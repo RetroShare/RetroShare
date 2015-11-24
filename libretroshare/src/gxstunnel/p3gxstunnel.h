@@ -55,12 +55,24 @@
 // Algorithms
 //
 //    Tunnel establishment
-//	* we need to layers: the turtle layer, and the GXS id layer.
+//	* we need two layers: the turtle layer, and the GXS id layer.
 //	* at the turtle layer:
 //		- accept virtual peers from turtle tunnel service. The hash for that VP only depends on the server GXS id at server side, which is our
 //			own ID at server side, and destination ID at client side. What happens if two different clients request to talk to the same GXS id? (same hash)
 //			They should use different virtual peers, so it should be ok. 
 //		- multiple tunnels may end up to the same hash, but will correspond to different GXS tunnels since the GXS id in the other side is different.
+//
+//                 Turtle hash:   [ 0 ---------------15 16---19 ]
+//                                      Destination      Source
+//
+//		    We Use 16 bytes to target the exact destination of the hash. The source part is just 4 arbitrary bytes that need to be different for all source
+//                 IDs that come from the same peer, which is quite likely to be sufficient. The real source of the tunnel will make itself known when sending the 
+//                 DH key.
+//
+//                 Another option is to use random bytes in 16-19. But then, we would digg multiple times different tunnels between the same two peers even when requesting
+//		   a GXS tunnel for the same pair of GXS ids. Is that a problem? 
+//			- that solves the problem of colliding source GXS ids (since 4 bytes is too small)
+//			- the DH will make it clear that we're talking to the same person if it already exist.
 //
 //	* at the GXS layer
 //		- we should be able to have as many tunnels as they are different couples of GXS ids to interact. That means the tunnel should be determined
@@ -87,6 +99,11 @@
 //  Notes
 //     * one other option would be to make the turtle hash depend on both GXS ids in a way that it is possible to find which are the two ids on the server side.
 //       but that would prevent the use of unknown IDs, which we would like to offer as well.
+//	 Without this, it's not possible to request two tunnels to a same server GXS id but from a different client GXS id. Indeed, if the two hashes are the same, 
+//	 from the same peer, the tunnel names will be identical and so will be the virtual peer ids, if the route is the same (because of multi-tunneling, they
+//	 will be different if the route is different).
+//
+//     * 
 
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
@@ -133,8 +150,10 @@ private:
 
         uint32_t status ;		// info: do we have a tunnel ?
         RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
+        RsGxsId to_gxs_id;  		// gxs id we're talking to
         RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
         RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
+        TurtleFileHash hash ;		// hash that is last used. This is necessary for handling tunnel establishment
     };
 
     class GxsTunnelDHInfo
@@ -145,6 +164,7 @@ private:
         DH *dh ;
         RsGxsId gxs_id ;
         RsGxsId own_gxs_id ;
+        RsGxsTunnelId tunnel_id ; // this is a proxy, since we cna always recompute that from the two previous values.
         RsTurtleGenericTunnelItem::Direction direction ;
 	uint32_t status ;
 	TurtleFileHash hash ;
@@ -152,8 +172,8 @@ private:
 
     // This maps contains the current peers to talk to with distant chat.
     //
-    std::map<RsGxsTunnelId,GxsTunnelPeerInfo> 	_gxs_tunnel_contacts ;		// current peers we can talk to
-    std::map<RsPeerId,GxsTunnelDHInfo>    	_gxs_tunnel_virtual_peer_ids ;	// current virtual peers. Used to figure out tunnels, etc.
+    std::map<RsGxsTunnelId,GxsTunnelPeerInfo> 		_gxs_tunnel_contacts ;		// current peers we can talk to
+    std::map<TurtleVirtualPeerId,GxsTunnelDHInfo>    	_gxs_tunnel_virtual_peer_ids ;	// current virtual peers. Used to figure out tunnels, etc.
 
     // List of items to be sent asap. Used to store items that we cannot pass directly to
     // sendTurtleData(), because of Mutex protection.
@@ -169,14 +189,14 @@ private:
     
     // session handling handles
     
-    void markGxsTunnelAsClosed(const RsGxsId &gxs_id) ;
+    void markGxsTunnelAsClosed(const RsGxsTunnelId &tunnel_id) ;
     void startClientGxsTunnelConnection(const RsGxsId &to_gxs_id, const RsGxsId& from_gxs_id, RsGxsTunnelId &tunnel_id) ;
     void locked_restartDHSession(const RsPeerId &virtual_peer_id, const RsGxsId &own_gxs_id) ;
 
     // utility functions
 
-    static TurtleFileHash hashFromGxsId(const RsGxsId& destination) ;
-    static RsGxsId gxsIdFromHash(const TurtleFileHash& sum) ;
+    static TurtleFileHash randomHashFromDestinationGxsId(const RsGxsId& destination) ;
+    static RsGxsId destinationGxsIdFromHash(const TurtleFileHash& sum) ;
 
     // Cryptography management
     
@@ -194,7 +214,7 @@ private:
     // Comunication with Turtle service
 
     void sendTurtleData(RsGxsTunnelItem *) ;
-    void sendEncryptedTurtleData(const uint8_t *buff,uint32_t rssize,const RsGxsId &gxs_id) ;
+    void sendEncryptedTurtleData(const uint8_t *buff, uint32_t rssize, const TurtleVirtualPeerId &vpid) ;
     bool handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id) ;
 
     static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
