@@ -102,7 +102,7 @@ uint32_t RsGxsIdLocalInfoItem::serial_size()
     s += 4 ; 		// number of items
     s += mTimeStamps.size() * (RsGxsId::SIZE_IN_BYTES + 8) ;
     s += 4 ; 		// number of contacts
-    s += mContacts.size() * (RsGxsId::SIZE_IN_BYTES + 8) ;
+    s += mContacts.size() * RsGxsId::SIZE_IN_BYTES ;
 
     return s;
 }

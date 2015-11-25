@@ -271,6 +271,7 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
             for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
                 mKeysTS.insert(*it2) ;
     
+            std::cerr << "p3IdService::loadList(): read " << lii->mContacts.size() << " contacts." << std::endl;
 	    mContacts = lii->mContacts ;
         }
     

@@ -189,7 +189,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 25 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
-
+	
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
@@ -434,6 +434,12 @@ void IdDialog::insertIdList(uint32_t token)
 	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
 
 	int accept = ui->filterComboBox->itemData(ui->filterComboBox->currentIndex()).toInt();
+	
+	contactsItem = new QTreeWidgetItem();
+	contactsItem->setText(0, tr("Contacts"));
+
+	allItem = new QTreeWidgetItem();
+	allItem->setText(0, tr("All"));
 
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
@@ -486,9 +492,25 @@ void IdDialog::insertIdList(uint32_t token)
 		data = (*vit);
 
 		item = NULL;
+		
+		ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
+		ui->idTreeWidget->insertTopLevelItem(0, allItem);
+
 		if (fillIdListItem(*vit, item, ownPgpId, accept))
 		{
-			ui->idTreeWidget->addTopLevelItem(item);
+			RsIdentityDetails details;
+			std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+			rsIdentity->getIdDetails(RsGxsId(keyId), details);
+			
+			if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
+			{
+				contactsItem->addChild(item);
+			}
+			else
+			{
+				allItem->addChild(item);
+			}
+		
 		}
 	}
 
@@ -952,6 +974,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	if (item) {
 		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
+
 		if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
 		{
 			if(own_identities.size() <= 1)
@@ -983,6 +1006,26 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+			
+			RsIdentityDetails details;
+      std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+			rsIdentity->getIdDetails(RsGxsId(keyId), details);
+			
+			QAction *addContact = contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+			QAction *removeContact = contextMnu.addAction(QIcon(), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+
+			
+			if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
+			{
+				addContact->setVisible(false);
+				removeContact->setVisible(true);
+			}
+			else
+			{
+				addContact->setVisible(true);
+				removeContact->setVisible(false);
+			}
 		}
 	}
 
@@ -1041,3 +1084,36 @@ void IdDialog::sendMsg()
     /* window will destroy itself! */
 
 }
+
+void IdDialog::addtoContacts()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsIdentity->setAsRegularContact(RsGxsId(Id),true);
+
+	requestIdDetails();
+	requestIdList();
+}
+
+void IdDialog::removefromContacts()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsIdentity->setAsRegularContact(RsGxsId(Id),false);
+
+	requestIdDetails();
+	requestIdList();
+}
+

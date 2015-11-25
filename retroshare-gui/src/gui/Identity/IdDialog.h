@@ -74,6 +74,10 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+	
+	void  addtoContacts();
+  void  removefromContacts();
+
 
 private:
 	void processSettings(bool load);
@@ -98,6 +102,9 @@ private:
 	UIStateHelper *mStateHelper;
 
 	RsGxsGroupId mId;
+	
+	QTreeWidgetItem *contactsItem;
+	QTreeWidgetItem *allItem;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;
