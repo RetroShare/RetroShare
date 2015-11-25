@@ -376,7 +376,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
                      +QObject::tr("Id:")+" "+QString::number(id,16) ;
     
     if(lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
-        tooltipstr += QObject::tr("\nSecurity: no anonymous ids") ;
+        tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
     
     item->setToolTip(0,tooltipstr) ;
 }
@@ -839,7 +839,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			ui.lobbyid_lineEdit->setText( QString::number((*it).lobby_id,16) );
 			ui.lobbytopic_lineEdit->setText( RsHtml::plainText(it->lobby_topic) );
 			ui.lobbytype_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)?tr("Public"):tr("Private")) );
-			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous ids accepted")) );
+			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous IDs accepted")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
             QString text = tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
