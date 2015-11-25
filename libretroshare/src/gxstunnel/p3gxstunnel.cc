@@ -145,7 +145,6 @@ void p3GxsTunnelService::flush()
             {
                 std::cerr << "(II) GxsTunnelService:: forcing new tunnel campain." << std::endl;
 
-#warning make sure we can use random here.
                 mTurtle->forceReDiggTunnels( randomHashFromDestinationGxsId(it->second.to_gxs_id) );
             }
         }
@@ -781,10 +780,6 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     cs->PeerId(vpid) ;
 
     pendingGxsTunnelItems.push_back(cs) ;
-
-#warning should notify client here
-    
-    //RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 }
 
 // Note: for some obscure reason, the typedef does not work here. Looks like a compiler error. So I use the primary type.
@@ -1173,16 +1168,6 @@ void p3GxsTunnelService::startClientGxsTunnelConnection(const RsGxsId& to_gxs_id
     // Now ask the turtle router to manage a tunnel for that hash.
     
     mTurtle->monitorTunnels(hash,this,false) ;
-
-#warning check that this code should go.
-#ifdef TO_BE_REMOVED
-    // spawn a status item so as to open the chat window.
-    RsGxsTunnelMsgItem *item = new RsGxsTunnelMsgItem;
-    item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
-    item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
-    item->PeerId(RsPeerId(to_gxs_id)) ;
-    handleRecvGxsTunnelMsgItem(item) ;
-#endif
 }
 
 TurtleFileHash p3GxsTunnelService::randomHashFromDestinationGxsId(const RsGxsId& destination)
