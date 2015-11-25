@@ -61,33 +61,32 @@ class RsGxsTunnelItem: public RsItem
 		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 };
 
-//  /*!
-//   * For sending distant communication data. The item is not encrypted after being serialised, but the data it.
-//   * The MAC is computed over encrypted data using the PFS key. All other items (except DH keys) are serialised, encrypted, and
-//   * sent as data in a RsGxsTunnelDataItem.
-//   * 
-//   * @see p3GxsTunnelService
-//   */
-//  class RsGxsTunnelDataItem: public RsGxsTunnelItem
-//  {
-//  public:
-//      RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) {}
-//      RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) {}
-//  
-//      virtual ~RsGxsTunnelDataItem() {}
-//      virtual void clear() {}
-//      virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
-//  
-//      virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
-//      virtual uint32_t serial_size() ;				// deserialise is handled using a constructor
-//  
-//      uint32_t sendTime;
-//      uint32_t flags;						// mainly NEEDS_HACK?
-//      unsigned char *data ;					// encrypted data
-//      uint32_t data_size ;					// encrypted data size
-//      unsigned char IV[IV_LENGTH] ;				// IV for the encrypted data
-//      unsigned char encrypted_data_mac[SHA_DIGEST_LENGTH] ;	// mac of the encrypted data, in order to avoid 
-//  };
+/*!
+ * For sending distant communication data. The item is not encrypted after being serialised, but the data it.
+ * The MAC is computed over encrypted data using the PFS key. All other items (except DH keys) are serialised, encrypted, and
+ * sent as data in a RsGxsTunnelDataItem.
+ * 
+ * @see p3GxsTunnelService
+ */
+class RsGxsTunnelDataItem: public RsGxsTunnelItem
+{
+public:
+    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) {}
+    RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) {}
+
+    virtual ~RsGxsTunnelDataItem() {}
+    virtual void clear() {}
+    virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+    virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+    virtual uint32_t serial_size() ;				// deserialise is handled using a constructor
+
+    uint64_t unique_item_counter;				// this allows to make the item unique
+    uint32_t flags;						// mainly NEEDS_HACK?
+    uint32_t service_id ;
+    uint32_t data_size ;					// encrypted data size
+    unsigned char *data ;					// encrypted data
+};
 
 // Used to send status of connection. This can be closing orders, flushing orders, etc.
 // These items are always sent encrypted.
@@ -121,7 +120,7 @@ class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
 
-        	Sha1CheckSum data_hash ;
+        	uint64_t unique_item_counter ;					// unique identifier for that item
 };
 
 

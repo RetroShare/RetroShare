@@ -49,7 +49,7 @@ public:
         // Data obtained from the corresponding GXS id. The memory ownership is transferred to the client, which
         // is responsible to free it using free() once used.
         
-        virtual void receiveData(const RsGxsTunnelId& id,const RsGxsId& from_id,unsigned char *data,uint32_t data_size) =0;
+        virtual void receiveData(const RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) =0;
     };
     
     class GxsTunnelInfo
@@ -84,6 +84,11 @@ public:
     //         Communication to other services.          //
     //===================================================//
 
+    // Register a new client service. The service ID needs to be unique, and it's the coder's resonsibility to use an ID that is not used elsewhere
+    // for the same purpose. 
+    
+    virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) =0;
+    
     // Asks for a tunnel. The service will request it to turtle router, and exchange a AES key using DH.
     // When the tunnel is secured, the client---here supplied as argument---will be notified. He can
     // then send data into the tunnel. The same tunnel may be used by different clients.
@@ -91,9 +96,9 @@ public:
     virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t& error_code) =0 ;
     
     // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged. If the tunnel does not exist, the item is rejected and 
-    // an error is issued. In any case, the memory ownership of the data is transferred to the tunnel service, so the client should not use it afterwards.
+    // an error is issued. In any case, the memory ownership of the data is *not* transferred to the tunnel service, so the client should delete it afterwards, if needed.
     
-    virtual bool sendData(RsGxsTunnelId tunnel_id, uint32_t client_service_id, const uint8_t *data, uint32_t data_size) =0;
+    virtual bool sendData(const RsGxsTunnelId tunnel_id, uint32_t client_service_id, const uint8_t *data, uint32_t data_size) =0;
     
     // Removes any established tunnel to this GXS id. This makes the tunnel refuse further data, but the tunnel will be however kept alive
     // until all pending data is flushed. All clients attached to the tunnel will be notified that the tunnel gets closed.

@@ -116,24 +116,23 @@ static const uint32_t GXS_TUNNEL_AES_KEY_SIZE = 16 ;
 class p3GxsTunnelService: public RsGxsTunnelService, public RsTurtleClientService
 {
 public:
-    p3GxsTunnelService(RsGixs *pids)
-            : mGixs(pids), mGxsTunnelMtx("GXS tunnel")
-    {
-        mTurtle = NULL ;
-    }
-
+    p3GxsTunnelService(RsGixs *pids) ;
     virtual void connectToTurtleRouter(p3turtle *) ;
 
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
     virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t& error_code) ;
+    
     virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id) ;
     virtual bool getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t &status);
+    virtual bool sendData(const RsGxsTunnelId& tunnel_id,uint32_t service_id,const uint8_t *data,uint32_t size) ;
+    
+    virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) ;
 
 private:
     void flush() ;
-    virtual bool handleIncomingItem(RsGxsTunnelItem *) ;
+    virtual void handleIncomingItem(const RsGxsTunnelId &tunnel_id, RsGxsTunnelItem *) ;
     
     class GxsTunnelPeerInfo
     {
@@ -170,6 +169,12 @@ private:
 	TurtleFileHash hash ;
     };
 
+    struct GxsTunnelData
+    {
+        RsGxsTunnelDataItem *data_item ;
+        time_t    last_sending_attempt ;
+    };
+    
     // This maps contains the current peers to talk to with distant chat.
     //
     std::map<RsGxsTunnelId,GxsTunnelPeerInfo> 		_gxs_tunnel_contacts ;		// current peers we can talk to
@@ -178,7 +183,9 @@ private:
     // List of items to be sent asap. Used to store items that we cannot pass directly to
     // sendTurtleData(), because of Mutex protection.
 
-    std::list<RsGxsTunnelItem*> pendingGxsTunnelItems ;
+    std::map<uint64_t,GxsTunnelData> 		pendingGxsTunnelDataItems ;	// items that need provable transport and encryption
+    std::list<RsGxsTunnelItem*> 		pendingGxsTunnelItems ;		// items that do not need provable transport, yet need encryption
+    std::list<RsGxsTunnelDHPublicKeyItem*> 	pendingDHItems ;		
 
     // Overloaded from RsTurtleClientService
 
@@ -209,12 +216,15 @@ private:
 
     // item handling
     
-    void handleRecvStatusItem(RsGxsTunnelStatusItem *item) ;
+    void handleRecvStatusItem(const RsGxsTunnelId& id,RsGxsTunnelStatusItem *item) ;
+    void handleRecvTunnelDataItem(const RsGxsTunnelId& id,RsGxsTunnelDataItem *item) ;
+    void handleRecvTunnelDataAckItem(const RsGxsTunnelId &id, RsGxsTunnelDataAckItem *item);
     
     // Comunication with Turtle service
 
-    void sendTurtleData(RsGxsTunnelItem *) ;
-    void sendEncryptedTurtleData(const uint8_t *buff, uint32_t rssize, const TurtleVirtualPeerId &vpid) ;
+    bool locked_sendEncryptedTunnelData(RsGxsTunnelItem *item) ;
+    bool locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *item);	// this limits the usage to DH items. Others should be encrypted!
+    
     bool handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id) ;
 
     static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
@@ -224,4 +234,9 @@ private:
     p3turtle 	*mTurtle ;
     RsGixs 	*mGixs ;
     RsMutex  	 mGxsTunnelMtx ;
+    
+    uint64_t 	 global_item_counter ;
+    
+    std::map<uint32_t,RsGxsTunnelClientService*> mRegisteredServices ;
 };
+
