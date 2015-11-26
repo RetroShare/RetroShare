@@ -31,21 +31,14 @@
 
 class pqilistener
 {
-	public:
-
-	pqilistener() 		{ return; }
-virtual ~pqilistener() 		{ return; }
-
-virtual int     tick()					{ return 1; }
-virtual int     status()				{ return 1; }
-virtual int     setListenAddr(const struct sockaddr_storage &addr)  
-	{ 
-		(void) addr; /* suppress unused parameter warning */
-		return 1; 
-	}
-virtual int	setuplisten() 				{ return 1; }
-virtual int     resetlisten() 				{ return 1; }
-
+public:
+	pqilistener() {}
+	virtual ~pqilistener() {}
+	virtual int tick() { return 1; }
+	virtual int status() { return 1; }
+	virtual int setListenAddr(const sockaddr_storage & /*addr*/) { return 1; }
+	virtual int setuplisten() { return 1; }
+	virtual int resetlisten() { return 1; }
 };
 
 
