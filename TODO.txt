@@ -23,10 +23,13 @@ GUI
            used, and replace with something else
     E  [ ] add tooltips in in permission matrix when hovering over the top most button/service name
            explain what the service does and the dependencies
-	 E  [ ] Make RS fully compatible with High DPI screens.
+	E  [ ] Make RS fully compatible with High DPI screens.
     M  [ ] improve comments in channels. Comments should be more available, more visible, and easier to handle.
     M  [ ] Merge the various help systems. there's 3 of them now. Lots of duplicate code, etc.
     M  [ ] New and consistent icon set (Purplehaze420 said he would provide a consistent set of icons. Is that still alive?)
+	M  [ ] add in options->Network a way to select which network interface is used to talk (choice between "auto" or selected from a list)
+	M  [ ] add a RS link for encrypted messages (encrypt for multiple GXS ids at once). Messages will appear as a link when encrypted and 
+		   be automatically decrypted when a suitable GXS id is available for it. Could be a way to securely post something in a public place.
 
 File transfer (all 3 tasks are related)
     H  [ ] implement a new file list management, with new info such as access time,total upload, popularity, etc
