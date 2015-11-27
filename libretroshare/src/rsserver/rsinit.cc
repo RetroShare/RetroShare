@@ -56,6 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
+#include <gxstunnel/p3gxstunnel.h>
+
 #define ENABLE_GROUTER
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
@@ -1472,13 +1474,16 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(tr,true);
 	pqih -> addService(ftserver,true);
 
+        p3GxsTunnelService *gxs_tunnels = new p3GxsTunnelService() ;
+        rsGxsTunnels = gxs_tunnels;
+        
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToTurtleRouter(tr) ;
+	chatSrv->connectToxsTunnelService(gxs_tunnels) ;
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
@@ -1489,8 +1494,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mDisc,true);
 	pqih -> addService(msgSrv,true);
 	pqih -> addService(chatSrv,true);
-    pqih -> addService(mStatusSrv,true);
-
+	pqih -> addService(mStatusSrv,true);
 
 	// set interfaces for plugins
 	//

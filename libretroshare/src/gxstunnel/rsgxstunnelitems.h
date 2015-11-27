@@ -130,10 +130,10 @@ class RsGxsTunnelDataAckItem: public RsGxsTunnelItem
 class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {}
+		RsGxsTunnelDHPublicKeyItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DH_PUBLIC_KEY) {}
 		RsGxsTunnelDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
 
-		virtual ~RsGxsTunnelDHPublicKeyItem() { BN_free(public_key) ; } 
+		virtual ~RsGxsTunnelDHPublicKeyItem() ;
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?

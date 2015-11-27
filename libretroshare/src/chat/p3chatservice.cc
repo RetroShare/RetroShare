@@ -86,7 +86,7 @@ int	p3ChatService::tick()
 		receiveChatQueue();
 
 	DistributedChatService::flush() ;
-	DistantChatService::flush() ;
+	//DistantChatService::flush() ;
 
 	return 0;
 }
@@ -284,12 +284,15 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 
 bool p3ChatService::isOnline(const RsPeerId& pid)
 {
-	// check if the id is a tunnel id or a peer id.
-	uint32_t status ;
-    if(getDistantChatStatus(RsGxsId(pid),status))
-		return status == RS_DISTANT_CHAT_STATUS_CAN_TALK ;
+    // check if the id is a tunnel id or a peer id.
+    
+    uint32_t status ;
+    DistantChatPeerInfo dcpinfo;
+
+    if(getDistantChatStatus(DistantChatPeerId(pid),dcpinfo))
+	    return dcpinfo.status == RS_DISTANT_CHAT_STATUS_CAN_TALK ;
     else
-        return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
+	    return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
 }
 
 bool p3ChatService::sendChat(ChatId destination, std::string msg)
@@ -767,6 +770,7 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 #endif
 
     uint32_t status;
+    DistantChatPeerInfo dcpinfo;
 
 	if(cs->flags & RS_CHAT_FLAG_REQUEST_CUSTOM_STATE) 	// no state here just a request.
 		sendCustomState(cs->PeerId()) ;
@@ -782,9 +786,9 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 #endif
 		sendCustomStateRequest(cs->PeerId()) ;
 	}
-    else if(DistantChatService::getDistantChatStatus(RsGxsId(cs->PeerId()), status))
+    else if(DistantChatService::getDistantChatStatus(DistantChatPeerId(cs->PeerId()), dcpinfo))
     {
-        RsServer::notify()->notifyChatStatus(ChatId(RsGxsId(cs->PeerId())), cs->status_string) ;
+        RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(cs->PeerId())), cs->status_string) ;
     }
 	else if(cs->flags & RS_CHAT_FLAG_PRIVATE)
 	{
@@ -817,8 +821,9 @@ void p3ChatService::initChatMessage(RsChatMsgItem *c, ChatMessage &m)
     }
 
     uint32_t status;
-    if(DistantChatService::getDistantChatStatus(RsGxsId(c->PeerId()), status))
-        m.chat_id = ChatId(RsGxsId(c->PeerId()));
+    DistantChatPeerInfo dcpinfo;
+    if(DistantChatService::getDistantChatStatus(DistantChatPeerId(c->PeerId()), dcpinfo))
+        m.chat_id = ChatId(DistantChatPeerId(c->PeerId()));
 
     if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
         m.chatflags |= RS_CHAT_PRIVATE;

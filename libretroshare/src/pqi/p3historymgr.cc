@@ -104,9 +104,9 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
                 peerName = cm.chat_id.toGxsId().toStdString();
             } else {
                 uint32_t status;
-                RsGxsId from_gxs_id;
-                if (rsMsgs->getDistantChatStatus(cm.chat_id.toGxsId(), status, &from_gxs_id))
-                    peerName = from_gxs_id.toStdString();
+                DistantChatPeerInfo dcpinfo;
+                if (rsMsgs->getDistantChatStatus(cm.chat_id.toPeerId(), dcpinfo))
+                    peerName = cm.chat_id.toPeerId().toStdString();
             }
             enabled = true;
         }

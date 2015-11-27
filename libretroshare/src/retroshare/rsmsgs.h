@@ -100,7 +100,6 @@ typedef uint64_t	ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
 
 typedef RsPeerId	DistantChatPeerId ;
-//typedef GRouterKeyId		DistantMsgPeerId ;
 
 typedef uint64_t     MessageId ;
 
@@ -253,12 +252,12 @@ public:
 #define RS_CHAT_PRIVATE 		0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
 
-#define RS_DISTANT_CHAT_STATUS_UNKNOWN		0x0000
-#define RS_DISTANT_CHAT_STATUS_TUNNEL_DN   	0x0001
-#define RS_DISTANT_CHAT_STATUS_TUNNEL_OK   	0x0002
+#define RS_DISTANT_CHAT_STATUS_UNKNOWN			0x0000
+#define RS_DISTANT_CHAT_STATUS_TUNNEL_DN   		0x0001
+#define RS_DISTANT_CHAT_STATUS_TUNNEL_OK   		0x0002
 #define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0003
 #define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0004
-#define RS_DISTANT_CHAT_STATUS_WAITING_DH  	0x0005
+#define RS_DISTANT_CHAT_STATUS_WAITING_DH  		0x0005
 
 #define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 
 #define RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   0x0001 
@@ -268,6 +267,14 @@ public:
 
 #define RS_DISTANT_CHAT_FLAG_SIGNED               0x0001 
 #define RS_DISTANT_CHAT_FLAG_SIGNATURE_OK         0x0002 
+
+struct DistantChatPeerInfo
+{
+	RsGxsId to_id ;
+	RsGxsId own_id ;
+	DistantChatPeerId peer_id ;	// this is the tunnel id actually
+	uint32_t status ;		// see the values in rsmsgs.h
+};
 
 // Identifier for an chat endpoint like
 // neighbour peer, distant peer, chatlobby, broadcast
@@ -372,15 +379,6 @@ class ChatLobbyInfo
         time_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
 };
 
-struct DistantChatInviteInfo
-{
-	DistantChatPeerId pid ;									// pid to contact the invite and refer to it.
-	std::string encrypted_radix64_string ;				// encrypted radix string used to for the chat link
-	RsPgpId   destination_pgp_id ;						// pgp is of the destination of the chat link
-	time_t 		time_of_validity ;   					// time when te invite becomes unusable
-	uint32_t    invite_flags ;								// used to keep track of wether signature was ok or not.
-};
-
 std::ostream &operator<<(std::ostream &out, const Rs::Msgs::MessageInfo &info);
 
 class RsMsgs;
@@ -481,9 +479,9 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId&
 /*            Distant chat              */
 /****************************************/
 
-virtual bool initiateDistantChatConnexion(const RsGxsId& to_pid,const RsGxsId& from_pid,uint32_t& error_code) = 0;
-virtual bool getDistantChatStatus(const RsGxsId& gxs_id,uint32_t& status, RsGxsId *from_gxs_id = NULL) = 0;
-virtual bool closeDistantChatConnexion(const RsGxsId& pid) = 0;
+virtual bool initiateDistantChatConnexion(const RsGxsId& to_pid,const RsGxsId& from_pid,DistantChatPeerId& pid,uint32_t& error_code) = 0;
+virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
+virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 };
 

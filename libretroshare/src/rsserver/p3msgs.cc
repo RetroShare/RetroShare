@@ -523,15 +523,15 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,uint32_t& error_code)
+bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id,DistantChatPeerId& pid,uint32_t& error_code)
 {
-    return mChatSrv->initiateDistantChatConnexion(to_gxs_id,from_gxs_id,error_code) ;
+    return mChatSrv->initiateDistantChatConnexion(to_gxs_id,from_gxs_id,pid,error_code) ;
 }
-bool p3Msgs::getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status,RsGxsId *from_gxs_id)
+bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)
 {
-    return mChatSrv->getDistantChatStatus(gxs_id,status,from_gxs_id) ;
+    return mChatSrv->getDistantChatStatus(pid,info) ;
 }
-bool p3Msgs::closeDistantChatConnexion(const RsGxsId& pid)
+bool p3Msgs::closeDistantChatConnexion(const DistantChatPeerId &pid)
 {
 	return mChatSrv->closeDistantChatConnexion(pid) ;
 }

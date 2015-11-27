@@ -22,6 +22,7 @@
 
 #pragma once 
 
+#include <retroshare/rsgxstunnel.h>
 #include "PopupChatDialog.h"
 
 class QTimer ;
@@ -33,7 +34,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	protected:
 		/** Default constructor */
-		PopupDistantChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		PopupDistantChatDialog(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		/** Default destructor */
 		virtual ~PopupDistantChatDialog();
 	
@@ -48,7 +49,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	private:
 		QTimer *_update_timer ;
-        RsGxsId _pid ;
+		RsGxsTunnelService::RsGxsTunnelId _tunnel_id ;
 		QLabel *_status_label ;
 
 		friend class ChatDialog;

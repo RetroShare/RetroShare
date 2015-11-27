@@ -232,6 +232,10 @@ std::ostream& RsChatAvatarItem::print(std::ostream &out, uint16_t indent)
 
 	return out;
 }
+RsGxsTunnelDHPublicKeyItem::~RsGxsTunnelDHPublicKeyItem() 
+{
+	BN_free(public_key) ;
+}
 RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
 	uint32_t rstype = getRsItemId(data);

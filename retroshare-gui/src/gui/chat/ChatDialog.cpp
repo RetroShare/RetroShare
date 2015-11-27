@@ -104,10 +104,9 @@ void ChatDialog::init(ChatId id, const QString &title)
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
                 cld->init();
                 cd = cld;
-            } else if(id.isGxsId()) {
-                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog();
-                QString peer_name = pdcd->getPeerName(id) ;
-                pdcd->init(id.toGxsId(), tr("Talking to")+" "+peer_name) ;
+            } else if(id.isGxsTunnelId()) {
+                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toGxsTunnelId());
+                pdcd->init() ;
                 cd = pdcd;
             } else {
                 RsPeerDetails sslDetails;

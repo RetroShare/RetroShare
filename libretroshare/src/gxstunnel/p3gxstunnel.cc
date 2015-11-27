@@ -53,11 +53,6 @@ static const uint32_t RS_GXS_TUNNEL_DH_STATUS_UNINITIALIZED = 0x0000 ;
 static const uint32_t RS_GXS_TUNNEL_DH_STATUS_HALF_KEY_DONE = 0x0001 ;
 static const uint32_t RS_GXS_TUNNEL_DH_STATUS_KEY_AVAILABLE = 0x0002 ;
 
-static const uint32_t RS_GXS_TUNNEL_STATUS_UNKNOWN          = 0x00 ;
-static const uint32_t RS_GXS_TUNNEL_STATUS_CAN_TALK         = 0x01 ;
-static const uint32_t RS_GXS_TUNNEL_STATUS_TUNNEL_DN        = 0x02 ;
-static const uint32_t RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED  = 0x03 ;
-
 static const uint32_t RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND  = 10 ; // re-send every 10 secs.
 
 static const uint32_t GXS_TUNNEL_ENCRYPTION_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
@@ -1126,8 +1121,7 @@ void p3GxsTunnelService::startClientGxsTunnelConnection(const RsGxsId& to_gxs_id
     
     RsFileHash hash = randomHashFromDestinationGxsId(to_gxs_id) ;
     
-    RsGxsTunnelId tnl_id = makeGxsTunnelId(from_gxs_id,to_gxs_id) ;
-    tunnel_id = tnl_id ;
+    tunnel_id = makeGxsTunnelId(from_gxs_id,to_gxs_id) ;
     
     {
         RsStackMutex stack(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/

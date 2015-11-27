@@ -36,6 +36,11 @@ public:
     static const uint32_t RS_GXS_TUNNEL_ERROR_NO_ERROR       = 0x0000 ;
     static const uint32_t RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID = 0x0001 ;
     
+    static const uint32_t RS_GXS_TUNNEL_STATUS_UNKNOWN          = 0x00 ;
+    static const uint32_t RS_GXS_TUNNEL_STATUS_CAN_TALK         = 0x01 ;
+    static const uint32_t RS_GXS_TUNNEL_STATUS_TUNNEL_DN        = 0x02 ;
+    static const uint32_t RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED  = 0x03 ;
+
     typedef GXSTunnelId RsGxsTunnelId ;
     
     class RsGxsTunnelClientService
@@ -50,6 +55,10 @@ public:
         // is responsible to free it using free() once used.
         
         virtual void receiveData(const RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) =0;
+        
+        // Used by the creator of the service to supply a pointer to the GXS tunnel service for it to be able to send data etc.
+        
+        virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) =0;
     };
     
     class GxsTunnelInfo
@@ -77,6 +86,7 @@ public:
     //===================================================//
 
     virtual bool getGxsTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
+    virtual bool getGxsTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
 
     // retrieve the routing probabilities
 
@@ -103,7 +113,7 @@ public:
     // Removes any established tunnel to this GXS id. This makes the tunnel refuse further data, but the tunnel will be however kept alive
     // until all pending data is flushed. All clients attached to the tunnel will be notified that the tunnel gets closed.
     
-    virtual bool closeExistingTunnel(const RsGxsId& to_id) =0;
+    virtual bool closeExistingTunnel(const RsGxsTunnelId& to_id) =0;
 
     //===================================================//
     //         Routage feedback from other services      //
