@@ -1474,8 +1474,8 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(tr,true);
 	pqih -> addService(ftserver,true);
 
-        p3GxsTunnelService *gxs_tunnels = new p3GxsTunnelService() ;
-        rsGxsTunnels = gxs_tunnels;
+        mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+        rsGxsTunnel = mGxsTunnels;
         
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
@@ -1483,7 +1483,7 @@ int RsServer::StartupRetroShare()
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToxsTunnelService(gxs_tunnels) ;
+	chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;

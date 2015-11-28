@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <openssl/ssl.h>
+
 #include "retroshare/rstypes.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserviceids.h"
@@ -71,8 +73,8 @@ class RsGxsTunnelItem: public RsItem
 class RsGxsTunnelDataItem: public RsGxsTunnelItem
 {
 public:
-    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) {}
-    RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) {}
+    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) { data=NULL ;data_size=0; }
+    RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) { data=NULL ;data_size=0; }
 
     virtual ~RsGxsTunnelDataItem() {}
     virtual void clear() {}
@@ -154,17 +156,22 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 
 class RsGxsTunnelSerialiser: public RsSerialType
 {
-	public:
-		RsGxsTunnelSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TUNNEL) {}
+public:
+	RsGxsTunnelSerialiser() :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_GXS_TUNNEL) {}
 
-		virtual uint32_t 	size (RsItem *item) 
-		{ 
-			return static_cast<RsGxsTunnelItem *>(item)->serial_size() ; 
-		}
-		virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
-		{ 
-			return static_cast<RsGxsTunnelItem *>(item)->serialise(data,*size) ; 
-		}
-		virtual RsGxsTunnelItem *deserialiseGxsTunnelItem(void *data, uint32_t *size) ;
+	virtual uint32_t 	size (RsItem *item) 
+	{ 
+		return static_cast<RsGxsTunnelItem *>(item)->serial_size() ; 
+	}
+	virtual bool serialise(RsItem *item, void *data, uint32_t *size) 
+	{ 
+		return static_cast<RsGxsTunnelItem *>(item)->serialise(data,*size) ; 
+	}
+	RsItem *deserialise(void *data, uint32_t *pktsize);
+private:
+	static RsGxsTunnelDataAckItem     *deserialise_RsGxsTunnelDataAckItem    (void *data, uint32_t size) ;
+	static RsGxsTunnelDataItem        *deserialise_RsGxsTunnelDataItem       (void *data, uint32_t size) ;
+	static RsGxsTunnelStatusItem      *deserialise_RsGxsTunnelStatusItem     (void *data, uint32_t size) ;
+	static RsGxsTunnelDHPublicKeyItem *deserialise_RsGxsTunnelDHPublicKeyItem(void *data, uint32_t size) ;
 };
 

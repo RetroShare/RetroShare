@@ -585,7 +585,7 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
 
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //
-        citem = RsGxsTunnelSerialiser().deserialiseGxsTunnelItem(decrypted_data,&decrypted_size) ;
+        citem = dynamic_cast<RsGxsTunnelItem*>(RsGxsTunnelSerialiser().deserialise(decrypted_data,&decrypted_size)) ;
         
         delete[] decrypted_data ;
 

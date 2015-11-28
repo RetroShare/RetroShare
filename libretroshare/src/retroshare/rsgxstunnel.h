@@ -85,8 +85,8 @@ public:
     //                  Debugging info                   //
     //===================================================//
 
-    virtual bool getGxsTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
-    virtual bool getGxsTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
+    //virtual bool getGxsTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
+    //virtual bool getGxsTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
 
     // retrieve the routing probabilities
 
@@ -108,7 +108,7 @@ public:
     // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged. If the tunnel does not exist, the item is rejected and 
     // an error is issued. In any case, the memory ownership of the data is *not* transferred to the tunnel service, so the client should delete it afterwards, if needed.
     
-    virtual bool sendData(const RsGxsTunnelId tunnel_id, uint32_t client_service_id, const uint8_t *data, uint32_t data_size) =0;
+    virtual bool sendData(const RsGxsTunnelId& tunnel_id, uint32_t client_service_id, const uint8_t *data, uint32_t data_size) =0;
     
     // Removes any established tunnel to this GXS id. This makes the tunnel refuse further data, but the tunnel will be however kept alive
     // until all pending data is flushed. All clients attached to the tunnel will be notified that the tunnel gets closed.

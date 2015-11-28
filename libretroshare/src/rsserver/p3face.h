@@ -39,6 +39,7 @@
 #include "util/rsthreads.h"
 
 #include "chat/p3chatservice.h"
+#include "gxstunnel/p3gxstunnel.h"
 
 #include "services/p3msgservice.h"
 #include "services/p3statusservice.h"
@@ -160,6 +161,7 @@ class RsServer: public RsControl, public RsTickingThread
 		p3MsgService  *msgSrv;
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
+		p3GxsTunnelService *mGxsTunnels;
 
         // This list contains all threaded services. It will be used to shut them down properly.
 
