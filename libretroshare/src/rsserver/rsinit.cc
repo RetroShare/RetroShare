@@ -1475,6 +1475,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(ftserver,true);
 
         mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+        mGxsTunnels->connectToTurtleRouter(tr) ;
         rsGxsTunnel = mGxsTunnels;
         
 	rsDisc  = mDisc;
@@ -1495,6 +1496,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(msgSrv,true);
 	pqih -> addService(chatSrv,true);
 	pqih -> addService(mStatusSrv,true);
+	pqih -> addService(mGxsTunnels,true);
 
 	// set interfaces for plugins
 	//
@@ -1515,6 +1517,8 @@ int RsServer::StartupRetroShare()
     interfaces.mPgpAuxUtils     = pgpAuxUtils;
     interfaces.mGxsForums       = mGxsForums;
     interfaces.mGxsChannels     = mGxsChannels;
+	interfaces.mGxsTunnels = mGxsTunnels;
+    
 	mPluginsManager->setInterfaces(interfaces);
 
 	// now add plugin objects inside the loop:

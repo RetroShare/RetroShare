@@ -32,7 +32,7 @@
 
 #include "gxstunnel/rsgxstunnelitems.h"
 
-//#define GXS_TUNNEL_ITEM_DEBUG 1
+#define GXS_TUNNEL_ITEM_DEBUG 1
 
 std::ostream& RsGxsTunnelDHPublicKeyItem::print(std::ostream &out, uint16_t indent)
 {
@@ -105,9 +105,7 @@ RsItem *RsGxsTunnelSerialiser::deserialise(void *data, uint32_t *pktsize)
     // look what we have...
     if (*pktsize < rssize)    /* check size */
     {
-#ifdef GXS_TUNNEL_ITEM_DEBUG
 	    std::cerr << "GxsTunnel deserialisation: not enough size: pktsize=" << *pktsize << ", rssize=" << rssize << std::endl ;
-#endif
 	    return NULL; /* not enough data */
     }
 

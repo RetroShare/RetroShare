@@ -107,13 +107,14 @@
 
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
+#include <services/p3service.h>
 #include <gxstunnel/rsgxstunnelitems.h>
 
 class RsGixs ;
 
 static const uint32_t GXS_TUNNEL_AES_KEY_SIZE = 16 ;
 
-class p3GxsTunnelService: public RsGxsTunnelService, public RsTurtleClientService
+class p3GxsTunnelService: public RsGxsTunnelService, public RsTurtleClientService, public p3Service
 {
 public:
     p3GxsTunnelService(RsGixs *pids) ;
@@ -131,6 +132,11 @@ public:
     
     virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) ;
 
+    // derived from p3service
+    
+    virtual int tick();
+    virtual RsServiceInfo getServiceInfo();
+    
 private:
     void flush() ;
     virtual void handleIncomingItem(const RsGxsTunnelId &tunnel_id, RsGxsTunnelItem *) ;
@@ -237,5 +243,7 @@ private:
     uint64_t 	 global_item_counter ;
     
     std::map<uint32_t,RsGxsTunnelClientService*> mRegisteredServices ;
+    
+    void debug_dump();
 };
 

@@ -41,6 +41,7 @@ extern RsPluginHandler *rsPlugins ;
 class p3Service ;
 class RsServiceControl ;
 class RsTurtle ;
+class RsGxsTunnelService ;
 class RsDht ;
 class RsDisc ;
 class RsMsgs ;
@@ -116,6 +117,7 @@ public:
     RsUtil::inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
     RsUtil::inited_ptr<RsGxsForums>     mGxsForums;
     RsUtil::inited_ptr<RsGxsChannels>   mGxsChannels;
+    RsUtil::inited_ptr<RsGxsTunnelService>    mGxsTunnels;
 };
 
 class RsPlugin

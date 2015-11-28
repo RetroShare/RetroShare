@@ -58,6 +58,15 @@ static const uint32_t RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND  = 10 ; // re-send ever
 static const uint32_t GXS_TUNNEL_ENCRYPTION_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
 static const uint32_t GXS_TUNNEL_ENCRYPTION_IV_SIZE      = 8 ;
 
+static const uint32_t INTERVAL_BETWEEN_DEBUG_DUMP        = 10 ;
+
+static std::string GXS_TUNNEL_APP_NAME = "GxsTunnels" ;
+
+static const uint8_t GXS_TUNNEL_APP_MAJOR_VERSION = 0x01 ;
+static const uint8_t GXS_TUNNEL_APP_MINOR_VERSION = 0x00 ;
+static const uint8_t GXS_TUNNEL_MIN_MAJOR_VERSION = 0x01 ;
+static const uint8_t GXS_TUNNEL_MIN_MINOR_VERSION = 0x00 ;
+        
 RsGxsTunnelService *rsGxsTunnel = NULL ;
 
 p3GxsTunnelService::p3GxsTunnelService(RsGixs *pids) 
@@ -89,6 +98,31 @@ bool p3GxsTunnelService::registerClientService(uint32_t service_id,RsGxsTunnelSe
     
     mRegisteredServices[service_id] = service ;
     return true ;
+}
+
+int p3GxsTunnelService::tick()
+{
+    static time_t last_dump = 0 ;
+   std::cerr << "p3GxsTunnelService::tick()" << std::endl; 
+    time_t now = time(NULL);
+    
+    if(now > last_dump + INTERVAL_BETWEEN_DEBUG_DUMP )
+    {
+        last_dump = now ;
+        debug_dump() ;
+    }
+    
+    flush() ;
+}
+
+RsServiceInfo p3GxsTunnelService::getServiceInfo()
+{
+    return RsServiceInfo(RS_SERVICE_TYPE_GXS_TUNNEL, 
+		GXS_TUNNEL_APP_NAME,
+		GXS_TUNNEL_APP_MAJOR_VERSION, 
+		GXS_TUNNEL_APP_MINOR_VERSION, 
+		GXS_TUNNEL_MIN_MAJOR_VERSION, 
+		GXS_TUNNEL_MIN_MINOR_VERSION);
 }
 
 void p3GxsTunnelService::flush()
@@ -342,7 +376,7 @@ void p3GxsTunnelService::addVirtualPeer(const TurtleFileHash& hash,const TurtleV
 		}
 		else	// client side
 		{
-			std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it ;
+			std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it = _gxs_tunnel_contacts.begin();
             
             		while(it != _gxs_tunnel_contacts.end() && it->second.hash != hash) ++it ;
 
@@ -495,7 +529,8 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
 
         // Now try deserialise the decrypted data to make an RsItem out of it.
         //
-        RsItem *citem = RsGxsTunnelSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&item->data_size-8) ;
+        uint32_t pktsize = item->data_size-8;
+        RsItem *citem = RsGxsTunnelSerialiser().deserialise(&((uint8_t*)item->data_bytes)[8],&pktsize) ;
 
         if(citem == NULL)
         {
@@ -1339,4 +1374,42 @@ void p3GxsTunnelService::markGxsTunnelAsClosed(const RsGxsTunnelId& tunnel_id)
         it->second.status = RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED ;
     }
 }
+
+void p3GxsTunnelService::debug_dump()
+{
+    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
+    
+    time_t now = time(NULL) ;
+    
+    std::cerr << "p3GxsTunnelService::debug_dump()" << std::endl;
+    std::cerr << "  Registered client services: " << std::endl;
+    
+    for(std::map<uint32_t,RsGxsTunnelService::RsGxsTunnelClientService*>::const_iterator it=mRegisteredServices.begin();it!=mRegisteredServices.end();++it)
+        std::cerr << std::hex << "    " << it->first << " - " << (void*)it->second << std::dec << std::endl;
+        
+    std::cerr << "  Active tunnels" << std::endl;
+                 
+    for(std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it=_gxs_tunnel_contacts.begin();it!=_gxs_tunnel_contacts.end();++it)
+        std::cerr << "    tunnel_id=" << it->first << " vpid=" << it->second.virtual_peer_id << " status=" << it->second.status << " direction=" << it->second.direction << " last_contact=" << (now-it->second.last_contact) <<" secs ago. Last_keep_alive_sent:" << (now - it->second.last_keep_alive_sent) << " secs ago." << std::endl; 
+    
+    std::cerr << "  Virtual peers:" << std::endl;
+    
+    for(std::map<TurtleVirtualPeerId,GxsTunnelDHInfo>::const_iterator it=_gxs_tunnel_virtual_peer_ids.begin();it!=_gxs_tunnel_virtual_peer_ids.end();++it)
+        std::cerr << "    vpid=" << it->first << " to=" << it->second.gxs_id << " from=" << it->second.own_gxs_id << " tunnel_id=" << it->second.tunnel_id << " status=" << it->second.status << " direction=" << it->second.direction << " hash=" << it->second.hash << std::endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
