@@ -34,11 +34,11 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	protected:
 		/** Default constructor */
-		PopupDistantChatDialog(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		PopupDistantChatDialog(const DistantChatPeerId &tunnel_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 		/** Default destructor */
 		virtual ~PopupDistantChatDialog();
 	
-        virtual void init(const RsGxsId &gxs_id, const QString &title);
+        virtual void init(const DistantChatPeerId& peer_id, const QString &title);
 		virtual void closeEvent(QCloseEvent *e) ;
 	
         virtual QString getPeerName(const ChatId &id) const ;
@@ -49,7 +49,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	private:
 		QTimer *_update_timer ;
-		RsGxsTunnelService::RsGxsTunnelId _tunnel_id ;
+		DistantChatPeerId _tunnel_id ;
 		QLabel *_status_label ;
 
 		friend class ChatDialog;

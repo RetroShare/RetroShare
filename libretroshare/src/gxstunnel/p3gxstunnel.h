@@ -126,6 +126,7 @@ public:
     
     virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id) ;
     virtual bool getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t &status);
+    virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info);
     virtual bool sendData(const RsGxsTunnelId& tunnel_id,uint32_t service_id,const uint8_t *data,uint32_t size) ;
     
     virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) ;

@@ -93,6 +93,7 @@ void ChatDialog::init(ChatId id, const QString &title)
 
     /* see if it already exists */
     ChatDialog *cd = getExistingChat(id);
+    DistantChatPeerInfo pinfo ;
 
     if (cd == NULL) {
 
@@ -104,11 +105,15 @@ void ChatDialog::init(ChatId id, const QString &title)
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
                 cld->init();
                 cd = cld;
-            } else if(id.isGxsTunnelId()) {
-                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toGxsTunnelId());
-                pdcd->init() ;
+            } 
+            else if(id.isPeerId() && rsMsgs->getDistantChatStatus(id.toPeerId(),pinfo))
+            {
+                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toPeerId());
+                pdcd->init(pinfo.peer_id, QString("This is a distant chat")) ;
                 cd = pdcd;
-            } else {
+            } 
+            else 
+            {
                 RsPeerDetails sslDetails;
                 if (rsPeers->getPeerDetails(id.toPeerId(), sslDetails)) {
                     PopupChatDialog* pcd = new PopupChatDialog();

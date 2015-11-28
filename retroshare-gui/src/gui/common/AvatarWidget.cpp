@@ -200,8 +200,9 @@ void AvatarWidget::refreshStatus()
             }
             else if(mId.isGxsId())
             {
-                if(!rsMsgs->getDistantChatStatus(mId.toGxsId(),status))
+//if(!rsMsgs->getDistantChatStatus(mId.toGxsId(),status))
                     status = RS_STATUS_OFFLINE ;
+#warning we need to do something clever here
             }
             else
             {

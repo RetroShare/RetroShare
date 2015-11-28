@@ -43,7 +43,7 @@ PopupDistantChatDialog::~PopupDistantChatDialog()
 	delete _update_timer ;
 }
 
-PopupDistantChatDialog::PopupDistantChatDialog(const RsGxsTunnelService::RsGxsTunnelId& tunnel_id,QWidget *parent, Qt::WindowFlags flags)
+PopupDistantChatDialog::PopupDistantChatDialog(const DistantChatPeerId& tunnel_id,QWidget *parent, Qt::WindowFlags flags)
 	: PopupChatDialog(parent,flags)
 {
     _tunnel_id = tunnel_id ;
@@ -60,19 +60,20 @@ PopupDistantChatDialog::PopupDistantChatDialog(const RsGxsTunnelService::RsGxsTu
 	updateDisplay() ;
 }
 
-void PopupDistantChatDialog::init()
+void PopupDistantChatDialog::init(const DistantChatPeerId &peer_id, const QString &title)
 {
-    RsGxsTunnelService::GxsTunnelInfo tinfo;
+    _tunnel_id = peer_id;
+    DistantChatPeerInfo tinfo;
     
-    if(!rsGxsTunnels->getDistantChatStatus(tunnel_id,tinfo))
+    if(!rsMsgs->getDistantChatStatus(_tunnel_id,tinfo))
         return ;
     
-    PopupChatDialog::init(ChatId(tinfo.destination_gxs_id), title) ;
+    PopupChatDialog::init(ChatId(tinfo.to_id), title) ;
 
     // Do not use setOwnId, because we don't want the user to change the GXS avatar from the chat window
     // it will not be transmitted.
 
-    ui.ownAvatarWidget->setId(ChatId(tinfo.source_gxs_id));
+    ui.ownAvatarWidget->setId(ChatId(tinfo.own_id));
 }
 
 void PopupDistantChatDialog::updateDisplay()
@@ -87,15 +88,15 @@ void PopupDistantChatDialog::updateDisplay()
     // make sure about the tunnel status
     //
 
-    RsGxsTunnelService::GxsTunnelInfo tinfo;
+    DistantChatPeerInfo tinfo;
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
-    ui.avatarWidget->setId(ChatId(tinfo.destination_gxs_id));
+    ui.avatarWidget->setId(ChatId(tinfo.to_id));
 
     QString msg;
-    switch(tinfo.tunnel_status)
+    switch(tinfo.status)
     {
-    case RsGxsTunnelService::RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
+    case RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
 	    _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
 	    msg = tr("Hash Error. No tunnel.");
 	    _status_label->setToolTip(msg) ;
@@ -103,7 +104,7 @@ void PopupDistantChatDialog::updateDisplay()
 	    getChatWidget()->blockSending(tr("Can't send message, because there is no tunnel."));
 	    setPeerStatus(RS_STATUS_OFFLINE) ;
 	    break ;
-    case RsGxsTunnelService::RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED: std::cerr << "Chat remotely closed. " << std::endl;
+    case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED: std::cerr << "Chat remotely closed. " << std::endl;
 	    _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
 	    _status_label->setToolTip(QObject::tr("Distant peer has closed the chat")) ;
 
@@ -112,7 +113,7 @@ void PopupDistantChatDialog::updateDisplay()
 	    setPeerStatus(RS_STATUS_OFFLINE) ;
 
 	    break ;
-    case RsGxsTunnelService::RS_DISTANT_CHAT_STATUS_TUNNEL_DN: //std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
+    case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: //std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
 	    _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
 	    msg = QObject::tr("Tunnel is pending...");
 	    _status_label->setToolTip(msg) ;
@@ -120,7 +121,7 @@ void PopupDistantChatDialog::updateDisplay()
 	    getChatWidget()->blockSending(msg);
 	    setPeerStatus(RS_STATUS_OFFLINE) ;
 	    break ;
-    case RsGxsTunnelService::RS_DISTANT_CHAT_STATUS_CAN_TALK: //std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
+    case RS_DISTANT_CHAT_STATUS_CAN_TALK: //std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
 	    _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
 	    msg = QObject::tr("Secured tunnel is working. You can talk!");
 	    _status_label->setToolTip(msg) ;
@@ -134,10 +135,11 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
 	//std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
 
-	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-	rsMsgs->getDistantChatStatus(_pid,status) ;
+    DistantChatPeerInfo tinfo ;
+    
+	rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
-	if(status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
+	if(tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
 		QString msg = tr("Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.") ;
 
@@ -157,26 +159,26 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 
 QString PopupDistantChatDialog::getPeerName(const ChatId &id) const
 {
-    RsGxsTunnelService::GxsTunnelInfo tinfo;
+    DistantChatPeerInfo tinfo;
 
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
     RsIdentityDetails details  ;
-    if(rsIdentity->getIdDetails(destination_gxs_id,details))
+    if(rsIdentity->getIdDetails(tinfo.to_id,details))
          return QString::fromUtf8( details.mNickname.c_str() ) ;
      else
-         return QString::fromStdString(destination_gxs_id.toStdString()) ;
+         return QString::fromStdString(tinfo.to_id.toStdString()) ;
 }
 
 QString PopupDistantChatDialog::getOwnName() const
 {
-    RsGxsTunnelService::GxsTunnelInfo tinfo;
+    DistantChatPeerInfo tinfo;
 
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
     RsIdentityDetails details  ;
-    if(rsIdentity->getIdDetails(source_gxs_id,details))
+    if(rsIdentity->getIdDetails(tinfo.own_id,details))
          return QString::fromUtf8( details.mNickname.c_str() ) ;
      else
-         return QString::fromStdString(source_gxs_id.toStdString()) ;
+         return QString::fromStdString(tinfo.own_id.toStdString()) ;
 }

@@ -58,6 +58,8 @@ static const uint32_t RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND  = 10 ; // re-send ever
 static const uint32_t GXS_TUNNEL_ENCRYPTION_HMAC_SIZE    = SHA_DIGEST_LENGTH ;
 static const uint32_t GXS_TUNNEL_ENCRYPTION_IV_SIZE      = 8 ;
 
+RsGxsTunnelService *rsGxsTunnel = NULL ;
+
 p3GxsTunnelService::p3GxsTunnelService(RsGixs *pids) 
             : mGixs(pids), mGxsTunnelMtx("GXS tunnel")
 {
@@ -71,6 +73,22 @@ void p3GxsTunnelService::connectToTurtleRouter(p3turtle *tr)
 {
 	mTurtle = tr ;
 	tr->registerTunnelService(this) ;
+}
+
+bool p3GxsTunnelService::registerClientService(uint32_t service_id,RsGxsTunnelService::RsGxsTunnelClientService *service)
+{
+    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
+
+    if(mRegisteredServices.find(service_id) != mRegisteredServices.end())
+    {
+        std::cerr << "(EE) p3GxsTunnelService::registerClientService(): trying to register client " << std::hex << service_id << std::dec << ", which is already registered!" << std::endl;
+        return false;
+    }
+    
+    std::cerr << "p3GxsTunnelService::registerClientService(): registering client service " << std::hex << service_id << std::dec << std::endl;
+    
+    mRegisteredServices[service_id] = service ;
+    return true ;
 }
 
 void p3GxsTunnelService::flush()
@@ -1191,6 +1209,31 @@ RsGxsId p3GxsTunnelService::destinationGxsIdFromHash(const TurtleFileHash& sum)
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
     return RsGxsId(sum.toByteArray());// takes the first 16 bytes
+}
+
+bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info)
+{
+    RsStackMutex stack(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
+
+    std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it = _gxs_tunnel_contacts.find(tunnel_id) ;
+
+    if(it == _gxs_tunnel_contacts.end())
+	    return false ;
+
+    info.destination_gxs_id = it->second.to_gxs_id;     
+    info.source_gxs_id      = it->second.own_gxs_id;	
+    info.tunnel_status      = it->second.status;	          
+#warning data missing here
+    info.total_size_sent    = 0;	         
+    info.total_size_received= 0;	  
+
+    // Data packets
+
+    info.pending_data_packets = 0;     
+    info.total_data_packets_sent=0 ;     
+    info.total_data_packets_received=0 ;
+
+    return true ;
 }
 
 bool p3GxsTunnelService::getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t& status)

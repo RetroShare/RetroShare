@@ -97,12 +97,36 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
 void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 {
     if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
-        markDistantChatAsClosed(RsGxsId(cs->PeerId())) ;
+        markDistantChatAsClosed(DistantChatPeerId(cs->PeerId())) ;
 
     // nothing more to do, because the decryption routing will update the last_contact time when decrypting.
 
     if(cs->flags & RS_CHAT_FLAG_KEEP_ALIVE)
         std::cerr << "DistantChatService::handleRecvChatStatusItem(): received keep alive packet for inactive chat! peerId=" << cs->PeerId() << std::endl;
+}
+
+void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, uint32_t tunnel_status)
+{
+    std::cerr << "DistantChatService::notifyTunnelStatus(): got notification " << std::hex << tunnel_status << std::dec << " for tunnel " << tunnel_id << std::endl;
+#warning do something here
+}
+
+void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, unsigned char *data, uint32_t data_size)
+{
+    std::cerr << "DistantChatService::receiveData(): got data of size " << data_size << " for tunnel " << tunnel_id << std::endl;
+#warning do something here
+}
+
+void DistantChatService::markDistantChatAsClosed(const DistantChatPeerId& dcpid)
+{
+    mGxsTunnels->closeExistingTunnel(RsGxsTunnelService::RsGxsTunnelId(dcpid)) ;
+    
+    RS_STACK_MUTEX(mDistantChatMtx) ;
+    
+    std::map<DistantChatPeerId,DistantChatContact>::iterator it = mDistantChatContacts.find(dcpid) ;
+    
+    if(it != mDistantChatContacts.end())
+        mDistantChatContacts.erase(it) ;
 }
 
 bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id, DistantChatPeerId& dcpid, uint32_t& error_code)
@@ -130,7 +154,7 @@ bool DistantChatService::getDistantChatStatus(const DistantChatPeerId& tunnel_id
 
     RsGxsTunnelService::GxsTunnelInfo tinfo ;
 
-    if(!mGxsTunnels->getGxsTunnelInfo(RsGxsTunnelId(tunnel_id),tinfo))
+    if(!mGxsTunnels->getTunnelInfo(RsGxsTunnelId(tunnel_id),tinfo))
 	    return false;
 
     cinfo.to_id  = tinfo.destination_gxs_id;

@@ -500,11 +500,11 @@ void p3ChatService::handleIncomingItem(RsItem *item)
 		return ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
 	}
 
-	if(DistantChatService::handleRecvItem(dynamic_cast<RsChatItem*>(item)))
-	{
-		delete item ;
-		return ;
-	}
+//	if(DistantChatService::handleRecvItem(dynamic_cast<RsChatItem*>(item)))
+//	{
+//		delete item ;
+//		return ;
+//	}
 
     if(DistributedChatService::handleRecvItem(dynamic_cast<RsChatItem*>(item)))
 	{

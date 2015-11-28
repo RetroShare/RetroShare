@@ -44,6 +44,8 @@ public:
         mGxsTunnels = NULL ;
     }
 
+    // Overloaded methods from RsGxsTunnelClientService
+    
     virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
 
     // Creates the invite if the public key of the distant peer is available.
@@ -79,8 +81,7 @@ private:
 
     // Utility functions.
     
-    void markDistantChatAsClosed(const RsGxsId &gxs_id) ;
-    void startClientDistantChatConnection(const RsGxsId &to_gxs_id,const RsGxsId& from_gxs_id) ;
+    void markDistantChatAsClosed(const DistantChatPeerId& dcpid) ;
 
     RsGxsTunnelService *mGxsTunnels ;
 

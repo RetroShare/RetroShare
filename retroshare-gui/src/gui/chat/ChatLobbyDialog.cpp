@@ -553,7 +553,7 @@ void ChatLobbyDialog::distantChatParticipant()
     rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
 
     uint32_t error_code ;
-    RsGxsTunnelService::RsGxsTunnelId tunnel_id;
+    DistantChatPeerId tunnel_id;
 
     if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
     {

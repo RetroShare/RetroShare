@@ -86,7 +86,7 @@ public:
     //===================================================//
 
     //virtual bool getGxsTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
-    //virtual bool getGxsTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
+    virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
 
     // retrieve the routing probabilities
 

@@ -333,7 +333,7 @@ bool RsGxsTunnelDataAckItem::serialise(void *data, uint32_t& pktsize)
 
 /*************************************************************************/
 
-RsGxsTunnelDHPublicKeyItem *deserialise_RsGxsTunnelDHPublicKeyItem(void *data,uint32_t /*size*/)
+RsGxsTunnelDHPublicKeyItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDHPublicKeyItem(void *data,uint32_t /*size*/)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(data);
@@ -367,7 +367,7 @@ RsGxsTunnelDHPublicKeyItem *deserialise_RsGxsTunnelDHPublicKeyItem(void *data,ui
     return item ;
 }
 
-RsGxsTunnelDataItem *deserialise_RsGxsTunnelDataItem(void *dat,uint32_t size)
+RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void *dat,uint32_t size)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
@@ -415,7 +415,7 @@ RsGxsTunnelDataItem *deserialise_RsGxsTunnelDataItem(void *dat,uint32_t size)
     return item ;
 }
 
-RsGxsTunnelDataAckItem *deserialise_RsGxsTunnelDataAckItem(void *dat,uint32_t /* size */)
+RsGxsTunnelDataAckItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataAckItem(void *dat,uint32_t /* size */)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
@@ -443,7 +443,7 @@ RsGxsTunnelDataAckItem *deserialise_RsGxsTunnelDataAckItem(void *dat,uint32_t /*
     return item ;
 }
 
-RsGxsTunnelStatusItem *deserialise_RsGxsTunnelStatusItem(void *dat,uint32_t size)
+RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat,uint32_t size)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
