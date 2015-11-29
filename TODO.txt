@@ -87,6 +87,7 @@ Channels
     E  [ ] allow to set a download directory per channel
     M  [ ] Thumbnail View for Channels
     M  [ ] Count commments on Comments Button
+    M  [ ] Notify Channel comments/replies
 
 Posted
     E  [ ] Show an info page for unsubscribed posted threads (same as forums)
