@@ -208,7 +208,7 @@ p3Config::p3Config()
 }
 
 
-bool p3Config::loadConfiguration(RsFileHash &loadHash)
+bool p3Config::loadConfiguration(RsFileHash& /* loadHash */)
 {
 	return loadConfig();
 }

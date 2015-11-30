@@ -58,6 +58,13 @@ ChatId::ChatId():
 
 }
 
+ChatId::ChatId(RsGxsId id):
+    lobby_id(0)
+{
+    type = TYPE_GXS_ID;
+    gxs_id = id;
+}
+
 ChatId::ChatId(RsPeerId id):
     lobby_id(0)
 {
@@ -65,11 +72,11 @@ ChatId::ChatId(RsPeerId id):
     peer_id = id;
 }
 
-ChatId::ChatId(RsGxsId id):
+ChatId::ChatId(DistantChatPeerId id):
     lobby_id(0)
 {
     type = TYPE_PRIVATE_DISTANT;
-    gxs_id = id;
+    distant_chat_id = id;
 }
 
 ChatId::ChatId(ChatLobbyId id):
@@ -93,7 +100,7 @@ ChatId::ChatId(std::string str):
     else if(str[0] == 'D')
     {
         type = TYPE_PRIVATE_DISTANT;
-        gxs_id == GXSId(str.substr(1));
+        distant_chat_id == DistantChatPeerId(str.substr(1));
     }
     else if(str[0] == 'L')
     {
@@ -143,7 +150,7 @@ std::string ChatId::toStdString() const
     else if(type == TYPE_PRIVATE_DISTANT)
     {
         str += "D";
-        str += gxs_id.toStdString();
+        str += distant_chat_id.toStdString();
     }
     else if(type == TYPE_LOBBY)
     {
@@ -186,7 +193,7 @@ bool ChatId::operator <(const ChatId& other) const
         case TYPE_PRIVATE:
             return peer_id < other.peer_id;
         case TYPE_PRIVATE_DISTANT:
-            return gxs_id < other.gxs_id;
+            return distant_chat_id < other.distant_chat_id;
         case TYPE_LOBBY:
             return lobby_id < other.lobby_id;
         case TYPE_BROADCAST:
@@ -210,7 +217,7 @@ bool ChatId::isSameEndpoint(const ChatId &other) const
         case TYPE_PRIVATE:
             return peer_id == other.peer_id;
         case TYPE_PRIVATE_DISTANT:
-            return gxs_id == other.gxs_id;
+            return distant_chat_id == other.distant_chat_id;
         case TYPE_LOBBY:
             return lobby_id == other.lobby_id;
         case TYPE_BROADCAST:
@@ -229,13 +236,17 @@ bool ChatId::isPeerId() const
 {
     return type == TYPE_PRIVATE;
 }
-bool ChatId::isGxsId()  const
+bool ChatId::isDistantChatId()  const
 {
     return type == TYPE_PRIVATE_DISTANT;
 }
 bool ChatId::isLobbyId() const
 {
     return type == TYPE_LOBBY;
+}
+bool ChatId::isGxsId() const
+{
+    return type == TYPE_GXS_ID;
 }
 bool ChatId::isBroadcast() const
 {
@@ -251,14 +262,25 @@ RsPeerId    ChatId::toPeerId()  const
         return RsPeerId();
     }
 }
+
 RsGxsId     ChatId::toGxsId()   const
 {
-    if(type == TYPE_PRIVATE_DISTANT)
+    if(type == TYPE_GXS_ID)
         return gxs_id;
     else
     {
-        std::cerr << "ChatId Warning: conversation to RsGxsId requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
+        std::cerr << "ChatId Warning: conversation to gxs_id requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
         return RsGxsId();
+    }
+}
+DistantChatPeerId     ChatId::toDistantChatId()   const
+{
+    if(type == TYPE_PRIVATE_DISTANT)
+        return distant_chat_id;
+    else
+    {
+        std::cerr << "ChatId Warning: conversation to DistantChatPeerId requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
+        return DistantChatPeerId();
     }
 }
 ChatLobbyId ChatId::toLobbyId() const

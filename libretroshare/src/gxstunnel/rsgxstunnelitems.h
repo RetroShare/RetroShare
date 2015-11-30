@@ -105,7 +105,7 @@ class RsGxsTunnelStatusItem: public RsGxsTunnelItem
 		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() ;			// deserialise is handled using a constructor
 
-		uint32_t flags ;
+		uint32_t status ;
 };
 
 // Used to confirm reception of an encrypted item. 

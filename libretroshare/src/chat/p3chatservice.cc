@@ -54,7 +54,7 @@ static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
 
 p3ChatService::p3ChatService(p3ServiceControl *sc,p3IdService *pids, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-    :DistantChatService(pids),DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr,pids), mChatMtx("p3ChatService"),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+    : DistributedChatService(getServiceInfo().mServiceType,sc,historyMgr,pids), mChatMtx("p3ChatService"),mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 
@@ -217,24 +217,25 @@ void p3ChatService::sendStatusString(const ChatId& id , const std::string& statu
         sendLobbyStatusString(id.toLobbyId(),status_string) ;
     else if(id.isBroadcast())
         sendGroupChatStatusString(status_string);
-    else if(id.isPeerId() || id.isGxsId())
-	{
-		RsChatStatusItem *cs = new RsChatStatusItem ;
+    else if(id.isPeerId() || id.isDistantChatId())
+    {
+	    RsChatStatusItem *cs = new RsChatStatusItem ;
 
-		cs->status_string = status_string ;
-		cs->flags = RS_CHAT_FLAG_PRIVATE ;
-        RsPeerId vpid;
-        if(id.isGxsId())
-            vpid = RsPeerId(id.toGxsId());
-        else
-            vpid = id.toPeerId();
-        cs->PeerId(vpid);
+	    cs->status_string = status_string ;
+	    cs->flags = RS_CHAT_FLAG_PRIVATE ;
+	    RsPeerId vpid;
+	    if(id.isDistantChatId())
+		    vpid = RsPeerId(id.toDistantChatId());
+	    else
+		    vpid = id.toPeerId();
+        
+	    cs->PeerId(vpid);
 
 #ifdef CHAT_DEBUG
-		std::cerr  << "sending chat status packet:" << std::endl ;
-		cs->print(std::cerr) ;
+	    std::cerr  << "sending chat status packet:" << std::endl ;
+	    cs->print(std::cerr) ;
 #endif
-		sendChatItem(cs);
+	    sendChatItem(cs);
     }
     else
     {
@@ -286,7 +287,6 @@ bool p3ChatService::isOnline(const RsPeerId& pid)
 {
     // check if the id is a tunnel id or a peer id.
     
-    uint32_t status ;
     DistantChatPeerInfo dcpinfo;
 
     if(getDistantChatStatus(DistantChatPeerId(pid),dcpinfo))
@@ -304,7 +304,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
         sendPublicChat(msg);
         return true;
     }
-    else if(destination.isPeerId()==false && destination.isGxsId()==false)
+    else if(destination.isPeerId()==false && destination.isDistantChatId()==false)
     {
         std::cerr << "p3ChatService::sendChat() Error: chat id type not handled. Is it empty?" << std::endl;
         return false;
@@ -316,8 +316,8 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 #endif
 
     RsPeerId vpid;
-    if(destination.isGxsId())
-        vpid = RsPeerId(destination.toGxsId()); // convert to virtual peer id
+    if(destination.isDistantChatId())
+        vpid = RsPeerId(destination.toDistantChatId()); // convert to virtual peer id
     else
         vpid = destination.toPeerId();
 
@@ -769,7 +769,6 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 	std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
 #endif
 
-    uint32_t status;
     DistantChatPeerInfo dcpinfo;
 
 	if(cs->flags & RS_CHAT_FLAG_REQUEST_CUSTOM_STATE) 	// no state here just a request.
@@ -820,7 +819,6 @@ void p3ChatService::initChatMessage(RsChatMsgItem *c, ChatMessage &m)
         return;
     }
 
-    uint32_t status;
     DistantChatPeerInfo dcpinfo;
     if(DistantChatService::getDistantChatStatus(DistantChatPeerId(c->PeerId()), dcpinfo))
         m.chat_id = ChatId(DistantChatPeerId(c->PeerId()));

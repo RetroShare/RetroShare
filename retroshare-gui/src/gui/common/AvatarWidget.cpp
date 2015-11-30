@@ -124,8 +124,6 @@ void AvatarWidget::setFrameType(FrameType type)
 void AvatarWidget::setId(const ChatId &id)
 {
     mId = id;
-//    mPgpId = rsPeers->getGPGId(id) ;
-//    mFlag.isGpg = false ;
 
     setPixmap(QPixmap());
 
@@ -133,14 +131,11 @@ void AvatarWidget::setId(const ChatId &id)
         setEnabled(false);
     }
 
+    if(mId.isGxsId())
+        std::cerr << "(EE) AvatarWidget should not be set to a GXS id." << std::endl;
+    
     refreshAvatarImage();
     refreshStatus();
-}
-void AvatarWidget::setOwnId(const RsGxsId& own_gxs_id)
-{
-    mFlag.isOwnId = true;
-
-    setId(ChatId(own_gxs_id));
 }
 void AvatarWidget::setOwnId()
 {
@@ -181,7 +176,7 @@ void AvatarWidget::refreshStatus()
                 rsStatus->getOwnStatus(statusInfo);
                 status = statusInfo.status ;
             }
-            else if(mId.isGxsId())
+            else if(mId.isDistantChatId())
                 status = RS_STATUS_ONLINE ;
             else
             {
@@ -198,12 +193,15 @@ void AvatarWidget::refreshStatus()
                 rsStatus->getStatus(mId.toPeerId(), statusInfo);
                 status = statusInfo.status ;
             }
-            else if(mId.isGxsId())
-            {
-//if(!rsMsgs->getDistantChatStatus(mId.toGxsId(),status))
-                    status = RS_STATUS_OFFLINE ;
-#warning we need to do something clever here
-            }
+            else if(mId.isDistantChatId())
+	    {
+		    DistantChatPeerInfo dcpinfo ;
+
+		    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+			    status = dcpinfo.status ;
+		    else
+			    std::cerr << "(EE) cannot get distant chat status for ID=" << mId.toDistantChatId() << std::endl;
+	    }
             else
             {
                 std::cerr << "Unhandled chat id type in AvatarWidget::refreshStatus()" << std::endl;
@@ -236,10 +234,11 @@ void AvatarWidget::updateStatus(int status)
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
     if(mId.isPeerId() && mId.toPeerId() == RsPeerId(peerId.toStdString()))
-        refreshAvatarImage() ;
-
-    if(mId.isGxsId() && mId.toGxsId() == RsGxsId(peerId.toStdString()))
-        refreshAvatarImage() ;
+	    refreshAvatarImage() ;
+    else if(mId.isDistantChatId() && mId.toDistantChatId() == DistantChatPeerId(peerId.toStdString()))
+	    refreshAvatarImage() ;
+    else
+	    std::cerr << "(EE) cannot update avatar. mId has unhandled type." << std::endl;
 }
 void AvatarWidget::refreshAvatarImage()
 {
@@ -263,12 +262,29 @@ void AvatarWidget::refreshAvatarImage()
         setPixmap(avatar);
         return;
     }
-    else  if (mId.isGxsId())
+//    else  if (mId.isGxsId())
+//    {
+//        QPixmap avatar;
+//        
+//	AvatarDefs::getAvatarFromGxsId(mId.toGxsId(), avatar, defaultAvatar);
+//	setPixmap(avatar);
+//	return;
+//    }
+    else  if (mId.isDistantChatId())
     {
-        QPixmap avatar;
-        AvatarDefs::getAvatarFromGxsId(mId.toGxsId(), avatar, defaultAvatar);
-        setPixmap(avatar);
-        return;
+	    QPixmap avatar;
+
+	    DistantChatPeerInfo dcpinfo ;
+
+	    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+	    {
+		    if(mFlag.isOwnId)
+			    AvatarDefs::getAvatarFromGxsId(dcpinfo.own_id, avatar, defaultAvatar);
+		    else
+			    AvatarDefs::getAvatarFromGxsId(dcpinfo.to_id, avatar, defaultAvatar);
+		    setPixmap(avatar);
+		    return;
+	    }
     }
     else
         std::cerr << "WARNING: unhandled situation in AvatarWidget::refreshAvatarImage()" << std::endl;

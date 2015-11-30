@@ -99,8 +99,6 @@ typedef uint64_t	ChatLobbyId ;
 typedef uint64_t	ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
 
-typedef RsPeerId	DistantChatPeerId ;
-
 typedef uint64_t     MessageId ;
 
 
@@ -254,10 +252,8 @@ public:
 
 #define RS_DISTANT_CHAT_STATUS_UNKNOWN			0x0000
 #define RS_DISTANT_CHAT_STATUS_TUNNEL_DN   		0x0001
-#define RS_DISTANT_CHAT_STATUS_TUNNEL_OK   		0x0002
-#define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0003
-#define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0004
-#define RS_DISTANT_CHAT_STATUS_WAITING_DH  		0x0005
+#define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0002
+#define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0003
 
 #define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 
 #define RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   0x0001 
@@ -285,6 +281,7 @@ public:
     explicit ChatId(RsPeerId     id);
     explicit ChatId(RsGxsId      id);
     explicit ChatId(ChatLobbyId  id);
+    explicit ChatId(DistantChatPeerId id);
     explicit ChatId(std::string str);
     static ChatId makeBroadcastId();
 
@@ -296,13 +293,15 @@ public:
 
     bool isNotSet() const;
     bool isPeerId() const;
-    bool isGxsId()  const;
+    bool isDistantChatId() const;
     bool isLobbyId() const;
+    bool isGxsId() const;
     bool isBroadcast() const;
 
     RsPeerId    toPeerId()  const;
     RsGxsId     toGxsId()   const;
     ChatLobbyId toLobbyId() const;
+    DistantChatPeerId toDistantChatId() const;
 
     // for the very specific case of transfering a status string
     // from the chatservice to the gui,
@@ -313,13 +312,15 @@ private:
                 TYPE_PRIVATE,            // private chat with directly connected friend, peer_id is valid
                 TYPE_PRIVATE_DISTANT,    // private chat with distant peer, gxs_id is valid
                 TYPE_LOBBY,              // chat lobby id, lobby_id is valid
+                TYPE_GXS_ID,             // 
                 TYPE_BROADCAST           // message to/from all connected peers
               };
 
     Type type;
     RsPeerId peer_id;
-    RsGxsId  gxs_id;
+    DistantChatPeerId distant_chat_id;
     ChatLobbyId lobby_id;
+    RsGxsId gxs_id;
 };
 
 class ChatMessage

@@ -39,7 +39,7 @@ public:
     // So, public interface only uses DistandChatPeerId, but internally, this is converted into a RsGxsTunnelService::RsGxsTunnelId
     
    
-    DistantChatService(RsGixs *pids) : mDistantChatMtx("distant chat")
+    DistantChatService() : mDistantChatMtx("distant chat")
     {
         mGxsTunnels = NULL ;
     }
@@ -56,7 +56,7 @@ public:
     
     virtual bool getDistantChatStatus(const DistantChatPeerId &tunnel_id, DistantChatPeerInfo& cinfo) ;
 
-    // derived in p3ChatService
+    // derived in p3ChatService, so as to pass down some info
     virtual void handleIncomingItem(RsItem *) = 0;
     virtual bool handleRecvChatMsgItem(RsChatMsgItem *ci)=0 ;
 

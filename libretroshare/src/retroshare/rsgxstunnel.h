@@ -33,15 +33,19 @@
 class RsGxsTunnelService
 {
 public:
-    static const uint32_t RS_GXS_TUNNEL_ERROR_NO_ERROR       = 0x0000 ;
-    static const uint32_t RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID = 0x0001 ;
-    
-    static const uint32_t RS_GXS_TUNNEL_STATUS_UNKNOWN          = 0x00 ;
-    static const uint32_t RS_GXS_TUNNEL_STATUS_CAN_TALK         = 0x01 ;
-    static const uint32_t RS_GXS_TUNNEL_STATUS_TUNNEL_DN        = 0x02 ;
-    static const uint32_t RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED  = 0x03 ;
-
     typedef GXSTunnelId RsGxsTunnelId ;
+    
+    enum {
+	RS_GXS_TUNNEL_ERROR_NO_ERROR          = 0x0000,
+	RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID    = 0x0001  
+    };
+
+    enum {
+	RS_GXS_TUNNEL_STATUS_UNKNOWN          = 0x00,
+	RS_GXS_TUNNEL_STATUS_TUNNEL_DN        = 0x01,
+	RS_GXS_TUNNEL_STATUS_CAN_TALK         = 0x02,
+	RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED  = 0x03  
+    };
     
     class RsGxsTunnelClientService
     {
@@ -102,8 +106,9 @@ public:
     // Asks for a tunnel. The service will request it to turtle router, and exchange a AES key using DH.
     // When the tunnel is secured, the client---here supplied as argument---will be notified. He can
     // then send data into the tunnel. The same tunnel may be used by different clients.
+    // The service id is passed on so that the client is notified when the tunnel is up.
     
-    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t& error_code) =0 ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t service_id,uint32_t& error_code) =0 ;
     
     // Data is sent through the established tunnel, possibly multiple times, until reception is acknowledged. If the tunnel does not exist, the item is rejected and 
     // an error is issued. In any case, the memory ownership of the data is *not* transferred to the tunnel service, so the client should delete it afterwards, if needed.
@@ -113,7 +118,7 @@ public:
     // Removes any established tunnel to this GXS id. This makes the tunnel refuse further data, but the tunnel will be however kept alive
     // until all pending data is flushed. All clients attached to the tunnel will be notified that the tunnel gets closed.
     
-    virtual bool closeExistingTunnel(const RsGxsTunnelId& to_id) =0;
+    virtual bool closeExistingTunnel(const RsGxsTunnelId& to_id,uint32_t service_id) =0;
 
     //===================================================//
     //         Routage feedback from other services      //

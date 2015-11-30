@@ -249,7 +249,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
     RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
-    if(chatId.isPeerId() || chatId.isGxsId())
+    if(chatId.isPeerId() || chatId.isDistantChatId())
         chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
     if(chatId.isBroadcast() || chatId.isLobbyId())
         chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
@@ -328,7 +328,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     continue;
 
                 QString name;
-                if (chatId.isLobbyId() || chatId.isGxsId()) {
+                if (chatId.isLobbyId() || chatId.isDistantChatId()) 
+                {
                     RsIdentityDetails details;
                     if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
                         name = QString::fromUtf8(details.mNickname.c_str());
@@ -360,7 +361,7 @@ ChatWidget::ChatType ChatWidget::chatType()
     // but maybe it is good to have separate types in libretroshare and gui
     if(chatId.isPeerId())
         return CHATTYPE_PRIVATE;
-    if(chatId.isGxsId())
+    if(chatId.isDistantChatId())
         return CHATTYPE_DISTANT;
     if(chatId.isLobbyId())
         return CHATTYPE_LOBBY;
@@ -1501,77 +1502,83 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
     // make virtual peer id from gxs id in case of distant chat
     RsPeerId vpid;
-    if(chatId.isGxsId())
-        vpid = RsPeerId(chatId.toGxsId());
+    if(chatId.isDistantChatId())
+        vpid = RsPeerId(chatId.toDistantChatId());
     else
         vpid = chatId.toPeerId();
 
 	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString()) {
-		// the peers status has changed
+    if (peer_id.toStdString() == vpid.toStdString()) 
+    {
+	    // the peers status has changed
 
-		QString peerName ;
-        if(chatId.isGxsId())
-		{
-			RsIdentityDetails details  ;
-            if(rsIdentity->getIdDetails(chatId.toGxsId(),details))
-				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
-			else
-                peerName = QString::fromStdString(chatId.toGxsId().toStdString()) ;
-		}
-		else
-            peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+	    QString peerName ;
+	    if(chatId.isDistantChatId())
+	    {
+		    DistantChatPeerInfo dcpinfo ;
+		    RsIdentityDetails details  ;
 
-		// is scrollbar at the end?
-		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
-		bool atEnd = (scrollbar->value() == scrollbar->maximum());
+		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
+				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
+			    else
+				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
+		    else
+			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+	    }
+	    else
+		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
 
-		switch (status) {
-		case RS_STATUS_OFFLINE:
-			ui->infoFrame->setVisible(true);
-			ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
-			break;
+	    // is scrollbar at the end?
+	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+	    bool atEnd = (scrollbar->value() == scrollbar->maximum());
 
-		case RS_STATUS_INACTIVE:
-			ui->infoFrame->setVisible(true);
-			ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
-			break;
+	    switch (status) {
+	    case RS_STATUS_OFFLINE:
+		    ui->infoFrame->setVisible(true);
+		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+		    break;
 
-		case RS_STATUS_ONLINE:
-			ui->infoFrame->setVisible(false);
-			break;
+	    case RS_STATUS_INACTIVE:
+		    ui->infoFrame->setVisible(true);
+		    ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
+		    break;
 
-		case RS_STATUS_AWAY:
-			ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
-			ui->infoFrame->setVisible(true);
-			break;
+	    case RS_STATUS_ONLINE:
+		    ui->infoFrame->setVisible(false);
+		    break;
 
-		case RS_STATUS_BUSY:
-			ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
-			ui->infoFrame->setVisible(true);
-			break;
-		}
+	    case RS_STATUS_AWAY:
+		    ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
+		    ui->infoFrame->setVisible(true);
+		    break;
 
-		ui->titleLabel->setText(peerName);
-		ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
+	    case RS_STATUS_BUSY:
+		    ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
+		    ui->infoFrame->setVisible(true);
+		    break;
+	    }
 
-		peerStatus = status;
+	    ui->titleLabel->setText(peerName);
+	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
-		if (atEnd) {
-			// scroll to the end
-			scrollbar->setValue(scrollbar->maximum());
-		}
+	    peerStatus = status;
 
-		emit infoChanged(this);
-		emit statusChanged(status);
+	    if (atEnd) {
+		    // scroll to the end
+		    scrollbar->setValue(scrollbar->maximum());
+	    }
 
-		// Notify all ChatWidgetHolder
-		foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
-			chatWidgetHolder->updateStatus(status);
-		}
+	    emit infoChanged(this);
+	    emit statusChanged(status);
 
-		return;
-	}
+	    // Notify all ChatWidgetHolder
+	    foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
+		    chatWidgetHolder->updateStatus(status);
+	    }
+
+	    return;
+    }
 
 	// ignore status change
 }

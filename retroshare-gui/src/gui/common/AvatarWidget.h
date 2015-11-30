@@ -51,7 +51,6 @@ public:
 	void setFrameType(FrameType type);
     void setId(const ChatId& id) ;
     void setOwnId();
-    void setOwnId(const RsGxsId&);
     void setDefaultAvatar(const QString &avatar_file_name);
 
 protected:

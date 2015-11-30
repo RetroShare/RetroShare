@@ -32,6 +32,7 @@
 
 #include "util/rsaes.h"
 #include "util/rsmemory.h"
+#include "util/rsprint.h"
 
 #include <serialiser/rsmsgitems.h>
 
@@ -90,6 +91,8 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
         return false;
     }
     
+    std::cerr << "  sending: " << RsUtil::BinToHex(mem,size) << std::endl;
+    
     mGxsTunnels->sendData( RsGxsTunnelId(item->PeerId()),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,mem,size);
     return true;
 }
@@ -108,18 +111,62 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, uint32_t tunnel_status)
 {
     std::cerr << "DistantChatService::notifyTunnelStatus(): got notification " << std::hex << tunnel_status << std::dec << " for tunnel " << tunnel_id << std::endl;
-#warning do something here
+    
+    switch(tunnel_status)
+    {
+    default:
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_UNKNOWN: 		std::cerr << "(EE) don't know how to handle RS_GXS_TUNNEL_STATUS_UNKNOWN !" << std::endl;
+        								break ;
+        
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK:    	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"Tunnel is secured. You can talk!") ;
+        								RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_ONLINE) ;
+                            						break ;
+                            
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:    	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"tunnel is down...") ;
+			        					RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_OFFLINE) ;
+        								break ;
+        
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED:	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"tunnel is down...") ;
+        								RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_OFFLINE) ;
+                            						break ;
+    }
 }
 
 void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, unsigned char *data, uint32_t data_size)
 {
     std::cerr << "DistantChatService::receiveData(): got data of size " << data_size << " for tunnel " << tunnel_id << std::endl;
-#warning do something here
+    std::cerr << "  received: " << RsUtil::BinToHex(data,data_size) << std::endl;
+    std::cerr << "  deserialising..." << std::endl;
+    
+    RsItem *item = RsChatSerialiser().deserialise(data,&data_size) ;
+    
+    // always make the contact up to date. This is useful for server side, which doesn't know about the chat until it
+    // receives the first item.
+    {
+	    RS_STACK_MUTEX(mDistantChatMtx) ;
+
+	    RsGxsTunnelService::GxsTunnelInfo tinfo;
+	    if(!mGxsTunnels->getTunnelInfo(tunnel_id,tinfo))
+		    return ;
+
+	    DistantChatContact& contact(mDistantChatContacts[DistantChatPeerId(tunnel_id)]) ;
+        
+	    contact.to_id = tinfo.destination_gxs_id ;
+	    contact.from_id = tinfo.source_gxs_id ;
+    }
+    
+    if(item != NULL)
+    {
+	    handleIncomingItem(item) ;
+	    RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+    }
+    else
+        std::cerr << "  (EE) item could not be deserialised!" << std::endl;
 }
 
 void DistantChatService::markDistantChatAsClosed(const DistantChatPeerId& dcpid)
 {
-    mGxsTunnels->closeExistingTunnel(RsGxsTunnelService::RsGxsTunnelId(dcpid)) ;
+    mGxsTunnels->closeExistingTunnel(RsGxsTunnelService::RsGxsTunnelId(dcpid),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID) ;
     
     RS_STACK_MUTEX(mDistantChatMtx) ;
     
@@ -132,10 +179,10 @@ void DistantChatService::markDistantChatAsClosed(const DistantChatPeerId& dcpid)
 bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id, DistantChatPeerId& dcpid, uint32_t& error_code)
 {
     RsGxsTunnelId tunnel_id ;
-    
-    if(!mGxsTunnels->requestSecuredTunnel(to_gxs_id,from_gxs_id,tunnel_id,error_code))
+
+    if(!mGxsTunnels->requestSecuredTunnel(to_gxs_id,from_gxs_id,tunnel_id,DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,error_code))
 	    return false ;
-    
+
     dcpid = DistantChatPeerId(tunnel_id) ;
 
     DistantChatContact& dc_contact(mDistantChatContacts[dcpid]) ;
@@ -145,6 +192,14 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
 
     error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 
+    // Make a self message to raise the chat window
+    
+    RsChatMsgItem *item = new RsChatMsgItem;
+    item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
+    item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
+    item->PeerId(RsPeerId(tunnel_id)) ;
+    handleRecvChatMsgItem(item) ;
+    
     return true ;
 }
 
@@ -160,14 +215,26 @@ bool DistantChatService::getDistantChatStatus(const DistantChatPeerId& tunnel_id
     cinfo.to_id  = tinfo.destination_gxs_id;
     cinfo.own_id = tinfo.source_gxs_id;
     cinfo.peer_id = tunnel_id;
-    cinfo.status = tinfo.tunnel_status;		// see the values in rsmsgs.h
+
+    switch(tinfo.tunnel_status)
+    {
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK : 		cinfo.status = RS_DISTANT_CHAT_STATUS_CAN_TALK;		
+	    						break ;
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN: 		cinfo.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;  		
+	    						break ;
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED: 	cinfo.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED ;	
+	    						break ;
+    default:
+    case  RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_UNKNOWN: 		cinfo.status = RS_DISTANT_CHAT_STATUS_UNKNOWN;			
+	    						break ;
+    }
 
     return true ;
 }
 
 bool DistantChatService::closeDistantChatConnexion(const DistantChatPeerId &tunnel_id)
 {
-    mGxsTunnels->closeExistingTunnel(RsGxsTunnelId(tunnel_id)) ;
+    mGxsTunnels->closeExistingTunnel(RsGxsTunnelId(tunnel_id), DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID) ;
     
     // also remove contact. Or do we wait for the notification?
     

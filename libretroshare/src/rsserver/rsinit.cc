@@ -266,7 +266,7 @@ bool doPortRestrictions = false;
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-int RsInit::InitRetroShare(int argc, char **argv, bool strictCheck)
+int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else

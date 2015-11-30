@@ -116,7 +116,7 @@ ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidge
     ui.filterLineEdit->showFilterIcon();
 
     // embed smileys ?
-    if (m_chatId.isPeerId() || m_chatId.isGxsId()) {
+    if (m_chatId.isPeerId() || m_chatId.isDistantChatId()) {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_PrivatChat", true).toBool();
     } else {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool();
@@ -275,7 +275,7 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     QString messageText = RsHtml().formatText(NULL, QString::fromUtf8(msg.message.c_str()), formatTextFlag);
 
     QString name;
-    if (m_chatId.isLobbyId() || m_chatId.isGxsId()) {
+    if (m_chatId.isLobbyId() || m_chatId.isDistantChatId()) {
         RsIdentityDetails details;
         if (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
             name = QString::fromUtf8(details.mNickname.c_str());

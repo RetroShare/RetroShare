@@ -79,7 +79,7 @@ std::ostream& RsGxsTunnelStatusItem::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-	out << "  flags      : " << std::hex << flags << std::dec << std::endl ;
+	out << "  flags      : " << std::hex << status << std::dec << std::endl ;
 
 	printRsItemEnd(out, "RsGxsTunnelStatusItem", indent);
 	return out;
@@ -235,7 +235,7 @@ bool RsGxsTunnelStatusItem::serialise(void *data, uint32_t& pktsize)
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, flags);
+	ok &= setRawUInt32(data, tlvsize, &offset, status);
 
 	if (offset != tlvsize)
 	{
@@ -249,7 +249,7 @@ bool RsGxsTunnelStatusItem::serialise(void *data, uint32_t& pktsize)
 	return ok;
 }
 
-bool RsGxsTunnelDataItem::serialise(void *data, uint32_t& pktsize)
+bool RsGxsTunnelDataItem::serialise(void *dt, uint32_t& pktsize)
 {
 	uint32_t tlvsize = serial_size() ;
 	uint32_t offset = 0;
@@ -261,7 +261,7 @@ bool RsGxsTunnelDataItem::serialise(void *data, uint32_t& pktsize)
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+	ok &= setRsItemHeader(dt, tlvsize, PacketId(), tlvsize);
 
 #ifdef GXS_TUNNEL_ITEM_DEBUG
 	std::cerr << "RsGxsTunnelSerialiser serialising chat status item." << std::endl;
@@ -273,14 +273,14 @@ bool RsGxsTunnelDataItem::serialise(void *data, uint32_t& pktsize)
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt64(data, tlvsize, &offset, unique_item_counter);
-	ok &= setRawUInt32(data, tlvsize, &offset, flags);
-	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
+	ok &= setRawUInt64(dt, tlvsize, &offset, unique_item_counter);
+	ok &= setRawUInt32(dt, tlvsize, &offset, flags);
+	ok &= setRawUInt32(dt, tlvsize, &offset, service_id);
+	ok &= setRawUInt32(dt, tlvsize, &offset, data_size);
     
     	if(offset + data_size <= tlvsize)
         {
-            memcpy(&((uint8_t*)data)[offset],data,data_size) ;
+            memcpy(&((uint8_t*)dt)[offset],data,data_size) ;
             offset += data_size ;
         }
         else
@@ -451,7 +451,7 @@ RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(
 
     /* get mandatory parts first */
 
-    ok &= getRawUInt32(dat, rssize, &offset, &item->flags);
+    ok &= getRawUInt32(dat, rssize, &offset, &item->status);
 
     if (offset != rssize)
     {
