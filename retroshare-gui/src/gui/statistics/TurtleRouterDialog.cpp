@@ -216,3 +216,124 @@ QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 	else
 		return items.front() ;
 }
+//=======================================================================================================================//
+
+
+GxsTunnelsDialog::GxsTunnelsDialog(QWidget *parent)
+	: RsAutoUpdatePage(2000,parent)
+{
+	setupUi(this) ;
+	
+	m_bProcessSettings = false;
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+	
+	maxWidth = 200 ;
+	maxHeight = 0 ;
+
+	// load settings
+    processSettings(true);
+}
+
+GxsTunnelsDialog::~GxsTunnelsDialog()
+{
+
+    // save settings
+    processSettings(false);
+}
+
+void GxsTunnelsDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("TurtleRouterStatistics"));
+
+    if (bLoad) {
+        // load settings
+    } else {
+        // save settings
+    }
+
+    Settings->endGroup();
+    
+    m_bProcessSettings = false;
+}
+
+void GxsTunnelsDialog::updateDisplay()
+{
+	QPixmap tmppixmap(maxWidth, maxHeight);
+	tmppixmap.fill(Qt::transparent);
+	setFixedHeight(maxHeight);
+
+	QPainter painter(&tmppixmap);
+	painter.initFrom(this);
+
+        // extracts the height of the fonts in pixels. This is used to callibrate the size of the objects to draw.
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+	maxHeight = 500*fact ;
+
+	int cellx = 6*fact ;
+	int celly = (10+4)*fact ;
+
+	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
+	// draw...
+	int ox=5*fact,oy=5*fact ;
+
+//	painter.setPen(QColor::fromRgb(70,70,70)) ;
+//	painter.drawLine(0,oy,maxWidth,oy) ;
+//	oy += celly ;
+
+	painter.drawText(ox+2*cellx,oy+celly,tr("Authenticated tunnels:")) ; oy += celly ;
+
+	// update the pixmap
+	//
+	pixmap = tmppixmap;
+	maxHeight = oy ;
+}
+
+QString GxsTunnelsDialog::getPeerName(const RsPeerId &peer_id)
+{
+    static std::map<RsPeerId, QString> names ;
+
+    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
+
+	if( it != names.end())
+		return it->second ;
+	else
+	{
+		RsPeerDetails detail ;
+		if(!rsPeers->getPeerDetails(peer_id,detail))
+			return tr("Unknown Peer");
+
+		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
+	}
+}
+
+QString GxsTunnelsDialog::speedString(float f)
+{
+	if(f < 1.0f) 
+		return QString("0 B/s") ;
+	if(f < 1024.0f)
+		return QString::number((int)f)+" B/s" ;
+
+	return QString::number(f/1024.0,'f',2) + " KB/s";
+}
+
+void GxsTunnelsDialog::paintEvent(QPaintEvent */*event*/)
+{
+    QStylePainter(this).drawPixmap(0, 0, pixmap);
+}
+
+void GxsTunnelsDialog::resizeEvent(QResizeEvent *event)
+{
+    QRect TaskGraphRect = geometry();
+    
+    maxWidth = TaskGraphRect.width();
+    maxHeight = TaskGraphRect.height() ;
+
+    QWidget::resizeEvent(event);
+    update();
+}
