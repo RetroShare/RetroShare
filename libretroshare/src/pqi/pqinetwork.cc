@@ -296,8 +296,14 @@ in_addr_t inet_network(const char *inet_name)
 
 
 #include <sys/types.h>
+#ifdef WINDOWS_SYS
+#include <winsock2.h>
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+#else // WINDOWS_SYS
 #include <ifaddrs.h>
 #include <net/if.h>
+#endif // WINDOWS_SYS
 
 void getLocalAddressesFailed()
 {
@@ -332,7 +338,7 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 		{
 			sockaddr_storage * tmp = new sockaddr_storage;
 			sockaddr_storage_clear(*tmp);
-			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr))
+			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
 				addrs.push_back(*tmp);
 			else delete tmp;
 		}
