@@ -896,6 +896,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     pinfo.virtual_peer_id = vpid ;
     pinfo.direction = it->second.direction ;
     pinfo.own_gxs_id = own_id ;
+    pinfo.to_gxs_id = item->signature.keyId;	// this is already set for client side but not for server side.
     
     // note: the hash might still be nn initialised on server side.
 
@@ -1433,7 +1434,7 @@ bool p3GxsTunnelService::closeExistingTunnel(const RsGxsTunnelId& tunnel_id, uin
 	RsGxsTunnelStatusItem *cs = new RsGxsTunnelStatusItem ;
 
 	cs->status = RS_GXS_TUNNEL_FLAG_CLOSING_DISTANT_CONNECTION;
-	cs->PeerId(vpid) ;
+	cs->PeerId(RsPeerId(tunnel_id)) ;
 
 	locked_sendEncryptedTunnelData(cs) ;	// that needs to be done off-mutex and before we close the tunnel also ignoring failure.
 

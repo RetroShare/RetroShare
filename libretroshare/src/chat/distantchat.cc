@@ -157,6 +157,8 @@ void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tu
     
     if(item != NULL)
     {
+        item->PeerId(RsPeerId(tunnel_id)) ;	// just in case, but normally this is already done.
+        
 	    handleIncomingItem(item) ;
 	    RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
     }
