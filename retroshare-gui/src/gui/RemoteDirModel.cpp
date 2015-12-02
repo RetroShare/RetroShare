@@ -1341,7 +1341,7 @@ void FlatStyle_RDM::updateRefs()
 			if(details->type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
 				_ref_entries.push_back(std::pair<void*,QString>(ref,computeDirectoryPath(*details)));
 #ifdef RDM_DEBUG
-			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
+			std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
 #endif
 			for(std::list<DirStub>::const_iterator it = details->children.begin(); it != details->children.end(); ++it)
 				_ref_stack.push_back(it->ref) ;
