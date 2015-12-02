@@ -68,8 +68,9 @@ public:
     class GxsTunnelInfo
     {
     public:
-            // Tunnel information
-            
+	    // Tunnel information
+
+	    RsGxsTunnelId tunnel_id ;
 	    RsGxsId  destination_gxs_id ;        // GXS Id we're talking to
 	    RsGxsId  source_gxs_id ;	          // GXS Id we're using to talk
 	    uint32_t tunnel_status ;	          // active, requested, DH pending, etc.
@@ -89,7 +90,7 @@ public:
     //                  Debugging info                   //
     //===================================================//
 
-    //virtual bool getGxsTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
+    virtual bool getTunnelsInfo(std::vector<GxsTunnelInfo>& infos) =0;
     virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) =0;
 
     // retrieve the routing probabilities

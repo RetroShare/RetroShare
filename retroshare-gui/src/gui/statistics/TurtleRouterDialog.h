@@ -3,6 +3,7 @@
 #include <retroshare/rsturtle.h>
 #include <retroshare/rstypes.h>
 #include "ui_TurtleRouterDialog.h"
+#include "ui_TurtleRouterStatistics.h"
 #include "RsAutoUpdatePage.h"
 
 
@@ -36,7 +37,7 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 
 } ;
 
-class GxsTunnelsDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
+class GxsTunnelsDialog: public RsAutoUpdatePage
 {
     Q_OBJECT
 

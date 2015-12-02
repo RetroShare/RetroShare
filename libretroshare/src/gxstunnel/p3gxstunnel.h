@@ -138,7 +138,7 @@ public:
     virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t service_id,uint32_t& error_code) ;
     
     virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id,uint32_t service_id) ;
-    virtual bool getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t &status);
+    virtual bool getTunnelsInfo(std::vector<GxsTunnelInfo>& infos);
     virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info);
     virtual bool sendData(const RsGxsTunnelId& tunnel_id,uint32_t service_id,const uint8_t *data,uint32_t size) ;
     
@@ -159,6 +159,9 @@ private:
         GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
         {
             memset(aes_key, 0, GXS_TUNNEL_AES_KEY_SIZE);
+            
+            total_sent = 0 ;
+            total_received = 0 ;
         }
 
         time_t last_contact ; 		// used to keep track of working connexion
@@ -173,6 +176,8 @@ private:
         RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
         TurtleFileHash hash ;		// hash that is last used. This is necessary for handling tunnel establishment
         std::set<uint32_t> client_services ;// services that used this tunnel
+        uint32_t total_sent ;
+        uint32_t total_received ;
     };
 
     class GxsTunnelDHInfo

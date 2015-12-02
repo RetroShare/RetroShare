@@ -140,9 +140,11 @@ void p3GxsTunnelService::flush()
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-	    while(!pendingDHItems.empty())
-		    if(locked_sendClearTunnelData(pendingDHItems.front()) )
-			    pendingDHItems.pop_front() ;
+	    for(std::list<RsGxsTunnelDHPublicKeyItem*>::iterator it=pendingDHItems.begin();it!=pendingDHItems.end();)
+		    if(locked_sendClearTunnelData(*it) )
+			    it = pendingDHItems.erase(it) ;
+		    else
+			    ++it ;
     }
         
     // Flush items that could not be sent, probably because of a Mutex protected zone.
@@ -150,13 +152,16 @@ void p3GxsTunnelService::flush()
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-	    while(!pendingGxsTunnelItems.empty())
-		    if(locked_sendEncryptedTunnelData(pendingGxsTunnelItems.front()))
-			    pendingGxsTunnelItems.pop_front() ;
-#ifdef DEBUG_GXS_TUNNEL    
+	    for(std::list<RsGxsTunnelItem*>::iterator it=pendingGxsTunnelItems.begin();it!=pendingGxsTunnelItems.end();)
+		    if(locked_sendEncryptedTunnelData(*it) )
+			    it = pendingGxsTunnelItems.erase(it) ;
 		    else
-			    std::cerr << "Cannot send encrypted data item to tunnel " << pendingGxsTunnelItems.front()->PeerId() << std::endl;
+		    {
+			    ++it ;
+#ifdef DEBUG_GXS_TUNNEL    
+			    std::cerr << "Cannot send encrypted data item to tunnel " << (*it)->PeerId() << std::endl;
 #endif
+		    }
     }
     
     // Look at pending data item, and re-send them if necessary.
@@ -772,6 +777,8 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             return true;
         }
 
+        it2->second.total_received += decrypted_size ;
+        
         // DH key items are sent even before we know who we speak to, so the virtual peer id is used in this
         // case only.
 
@@ -1158,6 +1165,8 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
         return false;
     }
 
+    it->second.total_sent += rssize ;	// counts the size of clear data that is sent
+    
     memcpy(aes_key,it->second.aes_key,GXS_TUNNEL_AES_KEY_SIZE) ;
     RsPeerId virtual_peer_id = it->second.virtual_peer_id ;
 
@@ -1387,9 +1396,8 @@ bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelI
     info.destination_gxs_id = it->second.to_gxs_id;     
     info.source_gxs_id      = it->second.own_gxs_id;	
     info.tunnel_status      = it->second.status;	          
-#warning data missing here
-    info.total_size_sent    = 0;	         
-    info.total_size_received= 0;	  
+    info.total_size_sent    = it->second.total_sent;	         
+    info.total_size_received= it->second.total_received;	  
 
     // Data packets
 
@@ -1398,24 +1406,6 @@ bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelI
     info.total_data_packets_received=0 ;
 
     return true ;
-}
-
-bool p3GxsTunnelService::getTunnelStatus(const RsGxsTunnelId& tunnel_id,uint32_t& status)
-{
-    RsStackMutex stack(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
-
-    std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it = _gxs_tunnel_contacts.find(tunnel_id) ;
-
-    if(it != _gxs_tunnel_contacts.end())
-    {
-        status = it->second.status ;
-
-        return true ;
-    }
-
-    status = RS_GXS_TUNNEL_STATUS_UNKNOWN ;
-
-    return false ;
 }
 
 bool p3GxsTunnelService::closeExistingTunnel(const RsGxsTunnelId& tunnel_id, uint32_t service_id)
@@ -1499,7 +1489,28 @@ bool p3GxsTunnelService::closeExistingTunnel(const RsGxsTunnelId& tunnel_id, uin
 
 		// GxsTunnelService::removeVirtualPeerId() will be called by the turtle service.
 	}
-	return true ;
+    return true ;
+}
+
+bool p3GxsTunnelService::getTunnelsInfo(std::vector<RsGxsTunnelService::GxsTunnelInfo> &infos)
+{
+    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
+    
+    for(std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it(_gxs_tunnel_contacts.begin());it!=_gxs_tunnel_contacts.end();++it)
+    {
+        GxsTunnelInfo ti ;
+        
+        ti.tunnel_id = it->first ;
+        ti.destination_gxs_id = it->second.to_gxs_id ;
+        ti.source_gxs_id = it->second.own_gxs_id ;
+        ti.tunnel_status = it->second.status ;
+        ti.total_size_sent = it->second.total_sent ;
+        ti.total_size_received = it->second.total_received ;
+        
+        infos.push_back(ti) ;
+    }
+    
+    return true ;
 }
 
 void p3GxsTunnelService::debug_dump()
