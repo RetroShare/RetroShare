@@ -104,7 +104,7 @@ void PopupDistantChatDialog::updateDisplay()
     {
     case RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
 	    _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
-	    msg = tr("Hash Error. No tunnel.");
+	    msg = tr("Chat remotely closed. Please close this window.");
 	    _status_label->setToolTip(msg) ;
 	    getChatWidget()->updateStatusString("%1", msg, true);
 	    getChatWidget()->blockSending(tr("Can't send message, because there is no tunnel."));
