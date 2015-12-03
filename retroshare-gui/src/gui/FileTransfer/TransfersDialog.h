@@ -239,6 +239,9 @@ private:
 
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
+    
+      QString downloads;
+      QString uploads;
 
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;

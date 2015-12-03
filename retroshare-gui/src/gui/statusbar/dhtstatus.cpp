@@ -57,6 +57,7 @@ DHTStatus::DHTStatus(QWidget *parent)
 
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
     dhtnetworksizeLabel->setVisible(false);
+    dhtnetworksizeLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     hbox->addWidget(dhtnetworksizeLabel);
 
     hbox->addSpacing(2);

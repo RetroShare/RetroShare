@@ -56,19 +56,17 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm)
-        :laddr(addr), active(false), mPeerMgr(pm)
-
+pqissllistenbase::pqissllistenbase(const sockaddr_storage &addr, p3PeerMgr *pm)
+	: laddr(addr), active(false), mPeerMgr(pm)
 {
-        if (!(AuthSSL::getAuthSSL()-> active())) {
-		pqioutput(PQL_ALERT, pqissllistenzone, 
-			"SSL-CTX-CERT-ROOT not initialised!");
-
+	if (!(AuthSSL::getAuthSSL()-> active()))
+	{
+		pqioutput(PQL_ALERT, pqissllistenzone,
+				  "SSL-CTX-CERT-ROOT not initialised!");
 		exit(1);
 	}
 
 	setuplisten();
-	return;
 }
 
 pqissllistenbase::~pqissllistenbase()
@@ -730,18 +728,7 @@ int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
  *
  */
 
-pqissllistener::pqissllistener(const struct sockaddr_storage &addr, p3PeerMgr *lm)
-        :pqissllistenbase(addr, lm)
-{
-	return;
-}
-
-pqissllistener::~pqissllistener()
-{
-	return;
-}
-
-int 	pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
+int pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 {
 	std::map<RsPeerId, pqissl *>::iterator it;
 
@@ -755,7 +742,6 @@ int 	pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 			
 			pqioutput(PQL_DEBUG_ALERT, pqissllistenzone, out);
 			return -1;
-
 		}
 	}
 
@@ -792,7 +778,7 @@ int	pqissllistener::removeListenPort(const RsPeerId& id)
 }
 
 
-int 	pqissllistener::status()
+int pqissllistener::status()
 {
 	pqissllistenbase::status();
 	// print certificates we are listening for.
