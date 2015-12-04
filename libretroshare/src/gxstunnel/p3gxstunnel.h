@@ -28,10 +28,14 @@
 // Generic tunnel service
 //
 // Preconditions:
-//	* multiple services can use the same tunnel
-//	* tunnels are automatically encrypted and ensure transport (items stored in a queue until ACKed by the other side)
+//	* the secured tunnel service takes care of:
+//		- tunnel health: tunnels are kept alive using special items, re-openned when necessary, etc.
+//		- transport: items are ACK-ed and re-sent if never received
+//		- encryption: items are all encrypted and authenticated using PFS(DH)+HMAC(sha1)+AES(128)
 //	* each tunnel is associated to a specific GXS id on both sides. Consequently, services that request tunnels from different IDs to a 
 //		server for the same GXS id need to be handled correctly.
+//	* client services must register to the secured tunnel service if they want to use it.
+//	* multiple services can use the same tunnel. Items contain a service Id that is obtained when registering to the secured tunnel service.
 //
 // GUI
 //	* the GUI should show for each tunnel:
@@ -41,7 +45,7 @@
 //		- number of pending items (and total size)
 //		- number ACKed items both ways.
 //
-//	we can use an additional tab "Authenticated tunnels" in the statistics->turtle window
+//	  We can use an additional tab "Authenticated tunnels" in the statistics->turtle window for that purpose.
 //
 // Interaction with services:
 //
@@ -52,14 +56,20 @@
 //      Data is send to a service ID (could be any existing service ID). The endpoint of the tunnel must register each service, in order to
 //	allow the data to be transmitted/sent from/to that service. Otherwise an error is issued.
 //
+// Encryption
+//	* the whole tunnel traffic is encrypted using AES-128 with random IV
+//	* a random key is established using DH key exchange for each connection (establishment of a new virtual peer)
+//	* encrypted items are authenticated with HMAC(sha1). 
+//	* DH public keys are the only chunks of data that travel un-encrypted along the tunnel. They are 
+//        signed to avoid any MITM interactions. No time-stamp is used in DH exchange since a replay attack would not work.
+//
 // Algorithms
 //
-//    Tunnel establishment
 //	* we need two layers: the turtle layer, and the GXS id layer.
 //		- for each pair of GXS ids talking, a single turtle tunnel is used
 //		- that tunnel can be shared by multiple services using it.
 //		- services are responsoble for asking tunnels and also droppping them when unused.
-//		- at the turtle layer, the tunnel will be closed only when no service uses it.
+//		- at the turtle layer, the tunnel will be effectively closed only when no service uses it.
 //	* IDs
 //		TurtleVirtualPeerId:	
 //			- Used by tunnel service for each turtle tunnel
@@ -72,25 +82,18 @@
 //		- accept virtual peers from turtle tunnel service. The hash for that VP only depends on the server GXS id at server side, which is our
 //			own ID at server side, and destination ID at client side. What happens if two different clients request to talk to the same GXS id? (same hash)
 //			They should use different virtual peers, so it should be ok. 
-//		- multiple tunnels may end up to the same hash, but will correspond to different GXS tunnels since the GXS id in the other side is different.
 //
 //                 Turtle hash:   [ 0 ---------------15 16---19 ]
-//                                      Destination      Source
+//                                      Destination      Random
 //
 //		    We Use 16 bytes to target the exact destination of the hash. The source part is just 4 arbitrary bytes that need to be different for all source
 //                 IDs that come from the same peer, which is quite likely to be sufficient. The real source of the tunnel will make itself known when sending the 
 //                 DH key.
 //
-//                 Another option is to use random bytes in 16-19. But then, we would digg multiple times different tunnels between the same two peers even when requesting
-//		   a GXS tunnel for the same pair of GXS ids. Is that a problem? 
-//			- that solves the problem of colliding source GXS ids (since 4 bytes is too small)
-//			- the DH will make it clear that we're talking to the same person if it already exist.
-//
 //	* at the GXS layer
 //		- we should be able to have as many tunnels as they are different couples of GXS ids to interact. That means the tunnel should be determined
 //		 by a mix between our own GXS id and the GXS id we're talking to. That is what the TunnelVirtualPeer is.
 //
-
 //      
 //	RequestTunnel(source_own_id,destination_id)                                                                              -
 //                            |                                                                                                  |
@@ -108,14 +111,6 @@
 //                |                                                                                                              |
 //                +---------------- notify client service that Peer(destination_id, tunnel_hash) is ready to talk to             |
 //                                                                                                                               -
-//  Notes
-//     * one other option would be to make the turtle hash depend on both GXS ids in a way that it is possible to find which are the two ids on the server side.
-//       but that would prevent the use of unknown IDs, which we would like to offer as well.
-//	 Without this, it's not possible to request two tunnels to a same server GXS id but from a different client GXS id. Indeed, if the two hashes are the same, 
-//	 from the same peer, the tunnel names will be identical and so will be the virtual peer ids, if the route is the same (because of multi-tunneling, they
-//	 will be different if the route is different).
-//
-//     * 
 
 #include <turtle/turtleclientservice.h>
 #include <retroshare/rsgxstunnel.h>
