@@ -13,6 +13,7 @@ PS: no tabs in this file,thx ;-)
 -----------------------------------------  TODO list ----------------------------------------------
 
 GUI
+	E  [ ] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
     E  [ ] Implement creation of a default (signed) gxs id in startup wizard. Needs to show to the 
            user a proper separation between nodes (network layer) and GXS ids (service layer).
     E  [ ] fix posted GUI. Needs to be more handy and more appealing.
