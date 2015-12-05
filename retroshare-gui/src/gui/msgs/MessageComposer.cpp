@@ -268,7 +268,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All"));
     ui.filterComboBox->addItem(tr("Friend Nodes"));
-    ui.filterComboBox->addItem(tr("Distant peer identities"));
+    ui.filterComboBox->addItem(tr("Persons"));
+    ui.filterComboBox->addItem(tr("Contacts"));
     ui.filterComboBox->setCurrentIndex(0);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
@@ -2569,6 +2570,10 @@ void MessageComposer::filterComboBoxChanged(int i)
 
 		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
 				  break ;
+				  
+		case 3: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS) ;
+				  break ;		  
+				  
 		default: ;
 	}
 
