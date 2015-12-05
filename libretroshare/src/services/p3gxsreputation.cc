@@ -23,6 +23,7 @@
  *
  */
 
+#include <math.h>
 #include "pqi/p3linkmgr.h"
 
 #include "retroshare/rspeers.h"
@@ -37,13 +38,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-
-
-/* DEFINE INTERFACE POINTER! */
-//RsGxsReputation *rsGxsReputation = NULL;
-
-const int kMaximumPeerAge =	180; // half a year.
-const int kMaximumSetSize = 	100;
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -61,8 +55,12 @@ const int kMaximumSetSize = 	100;
  *  last update ----------->
  *	<----------- modified opinions.
  *
- * This service will have to store a huge amount of data.
- * need to workout how to reduce it.
+ * If not clever enough, this service will have to store a huge amount of data.
+ * To make things tractable we do this:
+ * 	- do not store reputations when no data is present, or when all friends are neutral
+ * 	- only send a neutral opinion when they are a true change over someone's opinion
+ * 	- only send a neutral opinion when it is a true change over someone's opinion
+ * 	- auto-clean reputations for default values
  *
  * std::map<RsGxsId, Reputation> mReputations.
  * std::multimap<time_t, RsGxsId> mUpdated.
@@ -70,69 +68,86 @@ const int kMaximumSetSize = 	100;
  * std::map<RsPeerId, ReputationConfig> mConfig;
  *
  * Updates from p3GxsReputation -> p3IdService.
- *
- *
  * Updates from p3IdService -> p3GxsReputation.
  *
+ * Each peer locally stores reputations for all GXS ids. If not stored, a default value
+ * is used, corresponding to a neutral opinion. Peers also share their reputation level
+ * with their neighbor nodes. 
+ * 
+ * The calculation method is the following:
+ * 
+ * 	Local values:
+ * 		Good:      2
+ * 		Neutral:   1
+ * 		Bad:       0
  *
+ * 	Overall reputation score:
+ * 		
+ * 		if(own_opinion == 0)	// means we dont' care
+ * 			r = average_of_friends_opinions
+ * 		else
+ * 			r = own_opinion
+ * 
+ * 	Decisions based on reputation score:
+ * 
+ *              0               x1                1                    x2                   2
+ *              | <-----------------------------------------------------------------------> |
+ *     ---------+
+ *     Lobbies  |  Msgs dropped
+ *     Forums   |  Msgs dropped
+ *     Messages |  Msgs dropped
+ *     ---------+----------------------------------------------------------------------------
+ * 
+ * 	We select x1=0.5
+ * 
+ * 	=> to kill an identity, either you, or at least 50% of your friends need to flag it
+ * 		as bad.
+ * 	Rules:
+ * 		* a single peer cannot drastically change the behavior of a given GXS id
+ * 		* it should be easy for many peers to globally kill a GXS id
+ * 
+ * 	Typical examples:
+ * 
+ *            Friends   |  Friend average     |  Own     |  alpha     | Score
+ *           -----------+---------------------+----------+------------+--------------
+ *            10        |  0.5                |  1       |  0.25      | 0.375          
+ *            10        |  1.0                |  1       |  0.25      | 1.0            
+ *            10        |  1.0                |  0       |  0.25      | 1.0            
+ * 
+ * 	To check:
+ *	[ ]  Opinions are saved/loaded accross restart
+ *	[ ]  Opinions are transmitted to friends
+ *	[ ]  Opinions are transmitted to friends when updated
+ * 
+ * 	To do:
+ * 	[ ]  Add debug info
+ * 	[ ]  Test the whole thing
+ * 	[X]  Implement a system to allow not storing info when we don't have it
  */
 
-const int32_t REPUTATION_OFFSET		= 100000;
-const int32_t LOWER_LIMIT		= -100;
-const int32_t UPPER_LIMIT		= 100;
-
-int32_t ConvertFromSerialised(uint32_t value, bool limit)
-{
-	int32_t converted = ((int32_t) value) - REPUTATION_OFFSET ;
-	if (limit)
-	{
-		if (converted < LOWER_LIMIT)
-		{
-			converted = LOWER_LIMIT;
-		}
-		if (converted > UPPER_LIMIT)
-		{
-			converted = UPPER_LIMIT;
-		}
-	}
-	return converted;
-}
-
-uint32_t ConvertToSerialised(int32_t value, bool limit)
-{
-	if (limit)
-	{
-		if (value < LOWER_LIMIT)
-		{
-			value = LOWER_LIMIT;
-		}
-		if (value > UPPER_LIMIT)
-		{
-			value = UPPER_LIMIT;
-		}
-	}
-
-	value += REPUTATION_OFFSET;
-	if (value < 0)
-	{
-		value = 0;
-	}
-	return (uint32_t) value;
-}
-
+static const uint32_t LOWER_LIMIT                         = 0;        // used to filter valid Opinion values from serialized data
+static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
+static const int      kMaximumPeerAge                     = 180;      // half a year.
+static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
+static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
+static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
+static const int      kReputationRequestPeriod            = 600;      // 10 mins
+static const int      kReputationStoreWait                = 180;      // 3 minutes.
+static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
 	mReputationMtx("p3GxsReputation"), mLinkMgr(lm) 
 {
-	addSerialType(new RsGxsReputationSerialiser());
+    addSerialType(new RsGxsReputationSerialiser());
 
-	mRequestTime = 0;
-	mStoreTime = 0;
-	mReputationsUpdated = false;
+    mRequestTime = 0;
+    mStoreTime = 0;
+    mReputationsUpdated = false;
+    mLastActiveFriendsUpdate = 0 ;
+    mAverageActiveFriends = 0 ;
 }
-
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
 const uint16_t GXS_REPUTATION_APP_MAJOR_VERSION  =       1;
@@ -150,13 +165,41 @@ RsServiceInfo p3GxsReputation::getServiceInfo()
                 GXS_REPUTATION_MIN_MINOR_VERSION);
 }
 
-
-
 int	p3GxsReputation::tick()
 {
 	processIncoming();
 	sendPackets();
 
+	time_t now = time(NULL);
+
+	if(mLastActiveFriendsUpdate + ACTIVE_FRIENDS_UPDATE_PERIOD < now)
+	{
+		updateActiveFriends() ;
+                cleanup() ;
+                
+		mLastActiveFriendsUpdate = now ;
+	}
+
+    	static time_t last_identity_flags_update = 0 ;
+        
+        // no more than once per 5 second chunk.
+        
+        if(now > 100+last_identity_flags_update)
+        {
+            last_identity_flags_update = now ;
+            
+            updateIdentityFlags() ;
+        }
+        
+#ifdef DEBUG_REPUTATION
+	static time_t last_debug_print = time(NULL) ;
+
+	if(now > 10+last_debug_print)
+	{
+		last_debug_print = now ;
+		debug_print() ;
+	}
+#endif
 	return 0;
 }
 
@@ -165,7 +208,105 @@ int	p3GxsReputation::status()
 	return 1;
 }
 
+void p3GxsReputation::updateIdentityFlags()
+{
+    std::list<RsGxsId> to_update ;
 
+    // we need to gather the list to be used in a non locked frame
+    {
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "Updating reputation identity flags" << std::endl;
+#endif
+
+	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
+		    if(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE)
+			    to_update.push_back(rit->first) ;
+    }
+
+    for(std::list<RsGxsId>::const_iterator rit(to_update.begin());rit!=to_update.end();++rit)
+    {
+	    RsIdentityDetails details;
+
+	    if(!rsIdentity->getIdDetails(*rit,details))
+	    {
+#ifdef DEBUG_REPUTATION
+		    std::cerr << "  cannot obtain info for " << *rit << ". Will do it later." << std::endl;
+#endif
+		    continue ;
+	    }
+
+	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
+
+	    if(it == mReputations.end())
+	    {
+		    std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
+		    continue ;
+	    }
+	    it->second.mIdentityFlags = 0 ;
+
+	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
+#endif
+
+	    it->second.updateReputation() ;
+	    IndicateConfigChanged();		
+    }
+}
+
+void p3GxsReputation::cleanup()
+{
+    // remove opinions from friends that havn't been seen online for more than the specified delay
+    
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::cleanup() " << std::endl;
+#endif
+    std::cerr << __PRETTY_FUNCTION__ << ": not implemented. TODO!" << std::endl;
+}
+
+void p3GxsReputation::updateActiveFriends()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    // keep track of who is recently connected.  That will give a value to average friend
+    // for this, we count all friends that have been online in the last week.
+ 
+    time_t now = time(NULL) ;
+    
+    std::list<RsPeerId> idList ;
+    mLinkMgr->getFriendList(idList) ;
+
+    mAverageActiveFriends = 0 ;
+#ifdef DEBUG_REPUTATION
+    std::cerr << "  counting recently online peers." << std::endl;
+#endif
+
+    for(std::list<RsPeerId>::const_iterator it(idList.begin());it!=idList.end();++it)
+    {
+	    RsPeerDetails details ;
+#ifdef DEBUG_REPUTATION
+        	std::cerr << "    "  << *it << ": last seen " << now - details.lastConnect << " secs ago" << std::endl;
+#endif
+            
+	    if(rsPeers->getPeerDetails(*it, details) && now < details.lastConnect + ACTIVE_FRIENDS_ONLINE_DELAY)
+	                    ++mAverageActiveFriends ;
+    }
+#ifdef DEBUG_REPUTATION
+    std::cerr << "  new count: " << mAverageActiveFriends << std::endl;
+#endif
+
+}
+
+static RsReputations::Opinion safe_convert_uint32t_to_opinion(uint32_t op)
+{
+	return RsReputations::Opinion(std::min((uint32_t)op,UPPER_LIMIT)) ;
+}
 /***** Implementation ******/
 
 bool p3GxsReputation::processIncoming()
@@ -184,40 +325,31 @@ bool p3GxsReputation::processIncoming()
 		switch(item->PacketSubType())
 		{
 			default:
-			case RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM:
-			case RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM:
 				std::cerr << "p3GxsReputation::processingIncoming() Unknown Item";
 				std::cerr << std::endl;
 				itemOk = false;
 				break;
 
-			case RS_PKT_SUBTYPE_GXSREPUTATION_REQUEST_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM:
 			{
-				RsGxsReputationRequestItem *requestItem = 
-					dynamic_cast<RsGxsReputationRequestItem *>(item);
+				RsGxsReputationRequestItem *requestItem =  dynamic_cast<RsGxsReputationRequestItem *>(item);
 				if (requestItem)
-				{
 					SendReputations(requestItem);
-				}
 				else
-				{
 					itemOk = false;
-				}
 			}
 				break;
 
-			case RS_PKT_SUBTYPE_GXSREPUTATION_UPDATE_ITEM:
+			case RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM:
 			{
-				RsGxsReputationUpdateItem *updateItem = 
-					dynamic_cast<RsGxsReputationUpdateItem *>(item);
+				RsGxsReputationUpdateItem *updateItem =  dynamic_cast<RsGxsReputationUpdateItem *>(item);
+                
 				if (updateItem)
-				{
 					RecvReputations(updateItem);
-				}
 				else
-				{
 					itemOk = false;
-				}
 			}
 				break;
 		}
@@ -237,8 +369,9 @@ bool p3GxsReputation::processIncoming()
 
 bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 {
-	std::cerr << "p3GxsReputation::SendReputations()";
-	std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "p3GxsReputation::SendReputations()" << std::endl;
+#endif
 
 	RsPeerId peerId = request->PeerId();
 	time_t last_update = request->mLastUpdate;
@@ -252,12 +385,13 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 	int count = 0;
 	int totalcount = 0;
 	RsGxsReputationUpdateItem *pkt = new RsGxsReputationUpdateItem();
+    
 	pkt->PeerId(peerId);
 	for(;tit != mUpdated.end(); ++tit)
 	{
 		/* find */
-		std::map<RsGxsId, Reputation>::iterator rit;
-		rit = mReputations.find(tit->second);
+		std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(tit->second);
+        
 		if (rit == mReputations.end())
 		{
 			std::cerr << "p3GxsReputation::SendReputations() ERROR Missing Reputation";
@@ -275,8 +409,9 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 		}
 
 		RsGxsId gxsId = rit->first;
-		pkt->mOpinions[gxsId] = ConvertToSerialised(rit->second.mOwnOpinion, true);
+		pkt->mOpinions[gxsId] = rit->second.mOwnOpinion;
 		pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
+        
 		if (pkt->mLatestUpdate == (uint32_t) now)
 		{
 			// if we could possibly get another Update at this point (same second).
@@ -289,10 +424,13 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 
 		if (count > kMaximumSetSize)
 		{
+#ifdef DEBUG_REPUTATION
 			std::cerr << "p3GxsReputation::SendReputations() Sending Full Packet";
 			std::cerr << std::endl;
+#endif
 
 			sendItem(pkt);
+            
 			pkt = new RsGxsReputationUpdateItem();
 			pkt->PeerId(peerId);
 			count = 0;
@@ -301,8 +439,10 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 
 	if (!pkt->mOpinions.empty())
 	{
+#ifdef DEBUG_REPUTATION
 		std::cerr << "p3GxsReputation::SendReputations() Sending Final Packet";
 		std::cerr << std::endl;
+#endif
 
 		sendItem(pkt);
 	}
@@ -311,52 +451,125 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 		delete pkt;
 	}
 
+#ifdef DEBUG_REPUTATION
 	std::cerr << "p3GxsReputation::SendReputations() Total Count: " << totalcount;
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }
 
+void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& about,RsReputations::Opinion op)
+{
+    /* find matching Reputation */
+    std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(about);
+
+    RsReputations::Opinion new_opinion = safe_convert_uint32t_to_opinion(op);
+    RsReputations::Opinion old_opinion = RsReputations::OPINION_NEUTRAL ;	// default if not set
+
+    bool updated = false ;
+
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::update opinion of " << about << " from " << from << " to " << op << std::endl;
+#endif
+    // now 4 cases;
+    //    Opinion already stored          
+    //        New opinion is same:         nothing to do
+    //        New opinion is different:    if neutral, remove entry
+    //    Nothing stored
+    //        New opinion is neutral:      nothing to do
+    //        New opinion is != 1:         create entry and store
+
+    if (rit == mReputations.end())	
+    {
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  no preview record"<< std::endl;
+#endif
+
+	    if(new_opinion != RsReputations::OPINION_NEUTRAL)
+	    {
+		    mReputations[about] = Reputation(about);
+		    rit = mReputations.find(about);
+	    }
+	    else
+	    {
+#ifdef DEBUG_REPUTATION
+		    std::cerr << "  no changes!"<< std::endl;
+#endif
+		    return ;	// nothing to do
+	    }
+    }
+
+    Reputation& reputation = rit->second;
+
+    std::map<RsPeerId,RsReputations::Opinion>::iterator it2 = reputation.mOpinions.find(from) ;
+
+    if(it2 == reputation.mOpinions.end())
+    {
+	    if(new_opinion != RsReputations::OPINION_NEUTRAL)
+	    {
+		    reputation.mOpinions[from] = new_opinion;	// filters potentially tweaked reputation score sent by friend
+		    updated = true ;
+	    }
+    }
+    else
+    {
+	    old_opinion = it2->second ;
+
+	    if(new_opinion == RsReputations::OPINION_NEUTRAL)
+	    {
+		    reputation.mOpinions.erase(it2) ;		// don't store when the opinion is neutral
+		    updated = true ;
+	    }
+	    else if(new_opinion != old_opinion)
+	    {
+		    it2->second = new_opinion ;
+		    updated = true ;
+	    }
+    }
+
+    if(reputation.mOpinions.empty() && reputation.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+    {
+	    mReputations.erase(rit) ;
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  own is neutral and no opinions from friends => remove entry" << std::endl;
+#endif
+        updated = true ;
+    }
+    else if(updated)
+    {
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  reputation changed. re-calculating." << std::endl;
+#endif
+	    reputation.updateReputation() ;
+    }
+    
+    if(updated)
+	    IndicateConfigChanged() ;
+}
 
 bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 {
-	std::cerr << "p3GxsReputation::RecvReputations()";
-	std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "p3GxsReputation::RecvReputations() from " << item->PeerId() << std::endl;
+#endif
 
 	RsPeerId peerid = item->PeerId();
 
-	std::map<RsGxsId, uint32_t>::iterator it;
-	for(it = item->mOpinions.begin(); it != item->mOpinions.end(); ++it)
+	for( std::map<RsGxsId, uint32_t>::iterator it = item->mOpinions.begin(); it != item->mOpinions.end(); ++it)
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-		/* find matching Reputation */
-		std::map<RsGxsId, Reputation>::iterator rit;
-		RsGxsId gxsId(it->first);
-
-		rit = mReputations.find(gxsId);
-		if (rit == mReputations.end())
-		{
-			mReputations[gxsId] = Reputation(gxsId);
-			rit = mReputations.find(gxsId);
-		}
-
-		Reputation &reputation = rit->second;
-		reputation.mOpinions[peerid] = ConvertFromSerialised(it->second, true);
-
-		int previous = reputation.mReputation;
-		if (previous != reputation.CalculateReputation())
-		{
-			// updated from the network.
-			mUpdatedReputations.insert(gxsId);
-		}
+		locked_updateOpinion(peerid,it->first,safe_convert_uint32t_to_opinion(it->second));
 	}
-	updateLatestUpdate(peerid, item->mLatestUpdate);
+
+	updateLatestUpdate(peerid,item->mLatestUpdate);
+
 	return true;
 }
 
 
-bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
+bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -367,11 +580,12 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
         mConfig[peerid] = ReputationConfig(peerid);
         it = mConfig.find(peerid) ;
 	}
-	it->second.mLatestUpdate = ts;
+	it->second.mLatestUpdate = latest_update ;
 
 	mReputationsUpdated = true;	
 	// Switched to periodic save due to scale of data.
-	//IndicateConfigChanged();		
+    
+	IndicateConfigChanged();		
 
 	return true;
 }
@@ -380,14 +594,64 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid, time_t ts)
  * Opinion
  ****/
 
-bool p3GxsReputation::updateOpinion(const RsGxsId& gxsid, int opinion)
+bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
 {
+    if(gxsid.isNull())
+        return false ;
+        
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+#ifdef DEBUG_REPUTATION
+    std::cerr << "getReputationInfo() for " << gxsid << std::endl;
+#endif
+    Reputation& rep(mReputations[gxsid]) ;
+
+    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+    info.mOverallReputationScore = rep.mReputation ;
+    info.mFriendAverage = rep.mFriendAverage ;
+
+    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
+	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
+    else
+	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
+#endif
+
+    return true ;
+}
+
+bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
+{
+    RsReputations::ReputationInfo info ;
+    
+    getReputationInfo(id,info) ;
+    
+#ifdef DEBUG_REPUTATION
+    std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
+#endif
+    return info.mAssessment == RsReputations::ASSESSMENT_BAD ;
+}
+
+bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
+{
+#ifdef DEBUG_REPUTATION
+    std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
+#endif
+    if(gxsid.isNull())
+    {
+        std::cerr << "  ID " << gxsid << " is rejected. Look for a bug in calling method." << std::endl;
+        return false ;
+    }
+                     
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 	std::map<RsGxsId, Reputation>::iterator rit;
 
 	/* find matching Reputation */
 	rit = mReputations.find(gxsid);
+    
 	if (rit == mReputations.end())
 	{
 		mReputations[gxsid] = Reputation(gxsid);
@@ -420,14 +684,15 @@ bool p3GxsReputation::updateOpinion(const RsGxsId& gxsid, int opinion)
 	time_t now = time(NULL);
 	reputation.mOwnOpinion = opinion;
 	reputation.mOwnOpinionTs = now;
-	reputation.CalculateReputation();
+	reputation.updateReputation();
 
 	mUpdated.insert(std::make_pair(now, gxsid));
 	mUpdatedReputations.insert(gxsid);
-
 	mReputationsUpdated = true;	
+    
 	// Switched to periodic save due to scale of data.
-	//IndicateConfigChanged();		
+	IndicateConfigChanged();		
+    
 	return true;
 }
 
@@ -448,6 +713,9 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	cleanup = true;
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::saveList()" << std::endl;
+#endif
 	/* save */
 	std::map<RsPeerId, ReputationConfig>::iterator it;
 	for(it = mConfig.begin(); it != mConfig.end(); ++it)
@@ -459,7 +727,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		}
 
 		RsGxsReputationConfigItem *item = new RsGxsReputationConfigItem();
-		item->mPeerId = it->first.toStdString();
+		item->mPeerId = it->first;
 		item->mLatestUpdate = it->second.mLatestUpdate;
 		item->mLastQuery = it->second.mLastQuery;
 		savelist.push_back(item);
@@ -470,16 +738,16 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	for(rit = mReputations.begin(); rit != mReputations.end(); ++rit, count++)
 	{
 		RsGxsReputationSetItem *item = new RsGxsReputationSetItem();
-		item->mGxsId = rit->first.toStdString();
-		item->mOwnOpinion = ConvertToSerialised(rit->second.mOwnOpinion, false);
-		item->mOwnOpinionTs = rit->second.mOwnOpinionTs;
-		item->mReputation = ConvertToSerialised(rit->second.mReputation, false);
+		item->mGxsId = rit->first;
+		item->mOwnOpinion = rit->second.mOwnOpinion;
+		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
+		item->mIdentityFlags = rit->second.mIdentityFlags;
 
-		std::map<RsPeerId, int32_t>::iterator oit;
+		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
 		{
 			// should be already limited.
-			item->mOpinions[oit->first.toStdString()] = ConvertToSerialised(oit->second, false);
+			item->mOpinions[oit->first] = (uint32_t)oit->second;
 		}
 
 		savelist.push_back(item);
@@ -495,12 +763,16 @@ void p3GxsReputation::saveDone()
 
 bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 {
+#ifdef DEBUG_REPUTATION
+    std::cerr << "p3GxsReputation::saveList()" << std::endl;
+#endif
 	std::list<RsItem *>::iterator it;
 	std::set<RsPeerId> peerSet;
 
 	for(it = loadList.begin(); it != loadList.end(); ++it)
 	{
 		RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
+
 		// Configurations are loaded first. (to establish peerSet).
 		if (item)
 		{
@@ -510,14 +782,14 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 			config.mPeerId = peerId;
 			config.mLatestUpdate = item->mLatestUpdate;
 			config.mLastQuery = 0;
-			
+
 			peerSet.insert(peerId);
 		}
+
 		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
 		if (set)
-		{
 			loadReputationSet(set, peerSet);
-		}
+
 		delete (*it);
 	}
 
@@ -530,6 +802,9 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 	std::map<RsGxsId, Reputation>::iterator rit;
 
+    	if(item->mGxsId.isNull())	// just a protection against potential errors having put 00000 into ids.
+            return false ;
+        
 	/* find matching Reputation */
 	RsGxsId gxsId(item->mGxsId);
 	rit = mReputations.find(gxsId);
@@ -542,26 +817,24 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 	Reputation &reputation = mReputations[gxsId];
 
 	// install opinions.
-	std::map<std::string, uint32_t>::const_iterator oit;
+	std::map<RsPeerId, uint32_t>::const_iterator oit;
 	for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); ++oit)
 	{
 		// expensive ... but necessary.
 		RsPeerId peerId(oit->first);
 		if (peerSet.end() != peerSet.find(peerId))
-		{
-			reputation.mOpinions[peerId] = ConvertFromSerialised(oit->second, true);
-		}
+			reputation.mOpinions[peerId] = safe_convert_uint32t_to_opinion(oit->second);
 	}
 
-	reputation.mOwnOpinion = ConvertFromSerialised(item->mOwnOpinion, false);
-	reputation.mOwnOpinionTs = item->mOwnOpinionTs;
+	reputation.mOwnOpinion = item->mOwnOpinion;
+	reputation.mOwnOpinionTs = item->mOwnOpinionTS;
 
 	// if dropping entries has changed the score -> must update.
-	int previous = ConvertFromSerialised(item->mReputation, false);
-	if (previous != reputation.CalculateReputation())
-	{
-		mUpdatedReputations.insert(gxsId);
-	}
+    
+    	//float old_reputation = reputation.mReputation ;
+	//mUpdatedReputations.insert(gxsId) ;
+    
+	reputation.updateReputation() ;
 
 	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
@@ -571,9 +844,6 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 /********************************************************************
  * Send Requests.
  ****/
-
-const int kReputationRequestPeriod	= 	3600;
-const int kReputationStoreWait		= 	180; // 3 minutes.
 
 int	p3GxsReputation::sendPackets()
 {
@@ -585,7 +855,7 @@ int	p3GxsReputation::sendPackets()
 		storeTime = mStoreTime;
 	}
 
-	if (now - requestTime > kReputationRequestPeriod)
+	if (now > requestTime + kReputationRequestPeriod)
 	{
 		sendReputationRequests();
 
@@ -629,48 +899,41 @@ void p3GxsReputation::sendReputationRequests()
 
 	mLinkMgr->getOnlineList(idList);
 
-#ifdef DEBUG_REPUTATION
-	std::cerr << "p3GxsReputation::sendReputationRequests()";
-	std::cerr << std::endl;
-#endif
-
 	/* prepare packets */
 	std::list<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); ++it)
-	{
-#ifdef DEBUG_REPUTATION
-		std::cerr << "p3GxsReputation::sendReputationRequest() To: " << *it;
-		std::cerr << std::endl;
-#endif
 		sendReputationRequest(*it);
-	}
 }
-
-
 
 int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 {
-	std::cerr << "p3GxsReputation::sendReputationRequest(" << peerid << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_REPUTATION
+	std::cerr << "  p3GxsReputation::sendReputationRequest(" << peerid << ") " ;
+#endif
+    time_t now = time(NULL) ;
 
 	/* */
-	RsGxsReputationRequestItem *requestItem = 
-		new RsGxsReputationRequestItem();
-
+	RsGxsReputationRequestItem *requestItem =  new RsGxsReputationRequestItem();
 	requestItem->PeerId(peerid);
 
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 		/* find the last timestamp we have */
-		std::map<RsPeerId, ReputationConfig>::iterator it;
-		it = mConfig.find(peerid);
+		std::map<RsPeerId, ReputationConfig>::iterator it = mConfig.find(peerid);
+        
 		if (it != mConfig.end())
 		{
+#ifdef DEBUG_REPUTATION
+            		std::cerr << "  lastUpdate = " << now - it->second.mLatestUpdate << " secs ago. Requesting only more recent." << std::endl;
+#endif
 			requestItem->mLastUpdate = it->second.mLatestUpdate;
 		}
 		else
 		{
+#ifdef DEBUG_REPUTATION
+            		std::cerr << "  lastUpdate = never. Requesting all!" << std::endl;
+#endif
 			// get whole list.
 			requestItem->mLastUpdate = 0;
 		}
@@ -680,4 +943,90 @@ int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 	return 1;
 }
 
+void Reputation::updateReputation() 
+{
+    // the calculation of reputation makes the whole thing   
+
+    int friend_total = 0;
+
+    // accounts for all friends. Neutral opinions count for 1-1=0
+    // because the average is performed over only accessible peers (not the total number) we need to shift to 1
+
+    for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+	    friend_total += it->second - 1;
+
+    if(mOpinions.empty())	// includes the case of no friends!
+	    mFriendAverage = 1.0f ;
+    else
+    {
+	    static const float REPUTATION_FRIEND_FACTOR_ANON       =  2.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_LINKED =  5.0f ;
+	    static const float REPUTATION_FRIEND_FACTOR_PGP_KNOWN  = 10.0f ;
+
+	    // For positive votes, start from 1 and slowly tend to 2
+	    // for negative votes, start from 1 and slowly tend to 0
+	    // depending on signature state, the ID is harder (signed ids) or easier (anon ids) to ban or to promote.
+	    //
+	    // when REPUTATION_FRIEND_VARIANCE = 3, that gives the following values:
+	    //
+	    // total votes  |  mFriendAverage anon |  mFriendAverage PgpLinked | mFriendAverage PgpKnown  |
+	    //              |        F=2.0         |        F=5.0              |      F=10.0              |
+	    // -------------+----------------------+---------------------------+--------------------------+
+	    // -10          |  0.00  Banned        |  0.13  Banned             | 0.36 Banned              |
+	    // -5           |  0.08  Banned        |  0.36  Banned             | 0.60                     |
+	    // -4           |  0.13  Banned        |  0.44  Banned             | 0.67                     |
+	    // -3           |  0.22  Banned        |  0.54                     | 0.74                     |
+	    // -2           |  0.36  Banned        |  0.67                     | 0.81                     |
+	    // -1           |  0.60                |  0.81                     | 0.90                     |
+	    //  0           |  1.0                 |  1.0                      | 1.00                     |
+	    //  1           |  1.39                |  1.18                     | 1.09                     |
+	    //  2           |  1.63                |  1.32                     | 1.18                     |
+	    //  3           |  1.77                |  1.45                     | 1.25                     |
+	    //  4           |  1.86                |  1.55                     | 1.32                     |
+	    //  5           |  1.91                |  1.63                     | 1.39                     |
+	    //
+	    // Banning info is provided by the reputation system, and does not depend on PGP-sign state.
+	    //
+	    // However, each service might have its own rules for the different cases. For instance
+	    // PGP-favoring forums might want a score > 1.4 for anon ids, and >= 1.0 for PGP-signed.
+
+	    float reputation_bias ;
+
+	    if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_KNOWN)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_KNOWN ;
+	    else if(mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED)
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_PGP_LINKED ;
+	    else
+		    reputation_bias = REPUTATION_FRIEND_FACTOR_ANON ;
+
+	    if(friend_total > 0)
+		    mFriendAverage = 2.0f-exp(-friend_total / reputation_bias) ;
+	    else
+		    mFriendAverage =      exp( friend_total / reputation_bias) ;
+    }
+
+    // now compute a bias for PGP-signed ids.
+    
+    if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+	    mReputation = mFriendAverage ;
+    else
+	    mReputation = (float)mOwnOpinion ;
+}
+
+void p3GxsReputation::debug_print()
+{
+    std::cerr << "Reputations database: " << std::endl;
+    std::cerr << "  Average number of peers: " << mAverageActiveFriends << std::endl;
+    
+    time_t now = time(NULL) ;
+    
+    for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
+    {
+	std::cerr << "  ID=" << it->first << ", own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputation 
+              << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago." << std::endl;
+    
+    	for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
+            std::cerr << "    " << it2->first << ": " << it2->second << std::endl;
+    }
+}
 

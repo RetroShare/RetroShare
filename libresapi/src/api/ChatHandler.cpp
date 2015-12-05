@@ -42,6 +42,12 @@ StreamBase& operator << (StreamBase& left, ChatHandler::Msg& m)
 
 bool compare_lobby_id(const ChatHandler::Lobby& l1, const ChatHandler::Lobby& l2)
 {
+    if(l1.auto_subscribe && !l2.auto_subscribe) return true;
+    if(!l1.auto_subscribe && l2.auto_subscribe) return false;
+    if(l1.is_private && !l2.is_private) return true;
+    if(!l1.is_private && l2.is_private) return false;
+    if(l1.subscribed && !l2.subscribed) return true;
+    if(!l1.subscribed && l2.subscribed) return false;
     return l1.id < l2.id;
 }
 
@@ -65,13 +71,17 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<ChatLobbyId> kv)
 
 StreamBase& operator << (StreamBase& left, ChatHandler::Lobby& l)
 {
+    ChatId chatId(l.id);
+    if (l.is_broadcast)
+        chatId = ChatId::makeBroadcastId();
     left << makeKeyValueReference("id", l.id)
-         << makeKeyValue("chat_id", ChatId(l.id).toStdString())
+         << makeKeyValue("chat_id", chatId.toStdString())
          << makeKeyValueReference("name",l.name)
          << makeKeyValueReference("topic", l.topic)
          << makeKeyValueReference("subscribed", l.subscribed)
          << makeKeyValueReference("auto_subscribe", l.auto_subscribe)
          << makeKeyValueReference("is_private", l.is_private)
+         << makeKeyValueReference("is_broadcast", l.is_broadcast)
          << makeKeyValueReference("gxs_id", l.gxs_id);
     return left;
 }
@@ -157,9 +167,24 @@ void ChatHandler::tick()
             l.subscribed = true;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
+            l.is_broadcast = false;
             l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
         }
+    }
+
+    ChatId id = ChatId::makeBroadcastId();
+    {
+        Lobby l;
+        l.id = id.toLobbyId();
+        l.name = "BroadCast";
+        l.topic = "Retroshare broadcast chat: messages are sent to all connected friends.";
+        l.subscribed = true;
+        l.auto_subscribe = false;
+        l.is_private = false;
+        l.is_broadcast = true;
+        l.gxs_id = id.toGxsId();
+        lobbies.push_back(l);
     }
 
     std::vector<VisibleChatLobbyRecord> unsubscribed_lobbies;
@@ -176,6 +201,7 @@ void ChatHandler::tick()
             l.subscribed = false;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
+            l.is_broadcast = false;
             l.gxs_id = RsGxsId();
             lobbies.push_back(l);
         }
@@ -294,62 +320,7 @@ void ChatHandler::tick()
 
         // remove html tags from chat message
         // extract links form href
-        const std::string& in = msg.msg;
-        std::string out;
-        bool ignore = false;
-        bool keep_link = false;
-        std::string last_six_chars;
-        Triple current_link;
-        std::vector<Triple> links;
-        for(unsigned int i = 0; i < in.size(); ++i)
-        {
-            if(keep_link && in[i] == '"')
-            {
-                keep_link = false;
-                current_link.second = out.size();
-            }
-            if(last_six_chars == "href=\"")
-            {
-                keep_link = true;
-                current_link.first = out.size();
-            }
-
-            // "rising edge" sets mode to ignore
-            if(in[i] == '<')
-            {
-                ignore = true;
-            }
-            if(!ignore || keep_link)
-                out += in[i];
-            // "falling edge" resets mode to keep
-            if(in[i] == '>')
-                ignore = false;
-
-            last_six_chars += in[i];
-            if(last_six_chars.size() > 6)
-                last_six_chars = last_six_chars.substr(1);
-            std::string a = "</a>";
-            if(   current_link.first != -1
-               && last_six_chars.size() >= a.size()
-               && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
-            {
-                // only allow these protocols
-                // we don't want for example javascript:alert(0)
-                std::string http = "http://";
-                std::string https = "https://";
-                std::string retroshare = "retroshare://";
-                if(    out.substr(current_link.first, http.size()) == http
-                    || out.substr(current_link.first, https.size()) == https
-                    || out.substr(current_link.first, retroshare.size()) == retroshare)
-                {
-                    current_link.third = out.size();
-                    links.push_back(current_link);
-                }
-                current_link = Triple();
-            }
-        }
-        m.msg = out;
-        m.links = links;
+        getPlainText(msg.msg, m.msg, m.links);
         m.recv_time = msg.recvTime;
         m.send_time = msg.sendTime;
 
@@ -390,7 +361,77 @@ void ChatHandler::tick()
     }
 }
 
-void ChatHandler::handleWildcard(Request &req, Response &resp)
+void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links)
+{
+    if (in.size() == 0)
+        return;
+
+    if (in[0] != '<' || in[in.size() - 1] != '>')
+    {
+        // It's a plain text message without HTML
+        out = in;
+        return;
+    }
+    bool ignore = false;
+
+    bool keep_link = false;
+    std::string last_six_chars;
+    unsigned int tag_start_index = 0;
+    Triple current_link;
+    for(unsigned int i = 0; i < in.size(); ++i)
+    {
+        if(keep_link && in[i] == '"')
+        {
+            keep_link = false;
+            current_link.second = out.size();
+        }
+        if(last_six_chars == "href=\"")
+        {
+            keep_link = true;
+            current_link.first = out.size();
+        }
+
+        // "rising edge" sets mode to ignore
+        if(in[i] == '<')
+        {
+            tag_start_index = i;
+            ignore = true;
+        }
+        if(!ignore || keep_link)
+            out += in[i];
+        // "falling edge" resets mode to keep
+        if(in[i] == '>') {
+            // leave ignore mode on, if it's a style tag
+            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style")
+                ignore = false;
+        }
+
+        last_six_chars += in[i];
+        if(last_six_chars.size() > 6)
+            last_six_chars = last_six_chars.substr(1);
+        std::string a = "</a>";
+        if(   current_link.first != -1
+              && last_six_chars.size() >= a.size()
+              && last_six_chars.substr(last_six_chars.size()-a.size()) == a)
+        {
+            // only allow these protocols
+            // we don't want for example javascript:alert(0)
+            std::string http = "http://";
+            std::string https = "https://";
+            std::string retroshare = "retroshare://";
+            if(    out.substr(current_link.first, http.size()) == http
+                   || out.substr(current_link.first, https.size()) == https
+                   || out.substr(current_link.first, retroshare.size()) == retroshare)
+            {
+                current_link.third = out.size();
+                links.push_back(current_link);
+            }
+            current_link = Triple();
+        }
+    }
+}
+
+void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
     resp.mDataStream.getStreamToMember();
@@ -447,7 +488,7 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
@@ -626,17 +667,17 @@ void ChatHandler::handleInfo(Request &req, Response &resp)
     resp.setOk();
 }
 
-void ChatHandler::handleTypingLabel(Request &req, Response &resp)
+void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
 {
 
 }
 
-void ChatHandler::handleSendStatus(Request &req, Response &resp)
+void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
 {
 
 }
 
-void ChatHandler::handleUnreadMsgs(Request &req, Response &resp)
+void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
 

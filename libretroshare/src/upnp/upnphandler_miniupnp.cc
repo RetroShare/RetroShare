@@ -30,13 +30,81 @@ bool upnphandler::initUPnPState()
 {
 	/* allocate memory */
 	uPnPConfigData *upcd = new uPnPConfigData;
-
-#if MINIUPNPC_VERSION >= 11
-	/* Starting from version 1.1, miniupnpc api has a new parameter (int sameport) */
-	upcd->devlist = upnpDiscover(2000, NULL, NULL, 0);
+#if MINIUPNPC_API_VERSION >= 14 //1.9 2015/07/23
+	/* $Id: miniupnpc.h,v 1.44 2015/07/23 20:40:10 nanard Exp $ */
+	//upnpDiscover(int delay, const char * multicastif,
+	//             const char * minissdpdsock, int sameport,
+	//             int ipv6, unsigned char ttl,
+	//             int * error);
+	unsigned char ttl = 2;	/* defaulting to 2 */
+	upcd->devlist = upnpDiscover(2000, NULL,
+	                             NULL, 0,
+	                             0, ttl,
+	                             NULL);
 #else
-	upcd->devlist = upnpDiscover(2000, NULL, NULL);
-#endif
+#if MINIUPNPC_API_VERSION >= 8 //1.5 2011/04/18
+	/* $Id: miniupnpc.h,v 1.41 2015/05/22 10:23:48 nanard Exp $ */
+	/* $Id: miniupnpc.h,v 1.23 2011/04/11 08:21:46 nanard Exp $ */
+	//upnpDiscover(int delay, const char * multicastif,
+	//             const char * minissdpdsock, int sameport,
+	//             int ipv6,
+	//             int * error);
+	upcd->devlist = upnpDiscover(2000, NULL,
+	                             NULL, 0,
+	                             0,
+	                             NULL);
+#else
+#if MINIUPNPC_API_VERSION >= 6//1.5 2011/03/14
+	/* $Id: miniupnpc.h,v 1.21 2011/03/14 13:37:12 nanard Exp $ */
+	//upnpDiscover(int delay, const char * multicastif,
+	//             const char * minissdpdsock, int sameport,
+	//             int * error);
+	upcd->devlist = upnpDiscover(2000, NULL,
+	                             NULL, 0,
+	                             NULL);
+#else
+#if MINIUPNPC_API_VERSION >= -4//1.1 2008/09/25
+	/* $Id: miniupnpc.h,v 1.20 2011/02/07 16:46:05 nanard Exp $ */
+	/* $Id: miniupnpc.h,v 1.18 2008/09/25 18:02:50 nanard Exp $ */
+	//upnpDiscover(int delay, const char * multicastif,
+	//             const char * minissdpdsock, int sameport);
+	upcd->devlist = upnpDiscover(2000, NULL,
+	                             NULL, 0);
+#else
+#if MINIUPNPC_API_VERSION >= -5//1.0 2007/12/19
+	/* $Id: miniupnpc.h,v 1.17 2007/12/19 14:58:54 nanard Exp $ */
+	//upnpDiscover(int delay, const char * multicastif,
+	//             const char * minissdpdsock);
+	upcd->devlist = upnpDiscover(2000, NULL,
+	                             NULL);
+#else
+#if MINIUPNPC_API_VERSION >= -6//1.0 2007/10/16
+	/* $Id: miniupnpc.h,v 1.15 2007/10/16 15:07:32 nanard Exp $ */
+	//LIBSPEC struct UPNPDev * upnpDiscover(int delay, const char * multicastif);
+	upcd->devlist = upnpDiscover(2000, NULL);
+#else
+#if MINIUPNPC_API_VERSION >= -7//1.0 2006/09/04
+	/* $Id: miniupnpc.h,v 1.14 2007/10/01 13:42:52 nanard Exp $ */
+	/* $Id: miniupnpc.h,v 1.9 2006/09/04 09:30:17 nanard Exp $ */
+	//struct UPNPDev * upnpDiscover(int);
+	upcd->devlist = upnpDiscover(2000);
+#else
+#error MINIUPNPC_API_VERSION is not defined. You may define one follow miniupnpc library version
+	//2006/09/04 to 2007/10/01 => -7//Start return struct UPNPDev * for upnpDiscover
+	//2007/10/16 => -6 upnpDiscover
+	//2007/12/19 => -5 upnpDiscover
+	//2008/09/25 => -4 upnpDiscover
+	//2009/04/17 => -3 UPNP_AddPortMapping
+	//2010/12/09 => -2 //struct IGDdatas_service CIF;
+	//2011/02/15 => -1 UPNP_AddPortMapping
+	//2011/03/14 => 6 //Start of MINIUPNPC_API_VERSION
+#endif//>=-7
+#endif//>=-6
+#endif//>=-5
+#endif//>=-4
+#endif//>=6
+#endif//>=8
+#endif//>=14
 
 	if(upcd->devlist)
 	{
@@ -236,10 +304,17 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	data->start = start;
 	data->stop = stop;
 
-	pthread_create(&tid, 0, &doSetupUPnP, (void *) data);
-	pthread_detach(tid); /* so memory is reclaimed in linux */
-
-	return true;
+	if(!pthread_create(&tid, 0, &doSetupUPnP, (void *) data))
+	{
+		pthread_detach(tid); /* so memory is reclaimed in linux */
+		return true;
+	}
+        else
+        {
+            delete data ;
+            std::cerr << "(EE) Failed to start upnp thread." << std::endl;
+            return false ;
+        }
 }
 
 bool upnphandler::start_upnp()
@@ -305,12 +380,16 @@ bool upnphandler::start_upnp()
 	std::cerr << std::endl;
 
 	if (!SetRedirectAndTest(&(config -> urls), &(config->data),
-			in_addr, in_port1, eport1, eprot1))
+	                        in_addr, in_port1, eport1, eprot1,
+	                        NULL /*leaseDuration*/, NULL /*description*/,
+	                        0))
 	{
 		upnpState = RS_UPNP_S_TCP_FAILED;
 	}
 	else if (!SetRedirectAndTest(&(config -> urls), &(config->data),
-			in_addr, in_port2, eport2, eprot2))
+	                             in_addr, in_port2, eport2, eprot2,
+	                             NULL /*leaseDuration*/, NULL /*description*/,
+		                         0))
 	{
 		upnpState = RS_UPNP_S_UDP_FAILED;
 	}
@@ -323,8 +402,16 @@ bool upnphandler::start_upnp()
 	/* now store the external address */
 	char externalIPAddress[32];
 	UPNP_GetExternalIPAddress(config -> urls.controlURL,
-				  config->data.servicetype,
-				  externalIPAddress);
+#if MINIUPNPC_API_VERSION >= -2//1.4 2010/12/09
+	                          config->data.first.servicetype,
+#else
+#if MINIUPNPC_API_VERSION >= -7//1.0 2006/09/04
+	                          config->data.servicetype,
+#else
+#error MINIUPNPC_API_VERSION is not defined. You may define one follow miniupnpc library version
+#endif
+#endif
+	                          externalIPAddress);
 
 	sockaddr_clear(&upnp_eaddr);
 

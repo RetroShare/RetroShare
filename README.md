@@ -10,7 +10,7 @@ Compilation on Linux
    ```bash
    sudo apt-get install libglib2.0-dev libupnp-dev qt4-dev-tools \
        libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev \
-       libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev \
+       libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libsqlcipher-dev \
        libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev \
        libopencv-dev tcl8.5 libmicrohttpd-dev
    ```

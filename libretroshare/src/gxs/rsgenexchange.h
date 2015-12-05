@@ -739,12 +739,13 @@ private:
     /*!
      * Attempts to validate msg signatures
      * @param msg message to be validated
-     * @param grpFlag the flag for the group the message belongs to
+     * @param grpFlag the distribution flag for the group the message belongs to
+     * @param grpFlag the signature flag for the group the message belongs to
      * @param grpKeySet the key set user has for the message's group
      * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
      * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
      */
-    int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
+    int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, const uint32_t &signFlag, RsTlvSecurityKeySet& grpKeySet);
 
     /*!
 	 * Attempts to validate group signatures
@@ -862,7 +863,7 @@ private:
     std::vector<GroupDeletePublish> mGroupDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
-
+    std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;
 };
 
 #endif // RSGENEXCHANGE_H

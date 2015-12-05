@@ -315,6 +315,9 @@ public:
 
     bool getWebinterfaceAllowAllIps();
     void setWebinterfaceAllowAllIps(bool allow_all);
+    
+    // proxy function that computes the best icon size among sizes passed as array, to match the recommended size on screen.
+    int computeBestIconSize(int n_sizes, int *sizes, int recommended_size);
 
 protected:
 	/** Default constructor. */
@@ -323,7 +326,7 @@ protected:
 	void initSettings();
 
 	/* member for fast access */
-	int m_maxTimeBeforeIdle;
+    int m_maxTimeBeforeIdle;
 };
 
 // the one and only global settings object

@@ -27,7 +27,7 @@
 // Includes for directory creation.
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "util/rsdir.h"

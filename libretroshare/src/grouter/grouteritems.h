@@ -33,20 +33,19 @@
 #include "retroshare/rsgrouter.h"
 #include "groutermatrix.h"
 
-const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY       	          = 0x01 ;	// used to publish a key
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated    	          = 0x03 ;	// don't use!
-const uint8_t RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT_deprecated    = 0x04 ;	// don't use!
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated   	          = 0x05 ;	// don't use!
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated2  	          = 0x06 ;	// don't use!
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA              	          = 0x07 ;	// used to send data to a destination (Signed by source)
-const uint8_t RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT               = 0x08 ;	// long-distance acknowledgement of data received
-
-const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK            = 0x10 ;	// chunk of data. Used internally.
-const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN             = 0x11 ;	// acknowledge for finished transaction. Not necessary, but increases fiability.
-
-const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES                 = 0x80 ;	// item to save matrix clues
-const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST                 = 0x82 ;	// item to save friend lists
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO                 = 0x93 ;	//
+const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY                 = 0x01 ;	// used to publish a key
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK_deprecated              = 0x03 ;	// don't use!
+const uint8_t RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT_deprecated   = 0x04 ;	// don't use!
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated             = 0x05 ;	// don't use!
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA_deprecated2            = 0x06 ;	// don't use!
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA                        = 0x07 ;	// used to send data to a destination (Signed by source)
+const uint8_t RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT              = 0x08 ;	// long-distance acknowledgement of data received
+const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_CHUNK           = 0x10 ;	// chunk of data. Used internally.
+const uint8_t RS_PKT_SUBTYPE_GROUTER_TRANSACTION_ACKN            = 0x11 ;	// acknowledge for finished transaction. Not necessary, but increases fiability.
+const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES                = 0x80 ;	// item to save matrix clues
+const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST                = 0x82 ;	// item to save friend lists
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO                = 0x93 ;	//
+const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK                = 0x94 ;	// item to save matrix track info
 
 const uint8_t QOS_PRIORITY_RS_GROUTER = 4 ;			// relevant for items that travel through friends
 
@@ -243,6 +242,24 @@ class RsGRouterMatrixCluesItem: public RsGRouterItem
 		std::list<RoutingMatrixHitEntry> clues ;
 };
 
+class RsGRouterMatrixTrackItem: public RsGRouterItem
+{
+	public:
+        RsGRouterMatrixTrackItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_MATRIX_TRACK)
+		{ setPriorityLevel(0) ; }	// this item is never sent through the network
+
+		virtual bool serialise(void *data,uint32_t& size) const ;	
+		virtual uint32_t serial_size() const ; 						
+
+		virtual void clear() {} 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
+
+		// packet data
+		//
+		RsGxsMessageId message_id ;
+        	RsPeerId provider_id ;
+            	time_t time_stamp ;
+};
 class RsGRouterMatrixFriendListItem: public RsGRouterItem
 {
 	public:
@@ -317,6 +334,7 @@ private:
     RsGRouterTransactionAcknItem  *deserialise_RsGRouterTransactionAcknItem(void *data,uint32_t size) const ;
     RsGRouterSignedReceiptItem    *deserialise_RsGRouterSignedReceiptItem(void *data,uint32_t size) const ;
     RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
+    RsGRouterMatrixTrackItem      *deserialise_RsGRouterMatrixTrackItem(void *data,uint32_t size) const ;
     RsGRouterMatrixFriendListItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;
     RsGRouterRoutingInfoItem      *deserialise_RsGRouterRoutingInfoItem(void *data,uint32_t size) const ;
 };

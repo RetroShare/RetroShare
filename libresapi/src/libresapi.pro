@@ -2,8 +2,10 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
+CONFIG += create_prl
 CONFIG -= qt
 TARGET = resapi
+TARGET_PRL = libresapi
 DESTDIR = lib
 
 CONFIG += libmicrohttpd
@@ -22,10 +24,21 @@ unix {
 
 win32{
 	DEFINES *= WINDOWS_SYS
-	INCLUDEPATH += $$PWD/../../../libs/include
+	INCLUDEPATH += . $$INC_DIR
 }
 
 libmicrohttpd{
+	linux {
+		CONFIG += link_pkgconfig
+		PKGCONFIG *= libmicrohttpd
+	} else {
+		mac {
+		INCLUDEPATH += /usr/local/include
+		LIBS *= /usr/local/lib/libmicrohttpd.a
+		} else {
+			LIBS *= -lmicrohttpd
+		}
+	}
 	SOURCES += \
 		api/ApiServerMHD.cpp
 
@@ -51,7 +64,8 @@ SOURCES += \
 	api/GetPluginInterfaces.cpp \
     api/ChatHandler.cpp \
     api/LivereloadHandler.cpp \
-    api/TmpBlobStore.cpp
+    api/TmpBlobStore.cpp \
+    util/ContentTypes.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -74,4 +88,5 @@ HEADERS += \
 	api/GetPluginInterfaces.h \
     api/ChatHandler.h \
     api/LivereloadHandler.h \
-    api/TmpBlobStore.h
+    api/TmpBlobStore.h \
+    util/ContentTypes.h

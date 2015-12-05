@@ -36,11 +36,11 @@ VOIPToasterNotify::VOIPToasterNotify(RsVOIP *VOIP, VOIPNotify *notify, QObject *
 	mMutex = new QMutex();
 
 #ifdef VOIPTOASTERNOTIFY_ALL
-	connect(mVOIPNotify, SIGNAL(voipAcceptReceived(const RsPeerId&)), this, SLOT(voipAcceptReceived(const RsPeerId&)), Qt::QueuedConnection);
+	connect(mVOIPNotify, SIGNAL(voipAcceptReceived(const RsPeerId&, int)), this, SLOT(voipAcceptReceived(const RsPeerId&, int)), Qt::QueuedConnection);
 	connect(mVOIPNotify, SIGNAL(voipBandwidthInfoReceived(const RsPeerId&, int)), this, SLOT(voipBandwidthInfoReceived(RsPeerId&, int)), Qt::QueuedConnection);
 	connect(mVOIPNotify, SIGNAL(voipDataReceived(const RsPeerId&)), this, SLOT(voipDataReceived(const RsPeerId&)), Qt::QueuedConnection);
-	connect(mVOIPNotify, SIGNAL(voipHangUpReceived(const RsPeerId&)), this, SLOT(voipHangUpReceived(const RsPeerId&)), Qt::QueuedConnection);
-	connect(mVOIPNotify, SIGNAL(voipInvitationReceived(const RsPeerId&)), this, SLOT(voipInvitationReceived(const RsPeerId&)), Qt::QueuedConnection);
+	connect(mVOIPNotify, SIGNAL(voipHangUpReceived(const RsPeerId&, int)), this, SLOT(voipHangUpReceived(const RsPeerId&, int)), Qt::QueuedConnection);
+	connect(mVOIPNotify, SIGNAL(voipInvitationReceived(const RsPeerId&, int)), this, SLOT(voipInvitationReceived(const RsPeerId&, int)), Qt::QueuedConnection);
 #endif
 	connect(mVOIPNotify, SIGNAL(voipAudioCallReceived(const RsPeerId&)), this, SLOT(voipAudioCallReceived(const RsPeerId&)), Qt::QueuedConnection);
 	connect(mVOIPNotify, SIGNAL(voipVideoCallReceived(const RsPeerId&)), this, SLOT(voipVideoCallReceived(const RsPeerId&)), Qt::QueuedConnection);
@@ -186,7 +186,7 @@ ToasterItem* VOIPToasterNotify::testToasterItem(QString tag)
 }
 
 #ifdef VOIPTOASTERNOTIFY_ALL
-void VOIPToasterNotify::voipAcceptReceived(const RsPeerId &peer_id)
+void VOIPToasterNotify::voipAcceptReceived(const RsPeerId &peer_id, int flags)
 {
 	if (peer_id.isNull()) {
 		return;
@@ -258,7 +258,7 @@ void VOIPToasterNotify::voipDataReceived(const RsPeerId &peer_id)
 	mMutex->unlock();
 }
 
-void VOIPToasterNotify::voipHangUpReceived(const RsPeerId &peer_id)
+void VOIPToasterNotify::voipHangUpReceived(const RsPeerId &peer_id, int flags)
 {
 	if (peer_id.isNull()) {
 		return;
@@ -282,7 +282,7 @@ void VOIPToasterNotify::voipHangUpReceived(const RsPeerId &peer_id)
 	mMutex->unlock();
 }
 
-void VOIPToasterNotify::voipInvitationReceived(const RsPeerId &peer_id)
+void VOIPToasterNotify::voipInvitationReceived(const RsPeerId &peer_id, int flags)
 {
 	if (peer_id.isNull()) {
 		return;

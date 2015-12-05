@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1447</width>
-    <height>911</height>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,7 +89,14 @@
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
-     <widget class="BandwidthStatsWidget" name="widget" native="true"/>
+     <widget class="BandwidthStatsWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

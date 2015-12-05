@@ -74,10 +74,12 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
-	
+
 	void  addtoContacts();
   void  removefromContacts();
 
+	void banPerson();
+	void unbanPerson();
 
 private:
 	void processSettings(bool load);
@@ -101,10 +103,10 @@ private:
 	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
-	RsGxsGroupId mId;
-	
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
+
+	RsGxsGroupId mId;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

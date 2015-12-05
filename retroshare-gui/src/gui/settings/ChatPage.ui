@@ -111,6 +111,43 @@
              </widget>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="hl_minimumFontSize">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="minimumFontSizeLabel">
+                <property name="text">
+                 <string>Minimum font size</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="hs_minimumFontSize">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="minimumFontSize">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>64</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
              <widget class="QCheckBox" name="checkBox_enableBold">
               <property name="text">
                <string>Enable bold</string>

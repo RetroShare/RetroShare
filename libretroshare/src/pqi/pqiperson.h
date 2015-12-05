@@ -48,57 +48,36 @@ static const int HEARTBEAT_REPEAT_TIME = 5;
 #include "pqi/pqiqosstreamer.h"
 #include "pqi/pqithreadstreamer.h"
 
-class pqiconnect: public pqiQoSstreamer, public NetInterface
+class pqiconnect : public pqiQoSstreamer, public NetInterface
 {
 public:
-	pqiconnect(PQInterface *parent, RsSerialiser *rss, NetBinInterface *ni_in)
-			:pqiQoSstreamer(parent, rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
-			 NetInterface(NULL, ni_in->PeerId()), // No need for callback
-	 		 ni(ni_in) 
-	{ 
-		if (!ni_in)
-		{
-			std::cerr << "pqiconnect::pqiconnect() NetInterface == NULL, FATAL!";
-			std::cerr << std::endl;
-			exit(1);
-		}
-		return; 
-	} 
+	pqiconnect(PQInterface *parent, RsSerialiser *rss, NetBinInterface *ni_in) :
+		pqiQoSstreamer(parent, rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
+		NetInterface(NULL, ni_in->PeerId()), // No need for callback
+		ni(ni_in) {}
 
-virtual ~pqiconnect() { return; }
-virtual bool getCryptoParams(RsPeerCryptoParams& params) ;
+	virtual ~pqiconnect() {}
+	virtual bool getCryptoParams(RsPeerCryptoParams& params);
 
 	// presents a virtual NetInterface -> passes to ni.
-virtual int	connect(const struct sockaddr_storage &raddr) { return ni->connect(raddr); }
-virtual int	listen() 		{ return ni -> listen(); }
-virtual int	stoplistening() 	{ return ni -> stoplistening(); }
-virtual int 	reset() 		{ return ni -> reset(); }
-virtual int 	disconnect() 		{ return ni -> reset(); }
-virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
-virtual bool 	connect_parameter(uint32_t type, std::string value) { return ni -> connect_parameter(type, value);}
-virtual bool 	connect_additional_address(uint32_t type, const struct sockaddr_storage &addr) { return ni -> connect_additional_address(type, addr);}
-
-
-virtual int     getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
+	virtual int	connect(const struct sockaddr_storage &raddr) { return ni->connect(raddr); }
+	virtual int	listen() { return ni->listen(); }
+	virtual int	stoplistening() { return ni->stoplistening(); }
+	virtual int reset() { return ni->reset(); }
+	virtual int disconnect() { return ni->reset(); }
+	virtual bool connect_parameter(uint32_t type, uint32_t value) { return ni->connect_parameter(type, value);}
+	virtual bool connect_parameter(uint32_t type, std::string value) { return ni->connect_parameter(type, value);}
+	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr) { return ni->connect_additional_address(type, addr); }
+	virtual int getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
 
 	// get the contact from the net side!
-virtual const RsPeerId& PeerId()
-{
-	if (ni)
-	{
-		return ni->PeerId();
-	}
-	else
-	{
-		return PQInterface::PeerId();
-	}
-}
+	virtual const RsPeerId& PeerId() { return ni->PeerId(); }
 
 	// to check if our interface.
-virtual bool	thisNetInterface(NetInterface *ni_in) { return (ni_in == ni); }
+	virtual bool thisNetInterface(NetInterface *ni_in) { return (ni_in == ni); }
+
 protected:
 	NetBinInterface *ni;
-protected:
 };
 
 

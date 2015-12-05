@@ -44,7 +44,11 @@ public slots:
 	
   void filterColumnChanged(int);
   void filterItems(const QString &text);
-
+  
+private slots:
+	/** Create the context popup menu and it's submenus */
+	void DHTCustomPopupMenu( QPoint point );
+	void copyIP();
 	
 protected:
     //void changeEvent(QEvent *e);

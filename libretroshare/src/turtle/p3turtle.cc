@@ -289,7 +289,11 @@ void p3turtle::locked_addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 	unsigned char tmp[RsPeerId::SIZE_IN_BYTES] ;
 	memset(tmp,0,RsPeerId::SIZE_IN_BYTES) ;
 
-	((uint32_t*)tmp)[0] = tid ;
+	assert(sizeof(tid) == 4) ;
+
+	for(int i=0;i<4;++i)
+		tmp[i] = uint8_t( (tid >> ((3-i)*8)) & 0xff ) ;
+
 	RsPeerId virtual_peer_id(tmp) ;
 
 	_virtual_peers[virtual_peer_id] = tid ;

@@ -351,11 +351,14 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
     Q_UNUSED(flag);
 #endif
 
-    QString formatMsg = style.replace("%name%", RsHtml::plainText(name))
-                             .replace("%date%", DateTime::formatDate(timestamp.date()))
-                             .replace("%time%", DateTime::formatTime(timestamp.time()))
+	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
+	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
+	QString formatMsg = style.replace("%name%", strName)
+	                         .replace("%date%", strDate)
+	                         .replace("%time%", strTime)
 #ifdef COLORED_NICKNAMES
-                             .replace("%color%", color.name())
+	                         .replace("%color%", color.name())
 #endif
 	                         .replace("%message%", messageBody ) ;
 	if ( !styleOptimized.isEmpty() ) {

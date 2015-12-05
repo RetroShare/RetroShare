@@ -140,18 +140,18 @@ void AudioInputConfig::updateAvailableBW(double r)
     std::cerr << "Setting max bandwidth to " << r << " KB/s" << std::endl;
     videoProcessor->setMaximumBandwidth((uint32_t)(r*1024)) ;
 }
-    
+
 void AudioInputConfig::togglePreview(bool b)
 {
     if(b)
     {
         videoInput->setEchoVideoTarget(NULL) ;
-	videoProcessor->setDisplayTarget(ui.videoDisplay) ;
+        videoProcessor->setDisplayTarget(ui.videoDisplay) ;
     }
     else
     {
+        videoProcessor->setDisplayTarget(NULL) ;
         videoInput->setEchoVideoTarget(ui.videoDisplay) ;
-	videoProcessor->setDisplayTarget(NULL) ;
     }
 }
 

@@ -57,6 +57,7 @@ DHTStatus::DHTStatus(QWidget *parent)
 
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
     dhtnetworksizeLabel->setVisible(false);
+    dhtnetworksizeLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     hbox->addWidget(dhtnetworksizeLabel);
 
     hbox->addSpacing(2);
@@ -79,7 +80,7 @@ void DHTStatus::getDHTStatus()
 	if (!(config.DHTActive))
 	{
 		// GRAY.
-        dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+        dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 		dhtstatusLabel->setToolTip( text + tr("DHT Off"));
 
 		spaceLabel->setVisible(false);
@@ -97,7 +98,7 @@ void DHTStatus::getDHTStatus()
 			// YELLOW or GREEN.
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_yellow_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_yellow_128.png").scaledToHeight(S,Qt::SmoothTransformation));
                 dhtstatusLabel->setToolTip( text + tr("DHT Searching for RetroShare Peers"));
 
 				spaceLabel->setVisible(true);
@@ -109,7 +110,7 @@ void DHTStatus::getDHTStatus()
 			}
 			else
 			{
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_green_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_green_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 				dhtstatusLabel->setToolTip( text + tr("DHT Good"));
 
 				spaceLabel->setVisible(true);
@@ -123,7 +124,7 @@ void DHTStatus::getDHTStatus()
 		else
 		{
 			// RED - some issue.
-                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_64.png").scaledToHeight(S,Qt::SmoothTransformation));
+                dhtstatusLabel->setPixmap(QPixmap(":/icons/bullet_red_128.png").scaledToHeight(S,Qt::SmoothTransformation));
             dhtstatusLabel->setToolTip( text + tr("DHT Error"));
 
 			spaceLabel->setVisible(false);

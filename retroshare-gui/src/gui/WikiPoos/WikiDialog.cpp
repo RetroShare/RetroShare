@@ -79,7 +79,7 @@
 
 /** Constructor */
 WikiDialog::WikiDialog(QWidget *parent)
-: MainPage(parent)
+: RsGxsUpdateBroadcastPage(rsWiki, parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -103,11 +103,6 @@ WikiDialog::WikiDialog(QWidget *parent)
 	connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
 	connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
 
-
-	QTimer *timer = new QTimer(this);
-	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-	timer->start(1000);
-
 	/* setup TokenQueue */
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
@@ -118,27 +113,11 @@ WikiDialog::WikiDialog(QWidget *parent)
 	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(IMAGE_FOLDERGREEN), false);
 	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(IMAGE_FOLDERYELLOW), false);
 
-	//Auto refresh seems not to work, temporary solution at start
-	insertWikiGroups();
 }
 
 WikiDialog::~WikiDialog()
 {
 	delete(mWikiQueue);
-}
-
-void WikiDialog::checkUpdate()
-{
-	/* update */
-	if (!rsWiki)
-		return;
-
-	if (rsWiki->updated())
-	{
-		insertWikiGroups();
-	}
-
-	return;
 }
 
 void WikiDialog::OpenOrShowAddPageDialog()
@@ -362,11 +341,6 @@ const RsGxsGroupId& WikiDialog::getSelectedGroup()
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
 
-void WikiDialog::insertWikiGroups()
-{
-	requestGroupMeta();
-}
-
 void WikiDialog::requestGroupMeta()
 {
 	std::cerr << "WikiDialog::requestGroupMeta()";
@@ -528,7 +502,7 @@ void WikiDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 
 #define GXSGROUP_NEWGROUPID	     1
 			case GXSGROUP_NEWGROUPID:
-				insertWikiGroups();
+				requestGroupMeta();
 				break;
 			default:
 				std::cerr << "WikiDialog::loadRequest() ERROR: INVALID TYPE";
@@ -715,4 +689,21 @@ void WikiDialog::todo()
 							 "<b>Open points:</b><ul>"
 							 "<li>Auto update Group trees"
 							 "</ul>");
+}
+
+void WikiDialog::updateDisplay(bool complete)
+{
+	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
+		/* Update group list */
+		requestGroupMeta();
+	} else {
+		/* Update all groups of changed messages */
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		getAllMsgIds(msgIds);
+
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
+		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+			wikiGroupChanged(QString::fromStdString(msgIt->first.toStdString()));
+		}
+	}
 }

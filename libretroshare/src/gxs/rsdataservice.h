@@ -181,14 +181,15 @@ private:
      * @param c cursor to result set
      * @param msgs messages retrieved from cursor are stored here
      */
-    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs);
+    void locked_retrieveMessages(RetroCursor* c, std::vector<RsNxsMsg*>& msgs, int metaOffset);
 
     /*!
      * Retrieves all the grp results from a cursor
      * @param c cursor to result set
      * @param grps groups retrieved from cursor are stored here
+     * @param withMeta this initialise the metaData member of the nxsgroups retrieved
      */
-    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps);
+    void locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>& grps, int metaOffset);
 
     /*!
      * Retrieves all the msg meta results from a cursor
@@ -201,13 +202,13 @@ private:
      * extracts a msg meta item from a cursor at its
      * current position
      */
-    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c);
+    RsGxsMsgMetaData* locked_getMsgMeta(RetroCursor& c, int colOffset);
 
     /*!
      * extracts a grp meta item from a cursor at its
      * current position
      */
-    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c);
+    RsGxsGrpMetaData* locked_getGrpMeta(RetroCursor& c, int colOffset);
 
     /*!
      * extracts a msg item from a cursor at its
@@ -257,10 +258,12 @@ private:
 
     std::list<std::string> mMsgColumns;
     std::list<std::string> mMsgMetaColumns;
+    std::list<std::string> mMsgColumnsWithMeta;
     std::list<std::string> mMsgIdColumn;
 
     std::list<std::string> mGrpColumns;
     std::list<std::string> mGrpMetaColumns;
+    std::list<std::string> mGrpColumnsWithMeta;
     std::list<std::string> mGrpIdColumn;
 
     // Message meta column
@@ -286,6 +289,9 @@ private:
     int mColMsg_NxsData;
     int mColMsg_MetaData;
     int mColMsg_MsgId;
+
+    // Message columns with meta
+    int mColMsg_WithMetaOffset;
 
     // Group meta columns
     int mColGrpMeta_GrpId;
@@ -318,6 +324,9 @@ private:
     int mColGrp_GrpId;
     int mColGrp_NxsData;
     int mColGrp_MetaData;
+
+    // Group columns with meta
+    int mColGrp_WithMetaOffset;
 
     // Group id columns
     int mColGrpId_GrpId;

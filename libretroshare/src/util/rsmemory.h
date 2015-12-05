@@ -21,29 +21,37 @@
 //
 class RsTemporaryMemory
 {
-	public:
-		RsTemporaryMemory(size_t s)
-		{
-			_mem = (unsigned char *)malloc(s) ;
-		}
+public:
+    RsTemporaryMemory(size_t s)
+    {
+	    _mem = (unsigned char *)malloc(s) ;
 
-		operator unsigned char *() { return _mem ; }
+	    if(_mem)
+		    _size = s ;
+	    else
+		    _size = 0 ;
+    }
 
-		~RsTemporaryMemory()
-		{
-			if(_mem != NULL)
-			{
-				free(_mem) ;
-				_mem = NULL ;
-			}
-		}
+    operator unsigned char *() { return _mem ; }
+    
+    size_t size() const { return _size ; }
 
-	private:
-		unsigned char *_mem ;
+    ~RsTemporaryMemory()
+    {
+	    if(_mem != NULL)
+	    {
+		    free(_mem) ;
+		    _mem = NULL ;
+	    }
+    }
 
-		// make it noncopyable
-		RsTemporaryMemory& operator=(const RsTemporaryMemory&) { return *this ;}
-		RsTemporaryMemory(const RsTemporaryMemory&) {}
+private:
+    unsigned char *_mem ;
+    size_t _size ;
+
+    // make it noncopyable
+    RsTemporaryMemory& operator=(const RsTemporaryMemory&) { return *this ;}
+    RsTemporaryMemory(const RsTemporaryMemory&) {}
 };
 
 

@@ -99,9 +99,8 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-    
-        connect(ui.distantChatcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
 
+       connect(ui.distantChatcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
 
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
@@ -118,11 +117,11 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+		Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
-    
     // state of distant Chat combobox
     Settings->setValue("DistantChat", ui.distantChatcomboBox->currentIndex());
 
@@ -225,12 +224,13 @@ ChatPage::load()
     ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
     ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
     ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
     ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
-    
-    // state of distant Chat combobox
+
+	     // state of distant Chat combobox
     int index = Settings->value("DistantChat", 0).toInt();
     ui.distantChatcomboBox->setCurrentIndex(index);
 
@@ -518,3 +518,4 @@ void ChatPage::distantChatComboBoxChanged(int i)
 	}
 
 }
+

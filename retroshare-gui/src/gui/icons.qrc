@@ -7,10 +7,10 @@
 		<file>icons/blank_green_128.png</file>
 		<file>icons/browsable_blue_128.png</file>
 		<file>icons/browsable_green_128.png</file>
-		<file>icons/bullet_green_64.png</file>
-		<file>icons/bullet_grey_64.png</file>
-		<file>icons/bullet_red_64.png</file>
-		<file>icons/bullet_yellow_64.png</file>
+		<file>icons/bullet_green_128.png</file>
+		<file>icons/bullet_grey_128.png</file>
+		<file>icons/bullet_red_128.png</file>
+		<file>icons/bullet_yellow_128.png</file>
 		<file>icons/channels_128.png</file>
 		<file>icons/channels_red_128.png</file>
 		<file>icons/chat_128.png</file>
@@ -60,5 +60,14 @@
 		<file>icons/user-busy_64.png</file>
 		<file>icons/user-offline_64.png</file>
 		<file>icons/user-online_64.png</file>
+		<file>icons/yellow_biohazard64.png</file>
+		<file>icons/gmail.png</file>
+		<file>icons/yahoo.png</file>
+		<file>icons/outlook.png</file>
+		<file>icons/aol.png</file>
+		<file>icons/yandex.png</file>
+		<file>icons/tor-on.png</file>
+		<file>icons/tor-logo.png</file>
+		<file>icons/tor-off.png</file>
 	</qresource>
 </RCC>

@@ -551,7 +551,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
     in_offset += size_net_ekl;
 
 	// Conservative limits to detect weird errors due to corrupted encoding.
-	if(eklen < 0 || eklen > 512 || eklen+in_offset > inlen)
+	if(eklen < 0 || eklen > 512 || eklen+in_offset > (int)inlen)
 	{
 		std::cerr << "Error while deserialising encryption key length: eklen = " << std::dec << eklen << ". Giving up decryption." << std::endl;
 		free(ek);
@@ -681,12 +681,25 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
         EVP_VerifyInit(mdctx, EVP_sha1());
         EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
         int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+        EVP_MD_CTX_destroy(mdctx);
 
-		  delete[] allGrpData ;
+        if(signOk != 1)	// try previous API. This is a hack to accept groups previously signed with old APIs.
+	{
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+		EVP_VerifyInit(mdctx, EVP_sha1());
+		EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen-4);	// that means ommit the last
+		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+		EVP_MD_CTX_destroy(mdctx);
+        
+        	if(signOk)
+                	std::cerr << "(WW) GXS group with old API found. Signature still checks!" << std::endl;
+	}
+        
+	delete[] allGrpData ;
 
         /* clean up */
         EVP_PKEY_free(signKey);
-        EVP_MD_CTX_destroy(mdctx);
 
         grpMeta.signSet = signSet;
 
