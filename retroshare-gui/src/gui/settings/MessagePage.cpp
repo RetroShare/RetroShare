@@ -64,7 +64,7 @@ void MessagePage::distantMsgsComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_ANONYMOUS |RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST) ; 
+		case 0:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_EVERYBODY |RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST) ; 
 				  break ;
 				  
 		case 1:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST) ; 
@@ -123,7 +123,7 @@ MessagePage::load()
     
     uint32_t flags = rsMail->getDistantMessagingPermissionFlags() ;
     
-    if(flags == (RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST | RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_ANONYMOUS))
+    if(flags == (RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST | RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_EVERYBODY))
 	    ui.comboBox->setCurrentIndex(2);
     else if(flags == RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST)
 	    ui.comboBox->setCurrentIndex(1);
