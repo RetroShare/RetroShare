@@ -56,6 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
+#include <gxstunnel/p3gxstunnel.h>
+
 #define ENABLE_GROUTER
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
@@ -264,7 +266,7 @@ bool doPortRestrictions = false;
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-int RsInit::InitRetroShare(int argc, char **argv, bool strictCheck)
+int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
@@ -1486,13 +1488,17 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(tr,true);
 	pqih -> addService(ftserver,true);
 
+        mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+        mGxsTunnels->connectToTurtleRouter(tr) ;
+        rsGxsTunnel = mGxsTunnels;
+        
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToTurtleRouter(tr) ;
+	chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
@@ -1504,6 +1510,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(msgSrv,true);
 	pqih -> addService(chatSrv,true);
 	pqih -> addService(mStatusSrv,true);
+	pqih -> addService(mGxsTunnels,true);
 	pqih -> addService(mReputations,true);
 
 	// set interfaces for plugins
@@ -1525,6 +1532,7 @@ int RsServer::StartupRetroShare()
     interfaces.mPgpAuxUtils     = pgpAuxUtils;
     interfaces.mGxsForums       = mGxsForums;
     interfaces.mGxsChannels     = mGxsChannels;
+	interfaces.mGxsTunnels = mGxsTunnels;
     interfaces.mReputations     = mReputations;
     
 	mPluginsManager->setInterfaces(interfaces);

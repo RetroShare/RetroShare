@@ -112,7 +112,7 @@ bool RsharePeerSettings::getSettingsIdOfPeerId(const ChatId& chatId, std::string
         m_SslToGpg[peerId] = settingsId ;
         return true;
     }
-    if(chatId.isGxsId() || chatId.isLobbyId() || chatId.isBroadcast())
+    if(chatId.isDistantChatId() || chatId.isLobbyId() || chatId.isBroadcast())
     {
         settingsId = chatId.toStdString();
         return true;

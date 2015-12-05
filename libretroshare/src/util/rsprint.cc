@@ -40,6 +40,10 @@ std::string RsUtil::BinToHex(const std::string &bin)
 	return BinToHex(bin.c_str(), bin.length());
 }
 
+std::string RsUtil::BinToHex(const unsigned char *arr, const uint32_t len)
+{
+    return BinToHex((char*)arr,len) ;
+}
 std::string RsUtil::BinToHex(const char *arr, const uint32_t len)
 {
 	std::string out;

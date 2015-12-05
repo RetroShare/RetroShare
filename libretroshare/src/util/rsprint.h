@@ -35,6 +35,7 @@ namespace RsUtil {
 
 std::string BinToHex(const std::string &bin);
 std::string BinToHex(const char *arr, const uint32_t len);
+std::string BinToHex(const unsigned char *arr, const uint32_t len);
 std::string HashId(const std::string &id, bool reverse = false);
 
 //std::string AccurateTimeString();

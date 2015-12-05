@@ -66,7 +66,7 @@ public:
         bool is_private;
         bool is_broadcast;
 
-        RsGxsId gxs_id;// for subscribed lobbies: the id we use to write messages
+        RsGxsId distant_chat_id;// for subscribed lobbies: the id we use to write messages
 
         bool operator==(const Lobby& l) const
         {
@@ -76,15 +76,15 @@ public:
                     && subscribed == l.subscribed
                     && auto_subscribe == l.auto_subscribe
                     && is_private == l.is_private
-                    && is_broadcast == l.is_broadcast
-                    && gxs_id == l.gxs_id;
+                    && id == l.id
+                    && is_broadcast == l.is_broadcast;
         }
     };
 
     class ChatInfo{
     public:
         bool is_broadcast;
-        bool is_gxs_id;
+        bool is_distant_chat_id;
         bool is_lobby;
         bool is_peer;
         std::string remote_author_id;
