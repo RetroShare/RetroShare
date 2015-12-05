@@ -401,7 +401,7 @@ void MainWindow::initStackedPage()
 		 else
 			 icon = QIcon(":images/extension_48.png") ;
 
-		 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
+		 std::cerr << "  Adding widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
 		 pluginPage->setIconPixmap(icon);
 		 pluginPage->setPageName(QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()));
 		 addPage(pluginPage, grp, &notify);
