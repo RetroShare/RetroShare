@@ -60,22 +60,17 @@ MessagePage::~MessagePage()
     delete(m_pTags);
 }
 
-void MessagePage::toggleEnableEncryptedDistantMsgs(bool b)
-{
-	rsMail->enableDistantMessaging(b) ;
-}
-
 void MessagePage::distantMsgsComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:  rsMail->enableDistantMessaging(true) ;
+		case 0:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_ANONYMOUS |RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST) ; 
 				  break ;
 				  
-		case 1:  ;
+		case 1:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST) ; 
 				  break ;
 
-		case 2: rsMail->enableDistantMessaging(false) ;
+		case 2: rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_NONE) ;
 				  break ;
 				    
 				  
@@ -124,11 +119,16 @@ MessagePage::load()
     ui.loadEmbeddedImages->setChecked(Settings->getMsgLoadEmbeddedImages());
     ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
-	  //ui.encryptedMsgs_CB->setChecked(rsMail->distantMessagingEnabled()) ;
-	  
 	  // state of filter combobox
-    int index = Settings->value("DistantMessages", 0).toInt();
-    ui.comboBox->setCurrentIndex(index);
+    
+    uint32_t flags = rsMail->getDistantMessagingPermissionFlags() ;
+    
+    if(flags == (RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST | RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_ANONYMOUS))
+	    ui.comboBox->setCurrentIndex(2);
+    else if(flags == RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST)
+	    ui.comboBox->setCurrentIndex(1);
+    else
+	    ui.comboBox->setCurrentIndex(0);
 	  
     // fill items
     rsMail->getMessageTagTypes(*m_pTags);

@@ -269,6 +269,16 @@ public:
 #define RS_DISTANT_CHAT_FLAG_SIGNED               0x0001 
 #define RS_DISTANT_CHAT_FLAG_SIGNATURE_OK         0x0002 
 
+// flags to define who we accept to talk to
+
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_NONE           0x0000 
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_ANONYMOUS      0x0001 
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST   0x0002 
+
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_NONE           0x0000 
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_ANONYMOUS      0x0001 
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_CONTACT_LIST   0x0002 
+
 // Identifier for an chat endpoint like
 // neighbour peer, distant peer, chatlobby, broadcast
 class ChatId
@@ -430,9 +440,9 @@ virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 /*        Private distant messages      */
 /****************************************/
 
-virtual void enableDistantMessaging(bool b) = 0;
-virtual bool distantMessagingEnabled() = 0;
-
+    virtual uint32_t getDistantMessagingPermissionFlags()=0 ;
+    virtual void setDistantMessagingPermissionFlags(uint32_t flags)=0 ;
+    
 /****************************************/
 /*                 Chat                 */
 /****************************************/
