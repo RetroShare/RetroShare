@@ -20,6 +20,7 @@
  ****************************************************************/
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsversion.h>
+#include <retroshare/rsinit.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QTranslator>
 #include <QApplication>
@@ -90,14 +91,16 @@ VOIPPlugin::VOIPPlugin()
 	mVOIPGUIHandler = new VOIPGUIHandler ;
 	mVOIPNotify = new VOIPNotify ;
 
-	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&,int)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const RsPeerId&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&)),Qt::QueuedConnection) ;
-	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&,int)),Qt::QueuedConnection) ;
 	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const RsPeerId&,int)),Qt::QueuedConnection) ;
 
 	Q_INIT_RESOURCE(VOIP_images);
 	Q_INIT_RESOURCE(VOIP_qss);
+
+	avcodec_register_all();
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -211,9 +214,26 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 	return NULL;
 }
 
-void VOIPPlugin::qt_sound_events(SoundEvents &/*events*/) const
+void VOIPPlugin::qt_sound_events(SoundEvents &events) const
 {
-//	events.addEvent(QApplication::translate("VOIP", "VOIP"), QApplication::translate("VOIP", "Incoming call"), VOIP_SOUND_INCOMING_CALL);
+	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/sounds");
+
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Incoming audio call")
+	                , VOIP_SOUND_INCOMING_AUDIO_CALL
+	                , QFileInfo(baseDir, "incomingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Incoming video call")
+	                , VOIP_SOUND_INCOMING_VIDEO_CALL
+	                , QFileInfo(baseDir, "incomingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Outgoing audio call")
+	                , VOIP_SOUND_OUTGOING_AUDIO_CALL
+	                , QFileInfo(baseDir, "outgoingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Outgoing video call")
+	                , VOIP_SOUND_OUTGOING_VIDEO_CALL
+	                , QFileInfo(baseDir, "outgoingcall.wav").absoluteFilePath());
 }
 
 ToasterNotify *VOIPPlugin::qt_toasterNotify(){

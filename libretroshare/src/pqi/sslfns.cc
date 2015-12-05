@@ -72,102 +72,79 @@ X509_REQ *GenerateX509Req(
 		std::string loc, std::string state, std::string country, 
 		int nbits_in, std::string &errString)
 {
-	/* generate request */
-	X509_REQ *req=X509_REQ_new();
+    /* generate request */
+    X509_REQ *req=X509_REQ_new();
 
-        // setup output.
-        BIO *bio_out = NULL;
-        bio_out = BIO_new(BIO_s_file());
-        BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+    // setup output.
+    BIO *bio_out = BIO_new(BIO_s_file());
+    BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
 
-        EVP_PKEY *pkey = NULL;
+    EVP_PKEY *pkey = NULL;
+    X509_NAME *x509_name = NULL ;
+    RSA *rsa = NULL ;
 
-        // first generate a key....
-        if ((pkey=EVP_PKEY_new()) == NULL)
-        {
-                fprintf(stderr,"GenerateX509Req: Couldn't Create Key\n");
-		errString = "Couldn't Create Key";
-                return 0;
-        }
+    try
+    {
+	    // first generate a key....
+	    if ((pkey=EVP_PKEY_new()) == NULL)
+	    {
+		    fprintf(stderr,"GenerateX509Req: Couldn't Create Key\n");
+		    throw std::runtime_error("Couldn't Create Key") ;
+	    }
 
-        int nbits = 2048;
-        unsigned long e = 0x10001;
+	    int nbits = 2048;
+	    unsigned long e = 0x10001;
 
-        if ((nbits_in >= 512) && (nbits_in <= 4096))
-        {
-                nbits = nbits_in;
-        }
-        else
-        {
-                fprintf(stderr,"GenerateX509Req: strange num of nbits: %d\n", nbits_in);
-                fprintf(stderr,"GenerateX509Req: reverting to %d\n", nbits);
-        }
+	    if ((nbits_in >= 512) && (nbits_in <= 4096))
+	    {
+		    nbits = nbits_in;
+	    }
+	    else
+	    {
+		    fprintf(stderr,"GenerateX509Req: strange num of nbits: %d\n", nbits_in);
+		    fprintf(stderr,"GenerateX509Req: reverting to %d\n", nbits);
+	    }
 
+	    rsa = RSA_generate_key(nbits, e, NULL, NULL);
 
-        RSA *rsa = RSA_generate_key(nbits, e, NULL, NULL);
-        if ((rsa == NULL) || !EVP_PKEY_assign_RSA(pkey, rsa))
-        {
-                if(rsa) RSA_free(rsa);
-                fprintf(stderr,"GenerateX509Req: Couldn't Generate RSA Key!\n");
-		errString = "Couldn't generate RSA Key";
-                return 0;
-        }
+	    if ((rsa == NULL) || !EVP_PKEY_assign_RSA(pkey, rsa))
+		    throw std::runtime_error("Couldn't generate RSA Key");
 
+	    // open the file.
+	    FILE *out;
+	    if (NULL == (out = RsDirUtil::rs_fopen(pkey_file.c_str(), "w")))
+		    throw std::runtime_error("Couldn't Create Key File \"" + pkey_file + "\"");
 
-        // open the file.
-        FILE *out;
-        if (NULL == (out = RsDirUtil::rs_fopen(pkey_file.c_str(), "w")))
-        {
-                fprintf(stderr,"GenerateX509Req: Couldn't Create Key File!");
-                fprintf(stderr," : %s\n", pkey_file.c_str());
+	    const EVP_CIPHER *cipher = EVP_des_ede3_cbc();
 
-		errString = "Couldn't Create Key File";
-                return 0;
-        }
+	    if (!PEM_write_PrivateKey(out,pkey,cipher, NULL,0,NULL,(void *) passwd.c_str()))
+	    {
+		    fclose(out) ;
+		    throw std::runtime_error("Couldn't Save Private Key to file \""+pkey_file+"\"");
+	    }
 
-        const EVP_CIPHER *cipher = EVP_des_ede3_cbc();
+	    fclose(out);
 
-        if (!PEM_write_PrivateKey(out,pkey,cipher,
-                        NULL,0,NULL,(void *) passwd.c_str()))
-        {
-                fprintf(stderr,"GenerateX509Req() Couldn't Save Private Key");
-                fprintf(stderr," : %s\n", pkey_file.c_str());
+	    // We have now created a private key....
+	    std::cerr << "GenerateX509Req() Saved Private Key to file \"" << pkey_file << "\"" << std::endl;
 
-		errString = "Couldn't Save Private Key File";
-                return 0;
-        }
-        fclose(out);
+	    /********** Test Loading the private Key.... ************/
+	    FILE *tst_in = NULL;
+	    EVP_PKEY *tst_pkey = NULL;
 
-        // We have now created a private key....
-        fprintf(stderr,"GenerateX509Req() Saved Private Key");
-        fprintf(stderr," : %s\n", pkey_file.c_str());
+	    if (NULL == (tst_in = RsDirUtil::rs_fopen(pkey_file.c_str(), "rb")))
+		    throw std::runtime_error("GenerateX509Req() Couldn't Open Private Key file \""+pkey_file+"\"") ;
 
-        /********** Test Loading the private Key.... ************/
-        FILE *tst_in = NULL;
-        EVP_PKEY *tst_pkey = NULL;
-        if (NULL == (tst_in = RsDirUtil::rs_fopen(pkey_file.c_str(), "rb")))
-        {
-                fprintf(stderr,"GenerateX509Req() Couldn't Open Private Key");
-                fprintf(stderr," : %s\n", pkey_file.c_str());
+	    if (NULL == (tst_pkey = PEM_read_PrivateKey(tst_in,NULL,NULL,(void *) passwd.c_str())))
+	    {
+		    fclose(tst_in);
+		    throw std::runtime_error("GenerateX509Req() Couldn't read Private Key file \""+pkey_file+"\"") ;
+	    }
 
-		errString = "Couldn't Open Private Key";
-                return 0;
-        }
+	    fclose(tst_in);
+	    EVP_PKEY_free(tst_pkey);
 
-        if (NULL == (tst_pkey =
-                PEM_read_PrivateKey(tst_in,NULL,NULL,(void *) passwd.c_str())))
-        {
-                fprintf(stderr,"GenerateX509Req() Couldn't Read Private Key");
-                fprintf(stderr," : %s\n", pkey_file.c_str());
-
-		errString = "Couldn't Read Private Key";
-                return 0;
-        }
-        fclose(tst_in);
-        EVP_PKEY_free(tst_pkey);
-        /********** Test Loading the private Key.... ************/
-
-	/* Fill in details: fields. 
+	    /* Fill in details: fields. 
 	req->req_info;
 	req->req_info->enc;
 	req->req_info->version;
@@ -175,108 +152,88 @@ X509_REQ *GenerateX509Req(
 	req->req_info->pubkey;
 	 ****************************/
 
-	long version = 0x00;
-        unsigned long chtype = MBSTRING_UTF8;
-	X509_NAME *x509_name = X509_NAME_new();
+	    long version = 0x00;
+	    unsigned long chtype = MBSTRING_UTF8;
+	    x509_name = X509_NAME_new();
 
-        // fill in the request.
+	    // fill in the request.
 
-        /**** X509_REQ -> Version ********************************/
-        if (!X509_REQ_set_version(req,version)) /* version 1 */
-        {
-                fprintf(stderr,"GenerateX509Req(): Couldn't Set Version!\n");
+	    /**** X509_REQ -> Version ********************************/
+	    if(!X509_REQ_set_version(req,version)) /* version 1 */
+		    throw std::runtime_error("GenerateX509Req(): Couldn't Set SSL certificate Version!");
 
-		errString = "Couldn't Set Version";
-                return 0;
-        }
-        /**** X509_REQ -> Version ********************************/
-	/**** X509_REQ -> Key     ********************************/
+	    /**** X509_REQ -> Version ********************************/
+	    /**** X509_REQ -> Key     ********************************/
 
-	if (!X509_REQ_set_pubkey(req,pkey)) 
-	{
-                fprintf(stderr,"GenerateX509Req() Couldn't Set PUBKEY !\n");
+	    if (!X509_REQ_set_pubkey(req,pkey)) 
+		    throw std::runtime_error("GenerateX509Req(): Couldn't Set SSL certificate PUBKEY!");
 
-		errString = "Couldn't Set PubKey";
-		return 0;
-	}
+	    /**** SUBJECT         ********************************/
+	    // create the name.
 
-	/**** SUBJECT         ********************************/
-        // create the name.
+	    // fields to add.
+	    // commonName CN
+	    // emailAddress (none)
+	    // organizationName O
+	    // localityName L
+	    // stateOrProvinceName ST
+	    // countryName C
 
-        // fields to add.
-        // commonName CN
-        // emailAddress (none)
-        // organizationName O
-        // localityName L
-        // stateOrProvinceName ST
-        // countryName C
+	    if (0 == strlen(name.c_str()))
+		    throw std::runtime_error("No name! Aborting.") ;
 
-        if (0 < strlen(name.c_str()))
-        {
-                X509_NAME_add_entry_by_txt(x509_name, "CN", chtype,
-                        (unsigned char *) name.c_str(), -1, -1, 0);
-        }
-        else
-        {
-                fprintf(stderr,"GenerateX509Req(): No Name -> Not creating X509 Cert Req\n");
-		errString = "No Name, Aborting";
-                return 0;
-        }
+	    X509_NAME_add_entry_by_txt(x509_name, "CN", chtype, (unsigned char *) name.c_str(), -1, -1, 0);
 
-	if (0 < strlen(email.c_str()))
-	{
-		//X509_NAME_add_entry_by_txt(x509_name, "Email", 0, 
-		//  (unsigned char *) ui -> gen_email -> value(), -1, -1, 0);
-		X509_NAME_add_entry_by_NID(x509_name, 48, 0, 
-			(unsigned char *) email.c_str(), -1, -1, 0);
-	}
+	    if (0 < strlen(email.c_str()))
+		    X509_NAME_add_entry_by_NID(x509_name, 48, 0,  (unsigned char *) email.c_str(), -1, -1, 0);
 
-	if (0 < strlen(org.c_str()))
-	{
-		X509_NAME_add_entry_by_txt(x509_name, "O", chtype, 
-			(unsigned char *) org.c_str(), -1, -1, 0);
-	}
+	    if (0 < strlen(org.c_str()))
+		    X509_NAME_add_entry_by_txt(x509_name, "O", chtype,  (unsigned char *) org.c_str(), -1, -1, 0);
 
-	if (0 < strlen(loc.c_str()))
-	{
-		X509_NAME_add_entry_by_txt(x509_name, "L", chtype, 
-			(unsigned char *) loc.c_str(), -1, -1, 0);
-	}
+	    if (0 < strlen(loc.c_str()))
+		    X509_NAME_add_entry_by_txt(x509_name, "L", chtype,  (unsigned char *) loc.c_str(), -1, -1, 0);
 
-	if (0 < strlen(state.c_str()))
-	{
-		X509_NAME_add_entry_by_txt(x509_name, "ST", chtype, 
-			(unsigned char *) state.c_str(), -1, -1, 0);
-	}
+	    if (0 < strlen(state.c_str()))
+		    X509_NAME_add_entry_by_txt(x509_name, "ST", chtype,  (unsigned char *) state.c_str(), -1, -1, 0);
 
-	if (0 < strlen(country.c_str()))
-	{
-		X509_NAME_add_entry_by_txt(x509_name, "C", chtype, 
-			(unsigned char *) country.c_str(), -1, -1, 0);
-	}
+	    if (0 < strlen(country.c_str()))
+		    X509_NAME_add_entry_by_txt(x509_name, "C", chtype,  (unsigned char *) country.c_str(), -1, -1, 0);
 
-	if (!X509_REQ_set_subject_name(req,x509_name))
-	{
-		fprintf(stderr,"GenerateX509Req() Couldn't Set Name to Request!\n");
-		X509_NAME_free(x509_name);
+	    if (!X509_REQ_set_subject_name(req,x509_name))
+		    throw std::runtime_error("GenerateX509Req() Couldn't Set Name to Request!");
 
-		errString = "Couldn't Set Name";
-		return 0;
-	}
+	    X509_NAME_free(x509_name);
 
-	X509_NAME_free(x509_name);
-	/**** SUBJECT         ********************************/
+	    /**** SUBJECT         ********************************/
 
-	if (!X509_REQ_sign(req,pkey,EVP_sha1()))
-	{
-		fprintf(stderr,"GenerateX509Req() Failed to Sign REQ\n");
+	    if (!X509_REQ_sign(req,pkey,EVP_sha1()))
+		    throw std::runtime_error("GenerateX509Req() Failed to sign REQ");
 
-		errString = "Couldn't Sign Req";
-		return 0;
-	}
+	    errString = "No Error";
 
-	errString = "No Error";
-	return req;
+	    return req;
+    }
+    catch(std::exception& e)
+    {
+	    std::cerr << "(EE) Key creation failed: " << e.what() << std::endl;
+	    errString = e.what() ;
+        req = NULL ;
+    }
+    
+
+    if(rsa) 
+	    RSA_free(rsa);
+
+    if(x509_name) 
+	    X509_NAME_free(x509_name);
+    
+    if(bio_out)
+        BIO_free_all(bio_out) ;
+
+    if(pkey)
+	    EVP_PKEY_free(pkey);
+    
+    return req ;
 }
 
 #define SERIAL_RAND_BITS 	64

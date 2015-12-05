@@ -39,6 +39,7 @@
 #ifndef PRINTPREVIEW_H
 #define PRINTPREVIEW_H
 
+#include <QAbstractScrollArea>
 #include <QMainWindow>
 #include <QPrinter>
 #include <QPointF>
@@ -67,6 +68,35 @@ private:
     QTextDocument *doc;
     PreviewView *view;
     QPrinter printer;
+};
+
+class PreviewView : public QAbstractScrollArea
+{
+    Q_OBJECT
+public:
+    PreviewView(QTextDocument *document, PrintPreview *printPrev);
+
+    inline void updateLayout() { resizeEvent(0); viewport()->update(); }
+
+public slots:
+    void zoomIn();
+    void zoomOut();
+
+protected:
+    virtual void paintEvent(QPaintEvent *e);
+    virtual void resizeEvent(QResizeEvent *);
+    virtual void mousePressEvent(QMouseEvent *e);
+    virtual void mouseMoveEvent(QMouseEvent *e);
+    virtual void mouseReleaseEvent(QMouseEvent *e);
+
+private:
+    void paintPage(QPainter *painter, int page);
+    QTextDocument *doc;
+    qreal scale;
+    int interPageSpacing;
+    QPoint mousePressPos;
+    QPoint scrollBarValuesOnMousePress;
+    PrintPreview *printPreview;
 };
 
 #endif // PRINTPREVIEW_H

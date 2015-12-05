@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1597</width>
-    <height>811</height>
+    <width>812</width>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="BWGraph" name="bwgraph_BW">
      <property name="frameShape">
@@ -44,7 +47,17 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="friend_CB"/>
+       <widget class="QComboBox" name="friend_CB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_2">
@@ -75,7 +88,17 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="service_CB"/>
+       <widget class="QComboBox" name="service_CB">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_4">
@@ -94,7 +117,7 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>726</width>
+          <width>20</width>
           <height>20</height>
          </size>
         </property>

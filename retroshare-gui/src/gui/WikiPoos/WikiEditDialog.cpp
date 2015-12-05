@@ -733,7 +733,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
-		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID);
+		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID, false);
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
 		ui.treeWidget_History->addTopLevelItem(modItem);
@@ -847,7 +847,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
-		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID);
+		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID, false);
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
 
 		/* find the parent */

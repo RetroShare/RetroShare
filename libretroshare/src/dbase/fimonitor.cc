@@ -175,6 +175,7 @@ HashCache::HashCache(const std::string& path)
 
 		if(!f->good())
 		{
+            		delete f ;
 			std::cerr << "Unencrypted file cache not present either." << std::endl;
 			return ;
 		}

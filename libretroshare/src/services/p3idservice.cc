@@ -56,6 +56,8 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
 
+#define GXSID_MAX_CACHE_SIZE 5000
+
 static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
 static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
 
@@ -144,8 +146,8 @@ RsIdentity *rsIdentity = NULL;
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
+	mPublicKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPublicKeyCache"), 
+	mPrivateKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
 	mIdMtx("p3IdService"), mNes(nes),
 	mPgpUtils(pgpUtils)
 {
@@ -412,6 +414,8 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
         if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
             details.mNickname = "[too long a name]" ;
+        
+        rsReputations->getReputationInfo(id,details.mReputation) ;
 
             return true;
         }
@@ -421,6 +425,9 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+        rsReputations->getReputationInfo(id,details.mReputation) ;
+        
             return true;
         }
     }
@@ -831,7 +838,7 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		rep.id = id;
-                rep.score = data.details.mReputation.mOverallScore;
+                rep.score = 0;//data.details.mReputation.mOverallScore;
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::getReputation() id: ";
                 std::cerr << id.toStdString() << " score: " <<
@@ -1669,14 +1676,14 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 		}
 
 		// copy over Reputation scores.
-		details.mReputation = ssdata.score.rep;
+		//details.mReputation = ssdata.score.rep;
 	}
 	else
 	{
 		details.mPgpKnown = false;
 		details.mPgpId.clear();
-		details.mReputation.updateIdScore(false, false);
-		details.mReputation.update();
+		//details.mReputation.updateIdScore(false, false);
+		//details.mReputation.update();
 	}
 }
 

@@ -717,9 +717,9 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		}// for (int i = 0; i < lst.count(); ++i)
 	}// if (!items.empty())
 
-	if (atLeastOne_Downloading) {
+	if (atLeastOne_Waiting || atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Paused) {
 		contextMnu.addMenu( &prioritySpeedMenu) ;
-	}//if (atLeastOne_Downloading)
+	}
 	if (atLeastOne_Queued) {
 		contextMnu.addMenu( &priorityQueueMenu) ;
 	}//if (atLeastOne_Queued)
@@ -1076,6 +1076,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 	}
 
 	return row;
+	
 }
 
 int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
@@ -1401,6 +1402,13 @@ void TransfersDialog::insertTransfers()
 	}
 
 	ui.uploadsList->setSortingEnabled(true);
+	
+	downloads = tr("Downloads") + " (" + QString::number(DLListModel->rowCount()) + ")";
+	uploads    = tr("Uploads") + " (" + QString::number(ULListModel->rowCount()) + ")" ;
+
+	ui.tabWidget->setTabText(0,  downloads);
+	ui.tabWidget_2->setTabText(0, uploads);
+
 }
 
 QString TransfersDialog::getPeerName(const RsPeerId& id) const

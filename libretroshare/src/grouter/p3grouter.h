@@ -130,6 +130,7 @@ public:
     //===================================================//
 
     virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
+    virtual void addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id) ;
 
     //===================================================//
     //         Client/server request services            //
@@ -167,6 +168,7 @@ public:
     // 	- Cache state (memory size, etc)
     //
     virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
+    virtual bool getTrackingInfo(const RsGxsMessageId& mid, RsPeerId& provider_id) ;
 
     //===================================================//
     //         Derived from p3Service                    //
@@ -223,7 +225,9 @@ private:
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
     static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
-
+#ifdef __APPLE__
+public:
+#endif
     class nullstream: public std::ostream {};
 
     std::ostream& grouter_debug() const
@@ -232,7 +236,9 @@ private:
 
         return _debug_enabled?(std::cerr):null;
     }
-
+#ifdef __APPLE__
+private:
+#endif
     void routePendingObjects() ;
     void handleTunnels() ;
     void autoWash() ;
@@ -299,7 +305,6 @@ private:
     // 	- real time routing probabilities
     //
     GRouterMatrix _routing_matrix ;
-
 
     // Stores the keys which identify the router's node. For each key, a structure holds:
     // 	- the client service

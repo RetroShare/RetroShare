@@ -198,7 +198,7 @@ void tls_cleanup()
 	CRYPTO_set_locking_callback(NULL);
 	CRYPTO_set_id_callback(NULL);
 
-	if (mutex_buf == NULL) {
+	if (mutex_buf != NULL) {
 		for (int i = 0; i < CRYPTO_num_locks(); i++) {
 			pthread_mutex_destroy(&mutex_buf[i]);
 		}

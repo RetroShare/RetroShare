@@ -50,7 +50,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 	private:
 		QTimer *_update_timer ;
 		DistantChatPeerId _tunnel_id ;
-		QLabel *_status_label ;
+		QToolButton *_status_label ;
 
 		friend class ChatDialog;
 };

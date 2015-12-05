@@ -964,24 +964,25 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 	if (flags == RS_NET_CONN_UDP_ALL)
 	{
 #ifdef LINKMGR_DEBUG
-#endif
 		std::cerr << "p3LinkMgrIMPL::connectResult() Sending Feedback for UDP connection";
 		std::cerr << std::endl;
+#endif
 		if (success)
 		{
 #ifdef LINKMGR_DEBUG
-#endif
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update CONNECTED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONNECTED);
 		}
 		else
 		{
 #ifdef LINKMGR_DEBUG
-#endif
+
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update FAILED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			/* have no differentiation between failure and closed? */
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONN_FAILED);
@@ -1624,6 +1625,17 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 	/* first possibility - is it a hidden peer */
 	if (mPeerMgr->isHiddenPeer(id))
 	{
+		/* check for valid hidden type */
+		uint32_t type = mPeerMgr->getHiddenType(id);
+		if (type & (~RS_HIDDEN_TYPE_MASK))
+		{
+#ifdef LINKMGR_DEBUG
+			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() invalid hidden type (" << type << ") -> return false";
+			std::cerr << std::endl;
+#endif
+			return false;
+		}
+
 		struct sockaddr_storage proxy_addr;
 		std::string domain_addr;
 		uint16_t domain_port;
@@ -1636,7 +1648,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 	        	std::map<RsPeerId, peerConnectState>::iterator it;
 			if (mFriendList.end() != (it = mFriendList.find(id)))
 			{
-				locked_ConnectAttempt_ProxyAddress(&(it->second), proxy_addr, domain_addr, domain_port);
+				locked_ConnectAttempt_ProxyAddress(&(it->second), type, proxy_addr, domain_addr, domain_port);
 				return locked_ConnectAttempt_Complete(&(it->second));
 			}
 		}
@@ -1698,7 +1710,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
@@ -1719,13 +1731,8 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		return false;
 	}
 
-	bool isValid = sockaddr_storage_isValidNet(addr);
-	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
-	//	bool isPrivate = sockaddr_storage_isPrivateNet(addr);
-	bool isExternal = sockaddr_storage_isExternalNet(addr);
-
 	/* if invalid - quick rejection */
-	if (!isValid)
+	if ( ! sockaddr_storage_isValidNet(addr) )
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - INVALID";
@@ -1760,60 +1767,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
         return false ;
     }
 
-	/* if it is an external address, we'll accept it.
-	 * - even it is meant to be a local address.
-	 */
-	if (isExternal)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* if loopback, then okay - probably proxy connection (or local testing).
-	 */
-	if (isLoopback)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - LOOPBACK"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* get here, it is private or loopback 
-	 *  - can only connect to these addresses if we are on the same subnet.
-	    - check net against our local address.
-	 */
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() Checking sameNet against: "; 
-	std::cerr << sockaddr_storage_iptostring(mLocalAddress);
-	std::cerr << ")";
-	std::cerr << std::endl;
-#endif
-
-	if (sockaddr_storage_samenet(mLocalAddress, addr))
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - PRIVATE & !sameNET"; 
-	std::cerr << std::endl;
-#endif
-
-	/* else it fails */
-	return false;
-
+	return true;
 }
 
 
@@ -2018,7 +1972,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() trying address: " << domain_addr << ":" << domain_port << std::endl;
@@ -2026,7 +1980,22 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	peerConnectAddress pca;
 	pca.addr = proxy_addr;
 
-	pca.type = RS_NET_CONN_TCP_HIDDEN;
+	switch (type) {
+	case RS_HIDDEN_TYPE_TOR:
+		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
+		break;
+	case RS_HIDDEN_TYPE_I2P:
+		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+		/**** THIS CASE SHOULD NOT BE TRIGGERED - since this function is called with a valid hidden type only ****/
+		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> THIS SHOULD NEVER HAPPEN!" << std::endl;
+		std::cerr << " - peer : " << peer->id << "(" << peer->name << ")" << std::endl;
+		std::cerr << " - proxy: " << sockaddr_storage_tostring(proxy_addr) << std::endl;
+		std::cerr << " - addr : " << domain_addr << ":" << domain_port << std::endl;
+		pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
+	}
 
 	//for the delay, we add a random time and some more time when the friend list is big
 	pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;

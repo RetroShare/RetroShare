@@ -19,20 +19,67 @@ INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 #################################### Windows #####################################
 
 linux-* {
-	INCLUDEPATH += /usr/include
-	LIBS += $$system(pkg-config --libs opencv)
+	CONFIG += link_pkgconfig
+
+	PKGCONFIG += libavcodec libavutil
+	PKGCONFIG += speex speexdsp
+	PKGCONFIG += opencv
+} else {
+	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }
 
 win32 {
-	# ffmpeg
-	QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
-	LIBS_DIR = $$PWD/../../../libs
-	LIBS += -L"$$LIBS_DIR/lib/opencv"
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
-	OPENCV_VERSION = 249
-	LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
+	OPENCV_VERSION = "249"
+	USE_PRECOMPILED_LIBS =
+	for(lib, LIB_DIR) {
+#message(Scanning $$lib)
+		exists( $$lib/opencv/libopencv_core249.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv 249 libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/opencv/libopencv_core.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_core.dll.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_videoio.dll.a) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_videoio
+		}
+	}
+	isEmpty(USE_PRECOMPILED_LIBS) {
+		message(Use system opencv libraries.)
+		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+	}
+	LIBS += -lz -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
+	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
+
+# ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 QMAKE_CXXFLAGS *= -Wall
 
@@ -98,5 +145,3 @@ TRANSLATIONS +=  \
             lang/VOIP_sv.ts \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
-
-LIBS += -lspeex -lspeexdsp -lavformat -lavcodec -lavutil

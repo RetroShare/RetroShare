@@ -780,7 +780,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 			fclose(file);
 			return 0;
 		}
-		int bytesread = 0 ;
+		uint64_t bytesread = 0 ;
 		if(size != (bytesread = fread(compressed_data,1,size,file)))
 		{
 			std::cerr << "FileIndex::loadIndex(): can't read " << size << " bytes from file " << filename << ". Only " << bytesread << " actually read." << std::endl;
@@ -1089,7 +1089,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 		std::cerr << "FileIndex::saveIndex error opening file for writting: " << filename << ". Giving up." << std::endl;
 		return 0;
 	}
-	int outwritten ;
+	uint32_t outwritten ;
 
 	if(compressed_data_size != (outwritten=fwrite(compressed_data,1,compressed_data_size,file)))
 	{
@@ -1370,7 +1370,7 @@ void *FileIndex::findRef(const std::string& fpath) const
 		std::cerr << "FileIndex::updateFileEntry() NULL parent";
 		std::cerr << std::endl;
 //#endif
-		return false;
+		return NULL;
 	}
 	std::cerr << "Found parent directory: " << std::endl;
 	std::cerr << "  parent.name = " << parent->name << std::endl;

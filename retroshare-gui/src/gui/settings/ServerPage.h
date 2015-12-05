@@ -25,6 +25,7 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
 #include "RsAutoUpdatePage.h"
+#include <inttypes.h>
 
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -52,6 +53,7 @@ public slots:
     void updateStatus();
 
 private slots:
+    // ban list
     void updateSelectedBlackListIP(int row, int, int, int);
     void updateSelectedWhiteListIP(int row,int,int,int);
     void addIpRangeToBlackList();
@@ -69,25 +71,27 @@ private slots:
     void ipFilterContextMenu(const QPoint &);
     void ipWhiteListContextMenu(const QPoint &point);
     void removeBannedIp();
+
+    // server
     void saveAddresses();
     void toggleUPnP();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
     void clearKnownAddressList() ;
     void handleNetworkReply(QNetworkReply *reply);
-    void updateTorInProxyIndicator();
+    void updateInProxyIndicator();
 
 private:
-
-    // Alternative Versions for HiddenNode Mode.
+    // ban list
     void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
     bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
     bool removeCurrentRowFromWhiteList(sockaddr_storage &collected_addr, int &masked_bytes);
+
+    // Alternative Versions for HiddenNode Mode.
     void loadHiddenNode();
     void updateStatusHiddenNode();
     void saveAddressesHiddenNode();
-    void updateTorOutProxyIndicator();
-    void updateLocInProxyIndicator();
+    void updateOutProxyIndicator();
     void loadFilteredIps() ;
 
     Ui::ServerPage ui;
@@ -95,6 +99,7 @@ private:
     QNetworkAccessManager *manager ;
 
     bool mIsHiddenNode;
+	uint32_t mHiddenType;
 };
 
 #endif // !SERVERPAGE_H

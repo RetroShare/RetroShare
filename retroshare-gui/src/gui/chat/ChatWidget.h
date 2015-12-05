@@ -94,6 +94,7 @@ public:
 
 	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
+	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
     void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
@@ -108,9 +109,8 @@ public:
 	// Adds one widget in the chat bar. Used to add e.g. new buttons. The widget should be
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
-	
-	
-	void addVOIPBarWidget(QWidget *w);
+	void addTitleBarWidget(QWidget *w);
+	void hideChatText(bool hidden);
 	RSButtonOnText* getNewButtonOnTextBrowser();
 	RSButtonOnText* getNewButtonOnTextBrowser(QString text);
 

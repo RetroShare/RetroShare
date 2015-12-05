@@ -40,6 +40,7 @@ public:
 
 	void newMsg(); /* cleanup */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+void  insertPastedText(QString msg) ;
 
 private slots:
 	void fileHashingFinished(QList<HashedFile> hashedFiles);

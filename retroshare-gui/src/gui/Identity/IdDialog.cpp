@@ -32,8 +32,10 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
+#include <retroshare/rsreputations.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
 #include <iostream>
@@ -55,6 +57,7 @@
 #define RSID_COL_NICKNAME   0
 #define RSID_COL_KEYID      1
 #define RSID_COL_IDTYPE     2
+#define RSID_COL_VOTES      3
 
 #define RSIDREP_COL_NAME       0
 #define RSIDREP_COL_OPINION    1
@@ -91,19 +94,10 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->toolButton_Reputation);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repModButton);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Accept);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Ban);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Negative);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Positive);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_Custom);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->repMod_spinBox);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->ownOpinion_CB);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
@@ -112,23 +106,16 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 //	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
-    mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingImplicit);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingOwn);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->line_RatingPeers);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 
 	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui->treeWidget_RepList);
@@ -147,7 +134,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-	connect(ui->repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
+	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
 
@@ -183,12 +170,15 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	ui->idTreeWidget->enableColumnCustomize(true);
 	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
-
+	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
-	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 18 * fontWidth);
-	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 25 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_KEYID, 20 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
+	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 7 * fontWidth);
+	
+	//QHeaderView_setSectionResizeMode(ui->idTreeWidget->header(), QHeaderView::ResizeToContents);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
@@ -197,7 +187,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	// Hiding RepList until that part is finished.
 	//ui->treeWidget_RepList->setVisible(false);
-	ui->toolButton_Reputation->setVisible(false);
+    
 #ifndef UNFINISHED
 	ui->todoPushButton->hide() ;
 #endif
@@ -225,8 +215,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	processSettings(true);
 
     // hide reputation sice it's currently unused
-    ui->reputationGroupBox->hide();
-    ui->tweakGroupBox->hide();
+    //ui->reputationGroupBox->hide();
+    //ui->tweakGroupBox->hide();
 }
 
 IdDialog::~IdDialog()
@@ -300,6 +290,24 @@ void IdDialog::updateSelection()
 	}
 }
 
+static QString getHumanReadableDuration(uint32_t seconds)
+{
+    if(seconds < 60)
+        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
+    else if(seconds < 120)
+        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
+    else if(seconds < 3600)
+        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
+    else if(seconds < 7200)
+        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
+    else if(seconds < 24*3600)
+        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
+    else if(seconds < 2*24*3600)
+        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
+    else 
+        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
+}
+
 void IdDialog::requestIdList()
 {
 	//Disable by default, will be enable by insertIdDetails()
@@ -366,11 +374,17 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	if (!item)
         item = new QTreeWidgetItem();
+        
+        RsReputations::ReputationInfo info ;
+        rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+    
+    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore - 1.0f,'f',3));
 
 	 if(isOwnId)
 	 {
@@ -491,6 +505,9 @@ void IdDialog::insertIdList(uint32_t token)
 			ui->idTreeWidget->addTopLevelItem(item);
 		}
 	}
+	
+	/* count items */
+	ui->label_count->setText( "(" + QString::number(ui->idTreeWidget->topLevelItemCount()) + ")" );
 
 	filterIds();
 
@@ -522,23 +539,6 @@ void IdDialog::requestIdDetails()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
-static QString getHumanReadableDuration(uint32_t seconds)
-{
-    if(seconds < 60)
-        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
-    else if(seconds < 120)
-        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
-    else if(seconds < 3600)
-        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
-    else if(seconds < 7200)
-        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
-    else if(seconds < 24*3600)
-        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
-    else if(seconds < 2*24*3600)
-        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
-    else 
-        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
-}
 
 void IdDialog::insertIdDetails(uint32_t token)
 {
@@ -652,36 +652,9 @@ void IdDialog::insertIdDetails(uint32_t token)
     else
         ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
 
-    //	if (isOwnId)
-//	{
-//		ui->radioButton_IdYourself->setChecked(true);
-//	}
-//	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-//	{
-//		if (data.mPgpKnown)
-//		{
-//			if (rsPeers->isGPGAccepted(data.mPgpId))
-//			{
-//				ui->radioButton_IdFriend->setChecked(true);
-//			}
-//			else
-//			{
-//				ui->radioButton_IdFOF->setChecked(true);
-//			}
-//		}
-//		else
-//		{
-//			ui->radioButton_IdOther->setChecked(true);
-//		}
-//	}
-//	else
-//	{
-//		ui->radioButton_IdPseudo->setChecked(true);
-//	}
-
 	if (isOwnId)
 	{
-		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, false);
+		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
@@ -690,7 +663,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	else
 	{
 		// No Reputation yet!
-		mStateHelper->setWidgetEnabled(ui->toolButton_Reputation, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
@@ -698,9 +671,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 	}
 
 	/* now fill in the reputation information */
-	ui->line_RatingOverall->setText("Overall Rating TODO");
-	ui->line_RatingOwn->setText("Own Rating TODO");
 
+#ifdef SUSPENDED
 	if (data.mPgpKnown)
 	{
 		ui->line_RatingImplicit->setText(tr("+50 Known PGP"));
@@ -713,25 +685,28 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		ui->line_RatingImplicit->setText(tr("+5 Anon Id"));
 	}
-
-	{
-		QString rating = QString::number(data.mReputation.mOverallScore);
-		ui->line_RatingOverall->setText(rating);
-	}
-
 	{
 		QString rating = QString::number(data.mReputation.mIdScore);
 		ui->line_RatingImplicit->setText(rating);
 	}
 
-	{
-		QString rating = QString::number(data.mReputation.mOwnOpinion);
-		ui->line_RatingOwn->setText(rating);
-	}
+#endif
 
+    RsReputations::ReputationInfo info ;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
+    
+	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+
+	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
+	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    
+    switch(info.mOwnOpinion)
 	{
-		QString rating = QString::number(data.mReputation.mPeerOpinion);
-		ui->line_RatingPeers->setText(rating);
+        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
+        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
+        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
+        default:
+            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
 	}
 }
 
@@ -743,47 +718,38 @@ void IdDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
+    
+    	RsReputations::Opinion op ;
 
-	int mod = 0;
-	if (ui->repMod_Accept->isChecked())
-	{
-		mod += 100;
-	}
-	else if (ui->repMod_Positive->isChecked())
-	{
-		mod += 10;
-	}
-	else if (ui->repMod_Negative->isChecked())
-	{
-		mod += -10;
-	}
-	else if (ui->repMod_Ban->isChecked())
-	{
-		mod += -100;
-	}
-	else if (ui->repMod_Custom->isChecked())
-	{
-		mod += ui->repMod_spinBox->value();
-	}
-	else
-	{
-		// invalid
-		return;
-	}
+    	switch(ui->ownOpinion_CB->currentIndex())
+        {
+        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
+        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
+        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
+        default:
+            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+            
+        }
+    	rsReputations->setOwnOpinion(id,op) ;
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
 	std::cerr << std::endl;
 #endif
 
+#ifdef SUSPENDED
+    	// Cyril: apparently the old reputation system was in used here. It's based on GXS data exchange, and probably not
+    	// very efficient because of this.
+    
 	uint32_t token;
-	if (!rsIdentity->submitOpinion(token, id, false, mod))
+	if (!rsIdentity->submitOpinion(token, id, false, op))
 	{
 #ifdef ID_DEBUG
 		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
 		std::cerr << std::endl;
 #endif
 	}
+#endif
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
@@ -792,7 +758,8 @@ void IdDialog::modifyReputation()
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-	mIdQueue->queueRequest(token, 0, 0, IDDIALOG_REFRESH);
+    requestIdDetails();
+    requestIdList();
 
 	return;
 }
@@ -983,6 +950,29 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
+			
+			contextMnu.addSeparator();
+      
+			RsReputations::ReputationInfo info ;
+			std::string Id = item->text(RSID_COL_KEYID).toStdString();
+			rsReputations->getReputationInfo(RsGxsId(Id),info) ;
+    
+
+			QAction *banaction = contextMnu.addAction(QIcon(":/images/denied16.png"), tr("Ban this person"), this, SLOT(banPerson()));
+			QAction *unbanaction = contextMnu.addAction(QIcon(), tr("Unban this person"), this, SLOT(unbanPerson()));
+
+			
+			if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
+			{
+				banaction->setVisible(false);
+				unbanaction->setVisible(true);
+			}
+			else
+			{
+				banaction->setVisible(true);
+				unbanaction->setVisible(false);
+			}
+
 		}
 	}
 
@@ -1041,4 +1031,36 @@ void IdDialog::sendMsg()
 
     /* window will destroy itself! */
 
+}
+
+void IdDialog::banPerson()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEGATIVE) ;
+
+	requestIdDetails();
+	requestIdList();
+}
+
+void IdDialog::unbanPerson()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_POSITIVE) ;
+
+	requestIdDetails();
+	requestIdList();
 }

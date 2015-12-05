@@ -367,7 +367,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
+#ifdef __APPLE__
+ 				>> help('h',"help","Display this Help") ;
+#else
 				>> help() ;
+#endif
 
 			as.defaultErrorHandling(true) ;
 
@@ -821,6 +825,7 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
+RsReputations *rsReputations = NULL ;
 #ifdef ENABLE_GROUTER
 RsGRouter *rsGRouter = NULL ;
 #endif
@@ -849,6 +854,7 @@ RsGRouter *rsGRouter = NULL ;
         #endif
 #endif
 	
+#include "services/p3gxsreputation.h"
 #include "services/p3serviceinfo.h"
 #include "services/p3heartbeat.h"
 #include "services/p3discovery2.h"
@@ -1253,7 +1259,7 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifndef WINDOWS_SYS
-	plugins_directories.push_back(std::string(LIB_DIR) + "/retroshare/extensions6/") ;
+	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
@@ -1359,6 +1365,11 @@ int RsServer::StartupRetroShare()
 
     mPosted->setNetworkExchangeService(posted_ns) ;
 
+    	/**** Reputation system ****/
+    
+    	p3GxsReputation *mReputations = new p3GxsReputation(mLinkMgr) ;
+    	rsReputations = mReputations ;
+        
         /**** Wiki GXS service ****/
 
 
@@ -1366,9 +1377,9 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
+#ifdef RS_USE_WIKI
         p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
-
-        // create GXS photo service
+        // create GXS wiki service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr, 
 			mWiki, mWiki->getServiceInfo(), 
@@ -1376,6 +1387,7 @@ int RsServer::StartupRetroShare()
 			pgpAuxUtils);
 
     mWiki->setNetworkExchangeService(wiki_ns) ;
+#endif
 
         /**** Forum GXS service ****/
 
@@ -1445,7 +1457,9 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxsid_ns, true);
         pqih->addService(gxscircles_ns, true);
         pqih->addService(posted_ns, true);
+#ifdef RS_USE_WIKI
         pqih->addService(wiki_ns, true);
+#endif
         pqih->addService(gxsforums_ns, true);
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
@@ -1497,6 +1511,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(chatSrv,true);
 	pqih -> addService(mStatusSrv,true);
 	pqih -> addService(mGxsTunnels,true);
+	pqih -> addService(mReputations,true);
 
 	// set interfaces for plugins
 	//
@@ -1518,6 +1533,7 @@ int RsServer::StartupRetroShare()
     interfaces.mGxsForums       = mGxsForums;
     interfaces.mGxsChannels     = mGxsChannels;
 	interfaces.mGxsTunnels = mGxsTunnels;
+    interfaces.mReputations     = mReputations;
     
 	mPluginsManager->setInterfaces(interfaces);
 
@@ -1606,12 +1622,13 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
-    mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-    mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
-    mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
-    mConfigMgr->addConfiguration("turtle.cfg", tr);
-    mConfigMgr->addConfiguration("banlist.cfg", mBanList);
-    mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
+	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
+	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
+	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
+	mConfigMgr->addConfiguration("turtle.cfg", tr);
+	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
+	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
@@ -1627,7 +1644,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
 	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+#ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
+#endif
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
@@ -1736,7 +1755,9 @@ int RsServer::StartupRetroShare()
 	// Must Set the GXS pointers before starting threads.
     rsIdentity = mGxsIdService;
     rsGxsCircles = mGxsCircles;
+#if RS_USE_WIKI
     rsWiki = mWiki;
+#endif
     rsPosted = mPosted;
     rsGxsForums = mGxsForums;
     rsGxsChannels = mGxsChannels;
@@ -1747,7 +1768,9 @@ int RsServer::StartupRetroShare()
     startServiceThread(mGxsIdService);
     startServiceThread(mGxsCircles);
     startServiceThread(mPosted);
+#if RS_USE_WIKI
     startServiceThread(mWiki);
+#endif
     startServiceThread(mGxsForums);
     startServiceThread(mGxsChannels);
 
@@ -1758,7 +1781,9 @@ int RsServer::StartupRetroShare()
     startServiceThread(gxsid_ns);
     startServiceThread(gxscircles_ns);
     startServiceThread(posted_ns);
+#if RS_USE_WIKI
     startServiceThread(wiki_ns);
+#endif
     startServiceThread(gxsforums_ns);
     startServiceThread(gxschannels_ns);
 

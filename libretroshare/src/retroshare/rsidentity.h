@@ -32,6 +32,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsids.h"
 #include "serialiser/rstlvimage.h"
 #include "retroshare/rsgxscommon.h"
@@ -158,8 +159,7 @@ class RsIdentityDetails
 {
 public:
     RsIdentityDetails()
-            :mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-              mReputation(), mLastUsageTS(0) { return; }
+            :mIsOwnId(false), mPgpLinked(false), mPgpKnown(false), mLastUsageTS(0) { return; }
 
     RsGxsId mId;
 
@@ -175,8 +175,12 @@ public:
     // Recogn details.
     std::list<RsRecognTag> mRecognTags;
 
-    // reputation details.
-    GxsReputation mReputation;
+    // Cyril: Reputation details. At some point we might want to merge information
+    // between the two into a single global score. Since the old reputation system
+    // is not finished yet, I leave this in place. We should decide what to do with it.
+    
+    GxsReputation mReputation_oldSystem;		// this is the old "mReputation" field, which apparently is not used.
+    RsReputations::ReputationInfo mReputation;
 
     // avatar
     RsGxsImage mAvatar ;
@@ -214,7 +218,7 @@ public:
 
 /********************************************************************************************/
 /********************************************************************************************/
-
+    
 	// For Other Services....
 	// It should be impossible for them to get a message which we don't have the identity.
 	// Its a major error if we don't have the identity.

@@ -183,9 +183,24 @@ void QuickStartWizard::on_pushButtonSharesExit_clicked()
         close();
 }
 
-void QuickStartWizard::on_pushButtonSystemBack_clicked()
+void QuickStartWizard::on_pushButtonStyleBack_clicked()
 {
         ui.pagesWizard->setCurrentIndex(2);
+}
+
+void QuickStartWizard::on_pushButtonStyleNext_clicked()
+{
+        ui.pagesWizard->setCurrentIndex(4);
+}
+
+void QuickStartWizard::on_pushButtonStyleExit_clicked()
+{
+        close();
+}
+
+void QuickStartWizard::on_pushButtonSystemBack_clicked()
+{
+        ui.pagesWizard->setCurrentIndex(3);
 }
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
@@ -390,6 +405,9 @@ QuickStartWizard::loadGeneral()
   ui.checkBoxStartMinimized->setChecked(Settings->getStartMinimized());
   ui.checkBoxQuit->setChecked(Settings->value("doQuit", false).toBool());
   
+  ui.rbtPageOnToolBar->setChecked(Settings->getPageButtonLoc());
+	ui.rbtPageOnListItem->setChecked(!Settings->getPageButtonLoc());
+
   //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
@@ -419,6 +437,12 @@ void QuickStartWizard::loadNetwork()
 		case RS_NETMODE_UDP:
 			netIndex = 1;
 			break;
+        case RS_NETMODE_HIDDEN:
+            ui.netModeLabel->hide();
+            ui.netModeComboBox->hide();
+            ui.discoveryLabel->hide();
+            ui.discoveryComboBox->hide();
+            break;
 		default:
 		case RS_NETMODE_UPNP:
 			netIndex = 0;
@@ -471,6 +495,8 @@ void QuickStartWizard::saveChanges()
 	QString str;
 
 	//bool saveAddr = false;
+
+	Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());
 
 
 	RsPeerDetails detail;

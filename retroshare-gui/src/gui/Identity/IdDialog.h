@@ -75,6 +75,9 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
 
+	void banPerson();
+	void unbanPerson();
+
 private:
 	void processSettings(bool load);
 

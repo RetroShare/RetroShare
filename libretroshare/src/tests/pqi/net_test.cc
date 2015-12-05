@@ -211,46 +211,6 @@ bool test_local_address_manipulation()
 	return true;
 }
 
-
-
-#if 0
-
-std::ostream &showSocketError(std::ostream &out);
-
-std::string socket_errorType(int err);
-int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr1 );
-int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
-
-std::list<std::string> getLocalInterfaces(); // returns all possible addrs.
-bool    isExternalNet(struct in_addr *addr); // if Valid & is not Private or Loopback.
-bool	isPrivateNet(struct in_addr *addr); // if inside 10.0.0.0 or 
-						// other then firewalled.
-bool	isLoopbackNet(struct in_addr *addr); 
-bool	sameNet(struct in_addr *addr, struct in_addr *addr2); 
-bool	isValidNet(struct in_addr *addr);
-
-	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
-bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-					
-
-struct in_addr getPreferredInterface(); // returns best addr.
-
-in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
-
-bool LookupDNSAddr(std::string name, struct sockaddr_in &addr);
-
-/* universal socket interface */
-
-int unix_close(int sockfd);
-int unix_socket(int domain, int type, int protocol);
-int unix_fcntl_nonblock(int sockfd);
-int unix_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
-int unix_getsockopt_error(int sockfd, int *err);
-
-#endif
-
-
 bool test_bind_addr(struct sockaddr_in addr);
 
 bool test_address_listen()

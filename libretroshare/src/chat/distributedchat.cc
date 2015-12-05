@@ -34,6 +34,7 @@
 #include "pqi/p3historymgr.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
 #include "rsserver/p3face.h"
 #include "gxs/rsgixs.h"
@@ -168,13 +169,27 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details))
+	    {
+#ifdef DEBUG_CHAT_LOBBIES
+		    std::cerr << "(WW) cannot get ID " << cli->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
+		    return false;
+	    }
+
+	    if(!details.mPgpLinked)
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
 		    return false ;
 	    }
     }
+    if(rsReputations->isIdentityBanned(cli->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
+        return false ;
+    }
+    
     if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
         return false;
 
@@ -665,12 +680,25 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(item->signature.keyId,details))
+	    {
+#ifdef DEBUG_CHAT_LOBBIES
+		    std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
+		    return ;
+	    }
+
+	    if(!details.mPgpLinked)
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
 		    return ;
 	    }
+    }
+    if(rsReputations->isIdentityBanned(item->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
+        return ;
     }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 

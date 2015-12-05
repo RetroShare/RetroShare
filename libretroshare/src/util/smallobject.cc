@@ -158,6 +158,15 @@ void FixedAllocator::deallocate(void *p)
 		_chunks.pop_back();
 	}
 }
+uint32_t FixedAllocator::currentSize() const
+{
+    uint32_t res = 0 ;
+
+    for(uint32_t i=0;i<_chunks.size();++i)
+        res += (_numBlocks - _chunks[i]->_blocksAvailable) * _blockSize ;
+
+    return res ;
+}
 void FixedAllocator::printStatistics() const
 {
 	std::cerr << "    numBLocks=" << (int)_numBlocks << std::endl;
@@ -181,10 +190,17 @@ SmallObjectAllocator::~SmallObjectAllocator()
 {
 	RsStackMutex m(SmallObject::_mtx) ;
 
-	for(std::map<int,FixedAllocator*>::const_iterator it(_pool.begin());it!=_pool.end();++it)
-		delete it->second ;
-
+    	//std::cerr << __PRETTY_FUNCTION__ << " not deleting. Leaving it to the system." << std::endl;
+        
 	_active = false ;
+    
+    	uint32_t still_allocated = 0 ;
+        
+	for(std::map<int,FixedAllocator*>::const_iterator it(_pool.begin());it!=_pool.end();++it)
+        	still_allocated += it->second->currentSize() ;
+		//delete it->second ;
+    
+    	std::cerr << "Memory still in use at end of program: " << still_allocated << " bytes." << std::endl;
 }
 
 void *SmallObjectAllocator::allocate(size_t bytes)

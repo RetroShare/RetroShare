@@ -57,15 +57,16 @@ public:
 
     class Lobby{
     public:
-        Lobby(): id(0), subscribed(false), auto_subscribe(false), is_private(false){}
+        Lobby(): id(0), subscribed(false), auto_subscribe(false), is_private(false), is_broadcast(false){}
         ChatLobbyId id;
         std::string name;
         std::string topic;
         bool subscribed;
         bool auto_subscribe;
         bool is_private;
+        bool is_broadcast;
 
-        DistantChatPeerId distant_chat_id;// for subscribed lobbies: the id we use to write messages
+        RsGxsId distant_chat_id;// for subscribed lobbies: the id we use to write messages
 
         bool operator==(const Lobby& l) const
         {
@@ -75,7 +76,8 @@ public:
                     && subscribed == l.subscribed
                     && auto_subscribe == l.auto_subscribe
                     && is_private == l.is_private
-                    && distant_chat_id == l.distant_chat_id;
+                    && id == l.id
+                    && is_broadcast == l.is_broadcast;
         }
     };
 
@@ -101,6 +103,8 @@ private:
     void handleTypingLabel(Request& req, Response& resp);
     void handleSendStatus(Request& req, Response& resp);
     void handleUnreadMsgs(Request& req, Response& resp);
+
+    void getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links);
 
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;

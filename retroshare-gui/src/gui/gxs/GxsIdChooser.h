@@ -37,6 +37,7 @@ class RsGxsUpdateBroadcastBase;
 #define IDCHOOSER_ID_REQUIRED   0x0001
 #define IDCHOOSER_ANON_DEFAULT  0x0002
 #define IDCHOOSER_NO_CREATE     0x0004
+#define IDCHOOSER_NON_ANONYMOUS 0x0008
 
 class GxsIdChooser : public QComboBox
 {
@@ -48,6 +49,7 @@ public:
 	virtual ~GxsIdChooser();
 
 	void setFlags(uint32_t flags) ;
+    uint32_t flags() const { return mFlags ; }
 
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
 	void loadIds(uint32_t chooserFlags, const RsGxsId &defId);
@@ -56,6 +58,7 @@ public:
 	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
 
+    void setEntryEnabled(int index, bool enabled);
 signals:
     // emitted after first load of own ids
     void idsLoaded();
@@ -71,13 +74,13 @@ private slots:
 
 private:
     void loadPrivateIds();
-	void setDefaultItem();
+    void setDefaultItem();
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
 	bool mFirstLoad;
 
-	RsGxsUpdateBroadcastBase *mBase;
+    RsGxsUpdateBroadcastBase *mBase;
 };
 
 #endif

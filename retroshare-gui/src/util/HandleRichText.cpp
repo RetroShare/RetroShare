@@ -24,6 +24,7 @@
 #include <QtXml>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QTextDocumentFragment>
 #include <qmath.h>
 
 #include "HandleRichText.h"
@@ -376,7 +377,7 @@ static QString saveSpace(const QString text)
 	return savedSpaceText;
 }
 
-QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast, int desiredMinimumFontSize)
 {
 	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
@@ -416,7 +417,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
-		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast);
+		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	}
 
 	return formattedText;
@@ -734,12 +735,14 @@ static void optimizeHtml(QDomDocument& doc
  *                        is passed inside flag.
  * @param desiredContrast: Minimum contrast between text and background color,
  *                        between 1 and 21.
+ * @param desiredMinimumFontSize: Minimum font size.
  */
 static void styleCreate(QDomDocument& doc
                         , QHash<QString, QStringList*> stylesList
                         , unsigned int flag
                         , qreal bglum
-                        , qreal desiredContrast)
+                        , qreal desiredContrast
+                        , int desiredMinimumFontSize)
 {
 	QDomElement styleElem;
 	do{
@@ -792,6 +795,15 @@ static void styleCreate(QDomDocument& doc
 			QString key = keyvalue.at(0).trimmed();
 			QString val = keyvalue.at(1).trimmed();
 
+			if (key == "font-size") {
+				QRegExp re("(\\d+)(\\D*)");
+				if (re.indexIn(val) != -1) {
+					bool ok; int iVal = re.cap(1).toInt(&ok);
+					if (ok && (iVal < desiredMinimumFontSize)) {
+						val = QString::number(desiredMinimumFontSize) + re.cap(2);
+					}
+				}
+			}
 			if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
@@ -864,9 +876,12 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag 
  *                        is passed inside flag.
  * @param desiredContrast Minimum contrast between text and background color,
  *                        between 1 and 21.
+ * @param desiredMinimumFontSize Minimum font size.
  */
 void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
-                          , const QColor &backgroundColor /*= Qt::white*/, qreal desiredContrast /*= 1.0*/
+                          , const QColor &backgroundColor /*= Qt::white*/
+                          , qreal desiredContrast /*= 1.0*/
+                          , int desiredMinimumFontSize /*=10*/
                           )
 {
 
@@ -888,7 +903,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 	QHash<QString, QString> knownStyle;
 
 	::optimizeHtml(doc, body, stylesList, knownStyle);
-	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
+	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast, desiredMinimumFontSize);
 	text = doc.toString(-1);
 
 //	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
@@ -982,4 +997,16 @@ QString RsHtml::plainText(const std::string &text)
 #else
 	return Qt::escape(QString::fromUtf8(text.c_str()));
 #endif
+}
+
+QString RsHtml::makeQuotedText(RSTextBrowser *browser)
+{
+	QString text = browser->textCursor().selection().toPlainText();
+	if(text.length() == 0)
+	{
+		text = browser->toPlainText();
+	}
+	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+	text = sl.join("\n>");
+	return QString(">") + text;
 }

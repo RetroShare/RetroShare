@@ -34,6 +34,10 @@
 #include "rsserver/p3face.h"
 #include "util/rsstring.h"
 
+/****
+ * #define HISTMGR_DEBUG 1
+ ***/
+
 // clean too old messages every 5 minutes
 //
 #define MSG_HISTORY_CLEANING_PERIOD  300
@@ -168,7 +172,9 @@ void p3HistoryMgr::cleanOldMessages()
 {
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef HISTMGR_DEBUG
 	std::cerr << "****** cleaning old messages." << std::endl;
+#endif
 	time_t now = time(NULL) ;
 	bool changed = false ;
 
@@ -182,7 +188,9 @@ void p3HistoryMgr::cleanOldMessages()
 					std::map<uint32_t, RsHistoryMsgItem*>::iterator lit2 = lit ;
 					++lit2 ;
 
+#ifdef HISTMGR_DEBUG
 					std::cerr << "   removing msg id " << lit->first << ", for peer id " << mit->first << std::endl;
+#endif
 					delete lit->second ;
 
 					mit->second.erase(lit) ;
@@ -198,7 +206,9 @@ void p3HistoryMgr::cleanOldMessages()
 		{
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit2 = mit ;
 			++mit2 ;
-				std::cerr << "   removing peer id " << mit->first << ", since it has no messages" << std::endl;
+#ifdef HISTMGR_DEBUG
+			std::cerr << "   removing peer id " << mit->first << ", since it has no messages" << std::endl;
+#endif
 			mMessages.erase(mit) ;
 			mit = mit2 ;
 
@@ -303,7 +313,9 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(msgItem->chatPeerId);
 			msgItem->msgId = nextMsgId++;
 
+#ifdef HISTMGR_DEBUG
 			std::cerr << "Loading msg history item: peer id=" << msgItem->chatPeerId << "), msg id =" << msgItem->msgId  << std::endl;
+#endif
 
 			if (mit != mMessages.end()) {
 				mit->second.insert(std::make_pair(msgItem->msgId, msgItem));
@@ -341,7 +353,9 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
 						mMaxStorageDurationSeconds = val ;
 
+#ifdef HISTMGR_DEBUG
 					std::cerr << "Loaded max storage time for history = " << val << " seconds" << std::endl;
+#endif
 					continue;
 				}
 
@@ -443,7 +457,9 @@ bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs
     if(!chatIdToVirtualPeerId(chatId, chatPeerId))
         return false;
 
+#ifdef HISTMGR_DEBUG
     std::cerr << "Getting history for virtual peer " << chatPeerId << std::endl;
+#endif
 
 	uint32_t foundCount = 0;
 
@@ -464,7 +480,9 @@ bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs
 			}
 		}
 	}
+#ifdef HISTMGR_DEBUG
 	std::cerr << msgs.size() << " messages added." << std::endl;
+#endif
 
 	return true;
 }
@@ -494,7 +512,9 @@ void p3HistoryMgr::clear(const ChatId &chatId)
         if(!chatIdToVirtualPeerId(chatId, chatPeerId))
             return;
 
+#ifdef HISTMGR_DEBUG
         std::cerr << "********** p3History::clear()called for virtual peer id " << chatPeerId << std::endl;
+#endif
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
 		if (mit == mMessages.end()) {
@@ -520,7 +540,9 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 	std::list<uint32_t> removedIds;
 	std::list<uint32_t>::iterator iit;
 
+#ifdef HISTMGR_DEBUG
 	std::cerr << "********** p3History::removeMessages called()" << std::endl;
+#endif
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
@@ -533,7 +555,9 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 				std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.find(*iit);
 				if (lit != mit->second.end())
 				{
+#ifdef HISTMGR_DEBUG
 					std::cerr << "**** Removing " << mit->first << " msg id = " << lit->first << std::endl;
+#endif
 
 					delete(lit->second);
 					mit->second.erase(lit);

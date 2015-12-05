@@ -598,7 +598,7 @@ bool RetroDb::tableExists(const std::string &tableName)
 /********************** RetroCursor ************************/
 
 RetroCursor::RetroCursor(sqlite3_stmt *stmt)
-    : mStmt(NULL), mCount(0), mPosCounter(0) {
+    : mStmt(NULL) {
 
      open(stmt);
 }
@@ -635,7 +635,6 @@ bool RetroCursor::moveToFirst(){
     rc = sqlite3_step(mStmt);
 
     if(rc == SQLITE_ROW){
-        mPosCounter = 0;
         return true;
     }
 
@@ -673,17 +672,10 @@ bool RetroCursor::moveToLast(){
         return false;
 
     }else{
-        mPosCounter = mCount;
         return true;
     }
 }
-int RetroCursor::getResultCount() const {
 
-    if(isOpen())
-        return mCount;
-    else
-        return -1;
-}
 int RetroCursor::columnCount() const {
 
     if(isOpen())
@@ -704,8 +696,6 @@ bool RetroCursor::close(){
 
     int rc = sqlite3_finalize(mStmt);
     mStmt = NULL;
-    mPosCounter = 0;
-    mCount = 0;
 
     return (rc == SQLITE_OK);
 }
@@ -725,12 +715,6 @@ bool RetroCursor::open(sqlite3_stmt *stm){
     int rc = sqlite3_reset(mStmt);
 
     if(rc == SQLITE_OK){
-
-        while((rc = sqlite3_step(mStmt)) == SQLITE_ROW)
-            mCount++;
-
-        sqlite3_reset(mStmt);
-
         return true;
     }
     else{
@@ -753,7 +737,6 @@ bool RetroCursor::moveToNext(){
     int rc = sqlite3_step(mStmt);
 
     if(rc == SQLITE_ROW){
-        mPosCounter++;
         return true;
 
     }else if(rc == SQLITE_DONE){ // no more results
@@ -771,16 +754,6 @@ bool RetroCursor::moveToNext(){
         return false;
     }
 }
-
-
-int32_t RetroCursor::getPosition() const {
-
-    if(isOpen())
-        return mPosCounter;
-    else
-        return -1;
-}
-
 
 int32_t RetroCursor::getInt32(int columnIndex){
     return sqlite3_column_int(mStmt, columnIndex);

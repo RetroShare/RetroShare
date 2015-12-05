@@ -467,6 +467,9 @@
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="1" column="0">
             <widget class="QTreeWidget" name="dhtTreeWidget">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="defaultDropAction">
               <enum>Qt::CopyAction</enum>
              </property>

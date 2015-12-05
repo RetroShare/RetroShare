@@ -23,8 +23,10 @@
 #include "ui_DhtWindow.h"
 #include "util/QtVersion.h"
 
+#include <QClipboard>
 #include <QTimer>
 #include <QDateTime>
+#include <QMenu>
 
 #include <algorithm>
 #include <iostream>
@@ -51,6 +53,7 @@ DhtWindow::DhtWindow(QWidget *parent)
     
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
+    connect( ui.dhtTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(DHTCustomPopupMenu(QPoint)));
     
         /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("IP"), DTW_COL_IPADDR, tr("Search IP"));
@@ -60,6 +63,22 @@ DhtWindow::DhtWindow(QWidget *parent)
 DhtWindow::~DhtWindow()
 {
 
+}
+
+void DhtWindow::DHTCustomPopupMenu( QPoint )
+{
+	QMenu contextMnu( this );
+	
+	QTreeWidgetItem *item = ui.dhtTreeWidget->currentItem();
+	if (item) {
+	
+	QString Ip = item->text(DTW_COL_IPADDR);
+
+	contextMnu.addAction(QIcon(), tr("Copy %1 to clipboard").arg(Ip), this, SLOT(copyIP()));
+
+  }
+
+	contextMnu.exec(QCursor::pos());
 }
 
 void DhtWindow::updateDisplay()
@@ -494,6 +513,9 @@ void DhtWindow::updateNetPeers()
 	ui.label_direct->setText(QString::number(nDirectPeers)); 
 	ui.label_proxy->setText(QString::number(nProxyPeers)); 
 	ui.label_relay->setText(QString::number(nRelayPeers)); 
+	
+	ui.tabWidget_2->setTabText(1, tr("Peers") + " (" + QString::number(ui.peerTreeWidget->topLevelItemCount()) + ")" );
+
 
 	//peerSummaryLabel->setText(connstr);
 }
@@ -582,6 +604,9 @@ void DhtWindow::updateRelays()
 		item -> setData(RTW_COL_BANDWIDTH, Qt::DisplayRole, bandwidthstr);
 
 	}
+	
+		ui.tabWidget_2->setTabText(2, tr("Relays") + " (" + QString::number(ui.relayTreeWidget->topLevelItemCount()) + ")" );
+
 }
 
 
@@ -673,8 +698,12 @@ void DhtWindow::updateDhtPeers()
 		
 		if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
+    }
+    
+    ui.tabWidget_2->setTabText(0, tr("DHT") + " (" + QString::number(ui.dhtTreeWidget->topLevelItemCount()) + ")" );
 	}
-	}
+	
+
 
 }
 
@@ -752,4 +781,20 @@ bool DhtWindow::filterItem(QTreeWidgetItem *item, const QString &text, int filte
 
     return (visible || visibleChildCount);
 }
+
+void DhtWindow::copyIP()
+{
+	QTreeWidgetItem *item = ui.dhtTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	QString Ip = item->text(DTW_COL_IPADDR);
+
+	QApplication::clipboard()->setText(Ip, QClipboard::Clipboard);
+
+}
+
+
 

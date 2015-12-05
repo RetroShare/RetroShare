@@ -81,25 +81,36 @@ TRANSLATIONS +=  \
 			lang/FeedReader_zh_CN.ts
 
 linux-* {
-	LIBXML2_DIR = /usr/include/libxml2
+	CONFIG += link_pkgconfig
 
-	DEPENDPATH += $${LIBXML2_DIR}
-	INCLUDEPATH += $${LIBXML2_DIR}
-
-	LIBS += -lcurl -lxml2 -lxslt
+	PKGCONFIG *= libcurl libxml-2.0 libxslt
 }
 
 win32 {
 	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
-	LIBS += -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto
+	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
+	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
+	exists(C:/msys32/mingw32/include) {
+		message(msys2 xml2 is installed.)
+		INC_DIR  += "C:/msys32/mingw32/include/libxml2"
+	}
+	exists(C:/msys64/mingw32/include) {
+		message(msys2 xml2 is installed.)
+		INC_DIR  += "C:/msys64/mingw32/include/libxml2"
+	}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 openbsd-* {
 	LIBXML2_DIR = /usr/local/include/libxml2
+}
+
+haiku-* {
+	LIBXML2_DIR = pkg-config --cflags libxml-2.0
 
 	INCLUDEPATH += $${LIBXML2_DIR}
 
 	LIBS += -lcurl -lxml2 -lxslt
 }
-

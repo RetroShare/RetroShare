@@ -51,23 +51,23 @@ class RsVOIPPongResult
 
 struct RsVOIPDataChunk
 {
-	typedef enum { 	RS_VOIP_DATA_TYPE_UNKNOWN = 0x00, 
-                   	RS_VOIP_DATA_TYPE_AUDIO   = 0x01, 
-                    	RS_VOIP_DATA_TYPE_VIDEO   = 0x02 } RsVOIPDataType ;
+	typedef enum { RS_VOIP_DATA_TYPE_UNKNOWN = 0x00,
+	               RS_VOIP_DATA_TYPE_AUDIO   = 0x01,
+	               RS_VOIP_DATA_TYPE_VIDEO   = 0x02 } RsVOIPDataType ;
 
 	void *data ; // create/delete using malloc/free.
 	uint32_t size ;
 	RsVOIPDataType type ;	// video or audio
-    
-    	void clear() ;
+
+	void clear() ;
 };
 
 class RsVOIP
 {
 	public:
-		virtual int sendVoipHangUpCall(const RsPeerId& peer_id) = 0;
-		virtual int sendVoipRinging(const RsPeerId& peer_id) = 0;
-		virtual int sendVoipAcceptCall(const RsPeerId& peer_id) = 0;
+		virtual int sendVoipHangUpCall(const RsPeerId& peer_id, uint32_t flags) = 0;
+		virtual int sendVoipRinging(const RsPeerId& peer_id, uint32_t flags) = 0;
+		virtual int sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags) = 0;
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
 		virtual int sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk) = 0;
