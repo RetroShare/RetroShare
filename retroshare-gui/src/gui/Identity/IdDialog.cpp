@@ -81,6 +81,13 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	mIdQueue = NULL;
+    
+	contactsItem = new QTreeWidgetItem();
+	contactsItem->setText(0, tr("Contacts"));
+
+	allItem = new QTreeWidgetItem();
+	allItem->setText(0, tr("All"));
+
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -449,12 +456,6 @@ void IdDialog::insertIdList(uint32_t token)
 
 	int accept = ui->filterComboBox->itemData(ui->filterComboBox->currentIndex()).toInt();
 		
-	contactsItem = new QTreeWidgetItem();
-	contactsItem->setText(0, tr("Contacts"));
-
-	allItem = new QTreeWidgetItem();
-	allItem->setText(0, tr("All"));
-
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
 	std::vector<RsGxsIdGroup>::iterator vit;
@@ -511,9 +512,20 @@ void IdDialog::insertIdList(uint32_t token)
 		ui->idTreeWidget->insertTopLevelItem(0, allItem);
 
 		if (fillIdListItem(*vit, item, ownPgpId, accept))
+	{
+		RsIdentityDetails details;
+		std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+		rsIdentity->getIdDetails(RsGxsId(keyId), details);
+
+		if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
 		{
-			ui->idTreeWidget->addTopLevelItem(item);
+			contactsItem->addChild(item);
 		}
+		else
+		{
+			allItem->addChild(item);
+		}
+	}
 	}
 	
 	/* count items */
