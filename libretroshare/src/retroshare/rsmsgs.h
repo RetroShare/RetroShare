@@ -279,7 +279,6 @@ class ChatId
 public:
     ChatId();
     explicit ChatId(RsPeerId     id);
-    explicit ChatId(RsGxsId      id);
     explicit ChatId(ChatLobbyId  id);
     explicit ChatId(DistantChatPeerId id);
     explicit ChatId(std::string str);
@@ -295,7 +294,6 @@ public:
     bool isPeerId() const;
     bool isDistantChatId() const;
     bool isLobbyId() const;
-    bool isGxsId() const;
     bool isBroadcast() const;
 
     RsPeerId    toPeerId()  const;
@@ -312,7 +310,6 @@ private:
                 TYPE_PRIVATE,            // private chat with directly connected friend, peer_id is valid
                 TYPE_PRIVATE_DISTANT,    // private chat with distant peer, gxs_id is valid
                 TYPE_LOBBY,              // chat lobby id, lobby_id is valid
-                TYPE_GXS_ID,             // 
                 TYPE_BROADCAST           // message to/from all connected peers
               };
 
@@ -320,7 +317,6 @@ private:
     RsPeerId peer_id;
     DistantChatPeerId distant_chat_id;
     ChatLobbyId lobby_id;
-    RsGxsId gxs_id;
 };
 
 class ChatMessage

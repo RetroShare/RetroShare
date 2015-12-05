@@ -66,7 +66,7 @@ public:
         bool is_private;
         bool is_broadcast;
 
-        RsGxsId distant_chat_id;// for subscribed lobbies: the id we use to write messages
+        RsGxsId gxs_id;// for subscribed lobbies: the id we use to write messages
 
         bool operator==(const Lobby& l) const
         {
@@ -76,8 +76,8 @@ public:
                     && subscribed == l.subscribed
                     && auto_subscribe == l.auto_subscribe
                     && is_private == l.is_private
-                    && id == l.id
-                    && is_broadcast == l.is_broadcast;
+                    && is_broadcast == l.is_broadcast
+                    && gxs_id == l.gxs_id;
         }
     };
 

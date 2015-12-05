@@ -64,7 +64,6 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-    ChatId mPeerId;
 	std::string mMsgId;
 	QString mMsg;
 

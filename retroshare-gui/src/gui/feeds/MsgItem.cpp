@@ -88,11 +88,9 @@ void MsgItem::updateItemStatic()
     /* get peer Id */
 
     if(mi.msgflags & RS_MSG_SIGNED)
-        mPeerId = ChatId(mi.rsgxsid_srcId);
+        avatar->setGxsId(mi.rsgxsid_srcId);
     else
-        mPeerId = ChatId(mi.rspeerid_srcId);
-
-    avatar->setId(mPeerId);
+        avatar->setId(ChatId(mi.rspeerid_srcId));
 
 	QString title;
     QString srcName;

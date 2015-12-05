@@ -81,8 +81,8 @@ StreamBase& operator << (StreamBase& left, ChatHandler::Lobby& l)
          << makeKeyValueReference("subscribed", l.subscribed)
          << makeKeyValueReference("auto_subscribe", l.auto_subscribe)
          << makeKeyValueReference("is_private", l.is_private)
-         << makeKeyValueReference("distant_chat_id", l.distant_chat_id)
-         << makeKeyValueReference("is_broadcast", l.is_broadcast);
+         << makeKeyValueReference("is_broadcast", l.is_broadcast)
+         << makeKeyValueReference("gxs_id", l.gxs_id);
     return left;
 }
 
@@ -167,8 +167,8 @@ void ChatHandler::tick()
             l.subscribed = true;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
-            l.distant_chat_id.clear() ;
             l.is_broadcast = false;
+            l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
         }
     }
@@ -200,8 +200,8 @@ void ChatHandler::tick()
             l.subscribed = false;
             l.auto_subscribe = info.lobby_flags & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
             l.is_private = !(info.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC);
-            l.distant_chat_id.clear();
             l.is_broadcast = false;
+            l.gxs_id = RsGxsId();
             lobbies.push_back(l);
         }
     }
@@ -233,11 +233,11 @@ void ChatHandler::tick()
                 std::cerr << "(EE) cannot get info for distant chat peer " << msg.chat_id.toDistantChatId() << std::endl;
                 continue ;
             }
-                
-            author_id = dcpinfo.to_id.toStdString();
+
             RsIdentityDetails details;
-            if(!gxs_id_failed && mRsIdentity->getIdDetails(dcpinfo.to_id, details))
+            if(!gxs_id_failed && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
             {
+                author_id = details.mId.toStdString();
                 author_name = details.mNickname;
             }
             else
@@ -301,10 +301,10 @@ void ChatHandler::tick()
                 RsIdentityDetails details;
                 DistantChatPeerInfo dcpinfo ;
                 
-                if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo) 
-                        && mRsIdentity->getIdDetails(dcpinfo.to_id, details))
+                if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo)
+                                  && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
                 {
-                    info.remote_author_id = msg.chat_id.toGxsId().toStdString();
+                    info.remote_author_id = details.mId.toStdString();
                     info.remote_author_name = details.mNickname;
                 }
                 else

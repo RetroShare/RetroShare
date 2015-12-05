@@ -58,13 +58,6 @@ ChatId::ChatId():
 
 }
 
-ChatId::ChatId(RsGxsId id):
-    lobby_id(0)
-{
-    type = TYPE_GXS_ID;
-    gxs_id = id;
-}
-
 ChatId::ChatId(RsPeerId id):
     lobby_id(0)
 {
@@ -244,10 +237,6 @@ bool ChatId::isLobbyId() const
 {
     return type == TYPE_LOBBY;
 }
-bool ChatId::isGxsId() const
-{
-    return type == TYPE_GXS_ID;
-}
 bool ChatId::isBroadcast() const
 {
     return type == TYPE_BROADCAST;
@@ -263,16 +252,6 @@ RsPeerId    ChatId::toPeerId()  const
     }
 }
 
-RsGxsId     ChatId::toGxsId()   const
-{
-    if(type == TYPE_GXS_ID)
-        return gxs_id;
-    else
-    {
-        std::cerr << "ChatId Warning: conversation to gxs_id requested, but type is different. Current value=\"" << toStdString() << "\"" << std::endl;
-        return RsGxsId();
-    }
-}
 DistantChatPeerId     ChatId::toDistantChatId()   const
 {
     if(type == TYPE_PRIVATE_DISTANT)

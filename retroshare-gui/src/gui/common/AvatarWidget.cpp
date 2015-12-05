@@ -124,19 +124,33 @@ void AvatarWidget::setFrameType(FrameType type)
 void AvatarWidget::setId(const ChatId &id)
 {
     mId = id;
+    mGxsId.clear();
 
     setPixmap(QPixmap());
 
     if (id.isNotSet()) {
         setEnabled(false);
     }
-
-    if(mId.isGxsId())
-        std::cerr << "(EE) AvatarWidget should not be set to a GXS id." << std::endl;
     
     refreshAvatarImage();
     refreshStatus();
 }
+
+void AvatarWidget::setGxsId(const RsGxsId &id)
+{
+    mId = ChatId();
+    mGxsId = id;
+
+    setPixmap(QPixmap());
+
+    if (id.isNull()) {
+        setEnabled(false);
+    }
+
+    refreshAvatarImage();
+    refreshStatus();
+}
+
 void AvatarWidget::setOwnId()
 {
     mFlag.isOwnId = true;
@@ -242,6 +256,14 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 }
 void AvatarWidget::refreshAvatarImage()
 {
+    if (mGxsId.isNull()==false)
+    {
+        QPixmap avatar;
+
+        AvatarDefs::getAvatarFromGxsId(mGxsId, avatar, defaultAvatar);
+        setPixmap(avatar);
+        return;
+    }
     if (mId.isNotSet())
     {
         QPixmap avatar(defaultAvatar);
@@ -262,14 +284,6 @@ void AvatarWidget::refreshAvatarImage()
         setPixmap(avatar);
         return;
     }
-//    else  if (mId.isGxsId())
-//    {
-//        QPixmap avatar;
-//        
-//	AvatarDefs::getAvatarFromGxsId(mId.toGxsId(), avatar, defaultAvatar);
-//	setPixmap(avatar);
-//	return;
-//    }
     else  if (mId.isDistantChatId())
     {
 	    QPixmap avatar;
