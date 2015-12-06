@@ -2,6 +2,7 @@
 #define RSTEXTBROWSER_H
 
 #include <QTextBrowser>
+#include "util/RsSyntaxHighlighter.h"
 
 class RSImageBlockWidget;
 
@@ -35,6 +36,7 @@ private:
 	bool mShowImages;
 	RSImageBlockWidget *mImageBlockWidget;
 	bool mLinkClickActive;
+	RsSyntaxHighlighter *highliter;
 };
 
 #endif // RSTEXTBROWSER_H
