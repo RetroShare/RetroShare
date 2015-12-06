@@ -133,7 +133,6 @@ private slots:
 	void messageHistory();
 	void resetStatusBar() ;
 	void searchHistory();
-	void quote();
 
 
 signals:
@@ -185,6 +184,9 @@ private slots:
 
 	bool fileSave();
 	bool fileSaveAs();
+
+	void quote();
+	void saveImage();
 
 private:
 	bool findText(const QString& qsStringToFind);

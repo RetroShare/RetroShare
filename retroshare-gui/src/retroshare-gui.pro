@@ -524,7 +524,8 @@ HEADERS +=  rshare.h \
             gui/GetStartedDialog.h \
     gui/settings/WebuiPage.h \
     gui/statistics/BWGraph.h \
-    util/RsSyntaxHighlighter.h
+    util/RsSyntaxHighlighter.h \
+    util/imageutil.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -873,7 +874,8 @@ SOURCES +=  main.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
             gui/statistics/BWGraph.cpp \
-    util/RsSyntaxHighlighter.cpp
+    util/RsSyntaxHighlighter.cpp \
+    util/imageutil.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \

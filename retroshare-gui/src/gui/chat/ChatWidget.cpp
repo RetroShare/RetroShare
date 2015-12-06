@@ -51,6 +51,7 @@
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -126,6 +127,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
+	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
@@ -977,6 +979,9 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addAction(ui->actionClearChatHistory);
 	contextMnu->addAction(ui->actionQuote);
 
+	ui->actionSave_image->setData(point);
+	contextMnu->addAction(ui->actionSave_image);
+
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
 }
@@ -1673,4 +1678,11 @@ void ChatWidget::quote()
 		text = sl.join("\n>");
 		emit ui->chatTextEdit->append(QString(">") + text);
 	}
+}
+
+void ChatWidget::saveImage()
+{
+	QPoint point = ui->actionSave_image->data().toPoint();
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
 }

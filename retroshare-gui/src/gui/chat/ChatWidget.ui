@@ -980,6 +980,15 @@ border-image: url(:/images/closepressed.png)
     <string>Quotes the selected text</string>
    </property>
   </action>
+    <action name="actionSave_image">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save image</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
