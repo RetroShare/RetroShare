@@ -972,6 +972,14 @@ border-image: url(:/images/closepressed.png)
     <string>Search Box</string>
    </property>
   </action>
+  <action name="actionQuote">
+   <property name="text">
+    <string>Quote</string>
+   </property>
+   <property name="toolTip">
+    <string>Quotes the selected text</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

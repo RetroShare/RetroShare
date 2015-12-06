@@ -133,6 +133,7 @@ private slots:
 	void messageHistory();
 	void resetStatusBar() ;
 	void searchHistory();
+	void quote();
 
 
 signals:

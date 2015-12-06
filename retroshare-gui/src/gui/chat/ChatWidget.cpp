@@ -125,6 +125,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseFont, SIGNAL(triggered()), this, SLOT(chooseFont()));
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
+	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
@@ -974,6 +975,7 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
+	contextMnu->addAction(ui->actionQuote);
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
@@ -1660,4 +1662,15 @@ bool ChatWidget::setStyle()
 	}
 
 	return false;
+}
+
+void ChatWidget::quote()
+{
+	QString text = ui->textBrowser->textCursor().selection().toPlainText();
+	if(text.length() > 0)
+	{
+		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+		text = sl.join("\n>");
+		emit ui->chatTextEdit->append(QString(">") + text);
+	}
 }
