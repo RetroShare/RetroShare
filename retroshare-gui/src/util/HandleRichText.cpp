@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QTextDocumentFragment>
 #include <qmath.h>
+#include <QUrl>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -643,6 +644,28 @@ static void optimizeHtml(QDomDocument& doc
 				continue;
 			}
 
+			//hidden text in a
+			if (element.tagName().toLower() == "a") {
+				if(element.hasAttribute("href")){
+					QString href = element.attribute("href", "");
+					if(href.startsWith("hidden:")){
+						//this text should be hidden and appear in title
+						//we need this trick, because QTextEdit doesn't export the title attribute
+						QString title = href.remove(0, QString("hidden:").length());
+						QString text = element.text();
+						element.setTagName("span");
+						element.removeAttribute("href");
+						QDomNodeList c = element.childNodes();
+						for(int i = 0; i < c.count(); i++){
+							element.removeChild(c.at(i));
+						};
+						element.setAttribute(QString("title"), title);
+						QDomText textnode = doc.createTextNode(text);
+						element.appendChild(textnode);
+					}
+				}
+			}
+
 			// iterate children
 			optimizeHtml(doc, element, stylesList, knownStyle);
 
@@ -1003,4 +1026,21 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 	text = sl.join("\n>");
 	return QString(">") + text;
+}
+
+void RsHtml::insertSpoilerText(QTextCursor cursor)
+{
+	QString hiddentext = cursor.selection().toPlainText();
+	if(hiddentext.isEmpty()) return;
+	QString publictext = "*SPOILER*";
+
+	QString encoded = hiddentext;
+	encoded = encoded.replace(QChar('\"'), QString("&quot;"));
+	encoded = encoded.replace(QChar('\''), QString("&apos;"));
+	encoded = encoded.replace(QChar('<'), QString("&lt;"));
+	encoded = encoded.replace(QChar('>'), QString("&gt;"));
+	encoded = encoded.replace(QChar('&'), QString("&amp;"));
+
+	QString html = QString("<a href=\"hidden:%1\" title=\"%1\">%2</a>").arg(encoded, publictext);
+	cursor.insertHtml(html);
 }

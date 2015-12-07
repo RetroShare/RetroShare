@@ -59,6 +59,8 @@ private slots:
 	void pasteLink();
 	void pasteOwnCertificateLink();
 	void pastePlainText();
+	void spoiler();
+
 private:
 	QString textUnderCursor() const;
 
