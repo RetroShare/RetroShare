@@ -13,7 +13,7 @@ public:
 	RsSyntaxHighlighter(QTextEdit *parent = 0);
 
 protected:
-	void highlightBlock(const QString &text) Q_DECL_OVERRIDE;
+	void highlightBlock(const QString &text);
 
 private:
 	QTextCharFormat quotationFormat;
