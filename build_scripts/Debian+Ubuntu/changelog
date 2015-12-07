@@ -1851,7 +1851,7 @@ retroshare (0.5.4-0.6685~precise) precise; urgency=low
 
 
   * Bug fixes
-      - Added missing location from cert when addign new friend
+      - Added missing location from cert when adding new friend
       - Added missing IndicateConfigChanged to p3PeerMgrIMPL::setDynDNS
       - Fixed crash when closing the main window without the setting "Minimize to Tray Icon"
       - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray
@@ -2925,7 +2925,7 @@ retroshare (0.5.3-0.4953~natty) natty; urgency=low
      - Fixed Download toaster (utf8 in file name, use QDesktopServices vs RsUrlHandler for collections, fixed
        crash after opening a collection) (Patch from AsamK).
      - fixed utf8 chars in certificate links (Patch from AsamK)
-     - removed cache adding strategy to DL queue that was O(n^2). Now addign cache at the end of the queue
+     - removed cache adding strategy to DL queue that was O(n^2). Now adding cache at the end of the queue
      - Fixed bug when the user clicks on a link without http:// in a QTextBrowser. This link was 
        oppened directly in RetroShare.
      - Attempted fix for maintaining External Port in Manual Forwarded Mode.

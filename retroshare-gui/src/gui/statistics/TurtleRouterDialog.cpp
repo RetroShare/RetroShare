@@ -1,6 +1,7 @@
 #include <QObject>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxstunnel.h>
 #include "TurtleRouterDialog.h"
 #include <QPainter>
 #include <QStylePainter>
@@ -215,4 +216,157 @@ QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 	}
 	else
 		return items.front() ;
+}
+//=======================================================================================================================//
+
+
+GxsTunnelsDialog::GxsTunnelsDialog(QWidget *parent)
+	: RsAutoUpdatePage(2000,parent)
+{
+//	setupUi(this) ;
+	
+	m_bProcessSettings = false;
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+	
+	maxWidth = 200 ;
+	maxHeight = 200 ;
+
+	// load settings
+    processSettings(true);
+}
+
+GxsTunnelsDialog::~GxsTunnelsDialog()
+{
+
+    // save settings
+    processSettings(false);
+}
+
+void GxsTunnelsDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("TurtleRouterStatistics"));
+
+    if (bLoad) {
+        // load settings
+    } else {
+        // save settings
+    }
+
+    Settings->endGroup();
+    
+    m_bProcessSettings = false;
+}
+
+void GxsTunnelsDialog::updateDisplay()
+{
+    // Request info about ongoing tunnels
+    
+    std::vector<RsGxsTunnelService::GxsTunnelInfo> tunnel_infos ;
+    
+    rsGxsTunnel->getTunnelsInfo(tunnel_infos) ;
+    
+ 	//    // Tunnel information
+ 	//           
+	//    GxsTunnelId  tunnel_id ;        // GXS Id we're talking to
+	//    RsGxsId  destination_gxs_id ;   // GXS Id we're talking to
+	//    RsGxsId  source_gxs_id ;	          // GXS Id we're using to talk
+	//    uint32_t tunnel_status ;	          // active, requested, DH pending, etc.
+	//    uint32_t total_size_sent ;	          // total bytes sent through that tunnel since openned (including management). 
+	//    uint32_t total_size_received ;	  // total bytes received through that tunnel since openned (including management). 
+
+	//    // Data packets
+
+	//    uint32_t pending_data_packets;         // number of packets not acknowledged by other side, still on their way. Should be 0 unless something bad happens.
+	//    uint32_t total_data_packets_sent ;     // total number of data packets sent (does not include tunnel management)
+	//    uint32_t total_data_packets_received ; // total number of data packets received (does not include tunnel management)
+        
+    // now draw the shit
+	QPixmap tmppixmap(maxWidth, maxHeight);
+	tmppixmap.fill(Qt::transparent);
+	//setFixedHeight(maxHeight);
+
+	QPainter painter(&tmppixmap);
+	painter.initFrom(this);
+
+        // extracts the height of the fonts in pixels. This is used to calibrate the size of the objects to draw.
+
+        float fontHeight = QFontMetricsF(font()).height();
+        float fact = fontHeight/14.0;
+	//maxHeight = 500*fact ;
+
+	int cellx = 6*fact ;
+	int celly = (10+4)*fact ;
+    	int ox=5*fact,oy=5*fact ;
+
+	painter.setPen(QColor::fromRgb(0,0,0)) ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Authenticated tunnels:")) ; oy += celly ;
+        
+    	for(uint32_t i=0;i<tunnel_infos.size();++i)
+	{
+		// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
+		// draw...
+
+		painter.drawText(ox+4*cellx,oy+celly,tr("Tunnel ID: %1").arg(QString::fromStdString(tunnel_infos[i].tunnel_id.toStdString()))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("from: %1").arg(QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString()))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("to: %1").arg(QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString()))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("status: %1").arg(QString::number(tunnel_infos[i].tunnel_status))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("total sent: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_sent))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("total recv: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_received))) ; oy += celly ;
+        
+		//	painter.drawLine(0,oy,maxWidth,oy) ;
+		//	oy += celly ;
+	}
+
+	// update the pixmap
+	//
+	pixmap = tmppixmap;
+	maxHeight = std::max(oy,10*celly);
+}
+
+QString GxsTunnelsDialog::getPeerName(const RsPeerId &peer_id)
+{
+    static std::map<RsPeerId, QString> names ;
+
+    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
+
+	if( it != names.end())
+		return it->second ;
+	else
+	{
+		RsPeerDetails detail ;
+		if(!rsPeers->getPeerDetails(peer_id,detail))
+			return tr("Unknown Peer");
+
+		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
+	}
+}
+
+QString GxsTunnelsDialog::speedString(float f)
+{
+	if(f < 1.0f) 
+		return QString("0 B/s") ;
+	if(f < 1024.0f)
+		return QString::number((int)f)+" B/s" ;
+
+	return QString::number(f/1024.0,'f',2) + " KB/s";
+}
+
+void GxsTunnelsDialog::paintEvent(QPaintEvent */*event*/)
+{
+    QStylePainter(this).drawPixmap(0, 0, pixmap);
+}
+
+void GxsTunnelsDialog::resizeEvent(QResizeEvent *event)
+{
+    QRect TaskGraphRect = geometry();
+    
+    maxWidth = TaskGraphRect.width();
+    maxHeight = TaskGraphRect.height() ;
+
+    QWidget::resizeEvent(event);
+    update();
 }

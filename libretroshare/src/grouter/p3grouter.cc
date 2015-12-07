@@ -510,6 +510,12 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileH
 
     RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&item->data_size) ;
 
+if(itm == NULL)
+{
+    std::cerr << "(EE) p3GRouter::receiveTurtleData(): cannot de-serialise data. Somthing wrong in the format. Item data (size="<< item->data_size << "): " << RsUtil::BinToHex((char*)item->data_bytes,item->data_size) << std::endl;
+    return ;
+}
+
     itm->PeerId(virtual_peer_id) ;
 
     // At this point we can have either a transaction chunk, or a transaction ACK.

@@ -562,8 +562,9 @@ void ChatLobbyDialog::distantChatParticipant()
     rsMsgs->getIdentityForChatLobby(lobbyId, own_id);
 
     uint32_t error_code ;
+    DistantChatPeerId tunnel_id;
 
-    if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,error_code))
+    if(! rsMsgs->initiateDistantChatConnexion(gxs_id,own_id,tunnel_id,error_code))
     {
         QString error_str ;
         switch(error_code)

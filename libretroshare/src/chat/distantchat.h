@@ -25,35 +25,38 @@
 
 #pragma once
 
-#include <turtle/turtleclientservice.h>
 #include <chat/rschatitems.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsgxstunnel.h>
 
 class RsGixs ;
 
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
 
-class DistantChatService: public RsTurtleClientService
+class DistantChatService: public RsGxsTunnelService::RsGxsTunnelClientService
 {
 public:
-    DistantChatService(RsGixs *pids)
-            : mGixs(pids), mDistantChatMtx("distant chat")
+    // So, public interface only uses DistandChatPeerId, but internally, this is converted into a RsGxsTunnelService::RsGxsTunnelId
+    
+   
+    DistantChatService() : mDistantChatMtx("distant chat")
     {
-        mTurtle = NULL ;
+        mGxsTunnels = NULL ;
     }
 
-    void flush() ;
-
-    virtual void connectToTurtleRouter(p3turtle *) ;
+    // Overloaded methods from RsGxsTunnelClientService
+    
+    virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
 
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
-    bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id,const RsGxsId &from_gxs_id, uint32_t &error_code) ;
-    bool closeDistantChatConnexion(const RsGxsId& pid) ;
-    virtual bool getDistantChatStatus(const RsGxsId &gxs_id,uint32_t &status, RsGxsId *from_gxs_id=NULL) ;
+    bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId &from_gxs_id, DistantChatPeerId& dcpid, uint32_t &error_code) ;
+    bool closeDistantChatConnexion(const DistantChatPeerId &tunnel_id) ;
+    
+    virtual bool getDistantChatStatus(const DistantChatPeerId &tunnel_id, DistantChatPeerInfo& cinfo) ;
 
-    // derived in p3ChatService
+    // derived in p3ChatService, so as to pass down some info
     virtual void handleIncomingItem(RsItem *) = 0;
     virtual bool handleRecvChatMsgItem(RsChatMsgItem *ci)=0 ;
 
@@ -62,78 +65,25 @@ public:
     void handleRecvChatStatusItem(RsChatStatusItem *cs) ;
 
 private:
-    class DistantChatPeerInfo
+    struct DistantChatContact
     {
-    public:
-        DistantChatPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
-        {
-            memset(aes_key, 0, DISTANT_CHAT_AES_KEY_SIZE);
-        }
-
-        time_t last_contact ; 		// used to keep track of working connexion
-    time_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
-
-        unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
-
-        uint32_t status ;		// info: do we have a tunnel ?
-        RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-        RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
-        RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
+        RsGxsId from_id ;
+        RsGxsId to_id ;
     };
-
-    class DistantChatDHInfo
-    {
-    public:
-        DistantChatDHInfo() : dh(0), direction(0), status(0) {}
-
-        DH *dh ;
-        RsGxsId gxs_id ;
-        RsTurtleGenericTunnelItem::Direction direction ;
-    uint32_t status ;
-    TurtleFileHash hash ;
-    };
-
     // This maps contains the current peers to talk to with distant chat.
     //
-    std::map<RsGxsId, DistantChatPeerInfo> 	_distant_chat_contacts ;		// current peers we can talk to
-    std::map<RsPeerId,DistantChatDHInfo>    	_distant_chat_virtual_peer_ids ;	// current virtual peers. Used to figure out tunnels, etc.
+    std::map<DistantChatPeerId, DistantChatContact> 	mDistantChatContacts ;		// current peers we can talk to
 
-    // List of items to be sent asap. Used to store items that we cannot pass directly to
-    // sendTurtleData(), because of Mutex protection.
+    // Overloaded from RsGxsTunnelClientService
+    
+    virtual void notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId& tunnel_id,uint32_t tunnel_status) ;
+    virtual void receiveData(const RsGxsTunnelService::RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) ;
 
-    std::list<RsChatItem*> pendingDistantChatItems ;
+    // Utility functions.
+    
+    void markDistantChatAsClosed(const DistantChatPeerId& dcpid) ;
 
-    // Overloaded from RsTurtleClientService
-
-    virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-    void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
-    void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
-    void markDistantChatAsClosed(const RsGxsId &gxs_id) ;
-    void startClientDistantChatConnection(const RsGxsId &to_gxs_id,const RsGxsId& from_gxs_id) ;
-    void locked_restartDHSession(const RsPeerId &virtual_peer_id, const RsGxsId &own_gxs_id) ;
-
-    //bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
-
-    static TurtleFileHash hashFromGxsId(const RsGxsId& destination) ;
-    static RsGxsId gxsIdFromHash(const TurtleFileHash& sum) ;
-
-    void handleRecvDHPublicKey(RsChatDHPublicKeyItem *item) ;
-    bool locked_sendDHPublicKey(const DH *dh, const RsGxsId &own_gxs_id, const RsPeerId &virtual_peer_id) ;
-    bool locked_initDHSessionKey(DH *&dh);
-    DistantChatPeerId virtualPeerIdFromHash(const TurtleFileHash& hash  ) ;	// ... and to a hash for p3turtle
-
-
-    // Utility functions
-
-    void sendTurtleData(RsChatItem *) ;
-    void sendEncryptedTurtleData(const uint8_t *buff,uint32_t rssize,const RsGxsId &gxs_id) ;
-    bool handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id) ;
-
-    static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
-
-    p3turtle *mTurtle ;
-    RsGixs *mGixs ;
+    RsGxsTunnelService *mGxsTunnels ;
 
     RsMutex mDistantChatMtx ;
 };
