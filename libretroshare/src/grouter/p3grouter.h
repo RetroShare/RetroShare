@@ -269,8 +269,8 @@ private:
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
 
     static Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
-    static void makeGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
 
+    bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
     bool locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& item);
 
     void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, const std::set<RsPeerId>& incoming_routes,bool is_origin);
