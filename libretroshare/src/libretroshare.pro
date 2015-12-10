@@ -731,6 +731,13 @@ SOURCES += serialiser/rsnxsitems.cc \
 	gxs/rsgxsutil.cc \
 	gxs/rsgxsrequesttypes.cc
 
+# gxs tunnels
+HEADERS += gxstunnel/p3gxstunnel.h \
+			  gxstunnel/rsgxstunnelitems.h \
+			  retroshare/rsgxstunnel.h
+
+SOURCES += gxstunnel/p3gxstunnel.cc \
+				gxstunnel/rsgxstunnelitems.cc 
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
@@ -851,3 +858,4 @@ test_bitdht {
 
 	# ENABLED UDP NOW.
 }
+

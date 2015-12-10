@@ -45,7 +45,7 @@ ChatLobbyToaster::ChatLobbyToaster(const ChatLobbyId &lobby_id, const RsGxsId &s
 	if(!rsIdentity->getIdDetails(sender_id, idd))
 		return;
 
-	ui.avatarWidget->setId(ChatId(sender_id));
+    ui.avatarWidget->setGxsId(sender_id);
 
 	QString lobbyName = RsHtml::plainText(idd.mNickname);
 

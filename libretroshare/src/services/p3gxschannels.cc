@@ -122,7 +122,7 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 
 
 	/** Overloaded to cache new groups **/
-RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /* keySet */)
 {
 	updateSubscribedGroup(grpItem->meta);
 	return SERVICE_CREATE_SUCCESS;
