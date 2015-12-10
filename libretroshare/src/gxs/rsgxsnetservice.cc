@@ -36,11 +36,14 @@
 #include "pgp/pgpauxutils.h"
 
 /***
- * #define NXS_NET_DEBUG	1
+ * Use the following defines to debug:
+ 	NXS_NET_DEBUG_0		shows group update high level information
+ 	NXS_NET_DEBUG_1		shows group update low level info (including transaction details)
+ 	NXS_NET_DEBUG_2		bandwidth information
  ***/
-// #define NXS_NET_DEBUG	1
-// #define NXS_NET_DEBUG_0	1
-// #define NXS_NET_DEBUG_1	1
+#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_1 	1
+#define NXS_NET_DEBUG_2 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -55,6 +58,35 @@
 #define SYNC_PERIOD      60
 #define MAX_REQLIST_SIZE 20   // No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
 #define TRANSAC_TIMEOUT  2000 // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
+
+// Debug system to allow to print only for some IDs (group, Peer, etc)
+
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)
+
+static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;// use this to limit print to this peer id only
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;// use this to allow to this group id only
+static const uint32_t     service_to_print  = 0 ;                              // use this to allow to this service id only
+
+class nullstream: public std::ostream {};
+        
+static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp_id,uint32_t service_type) 
+{
+    static nullstream null ;
+    
+    if((peer_to_print.isNull() || peer_id.isNull() || peer_id == peer_to_print) 
+    && (group_id_to_print.isNull() || grp_id.isNull() || grp_id == group_id_to_print)
+    && (service_to_print==0 || service_type == 0 || service_type == service_to_print))
+        return std::cerr ;
+    else
+        return null ;
+}
+
+#define GXSNETDEBUG___                   gxsnetdebug(RsPeerId(),RsGxsGroupId(),mServiceInfo.mServiceType) 
+#define GXSNETDEBUG_P_(peer_id         ) gxsnetdebug(peer_id   ,RsGxsGroupId(),mServiceInfo.mServiceType) 
+#define GXSNETDEBUG__G(        group_id) gxsnetdebug(RsPeerId(),group_id      ,mServiceInfo.mServiceType) 
+#define GXSNETDEBUG_PG(peer_id,group_id) gxsnetdebug(peer_id   ,group_id      ,mServiceInfo.mServiceType) 
+
+#endif
 
 const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
@@ -142,7 +174,7 @@ public:
         total_record += bw ;
         ++total_events ;
 
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_2
         std::cerr << "bandwidthRecorder::recordEvent() Recording event time=" << now << ". bw=" << bw << std::endl;
 #endif
 
@@ -156,7 +188,7 @@ public:
             // Apply a small temporal convolution.
             estimated_required_bandwidth = 0.75*estimated_required_bandwidth + 0.25 * speed ;
 
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_2
             std::cerr << std::dec << "  " << total_record << " Bytes (" << total_events << " items)"
                       << " received in " << now - last_event_record << " seconds. Speed: " << speed << " KBytes/sec" << std::endl;
             std::cerr << "  instantaneous speed = " << speed << " KB/s" << std::endl;
@@ -182,7 +214,7 @@ public:
     RsConfigDataRates rates ;
     rsConfig->getTotalBandwidthRates(rates) ;
 
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_2
     std::cerr << std::dec << std::endl;
 #endif
 
@@ -198,7 +230,7 @@ public:
 
     float sending_probability = std::min(outqueue_factor,max_bandwidth_factor) ;
 
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_2
         std::cerr << "bandwidthRecorder::computeCurrentSendingProbability()" << std::endl;
         std::cerr << "  current required bandwidth : " << estimated_required_bandwidth << " KB/s" << std::endl;
     std::cerr << "  max_bandwidth_factor       : " << max_bandwidth_factor << std::endl;
@@ -227,7 +259,7 @@ RsMutex  NxsBandwidthRecorder::mtx("Bandwidth recorder") ; 	     // Protects the
 void RsGxsNetService::syncWithPeers()
 {
 #ifdef NXS_NET_DEBUG_0
-    std::cerr << "RsGxsNetService::syncWithPeers() this=" << (void*)this << ". serviceInfo=" << mServiceInfo << std::endl;
+    GXSNETDEBUG___ << "RsGxsNetService::syncWithPeers() this=" << (void*)this << ". serviceInfo=" << mServiceInfo << std::endl;
 #endif
 
     static RsNxsSerialiser ser(mServType) ;	// this is used to estimate bandwidth.
@@ -264,7 +296,7 @@ void RsGxsNetService::syncWithPeers()
         NxsBandwidthRecorder::recordEvent(mServType,grp) ;
 
 #ifdef NXS_NET_DEBUG_0
-        std::cerr << "  sending RsNxsSyncGrp item to peer id: " << *sit << " ts=" << updateTS << std::endl;
+	GXSNETDEBUG_P_(*sit) << "  sending RsNxsSyncGrp item to peer id: " << *sit << " ts=" << updateTS << std::endl;
 #endif
         sendItem(grp);
     }
@@ -300,7 +332,7 @@ void RsGxsNetService::syncWithPeers()
     sit = peers.begin();
 
     float sending_probability = NxsBandwidthRecorder::computeCurrentSendingProbability() ;
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_2
     std::cerr << "  syncWithPeers(): Sending probability = " << sending_probability << std::endl;
 #endif
 
@@ -323,7 +355,7 @@ void RsGxsNetService::syncWithPeers()
             mui = cit->second;
 
 #ifdef NXS_NET_DEBUG_0
-        std::cerr << "  syncing messages with peer " << peerId << std::endl;
+	GXSNETDEBUG_P_(peerId) << "  syncing messages with peer " << peerId << std::endl;
 #endif
 
         GrpMetaMap::const_iterator mmit = toRequest.begin();
@@ -358,14 +390,14 @@ void RsGxsNetService::syncWithPeers()
             {
                 sendItem(msg);
 #ifdef NXS_NET_DEBUG_0
-                std::cerr << "    sending RsNxsSyncMsg req for grpId=" << grpId << " to peer " << *sit << ", last TS=" << std::dec<< time(NULL) - updateTS << " secs ago." << std::endl;
+		GXSNETDEBUG_PG(*sit,grpId) << "    sending RsNxsSyncMsg req for grpId=" << grpId << " to peer " << *sit << ", last TS=" << std::dec<< time(NULL) - updateTS << " secs ago." << std::endl;
 #endif
             }
             else
             {
                 delete msg ;
 #ifdef NXS_NET_DEBUG_0
-                std::cerr << "    cancel RsNxsSyncMsg req for grpId=" << grpId << " to peer " << *sit << ": not enough bandwidth." << std::endl;
+                GXSNETDEBUG_PG(*sit,grpId) << "    cancel RsNxsSyncMsg req for grpId=" << grpId << " to peer " << *sit << ": not enough bandwidth." << std::endl;
 #endif
             }
         }
@@ -390,7 +422,7 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     // gets requested once again, for a proper update.
 
 #ifdef NXS_NET_DEBUG_0
-    std::cerr << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all msg time stamps." << std::endl;
+    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all msg time stamps." << std::endl;
 #endif
     for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
     {
@@ -550,10 +582,10 @@ struct GrpFragCollate
 
 void RsGxsNetService::locked_createTransactionFromPending( MsgRespPending* msgPend)
 {
-#ifdef NXS_NET_DEBUG
-    std::cerr << "locked_createTransactionFromPending()" << std::endl;
+#ifdef NXS_NET_DEBUG_1
+	GXSNETDEBUG_P_(msgPend->mPeerId) << "locked_createTransactionFromPending()" << std::endl;
 #endif
-    MsgAuthorV::const_iterator cit = msgPend->mMsgAuthV.begin();
+	MsgAuthorV::const_iterator cit = msgPend->mMsgAuthV.begin();
 	std::list<RsNxsItem*> reqList;
 	uint32_t transN = locked_getTransactionId();
 	for(; cit != msgPend->mMsgAuthV.end(); ++cit)
@@ -570,24 +602,24 @@ void RsGxsNetService::locked_createTransactionFromPending( MsgRespPending* msgPe
 			msgItem->transactionNumber = transN;
 			msgItem->PeerId(msgPend->mPeerId);
 			reqList.push_back(msgItem);
-        }
-#ifdef NXS_NET_DEBUG
-        else
-            std::cerr << "  entry failed vetting: grpId=" << entry.mGrpId << ", msgId=" << entry.mMsgId << ", peerId=" << msgPend->mPeerId << std::endl;
+		}
+#ifdef NXS_NET_DEBUG_1
+		else
+			GXSNETDEBUG_PG(msgPend->mPeerId,entry.mGrpId) << "  entry failed vetting: grpId=" << entry.mGrpId << ", msgId=" << entry.mMsgId << ", peerId=" << msgPend->mPeerId << std::endl;
 #endif
-    }
+	}
 
 	if(!reqList.empty())
 		locked_pushMsgTransactionFromList(reqList, msgPend->mPeerId, transN);
-#ifdef NXS_NET_DEBUG
-    std::cerr << "  added " << reqList.size() << " items to transaction." << std::endl;
+#ifdef NXS_NET_DEBUG_1
+	GXSNETDEBUG_P_(msgPend->mPeerId) << "  added " << reqList.size() << " items to transaction." << std::endl;
 #endif
 }
 
 void RsGxsNetService::locked_createTransactionFromPending(GrpRespPending* grpPend)
 {
-#ifdef NXS_NET_DEBUG
-    std::cerr << "locked_createTransactionFromPending() from peer " << grpPend->mPeerId << std::endl;
+#ifdef NXS_NET_DEBUG_1
+	GXSNETDEBUG_P_(grpPend->mPeerId) << "locked_createTransactionFromPending() from peer " << grpPend->mPeerId << std::endl;
 #endif
 	GrpAuthorV::const_iterator cit = grpPend->mGrpAuthV.begin();
     std::list<RsNxsItem*> reqList;
@@ -598,8 +630,8 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpRespPending* grpPen
 
 		if(entry.mPassedVetting)
 		{
-#ifdef NXS_NET_DEBUG
-            std::cerr << "  entry Group Id: " << entry.mGrpId << " PASSED" << std::endl;
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(grpPend->mPeerId,entry.mGrpId) << "  entry Group Id: " << entry.mGrpId << " PASSED" << std::endl;
 #endif
 			RsNxsSyncGrpItem* msgItem = new RsNxsSyncGrpItem(mServType);
 			msgItem->grpId = entry.mGrpId;
@@ -609,9 +641,9 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpRespPending* grpPen
 			msgItem->PeerId(grpPend->mPeerId);
 			reqList.push_back(msgItem);
 		}
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_1
         else
-            std::cerr << "  entry failed vetting: grpId=" << entry.mGrpId << ", peerId=" << grpPend->mPeerId << std::endl;
+            GXSNETDEBUG_PG(grpPend->mPeerId,entry.mGrpId) << "  entry failed vetting: grpId=" << entry.mGrpId << ", peerId=" << grpPend->mPeerId << std::endl;
 #endif
 	}
 
@@ -622,8 +654,8 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpRespPending* grpPen
 
 void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend)
 {
-#ifdef NXS_NET_DEBUG
-    std::cerr << "locked_createTransactionFromPending(GrpCircleIdReq)" << std::endl;
+#ifdef NXS_NET_DEBUG_1
+    GXSNETDEBUG_P_(grpPend->mPeerId) << "locked_createTransactionFromPending(GrpCircleIdReq)" << std::endl;
 #endif
     std::vector<GrpIdCircleVet>::iterator cit = grpPend->mGrpCircleV.begin();
 	uint32_t transN = locked_getTransactionId();
@@ -633,8 +665,8 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 		const GrpIdCircleVet& entry = *cit;
 		if(entry.mCleared)
 		{
-#ifdef NXS_NET_DEBUG
-            std::cerr << "  Group Id: " << entry.mGroupId << " PASSED" << std::endl;
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(grpPend->mPeerId,entry.mGroupId)        << "  Group Id: " << entry.mGroupId << " PASSED" << std::endl;
 #endif
 			RsNxsSyncGrpItem* gItem = new
 			RsNxsSyncGrpItem(mServType);
@@ -647,9 +679,9 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 			// why it authorId not set here???
 			itemL.push_back(gItem);
 		}
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_1
         else
-            std::cerr << "  Group Id: " << entry.mGroupId << " FAILED" << std::endl;
+            GXSNETDEBUG_PG(grpPend->mPeerId,entry.mGroupId) << "  Group Id: " << entry.mGroupId << " FAILED" << std::endl;
 #endif
     }
 
@@ -922,8 +954,7 @@ void RsGxsNetService::recvNxsItemQueue()
     while(NULL != (item=recvItem()))
     {
 #ifdef NXS_NET_DEBUG_1
-        std::cerr << "RsGxsNetService Item:" << (void*)item << std::endl ;
-        //item->print(std::cerr);
+        GXSNETDEBUG_P_(item->PeerId()) << "RsGxsNetService Item:" << (void*)item << std::endl ;
 #endif
         // RsNxsItem needs dynamic_cast, since they have derived siblings.
         //
@@ -933,8 +964,8 @@ void RsGxsNetService::recvNxsItemQueue()
             // a live transaction has a non zero value
             if(ni->transactionNumber != 0)
             {
-#ifdef NXS_NET_DEBUG
-                std::cerr << "  recvNxsItemQueue() handlingTransaction, transN " << ni->transactionNumber << std::endl;
+#ifdef NXS_NET_DEBUG_1
+                GXSNETDEBUG_P_(item->PeerId()) << "  recvNxsItemQueue() handlingTransaction, transN " << ni->transactionNumber << std::endl;
 #endif
 
                 if(!handleTransaction(ni))
