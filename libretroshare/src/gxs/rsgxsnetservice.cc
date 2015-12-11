@@ -67,9 +67,10 @@
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4)
 
-static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;// use this to limit print to this peer id only
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;// use this to allow to this group id only
-static const uint32_t     service_to_print  = 0 ;                              // use this to allow to this service id only
+static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;// use this to limit print to this peer id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  = 0x0215 ;                       // use this to allow to this service id only, or 0 for all services
+										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h)
 
 class nullstream: public std::ostream {};
         
@@ -79,7 +80,7 @@ static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp
     
     if((peer_to_print.isNull() || peer_id.isNull() || peer_id == peer_to_print) 
     && (group_id_to_print.isNull() || grp_id.isNull() || grp_id == group_id_to_print)
-    && (service_to_print==0 || service_type == 0 || service_type == service_to_print))
+    && (service_to_print==0 || service_type == 0 || ((service_type >> 8)&0xffff) == service_to_print))
         return std::cerr ;
     else
         return null ;
