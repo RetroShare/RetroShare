@@ -49,9 +49,6 @@
 #include "util/rsnet.h" /* more generic networking header */
 
 // Some Network functions that are missing from windows.
-
-in_addr_t inet_netof(struct in_addr addr);
-in_addr_t inet_network(const char *inet_name);
 int inet_aton(const char *name, struct in_addr *addr);
 
 extern int errno; /* Define extern errno, to duplicate unix behaviour */

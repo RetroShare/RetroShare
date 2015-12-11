@@ -263,34 +263,6 @@ int inet_aton(const char *name, struct in_addr *addr)
 	return (((*addr).s_addr = inet_addr(name)) != INADDR_NONE);
 }
 
-
-// This returns in Net Byte Order. 
-// NB: Linux man page claims it is in Host Byte order, but
-// this is blatantly wrong!..... (for Debian anyway)
-// Making this consistent with the Actual behavior (rather than documented).
-in_addr_t inet_netof(struct in_addr addr)
-{
-	return pqi_inet_netof(addr);
-}
-
-// This returns in Host Byte Order. (as the man page says)
-// Again, to be consistent with Linux.
-in_addr_t inet_network(const char *inet_name)
-{
-	struct in_addr addr;
-	if (inet_aton(inet_name, &addr))
-	{
-#ifdef NET_DEBUG
-//		std::cerr << "inet_network(" << inet_name << ") : ";
-//		std::cerr << rs_inet_ntoa(addr) << std::endl;
-#endif
-		return ntohl(inet_netof(addr));
-	}
-	return 0xffffffff;
-	//return -1;
-}
-
-
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 

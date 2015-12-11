@@ -54,7 +54,6 @@ int test_isExternalNet();
 int test_isPrivateNet();
 int test_isLoopbackNet();
 int test_isValidNet();
-int test_pqi_inet_netof();
 
 INITTEST();
 
@@ -66,7 +65,6 @@ int main(int argc, char **argv)
 	test_isPrivateNet();
 	test_isLoopbackNet();
 	test_isValidNet();
-	test_pqi_inet_netof();
 
 	FINALREPORT("net_test1");
 
@@ -167,43 +165,6 @@ int test_isValidNet()
 	//CHECK(isValidNet(&invalid_addr)==false);
 
 	REPORT("isValidNet()");
-
-	return 1;
-}
-
-int test_pqi_inet_netof()
-{
-	struct in_addr localnet1_addr;
-	struct in_addr localnet2_addr;
-	struct in_addr localnet3_addr;
-	struct in_addr localnet4_addr;
-	struct in_addr localnet5_addr;
-	struct in_addr localnet6_addr;
-	struct in_addr localnet7_addr;
-	struct in_addr localnet8_addr;
-	struct in_addr external_addr;
-
-	inet_aton(localnet1_addrstr, &localnet1_addr);
-	inet_aton(localnet2_addrstr, &localnet2_addr);
-	inet_aton(localnet3_addrstr, &localnet3_addr);
-	inet_aton(localnet4_addrstr, &localnet4_addr);
-	inet_aton(localnet5_addrstr, &localnet5_addr);
-	inet_aton(localnet6_addrstr, &localnet6_addr);
-	inet_aton(localnet7_addrstr, &localnet7_addr);
-	inet_aton(localnet8_addrstr, &localnet8_addr);
-	inet_aton(external_addrstr, &external_addr);
-
-	CHECK(pqi_inet_netof(localnet1_addr)==htonl(10<<24));
-	CHECK(pqi_inet_netof(localnet2_addr)==htonl(169<<24 | 254<<16));
-	CHECK(pqi_inet_netof(localnet3_addr)==htonl(172<<24 | 16<<16));
-	CHECK(pqi_inet_netof(localnet4_addr)==htonl(192<<24 | 168<<16 | 1<<8));
-	CHECK(pqi_inet_netof(localnet5_addr)==htonl(10<<24));
-	CHECK(pqi_inet_netof(localnet6_addr)==htonl(169<<24 | 254<<16));
-	CHECK(pqi_inet_netof(localnet7_addr)==htonl(172<<24 | 20<<16));
-	CHECK(pqi_inet_netof(localnet8_addr)==htonl(192<<24 | 168<<16 | 1<<8));
-	CHECK(pqi_inet_netof(external_addr)==htonl(74<<24));
-
-	REPORT("pqi_inet_netof()");
 
 	return 1;
 }
