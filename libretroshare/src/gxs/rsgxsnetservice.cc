@@ -957,7 +957,7 @@ void RsGxsNetService::recvNxsItemQueue()
 
     while(NULL != (item=recvItem()))
     {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_1
         GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetService Item:" << (void*)item << std::endl ;
 #endif
         // RsNxsItem needs dynamic_cast, since they have derived siblings.
@@ -2677,7 +2677,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
     RsPeerId peer = item->PeerId();
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): from " << peer << ", Last update TS sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
+    GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): Service: " << mServType << " from " << peer << ", Last update TS sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
 #endif
 
         if(!locked_CanReceiveUpdate(item))
@@ -2711,7 +2711,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 	std::vector<GrpIdCircleVet> toVet;
 #ifdef NXS_NET_DEBUG_0
-	GXSNETDEBUG_P_(peer) << "  RsGxsNetService::handleRecvSyncGroup() \nService: " << mServType << "\nGroup list beings being sent: " << std::endl;
+	GXSNETDEBUG_P_(peer) << "  Group list beings being sent: " << std::endl;
 #endif
 
 	for(; mit != grp.end(); ++mit)
@@ -2991,7 +2991,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  no local time stamp for this grp. " ;
 #endif
     
-#warning when no timestamp is found, the return value should be false, since we don't want to send anything
+#warning when no timestamp is found, the return value should be false, since we do not want to send anything 
     return true;
 }
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
