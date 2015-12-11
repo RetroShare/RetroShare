@@ -24,6 +24,171 @@
  *
  */
 
+// 
+// RsNxsItem
+//    |
+//    +-- RsNxsSyncGrp                    send req for group list, with time stamp of what we have
+//    +-- RsNxsSyncMsg
+//    +-- RsNxsGroupPublishKeyItem
+//    +-- RsNxsSyncGrpItem                send individual grp info with time stamps, authors, etc.
+// 
+// 
+// tick()
+//    |
+//    +----------- sharePublishKeys()
+//    |
+//    +----------- syncWithPeers()
+//    |              |
+//    |              +--if AutoSync--- send global UpdateTS of each peer to itself => the peer knows the last 
+//    |              |                 time current peer has received an updated from himself
+//    |              |                    type=RsNxsSyncGrp
+//    |              |                    role: advise to request grp list for mServType
+//    |              |
+//    |              +--Retrive all grp Id + meta
+//    |
+//    |                 For each peer
+//    |                    For each grp to request
+//    |                       send RsNxsSyncMsg(ServiceType,  grpId,  updateTS)
+//    |                                                                    |
+//    |                       (Only send if rand() < sendingProb())        +---comes from mClientMsgUpdateMap
+//    |                       
+//    +----------- recvNxsItemQueue()
+//                   |
+//                   +------ handleRecvPublishKeys(auto*)
+//                   |
+//                   |
+//                   |
+//                   +------ handleRecvSyncGroup( RsNxsSyncGrp*)
+//                   |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
+//                   |            - pack into a single RsNxsTransac item
+//                   |                     |
+//                   |                     +---- canSendGrpId(peer, grpMeta, toVet)   // determines if put in vetting list 
+//                   |                     |        |                                 // or sent right away
+//                   |                     |        +--CIRCLES_TYPE_LOCAL------- false
+//                   |                     |        +--CIRCLES_TYPE_PUBLIC------ true
+//                   |                     |        +--CIRCLES_TYPE_EXTERNAL---- mCircles->canSend(circleId, getPgpId(peerId))
+//                   |                     |        +--CIRCLES_TYPE_YOUR_EYES--- internal circle stuff
+//                   |                     |
+//                   |                     +---- store in mPendingCircleVet ou directement locked_pushGrpRespFromList()
+//                   |
+//                   +------ handleRecvSyncMessage( RsNxsSyncMsg*)
+//                                - parse msgs from group
+//                                - send all msg IDs for this group
+// data_tick()
+//    |
+//    +----------- updateServerSyncTS()
+//    |                    - retrieve all group meta data
+//    |                    - updates mServerMsgUpdateMap[grpId]=grp->mLastPostTS for all grps
+//    |                    - updates mGrpServerUpdateItem to max of all received TS
+//    |
+//    +----------- processTransactions()
+//    |
+//    +----------- processCompletedTransactions()
+//    |                    |
+//    |                    +------ locked_processCompletedIncomingTrans()
+//    |                    |              |
+//    |                    |              +-------- locked_genReqMsgTransaction()   // request messages based on list
+//    |                    |              |
+//    |                    |              +-------- locked_genReqGrpTransaction()   // request groups based on list
+//    |                    |              |
+//    |                    |              +-------- locked_genSendMsgsTransaction() // send msg list
+//    |                    |              |
+//    |                    |              +-------- locked_genSendGrpsTransaction() // send group list
+//    |                    |
+//    |                    +------ locked_processCompletedOutgoingTrans()
+//    |
+//    +----------- processExplicitGroupRequests()
+//    |                    - parse mExplicitRequest and for each element (containing a grpId list), 
+//    |                       send the group ID (?!?!)
+//    |
+//    +----------- runVetting()
+//                      |
+//                      +--------- sort items from mPendingResp
+//                      |                      |
+//                      |                      +------ locked_createTransactionFromPending(GrpRespPending / MsgRespPending)  
+// 							|                      |            // takes accepted transaction and adds them to the list of active trans
+//                      |
+//                      +--------- sort items from mPendingCircleVetting
+//                                             |
+//                                             +------ locked_createTransactionFromPending(GrpCircleIdsRequestVetting / MsgCircleIdsRequestVetting)   
+// 														               // takes accepted transaction and adds them to the list of active trans
+// 
+// Objects for time stamps
+// =======================
+//
+//     mClientGrpUpdateMap: map< RsPeerId, TimeStamp >    Time stamp over all groups sent by that peer Id 
+//                                                        Updated in processCompletedIncomingTransaction() from Grp list trans.
+//     
+//                                                        Used in syncWithPeers() sending in RsNxsSyncGrp once to all peers.
+//                                                        Set at server to be mGrpServerUpdateItem->grpUpdateTS
+//     
+//     mClientMsgUpdateMap: map< RsPeerId, map<grpId,TimeStamp > >    
+//     
+//                                                        Last msg list modification time sent by that peer Id 
+//                                                        Updated in processCompletedIncomingTransaction() from Grp list trans.
+//                                                        Used in syncWithPeers() sending in RsNxsSyncGrp once to all peers.
+//                                                        Set at server to be mServerMsgUpdateMap[grpId]->msgUpdateTS
+//     
+//     mGrpServerUpdateItem:  TimeStamp                   Last group modification timestamp over all groups
+//     
+//     mServerMsgUpdateMap: map< GrpId, TimeStamp >       Timestamp modification for each group (time of most recent msg)
+// 
+// 
+// Group update algorithm
+// ======================
+// 
+//          CLient                                                                                                   Server
+//          ======                                                                                                   ======
+// 
+//    tick()                                                                                                    tick()
+//      |                                                                                                         |
+//      +---- SyncWithPeers                                                                                       +-- recvNxsItemQueue()
+//                 |                                                                                                   |
+//                 +---------------- Send global UpdateTS of each peer to itself => the peer knows        +--------->  +------ handleRecvSyncGroup( RsNxsSyncGrp*)
+//                 |                 the last msg sent (stored in mClientGrpUpdateMap),                   |            |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
+//                 |                    type=RsNxsSyncGrp                                                 |            |            - pack into a single RsNxsTransac item
+//                 |                    role: advise to request grp list for mServType -------------------+            |
+//                 |                                                                                             +-->  +------ handleRecvSyncMessage( RsNxsSyncMsg*)
+//                 +---------------- Retrieve all grp Id + meta                                                  |                  - parse msgs from group
+//                 |                                                                                             |                  - send all msg IDs for this group
+//                 +-- For each peer                                                                             |     
+//                       For each grp to request                                                                 |     
+//                         send RsNxsSyncMsg(ServiceType,  grpId,  updateTS)                                     |     
+//                                                                       |                                       |     
+//                          (Only send if rand() < sendingProb())        +---comes from mClientMsgUpdateMap -----+
+//        
+// Suggestions
+// ===========
+//    * handleRecvSyncGroup should use mit->second.mLastPost to limit the sending of already known data
+//    * apparently mServerMsgUpdateMap is initially empty -> by default clients will always want to receive the data.
+//       => new peers will always send data for each group until they get an update for that group.
+//    * check that there is a timestamp for unsubscribed items, otherwise we always send TS=0 and we always get them!! (in 346)
+// 
+//       -> there is not. mClientMsgUpdateMap is updated when msgs are received.
+//       -> 1842: leaves before asking for msg content.
+// 
+//      Proposed changes:
+//       - for unsubsribed groups, mClientMsgUpdateMap[peerid][grpId]=now when the group list is received => wont be asked again
+//       - when we subscribe, we reset the time stamp.
+// 
+//      Better change:
+//       - each peer sends last 
+// 
+//    * the last TS method is not perfect: do new peers always receive old messages?
+// 
+//    * there's double information between mServerMsgUpdateMap first element (groupId) and second->grpId
+//    * processExplicitGroupRequests() seems to send the group list that it was
+//      asked for without further information. How is that useful???
+// 
+//    * grps without messages will never be stamped because stamp happens in genReqMsgTransaction, after checking msgListL.empty()
+//       Problem: without msg, we cannot know the grpId!!
+// 
+//    * what is the effect of a time shift between computers on the GXS system?
+//    * we should check that we never compare time stamps computed on different computers
+// 
+//    *  mClientMsgUpdateMap[peerid][grpId] is only updated when new msgs are received. Up to date groups will keep asking for lists!
+                            
+                            
 #include <unistd.h>
 #include <sys/time.h>
 #include <math.h>
@@ -67,9 +232,9 @@
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4)
 
-static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;// use this to limit print to this peer id only, or "" for all IDs
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x0215 ;                       // use this to allow to this service id only, or 0 for all services
+static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;	// use this to limit print to this peer id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  = 0x0215 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h)
 
 class nullstream: public std::ostream {};
@@ -81,7 +246,7 @@ static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp
     if((peer_to_print.isNull() || peer_id.isNull() || peer_id == peer_to_print) 
     && (group_id_to_print.isNull() || grp_id.isNull() || grp_id == group_id_to_print)
     && (service_to_print==0 || service_type == 0 || ((service_type >> 8)&0xffff) == service_to_print))
-        return std::cerr ;
+        return std::cerr << time(NULL) << ": " ;
     else
         return null ;
 }
@@ -2703,8 +2868,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 		return;
 	}
 
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit =
-	grp.begin();
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grp.begin();
 
 	std::list<RsNxsItem*> itemL;
 
