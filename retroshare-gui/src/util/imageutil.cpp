@@ -41,3 +41,11 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
 		QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Not an image"));
 	}
 }
+
+bool ImageUtil::checkImage(QTextCursor cursor)
+{
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QString imagestr = cursor.selection().toHtml();
+	return imagestr.indexOf("base64,") != -1;
+}

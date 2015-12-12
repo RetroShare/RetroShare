@@ -979,8 +979,12 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addAction(ui->actionClearChatHistory);
 	contextMnu->addAction(ui->actionQuote);
 
-	ui->actionSave_image->setData(point);
-	contextMnu->addAction(ui->actionSave_image);
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	if(ImageUtil::checkImage(cursor))
+	{
+		ui->actionSave_image->setData(point);
+		contextMnu->addAction(ui->actionSave_image);
+	}
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
