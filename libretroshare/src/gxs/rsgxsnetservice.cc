@@ -1408,17 +1408,17 @@ void RsGxsNetService::debugDump()
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
     GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << now - mGrpServerUpdateItem->grpUpdateTS << " secs ago (is the last local modification time over all groups of this service)" << std::endl;
-    GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last modification time)" << std::endl;
+    GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last local modification time)" << std::endl;
 
     for(std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
 	    GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(now,it->second->msgUpdateTS) << std::endl;
 
-    GXSNETDEBUG___<< "  mClientGrpUpdateMap: (is for each friend, the latest time the friend sent content, all groups included)" << std::endl;
+    GXSNETDEBUG___<< "  mClientGrpUpdateMap: (is for each friend, last modif time of group meta data at that friend, all groups included, sent by the friend himself)" << std::endl;
 
     for(std::map<RsPeerId,RsGxsGrpUpdateItem*>::const_iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();++it)
 	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << " - last updated at peer (secs ago): " << nice_time_stamp(now,it->second->grpUpdateTS) << std::endl;
 
-    GXSNETDEBUG___<< "  mClientMsgUpdateMap: (is for each friend, the latest modification time for each group, sent by the friend himself)" << std::endl;
+    GXSNETDEBUG___<< "  mClientMsgUpdateMap: (is for each friend, the modif time for each group (e.g. last message received), sent by the friend himself)" << std::endl;
 
     for(std::map<RsPeerId,RsGxsMsgUpdateItem*>::const_iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
     {
