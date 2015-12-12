@@ -1403,6 +1403,7 @@ static std::string nice_time_stamp(time_t now,time_t TS)
 
 void RsGxsNetService::debugDump()
 {
+	RS_STACK_MUTEX(mNxsMutex) ;
     time_t now = time(NULL) ;
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
