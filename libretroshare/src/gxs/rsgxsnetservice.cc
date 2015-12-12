@@ -145,7 +145,7 @@
 //      +---- SyncWithPeers                                                                                       +-- recvNxsItemQueue()
 //                 |                                                                                                   |
 //                 +---------------- Send global UpdateTS of each peer to itself => the peer knows        +--------->  +------ handleRecvSyncGroup( RsNxsSyncGrp*)
-//                 |                 the last msg sent (stored in mClientGrpUpdateMap),                   |            |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
+//                 |                 the last msg sent (stored in mClientGrpUpdateMap[peer_id]),          |            |            - parse all subscribed groups. For each, send a RsNxsSyncGrpItem with publish TS
 //                 |                    type=RsNxsSyncGrp                                                 |            |            - pack into a single RsNxsTransac item
 //                 |                    role: advise to request grp list for mServType -------------------+            |
 //                 |                                                                                             +-->  +------ handleRecvSyncMessage( RsNxsSyncMsg*)
@@ -1369,11 +1369,14 @@ void RsGxsNetService::data_tick()
         if(mUpdateCounter >= 120) // 60 seconds
         {
             updateServerSyncTS();
-            mUpdateCounter = 0;
+            mUpdateCounter = 1;
         }
         else
             mUpdateCounter++;
 
+        if(mUpdateCounter % 20 == 0)	// dump the full shit every 20 secs
+            debugDump() ;
+            
         // process active transactions
         processTransactions();
 
@@ -1384,6 +1387,34 @@ void RsGxsNetService::data_tick()
         runVetting();
 
         processExplicitGroupRequests();
+}
+
+void RsGxsNetService::debugDump()
+{
+    time_t now = time(NULL) ;
+
+    GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
+
+    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << now - mGrpServerUpdateItem->grpUpdateTS << " secs ago (is the last modification time over all groups of this service)" << std::endl;
+    GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last modification time)" << std::endl;
+
+    for(std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
+	    GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last modification: " << now - it->second->msgUpdateTS << " secs ago." << std::endl;
+
+    GXSNETDEBUG___<< "  mClientGrpUpdateMap: (is for each friend, the latest time the friend sent content, all groups included)" << std::endl;
+
+    for(std::map<RsPeerId,RsGxsGrpUpdateItem*>::const_iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();++it)
+	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << " - last updated " << now - it->second->grpUpdateTS << " secs ago." << std::endl;
+
+    GXSNETDEBUG___<< "  mClientMsgUpdateMap: (is for each friend, the latest time the friend sent content for each group)" << std::endl;
+
+    for(std::map<RsPeerId,RsGxsMsgUpdateItem*>::const_iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
+    {
+	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << std::endl;
+
+	    for(std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
+		    GXSNETDEBUG_PG(it->first,it2->first) << "      group " << it2->first << " - last updated " << now - it2->second.time_stamp << " secs ago. Message count=" << it2->second.message_count << std::endl;
+    }            
 }
 
 void RsGxsNetService::updateServerSyncTS()
@@ -2822,16 +2853,16 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
     if(mGrpServerUpdateItem)
     {
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(item->PeerId()) << "  local time stamp: " << std::dec<< time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago. Update sent: " <<
-                     (item->updateTS == 0 || item->updateTS < mGrpServerUpdateItem->grpUpdateTS)  << std::endl;
+        GXSNETDEBUG_P_(item->PeerId()) << "  local modification time stamp: " << std::dec<< time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago. Update sent: " <<
+                     ((item->updateTS == 0 || item->updateTS < mGrpServerUpdateItem->grpUpdateTS)?"YES":"NO")  << std::endl;
 #endif
         return (item->updateTS == 0 || item->updateTS < mGrpServerUpdateItem->grpUpdateTS);
     }
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(item->PeerId()) << "  no local time stamp. Client wants to receive the grp list. " << std::endl;
+    GXSNETDEBUG_P_(item->PeerId()) << "  no local time stamp. This will be fixed after updateServerSyncTS(). Not sending for now. " << std::endl;
 #endif
 
-    return true;
+    return false;
 }
 
 void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
@@ -2843,7 +2874,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
     RsPeerId peer = item->PeerId();
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): Service: " << mServType << " from " << peer << ", Last update TS sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
+    GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): Service: " << mServType << " from " << peer << ", Last update TS (from myself) sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
 #endif
 
         if(!locked_CanReceiveUpdate(item))

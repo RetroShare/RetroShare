@@ -511,7 +511,8 @@ private:
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
-
+    
+    void debugDump();
 };
 
 #endif // RSGXSNETSERVICE_H
