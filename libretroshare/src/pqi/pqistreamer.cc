@@ -416,104 +416,127 @@ time_t	pqistreamer::getLastIncomingTS()
 int	pqistreamer::handleoutgoing_locked()
 {
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleoutgoing_locked()");
+    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleoutgoing_locked()");
 #endif
 
-	int maxbytes = outAllowedBytes_locked();
-	int sentbytes = 0;
-	int len;
-	int ss;
-	//	std::cerr << "pqistreamer: maxbytes=" << maxbytes<< std::endl ; 
+    int maxbytes = outAllowedBytes_locked();
+    int sentbytes = 0;
+    int len;
+    int ss;
+    //	std::cerr << "pqistreamer: maxbytes=" << maxbytes<< std::endl ; 
 
-	std::list<void *>::iterator it;
+    std::list<void *>::iterator it;
 
-	// if not connection, or cannot send anything... pause.
-	if (!(mBio->isactive()))
-	{
-		/* if we are not active - clear anything in the queues. */
-		locked_clear_out_queue() ;
+    // if not connection, or cannot send anything... pause.
+    if (!(mBio->isactive()))
+    {
+	    /* if we are not active - clear anything in the queues. */
+	    locked_clear_out_queue() ;
 
-		/* also remove the pending packets */
-		if (mPkt_wpending)
-		{
-			free(mPkt_wpending);
-			mPkt_wpending = NULL;
-		}
+	    /* also remove the pending packets */
+	    if (mPkt_wpending)
+	    {
+		    free(mPkt_wpending);
+		    mPkt_wpending = NULL;
+	    }
 
-		outSentBytes_locked(sentbytes);
-		return 0;
-	}
+	    outSentBytes_locked(sentbytes);
+	    return 0;
+    }
 
-	// a very simple round robin
+    // a very simple round robin
 
-	bool sent = true;
-	while(sent) // catch if all items sent.
-	{
-		sent = false;
+    bool sent = true;
+    int nsent = 0 ;
+    while(sent) // catch if all items sent.
+    {
+	    sent = false;
 
-		if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
-		{
+	    if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
+	    {
 
 #ifdef DEBUG_TRANSFERS
-			if (maxbytes < sentbytes)
-			{
-				std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
-				std::cerr << std::endl;
-			}
-			else
-			{
-				std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending at cansend() is false";
-				std::cerr << std::endl;
-			}
+		    if (maxbytes < sentbytes)
+		    {
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
+			    std::cerr << std::endl;
+		    }
+		    else
+		    {
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending at cansend() is false";
+			    std::cerr << std::endl;
+		    }
 #endif
 
-			outSentBytes_locked(sentbytes);
-			return 0;
-		}
-
-		// send a out_pkt., else send out_data. unless
-		// there is a pending packet.
-		if (!mPkt_wpending)
-			mPkt_wpending = locked_pop_out_data() ;
-
-		if (mPkt_wpending)
-		{
-			// write packet.
-			len = getRsItemSize(mPkt_wpending);
-
+		    outSentBytes_locked(sentbytes);
+		    return 0;
+	    }
+#define GROUP_OUTGOING_PACKETS 1
+	    // send a out_pkt., else send out_data. unless
+	    // there is a pending packet.
+	    if (!mPkt_wpending)
+#ifdef GROUP_OUTGOING_PACKETS
+	    {
+		    void *dta;
+		    len = 0 ;
+		    int k=0;
+		    while(len < maxbytes && (dta = locked_pop_out_data())!=NULL )
+		    {
+			    uint32_t s = getRsItemSize(dta);
+			    mPkt_wpending = realloc(mPkt_wpending,s+len) ;
+			    memcpy(mPkt_wpending+len,dta,s) ;
+			    free(dta);
+			    len += s ;
+			    ++k ;
+		    }
+		    if(k > 1)
+			    std::cerr << "Packed " << k << " packets into " << len << " bytes." << std::endl;
+	    }
+#else
+	    {
+		    mPkt_wpending = locked_pop_out_data() ;
+		    len = getRsItemSize(mPkt_wpending);
+	    }
+#endif
+	    if (mPkt_wpending)
+	    {
+		    // write packet.
 #ifdef DEBUG_PQISTREAMER
-                        std::cout << "Sending Out Pkt of size " << len << " !" << std::endl;
+		    std::cout << "Sending Out Pkt of size " << len << " !" << std::endl;
 #endif
 
-			if (len != (ss = mBio->senddata(mPkt_wpending, len)))
-			{
+		    if (len != (ss = mBio->senddata(mPkt_wpending, len)))
+		    {
 #ifdef DEBUG_PQISTREAMER
-				std::string out;
-				rs_sprintf(out, "Problems with Send Data! (only %d bytes sent, total pkt size=%d)", ss, len);
-//				std::cerr << out << std::endl ;
-				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
+			    std::string out;
+			    rs_sprintf(out, "Problems with Send Data! (only %d bytes sent, total pkt size=%d)", ss, len);
+			    //				std::cerr << out << std::endl ;
+			    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 
-				outSentBytes_locked(sentbytes);
-				// pkt_wpending will kept til next time.
-				// ensuring exactly the same data is written (openSSL requirement).
-				return -1;
-			}
+			    outSentBytes_locked(sentbytes);
+			    // pkt_wpending will kept til next time.
+			    // ensuring exactly the same data is written (openSSL requirement).
+			    return -1;
+		    }
+		    ++nsent;
 
 #ifdef DEBUG_TRANSFERS
-			std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
-			std::cerr << std::endl;
+		    std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
+		    std::cerr << std::endl;
 #endif
 
-			free(mPkt_wpending);
-			mPkt_wpending = NULL;
+		    free(mPkt_wpending);
+		    mPkt_wpending = NULL;
 
-			sentbytes += len;
-			sent = true;
-		}
-	}
-	outSentBytes_locked(sentbytes);
-	return 1;
+		    sentbytes += len;
+		    sent = true;
+	    }
+    }
+    if(nsent > 0)
+	    std::cerr << "nsent = " << nsent << ", total bytes=" << sentbytes << std::endl;
+    outSentBytes_locked(sentbytes);
+    return 1;
 }
 
 
