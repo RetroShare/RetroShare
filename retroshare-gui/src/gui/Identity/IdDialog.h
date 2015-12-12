@@ -69,7 +69,6 @@ private slots:
 
 	void updateSelection();
 
-	void todo();
 	void modifyReputation();
 
 	/** Create the context popup menu and it's submenus */

@@ -130,7 +130,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Connect signals */
 	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -169,8 +168,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
-	headerText = headerItem->text(RSID_COL_KEYID);
-	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
 	/* Setup tree */
 	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
@@ -178,6 +176,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->enableColumnCustomize(true);
 	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
 	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
+	ui->idTreeWidget->setColumnHidden(RSID_COL_KEYID, true);
+	
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
 	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
@@ -192,12 +192,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
-	// Hiding RepList until that part is finished.
-	//ui->treeWidget_RepList->setVisible(false);
-    
-#ifndef UNFINISHED
-	ui->todoPushButton->hide() ;
-#endif
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
@@ -221,9 +215,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	// load settings
 	processSettings(true);
 
-    // hide reputation sice it's currently unused
-    //ui->reputationGroupBox->hide();
-    //ui->tweakGroupBox->hide();
 }
 
 IdDialog::~IdDialog()
@@ -233,14 +224,6 @@ IdDialog::~IdDialog()
 
 	delete(ui);
 	delete(mIdQueue);
-}
-
-void IdDialog::todo()
-{
-	QMessageBox::information(this, "Todo",
-	                         "<b>Open points:</b><ul>"
-	                         "<li>Reputation"
-	                         "</ul>");
 }
 
 void IdDialog::processSettings(bool load)
@@ -491,7 +474,10 @@ void IdDialog::insertIdList(uint32_t token)
 		}
 		if (vit == datavector.end())
 		{
-			delete(item);
+      if(item != allItem && item != contactsItem)
+      {
+        delete(item);
+      }
 		} else {
 			if (!fillIdListItem(*vit, item, ownPgpId, accept))
 			{
@@ -527,9 +513,10 @@ void IdDialog::insertIdList(uint32_t token)
 		}
 	}
 	}
+	//int itemCount = item->childCount();
 	
 	/* count items */
-	ui->label_count->setText( "(" + QString::number(ui->idTreeWidget->topLevelItemCount()) + ")" );
+	//ui->label_count->setText( "(" + QString::number(itemCount) + ")" );
 
 	filterIds();
 
@@ -938,7 +925,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	rsIdentity->getOwnIds(own_identities) ;
 
 	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (item) {
+	
+	if(item != allItem && item != contactsItem) {
 		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
 		if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
@@ -981,7 +969,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			rsIdentity->getIdDetails(RsGxsId(keyId), details);
 			
 			QAction *addContact = contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
-			QAction *removeContact = contextMnu.addAction(QIcon(), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+			QAction *removeContact = contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			
 			if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
@@ -1018,12 +1006,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 		}
+		
+    contextMnu.addSeparator();
+
+    contextMnu.addAction(ui->editIdentity);
+    contextMnu.addAction(ui->removeIdentity);
 	}
 
-	contextMnu.addSeparator();
-
-	contextMnu.addAction(ui->editIdentity);
-	contextMnu.addAction(ui->removeIdentity);
 	
 	contextMnu.addSeparator();
 
