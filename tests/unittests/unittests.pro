@@ -45,24 +45,28 @@ linux-* {
 
         #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+        contains(CONFIG, NO_SQLCIPHER) {
+                DEFINES *= NO_SQLCIPHER
+                PKGCONFIG *= sqlite3
+        } else {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-	SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	isEmpty(SQLCIPHER_OK) {
-	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+                SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+                isEmpty(SQLCIPHER_OK) {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-		! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
-				error(Please fix this and try again. Will stop now.)
-		}
+                        ! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+                                message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
+                                error(Please fix this and try again. Will stop now.)
+                        }
 
-		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-		INCLUDEPATH += ../../../lib/sqlcipher/src/
-		INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
-
-	} else {
-		LIBS += -lsqlcipher
-	}
+                        LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+                        INCLUDEPATH += ../../../lib/sqlcipher/src/
+                        INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
+                } else {
+                        LIBS += -lsqlcipher
+                }
+        }
 
 
 	LIBS *= -lglib-2.0
