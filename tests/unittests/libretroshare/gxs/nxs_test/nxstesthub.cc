@@ -1,6 +1,6 @@
 #include "nxstesthub.h"
 
-
+#include <unistd.h>
 
 class NotifyWithPeerId : public RsNxsObserver
 {
@@ -19,6 +19,16 @@ public:
     void notifyNewGroups(std::vector<RsNxsGrp*>& groups)
     {
     	mTestHub.notifyNewGroups(mPeerId, groups);
+    }
+
+    void notifyReceivePublishKey(const RsGxsGroupId& )
+    {
+
+    }
+
+    void notifyChangedGroupStats(const RsGxsGroupId&)
+    {
+
     }
 
 private:
@@ -95,11 +105,10 @@ bool rs_nxs_test::NxsTestHub::testsPassed()
 }
 
 
-void rs_nxs_test::NxsTestHub::run()
+void rs_nxs_test::NxsTestHub::runloop()
 {
-	bool running = isRunning();
 	double timeDelta = .2;
-	while(running)
+    while(!shouldStop())
 	{
 #ifndef WINDOWS_SYS
         usleep((int) (timeDelta * 1000000));
@@ -108,8 +117,6 @@ void rs_nxs_test::NxsTestHub::run()
 #endif
 
         tick();
-
-		running = isRunning();
 	}
 
 }
@@ -131,7 +138,7 @@ void rs_nxs_test::NxsTestHub::StartTest()
 void rs_nxs_test::NxsTestHub::EndTest()
 {
 	// then stop this thread
-	join();
+    ask_for_stop();
 
 	// stop services
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();

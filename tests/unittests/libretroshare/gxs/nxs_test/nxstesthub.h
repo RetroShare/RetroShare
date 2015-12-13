@@ -62,7 +62,7 @@ namespace rs_nxs_test
 		 *  This simulates the p3Service ticker and calls both gxs net services tick methods
 		 *  Also enables transport of messages between both services
 		 */
-		void run();
+        void runloop();
 
 		/*!
 		 * Begings test, equivalent to CreateThread(this)

@@ -2013,8 +2013,12 @@ void RsGenExchange::publishMsgs()
 				grpId = msg->grpId;
 				msg->metaData->recvTS = time(NULL);
                 
-				mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
-				mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
+                // FIXTESTS global variable rsPeers not available in unittests!
+                if(rsPeers)
+                {
+                    mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
+                    mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
+                }
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);

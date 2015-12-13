@@ -53,6 +53,8 @@
 #include "rstlvutil.h"
 
 #define TEST_LENGTH 10
+// more time for valgrind
+//#define TEST_LENGTH 500
 
 
 #define BIN_LEN 523456  /* bigger than 64k */
@@ -175,7 +177,16 @@ TEST(libretroshare_serialiser, test_RsTlvRandom)
 	int count = 0;
 	for(i = 0; endTs > time(NULL); i += 2)
 	{
-		uint32_t len = dsize - i;
+        uint32_t len = dsize - 2*i; // two times i, because we also use it as offset
+
+        // no point in testing smaller than header size,
+        // because items currently don't check if they can read the header
+        if(len < TLV_HEADER_SIZE)
+        {
+            std::cerr << "reached the end of our datablock!";
+            std::cerr << std::endl;
+            return;
+        }
 		count += test_TlvRandom(&(data[i]), len, i);
 
 		std::cerr << "Run: " << count << " tests";
