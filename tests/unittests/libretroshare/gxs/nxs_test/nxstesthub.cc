@@ -60,7 +60,7 @@ private:
 };
 
 rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
- : mTestScenario(testScenario)
+ : mTestScenario(testScenario), mMtx("NxsTestHub Mutex")
 {
 	std::list<RsPeerId> peers;
 	mTestScenario->getPeers(peers);
@@ -151,6 +151,7 @@ void rs_nxs_test::NxsTestHub::EndTest()
 void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 		std::vector<RsNxsMsg*>& messages)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 
 	std::map<RsNxsMsg*, RsGxsMsgMetaData*> toStore;
 	std::vector<RsNxsMsg*>::iterator it = messages.begin();
@@ -169,6 +170,8 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 
 void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<RsNxsGrp*>& groups)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
+
 	std::map<RsNxsGrp*, RsGxsGrpMetaData*> toStore;
 	std::vector<RsNxsGrp*>::iterator it = groups.begin();
 	for(; it != groups.end(); it++)
@@ -196,6 +199,7 @@ void rs_nxs_test::NxsTestHub::Wait(int seconds) {
 
 bool rs_nxs_test::NxsTestHub::recvItem(RsRawItem* item, const RsPeerId& peerFrom)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 	PayLoad p(peerFrom, item);
 	mPayLoad.push(p);
 	return true;
@@ -213,6 +217,7 @@ void rs_nxs_test::NxsTestHub::tick()
 	PeerNxsMap::iterator it = mPeerNxsMap.begin();
 
 	// deliver payloads to peer's net services
+    mMtx.lock();
 	while(!mPayLoad.empty())
 	{
 		PayLoad& p = mPayLoad.front();
@@ -221,9 +226,12 @@ void rs_nxs_test::NxsTestHub::tick()
 		RsPeerId peerFrom = p.first;
 		RsPeerId peerTo = item->PeerId();
 		item->PeerId(peerFrom);
-		mPeerNxsMap[peerTo]->recv(item); //
+        mMtx.unlock();
+            mPeerNxsMap[peerTo]->recv(item);
+        mMtx.lock();
 		mPayLoad.pop();
 	}
+    mMtx.unlock();
 
 	// then tick net services
 	for(; it != mPeerNxsMap.end(); it++)

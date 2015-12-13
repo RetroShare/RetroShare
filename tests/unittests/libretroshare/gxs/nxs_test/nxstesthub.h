@@ -104,6 +104,8 @@ namespace rs_nxs_test
 	    typedef std::pair<RsPeerId, RsRawItem*> PayLoad;
 
 	    typedef std::map<RsPeerId, RsGxsNetService::pointer > PeerNxsMap ;
+
+        RsMutex mMtx;
 		PeerNxsMap mPeerNxsMap;
 		NxsTestScenario::pointer mTestScenario;
 		std::queue<PayLoad> mPayLoad;
