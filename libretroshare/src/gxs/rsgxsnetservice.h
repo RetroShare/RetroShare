@@ -368,6 +368,7 @@ private:
     void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
+    void updateClientSyncTS();
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
     bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
