@@ -3,7 +3,7 @@
 RsSyntaxHighlighter::RsSyntaxHighlighter(QTextEdit *parent)
 	: QSyntaxHighlighter(parent)
 {
-	quotationFormat.setForeground(QColor(120,153,34));
+
 }
 
 void RsSyntaxHighlighter::highlightBlock(const QString &text)
@@ -24,6 +24,12 @@ void RsSyntaxHighlighter::highlightBlock(const QString &text)
 			setFormat(i+2, lines[0].length()-i-2, quotationFormat);
 		}
 	}
+}
+
+void RsSyntaxHighlighter::setTextColorQuote(QColor textColorQuote)
+{
+	quotationFormat.setForeground(textColorQuote);
+	this->rehighlight();
 }
 
 //Dumping the raw unicode string into the console in Base64 encoding

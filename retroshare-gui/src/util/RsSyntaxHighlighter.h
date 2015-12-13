@@ -9,8 +9,11 @@ class RsSyntaxHighlighter : public QSyntaxHighlighter
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+
 public:
 	RsSyntaxHighlighter(QTextEdit *parent = 0);
+	QColor textColorQuote() const { return quotationFormat.foreground().color(); };
 
 protected:
 	void highlightBlock(const QString &text);
@@ -21,6 +24,8 @@ private:
 signals:
 
 public slots:
+	void setTextColorQuote(QColor textColorQuote);
+
 };
 
 #endif // RSSYNTAXHIGHLIGHTER_H

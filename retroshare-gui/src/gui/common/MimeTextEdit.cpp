@@ -41,6 +41,7 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 	mCompleterKeyModifiers = Qt::ControlModifier;
 	mCompleterKey = Qt::Key_Space;
 	mForceCompleterShowNextKeyEvent = false;
+	highliter = new RsSyntaxHighlighter(this);
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
