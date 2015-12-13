@@ -1408,7 +1408,11 @@ void RsGxsNetService::debugDump()
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
-    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << now - mGrpServerUpdateItem->grpUpdateTS << " secs ago (is the last local modification time over all groups of this service)" << std::endl;
+    if(mGrpServerUpdateItem != NULL)
+	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << now - mGrpServerUpdateItem->grpUpdateTS << " secs ago (is the last local modification time over all groups of this service)" << std::endl;
+    else
+	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: not inited yet (is the last local modification time over all groups of this service)" << std::endl;
+    
     GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last local modification time)" << std::endl;
 
     for(std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
