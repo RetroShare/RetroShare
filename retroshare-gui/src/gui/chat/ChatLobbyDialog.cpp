@@ -53,6 +53,8 @@
 #define COLUMN_ID        3
 #define COLUMN_COUNT     4
 
+#define ROLE_SORT            Qt::UserRole + 1
+
 const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 
 /** Default constructor */
@@ -94,7 +96,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
 
         mParticipantCompareRole = new RSTreeWidgetItemCompareRole;
-        mParticipantCompareRole->setRole(0, Qt::UserRole);
+        mParticipantCompareRole->setRole(COLUMN_ACTIVITY, ROLE_SORT);
 
 	{
 	QIcon icon ;
@@ -450,6 +452,9 @@ void ChatLobbyDialog::updateParticipantsList()
 
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
             time_t now = time(NULL);
+            
+                widgetitem->setSizeHint(COLUMN_ICON, QSize(20,20));
+
 
             if(isParticipantMuted(it2->first))
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_128.png"));
@@ -472,7 +477,7 @@ void ChatLobbyDialog::updateParticipantsList()
         }
     }
     ui.participantsList->setSortingEnabled(true);
-    ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+    ui.participantsList->sortItems(COLUMN_ACTIVITY, Qt::DescendingOrder);
 }
 
 /**
