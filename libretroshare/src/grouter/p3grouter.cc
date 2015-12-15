@@ -316,6 +316,7 @@ bool p3GRouter::registerKey(const RsGxsId& authentication_key,const GRouterServi
     grouter_debug() << "   Auth GXS Id : " << authentication_key << std::endl;
     grouter_debug() << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
     grouter_debug() << "   Description : " << info.description_string << std::endl;
+    grouter_debug() << "   Hash        : " << hash << std::endl;
 #endif
 
     return true ;
@@ -1680,10 +1681,14 @@ bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const R
 {
     client = NULL ;
     service_id = 0;
-
     RsGxsId gxs_id ;
-    makeGxsIdAndClientId(hash,gxs_id,service_id) ;
-
+    
+    if(!locked_getGxsIdAndClientId(hash,gxs_id,service_id))
+    {
+        std::cerr << "  p3GRouter::ERROR: locked_getGxsIdAndClientId(): no key registered for hash " << hash << std::endl;
+        return false ;
+    }
+    
     if(gxs_id != destination_key)
     {
         std::cerr << "  ERROR: verification (destination) GXS key " << destination_key << " does not match key from hash " << gxs_id << std::endl;
@@ -2019,15 +2024,25 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
     bytes[18] = (client >> 8) & 0xff ;
     bytes[19] =  client       & 0xff ;
 
-    return Sha1CheckSum(bytes) ;
+    return RsDirUtil::sha1sum(bytes,20) ;
 }
-void p3GRouter::makeGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
 {
     assert(       gxs_id.SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
-    gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
-    client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
+    //gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
+    //client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
+    
+    std::map<Sha1CheckSum, GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(sum);
+    
+    if(it == _owned_key_ids.end())
+        return false ;
+    
+    gxs_id = it->second.authentication_key ;
+    client_id = it->second.service_id ;
+    
+    return true ;
 }
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {

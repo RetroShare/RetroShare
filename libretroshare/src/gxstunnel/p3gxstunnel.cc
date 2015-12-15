@@ -1389,14 +1389,14 @@ TurtleFileHash p3GxsTunnelService::randomHashFromDestinationGxsId(const RsGxsId&
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
     uint8_t bytes[20] ;
-    memcpy(bytes,destination.toByteArray(),16) ;
+    memcpy(&bytes[4],destination.toByteArray(),16) ;
     
-    RAND_bytes(&bytes[16],4) ;	// fill the last bytes with random crap. Very important to allow tunnels from different sources and statistically avoid collisions.
+    RAND_bytes(&bytes[0],4) ;	// fill the 4 first bytes with random crap. Very important to allow tunnels from different sources and statistically avoid collisions.
 
     // We could rehash this, with a secret key to get a HMAC. That would allow to publish secret distant chat
     // passphrases. I'll do this later if needed.
 
-    return Sha1CheckSum(bytes) ;
+    return Sha1CheckSum(bytes) ;	// this does not compute a hash, and that is on purpose.
 }
 
 RsGxsId p3GxsTunnelService::destinationGxsIdFromHash(const TurtleFileHash& sum)
@@ -1404,7 +1404,7 @@ RsGxsId p3GxsTunnelService::destinationGxsIdFromHash(const TurtleFileHash& sum)
     assert(     RsGxsId::SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
-    return RsGxsId(sum.toByteArray());// takes the first 16 bytes
+    return RsGxsId(&sum.toByteArray()[4]);// takes the last 16 bytes
 }
 
 bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info)
