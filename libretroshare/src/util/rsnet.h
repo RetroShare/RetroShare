@@ -126,6 +126,6 @@ bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr);
 
-
+bool rs_inet_ntop(const sockaddr_storage &addr, std::string &dst);
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

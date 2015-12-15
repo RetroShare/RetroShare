@@ -24,6 +24,7 @@
  */
 
 #include <sstream>
+#include <iomanip>
 
 #include "util/rsnet.h"
 #include "util/rsstring.h"
@@ -87,7 +88,7 @@ bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr);
 /******************************** Socket Fns  ***********************************/
 // Standard bind, on OSX anyway will not accept a longer socklen for IPv4.
 // so hidding details behind function.
-int     universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen)
+int universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen)
 {
 #ifdef SS_DEBUG
 	std::cerr << "universal_bind()";
@@ -109,11 +110,8 @@ int     universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen)
 
 	if (len > socklen)
 	{
-		std::cerr << "universal_bind() ERROR len > socklen";
-		std::cerr << std::endl;
-
+		std::cerr << "universal_bind() ERROR len > socklen" << std::endl;
 		len = socklen;
-		//return EINVAL;
 	}
 
 	return bind(fd, addr, len);
@@ -404,9 +402,9 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 	}
 	case AF_INET6:
 	{
-		char addrStr[INET6_ADDRSTRLEN+1];
-		struct sockaddr_in6 * in6 = (struct sockaddr_in6 *) & addr;
-		inet_ntop(addr.ss_family, &(in6->sin6_addr), addrStr, INET6_ADDRSTRLEN);
+		const sockaddr_in6 * in6 = (const sockaddr_in6 *) & addr;
+		std::string addrStr = "INVALID_IPV6";
+		rs_inet_ntop(addr, addrStr);
 		output << "addr.ss_family = AF_INET6";
 		output << " in6->sin6_addr = ";
 		output << addrStr;
@@ -418,12 +416,10 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 	}
 	default:
 	{
-		output << "unknown addr.ss_family = ";
-		output << addr.ss_family;
-		output << " addr.__ss_align = ";
-		output << addr.__ss_align;
-		output << " addr.__ss_padding = ";
-		output << addr.__ss_padding;
+		output << "unknown addr.ss_family ";
+		const uint8_t * buf = reinterpret_cast<const uint8_t *>(&addr);
+		for( uint32_t i = 0; i < sizeof(addr); ++i )
+			output << std::setw(2) << std::setfill('0') << std::hex << +buf[i];
 	}}
 
 	if(outputString)
@@ -867,11 +863,9 @@ std::string sockaddr_storage_ipv4_iptostring(const struct sockaddr_storage &addr
 
 std::string sockaddr_storage_ipv6_iptostring(const struct sockaddr_storage & addr)
 {
-	char addrStr[INET6_ADDRSTRLEN+1];
-	struct sockaddr_in6 * addrv6p = (struct sockaddr_in6 *) &addr;
-	inet_ntop(addr.ss_family, &(addrv6p->sin6_addr), addrStr, INET6_ADDRSTRLEN);
-	std::string output(addrStr);
-	return output;
+	std::string addrStr;
+	rs_inet_ntop(addr, addrStr);
+	return addrStr;
 }
 
 
@@ -1009,5 +1003,43 @@ bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr)
 	return false;
 }
 
+#ifdef WINDOWS_SYS
+#include <cstdlib>
+#include <Winsock2.h>
+#endif
 
+bool rs_inet_ntop (const sockaddr_storage &addr, std::string &dst)
+{
+	bool success = false;
+	char ipStr[255];
 
+#ifdef WINDOWS_SYS
+	// Use WSAAddressToString instead of InetNtop because the latter is missing
+	// on XP and is present only on Vista and newers
+	wchar_t wIpStr[255];
+	long unsigned int len = 255;
+	sockaddr_storage tmp;
+	sockaddr_storage_clear(tmp);
+	sockaddr_storage_copyip(tmp, addr);
+	sockaddr * sptr = (sockaddr *) &tmp;
+	success = (0 == WSAAddressToString( sptr, sizeof(sockaddr_storage), NULL, wIpStr, &len ));
+	wcstombs(ipStr, wIpStr, len);
+#else // WINDOWS_SYS
+	switch(addr.ss_family)
+	{
+	case AF_INET:
+	{
+		const struct sockaddr_in * addrv4p = (const struct sockaddr_in *) &addr;
+		success = inet_ntop( addr.ss_family, (const void *) &(addrv4p->sin_addr), ipStr, INET_ADDRSTRLEN );
+	}
+	case AF_INET6:
+	{
+		const struct sockaddr_in6 * addrv6p = (const struct sockaddr_in6 *) &addr;
+		success = inet_ntop( addr.ss_family, (const void *) &(addrv6p->sin6_addr), ipStr, INET6_ADDRSTRLEN );
+	}
+	}
+#endif // WINDOWS_SYS
+
+	dst = ipStr;
+	return success;
+}
