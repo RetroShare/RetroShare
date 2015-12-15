@@ -284,6 +284,8 @@ bool RsGxsIntegrityCheck::check()
     std::cerr << "  issuing random get on friends for non existing IDs" << std::endl;
 #endif
 
+    // now request a cache update for them, which triggers downloading from friends, if missing.
+
     for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && gxs_ids.size()>0;)
     {
 	    uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
@@ -300,17 +302,26 @@ bool RsGxsIntegrityCheck::check()
 		    std::cerr << "  ... from cache/net" << std::endl;
 #endif
 	    }
-        else
+	    else
+	    { 
+#ifdef GXSUTIL_DEBUG
 		    std::cerr << "  ... already in cache" << std::endl;
+#endif
+
+		    // Note: we could time_stamp even in the case where the id is not cached. Anyway, it's not really a problem here, since IDs have a high chance of
+		    // behing eventually stamped.
+
+		    mGixs->timeStampKey(gxs_ids[n]) ;
+	    }
 
 	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;
 	    gxs_ids.pop_back() ;
     }
 #ifdef GXSUTIL_DEBUG
-        std::cerr << "  total actual cache requests: "<< nb_requested_not_in_cache << std::endl;
+    std::cerr << "  total actual cache requests: "<< nb_requested_not_in_cache << std::endl;
 #endif
-        
-	return true;
+
+    return true;
 }
 
 bool RsGxsIntegrityCheck::isDone()
