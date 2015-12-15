@@ -1523,6 +1523,8 @@ int RsServer::StartupRetroShare()
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
 	interfaces.mNotify = mNotify;
+    interfaces.mServiceControl = serviceCtrl;
+    interfaces.mPluginHandler  = mPluginsManager;
     // gxs
     interfaces.mGxsDir          = currGxsDir;
     interfaces.mIdentity        = mGxsIdService;

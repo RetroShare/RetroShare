@@ -7,6 +7,7 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsdht.h>
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsservicecontrol.h>
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxscircles.h>
@@ -28,6 +29,8 @@ bool getPluginInterfaces(RsPlugInInterfaces& interfaces)
     interfaces.mDisc   = rsDisc;
     interfaces.mDht    = rsDht;
     interfaces.mNotify = rsNotify;
+    interfaces.mServiceControl = rsServiceControl;
+    interfaces.mPluginHandler  = rsPlugins;
 
     // gxs
     interfaces.mGxsDir          = "";
