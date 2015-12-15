@@ -77,10 +77,10 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mAuthenPolicy(authenPolicy),
   MESSAGE_STORE_PERIOD(messageStorePeriod),
   mCleaning(false),
-  mLastClean(time(NULL)),
+  mLastClean(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
   mChecking(false),
-  mLastCheck(time(NULL)),
+  mLastCheck(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD),	// this helps unsynchronising the checks for the different services
   mIntegrityCheck(NULL),
   CREATE_FAIL(0),
   CREATE_SUCCESS(1),
@@ -252,7 +252,7 @@ void RsGenExchange::tick()
 		}
 		else
 		{
-			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore);
+			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,mGixs);
 			mIntegrityCheck->start();
 			mChecking = true;
 		}
@@ -499,13 +499,11 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                                                 authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
+                    	mGixs->timeStampKey(grpMeta.mAuthorId) ;
+			signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
                 }
                 else
-                {
                 	id_ret = SIGN_FAIL;
-                }
-
-                signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
             }
             else
             {

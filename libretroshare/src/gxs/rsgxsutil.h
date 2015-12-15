@@ -30,6 +30,8 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgds.h"
 
+class RsGixs ;
+
 /*!
  * Handy function for cleaning out meta result containers
  * @param container
@@ -112,7 +114,7 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService);
+	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGixs *gixs);
 
 
 	bool check();
@@ -129,6 +131,8 @@ private:
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mDeletedMsgs;
+    
+    	RsGixs *mGixs ;
 };
 
 class GroupUpdate

@@ -206,7 +206,7 @@
  	NXS_NET_DEBUG_3		publish key exchange
  	NXS_NET_DEBUG_4		vetting
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
@@ -232,8 +232,9 @@
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4)
 
 //static const RsPeerId     peer_to_print     =     RsPeerId(std::string("6718ae182d97c23af203959e678b98ac")) ;	// use this to limit print to this peer id only, or "" for all IDs
-static const RsPeerId     peer_to_print     =     RsPeerId(std::string("")) ;	// use this to limit print to this peer id only, or "" for all IDs
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("8ad26b347697d7b443ef872ba3a8ea4b")) ;	// use this to allow to this group id only, or "" for all IDs
+//static const RsPeerId     peer_to_print     =     RsPeerId(std::string("a97fef0e2dc82ddb19200fb30f9ac575")) ;	// use this to limit print to this peer id only, or "" for all IDs
+static const RsPeerId     peer_to_print     ;
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("78a7480e7af4ae12303ec7fef2736745" )) ;	// use this to allow to this group id only, or "" for all IDs
 static const uint32_t     service_to_print  = 0x0217 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h)
 
@@ -326,98 +327,98 @@ int RsGxsNetService::tick()
 class NxsBandwidthRecorder
 {
 public:
-    static const int OUTQUEUE_CUTOFF_VALUE = 500 ;
-        static const int BANDWIDTH_ESTIMATE_DELAY = 20 ;
+	static const int OUTQUEUE_CUTOFF_VALUE = 500 ;
+	static const int BANDWIDTH_ESTIMATE_DELAY = 20 ;
 
-    static void recordEvent(uint16_t service_type, RsItem *item)
-    {
-		  RS_STACK_MUTEX(mtx) ;
+	static void recordEvent(uint16_t service_type, RsItem *item)
+	{
+		RS_STACK_MUTEX(mtx) ;
 
-        uint32_t bw = RsNxsSerialiser(service_type).size(item) ;	// this is used to estimate bandwidth.
-        timeval tv ;
-        gettimeofday(&tv,NULL) ;
+		uint32_t bw = RsNxsSerialiser(service_type).size(item) ;	// this is used to estimate bandwidth.
+		timeval tv ;
+		gettimeofday(&tv,NULL) ;
 
-        // compute time(NULL) in msecs, for a more accurate bw estimate.
+		// compute time(NULL) in msecs, for a more accurate bw estimate.
 
-        uint64_t now = (uint64_t) tv.tv_sec * 1000 + tv.tv_usec/1000 ;
+		uint64_t now = (uint64_t) tv.tv_sec * 1000 + tv.tv_usec/1000 ;
 
-        total_record += bw ;
-        ++total_events ;
-
-#ifdef NXS_NET_DEBUG_2
-        std::cerr << "bandwidthRecorder::recordEvent() Recording event time=" << now << ". bw=" << bw << std::endl;
-#endif
-
-        // Every 20 seconds at min, compute a new estimate of the required bandwidth.
-
-        if(now > last_event_record + BANDWIDTH_ESTIMATE_DELAY*1000)
-        {
-            // Compute the bandwidth using recorded times, in msecs
-            float speed = total_record/1024.0f/(now - last_event_record)*1000.0f ;
-
-            // Apply a small temporal convolution.
-            estimated_required_bandwidth = 0.75*estimated_required_bandwidth + 0.25 * speed ;
+		total_record += bw ;
+		++total_events ;
 
 #ifdef NXS_NET_DEBUG_2
-            std::cerr << std::dec << "  " << total_record << " Bytes (" << total_events << " items)"
-                      << " received in " << now - last_event_record << " seconds. Speed: " << speed << " KBytes/sec" << std::endl;
-            std::cerr << "  instantaneous speed = " << speed << " KB/s" << std::endl;
-            std::cerr << "  cumulated estimated = " << estimated_required_bandwidth << " KB/s" << std::endl;
+		std::cerr << "bandwidthRecorder::recordEvent() Recording event time=" << now << ". bw=" << bw << std::endl;
 #endif
 
-            last_event_record = now ;
-            total_record = 0 ;
-            total_events = 0 ;
-        }
-    }
+		// Every 20 seconds at min, compute a new estimate of the required bandwidth.
 
-    // Estimate the probability of sending an item so that the expected bandwidth matches the residual bandwidth
+		if(now > last_event_record + BANDWIDTH_ESTIMATE_DELAY*1000)
+		{
+			// Compute the bandwidth using recorded times, in msecs
+			float speed = total_record/1024.0f/(now - last_event_record)*1000.0f ;
 
-    static float computeCurrentSendingProbability()
-    {
-        int maxIn=50,maxOut=50;
-        float currIn=0,currOut=0 ;
-
-        rsConfig->GetMaxDataRates(maxIn,maxOut) ;
-        rsConfig->GetCurrentDataRates(currIn,currOut) ;
-
-    RsConfigDataRates rates ;
-    rsConfig->getTotalBandwidthRates(rates) ;
+			// Apply a small temporal convolution.
+			estimated_required_bandwidth = 0.75*estimated_required_bandwidth + 0.25 * speed ;
 
 #ifdef NXS_NET_DEBUG_2
-    std::cerr << std::dec << std::endl;
+			std::cerr << std::dec << "  " << total_record << " Bytes (" << total_events << " items)"
+			          << " received in " << now - last_event_record << " seconds. Speed: " << speed << " KBytes/sec" << std::endl;
+			std::cerr << "  instantaneous speed = " << speed << " KB/s" << std::endl;
+			std::cerr << "  cumulated estimated = " << estimated_required_bandwidth << " KB/s" << std::endl;
 #endif
 
-    float outqueue_factor     = 1.0f/pow( std::max(0.02f,rates.mQueueOut / (float)OUTQUEUE_CUTOFF_VALUE),5.0f) ;
-    float accepted_bandwidth  = std::max( 0.0f, maxOut - currOut) ;
-    float max_bandwidth_factor = std::min( accepted_bandwidth / estimated_required_bandwidth,1.0f ) ;
+			last_event_record = now ;
+			total_record = 0 ;
+			total_events = 0 ;
+		}
+	}
 
-    // We account for two things here:
-    //   1 - the required max bandwidth
-    //   2 - the current network overload, measured from the size of the outqueues.
-    //
-    // Only the later can limit the traffic if the internet connexion speed is responsible for outqueue overloading.
+	// Estimate the probability of sending an item so that the expected bandwidth matches the residual bandwidth
 
-    float sending_probability = std::min(outqueue_factor,max_bandwidth_factor) ;
+	static float computeCurrentSendingProbability()
+	{
+		int maxIn=50,maxOut=50;
+		float currIn=0,currOut=0 ;
+
+		rsConfig->GetMaxDataRates(maxIn,maxOut) ;
+		rsConfig->GetCurrentDataRates(currIn,currOut) ;
+
+		RsConfigDataRates rates ;
+		rsConfig->getTotalBandwidthRates(rates) ;
 
 #ifdef NXS_NET_DEBUG_2
-        std::cerr << "bandwidthRecorder::computeCurrentSendingProbability()" << std::endl;
-        std::cerr << "  current required bandwidth : " << estimated_required_bandwidth << " KB/s" << std::endl;
-    std::cerr << "  max_bandwidth_factor       : " << max_bandwidth_factor << std::endl;
-    std::cerr << "  outqueue size              : " << rates.mQueueOut << ", factor=" << outqueue_factor << std::endl;
-        std::cerr << "  max out                    : " << maxOut << ", currOut=" << currOut << std::endl;
-        std::cerr << "  computed probability       : " << sending_probability << std::endl;
+		std::cerr << std::dec << std::endl;
 #endif
 
-        return sending_probability ;
-    }
+		float outqueue_factor     = 1.0f/pow( std::max(0.02f,rates.mQueueOut / (float)OUTQUEUE_CUTOFF_VALUE),5.0f) ;
+		float accepted_bandwidth  = std::max( 0.0f, maxOut - currOut) ;
+		float max_bandwidth_factor = std::min( accepted_bandwidth / estimated_required_bandwidth,1.0f ) ;
+
+		// We account for two things here:
+		//   1 - the required max bandwidth
+		//   2 - the current network overload, measured from the size of the outqueues.
+		//
+		// Only the later can limit the traffic if the internet connexion speed is responsible for outqueue overloading.
+
+		float sending_probability = std::min(outqueue_factor,max_bandwidth_factor) ;
+
+#ifdef NXS_NET_DEBUG_2
+		std::cerr << "bandwidthRecorder::computeCurrentSendingProbability()" << std::endl;
+		std::cerr << "  current required bandwidth : " << estimated_required_bandwidth << " KB/s" << std::endl;
+		std::cerr << "  max_bandwidth_factor       : " << max_bandwidth_factor << std::endl;
+		std::cerr << "  outqueue size              : " << rates.mQueueOut << ", factor=" << outqueue_factor << std::endl;
+		std::cerr << "  max out                    : " << maxOut << ", currOut=" << currOut << std::endl;
+		std::cerr << "  computed probability       : " << sending_probability << std::endl;
+#endif
+
+		return sending_probability ;
+	}
 
 private:
-    static RsMutex mtx;
-    static uint64_t last_event_record ;
-    static float estimated_required_bandwidth ;
-    static uint32_t total_events ;
-    static uint64_t total_record ;
+	static RsMutex mtx;
+	static uint64_t last_event_record ;
+	static float estimated_required_bandwidth ;
+	static uint32_t total_events ;
+	static uint64_t total_record ;
 };
 
 uint32_t NxsBandwidthRecorder::total_events =0 ;		     // total number of events. Not used.
@@ -1394,6 +1395,7 @@ void RsGxsNetService::data_tick()
         processExplicitGroupRequests();
 }
 
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4)
 static std::string nice_time_stamp(time_t now,time_t TS)
 {
     if(TS == 0)
@@ -1405,9 +1407,11 @@ static std::string nice_time_stamp(time_t now,time_t TS)
         return s.str() ;
     }
 }
+#endif
 
 void RsGxsNetService::debugDump()
 {
+#ifdef NXS_NET_DEBUG_1
 	RS_STACK_MUTEX(mNxsMutex) ;
     time_t now = time(NULL) ;
 
@@ -1437,6 +1441,7 @@ void RsGxsNetService::debugDump()
 	    for(std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
 		    GXSNETDEBUG_PG(it->first,it2->first) << "      group " << it2->first << " - last updated at peer (secs ago): " << nice_time_stamp(now,it2->second.time_stamp) << ". Message count=" << it2->second.message_count << std::endl;
     }            
+#endif
 }
 
 // This method is normally not needed, but we use it to correct possible inconsistencies in the updte time stamps
@@ -1878,14 +1883,14 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
     if(tr->mFlag & NxsTransaction::FLAG_STATE_COMPLETED)
     {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
         GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  transaction has completed." << std::endl;
 #endif
         // for a completed list response transaction
         // one needs generate requests from this
         if(flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP)
         {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msg list response." << std::endl;
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  => generate msg request based on it." << std::endl;
 #endif
@@ -1894,7 +1899,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 
         }else if(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_RESP)
         {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = grp list response." << std::endl;
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  => generate group transaction request based on it." << std::endl;
 #endif
@@ -1903,7 +1908,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
         // you've finished receiving request information now gen
         else if(flag & RsNxsTransac::FLAG_TYPE_MSG_LIST_REQ)
         {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msg list request." << std::endl;
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  => generate msg list based on it." << std::endl;
 #endif
@@ -1911,7 +1916,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
         }
         else if(flag & RsNxsTransac::FLAG_TYPE_GRP_LIST_REQ)
         {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = grp list request." << std::endl;
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  => generate grp list based on it." << std::endl;
 #endif
@@ -1919,7 +1924,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
         }
         else if(flag & RsNxsTransac::FLAG_TYPE_GRPS)
         {
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = groups." << std::endl;
 #endif
             std::vector<RsNxsGrp*> grps;
@@ -1932,16 +1937,16 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
                 {
                     tr->mItems.pop_front();
                     grps.push_back(grp);
-#ifdef NXS_NET_DEBUG_1
-                    GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grp->grpId) << "    pushing new group " << grp->grpId << " to list." << std::endl;
+#ifdef NXS_NET_DEBUG_0
+                    GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grp->grpId) << "    adding new group " << grp->grpId << " to incoming list!" << std::endl;
 #endif
                 }
                 else
                     std::cerr << "    /!\\ item did not caste to grp" << std::endl;
             }
 
-#ifdef NXS_NET_DEBUG_1
-            GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    notifying observer " << std::endl;
+#ifdef NXS_NET_DEBUG_0
+            GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    ...and notifying observer " << std::endl;
 #endif
             // notify listener of grps
             mObserver->notifyNewGroups(grps);
@@ -1962,6 +1967,9 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
                 item = new RsGxsGrpUpdateItem(mServType);
                 mClientGrpUpdateMap.insert(std::make_pair(peerFrom, item));
             }
+#ifdef NXS_NET_DEBUG_0
+            GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    and updating mClientGrpUpdateMap for peer " << peerFrom << " of new time stamp " << nice_time_stamp(time(NULL),updateTS) << std::endl;
+#endif
 
 #warning should not we conservatively use the most recent one, in case the peer has reset its mServerGrpUpdate time?? What happens if the peer unsubscribed a recent group?
             item->grpUpdateTS = updateTS;
@@ -1974,7 +1982,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
         {
 
             std::vector<RsNxsMsg*> msgs;
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
@@ -1988,8 +1996,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 
                     tr->mItems.pop_front();
                     msgs.push_back(msg);
-#ifdef NXS_NET_DEBUG_1
-                    GXSNETDEBUG_PG(tr->mTransaction->PeerId(),msg->grpId) << "    pushing grpId="<< msg->grpId << ", msgsId=" << msg->msgId << std::endl;
+#ifdef NXS_NET_DEBUG_0
+                    GXSNETDEBUG_PG(tr->mTransaction->PeerId(),msg->grpId) << "    pushing grpId="<< msg->grpId << ", msgsId=" << msg->msgId << " to list of incoming messages" << std::endl;
 #endif
                 }
                 else
@@ -2013,7 +2021,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             }
 #endif
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  notifying observer of " << msgs.size() << " new messages." << std::endl;
+            GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  ...and notifying observer of " << msgs.size() << " new messages." << std::endl;
 #endif
             // notify listener of msgs
             mObserver->notifyNewMessages(msgs);
@@ -2329,7 +2337,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             // grp meta must be present if author present
             if(!noAuthor && grpMeta == NULL)
             {
+#ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", no group meta found. Givign up." << std::endl;
+#endif
                 continue;
             }
             
@@ -3208,9 +3218,11 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
 			const RsGxsCircleId& circleId = grpMeta.mCircleId;
 			if(circleId.isNull())
 			{
+#ifdef NXS_NET_DEBUG_0
                 GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  ERROR; EXTERNAL_CIRCLE missing NULL CircleId";
 				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << grpMeta.mGroupId;
 				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << std::endl;
+#endif
 
 				// should just be shared. ? no - this happens for
 				// Circle Groups which lose their CircleIds.
@@ -3650,7 +3662,9 @@ void RsGxsNetService::sharePublishKeysPending()
 
         if(recipients.empty())
         {
+#ifdef NXS_NET_DEBUG_3
             GXSNETDEBUG___ << "  No recipients online. Skipping." << std::endl;
+#endif
             continue ;
         }
 

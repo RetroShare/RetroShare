@@ -28,6 +28,7 @@
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
 #include "pqi/pqihash.h"
+#include "gxs/rsgixs.h"
 
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize)
@@ -106,9 +107,8 @@ bool RsGxsMessageCleanUp::clean()
 	return mGrpMeta.empty();
 }
 
-RsGxsIntegrityCheck::RsGxsIntegrityCheck(
-		RsGeneralDataService* const dataService) :
-		mDs(dataService), mDone(false), mIntegrityMutex("integrity")
+RsGxsIntegrityCheck::RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGixs *gixs) :
+		mDs(dataService), mDone(false), mIntegrityMutex("integrity"),mGixs(gixs)
 { }
 
 void RsGxsIntegrityCheck::run()
@@ -126,13 +126,15 @@ bool RsGxsIntegrityCheck::check()
 	GxsMsgReq msgIds;
 	GxsMsgReq grps;
 
+	std::set<RsGxsGroupId> subscribed_groups ;
+
 	// compute hash and compare to stored value, if it fails then simply add it
 	// to list
 	std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
 	for(; git != grp.end(); ++git)
 	{
 		RsNxsGrp* grp = git->second;
-        RsFileHash currHash;
+		RsFileHash currHash;
 		pqihash pHash;
 		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
 		pHash.Complete(currHash);
@@ -144,12 +146,24 @@ bool RsGxsIntegrityCheck::check()
 			{
 				// store the group for retrieveNxsMsgs
 				grps[grp->grpId];
+
+				if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+				{
+					subscribed_groups.insert(git->first) ;
+
+					if(!grp->metaData->mAuthorId.isNull())
+					{
+						std::cerr << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->metaData->mAuthorId << std::endl;
+						mGixs->timeStampKey(grp->metaData->mAuthorId) ;
+					}
+				}
 			}
 			else
 			{
 				msgIds.erase(msgIds.find(grp->grpId));
-//				grpsToDel.push_back(grp->grpId);
+				//				grpsToDel.push_back(grp->grpId);
 			}
+
 		}
 		else
 		{
@@ -206,16 +220,21 @@ bool RsGxsIntegrityCheck::check()
 		for(; vit != msgV.end(); ++vit)
 		{
 			RsNxsMsg* msg = *vit;
-            RsFileHash currHash;
+			RsFileHash currHash;
 			pqihash pHash;
 			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
 			pHash.Complete(currHash);
 
-            if(msg->metaData == NULL || currHash != msg->metaData->mHash)
-        {
-            std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
-                msgsToDel[msg->grpId].push_back(msg->msgId);
-        }
+			if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+			{
+				std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
+				msgsToDel[msg->grpId].push_back(msg->msgId);
+			}
+			else if(!msg->metaData->mAuthorId.isNull() && subscribed_groups.find(msg->metaData->mGroupId)!=subscribed_groups.end())
+			{
+				std::cerr << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
+				mGixs->timeStampKey(msg->metaData->mAuthorId) ;
+			}
 
 			delete msg;
 		}
