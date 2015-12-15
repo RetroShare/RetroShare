@@ -77,10 +77,10 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mAuthenPolicy(authenPolicy),
   MESSAGE_STORE_PERIOD(messageStorePeriod),
   mCleaning(false),
-  mLastClean(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD),	// this helps unsynchronising the checks for the different services
+  mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
   mChecking(false),
-  mLastCheck(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD),	// this helps unsynchronising the checks for the different services
+  mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD)),	// this helps unsynchronising the checks for the different services
   mIntegrityCheck(NULL),
   CREATE_FAIL(0),
   CREATE_SUCCESS(1),
@@ -196,7 +196,7 @@ void RsGenExchange::tick()
 	service_tick();
 
 	time_t now = time(NULL);
-
+    
 	if((mLastClean + MSG_CLEANUP_PERIOD < now) || mCleaning)
 	{
 		if(mMsgCleanUp)
