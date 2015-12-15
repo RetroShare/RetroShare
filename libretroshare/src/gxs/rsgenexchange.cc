@@ -661,23 +661,20 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
             bool haveKey = mGixs->havePrivateKey(msgMeta.mAuthorId);
 
             if(haveKey)
-            {
-                RsTlvSecurityKey authorKey;
-                mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey);
-                RsTlvKeySignature sign;
+	    {
+		    RsTlvSecurityKey authorKey;
+		    mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey);
+		    RsTlvKeySignature sign;
 
-                if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len,
-                                                authorKey, sign))
-                {
-                	id_ret = SIGN_SUCCESS;
-                }
-                else
-                {
-                	id_ret = SIGN_FAIL;
-                }
-
-                signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
-            }
+		    if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, authorKey, sign))
+		    {
+			    id_ret = SIGN_SUCCESS;
+			    mGixs->timeStampKey(msgMeta.mAuthorId) ;
+			    signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
+		    }
+		    else
+			    id_ret = SIGN_FAIL;
+	    }
             else
             {
             	mGixs->requestPrivateKey(msgMeta.mAuthorId);
