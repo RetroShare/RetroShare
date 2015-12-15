@@ -205,12 +205,14 @@
  	NXS_NET_DEBUG_2		bandwidth information
  	NXS_NET_DEBUG_3		publish key exchange
  	NXS_NET_DEBUG_4		vetting
+ 	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
 //#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
+#define NXS_NET_DEBUG_5 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -229,7 +231,7 @@
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4)
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)
 
 //static const RsPeerId     peer_to_print     =     RsPeerId(std::string("6718ae182d97c23af203959e678b98ac")) ;	// use this to limit print to this peer id only, or "" for all IDs
 //static const RsPeerId     peer_to_print     =     RsPeerId(std::string("a97fef0e2dc82ddb19200fb30f9ac575")) ;	// use this to limit print to this peer id only, or "" for all IDs
@@ -1948,6 +1950,11 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    ...and notifying observer " << std::endl;
 #endif
+#ifdef NXS_NET_DEBUG_5
+            GXSNETDEBUG_P_ (tr->mTransaction->PeerId()) << "Received new groups meta data from peer " << tr->mTransaction->PeerId() << std::endl;
+            for(uint32_t i=0;i<grps.size();++i)
+                GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grps[i]->grpId) ;
+#endif
             // notify listener of grps
             mObserver->notifyNewGroups(grps);
 
@@ -2022,6 +2029,11 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
 #ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  ...and notifying observer of " << msgs.size() << " new messages." << std::endl;
+#endif
+#ifdef NXS_NET_DEBUG_5
+            GXSNETDEBUG_PG (tr->mTransaction->PeerId(),grpId) << "Received new messages from peer " << tr->mTransaction->PeerId() << " for group " << grpId << std::endl;
+            for(uint32_t i=0;i<msgs.size();++i)
+                GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "   " << msgs[i]->msgId << std::endl ;
 #endif
             // notify listener of msgs
             mObserver->notifyNewMessages(msgs);
