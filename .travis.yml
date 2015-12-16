@@ -35,7 +35,7 @@ before_script:
   - qmake CONFIG+=NO_SQLCIPHER CONFIG+=tests
 
 #script: make
-script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make && tests/unittests/unittests 2>&1 1>/dev/null ; fi
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make && tests/unittests/unittests >/dev/null 2>&1 ; fi
 
 
 #after_success:
