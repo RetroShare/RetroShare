@@ -212,7 +212,7 @@
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_5 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -233,11 +233,9 @@
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)
 
-//static const RsPeerId     peer_to_print     =     RsPeerId(std::string("6718ae182d97c23af203959e678b98ac")) ;	// use this to limit print to this peer id only, or "" for all IDs
-//static const RsPeerId     peer_to_print     =     RsPeerId(std::string("a97fef0e2dc82ddb19200fb30f9ac575")) ;	// use this to limit print to this peer id only, or "" for all IDs
 static const RsPeerId     peer_to_print     ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("78a7480e7af4ae12303ec7fef2736745" )) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x0217 ;                       	// use this to allow to this service id only, or 0 for all services
+static const RsGxsGroupId group_id_to_print ; //= RsGxsGroupId(std::string("78a7480e7af4ae12303ec7fef2736745" )) ;	// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  =0;//= 0x0217 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h)
 
 class nullstream: public std::ostream {};
@@ -1951,7 +1949,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    ...and notifying observer " << std::endl;
 #endif
 #ifdef NXS_NET_DEBUG_5
-            GXSNETDEBUG_P_ (tr->mTransaction->PeerId()) << "Received new groups meta data from peer " << tr->mTransaction->PeerId() << std::endl;
+            GXSNETDEBUG_P_ (tr->mTransaction->PeerId()) << "Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << " - Received new groups meta data from peer " << tr->mTransaction->PeerId() << std::endl;
             for(uint32_t i=0;i<grps.size();++i)
                 GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grps[i]->grpId) ;
 #endif
@@ -2031,7 +2029,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  ...and notifying observer of " << msgs.size() << " new messages." << std::endl;
 #endif
 #ifdef NXS_NET_DEBUG_5
-            GXSNETDEBUG_PG (tr->mTransaction->PeerId(),grpId) << "Received new messages from peer " << tr->mTransaction->PeerId() << " for group " << grpId << std::endl;
+            GXSNETDEBUG_PG (tr->mTransaction->PeerId(),grpId) << "Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << " - Received new messages from peer " << tr->mTransaction->PeerId() << " for group " << grpId << std::endl;
             for(uint32_t i=0;i<msgs.size();++i)
                 GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "   " << msgs[i]->msgId << std::endl ;
 #endif
