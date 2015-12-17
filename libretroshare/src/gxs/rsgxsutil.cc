@@ -27,8 +27,13 @@
 
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rspeers.h"
 #include "pqi/pqihash.h"
+#include "gxs/rsgixs.h"
 
+static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of requests from cache/net (avoids killing the system!)
+
+//#define GXSUTIL_DEBUG 1
 
 RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize)
 : mDs(dataService), MESSAGE_STORE_PERIOD(messageStorePeriod), CHUNK_SIZE(chunkSize)
@@ -106,9 +111,8 @@ bool RsGxsMessageCleanUp::clean()
 	return mGrpMeta.empty();
 }
 
-RsGxsIntegrityCheck::RsGxsIntegrityCheck(
-		RsGeneralDataService* const dataService) :
-		mDs(dataService), mDone(false), mIntegrityMutex("integrity")
+RsGxsIntegrityCheck::RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGixs *gixs) :
+		mDs(dataService), mDone(false), mIntegrityMutex("integrity"),mGixs(gixs)
 { }
 
 void RsGxsIntegrityCheck::run()
@@ -118,122 +122,206 @@ void RsGxsIntegrityCheck::run()
 
 bool RsGxsIntegrityCheck::check()
 {
+    // first take out all the groups
+    std::map<RsGxsGroupId, RsNxsGrp*> grp;
+    mDs->retrieveNxsGrps(grp, true, true);
+    std::vector<RsGxsGroupId> grpsToDel;
+    GxsMsgReq msgIds;
+    GxsMsgReq grps;
 
-	// first take out all the groups
-	std::map<RsGxsGroupId, RsNxsGrp*> grp;
-	mDs->retrieveNxsGrps(grp, true, true);
-	std::vector<RsGxsGroupId> grpsToDel;
-	GxsMsgReq msgIds;
-	GxsMsgReq grps;
+    std::set<RsGxsId> used_gxs_ids ;
+    std::set<RsGxsGroupId> subscribed_groups ;
 
-	// compute hash and compare to stored value, if it fails then simply add it
-	// to list
-	std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
-	for(; git != grp.end(); ++git)
-	{
-		RsNxsGrp* grp = git->second;
-        RsFileHash currHash;
-		pqihash pHash;
-		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
-		pHash.Complete(currHash);
+    // compute hash and compare to stored value, if it fails then simply add it
+    // to list
+    std::map<RsGxsGroupId, RsNxsGrp*>::iterator git = grp.begin();
+    for(; git != grp.end(); ++git)
+    {
+	    RsNxsGrp* grp = git->second;
+	    RsFileHash currHash;
+	    pqihash pHash;
+	    pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
+	    pHash.Complete(currHash);
 
-		if(currHash == grp->metaData->mHash)
-		{
-			// get all message ids of group
-			if (mDs->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
-			{
-				// store the group for retrieveNxsMsgs
-				grps[grp->grpId];
-			}
-			else
-			{
-				msgIds.erase(msgIds.find(grp->grpId));
-//				grpsToDel.push_back(grp->grpId);
-			}
-		}
-		else
-		{
-			grpsToDel.push_back(grp->grpId);
-		}
-		delete grp;
-	}
+	    if(currHash == grp->metaData->mHash)
+	    {
+		    // get all message ids of group
+		    if (mDs->retrieveMsgIds(grp->grpId, msgIds[grp->grpId]) == 1)
+		    {
+			    // store the group for retrieveNxsMsgs
+			    grps[grp->grpId];
 
-	mDs->removeGroups(grpsToDel);
+			    if(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+			    {
+				    subscribed_groups.insert(git->first) ;
 
-	// now messages
-	GxsMsgReq msgsToDel;
-	GxsMsgResult msgs;
+				    if(!grp->metaData->mAuthorId.isNull())
+				    {
+#ifdef GXSUTIL_DEBUG
+					    std::cerr << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
+#endif
 
-	mDs->retrieveNxsMsgs(grps, msgs, false, true);
+					    used_gxs_ids.insert(grp->metaData->mAuthorId) ;
+				    }
+			    }
+		    }
+		    else
+		    {
+			    msgIds.erase(msgIds.find(grp->grpId));
+			    //				grpsToDel.push_back(grp->grpId);
+		    }
 
-	// check msg ids and messages
-	GxsMsgReq::iterator msgIdsIt;
-	for (msgIdsIt = msgIds.begin(); msgIdsIt != msgIds.end(); ++msgIdsIt)
-	{
-		const RsGxsGroupId& grpId = msgIdsIt->first;
-		std::vector<RsGxsMessageId> &msgIdV = msgIdsIt->second;
+	    }
+	    else
+	    {
+		    grpsToDel.push_back(grp->grpId);
+	    }
+	    delete grp;
+    }
 
-		std::vector<RsGxsMessageId>::iterator msgIdIt;
-		for (msgIdIt = msgIdV.begin(); msgIdIt != msgIdV.end(); ++msgIdIt)
-		{
-			const RsGxsMessageId& msgId = *msgIdIt;
-			std::vector<RsNxsMsg*> &nxsMsgV = msgs[grpId];
+    mDs->removeGroups(grpsToDel);
 
-			std::vector<RsNxsMsg*>::iterator nxsMsgIt;
-			for (nxsMsgIt = nxsMsgV.begin(); nxsMsgIt != nxsMsgV.end(); ++nxsMsgIt)
-			{
-				RsNxsMsg *nxsMsg = *nxsMsgIt;
-				if (nxsMsg && msgId == nxsMsg->msgId)
-				{
-					break;
-				}
-			}
+    // now messages
+    GxsMsgReq msgsToDel;
+    GxsMsgResult msgs;
 
-			if (nxsMsgIt == nxsMsgV.end())
-			{
-				msgsToDel[grpId].push_back(msgId);
-			}
-		}
-	}
+    mDs->retrieveNxsMsgs(grps, msgs, false, true);
 
-	GxsMsgResult::iterator mit = msgs.begin();
+    // check msg ids and messages
+    GxsMsgReq::iterator msgIdsIt;
+    for (msgIdsIt = msgIds.begin(); msgIdsIt != msgIds.end(); ++msgIdsIt)
+    {
+	    const RsGxsGroupId& grpId = msgIdsIt->first;
+	    std::vector<RsGxsMessageId> &msgIdV = msgIdsIt->second;
 
-	for(; mit != msgs.end(); ++mit)
-	{
-		std::vector<RsNxsMsg*>& msgV = mit->second;
-		std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
+	    std::vector<RsGxsMessageId>::iterator msgIdIt;
+	    for (msgIdIt = msgIdV.begin(); msgIdIt != msgIdV.end(); ++msgIdIt)
+	    {
+		    const RsGxsMessageId& msgId = *msgIdIt;
+		    std::vector<RsNxsMsg*> &nxsMsgV = msgs[grpId];
 
-		for(; vit != msgV.end(); ++vit)
-		{
-			RsNxsMsg* msg = *vit;
-            RsFileHash currHash;
-			pqihash pHash;
-			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
-			pHash.Complete(currHash);
+		    std::vector<RsNxsMsg*>::iterator nxsMsgIt;
+		    for (nxsMsgIt = nxsMsgV.begin(); nxsMsgIt != nxsMsgV.end(); ++nxsMsgIt)
+		    {
+			    RsNxsMsg *nxsMsg = *nxsMsgIt;
+			    if (nxsMsg && msgId == nxsMsg->msgId)
+			    {
+				    break;
+			    }
+		    }
 
-            if(msg->metaData == NULL || currHash != msg->metaData->mHash)
-        {
-            std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
-                msgsToDel[msg->grpId].push_back(msg->msgId);
-        }
+		    if (nxsMsgIt == nxsMsgV.end())
+		    {
+			    msgsToDel[grpId].push_back(msgId);
+		    }
+	    }
+    }
 
-			delete msg;
-		}
-	}
+    GxsMsgResult::iterator mit = msgs.begin();
 
-	mDs->removeMsgs(msgsToDel);
+    for(; mit != msgs.end(); ++mit)
+    {
+	    std::vector<RsNxsMsg*>& msgV = mit->second;
+	    std::vector<RsNxsMsg*>::iterator vit = msgV.begin();
 
-	RsStackMutex stack(mIntegrityMutex);
-	mDone = true;
+	    for(; vit != msgV.end(); ++vit)
+	    {
+		    RsNxsMsg* msg = *vit;
+		    RsFileHash currHash;
+		    pqihash pHash;
+		    pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
+		    pHash.Complete(currHash);
 
-	std::vector<RsGxsGroupId>::iterator grpIt;
-	for(grpIt = grpsToDel.begin(); grpIt != grpsToDel.end(); ++grpIt)
-	{
-		mDeletedGrps.push_back(*grpIt);
-	}
-	mDeletedMsgs = msgsToDel;
+		    if(msg->metaData == NULL || currHash != msg->metaData->mHash)
+		    {
+			    std::cerr << "(EE) deleting message data with wrong hash or null meta data. meta=" << (void*)msg->metaData << std::endl;
+			    msgsToDel[msg->grpId].push_back(msg->msgId);
+		    }
+		    else if(!msg->metaData->mAuthorId.isNull() && subscribed_groups.find(msg->metaData->mGroupId)!=subscribed_groups.end())
+		    {
+#ifdef GXSUTIL_DEBUG
+			    std::cerr << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
+#endif
+			    used_gxs_ids.insert(msg->metaData->mAuthorId) ;
+		    }
 
-	return true;
+		    delete msg;
+	    }
+    }
+
+    mDs->removeMsgs(msgsToDel);
+
+    RsStackMutex stack(mIntegrityMutex);
+    mDone = true;
+
+    std::vector<RsGxsGroupId>::iterator grpIt;
+    for(grpIt = grpsToDel.begin(); grpIt != grpsToDel.end(); ++grpIt)
+    {
+	    mDeletedGrps.push_back(*grpIt);
+    }
+    mDeletedMsgs = msgsToDel;
+
+#ifdef GXSUTIL_DEBUG
+    std::cerr << "At end of pass, this is the list used GXS ids: " << std::endl;
+    std::cerr << "  requesting them to GXS identity service to enforce loading." << std::endl;
+#endif
+
+    std::list<RsPeerId> connected_friends ;
+    rsPeers->getOnlineList(connected_friends) ;
+
+    std::vector<RsGxsId> gxs_ids ;
+
+    for(std::set<RsGxsId>::const_iterator it(used_gxs_ids.begin());it!=used_gxs_ids.end();++it)
+    {
+	    gxs_ids.push_back(*it) ;
+#ifdef GXSUTIL_DEBUG
+	    std::cerr << "    " << *it <<  std::endl;
+#endif
+    }
+    int nb_requested_not_in_cache = 0;
+
+#ifdef GXSUTIL_DEBUG
+    std::cerr << "  issuing random get on friends for non existing IDs" << std::endl;
+#endif
+
+    // now request a cache update for them, which triggers downloading from friends, if missing.
+
+    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && gxs_ids.size()>0;)
+    {
+	    uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
+#ifdef GXSUTIL_DEBUG
+	    std::cerr << "    requesting ID " << gxs_ids[n] ;
+#endif
+
+	    if(!mGixs->haveKey(gxs_ids[n]))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
+	    { 
+		    mGixs->requestKey(gxs_ids[n],connected_friends);
+
+		    ++nb_requested_not_in_cache ;
+#ifdef GXSUTIL_DEBUG
+		    std::cerr << "  ... from cache/net" << std::endl;
+#endif
+	    }
+	    else
+	    { 
+#ifdef GXSUTIL_DEBUG
+		    std::cerr << "  ... already in cache" << std::endl;
+#endif
+
+		    // Note: we could time_stamp even in the case where the id is not cached. Anyway, it's not really a problem here, since IDs have a high chance of
+		    // behing eventually stamped.
+
+		    mGixs->timeStampKey(gxs_ids[n]) ;
+	    }
+
+	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;
+	    gxs_ids.pop_back() ;
+    }
+#ifdef GXSUTIL_DEBUG
+    std::cerr << "  total actual cache requests: "<< nb_requested_not_in_cache << std::endl;
+#endif
+
+    return true;
 }
 
 bool RsGxsIntegrityCheck::isDone()

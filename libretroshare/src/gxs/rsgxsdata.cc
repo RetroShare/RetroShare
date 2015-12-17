@@ -28,17 +28,12 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
-static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0001 = 0x0000 ; // change this, and keep old values if the content changes
-static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0002 = 0xaf01 ; // current API
-
-static const uint32_t RS_GXS_MSG_META_DATA_VERSION_ID_0001 = 0x0000 ; // current API
-
 RsGxsGrpMetaData::RsGxsGrpMetaData()
 {
     clear();
 }
 
-uint32_t RsGxsGrpMetaData::serial_size()
+uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version)
 {
     uint32_t s = 8; // header size
 
@@ -55,7 +50,11 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += mCircleId.serial_size();
     s += 4;                                  // mAuthenFlag
     s += mParentGrpId.serial_size();         // mParentGroupId
-    s += 4;                                  // mSignFlag
+    
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+	    s += 4;                                  // mSignFlag
+    else if(api_version != RS_GXS_GRP_META_DATA_VERSION_ID_0001)
+        std::cerr << "(EE) wrong/unknown API version " << api_version << " requested in RsGxsGrpMetaData::serial_size()" << std::endl;
 
     return s;
 }
@@ -97,10 +96,9 @@ void RsGxsGrpMetaData::clear(){
     mHash.clear() ;
 }
 
-bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
+bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize,uint32_t api_version)
 {
-
-    uint32_t tlvsize = serial_size() ;
+    uint32_t tlvsize = serial_size(api_version) ;
     uint32_t offset = 0;
 
     if (pktsize < tlvsize)
@@ -110,7 +108,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, RS_GXS_GRP_META_DATA_VERSION_ID_0002, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, api_version, tlvsize); 
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;
@@ -136,7 +134,8 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
 
-    ok &= setRawUInt32(data, tlvsize, &offset, mSignFlags);	// new in API v2. Was previously missing. Kept in the end for backward compatibility
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+	    ok &= setRawUInt32(data, tlvsize, &offset, mSignFlags);	// new in API v2. Was previously missing. Kept in the end for backward compatibility
 
     return ok;
 }
@@ -265,7 +264,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, RS_GXS_MSG_META_DATA_VERSION_ID_0001, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, RS_GXS_MSG_META_DATA_VERSION_ID_0002, tlvsize);
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;
