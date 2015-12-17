@@ -65,7 +65,8 @@ SOURCES += \
     api/ChatHandler.cpp \
     api/LivereloadHandler.cpp \
     api/TmpBlobStore.cpp \
-    util/ContentTypes.cpp
+    util/ContentTypes.cpp \
+    api/ApiPluginHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -89,4 +90,5 @@ HEADERS += \
     api/ChatHandler.h \
     api/LivereloadHandler.h \
     api/TmpBlobStore.h \
-    util/ContentTypes.h
+    util/ContentTypes.h \
+    api/ApiPluginHandler.h
