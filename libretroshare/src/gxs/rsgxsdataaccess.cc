@@ -1603,7 +1603,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     for(; mit != grpMeta.end(); ++mit)
     {
         RsGxsGrpMetaData* m = mit->second;
-        req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size();
+        req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
 
         if (IS_GROUP_SUBSCRIBED(m->mSubscribeFlags))
         {
