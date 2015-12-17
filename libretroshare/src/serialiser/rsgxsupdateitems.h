@@ -85,6 +85,8 @@ public:
 
     struct MsgUpdateInfo
     {
+        MsgUpdateInfo(): time_stamp(0), message_count(0) {}
+        
         uint32_t time_stamp ;
         uint32_t message_count ;
     };
@@ -105,7 +107,7 @@ public:
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
         RsGxsGroupId grpId;
-        uint32_t msgUpdateTS; // the last time this group received a new msg
+        uint32_t msgUpdateTS; // local time stamp this group last received a new msg
 };
 
 
