@@ -337,8 +337,8 @@ int RsGxsNetService::tick()
         sharePublishKeysPending() ;
         
         mLastCleanRejectedMessages = now ;
-    }
         cleanRejectedMessages() ;
+    }
 
     return 1;
 }
