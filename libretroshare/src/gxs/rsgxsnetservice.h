@@ -151,6 +151,8 @@ public:
      */
     virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) ;
 
+    virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
+    
     /* p3Config methods */
 public:
 
@@ -438,6 +440,7 @@ private:
 
     void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
 
+    void cleanRejectedMessages();
 private:
 
 
@@ -476,6 +479,7 @@ private:
 
     uint32_t mSyncTs;
     uint32_t mLastKeyPublishTs;
+    uint32_t mLastCleanRejectedMessages;
 
     const uint32_t mSYNC_PERIOD;
     int mUpdateCounter ;
@@ -512,6 +516,8 @@ private:
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
+    
+    std::map<RsGxsMessageId,time_t> mRejectedMessages;
     
     void debugDump();
 };

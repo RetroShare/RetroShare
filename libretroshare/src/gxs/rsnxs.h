@@ -127,6 +127,13 @@ public:
      */
     virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers)=0 ;
 
+    /*!
+     * \brief rejectMessage
+     * 		Tells the network exchange service to not download this message again, at least for some time (maybe 24h or more)
+     * 		in order to avoid cluttering the network pipe with copied of this rejected message.
+     * \param msgId
+     */
+    virtual void rejectMessage(const RsGxsMessageId& msgId) =0;
 };
 
 #endif // RSGNP_H

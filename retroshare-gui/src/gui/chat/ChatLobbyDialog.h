@@ -47,6 +47,7 @@ public:
     void setIdentity(const RsGxsId& gxs_id);
     bool isParticipantMuted(const RsGxsId &participant);
 	ChatLobbyId id() const { return lobbyId ;}
+	void sortParcipants();
 
 private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
@@ -104,6 +105,8 @@ private:
 
     QAction *muteAct;
     QAction *distantChatAct;
+    QAction *actionSortByName;
+    QAction *actionSortByActivity;
     QWidgetAction *checkableAction;
     QAction *sendMessageAct;
 

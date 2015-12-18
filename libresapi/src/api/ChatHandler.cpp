@@ -173,10 +173,8 @@ void ChatHandler::tick()
         }
     }
 
-    ChatId id = ChatId::makeBroadcastId();
     {
         Lobby l;
-        l.id = id.toLobbyId();
         l.name = "BroadCast";
         l.topic = "Retroshare broadcast chat: messages are sent to all connected friends.";
         l.subscribed = true;

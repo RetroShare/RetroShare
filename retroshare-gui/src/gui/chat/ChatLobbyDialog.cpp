@@ -81,10 +81,25 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
+    
+    QActionGroup *sortgrp = new QActionGroup(this);
+    actionSortByName = new QAction(QIcon(), tr("Sort by Name"), this);
+    actionSortByName->setCheckable(true);
+    actionSortByName->setChecked(true); 
+    actionSortByName->setActionGroup(sortgrp);
+
+    actionSortByActivity = new QAction(QIcon(), tr("Sort by Activity"), this);
+    actionSortByActivity->setCheckable(true);
+    actionSortByActivity->setChecked(false); 
+    actionSortByActivity->setActionGroup(sortgrp);
+
 
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
+    
+    connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
+    connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
 
 	// Add a button to invite friends.
 	//
@@ -181,6 +196,9 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(sendMessageAct);
     contextMnu.addSeparator();
     contextMnu.addAction(muteAct);
+    contextMnu.addSeparator();
+    contextMnu.addAction(actionSortByActivity);
+    contextMnu.addAction(actionSortByName);
 
 
 	muteAct->setCheckable(true);
@@ -477,7 +495,7 @@ void ChatLobbyDialog::updateParticipantsList()
         }
     }
     ui.participantsList->setSortingEnabled(true);
-    ui.participantsList->sortItems(COLUMN_ACTIVITY, Qt::DescendingOrder);
+    sortParcipants();
 }
 
 /**
@@ -766,4 +784,15 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 		MainWindow::showWindow(MainWindow::ChatLobby);
 		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
 	}
+}
+
+void ChatLobbyDialog::sortParcipants()
+{
+
+	if (actionSortByActivity->isChecked()) {
+        ui.participantsList->sortItems(COLUMN_ACTIVITY, Qt::DescendingOrder);
+	} else if (actionSortByName->isChecked()) {
+        ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+	}
+  
 }
