@@ -62,8 +62,8 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 //#define GEN_EXCH_DEBUG	1
 
-#define MSG_CLEANUP_PERIOD 60*5 // 5 minutes
-#define INTEGRITY_CHECK_PERIOD 60*30 //  30 minutes
+#define MSG_CLEANUP_PERIOD     60*5  //  5 minutes
+#define INTEGRITY_CHECK_PERIOD 60*30 // 30 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -1536,6 +1536,9 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 	}
     	else
 	{
+#ifdef GEN_EXCH_DEBUG
+		std::cerr << "  message is already in pending validation list. dropping." << std::endl;
+#endif
     		delete msg;
 	}
     }
@@ -2656,6 +2659,16 @@ void RsGenExchange::processRecvdMessages()
 				if(grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
 					mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
 			}
+            
+            		if(validateReturn == VALIDATE_FAIL)
+		    	{
+                        	// In this case, we notify the network exchange service not to DL the message again, at least not yet. 
+                        
+#ifdef GEN_EXCH_DEBUG
+                        	std::cerr << "Notifying the network service to not download this message again." << std::endl;
+#endif
+                        	mNetService->rejectMessage(msg->msgId) ;
+		    	}
 		}
 		else
 		{
