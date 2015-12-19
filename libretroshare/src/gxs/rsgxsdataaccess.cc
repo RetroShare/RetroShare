@@ -1552,7 +1552,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     req->mGroupStatistic.mNumChildMsgsNew = 0;
     req->mGroupStatistic.mNumChildMsgsUnread = 0;
 
-    for(int i = 0; i < msgMetaV.size(); ++i)
+    for(uint32_t i = 0; i < msgMetaV.size(); ++i)
     {
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();

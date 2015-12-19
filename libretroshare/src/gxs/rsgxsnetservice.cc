@@ -207,12 +207,12 @@
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
-//#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-//#define NXS_NET_DEBUG_5 	1
+#define NXS_NET_DEBUG_5 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -224,11 +224,13 @@
 // A small value for MAX_REQLIST_SIZE is likely to help messages to propagate in a chaotic network, but will also slow them down.
 // A small SYNC_PERIOD fasten message propagation, but is likely to overload the server side of transactions (e.g. overload outqueues).
 //
-#define SYNC_PERIOD      60
-#define MAX_REQLIST_SIZE 20   				// No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
-#define TRANSAC_TIMEOUT  2000 				// In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
-#define SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE 3600  // force re-update if there happens to be a large delay between our server side TS and the client side TS of friends
-#define REJECTED_MESSAGE_RETRY_DELAY  24*3600         // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
+#define SYNC_PERIOD                                         60
+#define MAX_REQLIST_SIZE                                    20  // No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
+#define TRANSAC_TIMEOUT                                   2000  // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
+#define SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE           3600  // force re-update if there happens to be a large delay between our server side TS and the client side TS of friends
+#define REJECTED_MESSAGE_RETRY_DELAY                   24*3600  // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
+#define GROUP_STATS_UPDATE_DELAY                          1800  // update unsubscribed group statistics every 30 mins
+#define GROUP_STATS_UPDATE_NB_PEERS                          2  // update unsubscribed group statistics every 30 mins
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
@@ -323,6 +325,8 @@ int RsGxsNetService::tick()
     if((elapsed) < now)
     {
         syncWithPeers();
+        syncGrpStatistics();
+        
     	mSyncTs = now;
     }
 
@@ -332,14 +336,13 @@ int RsGxsNetService::tick()
         
         mLastKeyPublishTs = now ;
     }
+    
     if(now > 3600 + mLastCleanRejectedMessages)
     {
-        sharePublishKeysPending() ;
-        
         mLastCleanRejectedMessages = now ;
-    }
         cleanRejectedMessages() ;
-
+    }
+    
     return 1;
 }
 
@@ -543,14 +546,14 @@ void RsGxsNetService::syncWithPeers()
 
     for(; mit != grpMeta.end(); ++mit)
     {
-        RsGxsGrpMetaData* meta = mit->second;
+	    RsGxsGrpMetaData* meta = mit->second;
 
-        // This was commented out because we want to know how many messages are available for unsubscribed groups.
-        //            if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
-        //           {
-        toRequest.insert(std::make_pair(mit->first, meta));
-        //          }else
-        //         	delete meta;
+	    // This was commented out because we want to know how many messages are available for unsubscribed groups.
+            
+	    if(meta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )
+		    toRequest.insert(std::make_pair(mit->first, meta));
+            else
+		    delete meta;
     }
 
     grpMeta.clear();
@@ -638,6 +641,153 @@ void RsGxsNetService::syncWithPeers()
         delete mmit->second;
     }
 #endif
+}
+
+void RsGxsNetService::syncGrpStatistics()
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+#ifdef NXS_NET_DEBUG_0
+    GXSNETDEBUG___<< "Sync-ing group statistics." << std::endl;
+#endif
+    typedef std::map<RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaMap;
+    GrpMetaMap grpMeta;
+
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+    std::set<RsPeerId> peers;
+    mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
+
+    // Go through group statistics and groups without information are re-requested to random peers selected
+    // among the ones who provided the group info.
+
+    time_t now = time(NULL) ;
+    
+    for(std::map<RsGxsGroupId,RsGxsGrpMetaData*>::iterator it(grpMeta.begin());it!=grpMeta.end();++it)
+    {
+	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[it->first]) ;
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG__G(it->first) << "    group " << it->first ;
+#endif
+
+	    if(rec.update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.size() > 0)
+	    {
+#ifdef NXS_NET_DEBUG_0
+		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
+#endif
+		    // randomly select 2 friends among the suppliers of this group
+
+		    uint32_t n = RSRandom::random_u32() % rec.suppliers.size() ;
+
+		    std::set<RsPeerId>::const_iterator rit = rec.suppliers.begin();
+		    for(int i=0;i<n;++i)
+			    ++rit ;
+
+		    for(uint32_t i=0;i<std::min(rec.suppliers.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
+		    {
+			    RsPeerId peer_id = *rit ;
+
+			    ++rit ;
+			    if(rit == rec.suppliers.end())
+				    rit = rec.suppliers.begin() ;
+
+#ifdef NXS_NET_DEBUG_0
+			    GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
+#endif
+
+			    RsNxsSyncGrpStats *grs = new RsNxsSyncGrpStats(mServType) ;
+                
+			    grs->request_type = RsNxsSyncGrpStats::GROUP_INFO_TYPE_REQUEST ;
+			    grs->grpId = it->first ;
+			    grs->PeerId(peer_id) ;
+
+			    sendItem(grs) ;
+		    }
+	    }
+#ifdef NXS_NET_DEBUG_0
+	    else
+		    GXSNETDEBUG__G(it->first) << " up to date." << std::endl;
+#endif
+    }
+}
+
+void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
+{
+    if(grs->request_type == RsNxsSyncGrpStats::GROUP_INFO_TYPE_REQUEST)
+    {
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats Request for group " << grs->grpId << " from friend " << grs->PeerId() << std::endl;
+#endif
+	    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
+	    grpMetas[grs->grpId] = NULL;
+
+	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
+
+	    RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
+
+	    // check if we're subscribed or not
+
+	    if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
+	    {
+#ifdef NXS_NET_DEBUG_0
+		    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  Group is not subscribed. Not reponding." << std::endl;
+#endif
+		    delete grpMeta ;
+		    return ;
+	    }
+	    delete grpMeta ;
+
+	    // now count available messages
+
+	    GxsMsgReq reqIds;
+	    reqIds[grs->grpId] = std::vector<RsGxsMessageId>();
+	    GxsMsgMetaResult result;
+
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  retrieving message information." << std::endl;
+#endif
+	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
+
+	    const std::vector<RsGxsMsgMetaData*>& vec(result[grs->grpId]) ;
+
+	    if(vec.empty())	// that means we don't have any, or there isn't any, but since the default is always 0, no need to send.
+		    return ;
+
+	    RsNxsSyncGrpStats *grs_resp = new RsNxsSyncGrpStats(mServType) ;
+	    grs_resp->request_type = RsNxsSyncGrpStats::GROUP_INFO_TYPE_RESPONSE ;
+	    grs_resp->number_of_posts = vec.size();
+	    grs_resp->grpId = grs->grpId;
+	    grs_resp->PeerId(grs->PeerId()) ;
+
+	    grs_resp->last_post_TS = 0 ;
+
+	    for(uint32_t i=0;i<vec.size();++i)
+	    {
+		    if(grs_resp->last_post_TS < vec[i]->mPublishTs)
+			    grs_resp->last_post_TS = vec[i]->mPublishTs;
+
+		    delete vec[i] ;
+	    }
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  sending back statistics item with " << vec.size() << " elements." << std::endl;
+#endif
+
+	    sendItem(grs_resp) ;
+    }
+    else if(grs->request_type == RsNxsSyncGrpStats::GROUP_INFO_TYPE_RESPONSE)
+    {
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats item from peer " << grs->PeerId() << " for group " << grs->grpId << ", reporting " << grs->number_of_posts << " posts." << std::endl;
+#endif
+	    RS_STACK_MUTEX(mNxsMutex) ;
+	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[grs->grpId]) ;
+
+	    rec.suppliers.insert(grs->PeerId()) ;
+	    rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
+	    rec.update_TS = time(NULL) ;
+    }
+    else
+        std::cerr << "(EE) RsGxsNetService::handleRecvSyncGrpStatistics(): unknown item type " << grs->request_type << " found. This is a bug." << std::endl;
 }
 
 void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subscribed)
@@ -1118,27 +1268,29 @@ private:
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 {
-    RS_STACK_MUTEX(mNxsMutex) ;
+	RS_STACK_MUTEX(mNxsMutex) ;
 
-    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
+	std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
+        time_t now = time(NULL);
 
-    for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
-        for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
-		  {
-			  RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
+	for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
+		for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
+		{
+			RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
 
-			  // At each reload, divide the last count by 2. This gradually flushes old information away.
+			// At each reload, divide the last count by 2. This gradually flushes old information away.
 
-			  gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count/2) ;
+			gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count/2) ;
+			gnsr.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
 
-			  // Similarly, we remove some of the suppliers randomly. If they are
-			  // actual suppliers, they will come back automatically.  If they are
-			  // not, they will be forgotten.
+			// Similarly, we remove some of the suppliers randomly. If they are
+			// actual suppliers, they will come back automatically.  If they are
+			// not, they will be forgotten.
 
-			  if(RSRandom::random_f32() > 0.2)
-				  gnsr.suppliers.insert(it->first) ;
-		  }
-    return true;
+			if(RSRandom::random_f32() > 0.2)
+				gnsr.suppliers.insert(it->first) ;
+		}
+	return true;
 }
 
 #include <algorithm>
@@ -1206,9 +1358,10 @@ void RsGxsNetService::recvNxsItemQueue()
 
             switch(ni->PacketSubType())
             {
-            case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
-            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY: handleRecvPublishKeys (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS:  handleRecvSyncGrpStatistics   (dynamic_cast<RsNxsSyncGrpStats*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_GRP:        handleRecvSyncGroup           (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_SYNC_MSG:        handleRecvSyncMessage         (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
+            case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY: handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
             default:
                 std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
             }
@@ -2303,6 +2456,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // peer again, unless the peer has new info about it. It's important to use the same clock (this is peer's clock) so that
         // we never compare times from different (and potentially badly sync-ed clocks)
 
+        std::cerr << "(EE) stepping in part of the code (" << __PRETTY_FUNCTION__ << ") where we shouldn't. This is a bug." << std::endl;
+        
         locked_stampPeerGroupUpdateTime(pid,grpId,tr->mTransaction->updateTS,msgItemL.size()) ;
         
         if(grpMeta)
@@ -3079,17 +3234,17 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 	RS_STACK_MUTEX(mNxsMutex) ;
 
-    RsPeerId peer = item->PeerId();
+	RsPeerId peer = item->PeerId();
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): Service: " << mServType << " from " << peer << ", Last update TS (from myself) sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
+	GXSNETDEBUG_P_(peer) << "HandleRecvSyncGroup(): Service: " << mServType << " from " << peer << ", Last update TS (from myself) sent from peer is T = " << std::dec<< time(NULL) - item->updateTS << " secs ago" << std::endl;
 #endif
 
-        if(!locked_CanReceiveUpdate(item))
+	if(!locked_CanReceiveUpdate(item))
 	{
 #ifdef NXS_NET_DEBUG_0
-	    GXSNETDEBUG_P_(peer) << "  RsGxsNetService::handleRecvSyncGroup() update will not be sent." << std::endl;
+		GXSNETDEBUG_P_(peer) << "  RsGxsNetService::handleRecvSyncGroup() update will not be sent." << std::endl;
 #endif
-            return;
+		return;
 	}
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grp;
@@ -3120,6 +3275,8 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	for(; mit != grp.end(); ++mit)
 	{
 		RsGxsGrpMetaData* grpMeta = mit->second;
+
+		// Only send info about subscribed groups.
 
 		if(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 		{
@@ -3152,9 +3309,9 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	}
 
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_P_(peer) << "  final list sent (after vetting): " << itemL.size() << " elements." << std::endl;
+	GXSNETDEBUG_P_(peer) << "  final list sent (after vetting): " << itemL.size() << " elements." << std::endl;
 #endif
-    locked_pushGrpRespFromList(itemL, peer, transN);
+	locked_pushGrpRespFromList(itemL, peer, transN);
 
 	return;
 }
@@ -3437,7 +3594,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 #endif
         return;
     }
-        if(!(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
+    if(!(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
     {
 #ifdef NXS_NET_DEBUG_0
         GXSNETDEBUG_PG(item->PeerId(),item->grpId) << " Grp is not subscribed." << std::endl;

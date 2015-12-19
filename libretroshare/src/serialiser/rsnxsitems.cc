@@ -330,6 +330,54 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
     return ok;
 }
 
+    
+bool RsNxsSerialiser::serialiseNxsSyncGrpStats(RsNxsSyncGrpStats *item, void *data, uint32_t *size)
+{
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::serialiseNxsSyncGrpStats()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeNxsSyncGrpStats(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsNxsSerialiser::serialiseNxsSyncGrpStats()" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= setRawUInt32(data, *size, &offset, item->request_type);
+    ok &= item->grpId.serialise(data, *size, offset) ;
+    ok &= setRawUInt32(data, *size, &offset, item->number_of_posts);
+    ok &= setRawUInt32(data, *size, &offset, item->last_post_TS);
+
+    if(offset != tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsNxsSerialiser::serialiseSyncGrpStats() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef RSSERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsNxsSerialiser::serialiseSyncGrpStats() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
 bool RsNxsSerialiser::serialiseNxsSyncGrp(RsNxsSyncGrp *item, void *data, uint32_t *size)
 {
 
@@ -706,6 +754,71 @@ RsNxsMsg* RsNxsSerialiser::deserialNxsMsg(void *data, uint32_t *size){
 
     return item;
 }
+
+RsNxsSyncGrpStats* RsNxsSerialiser::deserialNxsSyncGrpStats(void *data, uint32_t *size){
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsNxsSerialiser::deserialNxsSyncGrpStats()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (SERVICE_TYPE != getRsItemService(rstype)) || (RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS != getRsItemSubType(rstype)))
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsSyncGrpStats() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsSyncGrpStats() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsNxsSyncGrpStats* item = new RsNxsSyncGrpStats(getRsItemService(rstype));
+    /* skip the header */
+    offset += 8;
+
+    ok &= getRawUInt32(data, *size, &offset, &(item->request_type));
+    ok &= item->grpId.deserialise(data, *size, offset) ;
+    ok &= getRawUInt32(data, *size, &offset, &(item->number_of_posts));
+    ok &= getRawUInt32(data, *size, &offset, &(item->last_post_TS));
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsSyncGrpStats() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsNxsSerialiser::deserialNxsSyncGrpStats() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+
 
 
 RsNxsSyncGrp* RsNxsSerialiser::deserialNxsSyncGrp(void *data, uint32_t *size){
@@ -1166,7 +1279,17 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrp(RsNxsSyncGrp *item)
 
     return s;
 }
+uint32_t RsNxsSerialiser::sizeNxsSyncGrpStats(RsNxsSyncGrpStats *item)
+{
+    uint32_t s = 8; // header size
 
+    s += 4; // request type
+    s += item->grpId.serial_size();
+    s += 4; // number_of_posts
+    s += 4; // last_post_TS
+
+    return s;
+}
 
 uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
 {
@@ -1260,7 +1383,6 @@ void RsNxsSyncMsg::clear()
     syncHash.clear();
     updateTS = 0;
 }
-
 void RsNxsSyncGrpItem::clear()
 {
     flag = 0;
@@ -1430,7 +1552,23 @@ std::ostream& RsNxsMsg::print(std::ostream &out, uint16_t indent){
     return out;
 }
 
+std::ostream& RsNxsSyncGrpStats::print(std::ostream &out, uint16_t indent){
 
+    printRsItemBase(out, "RsNxsSyncGrpStats", indent);
+    uint16_t int_Indent = indent + 2;
+
+    out << "available posts: " << number_of_posts << std::endl;
+    printIndent(out , int_Indent);
+    out << "last update: " << last_post_TS << std::endl;
+    printIndent(out , int_Indent);
+    out << "group ID: " << grpId << std::endl;
+    printIndent(out , int_Indent);
+    out << "request type: " << request_type << std::endl;
+    printIndent(out , int_Indent);
+
+    printRsItemEnd(out ,"RsNxsSyncGrpStats", indent);
+    return out;
+}
 std::ostream& RsNxsTransac::print(std::ostream &out, uint16_t indent){
 
     printRsItemBase(out, "RsNxsTransac", indent);
