@@ -272,6 +272,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 	QString styleOptimized ;
 	QString errorMsg ; int errorLine ; int errorColumn ;
 	QString messageBody = message ;
+	me = me || message.trimmed().startsWith("/me ");
 	if (doc.setContent(messageBody, &errorMsg, &errorLine, &errorColumn)) {
 		QDomElement body = doc.documentElement();
 		if (!body.isNull()){
@@ -362,9 +363,12 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
 	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
 
+	int bi = name.lastIndexOf(QRegExp(" \\(.*\\)")); //trim location from the end
+	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+
 	//handle /me
 	if(me){
-		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strName); //replace only the first /me
+		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName); //replace only the first /me
 		strName = "*";
 	}
 
