@@ -491,8 +491,10 @@ int	pqistreamer::handleoutgoing_locked()
 			    mPkt_wpending_size += s ;
 			    ++k ;
 		    }
+#ifdef DEBUG_PQISTREAMER
 		    if(k > 1)
 			    std::cerr << "Packed " << k << " packets into " << mPkt_wpending_size << " bytes." << std::endl;
+#endif
 	    }
 #else
 	{
@@ -543,8 +545,10 @@ int	pqistreamer::handleoutgoing_locked()
 		    sent = true;
 	    }
     }
+#ifdef DEBUG_PQISTREAMER
     if(nsent > 0)
 	    std::cerr << "nsent = " << nsent << ", total bytes=" << sentbytes << std::endl;
+#endif
     outSentBytes_locked(sentbytes);
     return 1;
 }
