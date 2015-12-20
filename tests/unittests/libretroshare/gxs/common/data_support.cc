@@ -282,7 +282,8 @@ bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
 
     if(l.transactFlag != r.transactFlag) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
-    if(l.timestamp != r.timestamp) return false;
+    // timestamp is not serialised, see rsnxsitems.h
+    //if(l.timestamp != r.timestamp) return false;
     if(l.nItems != r.nItems) return false;
 
 
