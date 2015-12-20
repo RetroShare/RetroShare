@@ -104,24 +104,6 @@ bool rs_nxs_test::NxsTestHub::testsPassed()
 	return mTestScenario->checkTestPassed();
 }
 
-
-void rs_nxs_test::NxsTestHub::runloop()
-{
-	double timeDelta = .2;
-    while(!shouldStop())
-	{
-#ifndef WINDOWS_SYS
-        usleep((int) (timeDelta * 1000000));
-#else
-        Sleep((int) (timeDelta * 1000));
-#endif
-
-        tick();
-	}
-
-}
-
-
 void rs_nxs_test::NxsTestHub::StartTest()
 {
 	// get all services up and running
@@ -138,7 +120,7 @@ void rs_nxs_test::NxsTestHub::StartTest()
 void rs_nxs_test::NxsTestHub::EndTest()
 {
 	// then stop this thread
-    ask_for_stop();
+    join();
 
 	// stop services
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
@@ -217,7 +199,7 @@ void rs_nxs_test::NxsTestHub::CleanUpTest()
 	mTestScenario->cleanTestScenario();
 }
 
-void rs_nxs_test::NxsTestHub::tick()
+void rs_nxs_test::NxsTestHub::data_tick()
 {
 	// for each nxs instance pull out all items from each and then move to destination peer
 
@@ -248,6 +230,8 @@ void rs_nxs_test::NxsTestHub::tick()
 
 	}
 
+    double timeDelta = .2;
+    usleep(timeDelta * 1000000);
 }
 
 
