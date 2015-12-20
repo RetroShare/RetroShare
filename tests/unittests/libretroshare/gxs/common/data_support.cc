@@ -32,6 +32,7 @@ bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
     if(!(l.keys == r.keys)) return false;
     if(l.mGroupFlags != r.mGroupFlags) return false;
     if(l.mPublishTs != r.mPublishTs) return false;
+    if(l.mSignFlags != r.mSignFlags) return false;
     if(l.mAuthorId != r.mAuthorId) return false;
     if(l.mGroupName != r.mGroupName) return false;
     if(l.mGroupId != r.mGroupId) return false;
