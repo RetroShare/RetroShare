@@ -8,6 +8,9 @@ ApiPluginHandler::ApiPluginHandler(StateTokenServer* statetokenserver, const RsP
     for(int i = 0; i < ifaces.mPluginHandler->nbPlugins(); i++)
     {
         RsPlugin* plugin = ifaces.mPluginHandler->plugin(i);
+        // if plugin is not loaded, pointer is null
+        if(plugin == 0)
+            continue;
         std::string entrypoint;
         ResourceRouter* child = plugin->new_resource_api_handler(ifaces, statetokenserver, entrypoint);
         if(child != 0)
