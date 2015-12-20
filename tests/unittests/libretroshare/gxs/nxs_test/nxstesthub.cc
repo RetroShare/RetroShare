@@ -159,6 +159,13 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 	{
 		RsNxsMsg* msg = *it;
 		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+        // local meta is not touched by the deserialisation routine
+        // have to initialise it
+        meta->mMsgStatus = 0;
+        meta->mMsgSize = 0;
+        meta->mChildTs = 0;
+        meta->recvTS = 0;
+        meta->validated = false;
 		bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 		toStore.insert(std::make_pair(msg, meta));
 	}
