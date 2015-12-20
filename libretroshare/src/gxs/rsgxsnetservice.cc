@@ -655,8 +655,8 @@ void RsGxsNetService::syncGrpStatistics()
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-    std::set<RsPeerId> peers;
-    mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
+    std::set<RsPeerId> online_peers;
+    mNetMgr->getOnlineList(mServiceInfo.mServiceType, online_peers);
 
     // Go through group statistics and groups without information are re-requested to random peers selected
     // among the ones who provided the group info.
@@ -684,25 +684,28 @@ void RsGxsNetService::syncGrpStatistics()
 			    ++rit ;
 
 		    for(uint32_t i=0;i<std::min(rec.suppliers.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
-		    {
-			    RsPeerId peer_id = *rit ;
-
-			    ++rit ;
-			    if(rit == rec.suppliers.end())
-				    rit = rec.suppliers.begin() ;
+                    {
+			RsPeerId peer_id = *rit ;
+			++rit ;
+                        
+                	if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
+			{
+				if(rit == rec.suppliers.end())
+					rit = rec.suppliers.begin() ;
 
 #ifdef NXS_NET_DEBUG_0
-			    GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
+				GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
 #endif
 
-			    RsNxsSyncGrpStats *grs = new RsNxsSyncGrpStats(mServType) ;
-                
-			    grs->request_type = RsNxsSyncGrpStats::GROUP_INFO_TYPE_REQUEST ;
-			    grs->grpId = it->first ;
-			    grs->PeerId(peer_id) ;
+				RsNxsSyncGrpStats *grs = new RsNxsSyncGrpStats(mServType) ;
 
-			    sendItem(grs) ;
-		    }
+				grs->request_type = RsNxsSyncGrpStats::GROUP_INFO_TYPE_REQUEST ;
+				grs->grpId = it->first ;
+				grs->PeerId(peer_id) ;
+
+				sendItem(grs) ;
+			}
+                    }
 	    }
 #ifdef NXS_NET_DEBUG_0
 	    else
@@ -725,6 +728,14 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 
 	    RsGxsGrpMetaData* grpMeta = grpMetas[grs->grpId];
 
+	if(grpMeta == NULL)
+            {
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  Group is unknown. Not reponding." << std::endl;
+#endif
+	    return ;
+            }
+            
 	    // check if we're subscribed or not
 
 	    if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
@@ -782,9 +793,15 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 	    RS_STACK_MUTEX(mNxsMutex) ;
 	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[grs->grpId]) ;
 
+	    int32_t old_count = rec.max_visible_count ;
+	    int32_t old_suppliers_count = rec.suppliers.size() ;
+        
 	    rec.suppliers.insert(grs->PeerId()) ;
 	    rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
 	    rec.update_TS = time(NULL) ;
+        
+	    if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.size())
+		    mObserver->notifyChangedGroupStats(grs->grpId);
     }
     else
         std::cerr << "(EE) RsGxsNetService::handleRecvSyncGrpStatistics(): unknown item type " << grs->request_type << " found. This is a bug." << std::endl;

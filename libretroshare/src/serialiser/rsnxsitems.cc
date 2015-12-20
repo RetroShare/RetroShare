@@ -38,6 +38,7 @@ uint32_t RsNxsSerialiser::size(RsItem *item) {
     RsNxsGrp* ngp;
     RsNxsMsg* nmg;
     RsNxsSyncGrp* sg;
+    RsNxsSyncGrpStats* sgs;
     RsNxsSyncGrpItem* sgl;
     RsNxsSyncMsg* sgm;
     RsNxsSyncMsgItem* sgml;
@@ -52,6 +53,9 @@ uint32_t RsNxsSerialiser::size(RsItem *item) {
     {
         return sizeNxsSyncGrp(sg);
 
+    } else if((sgs = dynamic_cast<RsNxsSyncGrpStats*>(item))  != NULL)
+    {
+        return sizeNxsSyncGrpStats(sgs);
     }else if(( ntx = dynamic_cast<RsNxsTransac*>(item)) != NULL){
         return sizeNxsTrans(ntx);
     }
@@ -109,6 +113,8 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
             return deserialNxsSyncMsgItem(data, size);
         case RS_PKT_SUBTYPE_NXS_GRP:
             return deserialNxsGrp(data, size);
+        case RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS:
+            return deserialNxsSyncGrpStats(data, size);
         case RS_PKT_SUBTYPE_NXS_MSG:
             return deserialNxsMsg(data, size);
         case RS_PKT_SUBTYPE_NXS_TRANS:
@@ -134,6 +140,7 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     RsNxsGrp* ngp;
     RsNxsMsg* nmg;
     RsNxsSyncGrp* sg;
+    RsNxsSyncGrpStats* sgs;
     RsNxsSyncGrpItem* sgl;
     RsNxsSyncMsg* sgm;
     RsNxsSyncMsgItem* sgml;
@@ -143,6 +150,10 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     if((sg = dynamic_cast<RsNxsSyncGrp*>(item))  != NULL)
     {
         return serialiseNxsSyncGrp(sg, data, size);
+
+    }else if((sgs = dynamic_cast<RsNxsSyncGrpStats*>(item))  != NULL)
+    {
+        return serialiseNxsSyncGrpStats(sgs, data, size);
 
     }else if ((ntx = dynamic_cast<RsNxsTransac*>(item)) != NULL)
     {
