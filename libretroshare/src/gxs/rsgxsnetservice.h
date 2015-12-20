@@ -54,7 +54,8 @@ class RsGroupNetworkStatsRecord
         RsGroupNetworkStatsRecord() { max_visible_count= 0 ; }
 
         std::set<RsPeerId> suppliers ;
-    uint32_t max_visible_count ;
+	uint32_t max_visible_count ;
+    time_t update_TS ;
 };
 
 /*!
@@ -320,6 +321,12 @@ private:
     void handleRecvSyncGroup(RsNxsSyncGrp* item);
 
     /*!
+     * Handles an nxs item for group statistics
+     * @param item contaims update time stamp and number of messages
+     */
+    void handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs);
+    
+    /*!
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
@@ -359,6 +366,7 @@ private:
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
     void syncWithPeers();
+    void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
