@@ -32,7 +32,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#ifndef WIN32
 #include <sys/select.h>
+#endif
 
 /***
  * #define UDP_ENABLE_BROADCAST		1

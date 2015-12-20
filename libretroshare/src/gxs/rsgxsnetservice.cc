@@ -343,7 +343,6 @@ int RsGxsNetService::tick()
         mLastCleanRejectedMessages = now ;
         cleanRejectedMessages() ;
     }
-    
     return 1;
 }
 

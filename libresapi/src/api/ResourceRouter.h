@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ApiTypes.h"
+#include <iostream>
 
 namespace resource_api
 {
@@ -20,6 +21,8 @@ public:
     void addResourceHandler(std::string name, T* instance, ResponseTask* (T::*callback)(Request& req, Response& resp));
     template <class T>
     void addResourceHandler(std::string name, T* instance, void (T::*callback)(Request& req, Response& resp));
+
+    bool isNameUsed(std::string name);
 private:
     class HandlerBase
     {
@@ -61,6 +64,10 @@ private:
 template <class T>
 void ResourceRouter::addResourceHandler(std::string name, T* instance, ResponseTask* (T::*callback)(Request& req, Response& resp))
 {
+    if(isNameUsed(name))
+    {
+        std::cerr << "ResourceRouter::addResourceHandler ERROR: name=" << name << " alerady in use. Not adding new Handler!" << std::endl;
+    }
     Handler<T>* handler = new Handler<T>();
     handler->instance = instance;
     handler->method = callback;
@@ -69,6 +76,10 @@ void ResourceRouter::addResourceHandler(std::string name, T* instance, ResponseT
 template <class T>
 void ResourceRouter::addResourceHandler(std::string name, T* instance, void (T::*callback)(Request& req, Response& resp))
 {
+    if(isNameUsed(name))
+    {
+        std::cerr << "ResourceRouter::addResourceHandler ERROR: name=" << name << " alerady in use. Not adding new Handler!" << std::endl;
+    }
     InstantResponseHandler<T>* handler = new InstantResponseHandler<T>();
     handler->instance = instance;
     handler->method = callback;

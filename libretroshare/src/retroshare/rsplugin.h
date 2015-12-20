@@ -49,6 +49,7 @@ class RsMsgs ;
 class RsGxsForums;
 class RsGxsChannels;
 class RsNotify;
+class RsServiceControl;
 class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
@@ -74,6 +75,12 @@ class RsGxsIdExchange;
 class RsGcxs;
 class PgpAuxUtils;
 class p3Config;
+
+namespace resource_api
+{
+    class ResourceRouter;
+    class StateTokenServer;
+}
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -108,6 +115,8 @@ public:
     RsUtil::inited_ptr<RsDisc>   mDisc;
     RsUtil::inited_ptr<RsDht>    mDht;
     RsUtil::inited_ptr<RsNotify> mNotify;
+    RsUtil::inited_ptr<RsServiceControl> mServiceControl;
+    RsUtil::inited_ptr<RsPluginHandler> mPluginHandler;
 
     // gxs
     std::string     mGxsDir;
@@ -146,6 +155,12 @@ class RsPlugin
         virtual p3Service   *p3_service() 		const	{ return NULL ; }
         virtual p3Config   *p3_config() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
+
+
+        // creates a new resource api handler object. ownership is transferred to the caller.
+        // the caller should supply a statetokenserver, and keep it valid until destruction
+        // the plugin should return a entry point name. this is to make the entry point name independent from file names
+        virtual resource_api::ResourceRouter* new_resource_api_handler(const RsPlugInInterfaces& ifaces, resource_api::StateTokenServer* sts, std::string &entrypoint) const { return 0;}
 
 		// Shutdown
 		virtual void stop() {}
