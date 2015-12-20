@@ -207,12 +207,13 @@
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_6 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -234,7 +235,7 @@
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("" )) ;	// use this to allow to this group id only, or "" for all IDs
@@ -243,7 +244,7 @@ static const uint32_t     service_to_print  = 0 ;                       	// use 
 
 class nullstream: public std::ostream {};
         
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)|| defined(NXS_NET_DEBUG_6)
 static std::string nice_time_stamp(time_t now,time_t TS)
 {
     if(TS == 0)
@@ -647,7 +648,7 @@ void RsGxsNetService::syncGrpStatistics()
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
     GXSNETDEBUG___<< "Sync-ing group statistics." << std::endl;
 #endif
     typedef std::map<RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaMap;
@@ -666,13 +667,13 @@ void RsGxsNetService::syncGrpStatistics()
     for(std::map<RsGxsGroupId,RsGxsGrpMetaData*>::iterator it(grpMeta.begin());it!=grpMeta.end();++it)
     {
 	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[it->first]) ;
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG__G(it->first) << "    group " << it->first ;
 #endif
 
 	    if(rec.update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.size() > 0)
 	    {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
 #endif
 		    // randomly select 2 friends among the suppliers of this group
@@ -680,7 +681,7 @@ void RsGxsNetService::syncGrpStatistics()
 		    uint32_t n = RSRandom::random_u32() % rec.suppliers.size() ;
 
 		    std::set<RsPeerId>::const_iterator rit = rec.suppliers.begin();
-		    for(int i=0;i<n;++i)
+		    for(uint32_t i=0;i<n;++i)
 			    ++rit ;
 
 		    for(uint32_t i=0;i<std::min(rec.suppliers.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
@@ -693,7 +694,7 @@ void RsGxsNetService::syncGrpStatistics()
 				if(rit == rec.suppliers.end())
 					rit = rec.suppliers.begin() ;
 
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 				GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
 #endif
 
@@ -707,7 +708,7 @@ void RsGxsNetService::syncGrpStatistics()
 			}
                     }
 	    }
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    else
 		    GXSNETDEBUG__G(it->first) << " up to date." << std::endl;
 #endif
@@ -718,7 +719,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 {
     if(grs->request_type == RsNxsSyncGrpStats::GROUP_INFO_TYPE_REQUEST)
     {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats Request for group " << grs->grpId << " from friend " << grs->PeerId() << std::endl;
 #endif
 	    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
@@ -730,7 +731,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 
 	if(grpMeta == NULL)
             {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 		GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  Group is unknown. Not reponding." << std::endl;
 #endif
 	    return ;
@@ -740,7 +741,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 
 	    if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
 	    {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 		    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  Group is not subscribed. Not reponding." << std::endl;
 #endif
 		    delete grpMeta ;
@@ -754,7 +755,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 	    reqIds[grs->grpId] = std::vector<RsGxsMessageId>();
 	    GxsMsgMetaResult result;
 
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  retrieving message information." << std::endl;
 #endif
 	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
@@ -779,7 +780,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
 
 		    delete vec[i] ;
 	    }
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  sending back statistics item with " << vec.size() << " elements." << std::endl;
 #endif
 
@@ -787,7 +788,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs)
     }
     else if(grs->request_type == RsNxsSyncGrpStats::GROUP_INFO_TYPE_RESPONSE)
     {
-#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats item from peer " << grs->PeerId() << " for group " << grs->grpId << ", reporting " << grs->number_of_posts << " posts." << std::endl;
 #endif
 	    RS_STACK_MUTEX(mNxsMutex) ;
@@ -1667,8 +1668,6 @@ void RsGxsNetService::updateClientSyncTS()
     GXSNETDEBUG___<< "updateClientSyncTS(): checking last modification time stamps of local data w.r.t. client's modification times" << std::endl;
 #endif
 
-    time_t now = time(NULL) ;
-    
     if(mGrpServerUpdateItem == NULL)
 	    mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
 
