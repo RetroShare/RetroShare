@@ -27,7 +27,11 @@
 #include <string>
 #include <map>
 #include <set>
+#if __MAC_10_10
+#include <unordered_set>
+#else
 #include <tr1/unordered_set>
+#endif
 #include <list>
 #include <vector>
 #include <stdint.h>
@@ -246,7 +250,11 @@ class FileIndex
 
 		PersonEntry *root;
 
+#ifdef __MAC_10_10
+		static std::unordered_set<void*> _pointers ;
+#else
 		static std::tr1::unordered_set<void*> _pointers ;
+#endif
 		static void registerEntry(void*p) ; 
 		static void unregisterEntry(void*p) ; 
 		static bool isValid(void*p)  ;
