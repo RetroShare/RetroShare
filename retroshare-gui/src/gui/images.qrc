@@ -619,65 +619,8 @@
         <file>qss/chat/compact/history/system.htm</file>
         <file>qss/chat/compact/history/main.css</file>
         <file>qss/chat/compact/history/variants/Standard.css</file>
-		<file>qss/stylesheet/qss.default</file>
-		<file>qss/stylesheet/Standard.qss</file>
-        <file>smileys/amorous.png</file>
-        <file>smileys/angry.png</file>
-        <file>smileys/bad.png</file>
-        <file>smileys/beer.png</file>
-        <file>smileys/cake.png</file>
-        <file>smileys/camera.png</file>
-        <file>smileys/cat.png</file>
-        <file>smileys/clock.png</file>
-        <file>smileys/coffee.png</file>
-        <file>smileys/coins.png</file>
-        <file>smileys/confused.png</file>
-        <file>smileys/crying.png</file>
-        <file>smileys/embarrassed.png</file>
-        <file>smileys/eyeroll.png</file>
-        <file>smileys/excited.png</file>
-        <file>smileys/face-devil-grin48.png</file>
-        <file>smileys/happy.png</file>
-        <file>smileys/in-love.png</file>
-        <file>smileys/island.png</file>
-        <file>smileys/kissing.png</file>
-        <file>smileys/laugh.png</file>
-        <file>smileys/liquor.png</file>
-        <file>smileys/love-over.png</file>
-        <file>smileys/love.png</file>
-        <file>smileys/mobile.png</file>
-        <file>smileys/moon.png</file>
-        <file>smileys/party.png</file>
-        <file>smileys/peace.png</file>
-        <file>smileys/phone.png</file>
-        <file>smileys/pirate.png</file>
-        <file>smileys/pizza.png</file>
-        <file>smileys/pouty.png</file>
-        <file>smileys/pumpkin.png</file>
-        <file>smileys/rotfl.png</file>
-        <file>smileys/sad.png</file>
-        <file>smileys/shocked.png</file>
-        <file>smileys/sleeping.png</file>
-        <file>smileys/tongue.png</file>
-        <file>smileys/umbrella.png</file>
-        <file>smileys/wink.png</file>
-        <file>smileys/emotes.acs</file>
-        <file>smileys/lamp.png</file>
-        <file>smileys/good.png</file>
-        <file>smileys/drink.png</file>
-        <file>smileys/airplane.png</file>
-        <file>smileys/turtle.png</file>
-        <file>smileys/time-out.png</file>
-        <file>smileys/weather-overcast.png</file>
-        <file>smileys/weather-few-clouds.png</file>
-        <file>smileys/weather-clear.png</file>
-        <file>smileys/weather-clear-night.png</file>
-        <file>smileys/weather-few-clouds-night.png</file>
-        <file>smileys/weather-severe-alert.png</file>
-        <file>smileys/weather-showers.png</file>
-        <file>smileys/weather-showers-scattered.png</file>
-        <file>smileys/weather-snow.png</file>
-        <file>smileys/weather-storm.png</file>
+        <file>qss/stylesheet/qss.default</file>
+        <file>qss/stylesheet/Standard.qss</file>
         <file>images/connect/connectFriendWatermark.png</file>
         <file>images/connect/connectFriendLogo.png</file>
         <file>images/connect/connectFriendBanner.png</file>

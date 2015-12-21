@@ -48,7 +48,7 @@ void Emoticons::load()
         internalEmoticons = false;
     } else {
         // then embedded emotions
-        sm_file.setFileName(":/smileys/emotes.acs");
+        sm_file.setFileName(":/emojione/emotes.acs");
         if(!sm_file.open(QIODevice::ReadOnly))
         {
             std::cout << "error opening ressource file" << std::endl ;
@@ -56,7 +56,7 @@ void Emoticons::load()
         }
     }
 #else
-    QFile sm_file(QString(":/smileys/emotes.acs"));
+    QFile sm_file(QString(":/emojione/emotes.acs"));
     if(!sm_file.open(QIODevice::ReadOnly))
     {
         std::cout << "error opening ressource file" << std::endl ;
@@ -128,7 +128,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
     const int buttonWidth = 26;
     const int buttonHeight = 26;
-    const int countPerLine = 9;
+    const int countPerLine = 14;
 
     int rowCount = (Smileys.size()/countPerLine) + ((Smileys.size() % countPerLine) ? 1 : 0);
 
