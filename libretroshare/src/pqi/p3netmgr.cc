@@ -1021,7 +1021,7 @@ bool p3NetMgrIMPL::checkNetAddress()
 		std::list<sockaddr_storage>::iterator it;
 		if (getLocalAddresses(addrs))
 			for(it = addrs.begin(); (it != addrs.end() && !validAddr); ++it)
-				if(sockaddr_storage_isValidNet(*it))
+				if(sockaddr_storage_isValidNet(*it) && !sockaddr_storage_isLoopbackNet(*it))
 				{
 					prefAddr = *it;
 					validAddr = true;

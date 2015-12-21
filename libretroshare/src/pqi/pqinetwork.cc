@@ -303,8 +303,6 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	IP_ADAPTER_ADDRESSES* adapter(NULL);
 	for(adapter = adapter_addresses; NULL != adapter; adapter = adapter->Next)
 	{
-		if (adapter->IfType == IF_TYPE_SOFTWARE_LOOPBACK) continue;
-
 		IP_ADAPTER_UNICAST_ADDRESS* address;
 		for ( address = adapter->FirstUnicastAddress; address; address = address->Next)
 		{
@@ -320,7 +318,7 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) getLocalAddressesFailed();
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
-		if ( (ifa->ifa_flags & IFF_UP) && !(ifa->ifa_flags & IFF_LOOPBACK) )
+		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
 			sockaddr_storage * tmp = new sockaddr_storage;
 			sockaddr_storage_clear(*tmp);
