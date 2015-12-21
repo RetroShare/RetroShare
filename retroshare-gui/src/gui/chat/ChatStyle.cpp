@@ -367,12 +367,17 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
 
 	//handle /me
+	//%nome% and %me% for including formatting conditionally
+	//meName class for modifying the style of the name in the palce of /me
 	if(me){
-		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName); //replace only the first /me
-		strName = "*";
+		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName.prepend(QString("<span class=\"meName\">")).append(QString("</span>"))); //replace only the first /me
+		style = style.remove(QRegExp("%nome%.*%/nome%")).remove("%me%").remove("%/me%");
+	} else {
+		style = style.remove(QRegExp("%me%.*%/me%")).remove("%nome%").remove("%/nome%");
 	}
 
 	QString formatMsg = style.replace("%name%", strName)
+							 .replace("%shortname%", strShortName)
 	                         .replace("%date%", strDate)
 	                         .replace("%time%", strTime)
 #ifdef COLORED_NICKNAMES
