@@ -331,11 +331,13 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	freeifaddrs(ifsaddrs);
 #endif // WINDOWS_SYS
 
+#ifdef NET_DEBUG
 	std::list<sockaddr_storage>::iterator it;
 	std::cout << "getLocalAddresses(...) returning: <" ;
 	for(it = addrs.begin(); it != addrs.end(); ++it)
 			std::cout << sockaddr_storage_iptostring(*it) << ", ";
 	std::cout << ">" << std::endl;
+#endif
 
 	return !addrs.empty();
 }
