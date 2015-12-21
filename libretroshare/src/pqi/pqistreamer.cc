@@ -486,7 +486,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    {
 			    uint32_t s = getRsItemSize(dta);
 			    mPkt_wpending = realloc(mPkt_wpending,s+mPkt_wpending_size) ;
-			    memcpy(mPkt_wpending+mPkt_wpending_size,dta,s) ;
+			    memcpy( &((char*)mPkt_wpending)[mPkt_wpending_size],dta,s) ;
 			    free(dta);
 			    mPkt_wpending_size += s ;
 			    ++k ;
