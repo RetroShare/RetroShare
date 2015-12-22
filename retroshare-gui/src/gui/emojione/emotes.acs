@@ -59,7 +59,7 @@
 ":mask:":"emojione/1F637.png";
 ":slight_frown:|:slightly_frowning_face:":"emojione/1F641.png";
 ":slight_smile:|:slightly_smiling_face:":"emojione/1F642.png";
-":smile_cat:":"emojione/1F638.png";
+":smile_cat:|(@)":"emojione/1F638.png";
 ":joy_cat:":"emojione/1F639.png";
 ":smiley_cat:":"emojione/1F63A.png";
 ":heart_eyes_cat:":"emojione/1F63B.png";
@@ -115,7 +115,7 @@
 ":thumbsdown:|:-1:":"emojione/1F44E.png";
 ":muscle:":"emojione/1F4AA.png";
 ":middle_finger:|":"emojione/1F595.png";
-":coffee:":"emojione/2615.png";
+":coffee:|(C)|(c)":"emojione/2615.png";
 ":sake:":"emojione/1F376.png";
 ":tea:":"emojione/1F375.png";
 ":cake:":"emojione/1F370.png";
@@ -125,7 +125,7 @@
 ":wine_glass:":"emojione/1F377.png";
 ":cocktail:":"emojione/1F378.png";
 ":tropical_drink:":"emojione/1F379.png";
-":beer:":"emojione/1F37A.png";
+":beer:|(B)|(b)":"emojione/1F37A.png";
 ":beers:":"emojione/1F37B.png";
 ":watch:":"emojione/231A.png";
 ":iphone:":"emojione/1F4F1.png";
@@ -135,7 +135,7 @@
 ":speak_no_evil:":"emojione/1F64A.png";
 ":turtle:":"emojione/1F422.png";
 ":frog:":"emojione/1F438.png";
-":airplane:":"emojione/2708.png";
+":airplane:|(C)|(c)":"emojione/2708.png";
 ":heart:|<3":"emojione/2764.png";
 ":broken_heart:|</3":"emojione/1F494.png";
 ":love_letter:":"emojione/1F48C.png";

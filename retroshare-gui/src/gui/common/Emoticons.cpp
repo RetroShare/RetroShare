@@ -29,7 +29,7 @@
 #include <QPushButton>
 
 #include <iostream>
-
+#include <math.h>
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 
@@ -128,9 +128,9 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
     const int buttonWidth = 26;
     const int buttonHeight = 26;
-    const int countPerLine = 14;
 
-    int rowCount = (Smileys.size()/countPerLine) + ((Smileys.size() % countPerLine) ? 1 : 0);
+    int rowCount = (int)sqrt((double)Smileys.size());
+    int countPerLine = (Smileys.size()/rowCount) + ((Smileys.size() % rowCount) ? 1 : 0);
 
     smWidget->setAttribute( Qt::WA_DeleteOnClose);
     smWidget->setWindowTitle("Emoticons");
