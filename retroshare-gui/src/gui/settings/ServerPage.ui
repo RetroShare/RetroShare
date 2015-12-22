@@ -7,20 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>568</height>
+    <height>671</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="leftMargin">
-    <number>6</number>
-   </property>
-   <property name="topMargin">
-    <number>6</number>
-   </property>
-   <property name="rightMargin">
-    <number>6</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>6</number>
    </property>
    <item>
@@ -506,13 +497,12 @@ behind a firewall or a VPN.</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="6" column="0">
         <layout class="QHBoxLayout">
          <item>
           <widget class="QCheckBox" name="allowNTPDeterminationCB">
            <property name="toolTip">
-            <string>If you uncheck this, RetroShare can't determine real time. Leaving this checked hel
-+determine if your computer is on time. If not, you could lost Chat Lobbies.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you uncheck this, RetroShare can't determine real time. Leaving this checked heps determine if your computer is on time. If not, you could lost Chat Lobbies.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Allow RetroShare to ask real time to these websites:</string>
@@ -557,7 +547,7 @@ behind a firewall or a VPN.</string>
          </item>
         </layout>
        </item>
-       <item>
+       <item row="7" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QListWidget" name="NTPServersLV">
