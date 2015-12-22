@@ -2,123 +2,13 @@
   <qresource prefix="/">
     <file>emojione/00A9.png</file>
     <file>emojione/00AE.png</file>
-    <file>emojione/1F0CF.png</file>
-    <file>emojione/1F3A0.png</file>
-    <file>emojione/1F3A1.png</file>
-    <file>emojione/1F3A2.png</file>
-    <file>emojione/1F3A3.png</file>
-    <file>emojione/1F3A4.png</file>
-    <file>emojione/1F3A5.png</file>
-    <file>emojione/1F3A6.png</file>
-    <file>emojione/1F3A7.png</file>
-    <file>emojione/1F3A8.png</file>
-    <file>emojione/1F3A9.png</file>
-    <file>emojione/1F3AA.png</file>
-    <file>emojione/1F3AB.png</file>
-    <file>emojione/1F3AC.png</file>
-    <file>emojione/1F3AD.png</file>
-    <file>emojione/1F3AE.png</file>
-    <file>emojione/1F3AF.png</file>
-    <file>emojione/1F3B0.png</file>
-    <file>emojione/1F3B1.png</file>
-    <file>emojione/1F3B2.png</file>
-    <file>emojione/1F3B3.png</file>
-    <file>emojione/1F3B4.png</file>
-    <file>emojione/1F3B5.png</file>
-    <file>emojione/1F3B6.png</file>
-    <file>emojione/1F3B7.png</file>
-    <file>emojione/1F3B8.png</file>
-    <file>emojione/1F3B9.png</file>
-    <file>emojione/1F3BA.png</file>
-    <file>emojione/1F3BB.png</file>
-    <file>emojione/1F3BC.png</file>
-    <file>emojione/1F3BD.png</file>
-    <file>emojione/1F3BE.png</file>
-    <file>emojione/1F3BF.png</file>
-    <file>emojione/1F3C0.png</file>
-    <file>emojione/1F3C1.png</file>
-    <file>emojione/1F3C2.png</file>
-    <file>emojione/1F3C3.png</file>
-    <file>emojione/1F3C4.png</file>
-    <file>emojione/1F3C5.png</file>
-    <file>emojione/1F3C6.png</file>
-    <file>emojione/1F3C7.png</file>
-    <file>emojione/1F3C8.png</file>
-    <file>emojione/1F3C9.png</file>
-    <file>emojione/1F3CA.png</file>
-    <file>emojione/1F3CB.png</file>
-    <file>emojione/1F3CC.png</file>
-    <file>emojione/1F3CD.png</file>
-    <file>emojione/1F3CE.png</file>
-    <file>emojione/1F3D4.png</file>
-    <file>emojione/1F3D5.png</file>
-    <file>emojione/1F3D6.png</file>
-    <file>emojione/1F3D7.png</file>
-    <file>emojione/1F3D8.png</file>
-    <file>emojione/1F3D9.png</file>
-    <file>emojione/1F3DA.png</file>
-    <file>emojione/1F3DB.png</file>
-    <file>emojione/1F3DC.png</file>
-    <file>emojione/1F3DD.png</file>
-    <file>emojione/1F3DE.png</file>
-    <file>emojione/1F3DF.png</file>
-    <file>emojione/1F3E0.png</file>
-    <file>emojione/1F3E1.png</file>
-    <file>emojione/1F3E2.png</file>
-    <file>emojione/1F3E3.png</file>
-    <file>emojione/1F3E4.png</file>
-    <file>emojione/1F3E5.png</file>
-    <file>emojione/1F3E6.png</file>
-    <file>emojione/1F3E7.png</file>
-    <file>emojione/1F3E8.png</file>
-    <file>emojione/1F3E9.png</file>
-    <file>emojione/1F3EA.png</file>
-    <file>emojione/1F3EB.png</file>
-    <file>emojione/1F3EC.png</file>
-    <file>emojione/1F3ED.png</file>
-    <file>emojione/1F3EE.png</file>
-    <file>emojione/1F3EF.png</file>
-    <file>emojione/1F3F0.png</file>
-    <file>emojione/1F3F1.png</file>
-    <file>emojione/1F3F2.png</file>
-    <file>emojione/1F3F3.png</file>
-    <file>emojione/1F3F4.png</file>
-    <file>emojione/1F3F5.png</file>
-    <file>emojione/1F3F6.png</file>
-    <file>emojione/1F3F7.png</file>
     <file>emojione/1F004.png</file>
-    <file>emojione/1F4A0.png</file>
-    <file>emojione/1F4A1.png</file>
-    <file>emojione/1F4A2.png</file>
-    <file>emojione/1F4A3.png</file>
-    <file>emojione/1F4A4.png</file>
-    <file>emojione/1F4A5.png</file>
-    <file>emojione/1F4A6.png</file>
-    <file>emojione/1F4A7.png</file>
-    <file>emojione/1F4A8.png</file>
-    <file>emojione/1F4A9.png</file>
     <file>emojione/1F4AA.png</file>
     <file>emojione/1F4AB.png</file>
     <file>emojione/1F4AC.png</file>
     <file>emojione/1F4AD.png</file>
     <file>emojione/1F4AE.png</file>
     <file>emojione/1F4AF.png</file>
-    <file>emojione/1F4B0.png</file>
-    <file>emojione/1F4B1.png</file>
-    <file>emojione/1F4B2.png</file>
-    <file>emojione/1F4B3.png</file>
-    <file>emojione/1F4B4.png</file>
-    <file>emojione/1F4B5.png</file>
-    <file>emojione/1F4B6.png</file>
-    <file>emojione/1F4B7.png</file>
-    <file>emojione/1F4B8.png</file>
-    <file>emojione/1F4B9.png</file>
-    <file>emojione/1F4BA.png</file>
-    <file>emojione/1F4BB.png</file>
-    <file>emojione/1F4BC.png</file>
-    <file>emojione/1F4BD.png</file>
-    <file>emojione/1F4BE.png</file>
-    <file>emojione/1F4BF.png</file>
     <file>emojione/1F4C0.png</file>
     <file>emojione/1F4C1.png</file>
     <file>emojione/1F4C2.png</file>
@@ -182,136 +72,7 @@
     <file>emojione/1F4FC.png</file>
     <file>emojione/1F4FD.png</file>
     <file>emojione/1F4FE.png</file>
-    <file>emojione/1F5A5.png</file>
-    <file>emojione/1F5A6.png</file>
-    <file>emojione/1F5A7.png</file>
-    <file>emojione/1F5A8.png</file>
-    <file>emojione/1F5A9.png</file>
-    <file>emojione/1F5AA.png</file>
-    <file>emojione/1F5AB.png</file>
-    <file>emojione/1F5AD.png</file>
-    <file>emojione/1F5AE.png</file>
-    <file>emojione/1F5AF.png</file>
-    <file>emojione/1F5B2.png</file>
-    <file>emojione/1F5B3.png</file>
-    <file>emojione/1F5B4.png</file>
-    <file>emojione/1F5B8.png</file>
-    <file>emojione/1F5B9.png</file>
-    <file>emojione/1F5BC.png</file>
-    <file>emojione/1F5BD.png</file>
-    <file>emojione/1F5BE.png</file>
-    <file>emojione/1F5C0.png</file>
-    <file>emojione/1F5C1.png</file>
-    <file>emojione/1F5C2.png</file>
-    <file>emojione/1F5C3.png</file>
-    <file>emojione/1F5C4.png</file>
-    <file>emojione/1F5C6.png</file>
-    <file>emojione/1F5C7.png</file>
-    <file>emojione/1F5C9.png</file>
-    <file>emojione/1F5CA.png</file>
-    <file>emojione/1F5CE.png</file>
-    <file>emojione/1F5CF.png</file>
-    <file>emojione/1F5D0.png</file>
-    <file>emojione/1F5D1.png</file>
-    <file>emojione/1F5D2.png</file>
-    <file>emojione/1F5D3.png</file>
-    <file>emojione/1F5D4.png</file>
-    <file>emojione/1F5D8.png</file>
-    <file>emojione/1F5D9.png</file>
-    <file>emojione/1F5DC.png</file>
-    <file>emojione/1F5DD.png</file>
-    <file>emojione/1F5DE.png</file>
-    <file>emojione/1F5E0.png</file>
-    <file>emojione/1F5E1.png</file>
     <file>emojione/1F5E2.png</file>
-    <file>emojione/1F5E3.png</file>
-    <file>emojione/1F5E8.png</file>
-    <file>emojione/1F5E9.png</file>
-    <file>emojione/1F5EA.png</file>
-    <file>emojione/1F5EB.png</file>
-    <file>emojione/1F5EC.png</file>
-    <file>emojione/1F5ED.png</file>
-    <file>emojione/1F5EE.png</file>
-    <file>emojione/1F5EF.png</file>
-    <file>emojione/1F5F0.png</file>
-    <file>emojione/1F5F1.png</file>
-    <file>emojione/1F5F2.png</file>
-    <file>emojione/1F5F3.png</file>
-    <file>emojione/1F5F4.png</file>
-    <file>emojione/1F5F5.png</file>
-    <file>emojione/1F5F8.png</file>
-    <file>emojione/1F5F9.png</file>
-    <file>emojione/1F5FA.png</file>
-    <file>emojione/1F5FB.png</file>
-    <file>emojione/1F5FC.png</file>
-    <file>emojione/1F5FD.png</file>
-    <file>emojione/1F5FE.png</file>
-    <file>emojione/1F5FF.png</file>
-    <file>emojione/1F6A0.png</file>
-    <file>emojione/1F6A1.png</file>
-    <file>emojione/1F6A2.png</file>
-    <file>emojione/1F6A3.png</file>
-    <file>emojione/1F6A4.png</file>
-    <file>emojione/1F6A5.png</file>
-    <file>emojione/1F6A6.png</file>
-    <file>emojione/1F6A7.png</file>
-    <file>emojione/1F6A8.png</file>
-    <file>emojione/1F6A9.png</file>
-    <file>emojione/1F6AA.png</file>
-    <file>emojione/1F6AB.png</file>
-    <file>emojione/1F6AC.png</file>
-    <file>emojione/1F6AD.png</file>
-    <file>emojione/1F6AE.png</file>
-    <file>emojione/1F6AF.png</file>
-    <file>emojione/1F6B0.png</file>
-    <file>emojione/1F6B1.png</file>
-    <file>emojione/1F6B2.png</file>
-    <file>emojione/1F6B3.png</file>
-    <file>emojione/1F6B4.png</file>
-    <file>emojione/1F6B5.png</file>
-    <file>emojione/1F6B6.png</file>
-    <file>emojione/1F6B7.png</file>
-    <file>emojione/1F6B8.png</file>
-    <file>emojione/1F6B9.png</file>
-    <file>emojione/1F6BA.png</file>
-    <file>emojione/1F6BB.png</file>
-    <file>emojione/1F6BC.png</file>
-    <file>emojione/1F6BD.png</file>
-    <file>emojione/1F6BE.png</file>
-    <file>emojione/1F6BF.png</file>
-    <file>emojione/1F6C0.png</file>
-    <file>emojione/1F6C1.png</file>
-    <file>emojione/1F6C2.png</file>
-    <file>emojione/1F6C3.png</file>
-    <file>emojione/1F6C4.png</file>
-    <file>emojione/1F6C5.png</file>
-    <file>emojione/1F6C6.png</file>
-    <file>emojione/1F6C7.png</file>
-    <file>emojione/1F6C8.png</file>
-    <file>emojione/1F6C9.png</file>
-    <file>emojione/1F6CA.png</file>
-    <file>emojione/1F6CB.png</file>
-    <file>emojione/1F6CC.png</file>
-    <file>emojione/1F6CD.png</file>
-    <file>emojione/1F6CE.png</file>
-    <file>emojione/1F6CF.png</file>
-    <file>emojione/1F6E0.png</file>
-    <file>emojione/1F6E1.png</file>
-    <file>emojione/1F6E2.png</file>
-    <file>emojione/1F6E3.png</file>
-    <file>emojione/1F6E4.png</file>
-    <file>emojione/1F6E5.png</file>
-    <file>emojione/1F6E6.png</file>
-    <file>emojione/1F6E7.png</file>
-    <file>emojione/1F6E8.png</file>
-    <file>emojione/1F6E9.png</file>
-    <file>emojione/1F6EA.png</file>
-    <file>emojione/1F6EB.png</file>
-    <file>emojione/1F6EC.png</file>
-    <file>emojione/1F6F0.png</file>
-    <file>emojione/1F6F1.png</file>
-    <file>emojione/1F6F2.png</file>
-    <file>emojione/1F6F3.png</file>
     <file>emojione/1F17E.png</file>
     <file>emojione/1F17F.png</file>
     <file>emojione/1F18E.png</file>
@@ -319,79 +80,12 @@
     <file>emojione/1F21A.png</file>
     <file>emojione/1F22F.png</file>
     <file>emojione/1F23A.png</file>
-    <file>emojione/1F30A.png</file>
-    <file>emojione/1F30B.png</file>
-    <file>emojione/1F30C.png</file>
-    <file>emojione/1F30D.png</file>
-    <file>emojione/1F30E.png</file>
-    <file>emojione/1F30F.png</file>
-    <file>emojione/1F31A.png</file>
-    <file>emojione/1F31B.png</file>
-    <file>emojione/1F31C.png</file>
-    <file>emojione/1F31D.png</file>
-    <file>emojione/1F31E.png</file>
-    <file>emojione/1F31F.png</file>
     <file>emojione/1F32A.png</file>
     <file>emojione/1F32B.png</file>
     <file>emojione/1F32C.png</file>
-    <file>emojione/1F33A.png</file>
-    <file>emojione/1F33B.png</file>
-    <file>emojione/1F33C.png</file>
-    <file>emojione/1F33D.png</file>
-    <file>emojione/1F33E.png</file>
-    <file>emojione/1F33F.png</file>
-    <file>emojione/1F34A.png</file>
-    <file>emojione/1F34B.png</file>
-    <file>emojione/1F34C.png</file>
-    <file>emojione/1F34D.png</file>
-    <file>emojione/1F34E.png</file>
-    <file>emojione/1F34F.png</file>
-    <file>emojione/1F35A.png</file>
-    <file>emojione/1F35B.png</file>
-    <file>emojione/1F35C.png</file>
-    <file>emojione/1F35D.png</file>
-    <file>emojione/1F35E.png</file>
-    <file>emojione/1F35F.png</file>
     <file>emojione/1F36A.png</file>
-    <file>emojione/1F36B.png</file>
-    <file>emojione/1F36C.png</file>
-    <file>emojione/1F36D.png</file>
-    <file>emojione/1F36E.png</file>
-    <file>emojione/1F36F.png</file>
     <file>emojione/1F37A.png</file>
     <file>emojione/1F37B.png</file>
-    <file>emojione/1F37C.png</file>
-    <file>emojione/1F37D.png</file>
-    <file>emojione/1F38A.png</file>
-    <file>emojione/1F38B.png</file>
-    <file>emojione/1F38C.png</file>
-    <file>emojione/1F38D.png</file>
-    <file>emojione/1F38E.png</file>
-    <file>emojione/1F38F.png</file>
-    <file>emojione/1F39A.png</file>
-    <file>emojione/1F39B.png</file>
-    <file>emojione/1F39C.png</file>
-    <file>emojione/1F39D.png</file>
-    <file>emojione/1F39E.png</file>
-    <file>emojione/1F39F.png</file>
-    <file>emojione/1F40A.png</file>
-    <file>emojione/1F40B.png</file>
-    <file>emojione/1F40C.png</file>
-    <file>emojione/1F40D.png</file>
-    <file>emojione/1F40E.png</file>
-    <file>emojione/1F40F.png</file>
-    <file>emojione/1F41A.png</file>
-    <file>emojione/1F41B.png</file>
-    <file>emojione/1F41C.png</file>
-    <file>emojione/1F41D.png</file>
-    <file>emojione/1F41E.png</file>
-    <file>emojione/1F41F.png</file>
-    <file>emojione/1F42A.png</file>
-    <file>emojione/1F42B.png</file>
-    <file>emojione/1F42C.png</file>
-    <file>emojione/1F42D.png</file>
-    <file>emojione/1F42E.png</file>
-    <file>emojione/1F42F.png</file>
     <file>emojione/1F43A.png</file>
     <file>emojione/1F43B.png</file>
     <file>emojione/1F43C.png</file>
@@ -404,12 +98,6 @@
     <file>emojione/1F44D.png</file>
     <file>emojione/1F44E.png</file>
     <file>emojione/1F44F.png</file>
-    <file>emojione/1F45A.png</file>
-    <file>emojione/1F45B.png</file>
-    <file>emojione/1F45C.png</file>
-    <file>emojione/1F45D.png</file>
-    <file>emojione/1F45E.png</file>
-    <file>emojione/1F45F.png</file>
     <file>emojione/1F46A.png</file>
     <file>emojione/1F46B.png</file>
     <file>emojione/1F46C.png</file>
@@ -434,52 +122,7 @@
     <file>emojione/1F49D.png</file>
     <file>emojione/1F49E.png</file>
     <file>emojione/1F49F.png</file>
-    <file>emojione/1F50A.png</file>
-    <file>emojione/1F50B.png</file>
-    <file>emojione/1F50C.png</file>
-    <file>emojione/1F50D.png</file>
-    <file>emojione/1F50E.png</file>
-    <file>emojione/1F50F.png</file>
-    <file>emojione/1F51A.png</file>
-    <file>emojione/1F51B.png</file>
-    <file>emojione/1F51C.png</file>
-    <file>emojione/1F51D.png</file>
-    <file>emojione/1F51E.png</file>
-    <file>emojione/1F51F.png</file>
-    <file>emojione/1F52A.png</file>
-    <file>emojione/1F52B.png</file>
-    <file>emojione/1F52C.png</file>
-    <file>emojione/1F52D.png</file>
-    <file>emojione/1F52E.png</file>
-    <file>emojione/1F52F.png</file>
-    <file>emojione/1F53A.png</file>
-    <file>emojione/1F53B.png</file>
-    <file>emojione/1F53C.png</file>
-    <file>emojione/1F53D.png</file>
     <file>emojione/1F54A.png</file>
-    <file>emojione/1F55A.png</file>
-    <file>emojione/1F55B.png</file>
-    <file>emojione/1F55C.png</file>
-    <file>emojione/1F55D.png</file>
-    <file>emojione/1F55E.png</file>
-    <file>emojione/1F55F.png</file>
-    <file>emojione/1F56A.png</file>
-    <file>emojione/1F56B.png</file>
-    <file>emojione/1F56C.png</file>
-    <file>emojione/1F56D.png</file>
-    <file>emojione/1F56E.png</file>
-    <file>emojione/1F56F.png</file>
-    <file>emojione/1F57B.png</file>
-    <file>emojione/1F57E.png</file>
-    <file>emojione/1F57F.png</file>
-    <file>emojione/1F58A.png</file>
-    <file>emojione/1F58B.png</file>
-    <file>emojione/1F58C.png</file>
-    <file>emojione/1F58D.png</file>
-    <file>emojione/1F58E.png</file>
-    <file>emojione/1F58F.png</file>
-    <file>emojione/1F59E.png</file>
-    <file>emojione/1F59F.png</file>
     <file>emojione/1F60A.png</file>
     <file>emojione/1F60B.png</file>
     <file>emojione/1F60C.png</file>
@@ -709,25 +352,7 @@
     <file>emojione/1F466.png</file>
     <file>emojione/1F467.png</file>
     <file>emojione/1F468.png</file>
-    <file>emojione/1F468-1F468-1F466.png</file>
-    <file>emojione/1F468-1F468-1F466-1F466.png</file>
-    <file>emojione/1F468-1F468-1F467.png</file>
-    <file>emojione/1F468-1F468-1F467-1F466.png</file>
-    <file>emojione/1F468-1F468-1F467-1F467.png</file>
-    <file>emojione/1F468-1F469-1F466-1F466.png</file>
-    <file>emojione/1F468-1F469-1F467.png</file>
-    <file>emojione/1F468-1F469-1F467-1F466.png</file>
-    <file>emojione/1F468-1F469-1F467-1F467.png</file>
-    <file>emojione/1F468-2764-1F48B-1F468.png</file>
-    <file>emojione/1F468-2764-1F468.png</file>
     <file>emojione/1F469.png</file>
-    <file>emojione/1F469-1F469-1F466.png</file>
-    <file>emojione/1F469-1F469-1F466-1F466.png</file>
-    <file>emojione/1F469-1F469-1F467.png</file>
-    <file>emojione/1F469-1F469-1F467-1F466.png</file>
-    <file>emojione/1F469-1F469-1F467-1F467.png</file>
-    <file>emojione/1F469-2764-1F48B-1F469.png</file>
-    <file>emojione/1F469-2764-1F469.png</file>
     <file>emojione/1F470.png</file>
     <file>emojione/1F471.png</file>
     <file>emojione/1F472.png</file>
@@ -758,93 +383,8 @@
     <file>emojione/1F497.png</file>
     <file>emojione/1F498.png</file>
     <file>emojione/1F499.png</file>
-    <file>emojione/1F500.png</file>
-    <file>emojione/1F501.png</file>
-    <file>emojione/1F502.png</file>
-    <file>emojione/1F503.png</file>
-    <file>emojione/1F504.png</file>
-    <file>emojione/1F505.png</file>
-    <file>emojione/1F506.png</file>
-    <file>emojione/1F507.png</file>
-    <file>emojione/1F508.png</file>
-    <file>emojione/1F509.png</file>
-    <file>emojione/1F510.png</file>
-    <file>emojione/1F511.png</file>
-    <file>emojione/1F512.png</file>
-    <file>emojione/1F513.png</file>
-    <file>emojione/1F514.png</file>
-    <file>emojione/1F515.png</file>
-    <file>emojione/1F516.png</file>
-    <file>emojione/1F517.png</file>
-    <file>emojione/1F518.png</file>
-    <file>emojione/1F519.png</file>
-    <file>emojione/1F520.png</file>
-    <file>emojione/1F521.png</file>
-    <file>emojione/1F522.png</file>
-    <file>emojione/1F523.png</file>
-    <file>emojione/1F524.png</file>
-    <file>emojione/1F525.png</file>
-    <file>emojione/1F526.png</file>
-    <file>emojione/1F527.png</file>
-    <file>emojione/1F528.png</file>
-    <file>emojione/1F529.png</file>
-    <file>emojione/1F530.png</file>
-    <file>emojione/1F531.png</file>
-    <file>emojione/1F532.png</file>
-    <file>emojione/1F533.png</file>
-    <file>emojione/1F534.png</file>
-    <file>emojione/1F535.png</file>
-    <file>emojione/1F536.png</file>
-    <file>emojione/1F537.png</file>
-    <file>emojione/1F538.png</file>
-    <file>emojione/1F539.png</file>
-    <file>emojione/1F546.png</file>
-    <file>emojione/1F547.png</file>
-    <file>emojione/1F548.png</file>
-    <file>emojione/1F549.png</file>
-    <file>emojione/1F550.png</file>
-    <file>emojione/1F551.png</file>
-    <file>emojione/1F552.png</file>
-    <file>emojione/1F553.png</file>
-    <file>emojione/1F554.png</file>
-    <file>emojione/1F555.png</file>
-    <file>emojione/1F556.png</file>
-    <file>emojione/1F557.png</file>
-    <file>emojione/1F558.png</file>
-    <file>emojione/1F559.png</file>
-    <file>emojione/1F560.png</file>
-    <file>emojione/1F561.png</file>
-    <file>emojione/1F562.png</file>
-    <file>emojione/1F563.png</file>
-    <file>emojione/1F564.png</file>
-    <file>emojione/1F565.png</file>
-    <file>emojione/1F566.png</file>
-    <file>emojione/1F567.png</file>
-    <file>emojione/1F568.png</file>
-    <file>emojione/1F569.png</file>
-    <file>emojione/1F570.png</file>
-    <file>emojione/1F571.png</file>
-    <file>emojione/1F572.png</file>
-    <file>emojione/1F573.png</file>
     <file>emojione/1F574.png</file>
     <file>emojione/1F575.png</file>
-    <file>emojione/1F576.png</file>
-    <file>emojione/1F577.png</file>
-    <file>emojione/1F578.png</file>
-    <file>emojione/1F579.png</file>
-    <file>emojione/1F581.png</file>
-    <file>emojione/1F582.png</file>
-    <file>emojione/1F583.png</file>
-    <file>emojione/1F585.png</file>
-    <file>emojione/1F586.png</file>
-    <file>emojione/1F587.png</file>
-    <file>emojione/1F588.png</file>
-    <file>emojione/1F589.png</file>
-    <file>emojione/1F590.png</file>
-    <file>emojione/1F591.png</file>
-    <file>emojione/1F592.png</file>
-    <file>emojione/1F593.png</file>
-    <file>emojione/1F594.png</file>
     <file>emojione/1F595.png</file>
     <file>emojione/1F596.png</file>
     <file>emojione/1F597.png</file>
@@ -927,7 +467,6 @@
     <file>emojione/2B55.png</file>
     <file>emojione/21A9.png</file>
     <file>emojione/21AA.png</file>
-    <file>emojione/0023-20E3.png</file>
     <file>emojione/23E9.png</file>
     <file>emojione/23EA.png</file>
     <file>emojione/23EB.png</file>
@@ -962,16 +501,6 @@
     <file>emojione/27A1.png</file>
     <file>emojione/27B0.png</file>
     <file>emojione/27BF.png</file>
-    <file>emojione/0030-20E3.png</file>
-    <file>emojione/0031-20E3.png</file>
-    <file>emojione/0032-20E3.png</file>
-    <file>emojione/0033-20E3.png</file>
-    <file>emojione/0034-20E3.png</file>
-    <file>emojione/0035-20E3.png</file>
-    <file>emojione/0036-20E3.png</file>
-    <file>emojione/0037-20E3.png</file>
-    <file>emojione/0038-20E3.png</file>
-    <file>emojione/0039-20E3.png</file>
     <file>emojione/203C.png</file>
     <file>emojione/231A.png</file>
     <file>emojione/231B.png</file>
@@ -994,51 +523,13 @@
     <file>emojione/274E.png</file>
     <file>emojione/303D.png</file>
     <file>emojione/2049.png</file>
-    <file>emojione/2122.png</file>
-    <file>emojione/2139.png</file>
-    <file>emojione/2194.png</file>
-    <file>emojione/2195.png</file>
-    <file>emojione/2196.png</file>
-    <file>emojione/2197.png</file>
-    <file>emojione/2198.png</file>
-    <file>emojione/2199.png</file>
     <file>emojione/2600.png</file>
     <file>emojione/2601.png</file>
     <file>emojione/2611.png</file>
     <file>emojione/2614.png</file>
     <file>emojione/2615.png</file>
-    <file>emojione/2648.png</file>
-    <file>emojione/2649.png</file>
-    <file>emojione/2650.png</file>
-    <file>emojione/2651.png</file>
-    <file>emojione/2652.png</file>
-    <file>emojione/2653.png</file>
-    <file>emojione/2660.png</file>
-    <file>emojione/2663.png</file>
-    <file>emojione/2665.png</file>
-    <file>emojione/2666.png</file>
-    <file>emojione/2668.png</file>
-    <file>emojione/2693.png</file>
-    <file>emojione/2702.png</file>
-    <file>emojione/2705.png</file>
     <file>emojione/2708.png</file>
-    <file>emojione/2709.png</file>
-    <file>emojione/2712.png</file>
-    <file>emojione/2714.png</file>
-    <file>emojione/2716.png</file>
-    <file>emojione/2728.png</file>
-    <file>emojione/2733.png</file>
-    <file>emojione/2734.png</file>
-    <file>emojione/2744.png</file>
-    <file>emojione/2747.png</file>
-    <file>emojione/2753.png</file>
-    <file>emojione/2754.png</file>
-    <file>emojione/2755.png</file>
-    <file>emojione/2757.png</file>
     <file>emojione/2764.png</file>
-    <file>emojione/2795.png</file>
-    <file>emojione/2796.png</file>
-    <file>emojione/2797.png</file>
     <file>emojione/2934.png</file>
     <file>emojione/2935.png</file>
     <file>emojione/3030.png</file>
