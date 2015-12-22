@@ -22,6 +22,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QKeyEvent>
+#include <QScrollBar>
 
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
@@ -39,6 +40,7 @@
 #include "util/DateTime.h"
 #include "gui/common/UIStateHelper.h"
 #include "util/QtVersion.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgrouter.h>
@@ -135,6 +137,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mThreadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
+	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
 
     ui->subscribeToolButton->hide() ;
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
@@ -153,6 +156,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
+
+	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	/* Set own item delegate */
 	RSItemDelegate *itemDelegate = new RSItemDelegate(this);
@@ -497,7 +502,27 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     contextMnu.addSeparator();
     contextMnu.addAction(replyauthorAct);
 
-    contextMnu.exec(QCursor::pos());
+	contextMnu.exec(QCursor::pos());
+}
+
+void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
+{
+	QMatrix matrix;
+	matrix.translate(ui->postText->horizontalScrollBar()->value(), ui->postText->verticalScrollBar()->value());
+
+	QMenu *contextMnu = ui->postText->createStandardContextMenu(matrix.map(point));
+
+	contextMnu->addSeparator();
+
+	QTextCursor cursor = ui->postText->cursorForPosition(point);
+	if(ImageUtil::checkImage(cursor))
+	{
+		ui->actionSave_image->setData(point);
+		contextMnu->addAction(ui->actionSave_image);
+	}
+
+	contextMnu->exec(ui->postText->viewport()->mapToGlobal(point));
+	delete(contextMnu);
 }
 
 bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
@@ -1854,6 +1879,13 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 	{
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
 	}
+}
+
+void GxsForumThreadWidget::saveImage()
+{
+	QPoint point = ui->actionSave_image->data().toPoint();
+	QTextCursor cursor = ui->postText->cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
 }
 
 void GxsForumThreadWidget::changedViewBox()

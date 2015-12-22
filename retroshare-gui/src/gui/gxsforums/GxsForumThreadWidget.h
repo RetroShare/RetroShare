@@ -70,6 +70,7 @@ protected:
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
+	void contextMenuTextBrowser(QPoint point);
 
 	void changedThread();
 	void clickedThread (QTreeWidgetItem *item, int column);
@@ -80,7 +81,7 @@ private slots:
 	void replyMessageData(const RsGxsForumMsg &msg);
 	void replyForumMessageData(const RsGxsForumMsg &msg);
 	
-	
+	void saveImage();
 
 
 	//void print();
