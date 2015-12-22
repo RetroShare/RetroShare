@@ -1552,7 +1552,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     req->mGroupStatistic.mNumChildMsgsNew = 0;
     req->mGroupStatistic.mNumChildMsgsUnread = 0;
 
-    for(int i = 0; i < msgMetaV.size(); ++i)
+    for(uint32_t i = 0; i < msgMetaV.size(); ++i)
     {
         RsGxsMsgMetaData* m = msgMetaV[i];
         req->mGroupStatistic.mTotalSizeOfMsgs += m->mMsgSize + m->serial_size();
@@ -1603,7 +1603,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     for(; mit != grpMeta.end(); ++mit)
     {
         RsGxsGrpMetaData* m = mit->second;
-        req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size();
+        req->mServiceStatistic.mSizeOfGrps += m->mGrpSize + m->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
 
         if (IS_GROUP_SUBSCRIBED(m->mSubscribeFlags))
         {

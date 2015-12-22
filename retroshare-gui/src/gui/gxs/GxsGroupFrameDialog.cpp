@@ -259,6 +259,13 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	QMenu contextMnu(this);
 
 	QAction *action;
+	
+	if (mMessageWidget) {
+		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
+		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
+			action->setEnabled(false);
+		}
+	}
 
 	if (isSubscribed) {
 		action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
@@ -266,13 +273,6 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	} else {
 		action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeGroup()));
 		action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
-	}
-
-	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
-			action->setEnabled(false);
-		}
 	}
 
 	contextMnu.addSeparator();

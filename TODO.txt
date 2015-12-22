@@ -71,6 +71,7 @@ Chat
     E  [ ] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
 
 Libretroshare
+	E  [ ] groups small packets in pqistreamer::handleoutgoing_locked(), and see if that removes some padding overhead
     E  [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
     M  [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
     M  [ ] separate chat stuff from rsmsgs.h into rschat.h

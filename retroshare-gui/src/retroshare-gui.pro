@@ -523,7 +523,9 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
     gui/settings/WebuiPage.h \
-    gui/statistics/BWGraph.h
+    gui/statistics/BWGraph.h \
+    util/RsSyntaxHighlighter.h \
+    util/imageutil.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -871,7 +873,9 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
-            gui/statistics/BWGraph.cpp
+            gui/statistics/BWGraph.cpp \
+    util/RsSyntaxHighlighter.cpp \
+    util/imageutil.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
@@ -890,7 +894,7 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \

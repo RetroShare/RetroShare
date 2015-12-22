@@ -84,7 +84,7 @@ public:
     class ChatInfo{
     public:
         bool is_broadcast;
-        bool is_gxs_id;
+        bool is_distant_chat_id;
         bool is_lobby;
         bool is_peer;
         std::string remote_author_id;

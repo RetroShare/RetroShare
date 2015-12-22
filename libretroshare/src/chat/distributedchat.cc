@@ -1288,7 +1288,7 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 			else
 				std::cerr << " : Match!" << std::endl;
 
-			std::cerr << "  Addign new friend " << item->PeerId() << " to lobby." << std::endl;
+			std::cerr << "  Adding new friend " << item->PeerId() << " to lobby." << std::endl;
 #endif
 
 			it->second.participating_friends.insert(item->PeerId()) ;

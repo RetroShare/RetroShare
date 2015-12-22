@@ -36,15 +36,17 @@
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 
+// These items have "flag type" numbers, but this is not used.
 
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP             = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_NXS_GRP                  = 0x0004;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM        = 0x0008;
-const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG             = 0x0010;
-const uint8_t RS_PKT_SUBTYPE_NXS_MSG                  = 0x0020;
-const uint8_t RS_PKT_SUBTYPE_NXS_TRANS                = 0x0040;
-const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY      = 0x0080;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP             = 0x01;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_ITEM        = 0x02;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS       = 0x03;
+const uint8_t RS_PKT_SUBTYPE_NXS_GRP                  = 0x04;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG_ITEM        = 0x08;
+const uint8_t RS_PKT_SUBTYPE_NXS_SYNC_MSG             = 0x10;
+const uint8_t RS_PKT_SUBTYPE_NXS_MSG                  = 0x20;
+const uint8_t RS_PKT_SUBTYPE_NXS_TRANS                = 0x40;
+const uint8_t RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY      = 0x80;
 
 
 // possibility create second service to deal with this functionality
@@ -53,7 +55,7 @@ const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_GRP   = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_MSG   = 0x0002;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_GRP   = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_MSG   = 0x0008;
-const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_REQ    = 0x0010;
+const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_REQ   = 0x0010;
 
 
 /*!
@@ -105,6 +107,27 @@ public:
     std::string syncHash; // use to determine if changes that have occured since last hash
 
 
+};
+
+/*!
+ * Use to request statistics about a particular group
+ */
+class RsNxsSyncGrpStats : public RsNxsItem 
+{
+public:
+
+    RsNxsSyncGrpStats(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_GRP_STATS) {}
+
+    virtual void clear() {}
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    static const uint8_t GROUP_INFO_TYPE_REQUEST  = 0x01;
+    static const uint8_t GROUP_INFO_TYPE_RESPONSE = 0x02; 
+    
+    uint32_t request_type;	// used to determine the type of request
+    RsGxsGroupId grpId;		// id of the group
+    uint32_t number_of_posts;	// number of posts in that group
+    uint32_t last_post_TS; 	// time_stamp of last post
 };
 
 /*!
@@ -444,6 +467,10 @@ private:
     virtual uint32_t sizeNxsSyncGrp(RsNxsSyncGrp* item);
     virtual bool serialiseNxsSyncGrp(RsNxsSyncGrp *item, void *data, uint32_t *size);
     virtual RsNxsSyncGrp* deserialNxsSyncGrp(void *data, uint32_t *size);
+
+    virtual uint32_t sizeNxsSyncGrpStats(RsNxsSyncGrpStats* item);
+    virtual bool serialiseNxsSyncGrpStats(RsNxsSyncGrpStats *item, void *data, uint32_t *size);
+    virtual RsNxsSyncGrpStats* deserialNxsSyncGrpStats(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_SYNC_GRP_ITEM */
 

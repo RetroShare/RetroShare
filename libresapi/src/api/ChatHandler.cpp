@@ -91,7 +91,7 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
     left << makeKeyValueReference("remote_author_id", info.remote_author_id)
          << makeKeyValueReference("remote_author_name", info.remote_author_name)
          << makeKeyValueReference("is_broadcast", info.is_broadcast)
-         << makeKeyValueReference("is_gxs_id", info.is_gxs_id)
+         << makeKeyValueReference("is_distant_chat_id", info.is_distant_chat_id)
          << makeKeyValueReference("is_lobby", info.is_lobby)
          << makeKeyValueReference("is_peer", info.is_peer);
     return left;
@@ -173,17 +173,14 @@ void ChatHandler::tick()
         }
     }
 
-    ChatId id = ChatId::makeBroadcastId();
     {
         Lobby l;
-        l.id = id.toLobbyId();
         l.name = "BroadCast";
         l.topic = "Retroshare broadcast chat: messages are sent to all connected friends.";
         l.subscribed = true;
         l.auto_subscribe = false;
         l.is_private = false;
         l.is_broadcast = true;
-        l.gxs_id = id.toGxsId();
         lobbies.push_back(l);
     }
 
@@ -225,12 +222,20 @@ void ChatHandler::tick()
             author_id = msg.broadcast_peer_id.toStdString();
             author_name = mRsPeers->getPeerName(msg.broadcast_peer_id);
         }
-        else if(msg.chat_id.isGxsId())
+        else if(msg.chat_id.isDistantChatId())
         {
-            author_id = msg.chat_id.toGxsId().toStdString();
-            RsIdentityDetails details;
-            if(!gxs_id_failed && mRsIdentity->getIdDetails(msg.chat_id.toGxsId(), details))
+            DistantChatPeerInfo dcpinfo ;
+            
+            if(!rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo))
             {
+                std::cerr << "(EE) cannot get info for distant chat peer " << msg.chat_id.toDistantChatId() << std::endl;
+                continue ;
+            }
+
+            RsIdentityDetails details;
+            if(!gxs_id_failed && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
+            {
+                author_id = details.mId.toStdString();
                 author_name = details.mNickname;
             }
             else
@@ -278,7 +283,7 @@ void ChatHandler::tick()
         {
             ChatInfo info;
             info.is_broadcast = msg.chat_id.isBroadcast();
-            info.is_gxs_id = msg.chat_id.isGxsId();
+            info.is_distant_chat_id = msg.chat_id.isDistantChatId();
             info.is_lobby = msg.chat_id.isLobbyId();
             info.is_peer = msg.chat_id.isPeerId();
             if(msg.chat_id.isLobbyId())
@@ -289,12 +294,15 @@ void ChatHandler::tick()
                         info.remote_author_name = vit->name;
                 }
             }
-            else if(msg.chat_id.isGxsId())
+            else if(msg.chat_id.isDistantChatId())
             {
                 RsIdentityDetails details;
-                if(!gxs_id_failed && mRsIdentity->getIdDetails(msg.chat_id.toGxsId(), details))
+                DistantChatPeerInfo dcpinfo ;
+                
+                if(!gxs_id_failed && rsMsgs->getDistantChatStatus(msg.chat_id.toDistantChatId(),dcpinfo)
+                                  && mRsIdentity->getIdDetails(msg.incoming? dcpinfo.to_id: dcpinfo.own_id, details))
                 {
-                    info.remote_author_id = msg.chat_id.toGxsId().toStdString();
+                    info.remote_author_id = details.mId.toStdString();
                     info.remote_author_name = details.mNickname;
                 }
                 else
