@@ -212,11 +212,17 @@ macx {
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += /usr/local/lib/libminiupnpc.a
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 	LIBS += -framework Carbon
-	INCLUDEPATH += . /usr/local/include
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
 	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
 }

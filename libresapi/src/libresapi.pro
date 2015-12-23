@@ -33,8 +33,8 @@ libmicrohttpd{
 		PKGCONFIG *= libmicrohttpd
 	} else {
 		mac {
-		INCLUDEPATH += /usr/local/include
-		LIBS *= /usr/local/lib/libmicrohttpd.a
+			INCLUDEPATH += . $$INC_DIR
+			for(lib, LIB_DIR):exists($$lib/libmicrohttpd.a){ LIBS *= $$lib/libmicrohttpd.a}
 		} else {
 			LIBS *= -lmicrohttpd
 		}

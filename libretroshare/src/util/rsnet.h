@@ -58,8 +58,12 @@ int inet_aton(const char *name, struct in_addr *addr);
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 /* 64 bit conversions */
+#ifndef ntohll
 uint64_t ntohll(uint64_t x);
+#endif
+#ifndef htonll
 uint64_t htonll(uint64_t x);
+#endif
 
 /* blank a network address */
 void sockaddr_clear(struct sockaddr_in *addr);

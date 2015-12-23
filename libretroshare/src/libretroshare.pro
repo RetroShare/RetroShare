@@ -266,6 +266,7 @@ mac {
                 DEFINES *= MINIUPNPC_VERSION=13
 
 		CONFIG += upnp_miniupnpc
+		CONFIG += c+11
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
 		#CONFIG += zeroconf
@@ -274,13 +275,14 @@ mac {
 		# Beautiful Hack to fix 64bit file access.
                 QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
-                UPNPC_DIR = /usr/local/include
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
-		INCLUDEPATH += . $${UPNPC_DIR} 
+		for(lib, LIB_DIR):LIBS += -L"$$lib"
+		for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+		DEPENDPATH += . $$INC_DIR
+		INCLUDEPATH += . $$INC_DIR
 
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 		LIBS += /usr/local/lib/libsqlcipher.a
