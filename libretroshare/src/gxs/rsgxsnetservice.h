@@ -449,6 +449,7 @@ private:
     void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
 
     void cleanRejectedMessages();
+    void processObserverNotifications();
 private:
 
 
@@ -526,6 +527,8 @@ private:
     RsServiceInfo mServiceInfo;
     
     std::map<RsGxsMessageId,time_t> mRejectedMessages;
+    std::vector<RsNxsGrp*> mNewGroupsToNotify ;
+    std::vector<RsNxsMsg*> mNewMessagesToNotify ;
     
     void debugDump();
 };
