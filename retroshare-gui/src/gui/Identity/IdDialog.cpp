@@ -442,6 +442,7 @@ void IdDialog::insertIdList(uint32_t token)
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
 	std::vector<RsGxsIdGroup>::iterator vit;
+    
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
 #ifdef ID_DEBUG
@@ -454,72 +455,69 @@ void IdDialog::insertIdList(uint32_t token)
 
 		return;
 	}
+    
+    	// turn that vector into a std::set, to avoid a linear search
+    
+    	std::map<RsGxsGroupId,RsGxsIdGroup> ids_set ;
+        
+        for(uint32_t i=0;i<datavector.size();++i)
+            ids_set[datavector[i].mMeta.mGroupId] = datavector[i] ;
 
 	mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-	/* Update existing and remove not existing items */
+	// Update existing and remove not existing items 
+    	// Also remove items that do not have the correct parent
+    	
 	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
 	QTreeWidgetItem *item = NULL;
-	while ((item = *itemIterator) != NULL) {
+    
+	while ((item = *itemIterator) != NULL) 
+	{
 		++itemIterator;
+		std::map<RsGxsGroupId,RsGxsIdGroup>::iterator it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
 
-		for (vit = datavector.begin(); vit != datavector.end(); ++vit)
+		if(it == ids_set.end())
 		{
-			if (vit->mMeta.mGroupId == RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString()))
-			{
-				break;
-			}
-		}
-		if (vit == datavector.end())
-		{
-      if(item != allItem && item != contactsItem)
-      {
-        delete(item);
-      }
-		} else {
-			if (!fillIdListItem(*vit, item, ownPgpId, accept))
-			{
+			if(item != allItem && item != contactsItem)
 				delete(item);
-			}
-			datavector.erase(vit);
-		}
+                        
+                        continue ;
+		} 
+                
+        	QTreeWidgetItem *parent_item = item->parent() ;
+                    
+                if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
+                {
+                    delete item ;	// do not remove from the list, so that it is added again in the correct place.
+                    continue ;
+                }
+                
+		if (!fillIdListItem(it->second, item, ownPgpId, accept))
+			delete(item);
+            
+		ids_set.erase(it);	// erase, so it is not considered to be a new item
 	}
 
 	/* Insert new items */
-	for (vit = datavector.begin(); vit != datavector.end(); ++vit)
+	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
 	{
-		data = (*vit);
+		data = vit->second ;
 
 		item = NULL;
 
 		ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
 		ui->idTreeWidget->insertTopLevelItem(0, allItem);
 
-		if (fillIdListItem(*vit, item, ownPgpId, accept))
-	{
-		RsIdentityDetails details;
-		std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-		rsIdentity->getIdDetails(RsGxsId(keyId), details);
-
-		if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
-		{
-			contactsItem->addChild(item);
-		}
-		else
-		{
-			allItem->addChild(item);
-		}
+		if (fillIdListItem(vit->second, item, ownPgpId, accept))
+			if(vit->second.mIsAContact)
+				contactsItem->addChild(item);
+			else
+				allItem->addChild(item);
 	}
-	}
-	//int itemCount = item->childCount();
-	
-	/* count items */
-	//ui->label_count->setText( "(" + QString::number(itemCount) + ")" );
 
 	filterIds();
-
 	updateSelection();
 }
 
@@ -1110,7 +1108,6 @@ void IdDialog::addtoContacts()
 
 	rsIdentity->setAsRegularContact(RsGxsId(Id),true);
 
-	requestIdDetails();
 	requestIdList();
 }
 
@@ -1126,7 +1123,6 @@ void IdDialog::removefromContacts()
 
 	rsIdentity->setAsRegularContact(RsGxsId(Id),false);
 
-	requestIdDetails();
 	requestIdList();
 }
 

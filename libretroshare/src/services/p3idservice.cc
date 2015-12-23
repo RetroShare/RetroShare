@@ -1060,33 +1060,33 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 			if (item)
 			{
 #ifdef DEBUG_IDS
-        std::cerr << "p3IdService::getGroupData() Item is:";
-        std::cerr << std::endl;
-        item->print(std::cerr);
-        std::cerr << std::endl;
+				std::cerr << "p3IdService::getGroupData() Item is:";
+				std::cerr << std::endl;
+				item->print(std::cerr);
+				std::cerr << std::endl;
 #endif // DEBUG_IDS
-        RsGxsIdGroup group ;
-    item->toGxsIdGroup(group,false) ;
+				RsGxsIdGroup group ;
+				item->toGxsIdGroup(group,false) ;
 
-    {
-        RS_STACK_MUTEX(mIdMtx) ;
-    group.mLastUsageTS = locked_getLastUsageTS(RsGxsId(group.mMeta.mGroupId)) ;
-    }
+				{
+					RS_STACK_MUTEX(mIdMtx) ;
+					group.mLastUsageTS = locked_getLastUsageTS(RsGxsId(group.mMeta.mGroupId)) ;
+				}
 
-        // Decode information from serviceString.
-        SSGxsIdGroup ssdata;
-        if (ssdata.load(group.mMeta.mServiceString))
-        {
-            group.mPgpKnown = ssdata.pgp.idKnown;
-            group.mPgpId    = ssdata.pgp.pgpId;
-            group.mReputation = ssdata.score.rep;
+				// Decode information from serviceString.
+				SSGxsIdGroup ssdata;
+				if (ssdata.load(group.mMeta.mServiceString))
+				{
+					group.mPgpKnown = ssdata.pgp.idKnown;
+					group.mPgpId    = ssdata.pgp.pgpId;
+					group.mReputation = ssdata.score.rep;
 #ifdef DEBUG_IDS
-            std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
-            std::cerr << std::endl;
-            std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
-            std::cerr << std::endl;
-            std::cerr << "\t mGpgId: " << group.mPgpId;
-            std::cerr << std::endl;
+					std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgId: " << group.mPgpId;
+					std::cerr << std::endl;
 #endif // DEBUG_IDS
 				}
 				else
@@ -1094,13 +1094,15 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 					group.mPgpKnown = false;
 					group.mPgpId.clear();
 
-                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
-                          << group.mMeta.mServiceString << "\"" ;
+					std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
+					          << group.mMeta.mServiceString << "\"" ;
 					std::cerr << std::endl;
 				}
 
+				group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
+
 				groups.push_back(group);
-                delete(item);
+				delete(item);
 			}
 			else
 			{

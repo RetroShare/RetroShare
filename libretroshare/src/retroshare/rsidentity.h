@@ -120,8 +120,9 @@ class RsGxsIdGroup
     time_t mLastUsageTS ;
 
     // Not Serialised - for GUI's benefit.
-	bool mPgpKnown;
-	RsPgpId mPgpId;
+    bool mPgpKnown;
+    bool mIsAContact;	// change that into flags one day
+    RsPgpId mPgpId;
     GxsReputation mReputation;
 };
 
