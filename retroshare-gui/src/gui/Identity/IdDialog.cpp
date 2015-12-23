@@ -82,11 +82,11 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	mIdQueue = NULL;
     
-	contactsItem = new QTreeWidgetItem();
-	contactsItem->setText(0, tr("Contacts"));
-
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));
+
+	contactsItem = new QTreeWidgetItem();
+	contactsItem->setText(0, tr("Contacts"));
 
 
 	/* Setup UI helper */
