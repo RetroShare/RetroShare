@@ -266,11 +266,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
-    ui.filterComboBox->addItem(tr("All"));
+    ui.filterComboBox->addItem(tr("All addresses (mixed)"));
     ui.filterComboBox->addItem(tr("Friend Nodes"));
-    ui.filterComboBox->addItem(tr("Persons"));
-	 ui.filterComboBox->addItem(tr("Contacts"));
-    ui.filterComboBox->setCurrentIndex(0);
+    ui.filterComboBox->addItem(tr("All people"));
+    ui.filterComboBox->addItem(tr("My contacts"));
+    ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
