@@ -1637,19 +1637,19 @@ void RsGxsNetService::debugDump()
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
     if(mGrpServerUpdateItem != NULL)
-	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << nice_time_stamp(now , mGrpServerUpdateItem->grpUpdateTS) << " (is the last local modification time over all groups of this service)" << std::endl;
+	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << nice_time_stamp(time(NULL) , mGrpServerUpdateItem->grpUpdateTS) << " (is the last local modification time over all groups of this service)" << std::endl;
     else
 	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: not inited yet (is the last local modification time over all groups of this service)" << std::endl;
     
     GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last local modification time)" << std::endl;
 
     for(std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
-	    GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(now,it->second->msgUpdateTS) << std::endl;
+	    GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(time(NULL),it->second->msgUpdateTS) << std::endl;
 
     GXSNETDEBUG___<< "  mClientGrpUpdateMap: (is for each friend, last modif time of group meta data at that friend, all groups included, sent by the friend himself)" << std::endl;
 
     for(std::map<RsPeerId,RsGxsGrpUpdateItem*>::const_iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();++it)
-	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << " - last updated at peer (secs ago): " << nice_time_stamp(now,it->second->grpUpdateTS) << std::endl;
+	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << " - last updated at peer (secs ago): " << nice_time_stamp(time(NULL),it->second->grpUpdateTS) << std::endl;
 
     GXSNETDEBUG___<< "  mClientMsgUpdateMap: (is for each friend, the modif time for each group (e.g. last message received), sent by the friend himself)" << std::endl;
 
@@ -1658,7 +1658,7 @@ void RsGxsNetService::debugDump()
 	    GXSNETDEBUG_P_(it->first) << "    From peer: " << it->first << std::endl;
 
 	    for(std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
-		    GXSNETDEBUG_PG(it->first,it2->first) << "      group " << it2->first << " - last updated at peer (secs ago): " << nice_time_stamp(now,it2->second.time_stamp) << ". Message count=" << it2->second.message_count << std::endl;
+		    GXSNETDEBUG_PG(it->first,it2->first) << "      group " << it2->first << " - last updated at peer (secs ago): " << nice_time_stamp(time(NULL),it2->second.time_stamp) << ". Message count=" << it2->second.message_count << std::endl;
     }            
     
     GXSNETDEBUG___<< "  List of rejected message ids: " << mRejectedMessages.size() << std::endl;
@@ -1683,7 +1683,7 @@ void RsGxsNetService::updateClientSyncTS()
 	    if(it->second->grpUpdateTS > SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE + mGrpServerUpdateItem->grpUpdateTS)
 	    {
 #ifdef NXS_NET_DEBUG_0
-		    GXSNETDEBUG_P_(it->first) << "  last global client GRP modification time known for peer (" << nice_time_stamp(now,it->second->grpUpdateTS) << " is quite more recent than our own server modification time (" << nice_time_stamp(now,mGrpServerUpdateItem->grpUpdateTS) << ". Forcing update! " << std::endl;
+		    GXSNETDEBUG_P_(it->first) << "  last global client GRP modification time known for peer (" << nice_time_stamp(time(NULL),it->second->grpUpdateTS) << " is quite more recent than our own server modification time (" << nice_time_stamp(time(NULL),mGrpServerUpdateItem->grpUpdateTS) << ". Forcing update! " << std::endl;
 #endif
 		    it->second->grpUpdateTS = 0 ;
 	    }
@@ -1696,7 +1696,7 @@ void RsGxsNetService::updateClientSyncTS()
 		if(mmit != mServerMsgUpdateMap.end() && it2->second.time_stamp > SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE + mmit->second->msgUpdateTS)
 		{
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG_PG(it->first,it2->first) << "  last group msg modification time known for peer (" << nice_time_stamp(now,it2->second.time_stamp) << " and group " << it2->first << " is quite more recent than our own server modification time (" << nice_time_stamp(now,mmit->second->msgUpdateTS) << ". Forcing update! " << std::endl;
+			GXSNETDEBUG_PG(it->first,it2->first) << "  last group msg modification time known for peer (" << nice_time_stamp(time(NULL),it2->second.time_stamp) << " and group " << it2->first << " is quite more recent than our own server modification time (" << nice_time_stamp(time(NULL),mmit->second->msgUpdateTS) << ". Forcing update! " << std::endl;
 #endif
             		it2->second.time_stamp = 0 ;
 		}
