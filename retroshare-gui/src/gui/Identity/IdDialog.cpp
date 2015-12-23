@@ -81,6 +81,13 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	mIdQueue = NULL;
+    
+	allItem = new QTreeWidgetItem();
+	allItem->setText(0, tr("All"));
+
+	contactsItem = new QTreeWidgetItem();
+	contactsItem->setText(0, tr("Contacts"));
+
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -123,7 +130,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Connect signals */
 	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui->todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -162,8 +168,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
 	ui->filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
-	headerText = headerItem->text(RSID_COL_KEYID);
-	ui->filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
 	/* Setup tree */
 	ui->idTreeWidget->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
@@ -171,6 +176,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->enableColumnCustomize(true);
 	ui->idTreeWidget->setColumnCustomizable(RSID_COL_NICKNAME, false);
 	ui->idTreeWidget->setColumnHidden(RSID_COL_IDTYPE, true);
+	ui->idTreeWidget->setColumnHidden(RSID_COL_KEYID, true);
+	
 	/* Set initial column width */
 	int fontWidth = QFontMetricsF(ui->idTreeWidget->font()).width("W");
 	ui->idTreeWidget->setColumnWidth(RSID_COL_NICKNAME, 14 * fontWidth);
@@ -185,12 +192,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
-	// Hiding RepList until that part is finished.
-	//ui->treeWidget_RepList->setVisible(false);
-    
-#ifndef UNFINISHED
-	ui->todoPushButton->hide() ;
-#endif
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
@@ -214,9 +215,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	// load settings
 	processSettings(true);
 
-    // hide reputation sice it's currently unused
-    //ui->reputationGroupBox->hide();
-    //ui->tweakGroupBox->hide();
 }
 
 IdDialog::~IdDialog()
@@ -226,14 +224,6 @@ IdDialog::~IdDialog()
 
 	delete(ui);
 	delete(mIdQueue);
-}
-
-void IdDialog::todo()
-{
-	QMessageBox::information(this, "Todo",
-	                         "<b>Open points:</b><ul>"
-	                         "<li>Reputation"
-	                         "</ul>");
 }
 
 void IdDialog::processSettings(bool load)
@@ -448,10 +438,11 @@ void IdDialog::insertIdList(uint32_t token)
 	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
 
 	int accept = ui->filterComboBox->itemData(ui->filterComboBox->currentIndex()).toInt();
-
+		
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
 	std::vector<RsGxsIdGroup>::iterator vit;
+    
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
 #ifdef ID_DEBUG
@@ -464,53 +455,69 @@ void IdDialog::insertIdList(uint32_t token)
 
 		return;
 	}
+    
+    	// turn that vector into a std::set, to avoid a linear search
+    
+    	std::map<RsGxsGroupId,RsGxsIdGroup> ids_set ;
+        
+        for(uint32_t i=0;i<datavector.size();++i)
+            ids_set[datavector[i].mMeta.mGroupId] = datavector[i] ;
 
 	mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-	/* Update existing and remove not existing items */
+	// Update existing and remove not existing items 
+    	// Also remove items that do not have the correct parent
+    	
 	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
 	QTreeWidgetItem *item = NULL;
-	while ((item = *itemIterator) != NULL) {
+    
+	while ((item = *itemIterator) != NULL) 
+	{
 		++itemIterator;
+		std::map<RsGxsGroupId,RsGxsIdGroup>::iterator it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
 
-		for (vit = datavector.begin(); vit != datavector.end(); ++vit)
+		if(it == ids_set.end())
 		{
-			if (vit->mMeta.mGroupId == RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString()))
-			{
-				break;
-			}
-		}
-		if (vit == datavector.end())
-		{
-			delete(item);
-		} else {
-			if (!fillIdListItem(*vit, item, ownPgpId, accept))
-			{
+			if(item != allItem && item != contactsItem)
 				delete(item);
-			}
-			datavector.erase(vit);
-		}
+                        
+                        continue ;
+		} 
+                
+        	QTreeWidgetItem *parent_item = item->parent() ;
+                    
+                if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
+                {
+                    delete item ;	// do not remove from the list, so that it is added again in the correct place.
+                    continue ;
+                }
+                
+		if (!fillIdListItem(it->second, item, ownPgpId, accept))
+			delete(item);
+            
+		ids_set.erase(it);	// erase, so it is not considered to be a new item
 	}
 
 	/* Insert new items */
-	for (vit = datavector.begin(); vit != datavector.end(); ++vit)
+	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
 	{
-		data = (*vit);
+		data = vit->second ;
 
 		item = NULL;
-		if (fillIdListItem(*vit, item, ownPgpId, accept))
-		{
-			ui->idTreeWidget->addTopLevelItem(item);
-		}
+
+		ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
+		ui->idTreeWidget->insertTopLevelItem(0, allItem);
+
+		if (fillIdListItem(vit->second, item, ownPgpId, accept))
+			if(vit->second.mIsAContact)
+				contactsItem->addChild(item);
+			else
+				allItem->addChild(item);
 	}
-	
-	/* count items */
-	ui->label_count->setText( "(" + QString::number(ui->idTreeWidget->topLevelItemCount()) + ")" );
 
 	filterIds();
-
 	updateSelection();
 }
 
@@ -916,7 +923,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	rsIdentity->getOwnIds(own_identities) ;
 
 	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (item) {
+	
+	if(item != allItem && item != contactsItem) {
 		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
 		if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
@@ -952,7 +960,29 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
 			
 			contextMnu.addSeparator();
+
+						RsIdentityDetails details;
+      std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+			rsIdentity->getIdDetails(RsGxsId(keyId), details);
+			
+			QAction *addContact = contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+			QAction *removeContact = contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+
+			
+			if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
+			{
+				addContact->setVisible(false);
+				removeContact->setVisible(true);
+			}
+			else
+			{
+				addContact->setVisible(true);
+				removeContact->setVisible(false);
+			}
       
+			contextMnu.addSeparator();
+
 			RsReputations::ReputationInfo info ;
 			std::string Id = item->text(RSID_COL_KEYID).toStdString();
 			rsReputations->getReputationInfo(RsGxsId(Id),info) ;
@@ -974,12 +1004,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 		}
+		
+    contextMnu.addSeparator();
+
+    contextMnu.addAction(ui->editIdentity);
+    contextMnu.addAction(ui->removeIdentity);
 	}
 
-	contextMnu.addSeparator();
-
-	contextMnu.addAction(ui->editIdentity);
-	contextMnu.addAction(ui->removeIdentity);
 	
 	contextMnu.addSeparator();
 
@@ -1064,3 +1095,34 @@ void IdDialog::unbanPerson()
 	requestIdDetails();
 	requestIdList();
 }
+
+void IdDialog::addtoContacts()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsIdentity->setAsRegularContact(RsGxsId(Id),true);
+
+	requestIdList();
+}
+
+void IdDialog::removefromContacts()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsIdentity->setAsRegularContact(RsGxsId(Id),false);
+
+	requestIdList();
+}
+

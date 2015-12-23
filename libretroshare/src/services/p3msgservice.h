@@ -90,6 +90,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		void    loadWelcomeMsg(); /* startup message */
 
+            
 		//std::list<RsMsgItem *> &getMsgList();
 		//std::list<RsMsgItem *> &getMsgOutList();
 
@@ -125,6 +126,8 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		};
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
+        	void setDistantMessagingPermissionFlags(uint32_t flags) {}
+        	uint32_t getDistantMessagingPermissionFlags() { return 0 ;}
 
 	private:
         void sendDistantMsgItem(RsMsgItem *msgitem) ;

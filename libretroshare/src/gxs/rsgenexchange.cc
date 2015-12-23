@@ -33,6 +33,7 @@
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgrouter.h"
+#include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
 #include "rsgixs.h"
 #include "rsgxsutil.h"
@@ -910,7 +911,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			{
 
 				// now check reputation of the message author
-				float reputation_threshold =  ( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !details.mPgpLinked) ? (RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM): (RsReputations::REPUTATION_THRESHOLD_DEFAULT) ;
+				float reputation_threshold =  ( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)) ? (RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM): (RsReputations::REPUTATION_THRESHOLD_DEFAULT) ;
 
 				if(details.mReputation.mOverallReputationScore < reputation_threshold)
 				{

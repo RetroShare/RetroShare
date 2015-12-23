@@ -103,10 +103,8 @@ void GxsResponseTask::streamGxsId(RsGxsId id, StreamBase &stream)
         {
             stream << makeKeyValueReference("id", id)
                    << makeKeyValueReference("gxs_id", id)
-                   << makeKeyValueReference("is_own", vit->mIsOwnId)
-                   << makeKeyValueReference("name", vit->mNickname)
-                   << makeKeyValueReference("pgp_linked", vit->mPgpLinked)
-                   << makeKeyValueReference("pgp_known", vit->mPgpKnown);
+                   << makeKeyValueReference("flags", vit->mFlags)
+                   << makeKeyValueReference("name", vit->mNickname);
             return;
         }
     }

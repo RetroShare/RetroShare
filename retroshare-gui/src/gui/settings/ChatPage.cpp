@@ -100,6 +100,8 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+       connect(ui.distantChatcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
@@ -120,6 +122,8 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
+    // state of distant Chat combobox
+    Settings->setValue("DistantChat", ui.distantChatcomboBox->currentIndex());
 
     Settings->setChatScreenFont(fontTempChat.toString());
     NotifyQt::getInstance()->notifyChatFontChanged();
@@ -225,6 +229,10 @@ ChatPage::load()
     ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
     ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
+
+	     // state of distant Chat combobox
+    int index = Settings->value("DistantChat", 0).toInt();
+    ui.distantChatcomboBox->setCurrentIndex(index);
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
@@ -493,3 +501,22 @@ void ChatPage::on_btSearch_FoundColor_clicked()
 		ui.btSearch_FoundColor->setIcon(pix);
 	}
 }
+
+void ChatPage::distantChatComboBoxChanged(int i)
+{
+	switch(i)
+	{
+		case 0:   ;
+				  break ;
+				  
+		case 1:  ;
+				  break ;
+
+		case 2:  ;
+				  break ;
+				    				  
+		default: ;
+	}
+
+}
+

@@ -912,11 +912,11 @@ QString nickname ;
                                             QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
 	                                        QString::fromStdString(details.mId.toStdString()));
 
-	if (details.mPgpLinked)
+	if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 	{
         comment += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
 
-		if (details.mPgpKnown)
+		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 		{
 			/* look up real name */
 			std::string authorName = rsPeers->getGPGName(details.mPgpId);
@@ -962,9 +962,9 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
     {
         // ICON Logic.
         QIcon baseIcon;
-        if (details.mPgpLinked)
+        if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
         {
-            if (details.mPgpKnown)
+		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
                 baseIcon = QIcon(IMAGE_PGPKNOWN);
             else
                 baseIcon = QIcon(IMAGE_PGPUNKNOWN);

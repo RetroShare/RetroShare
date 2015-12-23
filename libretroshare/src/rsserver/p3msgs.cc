@@ -279,6 +279,16 @@ bool p3Msgs::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 }
 
 
+uint32_t p3Msgs::getDistantMessagingPermissionFlags()
+{
+	return mMsgSrv->getDistantMessagingPermissionFlags();
+}
+
+void p3Msgs::setDistantMessagingPermissionFlags(uint32_t flags)
+{
+	return mMsgSrv->setDistantMessagingPermissionFlags(flags);
+}
+
 
 bool p3Msgs::getMessage(const std::string &mid, MessageInfo &msg)
 {
@@ -296,15 +306,6 @@ void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, un
 bool p3Msgs::MessageSend(MessageInfo &info)
 {
 	return mMsgSrv->MessageSend(info);
-}
-
-void p3Msgs::enableDistantMessaging(bool b)
-{
-	mMsgSrv->enableDistantMessaging(b);
-}
-bool p3Msgs::distantMessagingEnabled()
-{
-	return mMsgSrv->distantMessagingEnabled();
 }
 
 bool p3Msgs::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)

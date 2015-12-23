@@ -69,11 +69,13 @@ private slots:
 
 	void updateSelection();
 
-	void todo();
 	void modifyReputation();
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+
+	void  addtoContacts();
+  void  removefromContacts();
 
 	void banPerson();
 	void unbanPerson();
@@ -99,6 +101,9 @@ private:
 private:
 	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
+
+	QTreeWidgetItem *contactsItem;
+	QTreeWidgetItem *allItem;
 
 	RsGxsGroupId mId;
 

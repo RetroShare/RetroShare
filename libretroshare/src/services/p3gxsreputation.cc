@@ -248,8 +248,8 @@ void p3GxsReputation::updateIdentityFlags()
 	    }
 	    it->second.mIdentityFlags = 0 ;
 
-	    if(details.mPgpLinked) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
-	    if(details.mPgpKnown ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
 
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;

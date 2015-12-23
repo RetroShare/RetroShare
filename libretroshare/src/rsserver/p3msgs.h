@@ -80,8 +80,8 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
-	  virtual void enableDistantMessaging(bool b) ;
-	  virtual bool distantMessagingEnabled() ;
+	  virtual uint32_t getDistantMessagingPermissionFlags() ;
+	  virtual void setDistantMessagingPermissionFlags(uint32_t flags) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
