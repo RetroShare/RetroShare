@@ -1645,7 +1645,6 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 void RsGxsIdCache::updateServiceString(std::string serviceString)
 {
 	details.mRecognTags.clear();
-    	details.mFlags = 0 ;
 
 	SSGxsIdGroup ssdata;
 	if (ssdata.load(serviceString))
