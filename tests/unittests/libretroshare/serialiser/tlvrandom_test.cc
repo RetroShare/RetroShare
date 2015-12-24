@@ -149,7 +149,7 @@ bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, 
 }
 
 
-TEST(libretroshare_serialiser, test_RsTlvRandom)
+TEST(libretroshare_serialiser, DISABLED_test_RsTlvRandom)
 {
 	/* random data array to work through */
 	uint32_t dsize = 100000;
