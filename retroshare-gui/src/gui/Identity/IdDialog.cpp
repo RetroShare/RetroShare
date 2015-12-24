@@ -517,6 +517,10 @@ void IdDialog::insertIdList(uint32_t token)
 			else
 				allItem->addChild(item);
 	}
+	
+	/* count items */
+	int itemCount = contactsItem->childCount() + allItem->childCount();
+	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
 
 	filterIds();
 	updateSelection();

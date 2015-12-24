@@ -46,10 +46,11 @@
 #define ROLE_DESCRIPTION     Qt::UserRole + 2
 #define ROLE_POPULARITY      Qt::UserRole + 3
 #define ROLE_LASTPOST        Qt::UserRole + 4
-#define ROLE_SEARCH_SCORE    Qt::UserRole + 5
-#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
-#define ROLE_COLOR           Qt::UserRole + 7
-#define ROLE_SAVED_ICON      Qt::UserRole + 8
+#define ROLE_POSTS           Qt::UserRole + 5
+#define ROLE_SEARCH_SCORE    Qt::UserRole + 6
+#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 7
+#define ROLE_COLOR           Qt::UserRole + 8
+#define ROLE_SAVED_ICON      Qt::UserRole + 9
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -65,6 +66,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	actionSortByName = NULL;
 	actionSortByPopularity = NULL;
 	actionSortByLastPost = NULL;
+	actionSortByPosts = NULL;
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
@@ -153,6 +155,7 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	const int SORTBY_NAME = 1;
 	const int SORTBY_POPULRITY = 2;
 	const int SORTBY_LASTPOST = 3;
+	const int SORTBY_POSTS = 4;
 
 	if (load) {
 		// load settings
@@ -173,6 +176,11 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 		case SORTBY_LASTPOST:
 			if (actionSortByLastPost) {
 				actionSortByLastPost->setChecked(true);
+			}
+			break;
+		case SORTBY_POSTS:
+			if (actionSortByPosts) {
+				actionSortByPosts->setChecked(true);
 			}
 			break;
 		}
@@ -221,6 +229,10 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	actionSortByLastPost = displayMenu->addAction(QIcon(), tr("Sort by Last Post"), this, SLOT(sort()));
 	actionSortByLastPost->setCheckable(true);
 	actionSortByLastPost->setActionGroup(actionGroup);
+	
+	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Posts"), this, SLOT(sort()));
+	actionSortByPosts->setCheckable(true);
+	actionSortByPosts->setActionGroup(actionGroup);
 
 	toolButton->setMenu(displayMenu);
 }
@@ -359,6 +371,9 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
+		
+		/* Set visible posts */
+		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
 
 		/* Set icon */
 		if (ui->treeWidget->itemWidget(item, COLUMN_NAME)) {
@@ -623,6 +638,8 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 		compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
 	} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
 		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
+	} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_POSTS);
 	}
 
 	if (categoryItem) {

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1679</width>
-    <height>951</height>
+    <width>935</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -191,7 +191,16 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item row="0" column="0">
@@ -772,7 +781,16 @@
             <enum>QFrame::Box</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item>
@@ -1009,7 +1027,16 @@ border-image: url(:/images/closepressed.png)
        </widget>
        <widget class="QWidget" name="layoutWidget_1">
         <layout class="QGridLayout" name="layoutrecommended">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <property name="spacing">
@@ -1084,8 +1111,8 @@ border-image: url(:/images/closepressed.png)
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1679</width>
-     <height>37</height>
+     <width>935</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
