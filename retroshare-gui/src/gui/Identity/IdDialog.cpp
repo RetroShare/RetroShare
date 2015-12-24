@@ -32,6 +32,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/RetroShareLink.h"
 #include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
@@ -142,7 +143,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
-	connect(ui->messageButton, SIGNAL(clicked()), this, SLOT(sendMsg()));
+	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
 	ui->headerTextLabel->setText(tr("People"));
@@ -665,7 +666,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
-		ui->messageButton->setEnabled(false);
+		ui->inviteButton->setEnabled(false);
 	}
 	else
 	{
@@ -674,7 +675,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
-    ui->messageButton->setEnabled(true);
+		ui->inviteButton->setEnabled(true);
 	}
 
 	/* now fill in the reputation information */
@@ -1061,6 +1062,42 @@ void IdDialog::sendMsg()
 		nMsgDialog->activateWindow();
 
     /* window will destroy itself! */
+
+}
+
+QString IdDialog::inviteMessage()
+{
+    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+}
+
+void IdDialog::sendInvite()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+    /* create a message */
+    MessageComposer *composer = MessageComposer::newMsg();
+
+    composer->setTitleText(tr("You have a friend invite"));
+    
+    RsPeerId ownId = rsPeers->getOwnId();
+    RetroShareLink link;
+    link.createCertificate(ownId);
+    
+    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+    
+    QString sMsgText = inviteMessage();
+    sMsgText += "<br><br>";
+    sMsgText += tr("Respond now:") + "<br>";
+    sMsgText += link.toHtml() + "<br>";
+    sMsgText += "<br>";
+    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
+    composer->setMsgText(sMsgText);
+    composer->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
+
+    composer->show();
 
 }
 

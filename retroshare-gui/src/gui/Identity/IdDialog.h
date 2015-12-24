@@ -79,6 +79,9 @@ private slots:
 
 	void banPerson();
 	void unbanPerson();
+	
+	static QString inviteMessage();
+	void sendInvite();
 
 private:
 	void processSettings(bool load);
