@@ -16,7 +16,7 @@ MOBILITY = multimedia
 DEPENDPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
 
-#################################### Windows #####################################
+#################################### Linux #####################################
 
 linux-* {
 	CONFIG += link_pkgconfig
@@ -27,6 +27,8 @@ linux-* {
 } else {
 	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
 }
+
+#################################### Windows #####################################
 
 win32 {
 
@@ -77,6 +79,41 @@ win32 {
 	LIBS += -lz -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
 	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
+
+#################################### MacOSX #####################################
+
+macx {
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	#OPENCV_VERSION = "249"
+	USE_PRECOMPILED_LIBS =
+	for(lib, LIB_DIR) {
+#message(Scanning $$lib)
+		exists( $$lib/opencv/libopencv_core*.dylib) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_videoio*.dylib) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_videoio
+		}
+	}
+	isEmpty(USE_PRECOMPILED_LIBS) {
+		message(Use system opencv libraries.)
+		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+	}
+
+error(Missing RetroShare-gui library. Remove Plugins from RetroShare.pro))
+}
+
 
 # ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
 QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
