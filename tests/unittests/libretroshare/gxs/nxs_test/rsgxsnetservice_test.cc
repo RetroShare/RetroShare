@@ -19,8 +19,8 @@ TEST(libretroshare_gxs, gxs_grp_sync)
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
 
-	// wait for ten seconds
-	rs_nxs_test::NxsTestHub::Wait(10);
+    // wait xx secs, because sync happens every 60sec
+    rs_nxs_test::NxsTestHub::Wait(1.5*60);
 
 	tHub.EndTest();
 
@@ -36,8 +36,8 @@ TEST(libretroshare_gxs, gxs_grp_sync_delayed)
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
 
-	// wait for ten seconds
-        rs_nxs_test::NxsTestHub::Wait(20);
+    // wait xx secs, because sync happens every 60sec
+        rs_nxs_test::NxsTestHub::Wait(2.5*60);
 
 	tHub.EndTest();
 
