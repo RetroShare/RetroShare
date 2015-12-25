@@ -2,6 +2,7 @@
   <qresource prefix="/">
     <file>emojione/00A9.png</file>
     <file>emojione/00AE.png</file>
+    <file>emojione/1F525.png</file>
     <file>emojione/1F004.png</file>
     <file>emojione/1F4AA.png</file>
     <file>emojione/1F4AB.png</file>
@@ -9,6 +10,15 @@
     <file>emojione/1F4AD.png</file>
     <file>emojione/1F4AE.png</file>
     <file>emojione/1F4AF.png</file>
+    <file>emojione/1F4A1.png</file>
+    <file>emojione/1F4A2.png</file>
+    <file>emojione/1F4A3.png</file>
+    <file>emojione/1F4A4.png</file>
+    <file>emojione/1F4A5.png</file>
+    <file>emojione/1F4A6.png</file>
+    <file>emojione/1F4A7.png</file>
+    <file>emojione/1F4A8.png</file>
+    <file>emojione/1F4A9.png</file>    
     <file>emojione/1F4C0.png</file>
     <file>emojione/1F4C1.png</file>
     <file>emojione/1F4C2.png</file>

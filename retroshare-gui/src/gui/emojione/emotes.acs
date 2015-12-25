@@ -54,6 +54,19 @@
 ":astonished:":"emojione/1F632.png";
 ":flushed:|=$|:$|:-$":"emojione/1F633.png";
 ":sleeping:":"emojione/1F634.png";
+":bulb:":"emojione/1F4A1.png";
+":zzz:":"emojione/1F4A4.png";
+":fire:|:flame:":"emojione/1F525.png";
+":stars:":"emojione/1F320.png";
+":star:":"emojione/2B50.png";
+":dizzy:":"emojione/1F4AB.png";
+":boom:":"emojione/1F4A5.png";
+":anger:":"emojione/1F4A2.png";
+":bomb:":"emojione/1F4A3.png";
+":sweat_drops:":"emojione/1F4A6.png";
+":droplet:":"emojione/1F4A7.png";
+":dash:":"emojione/1F4A8.png";
+":poop:|:shit:|:hankey:|:poo:":"emojione/1F4A9.png";
 ":dizzy_face:|#-)|#)|%-)|%)|X)|X-)":"emojione/1F635.png";
 ":no_mouth:|:-X|:X:|-#|:#|=X|=x|:x|:-x|=#":"emojione/1F636.png";
 ":mask:":"emojione/1F637.png";
@@ -97,6 +110,8 @@
 ":skull:|:skeleton:":"emojione/1F480.png";
 ":alien:":"emojione/1F47D.png";
 ":space_invader:":"emojione/1F47E.png";
+":japanese_ogre:":"emojione/1F479.png";
+":japanese_goblin:":"emojione/1F47A.png";
 ":bow:":"emojione/1F647.png";
 ":information_desk_person:":"emojione/1F481.png";
 ":raised_hands:":"emojione/1F64C.png";
@@ -135,7 +150,7 @@
 ":speak_no_evil:":"emojione/1F64A.png";
 ":turtle:":"emojione/1F422.png";
 ":frog:":"emojione/1F438.png";
-":airplane:|(C)|(c)":"emojione/2708.png";
+":airplane:":"emojione/2708.png";
 ":heart:|<3":"emojione/2764.png";
 ":broken_heart:|</3":"emojione/1F494.png";
 ":love_letter:":"emojione/1F48C.png";
