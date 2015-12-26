@@ -239,6 +239,8 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 			QDomElement element = node.toElement();
 			if(element.tagName().toLower() == "head") {
 				// skip it
+			} else if(element.tagName().toLower() == "style") {
+				// skip it
 			} else if (element.tagName().toLower() == "a") {
 				// skip it
 				if (embedInfos.myType == Ahref) {
