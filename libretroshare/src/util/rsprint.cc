@@ -27,6 +27,7 @@
 #include "util/rsprint.h"
 #include "util/rsstring.h"
 #include <iomanip>
+#include <sstream>
 #include <openssl/sha.h>
 #include <sys/time.h>
 
@@ -34,6 +35,15 @@
 #include <time.h>
 #include <sys/timeb.h>
 #endif
+
+std::string RsUtil::NumberToString(uint64_t n)
+{
+    std::ostringstream os ;
+    os << n ;
+    os.flush() ;
+    
+    return os.str();
+}
 
 std::string RsUtil::BinToHex(const std::string &bin)
 {

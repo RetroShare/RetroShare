@@ -1661,10 +1661,13 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 
         std::cerr << "    notyfying client." << std::endl;
 #endif
-        client->receiveGRouterData(decrypted_item->destination_key,decrypted_item->signature.keyId,service_id,decrypted_item->data_bytes,decrypted_item->data_size);
-
-        decrypted_item->data_bytes = NULL ;
-        decrypted_item->data_size = 0 ;
+        if(client->acceptDataFromPeer(decrypted_item->signature.keyId)) 
+	{
+		client->receiveGRouterData(decrypted_item->destination_key,decrypted_item->signature.keyId,service_id,decrypted_item->data_bytes,decrypted_item->data_size);
+                
+		decrypted_item->data_bytes = NULL ;
+		decrypted_item->data_size = 0 ;
+	}
 
         delete decrypted_item ;
     }

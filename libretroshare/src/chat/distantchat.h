@@ -42,17 +42,26 @@ public:
     DistantChatService() : mDistantChatMtx("distant chat")
     {
         mGxsTunnels = NULL ;
+        mDistantChatPermissions = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;	// default: accept everyone
     }
 
-    // Overloaded methods from RsGxsTunnelClientService
+    virtual void triggerConfigSave()=0 ;
+    bool processLoadListItem(const RsItem *item) ;
+    void addToSaveList(std::list<RsItem*>& list) const;
     
-    virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
-
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
     bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId &from_gxs_id, DistantChatPeerId& dcpid, uint32_t &error_code) ;
     bool closeDistantChatConnexion(const DistantChatPeerId &tunnel_id) ;
+    
+    // Sets flags to only allow connexion from some people.
+    
+    uint32_t getDistantChatPermissionFlags() ;
+    bool setDistantChatPermissionFlags(uint32_t flags) ;
+    
+    // Returns the status of a distant chat contact. The contact is defined by the tunnel id (turned into a DistantChatPeerId) because
+    // each pair of talking GXS id needs to be treated separately
     
     virtual bool getDistantChatStatus(const DistantChatPeerId &tunnel_id, DistantChatPeerInfo& cinfo) ;
 
@@ -74,8 +83,17 @@ private:
     //
     std::map<DistantChatPeerId, DistantChatContact> 	mDistantChatContacts ;		// current peers we can talk to
 
+    // Permission handling
+    
+    uint32_t mDistantChatPermissions ;
+
     // Overloaded from RsGxsTunnelClientService
     
+public:
+    virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
+    
+private:
+    virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
     virtual void notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId& tunnel_id,uint32_t tunnel_status) ;
     virtual void receiveData(const RsGxsTunnelService::RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) ;
 
@@ -84,6 +102,5 @@ private:
     void markDistantChatAsClosed(const DistantChatPeerId& dcpid) ;
 
     RsGxsTunnelService *mGxsTunnels ;
-
     RsMutex mDistantChatMtx ;
 };

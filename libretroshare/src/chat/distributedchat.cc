@@ -1903,19 +1903,19 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
 		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
             if(kit->key == "DEFAULT_IDENTITY")
-			{
+	    {
 #ifdef DEBUG_CHAT_LOBBIES
-				std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
+		    std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
 #endif
-                if (!kit->value.empty())
-                {
-                    _default_identity = RsGxsId(kit->value) ;
-                    if(_default_identity.isNull())
-                        std::cerr << "ERROR: default identity is malformed." << std::endl;
-                }
+		    if (!kit->value.empty())
+		    {
+			    _default_identity = RsGxsId(kit->value) ;
+			    if(_default_identity.isNull())
+				    std::cerr << "ERROR: default identity is malformed." << std::endl;
+		    }
 
-				return true;
-			}
+		    return true;
+	    }
 
 	const RsChatLobbyConfigItem *clci = NULL ;
 

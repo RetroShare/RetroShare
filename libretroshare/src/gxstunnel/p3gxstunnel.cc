@@ -327,6 +327,8 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
 #endif
     
     RsGxsTunnelClientService *service = NULL ;
+    RsGxsId peer_from ;
+    
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 	    std::map<uint32_t,RsGxsTunnelClientService *>::const_iterator it = mRegisteredServices.find(item->service_id) ;
@@ -341,10 +343,14 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it2 = _gxs_tunnel_contacts.find(tunnel_id) ; 
             
             if(it2 != _gxs_tunnel_contacts.end())
+	    {
 		    it2->second.client_services.insert(item->service_id) ;
+		    peer_from = it2->second.to_gxs_id ;
+	    }
     }
     
-    service->receiveData(tunnel_id,item->data,item->data_size) ;
+    if(service->acceptDataFromPeer(peer_from))
+	    service->receiveData(tunnel_id,item->data,item->data_size) ;
     
     item->data = NULL ;		// avoids deletion, since the client has the memory now
     item->data_size = 0 ;

@@ -87,6 +87,7 @@ p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
 
     mShouldEnableDistantMessaging = true ;
     mDistantMessagingEnabled      = false ;
+    mDistantMessagePermissions      = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;
 
 	/* Initialize standard tag types */
 	if(sc)
@@ -468,6 +469,10 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	kv.key = "DISTANT_MESSAGES_ENABLED" ;
     kv.value = mShouldEnableDistantMessaging?"YES":"NO" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
+    
+    	kv.key = "DISTANT_MESSAGE_PERMISSION_FLAGS" ;
+        kv.value = RsUtil::NumberToString(mDistantMessagePermissions) ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	itemList.push_back(vitem) ;
 
@@ -558,13 +563,13 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 				mMsgUniqueId = mitem->msgId + 1;
 			}
 			items.push_back(mitem);
-        }
-        else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
-        {
-            // merge.
-            for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
-                _ongoing_messages.insert(*it) ;
-        }
+		}
+		else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
+		{
+			// merge.
+			for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
+				_ongoing_messages.insert(*it) ;
+		}
 		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 		{
 			// delete standard tags as they are now save in config
@@ -574,7 +579,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			}
 			else
 			{
-                delete mTags[mtt->tagId];
+				delete mTags[mtt->tagId];
 				mTags.erase(tagIt);
 				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
 			}
@@ -586,7 +591,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		}
 		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
 		{
-            srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
+			srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
 			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
 		}
 		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
@@ -598,13 +603,33 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 
 		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
 			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
-				if(kit->key == "DISTANT_MESSAGES_ENABLED")
+	    		{
+		    		if(kit->key == "DISTANT_MESSAGES_ENABLED")
 				{
 #ifdef MSG_DEBUG
 					std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
 #endif
-                    mShouldEnableDistantMessaging = (kit->value == "YES") ;
-                }
+					mShouldEnableDistantMessaging = (kit->value == "YES") ;
+				}
+				if(kit->key == "DISTANT_MESSAGE_PERMISSION_FLAGS")
+				{
+#ifdef MSG_DEBUG
+					std::cerr << "Loaded distant message permission flags: " << kit->value << std::endl ;
+#endif
+					if (!kit->value.empty())
+					{
+						std::istringstream is(kit->value) ;
+
+						uint32_t tmp ;
+						is >> tmp ;
+
+						if(tmp < 3)
+							mDistantMessagePermissions = tmp ;
+						else
+							std::cerr << "(EE) Invalid value read for DistantMessagePermission flags in config: " << tmp << std::endl;
+					}
+				}
+	    		}
 
 	}
 
@@ -1791,6 +1816,32 @@ void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t d
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 	IndicateConfigChanged() ;
 }
+bool p3MsgService::acceptDataFromPeer(const RsGxsId& to_gxs_id)
+{
+    if(mDistantMessagePermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
+        return (rsIdentity!=NULL) && rsIdentity->isARegularContact(to_gxs_id) ;
+    
+    if(mDistantMessagePermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
+        return false ;
+    
+    return true ;
+}
+
+void p3MsgService::setDistantMessagingPermissionFlags(uint32_t flags) 
+{
+    if(flags != mDistantMessagePermissions)
+    {
+	    mDistantMessagePermissions = flags ;
+
+	    IndicateConfigChanged() ;
+    }
+}
+            
+uint32_t p3MsgService::getDistantMessagingPermissionFlags() 
+{
+    return mDistantMessagePermissions ;
+}
+            
 void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGxsId& signing_key,GRouterServiceId& client_id,uint8_t *data,uint32_t data_size)
 {
     std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << data_size << ", for key " << destination_key << std::endl;

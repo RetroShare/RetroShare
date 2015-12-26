@@ -212,6 +212,13 @@ uint32_t p3IdService::idAuthenPolicy()
 
 	return policy;
 }
+
+bool p3IdService::isARegularContact(const RsGxsId& id) 
+{
+    RsStackMutex stack(mIdMtx);
+    return mContacts.find(id) != mContacts.end() ;
+}
+
 bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 {
     std::set<RsGxsId>::iterator it = mContacts.find(id) ;

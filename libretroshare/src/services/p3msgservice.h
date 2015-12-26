@@ -126,8 +126,9 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		};
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-        	void setDistantMessagingPermissionFlags(uint32_t flags) {}
-        	uint32_t getDistantMessagingPermissionFlags() { return 0 ;}
+        
+        	void setDistantMessagingPermissionFlags(uint32_t flags) ;
+        	uint32_t getDistantMessagingPermissionFlags() ;
 
 	private:
         void sendDistantMsgItem(RsMsgItem *msgitem) ;
@@ -139,6 +140,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 
 		// Overloaded from GRouterClientService
 
+    		virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
         virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
         virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
 
@@ -205,6 +207,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		std::string config_dir;
 
 		bool mDistantMessagingEnabled ;
+        uint32_t mDistantMessagePermissions ;
         bool mShouldEnableDistantMessaging ;
 };
 
