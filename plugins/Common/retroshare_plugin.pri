@@ -66,3 +66,18 @@ win32 {
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
 }
+
+macx {
+
+
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	RCC_DIR = temp/qrc
+	UI_DIR  = temp/ui
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+}

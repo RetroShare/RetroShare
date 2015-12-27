@@ -45,6 +45,7 @@ macx {
 	LIB_DIR += "/opt/local/lib"
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
 	QMAKE_MAC_SDK = macosx10.10
+	CONFIG += c+11
 }
 
 unfinished {

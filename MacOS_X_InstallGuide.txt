@@ -23,6 +23,9 @@ http://guide.macports.org/#installing.xcode
 $sudo port -v selfupdate
 $sudo port install openssl
 $sudo port install miniupnpc
+###For VOIP Plugin:
+$sudo port install speex-devel
+$sudo port install opencv
 
 ###Get Your OSX SDK if missing:
 https://github.com/phracker/MacOSX-SDKs
