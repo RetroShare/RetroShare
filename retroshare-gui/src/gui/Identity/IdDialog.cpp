@@ -250,6 +250,10 @@ void IdDialog::processSettings(bool load)
 
 		// state of splitter
 		Settings->setValue("splitter", ui->splitter->saveState());
+		
+		//save expanding
+		Settings->setValue("ExpandAll", allItem->isExpanded());
+		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
 	}
 
 	Settings->endGroup();
@@ -511,6 +515,11 @@ void IdDialog::insertIdList(uint32_t token)
 		ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
 		ui->idTreeWidget->insertTopLevelItem(0, allItem);
 
+		Settings->beginGroup("IdDialog");
+		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
+		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+    	Settings->endGroup();
+    	
 		if (fillIdListItem(vit->second, item, ownPgpId, accept))
 			if(vit->second.mIsAContact)
 				contactsItem->addChild(item);
