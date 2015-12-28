@@ -151,7 +151,7 @@
      <property name="gridSize">
       <size>
        <width>100</width>
-       <height>24</height>
+       <height>26</height>
       </size>
      </property>
      <property name="viewMode">
