@@ -506,16 +506,15 @@ void ChatPage::distantChatComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:   ;
+		default: 
+		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;           
 				  break ;
 				  
-		case 1:  ;
+		case 1:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
 				  break ;
 
-		case 2:  ;
+		case 2:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
 				  break ;
-				    				  
-		default: ;
 	}
 
 }

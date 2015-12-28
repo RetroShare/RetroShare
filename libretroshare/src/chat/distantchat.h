@@ -39,11 +39,7 @@ public:
     // So, public interface only uses DistandChatPeerId, but internally, this is converted into a RsGxsTunnelService::RsGxsTunnelId
     
    
-    DistantChatService() : mDistantChatMtx("distant chat")
-    {
-        mGxsTunnels = NULL ;
-        mDistantChatPermissions = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;	// default: accept everyone
-    }
+    DistantChatService() ;
 
     virtual void triggerConfigSave()=0 ;
     bool processLoadListItem(const RsItem *item) ;

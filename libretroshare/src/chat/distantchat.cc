@@ -60,6 +60,12 @@ static const uint32_t DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID = 0xa0001 ;
 
 typedef RsGxsTunnelService::RsGxsTunnelId RsGxsTunnelId;
 
+DistantChatService::DistantChatService()  : mDistantChatMtx("distant chat")
+{
+	mGxsTunnels = NULL ;
+	mDistantChatPermissions = RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE ;	// default: accept everyone
+}
+
 void DistantChatService::connectToGxsTunnelService(RsGxsTunnelService *tr)
 {
 	mGxsTunnels = tr ;
@@ -111,10 +117,10 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 
 bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id)
 {
-    if(mDistantChatPermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
+    if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
         return (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
     
-    if(mDistantChatPermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
+    if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
         return false ;
     
     return true ;
