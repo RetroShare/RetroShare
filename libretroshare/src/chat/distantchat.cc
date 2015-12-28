@@ -106,6 +106,12 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
 
 void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 {
+    if(cs->flags & RS_CHAT_FLAG_CONNEXION_REFUSED)
+    {
+        std::cerr << "(II) Distant chat: received notification that peer refuses conversation." << std::endl;
+        RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(cs->PeerId())),"Connexion refused by distant peer!") ;
+    }
+
     if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
         markDistantChatAsClosed(DistantChatPeerId(cs->PeerId())) ;
 
@@ -115,15 +121,41 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
         std::cerr << "DistantChatService::handleRecvChatStatusItem(): received keep alive packet for inactive chat! peerId=" << cs->PeerId() << std::endl;
 }
 
-bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id)
+bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id)
 {
+    bool res = true ;
+    
     if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
-        return (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
+        res = (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
     
     if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
-        return false ;
+        res = false ;
     
-    return true ;
+    if(!res)
+    {
+	    std::cerr << "(II) refusing distant chat from peer " << gxs_id << ". Sending a notification back to tunnel " << tunnel_id << std::endl;
+	    RsChatStatusItem *item = new RsChatStatusItem ;
+	    item->flags = RS_CHAT_FLAG_CONNEXION_REFUSED ;
+	    item->status_string.clear() ; // is not used yet! But could be set in GUI to some message (??).
+	    item->PeerId(RsPeerId(tunnel_id)) ;
+
+            // we do not use handleOutGoingItem() because there's no distant chat contact, as the chat is refused.
+            
+	    uint32_t size = item->serial_size() ;
+	    RsTemporaryMemory mem(size) ;
+
+	    if(!item->serialise(mem,size))
+	    {
+		    std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
+		    return false;
+	    }
+
+	    std::cerr << "  sending: " << RsUtil::BinToHex(mem,size) << std::endl;
+
+	    mGxsTunnels->sendData( RsGxsTunnelId(item->PeerId()),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,mem,size);
+    }
+    
+    return res ;
 }
 
 void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, uint32_t tunnel_status)

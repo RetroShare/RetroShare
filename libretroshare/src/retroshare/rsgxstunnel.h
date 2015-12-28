@@ -66,7 +66,7 @@ public:
         
         // Gives feedback about type of data that is allowed in. For security reasons, this always needs to be re-derived (Clients can return true on default)
         
-        virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) = 0 ;
+        virtual bool acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id) = 0 ;
     };
     
     class GxsTunnelInfo

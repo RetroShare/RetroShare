@@ -349,7 +349,7 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
 	    }
     }
     
-    if(service->acceptDataFromPeer(peer_from))
+    if(service->acceptDataFromPeer(peer_from,tunnel_id))
 	    service->receiveData(tunnel_id,item->data,item->data_size) ;
     
     item->data = NULL ;		// avoids deletion, since the client has the memory now
