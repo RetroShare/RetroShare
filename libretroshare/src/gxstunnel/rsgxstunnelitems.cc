@@ -32,7 +32,7 @@
 
 #include "gxstunnel/rsgxstunnelitems.h"
 
-#define GXS_TUNNEL_ITEM_DEBUG 1
+//#define GXS_TUNNEL_ITEM_DEBUG 1
 
 std::ostream& RsGxsTunnelDHPublicKeyItem::print(std::ostream &out, uint16_t indent)
 {

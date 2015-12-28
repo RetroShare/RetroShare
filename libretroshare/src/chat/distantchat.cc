@@ -25,6 +25,7 @@
 
 
 #include <unistd.h>
+#include <sstream>
 
 #include "openssl/rand.h"
 #include "openssl/dh.h"
@@ -59,6 +60,12 @@ static const uint32_t DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID = 0xa0001 ;
 
 typedef RsGxsTunnelService::RsGxsTunnelId RsGxsTunnelId;
 
+DistantChatService::DistantChatService()  : mDistantChatMtx("distant chat")
+{
+	mGxsTunnels = NULL ;
+	mDistantChatPermissions = RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE ;	// default: accept everyone
+}
+
 void DistantChatService::connectToGxsTunnelService(RsGxsTunnelService *tr)
 {
 	mGxsTunnels = tr ;
@@ -90,8 +97,9 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
         std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
         return false;
     }
-    
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "  sending: " << RsUtil::BinToHex(mem,size) << std::endl;
+#endif
     
     mGxsTunnels->sendData( RsGxsTunnelId(item->PeerId()),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,mem,size);
     return true;
@@ -99,6 +107,14 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
 
 void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 {
+    if(cs->flags & RS_CHAT_FLAG_CONNEXION_REFUSED)
+    {
+#ifdef DEBUG_DISTANT_CHAT    
+        std::cerr << "(II) Distant chat: received notification that peer refuses conversation." << std::endl;
+#endif
+        RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(cs->PeerId())),"Connexion refused by distant peer!") ;
+    }
+
     if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
         markDistantChatAsClosed(DistantChatPeerId(cs->PeerId())) ;
 
@@ -108,9 +124,50 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
         std::cerr << "DistantChatService::handleRecvChatStatusItem(): received keep alive packet for inactive chat! peerId=" << cs->PeerId() << std::endl;
 }
 
+bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id)
+{
+    bool res = true ;
+    
+    if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
+        res = (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
+    
+    if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
+        res = false ;
+    
+    if(!res)
+    {
+#ifdef DEBUG_DISTANT_CHAT    
+	    std::cerr << "(II) refusing distant chat from peer " << gxs_id << ". Sending a notification back to tunnel " << tunnel_id << std::endl;
+#endif
+	    RsChatStatusItem *item = new RsChatStatusItem ;
+	    item->flags = RS_CHAT_FLAG_CONNEXION_REFUSED ;
+	    item->status_string.clear() ; // is not used yet! But could be set in GUI to some message (??).
+	    item->PeerId(RsPeerId(tunnel_id)) ;
+
+            // we do not use handleOutGoingItem() because there's no distant chat contact, as the chat is refused.
+            
+	    uint32_t size = item->serial_size() ;
+	    RsTemporaryMemory mem(size) ;
+
+	    if(!item->serialise(mem,size))
+	    {
+		    std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
+		    return false;
+	    }
+
+	    std::cerr << "  sending: " << RsUtil::BinToHex(mem,size) << std::endl;
+
+	    mGxsTunnels->sendData( RsGxsTunnelId(item->PeerId()),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,mem,size);
+    }
+    
+    return res ;
+}
+
 void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, uint32_t tunnel_status)
 {
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "DistantChatService::notifyTunnelStatus(): got notification " << std::hex << tunnel_status << std::dec << " for tunnel " << tunnel_id << std::endl;
+#endif
     
     switch(tunnel_status)
     {
@@ -134,12 +191,12 @@ void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunne
 
 void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, unsigned char *data, uint32_t data_size)
 {
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "DistantChatService::receiveData(): got data of size " << data_size << " for tunnel " << tunnel_id << std::endl;
     std::cerr << "  received: " << RsUtil::BinToHex(data,data_size) << std::endl;
     std::cerr << "  deserialising..." << std::endl;
-    
-    RsItem *item = RsChatSerialiser().deserialise(data,&data_size) ;
-    
+#endif
+
     // always make the contact up to date. This is useful for server side, which doesn't know about the chat until it
     // receives the first item.
     {
@@ -149,21 +206,26 @@ void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tu
 	    if(!mGxsTunnels->getTunnelInfo(tunnel_id,tinfo))
 		    return ;
 
+	    // Check if the data is accepted. We cannot prevent the creation of tunnels at the level of p3GxsTunnels, since tunnels are shared between services.
+	    // however, 
+
 	    DistantChatContact& contact(mDistantChatContacts[DistantChatPeerId(tunnel_id)]) ;
-        
+
 	    contact.to_id = tinfo.destination_gxs_id ;
 	    contact.from_id = tinfo.source_gxs_id ;
     }
-    
+
+    RsItem *item = RsChatSerialiser().deserialise(data,&data_size) ;
+
     if(item != NULL)
     {
-        item->PeerId(RsPeerId(tunnel_id)) ;	// just in case, but normally this is already done.
-        
+	    item->PeerId(RsPeerId(tunnel_id)) ;	// just in case, but normally this is already done.
+
 	    handleIncomingItem(item) ;
 	    RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
     }
     else
-        std::cerr << "  (EE) item could not be deserialised!" << std::endl;
+	    std::cerr << "  (EE) item could not be deserialised!" << std::endl;
 }
 
 void DistantChatService::markDistantChatAsClosed(const DistantChatPeerId& dcpid)
@@ -243,4 +305,64 @@ bool DistantChatService::closeDistantChatConnexion(const DistantChatPeerId &tunn
     return true ;
 }
 
+uint32_t DistantChatService::getDistantChatPermissionFlags()
+{
+    return mDistantChatPermissions ;
+}
+bool DistantChatService::setDistantChatPermissionFlags(uint32_t flags)
+{
+    if(mDistantChatPermissions != flags)
+    {
+    mDistantChatPermissions = flags ;
+#ifdef DEBUG_DISTANT_CHAT    
+    std::cerr << "(II) Changing distant chat permissions to " << flags << ". Existing openned chats will however remain active until closed" << std::endl;
+#endif
+    triggerConfigSave() ;
+    }
+    
+    return true ;
+}
+
+void DistantChatService::addToSaveList(std::list<RsItem*>& list) const
+{
+	/* Save permission flags */
+
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "DISTANT_CHAT_PERMISSION_FLAGS" ;
+	kv.value = RsUtil::NumberToString(mDistantChatPermissions) ;
+    
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	list.push_back(vitem) ;
+}
+bool DistantChatService::processLoadListItem(const RsItem *item)
+{
+	const RsConfigKeyValueSet *vitem = NULL ;
+
+	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
+		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+			if(kit->key == "DISTANT_CHAT_PERMISSION_FLAGS")
+			{
+#ifdef DEBUG_DISTANT_CHAT
+				std::cerr << "Loaded distant chat permission flags: " << kit->value << std::endl ;
+#endif
+				if (!kit->value.empty())
+				{
+					std::istringstream is(kit->value) ;
+
+					uint32_t tmp ;
+					is >> tmp ;
+
+					if(tmp < 3)
+						mDistantChatPermissions = tmp ;
+					else
+						std::cerr << "(EE) Invalid value read for DistantChatPermission flags in config: " << tmp << std::endl;
+				}
+
+				return true;
+			}
+
+	return false ;
+}
 

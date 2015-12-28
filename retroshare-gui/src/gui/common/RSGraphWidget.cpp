@@ -113,7 +113,7 @@ QString RSGraphSource::legend(int i,float v) const
     return displayName(i) + " (" + displayValue(v) + " )";
 }
 
-void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts) const
+void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts,float filter_factor) const
 {
     pts.clear() ;
     qint64 now = getTime() ;
@@ -126,8 +126,15 @@ void RSGraphSource::getDataPoints(int index,std::vector<QPointF>& pts) const
     if(n != index)
         return ;
 
+    float last_value = it->second.empty()?0.0f:(it->second.begin()->second) ;
+    
     for(std::list<std::pair<qint64,float> >::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
-        pts.push_back(QPointF( (now - (*it2).first)/1000.0f,(*it2).second)) ;
+    {
+        float val = (1-filter_factor)*(*it2).second + filter_factor*last_value;
+        last_value = val ;
+        
+        pts.push_back(QPointF( (now - (*it2).first)/1000.0f, val)) ;
+    }
 }
 
 void RSGraphWidget::setShowEntry(uint32_t entry,bool b)
@@ -231,6 +238,7 @@ RSGraphWidget::RSGraphWidget(QWidget *parent)
   _opacity = 0.6 ;
   _flags = 0;
   _time_scale = 5.0f ; // in pixels per second.
+  _time_filter = 1.0f ;	
   _timer = new QTimer ;
   QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(updateIfPossible())) ;
 
@@ -370,7 +378,8 @@ void RSGraphWidget::paintData()
       if( _masked_entries.find(source.displayName(i).toStdString()) == _masked_entries.end() )
       {
           std::vector<QPointF> values ;
-          source.getDataPoints(i,values) ;
+          //std::cerr << "time filter = " << _time_filter << ", factor=" << 1./_time_scale*_time_filter/(1+_time_filter/_time_scale) << std::endl;
+          source.getDataPoints(i,values,1./_time_scale*_time_filter/(1.0f+_time_filter/_time_scale)) ;
 
           QVector<QPointF> points ;
           pointsFromData(values,points) ;
@@ -394,79 +403,79 @@ void RSGraphWidget::paintData()
  * of rsdht or alldht values. */
 void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QPointF>& points)
 {
-    points.clear();
+	points.clear();
 
-    int x = _rec.width();
-    int y = _rec.height();
+	int x = _rec.width();
+	int y = _rec.height();
 
-    float time_step = 1.0f ;	// number of seconds per pixel
+	float time_step = 1.0f ;	// number of seconds per pixel
 
-    /* Translate all data points to points on the graph frame */
+	/* Translate all data points to points on the graph frame */
 
-    // take 0 as the origin, otherwise the different curves are not aligned properly
-    float last = 0;//values.back().x();
+	// take 0 as the origin, otherwise the different curves are not aligned properly
+	float last = 0;//values.back().x();
 
-    //std::cerr << "Got " << values.size() << " values for index 0" << std::endl;
+	//std::cerr << "Got " << values.size() << " values for index 0" << std::endl;
 
-    float FS = QFontMetricsF(font()).height();
-    float fact = FS/14.0 ;
+	float FS = QFontMetricsF(font()).height();
+	float fact = FS/14.0 ;
 
-    float last_px = SCALE_WIDTH*fact ;
-    float last_py = 0.0f ;
+	float last_px = SCALE_WIDTH*fact ;
+	float last_py = 0.0f ;
 
- //   float min_x_no_data_threshold = 1.5 ; // 1.5 sec.
+	//   float min_x_no_data_threshold = 1.5 ; // 1.5 sec.
 
-    for (uint i = 0; i < values.size(); ++i)
-	 {
-		 //std::cerr << "Value: (" << values[i].x() << " , " << values[i].y() << ")" << std::endl;
+	for (uint i = 0; i < values.size(); ++i)
+	{
+		//std::cerr << "Value: (" << values[i].x() << " , " << values[i].y() << ")" << std::endl;
 
-		 // compute point in pixels
+		// compute point in pixels
 
-		 qreal px = x - (values[i].x()-last)*_time_scale ;
-		 qreal py = y -  valueToPixels(values[i].y()) ;
+		qreal px = x - (values[i].x()-last)*_time_scale ;
+		qreal py = y -  valueToPixels(values[i].y()) ;
 
-         if(px >= SCALE_WIDTH*fact && last_px < SCALE_WIDTH*fact)
-		 {
-             float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
-             float ipx = SCALE_WIDTH*fact ;
-			 float ipy = (1-alpha)*last_py + alpha*py ;
+		if(px >= SCALE_WIDTH*fact && last_px < SCALE_WIDTH*fact)
+		{
+			float alpha = (SCALE_WIDTH*fact - last_px)/(px - last_px) ;
+			float ipx = SCALE_WIDTH*fact ;
+			float ipy = (1-alpha)*last_py + alpha*py ;
 
-			 points << QPointF(ipx,y) ;
-			 points << QPointF(ipx,ipy) ;
-		 }
-		 else if(i==0)
-         {
-             if(px < SCALE_WIDTH*fact)
-			 points << QPointF(SCALE_WIDTH*fact,py) ;
-             else
-			 points << QPointF(px,y) ;
-         }
+			points << QPointF(ipx,y) ;
+			points << QPointF(ipx,ipy) ;
+		}
+		else if(i==0)
+		{
+			if(px < SCALE_WIDTH*fact)
+				points << QPointF(SCALE_WIDTH*fact,py) ;
+			else
+				points << QPointF(px,y) ;
+		}
 
-         if(px < SCALE_WIDTH*fact)
-			 continue ;
+		if(px < SCALE_WIDTH*fact)
+			continue ;
 
-		 _maxValue = std::max(_maxValue,values[i].y()) ;
+		_maxValue = std::max(_maxValue,values[i].y()) ;
 
-		 // remove midle point when 3 consecutive points have the same value.
+		// remove midle point when 3 consecutive points have the same value.
 
-		 if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
-			 points.pop_back() ;
+		if(points.size() > 1 && points[points.size()-2].y() == points.back().y() && points.back().y() == py)
+			points.pop_back() ;
 
-//         	if(fabs(px - last_px)/_time_scale > min_x_no_data_threshold)
-//            {
-//                points << QPointF(last_px,y) ;
-//                points << QPointF(px,y) ;
-//            }
+		//         	if(fabs(px - last_px)/_time_scale > min_x_no_data_threshold)
+		//            {
+		//                points << QPointF(last_px,y) ;
+		//                points << QPointF(px,y) ;
+		//            }
 
-		 points << QPointF(px,py) ;
+		points << QPointF(px,py) ;
 
-		 if(i==values.size()-1)
-			 points << QPointF(px,y) ;
+		if(i==values.size()-1)
+			points << QPointF(px,y) ;
 
-		 last_px = px ;
-		 last_py = py ;
+		last_px = px ;
+		last_py = py ;
 
-	 }
+	}
 }
 
 qreal RSGraphWidget::valueToPixels(qreal val)
@@ -601,12 +610,18 @@ void RSGraphWidget::paintScale2()
 
 void RSGraphWidget::wheelEvent(QWheelEvent *e)
 {
-	if(e->delta() > 0)
-		_time_scale *= 1.1 ;
-	else
-		_time_scale /= 1.1 ;
+    if(e->modifiers() & Qt::ShiftModifier)
+	    if(e->delta() > 0)
+		    _time_filter *= 1.1 ;
+	    else
+		    _time_filter /= 1.1 ;
+    else
+	    if(e->delta() > 0)
+		    _time_scale *= 1.1 ;
+	    else
+		    _time_scale /= 1.1 ;
 
-	update() ;
+    update() ;
 }
 
 void RSGraphWidget::paintLegend()

@@ -250,6 +250,7 @@ virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
                         uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
 
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
+    virtual bool isARegularContact(const RsGxsId& id) = 0 ;
     
 	// Specific RsIdentity Functions....
         /* Specific Service Data */

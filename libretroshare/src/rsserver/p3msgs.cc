@@ -537,4 +537,12 @@ bool p3Msgs::closeDistantChatConnexion(const DistantChatPeerId &pid)
 {
 	return mChatSrv->closeDistantChatConnexion(pid) ;
 }
+bool p3Msgs::setDistantChatPermissionFlags(uint32_t flags)
+{
+	return mChatSrv->setDistantChatPermissionFlags(flags) ;
+}
+uint32_t p3Msgs::getDistantChatPermissionFlags()
+{
+	return mChatSrv->getDistantChatPermissionFlags() ;
+}
 

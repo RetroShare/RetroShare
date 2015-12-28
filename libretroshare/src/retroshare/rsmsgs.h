@@ -264,11 +264,15 @@ public:
 #define RS_DISTANT_CHAT_FLAG_SIGNED               0x0001 
 #define RS_DISTANT_CHAT_FLAG_SIGNATURE_OK         0x0002 
 
-// flags to define who we accept to talk to
+// flags to define who we accept to talk to. Each flag *removes* some people.
 
-#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_NONE           0x0000 
-#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_EVERYBODY      0x0001 
-#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_CONTACT_LIST   0x0002 
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE           0x0000 
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS   0x0001 
+#define RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY      0x0002 
+
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE           0x0000 
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS   0x0001 
+#define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY      0x0002 
 
 struct DistantChatPeerInfo
 {
@@ -482,6 +486,9 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId&
 /*            Distant chat              */
 /****************************************/
 
+    virtual uint32_t getDistantChatPermissionFlags()=0 ;
+    virtual bool setDistantChatPermissionFlags(uint32_t flags)=0 ;
+    
 virtual bool initiateDistantChatConnexion(const RsGxsId& to_pid,const RsGxsId& from_pid,DistantChatPeerId& pid,uint32_t& error_code) = 0;
 virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;

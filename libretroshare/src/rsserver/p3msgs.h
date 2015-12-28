@@ -159,6 +159,9 @@ class p3Msgs: public RsMsgs
       virtual bool getDistantChatStatus(const DistantChatPeerId& gxs_id,DistantChatPeerInfo& info);
       virtual bool closeDistantChatConnexion(const DistantChatPeerId &pid) ;
 
+    virtual uint32_t getDistantChatPermissionFlags() ;
+    virtual bool setDistantChatPermissionFlags(uint32_t flags) ;
+    
    private:
 
 	  p3MsgService  *mMsgSrv;
