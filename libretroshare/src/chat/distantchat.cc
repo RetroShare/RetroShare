@@ -97,8 +97,9 @@ bool DistantChatService::handleOutgoingItem(RsChatItem *item)
         std::cerr << "(EE) serialisation error. Something's really wrong!" << std::endl;
         return false;
     }
-    
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "  sending: " << RsUtil::BinToHex(mem,size) << std::endl;
+#endif
     
     mGxsTunnels->sendData( RsGxsTunnelId(item->PeerId()),DISTANT_CHAT_GXS_TUNNEL_SERVICE_ID,mem,size);
     return true;
@@ -108,7 +109,9 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 {
     if(cs->flags & RS_CHAT_FLAG_CONNEXION_REFUSED)
     {
+#ifdef DEBUG_DISTANT_CHAT    
         std::cerr << "(II) Distant chat: received notification that peer refuses conversation." << std::endl;
+#endif
         RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(cs->PeerId())),"Connexion refused by distant peer!") ;
     }
 
@@ -133,7 +136,9 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
     
     if(!res)
     {
+#ifdef DEBUG_DISTANT_CHAT    
 	    std::cerr << "(II) refusing distant chat from peer " << gxs_id << ". Sending a notification back to tunnel " << tunnel_id << std::endl;
+#endif
 	    RsChatStatusItem *item = new RsChatStatusItem ;
 	    item->flags = RS_CHAT_FLAG_CONNEXION_REFUSED ;
 	    item->status_string.clear() ; // is not used yet! But could be set in GUI to some message (??).
@@ -160,7 +165,9 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
 
 void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, uint32_t tunnel_status)
 {
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "DistantChatService::notifyTunnelStatus(): got notification " << std::hex << tunnel_status << std::dec << " for tunnel " << tunnel_id << std::endl;
+#endif
     
     switch(tunnel_status)
     {
@@ -184,9 +191,11 @@ void DistantChatService::notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunne
 
 void DistantChatService::receiveData(const RsGxsTunnelService::RsGxsTunnelId &tunnel_id, unsigned char *data, uint32_t data_size)
 {
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "DistantChatService::receiveData(): got data of size " << data_size << " for tunnel " << tunnel_id << std::endl;
     std::cerr << "  received: " << RsUtil::BinToHex(data,data_size) << std::endl;
     std::cerr << "  deserialising..." << std::endl;
+#endif
 
     // always make the contact up to date. This is useful for server side, which doesn't know about the chat until it
     // receives the first item.
@@ -305,7 +314,9 @@ bool DistantChatService::setDistantChatPermissionFlags(uint32_t flags)
     if(mDistantChatPermissions != flags)
     {
     mDistantChatPermissions = flags ;
+#ifdef DEBUG_DISTANT_CHAT    
     std::cerr << "(II) Changing distant chat permissions to " << flags << ". Existing openned chats will however remain active until closed" << std::endl;
+#endif
     triggerConfigSave() ;
     }
     
