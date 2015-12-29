@@ -35,6 +35,19 @@ win32 {
 	}
 }
 
+macx {
+	message(***retroshare.pri:MacOSX)
+	BIN_DIR += "/usr/bin"
+	INC_DIR += "/usr/include"
+	INC_DIR += "/usr/local/include"
+	INC_DIR += "/opt/local/include"
+	LIB_DIR += "/usr/local/lib"
+	LIB_DIR += "/opt/local/lib"
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+	QMAKE_MAC_SDK = macosx10.10
+	CONFIG += c+11
+}
+
 unfinished {
 	CONFIG += gxscircles
 	CONFIG += gxsthewire

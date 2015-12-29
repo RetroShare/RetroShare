@@ -63,6 +63,10 @@ public:
         // Used by the creator of the service to supply a pointer to the GXS tunnel service for it to be able to send data etc.
         
         virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) =0;
+        
+        // Gives feedback about type of data that is allowed in. For security reasons, this always needs to be re-derived (Clients can return true on default)
+        
+        virtual bool acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id) = 0 ;
     };
     
     class GxsTunnelInfo

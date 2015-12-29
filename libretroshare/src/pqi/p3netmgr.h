@@ -326,6 +326,7 @@ private:
 
 void 	netStatusReset_locked();
 
+	// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just two possible address is a flawed assumption, this should be redesigned soon.
 	struct sockaddr_storage mLocalAddr;
 	struct sockaddr_storage mExtAddr;
 

@@ -112,13 +112,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="todoPushButton">
-        <property name="text">
-         <string>Todo</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="helpButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
@@ -221,6 +214,18 @@
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="indentation">
+          <number>24</number>
+         </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
@@ -229,7 +234,7 @@
          </attribute>
          <column>
           <property name="text">
-           <string>Identity name</string>
+           <string>Persons</string>
           </property>
          </column>
          <column>
@@ -297,41 +302,6 @@
            <widget class="StyledElidedLabel" name="headerTextLabel">
             <property name="text">
              <string>People</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3" rowspan="2">
-           <widget class="QToolButton" name="messageButton">
-            <property name="minimumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Send message</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/mail-message-new.png</normaloff>:/images/mail-message-new.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -487,6 +457,13 @@
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="inviteButton">
+              <property name="text">
+               <string>Send Invite</string>
               </property>
              </widget>
             </item>
@@ -713,7 +690,6 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>todoPushButton</tabstop>
   <tabstop>idTreeWidget</tabstop>
   <tabstop>lineEdit_Nickname</tabstop>
   <tabstop>lineEdit_KeyId</tabstop>

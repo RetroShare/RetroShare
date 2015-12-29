@@ -42,10 +42,9 @@ void freeAndClearContainerResource(Container container)
 	typename Container::iterator meta_it = container.begin();
 
 	for(; meta_it != container.end(); ++meta_it)
-	{
-		delete meta_it->second;
+        	if(meta_it->second != NULL)
+			delete meta_it->second;
 
-	}
 	container.clear();
 }
 

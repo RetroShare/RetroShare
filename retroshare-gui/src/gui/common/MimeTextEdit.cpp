@@ -41,6 +41,7 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 	mCompleterKeyModifiers = Qt::ControlModifier;
 	mCompleterKey = Qt::Key_Space;
 	mForceCompleterShowNextKeyEvent = false;
+	highliter = new RsSyntaxHighlighter(this);
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
@@ -231,6 +232,8 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 
 	/* Add actions for pasting links */
 	contextMenu->addAction( tr("Paste as plain text"), this, SLOT(pastePlainText()));
+	QAction *spoilerAction =  contextMenu->addAction(tr("Spoiler"), this, SLOT(spoiler()));
+	spoilerAction->setToolTip(tr("Select text to hide, then push this button"));
 	contextMenu->addSeparator();
 	QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 	contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
@@ -267,4 +270,9 @@ void MimeTextEdit::pasteOwnCertificateLink()
 void MimeTextEdit::pastePlainText()
 {
 	insertPlainText(QApplication::clipboard()->text());
+}
+
+void MimeTextEdit::spoiler()
+{
+	RsHtml::insertSpoilerText(this->textCursor());
 }

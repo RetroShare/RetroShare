@@ -160,9 +160,9 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	chooser->setItemData(index, (type == GXS_ID_DETAILS_TYPE_DONE) ? TYPE_FOUND_ID : TYPE_UNKNOWN_ID, ROLE_TYPE);
 	chooser->setItemIcon(index, icons.empty() ? QIcon() : icons[0]);
 
-    	std::cerr << "ID=" << details.mId << ", chooser->flags()=" << chooser->flags() << ", pgpLinked=" << details.mPgpLinked ;
+    	std::cerr << "ID=" << details.mId << ", chooser->flags()=" << chooser->flags() << ", flags=" << details.mFlags ;
         
-    	if((chooser->flags() & IDCHOOSER_NON_ANONYMOUS) && !(details.mPgpLinked))
+    	if((chooser->flags() & IDCHOOSER_NON_ANONYMOUS) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
         {
             std::cerr << " - disabling ID - entry = " << index << std::endl;
             chooser->setEntryEnabled(index,false) ;

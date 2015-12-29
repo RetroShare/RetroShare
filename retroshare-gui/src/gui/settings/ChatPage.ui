@@ -20,8 +20,43 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0" colspan="2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Distant Chat</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="2">
+           <widget class="QComboBox" name="distantChatcomboBox">
+            <item>
+             <property name="text">
+              <string>Everyone</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Contacts</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Nobody</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="distantchatlabel">
+            <property name="text">
+             <string>Accept encrypted distant chat from</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
           <widget class="QGroupBox" name="groupBox">
@@ -240,7 +275,7 @@
          </item>
         </layout>
        </item>
-       <item>
+       <item row="1" column="1">
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <widget class="QGroupBox" name="groupBox_2">

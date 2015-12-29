@@ -72,8 +72,8 @@ class MyFilter: public QObject
 
 void GenCertDialog::grabMouse()
 {
-	static int last_x = 0 ;
-	static int last_y = 0 ;
+	static uint32_t last_x = 0 ;
+	static uint32_t last_y = 0 ;
 	static uint32_t count = 0 ;
 
 	uint32_t x = QCursor::pos().x() ;
@@ -555,6 +555,7 @@ void GenCertDialog::genPerson()
 	RsPeerId sslId;
 	std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
 	std::string err;
+	this->hide();//To show dialog asking password PGP Key.
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
 
 	if (okGen)

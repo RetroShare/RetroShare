@@ -320,11 +320,20 @@ void ChatLobbyDialog::processSettings(bool load)
 
 		// state of splitter
 		ui.splitter->restoreState(Settings->value("splitter").toByteArray());
+		
+		// load sorting
+		actionSortByActivity->setChecked(Settings->value("sortbyActivity", QVariant(false)).toBool());
+		actionSortByName->setChecked(Settings->value("sortbyName", QVariant(true)).toBool());
+		
 	} else {
 		// save settings
 
 		// state of splitter
 		Settings->setValue("splitter", ui.splitter->saveState());
+		
+		//save sorting
+		Settings->setValue("sortbyActivity", actionSortByActivity->isChecked());
+		Settings->setValue("sortbyName", actionSortByName->isChecked());
 	}
 
 	Settings->endGroup();

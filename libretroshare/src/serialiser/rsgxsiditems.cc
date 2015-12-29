@@ -101,6 +101,8 @@ uint32_t RsGxsIdLocalInfoItem::serial_size()
     uint32_t s = 8 ;	// header
     s += 4 ; 		// number of items
     s += mTimeStamps.size() * (RsGxsId::SIZE_IN_BYTES + 8) ;
+    s += 4 ; 		// number of contacts
+    s += mContacts.size() * RsGxsId::SIZE_IN_BYTES ;
 
     return s;
 }
@@ -176,6 +178,11 @@ bool RsGxsIdLocalInfoItem::serialise(void *data, uint32_t& size)
         ok &= it->first.serialise(data,tlvsize,offset) ;
         ok &= setRawTimeT(data,tlvsize,&offset,it->second) ;
     }
+    ok &= setRawUInt32(data, tlvsize, &offset, mContacts.size()) ;
+    
+    for(std::set<RsGxsId>::const_iterator it(mContacts.begin());it!=mContacts.end();++it)
+	    ok &= (*it).serialise(data,tlvsize,offset) ;
+    
     if(offset != tlvsize)
     {
 #ifdef GXSID_DEBUG
@@ -386,6 +393,19 @@ RsGxsIdLocalInfoItem *RsGxsIdSerialiser::deserialise_GxsIdLocalInfoItem(void *da
         item->mTimeStamps[gxsid] = TS ;
     }
 
+    if (offset < rssize)	// backward compatibility, making that section optional.
+    {
+	ok &= getRawUInt32(data, rssize, &offset, &n) ;
+    	RsGxsId gxsid ;
+    
+    	for(int i=0;ok && i<n;++i)
+        {
+		ok &= gxsid.deserialise(data,rssize,offset) ;
+        
+        item->mContacts.insert(gxsid) ;
+        }
+    }
+    
     if (offset != rssize)
 	{
 #ifdef GXSID_DEBUG

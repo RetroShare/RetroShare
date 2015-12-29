@@ -95,11 +95,15 @@ macx {
     # CONFIG += ppc x86 
 
 	LIBS += -Wl,-search_paths_first
-        LIBS += -lssl -lcrypto -lz 
-	LIBS += /usr/local/lib/libminiupnpc.a
+        LIBS += -lssl -lcrypto -lz
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
-	INCLUDEPATH += /usr/local/include
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
 	sshserver {
 		LIBS += -L../../../lib
