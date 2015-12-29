@@ -420,6 +420,7 @@ void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputSt
 		const uint8_t * buf = reinterpret_cast<const uint8_t *>(&addr);
 		for( uint32_t i = 0; i < sizeof(addr); ++i )
 			output << std::setw(2) << std::setfill('0') << std::hex << +buf[i];
+		// The unary +buf[i] operation forces a no-op type conversion to an int with the correct sign
 	}}
 
 	if(outputString)

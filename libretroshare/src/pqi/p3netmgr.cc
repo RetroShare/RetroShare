@@ -1025,7 +1025,9 @@ bool p3NetMgrIMPL::checkNetAddress()
 				{
 					prefAddr = *it;
 					validAddr = true;
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cout << "p3NetMgrIMPL::checkNetAddress() prefAddr: " << sockaddr_storage_iptostring(prefAddr) << std::endl;
+#endif
 				}
 	}
 
@@ -1035,7 +1037,6 @@ bool p3NetMgrIMPL::checkNetAddress()
 	{
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::checkNetAddress() no Valid Network Address, resetting network." << std::endl;
-		std::cerr << std::endl;
 #endif
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::checkNetAddress() No Valid Network Address, resetting network");
 		netReset();
