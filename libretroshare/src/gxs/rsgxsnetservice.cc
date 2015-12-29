@@ -862,15 +862,20 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     // gets requested once again, for a proper update.
 
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all msg time stamps." << std::endl;
+    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all server msg time stamps for this group, and server global TS." << std::endl;
 #endif
-    for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
+    std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::iterator it = mServerMsgUpdateMap.find(grpId) ;
+    
+    if(mServerMsgUpdateMap.end() == it)
     {
-        std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::iterator it2 = it->second->msgUpdateInfos.find(grpId) ;
-
-        if(it2 != it->second->msgUpdateInfos.end())
-            it->second->msgUpdateInfos.erase(it2) ;
+        RsGxsServerMsgUpdateItem *item = new RsGxsServerMsgUpdateItem(mServType) ;
+        item->grpId = grpId ;
+        item->msgUpdateTS = 0 ;
     }
+    else
+        it->second->msgUpdateTS = 0 ; // reset!
+    
+    // no need to update mGrpServerUpdateItem since the ::updateServerSyncTS() call will do it.
 }
 
 bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const
