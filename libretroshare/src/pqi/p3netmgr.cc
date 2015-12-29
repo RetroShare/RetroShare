@@ -997,7 +997,7 @@ void p3NetMgrIMPL::netExtCheck()
  ************************************** Interfaces    *****************************************
  **********************************************************************************************/
 
-bool 	p3NetMgrIMPL::checkNetAddress()
+bool p3NetMgrIMPL::checkNetAddress()
 {
 	bool addrChanged = false;
 	bool validAddr = false;
@@ -1016,7 +1016,17 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 	}
 	else
 	{
-		validAddr = getPreferredInterface(mLocalAddr, prefAddr);
+		// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just one local address is a flawed assumption, this should be redesigned soon.
+		std::list<sockaddr_storage> addrs;
+		std::list<sockaddr_storage>::iterator it;
+		if (getLocalAddresses(addrs))
+			for(it = addrs.begin(); (it != addrs.end() && !validAddr); ++it)
+				if(sockaddr_storage_isValidNet(*it) && !sockaddr_storage_isLoopbackNet(*it))
+				{
+					prefAddr = *it;
+					validAddr = true;
+					std::cout << "p3NetMgrIMPL::checkNetAddress() prefAddr: " << sockaddr_storage_iptostring(prefAddr) << std::endl;
+				}
 	}
 
 
