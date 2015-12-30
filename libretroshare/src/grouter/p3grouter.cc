@@ -2095,6 +2095,7 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 #ifdef GROUTER_DEBUG
     debugDump();
 #endif
+    items.clear() ;
     return true ;
 }
 bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items) 

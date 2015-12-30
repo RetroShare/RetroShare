@@ -2360,6 +2360,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		setProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr);
 	}
 
+    	load.clear() ;
 	return true;
 }
 

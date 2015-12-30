@@ -793,6 +793,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 		delete (*it);
 	}
 
+    loadList.clear() ;
 	return true;
 }
 

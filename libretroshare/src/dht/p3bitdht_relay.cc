@@ -279,6 +279,11 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		/* error */
 		std::cerr << "p3BitDht::loadList() Error only expecting 1 item";
 		std::cerr << std::endl;
+        
+        	for(std::list<RsItem*>::iterator it=load.begin();it!=load.end();++it)
+		    delete *it ;
+            
+            	load.clear() ;
 		return false;
 	}
 	RsItem *item = load.front();
@@ -290,6 +295,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		/* error */
 		std::cerr << "p3BitDht::loadList() Error expecting item = config";
 		std::cerr << std::endl;
+		delete item ;
 		return false;
 	}
 
@@ -393,6 +399,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		setRelayMode(mode);
 	}
 
+    	load.clear() ;
 	return true;
 }
 
