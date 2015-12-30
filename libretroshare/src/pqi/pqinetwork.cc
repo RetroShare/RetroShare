@@ -306,11 +306,10 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 		IP_ADAPTER_UNICAST_ADDRESS* address;
 		for ( address = adapter->FirstUnicastAddress; address; address = address->Next)
 		{
-			sockaddr_storage * tmp = new sockaddr_storage;
-			sockaddr_storage_clear(*tmp);
-			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
-				addrs.push_back(*tmp);
-			else delete tmp;
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
+				addrs.push_back(tmp);
 		}
 	}
 	free(adapter_addresses);
@@ -320,11 +319,10 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
-			sockaddr_storage * tmp = new sockaddr_storage;
-			sockaddr_storage_clear(*tmp);
-			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
-				addrs.push_back(*tmp);
-			else delete tmp;
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+				addrs.push_back(tmp);
 		}
 	freeifaddrs(ifsaddrs);
 #endif // WINDOWS_SYS
