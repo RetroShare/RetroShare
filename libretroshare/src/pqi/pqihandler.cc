@@ -477,18 +477,18 @@ int     pqihandler::UpdateRates()
 
 	std::map<RsPeerId, SearchModule *>::iterator it;
 
-	int num_sm = mods.size();
-
 	float avail_in = getMaxRate(true);
 	float avail_out = getMaxRate(false);
 
 	float used_bw_in = 0;
 	float used_bw_out = 0;
-	float used_bw_in_table[num_sm];         /* table of in bandwidth currently used by each module */
-	float used_bw_out_table[num_sm];        /* table of out bandwidth currently used by each module */
 
 	/* Lock once rates have been retrieved */
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	int num_sm = mods.size();
+	float used_bw_in_table[num_sm];         /* table of in bandwidth currently used by each module */
+	float used_bw_out_table[num_sm];        /* table of out bandwidth currently used by each module */
 
 	int effectiveUploadsSm = 0;
 	int effectiveDownloadsSm = 0;
