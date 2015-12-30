@@ -862,15 +862,20 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     // gets requested once again, for a proper update.
 
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all msg time stamps." << std::endl;
+    GXSNETDEBUG__G(grpId) << "Changing subscribe status for grp " << grpId << " to " << subscribed << ": reseting all server msg time stamps for this group, and server global TS." << std::endl;
 #endif
-    for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
+    std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::iterator it = mServerMsgUpdateMap.find(grpId) ;
+    
+    if(mServerMsgUpdateMap.end() == it)
     {
-        std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::iterator it2 = it->second->msgUpdateInfos.find(grpId) ;
-
-        if(it2 != it->second->msgUpdateInfos.end())
-            it->second->msgUpdateInfos.erase(it2) ;
+        RsGxsServerMsgUpdateItem *item = new RsGxsServerMsgUpdateItem(mServType) ;
+        item->grpId = grpId ;
+        item->msgUpdateTS = 0 ;
     }
+    else
+        it->second->msgUpdateTS = 0 ; // reset!
+    
+    // no need to update mGrpServerUpdateItem since the ::updateServerSyncTS() call will do it.
 }
 
 bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const
@@ -3256,9 +3261,9 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
     {
 #ifdef NXS_NET_DEBUG_0
         GXSNETDEBUG_P_(item->PeerId()) << "  local modification time stamp: " << std::dec<< time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago. Update sent: " <<
-                     ((item->updateTS == 0 || item->updateTS < mGrpServerUpdateItem->grpUpdateTS)?"YES":"NO")  << std::endl;
+                     ((item->updateTS < mGrpServerUpdateItem->grpUpdateTS)?"YES":"NO")  << std::endl;
 #endif
-        return (item->updateTS == 0 || item->updateTS < mGrpServerUpdateItem->grpUpdateTS);
+        return item->updateTS < mGrpServerUpdateItem->grpUpdateTS;
     }
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_P_(item->PeerId()) << "  no local time stamp. This will be fixed after updateServerSyncTS(). Not sending for now. " << std::endl;
@@ -3584,9 +3589,9 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
         const RsGxsServerMsgUpdateItem *msui = cit->second;
 
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  local time stamp: " << std::dec<< time(NULL) - msui->msgUpdateTS << " secs ago. Update sent: " << (item->updateTS == 0 || item->updateTS < msui->msgUpdateTS)  ;
+        GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  local time stamp: " << std::dec<< time(NULL) - msui->msgUpdateTS << " secs ago. Update sent: " << (item->updateTS < msui->msgUpdateTS)  ;
 #endif
-        return (item->updateTS < msui->msgUpdateTS || item->updateTS == 0) ;
+        return item->updateTS < msui->msgUpdateTS ;
     }
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  no local time stamp for this grp. " ;
