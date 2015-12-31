@@ -1,5 +1,73 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  a6ee7cc csoler      Thu, 31 Dec 2015 14:15:14 -0500 Merge pull request #230 from G10h4ck/ss_port_invalid_family
+  fac1524 csoler      Thu, 31 Dec 2015 13:58:13 -0500 updated todo list
+  c5feafa Gio         Thu, 31 Dec 2015 19:56:50 +0100 Add missing stacktrace.h
+  1303d85 Gio         Thu, 31 Dec 2015 19:32:46 +0100 more cleanups + sanitize p3Peers::getPeerDetails avoid to look for port on null sockaddr_storage
+  37a3c46 defnax      Thu, 31 Dec 2015 16:40:06 +0100 Fixing Margins
+  ed7f958 Gio         Thu, 31 Dec 2015 15:42:22 +0100 Add stacktrave.h, sanitize p3LinkMgrIMPL::retryConnectTCP avoid to look for port on null sockaddr_stor
+  69f6bd0 electron128 Thu, 31 Dec 2015 14:02:51 +0100 insert the newest channel posts first and the oldest last (modified patch from Eugene Tooms)
+  8a41554 csoler      Wed, 30 Dec 2015 18:20:09 -0500 fixed some leaking memory issues in loadList() methods, and also increased consistency by not retur
+  48750cd csoler      Wed, 30 Dec 2015 17:18:22 -0500 merged
+  ae16fc8 csoler      Wed, 30 Dec 2015 17:13:27 -0500 Merge pull request #229 from G10h4ck/master
+  9c24203 Gio         Wed, 30 Dec 2015 22:47:51 +0100 Fix memory leak in getLocalAddresses
+  cefa5d9 csoler      Wed, 30 Dec 2015 13:55:15 -0500 fixed missing SSL_free when a new connection replaces the existing one
+  aabfcb9 csoler      Wed, 30 Dec 2015 13:51:56 -0500 fixed missign initialisation of err in pqissludp.cc
+  d1bc892 csoler      Wed, 30 Dec 2015 13:44:18 -0500 Merge pull request #228 from csoler/v0.6-GxsDebug
+  0299691 csoler      Wed, 30 Dec 2015 11:14:10 -0500 removed overkill test that would cause sending updates to peers when no messages are available (thx
+  f8be606 csoler      Wed, 30 Dec 2015 10:03:32 -0500 Merge pull request #227 from PhenomRetroShare/Fix_DefaultGxsId
+  894328b Phenom      Wed, 30 Dec 2015 15:43:47 +0100 Fix default Identity on Chat
+  6829309 csoler      Tue, 29 Dec 2015 23:40:09 -0500 merged PR 219 from Jolavilette+Phenom, with some minor modifications
+  2fe646c csoler      Tue, 29 Dec 2015 23:39:52 -0500 merged PR 219 from Jolavilette+Phenom, with some minor modifications
+  7486d54 csoler      Tue, 29 Dec 2015 17:59:31 -0500 Merge pull request #226 from G10h4ck/master
+  3cfa22e Gio         Tue, 29 Dec 2015 23:51:16 +0100 Guard checkNetAddress debug, unary + comment clarification
+  9e0dc01 csoler      Tue, 29 Dec 2015 17:31:35 -0500 changed the reset of client map into a reset f server map when subscribing a group
+  2d438b7 csoler      Tue, 29 Dec 2015 16:39:15 -0500 Merge pull request #162 from G10h4ck/getLocalAddresses
+  eab4253 csoler      Mon, 28 Dec 2015 18:15:51 -0500 Merge pull request #224 from PhenomRetroShare/Fix_GenCertDialogMaskingPGPKeyPassword
+  312cea7 defnax      Mon, 28 Dec 2015 16:42:42 +0100 Fixed double selection bug on Windows Vista style
+  4521e8e Phenom      Wed, 23 Dec 2015 15:49:05 +0100 Fix pqihandler::UpdateRates() to get more accurate.
+  c1b8850 Phenom      Mon, 28 Dec 2015 13:45:22 +0100 Fix GenCertDialog masking PGP Key password dialog at end.
+  00517fe csoler      Sun, 27 Dec 2015 22:22:51 -0500 Merge pull request #223 from csoler/v0.6-ContactList
+  71b3638 csoler      Sun, 27 Dec 2015 22:19:30 -0500 removed some debug output in distant chat
+  a80a666 csoler      Sun, 27 Dec 2015 22:16:04 -0500 added notifiction of denying conversation for distant chat
+  9dfac71 csoler      Sun, 27 Dec 2015 21:10:20 -0500 connected GUI to distant chat permission flags system
+  d287a62 defnax      Mon, 28 Dec 2015 00:39:58 +0100 Merge pull request #221 from PhenomRetroShare/Fix_MacOSX.X_Plugin_Compilation
+  b32eb6e csoler      Sun, 27 Dec 2015 17:00:54 -0500 added temporal filtering to RSGraphWidget to clear up the display. Auto-changes with scale. Can be 
+  a63482d defnax      Sun, 27 Dec 2015 19:14:20 +0100 Expand All/Contacts items by default & store/load expand settings.
+  672ab25 csoler      Sun, 27 Dec 2015 10:03:07 -0500 added safeguard against absurdly large packets in rsserial.cc and output of the beginning of the pa
+  ddec6b1 Phenom      Sat, 26 Dec 2015 17:20:45 +0100 Update MacOS_X_InstallGuide.txt
+  cb4579e Phenom      Thu, 24 Dec 2015 18:54:45 +0100 Fix compilation for plugins but miss RetroShare-gui library linking.
+  3ea2e0f defnax      Sat, 26 Dec 2015 16:14:28 +0100 Merge pull request #222 from PhenomRetroShare/Fix_ColoredFontInChat
+  162b5fa Phenom      Sat, 26 Dec 2015 15:57:46 +0100 Fix colored font in chat.
+  1402051 csoler      Fri, 25 Dec 2015 22:37:06 -0500 added backend for distant message and distant chat filtering based on contact list
+  f5c2aa3 defnax      Fri, 25 Dec 2015 17:23:15 +0100 update emotes
+  7afcc2a defnax      Thu, 24 Dec 2015 17:46:02 +0100 Enabled back counting People Enabled "Sort by Posts" for Channels/Forums/Posted Fixed Width/Height 
+  12c9194 defnax      Thu, 24 Dec 2015 14:31:52 +0100 Added Send Invite Button to People Dialog.
+  e3f496f electron128 Thu, 24 Dec 2015 13:21:40 +0100 fixed bug from contact list branch. Identity flags (pgp-linked, contact) where resettet so sig
+  f30f71d csoler      Wed, 23 Dec 2015 18:07:10 -0500 Merge pull request #218 from csoler/v0.6-ContactList
+  73f58c7 csoler      Wed, 23 Dec 2015 13:48:56 -0500 improved layout and namign in MessageComposer
+  4c50641 csoler      Wed, 23 Dec 2015 12:12:34 -0500 cosmetic change in IdDialog
+  52da8cd csoler      Wed, 23 Dec 2015 12:08:20 -0500 fixed display of contactlist when changing status, and improved computaitonal efficiency
+  0183919 csoler      Wed, 23 Dec 2015 11:20:10 -0500 merged before commit
+  98b27d6 csoler      Wed, 23 Dec 2015 11:18:26 -0500 moved notify calls to RsGenExchange out of RsGxsNetService lock zone, to avoid deadlocks
+  15a7487 defnax      Wed, 23 Dec 2015 16:55:23 +0100 Save sorting on Chat lobby
+  226948c defnax      Wed, 23 Dec 2015 14:08:28 +0100 Merge pull request #217 from PhenomRetroShare/Fix_CompilationWhenNXS_NET_DEBUG_0
+  b1ce2fa defnax      Wed, 23 Dec 2015 14:08:01 +0100 Merge pull request #214 from PhenomRetroShare/Fix_MacOSX.X_Compilation
+  1346259 Phenom      Wed, 23 Dec 2015 13:45:39 +0100 Miss recomment NXS_NET_DEBUG_0...
+  4aea100 Phenom      Wed, 23 Dec 2015 13:40:01 +0100 From jolavillette-morkitu: in rsgxsnetservice.cc when #define NXS_NET_DEBUG_0 is set to 1 the compi
+  5d92720 csoler      Tue, 22 Dec 2015 18:33:01 -0500 merged with upstream/master
+  ab763c7 csoler      Tue, 22 Dec 2015 18:29:27 -0500 converted file to unix mode
+  b7cba22 csoler      Tue, 22 Dec 2015 17:43:37 -0500 updated ubuntu changelog
+  95d8647 defnax      Tue, 22 Dec 2015 19:57:26 +0100 Optimized the emoticon selector box size based on how many emoticons are loaded (by anmo), update e
+  86b5591 Phenom      Mon, 21 Dec 2015 17:25:02 +0100 Fix MacOSX 10.10 Yosemite Compilation
+  334b414 defnax      Tue, 22 Dec 2015 17:24:12 +0100 cleaning up resource file for emojione, removed old smileys
+  8e9fe6d defnax      Tue, 22 Dec 2015 01:07:02 +0100 Merge pull request #189 from hunbernd/feature/chat-enhancements
+  4ccab41 defnax      Mon, 21 Dec 2015 22:27:10 +0100 Added new Emojione Emoticons
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 31 Dec 2015 14:00:00 +0100
+
+retroshare06 (0.6.0-1.20151222.4bf2464a~trusty) trusty; urgency=low
+
   436f619 Gio                 Mon, 21 Dec 2015 17:34:53 +0100 getLocalAddresses collects loopback address too
   9d78bba Gio                 Mon, 21 Dec 2015 15:48:18 +0100 Guard getLocalAddresses debug
   9826c72 Gio                 Tue, 15 Dec 2015 16:37:27 +0100 added rs_inet_ntop crossplatform version of inet_ntop
