@@ -398,7 +398,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		return;
 	}
 
-	std::vector<RsGxsChannelPost>::const_iterator it;
+    std::vector<RsGxsChannelPost>::const_reverse_iterator it;
 
 	int count = posts.size();
 	int pos = 0;
@@ -407,7 +407,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		ui->feedWidget->setSortingEnabled(false);
 	}
 
-	for (it = posts.begin(); it != posts.end(); ++it)
+    for (it = posts.rbegin(); it != posts.rend(); ++it)
 	{
 		if (thread && thread->stopped()) {
 			break;
