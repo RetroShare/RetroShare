@@ -1705,6 +1705,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
                 }
                 delete (*it);
         }
+        load.clear() ;
         return true;
 }
 

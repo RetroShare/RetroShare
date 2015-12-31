@@ -1199,6 +1199,7 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 		delete *it;
 	}
 
+    load.clear() ;
 	return true;
 }
 

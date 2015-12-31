@@ -310,6 +310,18 @@ RsGxsNetService::~RsGxsNetService()
         it->second.clear() ;
     }
     mTransactions.clear() ;
+    
+    delete mGrpServerUpdateItem ;
+    
+    for(ClientGrpMap::iterator it = mClientGrpUpdateMap.begin();it!=mClientGrpUpdateMap.end();++it)
+        delete it->second ;
+    
+    mClientGrpUpdateMap.clear() ;
+        
+    for(std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*>::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();)
+        delete it->second ;
+    
+    mServerMsgUpdateMap.clear() ;
 }
 
 
@@ -1310,9 +1322,7 @@ public:
         else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
         {
             if(mServerGrpUpdateItem == NULL)
-            {
                 mServerGrpUpdateItem = gsui;
-            }
             else
             {
                 std::cerr << "Error! More than one server group update item exists!" << std::endl;
@@ -1320,7 +1330,10 @@ public:
             }
         }
         else
+        {
             std::cerr << "Type not expected!" << std::endl;
+            delete item ;
+        }
     }
 
 private:
@@ -1336,9 +1349,11 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+    	// The delete is done in StoreHere, if necessary
+    
 	std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
         time_t now = time(NULL);
-
+        
 	for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
 		for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
 		{

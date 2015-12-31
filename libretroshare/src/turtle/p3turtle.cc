@@ -728,6 +728,7 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 
 		delete vitem ;
 	}
+    load.clear() ;
 	return true ;
 }
 int p3turtle::getMaxTRForwardRate() const

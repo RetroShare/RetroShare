@@ -1433,6 +1433,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
   	 	rslog(RSL_ALERT, pqisslzone, 
 		  "pqissl::accept() closing Previous/Existing ssl_connection");
 		SSL_shutdown(ssl_connection);
+		SSL_free (ssl_connection);
 	}
 
 	if ((sockfd > -1) && (sockfd != fd))

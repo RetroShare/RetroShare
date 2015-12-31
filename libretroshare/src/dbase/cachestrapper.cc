@@ -1052,6 +1052,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			delete (*it);
 		}
 	}
+    	load.clear() ;
 
 	/* assemble a list of dirs to clean (union of cache dirs) */
 	std::list<std::string> cacheDirs;

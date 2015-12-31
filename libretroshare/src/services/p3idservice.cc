@@ -275,6 +275,7 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
     RsGxsIdLocalInfoItem *lii;
 
     for(std::list<RsItem*>::const_iterator it = items.begin();it!=items.end();++it)
+    {
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
         {
             for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
@@ -282,7 +283,11 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
     
 	    mContacts = lii->mContacts ;
         }
+        
+        delete *it ;
+    }
     
+    items.clear() ;
     return true ;
 }
 

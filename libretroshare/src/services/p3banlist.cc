@@ -885,6 +885,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
         delete *it ;
     }
 
+    load.clear() ;
     return true ;
 }
 
