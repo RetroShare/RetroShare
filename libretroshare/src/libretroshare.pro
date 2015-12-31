@@ -494,7 +494,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
-			util/rsscopetimer.h
+			util/rsscopetimer.h \
+			util/stacktrace.h
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
