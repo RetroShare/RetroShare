@@ -38,6 +38,7 @@
 #include <arpa/inet.h>
 
 #include <sys/poll.h>
+#include <errno.h>
 
 //socket blocking/options.
 #include <fcntl.h>
@@ -48,9 +49,6 @@
 #include "util/rsnet.h" /* more generic networking header */
 
 // Some Network functions that are missing from windows.
-
-in_addr_t inet_netof(struct in_addr addr);
-in_addr_t inet_network(const char *inet_name);
 int inet_aton(const char *name, struct in_addr *addr);
 
 extern int errno; /* Define extern errno, to duplicate unix behaviour */
@@ -93,24 +91,11 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 #include <list>
 
 // Same def - different functions...
-
 void showSocketError(std::string &out);
 
 std::string socket_errorType(int err);
-int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
-int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
-bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
-bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs); // returns all possible addrs.
-
-	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
-bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);
-bool	sameNet(const struct in_addr *addr, const struct in_addr *addr2); 
-
-in_addr_t pqi_inet_netof(struct in_addr addr); // our implementation.
-
-bool LookupDNSAddr(std::string name, struct sockaddr_in &addr);
+bool getLocalAddresses(std::list<struct sockaddr_storage> & addrs);
 
 /* universal socket interface */
 

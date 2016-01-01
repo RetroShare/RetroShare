@@ -59,7 +59,6 @@ net_test
 Tested Code: pqinetwork.cc, rsnet.cc
 Description:
 (1) Tests ntohll / htonll
-(2) Demonstrates inet_netof / inet_network strange behaviour.
 (3) Tests socket binding.
 
 ------------------------------------------------------------
@@ -70,20 +69,7 @@ Description:
 (1) isExternalNet()
 (2) isPrivateNet()
 (3) isLoopbackNet()
-(4) sameNet()
 (5) isValidNet()
-(6) isSameSubnet()
-(7) pqi_inet_netof()
-
-------------------------------------------------------------
-netiface_test
-------------------------------------------------------------
-Tested Code: pqinetwork.cc
-Description :
-(1) getPreferredInterface()
-(2) getLocalInterfaces()
-
-This is currently a manual test - needs to be converted.
 
 ------------------------------------------------------------
 pqiarchive_test

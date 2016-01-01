@@ -252,6 +252,7 @@ int p3GRouter::tick()
 
         _last_matrix_update_time = now ;
         _routing_matrix.updateRoutingProbabilities() ;		// This should be locked.
+        _routing_matrix.cleanUp() ;				// This should be locked.
     }
 
 #ifdef GROUTER_DEBUG
@@ -315,6 +316,7 @@ bool p3GRouter::registerKey(const RsGxsId& authentication_key,const GRouterServi
     grouter_debug() << "   Auth GXS Id : " << authentication_key << std::endl;
     grouter_debug() << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
     grouter_debug() << "   Description : " << info.description_string << std::endl;
+    grouter_debug() << "   Hash        : " << hash << std::endl;
 #endif
 
     return true ;
@@ -508,6 +510,12 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileH
     // Items come out of the pipe in order. We need to recover all chunks before we de-serialise the content and have it handled by handleIncoming()
 
     RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&item->data_size) ;
+
+if(itm == NULL)
+{
+    std::cerr << "(EE) p3GRouter::receiveTurtleData(): cannot de-serialise data. Somthing wrong in the format. Item data (size="<< item->data_size << "): " << RsUtil::BinToHex((char*)item->data_bytes,item->data_size) << std::endl;
+    return ;
+}
 
     itm->PeerId(virtual_peer_id) ;
 
@@ -1653,10 +1661,13 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 
         std::cerr << "    notyfying client." << std::endl;
 #endif
-        client->receiveGRouterData(decrypted_item->destination_key,decrypted_item->signature.keyId,service_id,decrypted_item->data_bytes,decrypted_item->data_size);
-
-        decrypted_item->data_bytes = NULL ;
-        decrypted_item->data_size = 0 ;
+        if(client->acceptDataFromPeer(decrypted_item->signature.keyId)) 
+	{
+		client->receiveGRouterData(decrypted_item->destination_key,decrypted_item->signature.keyId,service_id,decrypted_item->data_bytes,decrypted_item->data_size);
+                
+		decrypted_item->data_bytes = NULL ;
+		decrypted_item->data_size = 0 ;
+	}
 
         delete decrypted_item ;
     }
@@ -1673,10 +1684,14 @@ bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const R
 {
     client = NULL ;
     service_id = 0;
-
     RsGxsId gxs_id ;
-    makeGxsIdAndClientId(hash,gxs_id,service_id) ;
-
+    
+    if(!locked_getGxsIdAndClientId(hash,gxs_id,service_id))
+    {
+        std::cerr << "  p3GRouter::ERROR: locked_getGxsIdAndClientId(): no key registered for hash " << hash << std::endl;
+        return false ;
+    }
+    
     if(gxs_id != destination_key)
     {
         std::cerr << "  ERROR: verification (destination) GXS key " << destination_key << " does not match key from hash " << gxs_id << std::endl;
@@ -1698,6 +1713,15 @@ bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const R
     return true ;
 }
 
+void p3GRouter::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id)
+{
+    RS_STACK_MUTEX(grMtx) ;
+#ifdef GROUTER_DEBUG
+    grouter_debug() << "Received new routing clue for key " << mid << " from peer " << peer_id << std::endl;
+#endif
+    _routing_matrix.addTrackingInfo(mid,peer_id) ;
+    _changed = true ;
+}
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(grMtx) ;
@@ -1705,6 +1729,7 @@ void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
     grouter_debug() << "Received new routing clue for key " << id << " from peer " << peer_id << std::endl;
 #endif
     _routing_matrix.addRoutingClue(id,peer_id,RS_GROUTER_BASE_WEIGHT_GXS_PACKET) ;
+    _changed = true ;
 }
 
 bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientService *service)
@@ -2002,15 +2027,25 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
     bytes[18] = (client >> 8) & 0xff ;
     bytes[19] =  client       & 0xff ;
 
-    return Sha1CheckSum(bytes) ;
+    return RsDirUtil::sha1sum(bytes,20) ;
 }
-void p3GRouter::makeGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
 {
     assert(       gxs_id.SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
 
-    gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
-    client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
+    //gxs_id = RsGxsId(sum.toByteArray());// takes the first 16 bytes
+    //client_id = sum.toByteArray()[19] + (sum.toByteArray()[18] << 8) ;
+    
+    std::map<Sha1CheckSum, GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(sum);
+    
+    if(it == _owned_key_ids.end())
+        return false ;
+    
+    gxs_id = it->second.authentication_key ;
+    client_id = it->second.service_id ;
+    
+    return true ;
 }
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
@@ -2060,6 +2095,7 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 #ifdef GROUTER_DEBUG
     debugDump();
 #endif
+    items.clear() ;
     return true ;
 }
 bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items) 
@@ -2154,6 +2190,13 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
     return true ;
 }
 
+bool p3GRouter::getTrackingInfo(const RsGxsMessageId &mid, RsPeerId &provider_id)
+{
+        RS_STACK_MUTEX(grMtx) ;
+        
+        return _routing_matrix.getTrackingInfo(mid,provider_id) ;
+}
+
 // Dump everything
 //
 void p3GRouter::debugDump()
@@ -2214,8 +2257,8 @@ void p3GRouter::debugDump()
 
     grouter_debug() << "  Routing matrix: " << std::endl;
 
-//   if(_debug_enabled)
- //      _routing_matrix.debugDump() ;
+   if(_debug_enabled)
+       _routing_matrix.debugDump() ;
 }
 
 

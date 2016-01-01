@@ -389,6 +389,11 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 #endif
 		return NULL;
 	}
+	if(pkt_size > getRsPktMaxSize())
+	{
+	   std::cerr << "(EE) trying to deserialise a packet with absurdely large size " << pkt_size << ". This means there's a bug upward or packet corruption. Packet content: " << RsUtil::BinToHex((unsigned char*)data,std::min(300u,pkt_size)) ;
+	   return NULL ;
+	}
 
 	/* store the packet size to return the amount we should use up */
 	*size = pkt_size;
@@ -427,7 +432,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
         std::cerr << std::endl;
 
-        RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
+        //RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
 
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";

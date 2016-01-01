@@ -195,7 +195,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	if (url.scheme() != RSLINK_SCHEME) {
 		/* No RetroShare-Link */
+#ifdef DEBUG_RSLINK
 		std::cerr << "Not a RS link: scheme=" << url.scheme().toStdString() << std::endl;
+#endif
 		return;
 	}
 
@@ -1333,7 +1335,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
 					{
-						if(gxs_details.mIsOwnId)
+						if(gxs_details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
 						{
 							QMessageBox::warning(NULL,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
 							break ;

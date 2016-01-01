@@ -38,32 +38,33 @@
  */
 
 /* These are Cache Only */
-const uint16_t RS_SERVICE_TYPE_FILE_INDEX    = 0x0001;
+const uint16_t RS_SERVICE_TYPE_FILE_INDEX     = 0x0001;
 
 /* These are Services only */
-const uint16_t RS_SERVICE_TYPE_DISC          = 0x0011;
-const uint16_t RS_SERVICE_TYPE_CHAT          = 0x0012;
-const uint16_t RS_SERVICE_TYPE_MSG           = 0x0013;
-const uint16_t RS_SERVICE_TYPE_TURTLE        = 0x0014;
-const uint16_t RS_SERVICE_TYPE_TUNNEL        = 0x0015;
-const uint16_t RS_SERVICE_TYPE_HEARTBEAT     = 0x0016;
-const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER = 0x0017;
-const uint16_t RS_SERVICE_TYPE_GROUTER       = 0x0018;
+const uint16_t RS_SERVICE_TYPE_DISC           = 0x0011;
+const uint16_t RS_SERVICE_TYPE_CHAT           = 0x0012;
+const uint16_t RS_SERVICE_TYPE_MSG            = 0x0013;
+const uint16_t RS_SERVICE_TYPE_TURTLE         = 0x0014;
+const uint16_t RS_SERVICE_TYPE_TUNNEL         = 0x0015;
+const uint16_t RS_SERVICE_TYPE_HEARTBEAT      = 0x0016;
+const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER  = 0x0017;
+const uint16_t RS_SERVICE_TYPE_GROUTER        = 0x0018;
 
-const uint16_t RS_SERVICE_TYPE_SERVICEINFO   = 0x0020;
+const uint16_t RS_SERVICE_TYPE_SERVICEINFO    = 0x0020;
 /* Bandwidth Control */
-const uint16_t RS_SERVICE_TYPE_BWCTRL        = 0x0021;
-// New Mail Service (replace old Msg Service)
-const uint16_t RS_SERVICE_TYPE_MAIL          = 0x0022;
-const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL   = 0x0023;
-const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL  = 0x0024;
-const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL  = 0x0025;
+const uint16_t RS_SERVICE_TYPE_BWCTRL         = 0x0021;
+// New Mail Service (replace old Msg Service) 
+const uint16_t RS_SERVICE_TYPE_MAIL           = 0x0022;
+const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL    = 0x0023;
+const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL   = 0x0024;
+const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL   = 0x0025;
 const uint16_t RS_SERVICE_TYPE_SERVICE_CONTROL= 0x0026;
-const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT  = 0x0027;
+const uint16_t RS_SERVICE_TYPE_DISTANT_CHAT   = 0x0027;
+const uint16_t RS_SERVICE_TYPE_GXS_TUNNEL     = 0x0028;
 
 // Non essential services.
-const uint16_t RS_SERVICE_TYPE_BANLIST       = 0x0101;
-const uint16_t RS_SERVICE_TYPE_STATUS        = 0x0102;
+const uint16_t RS_SERVICE_TYPE_BANLIST        = 0x0101;
+const uint16_t RS_SERVICE_TYPE_STATUS         = 0x0102;
 
  /* New Cache Services  */
 /* Rs Network Exchange Service */

@@ -32,6 +32,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsids.h"
 #include "serialiser/rstlvimage.h"
 #include "retroshare/rsgxscommon.h"
@@ -63,6 +64,11 @@ extern RsIdentity *rsIdentity;
 #define RSID_MAXIMUM_NICKNAME_SIZE 30
 
 std::string rsIdTypeToString(uint32_t idtype);
+
+static const uint32_t RS_IDENTITY_FLAGS_IS_A_CONTACT = 0x0001;
+static const uint32_t RS_IDENTITY_FLAGS_PGP_LINKED   = 0x0002;
+static const uint32_t RS_IDENTITY_FLAGS_PGP_KNOWN    = 0x0004;
+static const uint32_t RS_IDENTITY_FLAGS_IS_OWN_ID    = 0x0008;
 
 class GxsReputation
 {
@@ -114,8 +120,9 @@ class RsGxsIdGroup
     time_t mLastUsageTS ;
 
     // Not Serialised - for GUI's benefit.
-	bool mPgpKnown;
-	RsPgpId mPgpId;
+    bool mPgpKnown;
+    bool mIsAContact;	// change that into flags one day
+    RsPgpId mPgpId;
     GxsReputation mReputation;
 };
 
@@ -153,30 +160,31 @@ class RsRecognTagDetails
 	bool is_pending;
 };
 
-
 class RsIdentityDetails
 {
 public:
     RsIdentityDetails()
-            :mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-              mReputation(), mLastUsageTS(0) { return; }
+            : mFlags(0), mLastUsageTS(0) { return; }
 
     RsGxsId mId;
 
     // identity details.
     std::string mNickname;
-    bool mIsOwnId;
+    
+    uint32_t mFlags ;
 
     // PGP Stuff.
-    bool mPgpLinked;
-    bool mPgpKnown;
     RsPgpId mPgpId;
 
     // Recogn details.
     std::list<RsRecognTag> mRecognTags;
 
-    // reputation details.
-    GxsReputation mReputation;
+    // Cyril: Reputation details. At some point we might want to merge information
+    // between the two into a single global score. Since the old reputation system
+    // is not finished yet, I leave this in place. We should decide what to do with it.
+    
+    GxsReputation mReputation_oldSystem;		// this is the old "mReputation" field, which apparently is not used.
+    RsReputations::ReputationInfo mReputation;
 
     // avatar
     RsGxsImage mAvatar ;
@@ -214,7 +222,7 @@ public:
 
 /********************************************************************************************/
 /********************************************************************************************/
-
+    
 	// For Other Services....
 	// It should be impossible for them to get a message which we don't have the identity.
 	// Its a major error if we don't have the identity.
@@ -241,6 +249,9 @@ virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
                         uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
 
+    virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
+    virtual bool isARegularContact(const RsGxsId& id) = 0 ;
+    
 	// Specific RsIdentity Functions....
         /* Specific Service Data */
 	/* We expose these initially for testing / GUI purposes.

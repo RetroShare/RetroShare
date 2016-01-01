@@ -188,6 +188,11 @@ NetworkDialog
 	qproperty-backgroundColorDenied: lightGray;
 }
 
+RSTextBrowser, MimeTextEdit
+{
+	qproperty-textColorQuote: rgb(120, 153, 34);
+}
+
 QLabel#headerTextLabel
 {
 	qproperty-fontSizeFactor: 225;

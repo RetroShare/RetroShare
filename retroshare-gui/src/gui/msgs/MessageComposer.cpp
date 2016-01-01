@@ -136,8 +136,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     m_completer = NULL;
     
     ui.distantFrame->hide();
-    ui.respond_to_CB->setEnabled(false) ;
-    ui.fromLabel->setEnabled(false) ;
+    ui.respond_to_CB->hide();
+    ui.fromLabel->hide();
 
     Settings->loadWidgetInformation(this);
 
@@ -266,10 +266,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
-    ui.filterComboBox->addItem(tr("All"));
+    ui.filterComboBox->addItem(tr("All addresses (mixed)"));
     ui.filterComboBox->addItem(tr("Friend Nodes"));
-    ui.filterComboBox->addItem(tr("Distant peer identities"));
-    ui.filterComboBox->setCurrentIndex(0);
+    ui.filterComboBox->addItem(tr("All people"));
+    ui.filterComboBox->addItem(tr("My contacts"));
+    ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -389,15 +390,15 @@ void MessageComposer::updateCells(int,int)
     }
     if(has_gxs)
     {
-        ui.respond_to_CB->setEnabled(true) ;
+        ui.respond_to_CB->show();
         ui.distantFrame->show();
-        ui.fromLabel->setEnabled(true);
+        ui.fromLabel->show();
     }
     else
     {
-        ui.respond_to_CB->setEnabled(false) ;
+        ui.respond_to_CB->hide();
         ui.distantFrame->hide() ;
-        ui.fromLabel->setEnabled(false);
+        ui.fromLabel->hide();
     }
 }
 
@@ -2569,6 +2570,11 @@ void MessageComposer::filterComboBoxChanged(int i)
 
 		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
 				  break ;
+
+					  
+		case 3: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS) ;
+				  break ;		  
+				  				  
 		default: ;
 	}
 

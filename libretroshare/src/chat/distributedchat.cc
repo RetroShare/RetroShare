@@ -34,6 +34,7 @@
 #include "pqi/p3historymgr.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
 #include "rsserver/p3face.h"
 #include "gxs/rsgixs.h"
@@ -168,13 +169,27 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(cli->signature.keyId,details))
+	    {
+#ifdef DEBUG_CHAT_LOBBIES
+		    std::cerr << "(WW) cannot get ID " << cli->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
+		    return false;
+	    }
+
+	    if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
 		    return false ;
 	    }
     }
+    if(rsReputations->isIdentityBanned(cli->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
+        return false ;
+    }
+    
     if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
         return false;
 
@@ -665,12 +680,25 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(item->signature.keyId,details) || !details.mPgpKnown)
+	    if(!rsIdentity->getIdDetails(item->signature.keyId,details))
+	    {
+#ifdef DEBUG_CHAT_LOBBIES
+		    std::cerr << "(WW) cannot get ID " << item->signature.keyId << " for checking signature  of lobby item." << std::endl;
+#endif
+		    return ;
+	    }
+
+	    if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
 		    return ;
 	    }
+    }
+    if(rsReputations->isIdentityBanned(item->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
+        return ;
     }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
@@ -1260,7 +1288,7 @@ void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 			else
 				std::cerr << " : Match!" << std::endl;
 
-			std::cerr << "  Addign new friend " << item->PeerId() << " to lobby." << std::endl;
+			std::cerr << "  Adding new friend " << item->PeerId() << " to lobby." << std::endl;
 #endif
 
 			it->second.participating_friends.insert(item->PeerId()) ;
@@ -1699,7 +1727,7 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
             // Only send a nickname change event if the two Identities are not anonymous
 
-            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && det1.mPgpLinked && det2.mPgpLinked)
+            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && (det1.mFlags & det2.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
                 sendLobbyStatusPeerChangedNickname(lobby_id, nick.toStdString()) ;
         }
 
@@ -1870,24 +1898,23 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 bool DistributedChatService::processLoadListItem(const RsItem *item)
 {
     const RsConfigKeyValueSet *vitem = NULL ;
-    _default_identity.clear() ;
 
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
 		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
             if(kit->key == "DEFAULT_IDENTITY")
-			{
+	    {
 #ifdef DEBUG_CHAT_LOBBIES
-				std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
+		    std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
 #endif
-                if (!kit->value.empty())
-                {
-                    _default_identity = RsGxsId(kit->value) ;
-                    if(_default_identity.isNull())
-                        std::cerr << "ERROR: default identity is malformed." << std::endl;
-                }
+		    if (!kit->value.empty())
+		    {
+			    _default_identity = RsGxsId(kit->value) ;
+			    if(_default_identity.isNull())
+				    std::cerr << "ERROR: default identity is malformed." << std::endl;
+		    }
 
-				return true;
-			}
+		    return true;
+	    }
 
 	const RsChatLobbyConfigItem *clci = NULL ;
 

@@ -208,7 +208,7 @@ p3Config::p3Config()
 }
 
 
-bool p3Config::loadConfiguration(RsFileHash &loadHash)
+bool p3Config::loadConfiguration(RsFileHash& /* loadHash */)
 {
 	return loadConfig();
 }
@@ -304,7 +304,11 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	/* set hash */
 	setHash(bio->gethash());
 
-	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+	std::string signatureRead;
+	RsFileHash strHash(Hash());
+	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
+
+	BinMemInterface *signbio = new BinMemInterface(signatureRead.size(), BIN_FLAGS_READABLE);
 
 	if(!signbio->readfromfile(signFname.c_str()))
 	{
@@ -313,10 +317,6 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	}
 
 	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
-
-	std::string signatureRead;
-	RsFileHash strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
 
 	delete signbio;
 

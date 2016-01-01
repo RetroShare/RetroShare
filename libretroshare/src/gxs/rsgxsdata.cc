@@ -33,7 +33,7 @@ RsGxsGrpMetaData::RsGxsGrpMetaData()
     clear();
 }
 
-uint32_t RsGxsGrpMetaData::serial_size()
+uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version)
 {
     uint32_t s = 8; // header size
 
@@ -46,10 +46,15 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += GetTlvStringSize(mServiceString);
     s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += 4; // for mCircleType
+    s += 4;                                  // for mCircleType
     s += mCircleId.serial_size();
-    s += 4; // mAuthenFlag
-    s += mParentGrpId.serial_size();
+    s += 4;                                  // mAuthenFlag
+    s += mParentGrpId.serial_size();         // mParentGroupId
+    
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+	    s += 4;                                  // mSignFlag
+    else if(api_version != RS_GXS_GRP_META_DATA_VERSION_ID_0001)
+        std::cerr << "(EE) wrong/unknown API version " << api_version << " requested in RsGxsGrpMetaData::serial_size()" << std::endl;
 
     return s;
 }
@@ -91,10 +96,9 @@ void RsGxsGrpMetaData::clear(){
     mHash.clear() ;
 }
 
-bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
+bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize,uint32_t api_version)
 {
-
-    uint32_t tlvsize = serial_size() ;
+    uint32_t tlvsize = serial_size(api_version) ;
     uint32_t offset = 0;
 
     if (pktsize < tlvsize)
@@ -104,7 +108,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, 0, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, api_version, tlvsize); 
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;
@@ -130,6 +134,8 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
 
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+	    ok &= setRawUInt32(data, tlvsize, &offset, mSignFlags);	// new in API v2. Was previously missing. Kept in the end for backward compatibility
 
     return ok;
 }
@@ -154,12 +160,31 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= getRawUInt32(data, pktsize, &offset, &mCircleType);
     ok &= getRawUInt32(data, pktsize, &offset, &mAuthenFlags);
+    
+       
     ok &= mAuthorId.deserialise(data, pktsize, offset);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
     ok &= mCircleId.deserialise(data, pktsize, offset);
     ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
+    
+    switch(getRsItemId(data))
+    {
+    case RS_GXS_GRP_META_DATA_VERSION_ID_0002:	ok &= getRawUInt32(data, pktsize, &offset, &mSignFlags);	// current API
+	    break ;
 
+    case RS_GXS_GRP_META_DATA_VERSION_ID_0001: mSignFlags = 0;						// old API. Do not leave this uninitialised!
+	    break ;
+
+    default:
+	    std::cerr << "(EE) RsGxsGrpMetaData::deserialise(): ERROR: unknown API version " << std::hex << getRsItemId(data) << std::dec << std::endl;
+    }
+ 
+    if(offset != pktsize)
+    {
+	std::cerr << "(EE) RsGxsGrpMetaData::deserialise(): ERROR: unmatched size " << offset << ", expected: " << pktsize << std::dec << std::endl;
+    	return false ;
+    }
 #ifdef DROP_NON_CANONICAL_ITEMS
     if(mGroupName.length() > RsGxsGrpMetaData::MAX_ALLOWED_STRING_SIZE)
     {
@@ -202,8 +227,8 @@ uint32_t RsGxsMsgMetaData::serial_size()
 
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
-    s += 4;
-    s += 4;
+    s += 4;					// mPublishTS
+    s += 4;					// mMsgFlags
 
     return s;
 }
@@ -239,7 +264,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, 0, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, RS_GXS_MSG_META_DATA_VERSION_ID_0002, tlvsize);
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;

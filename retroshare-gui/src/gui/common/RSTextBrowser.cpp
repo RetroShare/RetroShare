@@ -14,6 +14,8 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	mImageBlockWidget = NULL;
 	mLinkClickActive = true;
 
+	highliter = new RsSyntaxHighlighter(this);
+
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 

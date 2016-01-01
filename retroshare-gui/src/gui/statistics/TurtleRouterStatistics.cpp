@@ -195,8 +195,8 @@ TurtleRouterStatistics::TurtleRouterStatistics(QWidget *parent)
 	_tunnel_statistics_F->setFrameStyle(QFrame::NoFrame);
 	_tunnel_statistics_F->setFocusPolicy(Qt::NoFocus);
 	
-	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Tunnel Requests")));
-
+	routertabWidget->addTab(new TurtleRouterDialog(),QString(tr("Anonymous tunnels")));
+	routertabWidget->addTab(new GxsTunnelsDialog(),QString(tr("Authenticated tunnels")));
 
         float fontHeight = QFontMetricsF(font()).height();
         float fact = fontHeight/14.0;

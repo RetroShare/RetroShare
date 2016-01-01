@@ -56,6 +56,8 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	0x0004
 
+#define GXSID_MAX_CACHE_SIZE 5000
+
 static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
 static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
 
@@ -144,8 +146,8 @@ RsIdentity *rsIdentity = NULL;
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
+	mPublicKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPublicKeyCache"), 
+	mPrivateKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
 	mIdMtx("p3IdService"), mNes(nes),
 	mPgpUtils(pgpUtils)
 {
@@ -210,6 +212,32 @@ uint32_t p3IdService::idAuthenPolicy()
 
 	return policy;
 }
+
+bool p3IdService::isARegularContact(const RsGxsId& id) 
+{
+    RsStackMutex stack(mIdMtx);
+    return mContacts.find(id) != mContacts.end() ;
+}
+
+bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
+{
+    std::set<RsGxsId>::iterator it = mContacts.find(id) ;
+    
+    if(b && (it == mContacts.end()))
+    {
+        mContacts.insert(id) ;
+        slowIndicateConfigChanged() ;
+    }
+    
+    if( (!b) &&(it != mContacts.end()))
+    {
+        mContacts.erase(it) ;
+        slowIndicateConfigChanged() ;
+    }
+    
+    return true ;
+}
+
 void p3IdService::slowIndicateConfigChanged()
 {
     time_t now = time(NULL) ;
@@ -247,9 +275,19 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
     RsGxsIdLocalInfoItem *lii;
 
     for(std::list<RsItem*>::const_iterator it = items.begin();it!=items.end();++it)
+    {
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
+        {
             for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
                 mKeysTS.insert(*it2) ;
+    
+	    mContacts = lii->mContacts ;
+        }
+        
+        delete *it ;
+    }
+    
+    items.clear() ;
     return true ;
 }
 
@@ -263,6 +301,7 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
     cleanup = true ;
     RsGxsIdLocalInfoItem *item = new RsGxsIdLocalInfoItem ;
     item->mTimeStamps = mKeysTS ;
+    item->mContacts = mContacts ;
 
     items.push_back(item) ;
     return true ;
@@ -408,10 +447,15 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+            if(mContacts.find(id) != mContacts.end())
+		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
 
         // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
         if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
             details.mNickname = "[too long a name]" ;
+        
+        rsReputations->getReputationInfo(id,details.mReputation) ;
 
             return true;
         }
@@ -421,6 +465,12 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
         {
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
+            
+            if(mContacts.find(id) != mContacts.end())
+		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
+
+        rsReputations->getReputationInfo(id,details.mReputation) ;
+        
             return true;
         }
     }
@@ -831,7 +881,7 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		rep.id = id;
-                rep.score = data.details.mReputation.mOverallScore;
+                rep.score = 0;//data.details.mReputation.mOverallScore;
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::getReputation() id: ";
                 std::cerr << id.toStdString() << " score: " <<
@@ -1022,33 +1072,33 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 			if (item)
 			{
 #ifdef DEBUG_IDS
-        std::cerr << "p3IdService::getGroupData() Item is:";
-        std::cerr << std::endl;
-        item->print(std::cerr);
-        std::cerr << std::endl;
+				std::cerr << "p3IdService::getGroupData() Item is:";
+				std::cerr << std::endl;
+				item->print(std::cerr);
+				std::cerr << std::endl;
 #endif // DEBUG_IDS
-        RsGxsIdGroup group ;
-    item->toGxsIdGroup(group,false) ;
+				RsGxsIdGroup group ;
+				item->toGxsIdGroup(group,false) ;
 
-    {
-        RS_STACK_MUTEX(mIdMtx) ;
-    group.mLastUsageTS = locked_getLastUsageTS(RsGxsId(group.mMeta.mGroupId)) ;
-    }
+				{
+					RS_STACK_MUTEX(mIdMtx) ;
+					group.mLastUsageTS = locked_getLastUsageTS(RsGxsId(group.mMeta.mGroupId)) ;
+				}
 
-        // Decode information from serviceString.
-        SSGxsIdGroup ssdata;
-        if (ssdata.load(group.mMeta.mServiceString))
-        {
-            group.mPgpKnown = ssdata.pgp.idKnown;
-            group.mPgpId    = ssdata.pgp.pgpId;
-            group.mReputation = ssdata.score.rep;
+				// Decode information from serviceString.
+				SSGxsIdGroup ssdata;
+				if (ssdata.load(group.mMeta.mServiceString))
+				{
+					group.mPgpKnown = ssdata.pgp.idKnown;
+					group.mPgpId    = ssdata.pgp.pgpId;
+					group.mReputation = ssdata.score.rep;
 #ifdef DEBUG_IDS
-            std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
-            std::cerr << std::endl;
-            std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
-            std::cerr << std::endl;
-            std::cerr << "\t mGpgId: " << group.mPgpId;
-            std::cerr << std::endl;
+					std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgId: " << group.mPgpId;
+					std::cerr << std::endl;
 #endif // DEBUG_IDS
 				}
 				else
@@ -1056,13 +1106,15 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 					group.mPgpKnown = false;
 					group.mPgpId.clear();
 
-                    std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
-                          << group.mMeta.mServiceString << "\"" ;
+					std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString \""
+					          << group.mMeta.mServiceString << "\"" ;
 					std::cerr << std::endl;
 				}
 
+				group.mIsAContact =  (mContacts.find(RsGxsId(group.mMeta.mGroupId)) != mContacts.end());
+
 				groups.push_back(group);
-                delete(item);
+				delete(item);
 			}
 			else
 			{
@@ -1593,8 +1645,10 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
     std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-    details.mIsOwnId   = (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-    details.mPgpLinked = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+    details.mFlags = 0 ;
+    
+    if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
+    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
 
     /* rest must be retrived from ServiceString */
     updateServiceString(item->meta.mServiceString);
@@ -1607,17 +1661,14 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 	SSGxsIdGroup ssdata;
 	if (ssdata.load(serviceString))
 	{
-		if (details.mPgpLinked)
+		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
-			details.mPgpKnown = ssdata.pgp.idKnown;
-			if (details.mPgpKnown)
-			{
+	    		if(ssdata.pgp.idKnown) details.mFlags |= RS_IDENTITY_FLAGS_PGP_KNOWN ;
+                        
+			if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 				details.mPgpId = ssdata.pgp.pgpId;
-			}
 			else
-			{
 				details.mPgpId.clear();
-			}
 		}
 
 
@@ -1669,14 +1720,14 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 		}
 
 		// copy over Reputation scores.
-		details.mReputation = ssdata.score.rep;
+		//details.mReputation = ssdata.score.rep;
 	}
 	else
 	{
-		details.mPgpKnown = false;
+		details.mFlags &= ~RS_IDENTITY_FLAGS_PGP_KNOWN ;
 		details.mPgpId.clear();
-		details.mReputation.updateIdScore(false, false);
-		details.mReputation.update();
+		//details.mReputation.updateIdScore(false, false);
+		//details.mReputation.update();
 	}
 }
 

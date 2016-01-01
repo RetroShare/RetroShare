@@ -439,8 +439,6 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
     lst.clear() ;
     for(std::map<sockaddr_storage,BanListPeer>::const_iterator it(mBanSet.begin());it!=mBanSet.end();++it)
     {
-        bool already_banned = false ;
-
         if(!acceptedBanSet_locked(it->second))
             continue ;
 
@@ -498,7 +496,7 @@ bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
-    if(getBitRange(addr) > masked_bytes)
+    if(getBitRange(addr) > uint32_t(masked_bytes))
     {
         std::cerr << "(EE) Input to p3BanList::addIpRange is inconsistent: ip=" << sockaddr_storage_iptostring(addr) << "/" << 32-8*masked_bytes << std::endl;
         return false ;
@@ -887,6 +885,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
         delete *it ;
     }
 
+    load.clear() ;
     return true ;
 }
 
@@ -955,7 +954,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 	{
 		/* see if it needs an update */
 		if ((mit->second.reason != reason) ||
-            (mit->second.level != level) ||
+            (mit->second.level != uint32_t(level)) ||
             (mit->second.mTs < time_stamp))
 		{
 			/* update */
@@ -1044,7 +1043,7 @@ int p3BanList::condenseBanSources_locked()
                         continue;
                     }
 
-        int lvl = lit->second.level;
+        uint32_t lvl = lit->second.level;
         if (it->first != ownId)
         {
             /* as from someone else, increment level */

@@ -55,4 +55,17 @@ ResponseTask* ResourceRouter::handleRequest(Request& req, Response& resp)
     return 0;
 }
 
+bool ResourceRouter::isNameUsed(std::string name)
+{
+    std::vector<std::pair<std::string, HandlerBase*> >::iterator vit;
+    for(vit = mHandlers.begin(); vit != mHandlers.end(); vit++)
+    {
+        if(vit->first == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 } // namespace resource_api

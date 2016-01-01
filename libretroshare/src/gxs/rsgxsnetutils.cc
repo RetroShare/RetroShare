@@ -99,7 +99,7 @@ bool MsgRespPending::accepted()
 			GixsReputation rep;
                         if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
-				if(rep.score > mCutOff)
+				if(rep.score >= mCutOff)
 				{
 					entry.mPassedVetting = true;
 					count++;
@@ -134,7 +134,7 @@ bool GrpRespPending::accepted()
 
                         if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
-				if(rep.score > mCutOff)
+				if(rep.score >= mCutOff)
 				{
 					entry.mPassedVetting = true;
 					count++;

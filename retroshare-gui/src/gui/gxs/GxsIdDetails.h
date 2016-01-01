@@ -39,7 +39,8 @@ enum GxsIdDetailsType
 	GXS_ID_DETAILS_TYPE_EMPTY,
 	GXS_ID_DETAILS_TYPE_LOADING,
 	GXS_ID_DETAILS_TYPE_DONE,
-	GXS_ID_DETAILS_TYPE_FAILED
+	GXS_ID_DETAILS_TYPE_FAILED,
+	GXS_ID_DETAILS_TYPE_BANNED
 };
 
 typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &data);
@@ -49,10 +50,11 @@ class GxsIdDetails : public QObject
 	Q_OBJECT
 
 public:
-    static const int ICON_TYPE_AVATAR = 0x0001 ;
-    static const int ICON_TYPE_PGP    = 0x0002 ;
-    static const int ICON_TYPE_RECOGN = 0x0004 ;
-    static const int ICON_TYPE_ALL    = 0x0007 ;
+    static const int ICON_TYPE_AVATAR  = 0x0001 ;
+    static const int ICON_TYPE_PGP     = 0x0002 ;
+    static const int ICON_TYPE_RECOGN  = 0x0004 ;
+    static const int ICON_TYPE_ALL     = 0x0007 ;
+    static const int ICON_TYPE_REDACTED= 0x0008 ;
 
 	GxsIdDetails();
 	virtual ~GxsIdDetails();

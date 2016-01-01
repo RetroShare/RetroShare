@@ -199,8 +199,7 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 			if (item)
 			{
 				RsGxsForumGroup grp = item->mGroup;
-				item->mGroup.mMeta = item->meta;
-				grp.mMeta = item->mGroup.mMeta;
+				grp.mMeta = item->meta;
 				delete item;
 				groups.push_back(grp);
 			}
@@ -230,7 +229,6 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 
 		for(; mit != msgData.end(); ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 

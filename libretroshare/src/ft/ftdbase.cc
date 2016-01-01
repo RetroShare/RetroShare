@@ -328,6 +328,8 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 				if(sscanf(mit->second.c_str(),"%d",&t) == 1)
 					setWatchPeriod(t);
 			}
+	    		delete *it ;
+            		continue ;
 		}
 
 		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
@@ -348,10 +350,13 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
 		dirList.push_back(info) ;
+        
+        	delete *it ;
 	}
 
 	/* set directories */
 	setSharedDirectories(dirList);
+    load.clear() ;
 	return true;
 }
 

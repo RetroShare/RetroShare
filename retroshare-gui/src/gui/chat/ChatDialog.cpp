@@ -96,7 +96,7 @@ void ChatDialog::init(ChatId id, const QString &title)
 
     if (cd == NULL) {
 
-        if(id.isGxsId())
+        if(id.isDistantChatId())
             chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // force open for distant chat
 
         if (chatflags & RS_CHAT_OPEN) {
@@ -104,12 +104,16 @@ void ChatDialog::init(ChatId id, const QString &title)
                 ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
                 cld->init();
                 cd = cld;
-            } else if(id.isGxsId()) {
-                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog();
-                QString peer_name = pdcd->getPeerName(id) ;
-                pdcd->init(id.toGxsId(), tr("Talking to")+" "+peer_name) ;
+            } 
+            else if(id.isDistantChatId())
+            {
+                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toDistantChatId());
+                
+                pdcd->init(id.toDistantChatId());
                 cd = pdcd;
-            } else {
+            } 
+            else 
+            {
                 RsPeerDetails sslDetails;
                 if (rsPeers->getPeerDetails(id.toPeerId(), sslDetails)) {
                     PopupChatDialog* pcd = new PopupChatDialog();
@@ -168,7 +172,7 @@ void ChatDialog::init(ChatId id, const QString &title)
     if(msg.chat_id.isBroadcast())
         return; // broadcast is not handled by a chat dialog
 
-    if(msg.incoming && (msg.chat_id.isPeerId() || msg.chat_id.isGxsId()))
+    if(msg.incoming && (msg.chat_id.isPeerId() || msg.chat_id.isDistantChatId()))
         // play sound when recv a message
         SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
 
@@ -334,8 +338,8 @@ void ChatDialog::setPeerStatus(uint32_t status)
         RsPeerId vpid;
         if(mChatId.isPeerId())
             vpid = mChatId.toPeerId();
-        if(mChatId.isGxsId())
-            vpid = RsPeerId(mChatId.toGxsId());
+        if(mChatId.isDistantChatId())
+            vpid = RsPeerId(mChatId.toDistantChatId());
         cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
     }
 }

@@ -37,6 +37,13 @@
 class RsGroupMetaData;
 class RsMsgMetaData;
 
+static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0001 = 0x0000 ; // change this, and keep old values if the content changes
+static const uint32_t RS_GXS_GRP_META_DATA_VERSION_ID_0002 = 0xaf01 ; // current API
+
+static const uint32_t RS_GXS_MSG_META_DATA_VERSION_ID_0002 = 0x0000 ; // current API
+
+static const uint32_t RS_GXS_GRP_META_DATA_CURRENT_API_VERSION = RS_GXS_GRP_META_DATA_VERSION_ID_0002;
+
 class RsGxsGrpMetaData
 {
 public:
@@ -44,15 +51,15 @@ public:
 
     RsGxsGrpMetaData();
     bool deserialise(void *data, uint32_t &pktsize);
-    bool serialise(void* data, uint32_t &pktsize);
-    uint32_t serial_size();
+    bool serialise(void* data, uint32_t &pktsize, uint32_t api_version);
+    uint32_t serial_size(uint32_t api_version);
     void clear();
     void operator =(const RsGroupMetaData& rMeta);
 
     RsGxsGroupId mGroupId;
     RsGxsGroupId mOrigGrpId;
     std::string mGroupName;
-    uint32_t    mGroupFlags;
+    uint32_t    mGroupFlags;	// GXS_SERV::FLAG_PRIVACY_RESTRICTED | GXS_SERV::FLAG_PRIVACY_PRIVATE | GXS_SERV::FLAG_PRIVACY_PUBLIC
     uint32_t    mPublishTs;
     uint32_t    mSignFlags;
     RsGxsId mAuthorId;
@@ -123,7 +130,6 @@ public:
     uint32_t recvTS;
     RsFileHash mHash;
     bool validated;
-
 };
 
 

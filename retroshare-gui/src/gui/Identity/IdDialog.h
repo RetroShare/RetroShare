@@ -73,14 +73,22 @@ private slots:
 
 	void updateSelection();
 
-	void todo();
 	void modifyReputation();
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
-	void CircleListCustomPopupMenu( QPoint point);
-    
-    void circle_selected();
+	void CircleListCustomPopupMenu(QPoint point) ;
+	void circle_selected() ;
+
+	void  addtoContacts();
+  void  removefromContacts();
+
+	void banPerson();
+	void unbanPerson();
+	
+	static QString inviteMessage();
+	void sendInvite();
+
 private:
 	void processSettings(bool load);
 
@@ -103,6 +111,9 @@ private:
 	TokenQueue *mIdQueue;
 	TokenQueue *mCircleQueue;
 	UIStateHelper *mStateHelper;
+
+	QTreeWidgetItem *contactsItem;
+	QTreeWidgetItem *allItem;
 
 	RsGxsGroupId mId;
 

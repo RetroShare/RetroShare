@@ -284,6 +284,10 @@ void FriendSelectionWidget::secured_fillList()
     std::set<RsGxsId> gxsIdsSelected;
 	if (mShowTypes & SHOW_GXS)
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
+		
+    std::set<RsGxsId> gxsIdsSelected2;
+	if (mShowTypes & SHOW_CONTACTS)
+		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected2,true);		
 	
 	// remove old items
 	ui->friendList->clear();
@@ -525,6 +529,7 @@ void FriendSelectionWidget::secured_fillList()
 			// iterate through gpg ids
 			for (std::vector<RsGxsGroupId>::const_iterator gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); ++gxsIt)
 			{
+
 					// we fill the not assigned gpg ids
 				if (std::find(filledIds.begin(), filledIds.end(), (*gxsIt).toStdString()) != filledIds.end()) 
 						continue;
@@ -568,6 +573,61 @@ void FriendSelectionWidget::secured_fillList()
 
 				if (std::find(gxsIdsSelected.begin(), gxsIdsSelected.end(), detail.mId) != gxsIdsSelected.end()) 
 					setSelected(mListModus, gxsItem, true);
+			}
+		}
+		if(mShowTypes & SHOW_CONTACTS)
+		{
+			// iterate through gpg ids
+			for (std::vector<RsGxsGroupId>::const_iterator gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); ++gxsIt)
+			{
+
+					// we fill the not assigned gpg ids
+				if (std::find(filledIds.begin(), filledIds.end(), (*gxsIt).toStdString()) != filledIds.end()) 
+						continue;
+
+				// add equal too, its no problem
+				filledIds.push_back((*gxsIt).toStdString());
+
+				RsIdentityDetails detail;
+				if (!rsIdentity->getIdDetails(RsGxsId(*gxsIt), detail)) 
+					continue; /* BAD */
+					
+                QList<QIcon> icons ;
+                GxsIdDetails::getIcons(detail,icons,GxsIdDetails::ICON_TYPE_AVATAR) ;
+                QIcon identicon = icons.front() ;
+                
+        if(detail.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
+        {      
+
+          // make a widget per friend
+          gxsItem = new RSTreeWidgetItem(mCompareRole, IDTYPE_GXS);
+
+          QString name = QString::fromUtf8(detail.mNickname.c_str());
+          gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
+
+          //gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+          gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
+                  gxsItem->setIcon(COLUMN_NAME, identicon);
+          gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
+
+          gxsItem->setData(COLUMN_NAME, ROLE_SORT_GROUP, 1);
+          gxsItem->setData(COLUMN_NAME, ROLE_SORT_STANDARD_GROUP, 0);
+          //TODO: online state for gxs items
+          gxsItem->setData(COLUMN_NAME, ROLE_SORT_STATE, 1);
+          gxsItem->setData(COLUMN_NAME, ROLE_SORT_NAME, name);
+
+          if (mListModus == MODUS_CHECK) 
+            gxsItem->setCheckState(0, Qt::Unchecked);
+
+          ui->friendList->addTopLevelItem(gxsItem);
+
+          gxsItem->setExpanded(true);
+
+          emit itemAdded(IDTYPE_GXS, QString::fromStdString(detail.mId.toStdString()), gxsItem);
+
+          if (std::find(gxsIdsSelected.begin(), gxsIdsSelected.end(), detail.mId) != gxsIdsSelected.end()) 
+            setSelected(mListModus, gxsItem, true);
+				}
 			}
 		}
 		if (groupIt != groupInfoList.end()) {

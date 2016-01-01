@@ -46,9 +46,15 @@ public:
 	/* TokenResponse */
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
-private:
+private slots:
+	void modifyReputation();
+
+private :
 	void requestIdDetails();
 	void insertIdDetails(uint32_t token);
+	
+  void requestRepList();
+	void insertRepList(uint32_t token);
 
 private:
 	RsGxsGroupId mId;

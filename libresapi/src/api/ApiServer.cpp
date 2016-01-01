@@ -13,6 +13,8 @@
 #include "JsonStream.h"
 #include "StateTokenServer.h" // for the state token serialisers
 
+#include "ApiPluginHandler.h"
+
 /*
 data types in json       http://json.org/
 string (utf-8 unicode)
@@ -226,10 +228,11 @@ public:
         mPeersHandler(sts, ifaces.mNotify, ifaces.mPeers, ifaces.mMsgs),
         mIdentityHandler(ifaces.mIdentity),
         mForumHandler(ifaces.mGxsForums),
-        mServiceControlHandler(rsServiceControl), // TODO: don't use global variable here
+        mServiceControlHandler(ifaces.mServiceControl),
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
         mTransfersHandler(sts, ifaces.mFiles),
-        mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler)
+        mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
+        mApiPluginHandler(sts, ifaces)
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -249,6 +252,8 @@ public:
                                    &TransfersHandler::handleRequest);
         router.addResourceHandler("chat", dynamic_cast<ResourceRouter*>(&mChatHandler),
                                   &ChatHandler::handleRequest);
+        router.addResourceHandler("apiplugin", dynamic_cast<ResourceRouter*>(&mApiPluginHandler),
+                                  &ChatHandler::handleRequest);
     }
 
     PeersHandler mPeersHandler;
@@ -258,6 +263,7 @@ public:
     FileSearchHandler mFileSearchHandler;
     TransfersHandler mTransfersHandler;
     ChatHandler mChatHandler;
+    ApiPluginHandler mApiPluginHandler;
 };
 
 ApiServer::ApiServer():

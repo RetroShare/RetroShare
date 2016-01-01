@@ -7,7 +7,7 @@ DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
 
 unix {
-	target.path = "$${LIB_DIR}/retroshare/extensions6"
+	target.path = "$${PLUGIN_DIR}"
 	INSTALLS += target
 }
 
@@ -37,7 +37,7 @@ win32 {
 	UI_DIR  = temp/ui
 
 	DEFINES += WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	DEFINES += MINIUPNPC_VERSION=13
+	#DEFINES += MINIUPNPC_VERSION=13
 #	DESTDIR = lib
 
 	# Switch off optimization for release version
@@ -53,16 +53,31 @@ win32 {
 	DEFINES += USE_CMD_ARGS
 
 	#miniupnp implementation files
-	HEADERS += upnp/upnputil.h
-	SOURCES += upnp/upnputil.c
+	#HEADERS += upnp/upnputil.h
+	#SOURCES += upnp/upnputil.c
 
-	LIBS_DIR = $$PWD/../../../libs
-
-	INCLUDEPATH += . $$LIBS_DIR/include $$LIBS_DIR/include/miniupnpc
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
 	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
-	LIBS += -L"$$LIBS_DIR/lib"
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
+}
+
+macx {
+
+
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	RCC_DIR = temp/qrc
+	UI_DIR  = temp/ui
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 }

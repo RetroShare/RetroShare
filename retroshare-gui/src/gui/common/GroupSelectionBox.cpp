@@ -46,7 +46,7 @@ void GroupSelectionBox::selectedGroupIds(std::list<std::string> &groupIds) const
 		QListWidgetItem *listItem = item(i);
 		if (listItem->checkState() == Qt::Checked) {
 			groupIds.push_back(item(i)->data(ROLE_ID).toString().toStdString());
-			std::cerr << "Addign selected item " << groupIds.back() << std::endl;
+			std::cerr << "Adding selected item " << groupIds.back() << std::endl;
 		}
 	}
 }
@@ -74,7 +74,7 @@ void GroupSelectionBox::selectedGroupNames(QList<QString> &groupNames) const
 		QListWidgetItem *listItem = item(i);
 		if (listItem->checkState() == Qt::Checked) {
 			groupNames.push_back(item(i)->text());
-			std::cerr << "Addign selected item " << groupNames.back().toUtf8().constData() << std::endl;
+			std::cerr << "Adding selected item " << groupNames.back().toUtf8().constData() << std::endl;
 		}
 	}
 }

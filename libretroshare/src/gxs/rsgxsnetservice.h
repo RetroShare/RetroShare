@@ -54,7 +54,8 @@ class RsGroupNetworkStatsRecord
         RsGroupNetworkStatsRecord() { max_visible_count= 0 ; }
 
         std::set<RsPeerId> suppliers ;
-    uint32_t max_visible_count ;
+	uint32_t max_visible_count ;
+    time_t update_TS ;
 };
 
 /*!
@@ -151,6 +152,8 @@ public:
      */
     virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) ;
 
+    virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
+    
     /* p3Config methods */
 public:
 
@@ -318,6 +321,12 @@ private:
     void handleRecvSyncGroup(RsNxsSyncGrpReqItem* item);
 
     /*!
+     * Handles an nxs item for group statistics
+     * @param item contaims update time stamp and number of messages
+     */
+    void handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs);
+    
+    /*!
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
@@ -357,6 +366,7 @@ private:
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
     void syncWithPeers();
+    void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
@@ -368,6 +378,7 @@ private:
     void locked_doMsgUpdateWork(const RsNxsTransacItem* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
+    void updateClientSyncTS();
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
     bool locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem* item);
@@ -442,6 +453,10 @@ private:
     */
     bool encryptTransaction(NxsTransaction *tr);
     bool decryptTransaction(NxsTransaction *tr);
+
+    void cleanRejectedMessages();
+    void processObserverNotifications();
+
 private:
 
 
@@ -480,6 +495,7 @@ private:
 
     uint32_t mSyncTs;
     uint32_t mLastKeyPublishTs;
+    uint32_t mLastCleanRejectedMessages;
 
     const uint32_t mSYNC_PERIOD;
     int mUpdateCounter ;
@@ -517,6 +533,11 @@ private:
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
     
+    std::map<RsGxsMessageId,time_t> mRejectedMessages;
+    std::vector<RsNxsGrp*> mNewGroupsToNotify ;
+    std::vector<RsNxsMsg*> mNewMessagesToNotify ;
+    
+    void debugDump();
 };
 
 #endif // RSGXSNETSERVICE_H

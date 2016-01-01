@@ -27,6 +27,7 @@
 #include "gxssecurity.h"
 #include "pqi/authgpg.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 //#include "retroshare/rspeers.h"
 
 /****
@@ -749,7 +750,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
     in_offset += size_net_ekl;
 
 	// Conservative limits to detect weird errors due to corrupted encoding.
-	if(eklen < 0 || eklen > 512 || eklen+in_offset > inlen)
+	if(eklen < 0 || eklen > 512 || eklen+in_offset > (int)inlen)
 	{
 		std::cerr << "Error while deserialising encryption key length: eklen = " << std::dec << eklen << ". Giving up decryption." << std::endl;
 		free(ek);
@@ -809,104 +810,114 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
 {
 #ifdef GXS_SECURITY_DEBUG
-        std::cerr << "GxsSecurity::validateNxsGrp()";
-        std::cerr << std::endl;
-        std::cerr << "RsNxsGrp :";
-        std::cerr << std::endl;
-        grp.print(std::cerr, 10);
-        std::cerr << std::endl;
+	std::cerr << "GxsSecurity::validateNxsGrp()";
+	std::cerr << std::endl;
+	std::cerr << "RsNxsGrp :";
+	std::cerr << std::endl;
+	grp.print(std::cerr, 10);
+	std::cerr << std::endl;
 #endif
 
-        RsGxsGrpMetaData& grpMeta = *(grp.metaData);
+	RsGxsGrpMetaData& grpMeta = *(grp.metaData);
 
-        /********************* check signature *******************/
+	/********************* check signature *******************/
 
-        /* check signature timeperiod */
-        if ((grpMeta.mPublishTs < key.startTS) || (key.endTS != 0 && grpMeta.mPublishTs > key.endTS))
-        {
+	/* check signature timeperiod */
+	if ((grpMeta.mPublishTs < key.startTS) || (key.endTS != 0 && grpMeta.mPublishTs > key.endTS))
+	{
 #ifdef GXS_SECURITY_DEBUG
-                std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
-                std::cerr << std::endl;
+		std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
+		std::cerr << std::endl;
 #endif
-                return false;
-        }
+		return false;
+	}
 
-        /* decode key */
-        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
-        long keylen = key.keyData.bin_len;
-        unsigned int siglen = sign.signData.bin_len;
-        unsigned char *sigbuf = (unsigned char *) sign.signData.bin_data;
+	/* decode key */
+	const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+	long keylen = key.keyData.bin_len;
+	unsigned int siglen = sign.signData.bin_len;
+	unsigned char *sigbuf = (unsigned char *) sign.signData.bin_data;
 
 #ifdef DISTRIB_DEBUG
-        std::cerr << "GxsSecurity::validateNxsMsg() Decode Key";
-        std::cerr << " keylen: " << keylen << " siglen: " << siglen;
-        std::cerr << std::endl;
+	std::cerr << "GxsSecurity::validateNxsMsg() Decode Key";
+	std::cerr << " keylen: " << keylen << " siglen: " << siglen;
+	std::cerr << std::endl;
 #endif
 
-        /* extract admin key */
-        RSA *rsakey =  (key.keyFlags & RSTLV_KEY_TYPE_FULL)? d2i_RSAPrivateKey(NULL, &(keyptr), keylen): d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+	/* extract admin key */
+	RSA *rsakey =  (key.keyFlags & RSTLV_KEY_TYPE_FULL)? d2i_RSAPrivateKey(NULL, &(keyptr), keylen): d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
-        if (!rsakey)
-        {
+	if (!rsakey)
+	{
 #ifdef GXS_SECURITY_DEBUG
-                std::cerr << "GxsSecurity::validateNxsGrp()";
-                std::cerr << " Invalid RSA Key";
-                std::cerr << std::endl;
+		std::cerr << "GxsSecurity::validateNxsGrp()";
+		std::cerr << " Invalid RSA Key";
+		std::cerr << std::endl;
 
-                key.print(std::cerr, 10);
+		key.print(std::cerr, 10);
 #endif
-        }
+	}
+
+	std::vector<uint32_t> api_versions_to_check ;
+	api_versions_to_check.push_back(RS_GXS_GRP_META_DATA_VERSION_ID_0002) ;	// put newest first, for debug info purpose
+	api_versions_to_check.push_back(RS_GXS_GRP_META_DATA_VERSION_ID_0001) ;
+
+	RsTlvKeySignatureSet signSet = grpMeta.signSet;
+	grpMeta.signSet.TlvClear();
+    
+	int signOk =0;
+	EVP_PKEY *signKey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(signKey, rsakey);
 
 
-        RsTlvKeySignatureSet signSet = grpMeta.signSet;
-        grpMeta.signSet.TlvClear();
+	for(uint32_t i=0;i<api_versions_to_check.size() && 0==signOk;++i)
+	{
+		uint32_t metaDataLen = grpMeta.serial_size(api_versions_to_check[i]);
+		uint32_t allGrpDataLen = metaDataLen + grp.grp.bin_len;
 
-        uint32_t metaDataLen = grpMeta.serial_size();
-        uint32_t allGrpDataLen = metaDataLen + grp.grp.bin_len;
-        char* metaData = new char[metaDataLen];
-        char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
+		RsTemporaryMemory metaData(metaDataLen) ;
+		RsTemporaryMemory allGrpData(allGrpDataLen) ;// msgData + metaData
 
-        grpMeta.serialise(metaData, metaDataLen);
+		grpMeta.serialise(metaData, metaDataLen,api_versions_to_check[i]);
 
-        // copy msg data and meta in allmsgData buffer
-        memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
-        memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
+		// copy msg data and meta in allmsgData buffer
+		memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
+		memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
 
-		  delete[] metaData ;
+		/* calc and check signature */
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
-        EVP_PKEY *signKey = EVP_PKEY_new();
-        EVP_PKEY_assign_RSA(signKey, rsakey);
+		EVP_VerifyInit(mdctx, EVP_sha1());
+		EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
+		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+		EVP_MD_CTX_destroy(mdctx);
 
-        /* calc and check signature */
-        EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+                if(i>0)
+		std::cerr << "(WW) Checking group signature with old api version " << i+1 << " : tag " << std::hex << api_versions_to_check[i] << std::dec << " result: " << signOk << std::endl;
+	}
 
-        EVP_VerifyInit(mdctx, EVP_sha1());
-        EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
-        int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+	/* clean up */
+	EVP_PKEY_free(signKey);
 
-		  delete[] allGrpData ;
+	// restore data
 
-        /* clean up */
-        EVP_PKEY_free(signKey);
-        EVP_MD_CTX_destroy(mdctx);
+	grpMeta.signSet = signSet;
 
-        grpMeta.signSet = signSet;
-
-        if (signOk == 1)
-        {
+	if (signOk == 1)
+	{
 #ifdef GXS_SECURITY_DEBUG
-                std::cerr << "GxsSecurity::validateNxsGrp() Signature OK";
-                std::cerr << std::endl;
+		std::cerr << "GxsSecurity::validateNxsGrp() Signature OK";
+		std::cerr << std::endl;
 #endif
-                return true;
-        }
+		return true;
+	}
 
 #ifdef GXS_SECURITY_DEBUG
-        std::cerr << "GxsSecurity::validateNxsGrp() Signature invalid";
-        std::cerr << std::endl;
+	std::cerr << "GxsSecurity::validateNxsGrp() Signature invalid";
+	std::cerr << std::endl;
 #endif
 
-return false;
+	return false;
 }
 
 

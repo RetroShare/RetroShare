@@ -590,7 +590,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role == Qt::SizeHintRole)
+	/*if (role == Qt::SizeHintRole)
 	{
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
@@ -600,7 +600,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			defw = 200/16.0*defh;
 		}
 		return QSize(defw, defh);
-	}
+	}*/
 
 	if (role != Qt::DisplayRole)
 		return QVariant();
@@ -636,7 +636,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 }
 QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if (role == Qt::SizeHintRole)
+	/*if (role == Qt::SizeHintRole)
 	{
 		int defw = QFontMetricsF(QWidget().font()).width(headerData(section,Qt::Horizontal,Qt::DisplayRole).toString()) ;
 		int defh = QFontMetricsF(QWidget().font()).height();
@@ -646,7 +646,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			defw = defh*200/16.0;
 		}
 		return QSize(defw, defh);
-	}
+	}*/
 
 	if (role != Qt::DisplayRole)
 		return QVariant();
@@ -1341,7 +1341,7 @@ void FlatStyle_RDM::updateRefs()
 			if(details->type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
 				_ref_entries.push_back(std::pair<void*,QString>(ref,computeDirectoryPath(*details)));
 #ifdef RDM_DEBUG
-			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
+			std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
 #endif
 			for(std::list<DirStub>::const_iterator it = details->children.begin(); it != details->children.end(); ++it)
 				_ref_stack.push_back(it->ref) ;

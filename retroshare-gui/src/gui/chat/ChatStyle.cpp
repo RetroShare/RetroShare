@@ -267,10 +267,12 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
 
 QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
 {
+	bool me = false;
 	QDomDocument doc ;
 	QString styleOptimized ;
 	QString errorMsg ; int errorLine ; int errorColumn ;
 	QString messageBody = message ;
+	me = me || message.trimmed().startsWith("/me ");
 	if (doc.setContent(messageBody, &errorMsg, &errorLine, &errorColumn)) {
 		QDomElement body = doc.documentElement();
 		if (!body.isNull()){
@@ -279,6 +281,12 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 			for (int curs = 0; curs < count; ++curs){
 				QDomNode it = body.childNodes().item(curs);
 				if (it.nodeName().toLower() != "style") {
+					//find out if the message starts with /me
+					if(it.isText()){
+						me = me || it.toText().data().trimmed().startsWith("/me ");
+					}else if(it.isElement()){
+						me = me || it.toElement().text().trimmed().startsWith("/me ");
+					}
 					QString str;
 					QTextStream stream(&str);
 					it.toElement().save(stream, -1);
@@ -351,11 +359,29 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
     Q_UNUSED(flag);
 #endif
 
-    QString formatMsg = style.replace("%name%", RsHtml::plainText(name))
-                             .replace("%date%", DateTime::formatDate(timestamp.date()))
-                             .replace("%time%", DateTime::formatTime(timestamp.time()))
+	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
+	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
+
+	int bi = name.lastIndexOf(QRegExp(" \\(.*\\)")); //trim location from the end
+	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+
+	//handle /me
+	//%nome% and %me% for including formatting conditionally
+	//meName class for modifying the style of the name in the palce of /me
+	if(me){
+		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName.prepend(QString("<span class=\"meName\">")).append(QString("</span>"))); //replace only the first /me
+		style = style.remove(QRegExp("%nome%.*%/nome%")).remove("%me%").remove("%/me%");
+	} else {
+		style = style.remove(QRegExp("%me%.*%/me%")).remove("%nome%").remove("%/nome%");
+	}
+
+	QString formatMsg = style.replace("%name%", strName)
+							 .replace("%shortname%", strShortName)
+	                         .replace("%date%", strDate)
+	                         .replace("%time%", strTime)
 #ifdef COLORED_NICKNAMES
-                             .replace("%color%", color.name())
+	                         .replace("%color%", color.name())
 #endif
 	                         .replace("%message%", messageBody ) ;
 	if ( !styleOptimized.isEmpty() ) {

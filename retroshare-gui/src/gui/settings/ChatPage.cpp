@@ -100,6 +100,8 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+       connect(ui.distantChatcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
@@ -115,10 +117,13 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+		Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
+    // state of distant Chat combobox
+    Settings->setValue("DistantChat", ui.distantChatcomboBox->currentIndex());
 
     Settings->setChatScreenFont(fontTempChat.toString());
     NotifyQt::getInstance()->notifyChatFontChanged();
@@ -219,10 +224,15 @@ ChatPage::load()
     ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
     ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
     ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
     ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
+
+	     // state of distant Chat combobox
+    int index = Settings->value("DistantChat", 0).toInt();
+    ui.distantChatcomboBox->setCurrentIndex(index);
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
@@ -336,6 +346,7 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message")));
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message")));
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message")));
+	textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), timestmp, tr("/me is sending a message with /me")));
 }
 
 void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)
@@ -490,3 +501,21 @@ void ChatPage::on_btSearch_FoundColor_clicked()
 		ui.btSearch_FoundColor->setIcon(pix);
 	}
 }
+
+void ChatPage::distantChatComboBoxChanged(int i)
+{
+	switch(i)
+	{
+		default: 
+		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;           
+				  break ;
+				  
+		case 1:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
+				  break ;
+
+		case 2:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
+				  break ;
+	}
+
+}
+

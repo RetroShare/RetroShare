@@ -964,24 +964,25 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 	if (flags == RS_NET_CONN_UDP_ALL)
 	{
 #ifdef LINKMGR_DEBUG
-#endif
 		std::cerr << "p3LinkMgrIMPL::connectResult() Sending Feedback for UDP connection";
 		std::cerr << std::endl;
+#endif
 		if (success)
 		{
 #ifdef LINKMGR_DEBUG
-#endif
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update CONNECTED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONNECTED);
 		}
 		else
 		{
 #ifdef LINKMGR_DEBUG
-#endif
+
 			std::cerr << "p3LinkMgrIMPL::connectResult() UDP Update FAILED to: " << id;
 			std::cerr << std::endl;
+#endif
 
 			/* have no differentiation between failure and closed? */
 			mNetMgr->netAssistStatusUpdate(id, NETMGR_DHT_FEEDBACK_CONN_FAILED);
@@ -1570,135 +1571,96 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const RsPeerId &id, const struct sockaddr_st
 
 
 
-
-bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
+/* push all available addresses onto the connect addr stack...
+ * with the following exceptions:
+ *  - id is our own
+ *  - id is not our friend
+ *  - id is already connected
+ *  - id is hidden but of an unkown type
+ *  - we are hidden but id is not
+ */
+bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 {
-	/* Check if we should retry first */
-	{
-		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-	
-		/* push all available addresses onto the connect addr stack...
-		 * with the following exceptions:
-	   	 *   - check local address, see if it is the same network as us
-		     - check address age. don't add old ones
-		 */
-	
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() id: " << id << std::endl;
 #endif
-	
-		if (id == getOwnId()) 
-		{
-#ifdef LINKMGR_DEBUG
-			rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::retryConnectTCP() Failed, connecting to own id: ");
-#endif
-			return false;
-		}
-	
-	        /* look up the id */
-	        std::map<RsPeerId, peerConnectState>::iterator it;
-		if (mFriendList.end() == (it = mFriendList.find(id)))
-		{
-#ifdef LINKMGR_DEBUG
-			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Peer is not Friend" << std::endl;
-#endif
-			return false;
-		}
-	
-		/* if already connected -> done */
-		if (it->second.state & RS_PEER_S_CONNECTED)
-		{
-#ifdef LINKMGR_DEBUG
-			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Peer Already Connected" << std::endl;
-#endif
-			return false;
-		}
-	} /****** END of LOCKED ******/
 
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Getting Address from PeerMgr for : " << id;
-	std::cerr << std::endl;
-#endif
-	/* If we reach here, must retry .... extract the required info from p3PeerMgr */
+	if (id == getOwnId()) return false;
 
-	/* first possibility - is it a hidden peer */
+	{
+		RS_STACK_MUTEX(mLinkMtx);
+		std::map<RsPeerId, peerConnectState>::iterator it = mFriendList.find(id);
+		if ( it == mFriendList.end() ) return false;
+		if ( it->second.state & RS_PEER_S_CONNECTED ) return false;
+	}
+
+	// Extract the required info from p3PeerMgr
+
+	// first possibility - is it a hidden peer
 	if (mPeerMgr->isHiddenPeer(id))
 	{
+		/* check for valid hidden type */
+		uint32_t type = mPeerMgr->getHiddenType(id);
+		if ( type & (~RS_HIDDEN_TYPE_MASK) ) return false;
+
+		/* then we just have one connect attempt via the Proxy */
 		struct sockaddr_storage proxy_addr;
 		std::string domain_addr;
 		uint16_t domain_port;
-
-		/* then we just have one connect attempt via the Proxy */
-		if (mPeerMgr->getProxyAddress(id, proxy_addr, domain_addr, domain_port))
+		if ( mPeerMgr->getProxyAddress(id, proxy_addr, domain_addr, domain_port) )
 		{
-			RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-	        	std::map<RsPeerId, peerConnectState>::iterator it;
-			if (mFriendList.end() != (it = mFriendList.find(id)))
+			RS_STACK_MUTEX(mLinkMtx);
+			std::map<RsPeerId, peerConnectState>::iterator it = mFriendList.find(id);
+			if (it != mFriendList.end())
 			{
-				locked_ConnectAttempt_ProxyAddress(&(it->second), proxy_addr, domain_addr, domain_port);
+				locked_ConnectAttempt_ProxyAddress(&(it->second), type, proxy_addr, domain_addr, domain_port);
 				return locked_ConnectAttempt_Complete(&(it->second));
 			}
 		}
+
 		return false;
 	}
 
-	if (mPeerMgr->isHidden())
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() isHidden(): no connection attempts for : " << id;
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
+	if (mPeerMgr->isHidden()) return false;
 
 	struct sockaddr_storage lAddr;
 	struct sockaddr_storage eAddr;
 	pqiIpAddrSet histAddrs;
 	std::string dyndns;
-
 	if (mPeerMgr->getConnectAddresses(id, lAddr, eAddr, histAddrs, dyndns))
 	{
-		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+		RS_STACK_MUTEX(mLinkMtx);
 
-	        std::map<RsPeerId, peerConnectState>::iterator it;
-		if (mFriendList.end() != (it = mFriendList.find(id)))
+		std::map<RsPeerId, peerConnectState>::iterator it = mFriendList.find(id);
+		if ( it != mFriendList.end() )
 		{
 			locked_ConnectAttempt_CurrentAddresses(&(it->second), lAddr, eAddr);
 
-			uint16_t dynPort = sockaddr_storage_port(eAddr);
-			if (!dynPort)
+			uint16_t dynPort = 0;
+			if (!sockaddr_storage_isnull(eAddr)) dynPort = sockaddr_storage_port(eAddr);
+			if (!dynPort && !sockaddr_storage_isnull(lAddr))
 				dynPort = sockaddr_storage_port(lAddr);
 			if (dynPort)
-			{
 				locked_ConnectAttempt_AddDynDNS(&(it->second), dyndns, dynPort);
-			}
 
 			locked_ConnectAttempt_HistoricalAddresses(&(it->second), histAddrs);
 
-			/* finish it off */
+			// finish it off
 			return locked_ConnectAttempt_Complete(&(it->second));
 		}
 		else
-		{
-			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() ERROR failed to find friend data : " << id;
-			std::cerr << std::endl;
-		}
+			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() ERROR failed to find friend data : " << id << std::endl;
 	}
 	else
-	{
-		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() ERROR failed to addresses from PeerMgr for: " << id;
-		std::cerr << std::endl;
-	}
+		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() ERROR failed to get addresses from PeerMgr for: " << id << std::endl;
 
 	return false;
-
 }
 
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
@@ -1719,13 +1681,8 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 		return false;
 	}
 
-	bool isValid = sockaddr_storage_isValidNet(addr);
-	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
-	//	bool isPrivate = sockaddr_storage_isPrivateNet(addr);
-	bool isExternal = sockaddr_storage_isExternalNet(addr);
-
 	/* if invalid - quick rejection */
-	if (!isValid)
+	if ( ! sockaddr_storage_isValidNet(addr) )
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - INVALID";
@@ -1760,60 +1717,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
         return false ;
     }
 
-	/* if it is an external address, we'll accept it.
-	 * - even it is meant to be a local address.
-	 */
-	if (isExternal)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* if loopback, then okay - probably proxy connection (or local testing).
-	 */
-	if (isLoopback)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - LOOPBACK"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-
-	/* get here, it is private or loopback 
-	 *  - can only connect to these addresses if we are on the same subnet.
-	    - check net against our local address.
-	 */
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() Checking sameNet against: "; 
-	std::cerr << sockaddr_storage_iptostring(mLocalAddress);
-	std::cerr << ")";
-	std::cerr << std::endl;
-#endif
-
-	if (sockaddr_storage_samenet(mLocalAddress, addr))
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - PRIVATE & !sameNET"; 
-	std::cerr << std::endl;
-#endif
-
-	/* else it fails */
-	return false;
-
+	return true;
 }
 
 
@@ -2018,7 +1922,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() trying address: " << domain_addr << ":" << domain_port << std::endl;
@@ -2026,7 +1930,22 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	peerConnectAddress pca;
 	pca.addr = proxy_addr;
 
-	pca.type = RS_NET_CONN_TCP_HIDDEN;
+	switch (type) {
+	case RS_HIDDEN_TYPE_TOR:
+		pca.type = RS_NET_CONN_TCP_HIDDEN_TOR;
+		break;
+	case RS_HIDDEN_TYPE_I2P:
+		pca.type = RS_NET_CONN_TCP_HIDDEN_I2P;
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+		/**** THIS CASE SHOULD NOT BE TRIGGERED - since this function is called with a valid hidden type only ****/
+		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() hidden type of addr: " << domain_addr << " is unkown -> THIS SHOULD NEVER HAPPEN!" << std::endl;
+		std::cerr << " - peer : " << peer->id << "(" << peer->name << ")" << std::endl;
+		std::cerr << " - proxy: " << sockaddr_storage_tostring(proxy_addr) << std::endl;
+		std::cerr << " - addr : " << domain_addr << ":" << domain_port << std::endl;
+		pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
+	}
 
 	//for the delay, we add a random time and some more time when the friend list is big
 	pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;

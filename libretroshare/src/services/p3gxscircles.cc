@@ -945,7 +945,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 						RsIdentityDetails details;
 						if (mIdentities->getIdDetails(*pit, details))
 						{
-							if (details.mPgpLinked && details.mPgpKnown)
+							if ((details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) &&(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
 							{
 #ifdef DEBUG_CIRCLES
 								std::cerr << "p3GxsCircles::cache_load_for_token() Is Known -> AllowedPeer: " << *pit;
@@ -1128,7 +1128,7 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 			RsIdentityDetails details;
 			if (mIdentities->getIdDetails(*pit, details))
 			{
-				if (details.mPgpLinked && details.mPgpKnown)
+				if ((details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) &&(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
 				{
 					cache.addAllowedPeer(details.mPgpId, *pit);
 

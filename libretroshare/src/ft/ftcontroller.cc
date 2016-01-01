@@ -2224,6 +2224,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 		/* cleanup */
 		delete (*it);
 	}
+    load.clear() ;
 	return true;
 
 }

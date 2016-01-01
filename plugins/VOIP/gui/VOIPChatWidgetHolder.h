@@ -20,12 +20,16 @@
  ****************************************************************/
 
 #pragma once
-
-#include "gui/VOIPNotify.h"
-
+//Qt
 #include <QObject>
 #include <QGraphicsEffect>
+#include <QProgressBar>
+#include <QTimer>
+//VOIP
+#include "gui/VOIPNotify.h"
 #include <gui/SpeexProcessor.h>
+#include "services/rsVOIPItems.h"
+//retroshare-gui
 #include <gui/chat/ChatWidget.h>
 #include <gui/common/RsButtonOnText.h>
 
@@ -36,7 +40,10 @@ class QVideoInputDevice ;
 class QVideoOutputDevice ;
 class VideoProcessor ;
 
-#define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
+#define VOIP_SOUND_INCOMING_AUDIO_CALL "VOIP_incoming_audio_call"
+#define VOIP_SOUND_INCOMING_VIDEO_CALL "VOIP_incoming_video_call"
+#define VOIP_SOUND_OUTGOING_AUDIO_CALL "VOIP_outgoing_audio_call"
+#define VOIP_SOUND_OUTGOING_VIDEO_CALL "VOIP_outgoing_video_call"
 
 class VOIPChatWidgetHolder : public QObject, public ChatWidgetHolder
 {
@@ -52,21 +59,46 @@ public:
 	void addVideoData(const RsPeerId &peer_id, QByteArray* array) ;
 	void setAcceptedBandwidth(uint32_t bytes_per_sec) ;
 
+	void ReceivedInvitation(const RsPeerId &peer_id, int flags) ;
+	void ReceivedVoipHangUp(const RsPeerId &peer_id, int flags) ;
+	void ReceivedVoipAccept(const RsPeerId &peer_id, int flags) ;
+
 public slots:
 	void sendAudioData();
 	void sendVideoData();
 	void startAudioCapture();
 	void startVideoCapture();
+	void hangupCallAudio() ;
+	void hangupCallVideo() ;
 
 private slots:
 	void toggleAudioListen();
+	void toggleAudioListenFS();
 	void toggleAudioCapture();
+	void toggleAudioCaptureFS();
 	void toggleVideoCapture();
+	void toggleVideoCaptureFS();
+	void toggleHideChatText();
+	void toggleFullScreen();
+	void toggleFullScreenFS();
 	void hangupCall() ;
-	void botMouseEnter();
-	void botMouseLeave();
+	void botMouseEnterTake();
+	void botMouseLeaveTake();
+	void botMouseEnterDecline();
+	void botMouseLeaveDecline();
+	void timerAudioRingTimeOut();
+	void timerVideoRingTimeOut();
+
+private:
+	void deleteButtonMap(int flags = RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA);
+	void addNewVideoButtonMap(const RsPeerId &peer_id);
+	void addNewAudioButtonMap(const RsPeerId &peer_id);
+	void replaceFullscreenWidget();
+	void showNormalView();
 
 protected:
+	bool eventFilter(QObject *obj, QEvent *event);
+
 	// Audio input/output
 	QAudioInput* inputAudioDevice;
 	QAudioOutput* outputAudioDevice;
@@ -79,18 +111,45 @@ protected:
 	QVideoOutputDevice *echoVideoDevice;
 	QVideoInputDevice *inputVideoDevice;
 
+	//For FullScreen Mode
+	QFrame *fullScreenFrame;
+	QVideoOutputDevice *outputVideoDeviceFS;
+	QVideoOutputDevice *echoVideoDeviceFS;
+	Qt::WindowFlags outputVideoDeviceFlags;
+
 	QWidget *videoWidget ;	// pointer to call show/hide
 
 	VideoProcessor *videoProcessor;
 
 	// Additional buttons to the chat bar
 	QToolButton *audioListenToggleButton ;
+	QToolButton *audioListenToggleButtonFS ;
 	QToolButton *audioCaptureToggleButton ;
+	QToolButton *audioCaptureToggleButtonFS ;
 	QToolButton *videoCaptureToggleButton ;
+	QToolButton *videoCaptureToggleButtonFS ;
+	QToolButton *hideChatTextToggleButton ;
+	QToolButton *fullscreenToggleButton ;
+	QToolButton *fullscreenToggleButtonFS ;
 	QToolButton *hangupButton ;
+	QToolButton *hangupButtonFS ;
+	QFrame *toolBarFS;
 
-	typedef QMap<QString, RSButtonOnText*> button_map;
-	button_map buttonMapTakeVideo;
+	typedef QMap<QString, QPair<RSButtonOnText*, RSButtonOnText*> > button_map;
+	button_map buttonMapTakeCall;
+
+	//Waiting for peer accept
+	QProgressBar *pbAudioRing;
+	QProgressBar *pbVideoRing;
+	QTimer *timerAudioRing;
+	QTimer *timerVideoRing;
+	int sendAudioRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int sendVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int recAudioRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+	int recVideoRingTime; //(-2 connected, -1 reseted, >=0 in progress)
+
+	//TODO, remove this when soundManager can manage multi events.
+	int lastTimePlayOccurs;
 
 	VOIPNotify *mVOIPNotify;
 };

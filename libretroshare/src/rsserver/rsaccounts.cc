@@ -994,7 +994,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 		return false;
 	}
 
-	int nbits = 2048;
+	int nbits = 4096;
 
 	std::string pgp_name = AuthGPG::getAuthGPG()->getGPGName(pgp_id);
 

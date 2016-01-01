@@ -1,8 +1,10 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
+TEMPLATE = app
 QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
+TARGET = RetroShare06
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -29,25 +31,11 @@ CONFIG += gxsforums
 CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
-
-# Gxs is always enabled now.
-
-DEFINES += RS_ENABLE_GXS
-
-	CONFIG += gxscircles
-
-unfinished {
-	CONFIG += gxsthewire
-	CONFIG += gxsphotoshare
-	CONFIG += wikipoos
-}
+CONFIG += gxscircles
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
-
-TEMPLATE = app
-TARGET = RetroShare06
 
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
@@ -73,18 +61,13 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
+	CONFIG += link_pkgconfig
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= -lX11 -lXss
-
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
-	#LIBS *= -lglib-2.0
-	LIBS *= -rdynamic -ldl
+	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU
 }
@@ -145,7 +128,6 @@ version_detail_bash_script {
 win32-x-g++ {
 		OBJECTS_DIR = temp/win32-x-g++/obj
 
-		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
@@ -193,19 +175,12 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS_DIR = $$PWD/../../../libs
-
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -L"$$LIBS_DIR/lib"
-
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-	LIBS += -lsqlcipher
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lole32 -lwinmm
+	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
@@ -216,11 +191,8 @@ win32 {
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-	DEPENDPATH += .
-	INCLUDEPATH += .
-
-	DEPENDPATH += $$LIBS_DIR/include
-	INCLUDEPATH += $$LIBS_DIR/include
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
@@ -235,24 +207,24 @@ win32 {
 
 macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	CONFIG += ppc x86
-	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+    	#CONFIG += ppc x86
+	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
+	LIBS += -framework Carbon
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-	LIBS += ../../../lib/libsqlcipher.a
-	#LIBS += -lsqlite3
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
-	INCLUDEPATH += .
-	#DEFINES* = MAC_IDLE # for idle feature
+	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
 }
 
@@ -260,12 +232,27 @@ macx {
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
+
+	LIBS += -lsqlite3
+}
+
+##################################### Haiku ######################################
+
+haiku-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2 -lbsd
+	LIBS *= -lssl -lcrypto -lnetwork
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lz
+	LIBS *= -lixml
 
 	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
@@ -276,18 +263,11 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS += -lsqlite3
-
 	LIBS *= -rdynamic
 }
 
@@ -303,11 +283,19 @@ openbsd-* {
 DEPENDPATH += . ../../libretroshare/src/
 INCLUDEPATH += ../../libretroshare/src/
 
+PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+LIBS *= ../../libretroshare/src/lib/libretroshare.a
+
+wikipoos {
+	PRE_TARGETDEPS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+}
+
 # webinterface
 DEPENDPATH += ../../libresapi/src
 INCLUDEPATH += ../../libresapi/src
 PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-LIBS += ../../libresapi/src/lib/libresapi.a -lmicrohttpd
+LIBS += ../../libresapi/src/lib/libresapi.a
 
 # Input
 HEADERS +=  rshare.h \
@@ -542,7 +530,9 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
     gui/settings/WebuiPage.h \
-    gui/statistics/BWGraph.h
+    gui/statistics/BWGraph.h \
+    util/RsSyntaxHighlighter.h \
+    util/imageutil.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -890,7 +880,9 @@ SOURCES +=  main.cpp \
             gui/statistics/StatisticsWindow.cpp \
             gui/statistics/BwCtrlWindow.cpp \
             gui/statistics/RttStatistics.cpp \
-            gui/statistics/BWGraph.cpp
+            gui/statistics/BWGraph.cpp \
+    util/RsSyntaxHighlighter.cpp \
+    util/imageutil.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
@@ -909,7 +901,7 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \
@@ -1123,7 +1115,8 @@ wikipoos {
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-	
+		gui/gxs/WikiGroupDialog.h \
+
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
@@ -1131,10 +1124,10 @@ wikipoos {
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-	
+		gui/gxs/WikiGroupDialog.cpp \
+
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
 
-	DEFINES *= RS_USE_WIKI
 }
 	
 	
@@ -1308,7 +1301,6 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
@@ -1345,7 +1337,6 @@ gxsgui {
 #		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \

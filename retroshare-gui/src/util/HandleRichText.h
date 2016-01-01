@@ -19,6 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <gui/common/RSTextBrowser.h>
+
 /**
  * This file provides helper functions and functors for translating data from/to
  * rich text format and HTML. Its main goal is to facilitate decoding of chat
@@ -51,6 +53,7 @@ class QDomDocument;
 class QDomElement;
 class EmbedInHtml;
 class RetroShareLink;
+class QTextCursor;
 
 class RsHtml
 {
@@ -59,11 +62,11 @@ public:
 
 	static void    initEmoticons(const QHash< QString, QString >& hash);
 
-	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
+	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static bool    findAnchors(const QString &text, QStringList& urls);
 
 	static void    optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag = 0);
-	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
+	static void    optimizeHtml(QString &text, unsigned int flag = 0, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static QString toHtml(QString text, bool realHtml = true);
 
 	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);
@@ -71,6 +74,9 @@ public:
 
 	static QString plainText(const QString &text);
 	static QString plainText(const std::string &text);
+
+	static QString makeQuotedText(RSTextBrowser* browser);
+	static void insertSpoilerText(QTextCursor cursor);
 
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);

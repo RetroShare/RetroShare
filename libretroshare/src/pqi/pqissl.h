@@ -98,7 +98,7 @@ virtual int reset();
 virtual int disconnect();
 virtual int getConnectAddress(struct sockaddr_storage &raddr);
 
-virtual bool connect_parameter(uint32_t type, const std::string &value);
+virtual bool connect_parameter(uint32_t /*type*/, const std::string & /*value*/) { return false; }
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 
 	// BinInterface
@@ -170,10 +170,13 @@ int Extract_Failed_SSL_Certificate(); // try to get cert anyway.
 bool  	CheckConnectionTimeout();
 
 
-	//protected internal fns that are overloaded for udp case.
-virtual int net_internal_close(int fd);
-virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
-virtual int net_internal_fcntl_nonblock(int fd);
+	/* Do we really need this ?
+	 * It is very specific TCP+SSL stuff and unlikely to be reused.
+	 * In fact we are overloading them in pqissludp case where they do different things or nothing.
+	 */
+	virtual int net_internal_close(int fd);
+	virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
+	virtual int net_internal_fcntl_nonblock(int fd);
 
 
 	/* data */
@@ -196,8 +199,6 @@ virtual int net_internal_fcntl_nonblock(int fd);
 
 	int attempt_ts;
 
-	bool sameLAN; /* flag use to allow high-speed transfers */
-
 	int n_read_zero; /* a counter to determine if the connection is really dead */
 	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
@@ -208,11 +209,9 @@ virtual int net_internal_fcntl_nonblock(int fd);
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
 
-
 private:
 	// ssl only fns.
-int connectInterface(const struct sockaddr_storage &addr);
-
+	int connectInterface(const struct sockaddr_storage &addr);
 };
 
 

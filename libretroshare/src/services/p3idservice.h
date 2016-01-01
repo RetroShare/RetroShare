@@ -187,10 +187,6 @@ virtual	std::string save() const;
 #define ID_LOCAL_STATUS_FULL_CALC_FLAG	0x00010000
 #define ID_LOCAL_STATUS_INC_CALC_FLAG	0x00020000
 
-
-#define MAX_CACHE_SIZE	100 // Small for testing..
-//#define MAX_CACHE_SIZE	10000 // More useful size
-
 class RsGxsIdGroupItem;
 
 class RsGxsIdCache
@@ -269,6 +265,9 @@ virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
 			uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
+virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
+    virtual bool isARegularContact(const RsGxsId& id) ;
+        
     /**************** RsGixs Implementation ***************/
 
     virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
@@ -499,8 +498,11 @@ std::string genRandomId(int len = 20);
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
-    std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
-    std::map<RsGxsId,time_t> mKeysTS ;
+	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
+	std::map<RsGxsId,time_t> mKeysTS ;
+    
+    	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
+    	std::set<RsGxsId> mContacts;
 	RsNetworkExchangeService* mNes;
 
 	/**************************

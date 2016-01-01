@@ -37,9 +37,10 @@ class RsGRouterSignedReceiptItem ;
 
 static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
-static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       =   10 ;	// max number of clues to store
-static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS =   60 ;	// can be set to up to half the publish time interval. Prevents flooding routes.
-static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD       =    5 ;	// at most save config every 5 seconds
+static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       =        10 ; // max number of clues to store
+static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS =        60 ; // can be set to up to half the publish time interval. Prevents flooding routes.
+static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD       =        10 ; // at most save config every 10 seconds
+static const uint32_t RS_GROUTER_MAX_KEEP_TRACKING_CLUES      =  86400*10 ; // max time for which we keep record of tracking info: 10 days.
 
 static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG          = 1.0f ;	// base contribution of routed message clue to routing matrix
 static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET          = 0.1f ;	// base contribution of GXS message to routing matrix
@@ -56,7 +57,7 @@ static const uint32_t MAX_INACTIVE_DATA_PIPE_DELAY         = 300         ; // cl
 
 static const time_t   RS_GROUTER_DEBUG_OUTPUT_PERIOD       =      10 ; // Output everything
 static const time_t   RS_GROUTER_AUTOWASH_PERIOD           =      10 ; // Autowash every minute. Not a costly operation.
-static const time_t   RS_GROUTER_MATRIX_UPDATE_PERIOD      =   1 *10 ; // Check for key advertising every 10 minutes
+static const time_t   RS_GROUTER_MATRIX_UPDATE_PERIOD      =   60*10 ; // Check for key advertising every 10 minutes
 static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     = 2*86400 ; // Cached items are kept for 48 hours at most.
 
 static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN       = 0x0000 ;	// unknown. Unused.

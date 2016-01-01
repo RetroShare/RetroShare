@@ -50,8 +50,8 @@ public:
 	QString frameState();
 	void setFrameType(FrameType type);
     void setId(const ChatId& id) ;
+    void setGxsId(const RsGxsId& id) ;
     void setOwnId();
-    void setOwnId(const RsGxsId&);
     void setDefaultAvatar(const QString &avatar_file_name);
 
 protected:
@@ -71,6 +71,7 @@ private:
 	Ui::AvatarWidget *ui;
 
     ChatId mId;
+    RsGxsId mGxsId;
 
 	struct {
 		bool isOwnId : 1;

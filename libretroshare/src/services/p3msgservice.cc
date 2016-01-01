@@ -87,6 +87,7 @@ p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
 
     mShouldEnableDistantMessaging = true ;
     mDistantMessagingEnabled      = false ;
+    mDistantMessagePermissions      = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;
 
 	/* Initialize standard tag types */
 	if(sc)
@@ -187,19 +188,26 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		msi->srcId = mi->PeerId();
 		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+		/**** STACK UNLOCKED ***/
 	}
-    // If the peer is allowed to push files, then auto-download the recommended files.
 
-    if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
-        for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
-            rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,std::list<RsPeerId>()) ;
+	if (incoming)
+	{
+		// If the peer is allowed to push files, then auto-download the recommended files.
+		if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
+		{
+			std::list<RsPeerId> srcIds;
+			srcIds.push_back(mi->PeerId());
 
-
+			for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
+				rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
+		}
+	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-
-	/**** STACK UNLOCKED ***/
 }
+
 bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
 {
 	// Check is the item is ending an incomplete item.
@@ -461,6 +469,10 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 	kv.key = "DISTANT_MESSAGES_ENABLED" ;
     kv.value = mShouldEnableDistantMessaging?"YES":"NO" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
+    
+    	kv.key = "DISTANT_MESSAGE_PERMISSION_FLAGS" ;
+        kv.value = RsUtil::NumberToString(mDistantMessagePermissions) ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	itemList.push_back(vitem) ;
 
@@ -532,7 +544,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgSrcId* msi;
     RsMsgParentId* msp;
     RsMsgGRouterMap* grm;
-//    RsPublicMsgInviteConfigItem* msv;
+    //    RsPublicMsgInviteConfigItem* msv;
 
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
@@ -540,130 +552,155 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     std::map<uint32_t, RsPeerId> srcIdMsgMap;
     std::map<uint32_t, RsPeerId>::iterator srcIt;
 
-	// load items and calculate next unique msgId
-	for(it = load.begin(); it != load.end(); ++it)
-	{
+    // load items and calculate next unique msgId
+    for(it = load.begin(); it != load.end(); ++it)
+    {
 
-		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
-		{
-			/* STORE MsgID */
-			if (mitem->msgId >= mMsgUniqueId) {
-				mMsgUniqueId = mitem->msgId + 1;
-			}
-			items.push_back(mitem);
-        }
-        else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
-        {
-            // merge.
-            for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
-                _ongoing_messages.insert(*it) ;
-        }
-		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
-		{
-			// delete standard tags as they are now save in config
-			if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
-			{
-				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
-			}
-			else
-			{
-                delete mTags[mtt->tagId];
-				mTags.erase(tagIt);
-				mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
-			}
+	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
+	    {
+		    /* STORE MsgID */
+		    if (mitem->msgId >= mMsgUniqueId) {
+			    mMsgUniqueId = mitem->msgId + 1;
+		    }
+		    items.push_back(mitem);
+	    }
+	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
+	    {
+		    // merge.
+		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
+			    _ongoing_messages.insert(*it) ;
+	    }
+	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
+	    {
+		    // delete standard tags as they are now save in config
+		    if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
+		    {
+			    mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+		    }
+		    else
+		    {
+			    delete mTags[mtt->tagId];
+			    mTags.erase(tagIt);
+			    mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+		    }
 
-		}
-		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
-		{
-			mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
-		}
-		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
-		{
-            srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
-			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
-		}
-		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
-		{
-			mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
-		}
+	    }
+	    else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
+	    {
+		    mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
+	    }
+	    else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
+	    {
+		    srcIdMsgMap.insert(std::pair<uint32_t, RsPeerId>(msi->msgId, msi->srcId));
+		    mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
+	    }
+	    else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
+	    {
+		    mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
+	    }
 
-		RsConfigKeyValueSet *vitem = NULL ;
+	    RsConfigKeyValueSet *vitem = NULL ;
 
-		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
-			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
-				if(kit->key == "DISTANT_MESSAGES_ENABLED")
-				{
+	    if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
+	    {
+		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+		    {
+			    if(kit->key == "DISTANT_MESSAGES_ENABLED")
+			    {
 #ifdef MSG_DEBUG
-					std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
+				    std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
 #endif
-                    mShouldEnableDistantMessaging = (kit->value == "YES") ;
-                }
+				    mShouldEnableDistantMessaging = (kit->value == "YES") ;
+			    }
+			    if(kit->key == "DISTANT_MESSAGE_PERMISSION_FLAGS")
+			    {
+#ifdef MSG_DEBUG
+				    std::cerr << "Loaded distant message permission flags: " << kit->value << std::endl ;
+#endif
+				    if (!kit->value.empty())
+				    {
+					    std::istringstream is(kit->value) ;
 
-	}
+					    uint32_t tmp ;
+					    is >> tmp ;
 
-        // sort items into lists
-	std::list<RsMsgItem*>::iterator msgIt;
-	for (msgIt = items.begin(); msgIt != items.end(); ++msgIt)
-	{
-		mitem = *msgIt;
+					    if(tmp < 3)
+						    mDistantMessagePermissions = tmp ;
+					    else
+						    std::cerr << "(EE) Invalid value read for DistantMessagePermission flags in config: " << tmp << std::endl;
+				    }
+			    }
+		    }
 
-		/* STORE MsgID */
-		if (mitem->msgId == 0) {
+		    delete *it ;
+		    continue ;
+	    }
+    }
+    load.clear() ;
+
+    // sort items into lists
+    std::list<RsMsgItem*>::iterator msgIt;
+    for (msgIt = items.begin(); msgIt != items.end(); ++msgIt)
+    {
+	    mitem = *msgIt;
+
+	    /* STORE MsgID */
+	    if (mitem->msgId == 0) {
 		    mitem->msgId = getNewUniqueMsgId();
-		}
+	    }
 
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	    RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-		srcIt = srcIdMsgMap.find(mitem->msgId);
-		if(srcIt != srcIdMsgMap.end()) {
-			mitem->PeerId(srcIt->second);
-			srcIdMsgMap.erase(srcIt);
-		}
+	    srcIt = srcIdMsgMap.find(mitem->msgId);
+	    if(srcIt != srcIdMsgMap.end()) {
+		    mitem->PeerId(srcIt->second);
+		    srcIdMsgMap.erase(srcIt);
+	    }
 
-		/* switch depending on the PENDING
+	    /* switch depending on the PENDING
 		 * flags
 		 */
-		if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
-		{
+	    if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
+	    {
 
-			//std::cerr << "MSG_PENDING";
-			//std::cerr << std::endl;
-			//mitem->print(std::cerr);
+		    //std::cerr << "MSG_PENDING";
+		    //std::cerr << std::endl;
+		    //mitem->print(std::cerr);
 
-			msgOutgoing[mitem->msgId] = mitem;
-		}
-		else
-		{
-			imsg[mitem->msgId] = mitem;
-		}
-	}
+		    msgOutgoing[mitem->msgId] = mitem;
+	    }
+	    else
+	    {
+		    imsg[mitem->msgId] = mitem;
+	    }
+    }
 
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+    RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	/* remove missing msgId in mSrcIds */
-	for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); ++srcIt) {
-		std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
-		if (it != mSrcIds.end()) {
-			delete(it->second);
-			mSrcIds.erase(it);
-		}
-	}
+    /* remove missing msgId in mSrcIds */
+    for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); ++srcIt) {
+	    std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
+	    if (it != mSrcIds.end()) {
+		    delete(it->second);
+		    mSrcIds.erase(it);
+	    }
+    }
 
-	/* remove missing msgId in mParentId */
-	std::map<uint32_t, RsMsgParentId *>::iterator mit = mParentId.begin();
-	while (mit != mParentId.end()) {
-		if (imsg.find(mit->first) == imsg.end()) {
-			if (msgOutgoing.find(mit->first) == msgOutgoing.end()) {
-				/* not found */
-				mParentId.erase(mit++);
-				continue;
-			}
-		}
-	
-		++mit;
-	}
-	
-	return true;
+    /* remove missing msgId in mParentId */
+    std::map<uint32_t, RsMsgParentId *>::iterator mit = mParentId.begin();
+    while (mit != mParentId.end()) {
+	    if (imsg.find(mit->first) == imsg.end()) {
+		    if (msgOutgoing.find(mit->first) == msgOutgoing.end()) {
+			    /* not found */
+			    mParentId.erase(mit++);
+			    continue;
+		    }
+	    }
+
+	    ++mit;
+    }
+
+    return true;
 }
 
 void p3MsgService::loadWelcomeMsg()
@@ -1784,6 +1821,32 @@ void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t d
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 	IndicateConfigChanged() ;
 }
+bool p3MsgService::acceptDataFromPeer(const RsGxsId& to_gxs_id)
+{
+    if(mDistantMessagePermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
+        return (rsIdentity!=NULL) && rsIdentity->isARegularContact(to_gxs_id) ;
+    
+    if(mDistantMessagePermissions & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
+        return false ;
+    
+    return true ;
+}
+
+void p3MsgService::setDistantMessagingPermissionFlags(uint32_t flags) 
+{
+    if(flags != mDistantMessagePermissions)
+    {
+	    mDistantMessagePermissions = flags ;
+
+	    IndicateConfigChanged() ;
+    }
+}
+            
+uint32_t p3MsgService::getDistantMessagingPermissionFlags() 
+{
+    return mDistantMessagePermissions ;
+}
+            
 void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGxsId& signing_key,GRouterServiceId& client_id,uint8_t *data,uint32_t data_size)
 {
     std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << data_size << ", for key " << destination_key << std::endl;

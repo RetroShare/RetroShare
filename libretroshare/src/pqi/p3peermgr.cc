@@ -74,17 +74,20 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 #define MIN_RETRY_PERIOD 140
 
 static const std::string kConfigDefaultProxyServerIpAddr = "127.0.0.1";
-static const uint16_t    kConfigDefaultProxyServerPort = 9050; // standard port.
+static const uint16_t    kConfigDefaultProxyServerPortTor = 9050; // standard port.
+static const uint16_t    kConfigDefaultProxyServerPortI2P = 10; // there is no standard port though
 
 static const std::string kConfigKeyExtIpFinder = "USE_EXTR_IP_FINDER";
-static const std::string kConfigKeyProxyServerIpAddr = "PROXY_SERVER_IPADDR";
-static const std::string kConfigKeyProxyServerPort = "PROXY_SERVER_PORT";
+static const std::string kConfigKeyProxyServerIpAddrTor = "PROXY_SERVER_IPADDR";
+static const std::string kConfigKeyProxyServerPortTor = "PROXY_SERVER_PORT";
+static const std::string kConfigKeyProxyServerIpAddrI2P = "PROXY_SERVER_IPADDR_I2P";
+static const std::string kConfigKeyProxyServerPortI2P = "PROXY_SERVER_PORT_I2P";
 	
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
 	:netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
-	 hiddenNode(false), hiddenPort(0) 
+	 hiddenNode(false), hiddenPort(0), hiddenType(RS_HIDDEN_TYPE_NONE)
 {
         sockaddr_storage_clear(localaddr);
         sockaddr_storage_clear(serveraddr);
@@ -130,13 +133,21 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		lastGroupId = 1;
 
 		// setup default ProxyServerAddress.
-		sockaddr_storage_clear(mProxyServerAddress);
-		sockaddr_storage_ipv4_aton(mProxyServerAddress,
+		// Tor
+		sockaddr_storage_clear(mProxyServerAddressTor);
+		sockaddr_storage_ipv4_aton(mProxyServerAddressTor,
 				kConfigDefaultProxyServerIpAddr.c_str());
-		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
-                kConfigDefaultProxyServerPort);
+		sockaddr_storage_ipv4_setport(mProxyServerAddressTor,
+				kConfigDefaultProxyServerPortTor);
+		// I2P
+		sockaddr_storage_clear(mProxyServerAddressI2P);
+		sockaddr_storage_ipv4_aton(mProxyServerAddressI2P,
+				kConfigDefaultProxyServerIpAddr.c_str());
+		sockaddr_storage_ipv4_setport(mProxyServerAddressI2P,
+				kConfigDefaultProxyServerPortI2P);
 
-        mProxyServerStatus = RS_NET_PROXY_STATUS_UNKNOWN ;
+		mProxyServerStatusTor = RS_NET_PROXY_STATUS_UNKNOWN ;
+		mProxyServerStatusI2P = RS_NET_PROXY_STATUS_UNKNOWN;
 	}
 	
 #ifdef PEER_DEBUG
@@ -169,6 +180,7 @@ bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint
 		mOwnState.hiddenNode = true;
 		mOwnState.hiddenPort = hiddenPort;
 		mOwnState.hiddenDomain = hiddenAddress;
+		mOwnState.hiddenType = hiddenDomainToHiddenType(hiddenAddress);
 	}
 
 	forceHiddenNode();
@@ -188,6 +200,7 @@ bool p3PeerMgrIMPL::forceHiddenNode()
 #endif
 		}
 		mOwnState.hiddenNode = true;
+		mOwnState.hiddenType = hiddenDomainToHiddenType(mOwnState.hiddenDomain);
 
 		// force external address - otherwise its invalid.
 		sockaddr_storage_clear(mOwnState.serveraddr);
@@ -366,14 +379,49 @@ bool    p3PeerMgrIMPL::getGpgId(const RsPeerId &ssl_id, RsPgpId &gpgId)
 
 /**** HIDDEN STUFF ****/
 
-bool    p3PeerMgrIMPL::isHidden()
+bool p3PeerMgrIMPL::isHidden()
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 	return mOwnState.hiddenNode;
 }
 
+/**
+ * @brief checks the hidden type of the own peer.
+ * @param type type to check
+ * @return true when the peer has the same hidden type than type
+ */
+bool	p3PeerMgrIMPL::isHidden(const uint32_t type)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	switch (type) {
+	case RS_HIDDEN_TYPE_TOR:
+		return mOwnState.hiddenType == RS_HIDDEN_TYPE_TOR;
+		break;
+	case RS_HIDDEN_TYPE_I2P:
+		return mOwnState.hiddenType == RS_HIDDEN_TYPE_I2P;
+		break;
+	default:
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::isHidden(" << type << ") unkown type -> false";
+		std::cerr << std::endl;
+#endif
+		return false;
+		break;
+	}
+}
 
 bool    p3PeerMgrIMPL::isHiddenPeer(const RsPeerId &ssl_id)
+{
+	return isHiddenPeer(ssl_id, RS_HIDDEN_TYPE_NONE);
+}
+
+/**
+ * @brief checks the hidden type of a given ssl id. When type RS_HIDDEN_TYPE_NONE is choosen it returns the 'hiddenNode' value instead
+ * @param ssl_id to check
+ * @param type type to check. Use RS_HIDDEN_TYPE_NONE to check 'hiddenNode' value
+ * @return true when the peer has the same hidden type than type
+ */
+bool	p3PeerMgrIMPL::isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -394,9 +442,91 @@ bool    p3PeerMgrIMPL::isHiddenPeer(const RsPeerId &ssl_id)
 	std::cerr << "p3PeerMgrIMPL::isHiddenPeer(" << ssl_id << ") = " << (it->second).hiddenNode;
 	std::cerr << std::endl;
 #endif
-	return (it->second).hiddenNode;
+	switch (type) {
+	case RS_HIDDEN_TYPE_TOR:
+		return (it->second).hiddenType == RS_HIDDEN_TYPE_TOR;
+		break;
+	case RS_HIDDEN_TYPE_I2P:
+		return (it->second).hiddenType == RS_HIDDEN_TYPE_I2P;
+		break;
+	default:
+		return (it->second).hiddenNode;
+		break;
+	}
 }
 
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+	if (fullString.length() < ending.length())
+		return false;
+
+	return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+}
+
+/**
+ * @brief resolves the hidden type (tor or i2p) from a domain
+ * @param domain to check
+ * @return RS_HIDDEN_TYPE_TOR, RS_HIDDEN_TYPE_I2P or RS_HIDDEN_TYPE_NONE
+ *
+ * Tor: ^[a-z2-7]{16}\.onion$
+ *
+ * I2P: There is more than one address:
+ *       - pub. key in base64
+ *       - hash in base32 ( ^[a-z2-7]{52}\.b32\.i2p$ )
+ *       - "normal" .i2p domains
+ */
+uint32_t p3PeerMgrIMPL::hiddenDomainToHiddenType(const std::string &domain)
+{
+	if(hasEnding(domain, ".onion"))
+		return RS_HIDDEN_TYPE_TOR;
+	if(hasEnding(domain, ".i2p"))
+		return RS_HIDDEN_TYPE_I2P;
+
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::hiddenDomainToHiddenType() unknown hidden type: " << domain;
+		std::cerr << std::endl;
+#endif
+	return RS_HIDDEN_TYPE_UNKNOWN;
+}
+
+/**
+ * @brief returns the hidden type of a peer
+ * @param ssl_id peer id
+ * @return hidden type
+ */
+uint32_t p3PeerMgrIMPL::getHiddenType(const RsPeerId &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	if (ssl_id == AuthSSL::getAuthSSL()->OwnId())
+		return mOwnState.hiddenType;
+
+	/* check for existing */
+	std::map<RsPeerId, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::getHiddenType(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+#endif
+
+		return false;
+	}
+
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getHiddenType(" << ssl_id << ") = " << (it->second).hiddenType;
+	std::cerr << std::endl;
+#endif
+	return (it->second).hiddenType;
+}
+
+/**
+ * @brief sets hidden domain and port for a given ssl ID
+ * @param ssl_id peer to set domain and port for
+ * @param domain_addr
+ * @param domain_port
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -426,6 +556,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 		mOwnState.hiddenNode = true;
 		mOwnState.hiddenDomain = domain;
 		mOwnState.hiddenPort = domain_port;
+		mOwnState.hiddenType = hiddenDomainToHiddenType(domain);
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set own State";
 		std::cerr << std::endl;
@@ -448,6 +579,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 	it->second.hiddenDomain = domain;
 	it->second.hiddenPort = domain_port;
 	it->second.hiddenNode = true;
+	it->second.hiddenType = hiddenDomainToHiddenType(domain);
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set Peers State";
 	std::cerr << std::endl;
@@ -456,15 +588,40 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const RsPeerId &ssl_id, const std::strin
 	return true;
 }
 
-bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_addr)
+/**
+ * @brief sets the proxy server address for a hidden service
+ * @param type hidden service type
+ * @param proxy_addr proxy address
+ * @return true on success
+ */
+bool p3PeerMgrIMPL::setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	if (!sockaddr_storage_same(mProxyServerAddress,proxy_addr))
-	{
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		mProxyServerAddress = proxy_addr;
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		if (!sockaddr_storage_same(mProxyServerAddressI2P, proxy_addr))
+		{
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			mProxyServerAddressI2P = proxy_addr;
+		}
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		if (!sockaddr_storage_same(mProxyServerAddressTor, proxy_addr))
+		{
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			mProxyServerAddressTor = proxy_addr;
+		}
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::setProxyServerAddress() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
 	}
+
 	return true;
 }
 
@@ -480,21 +637,71 @@ bool p3PeerMgrIMPL::resetOwnExternalAddressList()
     return true ;
 }
 
-bool p3PeerMgrIMPL::getProxyServerStatus(uint32_t& proxy_status)
-{
-    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-    proxy_status = mProxyServerStatus;
-    return true;
-}
-bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
+/**
+ * @brief returs proxy server status for a hidden service proxy
+ * @param type hidden service type
+ * @param proxy_status
+ * @return true on success
+ */
+bool p3PeerMgrIMPL::getProxyServerStatus(const uint32_t type, uint32_t& proxy_status)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	proxy_addr = mProxyServerAddress;
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy_status = mProxyServerStatusI2P;
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		proxy_status = mProxyServerStatusTor;
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyServerStatus() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
+	}
+
 	return true;
 }
-	
+
+/**
+ * @brief returs proxy server address for a hidden service proxy
+ * @param type hidden service type
+ * @param proxy_addr
+ * @return true on success
+ */
+bool p3PeerMgrIMPL::getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	switch (type) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy_addr = mProxyServerAddressI2P;
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		proxy_addr = mProxyServerAddressTor;
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyServerAddress() unknown hidden type " << type << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
+	}
+	return true;
+}
+
+/**
+ * @brief looks up the proxy address and domain/port that have to be used when connecting to a peer
+ * @param ssl_id peer to connect to
+ * @param proxy_addr proxy address to be used
+ * @param domain_addr domain to connect to
+ * @param domain_port port to connect to
+ * @return true on success
+ */
 bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -515,7 +722,21 @@ bool p3PeerMgrIMPL::getProxyAddress(const RsPeerId &ssl_id, struct sockaddr_stor
 	domain_addr = it->second.hiddenDomain;
 	domain_port = it->second.hiddenPort;
 
-	proxy_addr = mProxyServerAddress;
+	switch (it->second.hiddenType) {
+	case RS_HIDDEN_TYPE_I2P:
+		proxy_addr = mProxyServerAddressI2P;
+		break;
+	case RS_HIDDEN_TYPE_TOR:
+		proxy_addr = mProxyServerAddressTor;
+		break;
+	case RS_HIDDEN_TYPE_UNKNOWN:
+	default:
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::getProxyAddress() no valid hidden type (" << it->second.hiddenType << ") for peer id " << ssl_id << " -> false";
+	std::cerr << std::endl;
+#endif
+		return false;
+	}
 	return true;
 }
 
@@ -805,7 +1026,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
-        bool success = false;
+        //bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
@@ -822,7 +1043,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 				mOthersList[it->second.id] = peer;
 				mStatusChanged = true;
 
-				success = true;
+				//success = true;
 			}
 		}
 
@@ -878,7 +1099,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
-		bool success = false;
+		//bool success = false;
 		std::map<RsPeerId, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
@@ -897,7 +1118,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 				mOthersList[id] = peer;
 				mStatusChanged = true;
 
-				success = true;
+				//success = true;
 			}
 		}
 
@@ -1246,20 +1467,51 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     //		* emit a warnign when the address is unknown
     // 		* if multiple peers report the same address => notify the LinkMgr that the external address had changed.
 
-    sockaddr_storage addr_filtered ;
-    sockaddr_storage_copyip(addr_filtered,addr) ;
+	sockaddr_storage addr_filtered ;
+	sockaddr_storage_clear(addr_filtered) ;
+	sockaddr_storage_copyip(addr_filtered,addr) ;
 
 #ifdef PEER_DEBUG
-    std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
+	std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
 #endif
 
-    if(!sockaddr_storage_isExternalNet(addr_filtered))
+	if(!sockaddr_storage_isExternalNet(addr_filtered))
+	{
+#ifdef PEER_DEBUG
+		std::cerr << "  address is not an external address. Returning false" << std::endl ;
+#endif
+		return false ;
+	}
+
+    // Update a list of own IPs:
+    //	- remove old values for that same peer
+    //	- remove values for non connected peers
+    
     {
-#ifdef PEER_DEBUG
-        std::cerr << "  address is not an external address. Returning false" << std::endl ;
-#endif
-        return false ;
+	    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+            
+	    mReportedOwnAddresses[from] = addr_filtered ;
+
+	    for(std::map<RsPeerId,sockaddr_storage>::iterator it(mReportedOwnAddresses.begin());it!=mReportedOwnAddresses.end();)
+		    if(!mLinkMgr->isOnline(it->first))
+		    {
+			    std::map<RsPeerId,sockaddr_storage>::iterator tmp(it) ;
+			    ++tmp ;
+			    mReportedOwnAddresses.erase(it) ;
+			    it=tmp ;
+		    }
+	    else
+		    ++it ;
+
+	    sockaddr_storage current_best_ext_address_guess ;
+	    uint32_t count ;
+
+	    locked_computeCurrentBestOwnExtAddressCandidate(current_best_ext_address_guess,count) ;
+
+	    std::cerr << "p3PeerMgr::  Current external address is calculated to be: " << sockaddr_storage_iptostring(current_best_ext_address_guess) << " (simultaneously reported by " << count << " peers)." << std::endl;
     }
+       
+    // now current 
 
     sockaddr_storage own_addr ;
 
@@ -1282,8 +1534,54 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 
         RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
     }
+    
+    // we could also sweep over all connected friends and see if some report a different address.
 
     return true ;
+}
+
+bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage& addr, uint32_t& count)
+{
+    std::map<sockaddr_storage,ZeroedInt> addr_counts ;
+    
+    for(std::map<RsPeerId,sockaddr_storage>::iterator it(mReportedOwnAddresses.begin());it!=mReportedOwnAddresses.end();++it)
+	    ++addr_counts[it->second].n ;
+
+#ifdef PEER_DEBUG
+    std::cerr << "Current ext addr statistics:" << std::endl;
+#endif
+    
+    count = 0 ;
+    
+    for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it(addr_counts.begin());it!=addr_counts.end();++it)
+    {
+        if(uint32_t(it->second.n) > count)
+        {
+            addr = it->first ;
+            count = it->second.n ;
+        }
+        
+#ifdef PEER_DEBUG
+        std::cerr << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << std::endl;
+#endif
+    }
+    
+    return true ;
+}
+ 
+bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& isstable)
+{
+        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+        
+        uint32_t count ;
+        
+        locked_computeCurrentBestOwnExtAddressCandidate(addr,count) ;
+        
+#ifdef PEER_DEBUG
+        std::cerr << "Estimation count = " << count << ". Trusted? = " << (count>=2) << std::endl;
+#endif
+        
+        return count >= 2 ;// 2 is not conservative enough. 3 should be probably better.	
 }
 
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
@@ -1620,9 +1918,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	cleanup = false;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
 
-	// Store Proxy Server.
-	struct sockaddr_storage proxy_addr;
-	getProxyServerAddress(proxy_addr);
+	/* gather these information before mPeerMtx is locked! */
+	struct sockaddr_storage proxy_addr_tor, proxy_addr_i2p;
+	getProxyServerAddress(RS_HIDDEN_TYPE_TOR, proxy_addr_tor);
+	getProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr_i2p);
 
 	mPeerMtx.lock(); /****** MUTEX LOCKED *******/ 
 
@@ -1733,17 +2032,33 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
 
+	// Store Proxy Server.
+	// Tor
 #ifdef PEER_DEBUG
-	std::cerr << "Saving proxyServerAddress: " << sockaddr_storage_tostring(proxy_addr);
+	std::cerr << "Saving proxyServerAddress for Tor: " << sockaddr_storage_tostring(proxy_addr_tor);
 	std::cerr << std::endl;
 #endif
 
-	kv.key = kConfigKeyProxyServerIpAddr;
-	kv.value = sockaddr_storage_iptostring(proxy_addr);
+	kv.key = kConfigKeyProxyServerIpAddrTor;
+	kv.value = sockaddr_storage_iptostring(proxy_addr_tor);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-	kv.key = kConfigKeyProxyServerPort;
-	kv.value = sockaddr_storage_porttostring(proxy_addr);
+	kv.key = kConfigKeyProxyServerPortTor;
+	kv.value = sockaddr_storage_porttostring(proxy_addr_tor);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	// I2P
+#ifdef PEER_DEBUG
+	std::cerr << "Saving proxyServerAddress for I2P: " << sockaddr_storage_tostring(proxy_addr_i2p);
+	std::cerr << std::endl;
+#endif
+
+	kv.key = kConfigKeyProxyServerIpAddrI2P;
+	kv.value = sockaddr_storage_iptostring(proxy_addr_i2p);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = kConfigKeyProxyServerPortI2P;
+	kv.value = sockaddr_storage_porttostring(proxy_addr_i2p);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 	
 	saveData.push_back(vitem);
@@ -1779,8 +2094,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	// DEFAULTS.
 	bool useExtAddrFinder = true;
-	std::string proxyIpAddress = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPort = kConfigDefaultProxyServerPort;
+	std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
+	uint16_t    proxyPortTor = kConfigDefaultProxyServerPortTor;
+	std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
+	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPortI2P;
 
         if (load.empty()) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
@@ -1876,20 +2193,38 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 					std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
 #endif
 				} 
-				else if (kit->key == kConfigKeyProxyServerIpAddr)
+				// Tor
+				else if (kit->key == kConfigKeyProxyServerIpAddrTor)
 				{
-					proxyIpAddress = kit->value;
+					proxyIpAddressTor = kit->value;
 #ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyIpAddress: " << proxyIpAddress;
+					std::cerr << "Loaded proxyIpAddress for Tor: " << proxyIpAddressTor;
 					std::cerr << std::endl ;
 #endif
 					
 				}
-				else if (kit->key == kConfigKeyProxyServerPort)
+				else if (kit->key == kConfigKeyProxyServerPortTor)
 				{
-					proxyPort = atoi(kit->value.c_str());
+					proxyPortTor = atoi(kit->value.c_str());
 #ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyPort: " << proxyPort;
+					std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
+					std::cerr << std::endl ;
+#endif
+				}
+				// I2p
+				else if (kit->key == kConfigKeyProxyServerIpAddrI2P)
+				{
+					proxyIpAddressI2P = kit->value;
+#ifdef PEER_DEBUG
+					std::cerr << "Loaded proxyIpAddress for I2P: " << proxyIpAddressI2P;
+					std::cerr << std::endl ;
+#endif
+				}
+				else if (kit->key == kConfigKeyProxyServerPortI2P)
+				{
+					proxyPortI2P = atoi(kit->value.c_str());
+#ifdef PEER_DEBUG
+					std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
 					std::cerr << std::endl ;
 #endif
 				}
@@ -2005,15 +2340,27 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	// Configure Proxy Server.
 	struct sockaddr_storage proxy_addr;
+	// Tor
 	sockaddr_storage_clear(proxy_addr);
-	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddress.c_str());
-	sockaddr_storage_ipv4_setport(proxy_addr, proxyPort);
+	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressTor.c_str());
+	sockaddr_storage_ipv4_setport(proxy_addr, proxyPortTor);
 
 	if (sockaddr_storage_isValidNet(proxy_addr))
 	{
-		setProxyServerAddress(proxy_addr);
+		setProxyServerAddress(RS_HIDDEN_TYPE_TOR, proxy_addr);
 	}
 
+	// I2P
+	sockaddr_storage_clear(proxy_addr);
+	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressI2P.c_str());
+	sockaddr_storage_ipv4_setport(proxy_addr, proxyPortI2P);
+
+	if (sockaddr_storage_isValidNet(proxy_addr))
+	{
+		setProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr);
+	}
+
+    	load.clear() ;
 	return true;
 }
 

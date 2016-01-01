@@ -137,6 +137,7 @@ private:
 	QAction *actionSortByName;
 	QAction *actionSortByPopularity;
 	QAction *actionSortByLastPost;
+	QAction *actionSortByPosts;
 
 	RSTreeWidgetItemCompareRole *compareRole;
 

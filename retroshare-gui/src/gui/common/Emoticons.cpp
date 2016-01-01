@@ -29,7 +29,7 @@
 #include <QPushButton>
 
 #include <iostream>
-
+#include <math.h>
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 
@@ -48,7 +48,7 @@ void Emoticons::load()
         internalEmoticons = false;
     } else {
         // then embedded emotions
-        sm_file.setFileName(":/smileys/emotes.acs");
+        sm_file.setFileName(":/emojione/emotes.acs");
         if(!sm_file.open(QIODevice::ReadOnly))
         {
             std::cout << "error opening ressource file" << std::endl ;
@@ -56,7 +56,7 @@ void Emoticons::load()
         }
     }
 #else
-    QFile sm_file(QString(":/smileys/emotes.acs"));
+    QFile sm_file(QString(":/emojione/emotes.acs"));
     if(!sm_file.open(QIODevice::ReadOnly))
     {
         std::cout << "error opening ressource file" << std::endl ;
@@ -128,9 +128,9 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
     const int buttonWidth = 26;
     const int buttonHeight = 26;
-    const int countPerLine = 9;
 
-    int rowCount = (Smileys.size()/countPerLine) + ((Smileys.size() % countPerLine) ? 1 : 0);
+    int rowCount = (int)sqrt((double)Smileys.size());
+    int countPerLine = (Smileys.size()/rowCount) + ((Smileys.size() % rowCount) ? 1 : 0);
 
     smWidget->setAttribute( Qt::WA_DeleteOnClose);
     smWidget->setWindowTitle("Emoticons");

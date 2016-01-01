@@ -51,22 +51,22 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
-        :pqissl(NULL, parent, lm), tou_bio(NULL),
-	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0), mConnectBandwidth(0)
+pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm) :
+	pqissl(NULL, parent, lm), tou_bio(NULL), listen_checktime(0),
+	mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
+	mConnectBandwidth(0)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 	sockaddr_storage_clear(remote_addr);
 	sockaddr_storage_clear(mConnectProxyAddr);
 	sockaddr_storage_clear(mConnectSrcAddr);
-	return;
 }
 
 
 pqissludp::~pqissludp()
 { 
-        rslog(RSL_ALERT, pqissludpzone,  
+	rslog(RSL_ALERT, pqissludpzone,
             "pqissludp::~pqissludp -> destroying pqissludp");
 
 	/* must call reset from here, so that the
@@ -76,16 +76,13 @@ pqissludp::~pqissludp()
 	 *  This means that reset() will be called twice, but this should
 	 *  be harmless.
 	 */
-        stoplistening(); /* remove from p3proxy listenqueue */
-	reset(); 
+	stoplistening(); /* remove from p3proxy listenqueue */
+	reset();
 
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 	if (tou_bio) // this should be in the reset?
-	{
 		BIO_free(tou_bio);
-	}
-	return;
 }
 
 int pqissludp::reset_locked()
@@ -153,9 +150,9 @@ int	pqissludp::attach()
 
 
 // The Address determination is done centrally
-int 	pqissludp::Initiate_Connection()
+int pqissludp::Initiate_Connection()
 {
-	int err;
+	int err=0;
 
 	attach(); /* open socket */
 	//remote_addr.sin_family = AF_INET;
@@ -283,7 +280,7 @@ int 	pqissludp::Initiate_Connection()
 			proxyaddr.sin_port = pap->sin_port;
 			remoteaddr.sin_port = rap->sin_port;
 			
-			tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
+			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
 			
 		}
 		
@@ -349,7 +346,7 @@ int 	pqissludp::Initiate_Connection()
 }
 
 /********* VERY DIFFERENT **********/
-int 	pqissludp::Basic_Connection_Complete()
+int pqissludp::Basic_Connection_Complete()
 {
 	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Basic_Connection_Complete()...");
@@ -448,15 +445,6 @@ int pqissludp::net_internal_fcntl_nonblock(int /*fd*/)
 	return 0;
 }
 
-
-/* These are identical to pqinetssl version */
-//int 	pqissludp::status()
-
-int	pqissludp::tick()
-{
-	pqissl::tick();
-	return 1;
-}
 
         // listen fns call the udpproxy.
 int pqissludp::listen()

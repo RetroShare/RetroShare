@@ -110,7 +110,7 @@ void CreateLobbyDialog::checkTextFields()
     
     rsIdentity->getIdDetails(id,idd) ;
     
-    if( (!idd.mPgpKnown) && ui->pgp_signed_CB->isChecked())
+    if( (!(idd.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)) && ui->pgp_signed_CB->isChecked())
                     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false) ;
 }
 

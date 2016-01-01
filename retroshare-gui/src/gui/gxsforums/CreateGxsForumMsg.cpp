@@ -121,7 +121,9 @@ void  CreateGxsForumMsg::newMsg()
 	mForumMetaLoaded = false;
 
 	/* fill in the available OwnIds for signing */
-    ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    	std::cerr << "Initing ID chooser. Sign flags = " << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
+        
+	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
         if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
@@ -203,6 +205,13 @@ void  CreateGxsForumMsg::loadFormInformation()
 	std::cerr << "CreateGxsForumMsg::loadMsgInformation() Data Available!";
 	std::cerr << std::endl;
 
+	std::cerr << "CreateGxsForumMsg::loadMsgInformation() using signFlags=" << std::hex << mForumMeta.mSignFlags << std::dec << std::endl;
+    
+    	if(mForumMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+		ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NON_ANONYMOUS) ;
+        else
+		ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED) ;
+    	
 	QString name = QString::fromUtf8(mForumMeta.mGroupName.c_str());
 	QString subj;
         if (!mParentId.isNull())
@@ -251,7 +260,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 		ui.signBox->setEnabled(true);
 	}
 
-	ui.forumMessage->setText("");
+	//ui.forumMessage->setText("");
 }
 
 void  CreateGxsForumMsg::createMsg()
@@ -496,4 +505,9 @@ void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest 
 				std::cerr << std::endl;
 		}
 	}
+}
+
+void CreateGxsForumMsg::insertPastedText(QString msg)
+{
+	ui.forumMessage->append(msg);
 }

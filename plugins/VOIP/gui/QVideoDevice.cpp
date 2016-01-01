@@ -31,21 +31,23 @@ void QVideoInputDevice::stop()
 	}
 	if(_capture_device != NULL)
 	{
-		cvReleaseCapture(&_capture_device) ;
+		// the camera will be deinitialized automatically in VideoCapture destructor
+		_capture_device->release();
+		delete _capture_device ;
 		_capture_device = NULL ;
 	}
 }
 void QVideoInputDevice::start()
 {
-	// make sure everything is re-initialised 
+	// make sure everything is re-initialised
 	//
 	stop() ;
 
-	// Initialise la capture  
+	// Initialise la capture
 	static const int cam_id = 0 ;
-	_capture_device = cvCaptureFromCAM(cam_id);
+	_capture_device = new cv::VideoCapture(cam_id);
 
-	if(_capture_device == NULL)
+	if(!_capture_device->isOpened())
 	{
 		std::cerr << "Cannot initialise camera. Something's wrong." << std::endl;
 		return ;
@@ -61,52 +63,51 @@ void QVideoInputDevice::grabFrame()
 {
     if(!_timer)
         return ;
-    
-    IplImage *img=cvQueryFrame(_capture_device);    
 
-    if(img == NULL)
+    cv::Mat frame;
+    if(!_capture_device->read(frame))
     {
-	    std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
-	    return ;
+        std::cerr << "(EE) Cannot capture image from camera. Something's wrong." << std::endl;
+        return ;
     }
+
     // get the image data
 
-    if(img->nChannels != 3)
+    if(frame.channels() != 3)
     {
-	    std::cerr << "(EE) expected 3 channels. Got " << img->nChannels << std::endl;
-	    return ;
+        std::cerr << "(EE) expected 3 channels. Got " << frame.channels() << std::endl;
+        return ;
     }
 
     // convert to RGB and copy to new buffer, because cvQueryFrame tells us to not modify the buffer
     cv::Mat img_rgb;
-    cv::cvtColor(cv::Mat(img), img_rgb, CV_BGR2RGB);
-
+    cv::cvtColor(frame, img_rgb, CV_BGR2RGB);
     QImage image = QImage(img_rgb.data,img_rgb.cols,img_rgb.rows,QImage::Format_RGB888);
 
-    if(_video_processor != NULL) 
+    if(_video_processor != NULL)
     {
-	    _video_processor->processImage(image) ;
+        _video_processor->processImage(image) ;
 
-	    emit networkPacketReady() ;
+        emit networkPacketReady() ;
     }
-    if(_echo_output_device != NULL) 
-	    _echo_output_device->showFrame(image) ;
+    if(_echo_output_device != NULL)
+        _echo_output_device->showFrame(image) ;
 }
 
 bool QVideoInputDevice::getNextEncodedPacket(RsVOIPDataChunk& chunk)
 {
     if(!_timer)
         return false ;
-    
+
     if(_video_processor)
-	    return _video_processor->nextEncodedPacket(chunk) ;
-    else 
+        return _video_processor->nextEncodedPacket(chunk) ;
+    else
         return false ;
 }
 
 uint32_t QVideoInputDevice::currentBandwidth() const
 {
-  return _video_processor->currentBandwidthOut() ;  
+    return _video_processor->currentBandwidthOut() ;
 }
 
 QVideoInputDevice::~QVideoInputDevice()
@@ -117,19 +118,20 @@ QVideoInputDevice::~QVideoInputDevice()
 
 
 QVideoOutputDevice::QVideoOutputDevice(QWidget *parent)
-	: QLabel(parent)
+    : QLabel(parent)
 {
 	showFrameOff() ;
 }
 
 void QVideoOutputDevice::showFrameOff()
 {
-	setPixmap(QPixmap(":/images/video-icon-big.png").scaled(320,256,Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
+	setPixmap(QPixmap(":/images/video-icon-big.png").scaled(QSize(height()*4/3,height()),Qt::KeepAspectRatio,Qt::SmoothTransformation)) ;
+	setAlignment(Qt::AlignCenter);
 }
 
 void QVideoOutputDevice::showFrame(const QImage& img)
 {
     std::cerr << "img.size = " << img.width() << " x " << img.height() << std::endl;
-	setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*640/480,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
+    setPixmap(QPixmap::fromImage(img).scaled( QSize(height()*4/3,height()),Qt::IgnoreAspectRatio,Qt::SmoothTransformation)) ;
 }
 

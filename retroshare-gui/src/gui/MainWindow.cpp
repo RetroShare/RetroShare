@@ -401,7 +401,7 @@ void MainWindow::initStackedPage()
 		 else
 			 icon = QIcon(":images/extension_48.png") ;
 
-		 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
+		 std::cerr << "  Adding widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
 		 pluginPage->setIconPixmap(icon);
 		 pluginPage->setPageName(QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()));
 		 addPage(pluginPage, grp, &notify);
@@ -677,12 +677,20 @@ void MainWindow::updateTrayCombine()
     updateFriends();
 }
 
+void MainWindow::toggleStatusToolTip(bool toggle){
+    if(!toggle)return;
+    QString tray = "RetroShare\n";
+    tray += "\n" + nameAndLocation;
+    trayIcon->setToolTip(tray);
+}
+
 void MainWindow::updateStatus()
 {
     // This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
     if(RsAutoUpdatePage::eventsLocked())
         return;
-
+    if(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool())
+        return;
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);

@@ -96,7 +96,7 @@ void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 	// do some sanity check
 	//
 	
-	if( (((int)_map.size()-1)>>5) >= map._map.size() )
+	if( (((int)_map.size()-1)>>5) >= (int)map._map.size() )
 	{
 		std::cerr << "ChunkMap::setPeerAvailabilityMap: Compressed chunkmap received is too small or corrupted." << std::endl;
 		return ;

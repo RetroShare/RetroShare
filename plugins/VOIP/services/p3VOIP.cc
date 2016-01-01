@@ -219,36 +219,36 @@ void p3VOIP::sendBandwidthInfo()
 	}
 }
 
-int p3VOIP::sendVoipHangUpCall(const RsPeerId &peer_id)
+int p3VOIP::sendVoipHangUpCall(const RsPeerId &peer_id, uint32_t flags)
 {
 	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
 	item->protocol = RsVOIPProtocolItem::VoipProtocol_Close;
-	item->flags = 0 ;
+	item->flags = flags ;
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
 
 	return true ;
 }
-int p3VOIP::sendVoipAcceptCall(const RsPeerId& peer_id)
+int p3VOIP::sendVoipAcceptCall(const RsPeerId& peer_id, uint32_t flags)
 {
 	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
 	item->protocol = RsVOIPProtocolItem::VoipProtocol_Ackn ;
-	item->flags = 0 ;
+	item->flags = flags ;
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
 
 	return true ;
 }
-int p3VOIP::sendVoipRinging(const RsPeerId &peer_id)
+int p3VOIP::sendVoipRinging(const RsPeerId &peer_id, uint32_t flags)
 {
 	RsVOIPProtocolItem *item = new RsVOIPProtocolItem ;
 
 	item->protocol = RsVOIPProtocolItem::VoipProtocol_Ring ;
-	item->flags = 0 ;
+	item->flags = flags ;
 	item->PeerId(peer_id) ;
 
 	sendItem(item) ;
@@ -362,33 +362,31 @@ void p3VOIP::handleProtocol(RsVOIPProtocolItem *item)
 
 	switch(item->protocol)
 	{
-		case RsVOIPProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId());
+		case RsVOIPProtocolItem::VoipProtocol_Ring: mNotify->notifyReceivedVoipInvite(item->PeerId(), (uint32_t)item->flags);
 #ifdef DEBUG_VOIP
-																  std::cerr << "p3VOIP::handleProtocol(): Received protocol ring item." << std::endl;
+			std::cerr << "p3VOIP::handleProtocol(): Received protocol ring item." << std::endl;
 #endif
-																  break ;
+		break ;
 
-		case RsVOIPProtocolItem::VoipProtocol_Ackn: mNotify->notifyReceivedVoipAccept(item->PeerId());
+		case RsVOIPProtocolItem::VoipProtocol_Ackn: mNotify->notifyReceivedVoipAccept(item->PeerId(), (uint32_t)item->flags);
 #ifdef DEBUG_VOIP
-																  std::cerr << "p3VOIP::handleProtocol(): Received protocol accept call" << std::endl;
+			std::cerr << "p3VOIP::handleProtocol(): Received protocol accept call" << std::endl;
 #endif
-																  break ;
+		break ;
 
-		case RsVOIPProtocolItem::VoipProtocol_Close: mNotify->notifyReceivedVoipHangUp(item->PeerId());
+		case RsVOIPProtocolItem::VoipProtocol_Close: mNotify->notifyReceivedVoipHangUp(item->PeerId(), (uint32_t)item->flags);
 #ifdef DEBUG_VOIP
-																  std::cerr << "p3VOIP::handleProtocol(): Received protocol Close call." << std::endl;
+			std::cerr << "p3VOIP::handleProtocol(): Received protocol Close call." << std::endl;
 #endif
-																  break ;
+		break ;
 		case RsVOIPProtocolItem::VoipProtocol_Bandwidth: mNotify->notifyReceivedVoipBandwidth(item->PeerId(),(uint32_t)item->flags);
 #ifdef DEBUG_VOIP
-																  std::cerr << "p3VOIP::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
+			std::cerr << "p3VOIP::handleProtocol(): Received protocol bandwidth. Value=" << item->flags << std::endl;
 #endif
-																  break ;
+		break ;
 		default:
-#ifdef DEBUG_VOIP
-																  std::cerr << "p3VOIP::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
-#endif
-																  break ;
+			std::cerr << "p3VOIP::handleProtocol(): Received protocol item # " << item->protocol << ": not handled yet ! Sorry" << std::endl;
+		break ;
 	}
 
 }
@@ -785,7 +783,8 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 
 		delete vitem ;
 	}
-
+    
+    load.clear() ;
 	return true ;
 }
 

@@ -20,6 +20,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <math.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QStyleFactory>
@@ -237,26 +238,32 @@ void RshareSettings::setToolButtonStyle(Qt::ToolButtonStyle style)
 	}
 }
 
+int RshareSettings::computeBestIconSize(int n_sizes,int *sizes,int recommended_size)
+{
+    float default_size = QFontMetricsF(QWidget().font()).height()/16.0 * recommended_size ;
+    float closest_ratio_dist = 10000.0f ;
+    int best_default_size = sizes[0] ;
+    
+    for(int i=0;i<n_sizes;++i)
+    {
+        float ratio = default_size / sizes[i] ;
+        
+        if(fabsf(ratio - 1.0f) < closest_ratio_dist)
+        {
+            closest_ratio_dist = fabsf(ratio-1.0f) ;
+            best_default_size = sizes[i] ;
+        }
+    }
+    
+    return best_default_size ;
+}
+
 /** Gets the tool button's size.*/
 int RshareSettings::getToolButtonSize()
 {
-	int intValue=value(SETTING_TOOLBUTTONSIZE, 24).toInt();
-	switch (intValue)
-	{
-	case 8:
-		return 8;
-	case 16:
-		return 16;
-	case 24:
-	default:
-		return 24;
-	case 32:
-		return 32;
-    case 64:
-            return 64 ;
-case 128:
-    return 128 ;
-	}
+    static int sizes[6] = { 8,16,24,32,64,128 } ;
+    
+    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,24)).toInt();
 }
 
 /** Sets the tool button's size.*/
@@ -289,23 +296,9 @@ void RshareSettings::setToolButtonSize(int size)
 /** Gets the list item icon's size.*/
 int RshareSettings::getListItemIconSize()
 {
-	int intValue=value(SETTING_LISTITEMICONSIZE, 24).toInt();
-	switch (intValue)
-	{
-	case 8:
-		return 8;
-	case 16:
-		return 16;
-	case 24:
-	default:
-		return 24;
-	case 32:
-		return 32;
-    case 64:
-        return 64;
-    case 128:
-        return 128;
-    }
+    static int sizes[6] = { 8,16,24,32,64,128 } ;
+    
+    return value(SETTING_LISTITEMICONSIZE, computeBestIconSize(6,sizes,24)).toInt();
 }
 
 /** Sets the list item icon's size.*/

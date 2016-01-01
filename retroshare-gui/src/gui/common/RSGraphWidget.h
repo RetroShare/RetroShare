@@ -73,7 +73,7 @@ public:
     virtual QString legend(int i,float v) const ;
 
     // Returns the n^th interpolated value at the given time in floating point seconds backward.
-    virtual void getDataPoints(int index, std::vector<QPointF>& pts) const ;
+    virtual void getDataPoints(int index, std::vector<QPointF>& pts, float filter_factor=0.0f) const ;
 
     // returns the name to give to the nth entry in the graph
     virtual QString displayName(int index) const ;
@@ -113,108 +113,109 @@ class RSGraphWidget: public QFrame
 {
 	Q_OBJECT
 
-	public:
-        static const uint32_t RSGRAPH_FLAGS_AUTO_SCALE_Y    	= 0x0001 ;// automatically adjust Y scale
-        static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
-        static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
-        static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
-        static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND       = 0x0010 ;// show legend in the graph
-        static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT  = 0x0020 ;// do not interpolate, and draw flat colored boxes
+public:
+	static const uint32_t RSGRAPH_FLAGS_AUTO_SCALE_Y    	= 0x0001 ;// automatically adjust Y scale
+	static const uint32_t RSGRAPH_FLAGS_LOG_SCALE_Y     	= 0x0002 ;// log scale in Y
+	static const uint32_t RSGRAPH_FLAGS_ALWAYS_COLLECT  	= 0x0004 ;// keep collecting while not displayed
+	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_PLAIN	= 0x0008 ;// use plain / line drawing style
+	static const uint32_t RSGRAPH_FLAGS_SHOW_LEGEND       = 0x0010 ;// show legend in the graph
+	static const uint32_t RSGRAPH_FLAGS_PAINT_STYLE_FLAT  = 0x0020 ;// do not interpolate, and draw flat colored boxes
 
-		/** Bandwidth graph style. */
-		enum GraphStyle 
-		{
-			SolidLine = 0,  /**< Plot bandwidth as solid lines. */
-			AreaGraph = 1   /**< Plot bandwidth as alpha blended area graphs. */
-		};
+	/** Bandwidth graph style. */
+	enum GraphStyle 
+	{
+		SolidLine = 0,  /**< Plot bandwidth as solid lines. */
+		AreaGraph = 1   /**< Plot bandwidth as alpha blended area graphs. */
+	};
 
-		/** Default Constructor */
-		RSGraphWidget(QWidget *parent = 0);
-		/** Default Destructor */
-		~RSGraphWidget();
+	/** Default Constructor */
+	RSGraphWidget(QWidget *parent = 0);
+	/** Default Destructor */
+	~RSGraphWidget();
 
-		// sets the update interval period.
-		//
-		void setTimerPeriod(int miliseconds) ;				
-		void setSource(RSGraphSource *gs) ;
-        void setTimeScale(float pixels_per_second) ;
+	// sets the update interval period.
+	//
+	void setTimerPeriod(int miliseconds) ;				
+	void setSource(RSGraphSource *gs) ;
+	void setTimeScale(float pixels_per_second) ;
 
-		/** Add data points. */
-		//void addPoints(qreal rsDHT, qreal allDHT);
-		/** Clears the graph. */
-		void resetGraph();
-		/** Toggles display of data counters. */
-        //void setShowCounters(bool showRSDHT, bool showALLDHT);
+	/** Add data points. */
+	//void addPoints(qreal rsDHT, qreal allDHT);
+	/** Clears the graph. */
+	void resetGraph();
+	/** Toggles display of data counters. */
+	//void setShowCounters(bool showRSDHT, bool showALLDHT);
 
-        void setShowEntry(uint32_t entry, bool show) ;
-    void setCurvesOpacity(float f) ;
+	void setShowEntry(uint32_t entry, bool show) ;
+	void setCurvesOpacity(float f) ;
 
-        void setFlags(uint32_t flag) { _flags |= flag ; }
-        void resetFlags(uint32_t flag) { _flags &= ~flag ; }
-    protected:
-		/** Overloaded QWidget::paintEvent() */
-		void paintEvent(QPaintEvent *event);
+	void setFlags(uint32_t flag) { _flags |= flag ; }
+	void resetFlags(uint32_t flag) { _flags &= ~flag ; }
+protected:
+	/** Overloaded QWidget::paintEvent() */
+	void paintEvent(QPaintEvent *event);
 
-        virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
+	virtual QSizeF sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
-	protected slots:
-        void updateIfPossible() ;
+protected slots:
+	void updateIfPossible() ;
 
-		virtual void wheelEvent(QWheelEvent *e);
-	private:
-		/** Gets the width of the desktop, the max # of points. */
-		int getNumPoints();
+	virtual void wheelEvent(QWheelEvent *e);
+private:
+	/** Gets the width of the desktop, the max # of points. */
+	int getNumPoints();
 
-		/** Paints an integral and an outline of that integral for each data set
+	/** Paints an integral and an outline of that integral for each data set
 		 * (rsdht and/or alldht) that is to be displayed. */
-		void paintData();
-		/** Paints the rsdht/alldht totals. */
-		void paintTotals();
-		/** Paints the scale in the graph. */
-        void paintLegend();
-        /** Paints the scale in the graph. */
-        void paintScale1();
-        void paintScale2();
+	void paintData();
+	/** Paints the rsdht/alldht totals. */
+	void paintTotals();
+	/** Paints the scale in the graph. */
+	void paintLegend();
+	/** Paints the scale in the graph. */
+	void paintScale1();
+	void paintScale2();
 
-        QColor getColor(int i) ;
+	QColor getColor(int i) ;
 
-		/** Returns a formatted string representation of total. */
-		QString totalToStr(qreal total);
-		/** Returns a list of points on the bandwidth graph based on the supplied set
+	/** Returns a formatted string representation of total. */
+	QString totalToStr(qreal total);
+	/** Returns a list of points on the bandwidth graph based on the supplied set
 		 * of rsdht or alldht values. */
-        void pointsFromData(const std::vector<QPointF>& values, QVector<QPointF> &points ) ;
+	void pointsFromData(const std::vector<QPointF>& values, QVector<QPointF> &points ) ;
 
-		/** Paints a line with the data in <b>points</b>. */
-        void paintLine(const QVector<QPointF>& points, QColor color,
-				Qt::PenStyle lineStyle = Qt::SolidLine);
-		/** Paints an integral using the supplied data. */
-        void paintIntegral(const QVector<QPointF>& points, QColor color, qreal alpha = 1.0);
+	/** Paints a line with the data in <b>points</b>. */
+	void paintLine(const QVector<QPointF>& points, QColor color,
+	               Qt::PenStyle lineStyle = Qt::SolidLine);
+	/** Paints an integral using the supplied data. */
+	void paintIntegral(const QVector<QPointF>& points, QColor color, qreal alpha = 1.0);
 
-		/** A QPainter object that handles drawing the various graph elements. */
-		QPainter* _painter;
-		/** The current dimensions of the graph. */
-		QRect _rec;
-		/** The maximum data value plotted. */
-		qreal _maxValue;
-        /** The maximum number of points to store. */
-        qreal _y_scale ;
-    qreal _opacity ;
+	/** A QPainter object that handles drawing the various graph elements. */
+	QPainter* _painter;
+	/** The current dimensions of the graph. */
+	QRect _rec;
+	/** The maximum data value plotted. */
+	qreal _maxValue;
+	/** The maximum number of points to store. */
+	qreal _y_scale ;
+	qreal _opacity ;
 
-        qreal pixelsToValue(qreal) ;
-        qreal valueToPixels(qreal) ;
-        int _maxPoints;
+	qreal pixelsToValue(qreal) ;
+	qreal valueToPixels(qreal) ;
+	int _maxPoints;
 
-    std::set<std::string> _masked_entries ;
+	std::set<std::string> _masked_entries ;
 
-        qreal _time_scale ; // horizontal scale in pixels per sec.
+	qreal _time_scale ; // horizontal scale in pixels per sec.
+        qreal _time_filter ; // time filter. Goes from 0 to infinity. Will be converted into 1-1/(1+f)
 
-		/** Show the respective lines and counters. */
-		//bool _showRSDHT;
-		//bool _showALLDHT;
+	/** Show the respective lines and counters. */
+	//bool _showRSDHT;
+	//bool _showALLDHT;
 
-		uint32_t _flags ;
-		QTimer *_timer ;
+	uint32_t _flags ;
+	QTimer *_timer ;
 
-        RSGraphSource *_source ;
+	RSGraphSource *_source ;
 };
 

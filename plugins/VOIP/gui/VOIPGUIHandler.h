@@ -32,6 +32,9 @@
 
 #include <stdint.h>
 #include <QObject>
+/***
+#define VOIPGUIHANDLER_DEBUG 1
+***/
 
 class VOIPGUIHandler: public QObject
 {
@@ -39,11 +42,13 @@ class VOIPGUIHandler: public QObject
 public:
 	static void AnswerAudioCall(const RsPeerId &peer_id) ;
 	static void AnswerVideoCall(const RsPeerId &peer_id) ;
+  static void HangupAudioCall(const RsPeerId &peer_id) ;
+  static void HangupVideoCall(const RsPeerId &peer_id) ;
 
 	public slots:
-		void ReceivedInvitation(const RsPeerId &peer_id) ;
+		void ReceivedInvitation(const RsPeerId &peer_id, int flags) ;
 		void ReceivedVoipData(const RsPeerId &peer_id) ;
-		void ReceivedVoipHangUp(const RsPeerId &peer_id) ;
-		void ReceivedVoipAccept(const RsPeerId &peer_id) ;
+		void ReceivedVoipHangUp(const RsPeerId &peer_id, int flags) ;
+		void ReceivedVoipAccept(const RsPeerId &peer_id, int flags) ;
 		void ReceivedVoipBandwidthInfo(const RsPeerId &peer_id, int) ;
 };

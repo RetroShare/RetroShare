@@ -1,345 +1,127 @@
+Legend:
+   E: easy. Just GUI stuff, no algorithmics involved. That does not mean it's easy to come up with.
+   M: medium, either because it's a big task, or because it needs to understand a lot of code. 
+   H: hard. Needs digging deep into libretroshare, possibly involving some crypto.
+
+   [ ] pending
+   [/] half-done, someone's on it
+   [-] cancelled
+   [X] done
+
+PS: no tabs in this file,thx ;-)
+
+-----------------------------------------  TODO list ----------------------------------------------
+
+GUI
+    E  [X] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
+    E  [ ] Implement creation of a default (signed) gxs id in startup wizard. Needs to show to the 
+           user a proper separation between nodes (network layer) and GXS ids (service layer).
+    E  [ ] fix posted GUI. Needs to be more handy and more appealing.
+    E  [ ] add RS links for GXS identities, so that they can be transferred easily between nodes in forums, etc
+    E  [ ] enable people dialog
+    M  [ ] Personal Page (Profile Page for GXS ID Users,view latest Posts, public forum/channels,posted posts, comments in all areas, Reputation Infos, Popularity and more)
+    E  [ ] fix RSButtonOnText::eventFilter, and fix all places where RSButtonOnText gets deleted
+    E  [ ] find all places where the deprecated(in Qt5) Q_WS_WIN and other Q_WS* macros are 
+           used, and replace with something else
+    E  [ ] add tooltips in in permission matrix when hovering over the top most button/service name
+           explain what the service does and the dependencies
+    E  [ ] Make RS fully compatible with High DPI screens.
+    M  [ ] improve comments in channels. Comments should be more available, more visible, and easier to handle.
+    M  [ ] Merge the various help systems. there's 3 of them now. Lots of duplicate code, etc.
+    M  [ ] New and consistent icon set (Purplehaze420 said he would provide a consistent set of icons. Is that still alive?)
+    M  [ ] add in options->Network a way to select which network interface is used to talk (choice between "auto" or selected from a list)
+    M  [ ] add a RS link for encrypted messages (encrypt for multiple GXS ids at once). Messages will appear as a link when encrypted and 
+           be automatically decrypted when a suitable GXS id is available for it. Could be a way to securely post something in a public place.
+
+File transfer (all 3 tasks are related)
+    E  [ ] Add a limit of the total number of files simultaneously asked to the same peer using direct transfer.
+    H  [ ] implement a new file list management, with new info such as access time,total upload, popularity, etc
+    H  [ ] implement a new file list sharing service based on auto-sync system
+    M  [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,etc)
+
+DHT
+    H  [ ] improve DHT lookups to find masquerading peers using fake peers. First experiments (by cyril) do not prove very efficient.
+
+GXS
+    M  [X] create a tunnel service from distant chat code to make it (1) more generic (2) resistant to packet loss. 
+    M  [X] optimise GXS sync BW. For the moment too much is sent between nodes.
+    H  [/] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
+    H  [ ] use different and incompatible classes for public and private keys in GxsSecurity
+
+VOIP
+     H  [ ] use proper video encoding. What we have now is decent for video, but sound should be prioritized. Experiments 
+            with QtAV seem to work nicely. Finish and integrate!
+     M  [ ] Video Quality/Resolution Settings (High, Medium, Low) HD, HQ, SD )
+     M  [ ] Video Device: WebCam(s) or Desktop Selection
+     M  [ ] Audio Input Device Selection (Microphone)
+     M  [ ] Audio Output Device Selection (Speaker)
+     M  [ ] Video Snapshots https://support.skype.com/en/faq/FA1222/what-is-video-snapshot
+     M  [ ] Voice Messaging (record and send a voice message)
+     M  [ ] Video Messages (send a video greeting to multiple friends/coworkers/developers at once.)
+     H  [ ] Audio Conference
+     H  [ ] Video Conference
+ 
+
+Messages
+    H  [ ] make the mail system re-send failed emails notified by the global router. This is hard because it needs a proper
+           management of duplicate messages
+    E  [X] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
+
+Chat
+    E  [X] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
+
+Libretroshare
+    E  [X] groups small packets in pqistreamer::handleoutgoing_locked(), and see if that removes some padding overhead
+    E  [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
+    M  [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
+    M  [ ] separate chat stuff from rsmsgs.h into rschat.h
+    M  [ ] crash at shutdown due to memory management already cleared while new objects keep being requested.
+
+            #0 0x0000000000da52eb in RsMemoryManagement:¿mallObject:¿mallObject() ()
+            #1 0x0000000000da3694 in RsItem::RsItem(unsigned int) ()
+            #2 0x0000000000dcb365 in RsRawItem::RsRawItem (this=0x0, t=33559555, size=38) at ./serialiser/rsserial.h
+            #3 0x0000000000fc1643 in RsServiceSerialiser::deserialise(void*, unsigned int*) ()
+            #4 0x0000000000da4451 in RsSerialiser::deserialise(void*, unsigned int*) ()
+            #5 0x0000000000fb5b4b in pqistreamer::handleincoming_locked() ()
+            #6 0x0000000000fb4b3e in pqistreamer::tick_recv(unsigned int) ()
+            #7 0x0000000000fb744a in pqithreadstreamer::data_tick() ()
+            #8 0x0000000000e19b27 in RsTickingThread::runloop (this=0x7fffb004e7e8) at util/rsthreads.cc:196
+            #9 0x0000000000e19748 in RsThread::rsthread_init (p=0x7fffb004e7e8) at util/rsthreads.cc:63
+            #10 0x00007ffff4006f6b in start_thread () from /lib64/libpthread.so.0
+            #11 0x00007ffff351c7ed in clone () from /lib64/libc.so.6
+
+Channels
+    E  [ ] allow to set a download directory per channel
+    M  [ ] Thumbnail View for Channels
+    M  [ ] Count commments on Comments Button
+    M  [ ] Notify Channel comments/replies
+
+Posted
+    E  [ ] Show an info page for unsubscribed posted threads (same as forums)
+    E  [ ] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
+      
+Forums
+    E  [ ] do we keep "Getting Started" ? the look needs to be improved. Any help doing this is welcome!
+    E  [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
+
+Bugs
+    E  [ ] find the bug that shows some peers online in Network although they are not.
+    M  [X] Selecting different options in messages composer -> contact list then come back, 
+           shows disappearing / re-appearing people. What causes this???
+
+Sounds 
+    E  [ ] add default sounds for Friend go online, New Chat Message, Message arrived, Download complete
+    M  [ ] make sure sound is working for users on linux. We also need a "test sound" button in config->sound. 
+
+Packaging
+    E  [ ] Sound files should be part of the install package at least on ubuntu (put them in /usr/share)
+
 List of pending non backward compatible changes
 ===============================================
 
-	* RsGxsGrpMetaData::deserialis should use a proper TLV_STR_TYPE_NAME instead of 0 for mGroupName and mMsgName, in rsgxsdata.cc
-	* p3IdService::service_CreateGroup() should convert the mPgpSign member to radix64!! For now it is hard-coded in binary in a string.
-
-List of fixes/improvements before 0.6
-=====================================
-
-Legend:
-   E: easy. Just GUI stuff, no algorithmics involved
-   M: medium. Needs some care.
-   H: hard. Needs digging into libretroshare.
-
-----------------------------------------  GUI TWEAKS FOR 0.6 RELEASE  -------------------------------------------------
-
-To be done
-
-GUI
-
-  [X] http://www.cjoint.com/c/EFlhWgeLg4F. Strings too long in Add Friends Wizard on the conclusion page.
-  [X] RS crashes when right clicking on the People tabs when there's nobody yet
-  [X] Network tab cannot shrink the avatar column
-  [X] newsfeed default:
-        Options -- Notify -- Feed
-        Security <-- Make as Default Enabled
-        Connect attempt <-- Make as Default Enabled
-
-  [X] make the "Wrong IP reported" security item less dramatic. We should add text saying that this can be due to a friend 
-  		connecting before your own RS has realized that its IP has changed.
-
-  [ ] it should be possible to completely disable IP change security items using a checkbox in options->notify->Feeds
-		These security items should be enabled by default
-
-  [X] "Wrong IP" security items shouldn't show up when the IP reported by friend is whitelisted.
-
-  [X] at login, when cancel is pressed, the system keeps asking for the passwd. It shouldn't, and directly go back to the list of locations.
-
-0000 [ ]    merge the various help systems. there's 3 of them: (1) help buttons on most tabs that pop a flat panel with some 
-            info; (2) help wizard accessible from the "!" button in friends details->Trust; (3) 'getting started tab'
-
-0001 [X]    forums - middle horisontal bar - always shows *by anonymous* (from noname) [fixed, also removed useless thread line]
-0002 [X]    remove useless column in forums "signed by" (last column) (from electron)
-0003 [ ]    main window must close on ESC (from noname)
-0004 [X]    show storage time of forums/channels/posted in gui (from cave)
-0005 [X]    if keysigning is not working -> hide or remove it (from cave) cyril: keep it, but add more info about how to use/interpret it.
-0006 [ ]    implement default gxs id (from cave) cyril: you mean system-wide default gxs id? That would be a good thing to have.
-0007 [ ]    *getting started* - need to say about chatservers (from noname)
-            comment: chatservers are inofficial and may go down at any time. which one should we mention?
-            cyril: we could add a link to a search for RS chat servers in duckduck go
-0008 [X]    forum livetime too short (from noname) cyril: expand it to 1 year
-0009 [ ]    Settings -> Server -> show discovery information in statusbar. I've never seen any discovery info since the switch to 
-            disc v2 - so i guess this option can be removed (from sehraf) cyril: that can be fixed. The link between GUI and discovery2 can
-            be restored. Also we should get rid of the code for discovery(1)
-
-0010 [ ]    window and tab sizes not saved on exit or closing (from noname)
-
-0011 [X]    in add friend dialog: include signatures seems to do nothing there. cyril: it does if you have signatures. Show 
-            the checkbox only when the key as signatures => less confusion.  (from noname)
-
-0012 [ ]    from time to time the location images and the location message is not updated or gets lost, or the location name.  (from cave)
-
-0013 [ ]    new design, new icons, minimal UI (from purplehaze420) comment: use webui as base for minimal ui
-            cyril: we cannot change everything now. But purplehaze420 said he would provide a consistent set of icons. That would be great.
-
-0014 [X]    go to Settings -> Permissions: wait for scrollbars to appear go back to any other setting (e.g. Notify): the page now 
-            needs the same space as the permission matrix (happens on windows + linux; can be "fixed" by closing and reopen the setting window)
-            (from sehraf)
-
-0015 [X]    The new statistics windows is really nice and everybody should see it -> add a link to it somewhere in settings 
-            (or wherever suitable) (from sehraf) cyril: there's a menu in the bottom right corner ofthe main window to get it. 
-            Otherwise, we could merge it as tabs in options->server, but I don't really like this option.
-
-0016 [ ]    many things are deeply hidden - config wizard, share manager, permissions, statistics (from noname)
-            comment: either the gui is overloaded with buttons or stuff is hidden. choose one
-            cyril: this is true. Config wizard and share manager could be made more obvious.
-            Config wizard could be integrated in "getting started" which means
-            to be improved anyway.
-
-0017 [X]    no tab configuraion for uploads section. no cache transfer disable option comment: cachetransfers will be removed (from noname)
-            cyril: rename "show cache transfers" into "show file lists transfers"
-
-0018 [X]    add friend dialog - add button for pasting from clipboard.
-            // some ppl dumb to use rightclich or keyboard)) and on the upper window some buttons exist, the lower one feels lonely.(from noname)
-            comment: teach to use the context menu, else they are lost in RS
-
-0019 [X]    no identity on first start makes impossible to start chat or post forums.
-            maybe config wizard should propose to create one, just asking a name desired.  (from noname)
-            cyril: integrating in config wizard is a good idea: check if one identity is present, if not allow to create one.
-            Note that all ID choosers allow to create a new identity
-
-0020 [ ]    double click on completed download must open the file. or folder, configurable in options (from noname)
-
-0028 [X]    RTT statistics shouldn't show curves for offline peers
-0029 [X]    In options, rename "server"->"network", "transfer"->"file transfer".
-
-0030 [X]    forums - middle horisontal bar - post time is duplicate to the one in the list. also thread name.
-            forum name (the line with view mode) is duplicate to tab header.
-            button for new thread must have text, *reply to selected post* button must be placed next to it
-            the big subscribe button on the top, but never used.
-            generally,we have 2 panels here, both semi-empty. need to compact all the stuff
-
-0031 [X]    chats - participant list can't be extended in wide.
-            show/hide button is almost invisible. make it more big. but it takes space in width, so move it to bar with lobby name.
-            however, the lobby name bar also seems redundant. so maybe the button's final place must domewhere in the lower button bar. 
-
-0031a[ ]    ... the lobby name bar also seems redundant ....
-
-0032 [X]    In Network->friend list. Remove "[Connected]" to location names.  Takes room and isn't useful since the text is in bold 
-            when connected. Also put the avatar column first. Remove the "Busy" and "Idle" text since they are shown as icon already and
-            set them as tooltip => lots of saved space.
-
-0033 [ ]    Selecting different options in messages composer -> contact list then come back, shows disappearing / re-appearing people. 
-            What causes this???
-
-0034 [X]    Show forum/channel/posted admin name in details window
-
-**Not sure**
-
-0021 [ ]    too many option tabs. may be some must be hidden when advanced mode is not selected
-            some may be grouped, like styles -for messages, chats and forums appearance must be somewhere on top, in general (from noname)
-            comment: hiding stuff makes it even more complicated. before we hide it we can remove it
-            cyril: we could group them somehow. 
-
-0022 [ ]    some time ago we had separate chat window for messaging (in 0.5.5 it still exists). may be it must be resurrected.  (from noname)
-
-// UNSORTED
-// 
-// 23 [too hard for v0.6] chats are missing quote feature, any text formatting.
-//  picture attachment is ajoke, with the size limits given.
-//  need ability to save picture attaches in forums and chats
-// (from noname)
-// 
-// 24 [do nothing] people tab - is not much useful, may be hide it somewhere from main window. like options-node-my idents.
-// (from noname)
-// comment: we don't have somethign better, live with it
-// 
-// 25 [low priority] network - peer filter - not showing locations, not useful because many options are location specific.
-// (from noname)
-// comment: not sure what correct behaviour would be
-// 
-// 26 [low priority] friend file browser - need options to hide offline peers, hide empy shares
-//  size column should count contents for directories
-// (from noname)
-// comment: will people complain about missing peers?
-// 
-// 27 [] notify for channels and forums - need option to show only new forums, not for every post in them.
-//  some might not like flooding there, and it is not a big problem to go to needed tab when it becomes red.
-// (from noname)
-
-// long post from noname. Many things go to deep and are out of scope for v0.6
-// 
-// compaction the line below the buttonbar is useless, it just duplicates the
-// button. except the mail tab, there is some buttons and they need to be
-// relocated the help icon on each tab can be placed in window title or
-// somwhere else
-// 
-// IM window - the whole bar with name and a/v buttons is excess. name is on
-// the window title, and in the chat. buttons must be on the lower panel with
-// the others.  3x set... and dock buttons also must be relocated and the
-// panel removed.  away/offline informer bar must be more compact and nice
-// 
-// modularity some peopl may not use specific rs features like forums or chats
-// or mail. create the ability to hide the tabs from interface and disable the
-// network services for them in an ultimate configuration people for example
-// may want only chats, so the compact interface with only peer list is good
-// for them, skype-like.
-
-------------------------------------------  GENERAL BACKEND STUFF  ----------------------------------------------------
-       Posted:
-E        [X] it's not possible to create a Posted thread without a Owner. 
-             Bug? If not, then remove "No signature" from selection box
-E        [ ] Show an info page for unsubscribed posted threads (same as forums)
-E        [X] Links in Posted cannot be clicked.
-M        [ ] Fix the counting of unread messages in Posted. Now it's wrong.
-E        [X] Make the GUI of Posted more sexy: more compact items, remove unecessary text, use consistent icons,...
-      
-      
-       Forums
-E        [X] it's not possible to create a Forum thread without a Owner. 
-             Bug? If not, then remove "No signature" from selection box
-         [X] the tooltip over GXS ids should show the avatar on the left side.
-         [X] fix data race between GXS ID default icons
-         [X] Share of key shows "Not implemented". Since forums are public, share key should be hidden.
-         [X] switching between forums might cause a crash. Seems to be due to GxsIdDetails::instance not always initialised when used.
-      
-       GUI General
-E        [ ] do we keep "Getting Started" ? the look needs to be improved. Any help doing this is welcome!
-E        [X] Recommendation messages do not show complete links. Links show up in some buttons and the text is truncated
-E        [X] Recommendation messages should not be signed by the retroshare team!!
-E        [X] when adding a friend through clicking on cert links, the add friend wizard is shown twice!
-M        [X] add a flag in friends option to allow auto-download of recommended files
-M        [ ] sound is not working for some users on linux. We also need a "test sound" button in config->sound. 
-E        [ ] some widgets in the GUI do not follow the system style => GUI looks bad on these systems
-         [X] display version ID in windows version
-E        [X] recommended friends messages have embedded buttons of wrong size.  Use RSLinks instead!
-E        [X] "Friends details" should show both PGP key and RS certs in different tabs with appropriate names.
-             It should specify clearly which one should be used to make friends.
-E        [X] addFriend does not work when the cert contains signatures.
-E        [X] PGP signatures are not transmited by discovery2. 
-         [X] Default appearance style on Ubuntu should be GTK (to allow correct tooltips)
-         [X] Default layout should use toolbars. The "menu" look is inneficient
-         [X] replace sound tooltip "sound off" by "sound is on, click to turn off"
-         [X] rtt statistic is duplicated in statistics provided by VOIP, so remove it from file transfers
-         [ ] add tooltips in in permission matrix when hovering over the top most button/service name
-             explain what the service does and the dependencies
-      
-       Messages
-H        [X] distant messages should be made async-ed
-             * [ ] increase sigma of activity events to allow a more generous routing matrix
-             * [ ] collect routing events from chat lobbies? (maybe not a good idea)
-M        [X] distant messages are not re-sent when the peer is offline the first time
-M        [X] sent messages to direct peers in the Sent box have inconsistent To field. 
-             Raises an error if you click on it.
-M        [X] icons for GxsTreeWidgetItem are too small in distant messages list widget
-E        [X] "from" should be disabled until we actually use a GXS id in the destination list.
-E        [X] "show all" and "show everyone" in destination list are duplicate names for different things. 
-             Either remove one of them, or use appropriate names.
-      
-       Channels
-         [X] Unsubscribed channels should show an info page when selected, like forums
-H        [X] marking all as read in channels takes time. The channel icon should show a waiting clock 
-             during the operation to avoid the user to re-click many times in the hope to get the posts marked as read.
-         [X] channels items show a 0 left to the up/Dn buttons. What is it??
-         [X] allow to post on channels when attachment is not in shared files. Just display a warning.
-M        [X] popularity calculation seems wrong. To reproduce: create a new channel and subscribe to it from 
-             another location with many friends => popularity is too big at that location (should be 1)
-             the problem seems to be in RsGxsNetService::handleRecvSyncMessage
-             peers send RsNxsSyncMsg for unsubscribed groups (they are not suppliers then)
-             nor sure what role RsGxsNetService::loadList plays here
-         [X] show group owner in channel/forum/posted's details tab
-      
-       Chat lobbies
-H        [X] Chat lobbies should use Identities. That's a significant change, probably not backward compatible. 
-         [X] Remove deprecated code in rschatitems.
-         [X] remove "change nickname" from drop menu
-         [X] there's no way to remove auto-subscribe when connected to a lobby. Show auto-subscribe status in tooltip, add menu entries.
-      
-       Profile creation wizard
-         [X] "Hidden node" should be an option at start. Apparently it becomes mandatory when one sets the advanced mode. 
-         [X] the blue button "Generate new node" does not have a clear state. It should be grey while disabled, then 
-             not grey. Or maybe use an icon?
-
-       Settings
-         [X] remove HiddenNode fom config->server netWork mode drop menu, or disable it in non hidden mode.
-         [X] Default max upload should be a large number. Not 50KB/s!!
-         
-       Settings > Sounds -> enable default sounds for 
-         [ ] Friend go online
-         [ ] New Chat Message
-         [ ] Message arrived
-         [ ] Download complete
-
-       Chat
-         [X] Distant chat window should show GXS avatars
-H        [ ] Distant chat should work with shared identities
-         [X] Distant chat fails (tunnel bullet never gets green) when re-openning a distant chat window after closing a tunnel
-         [X] Distant chat fails (chat window never appears) when re-openning a distant chat window after closing a tunnel
-         [X] You should not be enabled to distant-chat yourself!
-         [X] Nickname completion is broken. It only works with @
-      
-       Identities:
-         [X] "Owned by you" => "Owned by node [nodename]" 
-         [X] Bold face should only be used for keys with admin credentials
-E        [X] reputations are not used yet. We should hide them.
-H        [X] Add timeout to Identities that are unused. Need to keep a time stamp list, updated whenever the identity is used for checking signatures. 
-         [X] Fix avatar loading for identities. When loaded for the first time by forums, the avatar does not show up.
-M        [ ] allow to share identities between locations. 
-      
-       Network
-E        [X] Friends => Friend nodes
-E        [X] remove TCP, TOR, UDP from the status column, and move it in front of IP
-      
-       File transfer
-H        [X] There's a bug sometimes causing re-hash of shared files at start. Find it, kill it.
-         [ ] Bug: when sorting files in friends file list, RS goes into a crazy loop and crashes
-
-       News feed
-         [X] remove the Ghost news feed items
-         [X] remove the double feed publication
-      
-       libretroshare
-         [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
-         [ ] some users can be declared as connected although they are not. Check Heart-Beat system.
-H        [X] fix the data race in pqissl
-H        [ ] valgrind pass for data races
-H        [ ] valgrind pass for memory leaks 
-H        [ ] valgrind pass for memory errors 
-H        [ ] valgrind pass for performance
-E        [-] remove mktemp => use mkstemp
-             note: mkstemp is not available on Windows
-H        [ ] RsGxsDataAccess::processRequests locks mDataMutex until all requests are processed.
-             Adding a new request or poll for the request status are freezing until the mutex is available.
-         [ ] crash at shutdown
-
-               #0 0x0000000000da52eb in RsMemoryManagement:¿mallObject:¿mallObject() ()
-               #1 0x0000000000da3694 in RsItem::RsItem(unsigned int) ()
-               #2 0x0000000000dcb365 in RsRawItem::RsRawItem (this=0x0, t=33559555, size=38) at ./serialiser/rsserial.h:182
-               #3 0x0000000000fc1643 in RsServiceSerialiser::deserialise(void*, unsigned int*) ()
-               #4 0x0000000000da4451 in RsSerialiser::deserialise(void*, unsigned int*) ()
-               #5 0x0000000000fb5b4b in pqistreamer::handleincoming_locked() ()
-               #6 0x0000000000fb4b3e in pqistreamer::tick_recv(unsigned int) ()
-               #7 0x0000000000fb744a in pqithreadstreamer::data_tick() ()
-               #8 0x0000000000e19b27 in RsTickingThread::runloop (this=0x7fffb004e7e8) at util/rsthreads.cc:196
-               #9 0x0000000000e19748 in RsThread::rsthread_init (p=0x7fffb004e7e8) at util/rsthreads.cc:63
-               #10 0x00007ffff4006f6b in start_thread () from /lib64/libpthread.so.0
-               #11 0x00007ffff351c7ed in clone () from /lib64/libc.so.6
-
-       Packaging
-         [X] check compilation on debian
-         [X] check compilation on ARM
-         [ ] Sound files should be part of the install package at least on ubuntu (put them in /usr/share)
-
- Post v0.6 release changes
- =========================
-
-      File transfer
-H        [ ] implement a new file list management, with new info such as access time, total upload, popularity, etc
-H        [ ] implement a new file list sharing service based on auto-sync system
-H        [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,etc)
-
-      GUI
-H        [ ] enable circles for channels/posted/forums
-E        [ ] enable people dialog
-E        [ ] fix RSButtonOnText::eventFilter, and fix all places where RSButtonOnText gets deleted
-E        [ ] find all places where the deprecated(in Qt5) Q_WS_WIN and other Q_WS* macros are used, and replace with something else
-
-      GXS
-H        [ ] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
-H        [ ] use different and incompatible classes for public and private keys in GxsSecurity
-
-      Libretroshare
-M        [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
-M        [ ] separate chat stuff from rsmsgs.h into rschat.h
-
-      Chat
-H        [ ] add "chat with this peer" from lobbies to start a private distant conversation with the GXS id of the peer
-
-      Msgs
-H        [ ] Merge the new messaging format
-
-      Channels
-M        [ ] allow to set a download directory per channel
+    * RsGxsGrpMetaData::deserialis should use a proper TLV_STR_TYPE_NAME instead of 0 for 
+      mGroupName and mMsgName, in rsgxsdata.cc
+    * p3IdService::service_CreateGroup() should convert the mPgpSign member to radix64!! For now 
+      it is hard-coded in binary in a string.
 
 

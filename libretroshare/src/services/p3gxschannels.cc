@@ -122,7 +122,7 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 
 
 	/** Overloaded to cache new groups **/
-RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return p3GxsChannels::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /* keySet */)
 {
 	updateSubscribedGroup(grpItem->meta);
 	return SERVICE_CREATE_SUCCESS;
@@ -337,7 +337,6 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 		
 		for(; mit != msgData.end();  ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 

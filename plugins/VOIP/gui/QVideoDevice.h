@@ -2,10 +2,12 @@
 
 #include <QLabel>
 #include "interface/rsVOIP.h"
+
+#include "opencv2/opencv.hpp"
+
 #include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
-class CvCapture ;
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -61,7 +63,7 @@ protected slots:
 	private:
 		VideoProcessor *_video_processor ;
 		QTimer *_timer ;
-		CvCapture *_capture_device ;
+		cv::VideoCapture *_capture_device ;
 
 		QVideoOutputDevice *_echo_output_device ;
 

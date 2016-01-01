@@ -22,6 +22,7 @@
 #include <iostream>
 
 #include <QDialog>
+#include <QFileInfo>
 
 #include "PluginsPage.h"
 #include "PluginItem.h"
@@ -55,25 +56,32 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 			 rsPlugins->getPluginStatus(i,status,file_name,file_hash,svn_revision,error_string) ;
 
 			 QString status_string ;
+             QString short_status_string;
 
 			 switch(status)
 			 {
-				 case PLUGIN_STATUS_REJECTED_HASH: status_string = tr("Hash rejected. Enable it manually and restart, if you need.") ;
+                 case PLUGIN_STATUS_REJECTED_HASH: status_string = tr("Plugin disabled. Click the enable button and restart Retroshare") ;
+                                                   short_status_string = tr("[disabled]");
 															  break ;
 
 				 case PLUGIN_STATUS_MISSING_API:   status_string = tr("No API number supplied. Please read plugin development manual.") ;
+                                                   short_status_string = tr("[loading problem]");
 															  break ;
 
 				 case PLUGIN_STATUS_MISSING_SVN:   status_string = tr("No SVN number supplied. Please read plugin development manual.") ;
+                                                   short_status_string = tr("[loading problem]");
 															  break ;
 
 				 case PLUGIN_STATUS_DLOPEN_ERROR:  status_string = tr("Loading error.") ;
+                                                   short_status_string = tr("[loading problem]");
 															  break ;
 
 				 case PLUGIN_STATUS_MISSING_SYMBOL:status_string = tr("Missing symbol. Wrong version?") ;
+                                                   short_status_string = tr("[loading problem]");
 															  break ;
 
 				 case PLUGIN_STATUS_NULL_PLUGIN:	  status_string = tr("No plugin object") ;
+                                                   short_status_string = tr("[loading problem]");
 															  break ;
 
 				 case PLUGIN_STATUS_LOADED:		  status_string = tr("Plugins is loaded.") ;
@@ -84,9 +92,9 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 			 QIcon plugin_icon(":images/disabled_plugin_48.png") ;
 			 RsPlugin *plugin = rsPlugins->plugin(i) ;
-			 QString pluginTitle = tr("Title unavailable") ;
-			 QString pluginDescription = tr("Description unavailable") ;
-			 QString pluginVersion = tr("Unknown version");
+             QString pluginTitle = QFileInfo(QString::fromStdString(file_name)).fileName();
+             QString pluginDescription = status_string;
+             QString pluginVersion = short_status_string;
 
 			 if(plugin!=NULL)
 			 {
@@ -114,7 +122,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 
 			 if(plugin == NULL || plugin->qt_config_panel() == NULL)
-				 item->_configure_PB->setEnabled(false) ;
+                 item->_configure_PB->hide() ;
 				 
 
 			 if(plugin != NULL){
@@ -123,6 +131,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 				 }else{
 				 item->enableButton->show();
 				 item->disableButton->hide();
+                 item->_about_PB->hide();
 				 }
 
 			 //if(rsPlugins->getAllowAllPlugins())

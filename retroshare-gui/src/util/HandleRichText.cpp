@@ -24,7 +24,9 @@
 #include <QtXml>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QTextDocumentFragment>
 #include <qmath.h>
+#include <QUrl>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -237,6 +239,8 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 			QDomElement element = node.toElement();
 			if(element.tagName().toLower() == "head") {
 				// skip it
+			} else if(element.tagName().toLower() == "style") {
+				// skip it
 			} else if (element.tagName().toLower() == "a") {
 				// skip it
 				if (embedInfos.myType == Ahref) {
@@ -376,7 +380,7 @@ static QString saveSpace(const QString text)
 	return savedSpaceText;
 }
 
-QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast, int desiredMinimumFontSize)
 {
 	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
@@ -416,7 +420,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
-		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast);
+		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	}
 
 	return formattedText;
@@ -568,7 +572,6 @@ static void optimizeHtml(QDomDocument& doc
                        , QHash<QString, QStringList*> &stylesList
                        , QHash<QString, QString> &knownStyle)
 {
-	bool bFirstP=true;
 	if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
 		//Already optimized only get StyleList
 		QDomElement styleElem = doc.documentElement().namedItem("style").toElement();
@@ -610,51 +613,9 @@ static void optimizeHtml(QDomDocument& doc
 	QDomNodeList children = currentElement.childNodes();
 	for (uint index = 0; index < children.length(); ) {
 		QDomNode node = children.item(index);
-
-		// Compress style attribute
-		styleNode = node.attributes().namedItem("style");
-		if (styleNode.isAttr()) {
-			QDomAttr styleAttr = styleNode.toAttr();
-			QString style = styleAttr.value().simplified().trimmed();
-			style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
-			style.replace("; ", ";");
-
-			QString className = knownStyle.value(style);
-			if (className.isEmpty()) {
-				// Create a new class
-				className = QString("S%1").arg(knownStyle.count());
-				knownStyle.insert(style, className);
-
-				// Now add this for each attribute values
-				QStringList styles = style.split(';');
-				foreach (QString pair, styles) {
-					pair.replace(" ","");
-					if (!pair.isEmpty()) {
-						QStringList* stylesListItem = stylesList.value(pair);
-						if(!stylesListItem){
-							// If value doesn't exist create it
-							stylesListItem = new QStringList();
-							stylesList.insert(pair, stylesListItem);
-							}
-						//Add the new class to this value
-						stylesListItem->push_back(className);
-								}
-							}
-								}
-			style.clear();
-
-				node.attributes().removeNamedItem("style");
-				styleNode.clear();
-
-			if (!className.isEmpty()) {
-				QDomNode classNode = doc.createAttribute("class");
-				classNode.setNodeValue(className);
-				node.attributes().setNamedItem(classNode);
-			}
-		}
-
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
+			styleNode = node.attributes().namedItem("style");
 
 			// not <p>
 			if (addBR && element.tagName().toLower() != "p") {
@@ -685,19 +646,38 @@ static void optimizeHtml(QDomDocument& doc
 				continue;
 			}
 
+			//hidden text in a
+			if (element.tagName().toLower() == "a") {
+				if(element.hasAttribute("href")){
+					QString href = element.attribute("href", "");
+					if(href.startsWith("hidden:")){
+						//this text should be hidden and appear in title
+						//we need this trick, because QTextEdit doesn't export the title attribute
+						QString title = href.remove(0, QString("hidden:").length());
+						QString text = element.text();
+						element.setTagName("span");
+						element.removeAttribute("href");
+						QDomNodeList c = element.childNodes();
+						for(int i = 0; i < c.count(); i++){
+							element.removeChild(c.at(i));
+						};
+						element.setAttribute(QString("title"), title);
+						QDomText textnode = doc.createTextNode(text);
+						element.appendChild(textnode);
+					}
+				}
+			}
+
 			// iterate children
 			optimizeHtml(doc, element, stylesList, knownStyle);
 
 			// <p>
 			if (element.tagName().toLower() == "p") {
-				//If it's the first <p>, replace it as <span> otherwise make "\n" before first line
-				if (bFirstP) {
-					element.setTagName("span");
-					bFirstP = false;
-				}
 				// <p style="...">
-				if (element.attributes().size() == 1 && styleNode.isAttr()) {
-					QString style = styleNode.toAttr().value().simplified();
+				if (styleNode.isAttr()) {
+					QString style = styleNode.toAttr().value().simplified().trimmed();
+					style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+					style.replace("; ", ";");
 					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;"
 					    || style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
 
@@ -718,6 +698,46 @@ static void optimizeHtml(QDomDocument& doc
 				}
 				addBR = false;
 			}
+			// Compress style attribute
+			if (styleNode.isAttr()) {
+				QDomAttr styleAttr = styleNode.toAttr();
+				QString style = styleAttr.value().simplified().trimmed();
+				style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+				style.replace("; ", ";");
+
+				QString className = knownStyle.value(style);
+				if (className.isEmpty()) {
+					// Create a new class
+					className = QString("S%1").arg(knownStyle.count());
+					knownStyle.insert(style, className);
+
+					// Now add this for each attribute values
+					QStringList styles = style.split(';');
+					foreach (QString pair, styles) {
+						pair.replace(" ","");
+						if (!pair.isEmpty()) {
+							QStringList* stylesListItem = stylesList.value(pair);
+							if(!stylesListItem){
+								// If value doesn't exist create it
+								stylesListItem = new QStringList();
+								stylesList.insert(pair, stylesListItem);
+							}
+							//Add the new class to this value
+							stylesListItem->push_back(className);
+						}
+					}
+				}
+				style.clear();
+
+				node.attributes().removeNamedItem("style");
+				styleNode.clear();
+
+				if (!className.isEmpty()) {
+					QDomNode classNode = doc.createAttribute("class");
+					classNode.setNodeValue(className);
+					node.attributes().setNamedItem(classNode);
+				}
+			}
 		}
 		++index;
 	}
@@ -734,12 +754,14 @@ static void optimizeHtml(QDomDocument& doc
  *                        is passed inside flag.
  * @param desiredContrast: Minimum contrast between text and background color,
  *                        between 1 and 21.
+ * @param desiredMinimumFontSize: Minimum font size.
  */
 static void styleCreate(QDomDocument& doc
                         , QHash<QString, QStringList*> stylesList
                         , unsigned int flag
                         , qreal bglum
-                        , qreal desiredContrast)
+                        , qreal desiredContrast
+                        , int desiredMinimumFontSize)
 {
 	QDomElement styleElem;
 	do{
@@ -792,6 +814,15 @@ static void styleCreate(QDomDocument& doc
 			QString key = keyvalue.at(0).trimmed();
 			QString val = keyvalue.at(1).trimmed();
 
+			if (key == "font-size") {
+				QRegExp re("(\\d+)(\\D*)");
+				if (re.indexIn(val) != -1) {
+					bool ok; int iVal = re.cap(1).toInt(&ok);
+					if (ok && (iVal < desiredMinimumFontSize)) {
+						val = QString::number(desiredMinimumFontSize) + re.cap(2);
+					}
+				}
+			}
 			if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
 				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
@@ -864,9 +895,12 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag 
  *                        is passed inside flag.
  * @param desiredContrast Minimum contrast between text and background color,
  *                        between 1 and 21.
+ * @param desiredMinimumFontSize Minimum font size.
  */
 void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
-                          , const QColor &backgroundColor /*= Qt::white*/, qreal desiredContrast /*= 1.0*/
+                          , const QColor &backgroundColor /*= Qt::white*/
+                          , qreal desiredContrast /*= 1.0*/
+                          , int desiredMinimumFontSize /*=10*/
                           )
 {
 
@@ -888,7 +922,7 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 	QHash<QString, QString> knownStyle;
 
 	::optimizeHtml(doc, body, stylesList, knownStyle);
-	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
+	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast, desiredMinimumFontSize);
 	text = doc.toString(-1);
 
 //	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
@@ -982,4 +1016,33 @@ QString RsHtml::plainText(const std::string &text)
 #else
 	return Qt::escape(QString::fromUtf8(text.c_str()));
 #endif
+}
+
+QString RsHtml::makeQuotedText(RSTextBrowser *browser)
+{
+	QString text = browser->textCursor().selection().toPlainText();
+	if(text.length() == 0)
+	{
+		text = browser->toPlainText();
+	}
+	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+	text = sl.join("\n>");
+	return QString(">") + text;
+}
+
+void RsHtml::insertSpoilerText(QTextCursor cursor)
+{
+	QString hiddentext = cursor.selection().toPlainText();
+	if(hiddentext.isEmpty()) return;
+	QString publictext = "*SPOILER*";
+
+	QString encoded = hiddentext;
+	encoded = encoded.replace(QChar('\"'), QString("&quot;"));
+	encoded = encoded.replace(QChar('\''), QString("&apos;"));
+	encoded = encoded.replace(QChar('<'), QString("&lt;"));
+	encoded = encoded.replace(QChar('>'), QString("&gt;"));
+	encoded = encoded.replace(QChar('&'), QString("&amp;"));
+
+	QString html = QString("<a href=\"hidden:%1\" title=\"%1\">%2</a>").arg(encoded, publictext);
+	cursor.insertHtml(html);
 }

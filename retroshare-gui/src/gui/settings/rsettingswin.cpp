@@ -142,11 +142,11 @@ RSettingsWin::initStackedWidget()
     addPage(new PluginsPage() );
     addPage(new NotifyPage());
     addPage(new CryptoPage());
+    addPage(new ChatPage());
     addPage(new MessagePage());
     addPage(new ChannelPage());
     addPage(new ForumPage());
-	addPage(new PostedPage());
-    addPage(new ChatPage());
+    addPage(new PostedPage());
     addPage(new AppearancePage());
     addPage(new SoundPage() );
     addPage(new ServicePermissionsPage() );

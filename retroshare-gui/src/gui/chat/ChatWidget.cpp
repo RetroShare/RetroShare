@@ -51,6 +51,7 @@
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -125,6 +126,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseFont, SIGNAL(triggered()), this, SLOT(chooseFont()));
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
+	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
+	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
@@ -214,7 +217,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->verticalLayout_2->addWidget(w) ;
+	ui->vl_Plugins->addWidget(w) ;
 	update() ;
 }
 
@@ -223,9 +226,15 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
-void ChatWidget::addVOIPBarWidget(QWidget *w)
+void ChatWidget::addTitleBarWidget(QWidget *w)
 {
-	ui->titleBarFrame->layout()->addWidget(w) ;
+	ui->pluginTitleFrame->layout()->addWidget(w) ;
+}
+
+void ChatWidget::hideChatText(bool hidden)
+{
+	ui->frame_ChatText->setHidden(hidden); ;
+	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
@@ -249,7 +258,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
     RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
-    if(chatId.isPeerId() || chatId.isGxsId())
+    if(chatId.isPeerId() || chatId.isDistantChatId())
         chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
     if(chatId.isBroadcast() || chatId.isLobbyId())
         chatStyle.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
@@ -328,7 +337,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
                     continue;
 
                 QString name;
-                if (chatId.isLobbyId() || chatId.isGxsId()) {
+                if (chatId.isLobbyId() || chatId.isDistantChatId()) 
+                {
                     RsIdentityDetails details;
                     if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
                         name = QString::fromUtf8(details.mNickname.c_str());
@@ -360,7 +370,7 @@ ChatWidget::ChatType ChatWidget::chatType()
     // but maybe it is good to have separate types in libretroshare and gui
     if(chatId.isPeerId())
         return CHATTYPE_PRIVATE;
-    if(chatId.isGxsId())
+    if(chatId.isDistantChatId())
         return CHATTYPE_DISTANT;
     if(chatId.isLobbyId())
         return CHATTYPE_LOBBY;
@@ -488,10 +498,10 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent) {
-                if (notify && keyEvent->key() == Qt::Key_Delete) {
+                if (keyEvent->key() == Qt::Key_Delete) {
 					// Delete key pressed
 					if (ui->textBrowser->textCursor().selectedText().length() > 0) {
-						if (chatType() == CHATTYPE_LOBBY) {
+						if (notify && chatType() == CHATTYPE_LOBBY) {
 							QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
 							rx.setMinimal(true);
 							QString sel=ui->textBrowser->textCursor().selection().toHtml();
@@ -840,6 +850,13 @@ void ChatWidget::setWelcomeMessage(QString &text)
 
 void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
 {
+	addChatMsg(incoming, name, RsGxsId(), sendTime, recvTime, message, chatType);
+}
+
+void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId
+                            , const QDateTime &sendTime, const QDateTime &recvTime
+                            , const QString &message, MsgType chatType)
+{
 #ifdef CHAT_DEBUG
 	std::cout << "ChatWidget::addChatMsg message : " << message.toStdString() << std::endl;
 #endif
@@ -870,6 +887,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	if (!Settings->valueFromGroup("Chat", "EnableCustomFontSize", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_SIZE;
 	}
+	int desiredMinimumFontSize = Settings->valueFromGroup("Chat", "MinimumFontSize", 10).toInt();
 	if (!Settings->valueFromGroup("Chat", "EnableBold", true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT;
 	}
@@ -893,13 +911,20 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		formatFlag |= CHAT_FORMATMSG_SYSTEM;
 	}
 
-	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
+	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
 	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
-	formatMsg.prepend(QString("<a name=\"%1\"/>").arg(timeStamp));
-	//To call this anchor do:    ui->textBrowser->scrollToAnchor(QString("%1_%2").arg(timeStamp).arg(name));
+	//replace Date and Time anchors
+	formatMsg.replace(QString("<a name=\"date\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	formatMsg.replace(QString("<a name=\"time\">"),QString("<a name=\"%1\">").arg(timeStamp));
+	//replace Name anchors with GXS Id
+	QString strGxsId = "";
+	if (!gxsId.isNull())
+		strGxsId = QString::fromStdString(gxsId.toStdString());
+	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"%1\">").arg(strGxsId));
+
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
 	textCursor.setBlockFormat(QTextBlockFormat ());
@@ -953,6 +978,14 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
+	contextMnu->addAction(ui->actionQuote);
+
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	if(ImageUtil::checkImage(cursor))
+	{
+		ui->actionSave_image->setData(point);
+		contextMnu->addAction(ui->actionSave_image);
+	}
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
@@ -1501,77 +1534,83 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
     // make virtual peer id from gxs id in case of distant chat
     RsPeerId vpid;
-    if(chatId.isGxsId())
-        vpid = RsPeerId(chatId.toGxsId());
+    if(chatId.isDistantChatId())
+        vpid = RsPeerId(chatId.toDistantChatId());
     else
         vpid = chatId.toPeerId();
 
 	/* set font size for status  */
-    if (peer_id.toStdString() == vpid.toStdString()) {
-		// the peers status has changed
+    if (peer_id.toStdString() == vpid.toStdString()) 
+    {
+	    // the peers status has changed
 
-		QString peerName ;
-        if(chatId.isGxsId())
-		{
-			RsIdentityDetails details  ;
-            if(rsIdentity->getIdDetails(chatId.toGxsId(),details))
-				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
-			else
-                peerName = QString::fromStdString(chatId.toGxsId().toStdString()) ;
-		}
-		else
-            peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+	    QString peerName ;
+	    if(chatId.isDistantChatId())
+	    {
+		    DistantChatPeerInfo dcpinfo ;
+		    RsIdentityDetails details  ;
 
-		// is scrollbar at the end?
-		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
-		bool atEnd = (scrollbar->value() == scrollbar->maximum());
+		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
+				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
+			    else
+				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
+		    else
+			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+	    }
+	    else
+		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
 
-		switch (status) {
-		case RS_STATUS_OFFLINE:
-			ui->infoFrame->setVisible(true);
-			ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
-			break;
+	    // is scrollbar at the end?
+	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
+	    bool atEnd = (scrollbar->value() == scrollbar->maximum());
 
-		case RS_STATUS_INACTIVE:
-			ui->infoFrame->setVisible(true);
-			ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
-			break;
+	    switch (status) {
+	    case RS_STATUS_OFFLINE:
+		    ui->infoFrame->setVisible(true);
+		    ui->infoLabel->setText(peerName + " " + tr("appears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+		    break;
 
-		case RS_STATUS_ONLINE:
-			ui->infoFrame->setVisible(false);
-			break;
+	    case RS_STATUS_INACTIVE:
+		    ui->infoFrame->setVisible(true);
+		    ui->infoLabel->setText(peerName + " " + tr("is Idle and may not reply"));
+		    break;
 
-		case RS_STATUS_AWAY:
-			ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
-			ui->infoFrame->setVisible(true);
-			break;
+	    case RS_STATUS_ONLINE:
+		    ui->infoFrame->setVisible(false);
+		    break;
 
-		case RS_STATUS_BUSY:
-			ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
-			ui->infoFrame->setVisible(true);
-			break;
-		}
+	    case RS_STATUS_AWAY:
+		    ui->infoLabel->setText(peerName + " " + tr("is Away and may not reply"));
+		    ui->infoFrame->setVisible(true);
+		    break;
 
-		ui->titleLabel->setText(peerName);
-		ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
+	    case RS_STATUS_BUSY:
+		    ui->infoLabel->setText(peerName + " " + tr("is Busy and may not reply"));
+		    ui->infoFrame->setVisible(true);
+		    break;
+	    }
 
-		peerStatus = status;
+	    ui->titleLabel->setText(peerName);
+	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
-		if (atEnd) {
-			// scroll to the end
-			scrollbar->setValue(scrollbar->maximum());
-		}
+	    peerStatus = status;
 
-		emit infoChanged(this);
-		emit statusChanged(status);
+	    if (atEnd) {
+		    // scroll to the end
+		    scrollbar->setValue(scrollbar->maximum());
+	    }
 
-		// Notify all ChatWidgetHolder
-		foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
-			chatWidgetHolder->updateStatus(status);
-		}
+	    emit infoChanged(this);
+	    emit statusChanged(status);
 
-		return;
-	}
+	    // Notify all ChatWidgetHolder
+	    foreach (ChatWidgetHolder *chatWidgetHolder, mChatWidgetHolder) {
+		    chatWidgetHolder->updateStatus(status);
+	    }
+
+	    return;
+    }
 
 	// ignore status change
 }
@@ -1639,4 +1678,22 @@ bool ChatWidget::setStyle()
 	}
 
 	return false;
+}
+
+void ChatWidget::quote()
+{
+	QString text = ui->textBrowser->textCursor().selection().toPlainText();
+	if(text.length() > 0)
+	{
+		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+		text = sl.join("\n>");
+		emit ui->chatTextEdit->append(QString(">") + text);
+	}
+}
+
+void ChatWidget::saveImage()
+{
+	QPoint point = ui->actionSave_image->data().toPoint();
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
 }

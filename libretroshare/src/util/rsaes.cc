@@ -61,7 +61,10 @@ bool RsAES::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 	int f_len = 0;
 
 	if(output_data_length < (uint32_t)c_len)
-		return false ;
+    {
+	    EVP_CIPHER_CTX_cleanup(&e_ctx) ;
+	    return false ;
+    }
 
 	/* update ciphertext, c_len is filled with the length of ciphertext generated,
 	 *len is the size of plaintext in bytes */
@@ -69,6 +72,7 @@ bool RsAES::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 	if(!EVP_EncryptUpdate(&e_ctx, output_data, &c_len, input_data, input_data_length))
 	{
 		std::cerr << "RsAES: decryption failed at end. Check padding." << std::endl;
+        	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 		return false ;
 	}
 
@@ -76,6 +80,7 @@ bool RsAES::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 	if(!EVP_EncryptFinal_ex(&e_ctx, output_data+c_len, &f_len))
 	{
 		std::cerr << "RsAES: decryption failed at end. Check padding." << std::endl;
+        	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 		return false ;
 	}
 
@@ -112,7 +117,10 @@ bool RsAES::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_lengt
 	int f_len = 0;
 
 	if(output_data_length < (uint32_t)c_len)
+    {
+        	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 		return false ;
+    }
 
 	output_data_length = c_len ;
 
@@ -122,6 +130,7 @@ bool RsAES::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_lengt
 	if(! EVP_DecryptUpdate(&e_ctx, output_data, &c_len, input_data, input_data_length))
 	{
 		std::cerr << "RsAES: decryption failed." << std::endl;
+        	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 		return false ;
 	}
 
@@ -129,6 +138,7 @@ bool RsAES::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_lengt
 	if(!EVP_DecryptFinal_ex(&e_ctx, output_data+c_len, &f_len))
 	{
 		std::cerr << "RsAES: decryption failed at end. Check padding." << std::endl;
+        	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 		return false ;
 	}
 
