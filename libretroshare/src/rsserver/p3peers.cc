@@ -243,20 +243,18 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
 
 bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
-	return AuthGPG::getAuthGPG()->haveSecretKey(id) ;
+	return AuthGPG::getAuthGPG()->haveSecretKey(id);
 }
 
 /* There are too many dependancies of this function
  * to shift it immeidately
  */
 
-bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
+bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
 #endif
-
-	// NOW Only for SSL Details.
 
 	RsPeerId sOwnId = AuthSSL::getAuthSSL()->OwnId();
 	peerState ps;
@@ -271,27 +269,11 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-		return false ;
+		return false;
 	}
 
-//			bool res = getGPGDetails(id, d);
-//
-//			d.isOnlyGPGdetail = true;
-//
-//			if(id.length() == 16)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else if(id.length() == 32)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else
-//			{
-//				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
-//				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
-//			}
-//
-//			return res ;
-
 	/* get from gpg (first), to fill in the sign and trust details */
-	/* don't retrun now, we've got fill in the ssl and connection info */
+	/* don't return now, we've got fill in the ssl and connection info */
 	getGPGDetails(ps.gpg_id, d);
 	d.isOnlyGPGdetail = false;
 
@@ -299,7 +281,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	d.id 		= id;
 	d.location 	= ps.location;
 
-	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id) ;
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id);
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";
@@ -327,10 +309,28 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
-		d.extAddr	= sockaddr_storage_iptostring(ps.serveraddr);
-		d.extPort	= sockaddr_storage_port(ps.serveraddr);
+		if (sockaddr_storage_isnull(ps.localaddr))
+		{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0;
+		}
+		else
+		{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+		}
+
+		if (sockaddr_storage_isnull(ps.serveraddr))
+		{
+			d.extAddr = "INVALID_IP";
+			d.extPort = 0;
+		}
+		else
+		{
+			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
+			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+
 		d.dyndns        = ps.dyndns;
 	
 		std::list<pqiIpAddress>::iterator it;
