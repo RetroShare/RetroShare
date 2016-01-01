@@ -295,7 +295,7 @@ void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId& id,RsG
     
     if(it == pendingGxsTunnelDataItems.end())
     {
-        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << " is unknown. This is unexpected." << std::endl;
+        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << std::dec << " is unknown. This is unexpected." << std::endl;
         return ;
     }
     
