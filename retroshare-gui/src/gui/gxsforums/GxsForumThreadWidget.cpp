@@ -100,6 +100,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mTokenTypeMessageData = nextTokenType();
 	mTokenTypeReplyMessage = nextTokenType();
 	mTokenTypeReplyForumMessage = nextTokenType();
+    mTokenTypeBanAuthor = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -127,6 +128,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     //mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->threadTitle);
 
 	mSubscribeFlags = 0;
+    mSignFlags = 0;
 	mInProcessSettings = false;
 	mUnreadCount = 0;
 	mNewCount = 0;
