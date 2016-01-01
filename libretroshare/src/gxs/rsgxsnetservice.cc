@@ -733,7 +733,7 @@ void RsGxsNetService::syncGrpStatistics()
 #ifdef NXS_NET_DEBUG_6
 		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
 #endif
-		    // randomly select 2 friends among the suppliers of this group
+            // randomly select GROUP_STATS_UPDATE_NB_PEERS friends among the suppliers of this group
 
 		    uint32_t n = RSRandom::random_u32() % rec.suppliers.size() ;
 
@@ -743,13 +743,15 @@ void RsGxsNetService::syncGrpStatistics()
 
 		    for(uint32_t i=0;i<std::min(rec.suppliers.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
                     {
+                // we started at a random position in the set, wrap around if the end is reached
+                if(rit == rec.suppliers.end())
+                    rit = rec.suppliers.begin() ;
+
 			RsPeerId peer_id = *rit ;
 			++rit ;
                         
                 	if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
 			{
-				if(rit == rec.suppliers.end())
-					rit = rec.suppliers.begin() ;
 
 #ifdef NXS_NET_DEBUG_6
 				GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
