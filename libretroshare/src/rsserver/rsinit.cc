@@ -1372,12 +1372,11 @@ int RsServer::StartupRetroShare()
         
         /**** Wiki GXS service ****/
 
-
+#ifdef RS_USE_WIKI
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
-#ifdef RS_USE_WIKI
         p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
         // create GXS wiki service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
