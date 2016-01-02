@@ -87,7 +87,7 @@ class GxsReputation
 class RsGxsIdGroup
 {
 	public:
-    RsGxsIdGroup(): mLastUsageTS(0), mPgpKnown(false) { return; }
+    RsGxsIdGroup(): mLastUsageTS(0), mPgpKnown(false),mIsAContact(false) { return; }
 	~RsGxsIdGroup() { return; }
 
 

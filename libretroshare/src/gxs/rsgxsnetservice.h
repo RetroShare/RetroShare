@@ -51,7 +51,7 @@ class PgpAuxUtils;
 class RsGroupNetworkStatsRecord
 {
     public:
-        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; }
+        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; update_TS=0; }
 
         std::set<RsPeerId> suppliers ;
 	uint32_t max_visible_count ;
