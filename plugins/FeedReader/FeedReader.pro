@@ -121,8 +121,6 @@ macx {
 	INCLUDEPATH += . $$INC_DIR
 
 	LIBS = -lcurl -lxml2 -lxslt -lcrypto
-
-error(Missing RetroShare-gui library. Remove Plugins from RetroShare.pro))
 }
 
 openbsd-* {
