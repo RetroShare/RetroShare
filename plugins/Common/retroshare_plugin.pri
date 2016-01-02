@@ -68,7 +68,11 @@ win32 {
 }
 
 macx {
-
+	#You can found some information here:
+	#https://developer.apple.com/library/mac/documentation/Porting/Conceptual/PortingUnix/compiling/compiling.html
+	QMAKE_LFLAGS_PLUGIN -= -dynamiclib
+	QMAKE_LFLAGS_PLUGIN += -bundle
+	QMAKE_LFLAGS_PLUGIN += -bundle_loader "../../retroshare-gui/src/RetroShare06.app/Contents/MacOS/RetroShare06"
 
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc

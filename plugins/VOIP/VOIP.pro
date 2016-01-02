@@ -110,8 +110,6 @@ macx {
 		message(Use system opencv libraries.)
 		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-
-error(Missing RetroShare-gui library. Remove Plugins from RetroShare.pro))
 }
 
 
