@@ -262,6 +262,7 @@ void UdpLayer::recv_loop()
 #ifdef DEBUG_UDP_LAYER
 				std::cerr << "UdpLayer::recv_loop() stopping thread" << std::endl;
 #endif
+                free(inbuf) ;
 				stop();
 			}
 
@@ -301,9 +302,6 @@ void UdpLayer::recv_loop()
 #endif
 		}
 	}
-
-	free(inbuf) ;
-	return;
 }
 
 

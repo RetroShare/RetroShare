@@ -1,4 +1,3 @@
-
 /*
  * libretroshare/src/gxs: rsgxnetservice.cc
  *
@@ -2751,6 +2750,8 @@ void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const 
     {
         pitem = new RsGxsMsgUpdateItem(mServType) ;
         pitem->peerId = pid ;
+
+		  mClientMsgUpdateMap[pid] = pitem ;
     }
     else
         pitem = it->second ;
@@ -4353,4 +4354,5 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 		std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
 	}
 }
+
 

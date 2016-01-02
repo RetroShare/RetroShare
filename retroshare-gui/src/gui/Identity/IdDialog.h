@@ -61,6 +61,7 @@ protected:
 private slots:
     void createExternalCircle();
     void editExistingCircle();
+
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
 
@@ -77,6 +78,7 @@ private slots:
 
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
+
 	void CircleListCustomPopupMenu(QPoint point) ;
 	void circle_selected() ;
 
@@ -110,6 +112,7 @@ private:
 private:
 	TokenQueue *mIdQueue;
 	TokenQueue *mCircleQueue;
+
 	UIStateHelper *mStateHelper;
 
 	QTreeWidgetItem *contactsItem;
