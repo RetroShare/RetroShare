@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>rswebui5</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div id="main">if app does not load, enable JavaScript!</div>
+    <script src="app.js"></script>
+    <script type="text/javascript">
+        function load_ui(){
+            var m = require("mithril");
+            var ui = require("chat");
+            var main = document.getElementById("main");
+            m.mount(main, ui);
+        }
+        load_ui();
+    </script>
+</body>
+</html>
