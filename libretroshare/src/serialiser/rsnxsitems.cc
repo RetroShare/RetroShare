@@ -79,6 +79,18 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size)
 }
 
 
+uint32_t RsNxsSerialiser::size(RsItem *item) 
+{
+	RsNxsItem *nxs_item = dynamic_cast<RsNxsItem*>(item) ;
+
+	if(nxs_item != NULL)
+		return nxs_item->serial_size() ;
+	else
+	{
+		std::cerr << "RsNxsSerialiser::serialise(): Not an RsNxsItem!"  << std::endl;
+		return 0;
+	}
+}
 
 bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size) 
 {

@@ -390,7 +390,7 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>&
     if(!getCircleDetails(circleId, details))
 	    return false;
     
-    for(std::set<RsGxsId>::const_iterator it(details.mUnknownPeers.begin());it!=details.mUnknownPeers.end();+it)
+    for(std::set<RsGxsId>::const_iterator it(details.mUnknownPeers.begin());it!=details.mUnknownPeers.end();++it)
 	    gxs_ids.push_back(*it) ;
             
     return true;

@@ -91,7 +91,7 @@ public:
                 RsNxsNetMgr *netMgr,
         RsNxsObserver *nxsObs,  // used to be = NULL.
         const RsServiceInfo serviceInfo,
-        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL,
+        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
         PgpAuxUtils *pgpUtils = NULL,
         bool grpAutoSync = true, bool msgAutoSync = true);
 
@@ -501,6 +501,7 @@ private:
     int mUpdateCounter ;
 
     RsGcxs* mCircles;
+    RsGixs *mGixs;
     RsGixsReputation* mReputations;
     PgpAuxUtils *mPgpUtils;
     bool mGrpAutoSync;

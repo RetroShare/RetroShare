@@ -35,6 +35,7 @@
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
+#include "retroshare/rsids.h" 
 
 #include <iostream>
 #include <QMenu>
@@ -563,8 +564,10 @@ void PeopleDialog::chatIdentity()
 				
 			uint32_t error_code ;
 
-      if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(gxs_id), from_gxs_id, error_code))
-      QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
+            DistantChatPeerId dpid ;
+            
+      if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(gxs_id), from_gxs_id, dpid,error_code))
+	      QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
 
 		}
 }

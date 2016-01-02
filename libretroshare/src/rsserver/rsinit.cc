@@ -1331,7 +1331,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
             false,false); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
@@ -1343,7 +1343,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
         /**** Posted GXS service ****/
@@ -1360,7 +1360,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* posted_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_POSTED, posted_ds, nxsMgr, 
 			mPosted, mPosted->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mPosted->setNetworkExchangeService(posted_ns) ;
@@ -1401,7 +1401,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
@@ -1417,7 +1417,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
                         mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
@@ -1434,7 +1434,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* photo_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_PHOTO, photo_ds, nxsMgr, 
 			mPhoto, mPhoto->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
 
@@ -1450,7 +1450,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wire_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIRE, wire_ds, nxsMgr, 
 			mWire, mWire->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
         // now add to p3service

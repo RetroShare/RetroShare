@@ -84,6 +84,8 @@ class GxsSecurity
 		   	 unsigned char **ek ;                 // array of encrypted keys 
 		   	 EVP_CIPHER_CTX ctx;                  // EVP encryption context
 		   	 unsigned char iv[EVP_MAX_IV_LENGTH]; // initialization vector of the cipher.
+             
+             		friend class GxsSecurity ;
 	    	};
 		/*!
 		 * Extracts a public key from a private key.
@@ -112,7 +114,7 @@ class GxsSecurity
 		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
 		 * parameter.
 		 */
-        static bool initEncryption(MultiEncryptionContext& encryption_context, const std::list<RsTlvSecurityKey> &keys) ;
+        static bool initEncryption(MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey> &keys) ;
         static bool initDecryption(MultiEncryptionContext& encryption_context, const RsTlvSecurityKey& key, unsigned char *IV, uint32_t IV_size, unsigned char *encrypted_session_key, uint32_t encrypted_session_key_size) ;
         
 		/*!

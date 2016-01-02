@@ -283,11 +283,11 @@ const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
 RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, 
-				const RsServiceInfo serviceInfo,
-				RsGixsReputation* reputations, RsGcxs* circles, 
-                PgpAuxUtils *pgpUtils, bool grpAutoSync,bool msgAutoSync)
+                                 const RsServiceInfo serviceInfo,
+                                 RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
+                                 PgpAuxUtils *pgpUtils, bool grpAutoSync,bool msgAutoSync)
                                      : p3ThreadedService(), p3Config(), mTransactionN(0),
-                                       mObserver(nxsObs), mDataStore(gds), mServType(servType),
+                                       mObserver(nxsObs),mGixs(gixs), mDataStore(gds), mServType(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
                                        mSyncTs(0), mLastKeyPublishTs(0),mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations),
 					mPgpUtils(pgpUtils),
@@ -3275,13 +3275,13 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     }
     
     std::cerr << "  Dest  Ids: " << std::endl;
-    std::list<RsTlvSecurityKey> recipient_keys ;
+    std::vector<RsTlvSecurityKey> recipient_keys ;
     
     for(std::list<RsGxsId>::const_iterator it(recipients.begin());it!=recipients.end();++it)
     {
         RsTlvSecurityKey pkey ;
         
-       	if(!rsIdentity->getKey(*it,pkey))
+       	if(!mGixs->getKey(*it,pkey))
         {
             std::cerr  << "(EE) Cannot retrieve public key " << *it << " for circle encryption." << std::endl;
             // we should probably request the key.
@@ -3314,7 +3314,7 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         unsigned char *encrypted_data = NULL ;
         uint32_t encrypted_len  = 0 ;
         
-        if(!GxsSecurity::encrypt(muctx,tempmem,size,encrypted_data, encrypted_len))
+        if(!GxsSecurity::encrypt(encrypted_data, encrypted_len,tempmem,size,muctx))
         {
             std::cerr << "  (EE) Cannot multi-encrypt item. Something went wrong." << std::endl;
             continue ;
@@ -3382,6 +3382,8 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     
     GxsSecurity::MultiEncryptionContext muctx ;
     RsGxsId private_key_id ;
+    RsTlvBinaryData ek ;
+    RsTlvSecurityKey private_key;
     bool found = false ;
     
     for(std::map<RsGxsId,RsTlvBinaryData>::const_iterator it(esk->encrypted_session_keys.begin());it!=esk->encrypted_session_keys.end();++it)
@@ -3389,6 +3391,13 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 	    {
 		    found = true ;
                     private_key_id = it->first ;
+                    ek = it->second ;
+                    
+                    if(!mGixs->getPrivateKey(private_key_id,private_key))
+                    {
+                        std::cerr << "(EE) Cannot find private key to decrypt incoming transaction, for ID " << it->first << ". This is a bug since the key is supposed ot be here." << std::endl;
+                        return false;
+                    }
                     
                     std::cerr << "  found appropriate private key to decrypt session key: " << it->first << std::endl;
 		    break ;
@@ -3400,7 +3409,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
         return false ;
     }
     
-    if(!GxsSecurity::initDecryption(private_key_id,esk->iv,EVP_MAX_IV_LENGTH,ek.bin_data,ek.bin_len))
+    if(!GxsSecurity::initDecryption(muctx,private_key,esk->iv,EVP_MAX_IV_LENGTH,(unsigned char*)ek.bin_data,ek.bin_len))
     {
         std::cerr << "  (EE) cannot decrypt transaction. initDecryption() failed." << std::endl;
         return false ;
@@ -3418,7 +3427,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 		unsigned char *tempmem;
 		uint32_t tempmemsize ;
 
-		if(!GxsSecurity::decrypt(muctx,tempmem,tempmemsize,encrypted_item->aes_encrypted_data.bin_data, encrypted_item->aes_encrypted_data.bin_len))
+		if(!GxsSecurity::decrypt(tempmem,tempmemsize,(uint8_t*)encrypted_item->aes_encrypted_data.bin_data, encrypted_item->aes_encrypted_data.bin_len,muctx))
 		{
 			std::cerr << "  (EE) Cannot decrypt item. Something went wrong. Skipping this item." << std::endl;
 			continue ;

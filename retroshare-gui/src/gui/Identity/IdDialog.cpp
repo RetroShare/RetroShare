@@ -572,24 +572,6 @@ void IdDialog::updateSelection()
 	}
 }
 
-static QString getHumanReadableDuration(uint32_t seconds)
-{
-    if(seconds < 60)
-        return QString(QObject::tr("%1 seconds ago")).arg(seconds) ;
-    else if(seconds < 120)
-        return QString(QObject::tr("%1 minute ago")).arg(seconds/60) ;
-    else if(seconds < 3600)
-        return QString(QObject::tr("%1 minutes ago")).arg(seconds/60) ;
-    else if(seconds < 7200)
-        return QString(QObject::tr("%1 hour ago")).arg(seconds/3600) ;
-    else if(seconds < 24*3600)
-        return QString(QObject::tr("%1 hours ago")).arg(seconds/3600) ;
-    else if(seconds < 2*24*3600)
-        return QString(QObject::tr("%1 day ago")).arg(seconds/86400) ;
-    else 
-        return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
-}
-
 void IdDialog::requestIdList()
 {
 	//Disable by default, will be enable by insertIdDetails()
@@ -663,8 +645,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
     
-    time_t now = time(NULL) ;
-    item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
+    //time_t now = time(NULL) ;
+    //item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
  
