@@ -207,6 +207,8 @@
  	NXS_NET_DEBUG_3		publish key exchange
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
+ 	NXS_NET_DEBUG_6		
+ 	NXS_NET_DEBUG_7		encryption/decryption of transactions
  ***/
 //#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
@@ -215,6 +217,7 @@
 //#define NXS_NET_DEBUG_4 	1
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
+#define NXS_NET_DEBUG_7 	1
 
 #define GIXS_CUT_OFF 0
 
@@ -236,7 +239,8 @@
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
+ || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("" )) ;	// use this to allow to this group id only, or "" for all IDs
@@ -245,7 +249,8 @@ static const uint32_t     service_to_print  = 0 ;                       	// use 
 
 class nullstream: public std::ostream {};
         
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5)|| defined(NXS_NET_DEBUG_6)
+#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
+ || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
 static std::string nice_time_stamp(time_t now,time_t TS)
 {
     if(TS == 0)
@@ -3260,8 +3265,11 @@ bool RsGxsNetService::locked_addTransaction(NxsTransaction* tr)
 
 bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
 {
+#ifdef NXS_NET_DEBUG_7
+    RsPeerId peerId = tr->mTransaction->PeerId() ;
+    GXSNETDEBUG_P_ (peerId) << "Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << " - Encrypting transaction for peer " << peerId << ", for circle ID " << tr->destination_circle  << std::endl;
+#endif
     std::cerr << "RsGxsNetService::encryptTransaction()" << std::endl;
-    std::cerr << "  Circle Id: " << tr->destination_circle << std::endl;
          
     // 1 - Find out the list of GXS ids to encrypt for
     //     We could do smarter things (like see if the peer_id owns one of the circle's identities
@@ -3275,7 +3283,9 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         return false ;
     }
     
-    std::cerr << "  Dest  Ids: " << std::endl;
+#ifdef NXS_NET_DEBUG_7
+    GXSNETDEBUG_P_ (peerId) << "  Dest  Ids: " << std::endl;
+#endif
     std::vector<RsTlvSecurityKey> recipient_keys ;
     
     for(std::list<RsGxsId>::const_iterator it(recipients.begin());it!=recipients.end();++it)
@@ -3288,12 +3298,18 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
             // we should probably request the key.
             continue ;
         }
-        std::cerr << "    added key " << *it << std::endl;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_ (peerId) << "    added key " << *it << std::endl;
+#endif
+        
         recipient_keys.push_back(pkey) ;
     }
     
     // 2 - call GXSSecurity to make a header item that encrypts for the given list of peers.
     
+#ifdef NXS_NET_DEBUG_7
+    GXSNETDEBUG_P_ (peerId) << "  Encrypting..." << std::endl;
+#endif
     GxsSecurity::MultiEncryptionContext muctx ; 
     GxsSecurity::initEncryption(muctx,recipient_keys);
             
@@ -3328,6 +3344,9 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         enc_item->aes_encrypted_data.tlvtype  = TLV_TYPE_BIN_ENCRYPTED ;
         
         encrypted_items.push_back(enc_item) ;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_(peerId) << "    encrypted item of size " << encrypted_len << std::endl;
+#endif
     }
         
     // 4 - put back in transaction.
@@ -3339,13 +3358,18 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     
     // 5 - make session key item and push it front.
     
+#ifdef NXS_NET_DEBUG_7
+    GXSNETDEBUG_P_(peerId) << "  Creating session key" << std::endl;
+#endif
     RsNxsSessionKeyItem *session_key_item = new RsNxsSessionKeyItem(mServType) ;
     
     memcpy(session_key_item->iv,muctx.initialisation_vector(),EVP_MAX_IV_LENGTH) ;
     
     for(int i=0;i<muctx.n_encrypted_keys();++i)
     {
-        std::cerr << "  addign session key for ID " << muctx.encrypted_key_id(i) << std::endl;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_(peerId) << "     addign session key for ID " << muctx.encrypted_key_id(i) << std::endl;
+#endif
         RsTlvBinaryData data ;
         
         data.setBinData(muctx.encrypted_key_data(i), muctx.encrypted_key_size(i)) ;
@@ -3360,8 +3384,11 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
 
 bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 {
-    std::cerr << "RsGxsNetService::decryptTransaction()" << std::endl;
-    std::cerr << "  Circle Id: " << tr->destination_circle << std::endl;
+#ifdef NXS_NET_DEBUG_7
+    RsPeerId peerId = tr->mTransaction->PeerId() ;
+    GXSNETDEBUG_P_(peerId) << "RsGxsNetService::decryptTransaction()" << std::endl;
+    GXSNETDEBUG_P_(peerId) << "  Circle Id: " << tr->destination_circle << std::endl;   
+#endif
          
     // 1 - Checks that the transaction is encrypted. It should contain
     // 	   one packet with an encrypted session key for the group,
@@ -3375,7 +3402,9 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
         
     if(esk == NULL)
     {
-        std::cerr << "  (II) nothing to decrypt. No session key packet in this transaction." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_(peerId) << "  (II) nothing to decrypt. No session key packet in this transaction." << std::endl;
+#endif
         return false ;
     }
     // 2 - Try to decrypt the session key. If not, return false. That probably means
@@ -3400,7 +3429,9 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
                         return false;
                     }
                     
-                    std::cerr << "  found appropriate private key to decrypt session key: " << it->first << std::endl;
+#ifdef NXS_NET_DEBUG_7
+                    GXSNETDEBUG_P_(peerId) << "  found appropriate private key to decrypt session key: " << it->first << std::endl;
+#endif
 		    break ;
 	    }
     
@@ -3415,6 +3446,10 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
         std::cerr << "  (EE) cannot decrypt transaction. initDecryption() failed." << std::endl;
         return false ;
     }
+#ifdef NXS_NET_DEBUG_7
+    GXSNETDEBUG_P_(peerId) << "  Session key successfully decrypted, with length " << ek.bin_len << std::endl;
+    GXSNETDEBUG_P_(peerId) << "  Now, decrypting transaction items..." << std::endl;
+#endif
     
     // 3 - Using session key, decrypt all packets, by calling GXSSecurity.
     
@@ -3436,7 +3471,9 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 
 		RsItem *ditem = serial.deserialise(tempmem,&tempmemsize) ;
 
-		std::cerr << "  Decrypted an item of type " << std::hex << ditem->PacketId() << std::dec << std::endl;
+#ifdef NXS_NET_DEBUG_7
+		GXSNETDEBUG_P_(peerId) << "    Decrypted an item of type " << std::hex << ditem->PacketId() << std::dec << std::endl;
+#endif
 
 		RsNxsItem *nxsi = dynamic_cast<RsNxsItem*>(ditem) ;
 
@@ -3452,7 +3489,9 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
         
     // 4 - put back in transaction.
     
-    std::cerr << "  replacing items with clear items" << std::endl;
+#ifdef NXS_NET_DEBUG_7
+    GXSNETDEBUG_P_(peerId) << "  replacing items with clear items" << std::endl;
+#endif
     
     for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
         delete *it ;
