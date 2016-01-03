@@ -587,9 +587,9 @@ static void optimizeHtml(QDomDocument& doc
 				if (pair.length()!=2) return; //Malformed style list so a bad message or last item.
 				QString keyvalue = pair.at(1);
 				keyvalue.replace(";","");
-				QStringList* classUsingIt = new QStringList(pair.at(0).split(','));
+				QStringList classUsingIt(pair.at(0).split(','));
 				QStringList* exported = new QStringList();
-				foreach (QString keyVal, *classUsingIt) {
+				foreach (QString keyVal, classUsingIt) {
 					if(!keyVal.trimmed().isEmpty()) {
 						exported->append(keyVal.trimmed().replace(".",""));
 					}

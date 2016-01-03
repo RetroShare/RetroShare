@@ -295,7 +295,7 @@ void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId& id,RsG
     
     if(it == pendingGxsTunnelDataItems.end())
     {
-        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << " is unknown. This is unexpected." << std::endl;
+        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << std::dec << " is unknown. This is unexpected." << std::endl;
         return ;
     }
     
@@ -1213,7 +1213,6 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
     {
         std::cerr << "(EE) packet encryption failed." << std::endl;
-        delete[] encrypted_data ;
         return false;
     }
 

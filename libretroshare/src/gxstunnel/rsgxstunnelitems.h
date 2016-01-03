@@ -73,7 +73,7 @@ class RsGxsTunnelItem: public RsItem
 class RsGxsTunnelDataItem: public RsGxsTunnelItem
 {
 public:
-    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) { data=NULL ;data_size=0; }
+    RsGxsTunnelDataItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_DATA) { data=NULL ;data_size=0;service_id=0;unique_item_counter=0; }
     RsGxsTunnelDataItem(uint8_t subtype) :RsGxsTunnelItem(subtype) { data=NULL ;data_size=0; }
 
     virtual ~RsGxsTunnelDataItem() {}
@@ -96,7 +96,7 @@ public:
 class RsGxsTunnelStatusItem: public RsGxsTunnelItem
 {
 	public:
-		RsGxsTunnelStatusItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS) {}
+		RsGxsTunnelStatusItem() :RsGxsTunnelItem(RS_PKT_SUBTYPE_GXS_TUNNEL_STATUS) , status(0) {}
 		RsGxsTunnelStatusItem(void *data,uint32_t size) ; // deserialization
 
 		virtual ~RsGxsTunnelStatusItem() {}

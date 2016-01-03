@@ -93,6 +93,7 @@ RsServer::RsServer()
 	msgSrv = NULL;
 	chatSrv = NULL;
 	mStatusSrv = NULL;
+    mGxsTunnels = NULL;
 
     mMin = 0;
     mLoop = 0;
