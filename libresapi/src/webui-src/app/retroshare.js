@@ -41,7 +41,7 @@ var last_update_ts = 0;
 function check_for_changes(){
     var tokens = [];
     for_key_in_obj(cache, function(path){
-        var token = cache[path].token;
+        var token = cache[path].statetoken;
         if(token !== undefined){
             tokens.push(token);
         }
@@ -58,7 +58,7 @@ function check_for_changes(){
         var paths_to_fetch = [];
         for_key_in_obj(cache, function(path){
             var found = false;
-            for(var i = 0; i > response.data.length; i++){
+            for(var i = 0; i < response.data.length; i++){
                 if(response.data[i] === cache[path].statetoken){
                     found = true;
                 }
@@ -69,7 +69,7 @@ function check_for_changes(){
         });
         var requests = [];
         paths_to_fetch.map(function request_it(path){
-            var req = m.request({
+            var req2 = m.request({
 
                 method: "GET",
 
@@ -78,15 +78,22 @@ function check_for_changes(){
     background: true,
 
             });
-            req.then(function fill_in_result(response){
+            req2 = req2.then(function fill_in_result(response){
                 cache[path].data = response.data;
+                cache[path].statetoken = response.statetoken;
             });
-            requests.push(req);
+            requests.push(req2);
         });
-        m.sync(requests, function trigger_render(){
-            m.startComputation();
-            m.endComputation();
-        });
+        if(requests.length > 0){
+            m.sync(requests).then(function trigger_render(){
+                m.startComputation();
+                m.endComputation();
+                setTimeout(check_for_changes, 500);
+            });
+        }
+        else{
+            setTimeout(check_for_changes, 500);
+        }
     });
 }
 
