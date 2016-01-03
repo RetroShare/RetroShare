@@ -70,13 +70,9 @@ function check_for_changes(){
         var requests = [];
         paths_to_fetch.map(function request_it(path){
             var req2 = m.request({
-
                 method: "GET",
-
-    url: api_url + path,
-
-    background: true,
-
+                url: api_url + path,
+                background: true,
             });
             req2 = req2.then(function fill_in_result(response){
                 cache[path].data = response.data;
@@ -146,22 +142,13 @@ function rs(path, optionen){
         }
         return cache[path].data;
     } else if (optionen.args != undefined) {
-        var req = m.request({
-                             method: "GET",
-
-                        url: api_url + path,
-
-                        args: optionen.args,
-
-                        background: false,
-
-                             callback: {
-                                 }
-
-    });
-
+        return m.request({
+            method: "GET",
+            url: api_url + path,
+            args: optionen.args,
+            background: false,
+        })();
     }
-
 }
 
 module.exports = rs;
