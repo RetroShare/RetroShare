@@ -8,7 +8,11 @@ var currentpasswd = null;
 var accountMap = new Map();
 
 function login(){
-    alert("login:" + curraccount.location + "; passwort: " + currentpasswd);
+    //alert("login:" + curraccount.location + "; passwort: " + currentpasswd);
+    rs("control/login", {data: {id: curraccount.id}, callback:function(){
+        //alert("login send");
+        rs("control/password",{data: {password: currentpasswd}});
+    }});
 }
 
 function cancel(){

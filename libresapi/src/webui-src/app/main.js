@@ -31,10 +31,6 @@ module.exports = {view: function(){
         } else {
             return m("div", "unknown runstate: " + runstate.runstate);
         }
-
-        return m("div", peers.map(function(peer){
-            return m("div",peer.name)
-        }));
     }
 }
 };

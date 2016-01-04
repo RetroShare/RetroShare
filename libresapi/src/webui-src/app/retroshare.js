@@ -141,13 +141,20 @@ function rs(path, optionen){
             schedule_request_missing();
         }
         return cache[path].data;
-    } else if (optionen.args != undefined) {
-        return m.request({
-            method: "GET",
+    } else{
+        m.request({
+            method: "POST",
             url: api_url + path,
-            args: optionen.args,
-            background: false,
-        })();
+            data: optionen.data,
+            background: true,
+        }).then(function(){
+            // i'm not happy about this.
+            // wouldn't it be nicer to return the thennable to the caller?
+            // but it is not nice to return different things from the rs function
+            // maybe make anotehr function which returns thennables
+            if(optionen.callback)
+                optionen.callback();
+        });
     }
 }
 
