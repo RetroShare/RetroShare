@@ -1391,7 +1391,13 @@ void ChatWidget::smileyWidget()
 
 void ChatWidget::addSmiley()
 {
-	ui->chatTextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	// add trailing space
+	smiley += QString(" ");
+	// add preceding space when needed (not at start of text or preceding space already exists)
+	if(!ui->chatTextEdit->textCursor().atStart() && ui->chatTextEdit->toPlainText()[ui->chatTextEdit->textCursor().position() - 1] != QChar(' '))
+		smiley = QString(" ") + smiley;
+	ui->chatTextEdit->textCursor().insertText(smiley);
 }
 
 void ChatWidget::clearChatHistory()
