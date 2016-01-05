@@ -130,17 +130,23 @@ function schedule_request_missing(){
     });
 }
 
-function rs(path, optionen){
-    if(optionen === undefined) {
-        if(cache[path] === undefined){
-            cache[path] = {
-                data: undefined,
-                statetoken: undefined,
-                requested: false,
-            };
-            schedule_request_missing();
-        }
-        return cache[path].data;
+function rs(path, args, callback){
+    if(cache[path] === undefined){
+        cache[path] = {
+            data: args,
+            statetoken: undefined,
+            requested: false,
+            then: function(){
+                if (callback != undefined) {
+                    callback();
+                }
+            }
+        };
+        schedule_request_missing();
+    }
+    return cache[path].data;
+}
+/*
     } else{
         m.request({
             method: "POST",
@@ -157,5 +163,20 @@ function rs(path, optionen){
         });
     }
 }
+*/
 
 module.exports = rs;
+
+rs.request=function(path, args, callback){
+    m.request({
+        method: "POST",
+        url: api_url + path,
+        data: args,
+        background: true
+    }).then(function(response){
+        if (callback != undefined) {
+            callback(response.data, response.statetoken);
+        }
+    });
+}
+

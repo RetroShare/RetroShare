@@ -9,10 +9,12 @@ var accountMap = new Map();
 
 function login(){
     //alert("login:" + curraccount.location + "; passwort: " + currentpasswd);
-    rs("control/login", {data: {id: curraccount.id}, callback:function(){
+    rs.request("control/login", {id: curraccount.id}, function(){
         //alert("login send");
-        rs("control/password",{data: {password: currentpasswd}});
-    }});
+        rs.request("control/password", {password: currentpasswd}, function(){
+            m.redraw();
+        });
+    });
 }
 
 function cancel(){
