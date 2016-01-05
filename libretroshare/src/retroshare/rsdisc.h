@@ -34,20 +34,19 @@
 
 /* The Main Interface Class - for information about your Peers */
 class RsDisc;
-extern RsDisc   *rsDisc;
+extern RsDisc *rsDisc;
 
 class RsDisc
 {
-	public:
+public:
 
-	RsDisc()  { return; }
-virtual ~RsDisc() { return; }
+	RsDisc() {}
+	virtual ~RsDisc() {}
 
-virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
-virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
-virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
-virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
-
+	virtual bool getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
+	virtual bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
+	virtual bool getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
+	virtual bool getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
 };
 
 #endif

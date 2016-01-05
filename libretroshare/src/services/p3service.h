@@ -59,35 +59,30 @@ std::string generateRandomServiceId();
 
 class p3FastService: public pqiService
 {
-	protected:
-
-	p3FastService() 
-	:pqiService(), 
-	srvMtx("p3FastService"), rsSerialiser(NULL)
+protected:
+	p3FastService() : pqiService(), srvMtx("p3FastService")
 	{
 		rsSerialiser = new RsSerialiser();
-		return; 
 	}
 
-	public:
+public:
+	virtual ~p3FastService() { delete rsSerialiser; }
 
-virtual ~p3FastService() { delete rsSerialiser; return; }
+	/*************** INTERFACE ******************************/
+	int sendItem(RsItem *);
+	virtual int	tick() { return 0; }
+	/*************** INTERFACE ******************************/
 
-/*************** INTERFACE ******************************/
-int             sendItem(RsItem *);
-virtual int	tick() { return 0; }
-/*************** INTERFACE ******************************/
 
-	public:
 	// overloaded pqiService interface.
-virtual bool	recv(RsRawItem *);
+	virtual bool recv(RsRawItem *);
 
 	// called by recv().
-virtual bool	recvItem(RsItem *item) = 0;
+	virtual bool recvItem(RsItem *item) = 0;
 
 
-	protected:
-void 	addSerialType(RsSerialType *);
+protected:
+	void addSerialType(RsSerialType *);
 
 	RsMutex srvMtx; /* below locked by Mutex */
 

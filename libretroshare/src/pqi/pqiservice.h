@@ -60,30 +60,30 @@ class p3ServiceServerIface;
 
 class pqiService
 {
-	protected:
+protected:
+	// our type of packets.
+	pqiService() : mServiceServer(NULL) {}
 
-	pqiService() // our type of packets.
-	:mServiceServer(NULL) { return; }
+	virtual ~pqiService() {}
 
-virtual ~pqiService() { return; }
+public:
+	void setServiceServer(p3ServiceServerIface *server);
 
-	public:
-void 	setServiceServer(p3ServiceServerIface *server);
-	// 
-virtual bool	recv(RsRawItem *) = 0;
-virtual bool	send(RsRawItem *item);
+	virtual bool recv(RsRawItem *) = 0;
+	virtual bool send(RsRawItem *item);
 
-virtual RsServiceInfo getServiceInfo() = 0;
+	virtual RsServiceInfo getServiceInfo() = 0;
 
-virtual int	tick() { return 0; }
+	virtual int	tick() { return 0; }
 
-	private:
+private:
 	p3ServiceServerIface *mServiceServer; // const, no need for mutex.
 };
 
 #include <map>
 
-/* We are pushing the packets back through p3ServiceServer, 
+/**
+ * We are pushing the packets back through p3ServiceServer,
  * so that we can filter services at this level later...
  * if we decide not to do this, pqiService can call through
  * to the base level pqiPublisher instead.
@@ -93,14 +93,10 @@ virtual int	tick() { return 0; }
 class p3ServiceServerIface
 {
 public:
-
 	virtual ~p3ServiceServerIface() {}
 
-
-virtual bool	recvItem(RsRawItem *) = 0;
-virtual bool	sendItem(RsRawItem *) = 0;
-
-
+	virtual bool recvItem(RsRawItem *) = 0;
+	virtual bool sendItem(RsRawItem *) = 0;
 };
 
 class p3ServiceServer : public p3ServiceServerIface
@@ -108,23 +104,21 @@ class p3ServiceServer : public p3ServiceServerIface
 public:
 	p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl);
 
-int	addService(pqiService *, bool defaultOn);
-int	removeService(pqiService *);
+	int	addService(pqiService *, bool defaultOn);
+	int	removeService(pqiService *);
 
-bool	recvItem(RsRawItem *);
-bool	sendItem(RsRawItem *);
+	bool recvItem(RsRawItem *);
+	bool sendItem(RsRawItem *);
 
-int	tick();
-public:
+	int	tick();
 
 private:
 
-	pqiPublisher *mPublisher;	// constant no need for mutex.
+	pqiPublisher *mPublisher;	/// constant no need for mutex.
 	p3ServiceControl *mServiceControl;
 
-	RsMutex srvMtx; 
+	RsMutex srvMtx;
 	std::map<uint32_t, pqiService *> services;
-
 };
 
 

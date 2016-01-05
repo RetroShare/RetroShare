@@ -275,7 +275,7 @@ bool     SetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type
 bool     GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string &in);
 uint32_t GetTlvStringSize(const std::string &in);
 
-#ifdef REMOVED_CODE
+#ifdef REMOVED_CODE // TODO: 2016/01/02 Dead Code?
 bool     SetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring out);
 bool     GetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring &in);
 uint32_t GetTlvWideStringSize(std::wstring &in);
@@ -289,6 +289,7 @@ bool     SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_
 bool     GetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in6 *in);
 uint32_t GetTlvIpAddrPortV6Size();
 
+// TODO: 2016/01/02 Dead Code?
 /* additional function to be added
 
 bool SetTlvBinData(void* data, uint32_t size, uint32_t* offset, uint16_t type, void* data_bin, uint32_t len_tlv)

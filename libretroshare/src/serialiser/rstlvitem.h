@@ -33,49 +33,48 @@
 #include <string>
 #include <inttypes.h>
 
-//! A base class for all tlv items 
-/*! This class is provided to allow the serialisation and deserialization of compund 
-tlv items 
-*/
+/**
+ * A base class for all tlv items
+ * This class is provided to allow the serialisation and deserialization of compund tlv items
+ */
 class RsTlvItem
 {
-	public:
-	 RsTlvItem() { return; }
-virtual ~RsTlvItem() { return; }
-virtual uint32_t TlvSize() const = 0;
-virtual void	 TlvClear() = 0;
-virtual	void	 TlvShallowClear(); /*! Don't delete allocated data */
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const = 0; /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset) = 0; /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const = 0;
-std::ostream &printBase(std::ostream &out, std::string clsName, uint16_t indent) const;
-std::ostream &printEnd(std::ostream &out, std::string clsName, uint16_t indent) const;
+public:
+	RsTlvItem() {}
+	virtual ~RsTlvItem() {}
+	virtual uint32_t TlvSize() const = 0;
+	virtual void TlvClear() = 0;
+	virtual	void TlvShallowClear(); /// Don't delete allocated data
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const = 0; /// serialise
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset) = 0; /// deserialise
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const = 0;
+	std::ostream &printBase(std::ostream &out, std::string clsName, uint16_t indent) const;
+	std::ostream &printEnd(std::ostream &out, std::string clsName, uint16_t indent) const;
 };
 
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
 
 
-class RsTlvUnit: public RsTlvItem
+class RsTlvUnit: public RsTlvItem // TODO: 2016/01/01 dead code?
 {
-	public:
-	 RsTlvUnit(uint16_t tlv_type);
-virtual ~RsTlvUnit() { return; }
-virtual uint32_t TlvSize() const;
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
+public:
+	RsTlvUnit(uint16_t tlv_type);
+	virtual ~RsTlvUnit() {}
+	virtual uint32_t TlvSize() const;
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset);
 
-virtual uint16_t TlvType() const { return mTlvType; }
+	virtual uint16_t TlvType() const { return mTlvType; }
 
-// These Functions need to be implemented.
-//virtual void	 TlvClear() = 0;
-//virtual std::ostream &print(std::ostream &out, uint16_t indent) = 0 const;
+	// These Functions need to be implemented.
+	//virtual void	 TlvClear() = 0;
+	//virtual std::ostream &print(std::ostream &out, uint16_t indent) = 0 const;
 
-virtual uint32_t TlvSizeUnit() const = 0;
-virtual bool     SetTlvUnit(void *data, uint32_t size, uint32_t *offset) const = 0;
-virtual bool     GetTlvUnit(void *data, uint32_t size, uint32_t *offset) = 0;
+	virtual uint32_t TlvSizeUnit() const = 0;
+	virtual bool SetTlvUnit(void *data, uint32_t size, uint32_t *offset) const = 0;
+	virtual bool GetTlvUnit(void *data, uint32_t size, uint32_t *offset) = 0;
 
-
-	private:
+private:
 	uint16_t mTlvType;
 };
 

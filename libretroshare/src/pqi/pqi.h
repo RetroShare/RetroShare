@@ -46,40 +46,37 @@
 class SearchInterface
 {
 public:
-	SearchInterface()  { return; }
-
-	virtual	~SearchInterface() { return; }
+	SearchInterface() {}
+	virtual	~SearchInterface() {}
 };
 
 class P3Interface: public SearchInterface
 {
 public:
-	P3Interface() {return; }
-virtual ~P3Interface() {return; }
+	P3Interface() {}
+	virtual ~P3Interface() {}
 
-virtual int	tick() { return 1; }
-virtual int	status() { return 1; }
+	virtual int	tick() { return 1; }
+	virtual int	status() { return 1; }
 
-virtual int	SendRsRawItem(RsRawItem *) = 0;
-#ifdef TO_BE_REMOVED
-virtual RsRawItem *GetRsRawItem() = 0;
-#endif
+	virtual int	SendRsRawItem(RsRawItem *) = 0;
+
+	#ifdef TO_BE_REMOVED
+	virtual RsRawItem *GetRsRawItem() = 0;
+	#endif
 };
 
 
-/* interface to allow outgoing messages to be sent directly 
+/**
+ * Interface to allow outgoing messages to be sent directly
  * through to the pqiperson, rather than being queued
  */
-
 class pqiPublisher
 {
-        public:
-virtual ~pqiPublisher() { return; }
-virtual bool sendItem(RsRawItem *item) = 0;
-
+public:
+	virtual ~pqiPublisher() {}
+	virtual bool sendItem(RsRawItem *item) = 0;
 };
-
 
 
 #endif // PQI_TOP_HEADER
-

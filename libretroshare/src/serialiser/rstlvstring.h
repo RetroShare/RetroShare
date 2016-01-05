@@ -36,15 +36,15 @@
 
 class RsTlvStringSet: public RsTlvItem
 {
-	public:
-	 RsTlvStringSet(uint16_t type);
-virtual ~RsTlvStringSet() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
-virtual std::ostream &printHex(std::ostream &out, uint16_t indent) const;
+public:
+	RsTlvStringSet(uint16_t type);
+	virtual ~RsTlvStringSet() {}
+	virtual uint32_t TlvSize() const;
+	virtual void TlvClear();
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset);
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+	virtual std::ostream &printHex(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mType;
 	std::list<std::string> ids; /* Mandatory */
@@ -52,17 +52,15 @@ virtual std::ostream &printHex(std::ostream &out, uint16_t indent) const;
 
 class RsTlvStringSetRef: public RsTlvItem
 {
-	public:
-     RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
-virtual ~RsTlvStringSetRef() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+public:
+	RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
+	virtual ~RsTlvStringSetRef() {}
+	virtual uint32_t TlvSize() const;
+	virtual void TlvClear();
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset);
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mType;
-    std::list<std::string> &ids; /* Mandatory */
+	std::list<std::string> &ids; /* Mandatory */
 };
-
-

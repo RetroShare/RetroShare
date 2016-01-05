@@ -37,38 +37,38 @@
 
 class RsTlvIpAddress: public RsTlvItem
 {
-	public:
-	 RsTlvIpAddress();
-virtual ~RsTlvIpAddress() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+public:
+	RsTlvIpAddress();
+	virtual ~RsTlvIpAddress() {}
+	virtual uint32_t TlvSize() const;
+	virtual void TlvClear();
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset);
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	struct sockaddr_storage addr; 			// Mandatory :
+	struct sockaddr_storage addr; /// Mandatory
 };
 
 
 class RsTlvIpAddressInfo: public RsTlvItem
 {
-	public:
-	 RsTlvIpAddressInfo();
-virtual ~RsTlvIpAddressInfo() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+public:
+	RsTlvIpAddressInfo();
+	virtual ~RsTlvIpAddressInfo() {}
+	virtual uint32_t TlvSize() const;
+	virtual void TlvClear();
+	virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset);
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	RsTlvIpAddress addr; 				// Mandatory :
-	uint64_t  seenTime;				// Mandatory :
-	uint32_t  source; 				// Mandatory :
+	RsTlvIpAddress addr; /// Mandatory
+	uint64_t seenTime; /// Mandatory
+	uint32_t source; /// Mandatory
 };
 
 typedef t_RsTlvList<RsTlvIpAddressInfo,TLV_TYPE_ADDRESS_SET> RsTlvIpAddrSet;
 
-#if 0
+#if 0 // TODO: 2016/01/02 Dead Code?
 class RsTlvIpAddrSet: public RsTlvItem
 {
 	public:
@@ -83,5 +83,3 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	std::list<RsTlvIpAddressInfo> addrs; 		// Mandatory :
 };
 #endif
-
-

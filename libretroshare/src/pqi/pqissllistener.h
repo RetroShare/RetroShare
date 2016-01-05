@@ -59,8 +59,6 @@ public:
 };
 
 
-
-
 class pqissllistenbase: public pqilistener
 {
 public:
@@ -82,11 +80,11 @@ public:
 
 	struct IncomingSSLInfo
 	{
-		SSL *ssl ;
-		sockaddr_storage addr ;
-		RsPgpId gpgid ;
-		RsPeerId sslid ;
-		std::string sslcn ;
+		SSL *ssl;
+		sockaddr_storage addr;
+		RsPgpId gpgid;
+		RsPeerId sslid;
+		std::string sslcn;
 	};
 
 	// fn to get cert, anyway
@@ -107,10 +105,14 @@ private:
 	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
 	bool active;
 	int lsock;
-	std::list<IncomingSSLInfo> incoming_ssl ;
+	std::list<IncomingSSLInfo> incoming_ssl;
 };
 
-
+/**
+ * @brief This is the standard pqissllistener interface
+ * this class only allows connections from
+ * specific certificates, which are pre specified.
+ */
 class pqissllistener: public pqissllistenbase
 {
 public:
@@ -127,6 +129,7 @@ public:
 								   const sockaddr_storage &raddr);
 
 private:
+	// TODO: 2016/01/05 It's me or the naming of this map is awkard?
 	std::map<RsPeerId, pqissl*> listenaddr;
 };
 

@@ -46,7 +46,7 @@
 
 /*************************************************************************/
 
-uint32_t    RsDiscSerialiser::size(RsItem *i)
+uint32_t RsDiscSerialiser::size(RsItem *i)
 {
 	RsDiscPgpListItem *pgplist;
 	RsDiscPgpCertItem *pgpcert;
@@ -54,18 +54,13 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	//RsDiscServicesItem *services;
 
 	if (NULL != (pgplist = dynamic_cast<RsDiscPgpListItem *>(i)))
-	{
 		return sizePgpList(pgplist);
-	}
 	else if (NULL != (pgpcert = dynamic_cast<RsDiscPgpCertItem *>(i)))
-	{
 		return sizePgpCert(pgpcert);
-	}
 	else if (NULL != (contact = dynamic_cast<RsDiscContactItem *>(i)))
-	{
 		return sizeContact(contact);
-	}
 #if 0
+	// TODO: 2016/01/04 Dead code?
 	else if (NULL != (services = dynamic_cast<RsDiscServicesItem *>(i)))
 	{
 		return sizeServices(services);
@@ -80,7 +75,7 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	RsDiscPgpListItem *pgplist;
 	RsDiscPgpCertItem *pgpcert;
 	RsDiscContactItem *contact;
-	//RsDiscServicesItem *services;
+	//RsDiscServicesItem *services; // TODO: 2016/01/04 Dead code?
 
 	if (NULL != (pgplist = dynamic_cast<RsDiscPgpListItem *>(i)))
 	{
@@ -110,7 +105,7 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 	uint32_t rstype = getRsItemId(data);
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)))
+			(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)))
 	{
 		std::cerr << "RsDiscSerialiser::deserialise() Wrong Type" << std::endl;
 		return NULL; /* wrong type */
@@ -118,35 +113,30 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_DISC_PGP_LIST:
-			return deserialisePgpList(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_DISC_PGP_CERT:
-			return deserialisePgpCert(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_DISC_CONTACT:
-			return deserialiseContact(data, pktsize);
-			break;
+	case RS_PKT_SUBTYPE_DISC_PGP_LIST:
+		return deserialisePgpList(data, pktsize);
+	case RS_PKT_SUBTYPE_DISC_PGP_CERT:
+		return deserialisePgpCert(data, pktsize);
+	case RS_PKT_SUBTYPE_DISC_CONTACT:
+		return deserialiseContact(data, pktsize);
 #if 0
+// TODO: 2016/01/04 Dead code?
 		case RS_PKT_SUBTYPE_DISC_SERVICES:
 			return deserialiseServices(data, pktsize);
 			break;
 #endif
-		default:
-			return NULL;
-			break;
+	default:
+		return NULL;
+		break;
 	}
 	return NULL;
 }
 
 /*************************************************************************/
 
-RsDiscPgpListItem::~RsDiscPgpListItem()
-{
-	return;
-}
+RsDiscPgpListItem::~RsDiscPgpListItem() {}
 
-void 	RsDiscPgpListItem::clear()
+void RsDiscPgpListItem::clear()
 {
 	mode = DISC_PGP_LIST_MODE_NONE;
 	pgpIdSet.TlvClear();
@@ -166,7 +156,7 @@ std::ostream &RsDiscPgpListItem::print(std::ostream &out, uint16_t indent)
 }
 
 
-uint32_t    RsDiscSerialiser::sizePgpList(RsDiscPgpListItem *item)
+uint32_t RsDiscSerialiser::sizePgpList(RsDiscPgpListItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* mode */
@@ -175,7 +165,7 @@ uint32_t    RsDiscSerialiser::sizePgpList(RsDiscPgpListItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *pktsize)
+bool RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizePgpList(item);
 	uint32_t offset = 0;
@@ -190,8 +180,8 @@ bool     RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data,
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::serialisePgpList() Header: " << ok << std::endl;
-	std::cerr << "RsDiscSerialiser::serialisePgpList() Size: " << tlvsize << std::endl;
+	std::cerr << "RsDiscSerialiser::serialisePgpList() Header: " << ok
+			  << " Size: " << tlvsize << std::endl;
 #endif
 
 	/* skip the header */
@@ -201,7 +191,8 @@ bool     RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data,
 	ok &= setRawUInt32(data, tlvsize, &offset, item->mode);
 	ok &= item->pgpIdSet.SetTlv(data, tlvsize, &offset);
 
-	if (offset != tlvsize) {
+	if (offset != tlvsize)
+	{
 		ok = false;
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::serialisePgpList() Size Error! " << std::endl;
@@ -211,17 +202,17 @@ bool     RsDiscSerialiser::serialisePgpList(RsDiscPgpListItem *item, void *data,
 	return ok;
 }
 
-RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pktsize) {
+RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pktsize)
+{
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
 
 	uint32_t offset = 0;
 
-
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_PGP_LIST != getRsItemSubType(rstype)))
+			(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+			(RS_PKT_SUBTYPE_DISC_PGP_LIST != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpList() Wrong Type" << std::endl;
@@ -253,7 +244,8 @@ RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pk
 	ok &= getRawUInt32(data, rssize, &offset, &(item->mode));
 	ok &= item->pgpIdSet.GetTlv(data, rssize, &offset);
 
-	if (offset != rssize) {
+	if (offset != rssize)
+	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpList() offset != rssize" << std::endl;
 #endif
@@ -262,7 +254,8 @@ RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pk
 		return NULL;
 	}
 
-	if (!ok) {
+	if (!ok)
+	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpList() ok = false" << std::endl;
 #endif
@@ -277,7 +270,7 @@ RsDiscPgpListItem *RsDiscSerialiser::deserialisePgpList(void *data, uint32_t *pk
 /*************************************************************************/
 /*************************************************************************/
 #if 0
-
+// TODO: 2016/01/04 Dead code?
 RsDiscServicesItem::~RsDiscServicesItem()
 {
 	return;
@@ -415,12 +408,9 @@ RsDiscServicesItem *RsDiscSerialiser::deserialiseServices(void *data, uint32_t *
 
 /*************************************************************************/
 
-RsDiscPgpCertItem::~RsDiscPgpCertItem()
-{
-	return;
-}
+RsDiscPgpCertItem::~RsDiscPgpCertItem() {}
 
-void 	RsDiscPgpCertItem::clear()
+void RsDiscPgpCertItem::clear()
 {
 	pgpId.clear();
 	pgpCert.clear();
@@ -441,7 +431,7 @@ std::ostream &RsDiscPgpCertItem::print(std::ostream &out, uint16_t indent)
 }
 
 
-uint32_t    RsDiscSerialiser::sizePgpCert(RsDiscPgpCertItem *item)
+uint32_t RsDiscSerialiser::sizePgpCert(RsDiscPgpCertItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += item->pgpId.serial_size();
@@ -450,7 +440,7 @@ uint32_t    RsDiscSerialiser::sizePgpCert(RsDiscPgpCertItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *pktsize)
+bool RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizePgpCert(item);
 	uint32_t offset = 0;
@@ -476,7 +466,8 @@ bool     RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data,
 	ok &= item->pgpId.serialise(data, tlvsize, offset) ;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PGPCERT, item->pgpCert);
 
-	if (offset != tlvsize) {
+	if (offset != tlvsize)
+	{
 		ok = false;
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::serialisePgpCert() Size Error! " << std::endl;
@@ -486,17 +477,17 @@ bool     RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data,
 	return ok;
 }
 
-RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pktsize) {
+RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pktsize)
+{
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
 
 	uint32_t offset = 0;
 
-
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_PGP_CERT != getRsItemSubType(rstype)))
+			(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+			(RS_PKT_SUBTYPE_DISC_PGP_CERT != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpCert() Wrong Type" << std::endl;
@@ -528,7 +519,8 @@ RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pk
 	ok &= item->pgpId.deserialise(data, rssize, offset) ;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PGPCERT, item->pgpCert);
 
-	if (offset != rssize) {
+	if (offset != rssize)
+	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpCert() offset != rssize" << std::endl;
 #endif
@@ -537,7 +529,8 @@ RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pk
 		return NULL;
 	}
 
-	if (!ok) {
+	if (!ok)
+	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialisePgpCert() ok = false" << std::endl;
 #endif
@@ -552,12 +545,9 @@ RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pk
 /*************************************************************************/
 
 
-RsDiscContactItem::~RsDiscContactItem()
-{
-	return;
-}
+RsDiscContactItem::~RsDiscContactItem() {}
 
-void 	RsDiscContactItem::clear()
+void RsDiscContactItem::clear()
 {
 	pgpId.clear();
 	sslId.clear();
@@ -578,7 +568,6 @@ void 	RsDiscContactItem::clear()
 	extAddrV4.TlvClear();
 	localAddrV6.TlvClear();
 	extAddrV6.TlvClear();
-
 
 	dyndns.clear();
 
@@ -658,7 +647,7 @@ std::ostream &RsDiscContactItem::print(std::ostream &out, uint16_t indent)
 }
 
 
-uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
+uint32_t RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += item->pgpId.serial_size();
@@ -682,7 +671,7 @@ uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 		s += item->localAddrV4.TlvSize(); /* localaddr */
 		s += item->extAddrV4.TlvSize(); /* remoteaddr */
 
-        s += item->currentConnectAddress.TlvSize() ;
+		s += item->currentConnectAddress.TlvSize() ;
 
 		s += item->localAddrV6.TlvSize(); /* localaddr */
 		s += item->extAddrV6.TlvSize(); /* remoteaddr */
@@ -702,22 +691,22 @@ uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data, uint32_t *pktsize)
+bool RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data,
+										uint32_t *pktsize)
 {
 	uint32_t tlvsize = sizeContact(item);
 	uint32_t offset = 0;
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::serialiseContact() tlvsize: " << tlvsize;
-	std::cerr << std::endl;
+	std::cerr << "RsDiscSerialiser::serialiseContact() tlvsize: " << tlvsize
+			  << std::endl;
 #endif
 
 	if (*pktsize < tlvsize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
-		std::cerr << "RsDiscSerialiser::serialiseContact() ERROR not enough space" << std::endl;
-		std::cerr << "RsDiscSerialiser::serialiseContact() ERROR *pktsize: " << *pktsize << " tlvsize: " << tlvsize;
-		std::cerr << std::endl;
+		std::cerr << "RsDiscSerialiser::serialiseContact() ERROR not enough space"
+				  << " *pktsize: " << *pktsize << " tlvsize: " << tlvsize << std::endl;
 #endif
 		return false; /* not enough space */
 	}
@@ -740,18 +729,18 @@ bool     RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data,
 	ok &= item->pgpId.serialise(data, tlvsize, offset) ;
 	ok &= item->sslId.serialise(data, tlvsize, offset) ;
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VERSION, item->version); 
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VERSION, item->version);
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); 
-	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_disc); 
-	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_dht); 
+	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode);
+	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_disc);
+	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_dht);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
 
 	if (item->isHidden)
 	{
 		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DOMADDR, item->hiddenAddr);
-		ok &= setRawUInt16(data, tlvsize, &offset, item->hiddenPort); 
+		ok &= setRawUInt16(data, tlvsize, &offset, item->hiddenPort);
 	}
 	else
 	{
@@ -760,16 +749,16 @@ bool     RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data,
 		ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset);
 		ok &= item->extAddrV6.SetTlv(data, tlvsize, &offset);
 
-        ok &= item->currentConnectAddress.SetTlv(data, tlvsize, &offset);
+		ok &= item->currentConnectAddress.SetTlv(data, tlvsize, &offset);
 
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
 		ok &= item->localAddrList.SetTlv(data, tlvsize, &offset);
 		ok &= item->extAddrList.SetTlv(data, tlvsize, &offset);
 	}
 
 
-	if (offset != tlvsize) 
+	if (offset != tlvsize)
 	{
 		ok = false;
 #ifdef RSSERIAL_ERROR_DEBUG
@@ -789,13 +778,14 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 	uint32_t offset = 0;
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::deserialiseContact() Pkt Type: " << std::hex << rstype << std::dec;
-	std::cerr << "RsDiscSerialiser::deserialiseContact() Pkt Size: " << rssize << std::endl;
+	std::cerr << "RsDiscSerialiser::deserialiseContact() Pkt Type: "
+			  << std::hex << rstype << std::dec << " Pkt Size: " << rssize
+			  << std::endl;
 #endif
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_CONTACT != getRsItemSubType(rstype)))
+			(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
+			(RS_PKT_SUBTYPE_DISC_CONTACT != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseContact() Wrong Type" << std::endl;
@@ -827,8 +817,8 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 	ok &= item->pgpId.deserialise(data, rssize, offset) ;
 	ok &= item->sslId.deserialise(data, rssize, offset) ;
 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VERSION, item->version); 
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VERSION, item->version);
 
 	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
 	ok &= getRawUInt16(data, rssize, &offset, &(item->vs_disc)); /* Mandatory */
@@ -864,7 +854,7 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 		ok &= item->localAddrV6.GetTlv(data, rssize, &offset);
 		ok &= item->extAddrV6.GetTlv(data, rssize, &offset);
 
-        ok &= item->currentConnectAddress.GetTlv(data, rssize, &offset);
+		ok &= item->currentConnectAddress.GetTlv(data, rssize, &offset);
 
 		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 		ok &= item->localAddrList.GetTlv(data, rssize, &offset);
@@ -872,7 +862,7 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 	}
 
 
-	if (offset != rssize) 
+	if (offset != rssize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseContact() offset != rssize" << std::endl;
@@ -882,7 +872,7 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 		return NULL;
 	}
 
-	if (!ok) 
+	if (!ok)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseContact() ok = false" << std::endl;
@@ -895,4 +885,3 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 }
 
 /*************************************************************************/
-

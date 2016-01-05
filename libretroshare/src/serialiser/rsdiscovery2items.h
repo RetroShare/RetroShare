@@ -41,8 +41,9 @@ const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
 
 class RsDiscItem: public RsItem
 {
-	protected:
-		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+protected:
+	RsDiscItem(uint8_t subtype) :
+		RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
 };
 
 
@@ -52,18 +53,14 @@ class RsDiscItem: public RsItem
 
 class RsDiscPgpListItem: public RsDiscItem
 {
-	public:
+public:
+	RsDiscPgpListItem() : RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST); }
 
-        RsDiscPgpListItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST);
-	}
+	virtual ~RsDiscPgpListItem();
 
-virtual ~RsDiscPgpListItem();
-
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	uint32_t mode;
 	RsTlvPgpIdSet pgpIdSet;
@@ -73,18 +70,14 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 class RsDiscPgpCertItem: public RsDiscItem
 {
-	public:
+public:
+	RsDiscPgpCertItem() : RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_CERT)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
 
-        RsDiscPgpCertItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_CERT)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT);
-	}
+	virtual ~RsDiscPgpCertItem();
 
-virtual ~RsDiscPgpCertItem();
-
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsPgpId pgpId;
 	std::string pgpCert;
@@ -93,46 +86,42 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 class RsDiscContactItem: public RsDiscItem
 {
-	public:
+public:
+	RsDiscContactItem() : RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT); }
 
-	RsDiscContactItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT); 
-	}
+	virtual ~RsDiscContactItem();
 
-virtual ~RsDiscContactItem();
-
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsPgpId pgpId;
 	RsPeerId sslId;
 
 	// COMMON
-	std::string location;				
+	std::string location;
 	std::string version;
 
-	uint32_t    netMode;			/* Mandatory */
-	uint16_t    vs_disc;		    	/* Mandatory */
-	uint16_t    vs_dht;		    	/* Mandatory */
-	uint32_t    lastContact;		
+	uint32_t netMode; // Mandatory
+	uint16_t vs_disc; // Mandatory
+	uint16_t vs_dht; // Mandatory
+	uint32_t lastContact;
 
-	bool   isHidden;			/* not serialised */
+	bool isHidden; // not serialised
 
 	// HIDDEN.
 	std::string hiddenAddr;
-	uint16_t    hiddenPort;
+	uint16_t hiddenPort;
 
 	// STANDARD.
 
-    RsTlvIpAddress currentConnectAddress ;	// used to check!
+	RsTlvIpAddress currentConnectAddress; // used to check!
 
-	RsTlvIpAddress localAddrV4;		/* Mandatory */
-	RsTlvIpAddress extAddrV4;		/* Mandatory */
+	RsTlvIpAddress localAddrV4; // Mandatory
+	RsTlvIpAddress extAddrV4; // Mandatory
 
-	RsTlvIpAddress localAddrV6;		/* Mandatory */
-	RsTlvIpAddress extAddrV6;		/* Mandatory */
+	RsTlvIpAddress localAddrV6; // Mandatory
+	RsTlvIpAddress extAddrV6; // Mandatory
 
 	std::string dyndns;
 
@@ -141,6 +130,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 };
 
 #if 0
+// TODO: 2016/01/01 Dead code?
 class RsDiscServicesItem: public RsDiscItem
 {
 	public:
@@ -160,46 +150,41 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	std::string version;
 	RsTlvServiceIdMap mServiceIdMap;
 };
-
 #endif
 
 
 class RsDiscSerialiser: public RsSerialType
 {
-        public:
-        RsDiscSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC)
-        { return; }
+public:
+	RsDiscSerialiser() :
+		RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC) {}
+	virtual ~RsDiscSerialiser() {}
 
-virtual     ~RsDiscSerialiser() { return; }
+	virtual uint32_t size(RsItem *);
+	virtual bool serialise (RsItem *item, void *data, uint32_t *size);
+	virtual RsItem * deserialise(void *data, uint32_t *size);
 
-virtual uint32_t    size(RsItem *);
-virtual bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual RsItem *    deserialise(void *data, uint32_t *size);
+private:
+	virtual uint32_t sizePgpList(RsDiscPgpListItem *);
+	virtual bool serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *size);
+	virtual RsDiscPgpListItem *deserialisePgpList(void *data, uint32_t *size);
 
-	private:
+	virtual uint32_t sizePgpCert(RsDiscPgpCertItem *);
+	virtual bool serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *size);
+	virtual RsDiscPgpCertItem *deserialisePgpCert(void *data, uint32_t *size);
 
-virtual uint32_t    sizePgpList(RsDiscPgpListItem *);
-virtual bool        serialisePgpList(RsDiscPgpListItem *item, void *data, uint32_t *size);
-virtual RsDiscPgpListItem *deserialisePgpList(void *data, uint32_t *size);
-
-virtual uint32_t    sizePgpCert(RsDiscPgpCertItem *);
-virtual bool        serialisePgpCert(RsDiscPgpCertItem *item, void *data, uint32_t *size);
-virtual RsDiscPgpCertItem *deserialisePgpCert(void *data, uint32_t *size);
-
-virtual uint32_t        sizeContact(RsDiscContactItem *);
-virtual bool            serialiseContact(RsDiscContactItem *item, void *data, uint32_t *size);
-virtual RsDiscContactItem   *deserialiseContact(void *data, uint32_t *size);
+	virtual uint32_t sizeContact(RsDiscContactItem *);
+	virtual bool serialiseContact(RsDiscContactItem *item, void *data, uint32_t *size);
+	virtual RsDiscContactItem *deserialiseContact(void *data, uint32_t *size);
 
 #if 0
+// TODO: 2016/01/04 Dead code?
 virtual uint32_t    sizeServices(RsDiscServicesItem *);
 virtual bool        serialiseServices(RsDiscServicesItem *item, void *data, uint32_t *size);
 virtual RsDiscServicesItem *deserialiseServices(void *data, uint32_t *size);
 
 #endif
-
 };
 
 
 #endif // RS_DISC_ITEMS_H
-

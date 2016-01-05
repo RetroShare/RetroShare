@@ -293,7 +293,7 @@ std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent) cons
 
 
 
-#if 0
+#if 0 // TODO: 2016/01/02 Dead code?
 /************************************* RsTlvIpAddrSet ************************************/
 
 void RsTlvIpAddrSet::TlvClear()

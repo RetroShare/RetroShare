@@ -1249,8 +1249,8 @@ void p3ChatService::saveDone()
 
 RsSerialiser *p3ChatService::setupSerialiser()
 {
-	RsSerialiser *rss = new RsSerialiser ;
-	rss->addSerialType(new RsChatSerialiser) ;
+	RsSerialiser *rss = new RsSerialiser;
+	rss->addSerialType(new RsChatSerialiser);
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss ;

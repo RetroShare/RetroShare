@@ -184,28 +184,19 @@ void    RsItem::setPacketService(uint16_t service)
 }
 
 
-RsSerialType::RsSerialType(uint32_t t)
-	:type(t & 0xFFFFFF00)
-{
-	return;
-}
+RsSerialType::RsSerialType(uint32_t t) : type(t & 0xFFFFFF00) {}
 	
 RsSerialType::RsSerialType(uint8_t ver, uint8_t cls, uint8_t t)
 {
 	type = (ver << 24) + (cls << 16) + (t << 8);
-	return;
 }
 
 RsSerialType::RsSerialType(uint8_t ver, uint16_t service)
 {
 	type = (ver << 24) + (service << 8);
-	return;
 }
 
-RsSerialType::~RsSerialType()
-{
-	return;
-}
+RsSerialType::~RsSerialType() {}
 	
 uint32_t    RsSerialType::size(RsItem *)
 {
@@ -261,15 +252,15 @@ RsSerialiser::~RsSerialiser()
 
 
 
-bool        RsSerialiser::addSerialType(RsSerialType *serialiser)
+bool RsSerialiser::addSerialType(RsSerialType *serialiser)
 {
 	uint32_t type = (serialiser->PacketId() & 0xFFFFFF00);
 	std::map<uint32_t, RsSerialType *>::iterator it;
 	if (serialisers.end() != (it = serialisers.find(type)))
 	{
 #ifdef  RSSERIAL_DEBUG
-		std::cerr << "RsSerialiser::addSerialType() Error Serialiser already exists!";
-		std::cerr << std::endl;
+		std::cerr << "RsSerialiser::addSerialType() Error Serialiser already"
+				  << "exists!" << std::endl;
 #endif
 		return false;
 	}
