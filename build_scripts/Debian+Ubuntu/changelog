@@ -1,5 +1,23 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  4953324 electron128 Sat,  2 Jan 2016 14:53:24 +0100 Merge pull request #235 from PhenomRetroShare/Fix_MakeMACOS_PluginWorking
+  c5e6f62 Phenom      Sat,  2 Jan 2016 14:19:53 +0100 Make Plugin working in Mac OSX.
+  b6b5f9c csoler      Fri,  1 Jan 2016 22:36:07 -0500 fixed some of the issues reported by coverity scan (mainly uninitialised class members)
+  ab3939c csoler      Fri,  1 Jan 2016 11:11:40 -0500 added missing update of mClientMsgUpdateMap, causing both a memory leak and an inconsistency in TS
+  22c00fc electron128 Fri,  1 Jan 2016 14:07:15 +0100 fixed free() in UdpLayer::recv_loop
+  58672e8 electron128 Fri,  1 Jan 2016 13:44:38 +0100 fix the logic to prevent using invalid iterators. First make a valid iterator, then dereference
+  3b2eae4 electron128 Fri,  1 Jan 2016 12:17:08 +0100 fixed memory leak by using stack memory instead of heap memory
+  9cb81f5 electron128 Fri,  1 Jan 2016 12:01:49 +0100 don't create wiki dataservice if wiki is not enabled for compile
+  72812be electron128 Fri,  1 Jan 2016 11:54:59 +0100 added missing initialisation of integers in GxsForumThreadWidget
+  55ea8a5 electron128 Fri,  1 Jan 2016 11:49:03 +0100 init pointer in RsServer
+  7efb763 electron128 Fri,  1 Jan 2016 11:38:29 +0100 restore stream state of std::cerr after printing hex number
+  640d71b electron128 Fri,  1 Jan 2016 11:09:49 +0100 removed delete of RsTemporaryMemory
+  d24ff5a csoler      Thu, 31 Dec 2015 19:42:50 -0500 Merge pull request #232 from G10h4ck/master
+  7895932 Gio         Fri,  1 Jan 2016 00:45:01 +0100 print_stacktrace is OS specific
+  e872727 csoler      Thu, 31 Dec 2015 17:37:05 -0500 updated dos->unix convertion script
+  b6b04dc csoler      Thu, 31 Dec 2015 17:28:42 -0500 added script to convert files to unix format
+  6392d65 csoler      Thu, 31 Dec 2015 16:50:52 -0500 fixed [dos] LF in IdDialog.h
+
   a6ee7cc csoler      Thu, 31 Dec 2015 14:15:14 -0500 Merge pull request #230 from G10h4ck/ss_port_invalid_family
   fac1524 csoler      Thu, 31 Dec 2015 13:58:13 -0500 updated todo list
   c5feafa Gio         Thu, 31 Dec 2015 19:56:50 +0100 Add missing stacktrace.h
@@ -2168,7 +2186,7 @@ retroshare (0.5.4-0.6546~precise) precise; urgency=low
 retroshare (0.5.4-0.6455~precise) precise; urgency=low
 
   * Improvements
-  	  - GUI
+     - GUI
         * added/enabled GUI for distant chat (Invitation handler in config->chat, handling of Distant chat links)
         * Localized Greek and Dutch (patch from Henry). Updated English.
         * Languages updates from transifex
@@ -2217,7 +2235,7 @@ retroshare (0.5.4-0.6399~precise) precise; urgency=low
     - added columns for last used statistics on pgp keys in network dialog.
 
   * Bugs
-  	 - fixed display of names in file lists
+    - fixed display of names in file lists
     - fixed destination directory when downloading channel items in auto DL mode
     - improved time-stamp management for pgp keys
     - fixed translatable string with .arg (Req. From H. Morgan)
