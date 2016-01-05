@@ -19,7 +19,7 @@ Compilation on Linux
    sudo zypper install gcc-c++ libqt4-devel libgnome-keyring-devel \
        glib2-devel speex-devel libssh-devel protobuf-devel libcurl-devel \
        libxml2-devel libxslt-devel sqlcipher-devel libmicrohttpd-devel \
-       opencv-devel speexdsp-devel libupnp-devel
+       opencv-devel speexdsp-devel libupnp-devel libavcodec-devel
    ```
    * Arch Linux
    ```bash
