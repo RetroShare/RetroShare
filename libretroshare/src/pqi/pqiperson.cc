@@ -37,6 +37,7 @@ const int pqipersonzone = 82371;
 /****
  * #define PERSON_DEBUG 1
  ****/
+#define PERSON_DEBUG 1
 
 pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg)
 	:PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"), 
@@ -78,9 +79,9 @@ int     pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 		// (not sure if this is a performance problem)
 		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
 		{
+#ifdef PERSON_DEBUG
 			std::string out = "pqiperson::SendItem() Active: Sending On\n";
 			i->print_string(out, 5); // this can be very expensive
-#ifdef PERSON_DEBUG
 			std::cerr << out << std::endl;
 #endif
 			pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out);
@@ -113,7 +114,7 @@ RsItem *pqiperson::GetItem()
 
 bool pqiperson::RecvItem(RsItem *item)
 {
-#ifdef PERSON_DEBUG
+#ifdef PERSON_DEBUG_1
 	std::cerr << "pqiperson::RecvItem()";
 	std::cerr << std::endl;
 #endif
@@ -135,7 +136,9 @@ int 	pqiperson::receiveHeartbeat()
 {
 	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
 
-        pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId().toStdString());
+#ifdef PERSON_DEBUG
+        std::cerr << "pqiperson::receiveHeartbeat() from peer : " << PeerId().toStdString() << std::endl;
+#endif
         lastHeartbeatReceived = time(NULL);
 
 		return true ;
@@ -149,23 +152,23 @@ int	pqiperson::tick()
 		RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
 	
 	        //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-		if (active && (lastHeartbeatReceived != 0) &&
-	            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
+        
+		if (active && (lastHeartbeatReceived != 0) && (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
 		{
 			int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
-			std::string out = "pqiperson::tick() WARNING No heartbeat from: " + PeerId().toStdString();
-			//out << " assume dead. calling pqissl::reset(), LastHeartbeat was: ";
-			rs_sprintf_append(out, " LastHeartbeat was: %ld secs ago", time(NULL) - lastHeartbeatReceived);
-			rs_sprintf_append(out, " LastIncoming was: %d secs ago", ageLastIncoming);
-			pqioutput(PQL_WARNING, pqipersonzone, out);
+#ifdef PERSON_DEBUG
+			std::cerr << "pqiperson::tick() WARNING No heartbeat from: " << PeerId().toStdString() 
+			          << "  LastHeartbeat was: " << time(NULL) - lastHeartbeatReceived << " secs ago" 
+				  << "  LastIncoming was: " << ageLastIncoming << " secs ago" << std::endl;
+#endif
 	
-	#define NO_PACKET_TIMEOUT 60
+#define NO_PACKET_TIMEOUT 60
 			
 			if (ageLastIncoming > NO_PACKET_TIMEOUT)
 			{
-				out = "pqiperson::tick() " + PeerId().toStdString();
-				out += " No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
-				pqioutput(PQL_WARNING, pqipersonzone, out);
+#ifdef PERSON_DEBUG
+				std::cerr << "pqiperson::tick() " + PeerId().toStdString() << ": No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
+#endif
 	            	
 				this->reset_locked();
 			}
@@ -174,6 +177,7 @@ int	pqiperson::tick()
 	
 	
 		{
+#ifdef PERSON_DEBUG
 			std::string out = "pqiperson::tick() Id: " + PeerId().toStdString() + " ";
 			if (active)
 				out += "***Active***";
@@ -182,25 +186,30 @@ int	pqiperson::tick()
 	
 			out += "\n";
 			rs_sprintf_append(out, "Activepqi: %p inConnectAttempt: ", activepqi);
+#endif
 	
+#ifdef PERSON_DEBUG_1
 			if (inConnectAttempt)
 				out += "In Connection Attempt";
 			else
 				out += "   Not Connecting    ";
 			out += "\n";
+#endif
 	
 			// tick the children.
 			std::map<uint32_t, pqiconnect *>::iterator it;
 			for(it = kids.begin(); it != kids.end(); ++it)
 			{
 				if (0 < (it->second) -> tick())
-				{
 					activeTick = 1;
-				}
+#ifdef PERSON_DEBUG_1
 				rs_sprintf_append(out, "\tTicking Child: %d\n", it->first);
+#endif
 			}
 	
-			pqioutput(PQL_DEBUG_ALL, pqipersonzone, out);
+#ifdef PERSON_DEBUG_1
+			std::cerr << out << std::endl;
+#endif
 		} // end of pqioutput.
 	}
 

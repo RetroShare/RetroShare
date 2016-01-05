@@ -64,6 +64,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
     mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
     mIncomingSize = 0 ;
 
+    should_print=false ;
     mStatisticsTimeStamp = 0 ;
 	/* allocated once */
     mPkt_rpend_size = 0;
@@ -150,7 +151,16 @@ int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 	
-	return queue_outpqi_locked(si,out_size);
+	int res = queue_outpqi_locked(si,out_size);
+    
+    if(si->PeerId().toStdString() == "f45934042cd8f72fa72f35def5aa878d")
+    {
+        should_print=true ;
+        std::cerr << "out-queuing item - " ;
+		qosprint() ;
+    }
+    
+    return res ;
 }
 
 RsItem *pqistreamer::GetItem()
@@ -1103,6 +1113,7 @@ void *pqistreamer::locked_pop_out_data()
 		std::cerr << "pqistreamer::locked_pop_out_data() getting next pkt from mOutPkts queue";
 		std::cerr << std::endl;
 #endif
+
 	}
 	return res ;
 }

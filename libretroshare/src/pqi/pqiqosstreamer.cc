@@ -69,6 +69,11 @@ void *pqiQoSstreamer::locked_pop_out_data()
 
 	if(out != NULL) 
 	{
+                if(should_print)
+        {
+            std::cerr << "actually sending " ;
+            qosprint() ;
+        }
 		_total_item_size -= getRsItemSize(out) ;
 		--_total_item_count ;
 	}
