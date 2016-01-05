@@ -441,7 +441,6 @@ int	pqistreamer::handleoutgoing_locked()
 		    	mPkt_wpending_size = 0 ;
 	    }
 
-	    outSentBytes_locked(sentbytes);
 	    return 0;
     }
 
@@ -469,7 +468,6 @@ int	pqistreamer::handleoutgoing_locked()
 		    }
 #endif
 
-		    outSentBytes_locked(sentbytes);
 		    return 0;
 	    }
 #define GROUP_OUTGOING_PACKETS 1
@@ -524,12 +522,12 @@ int	pqistreamer::handleoutgoing_locked()
 			    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 
-			    outSentBytes_locked(sentbytes);
 			    // pkt_wpending will kept til next time.
 			    // ensuring exactly the same data is written (openSSL requirement).
 			    return -1;
 		    }
 		    ++nsent;
+            outSentBytes_locked(mPkt_wpending_size);	// this is the only time where we know exactly what was sent.
 
 #ifdef DEBUG_TRANSFERS
 		    std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << mPkt_wpending_size << " @ " << RsUtil::AccurateTimeString();
@@ -549,7 +547,6 @@ int	pqistreamer::handleoutgoing_locked()
     if(nsent > 0)
 	    std::cerr << "nsent = " << nsent << ", total bytes=" << sentbytes << std::endl;
 #endif
-    outSentBytes_locked(sentbytes);
     return 1;
 }
 
@@ -568,7 +565,6 @@ int pqistreamer::handleincoming_locked()
 	if(!(mBio->isactive()))
 	{
 		mReading_state = reading_state_initial ;
-		inReadBytes_locked(readbytes);
         free_rpend_locked();
 		return 0;
 	}
@@ -605,8 +601,6 @@ start_packet_read:
 		if (blen != (tmplen = mBio->readdata(block, blen)))
 		{
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
-
-			inReadBytes_locked(readbytes);
 
 			// error.... (either blocked or failure)
 			if (tmplen == 0)
@@ -652,7 +646,7 @@ start_packet_read:
 #endif
 
 		readbytes += blen;
-		mReading_state = reading_state_packet_started ;
+        mReading_state = reading_state_packet_started ;
 		mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
 	}
 continue_packet:
@@ -805,7 +799,7 @@ continue_packet:
 
 			mFailed_read_attempts = 0 ;
 			readbytes += extralen;
-		}
+        }
 
 		// create packet, based on header.
 #ifdef DEBUG_PQISTREAMER
@@ -824,7 +818,9 @@ continue_packet:
 		std::cerr << "[" << (void*)pthread_self() << "] " << "deserializing. Size=" << pktlen << std::endl ;
 #endif
 
-		RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
+        inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
+
+        RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
 		{
@@ -854,7 +850,6 @@ continue_packet:
 	}
 #endif
 
-	inReadBytes_locked(readbytes);
 	return 0;
 }
 
