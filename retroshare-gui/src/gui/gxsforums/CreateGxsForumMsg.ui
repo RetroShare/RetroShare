@@ -21,7 +21,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -39,7 +48,16 @@
       <item row="0" column="0">
        <widget class="QFrame" name="innerFrame">
         <layout class="QVBoxLayout" name="verticalLayout_3">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -51,7 +69,16 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
              <number>0</number>
             </property>
             <item row="2" column="0">
@@ -76,8 +103,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="forumSubject">
-             </widget>
+             <widget class="QLineEdit" name="forumSubject"/>
             </item>
             <item row="1" column="1">
              <widget class="GxsIdChooser" name="idChooser"/>
@@ -113,7 +139,16 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>1</number>
+            </property>
+            <property name="topMargin">
+             <number>1</number>
+            </property>
+            <property name="rightMargin">
+             <number>1</number>
+            </property>
+            <property name="bottomMargin">
              <number>1</number>
             </property>
             <item>
@@ -151,8 +186,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
+               <iconset resource="../emojione.qrc">
+                <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -320,19 +355,20 @@ p, li { white-space: pre-wrap; }
    <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
   <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../emojione.qrc"/>
  </resources>
  <connections/>
 </ui>
