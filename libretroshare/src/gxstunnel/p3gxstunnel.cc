@@ -1465,6 +1465,8 @@ bool p3GxsTunnelService::closeExistingTunnel(const RsGxsTunnelId& tunnel_id, uin
 
 	    if(it2 != _gxs_tunnel_virtual_peer_ids.end())
 		    hash = it2->second.hash ;
+	else
+		hash = it->second.hash ;
 
 	    // check how many clients are used. If empty, close the tunnel
 
