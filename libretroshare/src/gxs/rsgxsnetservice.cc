@@ -2735,9 +2735,17 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     }
     else
     {
+#ifdef NXS_NET_DEBUG_1
+	    GXSNETDEBUG_PG(item->PeerId(),grpId) << "  Request list is empty. Not doing anything. " << std::endl;
+#endif
+#ifdef SUSPENDED
 	    // The list to req is empty. That means we already have all messages that this peer can
 	    // provide. So we can stamp the group from this peer to be up to date.
+        
+            // Normally, this is not needed, since the call in locked_genReqMsgTransaction should handle this.
+        
 	    locked_stampPeerGroupUpdateTime(pid,grpId,tr->mTransaction->updateTS,msgItemL.size()) ;
+#endif
     }
 }
 
