@@ -207,8 +207,8 @@
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
-//#define NXS_NET_DEBUG_0 	1
-//#define NXS_NET_DEBUG_1 	1
+#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
@@ -1127,8 +1127,7 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 #ifdef NXS_NET_DEBUG_1
 			GXSNETDEBUG_PG(grpPend->mPeerId,entry.mGroupId)        << "  Group Id: " << entry.mGroupId << " PASSED" << std::endl;
 #endif
-			RsNxsSyncGrpItem* gItem = new
-			RsNxsSyncGrpItem(mServType);
+			RsNxsSyncGrpItem* gItem = new RsNxsSyncGrpItem(mServType);
 			gItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
 			gItem->grpId = entry.mGroupId;
 			gItem->publishTs = 0;
@@ -1154,6 +1153,7 @@ void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
 	std::list<RsNxsItem*> itemL;
 
 	uint32_t transN = locked_getTransactionId();
+    	RsGxsGroupId grp_id ;
 
 	for(; vit != msgPend->mMsgs.end(); ++vit)
 	{
@@ -1167,10 +1167,12 @@ void RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
 		mItem->PeerId(msgPend->mPeerId);
 		mItem->transactionNumber =  transN;
 		itemL.push_back(mItem);
+        
+        	grp_id = msgPend->mGrpId ;
 	}
 
 	if(!itemL.empty())
-		locked_pushMsgRespFromList(itemL, msgPend->mPeerId, transN);
+		locked_pushMsgRespFromList(itemL, msgPend->mPeerId,grp_id, transN);
 }
 
 /*bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta
@@ -3692,8 +3694,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 		{
 			RsGxsMsgMetaData* m = *vit;
 
-			RsNxsSyncMsgItem* mItem = new
-			RsNxsSyncMsgItem(mServType);
+			RsNxsSyncMsgItem* mItem = new RsNxsSyncMsgItem(mServType);
 			mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
 			mItem->grpId = m->mGroupId;
 			mItem->msgId = m->mMsgId;
@@ -3711,7 +3712,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 #ifdef NXS_NET_DEBUG_0
                 GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  sending final msg info list of " << itemL.size() << " items." << std::endl;
 #endif
-            locked_pushMsgRespFromList(itemL, peer, transN);
+            locked_pushMsgRespFromList(itemL, peer, item->grpId,transN);
         }
 	}
 #ifdef NXS_NET_DEBUG_0
@@ -3725,24 +3726,33 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 		delete *vit;
 }
 
-void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN)
+void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId& grp_id,const uint32_t& transN)
 {
 #ifdef NXS_NET_DEBUG_1
-    GXSNETDEBUG_P_(sslId) << "locked_pushMsgResponseFromList()" << std::endl;
-    GXSNETDEBUG_P_(sslId) << "   nelems = " << itemL.size() << std::endl;
-    GXSNETDEBUG_P_(sslId) << "   peerId = " << sslId << std::endl;
-    GXSNETDEBUG_P_(sslId) << "   transN = " << transN << std::endl;
+    GXSNETDEBUG_PG(sslId,grp_id) << "locked_pushMsgResponseFromList()" << std::endl;
+    GXSNETDEBUG_PG(sslId,grp_id) << "   nelems = " << itemL.size() << std::endl;
+    GXSNETDEBUG_PG(sslId,grp_id) << "   peerId = " << sslId << std::endl;
+    GXSNETDEBUG_PG(sslId,grp_id) << "   transN = " << transN << std::endl;
 #endif
     NxsTransaction* tr = new NxsTransaction();
 	tr->mItems = itemL;
 	tr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
 	RsNxsTransac* trItem = new RsNxsTransac(mServType);
-    trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 | RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP;
-    trItem->nItems = itemL.size();
-	trItem->timestamp = 0;
+	trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 | RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP;
+	trItem->nItems = itemL.size();
 	trItem->PeerId(sslId);
 	trItem->transactionNumber = transN;
 
+	ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grp_id);
+
+	if(cit != mServerMsgUpdateMap.end())
+	    trItem->timestamp = cit->second->msgUpdateTS;
+    	else
+    	{
+	    std::cerr << "(EE) cannot find a server TS for message of group " << grp_id << " in locked_pushMsgRespFromList. This is weird." << std::endl;
+	    trItem->timestamp = 0 ;
+    	}
+    
 	// also make a copy for the resident transaction
 	tr->mTransaction = new RsNxsTransac(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
