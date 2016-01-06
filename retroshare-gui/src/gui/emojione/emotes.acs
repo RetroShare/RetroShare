@@ -126,8 +126,8 @@
 ":tongue:":"emojione/1F445.png";
 ":nail_care:":"emojione/1F485.png";
 ":wave:":"emojione/1F44B.png";
-":thumbsup:|:+1:":"emojione/1F44D.png";
-":thumbsdown:|:-1:":"emojione/1F44E.png";
+":thumbsup:|:+1:|(y)|(Y)":"emojione/1F44D.png";
+":thumbsdown:|:-1:|(N)|(n)":"emojione/1F44E.png";
 ":muscle:":"emojione/1F4AA.png";
 ":middle_finger:|":"emojione/1F595.png";
 ":coffee:|(C)|(c)":"emojione/2615.png";

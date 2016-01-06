@@ -612,8 +612,8 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
+                 <iconset resource="../emojione.qrc">
+                  <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -1262,6 +1262,7 @@ border-image: url(:/images/closepressed.png)
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../emojione.qrc"/>
  </resources>
  <connections/>
 </ui>
