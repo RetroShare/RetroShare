@@ -207,8 +207,8 @@
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
-#define NXS_NET_DEBUG_0 	1
-#define NXS_NET_DEBUG_1 	1
+//#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
@@ -3740,23 +3740,24 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 	RsNxsTransac* trItem = new RsNxsTransac(mServType);
 	trItem->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 | RsNxsTransac::FLAG_TYPE_MSG_LIST_RESP;
 	trItem->nItems = itemL.size();
+	trItem->timestamp = 0 ;
 	trItem->PeerId(sslId);
 	trItem->transactionNumber = transN;
 
 	ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grp_id);
 
 	if(cit != mServerMsgUpdateMap.end())
-	    trItem->timestamp = cit->second->msgUpdateTS;
+	    trItem->updateTS = cit->second->msgUpdateTS;
     	else
     	{
 	    std::cerr << "(EE) cannot find a server TS for message of group " << grp_id << " in locked_pushMsgRespFromList. This is weird." << std::endl;
-	    trItem->timestamp = 0 ;
+	    trItem->updateTS = 0 ;
     	}
     
 	// also make a copy for the resident transaction
 	tr->mTransaction = new RsNxsTransac(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
-    tr->mTimeOut = time(NULL) + mTransactionTimeOut;
+	tr->mTimeOut = time(NULL) + mTransactionTimeOut;
 
 #ifdef NXS_NET_DEBUG_5
             GXSNETDEBUG_P_ (sslId) << "Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << " - sending messages response to peer " 
