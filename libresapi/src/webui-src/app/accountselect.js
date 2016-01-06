@@ -4,29 +4,7 @@ var m = require("mithril");
 var rs = require("retroshare");
 
 var curraccount = null;
-var currentpasswd = null;
 var accountMap = new Map();
-
-function login(){
-    rs.request("control/login", {id: curraccount.id}, function(){
-        console.log("login sent");
-        waitForPassword(currentpasswd);
-    });
-}
-
-function waitForPassword(password){
-    rs.request("control/password",null,function(data){
-        if (data.want_password) {
-            console.log("sending pwd for " + data.key_name + "...");
-            rs.request("control/password", {password: password}, function(){
-                m.redraw();
-            });
-        } else {
-            console.log("waiting for pwd ...");
-            setTimeout(50, waitForPassword(password));
-        }
-    }, { method: "GET"})
-}
 
 function cancel(){
     curraccount=null;
@@ -36,10 +14,9 @@ function cancel(){
 function selAccount(account){
     curraccount=accountMap.get(account);
     m.redraw();
-}
-
-function setPasswd(password) {
-    currentpasswd = password
+    rs.request("control/login", {id: curraccount.id}, function(){
+        console.log("login sent");
+    });
 }
 
 module.exports = {view: function(){
@@ -60,15 +37,7 @@ module.exports = {view: function(){
     	    	    ]
         })]);
     } else {
-        return m("div", [
-    	    m("h2","login:"),
-            m("hr"),
-    	    m("h2","account:" + curraccount.location  + " (" + curraccount.name + ")"),
-    	    m("input",{type:"password", onchange:m.withAttr("value", setPasswd)}),
-    	    m("br"),
-    	    m("button",{onclick: function(){login();}},"login"),
-    	    m("button",{onclick: function(){cancel();}},"cancel")
-    	    ]);
+        return m("div", "logging in ..." );
     }
 }
 };

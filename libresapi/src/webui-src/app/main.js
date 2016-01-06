@@ -3,37 +3,84 @@
 var m = require("mithril");
 var rs = require("retroshare");
 var menu =require("menu");
+var currentpasswd = null;
 
-module.exports = {view: function(){
-    var runstate = rs("control/runstate");
-    console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
-    if(runstate === undefined){
-        return m("div", "waiting_server ... ");
-    } else if (runstate.runstate == null){
-        return m("div", "server down");
-    } else {
-        if (rs.content === undefined) {
-            rs.content = null;
-        }
-        if (runstate.runstate == "waiting_init") {
-            return m("div","server starting ...")
-        } else if(runstate.runstate =="waiting_account_select") {
-            return m("div", [
-    	        m("div", menu.view()),
-    	        m("hr"),
-    	        m("div", require("accountselect").view())
-            ]);
-        } else if (runstate.runstate == "waiting_startup") {
-	    return m("div","RetroShare starting ... please wait ...");
-        } else if(runstate.runstate =="running_ok" || runstate.runstate=="running_ok_no_full_control") {
-            return m("div", [
-                m("div", menu.view()),
-                m("hr"),
-                m("div", rs.content == null ? null : rs.content.view())
+
+function setPasswd(password) {
+    currentpasswd = password
+}
+
+function sendPassword(data) {
+    console.log("sending pwd for " + data.key_name + "...");
+    rs.request("control/password", {password: currentpasswd}, function(){
+        m.redraw();
+    });
+}
+
+function Page(content, runst){
+    this.view = function(){
+        var runstate = rs("control/runstate");
+        var needpasswd = rs("control/password");
+        console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
+        if(runstate === undefined){
+            return m("div", "waiting_server ... ");
+        } else if (runstate.runstate == null){
+            return m("div", "server down");
+        } else if (needpasswd != undefined && needpasswd.want_password === true){
+            return m("div",[
+                m("div","password required"),
+                m("div",needpasswd.key_name),
+                m("input",{type:"password", onchange:m.withAttr("value", setPasswd)}),
+                m("br"),
+                m("button",{onclick: function(){sendPassword(needpasswd);}},"send password"),
             ]);
         } else {
-            return m("div", "unknown runstate: " + runstate.runstate);
+            if ("waiting_init|waiting_startup".match(runstate.runstate)) {
+                return m("div","server starting ...")
+            } else if("waiting_account_select|running_ok*") {
+                if (runst === undefined || runst.match(runstate.runstate)) {
+                    return m("div", [
+                        m("div", menu.view()),
+        	            m("hr"),
+                        m("div", content)
+                    ]);
+                } else {
+                    // funktion currently not available
+                    m.route("/");
+                    return m("div", [
+                        m("div", menu.view()),
+        	            m("hr"),
+                        m("div", require("home").view())
+                    ]);
+                };
+            } else {
+                return m("div", "unknown runstate: " + runstate.runstate);
+            }
         }
     }
-}
 };
+
+
+var me ={};
+
+me.init = function(main){
+    console.log("start init ...");
+    var menudef = require("menudef");
+    var maps = {};
+    var m = require("mithril");
+
+    menudef.nodes.map(function(menu){
+        if (menu.action === undefined) {
+            var path = menu.path != undefined ? menu.path : ("/" + menu.name);
+            var module = menu.module != undefined ? menu.module : menu.name
+            console.log("adding route " + menu.name + " for " + path + " with module " + module);
+            maps[path] = new Page(require(module), menu.runstate);
+        }
+    });
+    m.route.mode = "hash";
+    m.route(main,"/chat",maps);
+    console.log("init done.");
+};
+
+module.exports = me;
+

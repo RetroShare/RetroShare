@@ -205,5 +205,9 @@ rs.request=function(path, args, callback, options){
         requestFail(path, null, value);
     });
     return req;
+};
+
+rs.forceUpdate = function(path){
+   cache[path].requested=false;
 }
 
