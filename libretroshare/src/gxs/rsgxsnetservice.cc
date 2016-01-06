@@ -2540,8 +2540,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         // we never compare times from different (and potentially badly sync-ed clocks)
 
         std::cerr << "(EE) stepping in part of the code (" << __PRETTY_FUNCTION__ << ") where we shouldn't. This is a bug." << std::endl;
-        
+#ifdef TO_REMOVE 
         locked_stampPeerGroupUpdateTime(pid,grpId,tr->mTransaction->updateTS,msgItemL.size()) ;
+#endif
         
         return ;
     }
@@ -2742,13 +2743,14 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	    // The list to req is empty. That means we already have all messages that this peer can
 	    // provide. So we can stamp the group from this peer to be up to date.
         
-            // Normally, this is not needed, since the call in locked_genReqMsgTransaction should handle this.
+            // Normally, this is not needed, since the time stamp is updated when receiving messages, not message ids
         
 	    locked_stampPeerGroupUpdateTime(pid,grpId,tr->mTransaction->updateTS,msgItemL.size()) ;
 #endif
     }
 }
 
+#ifdef SUSPENDED
 void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
 {
     std::map<RsPeerId,RsGxsMsgUpdateItem*>::iterator it = mClientMsgUpdateMap.find(pid) ;
@@ -2770,6 +2772,7 @@ void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const 
 
     IndicateConfigChanged();
 }
+#endif
 
 void RsGxsNetService::locked_pushGrpTransactionFromList( std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN)
 {
@@ -3754,6 +3757,8 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 
 	ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grp_id);
 
+    	// This time stamp is not supposed to be used on the other side. We just set it to avoid sending an uninitialiszed value.
+    
 	if(cit != mServerMsgUpdateMap.end())
 	    trItem->updateTS = cit->second->msgUpdateTS;
     	else
