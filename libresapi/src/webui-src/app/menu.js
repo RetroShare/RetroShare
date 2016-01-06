@@ -4,7 +4,11 @@ var m = require("mithril");
 var rs = require("retroshare");
 
 function shutdown(){
-    rs("control/shutdown",{args:[]});
+    rs.request("control/shutdown",null,function(){
+        rs("control/runstate").runstate=null;
+        m.redraw();
+    });
+
 }
 
 function goback(){

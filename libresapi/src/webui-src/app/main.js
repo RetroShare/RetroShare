@@ -6,15 +6,18 @@ var menu =require("menu");
 
 module.exports = {view: function(){
     var runstate = rs("control/runstate");
-    console.log("runstate: " + runstate);
+    console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
     if(runstate === undefined){
-        return m("div", "waiting_server");
+        return m("div", "waiting_server ... ");
+    } else if (runstate.runstate == null){
+        return m("div", "server down");
     } else {
         if (rs.content === undefined) {
             rs.content = null;
         }
-
-        if(runstate.runstate =="waiting_account_select") {
+        if (runstate.runstate == "waiting_init") {
+            return m("div","server starting ...")
+        } else if(runstate.runstate =="waiting_account_select") {
             return m("div", [
     	        m("div", menu.view()),
     	        m("hr"),

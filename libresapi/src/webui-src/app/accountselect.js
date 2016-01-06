@@ -8,13 +8,24 @@ var currentpasswd = null;
 var accountMap = new Map();
 
 function login(){
-    //alert("login:" + curraccount.location + "; passwort: " + currentpasswd);
     rs.request("control/login", {id: curraccount.id}, function(){
-        //alert("login send");
-        rs.request("control/password", {password: currentpasswd}, function(){
-            m.redraw();
-        });
+        console.log("login sent");
+        waitForPassword(currentpasswd);
     });
+}
+
+function waitForPassword(password){
+    rs.request("control/password",null,function(data){
+        if (data.want_password) {
+            console.log("sending pwd for " + data.key_name + "...");
+            rs.request("control/password", {password: password}, function(){
+                m.redraw();
+            });
+        } else {
+            console.log("waiting for pwd ...");
+            setTimeout(50, waitForPassword(password));
+        }
+    }, { method: "GET"})
 }
 
 function cancel(){
@@ -33,8 +44,7 @@ function setPasswd(password) {
 
 module.exports = {view: function(){
     var accounts = rs("control/locations");
-    console.log("accounts: " + accounts);
-    if(accounts === undefined){
+    if(accounts === undefined || accounts == null){
         return m("div", "accounts: waiting_server");
     }
     if (curraccount == null) {
@@ -43,7 +53,6 @@ module.exports = {view: function(){
     	    m("h2","accounts:"),
             m("hr"),
     	    accounts.map(function(account){
-    	    	console.log("adding: " + account.id);
     	    	accountMap.set(account.id,account);
     	    	return [
     	    	    m("div", {onclick: m.withAttr("account", selAccount), account:account.id }, account.location + " (" + account.name + ")"),

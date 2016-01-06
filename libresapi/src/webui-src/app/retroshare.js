@@ -40,13 +40,14 @@ var last_update_ts = 0;
 
 function check_for_changes(){
     var tokens = [];
+//    console.log("start-check");
     for_key_in_obj(cache, function(path){
         var token = cache[path].statetoken;
         if(token !== undefined){
             tokens.push(token);
         }
     });
-    
+//    console.log("tokens found: " + tokens);
     var req = m.request({
         method: "POST",
         url: api_url + "statetokenservice",
@@ -55,6 +56,7 @@ function check_for_changes(){
     });
     
     req.then(function handle_statetoken_response(response){
+//        console.log("checking result " + response);
         var paths_to_fetch = [];
         for_key_in_obj(cache, function(path){
             var found = false;
@@ -67,6 +69,7 @@ function check_for_changes(){
                 paths_to_fetch.push(path);
             }
         });
+//        console.log("generating Results for " + paths_to_fetch.length + " paths");
         var requests = [];
         paths_to_fetch.map(function request_it(path){
             var req2 = m.request({
@@ -81,6 +84,7 @@ function check_for_changes(){
             requests.push(req2);
         });
         if(requests.length > 0){
+//            console.log("requesting " + requests.length + " requests");
             m.sync(requests).then(function trigger_render(){
                 m.startComputation();
                 m.endComputation();
@@ -88,8 +92,12 @@ function check_for_changes(){
             });
         }
         else{
+//            console.log("no requests");
             setTimeout(check_for_changes, 500);
         }
+    }, function errhandling(value){
+//        console.log("server disconnected " + value);
+        setTimeout(check_for_changes, 500);
     });
 }
 
@@ -114,10 +122,24 @@ function schedule_request_missing(){
                     url: api_url + path,
                     background: true,
                 });
-                req = req.then(function fill_data(response){
+
+                req.then(function fill_data(response){
                     // TODO: add errorhandling
                     cache[path].data = response.data;
                     cache[path].statetoken = response.statetoken;
+                    if (cache[path].then != undefined && cache[path].then != null) {
+                        try {
+                            cache[path].then(response);
+                        } catch (ex) {
+                            if (cache[path].errorCallback != undefined && cache[path].errorCallback != null) {
+                                cache[path].errorCallback(ex);
+                            };
+                        }
+                    };
+                }, function errhandling(value){
+                    if (cache[path].errorCallback != undefined && cache[path].errorCallback != null) {
+                        cache[path].errorCallback(value);
+                    }
                 });
                 requests.push(req);
             }
@@ -130,53 +152,58 @@ function schedule_request_missing(){
     });
 }
 
+// called every time, rs or rs.request failed, only response or value is set
+function requestFail(path, response, value) {
+    rs.error = "error on " + path;
+    console.log("Error on " + path + (response == null ? ", value " + value : ", response " + response));
+}
+
 function rs(path, args, callback){
     if(cache[path] === undefined){
-        cache[path] = {
+        var req = {
             data: args,
             statetoken: undefined,
             requested: false,
-            then: function(){
-                if (callback != undefined) {
-                    callback();
+            then: function(response){
+                console.log(path + ": response: " + response.returncode);
+                if (response.returncode != "ok") {
+                    requestFail(path, response, null);
+                } else if (callback != undefined && callback != null) {
+                    callback(response.data, response.statetoken);
                 }
+            },
+            errorCallback: function(value){
+                requestFail(path, null, value);
             }
         };
+        cache[path] = req;
         schedule_request_missing();
     }
     return cache[path].data;
 }
-/*
-    } else{
-        m.request({
-            method: "POST",
-            url: api_url + path,
-            data: optionen.data,
-            background: true,
-        }).then(function(){
-            // i'm not happy about this.
-            // wouldn't it be nicer to return the thennable to the caller?
-            // but it is not nice to return different things from the rs function
-            // maybe make anotehr function which returns thennables
-            if(optionen.callback)
-                optionen.callback();
-        });
-    }
-}
-*/
 
 module.exports = rs;
 
-rs.request=function(path, args, callback){
-    m.request({
-        method: "POST",
+rs.request=function(path, args, callback, options){
+    if (options === undefined) {
+        options = {};
+    }
+    var req = m.request({
+        method: options.method === undefined ? "POST" : options.method,
         url: api_url + path,
         data: args,
         background: true
-    }).then(function(response){
-        if (callback != undefined) {
+    });
+    req.then(function checkResponseAndCallback(response){
+        console.log(path + ": response: " + response.returncode);
+        if (response.returncode != "ok") {
+            requestFail(path, response, null);
+        } else if (callback != undefined && callback != null) {
             callback(response.data, response.statetoken);
         }
+    }, function errhandling(value){
+        requestFail(path, null, value);
     });
+    return req;
 }
 
