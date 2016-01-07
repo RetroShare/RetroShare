@@ -160,7 +160,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
         void    checkSizeAndSendMessage(RsMsgItem *msg);
 
 		int 	incomingMsgs();
-		void    processMsg(RsMsgItem *mi, bool incoming);
+		void    processIncomingMsg(RsMsgItem *mi) ;
 		bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
 		void 	initRsMI(RsMsgItem *msg, Rs::Msgs::MessageInfo &mi);

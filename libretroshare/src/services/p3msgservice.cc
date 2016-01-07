@@ -152,7 +152,7 @@ int	p3MsgService::status()
 	return 1;
 }
 
-void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
+void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 {
 	mi -> recvTime = time(NULL);
 	mi -> msgId = getNewUniqueMsgId();
@@ -160,26 +160,19 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 	{
 		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
 
-		if (incoming)
+		/* from a peer */
+
+		mi->msgFlags &= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_SYSTEM); // remove flags except those
+		mi->msgFlags |= RS_MSG_FLAGS_NEW;
+
+		p3Notify *notify = RsServer::notify();
+		if (notify)
 		{
-			/* from a peer */
+			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
 
-            mi->msgFlags &= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_SYSTEM); // remove flags except those
-			mi->msgFlags |= RS_MSG_FLAGS_NEW;
-
-			p3Notify *notify = RsServer::notify();
-			if (notify)
-			{
-                notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
-
-				std::string out;
-				rs_sprintf(out, "%lu", mi->msgId);
-				notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
-			}
-		}
-		else
-		{
-			mi->msgFlags |= RS_MSG_OUTGOING;
+			std::string out;
+			rs_sprintf(out, "%lu", mi->msgId);
+			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
 		}
 
 		imsg[mi->msgId] = mi;
@@ -187,13 +180,12 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		msi->msgId = mi->msgId;
 		msi->srcId = mi->PeerId();
 		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		/**** STACK UNLOCKED ***/
 	}
 
-	if (incoming)
-	{
 		// If the peer is allowed to push files, then auto-download the recommended files.
 		if(rsPeers->servicePermissionFlags(mi->PeerId()) & RS_NODE_PERM_ALLOW_PUSH)
 		{
@@ -203,7 +195,6 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 			for(std::list<RsTlvFileItem>::const_iterator it(mi->attachment.items.begin());it!=mi->attachment.items.end();++it)
 				rsFiles->FileRequest((*it).name,(*it).hash,(*it).filesize,std::string(),RS_FILE_REQ_ANONYMOUS_ROUTING,srcIds) ;
 		}
-	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 }
@@ -271,7 +262,7 @@ void p3MsgService::handleIncomingItem(RsMsgItem *mi)
 
 	if(checkAndRebuildPartialMessage(mi))	// only returns true when a msg is complete.
 	{
-		processMsg(mi, true);
+		processIncomingMsg(mi);
 		changed = true ;
 	}
 	if(changed)
@@ -1030,48 +1021,71 @@ bool    p3MsgService::setMsgParentId(uint32_t msgId, uint32_t msgParentId)
 /****************************************/
 /****************************************/
 	/* Message Items */
-uint32_t     p3MsgService::sendMessage(RsMsgItem *item)
+uint32_t     p3MsgService::sendMessage(RsMsgItem *item)	// no from field because it's implicitly our own PeerId
 {
     if(!item)
-        return 0 ;
+	    return 0 ;
 
-	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-		"p3MsgService::sendMessage()");
+    pqioutput(PQL_DEBUG_BASIC, msgservicezone,  "p3MsgService::sendMessage()");
 
-	item -> msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
+    item->msgId     = getNewUniqueMsgId(); /* grabs Mtx as well */
+    item->msgFlags |= (RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING); /* add pending flag */
+
+    {
+	    RS_STACK_MUTEX(mMsgMtx) ;
+
+	    /* STORE MsgID */
+	    msgOutgoing[item->msgId] = item;
+
+	    if (item->PeerId() != mServiceCtrl->getOwnId()) 
+	    {
+		    /* not to the loopback device */
+            
+		    RsMsgSrcId* msi = new RsMsgSrcId();
+		    msi->msgId = item->msgId;
+		    msi->srcId = mServiceCtrl->getOwnId();	
+		    mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+	    }
+    }
+
+    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
+
+    return item->msgId;
+}
+uint32_t     p3MsgService::sendDistantMessage(RsMsgItem *item,const RsGxsId& from)
+{
+	if(!item)
+		return 0 ;
+
+	item->msgId     = getNewUniqueMsgId(); /* grabs Mtx as well */
+	item->msgFlags |= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING); /* add pending flag */
 
 	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mMsgMtx) ;
 
-		/* add pending flag */
-		item->msgFlags |= (RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING);
 		/* STORE MsgID */
 		msgOutgoing[item->msgId] = item;
+		mDistantOutgoingMsgSigners[item->msgId] = from ;
 
-		if (item->PeerId() != mServiceCtrl->getOwnId()) {
+		if (item->PeerId() != mServiceCtrl->getOwnId()) 
+		{
 			/* not to the loopback device */
+
 			RsMsgSrcId* msi = new RsMsgSrcId();
 			msi->msgId = item->msgId;
-			msi->srcId = item->PeerId();
+			msi->srcId = RsPeerId(from) ;
 			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
-        }
-
+		}
 	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
 
-    return item->msgId;
-}
-uint32_t     p3MsgService::sendDistantMessage(RsMsgItem *item,const RsGxsId& from)
-{
-    uint32_t msg_id = sendMessage(item) ;
+	return item->msgId;
 
-    RS_STACK_MUTEX(mMsgMtx) ;
-    mDistantOutgoingMsgSigners[msg_id] = from ;
-
-    return msg_id ;
 }
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
@@ -1084,22 +1098,30 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
     for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
     for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
 
-	/* send to ourselves as well */
-	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
-
-	if (msg)
-	{
-		std::list<RsPgpId>::iterator it ;
-
-		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
-			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
-
-		/* use processMsg to get the new msgId */
-		processMsg(msg, false);
-
-		// return new message id
-		rs_sprintf(info.msgId, "%lu", msg->msgId);
-	}
+	// store message in outgoing list.
+    // why would we do what's below??
+    
+//	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
+//
+//	if (msg)
+//	{
+//		std::list<RsPgpId>::iterator it ;
+//
+//		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+//			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
+//
+//		/* use processMsg to get the new msgId */
+//	msg->recvTime = time(NULL);
+//	msg->msgId = getNewUniqueMsgId();
+//			mi->msgFlags |= RS_MSG_OUTGOING;
+//            
+//		imsg[mi->msgId] = mi;
+//            
+//	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+//
+//		// return new message id
+//		rs_sprintf(info.msgId, "%lu", msg->msgId);
+//	}
 
 	return true;
 }
@@ -1138,7 +1160,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 
     msg->rspeerid_msgto.ids.insert(ownId);
 
-	processMsg(msg, true);
+	processIncomingMsg(msg);
 
 	return true;
 }
