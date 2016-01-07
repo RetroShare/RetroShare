@@ -112,7 +112,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		serialiser/rspluginitems.h \
-    util/rsinitedptr.h
+		util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
 
@@ -456,6 +456,7 @@ HEADERS +=	serialiser/itempriorities.h \
 			serialiser/rsgxsrecognitems.h \
 			serialiser/rsgxsupdateitems.h \
 			serialiser/rsserviceinfoitems.h \
+			serialiser/rsautoserialize.h
 
 HEADERS +=	services/p3msgservice.h \
 			services/p3service.h \
