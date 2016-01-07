@@ -13,6 +13,10 @@ module.exports = {  nodes: [
 		runstate: "running_ok.*",
 	},
 	{
+		name: "downloads",
+		runstate: "running_ok.*",
+	},
+	{
 		name: "chat",
 		runstate: "running_ok.*",
 	},

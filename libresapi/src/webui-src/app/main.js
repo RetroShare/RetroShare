@@ -21,7 +21,7 @@ function Page(content, runst){
     this.view = function(){
         var runstate = rs("control/runstate");
         var needpasswd = rs("control/password");
-        console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
+        //console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
         if(runstate === undefined){
             return m("div", "waiting_server ... ");
         } else if (runstate.runstate == null){
@@ -78,7 +78,7 @@ me.init = function(main){
         }
     });
     m.route.mode = "hash";
-    m.route(main,"/chat",maps);
+    m.route(main,"/",maps);
     console.log("init done.");
 };
 
