@@ -30,6 +30,14 @@
  *
  ******************************************************************/
 
+/**
+ * DEPRECATED!
+ * TODO: 2016/01/08 This file as misleading naming, the classes you find here
+ * are not proper StringSets in fact they do assumption on type of string!
+ * @see rstlvlist.h for a proper implementation!!
+ */
+
+
 #include "serialiser/rstlvitem.h"
 
 #include <list>

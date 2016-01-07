@@ -465,17 +465,18 @@ bool GetTlvUInt64(void *data, uint32_t size, uint32_t *offset,
 bool SetTlvString(void *data, uint32_t size, uint32_t *offset, 
 			uint16_t type, std::string out) 
 {
-	if (!data) return false;
-
-	uint32_t tlvsize = GetTlvStringSize(out);
+	if (!data)
+		return false;
+	uint32_t tlvsize = GetTlvStringSize(out); 
 	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
 
 	if (size < tlvend)
 	{
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "SetTlvString() FAILED - not enough space size: " << size
-				  << " tlvsize: " << tlvsize
-				  << " tlvend: " << tlvend << std::endl;
+		std::cerr << "SetTlvString() FAILED - not enough space" << std::endl;
+		std::cerr << "SetTlvString() size: " << size << std::endl;
+		std::cerr << "SetTlvString() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvString() tlvend: " << tlvend << std::endl;
 #endif
 		return false;
 	}
@@ -549,16 +550,18 @@ static bool find_decoded_string(const std::string& in,const std::string& suspici
 }
 
 //tested
-bool GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type,
-				  std::string &in)
+bool GetTlvString(void *data, uint32_t size, uint32_t *offset, 
+			uint16_t type, std::string &in) 
 {
-	if (!data) return false;
+    if (!data)
+        return false;
 
     if (size < *offset)
     {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - not enough space size: " << size
-				  << " *offset: " << *offset << std::endl;
+        std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
+        std::cerr << "GetTlvString() size: " << size << std::endl;
+        std::cerr << "GetTlvString() *offset: " << *offset << std::endl;
 #endif
         return false;
     }
@@ -670,6 +673,146 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type,
 uint32_t GetTlvStringSize(const std::string &in) {
 	return TLV_HEADER_SIZE + in.size();
 }
+
+
+#ifdef REMOVED_CODE
+/* We must use a consistent wchar size for cross platform ness.
+ * As unix uses 4bytes, and windows 2bytes? we'll go with 4bytes for maximum flexibility
+ */
+
+const uint32_t RS_WCHAR_SIZE = 4;
+
+bool SetTlvWideString(void *data, uint32_t size, uint32_t *offset, 
+			uint16_t type, std::wstring out) 
+{
+	if (!data)
+		return false;
+	uint32_t tlvsize = GetTlvWideStringSize(out); 
+	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
+
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "SetTlvWideString() size: " << size << std::endl;
+		std::cerr << "SetTlvWideString() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvWideString() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
+
+	uint32_t strlen = out.length();
+
+	/* Must convert manually to ensure its always the same! */
+	for(uint32_t i = 0; i < strlen; i++)
+	{
+		uint32_t widechar = out[i];
+		ok &= setRawUInt32(data, tlvend, offset, widechar);
+	}
+	return ok;
+}
+
+//tested
+bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset, 
+			uint16_t type, std::wstring &in) 
+{
+	if (!data)
+		return false;
+
+	if (size < *offset + TLV_HEADER_SIZE)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "GetTlvWideString() size: " << size << std::endl;
+		std::cerr << "GetTlvWideString() *offset: " << *offset << std::endl;
+#endif
+		return false;
+	}
+
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint32_t tlvsize = GetTlvSize(tlvstart);
+
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - not enough space" << std::endl;
+		std::cerr << "GetTlvWideString() size: " << size << std::endl;
+		std::cerr << "GetTlvWideString() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetTlvWideString() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvWideString() FAILED - invalid type" << std::endl;
+		std::cerr << "GetTlvWideString() type: " << type << std::endl;
+		std::cerr << "GetTlvWideString() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
+
+
+	bool ok = true;
+	/* remove the header, calc string length */
+	*offset += TLV_HEADER_SIZE;
+	uint32_t strlen = (tlvsize - TLV_HEADER_SIZE) / RS_WCHAR_SIZE; 
+
+	/* Must convert manually to ensure its always the same! */
+	for(uint32_t i = 0; i < strlen; i++)
+	{
+		uint32_t widechar;
+		ok &= getRawUInt32(data, tlvend, offset, &widechar);
+		in += widechar;
+	}
+
+	// Check for message content. We want to avoid possible lol bombs as soon as possible.
+	
+	static const int number_of_suspiscious_strings = 4 ;
+	static const std::wstring err_in = L"**** String removed (SVG bomb?) ****" ;
+	static std::wstring suspiscious_strings[number_of_suspiscious_strings] = { L"<!e",     // base ingredient of xml bombs
+                      			                                                L"<!E",
+		                       			                                          L"PD94bW",  // this is the base64 encoding of <?xml*
+		                             			                                    L"PHN2Zy" 	// this is the base64 encoding of <svg*
+	} ;
+
+#ifdef TLV_BASE_DEBUG
+	std::wcerr << L"Checking wide string \"" << in << std::endl;
+#endif
+	// Drop any string with "<!" or "<!"...
+	// TODO: check what happens with partial messages
+	//
+	for(int i=0;i<number_of_suspiscious_strings;++i)
+		if (in.find(suspiscious_strings[i]) != std::string::npos)
+		{
+			std::wcerr << L"**** suspiscious wstring contains \"" << suspiscious_strings[i] << L"\" (SVG bomb suspected). " ;
+			std::cerr << "========== Original string =========" << std::endl;
+			std::wcerr << in << std::endl;
+			std::cerr << "=============== END ================" << std::endl;
+
+			for(uint32_t k=0;k<in.length();++k)
+				if(k < err_in.length())
+					in[k] = err_in[k] ;	// It's important to keep the same size for in than the size it should have,
+				else
+					in[k] = L' ';			// otherwise the deserialization of derived items that use it might fail 
+			break ;
+		}
+
+	return ok;
+}
+
+uint32_t GetTlvWideStringSize(std::wstring &in) {
+	return TLV_HEADER_SIZE + in.size() * RS_WCHAR_SIZE;
+}
+#endif
 
 bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 		uint16_t type, struct sockaddr_in *out) {

@@ -41,17 +41,13 @@
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
-	public:
+public:
+	typedef std::list<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_list;
+	typedef std::vector<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_vector;
+	typedef std::set<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_set;
 
-		typedef std::list<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_list;
-		typedef std::vector<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_vector;
-		typedef std::set<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_set;
-
-		t_RsGenericIdType() 
-		{ 
-			memset(bytes,0,ID_SIZE_IN_BYTES) ; 	// by default, ids are set to null()
-		}
-		virtual ~t_RsGenericIdType() {}
+	t_RsGenericIdType() { memset(bytes,0,ID_SIZE_IN_BYTES); } // by default, ids are set to null()
+	virtual ~t_RsGenericIdType() {}
 
 		// Explicit constructor from a hexadecimal string
 		//
@@ -69,9 +65,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 		//
 		template<bool UPPER_CASE2,uint32_t UNIQUE_IDENTIFIER2>
 		explicit t_RsGenericIdType(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE2,UNIQUE_IDENTIFIER2>& id)
-		{
-			memcpy(bytes,id.toByteArray(),ID_SIZE_IN_BYTES) ;
-		}
+		{ memcpy(bytes,id.toByteArray(),ID_SIZE_IN_BYTES); }
 
 		// Random initialization. Can be useful for testing.
 		//
@@ -109,31 +103,31 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			return out << id.toStdString(UPPER_CASE) ;
 		}
 
-		inline std::string toStdString() const { return toStdString(UPPER_CASE) ; }
+	inline std::string toStdString() const { return toStdString(UPPER_CASE); }
 
-        inline static uint32_t serial_size() { return SIZE_IN_BYTES ; }
-        bool serialise(void *data,uint32_t pktsize,uint32_t& offset) const
-		{
-			if(offset + SIZE_IN_BYTES > pktsize)
-				return false ;
+	inline static uint32_t serial_size() { return SIZE_IN_BYTES ; }
+	bool serialise(void *data,uint32_t pktsize,uint32_t& offset) const
+	{
+		if(offset + SIZE_IN_BYTES > pktsize) return false;
 
-			memcpy(&((uint8_t*)data)[offset],bytes,SIZE_IN_BYTES) ;
-			offset += SIZE_IN_BYTES ;
-			return true ;
-		}
-		bool deserialise(void *data,uint32_t pktsize,uint32_t& offset)
-		{
-			if(offset + SIZE_IN_BYTES > pktsize)
-				return false ;
+		memcpy(&((uint8_t*)data)[offset],bytes,SIZE_IN_BYTES);
+		offset += SIZE_IN_BYTES ;
+		return true ;
+	}
+	bool deserialise(const uint8_t data[], uint32_t pktsize, uint32_t& offset)
+	{
+		if(offset + SIZE_IN_BYTES > pktsize) return false;
+		memcpy(bytes, data + offset,SIZE_IN_BYTES);
+		offset += SIZE_IN_BYTES;
+		return true;
+	}
+	/// DEPRECATED
+	bool deserialise(void * data,uint32_t pktsize,uint32_t & offset)
+	{ return deserialise((const uint8_t *)data, pktsize, offset);}
 
-			memcpy(bytes,&((uint8_t*)data)[offset],SIZE_IN_BYTES) ;
-			offset += SIZE_IN_BYTES ;
-			return true ;
-		}
-	private:
-		std::string toStdString(bool upper_case) const ;
-
-		unsigned char bytes[ID_SIZE_IN_BYTES] ;
+private:
+	std::string toStdString(bool upper_case) const;
+	unsigned char bytes[ID_SIZE_IN_BYTES];
 };
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::toStdString(bool upper_case) const
