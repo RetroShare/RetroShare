@@ -213,80 +213,68 @@ int	pqipersongrp::init_listener()
 	/* extract our information from the p3ConnectMgr */
 	if (initFlags & PQIPERSON_NO_LISTENER)
 	{
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RS_STACK_MUTEX(coreMtx);
 		pqil = NULL;
 	}
 	else
 	{
-		/* extract details from 
-		 */
-		struct sockaddr_storage laddr;
+		// extract details from
+		sockaddr_storage laddr;
 		mLinkMgr->getLocalAddress(laddr);
-		
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+
+		RS_STACK_MUTEX(coreMtx);
 		pqil = locked_createListener(laddr);
 	}
 	return 1;
 }
 
-bool    pqipersongrp::resetListener(const struct sockaddr_storage &local)
+bool pqipersongrp::resetListener(const struct sockaddr_storage &local)
 {
-        #ifdef PGRP_DEBUG
+#ifdef PGRP_DEBUG
 	std::cerr << "pqipersongrp::resetListener()" << std::endl;
-        #endif
+#endif
 
 	// stop it, 
 	// change the address.
 	// restart.
 
-	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+	RS_STACK_MUTEX(coreMtx);
 
 	if (pqil != NULL)
 	{
-                #ifdef PGRP_DEBUG
+#ifdef PGRP_DEBUG
 		std::cerr << "pqipersongrp::resetListener() haveListener" << std::endl;
-                #endif
+#endif
 
 		pqil -> resetlisten();
 		pqil -> setListenAddr(local);
 		pqil -> setuplisten();
 
-                #ifdef PGRP_DEBUG
+#ifdef PGRP_DEBUG
 		std::cerr << "pqipersongrp::resetListener() done!" << std::endl;
-                #endif
+#endif
 
 	}
 	return 1;
 }
 
-void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
+void pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 {
 
 	/* iterate through, only worry about the friends */
 	std::list<pqipeer>::const_iterator it;
 	for(it = plist.begin(); it != plist.end(); ++it)
 	{
-	  if (it->state & RS_PEER_S_FRIEND)
-	  {
-	  	/* now handle add/remove */
-		if ((it->actions & RS_PEER_NEW) 
-		   || (it->actions & RS_PEER_MOVED))
+		if (it->state & RS_PEER_S_FRIEND)
 		{
-			addPeer(it->id);
-		}
+			// now handle add/remove
+			if ((it->actions & RS_PEER_NEW) || (it->actions & RS_PEER_MOVED))
+				addPeer(it->id);
 
-		if (it->actions & RS_PEER_CONNECT_REQ)
-		{
-			connectPeer(it->id);
+			if (it->actions & RS_PEER_CONNECT_REQ)
+				connectPeer(it->id);
 		}
-	  }
-	  else /* Not Friend */
-	  {
-		if (it->actions & RS_PEER_MOVED)
-		{
-			removePeer(it->id);
-		}
-	  }
+		else if (it->actions & RS_PEER_MOVED) removePeer(it->id); // Not Friend
 	}
 }
 
@@ -410,7 +398,7 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 
 	{ 
 		// The Mutex is required here as pqiListener is not thread-safe.
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RS_STACK_MUTEX(coreMtx);
 		pqiperson *pqip = locked_createPerson(id, pqil);
 	
 		// attach to pqihandler
