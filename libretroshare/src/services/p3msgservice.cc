@@ -80,11 +80,14 @@ const int msgservicezone = 54319;
 
 
 p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
-	:p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
+	:p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0) 
 {
-	_serialiser = new RsMsgSerialiser();
+	_serialiser = new RsMsgSerialiser();	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
 	addSerialType(_serialiser);
 
+    mMsgUniqueId = RSRandom::random_u32() ;	// better than time(NULL). We don't need crypto-safe random here. Just something much likely
+    						// different from what friends use.
+    
     mShouldEnableDistantMessaging = true ;
     mDistantMessagingEnabled      = false ;
     mDistantMessagePermissions      = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;
@@ -454,6 +457,10 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
     grmap->ongoing_msgs = _ongoing_messages ;
 
     itemList.push_back(grmap) ;
+    
+    RsMsgDistantMessagesHashMap *ghm = new RsMsgDistantMessagesHashMap ;
+    ghm->hash_map = mRecentlyReceivedDistantMessageHashes ;
+    itemList.push_back(ghm) ;
 
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
@@ -476,7 +483,7 @@ void p3MsgService::saveDone()
 	mMsgMtx.unlock();
 }
 
-RsSerialiser* p3MsgService::setupSerialiser()
+RsSerialiser* p3MsgService::setupSerialiser()	// this serialiser is used for config. So it adds somemore info in the serialised items
 {
 	RsSerialiser *rss = new RsSerialiser ;
 
@@ -535,7 +542,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     RsMsgSrcId* msi;
     RsMsgParentId* msp;
     RsMsgGRouterMap* grm;
-    //    RsPublicMsgInviteConfigItem* msv;
+    RsMsgDistantMessagesHashMap *ghm;
 
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
@@ -543,6 +550,8 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
     std::map<uint32_t, RsPeerId> srcIdMsgMap;
     std::map<uint32_t, RsPeerId>::iterator srcIt;
 
+    uint32_t max_msg_id = 0 ;
+    
     // load items and calculate next unique msgId
     for(it = load.begin(); it != load.end(); ++it)
     {
@@ -550,9 +559,9 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	    if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 	    {
 		    /* STORE MsgID */
-		    if (mitem->msgId >= mMsgUniqueId) {
-			    mMsgUniqueId = mitem->msgId + 1;
-		    }
+		    if (mitem->msgId > max_msg_id) 
+			    max_msg_id = mitem->msgId ;
+		    
 		    items.push_back(mitem);
 	    }
 	    else if (NULL != (grm = dynamic_cast<RsMsgGRouterMap *>(*it)))
@@ -561,6 +570,10 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    for(std::map<GRouterMsgPropagationId,uint32_t>::const_iterator it(grm->ongoing_msgs.begin());it!=grm->ongoing_msgs.end();++it)
 			    _ongoing_messages.insert(*it) ;
 	    }
+        else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
+        {
+            mRecentlyReceivedDistantMessageHashes = ghm->hash_map ;
+        }
 	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 	    {
 		    // delete standard tags as they are now save in config
@@ -627,6 +640,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		    continue ;
 	    }
     }
+    mMsgUniqueId = max_msg_id + 1;	// make it unique with respect to what was loaded. Not totally safe, but works 99.9999% of the cases.
     load.clear() ;
 
     // sort items into lists
@@ -1804,44 +1818,67 @@ void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t d
 {
     if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED)
     {
-        std::cerr << __PRETTY_FUNCTION__ << ": Not fully implemented. The global router fails to send apacket, but we don't deal with it. Please remind the devs to do it" << std::endl;
-        return ;
+	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+	    std::cerr << "(WW) p3MsgService::notifyDataStatus: Global router tells us that item ID " << id << " could not be delivered on time." ;
+	    std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
+
+	    if(it == _ongoing_messages.end())
+	    {
+		    std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
+		    return ;
+	    }
+	    uint32_t msg_id = it->second ;
+	    std::cerr << "  message id = " << msg_id << std::endl;
+
+	    std::map<uint32_t,RsMsgItem*>::iterator mit = msgOutgoing.find(msg_id) ;
+
+	    if(mit == msgOutgoing.end())
+	    {
+		    std::cerr << "  (EE) message has been notified as not delivered, but it not on outgoing list. Something's wrong!!" << std::endl;
+		    return ;
+	    }
+        std::cerr << "  reseting the ROUTED flag so that the message is requested again" << std::endl;
+
+	    mit->second->msgFlags &= ~RS_MSG_FLAGS_ROUTED ;	// clear the routed flag so that the message is requested again
+	    return ;
     }
-    if(data_status != GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED)
+    
+    if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED)
     {
-        std::cerr << "p3MsgService: unhandled data status info from global router for msg ID " << id << ": this is a bug." << std::endl;
-        return ;
-    }
-
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
+	    std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
 #endif
-	std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
+	    std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
 
-	if(it == _ongoing_messages.end())
-	{
-		std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
-		return ;
-	}
+	    if(it == _ongoing_messages.end())
+	    {
+		    std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
+		    return ;
+	    }
 
-	uint32_t msg_id = it->second ;
+	    uint32_t msg_id = it->second ;
 
-	// we should now remove the item from the msgOutgoing list.
-	
-	std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
+	    // we should now remove the item from the msgOutgoing list.
 
-	if(it2 == msgOutgoing.end())
-	{
-		std::cerr << "(EE) message has been ACKed, but is not in outgoing list. Something's wrong!!" << std::endl;
-		return ;
-	}
+	    std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
 
-	delete it2->second ;
-	msgOutgoing.erase(it2) ;
+	    if(it2 == msgOutgoing.end())
+	    {
+		    std::cerr << "(EE) message has been ACKed, but is not in outgoing list. Something's wrong!!" << std::endl;
+		    return ;
+	    }
 
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-	IndicateConfigChanged() ;
+	    delete it2->second ;
+	    msgOutgoing.erase(it2) ;
+
+	    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+	    IndicateConfigChanged() ;
+        
+        	return ;
+    }
+    std::cerr << "p3MsgService: unhandled data status info from global router for msg ID " << id << ": this is a bug." << std::endl;
 }
 bool p3MsgService::acceptDataFromPeer(const RsGxsId& to_gxs_id)
 {
@@ -1873,8 +1910,19 @@ void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGx
 {
     std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << data_size << ", for key " << destination_key << std::endl;
 
+    // first make sure that we havn't already received the data. Since we allow to re-send messages, it's necessary to check.
+    
+    Sha1CheckSum hash = RsDirUtil::sha1sum(data,data_size) ;
+    
+    if(mRecentlyReceivedDistantMessageHashes.find(hash) != mRecentlyReceivedDistantMessageHashes.end())
+    {
+        std::cerr << "(WW) receiving distant message of hash " << hash << " more than once. This is not a bug, unless it happens very often." << std::endl;
+	free(data) ;
+        return ;
+    }
+    mRecentlyReceivedDistantMessageHashes[hash] = time(NULL) ;
+    
     RsItem *item = _serialiser->deserialise(data,&data_size) ;
-
     free(data) ;
 
     RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item) ;
@@ -1883,9 +1931,9 @@ void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGx
     {
         std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
 
-    msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT ;
-    /* we expect complete msgs - remove partial flag just in case someone has funny ideas */
-    msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
+	msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT ;
+	/* we expect complete msgs - remove partial flag just in case someone has funny ideas */
+	msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
 
         msg_item->PeerId(RsPeerId(signing_key)) ;	// hack to pass on GXS id.
         handleIncomingItem(msg_item) ;
@@ -1921,12 +1969,12 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
     std::cerr << "  signing : " << signing_key_id << std::endl;
 #endif
 
-    // The item is serialized and turned into a generic turtle item.
+    // The item is serialized and turned into a generic turtle item. Use use the explicit serialiser to make sure that the msgId is not included
 
-    uint32_t msg_serialized_rssize = _serialiser->size(msgitem) ;
+    uint32_t msg_serialized_rssize = msgitem->serial_size(false) ;
     unsigned char *msg_serialized_data = new unsigned char[msg_serialized_rssize] ;
 
-    if(!_serialiser->serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
+    if(!msgitem->serialise(msg_serialized_data,msg_serialized_rssize,false))
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
         delete[] msg_serialized_data ;

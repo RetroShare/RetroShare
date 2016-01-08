@@ -194,6 +194,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		std::map<uint32_t, RsMsgTags*> mMsgTags;
 
 		uint32_t mMsgUniqueId;
+	std::map<Sha1CheckSum,uint32_t> mRecentlyReceivedDistantMessageHashes;
 
 		// used delete msgSrcIds after config save
         std::map<uint32_t, RsMsgSrcId*> mSrcIds;
