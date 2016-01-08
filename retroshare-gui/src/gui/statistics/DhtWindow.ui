@@ -13,25 +13,25 @@
   <property name="windowTitle">
    <string>DHT</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="dhtMainTab">
       <attribute name="title">
        <string>DHT</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_6">
+      <layout class="QGridLayout" name="dhtMainTabGLayout">
        <item row="0" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="headerHLayout">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <layout class="QHBoxLayout" name="topHLayout">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+            <layout class="QHBoxLayout" name="netStatus_HLayout">
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="netStatus_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -44,7 +44,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="netStatusLabel">
+              <widget class="QLabel" name="netStatus">
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
@@ -59,9 +59,9 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="network_HLayout">
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="network_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -74,7 +74,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="networkLabel">
+              <widget class="QLabel" name="network">
                <property name="text">
                 <string>Network Mode</string>
                </property>
@@ -83,9 +83,9 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="natType_HLayout">
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="natType_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -98,7 +98,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="natTypeLabel">
+              <widget class="QLabel" name="natType">
                <property name="text">
                 <string>Nat Type</string>
                </property>
@@ -107,9 +107,9 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="natHole_HLayout">
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="natHole_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -122,35 +122,35 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="natHoleLabel">
+              <widget class="QLabel" name="natHole">
                <property name="text">
                 <string>Nat Hole</string>
                </property>
               </widget>
              </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
+           </item>
+           <item>
+            <spacer name="topHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_17">
+          <layout class="QHBoxLayout" name="middleHLayout">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="connect_HLayout">
              <item>
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="connect_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -163,7 +163,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="connectLabel">
+              <widget class="QLabel" name="connect">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -181,9 +181,9 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <layout class="QHBoxLayout" name="peerAddress_HLayout">
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="peerAddress_Label">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -196,7 +196,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="peerAddressLabel">
+              <widget class="QLabel" name="peerAddress">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -208,32 +208,32 @@
                </property>
               </widget>
              </item>
-             <item>
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
+           </item>
+           <item>
+            <spacer name="middleHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_18">
+          <layout class="QHBoxLayout" name="bottomHLayout">
            <item>
-            <widget class="QFrame" name="frame">
-             <layout class="QGridLayout" name="gridLayout">
+            <widget class="QFrame" name="leftFrame">
+             <layout class="QGridLayout" name="leftFrameGLayout">
               <item row="0" column="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <layout class="QHBoxLayout" name="unreachable_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_9">
+                 <widget class="QLabel" name="unreachable_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -246,7 +246,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_unreachable">
+                 <widget class="QLabel" name="unreachable">
                   <property name="text">
                    <string/>
                   </property>
@@ -255,9 +255,9 @@
                </layout>
               </item>
               <item row="0" column="3">
-               <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <layout class="QHBoxLayout" name="online_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_10">
+                 <widget class="QLabel" name="online_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -270,7 +270,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_online">
+                 <widget class="QLabel" name="online">
                   <property name="text">
                    <string/>
                   </property>
@@ -279,9 +279,9 @@
                </layout>
               </item>
               <item row="0" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <layout class="QHBoxLayout" name="offline_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_8">
+                 <widget class="QLabel" name="offline_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -294,7 +294,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_offline">
+                 <widget class="QLabel" name="offline">
                   <property name="text">
                    <string/>
                   </property>
@@ -303,9 +303,9 @@
                </layout>
               </item>
               <item row="0" column="0">
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
+               <layout class="QHBoxLayout" name="peers_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_7">
+                 <widget class="QLabel" name="peers_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -318,7 +318,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_peers">
+                 <widget class="QLabel" name="peers">
                   <property name="text">
                    <string/>
                   </property>
@@ -330,19 +330,19 @@
             </widget>
            </item>
            <item>
-            <widget class="Line" name="line">
+            <widget class="Line" name="bottomVLine">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QWidget" name="widget_2" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <widget class="QFrame" name="rightFrame">
+             <layout class="QGridLayout" name="rightFrameGLayout">
+              <item row="0" column="0">
+               <layout class="QHBoxLayout" name="disconnected_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QLabel" name="disconnected_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -355,7 +355,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_disconnected">
+                 <widget class="QLabel" name="disconnected">
                   <property name="text">
                    <string/>
                   </property>
@@ -363,10 +363,10 @@
                 </item>
                </layout>
               </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item row="0" column="1">
+               <layout class="QHBoxLayout" name="direct_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_13">
+                 <widget class="QLabel" name="direct_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -379,7 +379,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_direct">
+                 <widget class="QLabel" name="direct">
                   <property name="text">
                    <string/>
                   </property>
@@ -387,10 +387,10 @@
                 </item>
                </layout>
               </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <item row="0" column="2">
+               <layout class="QHBoxLayout" name="proxy_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="proxy_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -403,7 +403,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_proxy">
+                 <widget class="QLabel" name="proxy">
                   <property name="text">
                    <string/>
                   </property>
@@ -411,10 +411,10 @@
                 </item>
                </layout>
               </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_14">
+              <item row="0" column="3">
+               <layout class="QHBoxLayout" name="relay_HLayout">
                 <item>
-                 <widget class="QLabel" name="label_16">
+                 <widget class="QLabel" name="relay_Label">
                   <property name="font">
                    <font>
                     <weight>75</weight>
@@ -427,7 +427,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_relay">
+                 <widget class="QLabel" name="relay">
                   <property name="text">
                    <string/>
                   </property>
@@ -435,36 +435,36 @@
                 </item>
                </layout>
               </item>
-              <item>
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
              </layout>
             </widget>
+           </item>
+           <item>
+            <spacer name="bottomHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </item>
         </layout>
        </item>
        <item row="1" column="0">
-        <widget class="QTabWidget" name="tabWidget_2">
+        <widget class="QTabWidget" name="dhtTWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
-         <widget class="QWidget" name="tab_3">
+         <widget class="QWidget" name="dhtTab">
           <attribute name="title">
            <string>DHT</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_2">
+          <layout class="QGridLayout" name="dhtTabGLayout">
            <item row="1" column="0">
             <widget class="QTreeWidget" name="dhtTreeWidget">
              <property name="contextMenuPolicy">
@@ -517,7 +517,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_19">
+            <layout class="QHBoxLayout" name="filterHLayout">
              <item>
               <widget class="QLabel" name="filterLabel">
                <property name="text">
@@ -536,11 +536,11 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_4">
+         <widget class="QWidget" name="peersTab">
           <attribute name="title">
            <string>Peers</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_4">
+          <layout class="QGridLayout" name="peersTabGLayout">
            <item row="0" column="0">
             <widget class="QTreeWidget" name="peerTreeWidget">
              <property name="sortingEnabled">
@@ -595,11 +595,11 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_5">
+         <widget class="QWidget" name="relayTab">
           <attribute name="title">
            <string>Relay</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_5">
+          <layout class="QGridLayout" name="relayTabGLayout">
            <item row="0" column="0">
             <widget class="QTreeWidget" name="relayTreeWidget">
              <property name="sortingEnabled">
@@ -653,11 +653,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="dhtGraphTab">
       <attribute name="title">
        <string>DHT Graph</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="dhtGraphTabGLayout">
        <item row="0" column="0">
         <widget class="DhtGraph" name="frmGraph">
          <property name="minimumSize">
@@ -685,15 +685,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>DhtGraph</class>
    <extends>QFrame</extends>
    <header>gui/statistics/dhtgraph.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

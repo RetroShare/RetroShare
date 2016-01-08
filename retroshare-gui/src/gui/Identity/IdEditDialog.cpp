@@ -55,26 +55,25 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_Nickname);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_KeyId);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgHash);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgId);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
-	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->radioButton_GpgId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->radioButton_PGPId);
 	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->radioButton_Pseudo);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->nickname_LEdit);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->keyId_LEdit);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->pgpHash_LEdit);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->pgpId_LEdit);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui->pgpName_LEdit);
 
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_Nickname);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_KeyId);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgHash);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgId);
-	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->lineEdit_GpgName);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->nickname_LEdit);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->keyId_LEdit);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->pgpHash_LEdit);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->pgpId_LEdit);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui->pgpName_LEdit);
 
 	/* Initialize recogn tags */
 	loadRecognTags();
 
 	/* Connect signals */
-	connect(ui->radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
+	connect(ui->radioButton_PGPId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -89,7 +88,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
 
 	/* Initialize ui */
-	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
+	ui->nickname_LEdit->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui->pushButton_Tag->setEnabled(false);
@@ -126,10 +125,10 @@ void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
 	mIsNew = true;
 	mGroupId.clear();
 
-	ui->lineEdit_KeyId->setText(tr("To be generated"));
-	ui->lineEdit_Nickname->setText("");
-	ui->radioButton_GpgId->setEnabled(true);
+	ui->radioButton_PGPId->setEnabled(true);
 	ui->radioButton_Pseudo->setEnabled(true);
+	ui->nickname_LEdit->setText("");
+	ui->keyId_LEdit->setText(tr("To be generated"));
 
 	if (pseudo)
 	{
@@ -137,14 +136,14 @@ void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
 	}
 	else
 	{
-		ui->radioButton_GpgId->setChecked(true);
+		ui->radioButton_PGPId->setChecked(true);
 	}
 
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
 	ui->frame_Tags->setHidden(true);
-	ui->radioButton_GpgId->setEnabled(true);
+	ui->radioButton_PGPId->setEnabled(true);
     
     	if(enable_anon)
 		ui->radioButton_Pseudo->setEnabled(true);
@@ -170,20 +169,20 @@ void IdEditDialog::updateIdType(bool pseudo)
 {
 	if (pseudo)
 	{
-		ui->lineEdit_GpgHash->setText(tr("N/A"));
-		ui->lineEdit_GpgId->setText(tr("N/A"));
-		ui->lineEdit_GpgName->setText(tr("N/A"));
+		ui->pgpHash_LEdit->setText(tr("N/A"));
+		ui->pgpId_LEdit->setText(tr("N/A"));
+		ui->pgpName_LEdit->setText(tr("N/A"));
 	}
 	else
 	{
-		/* get GPG Details from rsPeers */
-		RsPgpId gpgid = rsPeers->getGPGOwnId();
+		/* get PGP Details from rsPeers */
+		RsPgpId pgpid = rsPeers->getGPGOwnId();
 		RsPeerDetails details;
-		rsPeers->getGPGDetails(gpgid, details);
+		rsPeers->getGPGDetails(pgpid, details);
 
-		ui->lineEdit_GpgId->setText(QString::fromStdString(gpgid.toStdString()));
-		ui->lineEdit_GpgHash->setText(tr("To be generated"));
-		ui->lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+		ui->pgpHash_LEdit->setText(tr("To be generated"));
+		ui->pgpId_LEdit->setText(QString::fromStdString(pgpid.toStdString()));
+		ui->pgpName_LEdit->setText(QString::fromUtf8(details.name.c_str()));
 	}
 }
 
@@ -222,8 +221,8 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
 
 void IdEditDialog::enforceNoAnonIds()
 {
-    ui->radioButton_GpgId->setChecked(true);
-    ui->radioButton_GpgId->setEnabled(false);
+    ui->radioButton_PGPId->setChecked(true);
+    ui->radioButton_PGPId->setEnabled(false);
 }
 
 void IdEditDialog::loadExistingId(uint32_t token)
@@ -234,7 +233,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	std::vector<RsGxsIdGroup> datavector;
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
-		ui->lineEdit_KeyId->setText(tr("Error getting key!"));
+		ui->keyId_LEdit->setText(tr("Error getting key!"));
 		return;
 	}
 
@@ -243,12 +242,12 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
 		std::cerr << std::endl;
 
-		ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
-		ui->lineEdit_Nickname->setText("");
+		ui->nickname_LEdit->setText("");
+		ui->keyId_LEdit->setText(tr("Error KeyID invalid"));
 
-		ui->lineEdit_GpgHash->setText(tr("N/A"));
-		ui->lineEdit_GpgId->setText(tr("N/A"));
-		ui->lineEdit_GpgName->setText(tr("N/A"));
+		ui->pgpHash_LEdit->setText(tr("N/A"));
+		ui->pgpId_LEdit->setText(tr("N/A"));
+		ui->pgpName_LEdit->setText(tr("N/A"));
 		return;
 	}
 
@@ -266,46 +265,45 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	if (realid)
 	{
-		ui->radioButton_GpgId->setChecked(true);
+		ui->radioButton_PGPId->setChecked(true);
 	}
 	else
 	{
 		ui->radioButton_Pseudo->setChecked(true);
 	}
 	// these are not editable for existing Id.
-	ui->radioButton_GpgId->setEnabled(false);
+	ui->radioButton_PGPId->setEnabled(false);
 	ui->radioButton_Pseudo->setEnabled(false);
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-    ui->lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
-	ui->lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
+	ui->nickname_LEdit->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+	ui->keyId_LEdit->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
 
 	if (realid)
 	{
-		ui->lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash.toStdString()));
+		ui->pgpHash_LEdit->setText(QString::fromStdString(mEditGroup.mPgpIdHash.toStdString()));
 
 		if (mEditGroup.mPgpKnown)
 		{
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(mEditGroup.mPgpId, details);
-			ui->lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
-
-			ui->lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
+			ui->pgpId_LEdit->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
+			ui->pgpName_LEdit->setText(QString::fromUtf8(details.name.c_str()));
 		}
 		else
 		{
-			ui->lineEdit_GpgId->setText(tr("Unknown GpgId"));
-			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
+			ui->pgpId_LEdit->setText(tr("Unknown PGP Id"));
+			ui->pgpName_LEdit->setText(tr("Unknown real name"));
 		}
 	}
 	else
 	{
-		ui->lineEdit_GpgHash->setText(tr("N/A"));
-		ui->lineEdit_GpgId->setText(tr("N/A"));
-		ui->lineEdit_GpgName->setText(tr("N/A"));
+		ui->pgpHash_LEdit->setText(tr("N/A"));
+		ui->pgpId_LEdit->setText(tr("N/A"));
+		ui->pgpName_LEdit->setText(tr("N/A"));
 	}
 
 	// RecognTags.
@@ -318,9 +316,9 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 void IdEditDialog::checkNewTag()
 {
+	std::string name = ui->nickname_LEdit->text().left(RSID_MAXIMUM_NICKNAME_SIZE).toUtf8().data();
+	RsGxsId id ( ui->keyId_LEdit->text().toStdString());
 	std::string tag = ui->plainTextEdit_Tag->toPlainText().toStdString();
-    RsGxsId id ( ui->lineEdit_KeyId->text().toStdString());
-    std::string name = ui->lineEdit_Nickname->text().left(RSID_MAXIMUM_NICKNAME_SIZE).toUtf8().data();
 
 	QString desc;
 	bool ok = tagDetails(id, name, tag, desc);
@@ -503,7 +501,7 @@ void IdEditDialog::submit()
 
 void IdEditDialog::createId()
 {
-    QString groupname = ui->lineEdit_Nickname->text();
+	QString groupname = ui->nickname_LEdit->text();
 
 	if (groupname.size() < 2)
 	{
@@ -524,7 +522,7 @@ void IdEditDialog::createId()
     }
 	RsIdentityParameters params;
     params.nickname = groupname.toUtf8().constData();
-	params.isPgpLinked = (ui->radioButton_GpgId->isChecked());
+	params.isPgpLinked = (ui->radioButton_PGPId->isChecked());
 
 	if (!mAvatar.isNull())
 	{
@@ -563,7 +561,7 @@ void IdEditDialog::idCreated(uint32_t token)
 void IdEditDialog::updateId()
 {
 	/* submit updated details */
-    QString groupname = ui->lineEdit_Nickname->text();
+	QString groupname = ui->nickname_LEdit->text();
 
 	if (groupname.size() < 2)
 	{

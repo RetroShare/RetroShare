@@ -96,7 +96,7 @@ bool GeneralPage::save(QString &/*errmsg*/)
   }
 #endif
 
-  Settings->setMaxTimeBeforeIdle(ui.spinBox->value());
+  Settings->setMaxTimeBeforeIdle(ui.idleSpinBox->value());
 
   RsInit::setAutoLogin(ui.autoLogin->isChecked());
 
@@ -130,7 +130,7 @@ void GeneralPage::load()
 
   ui.checkCloseToTray->setChecked(Settings->getCloseToTray());
   
-  ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
+  ui.idleSpinBox->setValue(Settings->getMaxTimeBeforeIdle());
 
   ui.autoLogin->setChecked(RsInit::getAutoLogin());
 

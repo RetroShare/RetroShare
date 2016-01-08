@@ -175,7 +175,7 @@ void HashBox::addAttachments(const QStringList& files,TransferRequestFlags tfl, 
 		hashingInfo.item = file;
 		hashingInfo.flag = flag;
 		mHashingInfos.push_back(hashingInfo);
-		ui->verticalLayout->addWidget(file, 1, 0);
+		ui->scrollAreaWidgetContentsVLayout->addWidget(file, 1, 0);
 	}
 	QApplication::processEvents();
 
@@ -242,7 +242,7 @@ void HashBox::checkAttachmentReady()
 			hashedFile.flag = hashingInfo.flag;
 			hashedFiles.push_back(hashedFile);
 
-			ui->verticalLayout->removeWidget(hashingInfo.item);
+			ui->scrollAreaWidgetContentsVLayout->removeWidget(hashingInfo.item);
 			hashingInfo.item->deleteLater();
 		}
 	}

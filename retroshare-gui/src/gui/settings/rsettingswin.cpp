@@ -71,7 +71,7 @@ RSettingsWin::RSettingsWin(QWidget *parent)
       restoreGeometry(geometry);
     }
 
-    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
+    connect(ui.listOfSettings, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
@@ -175,7 +175,7 @@ void RSettingsWin::addPage(ConfigPage *page)
 	ui.stackedWidget->addWidget(page) ;
 
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
-	ui.listWidget->addItem(item) ;
+	ui.listOfSettings->addItem(item) ;
 }
 
 void
@@ -192,10 +192,10 @@ RSettingsWin::setNewPage(int page)
 		return ;
 	}
 	ui.pageName->setText(pagew->pageName());
-	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
+	ui.pageIcon->setPixmap(pagew->iconPixmap()) ;
 
 	ui.stackedWidget->setCurrentIndex(page);
-	ui.listWidget->setCurrentRow(page);
+	ui.listOfSettings->setCurrentRow(page);
 
 	mHelpBrowser->setHelpText(pagew->helpText());
 }

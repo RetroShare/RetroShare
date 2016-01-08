@@ -14,7 +14,7 @@
    <string notr="true">MainWindow</string>
   </property>
   <widget class="QWidget" name="chatcentralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="chatcentralwidgetHLayout">
     <property name="leftMargin">
      <number>5</number>
     </property>

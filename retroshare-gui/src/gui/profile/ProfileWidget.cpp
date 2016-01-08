@@ -42,7 +42,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
     ui.setupUi(this);
 
     connect(ui.editstatustoolButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
-    connect(ui.CopyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
+    connect(ui.copyCertButton,SIGNAL(clicked()), this, SLOT(copyCert()));
     connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
@@ -80,7 +80,7 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         rsPeers->getGPGAcceptedList(ids);
         int friends = ids.size();
 
-        ui.friendsEdit->setText(QString::number(friends));
+        ui.friends->setText(QString::number(friends));
     }
 }
 

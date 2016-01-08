@@ -17,7 +17,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_32.png</normaloff>:/images/logo/logo_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="CreateLobbyDialogVLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -29,7 +29,7 @@
    </item>
    <item>
     <widget class="QFrame" name="frame">
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="frameVLayout">
       <item>
        <widget class="StyledLabel" name="lobbyInfoLabel">
         <property name="text">
@@ -41,14 +41,14 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="mainHLayout">
         <item>
          <widget class="QFrame" name="lobbyFrame">
-          <layout class="QVBoxLayout" name="verticalLayout">
+          <layout class="QVBoxLayout" name="lobbyFrameVLayout">
            <item>
-            <layout class="QGridLayout" name="gridLayout_3">
+            <layout class="QGridLayout" name="lobbyGLayout">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="lobbyName_Label">
                <property name="text">
                 <string>Lobby name:</string>
                </property>
@@ -61,7 +61,7 @@
               <widget class="QLineEdit" name="lobbyName_LE"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="lobbyTopic_Label">
                <property name="text">
                 <string>Lobby topic:</string>
                </property>
@@ -74,7 +74,7 @@
               <widget class="QLineEdit" name="lobbyTopic_LE"/>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="idChooser_Label">
                <property name="text">
                 <string>Identity to use:</string>
                </property>
@@ -84,7 +84,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="security_Label">
                <property name="text">
                 <string>Visibility:</string>
                </property>
@@ -121,7 +121,7 @@
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="pgp_signed_Label">
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
@@ -136,7 +136,7 @@
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer">
+            <spacer name="lobbyVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -152,9 +152,9 @@
          </widget>
         </item>
         <item>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="selectGLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="selectLabel">
             <property name="text">
              <string>Select the Friends with which you want to group chat.</string>
             </property>
@@ -199,7 +199,7 @@
              <string>Invited friends</string>
             </property>
             <widget class="QWidget" name="dockWidgetContents">
-             <layout class="QGridLayout" name="_2">
+             <layout class="QGridLayout" name="dockWidgetContentsGLayout">
               <property name="margin">
                <number>0</number>
               </property>
@@ -249,7 +249,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>

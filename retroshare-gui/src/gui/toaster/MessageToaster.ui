@@ -26,7 +26,16 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -37,15 +46,24 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout">
-      <property name="margin">
+     <layout class="QGridLayout" name="windowFrameGLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <property name="spacing">
        <number>2</number>
       </property>
       <item row="0" column="0">
-       <layout class="QHBoxLayout">
+       <layout class="QHBoxLayout" name="headerHLayout">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -85,7 +103,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="headerHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -123,7 +141,7 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QGridLayout">
+       <layout class="QGridLayout" name="bodyGLayout">
         <property name="spacing">
          <number>2</number>
         </property>
@@ -190,7 +208,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

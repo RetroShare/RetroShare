@@ -92,13 +92,13 @@ HelpDialog::HelpDialog(QWidget *parent) :
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;
 	RsControl::instance()->getLibraries(libraries);
-	addLibraries(ui->libraryLayout, "libretroshare", libraries);
+	addLibraries(ui->libSAreaWCGLayout, "libretroshare", libraries);
 
 	/* Add version numbers of RetroShare */
 	// Add versions here. Find a better place.
 	libraries.clear();
 	libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
-	addLibraries(ui->libraryLayout, "RetroShare", libraries);
+	addLibraries(ui->libSAreaWCGLayout, "RetroShare", libraries);
 
 	/* Add version numbers of plugins */
 	if (rsPlugins) {
@@ -107,7 +107,7 @@ HelpDialog::HelpDialog(QWidget *parent) :
 			if (plugin) {
 				libraries.clear();
 				plugin->getLibraries(libraries);
-				addLibraries(ui->libraryLayout, plugin->getPluginName(), libraries);
+				addLibraries(ui->libSAreaWCGLayout, plugin->getPluginName(), libraries);
 			}
 		}
 	}

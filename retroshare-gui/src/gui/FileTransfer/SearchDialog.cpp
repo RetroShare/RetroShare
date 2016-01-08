@@ -122,7 +122,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
     connect( ui.pushButtonSearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
-    connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
+    connect( ui.closeAllSearchResultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
 
     connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));
 
@@ -204,7 +204,7 @@ SearchDialog::SearchDialog(QWidget *parent)
   	ui._ownFiles_CB->setMinimumWidth(20);
   	ui._friendListsearch_SB->setMinimumWidth(20);
     ui._anonF2Fsearch_CB->setMinimumWidth(20);
-    ui.label->setMinimumWidth(20);
+    ui._max_results_Label->setMinimumWidth(20);
 
     // workaround for Qt bug, be solved in next Qt release 4.7.0
     // https://bugreports.qt-project.org/browse/QTBUG-8270

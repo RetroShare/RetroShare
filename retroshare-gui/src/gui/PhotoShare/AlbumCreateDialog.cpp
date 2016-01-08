@@ -17,8 +17,8 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, 
     
 
 #if QT_VERSION >= 0x040700
-    ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album"));
-    ui->lineEdit_Caption_2->setPlaceholderText(tr("Say something about this album..."));
+    ui->lineEdit_Title->setPlaceholderText(tr("Untitle Album"));
+    ui->lineEdit_Caption->setPlaceholderText(tr("Say something about this album..."));
     //ui->textEdit_Description->setPlaceholderText(tr("Say something about this album...")) ;
     ui->lineEdit_Where->setPlaceholderText(tr("Where were these taken?"));
 #endif
@@ -52,16 +52,16 @@ void AlbumCreateDialog::publishAlbum()
     // get fields for album to publish, publish and then exit dialog
     RsPhotoAlbum album;
 
-    album.mCaption = ui->lineEdit_Caption_2->text().toStdString();
+    album.mCaption = ui->lineEdit_Caption->text().toStdString();
     album.mPhotographer = ui->lineEdit_Photographer->text().toStdString();
-    album.mMeta.mGroupName = ui->lineEdit_Title_2->text().toStdString();
+    album.mMeta.mGroupName = ui->lineEdit_Title->text().toStdString();
     album.mDescription = ui->textEdit_Description->toPlainText().toStdString();
     album.mWhere = ui->lineEdit_Where->text().toStdString();
     album.mPhotographer = ui->lineEdit_Photographer->text().toStdString();
     getAlbumThumbnail(album.mThumbnail);
 
 
-    int currIndex = ui->privacyComboBox->currentIndex();
+    int currIndex = ui->comboBox_Privacy->currentIndex();
 
     switch(currIndex)
     {

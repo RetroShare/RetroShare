@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Share</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -24,14 +24,14 @@
     <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item>
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <property name="horizontalSpacing">
        <number>6</number>
       </property>
@@ -77,7 +77,7 @@
          <string>Share for Friend</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents">
-         <layout class="QGridLayout" name="_2">
+         <layout class="QGridLayout" name="dockWidgetContentsGLayout">
           <property name="margin">
            <number>0</number>
           </property>
@@ -123,7 +123,7 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>

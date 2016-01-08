@@ -10,17 +10,8 @@
     <height>353</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+  <layout class="QVBoxLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -37,7 +28,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
       <property name="margin">
        <number>2</number>
       </property>
@@ -62,7 +53,7 @@
        </widget>
       </item>
       <item>
-       <spacer>
+       <spacer name="titleHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -80,7 +71,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -116,7 +107,7 @@
       <attribute name="title">
        <string>Downloads</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="tabGLayout">
        <property name="horizontalSpacing">
         <number>6</number>
        </property>
@@ -187,7 +178,7 @@
            <bool>false</bool>
           </attribute>
          </widget>
-         <widget class="QTabWidget" name="tabWidget_2">
+         <widget class="QTabWidget" name="tab_Upload">
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -214,7 +205,7 @@
            <attribute name="title">
             <string>Uploads</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="uploadsTabGLayout">
             <property name="margin">
              <number>0</number>
             </property>
@@ -247,6 +238,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -62,7 +62,7 @@ void PhotoDialog::clearComments()
     while(sit.hasNext())
     {
         PhotoCommentItem* item = sit.next();
-        ui->verticalLayout->removeWidget(item);
+        ui->scrollAreaVLayout->removeWidget(item);
         item->setParent(NULL);
         delete item;
     }
@@ -77,7 +77,7 @@ void PhotoDialog::resetComments()
     while(sit.hasNext())
     {
         PhotoCommentItem* item = sit.next();
-        ui->verticalLayout->insertWidget(0,item);
+        ui->scrollAreaVLayout->insertWidget(0,item);
     }
 }
 

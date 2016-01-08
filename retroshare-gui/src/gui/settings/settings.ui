@@ -17,9 +17,9 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="buttonHLayout">
      <property name="spacing">
       <number>6</number>
      </property>
@@ -36,7 +36,7 @@
     </layout>
    </item>
    <item row="0" column="1">
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="headerGLayout">
      <item row="0" column="1">
       <widget class="StyledLabel" name="pageName">
        <property name="sizePolicy">
@@ -57,7 +57,7 @@
       </widget>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="pageicon">
+      <widget class="QLabel" name="pageIcon">
        <property name="maximumSize">
         <size>
          <width>24</width>
@@ -75,7 +75,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="icon">
-        <iconset resource="../images.qrc">
+        <iconset resource="../icons.qrc">
          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
        </property>
        <property name="checkable">
@@ -87,7 +87,7 @@
       </widget>
      </item>
      <item row="1" column="0" colspan="3">
-      <widget class="Line" name="line_2">
+      <widget class="Line" name="headerHline">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -96,7 +96,7 @@
     </layout>
    </item>
    <item row="0" column="0" rowspan="3">
-    <widget class="QListWidget" name="listWidget">
+    <widget class="QListWidget" name="listOfSettings">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -142,14 +142,14 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="Line" name="line">
+    <widget class="Line" name="buttonHline">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="settingSArea">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -168,7 +168,7 @@
         <height>495</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
        <property name="margin">
         <number>3</number>
        </property>
@@ -194,6 +194,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

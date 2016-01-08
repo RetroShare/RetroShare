@@ -179,9 +179,9 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 	if (tabbedWindow) {
 		ui.tabWidget->addDialog(dialog);
 	} else {
-		ui.horizontalLayout->addWidget(dialog);
+		ui.chatcentralwidgetHLayout->addWidget(dialog);
 		dialog->addToParent(this);
-		ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
+		ui.chatcentralwidgetHLayout->setContentsMargins(0, 0, 0, 0);
         chatId = dialog->getChatId();
 		chatDialog = dialog;
 		calculateStyle(dialog);
@@ -213,7 +213,7 @@ void PopupChatWindow::removeDialog(ChatDialog *dialog)
 		if (chatDialog == dialog) {
 			saveSettings();
 			dialog->removeFromParent(this);
-			ui.horizontalLayout->removeWidget(dialog);
+			ui.chatcentralwidgetHLayout->removeWidget(dialog);
 			chatDialog = NULL;
             chatId = ChatId();
 			deleteLater();

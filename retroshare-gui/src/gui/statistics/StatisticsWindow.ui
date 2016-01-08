@@ -14,7 +14,7 @@
    <string notr="true">RetroShare Statistics</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="centralwidgetGLayout">
     <property name="margin">
      <number>0</number>
     </property>

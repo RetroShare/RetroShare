@@ -72,7 +72,7 @@ DetailsDialog::DetailsDialog(QWidget *parent)
 
 void DetailsDialog::copyLink()
 {
-	QApplication::clipboard()->setText(	ui.Linktext->toPlainText() );
+	QApplication::clipboard()->setText(	ui.linkText->toPlainText() );
 }
 void DetailsDialog::on_ok_dButton_clicked()
 {
@@ -113,6 +113,6 @@ void DetailsDialog::setFileHash(const RsFileHash & hash)
 	RetroShareLink link ;
     link.createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash.toStdString())) ;
 
-	ui.Linktext->setText(link.toString()) ;
+	ui.linkText->setText(link.toString()) ;
 }
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>758</width>
+    <width>874</width>
     <height>339</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
@@ -31,12 +31,21 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <property name="margin">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="titleBarHLayout">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -54,15 +63,24 @@
             <height>22</height>
            </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="searchLineFrameGLayout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <property name="horizontalSpacing">
             <number>0</number>
            </property>
            <property name="verticalSpacing">
             <number>1</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
            </property>
            <item row="0" column="0">
             <widget class="LineEditClear" name="lineEdit">
@@ -143,7 +161,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="cloaseallsearchresultsButton">
+       <widget class="QPushButton" name="closeAllSearchResultsButton">
         <property name="toolTip">
          <string>Close all Search Results</string>
         </property>
@@ -205,7 +223,7 @@
       </column>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="resultVLayout">
        <item>
         <widget class="SearchTreeWidget" name="searchResultWidget">
          <property name="sizePolicy">
@@ -259,9 +277,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="resultButtonHLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="filterLabel">
            <property name="text">
             <string>Filter:</string>
            </property>
@@ -275,7 +293,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="_max_results_Label">
            <property name="text">
             <string>Max results:</string>
            </property>

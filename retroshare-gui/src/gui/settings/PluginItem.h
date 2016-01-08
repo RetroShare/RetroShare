@@ -28,7 +28,7 @@ class PluginItem: public QWidget, public Ui::PluginItem
 	Q_OBJECT
 
 	public:
-		PluginItem(const QString& pluginVersion, int id,const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon) ;
+		PluginItem(const QString& pluginVersion, int pluginId,const QString& pluginTitle,const QString& pluginDescription,const QString& pluginStatus, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon) ;
 
 	protected slots:
 		void configurePlugin() ;

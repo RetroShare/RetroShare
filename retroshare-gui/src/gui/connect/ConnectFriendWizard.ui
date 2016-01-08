@@ -27,7 +27,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Intro</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="pageIdVLayout">
     <item>
      <widget class="QRadioButton" name="textRadioButton">
       <property name="text">
@@ -90,7 +90,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Text</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="TextPageVLayout">
     <item>
      <widget class="QLabel" name="userCertLabel">
       <property name="text">
@@ -99,7 +99,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="userHLayout">
       <item>
        <widget class="QPlainTextEdit" name="userCertEdit">
         <property name="font">
@@ -119,7 +119,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="userVLayout">
         <item>
          <widget class="QToolButton" name="userCertHelpButton">
           <property name="sizePolicy">
@@ -259,7 +259,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_2">
+         <spacer name="userVSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -283,7 +283,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="friendHLayout">
       <item>
        <widget class="QPlainTextEdit" name="friendCertEdit">
         <property name="font">
@@ -300,9 +300,9 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="friendVLayout">
         <item>
-         <spacer name="verticalSpacer_3">
+         <spacer name="friendTopVSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -315,7 +315,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QToolButton" name="userCertPasteButton">
+         <widget class="QToolButton" name="friendCertPasteButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
@@ -348,7 +348,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
+         <spacer name="friendBottomVSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -376,7 +376,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Cert</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_5">
+   <layout class="QVBoxLayout" name="CertificatePageVLayout">
     <item>
      <widget class="QGroupBox" name="userFileFrame">
       <property name="title">
@@ -385,7 +385,7 @@
       <property name="flat">
        <bool>true</bool>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <layout class="QHBoxLayout" name="userFileFrameHLayout">
        <item>
         <widget class="QLabel" name="userFileLabel">
          <property name="text">
@@ -414,7 +414,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="friendFileHLayout">
       <item>
        <widget class="DropLineEdit" name="friendFileNameEdit"/>
       </item>
@@ -439,9 +439,9 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Foff</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_11">
+   <layout class="QVBoxLayout" name="FofPageVLayout">
     <item>
-     <widget class="QLabel" name="userFileLabel_2">
+     <widget class="QLabel" name="userSelectionLabel">
       <property name="text">
        <string>Show me:</string>
       </property>
@@ -486,7 +486,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Rsid</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_7">
+   <layout class="QVBoxLayout" name="RsidPageVLayout">
     <item>
      <widget class="QGroupBox" name="userRsidFrame">
       <property name="title">
@@ -495,7 +495,7 @@
       <property name="flat">
        <bool>true</bool>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_8"/>
+      <layout class="QVBoxLayout" name="userRsidFrameVLayout"/>
      </widget>
     </item>
     <item>
@@ -514,7 +514,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="WebmalPage">
+  <widget class="QWizardPage" name="WebmailPage">
    <property name="title">
     <string>RetroShare is better with Friends </string>
    </property>
@@ -524,14 +524,23 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_WebMail</string>
    </attribute>
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="webmailPageGLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
-      <property name="margin">
+     <layout class="QHBoxLayout" name="mailButtonHLayout">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
        <number>9</number>
       </property>
       <item>
-       <spacer name="horizontalSpacer_2">
+       <spacer name="mailButtonLHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -664,7 +673,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="mailButtonRHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -682,37 +691,7 @@
      </layout>
     </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0">
-     <spacer name="verticalSpacer_6">
+     <spacer name="webMailVSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -736,9 +715,9 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Email</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_9">
+   <layout class="QVBoxLayout" name="EmailPageVLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QHBoxLayout" name="addressHLayout">
       <item>
        <widget class="QLabel" name="addressLabel">
         <property name="text">
@@ -756,7 +735,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <layout class="QHBoxLayout" name="subjectHLayout">
       <item>
        <widget class="QLabel" name="subjectLabel">
         <property name="text">
@@ -788,7 +767,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_FriendRequest</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_15">
+   <layout class="QVBoxLayout" name="FriendRequestPageVLayout">
     <property name="leftMargin">
      <number>6</number>
     </property>
@@ -796,10 +775,10 @@
      <number>6</number>
     </property>
     <item>
-     <widget class="QFrame" name="frame">
-      <layout class="QVBoxLayout" name="verticalLayout_13">
+     <widget class="QFrame" name="fr_frame">
+      <layout class="QVBoxLayout" name="fr_frameVLayout">
        <item>
-        <widget class="StyledLabel" name="fr_label_3">
+        <widget class="StyledLabel" name="fr_labelTop">
          <property name="text">
           <string notr="true">You have a friend request from</string>
          </property>
@@ -828,7 +807,7 @@
            <property name="title">
             <string>Peer details</string>
            </property>
-           <layout class="QFormLayout" name="formLayout_3">
+           <layout class="QFormLayout" name="fr_peerDetailsFrameFLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
@@ -880,13 +859,13 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="fr_optionslLayout">
+        <layout class="QHBoxLayout" name="fr_optionsHLayout">
          <item>
-          <widget class="QGroupBox" name="fr_optionsFrame">
+          <widget class="QGroupBox" name="fr_optionsLGBox">
            <property name="title">
             <string>Options</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14">
+           <layout class="QVBoxLayout" name="fr_optionsLGBoxVLayout">
             <item>
              <layout class="QHBoxLayout" name="fr_groupLayout">
               <item>
@@ -932,34 +911,34 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="fr_optionsRGBox">
            <property name="title">
             <string>Options</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
+           <layout class="QVBoxLayout" name="fr_optionsRGBoxVLayout">
             <item>
-             <widget class="QCheckBox" name="_direct_transfer_CB">
+             <widget class="QCheckBox" name="fr_direct_transfer_CB">
               <property name="text">
                <string>Use as direct source, when available</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_allow_push_CB">
+             <widget class="QCheckBox" name="fr_allow_push_CB">
               <property name="text">
                <string>Auto-download recommended files</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_require_WL_CB">
+             <widget class="QCheckBox" name="fr_require_WL_CB">
               <property name="text">
                <string>Require whitelist clearance to connect</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_5">
+             <spacer name="fr_optionsRVSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -980,7 +959,7 @@
      </widget>
     </item>
     <item>
-     <widget class="StyledLabel" name="requestinfolabel_3">
+     <widget class="StyledLabel" name="fr_labelBottom">
       <property name="text">
        <string>To accept the Friend Request, click the Finish button.</string>
       </property>
@@ -1011,7 +990,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_ErrorMessage</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <layout class="QVBoxLayout" name="ErrorMessagePageVLayout">
     <item>
      <widget class="QLabel" name="messageLabel">
       <property name="text">
@@ -1031,7 +1010,7 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Conclusion</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_17">
+   <layout class="QVBoxLayout" name="ConclusionPageVLayout">
     <item>
      <widget class="StyledLabel" name="makefriend_infolabel">
       <property name="palette">
@@ -1303,9 +1282,9 @@ resources.</string>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <layout class="QHBoxLayout" name="cp_optionsHLayout">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_18">
+       <layout class="QVBoxLayout" name="cp_optionsLVLayout">
         <item>
          <widget class="QCheckBox" name="addKeyToKeyring_CB">
           <property name="text">
@@ -1328,21 +1307,21 @@ resources.</string>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <layout class="QHBoxLayout" name="addIPToWLHLayout">
           <item>
-           <widget class="QCheckBox" name="_addIPToWhiteList_CB_2">
+           <widget class="QCheckBox" name="_addIPToWhiteList_CB">
             <property name="text">
              <string>Add IP to whitelist</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="_addIPToWhiteList_ComboBox_2"/>
+           <widget class="QComboBox" name="_addIPToWhiteList_ComboBox"/>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <layout class="QHBoxLayout" name="groupHLayout">
           <item>
            <widget class="QLabel" name="groupLabel">
             <property name="text">
@@ -1358,29 +1337,29 @@ resources.</string>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_19">
+       <layout class="QVBoxLayout" name="cp_optionsRVLayout">
         <item>
          <widget class="QGroupBox" name="_options_GB">
           <property name="title">
            <string>Options</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
+          <layout class="QVBoxLayout" name="_options_GBVLayout">
            <item>
-            <widget class="QCheckBox" name="_direct_transfer_CB_2">
+            <widget class="QCheckBox" name="cp_direct_transfer_CB">
              <property name="text">
               <string>Can be used as direct source</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_allow_push_CB_2">
+            <widget class="QCheckBox" name="cp_allow_push_CB">
              <property name="text">
               <string>Auto-download recommended files</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_require_WL_CB_2">
+            <widget class="QCheckBox" name="cp_require_WL_CB">
              <property name="text">
               <string>Require whitelist clearance to connect</string>
              </property>
@@ -1390,7 +1369,7 @@ resources.</string>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_4">
+         <spacer name="cp_optionsRVSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1498,9 +1477,9 @@ resources.</string>
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_FriendRecommendations</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_16">
+   <layout class="QVBoxLayout" name="FriendRecommendationsPageVLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <layout class="QHBoxLayout" name="frec_HLayout">
       <item>
        <widget class="FriendSelectionWidget" name="frec_recommendList" native="true">
         <property name="sizePolicy">
@@ -1545,9 +1524,9 @@ resources.</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1556,9 +1535,9 @@ resources.</string>
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>FriendSelectionWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendSelectionWidget.h</header>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

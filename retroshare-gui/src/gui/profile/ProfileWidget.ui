@@ -16,7 +16,7 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout">
    <property name="verticalSpacing">
     <number>0</number>
    </property>
@@ -25,7 +25,7 @@
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="toolBarFrame">
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="toolBarFrameHLayout">
       <property name="margin">
        <number>2</number>
       </property>
@@ -53,7 +53,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="CopyCertButton">
+       <widget class="QToolButton" name="copyCertButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
@@ -99,7 +99,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="toolBarHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -125,21 +125,21 @@
         <x>0</x>
         <y>0</y>
         <width>498</width>
-        <height>569</height>
+        <height>567</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout" name="scrollAreaWidgetContentsGLayout">
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_1">
+        <widget class="QFrame" name="publicFrame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="publicFrameGLayout">
           <item row="0" column="0" colspan="3">
-           <layout class="QGridLayout" name="gridLayout_3">
+           <layout class="QGridLayout" name="publicTitleGLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="publicIcon">
               <property name="maximumSize">
@@ -169,7 +169,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="nameLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -207,7 +207,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="countryLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -245,7 +245,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="peeridLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -286,16 +286,16 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QFrame" name="frame_2">
+        <widget class="QFrame" name="otherFrame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6" columnstretch="0,0,0" columnminimumwidth="0,0,0">
+         <layout class="QGridLayout" name="otherFrameGLayout" columnstretch="0,0,0" columnminimumwidth="0,0,0">
           <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="friendsLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -314,7 +314,7 @@
            </widget>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QLabel" name="friendsEdit">
+           <widget class="QLabel" name="friends">
             <property name="sizePolicy">
              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -333,7 +333,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="versionLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -352,7 +352,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="onlinesinceLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -409,7 +409,7 @@
            </widget>
           </item>
           <item row="1" column="0" colspan="3">
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="otherTitleGLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="otherIcon">
               <property name="maximumSize">
@@ -445,16 +445,16 @@
         </widget>
        </item>
        <item row="12" column="0">
-        <widget class="QFrame" name="frame_3">
+        <widget class="QFrame" name="myFrame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
+         <layout class="QGridLayout" name="addrFrameGLayout">
           <item row="0" column="0" colspan="4">
-           <layout class="QGridLayout" name="gridLayout_8">
+           <layout class="QGridLayout" name="myTitleGLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="myIcon">
               <property name="maximumSize">
@@ -487,7 +487,7 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="localAddressLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -547,7 +547,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="extAddressLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -566,7 +566,7 @@
            </widget>
           </item>
           <item row="1" column="3">
-           <spacer name="horizontalSpacer_4">
+           <spacer name="localAddressHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -620,7 +620,7 @@
            </widget>
           </item>
           <item row="2" column="3">
-           <spacer name="horizontalSpacer_7">
+           <spacer name="extAddressHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -633,7 +633,7 @@
            </spacer>
           </item>
           <item row="3" column="3">
-           <spacer name="horizontalSpacer_9">
+           <spacer name="dyndnsHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -646,7 +646,7 @@
            </spacer>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="dyndnsLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -675,7 +675,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="ipAddressListLabel">
             <property name="minimumSize">
              <size>
               <width>100</width>
@@ -704,7 +704,7 @@
         </widget>
        </item>
        <item row="13" column="0">
-        <spacer name="verticalSpacer">
+        <spacer name="scrollAreaVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

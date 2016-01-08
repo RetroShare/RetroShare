@@ -13,12 +13,12 @@
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="PopupChatDialogVLayout">
    <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="mainHLayout">
      <property name="spacing">
       <number>3</number>
      </property>
@@ -45,7 +45,7 @@
          <height>16777215</height>
         </size>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="leftsideframeVLayout">
         <property name="margin">
          <number>0</number>
         </property>
@@ -78,7 +78,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="avatarFrameSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -101,7 +101,7 @@
          <height>16777215</height>
         </size>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="avatarframeVLayout">
         <property name="margin">
          <number>0</number>
         </property>
@@ -181,15 +181,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>
    <header location="global">gui/chat/ChatWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

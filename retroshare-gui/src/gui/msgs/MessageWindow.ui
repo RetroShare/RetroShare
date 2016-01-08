@@ -11,7 +11,7 @@
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="centralwidgetGLayout">
     <property name="verticalSpacing">
      <number>0</number>
     </property>
@@ -44,7 +44,7 @@
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="toolBarFrameGLayout">
        <property name="margin">
         <number>2</number>
        </property>
@@ -81,7 +81,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="Line" name="line">
+        <widget class="Line" name="rightVLine">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -187,7 +187,7 @@
         </widget>
        </item>
        <item row="0" column="5">
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="leftVLine">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -281,7 +281,7 @@
         </widget>
        </item>
        <item row="0" column="10">
-        <spacer name="horizontalSpacer">
+        <spacer name="toolBarHSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -337,7 +337,7 @@
      <x>0</x>
      <y>0</y>
      <width>698</width>
-     <height>20</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>

@@ -70,15 +70,15 @@ ShareManager::ShareManager()
     connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
 
-    connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
-    connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
+    connect(ui.sharedDirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
+    connect(ui.sharedDirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(updateGroups()));
 
     ui.editButton->setEnabled(false);
     ui.removeButton->setEnabled(false);
 
-    QHeaderView* header = ui.shareddirList->horizontalHeader();
+    QHeaderView* header = ui.sharedDirList->horizontalHeader();
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
 
     //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
@@ -135,7 +135,7 @@ void ShareManager::load()
     rsFiles->getSharedDirectories(dirs);
 
     /* get a link to the table */
-    QTableWidget *listWidget = ui.shareddirList;
+    QTableWidget *listWidget = ui.sharedDirList;
 
     /* set new row count */
     listWidget->setRowCount(dirs.size());
@@ -204,10 +204,10 @@ void ShareManager::updateFlags()
 
 	 std::map<QString, FileStorageFlags> mapped_flags ;
 
-	 for(int row=0;row<ui.shareddirList->rowCount();++row)
+	 for(int row=0;row<ui.sharedDirList->rowCount();++row)
 	 {
-		 QString dirpath = ui.shareddirList->item(row,COLUMN_PATH)->text() ;
-		 FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
+		 QString dirpath = ui.sharedDirList->item(row,COLUMN_PATH)->text() ;
+		 FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.sharedDirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
 
 		 mapped_flags[dirpath] = flags ;
 
@@ -245,7 +245,7 @@ void ShareManager::updateGroups()
     int row=0 ;
     for(it = dirs.begin(); it != dirs.end(); ++it,++row)
     {
-        QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_GROUPS);
+        QTableWidgetItem *item = ui.sharedDirList->item(row, COLUMN_GROUPS);
 
         QString group_string;
         int n = 0;
@@ -266,8 +266,8 @@ void ShareManager::updateGroups()
 void ShareManager::editShareDirectory()
 {
     /* id current dir */
-    int row = ui.shareddirList->currentRow();
-    QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_PATH);
+    int row = ui.sharedDirList->currentRow();
+    QTableWidgetItem *item = ui.sharedDirList->item(row, COLUMN_PATH);
 
     if (item) {
         std::string filename = item->text().toUtf8().constData();
@@ -292,7 +292,7 @@ void ShareManager::removeShareDirectory()
 {
     /* id current dir */
     /* ask for removal */
-    QTableWidget *listWidget = ui.shareddirList;
+    QTableWidget *listWidget = ui.sharedDirList;
     int row = listWidget -> currentRow();
     QTableWidgetItem *qdir = listWidget->item(row, COLUMN_PATH);
 

@@ -18,23 +18,41 @@
     <normaloff>:/images/rsmessenger48.png</normaloff>:/images/rsmessenger48.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+   <layout class="QGridLayout" name="centralwidgetGLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
      <number>0</number>
     </property>
     <item row="0" column="0">
-     <widget class="QFrame" name="messengerframetop">
+     <widget class="QFrame" name="messengerFrameTop">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
         <height>82</height>
        </size>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
+      <layout class="QGridLayout" name="messengerFrameTopGLayout">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
         <number>6</number>
        </property>
        <item row="0" column="0">
@@ -54,9 +72,9 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <layout class="QGridLayout" name="gridLayout_4">
+        <layout class="QGridLayout" name="messageGLayout">
          <item row="1" column="0" colspan="2">
-          <widget class="QComboBox" name="messagelineEdit">
+          <widget class="QComboBox" name="messageLineEdit">
            <property name="editable">
             <bool>true</bool>
            </property>
@@ -84,7 +102,7 @@
         </layout>
        </item>
        <item row="1" column="1">
-        <spacer name="verticalSpacer">
+        <spacer name="messengerVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -117,8 +135,17 @@
     </item>
     <item row="1" column="0">
      <widget class="QFrame" name="friendListFrame">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <property name="margin">
+      <layout class="QGridLayout" name="friendListFrameGLayout">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
         <number>3</number>
        </property>
        <item row="1" column="0">
@@ -136,13 +163,13 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>258</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

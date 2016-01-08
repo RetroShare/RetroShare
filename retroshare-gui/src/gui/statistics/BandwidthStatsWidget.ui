@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -31,9 +31,9 @@
      <property name="title">
       <string/>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="informationSelector_GBHLayout">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="friend_Label">
         <property name="text">
          <string>Friend:</string>
         </property>
@@ -53,7 +53,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="type_Label">
         <property name="text">
          <string>Type:</string>
         </property>
@@ -74,7 +74,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="service_Label">
         <property name="text">
          <string>Service:</string>
         </property>
@@ -94,7 +94,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="Unit_Label">
         <property name="text">
          <string>Unit:</string>
         </property>
@@ -111,7 +111,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="buttonHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

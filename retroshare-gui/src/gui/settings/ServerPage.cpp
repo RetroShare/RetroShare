@@ -105,7 +105,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-	ui.hiddenpage_incoming->setVisible(false);
+	ui.hiddenpage_incomingGBox->setVisible(false);
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
@@ -227,11 +227,11 @@ void ServerPage::load()
         loadFilteredIps() ;
 
     ui.netModeComboBox->show() ;
-    ui.textlabel_upnp->show();
+    ui.label_upnp->show();
     ui.iconlabel_upnp->show();
     ui.label_nat->show();
 
-	ui.hiddenMode_LB->hide() ;
+	ui.label_hiddenMode->hide() ;
 	ui.iconlabel_hiddenMode->hide() ;
 
 	/* set net mode */
@@ -884,11 +884,11 @@ void ServerPage::loadHiddenNode()
 	// FIXED.
 	//ui.netModeComboBox->setCurrentIndex(3);
 	ui.netModeComboBox->hide();
-	ui.textlabel_upnp->hide();
+	ui.label_upnp->hide();
 	ui.iconlabel_upnp->hide();
 	ui.label_nat->hide();
 	
-	ui.hiddenMode_LB->show();
+	ui.label_hiddenMode->show();
 	ui.iconlabel_hiddenMode->show() ;
 	ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
 
@@ -922,7 +922,7 @@ void ServerPage::loadHiddenNode()
 	ui.label_dynDNS->setVisible(false);
 	ui.dynDNS      ->setVisible(false);
 
-	ui.hiddenpage_incoming->setVisible(true);
+	ui.hiddenpage_incomingGBox->setVisible(true);
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -981,7 +981,7 @@ void ServerPage::loadHiddenNode()
 	QString expected = "";
 	switch (mHiddenType) {
 	case RS_HIDDEN_TYPE_I2P:
-		ui.l_serviceAddress->setText(tr("I2P Address"));
+		ui.label_hiddenpage_serviceAddress->setText(tr("I2P Address"));
 		ui.l_incomingTestResult->setText(tr("I2P incoming ok"));
 
 		expected += "http://127.0.0.1:7657/i2ptunnelmgr - I2P Hidden Services\n";
@@ -991,7 +991,7 @@ void ServerPage::loadHiddenNode()
 		expected += QString::number(detail.localPort);
 		break;
 	case RS_HIDDEN_TYPE_TOR:
-		ui.l_serviceAddress->setText(tr("Onion Address"));
+		ui.label_hiddenpage_serviceAddress->setText(tr("Onion Address"));
 		ui.l_incomingTestResult->setText(tr("Tor incoming ok"));
 
 		expected += "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
@@ -1003,7 +1003,7 @@ void ServerPage::loadHiddenNode()
 		expected += QString::number(detail.localPort);
 		break;
 	default:
-		ui.l_serviceAddress->setText(tr("Service Address"));
+		ui.label_hiddenpage_serviceAddress->setText(tr("Service Address"));
 		ui.l_incomingTestResult->setText(tr("incoming ok"));
 
 		expected += "Please fill in a service address";

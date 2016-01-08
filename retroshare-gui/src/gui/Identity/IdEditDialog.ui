@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
-    <height>518</height>
+    <width>554</width>
+    <height>575</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/identity/identities_32.png</normaloff>:/images/identity/identities_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -44,7 +44,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="frameVLayout">
       <item>
        <widget class="QLabel" name="info_label">
         <property name="palette">
@@ -129,25 +129,25 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="detailHLayout">
         <item>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="infoGLayout">
           <item row="3" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="pgpHash_Label">
             <property name="text">
              <string>PGP Hash</string>
             </property>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="type_Label">
             <property name="text">
              <string>Type</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QRadioButton" name="radioButton_GpgId">
+           <widget class="QRadioButton" name="radioButton_PGPId">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -193,35 +193,35 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="nickname_Label">
             <property name="text">
              <string>Nickname</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="keyId_Label">
             <property name="text">
              <string>Key ID</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="pgpId_Label">
             <property name="text">
              <string>PGP Id</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="pgpName_Label">
             <property name="text">
              <string>PGP Name</string>
             </property>
            </widget>
           </item>
           <item row="0" column="3">
-           <spacer name="horizontalSpacer_3">
+           <spacer name="infoHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -234,38 +234,38 @@
            </spacer>
           </item>
           <item row="1" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEdit_Nickname"/>
+           <widget class="QLineEdit" name="nickname_LEdit"/>
           </item>
           <item row="2" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEdit_KeyId">
+           <widget class="QLineEdit" name="keyId_LEdit">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="3" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEdit_GpgHash">
+           <widget class="QLineEdit" name="pgpHash_LEdit">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="4" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEdit_GpgId">
+           <widget class="QLineEdit" name="pgpId_LEdit">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="5" column="1" colspan="3">
-           <widget class="QLineEdit" name="lineEdit_GpgName">
+           <widget class="QLineEdit" name="pgpName_LEdit">
             <property name="readOnly">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item row="6" column="0" colspan="4">
-           <spacer name="verticalSpacer_2">
+           <spacer name="infoVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -280,7 +280,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="avatarVLayout">
           <item>
            <widget class="QLabel" name="avatarLabel">
             <property name="sizePolicy">
@@ -326,7 +326,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_3">
+           <spacer name="avatarVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -353,7 +353,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="frame_TagsGLayout">
       <item row="2" column="0">
        <widget class="QLabel" name="label_Tag2">
         <property name="text">
@@ -448,7 +448,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <spacer name="verticalSpacer">
+       <spacer name="tagVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -464,8 +464,8 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <widget class="QFrame" name="buttonFrame">
+     <layout class="QHBoxLayout" name="buttonFrameHLayout">
       <property name="spacing">
        <number>9</number>
       </property>
@@ -473,7 +473,7 @@
        <number>9</number>
       </property>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="buttonHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

@@ -10,7 +10,7 @@
     <height>257</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="GroupTreeWidgetVLayout">
    <property name="spacing">
     <number>2</number>
    </property>
@@ -31,7 +31,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
       <property name="margin">
        <number>2</number>
       </property>

@@ -37,7 +37,7 @@ NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::Win
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(OnCancel()));
     connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setTagColor()));
 
-    connect(ui.lineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(textChanged(const QString &)));
+    connect(ui.nameLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(textChanged(const QString &)));
 
     ui.okButton->setEnabled(false);
 
@@ -45,12 +45,12 @@ NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::Win
         std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
         Tag = m_Tags.types.find(m_nId);
         if (Tag != m_Tags.types.end()) {
-            ui.lineEdit->setText(QString::fromStdString(Tag->second.first));
+            ui.nameLineEdit->setText(QString::fromStdString(Tag->second.first));
             m_Color = QRgb(Tag->second.second);
 
             if (m_nId < RS_MSGTAGTYPE_USER) {
                 // standard tag
-                ui.lineEdit->setEnabled(false);
+                ui.nameLineEdit->setEnabled(false);
             }
         } else {
             // tag id not found
@@ -77,7 +77,7 @@ void NewTag::OnOK()
         }
     }
 
-    std::pair<std::string, uint32_t> newTag(ui.lineEdit->text().toStdString(), m_Color);
+    std::pair<std::string, uint32_t> newTag(ui.nameLineEdit->text().toStdString(), m_Color);
     m_Tags.types [m_nId] = newTag;
 
     setResult(QDialog::Accepted);

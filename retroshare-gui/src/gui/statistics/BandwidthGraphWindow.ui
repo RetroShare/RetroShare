@@ -18,9 +18,9 @@
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="centralwidgetGridLayout">
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="_8">
+     <layout class="QHBoxLayout" name="btnHLayout">
       <property name="spacing">
        <number>6</number>
       </property>
@@ -38,7 +38,7 @@
        </widget>
       </item>
       <item>
-       <spacer>
+       <spacer name="btnHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -88,7 +88,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout">
+      <layout class="QHBoxLayout" name="frmSettingsHLayout">
        <property name="spacing">
         <number>6</number>
        </property>
@@ -96,7 +96,7 @@
         <number>9</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="_2">
+        <layout class="QVBoxLayout" name="chkVLayout">
          <property name="spacing">
           <number>6</number>
          </property>
@@ -152,7 +152,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="chkVSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -167,7 +167,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="_3">
+        <layout class="QVBoxLayout" name="styleVLayout">
          <property name="spacing">
           <number>1</number>
          </property>
@@ -175,7 +175,7 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="_4">
+          <layout class="QHBoxLayout" name="styleHLayout">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -183,7 +183,7 @@
             <number>0</number>
            </property>
            <item>
-            <spacer>
+            <spacer name="styleHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -196,7 +196,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="styleLabel">
              <property name="text">
               <string>Style</string>
              </property>
@@ -237,7 +237,7 @@
            <property name="frameShadow">
             <enum>QFrame::Plain</enum>
            </property>
-           <layout class="QVBoxLayout" name="_5">
+           <layout class="QVBoxLayout" name="frmOpacityVLayout">
             <property name="spacing">
              <number>3</number>
             </property>
@@ -282,7 +282,7 @@
              </widget>
             </item>
             <item>
-             <spacer>
+             <spacer name="opacityVSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -295,7 +295,7 @@
              </spacer>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="_6">
+             <layout class="QHBoxLayout" name="opacityLabelHLayout">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -303,7 +303,7 @@
                <number>0</number>
               </property>
               <item>
-               <spacer>
+               <spacer name="opacityLabelLHSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -335,7 +335,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="opacityLabel">
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
@@ -345,7 +345,7 @@
                </widget>
               </item>
               <item>
-               <spacer>
+               <spacer name="opacityLabelRHSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -363,7 +363,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="styleVSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -378,7 +378,7 @@
         </layout>
        </item>
        <item>
-        <spacer>
+        <spacer name="settingsHSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -391,7 +391,7 @@
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="_7">
+        <layout class="QVBoxLayout" name="btnSettingsVLayout">
          <property name="spacing">
           <number>1</number>
          </property>

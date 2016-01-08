@@ -17,7 +17,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
+  <layout class="QGridLayout">
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
@@ -45,9 +45,9 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="1" column="0">
-       <layout class="QGridLayout" name="_12">
+       <layout class="QGridLayout" name="buttonGLayout">
         <item row="0" column="0">
          <widget class="QDialogButtonBox" name="buttonBox">
           <property name="standardButtons">
@@ -62,7 +62,7 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="detailsTab">
          <attribute name="icon">
           <iconset resource="../images.qrc">
            <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
@@ -70,15 +70,15 @@
          <attribute name="title">
           <string>Details</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="detailsTabVLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="nodeInfoHLayout">
             <item>
-             <widget class="QGroupBox" name="groupBox_4">
+             <widget class="QGroupBox" name="nodeInfoGBox">
               <property name="title">
                <string>Node info</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout_3">
+              <layout class="QGridLayout" name="nodeInfoGBoxGLayout">
                <item row="0" column="1">
                 <widget class="RSTextBrowser" name="pgpfingerprint">
                  <property name="sizePolicy">
@@ -169,7 +169,7 @@
                 </widget>
                </item>
                <item row="4" column="0">
-                <widget class="QLabel" name="crypto_label">
+                <widget class="QLabel" name="label_crypto">
                  <property name="text">
                   <string>Encryption</string>
                  </property>
@@ -196,7 +196,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <layout class="QVBoxLayout" name="avatarVLayout">
               <item>
                <widget class="AvatarWidget" name="avatar">
                 <property name="minimumSize">
@@ -214,7 +214,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_5">
+               <spacer name="avatarVSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -231,7 +231,7 @@
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer">
+           <spacer name="detailsVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -244,36 +244,23 @@
            </spacer>
           </item>
           <item>
-           <widget class="QTabWidget" name="tabWidget">
+           <widget class="QTabWidget" name="addressTab">
             <property name="currentIndex">
              <number>0</number>
             </property>
-            <widget class="QWidget" name="tab_5">
+            <widget class="QWidget" name="peerAddTab">
              <attribute name="title">
               <string>Peer Addresses</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_8">
+             <layout class="QGridLayout" name="peerAddTabGLayout">
               <item row="0" column="0">
-               <widget class="QGroupBox" name="groupBox">
+               <widget class="QGroupBox" name="peerAddGBox">
                 <property name="title">
                  <string>Peer Address</string>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_6">
+                <layout class="QGridLayout" name="peerAddGBoxGLayout">
                  <item row="2" column="0" colspan="2">
-                  <spacer>
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>47</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="2" column="0" colspan="2">
-                  <spacer>
+                  <spacer name="peerAddVSpacer">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
                    </property>
@@ -286,7 +273,7 @@
                   </spacer>
                  </item>
                  <item row="0" column="0">
-                  <layout class="QGridLayout" name="gridLayout_2">
+                  <layout class="QGridLayout" name="peerAddGLayout">
                    <item row="0" column="0">
                     <widget class="QLabel" name="l_localAddress">
                      <property name="layoutDirection">
@@ -370,13 +357,13 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="tab_6">
+            <widget class="QWidget" name="addListTab">
              <attribute name="title">
               <string>Addresses list</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_9">
+             <layout class="QGridLayout" name="addListTabGLayout">
               <item row="0" column="0">
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="l_ipAddressList">
                 <property name="text">
                  <string>Addresses list</string>
                 </property>
@@ -398,7 +385,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_3">
+        <widget class="QWidget" name="certificateTab">
          <attribute name="icon">
           <iconset resource="../images.qrc">
            <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
@@ -406,12 +393,12 @@
          <attribute name="title">
           <string>Retroshare Certificate</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="certificateTabVLayout">
           <item>
            <widget class="QTextEdit" name="userCertificateText"/>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="signHLayout">
             <item>
              <widget class="QCheckBox" name="_shouldAddSignatures_CB">
               <property name="text">
@@ -420,7 +407,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer name="signHSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -436,7 +423,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_4">
+        <widget class="QWidget" name="optionTab">
          <attribute name="icon">
           <iconset resource="../images.qrc">
            <normaloff>:/images/admin-16.png</normaloff>:/images/admin-16.png</iconset>
@@ -444,9 +431,9 @@
          <attribute name="title">
           <string>Options</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="optionTabGLayout">
           <item row="3" column="0" colspan="2">
-           <spacer name="verticalSpacer_4">
+           <spacer name="optionVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -499,6 +486,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -508,12 +501,6 @@
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

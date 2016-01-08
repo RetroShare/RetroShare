@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Router Statistics</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -47,7 +47,7 @@
      <property name="title">
       <string>GroupBox</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="groupBoxGLayout">
       <item row="0" column="0">
        <widget class="QTreeWidget" name="treeWidget">
         <property name="contextMenuPolicy">

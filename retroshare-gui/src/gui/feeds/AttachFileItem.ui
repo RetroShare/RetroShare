@@ -16,7 +16,7 @@
     <height>35</height>
    </size>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <property name="verticalSpacing">
     <number>0</number>
    </property>
@@ -37,7 +37,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <property name="topMargin">
        <number>2</number>
       </property>

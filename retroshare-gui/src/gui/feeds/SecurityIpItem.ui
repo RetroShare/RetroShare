@@ -131,7 +131,7 @@
           </widget>
          </item>
          <item row="1" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="buttonHLayout">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -188,7 +188,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer">
+            <spacer name="buttonHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -243,7 +243,7 @@
           </layout>
          </item>
          <item row="0" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="timeHLayout">
            <item>
             <widget class="QLabel" name="timeLabel">
              <property name="font">
@@ -263,7 +263,7 @@
           </layout>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout">
+          <layout class="QGridLayout" name="titleGLayout">
            <property name="horizontalSpacing">
             <number>6</number>
            </property>
@@ -457,15 +457,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>RsBanListToolButton</class>

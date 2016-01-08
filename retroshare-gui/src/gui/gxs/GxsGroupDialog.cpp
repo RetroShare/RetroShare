@@ -102,13 +102,13 @@ void GxsGroupDialog::init()
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
-	ui.typePublic->setChecked(true);
-	ui.typePublic_3->setChecked(true);
+	ui.edit_typePublic->setChecked(true);
+	ui.show_typePublic->setChecked(true);
 	updateCircleOptions();
 
-	connect(ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
-	connect(ui.typeGroup, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
-	connect(ui.typeLocal, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.edit_typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.edit_typeGroup, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
+	connect(ui.edit_typeLocal, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
 
 	if (!ui.pubKeyShare_cb->isChecked())
 	{
@@ -127,7 +127,7 @@ void GxsGroupDialog::init()
 	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
 	
-	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
+	ui.edit_groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
     	ui.personal_ifnopub->hide() ;
     	ui.personal_required->hide() ;
@@ -204,9 +204,9 @@ void GxsGroupDialog::initMode()
 
 void GxsGroupDialog::clearForm()
 {
-	ui.groupName->clear();
-	ui.groupDesc->clear();
-	ui.groupName->setFocus();
+	ui.edit_groupName->clear();
+	ui.edit_groupDesc->clear();
+	ui.edit_groupName->setFocus();
 }
 
 void GxsGroupDialog::setupDefaults()
@@ -217,24 +217,24 @@ void GxsGroupDialog::setupDefaults()
 	{
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC)
 		{
-			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
+			ui.edit_typePublic->setChecked(true);
+			ui.show_typePublic->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_GROUP)
 		{
-			ui.typeGroup->setChecked(true);
-			ui.typeGroup_3->setChecked(true);
+			ui.edit_typeGroup->setChecked(true);
+			ui.show_typeGroup->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_LOCAL)
 		{
-			ui.typeLocal->setChecked(true);
-			ui.typeLocal_3->setChecked(true);
+			ui.edit_typeLocal->setChecked(true);
+			ui.show_typeLocal->setChecked(true);
 		}
 		else
 		{
 			// default
-			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
+			ui.edit_typePublic->setChecked(true);
+			ui.show_typePublic->setChecked(true);
 		}
 	}
 
@@ -284,57 +284,57 @@ void GxsGroupDialog::setupDefaults()
 	{
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_YES)
 		{
-			ui.comments_allowed->setChecked(true);
-			ui.comments_allowed_3->setChecked(true);
+			ui.edit_comments_allowed->setChecked(true);
+			ui.show_comments_allowed->setChecked(true);
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_NO)
 		{
-			ui.comments_no->setChecked(true);
-			ui.comments_no_3->setChecked(true);
+			ui.edit_comments_no->setChecked(true);
+			ui.show_comments_no->setChecked(true);
 		}
 		else
 		{
 			// default
-			ui.comments_no->setChecked(true);
-			ui.comments_no_3->setChecked(true);
+			ui.edit_comments_no->setChecked(true);
+			ui.show_comments_no->setChecked(true);
 		}
 	}
-	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
-	    ui.antiSpam_trackMessages_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antiSpam_signedIds_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
-        
+	ui.edit_antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	ui.show_antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
+	ui.edit_antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+	ui.show_antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+
 #ifndef RS_USE_CIRCLES
-    ui.typeGroup->setEnabled(false);
-    ui.typeLocal->setEnabled(false);
-    ui.typeGroup_3->setEnabled(false);
-    ui.typeLocal_3->setEnabled(false);
+	ui.edit_typeGroup->setEnabled(false);
+	ui.show_typeGroup->setEnabled(false);
+	ui.edit_typeLocal->setEnabled(false);
+	ui.show_typeLocal->setEnabled(false);
 #endif
 }
 
 void GxsGroupDialog::setupVisibility()
 {
-	ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
+	ui.edit_groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
-	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	ui.edit_groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
-	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
-	ui.distribGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	ui.editDistribGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	ui.showDistribGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
     
-	ui.spamProtection_GB->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
-	ui.spamProtection_GB_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
+	ui.editSpamProtectionGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
+	ui.showSpamProtectionGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
 
-	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
+	ui.publishGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
 
-	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
+	ui.personalGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
-	ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-	ui.commentGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.editCommentGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.showCommentGBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentslabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
@@ -355,18 +355,18 @@ void GxsGroupDialog::setupReadonly()
 
 	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
-	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
+	ui.publishGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
 
 	ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
 
-	ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
+	ui.personalGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 	
 	ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 
-	ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
-	ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
-	ui.spamProtection_GB->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
-	ui.spamProtection_GB_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
+	ui.showDistribGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
+	ui.showCommentGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+	ui.editSpamProtectionGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
+	ui.showSpamProtectionGBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 #ifndef UNFINISHED
@@ -399,14 +399,14 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     	setGroupSignFlags(mGrpMeta.mSignFlags) ;
 
 	/* setup name */
-	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+	ui.edit_groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
 	
 	/* Show Mode */
-	ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
-	ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
-	ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
-    ui.authorLabel->setId(mGrpMeta.mAuthorId);
+	ui.nameLine->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+	ui.popLine->setText(QString::number( mGrpMeta.mPop)) ;
+	ui.postsLine->setText(QString::number(mGrpMeta.mVisibleMsgCount));
+	ui.lastpostLine->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+	ui.authorLabel->setId(mGrpMeta.mAuthorId);
 	ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
 	ui.descriptiontextEdit->setPlainText(description);
 	
@@ -427,22 +427,22 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 		break;
   }
 	/* set description */
-	ui.groupDesc->setPlainText(description);
+	ui.edit_groupDesc->setPlainText(description);
 
 	switch(mGrpMeta.mCircleType)
 	{
 		case GXS_CIRCLE_TYPE_YOUREYESONLY:
-			ui.typeLocal->setChecked(true);
-			ui.typeLocal_3->setChecked(true);
+			ui.edit_typeLocal->setChecked(true);
+			ui.show_typeLocal->setChecked(true);
 			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
 			break;
 		case GXS_CIRCLE_TYPE_PUBLIC:
-			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
+			ui.edit_typePublic->setChecked(true);
+			ui.show_typePublic->setChecked(true);
 			break;
 		case GXS_CIRCLE_TYPE_EXTERNAL:
-			ui.typeGroup->setChecked(true);
-			ui.typeGroup_3->setChecked(true);
+			ui.edit_typeGroup->setChecked(true);
+			ui.show_typeGroup->setChecked(true);
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			break;
 		default:
@@ -613,10 +613,10 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
     
 	// Author Signature.
-	if (ui.antiSpam_signedIds->isChecked()) 
+	if (ui.edit_antiSpam_signedIds->isChecked())
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
     
-	if (ui.antiSpam_trackMessages->isChecked()) 
+	if (ui.edit_antiSpam_trackMessages->isChecked())
 		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
     
 	return signFlags;
@@ -640,10 +640,10 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
     
-		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.edit_antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.show_antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		ui.edit_antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+		ui.show_antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
 		//ui.SignEdIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
 		//ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
     
@@ -651,13 +651,13 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
 	    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))
 	{
-		ui.comments_allowed->setChecked(true);
-		ui.comments_allowed_3->setChecked(true);
+		ui.edit_comments_allowed->setChecked(true);
+		ui.show_comments_allowed->setChecked(true);
 	}
 	else
 	{
-		ui.comments_no->setChecked(true);
-		ui.comments_no_3->setChecked(true);
+		ui.edit_comments_no->setChecked(true);
+		ui.show_comments_no->setChecked(true);
 	}
 }
 
@@ -668,7 +668,7 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 
 void GxsGroupDialog::updateCircleOptions()
 {
-	if (ui.typeGroup->isChecked())
+	if (ui.edit_typeGroup->isChecked())
 	{
 		ui.circleComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.circleComboBox->setVisible(true);
@@ -679,7 +679,7 @@ void GxsGroupDialog::updateCircleOptions()
 		ui.circleComboBox->setVisible(false);
 	}
 
-	if (ui.typeLocal->isChecked())
+	if (ui.edit_typeLocal->isChecked())
 	{
 		ui.localComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.localComboBox->setVisible(true);
@@ -698,12 +698,12 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 	meta.mOriginator.clear();
 	meta.mInternalCircle.clear();
 
-	if (ui.typePublic->isChecked())
+	if (ui.edit_typePublic->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
 		meta.mCircleId.clear();
 	}
-	else if (ui.typeGroup->isChecked())
+	else if (ui.edit_typeGroup->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
 		if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
@@ -711,7 +711,7 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 			return false;
 		}
 	}
-	else if (ui.typeLocal->isChecked())
+	else if (ui.edit_typeLocal->isChecked())
 	{
 		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
 		meta.mCircleId.clear();
@@ -763,12 +763,12 @@ void GxsGroupDialog::setLogo(const QPixmap &pixmap)
 
 QString GxsGroupDialog::getName()
 {
-	return misc::removeNewLine(ui.groupName->text());
+	return misc::removeNewLine(ui.edit_groupName->text());
 }
 
 QString GxsGroupDialog::getDescription()
 {
-	return ui.groupDesc->toPlainText();
+	return ui.edit_groupDesc->toPlainText();
 }
 
 /***********************************************************************************

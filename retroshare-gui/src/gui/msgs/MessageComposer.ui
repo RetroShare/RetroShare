@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>935</width>
-    <height>706</height>
+    <width>944</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,9 @@
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="centralwidgetGLayout">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter_2">
+     <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -59,7 +59,7 @@
         <string>Address list:</string>
        </property>
        <widget class="QWidget" name="dockWidgetContents">
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="dockWidgetContentsVLayout">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -110,9 +110,9 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="contactButtonVLayout">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="contactTopHLayout">
              <item>
               <widget class="QPushButton" name="addCcButton">
                <property name="sizePolicy">
@@ -155,7 +155,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <layout class="QHBoxLayout" name="contactBottomHLayout">
              <item>
               <widget class="QPushButton" name="addRecommendButton">
                <property name="sizePolicy">
@@ -176,12 +176,12 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QSplitter" name="splitter">
+      <widget class="QSplitter" name="messageSplitter">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QWidget" name="layoutWidget">
-        <layout class="QGridLayout" name="gridLayout_2">
+       <widget class="QWidget" name="messageWidget">
+        <layout class="QGridLayout" name="messageGLayout">
          <property name="verticalSpacing">
           <number>2</number>
          </property>
@@ -199,21 +199,12 @@
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>6</number>
-            </property>
-            <property name="rightMargin">
-             <number>6</number>
-            </property>
-            <property name="bottomMargin">
+           <layout class="QGridLayout" name="toolBarFrameGLayout">
+            <property name="margin">
              <number>6</number>
             </property>
             <item row="0" column="0">
-             <layout class="QGridLayout">
+             <layout class="QGridLayout" name="toolBarGLayout">
               <property name="horizontalSpacing">
                <number>1</number>
               </property>
@@ -553,7 +544,7 @@
                </widget>
               </item>
               <item row="0" column="17">
-               <spacer>
+               <spacer name="toolBarSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -627,7 +618,7 @@
                </widget>
               </item>
               <item row="0" column="3">
-               <widget class="QToolButton" name="colorbtn">
+               <widget class="QToolButton" name="colorTextBtn">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -655,7 +646,7 @@
                </widget>
               </item>
               <item row="0" column="4">
-               <widget class="QToolButton" name="color2btn">
+               <widget class="QToolButton" name="colorBackBtn">
                 <property name="toolTip">
                  <string>Set Text background color</string>
                 </property>
@@ -789,17 +780,8 @@
            <property name="frameShape">
             <enum>QFrame::Box</enum>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>6</number>
-            </property>
-            <property name="rightMargin">
-             <number>6</number>
-            </property>
-            <property name="bottomMargin">
+           <layout class="QHBoxLayout" name="distantFrameHLayout">
+            <property name="margin">
              <number>6</number>
             </property>
             <item>
@@ -866,9 +848,9 @@ border-image: url(:/images/closepressed.png)
           </widget>
          </item>
          <item row="2" column="0">
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="headerGLayout">
            <item row="3" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="tagMainHLayout">
              <item>
               <widget class="QPushButton" name="tagButton">
                <property name="sizePolicy">
@@ -893,7 +875,7 @@ border-image: url(:/images/closepressed.png)
               <layout class="QHBoxLayout" name="tagLayout"/>
              </item>
              <item>
-              <spacer name="horizontalSpacer_2">
+              <spacer name="tagHSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -908,7 +890,7 @@ border-image: url(:/images/closepressed.png)
             </layout>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="subjectLabel">
              <property name="minimumSize">
               <size>
                <width>60</width>
@@ -946,7 +928,7 @@ border-image: url(:/images/closepressed.png)
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="tagLabel">
              <property name="minimumSize">
               <size>
                <width>60</width>
@@ -1034,25 +1016,16 @@ border-image: url(:/images/closepressed.png)
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget_1">
-        <layout class="QGridLayout" name="layoutrecommended">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+       <widget class="QWidget" name="recommendedWidget">
+        <layout class="QGridLayout" name="recommendedGLayout">
+         <property name="margin">
           <number>0</number>
          </property>
          <property name="spacing">
           <number>6</number>
          </property>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_13">
+          <widget class="QLabel" name="msgFileLabel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1120,8 +1093,8 @@ border-image: url(:/images/closepressed.png)
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>935</width>
-     <height>21</height>
+     <width>944</width>
+     <height>24</height>
     </rect>
    </property>
   </widget>
@@ -1261,8 +1234,8 @@ border-image: url(:/images/closepressed.png)
   <tabstop>hashBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../emojione.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

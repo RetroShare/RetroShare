@@ -10,8 +10,17 @@
     <height>485</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QVBoxLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -40,22 +49,31 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+     <layout class="QGridLayout" name="toolBarFrameGLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <property name="horizontalSpacing">
        <number>6</number>
       </property>
       <item row="0" column="9">
-       <widget class="Line" name="line_2">
+       <widget class="Line" name="buttonRVLine">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="4">
-       <widget class="QToolButton" name="newmessageButton">
+       <widget class="QToolButton" name="newMessageButton">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -96,7 +114,7 @@
        </widget>
       </item>
       <item row="0" column="11">
-       <widget class="QToolButton" name="removemessageButton">
+       <widget class="QToolButton" name="removeMessageButton">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -160,7 +178,7 @@
        </widget>
       </item>
       <item row="0" column="8">
-       <widget class="QToolButton" name="forwardmessageButton">
+       <widget class="QToolButton" name="forwardMessageButton">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -201,7 +219,7 @@
        </widget>
       </item>
       <item row="0" column="12">
-       <widget class="QToolButton" name="printbutton">
+       <widget class="QToolButton" name="printButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -251,7 +269,7 @@
        </widget>
       </item>
       <item row="0" column="13">
-       <widget class="QToolButton" name="viewtoolButton">
+       <widget class="QToolButton" name="viewToolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -343,7 +361,7 @@
        </widget>
       </item>
       <item row="0" column="6">
-       <widget class="QToolButton" name="replymessageButton">
+       <widget class="QToolButton" name="replyMessageButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -390,7 +408,7 @@
        </widget>
       </item>
       <item row="0" column="7">
-       <widget class="QToolButton" name="replyallmessageButton">
+       <widget class="QToolButton" name="replyAllMessageButton">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -448,7 +466,7 @@
        </widget>
       </item>
       <item row="0" column="14">
-       <spacer name="horizontalSpacer">
+       <spacer name="buttonRHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -461,7 +479,7 @@
        </spacer>
       </item>
       <item row="0" column="2">
-       <spacer name="horizontalSpacer_2">
+       <spacer name="buttonLHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -477,7 +495,7 @@
        </spacer>
       </item>
       <item row="0" column="5">
-       <widget class="Line" name="line">
+       <widget class="Line" name="buttonLVLine">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -491,12 +509,21 @@
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="mainTab">
       <attribute name="title">
        <string notr="true">Main Tab</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <property name="margin">
+      <layout class="QGridLayout" name="mainTabGLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <property name="spacing">
@@ -508,14 +535,23 @@
           <enum>Qt::Horizontal</enum>
          </property>
          <widget class="QFrame" name="sideBarFrame">
-          <layout class="QGridLayout" name="gridLayout_3">
+          <layout class="QGridLayout" name="sideBarFrameGLayout">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <property name="horizontalSpacing">
             <number>6</number>
            </property>
            <property name="verticalSpacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
             <number>0</number>
            </property>
            <item row="1" column="0">
@@ -610,7 +646,7 @@
              <property name="autoFillBackground">
               <bool>true</bool>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="folderFrameHLayout">
               <property name="topMargin">
                <number>3</number>
               </property>
@@ -651,7 +687,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="quickViewFrameHLayout">
               <property name="topMargin">
                <number>3</number>
               </property>
@@ -686,11 +722,11 @@
            </item>
           </layout>
          </widget>
-         <widget class="QSplitter" name="msgSplitter">
+         <widget class="QSplitter" name="msgSplitter_File">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QSplitter" name="msgSplitter_2">
+          <widget class="QSplitter" name="msgSplitter_Tree">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -808,6 +844,11 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
@@ -818,14 +859,9 @@
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>replymessageButton</tabstop>
+  <tabstop>replyMessageButton</tabstop>
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>

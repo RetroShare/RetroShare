@@ -64,7 +64,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
                   QCheckBox *enabledCheckBox = new QCheckBox(name, this);
                   enabledCheckBox->setFont(font);
-                  ui.feedLayout->addWidget(enabledCheckBox, rowFeed++);
+                  ui.pluginFeedNotifyLayout->addWidget(enabledCheckBox, rowFeed++);
 
                   mFeedNotifySettingList.push_back(FeedNotifySetting(feedNotify, enabledCheckBox));
               }
@@ -77,7 +77,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
                   QCheckBox *enabledCheckBox = new QCheckBox(name, this);
                   enabledCheckBox->setFont(font);
-                  ui.toasterLayout->addWidget(enabledCheckBox, rowToaster++);
+                  ui.pluginToasterNotifyLayout->addWidget(enabledCheckBox, rowToaster++);
 
                   mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
               }
@@ -99,7 +99,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
                           vbLayout->addWidget(enabledCheckBox);
                           mToasterNotifySettingList.push_back(ToasterNotifySetting(toasterNotify, enabledCheckBox));
                       }
-                      ui.toasterLayout->addWidget(widget, rowToaster++);
+                      ui.pluginToasterNotifyLayout->addWidget(widget, rowToaster++);
                   }
               }
           }
@@ -121,16 +121,16 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
       QCheckBox *enabledCheckBox = new QCheckBox(name, this);
       enabledCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
+      ui.userNotifyLayout->addWidget(enabledCheckBox, rowFeed, 0, 0);
       connect(enabledCheckBox, SIGNAL(toggled(bool)), this, SLOT(notifyToggled()));
 
       QCheckBox *combinedCheckBox = new QCheckBox(tr("Combined"), this);
       combinedCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
+      ui.userNotifyLayout->addWidget(combinedCheckBox, rowFeed, 1);
 
       QCheckBox *blinkCheckBox = new QCheckBox(tr("Blink"), this);
       blinkCheckBox->setFont(font);
-      ui.notifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
+      ui.userNotifyLayout->addWidget(blinkCheckBox, rowFeed++, 2);
 
       mUserNotifySettingList.push_back(UserNotifySetting(userNotify, enabledCheckBox, combinedCheckBox, blinkCheckBox));
 

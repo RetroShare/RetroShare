@@ -18,7 +18,7 @@
   <property name="windowTitle">
    <string notr="true"/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout">
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -39,7 +39,7 @@ border-radius: 10px}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0" rowspan="2">
        <widget class="QLabel" name="imgLabel">
         <property name="minimumSize">
@@ -64,7 +64,7 @@ border-radius: 10px}</string>
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>:/images/konversation.png</pixmap>
+         <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -72,7 +72,7 @@ border-radius: 10px}</string>
        </widget>
       </item>
       <item row="0" column="1">
-       <layout class="QHBoxLayout" name="_3">
+       <layout class="QHBoxLayout" name="fromHLayout">
         <item>
          <widget class="QLabel" name="fromBoldLabel">
           <property name="sizePolicy">
@@ -117,7 +117,7 @@ border-radius: 10px}</string>
        </layout>
       </item>
       <item row="0" column="2">
-       <layout class="QHBoxLayout" name="_4">
+       <layout class="QHBoxLayout" name="dateHLayout">
         <item>
          <widget class="QLabel" name="dateBoldLabel">
           <property name="sizePolicy">
@@ -162,10 +162,10 @@ border-radius: 10px}</string>
        </layout>
       </item>
       <item row="1" column="1" rowspan="3" colspan="2">
-       <widget class="QTextBrowser" name="textBrowser"/>
+       <widget class="QTextBrowser" name="itemTBrowser"/>
       </item>
       <item row="2" column="0">
-       <spacer name="verticalSpacer">
+       <spacer name="buttonVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -178,7 +178,7 @@ border-radius: 10px}</string>
        </spacer>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="toolHLayout">
         <item>
          <widget class="QToolButton" name="toolButton">
           <property name="text">
@@ -208,7 +208,7 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../../retroshare-gui/src/gui/images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

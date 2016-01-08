@@ -18,7 +18,7 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="scrollAreaWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
     <property name="spacing">
      <number>2</number>
     </property>

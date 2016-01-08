@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Change Avatar</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="AvatarDialogVLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -38,9 +38,9 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="mainHLayout">
         <item>
          <widget class="QLabel" name="avatarLabel">
           <property name="minimumSize">
@@ -70,7 +70,7 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="avatarButtonVLayout">
           <item>
            <widget class="QPushButton" name="avatarButton">
             <property name="text">
@@ -89,7 +89,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
+           <spacer name="avatarVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -106,7 +106,7 @@
        </layout>
       </item>
       <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
+       <spacer name="mainHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -119,7 +119,7 @@
        </spacer>
       </item>
       <item row="1" column="0" colspan="3">
-       <spacer name="verticalSpacer">
+       <spacer name="mainVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -135,12 +135,12 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="buttonHLayout">
      <property name="margin">
       <number>9</number>
      </property>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="buttonHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -176,9 +176,7 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

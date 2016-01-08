@@ -1407,7 +1407,7 @@ void TransfersDialog::insertTransfers()
 	uploads    = tr("Uploads") + " (" + QString::number(ULListModel->rowCount()) + ")" ;
 
 	ui.tabWidget->setTabText(0,  downloads);
-	ui.tabWidget_2->setTabText(0, uploads);
+	ui.tab_Upload->setTabText(0, uploads);
 
 }
 

@@ -17,7 +17,7 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="AdvancedSearchDialogGLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -35,7 +35,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0">
        <widget class="QGroupBox" name="searchCriteriaBox">
         <property name="sizePolicy">
@@ -102,7 +102,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="_2">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <property name="spacing">
          <number>6</number>
         </property>
@@ -147,7 +147,7 @@
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="buttonSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

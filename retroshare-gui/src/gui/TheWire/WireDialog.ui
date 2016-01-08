@@ -315,7 +315,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../LinksCloud/images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

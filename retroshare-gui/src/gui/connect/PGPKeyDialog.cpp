@@ -88,7 +88,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
     connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
     //connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     //connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-    connect(ui._shouldAddSignatures_CB_2, SIGNAL(toggled(bool)), this, SLOT(loadKeyPage()));
+    connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadKeyPage()));
 
     //ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -177,9 +177,9 @@ void PGPKeyDialog::load()
     // ui.label_last_contact->hide();
     // ui.version->hide();
     // ui.label_version->hide();
-    // ui.groupBox_4->hide();
+    // ui.nodeInfoGBox->hide();
     // ui.crypto_info->hide();
-    // ui.crypto_label->hide();
+    // ui.label_crypto->hide();
 
     // ui.groupBox->hide();
     // ui.tabWidget->hide();
@@ -296,18 +296,18 @@ void PGPKeyDialog::loadKeyPage()
         close();
         return;
     }
-    ui._shouldAddSignatures_CB_2->setEnabled(detail.gpgSigners.size() > 1) ;
+    ui._shouldAddSignatures_CB->setEnabled(detail.gpgSigners.size() > 1) ;
 
-     std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
+     std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
 
-    ui.userCertificateText_2->setReadOnly(true);
-    ui.userCertificateText_2->setMinimumHeight(200);
-    ui.userCertificateText_2->setMinimumWidth(530);
+    ui.userCertificateText->setReadOnly(true);
+    ui.userCertificateText->setMinimumHeight(200);
+    ui.userCertificateText->setMinimumWidth(530);
     QFont font("Courier New",10,50,false);
     font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
     font.setStyle(QFont::StyleNormal);
-    ui.userCertificateText_2->setFont(font);
-    ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
+    ui.userCertificateText->setFont(font);
+    ui.userCertificateText->setText(QString::fromUtf8(pgp_key.c_str()));
 
     QString helptext ;
     helptext += tr("<p>This PGP key (ID=")+detail.gpg_id.toStdString().c_str()+")" + " authenticates one or more retroshare nodes.</p> ";
@@ -320,7 +320,7 @@ void PGPKeyDialog::loadKeyPage()
 
     helptext += "</p>" ;
 
-    ui.userCertificateText_2->setToolTip(helptext) ;
+    ui.userCertificateText->setToolTip(helptext) ;
 }
 
 

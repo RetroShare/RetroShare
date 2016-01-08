@@ -115,34 +115,33 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui->idTreeWidget, false);
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
-//	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->nickname_LEdit);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->keyId_LEdit);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->type_LEdit);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->nodeId_LEdit);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->nodeName_LEdit);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lastUsed_LEdit);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->ownOpinion_CB);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->overallOpinion_TF);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->neighborNodesOpinion_TF);
+	//	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
 
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
-//	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->nickname_LEdit);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->keyId_LEdit);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->type_LEdit);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->nodeId_LEdit);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->nodeName_LEdit);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lastUsed_LEdit);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->line_RatingOverall);
 
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->nickname_LEdit);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->keyId_LEdit);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->type_LEdit);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->nodeId_LEdit);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->nodeName_LEdit);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lastUsed_LEdit);
 //	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgHash);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgName);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 
 	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui->treeWidget_RepList);
@@ -539,11 +538,12 @@ void IdDialog::insertIdList(uint32_t token)
 		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
     	Settings->endGroup();
     	
-		if (fillIdListItem(vit->second, item, ownPgpId, accept))
+		if (fillIdListItem(vit->second, item, ownPgpId, accept)) {
 			if(vit->second.mIsAContact)
 				contactsItem->addChild(item);
 			else
 				allItem->addChild(item);
+		}
 	}
 	
 	/* count items */
@@ -592,7 +592,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->clear(IDDIALOG_REPLIST);
 
-		ui->lineEdit_KeyId->setText("ERROR GETTING KEY!");
+		ui->keyId_LEdit->setText("ERROR GETTING KEY!");
 
 		return;
 	}
@@ -606,7 +606,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->clear(IDDIALOG_IDDETAILS);
 
-		ui->lineEdit_KeyId->setText("INVALID DV SIZE");
+		ui->keyId_LEdit->setText("INVALID DV SIZE");
 
 		return;
 	}
@@ -618,13 +618,13 @@ void IdDialog::insertIdDetails(uint32_t token)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
-    ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
-	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+	ui->nickname_LEdit->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+	ui->keyId_LEdit->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
-    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    ui->nodeId_LEdit->setText(QString::fromStdString(data.mPgpId.toStdString()));
 
     time_t now = time(NULL) ;
-    ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
+    ui->lastUsed_LEdit->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
     ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 
     QPixmap pixmap ;
@@ -642,33 +642,33 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		RsPeerDetails details;
 		rsPeers->getGPGDetails(data.mPgpId, details);
-		ui->lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
+		ui->nodeName_LEdit->setText(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 	{
 		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 		{
-			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
+			ui->nodeName_LEdit->setText(tr("Unknown real name"));
 		}
 		else
 		{
-			ui->lineEdit_GpgName->setText(tr("Anonymous Id"));
+			ui->nodeName_LEdit->setText(tr("Anonymous Id"));
 		}
 	}
 
 	if(data.mPgpId.isNull())
 	{
-		ui->lineEdit_GpgId->hide() ;
-		ui->lineEdit_GpgName->hide() ;
-		ui->PgpId_LB->hide() ;
-		ui->PgpName_LB->hide() ;
+		ui->nodeId_LEdit->hide() ;
+		ui->nodeName_LEdit->hide() ;
+		ui->nodeId_Label->hide() ;
+		ui->nodeName_Label->hide() ;
 	}
 	else
 	{
-		ui->lineEdit_GpgId->show() ;
-		ui->lineEdit_GpgName->show() ;
-		ui->PgpId_LB->show() ;
-		ui->PgpName_LB->show() ;
+		ui->nodeId_LEdit->show() ;
+		ui->nodeName_LEdit->show() ;
+		ui->nodeId_Label->show() ;
+		ui->nodeName_Label->show() ;
 	}
 
     bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
@@ -676,21 +676,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     if(isOwnId)
         if (isLinkedToOwnPgpId)
-            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
+            ui->type_LEdit->setText(tr("Identity owned by you, linked to your Retroshare node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
+            ui->type_LEdit->setText(tr("Anonymous identity, owned by you")) ;
     else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+                ui->type_LEdit->setText(tr("Linked to a friend Retroshare node")) ;
             else
-                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+                ui->type_LEdit->setText(tr("Linked to a known Retroshare node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+            ui->type_LEdit->setText(tr("Linked to unknown Retroshare node")) ;
     }
     else
-        ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
+        ui->type_LEdit->setText(tr("Anonymous identity")) ;
 
 	if (isOwnId)
 	{
@@ -757,7 +757,7 @@ void IdDialog::modifyReputation()
 	std::cerr << std::endl;
 #endif
 
-	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
+	RsGxsId id(ui->keyId_LEdit->text().toStdString());
     
     	RsReputations::Opinion op ;
 

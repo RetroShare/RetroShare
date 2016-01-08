@@ -13,17 +13,8 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+  <layout class="QVBoxLayout" name="CirclesDialogVLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -34,17 +25,8 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -102,7 +84,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
+       <spacer name="titleBarHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -118,7 +100,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="showingDetailsLabel">
      <property name="font">
       <font>
        <weight>75</weight>
@@ -131,13 +113,13 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="mainHLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="memberGBox">
        <property name="title">
         <string>Membership</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="memberGBoxVLayout">
         <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
           <property name="sortingEnabled">
@@ -169,14 +151,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="peerGBox">
        <property name="enabled">
         <bool>true</bool>
        </property>
        <property name="title">
         <string>Peers</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="peerGBoxVLayout">
         <item>
          <widget class="QTreeWidget" name="treeWidget_friends">
           <property name="sortingEnabled">
@@ -227,14 +209,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="permissionsGBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
        <property name="title">
         <string>Permissions</string>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="permissionsGBoxVLayout">
         <item>
          <widget class="QCheckBox" name="checkBox_anon">
           <property name="text">

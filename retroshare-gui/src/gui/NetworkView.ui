@@ -33,7 +33,7 @@
     <widget class="GraphWidget" name="graphicsView"/>
    </item>
    <item row="1" column="0">
-    <layout class="QGridLayout">
+    <layout class="QGridLayout" name="buttonGLayout">
      <property name="horizontalSpacing">
       <number>9</number>
      </property>
@@ -41,7 +41,7 @@
       <number>6</number>
      </property>
      <item row="0" column="3">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="edgeLengthLabel">
        <property name="text">
         <string>Edge length:</string>
        </property>
@@ -55,7 +55,7 @@
       </widget>
      </item>
      <item row="0" column="6">
-      <spacer>
+      <spacer name="buttonHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -81,7 +81,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="maxFriendLevelLabel">
        <property name="text">
         <string>Friendship level:</string>
        </property>

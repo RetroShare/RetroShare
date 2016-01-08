@@ -13,7 +13,7 @@
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QCheckBox" name="enableAll">
      <property name="text">
@@ -22,11 +22,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="pluginsGBox">
      <property name="title">
       <string>Plugins</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="pluginsGBoxVLayout">
       <item>
        <widget class="QScrollArea" name="scrollArea">
         <property name="frameShape">
@@ -50,11 +50,20 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <layout class="QVBoxLayout" name="_pluginsLayout">
+         <layout class="QVBoxLayout" name="pluginsLayout">
           <property name="spacing">
            <number>3</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
          </layout>
@@ -65,13 +74,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="lookupGBox">
      <property name="title">
       <string>Plugin look-up directories</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="lookupGBoxVLayout">
       <item>
-       <widget class="QTextBrowser" name="_lookupDirectories_TB"/>
+       <widget class="QTextBrowser" name="lookupDirectories_TB"/>
       </item>
      </layout>
     </widget>
