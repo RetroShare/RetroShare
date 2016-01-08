@@ -31,7 +31,7 @@ function progressBar(file){
 
 function cntrlBtn(file, act) {
     return(
-        m("button",{
+        m("div.btn",{
             onclick: function(){
                 rs.request("transfers/control_download",{action: act, id: file.id});
             }
@@ -44,35 +44,42 @@ function cntrlBtn(file, act) {
 module.exports = {
     view: function(){
         var paths = rs("transfers/downloads");
+        var filestreamer_url = "/fstream/";
         if (paths === undefined) {
             return m("div", "Downloads ... please wait ...");
         }
         return m("div", [
-            m("div","Downloads (" + paths.length +")"),
-            m("hr[style=color:silver]"),
-            m('table[cellspacing=2][style=padding:2px !important;margin:2px !important;border-spacing: 2px]', [
-                m("tr[style=font-weight:bold]",[
-                    m("th[style=padding:2px]","name"),
-                    m("th[style=padding:2px]","size"),
-                    m("th[style=padding:2px]","progress"),
-                    m("th[style=padding:2px]","transfer rate"),
-                    m("th[style=padding:2px]","status"),
-                    m("th[style=padding:2px]","progress"),
-                    m("th[style=padding:2px]","action")
+            m("h2","Downloads (" + paths.length +")"),
+            m('table', [
+                m("tr",[
+                    m("th","name"),
+                    m("th","size"),
+                    m("th","progress"),
+                    m("th","transfer rate"),
+                    m("th","status"),
+                    m("th","progress"),
+                    m("th","action")
                 ]),
             	paths.map(function (file){
             	    var ctrlBtn = m("div","");
                     var progress = file.transfered  /  file.size * 100;
             	    return m("tr",[
-            	        m("td[style=padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", file.name),
-            	        m("td[style=padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", makeFriendlyUnit(file.size)),
-            	        m("td[style=text-align:right;padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", progress.toPrecision(3) + "%"),
-            	        m("td[style=text-align:right;padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", makeFriendlyUnit(file.transfer_rate*1e3)+"/s"),
-            	        m("td[style=padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", file.download_status),
-            	        m("td[style=padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", progressBar(file)),
-            	        m("td[style=padding:2px;style=padding: 0.3em;border-style: solid;border-width: 0.1em;border-color: #0F0]", [
+            	        m("td",[
+            	            m("a.filelink",
+            	                {
+                        	        target: "blank",
+                        	        href: filestreamer_url + file.hash + "/" + encodeURIComponent(file.name)
+                	            },
+            	                file.name
+            	            )
+            	        ]),
+            	        m("td", makeFriendlyUnit(file.size)),
+            	        m("td", progress.toPrecision(3) + "%"),
+            	        m("td", makeFriendlyUnit(file.transfer_rate*1e3)+"/s"),
+            	        m("td", file.download_status),
+            	        m("td", progressBar(file)),
+            	        m("td", [
             	            cntrlBtn(file, file.download_status==="paused"?"start":"pause"),
-            	            m("span"," "),
             	            cntrlBtn(file, "cancel")]
             	        )
             	    ])

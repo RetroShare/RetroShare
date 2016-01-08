@@ -6,3 +6,11 @@ ui_*.h
 Makefile.*
 *~
 Thumbs.db
+Makefile
+*/Makefile
+*.a
+*.prl
+*.log
+*.so
+retroshare-gui/src/RetroShare06
+retroshare-nogui/src/RetroShare06-nogui

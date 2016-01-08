@@ -158,15 +158,19 @@ function requestFail(path, response, value) {
     console.log("Error on " + path + (response == null ? ", value " + value : ", response " + response));
 }
 
-function rs(path, args, callback){
+function rs(path, args, callback, options){
     if(cache[path] === undefined){
+        if (options === undefined){
+            options = {};
+        }
         var req = {
             data: args,
             statetoken: undefined,
             requested: false,
+            allow: options.allow === undefined ? "ok" : options.allow,
             then: function(response){
                 console.log(path + ": response: " + response.returncode);
-                if (response.returncode != "ok") {
+                if (!allow.match(response.returncode)) {
                     requestFail(path, response, null);
                 } else if (callback != undefined && callback != null) {
                     callback(response.data, response.statetoken);
