@@ -10,9 +10,12 @@ function goback(){
 }
 
 function buildmenu(menu, tagname, runstate, ignore){
-    if ((menu.runstate === undefined || runstate.match(menu.runstate))
-    && (!ignore.match(menu.name))
-    && (menu.path === undefined || !menu.path.contains(":")))  {
+    if (
+        (menu.runstate === undefined || runstate.match(menu.runstate))
+        && (!ignore.match(menu.name))
+        && (menu.path === undefined || !menu.path.contains(":"))
+        && (menu.show === undefined || menu.show)
+    )  {
         if (menu.action === undefined) {
             return m(tagname , {
                 onclick: function(){
