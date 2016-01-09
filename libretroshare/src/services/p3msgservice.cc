@@ -368,11 +368,11 @@ int     p3MsgService::checkOutgoingMessages()
 			    if(!(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
 				    should_send = true ;
 
-			    if(mit->second->sendTime + OLD_MESSAGE_FLUSHING_DELAY < now)
-				{
-				    should_send = true ;
-                    			mit->second->sendTime = now;
-                		}
+			 //   if(mit->second->sendTime + OLD_MESSAGE_FLUSHING_DELAY < now)
+				//{
+			//	    should_send = true ;
+                 //   			mit->second->sendTime = now;
+                //		}
 		    }
 
 		    if(should_send)
