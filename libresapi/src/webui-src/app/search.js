@@ -15,56 +15,37 @@ function dosearch(){
 	        distant: true,
 	        search_string: searchText
 	    },
-	    onCreateSearchResponse
+        function(resp){
+            m.route("/search/" + resp.search_id);
+        }
 	);
-}
-
-function onCreateSearchResponse(resp){
-    state={search_id: resp.search_id};
-    //tracking searchresults
-    rs("filesearch/"+state.search_id,{},null,{allow:"not_set|ok"});
-    //todo: route search/id, caching search-resultlists
 }
 
 module.exports = {
     view: function(){
-        var results = [];
-        if (state.search_id != undefined){
-            var searchresult = rs("filesearch/"+state.search_id);
-            if (searchresult != undefined) {
-                results = searchresult;
-            }
-        }
+        var results = rs("filesearch");
+        if (results === undefined||results == null) {
+            results = [];
+        };
         return m("div",[
             m("h2","turtle file search"),
             m("div", [
                 m("input[type=text]", {onchange:m.withAttr("value", updateText)}),
                 m("input[type=button][value=search]",{onclick:dosearch})
             ]),
-            m("table", [
-                m("tr" ,[
-                    m("th","name"),
-                    m("th","size"),
-                    m("th",""),
-                ]),
-                results.map(function(file){
-                    return m("tr",[
-                        m("th",file.name),
-                        m("th",file.size),
-                        m("th",[
-                            m("span.btn", {
-                                onclick:function(){
-				                    rs.request("transfers/control_download", {
-					                    action: "begin",
-					                    name: file.name,
-					                    size: file.size,
-					                    hash: file.hash,
-				                    });
-                                }
-                            },
-                            "download")
-                        ]),
-                    ])
+            m("hr"),
+            m("h2","previous searches:"),
+            m("div", [
+                results.map(function(item){
+                    var res = rs("filesearch/" + item.id,{},null,{allow:"not_set|ok"});
+                    if (res === undefined) {
+                        res =[];
+                    };
+                    return m("div.btn2",{
+                        onclick:function(){
+		                    m.route("/search/" + item.id);
+		                    }
+                    }, item.search_string + " (" + res.length + ")");
                 })
             ])
         ])

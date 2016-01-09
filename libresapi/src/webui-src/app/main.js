@@ -37,7 +37,7 @@ function Page(content, runst){
         } else {
             if ("waiting_init|waiting_startup".match(runstate.runstate)) {
                 return m("h2","server starting ...")
-            } else if("waiting_account_select|running_ok*") {
+            } else if("waiting_account_select|running_ok*".match(runstate.runstate)) {
                 if (runst === undefined || runst.match(runstate.runstate)) {
                     return m("div", [
                         m("div", menu.view()),

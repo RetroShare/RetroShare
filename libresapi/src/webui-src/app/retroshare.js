@@ -170,7 +170,7 @@ function rs(path, args, callback, options){
             allow: options.allow === undefined ? "ok" : options.allow,
             then: function(response){
                 console.log(path + ": response: " + response.returncode);
-                if (!allow.match(response.returncode)) {
+                if (!this.allow.match(response.returncode)) {
                     requestFail(path, response, null);
                 } else if (callback != undefined && callback != null) {
                     callback(response.data, response.statetoken);

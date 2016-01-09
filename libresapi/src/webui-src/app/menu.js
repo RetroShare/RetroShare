@@ -11,7 +11,8 @@ function goback(){
 
 function buildmenu(menu, tagname, runstate, ignore){
     if ((menu.runstate === undefined || runstate.match(menu.runstate))
-    && (!ignore.match(menu.name))) {
+    && (!ignore.match(menu.name))
+    && (menu.path === undefined || !menu.path.contains(":")))  {
         if (menu.action === undefined) {
             return m(tagname , {
                 onclick: function(){

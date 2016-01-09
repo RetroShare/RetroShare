@@ -13,6 +13,11 @@ module.exports = {  nodes: [
 		runstate: "running_ok.*",
 	},
 	{
+	    name:"searchresult",
+	    path: "/search/:id",
+	    runstate: "running_ok.*",
+	},
+	{
 	    name: "search",
 	    runstate: "running_ok.*",
 	},
