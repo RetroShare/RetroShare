@@ -23,20 +23,20 @@ function Page(content, runst){
         var needpasswd = rs("control/password");
         //console.log("runstate: " + (runstate === undefined ? runstate : runstate.runstate));
         if(runstate === undefined){
-            return m("div", "waiting_server ... ");
+            return m("h2", "waiting_server ... ");
         } else if (runstate.runstate == null){
-            return m("div", "server down");
+            return m("h2", "server down");
         } else if (needpasswd != undefined && needpasswd.want_password === true){
             return m("div",[
-                m("div","password required"),
-                m("div",needpasswd.key_name),
+                m("h2","password required"),
+                m("h3",needpasswd.key_name),
                 m("input",{type:"password", onchange:m.withAttr("value", setPasswd)}),
                 m("br"),
-                m("button",{onclick: function(){sendPassword(needpasswd);}},"send password"),
+                m("input[type=button][value=send password]",{onclick: function(){sendPassword(needpasswd);}}),
             ]);
         } else {
             if ("waiting_init|waiting_startup".match(runstate.runstate)) {
-                return m("div","server starting ...")
+                return m("h2","server starting ...")
             } else if("waiting_account_select|running_ok*") {
                 if (runst === undefined || runst.match(runstate.runstate)) {
                     return m("div", [

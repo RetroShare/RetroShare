@@ -36,7 +36,7 @@ module.exports = {
             }
         }
         return m("div",[
-            m("p","turtle file search"),
+            m("h2","turtle file search"),
             m("div", [
                 m("input[type=text]", {onchange:m.withAttr("value", updateText)}),
                 m("input[type=button][value=search]",{onclick:dosearch})

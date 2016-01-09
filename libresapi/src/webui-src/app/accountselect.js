@@ -27,12 +27,12 @@ module.exports = {view: function(){
     if (curraccount == null) {
     	accountMap.clear();
         return m("div", [
-    	    m("h2","accounts:"),
+    	    m("h2","login:"),
             m("hr"),
     	    accounts.map(function(account){
     	    	accountMap.set(account.id,account);
     	    	return [
-    	    	    m("div", {onclick: m.withAttr("account", selAccount), account:account.id }, account.location + " (" + account.name + ")"),
+    	    	    m("div.btn2", {onclick: m.withAttr("account", selAccount), account:account.id }, account.location + " (" + account.name + ")"),
     	    	    m("br")
     	    	    ]
         })]);
