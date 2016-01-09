@@ -783,7 +783,8 @@ bool p3VOIP::loadList(std::list<RsItem*>& load)
 
 		delete vitem ;
 	}
-
+    
+    load.clear() ;
 	return true ;
 }
 

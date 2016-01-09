@@ -177,7 +177,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
 		    return false;
 	    }
 
-	    if(!details.mPgpLinked)
+	    if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (id=" << cli->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
@@ -688,7 +688,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		    return ;
 	    }
 
-	    if(!details.mPgpLinked)
+	    if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
 	    {
 		    std::cerr << "(WW) Received a lobby msg/item that is not PGP-authed (ID=" << item->signature.keyId << "), whereas the lobby flags require it. Rejecting!" << std::endl;
 
@@ -1727,7 +1727,7 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
             // Only send a nickname change event if the two Identities are not anonymous
 
-            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && det1.mPgpLinked && det2.mPgpLinked)
+            if(rsIdentity->getIdDetails(nick,det1) && rsIdentity->getIdDetails(it->second.gxs_id,det2) && (det1.mFlags & det2.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
                 sendLobbyStatusPeerChangedNickname(lobby_id, nick.toStdString()) ;
         }
 
@@ -1898,24 +1898,23 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 bool DistributedChatService::processLoadListItem(const RsItem *item)
 {
     const RsConfigKeyValueSet *vitem = NULL ;
-    _default_identity.clear() ;
 
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
 		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
             if(kit->key == "DEFAULT_IDENTITY")
-			{
+	    {
 #ifdef DEBUG_CHAT_LOBBIES
-				std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
+		    std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
 #endif
-                if (!kit->value.empty())
-                {
-                    _default_identity = RsGxsId(kit->value) ;
-                    if(_default_identity.isNull())
-                        std::cerr << "ERROR: default identity is malformed." << std::endl;
-                }
+		    if (!kit->value.empty())
+		    {
+			    _default_identity = RsGxsId(kit->value) ;
+			    if(_default_identity.isNull())
+				    std::cerr << "ERROR: default identity is malformed." << std::endl;
+		    }
 
-				return true;
-			}
+		    return true;
+	    }
 
 	const RsChatLobbyConfigItem *clci = NULL ;
 

@@ -103,6 +103,26 @@ win32 {
 	INCLUDEPATH += . $$INC_DIR
 }
 
+macx {
+	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
+
+	XML2_FOUND =
+	for(inc, INC_DIR){
+#message(Scanning $$inc)s
+		exists($$inc/libxml2){
+			isEmpty( XML2_FOUND) {
+				message(xml2 is first found here: $$inc .)
+				INC_DIR  += "$$inc/libxml2"
+				XML2_FOUND = 1
+			}
+		}
+	}
+	DEPENDPATH += . $$INC_DIRs
+	INCLUDEPATH += . $$INC_DIR
+
+	LIBS = -lcurl -lxml2 -lxslt -lcrypto
+}
+
 openbsd-* {
 	LIBXML2_DIR = /usr/local/include/libxml2
 }

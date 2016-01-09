@@ -53,6 +53,7 @@ class QDomDocument;
 class QDomElement;
 class EmbedInHtml;
 class RetroShareLink;
+class QTextCursor;
 
 class RsHtml
 {
@@ -75,6 +76,7 @@ public:
 	static QString plainText(const std::string &text);
 
 	static QString makeQuotedText(RSTextBrowser* browser);
+	static void insertSpoilerText(QTextCursor cursor);
 
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);

@@ -55,7 +55,9 @@ class ChatPage : public ConfigPage
 
     void on_cbSearch_WithoutLimit_toggled(bool);
     void on_btSearch_FoundColor_clicked();
-    
+ 
+    void distantChatComboBoxChanged(int);
+  
 
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);

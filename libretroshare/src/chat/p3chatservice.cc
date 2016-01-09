@@ -1192,16 +1192,14 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			continue;
 		}
 
-		if(DistributedChatService::processLoadListItem(*it))
-		{
-			delete *it;
-			continue;
-		}
+		DistributedChatService::processLoadListItem(*it) ;
+		DistantChatService::processLoadListItem(*it) ;
 
 		// delete unknown items
 		delete *it;
 	}
 
+    load.clear() ;
 	return true;
 }
 
@@ -1238,6 +1236,7 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 	}
 
 	DistributedChatService::addToSaveList(list) ;
+	DistantChatService::addToSaveList(list) ;
 
 	return true;
 }

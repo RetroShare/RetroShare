@@ -1,5 +1,232 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  4953324 electron128 Sat,  2 Jan 2016 14:53:24 +0100 Merge pull request #235 from PhenomRetroShare/Fix_MakeMACOS_PluginWorking
+  c5e6f62 Phenom      Sat,  2 Jan 2016 14:19:53 +0100 Make Plugin working in Mac OSX.
+  b6b5f9c csoler      Fri,  1 Jan 2016 22:36:07 -0500 fixed some of the issues reported by coverity scan (mainly uninitialised class members)
+  ab3939c csoler      Fri,  1 Jan 2016 11:11:40 -0500 added missing update of mClientMsgUpdateMap, causing both a memory leak and an inconsistency in TS
+  22c00fc electron128 Fri,  1 Jan 2016 14:07:15 +0100 fixed free() in UdpLayer::recv_loop
+  58672e8 electron128 Fri,  1 Jan 2016 13:44:38 +0100 fix the logic to prevent using invalid iterators. First make a valid iterator, then dereference
+  3b2eae4 electron128 Fri,  1 Jan 2016 12:17:08 +0100 fixed memory leak by using stack memory instead of heap memory
+  9cb81f5 electron128 Fri,  1 Jan 2016 12:01:49 +0100 don't create wiki dataservice if wiki is not enabled for compile
+  72812be electron128 Fri,  1 Jan 2016 11:54:59 +0100 added missing initialisation of integers in GxsForumThreadWidget
+  55ea8a5 electron128 Fri,  1 Jan 2016 11:49:03 +0100 init pointer in RsServer
+  7efb763 electron128 Fri,  1 Jan 2016 11:38:29 +0100 restore stream state of std::cerr after printing hex number
+  640d71b electron128 Fri,  1 Jan 2016 11:09:49 +0100 removed delete of RsTemporaryMemory
+  d24ff5a csoler      Thu, 31 Dec 2015 19:42:50 -0500 Merge pull request #232 from G10h4ck/master
+  7895932 Gio         Fri,  1 Jan 2016 00:45:01 +0100 print_stacktrace is OS specific
+  e872727 csoler      Thu, 31 Dec 2015 17:37:05 -0500 updated dos->unix convertion script
+  b6b04dc csoler      Thu, 31 Dec 2015 17:28:42 -0500 added script to convert files to unix format
+  6392d65 csoler      Thu, 31 Dec 2015 16:50:52 -0500 fixed [dos] LF in IdDialog.h
+
+  a6ee7cc csoler      Thu, 31 Dec 2015 14:15:14 -0500 Merge pull request #230 from G10h4ck/ss_port_invalid_family
+  fac1524 csoler      Thu, 31 Dec 2015 13:58:13 -0500 updated todo list
+  c5feafa Gio         Thu, 31 Dec 2015 19:56:50 +0100 Add missing stacktrace.h
+  1303d85 Gio         Thu, 31 Dec 2015 19:32:46 +0100 more cleanups + sanitize p3Peers::getPeerDetails avoid to look for port on null sockaddr_storage
+  37a3c46 defnax      Thu, 31 Dec 2015 16:40:06 +0100 Fixing Margins
+  ed7f958 Gio         Thu, 31 Dec 2015 15:42:22 +0100 Add stacktrave.h, sanitize p3LinkMgrIMPL::retryConnectTCP avoid to look for port on null sockaddr_stor
+  69f6bd0 electron128 Thu, 31 Dec 2015 14:02:51 +0100 insert the newest channel posts first and the oldest last (modified patch from Eugene Tooms)
+  8a41554 csoler      Wed, 30 Dec 2015 18:20:09 -0500 fixed some leaking memory issues in loadList() methods, and also increased consistency by not retur
+  48750cd csoler      Wed, 30 Dec 2015 17:18:22 -0500 merged
+  ae16fc8 csoler      Wed, 30 Dec 2015 17:13:27 -0500 Merge pull request #229 from G10h4ck/master
+  9c24203 Gio         Wed, 30 Dec 2015 22:47:51 +0100 Fix memory leak in getLocalAddresses
+  cefa5d9 csoler      Wed, 30 Dec 2015 13:55:15 -0500 fixed missing SSL_free when a new connection replaces the existing one
+  aabfcb9 csoler      Wed, 30 Dec 2015 13:51:56 -0500 fixed missign initialisation of err in pqissludp.cc
+  d1bc892 csoler      Wed, 30 Dec 2015 13:44:18 -0500 Merge pull request #228 from csoler/v0.6-GxsDebug
+  0299691 csoler      Wed, 30 Dec 2015 11:14:10 -0500 removed overkill test that would cause sending updates to peers when no messages are available (thx
+  f8be606 csoler      Wed, 30 Dec 2015 10:03:32 -0500 Merge pull request #227 from PhenomRetroShare/Fix_DefaultGxsId
+  894328b Phenom      Wed, 30 Dec 2015 15:43:47 +0100 Fix default Identity on Chat
+  6829309 csoler      Tue, 29 Dec 2015 23:40:09 -0500 merged PR 219 from Jolavilette+Phenom, with some minor modifications
+  2fe646c csoler      Tue, 29 Dec 2015 23:39:52 -0500 merged PR 219 from Jolavilette+Phenom, with some minor modifications
+  7486d54 csoler      Tue, 29 Dec 2015 17:59:31 -0500 Merge pull request #226 from G10h4ck/master
+  3cfa22e Gio         Tue, 29 Dec 2015 23:51:16 +0100 Guard checkNetAddress debug, unary + comment clarification
+  9e0dc01 csoler      Tue, 29 Dec 2015 17:31:35 -0500 changed the reset of client map into a reset f server map when subscribing a group
+  2d438b7 csoler      Tue, 29 Dec 2015 16:39:15 -0500 Merge pull request #162 from G10h4ck/getLocalAddresses
+  eab4253 csoler      Mon, 28 Dec 2015 18:15:51 -0500 Merge pull request #224 from PhenomRetroShare/Fix_GenCertDialogMaskingPGPKeyPassword
+  312cea7 defnax      Mon, 28 Dec 2015 16:42:42 +0100 Fixed double selection bug on Windows Vista style
+  4521e8e Phenom      Wed, 23 Dec 2015 15:49:05 +0100 Fix pqihandler::UpdateRates() to get more accurate.
+  c1b8850 Phenom      Mon, 28 Dec 2015 13:45:22 +0100 Fix GenCertDialog masking PGP Key password dialog at end.
+  00517fe csoler      Sun, 27 Dec 2015 22:22:51 -0500 Merge pull request #223 from csoler/v0.6-ContactList
+  71b3638 csoler      Sun, 27 Dec 2015 22:19:30 -0500 removed some debug output in distant chat
+  a80a666 csoler      Sun, 27 Dec 2015 22:16:04 -0500 added notifiction of denying conversation for distant chat
+  9dfac71 csoler      Sun, 27 Dec 2015 21:10:20 -0500 connected GUI to distant chat permission flags system
+  d287a62 defnax      Mon, 28 Dec 2015 00:39:58 +0100 Merge pull request #221 from PhenomRetroShare/Fix_MacOSX.X_Plugin_Compilation
+  b32eb6e csoler      Sun, 27 Dec 2015 17:00:54 -0500 added temporal filtering to RSGraphWidget to clear up the display. Auto-changes with scale. Can be 
+  a63482d defnax      Sun, 27 Dec 2015 19:14:20 +0100 Expand All/Contacts items by default & store/load expand settings.
+  672ab25 csoler      Sun, 27 Dec 2015 10:03:07 -0500 added safeguard against absurdly large packets in rsserial.cc and output of the beginning of the pa
+  ddec6b1 Phenom      Sat, 26 Dec 2015 17:20:45 +0100 Update MacOS_X_InstallGuide.txt
+  cb4579e Phenom      Thu, 24 Dec 2015 18:54:45 +0100 Fix compilation for plugins but miss RetroShare-gui library linking.
+  3ea2e0f defnax      Sat, 26 Dec 2015 16:14:28 +0100 Merge pull request #222 from PhenomRetroShare/Fix_ColoredFontInChat
+  162b5fa Phenom      Sat, 26 Dec 2015 15:57:46 +0100 Fix colored font in chat.
+  1402051 csoler      Fri, 25 Dec 2015 22:37:06 -0500 added backend for distant message and distant chat filtering based on contact list
+  f5c2aa3 defnax      Fri, 25 Dec 2015 17:23:15 +0100 update emotes
+  7afcc2a defnax      Thu, 24 Dec 2015 17:46:02 +0100 Enabled back counting People Enabled "Sort by Posts" for Channels/Forums/Posted Fixed Width/Height 
+  12c9194 defnax      Thu, 24 Dec 2015 14:31:52 +0100 Added Send Invite Button to People Dialog.
+  e3f496f electron128 Thu, 24 Dec 2015 13:21:40 +0100 fixed bug from contact list branch. Identity flags (pgp-linked, contact) where resettet so sig
+  f30f71d csoler      Wed, 23 Dec 2015 18:07:10 -0500 Merge pull request #218 from csoler/v0.6-ContactList
+  73f58c7 csoler      Wed, 23 Dec 2015 13:48:56 -0500 improved layout and namign in MessageComposer
+  4c50641 csoler      Wed, 23 Dec 2015 12:12:34 -0500 cosmetic change in IdDialog
+  52da8cd csoler      Wed, 23 Dec 2015 12:08:20 -0500 fixed display of contactlist when changing status, and improved computaitonal efficiency
+  0183919 csoler      Wed, 23 Dec 2015 11:20:10 -0500 merged before commit
+  98b27d6 csoler      Wed, 23 Dec 2015 11:18:26 -0500 moved notify calls to RsGenExchange out of RsGxsNetService lock zone, to avoid deadlocks
+  15a7487 defnax      Wed, 23 Dec 2015 16:55:23 +0100 Save sorting on Chat lobby
+  226948c defnax      Wed, 23 Dec 2015 14:08:28 +0100 Merge pull request #217 from PhenomRetroShare/Fix_CompilationWhenNXS_NET_DEBUG_0
+  b1ce2fa defnax      Wed, 23 Dec 2015 14:08:01 +0100 Merge pull request #214 from PhenomRetroShare/Fix_MacOSX.X_Compilation
+  1346259 Phenom      Wed, 23 Dec 2015 13:45:39 +0100 Miss recomment NXS_NET_DEBUG_0...
+  4aea100 Phenom      Wed, 23 Dec 2015 13:40:01 +0100 From jolavillette-morkitu: in rsgxsnetservice.cc when #define NXS_NET_DEBUG_0 is set to 1 the compi
+  5d92720 csoler      Tue, 22 Dec 2015 18:33:01 -0500 merged with upstream/master
+  ab763c7 csoler      Tue, 22 Dec 2015 18:29:27 -0500 converted file to unix mode
+  b7cba22 csoler      Tue, 22 Dec 2015 17:43:37 -0500 updated ubuntu changelog
+  95d8647 defnax      Tue, 22 Dec 2015 19:57:26 +0100 Optimized the emoticon selector box size based on how many emoticons are loaded (by anmo), update e
+  86b5591 Phenom      Mon, 21 Dec 2015 17:25:02 +0100 Fix MacOSX 10.10 Yosemite Compilation
+  334b414 defnax      Tue, 22 Dec 2015 17:24:12 +0100 cleaning up resource file for emojione, removed old smileys
+  8e9fe6d defnax      Tue, 22 Dec 2015 01:07:02 +0100 Merge pull request #189 from hunbernd/feature/chat-enhancements
+  4ccab41 defnax      Mon, 21 Dec 2015 22:27:10 +0100 Added new Emojione Emoticons
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 31 Dec 2015 14:00:00 +0100
+
+retroshare06 (0.6.0-1.20151222.4bf2464a~trusty) trusty; urgency=low
+
+  436f619 Gio                 Mon, 21 Dec 2015 17:34:53 +0100 getLocalAddresses collects loopback address too
+  9d78bba Gio                 Mon, 21 Dec 2015 15:48:18 +0100 Guard getLocalAddresses debug
+  9826c72 Gio                 Tue, 15 Dec 2015 16:37:27 +0100 added rs_inet_ntop crossplatform version of inet_ntop
+  ca1a970 Gio                 Fri, 11 Dec 2015 11:44:26 +0100 Removed dead code
+  1b2fa36 Gio                 Tue, 1  Dec 2015 23:38:44 +0100 Adapted getLocalAddresses() includes for windows
+  5a541e7 Gio                 Mon, 26 Oct 2015 13:12:21 +0100 Removed unused getLocalInterfaces_ipv4
+  77bcc99 Gio                 Mon, 26 Oct 2015 12:38:08 +0100 Added sockaddr_storage_dump(...), implemented sockaddr_storage_ipv6_iptostring(...)
+  747a03a Gioacchino Mazzurco Mon, 9  Mar 2015 20:00:41 +0100 Substitute getpreferredinterface flawed logic with simpler getLocalAddresses still just one address used at moment
+  f12b4a1 csoler              Sun, 20 Dec 2015 20:53:11 -0500 Merge pull request #213 from csoler/v0.6-GxsDebug
+  d4926cb csoler              Sun, 20 Dec 2015 20:35:48 -0500 fixed a number of memory leaks in gxsnetservice. Used a class that auto-deletes retrieved items.
+  ea137ad csoler              Sun, 20 Dec 2015 19:07:04 -0500 fixed compilation on OSX pb in pqistreamer
+  d50875b csoler              Sat, 19 Dec 2015 21:38:55 -0500 Merge pull request #212 from csoler/v0.6-TrafficOptim
+  141b799 csoler              Sat, 19 Dec 2015 21:20:25 -0500 removed debug info
+  124da6f csoler              Sat, 19 Dec 2015 21:12:57 -0500 Merge pull request #210 from G10h4ck/pqicleaning
+  d2e62b9 csoler              Sat, 19 Dec 2015 19:18:53 -0500 Merge pull request #211 from csoler/v0.6-GxsDebug
+  462f969 csoler              Sat, 19 Dec 2015 19:15:48 -0500 merged with upstream/master
+  ccc5f0f csoler              Sat, 19 Dec 2015 19:04:49 -0500 improved debug info in rsgxsnetservice
+  5fcaa36 csoler              Sat, 19 Dec 2015 19:00:06 -0500 fixed some serialising bugs, and added proper notification of observer
+  6910ad3 csoler              Sat, 19 Dec 2015 17:38:52 -0500 added stats exchange system to gather number of posts in unsubscribed groups without the need to actually DL the messages (reduced bw a lot)
+  b2c27a1 Gio                 Sat, 19 Dec 2015 22:10:07 +0100 Made pqiperson more readable evidence some strange code
+  adfa94d electron128         Fri, 18 Dec 2015 19:05:18 +0100 added missing null check libresapi ApiPluginHandler
+  b1b75a3 csoler              Fri, 18 Dec 2015 08:07:00 -0500 fixed stupid bug causing cleanRejectedMessages() to be called continuously
+  374aa65 csoler              Thu, 17 Dec 2015 23:10:02 -0500 Merge pull request #209 from csoler/v0.6-GxsDebug
+  e8b881b csoler              Thu, 17 Dec 2015 23:08:02 -0500 added rejection list to gxsnetservice that is fed by calls from GenExchange system, to avoid infinitely re-downloading rejected messages due to bad reputation, bad signatures, missing ids, etc
+  03896d7 defnax              Fri, 18 Dec 2015 01:40:39 +0100 Added Sorting Menu entry.
+  5b63762 electron128         Thu, 17 Dec 2015 18:59:30 +0100 removed useless code which caused lots of ChatId conversation warnings
+  45fb453 csoler              Thu, 17 Dec 2015 09:23:16 -0500 Merge pull request #208 from csoler/v0.6-GxsDebug
+  55e66d0 csoler              Thu, 17 Dec 2015 00:08:08 -0500 fixed mismatch between API versions causing signed groups created with old API to fail author signature checking
+  dc034fe csoler              Tue, 15 Dec 2015 23:17:35 -0500 removed debug info from GxsNetService
+  0c4fd8e csoler              Tue, 15 Dec 2015 18:13:40 -0500 added missing time-stamping of keys
+  3617f9c csoler              Tue, 15 Dec 2015 18:09:49 -0500 added NXS_NET_DEBUG_5 to print summary of incoming items
+  92780b7 csoler              Tue, 15 Dec 2015 18:01:03 -0500 added auto-request of missing GXS ids for group posts authors and group authors
+  42bf996 defnax              Tue, 15 Dec 2015 20:20:11 +0100 Sort lobby Parcipants by activity Set spacing between items
+  f7ab3ad electron128         Tue, 15 Dec 2015 19:56:49 +0100 allow plugins to integrate into the JSON API
+  8d886b8 csoler              Tue, 15 Dec 2015 12:31:03 -0500 added regular timestamp-ing of GXS ids of group authors and group post authors for all subscribed groups
+  3f132f2 csoler              Mon, 14 Dec 2015 21:13:44 -0500 added missing timestamp at message creation time and group creation time
+  e824a2f defnax              Mon, 14 Dec 2015 16:32:00 +0100 update file extensions, patch by Agurer
+  f702c94 csoler              Sun, 13 Dec 2015 18:22:04 -0500 added a few methods to improve consistency between client and server sides, and force update of groups in some cases (such as database erased)
+  96c2872 defnax              Sun, 13 Dec 2015 18:20:56 +0100 Merge pull request #203 from realityfabric/master
+  e003f56 realityfabric       Sun, 13 Dec 2015 08:27:32 -0800 Made it so that sys/select.h is only included if the operating system is not Windows
+  82d43eb csoler              Sat, 12 Dec 2015 23:07:33 -0500 fixed a few bugs in packet packing in pqistreamer.
+  ed7a261 csoler              Sat, 12 Dec 2015 21:07:48 -0500 added check for NULL client update map in rsgxsnetservice::debugDump()
+  ad1aafe csoler              Sat, 12 Dec 2015 14:05:45 -0500 added missing mutex
+  f6a84aa csoler              Sat, 12 Dec 2015 11:52:48 -0500 added packet packing in pqistreamer. To be tested for improvement in bw
+  534be72 csoler              Fri, 11 Dec 2015 22:54:45 -0500 improved debug info in rsgxsnetservice.cc
+  7be7233 csoler              Fri, 11 Dec 2015 22:38:17 -0500 fixed a number of timing issues in rsgxsnetservice. To be tested.
+  66d6f05 csoler              Fri, 11 Dec 2015 19:01:20 -0500 added debugDump() method to display update timestamps of GXS groups on both sides
+  16d815f csoler              Fri, 11 Dec 2015 18:03:44 -0500 added protocol documentation in rsgxsnetservice.cc
+  039db26 csoler              Thu, 10 Dec 2015 22:25:09 -0500 improved debug info in rsgxsnetservice.cc
+  c9af8e3 csoler              Thu, 10 Dec 2015 22:08:28 -0500 improved debug info in rsgxsnetservice.cc
+  3cb3662 csoler              Thu, 10 Dec 2015 21:54:48 -0500 improved debug info in rsgxsnetservice.cc
+  4f41605 csoler              Thu, 10 Dec 2015 14:02:11 -0500 updated TODO list
+  9db0524 csoler              Thu, 10 Dec 2015 00:10:51 -0500 merged with upstream/master
+  9843c1f csoler              Thu, 10 Dec 2015 00:03:01 -0500 started updating debug info in gxsnetservice
+  893f178 csoler              Mon, 7  Dec 2015 23:09:44 -0500 changed GxsTunnel method for computing turtle hash, to avoid crashing old peers
+  0957e70 csoler              Mon, 7  Dec 2015 22:39:45 -0500 changed the method of computation for tunnel hashes in global router in order to avoid conflict with GxsTunnel service (breaks compatibility of distant message sending)
+  4724007 defnax              Mon, 7  Dec 2015 17:11:25 +0100 Changed Context Menu order issue: #187
+  e2542a6 csoler              Mon, 7  Dec 2015 10:02:04 -0500 added missing check after deserialisation of grouter item which caused a crash when receiving a malformed message data
+  7cd880e electron128         Sat, 5  Dec 2015 17:00:57 +0100 removed member gxs_id from ChatId class, because ChatId now uses tunnel ids stored in distant_chat_id for distant chat. reverted naming confusion in in libresapi ChatHandler and fixed author of distant chat messages (distant chat is still unfinished)
+  0ac76d6 csoler              Sat, 5  Dec 2015 10:28:16 -0500 Merge pull request #188 from csoler/v0.6-SecuredTunnelService
+  2a82ef5 csoler              Fri, 4  Dec 2015 21:43:35 -0500 Merge pull request #186 from realityfabric/minor_edits
+  9193d35 csoler              Fri, 4  Dec 2015 21:24:51 -0500 merged with latest master before creating PR
+  dcdf9df csoler              Fri, 4  Dec 2015 14:14:13 -0500 merged
+  88d3e98 csoler              Fri, 4  Dec 2015 14:13:46 -0500 updated TODO list
+  89693b1 csoler              Fri, 4  Dec 2015 14:12:35 -0500 updated TODO list
+  d2a9978 defnax              Fri, 4  Dec 2015 19:56:56 +0100 Fixed Qt5 Fusion stylesheet on MessageComposer
+  d32765c csoler              Fri, 4  Dec 2015 10:53:14 -0500 updated TODO list
+  318be3a csoler              Fri, 4  Dec 2015 00:06:14 -0500 fixed a few bugs in distant chat: disabled history (for now), improved tunnel handling
+  b198f1a csoler              Thu, 3  Dec 2015 00:34:13 -0500 fixed some cleaning of remotely closed tunnels in GxsTunnelService
+  9f56199 realityfabric       Wed, 2  Dec 2015 06:18:17 -0800 fixed spelling errors in several files
+  81b196d csoler              Tue, 1  Dec 2015 23:40:35 -0500 added GUI to display authenticated tunnel info. Added counting of data sent/recvd.
+  60d948b csoler              Mon, 30 Nov 2015 21:52:15 -0500 added void GUI for authenticated tunnels
+  266652f csoler              Mon, 30 Nov 2015 21:02:12 -0500 put ifdefs around debug info in tunnel service
+  12866cd csoler              Mon, 30 Nov 2015 20:51:47 -0500 fixed a few bugs in new distant chat
+  81ab43b csoler              Mon, 30 Nov 2015 00:02:44 -0500 fixed GUI update of avatars and status for distant chat. Updated backend for new model. Fixed a few bugs in serialisation
+  4b38b66 defnax              Sun, 29 Nov 2015 17:28:05 +0100 update todo
+  6951d73 csoler              Sat, 28 Nov 2015 18:02:57 -0500 debugging of GxsTunnel service - fixed transport layer
+  a29f15a csoler              Sat, 28 Nov 2015 14:55:56 -0500 fixed compilation, added missing methods for new distant chat
+  923efda defnax              Sat, 28 Nov 2015 18:13:35 +0100 update todo list
+  6ca49a2 csoler              Fri, 27 Nov 2015 23:37:39 -0500 fixed serialisation methods for GxsTunnel service
+  950f407 csoler              Fri, 27 Nov 2015 14:16:57 -0500 updated todo
+  a2e0f41 csoler              Thu, 26 Nov 2015 20:40:06 -0500 updated GUI for new distant chat
+  874f304 csoler              Thu, 26 Nov 2015 14:48:30 -0500 Merge pull request #167 from G10h4ck/pqicleaning
+  26f4523 csoler              Wed, 25 Nov 2015 17:34:13 -0500 fixed compilation
+  2f31dcf csoler              Wed, 25 Nov 2015 09:27:56 -0500 Merge pull request #182 from ericthefish/master
+  e8173bd Ivan Lucas          Wed, 25 Nov 2015 10:33:28 +0000 Improve some of the wording of labels and information
+  b552408 csoler              Tue, 24 Nov 2015 21:57:59 -0500 added service part and item queues to GXS tunnel service
+  397729b defnax              Tue, 24 Nov 2015 19:41:13 +0100 Added to count downloads/uploads items Enabled to get copy the DHT label values via mouse Added counting on DHT Window & added context menu for DHT Tree, to copy IP addresses to clipboard
+  36c68e7 csoler              Tue, 24 Nov 2015 09:31:29 -0500 Merge pull request #181 from dali99/patch-1
+  8eadba6 Daniel L.Olsen      Tue, 24 Nov 2015 14:43:09 +0100 Fixed a small spelling error
+  19f1a82 csoler              Mon, 23 Nov 2015 22:31:31 -0500 fixed compilation
+  85a9e4c csoler              Mon, 23 Nov 2015 22:19:18 -0500 coding phase done. Needs testing/debugging
+  5c0f1da csoler              Sun, 22 Nov 2015 23:19:46 -0500 saving ongoing work. Implementation almoast finished.
+  8df9d4b csoler              Sun, 22 Nov 2015 11:36:14 -0500 added some doc for tunnel service. Fixed a few function prototypes
+  b247056 csoler              Sat, 21 Nov 2015 15:08:43 -0500 Merge pull request #179 from sirjenster/osx
+  c89ff9f defnax              Sat, 21 Nov 2015 13:47:50 +0100 Added nickname column to pending packets & context menu action to view details Fixed ui layout.
+  2e76cc6 defnax              Sat, 21 Nov 2015 12:32:55 +0100 Fixed DHT icon
+  4b84767 electron128         Sat, 21 Nov 2015 11:57:50 +0100 hide network mode selection in quick start wizard if node is a hidden node
+  1f9cb27 Jenster             Fri, 20 Nov 2015 20:40:00 -0800 other_osx_patch
+  699299a Jenster             Fri, 20 Nov 2015 08:10:59 -0800 latest OSX patches
+  47328a4 defnax              Thu, 19 Nov 2015 19:11:02 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  4dacd9a defnax              Thu, 19 Nov 2015 19:08:47 +0100 Added Ban/Unban Context menu actions for People list.
+  df6abc8 csoler              Thu, 19 Nov 2015 10:54:38 -0500 merged before commit
+  fa4308e csoler              Thu, 19 Nov 2015 10:52:53 -0500 updated TODO list
+  5404cda defnax              Thu, 19 Nov 2015 12:05:52 +0100 Added Forum reply with plaintext quote (by anmo)
+  cb97ce6 csoler              Wed, 18 Nov 2015 23:56:35 -0500 half-way through GxsTunnel service
+  e3d12b8 defnax              Wed, 18 Nov 2015 21:24:38 +0100 Disabled Fontmetrics on RemoteDirModel Columns, it causes unusable very small column height.
+  7bcbc70 csoler              Tue, 17 Nov 2015 18:12:46 -0500 added interface file for gxs tunnel service
+  cb8b814 csoler              Tue, 17 Nov 2015 18:11:00 -0500 added gxs tunnel service, based on distant chat code. Does not compile yet
+  701f1ce defnax              Tue, 17 Nov 2015 17:33:25 +0100 Fixed counting thx to sehraf
+  01f3db7 defnax              Tue, 17 Nov 2015 15:58:22 +0100 Added to count identity items on People
+  17dc7c7 csoler              Mon, 16 Nov 2015 23:56:37 -0500 Merge pull request #68 from chozabu/systray_tweaks
+  0751876 csoler              Mon, 16 Nov 2015 14:06:45 -0500 changed MAX_CACHE_SIZE to not use the default (fixes previous commit that was wrong)
+  b44d08a csoler              Sat, 14 Nov 2015 21:18:26 -0500 changed GXS id cache size to 5000 instead of 100. Should help a lot GXS id handling
+  e0e3621 csoler              Sat, 14 Nov 2015 21:16:30 -0500 added missing wily for ubuntu packages
+  8238c82 electron128         Sun, 8  Nov 2015 10:34:31 +0100 fix integer size issue in ContentTypes.cpp which can lead to an infinite loop
+  0a21d92 electron128         Sun, 8  Nov 2015 10:23:45 +0100 Merge pull request #176 from hunbernd/feature/webui-download-enhancements
+  3991b6f csoler              Sun, 8  Nov 2015 01:38:37 -0500 Merge pull request #175 from sembrestels/patch-1
+  0ef9b22 hunbernd            Sun, 8  Nov 2015 01:52:23 +0100 Some fixes: * using ContentTypes to resolve static files too * added some default content types, in the case of mime.types file not present * resolve extensions with upper case letters in them
+  c6ad0d4 defnax              Sun, 8  Nov 2015 01:07:59 +0100 Merge pull request #122 from PhenomRetroShare/Fix_PrioritySpeedMenuForDownloadFiles
+  b847eea hunbernd            Sat, 7  Nov 2015 00:33:37 +0100 Webui: Added video support into MediaPlayerWidget
+  37353e5 Sem                 Sat, 7  Nov 2015 19:41:55 +0100 Adding libsqlcipher-dev package
+  88e1dc0 hunbernd            Fri, 6  Nov 2015 22:51:52 +0100 Webui: added links on file names Browsers can play partial files with built-in player, or save files to disk.
+  ce40760 hunbernd            Fri, 6  Nov 2015 22:05:35 +0100 Added support for all common content-types into MHDFilestreamerHandler File extension --> content-type associations are read from mime.types file.
+  413cee3 electron128         Fri, 6  Nov 2015 19:50:59 +0100 set buffer size for reading config signatures to the size of the computed signature. This fixes the load of the configuration for locations created after 8e6c7cd.
+  c41f98c defnax              Fri, 6  Nov 2015 01:58:30 +0100 Merge pull request #86 from PhenomRetroShare/Fix_Win7_32bCompilationFromScratch
+  af35af1 csoler              Thu, 5  Nov 2015 10:06:43 -0500 Merge pull request #174 from AsamK/hide_debug
+  0e2417d AsamK               Wed, 9  Sep 2015 16:18:47 +0200 Hide debug messages from p3historymgr
+  75d462e csoler              Thu, 5  Nov 2015 03:22:47 -0500 Merge pull request #173 from mr-alice/master
+  93368aa mr-alice            Wed, 4  Nov 2015 21:08:31 -0500 show or hide ID chooser in message box depending on destination of message
+  3a2b5f1 defnax              Wed, 4  Nov 2015 23:47:12 +0100 calculate correct icon size for the status icon
+  bdc70c6 hunbernd            Wed, 4  Nov 2015 22:02:02 +0100 Allow arbitrary name in fstream url after hash. /fstream/fileshash/name Useful for creating file links that contains the original file name.
+  c4563db defnax              Wed, 4  Nov 2015 17:06:44 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  2a998c1 defnax              Wed, 4  Nov 2015 17:05:39 +0100 Added new higher resolution bullet icons with better quality
+  f9e61dd csoler              Sat, 31 Oct 2015 13:32:19 -0400 Merge pull request #169 from AsamK/add_missing_return
+  f06d150 AsamK               Sat, 31 Oct 2015 15:13:47 +0100 Add missing return
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Fri, 30 Oct 2015 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20151030.3c70c5cc~trusty) trusty; urgency=low
+
    2a5fe4d csoler              30 Oct 2015 21:12:47 -0400 merge before push
    1bc2892 csoler              30 Oct 2015 21:11:44 -0400 removed some debug info
    6554362 defnax              30 Oct 2015 15:51:13 +0100 Fixed Layout
@@ -1959,7 +2186,7 @@ retroshare (0.5.4-0.6546~precise) precise; urgency=low
 retroshare (0.5.4-0.6455~precise) precise; urgency=low
 
   * Improvements
-  	  - GUI
+     - GUI
         * added/enabled GUI for distant chat (Invitation handler in config->chat, handling of Distant chat links)
         * Localized Greek and Dutch (patch from Henry). Updated English.
         * Languages updates from transifex
@@ -2008,7 +2235,7 @@ retroshare (0.5.4-0.6399~precise) precise; urgency=low
     - added columns for last used statistics on pgp keys in network dialog.
 
   * Bugs
-  	 - fixed display of names in file lists
+    - fixed display of names in file lists
     - fixed destination directory when downloading channel items in auto DL mode
     - improved time-stamp management for pgp keys
     - fixed translatable string with .arg (Req. From H. Morgan)

@@ -295,7 +295,7 @@ void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId& id,RsG
     
     if(it == pendingGxsTunnelDataItems.end())
     {
-        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << " is unknown. This is unexpected." << std::endl;
+        std::cerr << "  (EE) item number " << std::hex << item->unique_item_counter << std::dec << " is unknown. This is unexpected." << std::endl;
         return ;
     }
     
@@ -327,6 +327,8 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
 #endif
     
     RsGxsTunnelClientService *service = NULL ;
+    RsGxsId peer_from ;
+    
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 	    std::map<uint32_t,RsGxsTunnelClientService *>::const_iterator it = mRegisteredServices.find(item->service_id) ;
@@ -341,10 +343,14 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it2 = _gxs_tunnel_contacts.find(tunnel_id) ; 
             
             if(it2 != _gxs_tunnel_contacts.end())
+	    {
 		    it2->second.client_services.insert(item->service_id) ;
+		    peer_from = it2->second.to_gxs_id ;
+	    }
     }
     
-    service->receiveData(tunnel_id,item->data,item->data_size) ;
+    if(service->acceptDataFromPeer(peer_from,tunnel_id))
+	    service->receiveData(tunnel_id,item->data,item->data_size) ;
     
     item->data = NULL ;		// avoids deletion, since the client has the memory now
     item->data_size = 0 ;
@@ -1207,7 +1213,6 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     if(!RsAES::aes_crypt_8_16(buff,rssize,aes_key,(uint8_t*)&IV,encrypted_data,encrypted_size))
     {
         std::cerr << "(EE) packet encryption failed." << std::endl;
-        delete[] encrypted_data ;
         return false;
     }
 
@@ -1460,6 +1465,8 @@ bool p3GxsTunnelService::closeExistingTunnel(const RsGxsTunnelId& tunnel_id, uin
 
 	    if(it2 != _gxs_tunnel_virtual_peer_ids.end())
 		    hash = it2->second.hash ;
+	else
+		hash = it->second.hash ;
 
 	    // check how many clients are used. If empty, close the tunnel
 

@@ -152,7 +152,7 @@ int	pqissludp::attach()
 // The Address determination is done centrally
 int pqissludp::Initiate_Connection()
 {
-	int err;
+	int err=0;
 
 	attach(); /* open socket */
 	//remote_addr.sin_family = AF_INET;
@@ -280,7 +280,7 @@ int pqissludp::Initiate_Connection()
 			proxyaddr.sin_port = pap->sin_port;
 			remoteaddr.sin_port = rap->sin_port;
 			
-			tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
+			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
 			
 		}
 		

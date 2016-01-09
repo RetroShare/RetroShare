@@ -66,3 +66,22 @@ win32 {
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
 }
+
+macx {
+	#You can found some information here:
+	#https://developer.apple.com/library/mac/documentation/Porting/Conceptual/PortingUnix/compiling/compiling.html
+	QMAKE_LFLAGS_PLUGIN -= -dynamiclib
+	QMAKE_LFLAGS_PLUGIN += -bundle
+	QMAKE_LFLAGS_PLUGIN += -bundle_loader "../../retroshare-gui/src/RetroShare06.app/Contents/MacOS/RetroShare06"
+
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	RCC_DIR = temp/qrc
+	UI_DIR  = temp/ui
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+}

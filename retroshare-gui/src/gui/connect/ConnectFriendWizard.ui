@@ -94,7 +94,7 @@
     <item>
      <widget class="QLabel" name="userCertLabel">
       <property name="text">
-       <string>The text below is your PGP certificate. You have to provide it to your friend</string>
+       <string>The text below is your Retroshare certificate. You have to provide it to your friend</string>
       </property>
      </widget>
     </item>
@@ -278,7 +278,7 @@
     <item>
      <widget class="QLabel" name="friendCertLabel">
       <property name="text">
-       <string>Please, paste your friend's PGP certificate into the box below</string>
+       <string>Please, paste your friend's Retroshare certificate into the box below</string>
       </property>
      </widget>
     </item>
@@ -290,6 +290,9 @@
          <font>
           <family>Courier New</family>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's PGP key. Do not paste your friend's PGP key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="lineWrapMode">
          <enum>QPlainTextEdit::NoWrap</enum>
@@ -524,16 +527,7 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout_10">
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
-      <property name="topMargin">
-       <number>9</number>
-      </property>
-      <property name="rightMargin">
-       <number>9</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>9</number>
       </property>
       <item>

@@ -97,6 +97,7 @@ public:
     virtual uint32_t serial_size() ;
 
     std::map<RsGxsId,time_t> mTimeStamps ;
+    std::set<RsGxsId> mContacts ;
 };
 
 #if 0

@@ -53,6 +53,8 @@
 #define COLUMN_ID        3
 #define COLUMN_COUNT     4
 
+#define ROLE_SORT            Qt::UserRole + 1
+
 const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 
 /** Default constructor */
@@ -79,10 +81,25 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
+    
+    QActionGroup *sortgrp = new QActionGroup(this);
+    actionSortByName = new QAction(QIcon(), tr("Sort by Name"), this);
+    actionSortByName->setCheckable(true);
+    actionSortByName->setChecked(true); 
+    actionSortByName->setActionGroup(sortgrp);
+
+    actionSortByActivity = new QAction(QIcon(), tr("Sort by Activity"), this);
+    actionSortByActivity->setCheckable(true);
+    actionSortByActivity->setChecked(false); 
+    actionSortByActivity->setActionGroup(sortgrp);
+
 
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
+    
+    connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
+    connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
 
 	// Add a button to invite friends.
 	//
@@ -94,7 +111,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
 
         mParticipantCompareRole = new RSTreeWidgetItemCompareRole;
-        mParticipantCompareRole->setRole(0, Qt::UserRole);
+        mParticipantCompareRole->setRole(COLUMN_ACTIVITY, ROLE_SORT);
 
 	{
 	QIcon icon ;
@@ -179,6 +196,9 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(sendMessageAct);
     contextMnu.addSeparator();
     contextMnu.addAction(muteAct);
+    contextMnu.addSeparator();
+    contextMnu.addAction(actionSortByActivity);
+    contextMnu.addAction(actionSortByName);
 
 
 	muteAct->setCheckable(true);
@@ -300,11 +320,20 @@ void ChatLobbyDialog::processSettings(bool load)
 
 		// state of splitter
 		ui.splitter->restoreState(Settings->value("splitter").toByteArray());
+		
+		// load sorting
+		actionSortByActivity->setChecked(Settings->value("sortbyActivity", QVariant(false)).toBool());
+		actionSortByName->setChecked(Settings->value("sortbyName", QVariant(true)).toBool());
+		
 	} else {
 		// save settings
 
 		// state of splitter
 		Settings->setValue("splitter", ui.splitter->saveState());
+		
+		//save sorting
+		Settings->setValue("sortbyActivity", actionSortByActivity->isChecked());
+		Settings->setValue("sortbyName", actionSortByName->isChecked());
 	}
 
 	Settings->endGroup();
@@ -450,6 +479,9 @@ void ChatLobbyDialog::updateParticipantsList()
 
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
             time_t now = time(NULL);
+            
+                widgetitem->setSizeHint(COLUMN_ICON, QSize(20,20));
+
 
             if(isParticipantMuted(it2->first))
                 widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_red_128.png"));
@@ -472,7 +504,7 @@ void ChatLobbyDialog::updateParticipantsList()
         }
     }
     ui.participantsList->setSortingEnabled(true);
-    ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+    sortParcipants();
 }
 
 /**
@@ -761,4 +793,15 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 		MainWindow::showWindow(MainWindow::ChatLobby);
 		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
 	}
+}
+
+void ChatLobbyDialog::sortParcipants()
+{
+
+	if (actionSortByActivity->isChecked()) {
+        ui.participantsList->sortItems(COLUMN_ACTIVITY, Qt::DescendingOrder);
+	} else if (actionSortByName->isChecked()) {
+        ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+	}
+  
 }

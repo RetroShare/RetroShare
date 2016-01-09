@@ -185,6 +185,9 @@ private slots:
 	bool fileSave();
 	bool fileSaveAs();
 
+	void quote();
+	void saveImage();
+
 private:
 	bool findText(const QString& qsStringToFind);
 	bool findText(const QString& qsStringToFind, bool bBackWard, bool bForceMove);

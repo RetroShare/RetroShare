@@ -51,6 +51,7 @@
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
+#include "util/imageutil.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -125,6 +126,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseFont, SIGNAL(triggered()), this, SLOT(chooseFont()));
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
+	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
+	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
@@ -975,6 +978,14 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
+	contextMnu->addAction(ui->actionQuote);
+
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	if(ImageUtil::checkImage(cursor))
+	{
+		ui->actionSave_image->setData(point);
+		contextMnu->addAction(ui->actionSave_image);
+	}
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
 	delete(contextMnu);
@@ -1380,7 +1391,13 @@ void ChatWidget::smileyWidget()
 
 void ChatWidget::addSmiley()
 {
-	ui->chatTextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+	QString smiley = qobject_cast<QPushButton*>(sender())->toolTip().split("|").first();
+	// add trailing space
+	smiley += QString(" ");
+	// add preceding space when needed (not at start of text or preceding space already exists)
+	if(!ui->chatTextEdit->textCursor().atStart() && ui->chatTextEdit->toPlainText()[ui->chatTextEdit->textCursor().position() - 1] != QChar(' '))
+		smiley = QString(" ") + smiley;
+	ui->chatTextEdit->textCursor().insertText(smiley);
 }
 
 void ChatWidget::clearChatHistory()
@@ -1667,4 +1684,22 @@ bool ChatWidget::setStyle()
 	}
 
 	return false;
+}
+
+void ChatWidget::quote()
+{
+	QString text = ui->textBrowser->textCursor().selection().toPlainText();
+	if(text.length() > 0)
+	{
+		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+		text = sl.join("\n>");
+		emit ui->chatTextEdit->append(QString(">") + text);
+	}
+}
+
+void ChatWidget::saveImage()
+{
+	QPoint point = ui->actionSave_image->data().toPoint();
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	ImageUtil::extractImage(window(), cursor);
 }

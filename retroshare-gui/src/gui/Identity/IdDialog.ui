@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>826</width>
-    <height>630</height>
+    <width>745</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6">
+  <layout class="QGridLayout" name="gridLayout_5">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -32,7 +32,10 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <property name="horizontalSpacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -46,7 +49,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="leftMargin">
        <number>2</number>
       </property>
@@ -112,13 +115,6 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="todoPushButton">
-        <property name="text">
-         <string>Todo</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="helpButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
@@ -138,7 +134,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -221,6 +217,18 @@
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="indentation">
+          <number>24</number>
+         </property>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
@@ -229,7 +237,7 @@
          </attribute>
          <column>
           <property name="text">
-           <string>Identity name</string>
+           <string>Persons</string>
           </property>
          </column>
          <column>
@@ -254,7 +262,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget1">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="QFrame" name="headerFrame">
@@ -297,41 +305,6 @@
            <widget class="StyledElidedLabel" name="headerTextLabel">
             <property name="text">
              <string>People</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3" rowspan="2">
-           <widget class="QToolButton" name="messageButton">
-            <property name="minimumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Send message</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/mail-message-new.png</normaloff>:/images/mail-message-new.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>48</width>
-              <height>48</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -487,6 +460,13 @@
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="inviteButton">
+              <property name="text">
+               <string>Send Invite</string>
               </property>
              </widget>
             </item>
@@ -713,12 +693,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>todoPushButton</tabstop>
   <tabstop>idTreeWidget</tabstop>
-  <tabstop>lineEdit_Nickname</tabstop>
-  <tabstop>lineEdit_KeyId</tabstop>
-  <tabstop>lineEdit_GpgId</tabstop>
-  <tabstop>lineEdit_GpgName</tabstop>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>

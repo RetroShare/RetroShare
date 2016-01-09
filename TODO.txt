@@ -13,7 +13,7 @@ PS: no tabs in this file,thx ;-)
 -----------------------------------------  TODO list ----------------------------------------------
 
 GUI
-	E  [ ] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
+    E  [X] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
     E  [ ] Implement creation of a default (signed) gxs id in startup wizard. Needs to show to the 
            user a proper separation between nodes (network layer) and GXS ids (service layer).
     E  [ ] fix posted GUI. Needs to be more handy and more appealing.
@@ -44,7 +44,7 @@ DHT
 
 GXS
     M  [X] create a tunnel service from distant chat code to make it (1) more generic (2) resistant to packet loss. 
-    M  [ ] optimise GXS sync BW. For the moment too much is sent between nodes.
+    M  [X] optimise GXS sync BW. For the moment too much is sent between nodes.
     H  [/] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
     H  [ ] use different and incompatible classes for public and private keys in GxsSecurity
 
@@ -65,12 +65,13 @@ VOIP
 Messages
     H  [ ] make the mail system re-send failed emails notified by the global router. This is hard because it needs a proper
            management of duplicate messages
-    E  [ ] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
+    E  [X] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
 
 Chat
-    E  [ ] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
+    E  [X] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
 
 Libretroshare
+    E  [X] groups small packets in pqistreamer::handleoutgoing_locked(), and see if that removes some padding overhead
     E  [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
     M  [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
     M  [ ] separate chat stuff from rsmsgs.h into rschat.h
@@ -105,10 +106,10 @@ Forums
 
 Bugs
     E  [ ] find the bug that shows some peers online in Network although they are not.
-    M  [ ] Selecting different options in messages composer -> contact list then come back, 
+    M  [X] Selecting different options in messages composer -> contact list then come back, 
            shows disappearing / re-appearing people. What causes this???
 
-Settings 
+Sounds 
     E  [ ] add default sounds for Friend go online, New Chat Message, Message arrived, Download complete
     M  [ ] make sure sound is working for users on linux. We also need a "test sound" button in config->sound. 
 

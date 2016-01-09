@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
-    <height>747</height>
+    <width>935</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,14 +56,23 @@
         <set>QDockWidget::DockWidgetClosable</set>
        </property>
        <property name="windowTitle">
-        <string>Contacts</string>
+        <string>Address list:</string>
        </property>
        <widget class="QWidget" name="dockWidgetContents">
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="margin">
-          <number>1</number>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <item row="1" column="0">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="filterComboBox"/>
+         </item>
+         <item>
           <widget class="FriendSelectionWidget" name="friendSelectionWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -100,25 +109,8 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="addToButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>&gt;&gt; To</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
@@ -130,7 +122,20 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Cc</string>
+                <string>Cc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addToButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>To</string>
                </property>
               </widget>
              </item>
@@ -143,7 +148,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Bcc</string>
+                <string>Bcc</string>
                </property>
               </widget>
              </item>
@@ -160,28 +165,11 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Recommend</string>
+                <string>Recommend this friend</string>
                </property>
               </widget>
              </item>
             </layout>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Show:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="filterComboBox"/>
            </item>
           </layout>
          </item>
@@ -212,7 +200,16 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item row="0" column="0">
@@ -615,8 +612,8 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
+                 <iconset resource="../emojione.qrc">
+                  <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -793,7 +790,16 @@
             <enum>QFrame::Box</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item>
@@ -1030,7 +1036,16 @@ border-image: url(:/images/closepressed.png)
        </widget>
        <widget class="QWidget" name="layoutWidget_1">
         <layout class="QGridLayout" name="layoutrecommended">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <property name="spacing">
@@ -1105,7 +1120,7 @@ border-image: url(:/images/closepressed.png)
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>925</width>
+     <width>935</width>
      <height>21</height>
     </rect>
    </property>
@@ -1238,8 +1253,6 @@ border-image: url(:/images/closepressed.png)
   <tabstop>titleEdit</tabstop>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
-  <tabstop>addToButton</tabstop>
-  <tabstop>addCcButton</tabstop>
   <tabstop>addBccButton</tabstop>
   <tabstop>addRecommendButton</tabstop>
   <tabstop>comboSize</tabstop>
@@ -1249,6 +1262,7 @@ border-image: url(:/images/closepressed.png)
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../emojione.qrc"/>
  </resources>
  <connections/>
 </ui>

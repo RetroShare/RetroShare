@@ -40,6 +40,7 @@
 	#define BIG_ENDIAN  4321
 #endif
 
+#ifndef ntohll
 uint64_t ntohll(uint64_t x)
 {
 #ifdef BYTE_ORDER
@@ -61,11 +62,13 @@ uint64_t ntohll(uint64_t x)
 #endif
 
 }
-
+#endif
+#ifndef htonll
 uint64_t htonll(uint64_t x)
 {
         return ntohll(x);
 }
+#endif
 
 void sockaddr_clear(struct sockaddr_in *addr)
 {

@@ -54,7 +54,8 @@ private slots:
     void defaultTag();
 
     void currentRowChangedTag(int row);
-	 void toggleEnableEncryptedDistantMsgs(bool) ;
+    void distantMsgsComboBoxChanged(int);
+	 
 
 private:
     void fillTags();

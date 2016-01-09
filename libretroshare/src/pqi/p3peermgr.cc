@@ -379,9 +379,9 @@ bool    p3PeerMgrIMPL::getGpgId(const RsPeerId &ssl_id, RsPgpId &gpgId)
 
 /**** HIDDEN STUFF ****/
 
-bool    p3PeerMgrIMPL::isHidden()
+bool p3PeerMgrIMPL::isHidden()
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 	return mOwnState.hiddenNode;
 }
 
@@ -2360,6 +2360,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		setProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr);
 	}
 
+    	load.clear() ;
 	return true;
 }
 

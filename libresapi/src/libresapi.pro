@@ -33,8 +33,8 @@ libmicrohttpd{
 		PKGCONFIG *= libmicrohttpd
 	} else {
 		mac {
-		INCLUDEPATH += /usr/local/include
-		LIBS *= /usr/local/lib/libmicrohttpd.a
+			INCLUDEPATH += . $$INC_DIR
+			for(lib, LIB_DIR):exists($$lib/libmicrohttpd.a){ LIBS *= $$lib/libmicrohttpd.a}
 		} else {
 			LIBS *= -lmicrohttpd
 		}
@@ -65,7 +65,8 @@ SOURCES += \
     api/ChatHandler.cpp \
     api/LivereloadHandler.cpp \
     api/TmpBlobStore.cpp \
-    util/ContentTypes.cpp
+    util/ContentTypes.cpp \
+    api/ApiPluginHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -89,4 +90,5 @@ HEADERS += \
     api/ChatHandler.h \
     api/LivereloadHandler.h \
     api/TmpBlobStore.h \
-    util/ContentTypes.h
+    util/ContentTypes.h \
+    api/ApiPluginHandler.h

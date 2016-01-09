@@ -33,7 +33,11 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
+#ifdef __MAC_10_10
+#include <unordered_set>
+#else
 #include <tr1/unordered_set>
+#endif
 #include <iomanip>
 #include <fstream>
 #include <sys/stat.h>
@@ -54,8 +58,11 @@ static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
  ****/
 
 static RsMutex FIndexPtrMtx("FIndexPtrMtx") ;
+#ifdef __MAC_10_10
+std::unordered_set<void*> FileIndex::_pointers ;
+#else
 std::tr1::unordered_set<void*> FileIndex::_pointers ;
-
+#endif
 void FileIndex::registerEntry(void*p)
 {
 	RsStackMutex m(FIndexPtrMtx) ;

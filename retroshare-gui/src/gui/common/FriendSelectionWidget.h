@@ -65,7 +65,8 @@ public:
         SHOW_GPG              = 2,
         SHOW_SSL              = 4,
         SHOW_NON_FRIEND_GPG   = 8,
-        SHOW_GXS              =16
+        SHOW_GXS              =16,
+        SHOW_CONTACTS         =32
     };
 
     Q_DECLARE_FLAGS(ShowTypes, ShowType)

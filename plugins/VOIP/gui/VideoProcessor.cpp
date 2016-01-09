@@ -1,6 +1,10 @@
 #include <iostream>
 #include <assert.h>
+#ifdef __MACH__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 
 #include <QByteArray>
 #include <QBuffer>
@@ -720,7 +724,12 @@ bool FFmpegVideo::decodeData(const RsVOIPDataChunk& chunk,QImage& image)
 #if defined(__MINGW32__)
 	unsigned char *tmp = (unsigned char*)_aligned_malloc(s + AV_INPUT_BUFFER_PADDING_SIZE, 16) ;
 #else
+#ifdef __MACH__
+	//Mac OS X appears to be 16-byte mem aligned.
+	unsigned char *tmp = (unsigned char*)malloc(s + AV_INPUT_BUFFER_PADDING_SIZE) ;
+#else //MAC
 	unsigned char *tmp = (unsigned char*)memalign(16, s + AV_INPUT_BUFFER_PADDING_SIZE) ;
+#endif //MAC
 #endif //MINGW
 	if (tmp == NULL) {
 		std::cerr << "FFmpegVideo::decodeData() Unable to allocate new buffer of size " << s << std::endl;

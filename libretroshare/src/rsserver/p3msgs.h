@@ -80,8 +80,8 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
-	  virtual void enableDistantMessaging(bool b) ;
-	  virtual bool distantMessagingEnabled() ;
+	  virtual uint32_t getDistantMessagingPermissionFlags() ;
+	  virtual void setDistantMessagingPermissionFlags(uint32_t flags) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
@@ -159,6 +159,9 @@ class p3Msgs: public RsMsgs
       virtual bool getDistantChatStatus(const DistantChatPeerId& gxs_id,DistantChatPeerInfo& info);
       virtual bool closeDistantChatConnexion(const DistantChatPeerId &pid) ;
 
+    virtual uint32_t getDistantChatPermissionFlags() ;
+    virtual bool setDistantChatPermissionFlags(uint32_t flags) ;
+    
    private:
 
 	  p3MsgService  *mMsgSrv;

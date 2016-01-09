@@ -1180,12 +1180,13 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
     {
         RsServicePermissionItem *item = dynamic_cast<RsServicePermissionItem*>(*it) ;
 
-        if(item == NULL)
-            continue ;
-
-        mServicePermissionMap[item->mServiceId] = *item ;
+        if(item != NULL)
+		mServicePermissionMap[item->mServiceId] = *item ;
+        
+        delete *it ;
     }
 
+    loadList.clear() ;
 	return true;
 }
 
