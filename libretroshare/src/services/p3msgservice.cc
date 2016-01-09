@@ -1126,38 +1126,38 @@ uint32_t     p3MsgService::sendDistantMessage(RsMsgItem *item,const RsGxsId& fro
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
-    for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
-    for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
-    for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  ++pit) sendMessage(initMIRsMsg(info, *pit));
+	for(std::set<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); ++pit) sendMessage(initMIRsMsg(info, *pit));
 
-    for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
-    for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
-    for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
+	for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
+	for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
+	for(std::set<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); ++pit) sendDistantMessage(initMIRsMsg(info, *pit),info.rsgxsid_srcId);
 
-	// store message in outgoing list.
-    // why would we do what's below??
-    
-//	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
-//
-//	if (msg)
-//	{
-//		std::list<RsPgpId>::iterator it ;
-//
-//		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
-//			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
-//
-//		/* use processMsg to get the new msgId */
-//	msg->recvTime = time(NULL);
-//	msg->msgId = getNewUniqueMsgId();
-//			mi->msgFlags |= RS_MSG_OUTGOING;
-//            
-//		imsg[mi->msgId] = mi;
-//            
-//	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-//
-//		// return new message id
-//		rs_sprintf(info.msgId, "%lu", msg->msgId);
-//	}
+	// store message in outgoing list. In order to appear as sent the message needs to have the OUTGOING flg, but no pending flag on.
+
+	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
+
+	if (msg)
+	{
+		std::list<RsPgpId>::iterator it ;
+
+		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
+
+		/* use processMsg to get the new msgId */
+		msg->recvTime = time(NULL);
+		msg->msgId = getNewUniqueMsgId();
+                
+		msg->msgFlags |= RS_MSG_OUTGOING;
+
+		imsg[msg->msgId] = msg;
+
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+		//
+		//		// return new message id
+		//		rs_sprintf(info.msgId, "%lu", msg->msgId);
+	}
 
 	return true;
 }
