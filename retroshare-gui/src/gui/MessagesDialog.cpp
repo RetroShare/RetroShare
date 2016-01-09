@@ -852,8 +852,6 @@ void MessagesDialog::insertMessages()
 
     rsMail -> getMessageSummaries(msgList);
 
-    std::cerr << "MessagesDialog::insertMessages()" << std::endl;
-
     int filterColumn = ui.filterLineEdit->currentFilter();
 
     /* check the mode we are in */
@@ -1468,8 +1466,6 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
 
 void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead)
 {
-    std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
-
     /* get its Ids */
     std::string cid;
     std::string mid;
