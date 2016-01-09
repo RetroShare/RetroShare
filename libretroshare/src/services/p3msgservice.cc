@@ -327,96 +327,118 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 
 int     p3MsgService::checkOutgoingMessages()
 {
-	/* iterate through the outgoing queue 
+    /* iterate through the outgoing queue 
 	 *
 	 * if online, send
 	 */
 
-	bool changed = false ;
-	std::list<RsMsgItem*> output_queue ;
+    	static const uint32_t OLD_MESSAGE_FLUSHING_DELAY = 86400*7 ; // re-send old messages every week. This mainly ensures that
+        								// messages that where never sent get sent at some point.
+        
+    time_t now = time(NULL);
+    bool changed = false ;
+    std::list<RsMsgItem*> output_queue ;
 
-	{
-        const RsPeerId& ownId = mServiceCtrl->getOwnId();
+    {
+	    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+        
+	    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
-		std::list<uint32_t>::iterator it;
-		std::list<uint32_t> toErase;
-        RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	    std::list<uint32_t>::iterator it;
+	    std::list<uint32_t> toErase;
 
-		std::map<uint32_t, RsMsgItem *>::iterator mit;
-		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
-		{
-            if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH)
-				continue;
+	    std::map<uint32_t, RsMsgItem *>::iterator mit;
+	    for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); ++mit)
+	    {
+		    if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH)
+			    continue;
 
-			/* find the certificate */
-			RsPeerId pid = mit->second->PeerId();
+		    /* find the certificate */
+		    RsPeerId pid = mit->second->PeerId();
+		    bool should_send = false ;
 
-			if( pid == ownId 
-                    || ( (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) && (!(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED)))
-                    || mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
-			{
-				/* send msg */
-				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-					"p3MsgService::checkOutGoingMessages() Sending out message");
-				/* remove the pending flag */
+		    if( pid == ownId) 
+			    should_send = true ;
 
-				output_queue.push_back(mit->second) ;
+		    if( mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
+			    should_send = true ;
 
-				// When the message is a distant msg, dont remove it yet from the list. Only mark it as being sent, so that we don't send it again.
-				//
-				if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
+		    if (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) 
+		    {
+			    if(!(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
+				    should_send = true ;
+
+			    if(mit->second->sendTime + OLD_MESSAGE_FLUSHING_DELAY < now)
 				{
-					(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
-					toErase.push_back(mit->first);
-					changed = true ;
-				}
-				else
-				{
+				    should_send = true ;
+                    			mit->second->sendTime = now;
+                		}
+		    }
+
+		    if(should_send)
+		    {
+			    /* send msg */
+			    pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
+			              "p3MsgService::checkOutGoingMessages() Sending out message");
+			    /* remove the pending flag */
+
+			    output_queue.push_back(mit->second) ;
+
+			    // When the message is a distant msg, dont remove it yet from the list. Only mark it as being sent, so that we don't send it again.
+			    //
+			    if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
+			    {
+				    (mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
+				    toErase.push_back(mit->first);
+				    changed = true ;
+			    }
+			    else
+			    {
 #ifdef DEBUG_DISTANT_MSG
-					std::cerr << "Message id " << mit->first << " is distant: kept in outgoing, and marked as ROUTED" << std::endl;
+				    std::cerr << "Message id " << mit->first << " is distant: kept in outgoing, and marked as ROUTED" << std::endl;
 #endif
-					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED ;
-				}
-			}
-			else
-			{
-				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-					"p3MsgService::checkOutGoingMessages() Delaying until available...");
-			}
-		}
+				    mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED ;
+			    }
+		    }
+		    else
+		    {
+			    pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
+			              "p3MsgService::checkOutGoingMessages() Delaying until available...");
+		    }
+	    }
 
-		/* clean up */
-		for(it = toErase.begin(); it != toErase.end(); ++it)
-		{
-			mit = msgOutgoing.find(*it);
-			if (mit != msgOutgoing.end())
-			{
-				msgOutgoing.erase(mit);
-			}
+	    /* clean up */
+	    for(it = toErase.begin(); it != toErase.end(); ++it)
+	    {
+		    mit = msgOutgoing.find(*it);
+		    if (mit != msgOutgoing.end())
+		    {
+			    msgOutgoing.erase(mit);
+		    }
 
-			std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
-			if (srcIt != mSrcIds.end()) {
-				delete (srcIt->second);
-				mSrcIds.erase(srcIt);
-			}
-		}
+		    std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
+		    if (srcIt != mSrcIds.end()) {
+			    delete (srcIt->second);
+			    mSrcIds.erase(srcIt);
+		    }
+	    }
 
-		if (toErase.size() > 0)
-		{
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		}
-	}
+	    if (toErase.size() > 0)
+	    {
+		    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	    }
+    }
 
     for(std::list<RsMsgItem*>::const_iterator it(output_queue.begin());it!=output_queue.end();++it)
-        if((*it)->msgFlags & RS_MSG_FLAGS_DISTANT)		// don't split distant messages. The global router takes care of it.
-            sendDistantMsgItem(*it) ;
-        else
-            checkSizeAndSendMessage(*it) ;
+	    if((*it)->msgFlags & RS_MSG_FLAGS_DISTANT)		// don't split distant messages. The global router takes care of it.
+		    sendDistantMsgItem(*it) ;
+	    else
+		    checkSizeAndSendMessage(*it) ;
 
-	if(changed)
-		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+    if(changed)
+	    RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
-	return 0;
+    return 0;
 }
 
 bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)

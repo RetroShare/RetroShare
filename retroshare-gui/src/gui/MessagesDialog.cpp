@@ -1098,25 +1098,34 @@ void MessagesDialog::insertMessages()
             //  From ....
             {
                 bool setText = true;
-                if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) {
+                if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) 
+                {
                     if ((it->msgflags & RS_MSG_SYSTEM) && it->srcId == ownId) {
                         text = "RetroShare";
-                    } else {
+                    } 
+                    else 
+                    {
                         if (it->msgflags & RS_MSG_DISTANT)
                         {
                             // distant message
                             setText = false;
                             if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
                                 gotInfo = true;
-                                item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM, false);
-                            } else {
+                                
+                                if(msgbox != RS_MSG_INBOX && !msgInfo.rsgxsid_msgto.empty())
+					item->setId(RsGxsId(*msgInfo.rsgxsid_msgto.begin()), COLUMN_FROM, false);
+                                else
+					item->setId(RsGxsId(msgInfo.rsgxsid_srcId), COLUMN_FROM, false);
+                            } 
+                            else 
                                 std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
-                            }
-                        } else {
+                        } 
+                        else 
                             text = QString::fromUtf8(rsPeers->getPeerName(it->srcId).c_str());
-                        }
                     }
-                } else {
+                } 
+                else 
+                {
                     if (gotInfo || rsMail->getMessage(it->msgId, msgInfo)) {
                         gotInfo = true;
 
