@@ -51,7 +51,9 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "util/rsrandom.h"
+#include "util/rsmemory.h"
 #include "util/rsprint.h"
+#include "util/rsthreads.h"
 
 #include <unistd.h>
 #include <iomanip>
@@ -67,6 +69,8 @@ using namespace Rs::Msgs;
 
 const int msgservicezone = 54319;
 
+static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // keep msg hashes for 2 months to avoid re-sent msgs
+
 /* Another little hack ..... unique message Ids
  * will be handled in this class.....
  * These are unique within this run of the server, 
@@ -78,23 +82,22 @@ const int msgservicezone = 54319;
  * (3) from storage...
  */
 
-
 p3MsgService::p3MsgService(p3ServiceControl *sc, p3IdService *id_serv)
 	:p3Service(), p3Config(), mIdService(id_serv), mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(0) 
 {
 	_serialiser = new RsMsgSerialiser();	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
 	addSerialType(_serialiser);
 
-    mMsgUniqueId = RSRandom::random_u32() ;	// better than time(NULL). We don't need crypto-safe random here. Just something much likely
-    						// different from what friends use.
+    mMsgUniqueId = 1 ;	// MsgIds are not transmitted, but only used locally as a storage index. As such, thay do not need to be different
+    			// at friends nodes.
     
     mShouldEnableDistantMessaging = true ;
     mDistantMessagingEnabled      = false ;
     mDistantMessagePermissions      = RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE ;
 
-	/* Initialize standard tag types */
-	if(sc)
-		initStandardTagTypes();
+    /* Initialize standard tag types */
+    if(sc)
+	    initStandardTagTypes();
 
 }
 
@@ -117,7 +120,7 @@ RsServiceInfo p3MsgService::getServiceInfo()
 
 uint32_t p3MsgService::getNewUniqueMsgId()
 {
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
 	return mMsgUniqueId++;
 }
 
@@ -139,6 +142,7 @@ int	p3MsgService::tick()
 	{
 		manageDistantPeers() ;
 		checkOutgoingMessages(); 
+        	cleanListOfReceivedMessageHashes();
 
 		last_management_time = now ;
 	}
@@ -146,6 +150,24 @@ int	p3MsgService::tick()
 	return 0;
 }
 
+void p3MsgService::cleanListOfReceivedMessageHashes()
+{
+    RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+    time_t now = time(NULL) ;
+    
+    for(std::map<Sha1CheckSum,uint32_t>::iterator it(mRecentlyReceivedDistantMessageHashes.begin());it!=mRecentlyReceivedDistantMessageHashes.end();)
+	    if(now > RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME + it->second)
+	    {
+		    std::cerr << "p3MsgService(): cleanListOfReceivedMessageHashes(). Removing old hash " << it->first << ", aged " << now - it->second << " secs ago" << std::endl;
+		    std::map<Sha1CheckSum,uint32_t>::iterator  tmp(it) ;
+		    ++tmp ;
+		    mRecentlyReceivedDistantMessageHashes.erase(it) ;
+		    it=tmp ;
+	    }
+	    else
+		    ++it ;
+}
 
 int	p3MsgService::status()
 {
@@ -332,9 +354,6 @@ int     p3MsgService::checkOutgoingMessages()
 	 * if online, send
 	 */
 
-    	static const uint32_t OLD_MESSAGE_FLUSHING_DELAY = 86400*7 ; // re-send old messages every week. This mainly ensures that
-        								// messages that where never sent get sent at some point.
-        
     time_t now = time(NULL);
     bool changed = false ;
     std::list<RsMsgItem*> output_queue ;
@@ -363,17 +382,8 @@ int     p3MsgService::checkOutgoingMessages()
 		    if( mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
 			    should_send = true ;
 
-		    if (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) 
-		    {
-			    if(!(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
+		    if((mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) && !(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED))
 				    should_send = true ;
-
-			 //   if(mit->second->sendTime + OLD_MESSAGE_FLUSHING_DELAY < now)
-				//{
-			//	    should_send = true ;
-                 //   			mit->second->sendTime = now;
-                //		}
-		    }
 
 		    if(should_send)
 		    {
@@ -595,6 +605,13 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
         else if(NULL != (ghm = dynamic_cast<RsMsgDistantMessagesHashMap*>(*it)))
         {
             mRecentlyReceivedDistantMessageHashes = ghm->hash_map ;
+            
+#ifdef DEBUG_DISTANT_MSG
+            std::cerr << "  loaded recently received message map: " << std::endl;
+            
+            for(std::map<Sha1CheckSum,uint32_t>::const_iterator it(mRecentlyReceivedDistantMessageHashes.begin());it!=mRecentlyReceivedDistantMessageHashes.end();++it)
+                std::cerr << "    " << it->first << " received " << time(NULL)-it->second << " secs ago." << std::endl;
+#endif
         }
 	    else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 	    {
@@ -1820,7 +1837,7 @@ void p3MsgService::manageDistantPeers()
     {
 #ifdef DEBUG_DISTANT_MSG
         for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
-            std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with peer id = " << *it << std::endl;
+            std::cerr << (mShouldEnableDistantMessaging?"Enabling":"Disabling") << " distant messaging, with peer id = " << *it << std::endl;
 #endif
 
         for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
@@ -1943,6 +1960,7 @@ void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGx
         return ;
     }
     mRecentlyReceivedDistantMessageHashes[hash] = time(NULL) ;
+    IndicateConfigChanged() ;
     
     RsItem *item = _serialiser->deserialise(data,&data_size) ;
     free(data) ;
@@ -1969,7 +1987,8 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
     RsGxsId destination_key_id(msgitem->PeerId()) ;
     RsGxsId signing_key_id ;
 
-    msgitem->msgFlags |= RS_MSG_FLAGS_DISTANT ;
+    msgitem->msgFlags |= RS_MSG_FLAGS_DISTANT ;// just in case, but normally we should always have this flag set, when ending up here.
+    
     {
         RS_STACK_MUTEX(mMsgMtx) ;
 
@@ -1994,12 +2013,11 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
     // The item is serialized and turned into a generic turtle item. Use use the explicit serialiser to make sure that the msgId is not included
 
     uint32_t msg_serialized_rssize = msgitem->serial_size(false) ;
-    unsigned char *msg_serialized_data = new unsigned char[msg_serialized_rssize] ;
+    RsTemporaryMemory msg_serialized_data(msg_serialized_rssize) ;
 
     if(!msgitem->serialise(msg_serialized_data,msg_serialized_rssize,false))
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
-        delete[] msg_serialized_data ;
         return ;
     }
 #ifdef DEBUG_DISTANT_MSG
@@ -2008,8 +2026,6 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 
     GRouterMsgPropagationId grouter_message_id ;
     mGRouter->sendData(destination_key_id,GROUTER_CLIENT_ID_MESSAGES,msg_serialized_data,msg_serialized_rssize,signing_key_id,grouter_message_id) ;
-
-    delete[] msg_serialized_data ;
 
     // now store the grouter id along with the message id, so that we can keep track of received messages
 

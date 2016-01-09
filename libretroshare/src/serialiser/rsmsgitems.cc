@@ -1023,12 +1023,14 @@ RsMsgDistantMessagesHashMap* RsMsgSerialiser::deserialiseMsgDistantMessageHashMa
     if (offset != rssize)
     {
         /* error */
+        std::cerr << "(EE) size error in packet deserialisation: p3MsgItem, subtype " << getRsItemSubType(rstype) << ". offset=" << offset << " != rssize=" << rssize << std::endl;
         delete item;
         return NULL;
     }
 
     if (!ok)
     {
+        std::cerr << "(EE) size error in packet deserialisation: p3MsgItem, subtype " << getRsItemSubType(rstype) << std::endl;
         delete item;
         return NULL;
     }
@@ -1177,27 +1179,14 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_DEFAULT:
-			return deserialiseMsgItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_SRC_TAG:
-			return deserialiseMsgSrcIdItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_PARENT_TAG:
-			return deserialiseMsgParentIdItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:
-			return deserialiseTagItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_INVITE:
-			return deserialisePublicMsgInviteConfigItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_TAGS:
-			return deserialiseMsgTagItem(data, pktsize);
-			break;
-        case RS_PKT_SUBTYPE_MSG_GROUTER_MAP:
-            return deserialiseMsgGRouterMap(data, pktsize);
-            break;
+		case RS_PKT_SUBTYPE_DEFAULT:          return deserialiseMsgItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_SRC_TAG:      return deserialiseMsgSrcIdItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_PARENT_TAG:   return deserialiseMsgParentIdItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:     return deserialiseTagItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_INVITE:       return deserialisePublicMsgInviteConfigItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_TAGS:         return deserialiseMsgTagItem(data, pktsize);
+        	case RS_PKT_SUBTYPE_MSG_GROUTER_MAP:  return deserialiseMsgGRouterMap(data, pktsize);
+        	case RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP:  return deserialiseMsgDistantMessageHashMap(data, pktsize);
         default:
 			return NULL;
 			break;
