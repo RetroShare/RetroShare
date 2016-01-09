@@ -250,7 +250,7 @@ void 	RsServer::data_tick()
 
     } // end of only once a second.
 
-#ifdef	DEBUG_TICK
+//#ifdef	DEBUG_TICK
     double endCycleTs = getCurrentTS();
     double cycleTime = endCycleTs - ts;
     if (cycleTime > WARN_BIG_CYCLE_TIME)
@@ -261,5 +261,5 @@ void 	RsServer::data_tick()
 
         rslog(RSL_ALERT, rsserverzone, out);
     }
-#endif
+//#endif
 }

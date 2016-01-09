@@ -37,6 +37,7 @@ const int pqipersonzone = 82371;
 /****
  * #define PERSON_DEBUG 1
  ****/
+#define PERSON_DEBUG 1
 
 pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg) :
 	PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
@@ -69,9 +70,9 @@ int pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 		// (not sure if this is a performance problem)
 		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
 		{
+#ifdef PERSON_DEBUG
 			std::string out = "pqiperson::SendItem() Active: Sending On\n";
 			i->print_string(out, 5); // this can be very expensive
-#ifdef PERSON_DEBUG
 			std::cerr << out << std::endl;
 #endif
 			pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out);
@@ -124,12 +125,9 @@ int pqiperson::status()
 int pqiperson::receiveHeartbeat()
 {
 #ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::receiveHeartbeat() from peer : "
-			  << PeerId().toStdString() << std::endl;
+        std::cerr << "pqiperson::receiveHeartbeat() from peer : " << PeerId().toStdString() << std::endl;
 #endif
-
-	RS_STACK_MUTEX(mPersonMtx);
-	lastHeartbeatReceived = time(NULL);
+        lastHeartbeatReceived = time(NULL);
 
 	return 1;
 }
@@ -142,8 +140,7 @@ int	pqiperson::tick()
 		RS_STACK_MUTEX(mPersonMtx);
 
 		//if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-		if ( active && (lastHeartbeatReceived != 0)
-			 && (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5)
+		if ( active && (lastHeartbeatReceived != 0) && (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5)
 		{
 			int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
 
@@ -155,7 +152,9 @@ int	pqiperson::tick()
 					  << "secs ago" << std::endl;
 #endif
 	
-			if (ageLastIncoming > 60) // Check timeout
+#define NO_PACKET_TIMEOUT 60
+			
+			if (ageLastIncoming > NO_PACKET_TIMEOUT)
 			{
 #ifdef PERSON_DEBUG
 				std::cerr << "pqiperson::tick() " << PeerId().toStdString()

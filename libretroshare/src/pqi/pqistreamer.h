@@ -56,6 +56,7 @@ class pqistreamer: public PQInterface
 		virtual int     SendItem(RsItem *,uint32_t& serialized_size);
 		virtual RsItem *GetItem();
 
+        virtual void qosprint() = 0 ;
 		virtual int     tick();
 		virtual int     status();
 
@@ -89,6 +90,7 @@ class pqistreamer: public PQInterface
 		BinInterface *mBio;
 		unsigned int  mBio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
+        bool should_print;
 	private:
 		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
 		int handleincomingitem_locked(RsItem *i, int len);
