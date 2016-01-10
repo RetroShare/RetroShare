@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
-    <height>634</height>
+    <width>678</width>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,7 +60,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="icon">
@@ -470,6 +470,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="_allow_push_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Auto-download recommended files from this node</string>
             </property>
@@ -496,12 +499,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -511,6 +508,12 @@
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
