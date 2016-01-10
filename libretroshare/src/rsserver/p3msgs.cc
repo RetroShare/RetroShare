@@ -444,11 +444,6 @@ void p3Msgs::setCustomStateString(const std::string& state_string)
 	mChatSrv->setOwnCustomStateString(state_string) ;
 }
 
-bool p3Msgs::getVirtualPeerId(const ChatLobbyId& id,RsPeerId& peer_id)
-{
-	return mChatSrv->getVirtualPeerId(id,peer_id) ;
-}
-
 bool p3Msgs::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& linfo)
 {
     return mChatSrv->getChatLobbyInfo(id,linfo) ;

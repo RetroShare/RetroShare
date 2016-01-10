@@ -501,10 +501,7 @@ void ChatLobbyWidget::updateDisplay()
 #endif
 
 
-		bool subscribed = false;
-		if (rsMsgs->getVirtualPeerId(lobby.lobby_id, vpid)) {
-			subscribed = true;
-		}
+        bool subscribed = std::find(lobbies.begin(), lobbies.end(), lobby.lobby_id) != lobbies.end();
 
 		QTreeWidgetItem *item = NULL;
 		QTreeWidgetItem *lobby_item =NULL;
@@ -1101,13 +1098,10 @@ void ChatLobbyWidget::readChatLobbyInvites()
             continue ;
         }
 
-        rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id);
-
-        RsPeerId vpid;
-        if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid ))
+        if(rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id))
             ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
         else
-            std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
+            std::cerr << "Can't join lobby with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 
     }
 }
