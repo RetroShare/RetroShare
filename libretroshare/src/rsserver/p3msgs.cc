@@ -448,10 +448,6 @@ bool p3Msgs::getVirtualPeerId(const ChatLobbyId& id,RsPeerId& peer_id)
 {
 	return mChatSrv->getVirtualPeerId(id,peer_id) ;
 }
-bool p3Msgs::isLobbyId(const RsPeerId& peer_id,ChatLobbyId& id)
-{
-	return mChatSrv->isLobbyId(peer_id,id) ;
-}
 
 bool p3Msgs::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& linfo)
 {

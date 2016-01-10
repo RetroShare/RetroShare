@@ -863,11 +863,9 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-						ChatLobbyId lobby_id;
-						if(!rsMsgs->isLobbyId(RsPeerId(id), lobby_id))
-							break;
+                        ChatId chat_id(id);
 
-						ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
+                        ChatDialog *chatDialog = ChatDialog::getChat(chat_id);
 						ChatWidget *chatWidget;
                         if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
                             // do not show when active
@@ -879,7 +877,7 @@ void NotifyQt::UpdateGUI()
 						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
                             break; // participant is muted
 
-						toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, sender, QString::fromUtf8(msg.c_str())));
+                        toaster = new ToasterItem(new ChatLobbyToaster(chat_id.toLobbyId(), sender, QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:

@@ -60,7 +60,6 @@ class DistributedChatService
 		// Interface part to communicate with
 		//
 		bool getVirtualPeerId(const ChatLobbyId& lobby_id, RsPeerId& virtual_peer_id) ;
-		bool isLobbyId(const RsPeerId& virtual_peer_id, ChatLobbyId& lobby_id) ;
         void getChatLobbyList(std::list<ChatLobbyId>& clids) ;
         bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& clinfo) ;
         bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) ;

@@ -202,7 +202,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     //name = cli->nick;
     //popupChatFlag = RS_POPUP_CHATLOBBY;
 
-	RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, virtual_peer_id.toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
+    RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, ChatId(cli->lobby_id).toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
 
     return true ;
 }
@@ -339,21 +339,6 @@ void DistributedChatService::locked_printDebugInfo() const
         std::cerr << "   \"" << std::hex << it->first << "\" flags = " << it->second << std::dec << std::endl;
 }
 
-bool DistributedChatService::isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id)
-{
-	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.find(virtual_peer_id)) ;
-
-	if(it != _lobby_ids.end())
-	{
-		lobby_id = it->second ;
-		return true ;
-	}
-
-	lobby_id = 0;
-	return false ;
-}
 bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id,uint32_t lobby_count)
 {
 	static std::map<std::string, std::list<time_t> > message_counts ;
