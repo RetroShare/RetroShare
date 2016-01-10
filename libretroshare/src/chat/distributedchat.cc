@@ -319,11 +319,6 @@ void DistributedChatService::locked_printDebugInfo() const
 
 	}
 
-	std::cerr << "Recorded lobby names: " << std::endl;
-
-	for( std::map<RsPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
-		std::cerr << "   \"" << it->first << "\" id = " << std::hex << it->second << std::dec << std::endl;
-
 	std::cerr << "Visible public lobbies: " << std::endl;
 
 	for( std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.begin()) ;it!=_visible_lobbies.end();++it)
@@ -1353,7 +1348,6 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 
 		_lobby_invites_queue.erase(it) ;		// remove the invite from cache.
@@ -1472,8 +1466,6 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		entry.last_connexion_challenge_time = now ; 
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
-
 		for(std::set<RsPeerId>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 		{
 			invited_friends.push_back(*it2) ;
@@ -1522,7 +1514,6 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 	}
 
@@ -1604,13 +1595,6 @@ void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 		// remove lobby information
 
 		_chat_lobbys.erase(it) ;
-
-		for(std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
-			if(it2->second == id)
-			{
-				_lobby_ids.erase(it2) ;
-				break ;
-			}
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;

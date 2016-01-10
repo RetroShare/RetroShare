@@ -148,7 +148,6 @@ class DistributedChatService
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
 		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
-		std::map<ChatLobbyVirtualPeerId,ChatLobbyId> _lobby_ids ;
 		std::map<ChatLobbyId,ChatLobbyFlags> _known_lobbies_flags ;	// flags for all lobbies, including the ones that are not known. So we can't
         std::map<ChatLobbyId,std::vector<RsChatLobbyMsgItem*> > _pendingPartialLobbyMessages ;																	// store them in _chat_lobbies (subscribed lobbies) nor _visible_lobbies.
 																				// Known flags:
