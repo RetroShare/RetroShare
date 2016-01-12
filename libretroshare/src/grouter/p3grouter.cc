@@ -1922,6 +1922,12 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     RsGRouterGenericDataItem *data_item = new RsGRouterGenericDataItem ;
 
     data_item->data_bytes = (uint8_t*)malloc(data_size) ;
+    
+    if(data_item->data_bytes == NULL)
+    {
+        std::cerr << "(EE) memory allocaiton error for " << data_size << " bytes in " << __PRETTY_FUNCTION__<< std::endl;
+        return false ;
+    }
     memcpy(data_item->data_bytes,data,data_size) ;
 
     data_item->data_size = data_size ;

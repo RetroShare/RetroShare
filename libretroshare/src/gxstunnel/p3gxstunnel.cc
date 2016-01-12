@@ -856,7 +856,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 #endif
 
     uint32_t pubkey_size = BN_num_bytes(item->public_key) ;
-    unsigned char *data = (unsigned char *)malloc(pubkey_size) ;
+    RsTemporaryMemory data(pubkey_size) ;
     BN_bn2bin(item->public_key, data) ;
 
     RsTlvSecurityKey signature_key ;
@@ -901,7 +901,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 	    signature_key = item->gxs_key ;
     }
 
-    if(!GxsSecurity::validateSignature((char*)data,pubkey_size,signature_key,item->signature))
+    if(!GxsSecurity::validateSignature((char*)(unsigned char*)data,pubkey_size,signature_key,item->signature))
     {
         std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
@@ -939,7 +939,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     // Looks for the DH params. If not there yet, create them.
     //
     int size = DH_size(it->second.dh) ;
-    unsigned char *key_buff = new unsigned char[size] ;
+    RsTemporaryMemory key_buff(size) ;
 
     if(size != DH_compute_key(key_buff,item->public_key,it->second.dh))
     {
@@ -959,7 +959,6 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 
     assert(GXS_TUNNEL_AES_KEY_SIZE <= Sha1CheckSum::SIZE_IN_BYTES) ;
     memcpy(pinfo.aes_key, RsDirUtil::sha1sum(key_buff,size).toByteArray(),GXS_TUNNEL_AES_KEY_SIZE) ;
-    delete[] key_buff ;
     
     pinfo.last_contact = time(NULL) ;
     pinfo.last_keep_alive_sent = time(NULL) ;
@@ -1138,6 +1137,12 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     gitem->data_size  = rssize + 8 ;
     gitem->data_bytes = malloc(rssize+8) ;
 
+    if(gitem->data_bytes == NULL)
+    {
+        std::cerr <<  "(EE) could not allocate " << rssize+8 << " bytes of data in " << __PRETTY_FUNCTION__ << std::endl;
+        delete gitem ;
+        return NULL ;
+    }
     // by convention, we use a IV of 0 for unencrypted data.
     memset(gitem->data_bytes,0,8) ;
 
@@ -1223,6 +1228,11 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
     gitem->data_bytes = malloc(gitem->data_size) ;
 
+    if(gitem->data_bytes == NULL)
+    {
+        std::cerr << "(EE) cannot allocate " << gitem->data_size << " bytes of memory in " << __PRETTY_FUNCTION__<< std::endl;
+        return false ;
+    }
     memcpy(& ((uint8_t*)gitem->data_bytes)[0]                                       ,&IV,8) ;
 
     unsigned int md_len = GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
@@ -1317,6 +1327,12 @@ bool p3GxsTunnelService::sendData(const RsGxsTunnelId &tunnel_id, uint32_t servi
     item->service_id = service_id;
     item->data_size = size;					// encrypted data size
     item->data = (uint8_t*)malloc(size);			// encrypted data
+    
+    if(item->data == NULL)
+    {
+        std::cerr << "(EE) Cannot allocate " << size << " bytes of memory in " << __PRETTY_FUNCTION__ << std::endl;
+        delete item ;
+    }
     item->PeerId(RsPeerId(tunnel_id)) ;
     memcpy(item->data,data,size) ;
     

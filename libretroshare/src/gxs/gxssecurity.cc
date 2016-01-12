@@ -445,6 +445,13 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 
 	int max_evp_key_size = EVP_PKEY_size(public_key);
 	ek = (unsigned char*)malloc(max_evp_key_size);
+    
+    	if(ek == NULL)
+        {
+            std::cerr << "(EE) memory allocation error for " << max_evp_key_size << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return false ;
+        }
+        
 	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
 	int cipher_block_size = EVP_CIPHER_block_size(cipher);
 	int size_net_ekl = sizeof(net_ekl);
@@ -541,6 +548,12 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
     EVP_CIPHER_CTX ctx;
     int eklen = 0, net_ekl = 0;
 	unsigned char *ek = (unsigned char*)malloc(EVP_PKEY_size(privateKey));
+    
+    if(ek == NULL)
+    {
+        std::cerr << "Memory allocation error in " << __PRETTY_FUNCTION__ << " for " << EVP_PKEY_size(privateKey) << " bytes." << std::endl;
+        return false ;
+    }
     unsigned char iv[EVP_MAX_IV_LENGTH];
     EVP_CIPHER_CTX_init(&ctx);
 

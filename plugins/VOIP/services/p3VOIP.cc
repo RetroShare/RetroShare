@@ -433,6 +433,13 @@ bool p3VOIP::getIncomingData(const RsPeerId& peer_id,std::vector<RsVOIPDataChunk
 		RsVOIPDataChunk chunk ;
 		chunk.size = (*it2)->data_size ;
 		chunk.data = malloc((*it2)->data_size) ;
+        
+        	if(chunk.data == NULL)
+	    	{
+                	std::cerr << "(EE) p3VOIP::getIncomingData(): error. Cannot allocate memory for chunk of size " << chunk.size << std::endl;
+                	delete *it2 ;
+                	continue ;
+            	}
 
 		uint32_t type_flags = (*it2)->flags & (RS_VOIP_FLAGS_AUDIO_DATA | RS_VOIP_FLAGS_VIDEO_DATA) ;
 		if(type_flags == RS_VOIP_FLAGS_AUDIO_DATA)

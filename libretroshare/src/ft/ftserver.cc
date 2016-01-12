@@ -465,6 +465,8 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 		return NULL; /* wrong type */
 	}
 
+    try
+    {
 	switch(getRsItemSubType(rstype))
 	{
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,size) ;
@@ -477,6 +479,11 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 		default:
 																		return NULL ;
 	}
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
+    }
 }
 
 void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) 

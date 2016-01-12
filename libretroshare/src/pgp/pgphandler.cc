@@ -40,6 +40,12 @@ PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 ops_keyring_t *PGPHandler::allocateOPSKeyring() 
 {
 	ops_keyring_t *kr = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
+    
+    	if(kr == NULL)
+        {
+            std::cerr << "(EE) Cannot allocate memory for " << sizeof(ops_keyring_t) << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return NULL ;
+        }
 	kr->nkeys = 0 ;
 	kr->nkeys_allocated = 0 ;
 	kr->keys = 0 ;

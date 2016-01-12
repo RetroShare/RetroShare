@@ -422,14 +422,24 @@ RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 
-	/* add mandatory parts first */
-
 	bool ok = true ;
+    
+    	if(rssize > pktsize)
+            ok = false ;
+        
+	/* add mandatory parts first */
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt64(data, pktsize, &offset, &chunk_offset);
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_size);
 
+    	if(chunk_size > rssize || rssize - chunk_size < offset)
+	    throw std::runtime_error("RsTurtleFileDataItem::() error while deserializing.") ;
+        
 	chunk_data = (void*)malloc(chunk_size) ;
+        
+        if(chunk_data == NULL)
+	    throw std::runtime_error("RsTurtleFileDataItem::() cannot allocate memory.") ;
+            
 	memcpy(chunk_data,(void*)((unsigned char*)data+offset),chunk_size) ;
 
 	offset += chunk_size ;

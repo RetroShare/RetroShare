@@ -349,6 +349,13 @@ RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
     // then duplicate the memory chunk
 
     item->data_bytes = (uint8_t*)malloc(data_size) ;
+    
+    if(item->data_bytes == NULL)
+    {
+        std::cerr << "(EE) memory allocation error for " << data_size << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+        return NULL ;
+    }
+    
     memcpy(item->data_bytes,data_bytes,data_size) ;
 
     return item ;

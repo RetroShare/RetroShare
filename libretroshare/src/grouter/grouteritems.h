@@ -195,6 +195,12 @@ class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsG
         RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem ;
         *item = *this ;	// copy all fields
         item->chunk_data = (uint8_t*)malloc(chunk_size) ;	// deep copy memory chunk
+        
+        if(item->chunk_data == NULL)
+        {
+            std::cerr << "(EE) Memory allocation error in " << __PRETTY_FUNCTION__ << " for size " << chunk_size << std::endl;
+            return NULL ;
+        }
         memcpy(item->chunk_data,chunk_data,chunk_size) ;
         return item ;
     }
