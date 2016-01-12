@@ -3,12 +3,92 @@
 var m = require("mithril");
 var rs = require("retroshare");
 
+var newkey = "";
+var remote = "";
 
 module.exports = {
     view: function(){
-        return m("h2","add new friend");
+        var key = m.route.param("radix");
+        var pgp = m.route.param("pgp_id");
+        var peer_id =m.route.param("peer_id");
+
+        if (key===undefined && pgp === undefined) {
+
+            var owncert = rs("peers/self/certificate");
+            if (owncert === undefined ) {
+                owncert = {cert_string:"< waiting for server ... >"}
+            }
+            return m("div", [
+                m("h2","add new friend (Step 1/3)"),
+                m("p","Your own key, give it to your friends"),
+                m("pre", owncert.cert_string),
+                m("p","paste your friends key below"),
+			    m("textarea", {
+                    ref:"cert",
+			        cols:"70",
+			        rows:"16",
+			        onchange: m.withAttr("value", function(value){newkey=value;})
+			    }),
+			    m("br"),
+			    m("input.btn2",{
+			        type:"button",
+			        value:"read",
+			        onclick: function (){
+			            m.route("/addpeer",{radix:newkey})
+			        },
+			    })
+            ]);
+        } else if (pgp === undefined) {
+            rs.request("peers/examine_cert",{cert_string:key},
+                function(data,responsetoken){
+                    data.radix=key;
+                    m.route("/addpeer", data);
+                }
+            );
+            return m("div", [
+                m("h2","add new friend (Step 2/3)"),
+                m("div", "analyse cert, please wait for server ...")
+                // { data: null, debug_msg: "failed to load certificate ", returncode: "fail" }
+            ]);
+        } else {
+            var result = {
+                cert_string:key ,
+                flags:{
+                    allow_direct_download:false,
+                    allow_push:false,
+					// set to false, until the webinterface supports managment of the blacklist/whitelist
+					require_whitelist: false,
+                }
+            };
+            return m("div",[
+                m("h2","add new friend (Step 2/3)"),
+                m("p","Do you want to add "
+                    + m.route.param("name")
+                    + " (" + m.route.param("location") + ")"
+                    + " to your friendslist?"),
+                m("input.checkbox[type=checkbox]", {
+                    onchange: m.withAttr("checked", function(checked){
+                        result.flags.allow_direct_download=checked;
+                    })
+                }), "Allow direct downloads from this node",
+                m("br"),
+                m("input.checkbox[type=checkbox]", {
+                    onchange: m.withAttr("checked", function(checked){
+                        result.flags.allow_push=checked;
+                    })
+                }), "Auto download recommended files from this node",
+                m("div.btn2",{
+                    onclick: function(){
+                        rs.request("peers",result,function(data, responsetoken){
+                            m.route("/peers");
+                        })
+                    }
+                },"add to friendslist")
+
+            ])
+        }
     }
-}
+};
 
 /*
 

@@ -37,7 +37,7 @@ function Page(content, runst){
         } else {
             if ("waiting_init|waiting_startup".match(runstate.runstate)) {
                 return m("h2","server starting ...")
-            } else if("waiting_account_select|running_ok*".match(runstate.runstate)) {
+            } else if("waiting_account_select|running_ok.*".match(runstate.runstate)) {
                 if (runst === undefined || runst.match(runstate.runstate)) {
                     return m("div", [
                         m("div", menu.view()),
@@ -61,26 +61,24 @@ function Page(content, runst){
 };
 
 
-var me ={};
+module.exports = {
+    init:function(main){
+        console.log("start init ...");
+        var menudef = require("menudef");
+        var maps = {};
+        var m = require("mithril");
 
-me.init = function(main){
-    console.log("start init ...");
-    var menudef = require("menudef");
-    var maps = {};
-    var m = require("mithril");
-
-    menudef.nodes.map(function(menu){
-        if (menu.action === undefined) {
-            var path = menu.path != undefined ? menu.path : ("/" + menu.name);
-            var module = menu.module != undefined ? menu.module : menu.name
-            console.log("adding route " + menu.name + " for " + path + " with module " + module);
-            maps[path] = new Page(require(module), menu.runstate);
-        }
-    });
-    m.route.mode = "hash";
-    m.route(main,"/",maps);
-    console.log("init done.");
+        menudef.nodes.map(function(menu){
+            if (menu.action === undefined) {
+                var path = menu.path != undefined ? menu.path : ("/" + menu.name);
+                var module = menu.module != undefined ? menu.module : menu.name
+                console.log("adding route " + menu.name + " for " + path + " with module " + module);
+                maps[path] = new Page(require(module), menu.runstate);
+            }
+        });
+        m.route.mode = "hash";
+        m.route(main,"/",maps);
+        console.log("init done.");
+    }
 };
-
-module.exports = me;
 

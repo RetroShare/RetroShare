@@ -215,3 +215,14 @@ rs.forceUpdate = function(path){
    cache[path].requested=false;
 }
 
+//return api-path
+rs.apiurl = function(path) {
+    if (path === undefined) {
+        path="";
+    }
+    if (path.length > 0 && "^\\\\|\\/".match(path)) {
+        path=path.substr(1);
+    }
+    return api_url + path;
+}
+
