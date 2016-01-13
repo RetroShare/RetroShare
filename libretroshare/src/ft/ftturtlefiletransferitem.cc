@@ -26,6 +26,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <util/rsmemory.h>
 #include <serialiser/itempriorities.h>
 #include <ft/ftturtlefiletransferitem.h>
 
@@ -435,7 +436,7 @@ RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
     	if(chunk_size > rssize || rssize - chunk_size < offset)
 	    throw std::runtime_error("RsTurtleFileDataItem::() error while deserializing.") ;
         
-	chunk_data = (void*)malloc(chunk_size) ;
+	chunk_data = (void*)rs_safe_malloc(chunk_size) ;
         
         if(chunk_data == NULL)
 	    throw std::runtime_error("RsTurtleFileDataItem::() cannot allocate memory.") ;

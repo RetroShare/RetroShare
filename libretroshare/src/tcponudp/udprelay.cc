@@ -26,6 +26,7 @@
 #include "udprelay.h"
 #include <iostream>
 #include <time.h>
+#include <util/rsmemory.h>
 
 /*
  * #define DEBUG_UDP_RELAY 		1
@@ -70,7 +71,7 @@ UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 	setRelayClassMax(UDP_RELAY_CLASS_GENERAL, UDP_RELAY_DEFAULT_GENERAL, UDP_RELAY_DEFAULT_BANDWIDTH);
 
 	/* only allocate this space once */
-	mTmpSendPkt = malloc(MAX_RELAY_UDP_PACKET_SIZE);
+	mTmpSendPkt = rs_safe_malloc(MAX_RELAY_UDP_PACKET_SIZE);
 	mTmpSendSize = MAX_RELAY_UDP_PACKET_SIZE;
 
 	clearDataTransferred();

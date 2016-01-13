@@ -36,6 +36,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <util/rsmemory.h>
 
 #include <iostream>
 
@@ -79,8 +80,10 @@ TcpPacket::TcpPacket(uint8 *ptr, int size)
 		if (size > 0)
 		{
 			datasize = size;
-			data = (uint8 *) malloc(datasize);
-			memcpy(data, (void *) ptr, size);
+			data = (uint8 *) rs_safe_malloc(datasize);
+            
+            		if(data != NULL)
+				memcpy(data, (void *) ptr, size);
 		}
 		return;
 	}
@@ -185,7 +188,10 @@ int	TcpPacket::readPacket(void *buf, int size)
 		free(data);
 	}
 	datasize = size - TCP_PSEUDO_HDR_SIZE;
-	data = (uint8 *) malloc(datasize);
+	data = (uint8 *) rs_safe_malloc(datasize);
+    
+    	if(data == NULL)
+            return 0 ;
 
 	/* now the data */
 	memcpy(data, (void *) &(((uint8 *) buf)[20]), datasize);

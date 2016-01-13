@@ -29,6 +29,7 @@
 #include "rsserver/p3face.h"
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 #include "pqi/authssl.h"
 #include "serialiser/rsserviceids.h"
 #include "retroshare/rsiface.h"
@@ -128,13 +129,11 @@ HashCache::HashCache(const std::string& path)
 
 		// read the binary stream into memory.
 		//
-		void *buffer = malloc(file_size) ;
+		void *buffer = rs_safe_malloc(file_size) ;
 
 		if(buffer == NULL)
-		{
-			std::cerr << "Cannot allocate memory for reading encrypted file cache, bytes=" << file_size << std::endl;
 			return ;
-		}
+		
 		FILE *F = fopen( (_path+".bin").c_str(),"rb") ;
 		if (!F)
 		{

@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "util/rsmemory.h"
 #include "retroshare/rstypes.h"
 
 /*******************************************************************
@@ -181,7 +182,7 @@ class RsRawItem: public RsItem
 		RsRawItem(uint32_t t, uint32_t size)
 			:RsItem(t), len(size)
 		{ 
-			data = malloc(len);
+			data = rs_safe_malloc(len);
 		}
 
 		virtual ~RsRawItem()

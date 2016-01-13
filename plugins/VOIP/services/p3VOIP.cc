@@ -280,11 +280,10 @@ int p3VOIP::sendVoipData(const RsPeerId& peer_id,const RsVOIPDataChunk& chunk)
 		std::cerr << "Cannot allocate RsVOIPDataItem !" << std::endl;
 		return false ;
 	}
-	item->voip_data = malloc(chunk.size) ;
+	item->voip_data = rs_safe_malloc(chunk.size) ;
 
 	if(item->voip_data == NULL)
 	{
-		std::cerr << "Cannot allocate RsVOIPDataItem.voip_data of size " << chunk.size << " !" << std::endl;
 		delete item ;
 		return false ;
 	}
@@ -432,11 +431,10 @@ bool p3VOIP::getIncomingData(const RsPeerId& peer_id,std::vector<RsVOIPDataChunk
 	{
 		RsVOIPDataChunk chunk ;
 		chunk.size = (*it2)->data_size ;
-		chunk.data = malloc((*it2)->data_size) ;
+		chunk.data = rs_safe_malloc((*it2)->data_size) ;
         
         	if(chunk.data == NULL)
 	    	{
-                	std::cerr << "(EE) p3VOIP::getIncomingData(): error. Cannot allocate memory for chunk of size " << chunk.size << std::endl;
                 	delete *it2 ;
                 	continue ;
             	}

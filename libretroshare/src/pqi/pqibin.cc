@@ -27,6 +27,7 @@
 #include "pqi/authssl.h"
 #include "util/rsnet.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 
 // #define DEBUG_PQIBIN
 
@@ -314,7 +315,13 @@ BinMemInterface::BinMemInterface(int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = malloc(defsize);
+		buf = rs_safe_malloc(defsize);
+        
+        	if(buf == NULL)
+            {
+                close() ;
+                return ;
+            }
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{
 			hash = new pqihash();
@@ -326,7 +333,13 @@ BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = malloc(defsize);
+		buf = rs_safe_malloc(defsize);
+        
+        	if(buf == NULL)
+            {
+                close() ;
+                return ;
+            }
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{
 			hash = new pqihash();

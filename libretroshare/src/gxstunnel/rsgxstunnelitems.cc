@@ -29,6 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 
 #include "gxstunnel/rsgxstunnelitems.h"
 
@@ -393,7 +394,7 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
 	    delete item ;
 	    return NULL ;
     }
-    item->data = (unsigned char*)malloc(item->data_size) ;
+    item->data = (unsigned char*)rs_safe_malloc(item->data_size) ;
 
     if(item->data == NULL)
     {

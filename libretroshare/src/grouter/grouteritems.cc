@@ -86,9 +86,8 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
 	delete item;
         return NULL ;
     }
-    if( NULL == (item->chunk_data = (uint8_t*)malloc(item->chunk_size)))
+    if( NULL == (item->chunk_data = (uint8_t*)rs_safe_malloc(item->chunk_size)))
     {
-        std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
 	delete item;
         return NULL ;
     }
@@ -150,9 +149,8 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 		return NULL ;
 	}
 
-	if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
+	if( NULL == (item->data_bytes = (uint8_t*)rs_safe_malloc(item->data_size)))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->data_size << std::endl;
 		delete item;
 		return NULL ;
 	}
@@ -348,13 +346,10 @@ RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 
     // then duplicate the memory chunk
 
-    item->data_bytes = (uint8_t*)malloc(data_size) ;
+    item->data_bytes = (uint8_t*)rs_safe_malloc(data_size) ;
     
     if(item->data_bytes == NULL)
-    {
-        std::cerr << "(EE) memory allocation error for " << data_size << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
         return NULL ;
-    }
     
     memcpy(item->data_bytes,data_bytes,data_size) ;
 

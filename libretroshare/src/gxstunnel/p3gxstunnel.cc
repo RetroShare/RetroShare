@@ -1035,7 +1035,15 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 	uint32_t error_status ;
 
 	uint32_t size = BN_num_bytes(dhitem->public_key) ;
-	unsigned char *data = (unsigned char *)malloc(size) ;
+    
+    	RsTemporaryMemory data(size) ;
+        
+        if(data == NULL)
+        {
+	    delete(dhitem);
+            return false ;
+        }
+        
 	BN_bn2bin(dhitem->public_key, data) ;
 
 	if(!mGixs->signData((unsigned char*)data,size,own_gxs_id,signature,error_status))
@@ -1047,11 +1055,9 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 		default: std::cerr << "(EE) Unknown error when signing" << std::endl;
 			break ;
 		}
-		free(data) ;
 		delete(dhitem);
 		return false;
 	}
-	free(data) ;
 
 	if(!mGixs->getKey(own_gxs_id,signature_key_public))
 	{
@@ -1135,11 +1141,10 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     uint32_t rssize = item->serial_size() ;
 
     gitem->data_size  = rssize + 8 ;
-    gitem->data_bytes = malloc(rssize+8) ;
+    gitem->data_bytes = rs_safe_malloc(rssize+8) ;
 
     if(gitem->data_bytes == NULL)
     {
-        std::cerr <<  "(EE) could not allocate " << rssize+8 << " bytes of data in " << __PRETTY_FUNCTION__ << std::endl;
         delete gitem ;
         return NULL ;
     }
@@ -1226,13 +1231,11 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
     gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
-    gitem->data_bytes = malloc(gitem->data_size) ;
+    gitem->data_bytes = rs_safe_malloc(gitem->data_size) ;
 
     if(gitem->data_bytes == NULL)
-    {
-        std::cerr << "(EE) cannot allocate " << gitem->data_size << " bytes of memory in " << __PRETTY_FUNCTION__<< std::endl;
         return false ;
-    }
+    
     memcpy(& ((uint8_t*)gitem->data_bytes)[0]                                       ,&IV,8) ;
 
     unsigned int md_len = GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
@@ -1326,13 +1329,11 @@ bool p3GxsTunnelService::sendData(const RsGxsTunnelId &tunnel_id, uint32_t servi
     item->flags = 0;						// not used yet.
     item->service_id = service_id;
     item->data_size = size;					// encrypted data size
-    item->data = (uint8_t*)malloc(size);			// encrypted data
+    item->data = (uint8_t*)rs_safe_malloc(size);			// encrypted data
     
     if(item->data == NULL)
-    {
-        std::cerr << "(EE) Cannot allocate " << size << " bytes of memory in " << __PRETTY_FUNCTION__ << std::endl;
         delete item ;
-    }
+    
     item->PeerId(RsPeerId(tunnel_id)) ;
     memcpy(item->data,data,size) ;
     

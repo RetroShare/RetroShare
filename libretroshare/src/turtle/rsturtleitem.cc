@@ -547,7 +547,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
     	if(data_size > rssize || rssize - data_size < offset)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() wrong data_size (exceeds rssize).") ;
             
-	data_bytes = malloc(data_size) ;
+	data_bytes = rs_safe_malloc(data_size) ;
 
 	if(data_bytes != NULL)
 	{
@@ -555,10 +555,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 		offset += data_size ;
 	}
 	else
-	{
-		std::cerr << "(EE) RsTurtleGenericDataItem: Error. Cannot allocate data for a size of " << data_size <<  " bytes." <<std::endl;
 		offset = 0 ; // generate an error
-	}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);

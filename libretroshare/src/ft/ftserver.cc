@@ -483,6 +483,8 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
     catch(std::exception& e)
     {
         std::cerr << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
+        
+        return NULL ;
     }
 }
 
@@ -1100,11 +1102,10 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 
 			item->chunk_offset = offset+baseoffset ;
 			item->chunk_size = chunk;
-			item->chunk_data = malloc(chunk) ;
+			item->chunk_data = rs_safe_malloc(chunk) ;
 
 			if(item->chunk_data == NULL)
 			{
-				std::cerr << "p3turtle: Warning: failed malloc of " << chunk << " bytes for sending data packet." << std::endl ;
 				delete item;
 				return false;
 			}

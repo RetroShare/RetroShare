@@ -273,7 +273,13 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 		fseek(fp, 0, SEEK_END);
 		datalen = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
-		dataptr = (char *) malloc(datalen);
+		dataptr = (char *) rs_safe_malloc(datalen);
+        
+        	if(data_ptr == NULL)
+            {
+                fclose(fp);
+                return false;
+            }
 		fread(dataptr, 1, datalen, fp);
 		fclose(fp);
 
