@@ -349,6 +349,12 @@ RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
     if(data_size > 0)
     {
 	    item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
+
+        if(item->data_bytes == NULL)
+            {
+                delete item ;
+                return NULL ;
+            }
 	    memcpy(item->data_bytes,data_bytes,data_size) ;
     }
     else
