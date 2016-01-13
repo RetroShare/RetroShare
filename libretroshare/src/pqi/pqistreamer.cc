@@ -475,6 +475,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    return 0;
 	    }
 #define GROUP_OUTGOING_PACKETS 1
+#define PACKET_GROUPING_SIZE_LIMIT 32768
 	    // send a out_pkt., else send out_data. unless
 	    // there is a pending packet.
 	    if (!mPkt_wpending)
@@ -484,7 +485,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    mPkt_wpending_size = 0 ;
 		    int k=0;
             
-		    while(mPkt_wpending_size < maxbytes && (dta = locked_pop_out_data())!=NULL )
+		    while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PACKET_GROUPING_SIZE_LIMIT && (dta = locked_pop_out_data())!=NULL )
 		    {
 			    uint32_t s = getRsItemSize(dta);
 			    mPkt_wpending = realloc(mPkt_wpending,s+mPkt_wpending_size) ;
