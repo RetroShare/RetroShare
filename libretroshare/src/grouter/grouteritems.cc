@@ -346,12 +346,13 @@ RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 
     // then duplicate the memory chunk
 
-    item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
-    
-    if(item->data_bytes == NULL)
-        return NULL ;
-    
-    memcpy(item->data_bytes,data_bytes,data_size) ;
+    if(data_size > 0)
+    {
+	    item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
+	    memcpy(item->data_bytes,data_bytes,data_size) ;
+    }
+    else
+	    item->data_bytes = NULL ;
 
     return item ;
 }
