@@ -71,7 +71,7 @@ UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 	setRelayClassMax(UDP_RELAY_CLASS_GENERAL, UDP_RELAY_DEFAULT_GENERAL, UDP_RELAY_DEFAULT_BANDWIDTH);
 
 	/* only allocate this space once */
-	mTmpSendPkt = rs_safe_malloc(MAX_RELAY_UDP_PACKET_SIZE);
+	mTmpSendPkt = rs_malloc(MAX_RELAY_UDP_PACKET_SIZE);
 	mTmpSendSize = MAX_RELAY_UDP_PACKET_SIZE;
 
 	clearDataTransferred();

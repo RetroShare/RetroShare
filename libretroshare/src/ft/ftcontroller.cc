@@ -748,7 +748,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 	size_t T=0;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = rs_safe_malloc(BUFF_SIZE) ;
+	void *buffer = rs_malloc(BUFF_SIZE) ;
 
     	if(buffer == NULL)
         {

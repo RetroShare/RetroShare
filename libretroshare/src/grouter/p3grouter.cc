@@ -1121,7 +1121,7 @@ bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTr
         std::cerr << "  sending to tunnel vpid " << pid << std::endl;
 #endif
         uint32_t turtle_data_size = trans_item.serial_size() ;
-        uint8_t *turtle_data = (uint8_t*)rs_safe_malloc(turtle_data_size) ;
+        uint8_t *turtle_data = (uint8_t*)rs_malloc(turtle_data_size) ;
 
         if(turtle_data == NULL)
             return false ;
@@ -1302,7 +1302,7 @@ bool p3GRouter::sliceDataItem(RsGRouterAbstractMsgItem *item,std::list<RsGRouter
             chunk_item->total_size = size;
             chunk_item->chunk_start= offset;
             chunk_item->chunk_size = chunk_size ;
-            chunk_item->chunk_data = (uint8_t*)rs_safe_malloc(chunk_size) ;
+            chunk_item->chunk_data = (uint8_t*)rs_malloc(chunk_size) ;
 #ifdef GROUTER_DEBUG
             std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
 #endif
@@ -1918,7 +1918,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
 
     RsGRouterGenericDataItem *data_item = new RsGRouterGenericDataItem ;
 
-    data_item->data_bytes = (uint8_t*)rs_safe_malloc(data_size) ;
+    data_item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
     
     if(data_item->data_bytes == NULL)
         return false ;

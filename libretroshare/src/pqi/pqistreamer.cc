@@ -315,7 +315,7 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 	/* decide which type of packet it is */
 
 	pktsize = mRsSerialiser->size(pqi);
-	void *ptr = rs_safe_malloc(pktsize);
+	void *ptr = rs_malloc(pktsize);
     
     	if(ptr == NULL)
             return 0 ;
@@ -1044,7 +1044,7 @@ void pqistreamer::allocate_rpend_locked()
         return;
 
     mPkt_rpend_size = getRsPktMaxSize();
-    mPkt_rpending = rs_safe_malloc(mPkt_rpend_size);
+    mPkt_rpending = rs_malloc(mPkt_rpend_size);
     
     if(mPkt_rpending == NULL)
         return ;

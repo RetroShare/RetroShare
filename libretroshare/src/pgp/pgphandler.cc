@@ -40,7 +40,7 @@ PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
 ops_keyring_t *PGPHandler::allocateOPSKeyring() 
 {
-	ops_keyring_t *kr = (ops_keyring_t*)rs_safe_malloc(sizeof(ops_keyring_t)) ;
+	ops_keyring_t *kr = (ops_keyring_t*)rs_malloc(sizeof(ops_keyring_t)) ;
     
     	if(kr == NULL)
             return NULL ;

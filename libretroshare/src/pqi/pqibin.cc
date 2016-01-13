@@ -315,7 +315,7 @@ BinMemInterface::BinMemInterface(int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = rs_safe_malloc(defsize);
+		buf = rs_malloc(defsize);
         
         	if(buf == NULL)
             {
@@ -333,7 +333,7 @@ BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = rs_safe_malloc(defsize);
+		buf = rs_malloc(defsize);
         
         	if(buf == NULL)
             {

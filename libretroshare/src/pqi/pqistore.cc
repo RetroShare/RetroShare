@@ -289,7 +289,7 @@ int     pqistore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = rs_safe_malloc(blen);
+	void *block = rs_malloc(blen);
     
     	if(block == NULL)
             return false ;
@@ -499,7 +499,7 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = rs_safe_malloc(blen);
+	void *block = rs_malloc(blen);
     
     	if(block == NULL)
             return false ;

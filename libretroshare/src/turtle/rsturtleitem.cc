@@ -547,7 +547,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
     	if(data_size > rssize || rssize - data_size < offset)
 		throw std::runtime_error("RsTurtleTunnelOkItem::() wrong data_size (exceeds rssize).") ;
             
-	data_bytes = rs_safe_malloc(data_size) ;
+	data_bytes = rs_malloc(data_size) ;
 
 	if(data_bytes != NULL)
 	{

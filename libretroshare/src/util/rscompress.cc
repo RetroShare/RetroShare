@@ -43,7 +43,7 @@ bool RsCompress::compress_memory_chunk(const uint8_t *input_mem,const uint32_t i
 	uint32_t output_offset = 0 ;
 	uint32_t input_offset = 0 ;
 	output_size = 1024 ;
-	output_mem = (uint8_t*)rs_safe_malloc(output_size) ;
+	output_mem = (uint8_t*)rs_malloc(output_size) ;
     
     	if(!output_mem)
             return false ;
@@ -117,7 +117,7 @@ bool RsCompress::uncompress_memory_chunk(const uint8_t *input_mem,const uint32_t
 	output_size = input_size ;
 	uint32_t output_offset = 0 ;
 	uint32_t input_offset = 0 ;
-	output_mem = (uint8_t*)rs_safe_malloc(output_size) ;
+	output_mem = (uint8_t*)rs_malloc(output_size) ;
 
 	if(!output_mem)
 	    return false ;

@@ -207,7 +207,7 @@ SmallObjectAllocator::~SmallObjectAllocator()
 void *SmallObjectAllocator::allocate(size_t bytes)
 {
 	if(bytes > _maxObjectSize)
-		return rs_safe_malloc(bytes) ;
+		return rs_malloc(bytes) ;
 	else if(_lastAlloc != NULL && _lastAlloc->blockSize() == bytes)
 		return _lastAlloc->allocate() ;
 	else

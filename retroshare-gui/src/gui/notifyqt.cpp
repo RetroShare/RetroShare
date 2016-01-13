@@ -151,7 +151,7 @@ class SignatureEventData
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
-			sign = (unsigned char *)rs_safe_malloc(_signlen) ;
+			sign = (unsigned char *)rs_malloc(_signlen) ;
             
             		if(!sign)
 		    {
@@ -163,7 +163,7 @@ class SignatureEventData
 			signlen = new unsigned int ;
 			*signlen = _signlen ;
             signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-			data = rs_safe_malloc(_len) ;
+			data = rs_malloc(_len) ;
             
             		if(!data)
                     {

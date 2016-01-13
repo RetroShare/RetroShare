@@ -351,7 +351,7 @@ void SpeexOutputProcessor::putNetworkPacket(QString name, QByteArray packet) {
         if (userJitterHash.contains(name)) {
             userJitter = userJitterHash.value(name);
         } else {
-            userJitter = (SpeexJitter*)rs_safe_malloc(sizeof(SpeexJitter));
+            userJitter = (SpeexJitter*)rs_malloc(sizeof(SpeexJitter));
             
             if(!userJitter)
                 return ;

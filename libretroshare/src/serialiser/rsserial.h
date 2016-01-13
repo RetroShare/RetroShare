@@ -182,7 +182,7 @@ class RsRawItem: public RsItem
 		RsRawItem(uint32_t t, uint32_t size)
 			:RsItem(t), len(size)
 		{ 
-			data = rs_safe_malloc(len);
+			data = rs_malloc(len);
 		}
 
 		virtual ~RsRawItem()

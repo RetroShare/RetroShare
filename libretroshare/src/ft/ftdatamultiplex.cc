@@ -879,7 +879,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const
 		std::cerr << "Warning: peer " << peerId << " is asking a large chunk (s=" << chunksize << ") for hash " << hash << ", filesize=" << size << ". This is unexpected." << std::endl ;
 		return false ;
 	}
-	void *data = rs_safe_malloc(chunksize);
+	void *data = rs_malloc(chunksize);
 
 	if(data == NULL)
 		return false ;

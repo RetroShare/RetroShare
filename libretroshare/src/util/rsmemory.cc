@@ -1,6 +1,6 @@
 #include "util/rsmemory.h"
 
-void *rs_safe_malloc(size_t size) 
+void *rs_malloc(size_t size) 
 {
     static const size_t SAFE_MEMALLOC_THRESHOLD = 1024*1024*1024 ; // 1Gb should be enough for everything!
     

@@ -75,7 +75,7 @@ bool     RsTlvBinaryData::setBinData(const void *data, uint32_t size)
 		return true;
 	}
 
-	bin_data = rs_safe_malloc(bin_len);
+	bin_data = rs_malloc(bin_len);
     
     	if(bin_data == NULL)
             return false ;

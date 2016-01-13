@@ -444,7 +444,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 	int out_offset = 0;
 
 	int max_evp_key_size = EVP_PKEY_size(public_key);
-	ek = (unsigned char*)rs_safe_malloc(max_evp_key_size);
+	ek = (unsigned char*)rs_malloc(max_evp_key_size);
     
     	if(ek == NULL)
             return false ;
@@ -459,7 +459,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
 
 	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-    out = (uint8_t*)rs_safe_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+    out = (uint8_t*)rs_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
 
     if(out == NULL)
         return false ;
@@ -541,7 +541,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 
     EVP_CIPHER_CTX ctx;
     int eklen = 0, net_ekl = 0;
-	unsigned char *ek = (unsigned char*)rs_safe_malloc(EVP_PKEY_size(privateKey));
+	unsigned char *ek = (unsigned char*)rs_malloc(EVP_PKEY_size(privateKey));
     
     if(ek == NULL)
         return false ;
@@ -579,7 +579,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 		 std::cerr << "Severe error in " << __PRETTY_FUNCTION__ << ": cannot encrypt. " << std::endl;
 		 return false ;
 	 }
-    out = (uint8_t*)rs_safe_malloc(inlen - in_offset);
+    out = (uint8_t*)rs_malloc(inlen - in_offset);
 
     if(out == NULL)
          return false;

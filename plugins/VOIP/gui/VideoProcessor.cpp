@@ -386,7 +386,7 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
     buffer.open(QIODevice::WriteOnly) ;
     encoded_frame.save(&buffer,"JPEG") ;
 
-    voip_chunk.data = rs_safe_malloc(HEADER_SIZE + qb.size());
+    voip_chunk.data = rs_malloc(HEADER_SIZE + qb.size());
     
     if(!voip_chunk.data)
         return false ;
@@ -684,7 +684,7 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	if(got_output)
 	{
-		voip_chunk.data = rs_safe_malloc(pkt.size + HEADER_SIZE) ;
+		voip_chunk.data = rs_malloc(pkt.size + HEADER_SIZE) ;
 		
 		if(!voip_chunk.data)
 			return false ;

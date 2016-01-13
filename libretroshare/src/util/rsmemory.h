@@ -4,7 +4,7 @@
 #include <iostream>
 #include <util/stacktrace.h>
 
-void *rs_safe_malloc(size_t size) ;
+void *rs_malloc(size_t size) ;
 
 // This is a scope guard to release the memory block when going of of the current scope.
 // Can be very useful to auto-delete some memory on quit without the need to call free each time.
@@ -28,7 +28,7 @@ class RsTemporaryMemory
 public:
     RsTemporaryMemory(size_t s)
     {
-	    _mem = (unsigned char *)rs_safe_malloc(s) ;
+	    _mem = (unsigned char *)rs_malloc(s) ;
 
 	    if(_mem)
 		    _size = s ;

@@ -117,7 +117,7 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char */*file*/, in
 {
 	struct CRYPTO_dynlock_value *value;
 
-	value = (struct CRYPTO_dynlock_value*) rs_safe_malloc(sizeof(struct CRYPTO_dynlock_value));
+	value = (struct CRYPTO_dynlock_value*) rs_malloc(sizeof(struct CRYPTO_dynlock_value));
 	if (!value) 
 		return NULL;
 	
@@ -166,7 +166,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char */*f
 bool tls_init()
 {
 	/* static locks area */
-	mutex_buf = (pthread_mutex_t*) rs_safe_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+	mutex_buf = (pthread_mutex_t*) rs_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
 	if (mutex_buf == NULL) 
 		return false;
 	
@@ -1259,7 +1259,7 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         int out_offset = 0;
 
         int max_evp_key_size = EVP_PKEY_size(public_key);
-        ek = (unsigned char*)rs_safe_malloc(max_evp_key_size);
+        ek = (unsigned char*)rs_malloc(max_evp_key_size);
         
         if(ek == NULL)
             return false ;
@@ -1277,7 +1277,7 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         }
 
     	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-        out = (unsigned char*)rs_safe_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+        out = (unsigned char*)rs_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
 
         if(out == NULL)
         {
@@ -1395,7 +1395,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        out = (unsigned char*)rs_safe_malloc(inlen - in_offset);
+        out = (unsigned char*)rs_malloc(inlen - in_offset);
 
         if(out == NULL)
         {

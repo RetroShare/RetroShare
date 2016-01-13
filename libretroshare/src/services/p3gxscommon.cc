@@ -98,7 +98,7 @@ void RsGxsImage::take(uint8_t *data, uint32_t size)
 // NB Must make sure that we always use malloc/free for this data.
 uint8_t *RsGxsImage::allocate(uint32_t size)
 {
-	uint8_t *val = (uint8_t *) rs_safe_malloc(size);
+	uint8_t *val = (uint8_t *) rs_malloc(size);
     
 #ifdef DEBUG_GXSCOMMON
     std::cerr << "RsGxsImage()::allocate(" << (void *) val << ")";

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <QDesktopServices>
 #include <QPainter>
 
@@ -72,6 +74,8 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 {
+    std::cerr << "TEXTBROWSER loading ressource: type=" << type << " url=" << name.toString().toStdString() << std::endl;
+    
 	if (mShowImages || type != QTextDocument::ImageResource || name.scheme().compare("data", Qt::CaseInsensitive) != 0) {
 		return QTextBrowser::loadResource(type, name);
 	}

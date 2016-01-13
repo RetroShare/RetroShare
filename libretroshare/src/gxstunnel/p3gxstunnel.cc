@@ -1141,7 +1141,7 @@ bool p3GxsTunnelService::locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *
     uint32_t rssize = item->serial_size() ;
 
     gitem->data_size  = rssize + 8 ;
-    gitem->data_bytes = rs_safe_malloc(rssize+8) ;
+    gitem->data_bytes = rs_malloc(rssize+8) ;
 
     if(gitem->data_bytes == NULL)
     {
@@ -1231,7 +1231,7 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
 
     gitem->data_size  = encrypted_size + GXS_TUNNEL_ENCRYPTION_IV_SIZE + GXS_TUNNEL_ENCRYPTION_HMAC_SIZE ;
-    gitem->data_bytes = rs_safe_malloc(gitem->data_size) ;
+    gitem->data_bytes = rs_malloc(gitem->data_size) ;
 
     if(gitem->data_bytes == NULL)
         return false ;
@@ -1329,7 +1329,7 @@ bool p3GxsTunnelService::sendData(const RsGxsTunnelId &tunnel_id, uint32_t servi
     item->flags = 0;						// not used yet.
     item->service_id = service_id;
     item->data_size = size;					// encrypted data size
-    item->data = (uint8_t*)rs_safe_malloc(size);			// encrypted data
+    item->data = (uint8_t*)rs_malloc(size);			// encrypted data
     
     if(item->data == NULL)
         delete item ;

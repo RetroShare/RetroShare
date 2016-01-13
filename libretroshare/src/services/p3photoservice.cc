@@ -26,7 +26,7 @@ bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 
         size = nail.size;
         type = nail.type;
-        data = (uint8_t *) rs_safe_malloc(size);
+        data = (uint8_t *) rs_malloc(size);
         
         if(data == NULL)
             return false ;

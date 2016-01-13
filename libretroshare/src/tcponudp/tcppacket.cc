@@ -80,7 +80,7 @@ TcpPacket::TcpPacket(uint8 *ptr, int size)
 		if (size > 0)
 		{
 			datasize = size;
-			data = (uint8 *) rs_safe_malloc(datasize);
+			data = (uint8 *) rs_malloc(datasize);
             
             		if(data != NULL)
 				memcpy(data, (void *) ptr, size);
@@ -188,10 +188,17 @@ int	TcpPacket::readPacket(void *buf, int size)
 		free(data);
 	}
 	datasize = size - TCP_PSEUDO_HDR_SIZE;
-	data = (uint8 *) rs_safe_malloc(datasize);
     
-    	if(data == NULL)
+    	if(datasize == 0)	// this happens!
+        {
+            data = NULL ;
             return 0 ;
+        }
+        
+	data = (uint8 *) rs_malloc(datasize);
+
+	if(data == NULL)
+		return 0 ;
 
 	/* now the data */
 	memcpy(data, (void *) &(((uint8 *) buf)[20]), datasize);

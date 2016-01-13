@@ -1102,7 +1102,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 
 			item->chunk_offset = offset+baseoffset ;
 			item->chunk_size = chunk;
-			item->chunk_data = rs_safe_malloc(chunk) ;
+			item->chunk_data = rs_malloc(chunk) ;
 
 			if(item->chunk_data == NULL)
 			{

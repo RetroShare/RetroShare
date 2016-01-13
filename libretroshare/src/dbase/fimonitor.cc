@@ -129,7 +129,7 @@ HashCache::HashCache(const std::string& path)
 
 		// read the binary stream into memory.
 		//
-		void *buffer = rs_safe_malloc(file_size) ;
+		void *buffer = rs_malloc(file_size) ;
 
 		if(buffer == NULL)
 			return ;

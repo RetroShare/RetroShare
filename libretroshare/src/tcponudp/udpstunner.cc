@@ -536,7 +536,7 @@ bool UdpStun_generate_stun_pkt(void *stun_pkt, int *len)
 void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 {
 	/* just the header */
-	void *stun_pkt = rs_safe_malloc(28);
+	void *stun_pkt = rs_malloc(28);
     
     	if(!stun_pkt)
             return NULL ;

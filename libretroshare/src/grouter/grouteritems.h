@@ -196,7 +196,7 @@ class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsG
     {
         RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem ;
         *item = *this ;	// copy all fields
-        item->chunk_data = (uint8_t*)rs_safe_malloc(chunk_size) ;	// deep copy memory chunk
+        item->chunk_data = (uint8_t*)rs_malloc(chunk_size) ;	// deep copy memory chunk
         
         if(item->chunk_data == NULL)
             return NULL ;
