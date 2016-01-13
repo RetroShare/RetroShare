@@ -74,17 +74,32 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 {
-    std::cerr << "TEXTBROWSER loading ressource: type=" << type << " url=" << name.toString().toStdString() << std::endl;
+    std::cerr << "TEXTBROWSER: load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
+                 
+    // case 1: always trust the image if it comes from an internal resource
     
-	if (mShowImages || type != QTextDocument::ImageResource || name.scheme().compare("data", Qt::CaseInsensitive) != 0) {
-		return QTextBrowser::loadResource(type, name);
-	}
+    if(name.scheme().compare("qrc",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) 
+    {
+        std::cerr << "loading because it's qrc..." << std::endl;
+	    return QTextBrowser::loadResource(type, name);
+    }
+        
+    // case 2: only display if the ser allows it
+    
+    if(name.scheme().compare("data",Qt::CaseInsensitive)==0 && mShowImages)
+    {
+        std::cerr << "loading because it's data and mShowImages is true..." << std::endl;
+	    return QTextBrowser::loadResource(type, name);
+    }
+        
+    // case 3: otherwise, do not display
+    
+    std::cerr << "not loading " << std::endl;
+    
+    if (mImageBlockWidget) 
+	    mImageBlockWidget->show();
 
-	if (mImageBlockWidget) {
-		mImageBlockWidget->show();
-	}
-
-	return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
+    return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
 }
 
 void RSTextBrowser::setImageBlockWidget(RSImageBlockWidget *widget)
