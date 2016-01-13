@@ -2399,6 +2399,13 @@ bdNodeNetMsg::bdNodeNetMsg(char *msg, int len, struct sockaddr_in *in_addr)
 	:data(NULL), mSize(len), addr(*in_addr)
 {
 	data = (char *) malloc(len);
+    
+    	if(data == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len << " bytes." << std::endl;
+            return ;
+        }
+                         
 	memcpy(data, msg, len);
 	//print(std::cerr);
 }

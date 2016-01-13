@@ -361,7 +361,6 @@ HEADERS += chat/distantchat.h \
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
-			pqi/rsmemory.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
 			pgp/rsaes.h \
@@ -475,6 +474,7 @@ HEADERS +=	turtle/p3turtle.h \
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
+			util/rsmemory.h \
 			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
@@ -631,6 +631,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
+			util/rsmemory.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \

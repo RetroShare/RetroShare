@@ -35,6 +35,7 @@
 #include "ft/ftfileprovider.h"
 #include "ft/ftsearch.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 #include <retroshare/rsturtle.h>
 #include <time.h>
 
@@ -878,13 +879,11 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const
 		std::cerr << "Warning: peer " << peerId << " is asking a large chunk (s=" << chunksize << ") for hash " << hash << ", filesize=" << size << ". This is unexpected." << std::endl ;
 		return false ;
 	}
-	void *data = malloc(chunksize);
+	void *data = rs_malloc(chunksize);
 
 	if(data == NULL)
-	{
-		std::cerr << "WARNING: Could not allocate data for a chunksize of " << chunksize << std::endl ;
 		return false ;
-	}
+	
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";
 	std::cerr << "\t peer: " << peerId << " hash: " << hash;

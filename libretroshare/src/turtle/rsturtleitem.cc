@@ -286,17 +286,17 @@ RsTurtleRegExpSearchRequestItem::RsTurtleRegExpSearchRequestItem(void *data,uint
 
 	expr._tokens.resize(n) ;
 
-	for(uint32_t i=0;i<n;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
+	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
 
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 	expr._ints.resize(n) ;
 
-	for(uint32_t i=0;i<n;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
+	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
 
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 	expr._strings.resize(n) ;
 
-	for(uint32_t i=0;i<n;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
+	for(uint32_t i=0;i<n && ok;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);
@@ -531,6 +531,9 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 	uint32_t offset = 8; // skip the header 
 	uint32_t rssize = getRsItemSize(data);
 
+    	if(rssize > pktsize)
+		throw std::runtime_error("RsTurtleTunnelOkItem::() wrong rssize (exceeds pktsize).") ;
+            
 	/* add mandatory parts first */
 
 	bool ok = true ;
@@ -540,7 +543,11 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "  request_id=" << (void*)request_id << ", tunnel_id=" << (void*)tunnel_id << std::endl ;
 #endif
-	data_bytes = malloc(data_size) ;
+    
+    	if(data_size > rssize || rssize - data_size < offset)
+		throw std::runtime_error("RsTurtleTunnelOkItem::() wrong data_size (exceeds rssize).") ;
+            
+	data_bytes = rs_malloc(data_size) ;
 
 	if(data_bytes != NULL)
 	{
@@ -548,10 +555,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 		offset += data_size ;
 	}
 	else
-	{
-		std::cerr << "(EE) RsTurtleGenericDataItem: Error. Cannot allocate data for a size of " << data_size <<  " bytes." <<std::endl;
 		offset = 0 ; // generate an error
-	}
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 	UNREFERENCED_LOCAL_VARIABLE(rssize);

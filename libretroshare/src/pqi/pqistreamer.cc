@@ -315,7 +315,11 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 	/* decide which type of packet it is */
 
 	pktsize = mRsSerialiser->size(pqi);
-	void *ptr = malloc(pktsize);
+	void *ptr = rs_malloc(pktsize);
+    
+    	if(ptr == NULL)
+            return 0 ;
+            
 
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
@@ -1040,7 +1044,10 @@ void pqistreamer::allocate_rpend_locked()
         return;
 
     mPkt_rpend_size = getRsPktMaxSize();
-    mPkt_rpending = malloc(mPkt_rpend_size);
+    mPkt_rpending = rs_malloc(mPkt_rpend_size);
+    
+    if(mPkt_rpending == NULL)
+        return ;
 
     // avoid uninitialized (and random) memory read.
     memset(mPkt_rpending,0,mPkt_rpend_size) ;

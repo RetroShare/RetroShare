@@ -39,6 +39,7 @@
 #include "util/rsstring.h"
 #endif
 #include "util/rsdiscspace.h"
+#include "util/rsmemory.h"
 
 #include "ft/ftcontroller.h"
 
@@ -747,8 +748,14 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 	size_t T=0;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = malloc(BUFF_SIZE) ;
+	void *buffer = rs_malloc(BUFF_SIZE) ;
 
+    	if(buffer == NULL)
+        {
+	    fclose (in);
+	    fclose (out);
+            return false ;
+        }
 	bool bRet = true;
 
 	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
