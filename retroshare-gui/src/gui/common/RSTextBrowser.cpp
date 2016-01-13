@@ -74,27 +74,20 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 {
-    std::cerr << "TEXTBROWSER: load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
-                 
     // case 1: always trust the image if it comes from an internal resource
     
     if(name.scheme().compare("qrc",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) 
-    {
-        std::cerr << "loading because it's qrc..." << std::endl;
 	    return QTextBrowser::loadResource(type, name);
-    }
         
-    // case 2: only display if the ser allows it
+    // case 2: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
+    //         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
     
     if(name.scheme().compare("data",Qt::CaseInsensitive)==0 && mShowImages)
-    {
-        std::cerr << "loading because it's data and mShowImages is true..." << std::endl;
 	    return QTextBrowser::loadResource(type, name);
-    }
         
     // case 3: otherwise, do not display
     
-    std::cerr << "not loading " << std::endl;
+    std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
     
     if (mImageBlockWidget) 
 	    mImageBlockWidget->show();
