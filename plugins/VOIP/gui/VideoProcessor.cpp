@@ -10,6 +10,8 @@
 #include <QBuffer>
 #include <QImage>
 
+#include "util/rsmemory.h"
+
 #include "VideoProcessor.h"
 #include "QVideoDevice.h"
 
@@ -384,7 +386,10 @@ bool JPEGVideo::encodeData(const QImage& image,uint32_t /* size_hint */,RsVOIPDa
     buffer.open(QIODevice::WriteOnly) ;
     encoded_frame.save(&buffer,"JPEG") ;
 
-    voip_chunk.data = malloc(HEADER_SIZE + qb.size());
+    voip_chunk.data = rs_malloc(HEADER_SIZE + qb.size());
+    
+    if(!voip_chunk.data)
+        return false ;
 
     // build header
     uint32_t flags = differential_frame ? JPEG_VIDEO_FLAGS_DIFFERENTIAL_FRAME : 0x0 ;
@@ -679,7 +684,11 @@ bool FFmpegVideo::encodeData(const QImage& image, uint32_t target_encoding_bitra
 
 	if(got_output)
 	{
-		voip_chunk.data = malloc(pkt.size + HEADER_SIZE) ;
+		voip_chunk.data = rs_malloc(pkt.size + HEADER_SIZE) ;
+		
+		if(!voip_chunk.data)
+			return false ;
+        
 		uint32_t flags = 0;
 
 		((unsigned char *)voip_chunk.data)[0] =  VideoProcessor::VIDEO_PROCESSOR_CODEC_ID_MPEG_VIDEO       & 0xff ;

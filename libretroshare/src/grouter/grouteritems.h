@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "util/rsmemory.h"
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserviceids.h"
@@ -194,7 +196,11 @@ class RsGRouterTransactionChunkItem: public RsGRouterTransactionItem, public RsG
     {
         RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem ;
         *item = *this ;	// copy all fields
-        item->chunk_data = (uint8_t*)malloc(chunk_size) ;	// deep copy memory chunk
+        item->chunk_data = (uint8_t*)rs_malloc(chunk_size) ;	// deep copy memory chunk
+        
+        if(item->chunk_data == NULL)
+            return NULL ;
+        
         memcpy(item->chunk_data,chunk_data,chunk_size) ;
         return item ;
     }

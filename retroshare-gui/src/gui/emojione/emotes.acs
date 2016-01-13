@@ -130,6 +130,10 @@
 ":thumbsdown:|:-1:|(N)|(n)":"emojione/1F44E.png";
 ":muscle:":"emojione/1F4AA.png";
 ":middle_finger:|":"emojione/1F595.png";
+":finger_pointing_down:":"emojione/1F597.png";
+":finger_pointing_left:":"emojione/1F598.png";
+":finger_pointing_right:":"emojione/1F599.png";
+":finger_pointing_up:":"emojione/1F59E.png";
 ":coffee:|(C)|(c)":"emojione/2615.png";
 ":sake:":"emojione/1F376.png";
 ":tea:":"emojione/1F375.png";

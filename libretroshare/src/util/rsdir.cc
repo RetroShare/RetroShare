@@ -33,6 +33,7 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
+#include "util/rsmemory.h"
 #include "retroshare/rstypes.h"
 #include "rsthreads.h"
 #include <iostream>
@@ -267,7 +268,14 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 	size_t T=0;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = malloc(BUFF_SIZE) ;
+	RsTemporaryMemory buffer(BUFF_SIZE) ;
+    
+    	if(!buffer)
+	{
+		fclose(in) ;
+		fclose(out) ;
+		return false ;
+	}
 
 	bool bRet = true;
 
@@ -285,8 +293,6 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 
 	fclose(in) ;
 	fclose(out) ;
-
-	free(buffer) ;
 
 	return true ;
 

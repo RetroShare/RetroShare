@@ -2739,18 +2739,17 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #ifdef NXS_NET_DEBUG_1
 	    GXSNETDEBUG_PG(item->PeerId(),grpId) << "  Request list is empty. Not doing anything. " << std::endl;
 #endif
-#ifdef SUSPENDED
 	    // The list to req is empty. That means we already have all messages that this peer can
 	    // provide. So we can stamp the group from this peer to be up to date.
         
-            // Normally, this is not needed, since the time stamp is updated when receiving messages, not message ids
+            // Part of this is already achieved in two other places:
+            // - the GroupStats exchange system, which counts the messages at each peer. It could also supply TS for the messages, but it does not for the time being
+            // - client TS are updated when receiving messages
         
 	    locked_stampPeerGroupUpdateTime(pid,grpId,tr->mTransaction->updateTS,msgItemL.size()) ;
-#endif
     }
 }
 
-#ifdef SUSPENDED
 void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
 {
     std::map<RsPeerId,RsGxsMsgUpdateItem*>::iterator it = mClientMsgUpdateMap.find(pid) ;
@@ -2772,7 +2771,6 @@ void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const 
 
     IndicateConfigChanged();
 }
-#endif
 
 void RsGxsNetService::locked_pushGrpTransactionFromList( std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN)
 {

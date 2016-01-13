@@ -290,7 +290,11 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 #ifdef WINDOWS_SYS
 	// Seems strange to me but M$ documentation suggests to allocate this way...
 	DWORD bf_size = 16000;
-	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) malloc(bf_size);
+	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) rs_malloc(bf_size);
+    
+    	if(adapter_addresses == NULL)
+            return false ;
+        
 	DWORD error = GetAdaptersAddresses(AF_UNSPEC,
 									   GAA_FLAG_SKIP_MULTICAST |
 									   GAA_FLAG_SKIP_DNS_SERVER |

@@ -46,6 +46,7 @@
 #include <fstream>
 
 #include "util/rsdebug.h"
+#include "util/rsmemory.h"
 #include "util/rsstring.h"
 
 // 
@@ -194,7 +195,12 @@ int	pqistore::writePkt(RsItem *pqi)
 #endif
 
 	uint32_t pktsize = rsSerialiser->size(pqi);
-	void *ptr = malloc(pktsize);
+    
+    	RsTemporaryMemory ptr(pktsize) ;
+        
+    	if(ptr == NULL)
+            return 0 ;
+        
 	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
 #ifdef PQISTORE_DEBUG
@@ -203,7 +209,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 		return 0;
@@ -218,7 +223,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqi -> print_string(out);
 		pqioutput(PQL_ALERT, pqistorezone, out);
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 		return 0;
@@ -232,7 +236,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqi -> print_string(out);
 		pqioutput(PQL_ALERT, pqistorezone, out);
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 
@@ -250,7 +253,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 
@@ -262,7 +264,6 @@ int	pqistore::writePkt(RsItem *pqi)
 	pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 #endif
 
-	free(ptr);
 	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 		delete pqi;
 
@@ -288,7 +289,10 @@ int     pqistore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = malloc(blen);
+	void *block = rs_malloc(blen);
+    
+    	if(block == NULL)
+            return false ;
 
 	int tmplen;
 	/* we have the header */
@@ -495,7 +499,10 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = malloc(blen);
+	void *block = rs_malloc(blen);
+    
+    	if(block == NULL)
+            return false ;
 
 	int tmplen;
 	/* we have the header */

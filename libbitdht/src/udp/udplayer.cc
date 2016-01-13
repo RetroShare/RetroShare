@@ -66,7 +66,11 @@ class   udpPacket
 	:raddr(*addr), len(dlen)
 	{
 		data = malloc(len);
-		memcpy(data, dta, len);
+        
+        	if(data != NULL)
+			memcpy(data, dta, len);
+                else
+                    std::cerr << "(EE) error in memory allocation in " << __PRETTY_FUNCTION__ << std::endl;
 	}
 
 	~udpPacket()
@@ -242,6 +246,12 @@ void UdpLayer::recv_loop()
 	int maxsize = 16000;
 	void *inbuf = malloc(maxsize);
 
+    	if(inbuf == NULL)
+        {
+            std::cerr << "(EE) Error in memory allocation of size " << maxsize << " in " << __PRETTY_FUNCTION__ << std::endl;
+            return ;
+        }
+        
         int status;
         struct timeval timeout;
 

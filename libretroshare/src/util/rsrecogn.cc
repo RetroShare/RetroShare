@@ -145,7 +145,12 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 
 		/* store in */
 		uint32_t datalen = recognSerialiser.size(item);
-		uint8_t *data = (uint8_t *) malloc(datalen);
+        
+        	RsTemporaryMemory data(datalen) ;
+            
+            	if(!data)
+                    return false ;
+                
 		uint32_t pktlen = datalen;
 		int signOk = 0;
 		
@@ -181,8 +186,6 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 #endif // DEBUG_RECOGN
 			delete item;
 		}
-
-		free(data);
 	}
 
 	/* clean up */
@@ -233,7 +236,12 @@ bool	RsRecogn::validateTagSignature(RsGxsRecognSignerItem *signer, RsGxsRecognTa
 	RsGxsRecognSerialiser serialiser;
 
 	uint32_t datalen = serialiser.size(item);
-	uint8_t *data = (uint8_t *) malloc(datalen);
+    
+    	RsTemporaryMemory data(datalen) ;
+        
+        if(!data)
+            return false ;
+        
 	int signOk = 0;
 		
 	uint32_t pktlen = datalen;
@@ -262,8 +270,6 @@ bool	RsRecogn::validateTagSignature(RsGxsRecognSignerItem *signer, RsGxsRecognTa
 		
 	EVP_MD_CTX_destroy(mdctx);
 	EVP_PKEY_free(signKey);
-
-	free(data);
 		
 	return (signOk == 1);		
 }

@@ -151,11 +151,25 @@ class SignatureEventData
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
-			sign = (unsigned char *)malloc(_signlen) ;
+			sign = (unsigned char *)rs_malloc(_signlen) ;
+            
+            		if(!sign)
+		    {
+			    signlen = NULL ;
+			    signature_result = SELF_SIGNATURE_RESULT_FAILED ;
+			    return ;
+		    }
+                    
 			signlen = new unsigned int ;
 			*signlen = _signlen ;
             signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-			data = malloc(_len) ;
+			data = rs_malloc(_len) ;
+            
+            		if(!data)
+                    {
+                        len = 0 ;
+                        return ;
+                    }
 			len = _len ;
 			memcpy(data,_data,len) ;
 		}
@@ -863,11 +877,9 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-						ChatLobbyId lobby_id;
-						if(!rsMsgs->isLobbyId(RsPeerId(id), lobby_id))
-							break;
+                        ChatId chat_id(id);
 
-						ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
+                        ChatDialog *chatDialog = ChatDialog::getChat(chat_id);
 						ChatWidget *chatWidget;
                         if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
                             // do not show when active
@@ -879,7 +891,7 @@ void NotifyQt::UpdateGUI()
 						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
                             break; // participant is muted
 
-						toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, sender, QString::fromUtf8(msg.c_str())));
+                        toaster = new ToasterItem(new ChatLobbyToaster(chat_id.toLobbyId(), sender, QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:

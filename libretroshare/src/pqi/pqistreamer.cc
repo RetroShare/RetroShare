@@ -315,7 +315,11 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 	/* decide which type of packet it is */
 
 	pktsize = mRsSerialiser->size(pqi);
-	void *ptr = malloc(pktsize);
+	void *ptr = rs_malloc(pktsize);
+    
+    	if(ptr == NULL)
+            return 0 ;
+            
 
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
@@ -471,6 +475,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    return 0;
 	    }
 #define GROUP_OUTGOING_PACKETS 1
+#define PACKET_GROUPING_SIZE_LIMIT 32768
 	    // send a out_pkt., else send out_data. unless
 	    // there is a pending packet.
 	    if (!mPkt_wpending)
@@ -480,7 +485,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    mPkt_wpending_size = 0 ;
 		    int k=0;
             
-		    while(mPkt_wpending_size < maxbytes && (dta = locked_pop_out_data())!=NULL )
+		    while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PACKET_GROUPING_SIZE_LIMIT && (dta = locked_pop_out_data())!=NULL )
 		    {
 			    uint32_t s = getRsItemSize(dta);
 			    mPkt_wpending = realloc(mPkt_wpending,s+mPkt_wpending_size) ;
@@ -1040,7 +1045,10 @@ void pqistreamer::allocate_rpend_locked()
         return;
 
     mPkt_rpend_size = getRsPktMaxSize();
-    mPkt_rpending = malloc(mPkt_rpend_size);
+    mPkt_rpending = rs_malloc(mPkt_rpend_size);
+    
+    if(mPkt_rpending == NULL)
+        return ;
 
     // avoid uninitialized (and random) memory read.
     memset(mPkt_rpending,0,mPkt_rpend_size) ;
