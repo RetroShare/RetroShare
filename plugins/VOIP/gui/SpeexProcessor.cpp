@@ -1,5 +1,6 @@
 #include "SpeexProcessor.h"
 
+#include <util/rsmemory.h>
 #include <speex/speex.h>
 #include <speex/speex_preprocess.h>
 
@@ -350,7 +351,11 @@ void SpeexOutputProcessor::putNetworkPacket(QString name, QByteArray packet) {
         if (userJitterHash.contains(name)) {
             userJitter = userJitterHash.value(name);
         } else {
-            userJitter = (SpeexJitter*)malloc(sizeof(SpeexJitter));
+            userJitter = (SpeexJitter*)rs_malloc(sizeof(SpeexJitter));
+            
+            if(!userJitter)
+                return ;
+            
             speex_jitter_init(userJitter, speex_decoder_init(&speex_wb_mode), SAMPLING_RATE);
             int on = 1;
             speex_decoder_ctl(userJitter->dec, SPEEX_SET_ENH, &on);

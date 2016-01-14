@@ -202,7 +202,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     //name = cli->nick;
     //popupChatFlag = RS_POPUP_CHATLOBBY;
 
-	RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, virtual_peer_id.toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
+    RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, ChatId(cli->lobby_id).toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
 
     return true ;
 }
@@ -319,11 +319,6 @@ void DistributedChatService::locked_printDebugInfo() const
 
 	}
 
-	std::cerr << "Recorded lobby names: " << std::endl;
-
-	for( std::map<RsPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
-		std::cerr << "   \"" << it->first << "\" id = " << std::hex << it->second << std::dec << std::endl;
-
 	std::cerr << "Visible public lobbies: " << std::endl;
 
 	for( std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.begin()) ;it!=_visible_lobbies.end();++it)
@@ -339,21 +334,6 @@ void DistributedChatService::locked_printDebugInfo() const
         std::cerr << "   \"" << std::hex << it->first << "\" flags = " << it->second << std::dec << std::endl;
 }
 
-bool DistributedChatService::isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id)
-{
-	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.find(virtual_peer_id)) ;
-
-	if(it != _lobby_ids.end())
-	{
-		lobby_id = it->second ;
-		return true ;
-	}
-
-	lobby_id = 0;
-	return false ;
-}
 bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id,uint32_t lobby_count)
 {
 	static std::map<std::string, std::list<time_t> > message_counts ;
@@ -1368,7 +1348,6 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 
 		_lobby_invites_queue.erase(it) ;		// remove the invite from cache.
@@ -1487,8 +1466,6 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		entry.last_connexion_challenge_time = now ; 
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
-
 		for(std::set<RsPeerId>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 		{
 			invited_friends.push_back(*it2) ;
@@ -1537,7 +1514,6 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 	}
 
@@ -1619,13 +1595,6 @@ void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 		// remove lobby information
 
 		_chat_lobbys.erase(it) ;
-
-		for(std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
-			if(it2->second == id)
-			{
-				_lobby_ids.erase(it2) ;
-				break ;
-			}
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;

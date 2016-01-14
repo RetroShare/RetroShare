@@ -899,7 +899,144 @@ RsMsgGRouterMap* RsMsgSerialiser::deserialiseMsgGRouterMap(void* data, uint32_t*
 
 /************************* end of definition of msgGRouterMap serialisation functions ************************/
 
+/************************* definition of msgDistantMessageMap serialisation functions ************************/
 
+std::ostream& RsMsgDistantMessagesHashMap::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsMsgDistantMessagesHashMap", indent);
+    uint16_t int_Indent = indent + 2;
+
+    for(std::map<Sha1CheckSum,uint32_t>::const_iterator it(hash_map.begin());it!=hash_map.end();++it)
+    {
+        printIndent(out, int_Indent);
+        out << "  " << std::hex << it->first << std::dec << " : " << it->second << std::endl;
+    }
+
+    printRsItemEnd(out, "RsMsgDistantMessagesHashMap", indent);
+
+    return out;
+}
+
+void RsMsgDistantMessagesHashMap::clear()
+{
+    hash_map.clear() ;
+
+    return;
+}
+
+uint32_t RsMsgDistantMessagesHashMap::serial_size(bool)
+{
+    uint32_t s = 8; /* header */
+
+    s += 4; // number of entries
+    s += (Sha1CheckSum::SIZE_IN_BYTES+4)*hash_map.size(); // entries
+
+    return s;
+}
+
+bool RsMsgDistantMessagesHashMap::serialise(void *data, uint32_t& pktsize,bool config)
+{
+    uint32_t tlvsize = serial_size(config) ;
+    uint32_t offset = 0;
+
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsMsgSerialiser::serialiseMsgDistantMessagesHashMap() Header: " << ok << std::endl;
+    std::cerr << "RsMsgSerialiser::serialiseMsgDistantMessagesHashMap() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= setRawUInt32(data, tlvsize, &offset, hash_map.size());
+
+    for(std::map<Sha1CheckSum,uint32_t>::const_iterator it=hash_map.begin();ok && it!=hash_map.end();++it)
+    {
+        ok &= it->first.serialise(data, tlvsize, offset) ;
+        ok &= setRawUInt32(data, tlvsize, &offset, it->second);
+    }
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsMsgSerialiser::serialiseMsgDistantMessagesHashMap() Size Error! " << std::endl;
+    }
+
+    return ok;
+}
+
+RsMsgDistantMessagesHashMap* RsMsgSerialiser::deserialiseMsgDistantMessageHashMap(void* data, uint32_t* pktsize)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+        (RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+        (RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
+
+    if (*pktsize < rssize)    /* check size */
+        return NULL; /* not enough data */
+
+    /* set the packet length */
+    *pktsize = rssize;
+
+    bool ok = true;
+
+    /* ready to load */
+    RsMsgDistantMessagesHashMap *item = new RsMsgDistantMessagesHashMap();
+    item->clear();
+
+    /* skip the header */
+    offset += 8;
+
+    uint32_t s=0 ;
+
+    /* get mandatory parts first */
+    ok &= getRawUInt32(data, rssize, &offset, &s);
+
+    for(uint32_t i=0;i<s && ok;++i)
+    {
+        Sha1CheckSum s ;
+        uint32_t tm ;
+
+        ok &= s.deserialise(data, rssize, offset) ;
+        ok &= getRawUInt32(data, rssize, &offset, &tm);
+
+        item->hash_map.insert(std::make_pair(s,tm)) ;
+    }
+
+    if (offset != rssize)
+    {
+        /* error */
+        std::cerr << "(EE) size error in packet deserialisation: p3MsgItem, subtype " << getRsItemSubType(rstype) << ". offset=" << offset << " != rssize=" << rssize << std::endl;
+        delete item;
+        return NULL;
+    }
+
+    if (!ok)
+    {
+        std::cerr << "(EE) size error in packet deserialisation: p3MsgItem, subtype " << getRsItemSubType(rstype) << std::endl;
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
 /************************************** Message ParentId **********************/
 
 std::ostream& RsMsgParentId::print(std::ostream& out, uint16_t indent)
@@ -1042,27 +1179,14 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_DEFAULT:
-			return deserialiseMsgItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_SRC_TAG:
-			return deserialiseMsgSrcIdItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_PARENT_TAG:
-			return deserialiseMsgParentIdItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:
-			return deserialiseTagItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_INVITE:
-			return deserialisePublicMsgInviteConfigItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_MSG_TAGS:
-			return deserialiseMsgTagItem(data, pktsize);
-			break;
-        case RS_PKT_SUBTYPE_MSG_GROUTER_MAP:
-            return deserialiseMsgGRouterMap(data, pktsize);
-            break;
+		case RS_PKT_SUBTYPE_DEFAULT:          return deserialiseMsgItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_SRC_TAG:      return deserialiseMsgSrcIdItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_PARENT_TAG:   return deserialiseMsgParentIdItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:     return deserialiseTagItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_INVITE:       return deserialisePublicMsgInviteConfigItem(data, pktsize);
+		case RS_PKT_SUBTYPE_MSG_TAGS:         return deserialiseMsgTagItem(data, pktsize);
+        	case RS_PKT_SUBTYPE_MSG_GROUTER_MAP:  return deserialiseMsgGRouterMap(data, pktsize);
+        	case RS_PKT_SUBTYPE_MSG_DISTANT_MSG_MAP:  return deserialiseMsgDistantMessageHashMap(data, pktsize);
         default:
 			return NULL;
 			break;

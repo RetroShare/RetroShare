@@ -1121,13 +1121,11 @@ bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTr
         std::cerr << "  sending to tunnel vpid " << pid << std::endl;
 #endif
         uint32_t turtle_data_size = trans_item.serial_size() ;
-        uint8_t *turtle_data = (uint8_t*)malloc(turtle_data_size) ;
+        uint8_t *turtle_data = (uint8_t*)rs_malloc(turtle_data_size) ;
 
         if(turtle_data == NULL)
-        {
-            std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
             return false ;
-        }
+        
         if(!trans_item.serialise(turtle_data,turtle_data_size))
         {
             std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
@@ -1184,16 +1182,18 @@ void p3GRouter::autoWash()
 #ifdef GROUTER_DEBUG
                 grouter_debug() << "  Removing cached item " << std::hex << it->first << std::dec << std::endl;
 #endif
-                GRouterClientService *client = NULL ;
-                GRouterServiceId service_id = 0;
+                //GRouterClientService *client = NULL ;
+                //GRouterServiceId service_id = 0;
 
                 if( it->second.data_status != RS_GROUTER_DATA_STATUS_DONE )
-                {
-                    if(!locked_getClientAndServiceId(it->second.tunnel_hash,it->second.data_item->destination_key,client,service_id))
-                        std::cerr << "  ERROR: cannot find client for cancelled message " << it->first << std::endl;
-                    else
-                        failed_msgs[it->first] = client;
-                }
+		{
+                    GRouterClientService *client = NULL;
+                    
+			if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client))
+				failed_msgs[it->first] = client ;
+			else
+				std::cerr << "  ERROR: client id " << it->second.client_id << " not registered. Consistency error." << std::endl;
+		}
 
                 delete it->second.data_item ;
 
@@ -1302,14 +1302,13 @@ bool p3GRouter::sliceDataItem(RsGRouterAbstractMsgItem *item,std::list<RsGRouter
             chunk_item->total_size = size;
             chunk_item->chunk_start= offset;
             chunk_item->chunk_size = chunk_size ;
-            chunk_item->chunk_data = (uint8_t*)malloc(chunk_size) ;
+            chunk_item->chunk_data = (uint8_t*)rs_malloc(chunk_size) ;
 #ifdef GROUTER_DEBUG
             std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
 #endif
 
             if(chunk_item->chunk_data == NULL)
             {
-                std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
                 delete chunk_item;
                 throw ;
             }
@@ -1411,7 +1410,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
 #endif
             it->second.data_status  = RS_GROUTER_DATA_STATUS_DONE;
 
-            if(locked_getClientAndServiceId(it->second.tunnel_hash,it->second.data_item->destination_key,client_service,service_id))
+            if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client_service))
                 mid = it->first ;
             else
             {
@@ -1604,6 +1603,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
             info.receipt_item = receipt_item ;	// inited before, or NULL.
             info.tunnel_status = RS_GROUTER_TUNNEL_STATUS_UNMANAGED ;
             info.last_sent_TS = 0 ;
+            info.client_id = data_item->service_id ;
             info.item_hash = item_hash ;
             info.last_tunnel_request_TS = 0 ;
             info.sending_attempts = 0 ;
@@ -1680,26 +1680,10 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
         IndicateConfigChanged() ;
 }
 
-bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id)
+bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client)
 {
     client = NULL ;
-    service_id = 0;
-    RsGxsId gxs_id ;
     
-    if(!locked_getGxsIdAndClientId(hash,gxs_id,service_id))
-    {
-        std::cerr << "  p3GRouter::ERROR: locked_getGxsIdAndClientId(): no key registered for hash " << hash << std::endl;
-        return false ;
-    }
-    
-    if(gxs_id != destination_key)
-    {
-        std::cerr << "  ERROR: verification (destination) GXS key " << destination_key << " does not match key from hash " << gxs_id << std::endl;
-        return false;
-    }
-
-    // now find the client given its id.
-
     std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(service_id) ;
 
     if(its == _registered_services.end())
@@ -1934,7 +1918,11 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
 
     RsGRouterGenericDataItem *data_item = new RsGRouterGenericDataItem ;
 
-    data_item->data_bytes = (uint8_t*)malloc(data_size) ;
+    data_item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
+    
+    if(data_item->data_bytes == NULL)
+        return false ;
+    
     memcpy(data_item->data_bytes,data,data_size) ;
 
     data_item->data_size = data_size ;
@@ -1981,6 +1969,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     info.data_status = RS_GROUTER_DATA_STATUS_PENDING ;
     info.tunnel_status = RS_GROUTER_TUNNEL_STATUS_UNMANAGED ;
     info.last_sent_TS = 0 ;
+    info.client_id = client_id ;
     info.last_tunnel_request_TS = 0 ;
     info.item_hash = computeDataItemHash(data_item) ;
     info.sending_attempts = 0 ;
@@ -2029,7 +2018,8 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
 
     return RsDirUtil::sha1sum(bytes,20) ;
 }
-bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+#ifdef TO_REMOVE
+bool p3GRouter::locked_getGxsOwnIdAndClientIdFromHash(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
 {
     assert(       gxs_id.SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
@@ -2047,6 +2037,7 @@ bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gx
     
     return true ;
 }
+#endif
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
     {
@@ -2210,7 +2201,8 @@ void p3GRouter::debugDump()
 
     for(std::map<Sha1CheckSum, GRouterPublishedKeyInfo>::const_iterator it(_owned_key_ids.begin());it!=_owned_key_ids.end();++it)
 	{
-        grouter_debug() << "    Hash            : " << it->first << std::endl;
+	    grouter_debug() << "    Hash            : " << it->first << std::endl;
+	    grouter_debug() << "    Key             : " << it->second.authentication_key << std::endl;
 		grouter_debug() << "      Service id    : " << std::hex << it->second.service_id << std::dec << std::endl;
 		grouter_debug() << "      Description   : " << it->second.description_string << std::endl;
 	}
@@ -2226,15 +2218,17 @@ void p3GRouter::debugDump()
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
     {
-        grouter_debug() << "    Msg id          : " << std::hex << it->first << std::dec ;
-        grouter_debug() << "    data hash       : " << it->second.item_hash ;
-        grouter_debug() << "    Destination     : " << it->second.data_item->destination_key ;
-        grouter_debug() << "    Received        : " << now - it->second.received_time_TS << " secs ago.";
-        grouter_debug() << "    Last sent       : " << now - it->second.last_sent_TS << " secs ago.";
-        grouter_debug() << "    Transaction TS  : " << now - it->second.data_transaction_TS << " secs ago.";
-        grouter_debug() << "    Data Status     : " << statusString[it->second.data_status] << std::endl;
-        grouter_debug() << "    Tunl Status     : " << statusString[it->second.tunnel_status] << std::endl;
-    grouter_debug() << "    Receipt ok      : " << (it->second.receipt_item != NULL) << std::endl;
+        grouter_debug() << " Msg id: " << std::hex << it->first << std::dec ;
+        grouter_debug() << " data hash: " << it->second.item_hash ;
+        grouter_debug() << " client id: " << std::hex << it->second.client_id << std::dec;
+        grouter_debug() << " Flags: " << std::hex << it->second.routing_flags << std::dec;
+        grouter_debug() << " Destination: " << it->second.data_item->destination_key ;
+        grouter_debug() << " Received: " << now - it->second.received_time_TS << " secs ago.";
+        grouter_debug() << " Last sent: " << now - it->second.last_sent_TS << " secs ago.";
+        grouter_debug() << " Transaction TS: " << now - it->second.data_transaction_TS << " secs ago.";
+        grouter_debug() << " Data Status: " << statusString[it->second.data_status] << std::endl;
+        grouter_debug() << " Tunl Status: " << statusString[it->second.tunnel_status] << std::endl;
+	grouter_debug() << " Receipt ok: " << (it->second.receipt_item != NULL) << std::endl;
     }
 
     grouter_debug() << "  Tunnels: " << std::endl;

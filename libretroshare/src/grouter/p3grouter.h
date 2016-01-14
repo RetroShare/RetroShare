@@ -252,8 +252,7 @@ private:
     void handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_item) ;
     void handleIncomingDataItem(RsGRouterGenericDataItem *data_item) ;
 
-    bool locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id);
-
+    bool locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client);
 
     // utility functions
     //
@@ -270,7 +269,7 @@ private:
 
     static Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
 
-    bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
+    //bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
     bool locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& item);
 
     void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, const std::set<RsPeerId>& incoming_routes,bool is_origin);

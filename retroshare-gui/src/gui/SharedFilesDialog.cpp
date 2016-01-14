@@ -363,10 +363,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_DIR) ;
 
-#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-	if(viewTypeIndex == VIEW_TYPE_FLAT)
-#endif
-		FilterItems();
+    FilterItems();
 }
 
 void LocalSharedFilesDialog::showProperColumns()
@@ -1017,6 +1014,11 @@ void SharedFilesDialog::startFilter()
 
 void SharedFilesDialog::FilterItems()
 {
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
+    if(proxyModel == tree_proxyModel)
+        return;
+#endif
+
     QString text = ui.filterPatternLineEdit->text();
 
     setCursor(Qt::WaitCursor);

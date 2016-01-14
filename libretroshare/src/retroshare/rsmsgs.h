@@ -464,10 +464,11 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 /****************************************/
 
 virtual bool joinVisibleChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& own_id) = 0 ;
-virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) = 0;
-virtual bool getVirtualPeerId(const ChatLobbyId& lobby_id,RsPeerId& vpid) = 0;
+/// get ids of subscribed lobbies
 virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) = 0;
+/// get lobby info of a subscribed chat lobby. Returns true if lobby id is valid.
 virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) = 0 ;
+/// get info about all lobbies, subscribed and unsubscribed
 virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) = 0 ;
 virtual void invitePeerToLobby(const ChatLobbyId& lobby_id,const RsPeerId& peer_id) = 0;
 virtual bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) = 0 ;

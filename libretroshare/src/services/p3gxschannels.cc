@@ -916,6 +916,12 @@ bool SSGxsChannelGroup::load(const std::string &input)
     mAutoDownload = false;
     mDownloadDirectory.clear();
 
+    if(input.empty())
+    {
+        std::cerr << "(EE) SSGxsChannelGroup::load() asked to load a null string. Weird." << std::endl;
+        return false ;
+    }
+    
     RsTemporaryMemory tmpmem(input.length());
 
     if (1 == sscanf(input.c_str(), "D:%d", &download_val))

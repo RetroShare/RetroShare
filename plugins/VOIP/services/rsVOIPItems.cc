@@ -447,7 +447,14 @@ RsVOIPDataItem::RsVOIPDataItem(void *data, uint32_t pktsize)
 	ok &= getRawUInt32(data, rssize, &offset, &flags);
 	ok &= getRawUInt32(data, rssize, &offset, &data_size);
 
-	voip_data = malloc(data_size) ;
+    	if(data_size > rssize || rssize - data_size < offset)
+            throw std::runtime_error("Not enough space.") ;
+        
+	voip_data = rs_malloc(data_size) ;
+    
+    	if(!voip_data)
+		throw std::runtime_error("Serialization error.") ;
+            
 	memcpy(voip_data,&((uint8_t*)data)[offset],data_size) ;
 	offset += data_size ;
 

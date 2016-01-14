@@ -56,159 +56,161 @@ class p3IdService;
 // Temp tweak to test grouter
 class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor, public GRouterClientService
 {
-	public:
-		p3MsgService(p3ServiceControl *sc, p3IdService *id_service);
-		virtual RsServiceInfo getServiceInfo();
+public:
+    p3MsgService(p3ServiceControl *sc, p3IdService *id_service);
+    virtual RsServiceInfo getServiceInfo();
 
-		/* External Interface */
-		bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
-		bool 	getMessage(const std::string &mid, Rs::Msgs::MessageInfo &msg);
-		void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
+    /* External Interface */
+    bool 	getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
+    bool 	getMessage(const std::string &mid, Rs::Msgs::MessageInfo &msg);
+    void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-		bool decryptMessage(const std::string& mid) ;
-		bool    removeMsgId(const std::string &mid); 
-		bool    markMsgIdRead(const std::string &mid, bool bUnreadByUser);
-		bool    setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask);
-		bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
-		// msgParentId == 0 --> remove
-		bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
+    bool decryptMessage(const std::string& mid) ;
+    bool    removeMsgId(const std::string &mid); 
+    bool    markMsgIdRead(const std::string &mid, bool bUnreadByUser);
+    bool    setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask);
+    bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
+    // msgParentId == 0 --> remove
+    bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
-		bool    MessageSend(Rs::Msgs::MessageInfo &info);
-		bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-		bool    MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
-		bool    MessageToTrash(const std::string &mid, bool bTrash);
+    bool    MessageSend(Rs::Msgs::MessageInfo &info);
+    bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
+    bool    MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
+    bool    MessageToTrash(const std::string &mid, bool bTrash);
 
-		bool 	getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
-		bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
-		bool    removeMessageTagType(uint32_t tagId);
+    bool 	getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
+    bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
+    bool    removeMessageTagType(uint32_t tagId);
 
-		bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
-		/* set == false && tagId == 0 --> remove all */
-		bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
+    bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
+    /* set == false && tagId == 0 --> remove all */
+    bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
-		bool    resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
+    bool    resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
-		void    loadWelcomeMsg(); /* startup message */
+    void    loadWelcomeMsg(); /* startup message */
 
-            
-		//std::list<RsMsgItem *> &getMsgList();
-		//std::list<RsMsgItem *> &getMsgOutList();
 
-		int	tick();
-		int	status();
+    //std::list<RsMsgItem *> &getMsgList();
+    //std::list<RsMsgItem *> &getMsgOutList();
 
-		/*** Overloaded from p3Config ****/
-		virtual RsSerialiser *setupSerialiser();
-		virtual bool saveList(bool& cleanup, std::list<RsItem*>&);
-		virtual bool loadList(std::list<RsItem*>& load);
-		virtual void saveDone();
-		/*** Overloaded from p3Config ****/
+    int	tick();
+    int	status();
 
-		/*** Overloaded from pqiMonitor ***/
-		virtual void    statusChange(const std::list<pqiServicePeer> &plist);
-		int     checkOutgoingMessages();
-		/*** Overloaded from pqiMonitor ***/
+    /*** Overloaded from p3Config ****/
+    virtual RsSerialiser *setupSerialiser();
+    virtual bool saveList(bool& cleanup, std::list<RsItem*>&);
+    virtual bool loadList(std::list<RsItem*>& load);
+    virtual void saveDone();
+    /*** Overloaded from p3Config ****/
 
-		/*** overloaded from p3turtle   ***/
+    /*** Overloaded from pqiMonitor ***/
+    virtual void    statusChange(const std::list<pqiServicePeer> &plist);
+    int     checkOutgoingMessages();
+    /*** Overloaded from pqiMonitor ***/
 
-		virtual void connectToGlobalRouter(p3GRouter *) ;
+    /*** overloaded from p3turtle   ***/
 
-		struct DistantMessengingInvite
-		{
-			time_t time_of_validity ;
-		};
-		struct DistantMessengingContact
-		{
-			time_t last_hit_time ;
-			RsPeerId virtual_peer_id ;
-			uint32_t status ;
-			bool pending_messages ;
-		};
-		void enableDistantMessaging(bool b) ;
-		bool distantMessagingEnabled() ;
-        
-        	void setDistantMessagingPermissionFlags(uint32_t flags) ;
-        	uint32_t getDistantMessagingPermissionFlags() ;
+    virtual void connectToGlobalRouter(p3GRouter *) ;
 
-	private:
-        void sendDistantMsgItem(RsMsgItem *msgitem) ;
+    struct DistantMessengingInvite
+    {
+	    time_t time_of_validity ;
+    };
+    struct DistantMessengingContact
+    {
+	    time_t last_hit_time ;
+	    RsPeerId virtual_peer_id ;
+	    uint32_t status ;
+	    bool pending_messages ;
+    };
+    void enableDistantMessaging(bool b) ;
+    bool distantMessagingEnabled() ;
 
-		// This contains the ongoing tunnel handling contacts.
-		// The map is indexed by the hash
-		//
-		std::map<GRouterMsgPropagationId,uint32_t> _ongoing_messages ;
+    void setDistantMessagingPermissionFlags(uint32_t flags) ;
+    uint32_t getDistantMessagingPermissionFlags() ;
 
-		// Overloaded from GRouterClientService
+private:
+    void sendDistantMsgItem(RsMsgItem *msgitem) ;
 
-    		virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
-        virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
-        virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
+    // This contains the ongoing tunnel handling contacts.
+    // The map is indexed by the hash
+    //
+    std::map<GRouterMsgPropagationId,uint32_t> _ongoing_messages ;
 
-		// Utility functions
+    // Overloaded from GRouterClientService
 
-		bool createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *msg) ;
-		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
-        void sendGRouterData(const RsGxsId &key_id,RsMsgItem *) ;
+    virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
+    virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
+    virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
 
-		void manageDistantPeers() ;
+    // Utility functions
 
-		void handleIncomingItem(RsMsgItem *) ;
+    bool createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *msg) ;
+    bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
+    void sendGRouterData(const RsGxsId &key_id,RsMsgItem *) ;
 
-		uint32_t getNewUniqueMsgId();
-        uint32_t sendMessage(RsMsgItem *item);
-        uint32_t sendDistantMessage(RsMsgItem *item,const RsGxsId& signing_gxs_id);
-        void    checkSizeAndSendMessage(RsMsgItem *msg);
+    void manageDistantPeers() ;
 
-		int 	incomingMsgs();
-		void    processMsg(RsMsgItem *mi, bool incoming);
-		bool checkAndRebuildPartialMessage(RsMsgItem*) ;
+    void handleIncomingItem(RsMsgItem *) ;
 
-		void 	initRsMI(RsMsgItem *msg, Rs::Msgs::MessageInfo &mi);
-		void 	initRsMIS(RsMsgItem *msg, Rs::Msgs::MsgInfoSummary &mis);
+    uint32_t getNewUniqueMsgId();
+    uint32_t sendMessage(RsMsgItem *item);
+    uint32_t sendDistantMessage(RsMsgItem *item,const RsGxsId& signing_gxs_id);
+    void    checkSizeAndSendMessage(RsMsgItem *msg);
+    void cleanListOfReceivedMessageHashes();
 
-		RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsPeerId& to);
-		RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsGxsId& to);
-		void initMIRsMsg(RsMsgItem *item,const Rs::Msgs::MessageInfo &info) ;
+    int 	incomingMsgs();
+    void    processIncomingMsg(RsMsgItem *mi) ;
+    bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
-		void    initStandardTagTypes();
+    void 	initRsMI(RsMsgItem *msg, Rs::Msgs::MessageInfo &mi);
+    void 	initRsMIS(RsMsgItem *msg, Rs::Msgs::MsgInfoSummary &mis);
 
-		p3IdService *mIdService ;
-        p3ServiceControl *mServiceCtrl;
-        p3GRouter *mGRouter ;
+    RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsPeerId& to);
+    RsMsgItem *initMIRsMsg(const Rs::Msgs::MessageInfo &info, const RsGxsId& to);
+    void initMIRsMsg(RsMsgItem *item,const Rs::Msgs::MessageInfo &info) ;
 
-		/* Mutex Required for stuff below */
+    void    initStandardTagTypes();
 
-		RsMutex mMsgMtx;
-		RsMsgSerialiser *_serialiser ;
+    p3IdService *mIdService ;
+    p3ServiceControl *mServiceCtrl;
+    p3GRouter *mGRouter ;
 
-		/* stored list of messages */
-		std::map<uint32_t, RsMsgItem *> imsg;
-		/* ones that haven't made it out yet! */
-		std::map<uint32_t, RsMsgItem *> msgOutgoing; 
+    /* Mutex Required for stuff below */
 
-		std::map<RsPeerId, RsMsgItem *> _pendingPartialMessages ;
+    RsMutex mMsgMtx;
+    RsMsgSerialiser *_serialiser ;
 
-		/* maps for tags types and msg tags */
+    /* stored list of messages */
+    std::map<uint32_t, RsMsgItem *> imsg;
+    /* ones that haven't made it out yet! */
+    std::map<uint32_t, RsMsgItem *> msgOutgoing; 
 
-		std::map<uint32_t, RsMsgTagType*> mTags;
-		std::map<uint32_t, RsMsgTags*> mMsgTags;
+    std::map<RsPeerId, RsMsgItem *> _pendingPartialMessages ;
 
-		uint32_t mMsgUniqueId;
+    /* maps for tags types and msg tags */
 
-		// used delete msgSrcIds after config save
-        std::map<uint32_t, RsMsgSrcId*> mSrcIds;
+    std::map<uint32_t, RsMsgTagType*> mTags;
+    std::map<uint32_t, RsMsgTags*> mMsgTags;
 
-        // temporary storage. Will not be needed when messages have a proper "from" field. Not saved!
-        std::map<uint32_t, RsGxsId> mDistantOutgoingMsgSigners;
+    uint32_t mMsgUniqueId;
+    std::map<Sha1CheckSum,uint32_t> mRecentlyReceivedDistantMessageHashes;
 
-		// save the parent of the messages in draft for replied and forwarded
-		std::map<uint32_t, RsMsgParentId*> mParentId;
+    // used delete msgSrcIds after config save
+    std::map<uint32_t, RsMsgSrcId*> mSrcIds;
 
-		std::string config_dir;
+    // temporary storage. Will not be needed when messages have a proper "from" field. Not saved!
+    std::map<uint32_t, RsGxsId> mDistantOutgoingMsgSigners;
 
-		bool mDistantMessagingEnabled ;
-        uint32_t mDistantMessagePermissions ;
-        bool mShouldEnableDistantMessaging ;
+    // save the parent of the messages in draft for replied and forwarded
+    std::map<uint32_t, RsMsgParentId*> mParentId;
+
+    std::string config_dir;
+
+    bool mDistantMessagingEnabled ;
+    uint32_t mDistantMessagePermissions ;
+    bool mShouldEnableDistantMessaging ;
 };
 
 #endif // MESSAGE_SERVICE_HEADER

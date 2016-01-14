@@ -29,6 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 
 #include "gxstunnel/rsgxstunnelitems.h"
 
@@ -343,6 +344,13 @@ RsGxsTunnelDHPublicKeyItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDHPubl
     /* get mandatory parts first */
     ok &= getRawUInt32(data, rssize, &offset, &s);
 
+    if(s > rssize || rssize - s < offset)
+    {
+	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+            delete item ;
+	    return NULL ;
+    }
+    
     item->public_key = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
     offset += s ;
 
@@ -380,21 +388,22 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     ok &= getRawUInt32(dat, rssize, &offset, &item->service_id);
     ok &= getRawUInt32(dat, rssize, &offset, &item->data_size);
 
-    if(offset + item->data_size <= size)
+    if(item->data_size > rssize || rssize - item->data_size < offset) 
     {
-	    item->data = (unsigned char*)malloc(item->data_size) ;
-
-	    if(dat == NULL)
-	{
-		delete item ;
-		return NULL ;
-	}
-
-	    memcpy(item->data,&((uint8_t*)dat)[offset],item->data_size) ;
-	    offset += item->data_size ;
+	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+	    delete item ;
+	    return NULL ;
     }
-    else
-	    ok = false ;
+    item->data = (unsigned char*)rs_malloc(item->data_size) ;
+
+    if(item->data == NULL)
+    {
+	    delete item ;
+	    return NULL ;
+    }
+
+    memcpy(item->data,&((uint8_t*)dat)[offset],item->data_size) ;
+    offset += item->data_size ;
 
 
     if (offset != rssize)
