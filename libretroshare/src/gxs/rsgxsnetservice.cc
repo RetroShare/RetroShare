@@ -3112,7 +3112,6 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genSendMsgsTransaction() Generating Msg data send fron TransN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 
-<<<<<<< HEAD
     // go groups requested in transaction tr
 
     std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
