@@ -51,7 +51,7 @@ class PgpAuxUtils;
 class RsGroupNetworkStatsRecord
 {
     public:
-        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; }
+        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; update_TS=0; }
 
         std::set<RsPeerId> suppliers ;
 	uint32_t max_visible_count ;
@@ -364,7 +364,7 @@ private:
     void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
     void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
-    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
+    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     void syncWithPeers();
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
@@ -522,7 +522,6 @@ public:
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
-    
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
