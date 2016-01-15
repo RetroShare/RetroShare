@@ -1666,7 +1666,9 @@ void RsGxsNetService::data_tick()
         if(mUpdateCounter >= 120) // 60 seconds
         {
             updateServerSyncTS();
+#ifdef TO_REMOVE
             updateClientSyncTS();
+#endif
             mUpdateCounter = 1;
         }
         else
@@ -1724,6 +1726,7 @@ void RsGxsNetService::debugDump()
 #endif
 }
 
+#ifdef TO_REMOVE
 // This method is normally not needed, but we use it to correct possible inconsistencies in the updte time stamps
 // on the client side.
 
@@ -1761,6 +1764,7 @@ void RsGxsNetService::updateClientSyncTS()
 		}
 	}
 }
+#endif
 
 void RsGxsNetService::updateServerSyncTS()
 {
