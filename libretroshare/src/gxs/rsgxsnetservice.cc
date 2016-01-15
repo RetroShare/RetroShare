@@ -2935,6 +2935,24 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 
     if(!reqList.empty())
         locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
+    else
+    {
+        ClientGrpMap::iterator it = mClientGrpUpdateMap.find(tr->mTransaction->PeerId());
+        RsGxsGrpUpdateItem* item = NULL;
+        if(it != mClientGrpUpdateMap.end())
+            item = it->second;
+        else
+        {
+            item = new RsGxsGrpUpdateItem(mServType);
+            mClientGrpUpdateMap.insert(std::make_pair(tr->mTransaction->PeerId(), item));
+        }
+#ifdef NXS_NET_DEBUG_0
+        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+#endif
+        item->grpUpdateTS = tr->mTransaction->updateTS;
+        item->peerId = tr->mTransaction->PeerId();
+        IndicateConfigChanged();
+    }
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
@@ -3266,6 +3284,10 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 	trItem->timestamp = 0;
 	trItem->PeerId(peer);
 	trItem->transactionNumber = transN;
+#ifdef NXS_NET_DEBUG_0
+        GXSNETDEBUG_P_ (peer) << "Setting tr->mTransaction->updateTS to " << mGrpServerUpdateItem->grpUpdateTS << std::endl;
+#endif
+        trItem->updateTS = mGrpServerUpdateItem->grpUpdateTS;
 	// also make a copy for the resident transaction
 	tr->mTransaction = new RsNxsTransac(*trItem);
 	tr->mTransaction->PeerId(mOwnId);
