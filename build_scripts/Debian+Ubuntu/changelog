@@ -1,5 +1,8 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  0ff6349 thunder2    Fri, 15 Jan 2016 12:01:37 +0100 Fixed possibility of XXE injection in FeedReader plugin.
+  748147f thunder2    Fri, 15 Jan 2016 12:00:02 +0100 Fixed Windows compile.
+  b5f6059 Cyril Soler Fri, 15 Jan 2016 10:07:21 -0500 deprecated updateClientSyncTS() which is not needed anymore
   c24447f csoler      Thu, 14 Jan 2016 20:11:26 -0500 fixed update of mGrpClientUpdateMap when no new group is available, avoiding unnecessary GXS grp list traffic (patch from jolavillette)
   3b18c43 csoler      Wed, 13 Jan 2016 20:25:18 -0500 removed [dos] LF from rsgxsnetservice (causes merging rampage)
   086b076 csoler      Wed, 13 Jan 2016 12:22:55 -0500 fixed a few serialisation issues
