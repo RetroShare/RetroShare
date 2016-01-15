@@ -25,6 +25,7 @@
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
+#include "util/rsmemory.h"
 #include <ws2tcpip.h>
 #endif // WINDOWS_SYS
 
