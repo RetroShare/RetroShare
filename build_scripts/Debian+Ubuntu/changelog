@@ -1,5 +1,73 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  c24447f csoler      Thu, 14 Jan 2016 20:11:26 -0500 fixed update of mGrpClientUpdateMap when no new group is available, avoiding unnecessary GXS grp list traffic (patch from jolavillette)
+  3b18c43 csoler      Wed, 13 Jan 2016 20:25:18 -0500 removed [dos] LF from rsgxsnetservice (causes merging rampage)
+  086b076 csoler      Wed, 13 Jan 2016 12:22:55 -0500 fixed a few serialisation issues
+  96f3446 csoler      Wed, 13 Jan 2016 11:13:23 -0500 added size limit to packet grouping
+  b56881e csoler      Wed, 13 Jan 2016 10:23:21 -0500 fixed windows compilation
+  4916496 csoler      Wed, 13 Jan 2016 10:20:51 -0500 Merge pull request #253 from csoler/v0.6-SecurityReview
+  2c019d9 csoler      Wed, 13 Jan 2016 00:39:22 -0500 added load image option in forum posts when images are to be displayed
+  60408b3 csoler      Wed, 13 Jan 2016 00:13:16 -0500 fixed a bug in GRouterGenericDataItem::duplicate()
+  2a8fc7f csoler      Wed, 13 Jan 2016 00:08:27 -0500 hardened the restriction to image loading to avoid external resources in RSTextBrowser
+  d55993d csoler      Tue, 12 Jan 2016 21:43:04 -0500 removed two instances of malloc(0) captured by new rs_malloc funtion
+  d13526f csoler      Tue, 12 Jan 2016 21:10:11 -0500 added a new method rs_malloc that checks its arguments and prints a stacktrace on error/weird call. 
+                                                      Changed the code everywhere to use this instead of malloc. Removed some mallocs and replaced with RsTemporaryMemory
+  9c6e7df csoler      Mon, 11 Jan 2016 23:49:00 -0500 added checks after mallocs in several files
+  46520b0 csoler      Mon, 11 Jan 2016 20:49:26 -0500 fixed potential integer overflow / Out of bounds read in gxstunnelitems.cc
+  8e666fc csoler      Mon, 11 Jan 2016 20:40:57 -0500 fixed potential integer overflow / Out of bounds read in rsturtleitems.cc
+  6e9d96e csoler      Mon, 11 Jan 2016 20:26:19 -0500 fixed potential integer overflow / Out of bounds read in RsVOIPDataItem.cc
+  98f0c10 csoler      Mon, 11 Jan 2016 19:26:54 -0500 fixed potential integer overflow / Out of bounds read in GRouterItems.cc
+  3094b52 csoler      Mon, 11 Jan 2016 19:08:52 -0500 fixed potential integer overflow / Out of bounds read in rsbaseserial.cc. Also added a few more error output.
+  8e6998b electron128 Sun, 10 Jan 2016 14:34:08 +0100 removed redundant map _lobby_ids from DistributedChatService. The same information and more is stored in the _chat_lobbys map. 
+                                                      _lobby_ids is unused since commit 67e1495d9a78ac259649014355cd127a2febeaaf
+  09ed1ea electron128 Sun, 10 Jan 2016 14:22:06 +0100 removed getVirtualPeerId method from rsmsgs lobby interface. It is not neccesary anymore to have the virtual peer id exposed to the GUI layer.
+  67e1495 electron128 Sun, 10 Jan 2016 13:29:40 +0100 use ChatId instead of virtual peer id for chat lobby popup. Removed a now unused method from rsmsgs interface and DistributedChatService.
+  c3d422a csoler      Sat,  9 Jan 2016 14:31:20 -0500 added some tooltips on keys and certificate details
+  994bfaf csoler      Sat,  9 Jan 2016 13:54:24 -0500 updated TODO
+  e01b1a4 csoler      Sat,  9 Jan 2016 11:00:57 -0500 Merge pull request #245 from csoler/v0.6-Messaging
+  ee84ab7 csoler      Sat,  9 Jan 2016 10:58:49 -0500 fixed serialisation error (missing call) for received Distant msg hash map
+  b125cb1 electron128 Sat,  9 Jan 2016 12:09:43 +0100 fix the bug where a filter is applied in friends file list even if view mode is tree and search box is hidden. Problem was: 
+                                                      SharedFilesDialog::FilterItems() is called from multiple places. The check if we should filter or not is now in the filter function itself.
+  a118870 electron128 Sat,  9 Jan 2016 12:01:32 +0100 if file in friends file list is available locally or is being downloaded, then show it in red like in search. The color is hardcoded, because 
+                                                      it is not possible to style arbitrary QObjects with stylesheets. closes #195
+  9f4256c csoler      Fri,  8 Jan 2016 23:19:45 -0500 Merge pull request #244 from csoler/v0.6-Messaging
+  fe02167 csoler      Fri,  8 Jan 2016 23:18:45 -0500 disabled part of msg re-sending code in order to improve it later
+  56a844b csoler      Fri,  8 Jan 2016 23:08:14 -0500 Merge pull request #243 from csoler/v0.6-Messaging
+  a540ffd csoler      Fri,  8 Jan 2016 22:52:01 -0500 removed two debug outputs from MessageDialog
+  3f6964b csoler      Fri,  8 Jan 2016 22:50:03 -0500 added back messages to sent box
+  75edb46 csoler      Fri,  8 Jan 2016 20:48:47 -0500 added auto-resend of unsent messages. Fixed display of From field in outbox
+  0c591f0 csoler      Thu,  7 Jan 2016 22:22:05 -0500 added auto re-send of distant messages after global router notified the message cannot be sent. Added a map n p3msgService to avoid 
+                                                      receiving multiple times the same message.
+  9651f43 csoler      Thu,  7 Jan 2016 21:01:50 -0500 fixed wrong usage of local client ids in global router causing distant messages to stay in outbox forever.
+  81e2a59 defnax      Thu,  7 Jan 2016 19:25:52 +0100 Fixing People Margins Update emotes file
+  4484b08 csoler      Thu,  7 Jan 2016 00:04:52 -0500 cleaned up the problem of outgoing messages being shown with the from from field.
+  3d6fa0c csoler      Wed,  6 Jan 2016 18:38:27 -0500 fixed bug causing turtle to keep asking for a tunnel after a distant chat is closed if not connected
+  61f8e73 csoler      Wed,  6 Jan 2016 18:12:15 -0500 improved text of warning against pasting pgp keys in connect wizard
+  984ce2d csoler      Wed,  6 Jan 2016 18:07:20 -0500 removed circles tab from IdDialog. Came from a difficult manual merging between dos and unix encoded files
+  7da2ad1 csoler      Wed,  6 Jan 2016 10:31:59 -0500 re-enabled previously disabled code in rsgxsnetservice, that proved useful
+  6398b7b csoler      Tue,  5 Jan 2016 23:00:26 -0500 added comment in rsgxsnetservice.cc
+  3fa8d86 csoler      Tue,  5 Jan 2016 22:53:56 -0500 removed time-stamp-ing of messages on client side in locked_genReqMsgTransaction() as it is already handled when receiving messages, 
+                                                      and the need to stamp non subscribed groups is not justified anymore
+  678afe7 csoler      Tue,  5 Jan 2016 22:27:00 -0500 fixed stupid mistake in previous commit (GXS transaction timestamp)
+  7b3fd53 csoler      Tue,  5 Jan 2016 19:23:59 -0500 added correct timestamp in msg list response items for GXS. To be tested.
+  141f092 csoler      Tue,  5 Jan 2016 14:22:27 -0500 added tooltip and fixed text in connect friend dialog
+  496546e defnax      Tue,  5 Jan 2016 18:25:44 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  19011ba defnax      Tue,  5 Jan 2016 18:23:43 +0100 clean up emotes, removed some unused. changed icons for emotes button. reduze the size of the emoticons
+  9fd0fc5 csoler      Tue,  5 Jan 2016 11:43:50 -0500 fixed bandwidth measurement in pqistreamer
+  e6cd4a4 defnax      Tue,  5 Jan 2016 16:09:14 +0100 Merge pull request #240 from sehraf/pr-smiley-whitespace
+  54f9912 sehraf      Tue,  5 Jan 2016 14:58:41 +0100 Add whitespaces around smileys. Only replace smileys with an image when they are surrounded by whitespaces. 
+                                                      This fixes smileys in links and other text that happen to include the sequence for a smiley.
+  f1f111f csoler      Mon,  4 Jan 2016 20:05:44 -0500 merged
+  e04b933 B.Cristea   Mon,  4 Jan 2016 15:25:22 +0200 corrected compilation inst on openSUSE
+  fddc008 csoler      Sun,  3 Jan 2016 17:31:22 -0500 merged with origin
+  3d5042b csoler      Sun,  3 Jan 2016 14:29:33 -0500 Merge pull request #237 from G10h4ck/master
+  05fd33b Gio         Sun,  3 Jan 2016 17:21:11 +0100 p3ServiceControl: Optimize checkFilter(...), solve memory leak removing mSerialiser, code cleanup
+  1082a8d csoler      Sat,  2 Jan 2016 18:59:05 -0500 updated ubuntu changelog
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 14 Jan 2016 20:00:00 +0100
+
+retroshare06 (0.6.0-1.20160102.1082a8d1~trusty) trusty; urgency=low
+
   4953324 electron128 Sat,  2 Jan 2016 14:53:24 +0100 Merge pull request #235 from PhenomRetroShare/Fix_MakeMACOS_PluginWorking
   c5e6f62 Phenom      Sat,  2 Jan 2016 14:19:53 +0100 Make Plugin working in Mac OSX.
   b6b5f9c csoler      Fri,  1 Jan 2016 22:36:07 -0500 fixed some of the issues reported by coverity scan (mainly uninitialised class members)
