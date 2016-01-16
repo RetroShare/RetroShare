@@ -213,6 +213,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->line_2->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
+    ui->postText->setImageBlockWidget(ui->imageBlockWidget);
+    ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
     ui->subscribeToolButton->setToolTip(tr("<p>Subscribing to the forum will gather \
                                            available posts from your subscribed friends, and make the \
@@ -590,6 +592,7 @@ void GxsForumThreadWidget::changedThread()
 	if (mFillThread) {
 		return;
 	}
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
 }

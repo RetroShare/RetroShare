@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <iostream>
 #include <stdlib.h> /* malloc() realloc() free() strtoll() */
 #include <string.h> /* memset() */
 #include "util/bdstring.h"
@@ -111,6 +112,13 @@ static char *_be_decode_str(const char **data, long long *data_len)
 
 	if (**data == ':') {
 		char *_ret = (char *) malloc(sizeof(sllen) + len + 1);
+        
+    	if(_ret == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len+1+sizeof(sllen) << " bytes." << std::endl;
+            return NULL;
+        }
+                         
 		memcpy(_ret, &sllen, sizeof(sllen));
 		ret = _ret + sizeof(sllen);
 		memcpy(ret, *data + 1, len);
@@ -500,6 +508,12 @@ be_node *be_create_str(const char *str)
 	int len = strlen(str);
 	long long int sllen = len;
 	char *_ret = (char *) malloc(sizeof(sllen) + len + 1);
+    
+    	if(_ret == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len+1+sizeof(sllen) << " bytes." << std::endl;
+            return NULL;
+        }
 	char *ret = NULL;
 
 	memcpy(_ret, &sllen, sizeof(sllen));
@@ -519,6 +533,12 @@ be_node *be_create_str_wlen(const char *str, int len) /* not including \0 */
 	be_node *n = be_alloc(BE_STR);
 	long long int sllen = len;
 	char *_ret = (char *) malloc(sizeof(sllen) + len + 1);
+    
+    	if(_ret == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len+1+sizeof(sllen) << " bytes." << std::endl;
+            return NULL;
+        }
 	char *ret = NULL;
 
 	memcpy(_ret, &sllen, sizeof(sllen));
@@ -561,6 +581,12 @@ int be_add_keypair(be_node *dict, const char *str, be_node *node)
 	int len = strlen(str);
 	long long int sllen = len;
 	char *_ret = (char *) malloc(sizeof(sllen) + len + 1);
+    
+    	if(_ret == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len+1+sizeof(sllen) << " bytes." << std::endl;
+            return 0;
+        }
 	char *ret = NULL;
 
 	//fprintf(stderr, "be_add_keypair() key len = %d\n",len);

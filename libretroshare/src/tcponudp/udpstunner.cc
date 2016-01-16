@@ -29,6 +29,7 @@
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 #include "util/rsstring.h"
 
 static const int STUN_TTL = 64;
@@ -535,7 +536,11 @@ bool UdpStun_generate_stun_pkt(void *stun_pkt, int *len)
 void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 {
 	/* just the header */
-	void *stun_pkt = malloc(28);
+	void *stun_pkt = rs_malloc(28);
+    
+    	if(!stun_pkt)
+            return NULL ;
+        
 	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(0x0101);
 	((uint16_t *) stun_pkt)[1] = (uint16_t) htons(28); /* only header + 8 byte addr */
 	/* transaction id - should be random */

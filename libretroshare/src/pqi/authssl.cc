@@ -117,10 +117,10 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char */*file*/, in
 {
 	struct CRYPTO_dynlock_value *value;
 
-	value = (struct CRYPTO_dynlock_value*) malloc(sizeof(struct CRYPTO_dynlock_value));
-	if (!value) {
+	value = (struct CRYPTO_dynlock_value*) rs_malloc(sizeof(struct CRYPTO_dynlock_value));
+	if (!value) 
 		return NULL;
-	}
+	
 	pthread_mutex_init(&value->mutex, NULL);
 
 	return value;
@@ -166,10 +166,10 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char */*f
 bool tls_init()
 {
 	/* static locks area */
-	mutex_buf = (pthread_mutex_t*) malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
-	if (mutex_buf == NULL) {
+	mutex_buf = (pthread_mutex_t*) rs_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+	if (mutex_buf == NULL) 
 		return false;
-	}
+	
 	for (int i = 0; i < CRYPTO_num_locks(); i++) {
 		pthread_mutex_init(&mutex_buf[i], NULL);
 	}
@@ -1259,7 +1259,11 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         int out_offset = 0;
 
         int max_evp_key_size = EVP_PKEY_size(public_key);
-        ek = (unsigned char*)malloc(max_evp_key_size);
+        ek = (unsigned char*)rs_malloc(max_evp_key_size);
+        
+        if(ek == NULL)
+            return false ;
+        
         const EVP_CIPHER *cipher = EVP_aes_128_cbc();
         int cipher_block_size = EVP_CIPHER_block_size(cipher);
         int size_net_ekl = sizeof(net_ekl);
@@ -1273,8 +1277,13 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         }
 
     	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-        out = (unsigned char*)malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+        out = (unsigned char*)rs_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
 
+        if(out == NULL)
+        {
+            free(ek) ;
+            return false ;
+        }
     	net_ekl = htonl(eklen);
     	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
     	out_offset += size_net_ekl;
@@ -1343,6 +1352,12 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         unsigned char iv[EVP_MAX_IV_LENGTH];
         int ek_mkl = EVP_PKEY_size(mOwnPrivateKey);
         ek = (unsigned char*)malloc(ek_mkl);
+        
+        if(ek == NULL)
+        {
+            std::cerr << "(EE) Cannot allocate memory for " << ek_mkl << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return false ;
+        }
         EVP_CIPHER_CTX_init(&ctx);
 
         int in_offset = 0, out_currOffset = 0;
@@ -1380,8 +1395,13 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        out = (unsigned char*)malloc(inlen - in_offset);
+        out = (unsigned char*)rs_malloc(inlen - in_offset);
 
+        if(out == NULL)
+        {
+            free(ek) ;
+            return false ;
+        }
         if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) {
             free(ek);
 				free(out) ;

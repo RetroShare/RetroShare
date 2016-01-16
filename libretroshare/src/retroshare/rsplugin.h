@@ -160,7 +160,7 @@ class RsPlugin
         // creates a new resource api handler object. ownership is transferred to the caller.
         // the caller should supply a statetokenserver, and keep it valid until destruction
         // the plugin should return a entry point name. this is to make the entry point name independent from file names
-        virtual resource_api::ResourceRouter* new_resource_api_handler(const RsPlugInInterfaces& ifaces, resource_api::StateTokenServer* sts, std::string &entrypoint) const { return 0;}
+        virtual resource_api::ResourceRouter* new_resource_api_handler(const RsPlugInInterfaces& /* ifaces */, resource_api::StateTokenServer* /* sts */, std::string & /*entrypoint*/) const { return 0;}
 
 		// Shutdown
 		virtual void stop() {}
