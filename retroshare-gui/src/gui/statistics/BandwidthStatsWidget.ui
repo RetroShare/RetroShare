@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>812</width>
-    <height>349</height>
+    <width>1128</width>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,14 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="BWGraph" name="bwgraph_BW">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-    </widget>
+    <widget class="BWGraph" name="bwgraph_BW" native="true"/>
    </item>
    <item>
     <widget class="QGroupBox" name="informationSelector_GB">
@@ -111,6 +104,13 @@
        <widget class="QComboBox" name="unit_CB"/>
       </item>
       <item>
+       <widget class="QCheckBox" name="logScale_CB">
+        <property name="text">
+         <string>Log scale</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -131,8 +131,8 @@
  <customwidgets>
   <customwidget>
    <class>BWGraph</class>
-   <extends>QFrame</extends>
-   <header>gui/statistics/BWGraph.h</header>
+   <extends>QWidget</extends>
+   <header location="global">gui/statistics/BWGraph.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
