@@ -73,7 +73,26 @@
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
-
+// quick solution for RSID_COL_VOTES sorting
+class TreeWidgetItem : public QTreeWidgetItem {
+  public:
+  TreeWidgetItem(int type=Type): QTreeWidgetItem(type) {}
+  TreeWidgetItem(QTreeWidget *tree): QTreeWidgetItem(tree) {}
+  TreeWidgetItem(const QStringList& strings): QTreeWidgetItem (strings) {}
+  bool operator< (const QTreeWidgetItem& other ) const {
+    int column = treeWidget()->sortColumn();
+    const QVariant v1 = data(column, Qt::DisplayRole);
+    const QVariant v2 = other.data(column, Qt::DisplayRole);
+    double value1 = v1.toDouble();
+    double value2 = v2.toDouble();
+      if (value1 != value2) {
+          return value1 < value2;
+                }
+      else {
+           return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
+                }
+  }
+};
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
     RsGxsUpdateBroadcastPage(rsIdentity, parent),
@@ -368,7 +387,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		return false;
 
 	if (!item)
-        item = new QTreeWidgetItem();
+        item = new TreeWidgetItem();
         
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
