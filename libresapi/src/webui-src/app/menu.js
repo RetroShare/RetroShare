@@ -16,6 +16,13 @@ function buildmenu(menu, tagname, runstate, ignore){
         && (menu.path === undefined || !menu.path.contains(":"))
         && (menu.show === undefined || menu.show)
     )  {
+        var name = menu.name;
+        if (menu.counter != undefined && menu.counterfnkt != undefined) {
+            var data=rs(menu.counter);
+            if (data != undefined) {
+                name += " (" + menu.counterfnkt(data) + ")";
+            }
+        }
         if (menu.action === undefined) {
             return m(tagname , {
                 onclick: function(){
@@ -23,9 +30,9 @@ function buildmenu(menu, tagname, runstate, ignore){
                         menu.path != undefined ? menu.path : "/" + menu.name
                     )
                 }
-            }, menu.name);
+            }, name);
         } else {
-            return m(tagname, {onclick: function(){menu.action(rs,m)}}, menu.name);
+            return m(tagname, {onclick: function(){menu.action(rs,m)}}, name);
         }
     }
 }

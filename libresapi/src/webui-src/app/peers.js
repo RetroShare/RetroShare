@@ -5,7 +5,7 @@ var rs = require("retroshare");
 
 module.exports = {view: function(){
     var peers = rs("peers");
-    console.log("peers:" + peers);
+    //console.log("peers:" + peers);
 
     //waiting for peerlist ...
     if(peers === undefined){

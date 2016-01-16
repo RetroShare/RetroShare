@@ -11,6 +11,22 @@ module.exports = {  nodes: [
 	{
 		name: "peers",
 		runstate: "running_ok.*",
+		counter: "peers",
+		counterfnkt: function(data){
+		    var onlinecount = 0;
+		    data.map(function(peer) {
+		        var is_online = false;
+		        peer.locations.map(function (location){
+		            if (location.is_online) {
+		                is_online=true;
+		            }
+		        });
+		        if (is_online) {
+		            onlinecount +=1;
+		        }
+		    });
+		    return onlinecount + "/" + data.length;
+		}
 	},
 	{
 	    name: "addpeer",
@@ -29,6 +45,10 @@ module.exports = {  nodes: [
 	{
 		name: "downloads",
 		runstate: "running_ok.*",
+		counter: "transfers/downloads",
+		counterfnkt: function(data){
+		    return data.length;
+		}
 	},
 	{
 		name: "chat",
