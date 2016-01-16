@@ -26,7 +26,9 @@
  */
 
 
-/*******************************************************************
+/**
+ * @deprecated @see rsautoserialize.h and @see rstlvitem.h instead
+ *
  * These are the general TLV (un)packing routines.
  *
  * Data is Serialised into the following format
@@ -59,7 +61,7 @@
  *
  * *in / *out - the data to (un)pack.
  *
- ******************************************************************/
+ */
 
 #include <inttypes.h>
 #include <string>

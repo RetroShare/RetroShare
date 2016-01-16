@@ -57,7 +57,10 @@ int inet_aton(const char *name, struct in_addr *addr);
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-/* 64 bit conversions */
+/**
+ * @brief 64 bit host to network and back conversions
+ * Dont use this directly use templated ntoh instead
+ */
 #ifndef ntohll
 uint64_t ntohll(uint64_t x);
 #endif

@@ -138,10 +138,12 @@ public:
 #include "serialiser/rsautoserialize.h"
 
 /**
- * @brief DEPRECATED A base class for Type Length Value items
+ * @deprecated @see RsAutoTlvSerializable instead
+ *
+ * @brief A base class for Type Length Value items
  * If you are about to implement a new TLV you should <b>not</b> inherit
  * direclty from RsTlvItem as this class is kept just for retrocompatibility
- * purpose and should be not used anymore @see RsAutoTlv instead.
+ * purpose and should be not used anymore @see RsAutoTlvSerializable instead.
  */
 class RsTlvItem : public RsSerializable
 {

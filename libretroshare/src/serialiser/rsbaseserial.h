@@ -31,7 +31,9 @@
 #include <stdint.h>
 #include <retroshare/rsids.h>
 
-/*******************************************************************
+/**
+ * @deprecated @see rsautoserialize.h and @see rstlvitem.h instead
+ *
  * This is at the lowlevel packing routines. They are usually 
  * created in pairs - one to pack the data, the other to unpack.
  *
@@ -46,7 +48,7 @@
  *
  * *in / *out - the data to (un)pack.
  *
- ******************************************************************/
+ */
 
 bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out);
 bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in);
