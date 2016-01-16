@@ -47,42 +47,44 @@ typedef RsPeerId SSLID;
 
 class DiscSslInfo
 {
-	public:
-	DiscSslInfo() { mDiscStatus = 0; }
+public:
+	DiscSslInfo() : mDiscStatus(0) {}
 	uint16_t mDiscStatus;
 };
 
 class DiscPeerInfo
 {
-	public:
+public:
 	DiscPeerInfo() {}
 
 	std::string mVersion;
-	//uint32_t mStatus;
+	//uint32_t mStatus; // TODO: 2016/01/01 Dead code?
 };
 
 class DiscPgpInfo
 {
-	public:
+public:
 	DiscPgpInfo() {}
 
-void    mergeFriendList(const std::set<PGPID> &friends);
+	void mergeFriendList(const std::set<PGPID> &friends);
 
-	//PGPID mPgpId;
+	//PGPID mPgpId; // TODO: 2016/01/01 Dead code?
 	std::set<PGPID> mFriendSet;
 	std::map<SSLID, DiscSslInfo> mSslIds;
 };
 
 
 
-class p3discovery2: public RsDisc, public p3Service, public pqiServiceMonitor, public AuthGPGService
+class p3discovery2 : public RsDisc, public p3Service, public pqiServiceMonitor,
+		public AuthGPGService
 {
-	public:
+public:
 
-	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc);
-virtual ~p3discovery2();
+	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr,
+				 p3ServiceControl *sc);
+	virtual ~p3discovery2();
 
-virtual RsServiceInfo getServiceInfo();
+	virtual RsServiceInfo getServiceInfo();
 
 	/************* from pqiServiceMonitor *******************/
 	virtual void statusChange(const std::list<pqiServicePeer> &plist);
@@ -91,21 +93,21 @@ virtual RsServiceInfo getServiceInfo();
 	int	tick();
 	
 	/* external interface */
-virtual bool    getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
-virtual bool    getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
-virtual bool    getPeerVersion(const RsPeerId &id, std::string &version);
-virtual bool    getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
+	virtual bool getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
+	virtual bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
+	virtual bool getPeerVersion(const RsPeerId &id, std::string &version);
+	virtual bool getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
 
-        /************* from AuthGPService ****************/
-virtual AuthGPGOperation *getGPGOperation();
-virtual void setGPGOperation(AuthGPGOperation *operation);
+	/************* from AuthGPService ****************/
+	virtual AuthGPGOperation *getGPGOperation();
+	virtual void setGPGOperation(AuthGPGOperation *operation);
 
 
-	private:
+private:
 
 	PGPID getPGPId(const SSLID &id);
 
-	int  handleIncoming();
+	int handleIncoming();
 	void updatePgpFriendList();
 
 	void addFriend(const SSLID &sslId);
@@ -129,7 +131,6 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 
 	bool setPeerVersion(const SSLID &peerId, const std::string &version);
 
-	private:
 
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;

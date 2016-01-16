@@ -86,7 +86,7 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 
 int p3ServiceServer::removeService(pqiService *ts)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx);
 
 #ifdef SERVICE_DEBUG
 	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, "p3ServiceServer::removeService()");
@@ -94,7 +94,7 @@ int p3ServiceServer::removeService(pqiService *ts)
 
 	RsServiceInfo info = ts->getServiceInfo();
 
-	// This doesn't need to be in Mutex.
+	// TODO: 2016/01/03 This doesn't need to be in Mutex?
 	mServiceControl->deregisterService(info.mServiceType);
 
 	std::map<uint32_t, pqiService *>::iterator it = services.find(info.mServiceType);
@@ -109,42 +109,37 @@ int p3ServiceServer::removeService(pqiService *ts)
 	return 1;
 }
 
-bool	p3ServiceServer::recvItem(RsRawItem *item)
+bool p3ServiceServer::recvItem(RsRawItem *item)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+	RS_STACK_MUTEX(srvMtx);
 
-#ifdef  SERVICE_DEBUG
-	std::cerr << "p3ServiceServer::incoming()";
-	std::cerr << std::endl;
-
+#ifdef SERVICE_DEBUG
+	std::cerr << "p3ServiceServer::incoming()" << std::endl;
 	{
 		std::string out;
 		rs_sprintf(out, "p3ServiceServer::incoming() PacketId: %x\nLooking for Service: %x\nItem:\n", item -> PacketId(), (item -> PacketId() & 0xffffff00));
 		item -> print_string(out);
-		std::cerr << out;
-		std::cerr << std::endl;
+		std::cerr << out << std::endl;
 	}
 #endif
 
 	// Packet Filtering.
-	// This doesn't need to be in Mutex.
+	// TODO: 2016/01/03 This doesn't need to be in Mutex?
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
 #ifdef  SERVICE_DEBUG
-        std::cerr << "p3ServiceServer::recvItem() Fails Filtering " << std::endl;
+		std::cerr << "p3ServiceServer::recvItem() Fails Filtering " << std::endl;
 #endif
 		delete item;
 		return false;
 	}
-
 
 	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(item -> PacketId() & 0xffffff00);
 	if (it == services.end())
 	{
 #ifdef  SERVICE_DEBUG
-		std::cerr << "p3ServiceServer::incoming() Service: No Service - deleting";
-		std::cerr << std::endl;
+		std::cerr << "p3ServiceServer::incoming() Service: No Service - deleting" << std::endl;
 #endif
 		delete item;
 		return false;
@@ -152,17 +147,16 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 
 	{
 #ifdef  SERVICE_DEBUG
-		std::cerr << "p3ServiceServer::incoming() Sending to : " << (void *) it -> second;
-		std::cerr << std::endl;
+		std::cerr << "p3ServiceServer::incoming() Sending to : "
+				  << (void *) it -> second << std::endl;
 #endif
 
-		return (it->second) -> recv(item);
+		return (it->second)->recv(item);
 	}
 
 	delete item;
 	return false;
 }
-
 
 
 bool p3ServiceServer::sendItem(RsRawItem *item)

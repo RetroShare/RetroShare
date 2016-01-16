@@ -47,9 +47,9 @@ class pqiServicePeer
 
 class pqiServiceMonitor
 {
-	public:
-	pqiServiceMonitor()  { return; }
-virtual ~pqiServiceMonitor() { return; }
+public:
+	pqiServiceMonitor()  {}
+	virtual ~pqiServiceMonitor() {}
 
 	/*!
 	 * this serves as a call back function for server which has
@@ -58,7 +58,7 @@ virtual ~pqiServiceMonitor() { return; }
 	 *
 	 *@param plist contains list of states and actions of the client's peers
 	 */
-virtual void	statusChange(const std::list<pqiServicePeer> &plist) = 0;
+	virtual void statusChange(const std::list<pqiServicePeer> &plist) = 0;
 };
 
 #endif // PQI_SERVICE_MONITOR_H

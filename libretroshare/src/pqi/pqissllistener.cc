@@ -84,7 +84,7 @@ pqissllistenbase::~pqissllistenbase()
     }
 }
 
-int 	pqissllistenbase::tick()
+int pqissllistenbase::tick()
 {
 	status();
 	// check listen port.
@@ -93,7 +93,7 @@ int 	pqissllistenbase::tick()
 	return finaliseAccepts();
 }
 
-int 	pqissllistenbase::status()
+int pqissllistenbase::status()
 {
 	std::string out;
 	rs_sprintf(out, "pqissllistenbase::status(): Listening on port: %u", sockaddr_storage_port(laddr));
@@ -103,28 +103,26 @@ int 	pqissllistenbase::status()
 
 int	pqissllistenbase::setuplisten()
 {
-        int err;
-	if (active)
-		return -1;
+	int err;
+	if (active) return -1;
 
-        lsock = socket(PF_INET, SOCK_STREAM, 0);
+	lsock = socket(PF_INET, SOCK_STREAM, 0);
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-        if (lsock < 0)
-        {
-		pqioutput(PQL_ALERT, pqissllistenzone, 
-		 "pqissllistenbase::setuplisten() Cannot Open Socket!");
-
+	if (lsock < 0)
+	{
+		pqioutput(PQL_ALERT, pqissllistenzone,
+				  "pqissllistenbase::setuplisten() Cannot Open Socket!");
 		return -1;
 	}
 
-        err = fcntl(lsock, F_SETFL, O_NONBLOCK);
+	err = fcntl(lsock, F_SETFL, O_NONBLOCK);
 	if (err < 0)
 	{
-        		shutdown(lsock,SHUT_RDWR) ;
-                	close(lsock) ;
-                    	lsock = -1 ;
-                        
+		shutdown(lsock,SHUT_RDWR);
+		close(lsock);
+		lsock = -1;
+
 		std::string out;
 		rs_sprintf(out, "Error: Cannot make socket NON-Blocking: %d", err);
 		pqioutput(PQL_ERROR, pqissllistenzone, out);
@@ -134,11 +132,11 @@ int	pqissllistenbase::setuplisten()
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else //WINDOWS_SYS 
-        if ((unsigned) lsock == INVALID_SOCKET)
-        {
-        std::string out = "pqissllistenbase::setuplisten() Cannot Open Socket!\n";
-        out += "Socket Error: "+ socket_errorType(WSAGetLastError());
-        pqioutput(PQL_ALERT, pqissllistenzone, out);
+	if ((unsigned) lsock == INVALID_SOCKET)
+	{
+		std::string out = "pqissllistenbase::setuplisten() Cannot Open Socket!\n";
+		out += "Socket Error: "+ socket_errorType(WSAGetLastError());
+		pqioutput(PQL_ALERT, pqissllistenzone, out);
 
 		return -1;
 	}
@@ -147,9 +145,9 @@ int	pqissllistenbase::setuplisten()
 	unsigned long int on = 1;
 	if (0 != (err = ioctlsocket(lsock, FIONBIO, &on)))
 	{
-        		closesocket(lsock) ;
-                	lsock = -1 ;
-                    
+		closesocket(lsock) ;
+		lsock = -1 ;
+
 		std::string out;
 		rs_sprintf(out, "pqissllistenbase::setuplisten() Error: Cannot make socket NON-Blocking: %d\n", err);
 		out += "Socket Error: " + socket_errorType(WSAGetLastError());
@@ -166,37 +164,37 @@ int	pqissllistenbase::setuplisten()
 		std::string out = "pqissllistenbase::setuplisten()\n";
 		out += "\t FAMILY: " + sockaddr_storage_familytostring(laddr);
 		out += "\t ADDRESS: " + sockaddr_storage_tostring(laddr);
-		
-        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-                //std::cerr << out.str() << std::endl;
+
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+		//std::cerr << out.str() << std::endl;
 	}
 	
 	/* added a call to REUSEADDR, so that we can re-open an existing socket
 	 * when we restart_listener.
 	 */
 
-    	{
-      		int on = 1;
+	{
+		int on = 1;
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-      		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
-#else //WINDOWS_SYS 
-      		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on)) < 0)
+		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0)
+#else // WINDOWS_SYS
+		if (setsockopt(lsock, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on)) < 0)
 #endif 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-        	{
-            std::string out = "pqissllistenbase::setuplisten() Cannot setsockopt SO_REUSEADDR!\n";
+		{
+			std::string out = "pqissllistenbase::setuplisten() Cannot setsockopt SO_REUSEADDR!\n";
 			showSocketError(out);
 			pqioutput(PQL_ALERT, pqissllistenzone, out);
 			std::cerr << out << std::endl;
 
-			exit(1); 
-        	}
-    	}
+			exit(1);
+		}
+	}
 
 #ifdef OPEN_UNIVERSAL_PORT
-	struct sockaddr_storage tmpaddr = laddr;
+	sockaddr_storage tmpaddr = laddr;
 	if (!mPeerMgr->isHidden()) sockaddr_storage_zeroip(tmpaddr);
 	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
 #else
@@ -212,13 +210,13 @@ int	pqissllistenbase::setuplisten()
 		if (!mPeerMgr->isHidden()) std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
 #endif
 
-		exit(1); 
+		exit(1);
 		return -1;
 	}
 	else
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-		  "pqissllistenbase::setuplisten() Bound to Address.");
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+				  "pqissllistenbase::setuplisten() Bound to Address.");
 	}
 
 #ifdef WINDOWS_SYS
@@ -228,39 +226,27 @@ int	pqissllistenbase::setuplisten()
 	int size = sizeof(int);
 
 	err = getsockopt(lsock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, &size);
-	if (err == 0) {
-		std::cerr << "pqissllistenbase::setuplisten: Current TCP receive buffer size " << sockbufsize << std::endl;
-	} else {
-		std::cerr << "pqissllistenbase::setuplisten: Error getting TCP receive buffer size. Error " << err << std::endl;
-	}
+	if (err == 0) std::cerr << "pqissllistenbase::setuplisten: Current TCP receive buffer size " << sockbufsize << std::endl;
+	else std::cerr << "pqissllistenbase::setuplisten: Error getting TCP receive buffer size. Error " << err << std::endl;
 
 	sockbufsize = 0;
 
 	err = getsockopt(lsock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, &size);
 
-	if (err == 0) {
-		std::cerr << "pqissllistenbase::setuplisten: Current TCP send buffer size " << sockbufsize << std::endl;
-	} else {
-		std::cerr << "pqissllistenbase::setuplisten: Error getting TCP send buffer size. Error " << err << std::endl;
-	}
+	if (err == 0) std::cerr << "pqissllistenbase::setuplisten: Current TCP send buffer size " << sockbufsize << std::endl;
+	else std::cerr << "pqissllistenbase::setuplisten: Error getting TCP send buffer size. Error " << err << std::endl;
 
 	sockbufsize = WINDOWS_TCP_BUFFER_SIZE;
 
 	err = setsockopt(lsock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, sizeof(sockbufsize));
 
-	if (err == 0) {
-		std::cerr << "pqissllistenbase::setuplisten: TCP receive buffer size set to " << sockbufsize << std::endl;
-	} else {
-		std::cerr << "pqissllistenbase::setuplisten: Error setting TCP receive buffer size. Error " << err << std::endl;
-	}
+	if (err == 0) std::cerr << "pqissllistenbase::setuplisten: TCP receive buffer size set to " << sockbufsize << std::endl;
+	else std::cerr << "pqissllistenbase::setuplisten: Error setting TCP receive buffer size. Error " << err << std::endl;
 
 	err = setsockopt(lsock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, sizeof(sockbufsize));
 
-	if (err == 0) {
-		std::cerr << "pqissllistenbase::setuplisten: TCP send buffer size set to " << sockbufsize << std::endl;
-	} else {
-		std::cerr << "pqissllistenbase::setuplisten: Error setting TCP send buffer size. Error " << err << std::endl;
-	}
+	if (err == 0) std::cerr << "pqissllistenbase::setuplisten: TCP send buffer size set to " << sockbufsize << std::endl;
+	else std::cerr << "pqissllistenbase::setuplisten: Error setting TCP send buffer size. Error " << err << std::endl;
 #endif
 
 	if (0 != (err = listen(lsock, 100)))
@@ -271,19 +257,19 @@ int	pqissllistenbase::setuplisten()
 		pqioutput(PQL_ALERT, pqissllistenzone, out);
 		std::cerr << out << std::endl;
 
-		exit(1); 
-		return -1;
+		exit(1);
+		return -1; // TODO: 2016/01/05 Is this executed?
 	}
 	else
 	{
-		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-		  "pqissllistenbase::setuplisten() Listening to Socket");
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+				  "pqissllistenbase::setuplisten() Listening to Socket");
 	}
 	active = true;
 	return 1;
 }
 
-int	pqissllistenbase::setListenAddr(const struct sockaddr_storage &addr)
+int	pqissllistenbase::setListenAddr(const sockaddr_storage &addr)
 {
 	laddr = addr;
 	return 1;
@@ -296,13 +282,13 @@ int	pqissllistenbase::resetlisten()
 		// close ports etc.
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-		shutdown(lsock, SHUT_RDWR);	
+		shutdown(lsock, SHUT_RDWR);
 		close(lsock);
 #else //WINDOWS_SYS 
 		closesocket(lsock);
 #endif 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-        lsock = -1;
+		lsock = -1;
 		active = false;
 		return 1;
 	}
@@ -313,28 +299,27 @@ int	pqissllistenbase::resetlisten()
 
 int	pqissllistenbase::acceptconnection()
 {
-	if (!active)
-		return 0;
+	if (!active) return 0;
 	// check port for any socets...
 	pqioutput(PQL_DEBUG_ALL, pqissllistenzone, "pqissllistenbase::accepting()");
 
 	// These are local but temp variables...
 	// can't be arsed making them all the time.
-	struct sockaddr_storage remote_addr;
+	sockaddr_storage remote_addr;
 	socklen_t addrlen = sizeof(remote_addr);
 	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
 	int err = 0;
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-        if (fd < 0)
-        {
-		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
-		 "pqissllistenbase::acceptconnnection() Nothing to Accept!");
+	if (fd < 0)
+	{
+		pqioutput(PQL_DEBUG_ALL, pqissllistenzone,
+				  "pqissllistenbase::acceptconnnection() Nothing to Accept!");
 		return 0;
 	}
 
-        err = fcntl(fd, F_SETFL, O_NONBLOCK);
+	err = fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (err < 0)
 	{
 		std::string out;
@@ -347,10 +332,10 @@ int	pqissllistenbase::acceptconnection()
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else //WINDOWS_SYS 
-        if ((unsigned) fd == INVALID_SOCKET)
-        {
-		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
-		 "pqissllistenbase::acceptconnnection() Nothing to Accept!");
+	if ((unsigned) fd == INVALID_SOCKET)
+	{
+		pqioutput(PQL_DEBUG_ALL, pqissllistenzone,
+				  "pqissllistenbase::acceptconnnection() Nothing to Accept!");
 		return 0;
 	}
 
@@ -370,10 +355,10 @@ int	pqissllistenbase::acceptconnection()
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	{
-	  std::string out;
-	  out += "Accepted Connection from ";
-	  out += sockaddr_storage_tostring(remote_addr);
-	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+		std::string out;
+		out += "Accepted Connection from ";
+		out += sockaddr_storage_tostring(remote_addr);
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 	}
 
 	// Negotiate certificates. SSL stylee.
@@ -381,39 +366,42 @@ int	pqissllistenbase::acceptconnection()
 	
 	IncomingSSLInfo incoming_connexion_info ;
 
-	incoming_connexion_info.ssl   = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
-	incoming_connexion_info.addr  = remote_addr ;
-	incoming_connexion_info.gpgid.clear() ;
-	incoming_connexion_info.sslid.clear() ;
-	incoming_connexion_info.sslcn = "" ;
+	incoming_connexion_info.ssl = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
+	incoming_connexion_info.addr = remote_addr;
+	incoming_connexion_info.gpgid.clear();
+	incoming_connexion_info.sslid.clear();
+	incoming_connexion_info.sslcn = "";
 
 	SSL_set_fd(incoming_connexion_info.ssl, fd);
 
-    return continueSSL(incoming_connexion_info, true); // continue and save if incomplete.
+	return continueSSL(incoming_connexion_info, true); // continue and save if incomplete.
 }
 
 int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool addin)
 {
 	// attempt the accept again.
-    int fd =  SSL_get_fd(incoming_connexion_info.ssl);
+	int fd =  SSL_get_fd(incoming_connexion_info.ssl);
 
-    AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
-    int err = SSL_accept(incoming_connexion_info.ssl);
+	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
+	int err = SSL_accept(incoming_connexion_info.ssl);
 
-    // Now grab the connection info that was filled in by the callback.
-    // In the case the callback did not succeed the SSL certificate will not be accessible
-    // from SSL_get_peer_certificate, so we need to get it from the callback system.
-    //
-    AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
+	// Now grab the connection info that was filled in by the callback.
+	// In the case the callback did not succeed the SSL certificate will not be accessible
+	// from SSL_get_peer_certificate, so we need to get it from the callback system.
+	//
+	AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(
+				incoming_connexion_info.gpgid,
+				incoming_connexion_info.sslid,
+				incoming_connexion_info.sslcn );
 
 #ifdef DEBUG_LISTENNER
-    std::cerr << "Info from callback: " << std::endl;
-        std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
-        std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
-        std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
+	std::cerr << "Info from callback: " << std::endl
+			  << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl
+			  << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl
+			  << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
 #endif
 
-    if (err <= 0)
+	if (err <= 0)
 	{
 		int ssl_err = SSL_get_error(incoming_connexion_info.ssl, err);
 		int err_err = ERR_get_error();
@@ -425,86 +413,80 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 		}
 
-		switch (ssl_err) {
-			case SSL_ERROR_WANT_READ:
-			case SSL_ERROR_WANT_WRITE:
+		switch (ssl_err)
+		{
+		case SSL_ERROR_WANT_READ:
+		case SSL_ERROR_WANT_WRITE:
+		{
+			std::string out = "pqissllistenbase::continueSSL() Connection Not Complete!\n";
+
+			if (addin)
 			{
-				std::string out = "pqissllistenbase::continueSSL() Connection Not Complete!\n";
+				out += "pqissllistenbase::continueSSL() Adding SSL to incoming!";
 
-				if (addin)
-				{
-					out += "pqissllistenbase::continueSSL() Adding SSL to incoming!";
-
-					// add to incomingqueue.
-					incoming_ssl.push_back(incoming_connexion_info) ;
-				}
-
-				pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-
-				// zero means still continuing....
-				return 0;
+				// add to incomingqueue.
+				incoming_ssl.push_back(incoming_connexion_info) ;
 			}
-			break;
-			case SSL_ERROR_SYSCALL:
-			{
-				std::string out = "pqissllistenbase::continueSSL() Connection failed!\n";
-				pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 
-				closeConnection(fd, incoming_connexion_info.ssl);
+			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 
-				// basic-error while connecting, no security message needed
-				return -1;
-			}
-			break;
+			// zero means still continuing....
+			return 0;
+		}
+		case SSL_ERROR_SYSCALL:
+		{
+			std::string out = "pqissllistenbase::continueSSL() Connection failed!\n";
+			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+
+			closeConnection(fd, incoming_connexion_info.ssl);
+
+			// basic-error while connecting, no security message needed
+			return -1;
+		}
 		}
 
 		/* we have failed -> get certificate if possible */
 		Extract_Failed_SSL_Certificate(incoming_connexion_info);
 
-		closeConnection(fd, incoming_connexion_info.ssl) ;
+		closeConnection(fd, incoming_connexion_info.ssl);
 
 		pqioutput(PQL_WARNING, pqissllistenzone, "Read Error on the SSL Socket\nShutting it down!");
 
 		// failure -1, pending 0, sucess 1.
 		return -1;
-    }
-
-    // Now grab the connection info from the SSL itself, because the callback info might be
-    // tempered due to multiple connection attempts at once.
-    //
-    X509 *x509 = SSL_get_peer_certificate(incoming_connexion_info.ssl) ;
-
-#ifdef DEBUG_LISTENNER
-    std::cerr << "Info from certificate: " << std::endl;
-#endif
-    if(x509 != NULL)
-    {
-        incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
-        incoming_connexion_info.sslcn = getX509CNString(x509->cert_info->subject);
-
-        getX509id(x509,incoming_connexion_info.sslid);
-
-#ifdef DEBUG_LISTENNER
-        std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
-        std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
-        std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
-#endif
-    }
-#ifdef DEBUG_LISTENNER
-    else
-        std::cerr << "  no info." << std::endl;
-#endif
-
-
-	// if it succeeds
-	if (0 < completeConnection(fd, incoming_connexion_info))
-	{
-		return 1;
 	}
 
+	// Now grab the connection info from the SSL itself, because the callback info might be
+	// tempered due to multiple connection attempts at once.
+	//
+	X509 *x509 = SSL_get_peer_certificate(incoming_connexion_info.ssl);
+
+#ifdef DEBUG_LISTENNER
+	std::cerr << "Info from certificate: " << std::endl;
+#endif
+	if(x509 != NULL)
+	{
+		incoming_connexion_info.gpgid = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
+		incoming_connexion_info.sslcn = getX509CNString(x509->cert_info->subject);
+
+		getX509id(x509,incoming_connexion_info.sslid);
+
+#ifdef DEBUG_LISTENNER
+		std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl
+				  << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl
+				  << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
+#endif
+	}
+#ifdef DEBUG_LISTENNER
+	else std::cerr << "  no info." << std::endl;
+#endif
+
+	// if it succeeds
+	if (0 < completeConnection(fd, incoming_connexion_info)) return 1;
+
 	/* else we shut it down! */
-  	pqioutput(PQL_WARNING, pqissllistenzone, 
-	 	"pqissllistenbase::completeConnection() Failed!");
+	pqioutput(PQL_WARNING, pqissllistenzone,
+			  "pqissllistenbase::completeConnection() Failed!");
 
 	closeConnection(fd, incoming_connexion_info.ssl) ;
 
@@ -518,7 +500,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 {
 	/* else we shut it down! */
-  	pqioutput(PQL_WARNING, pqissllistenzone, "pqissllistenbase::closeConnection() Shutting it Down!");
+	pqioutput(PQL_WARNING, pqissllistenzone, "pqissllistenbase::closeConnection() Shutting it Down!");
 
 	// delete ssl connection.
 	SSL_shutdown(ssl);
@@ -526,7 +508,7 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 	// close socket???
 /************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-	shutdown(fd, SHUT_RDWR);	
+	shutdown(fd, SHUT_RDWR);
 	close(fd);
 #else //WINDOWS_SYS 
 	closesocket(fd);
@@ -541,22 +523,21 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 
 
 
-int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& info)
+int pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& info)
 {
-  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::Extract_Failed_SSL_Certificate()");
+	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::Extract_Failed_SSL_Certificate()");
 
-	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!";
-	std::cerr << std::endl;
+	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!" << std::endl;
 
 	// Get the Peer Certificate....
 	X509 *peercert = SSL_get_peer_certificate(info.ssl);
 
-	std::cerr << "Extract_Failed_SSL_Certificate: " << std::endl;
-	std::cerr << "   SSL    = " << (void*)info.ssl << std::endl;
-	std::cerr << "   GPG id = " << info.gpgid << std::endl;
-	std::cerr << "   SSL id = " << info.sslid << std::endl;
-	std::cerr << "   SSL cn = " << info.sslcn << std::endl;
-	std::cerr << "   addr+p = " << sockaddr_storage_tostring(info.addr) << std::endl;
+	std::cerr << "Extract_Failed_SSL_Certificate: " << std::endl
+			  << "   SSL    = " << (void*)info.ssl << std::endl
+			  << "   GPG id = " << info.gpgid << std::endl
+			  << "   SSL id = " << info.sslid << std::endl
+			  << "   SSL cn = " << info.sslcn << std::endl
+			  << "   addr+p = " << sockaddr_storage_tostring(info.addr) << std::endl;
 
 	if (peercert == NULL)
 	{
@@ -565,21 +546,20 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& inf
 		out += sockaddr_storage_tostring(info.addr);
 		out += " ERROR Peer didn't give Cert!";
 		std::cerr << out << std::endl;
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
+		AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 		return -1;
 	}
 
-  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
+	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+			  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
 
 	{
 		std::string out;
 		out += "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
 		out += sockaddr_storage_tostring(info.addr);
 		out += " Passing Cert to AuthSSL() for analysis";
-		std::cerr << out << std::endl;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 		std::cerr << out << std::endl;
@@ -595,7 +575,6 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& inf
 
 int	pqissllistenbase::continueaccepts()
 {
-
 	// for each of the incoming sockets.... call continue.
 
 	for(std::list<IncomingSSLInfo>::iterator it = incoming_ssl.begin(); it != incoming_ssl.end();)
@@ -604,65 +583,62 @@ int	pqissllistenbase::continueaccepts()
 
 		if (0 != continueSSL( *it, false))
 		{
-			pqioutput(PQL_DEBUG_ALERT, pqissllistenzone, 
-					"pqissllistenbase::continueaccepts() SSL Complete/Dead!");
+			pqioutput(PQL_DEBUG_ALERT, pqissllistenzone,
+					  "pqissllistenbase::continueaccepts() SSL Complete/Dead!");
 
 			/* save and increment -> so we can delete */
 			std::list<IncomingSSLInfo>::iterator itd = it++;
 			incoming_ssl.erase(itd);
 		}
-		else
-			++it;
+		else ++it;
 	}
 	return 1;
 }
 
-#define ACCEPT_WAIT_TIME 30	
+#define ACCEPT_WAIT_TIME 30
 
 int	pqissllistenbase::finaliseAccepts()
 {
-
 	// for each of the incoming sockets.... call continue.
 	std::list<AcceptedSSL>::iterator it;
 
 	time_t now = time(NULL);
 	for(it = accepted_ssl.begin(); it != accepted_ssl.end();)
 	{
-  	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-		  "pqissllistenbase::finalisedAccepts() Continuing SSL Accept");
+		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+				  "pqissllistenbase::finalisedAccepts() Continuing SSL Accept");
 
 		/* check that the socket is still active - how? */
 		int active = isSSLActive(it->mFd, it->mSSL);
 		if (active > 0)
 		{
-  	        	pqioutput(PQL_WARNING, pqissllistenzone, 
-		  		"pqissllistenbase::finaliseAccepts() SSL Connection Ok => finaliseConnection");
+			pqioutput(PQL_WARNING, pqissllistenzone,
+					  "pqissllistenbase::finaliseAccepts() SSL Connection Ok => finaliseConnection");
 
 			if (0 > finaliseConnection(it->mFd, it->mSSL, it->mPeerId, it->mAddr))
-			{
 				closeConnection(it->mFd, it->mSSL);
-			}
+
 			it = accepted_ssl.erase(it);
 		}
 		else if (active < 0)
 		{
-          		pqioutput(PQL_WARNING, pqissllistenzone, 
-		  		"pqissllistenbase::finaliseAccepts() SSL Connection Dead => closeConnection");
+			pqioutput(PQL_WARNING, pqissllistenzone,
+					  "pqissllistenbase::finaliseAccepts() SSL Connection Dead => closeConnection");
 
 			closeConnection(it->mFd, it->mSSL);
 			it = accepted_ssl.erase(it);
 		}
 		else if (now - it->mAcceptTS > ACCEPT_WAIT_TIME)
 		{
-          		pqioutput(PQL_WARNING, pqissllistenzone, 
-		  		"pqissllistenbase::finaliseAccepts() SSL Connection Timed Out => closeConnection");
+			pqioutput(PQL_WARNING, pqissllistenzone,
+					  "pqissllistenbase::finaliseAccepts() SSL Connection Timed Out => closeConnection");
 			closeConnection(it->mFd, it->mSSL);
 			it = accepted_ssl.erase(it);
 		}
 		else
 		{
-          		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-		  		"pqissllistenbase::finaliseAccepts() SSL Connection Status Unknown");
+			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+					  "pqissllistenbase::finaliseAccepts() SSL Connection Status Unknown");
 			++it;
 		}
 	}
@@ -671,7 +647,6 @@ int	pqissllistenbase::finaliseAccepts()
 
 int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
 {
-
 	/* can we just get error? */
 	int bufsize = 8; /* just a little look */
 	uint8_t buf[bufsize];
@@ -682,10 +657,10 @@ int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
 		int err_err = ERR_get_error();
 
 		{
-		  std::string out;
-		  rs_sprintf(out, "pqissllistenbase::isSSLActive() Issues with SSL_Accept(%d)!\n", err);
-		  printSSLError(ssl, err, ssl_err, err_err, out);
-		  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+			std::string out;
+			rs_sprintf(out, "pqissllistenbase::isSSLActive() Issues with SSL_Accept(%d)!\n", err);
+			printSSLError(ssl, err, ssl_err, err_err, out);
+			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 		}
 
 		if (ssl_err == SSL_ERROR_ZERO_RETURN)
@@ -695,8 +670,8 @@ int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
 			// zero means still continuing....
 			return 0;
 		}
-		if ((ssl_err == SSL_ERROR_WANT_READ) || 
-		   (ssl_err == SSL_ERROR_WANT_WRITE))
+		if ((ssl_err == SSL_ERROR_WANT_READ) ||
+				(ssl_err == SSL_ERROR_WANT_WRITE))
 		{
 			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::isSSLActive() SSL_ERROR_WANT_READ || SSL_ERROR_WANT_WRITE Connection state unknown");
 
@@ -719,14 +694,7 @@ int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
 	return 1;
 }
 
-/************************ PQI SSL LISTENER ****************************
- *
- * This is the standard pqissl listener interface....
- *
- * this class only allows connections from 
- * specific certificates, which are pre specified.
- *
- */
+/************************ PQI SSL LISTENER ****************************/
 
 int pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 {
@@ -739,7 +707,7 @@ int pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 		if (it -> first == id)
 		{
 			out += "pqissllistener::addlistenaddr() Already listening for Certificate!\n";
-			
+
 			pqioutput(PQL_DEBUG_ALERT, pqissllistenzone, out);
 			return -1;
 		}
@@ -755,7 +723,7 @@ int pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 int	pqissllistener::removeListenPort(const RsPeerId& id)
 {
 	// check where the connection is coming from.
-	// if in list of acceptable addresses, 
+	// if in list of acceptable addresses,
 	//
 	// check if in list.
 	std::map<RsPeerId, pqissl *>::iterator it;
@@ -765,18 +733,17 @@ int	pqissllistener::removeListenPort(const RsPeerId& id)
 		{
 			listenaddr.erase(it);
 
-  	        	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-			  "pqissllisten::removeListenPort() Success!");
+			pqioutput(PQL_DEBUG_BASIC, pqissllistenzone,
+					  "pqissllisten::removeListenPort() Success!");
 			return 1;
 		}
 	}
 
-  	pqioutput(PQL_WARNING, pqissllistenzone, 
-	  "pqissllistener::removeListenPort() Failed to Find a Match");
+	pqioutput(PQL_WARNING, pqissllistenzone,
+			  "pqissllistener::removeListenPort() Failed to Find a Match");
 
 	return -1;
 }
-
 
 int pqissllistener::status()
 {
@@ -788,9 +755,7 @@ int pqissllistener::status()
 	out += sockaddr_storage_tostring(laddr);
 	out += ") for Certs:";
 	for(it = listenaddr.begin(); it != listenaddr.end(); ++it)
-	{
 		out += "\n" + it -> first.toStdString() ;
-	}
 	pqioutput(PQL_DEBUG_ALL, pqissllistenzone, out);
 
 	return 1;
@@ -798,14 +763,13 @@ int pqissllistener::status()
 
 int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 { 
-
 	// Get the Peer Certificate....
 	X509 *peercert = SSL_get_peer_certificate(info.ssl);
 
 	if (peercert == NULL)
 	{
-  	        pqioutput(PQL_WARNING, pqissllistenzone, 
-		 "pqissllistener::completeConnection() Peer Did Not Provide Cert!");
+		pqioutput(PQL_WARNING, pqissllistenzone,
+				  "pqissllistener::completeConnection() Peer Did Not Provide Cert!");
 
 		// failure -1, pending 0, sucess 1.
 		// pqissllistenbase will shutdown!
@@ -815,13 +779,12 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	// Check cert.
 	RsPeerId newPeerId;
 
-
 	/****
 	 * As the validation is actually done before this...
 	 * we should only need to call CheckCertificate here!
 	 ****/
 
-        bool certOk = AuthSSL::getAuthSSL()->ValidateCertificate(peercert, newPeerId);
+	bool certOk = AuthSSL::getAuthSSL()->ValidateCertificate(peercert, newPeerId);
 
 	bool found = false;
 	std::map<RsPeerId, pqissl *>::iterator it;
@@ -829,8 +792,8 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	// Let connected one through as well! if ((npc == NULL) || (npc -> Connected()))
 	if (!certOk)
 	{
-  	        pqioutput(PQL_WARNING, pqissllistenzone, 
-		 "pqissllistener::completeConnection() registerCertificate Failed!");
+		pqioutput(PQL_WARNING, pqissllistenzone,
+				  "pqissllistener::completeConnection() registerCertificate Failed!");
 
 		// bad - shutdown.
 		// pqissllistenbase will shutdown!
@@ -842,7 +805,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	{
 		std::string out = "pqissllistener::continueSSL()\nchecking: " + newPeerId.toStdString() + "\n";
 		// check if cert is in our list.....
-		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
+		for(it = listenaddr.begin(); !found && it!=listenaddr.end(); ++it)
 		{
 			out + "\tagainst: " + it->first.toStdString() + "\n";
 			if (it -> first == newPeerId)
@@ -851,23 +814,19 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 				out += "\t\tMatch!";
 				found = true;
 			}
-			else
-			{
-				++it;
-			}
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 	}
 	
-	if (found == false)
+	if (!found)
 	{
 		std::string out = "No Matching Certificate for Connection:";
 		out += sockaddr_storage_tostring(info.addr);
 		out += "\npqissllistenbase: Will shut it down!";
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 
-		// but as it passed the authentication step, 
+		// but as it passed the authentication step,
 		// we can add it into the AuthSSL, and mConnMgr.
 
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
@@ -902,34 +861,35 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	return 1;
 }
 
-int pqissllistener::finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId, const struct sockaddr_storage &remote_addr)
-{ 
-	std::map<RsPeerId, pqissl *>::iterator it;
+/**
+ * @brief Accept connection and handle it to pqissl if from friend, drop it if from untrusted peer
+ * @param fd Connection socket file descriptor
+ * @param ssl TODO: 2016/01/05
+ * @param peerId Remote peer SSL certificate
+ * @param remote_addr Address of remote peer
+ * @return 1 if connection is accepted -1 if dropped
+ */
+int pqissllistener::finaliseConnection(int fd, SSL *ssl,
+									   const RsPeerId& peerId,
+									   const sockaddr_storage &remote_addr)
+{
+	std::cerr << "pqissllistener::finaliseConnection() for:"
+			  << sockaddr_storage_tostring(remote_addr) << " checking: "
+			  << peerId.toStdString();
 
-	std::string out = "pqissllistener::finaliseConnection()\n";
-	out += "checking: " + peerId.toStdString() + "\n";
-	// check if cert is in the list.....
-
-	it = listenaddr.find(peerId);
-	if (it == listenaddr.end())
+	std::map<RsPeerId, pqissl *>::iterator it = listenaddr.find(peerId);
+	if (it == listenaddr.end()) // check if cert is in the list
 	{
-		out += "No Matching Peer for Connection:";
-		out += sockaddr_storage_tostring(remote_addr);
-		out += "\npqissllistener => Shutting Down!";
-		pqioutput(PQL_WARNING, pqissllistenzone, out);
+		std::cerr << " No Matching Peer Dropping Connection" << std::endl;
 		return -1;
 	}
 
-	out += "Found Matching Peer for Connection:";
-	out += sockaddr_storage_tostring(remote_addr);
-	out += "\npqissllistener => Passing to pqissl module!";
-	pqioutput(PQL_WARNING, pqissllistenzone, out);
+	std::cerr << " connected to " << sockaddr_storage_tostring(remote_addr)
+			  << std::endl;
 
-    std::cerr << "pqissllistenner::finaliseConnection() connected to " << sockaddr_storage_tostring(remote_addr) << std::endl;
-
-	// hand off ssl conection.
-	pqissl *pqis = it -> second;
-	pqis -> accept(ssl, fd, remote_addr);
+	// Hand off ssl conection.
+	pqissl *pqis = it->second;
+	pqis->accept(ssl, fd, remote_addr);
 
 	return 1;
 }

@@ -95,54 +95,48 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
  *
  */
 
-pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
-	:NetBinInterface(parent, parent->PeerId()), 
-	mLinkMgr(lm), pqil(l), 
-	mSslMtx("pqissl"),
-	active(false), certvalid(false), waiting(WAITING_NOT), 
-	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
-	readpkt(NULL), pktlen(0), total_len(0),
-	attempt_ts(0),
-	n_read_zero(0), mReadZeroTS(0), ssl_connect_timeout(0),
-	mConnectDelay(0), mConnectTS(0),
-	mConnectTimeout(0), mTimeoutTS(0)
+pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm) :
+    NetBinInterface(parent, parent->PeerId()), mLinkMgr(lm), pqil(l),
+    mSslMtx("pqissl"), active(false), certvalid(false), waiting(WAITING_NOT),
+    sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), readpkt(NULL),
+    pktlen(0), total_len(0), attempt_ts(0), n_read_zero(0), mReadZeroTS(0),
+    ssl_connect_timeout(0), mConnectDelay(0), mConnectTS(0), mConnectTimeout(0),
+    mTimeoutTS(0)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
-	/* set address to zero */
-        sockaddr_storage_clear(remote_addr);
+	// set address to zero
+	sockaddr_storage_clear(remote_addr);
 
 #ifdef PQISSL_LOG_DEBUG 
-    rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
+	rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
 #endif
 
+// TODO: 2016/01/07 This seems scary!
 #if 0
 	if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId())))
 	{
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "pqissl::Warning Certificate Not Approved!");
+		rslog(RSL_ALERT, pqisslzone,
+		      "pqissl::Warning Certificate Not Approved!");
 
-  	  rslog(RSL_ALERT, pqisslzone, 
-	    "\t pqissl will not initialise....");
+		rslog(RSL_ALERT, pqisslzone,
+		      "\t pqissl will not initialise....");
 
 	}
 #else
-  	  rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	    "pqissl::Warning SSL Certificate Approval Not CHECKED??");
+	rslog(RSL_DEBUG_BASIC, pqisslzone,
+	      "pqissl::Warning SSL Certificate Approval Not CHECKED??");
 #endif
-
-	return;
 }
 
-	pqissl::~pqissl()
+pqissl::~pqissl()
 { 
-  	rslog(RSL_ALERT, pqisslzone, 
-	    "pqissl::~pqissl -> destroying pqissl");
-	stoplistening(); /* remove from pqissllistener only */
+	rslog(RSL_ALERT, pqisslzone,
+	      "pqissl::~pqissl -> destroying pqissl");
+	stoplistening(); // remove from pqissllistener only
 
 	rslog(RSL_ALERT, pqisslzone, "pqissl::~pqissl() -> calling reset()");
-	reset(); 
-	return;
+	reset();
 }
 
 
@@ -150,7 +144,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 int	pqissl::connect(const struct sockaddr_storage &raddr)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 	// reset failures
 	remote_addr = raddr;
@@ -161,10 +155,7 @@ int	pqissl::connect(const struct sockaddr_storage &raddr)
 // tells pqilistener to listen for us.
 int	pqissl::listen()
 {
-	if (pqil)
-	{
-		return pqil -> addlistenaddr(PeerId(), this);
-	}
+	if (pqil) return pqil -> addlistenaddr(PeerId(), this);
 	return 0;
 }
 

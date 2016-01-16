@@ -886,7 +886,11 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id,
+							  const RsPgpId& input_gpg_id, uint32_t netMode,
+							  uint16_t vs_disc, uint16_t vs_dht,
+							  time_t lastContact,
+							  ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
 	RsPeerId id = input_id ;
@@ -895,10 +899,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id.toStdString());
 
 	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		RS_STACK_MUTEX(mPeerMtx);
 
-
-		if (id == AuthSSL::getAuthSSL()->OwnId()) 
+		if (id == AuthSSL::getAuthSSL()->OwnId())
 		{
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() cannot add own id as a friend." << std::endl;
@@ -954,7 +957,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			/* setup connectivity parameters */
 			it->second.vs_disc = vs_disc;
 			it->second.vs_dht = vs_dht;
-			
+
 			it->second.netMode  = netMode;
 			it->second.lastcontact = lastContact;
 
@@ -995,11 +998,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	}
 
 	if (notifyLinkMgr)
-	{
 		mLinkMgr->addFriend(id, vs_dht != RS_VS_DHT_OFF);
-	}
 
-	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions. 
+	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions.
 	setServicePermissionFlags(gpg_id,service_flags) ;
 
 #ifdef PEER_DEBUG
