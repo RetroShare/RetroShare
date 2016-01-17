@@ -162,7 +162,7 @@ bool RsGxsIntegrityCheck::check()
 					    std::cerr << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
 #endif
 
-					if(rsReputations==NULL || !rsReputations->isIdentityBanned(grp->metaData->mAuthorId))
+					if(rsReputations!=NULL && !rsReputations->isIdentityBanned(grp->metaData->mAuthorId))
 						used_gxs_ids.insert(grp->metaData->mAuthorId) ;
 				    }
 			    }
@@ -244,7 +244,7 @@ bool RsGxsIntegrityCheck::check()
 #ifdef GXSUTIL_DEBUG
 			    std::cerr << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
-			    if(rsReputations==NULL || !rsReputations->isIdentityBanned(msg->metaData->mAuthorId))
+			    if(rsReputations!=NULL && !rsReputations->isIdentityBanned(msg->metaData->mAuthorId))
 				    used_gxs_ids.insert(msg->metaData->mAuthorId) ;
 		    }
 
