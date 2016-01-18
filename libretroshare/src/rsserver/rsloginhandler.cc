@@ -275,7 +275,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 		fseek(fp, 0, SEEK_SET);
 		dataptr = (char *) rs_malloc(datalen);
         
-        	if(data_ptr == NULL)
+        	if(dataptr == NULL)
             {
                 fclose(fp);
                 return false;

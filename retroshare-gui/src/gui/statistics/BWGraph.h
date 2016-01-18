@@ -25,7 +25,6 @@ public:
 
     virtual void getValues(std::map<std::string,float>& values) const;
     virtual QString displayValue(float v) const;
-//    virtual QString displayName(int i) const;
     virtual QString legend(int i,float v) const;
     virtual void update();
     QString unitName() const ;
