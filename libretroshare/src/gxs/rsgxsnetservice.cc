@@ -207,8 +207,8 @@
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
  ***/
-#define NXS_NET_DEBUG_0 	1
-#define NXS_NET_DEBUG_1 	1
+//#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
@@ -239,8 +239,8 @@
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("93ea28698ce9f693d014cc55a0dfb716" )) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("" )) ;	// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  = 0 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
