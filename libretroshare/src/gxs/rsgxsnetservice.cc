@@ -233,6 +233,7 @@
 #define REJECTED_MESSAGE_RETRY_DELAY                   24*3600  // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
 #define GROUP_STATS_UPDATE_DELAY                          1800  // update unsubscribed group statistics every 30 mins
 #define GROUP_STATS_UPDATE_NB_PEERS                          2  // update unsubscribed group statistics every 30 mins
+#define MAX_ALLOWED_GXS_MESSAGE_SIZE                    180000  // 200,000 bytes. Should be still ok after adding signature and headers
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
@@ -240,7 +241,7 @@
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("" )) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0 ;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -2326,6 +2327,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             }
 
 #ifdef NXS_FRAG
+            // (cyril) This code does not work. Since we do not really need message fragmenting, I won't fix it.
+            
             std::map<RsGxsMessageId, MsgFragments > collatedMsgs;
             collateMsgFragments(msgs, collatedMsgs);			// this destroys msgs whatsoever and recovers memory when needed
 
@@ -3212,13 +3215,15 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 			msg->PeerId(peerId);
 			msg->transactionNumber = transN;
 			
-#ifndef 	NXS_FRAG		
-			msg->count = 1;
-			msg->pos = 0;
+            		// Quick trick to clamp messages with an exceptionnally large size. Signature will fail on client side, and the message
+            		// will be rejected.
             
-			newTr->mItems.push_back(msg);
-			msgSize++;
-#else			
+            		if(msg->msg.bin_len > MAX_ALLOWED_GXS_MESSAGE_SIZE)
+		    	{
+				std::cerr << "(WW) message with ID " << msg->msgId << " in group " << msg->grpId << " exceeds size limit of " << MAX_ALLOWED_GXS_MESSAGE_SIZE << " bytes. Actual size is " << msg->msg.bin_len << " bytes. Message will be truncated and rejected at client." << std::endl;
+                         	msg->msg.bin_len = 1 ;	// arbitrary small size, but not 0. No need to send the data since it's going to be rejected.
+		    	}
+#ifdef 	NXS_FRAG		
 			MsgFragments fragments;
 			fragmentMsg(*msg, fragments);
             
@@ -3231,7 +3236,14 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 				newTr->mItems.push_back(*mit);
 				msgSize++;
 			}
+#else			
+		    	msg->count = 1;	// only one piece. This is to keep compatibility if we ever implement fragmenting in the future.
+			msg->pos = 0;
+            
+			newTr->mItems.push_back(msg);
+			msgSize++;
 #endif			
+
 		}
 	}
 
