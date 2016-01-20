@@ -91,8 +91,8 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/information_128.png</normaloff>:/icons/information_128.png</iconset>
+         <iconset resource="images.qrc">
+          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="iconSize">
          <size>
