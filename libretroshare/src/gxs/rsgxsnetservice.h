@@ -435,7 +435,7 @@ private:
      * @param fragments message fragments which are not necessarily from the same message
      * @param partFragments the partitioned fragments (into message ids)
      */
-    void collateMsgFragments(MsgFragments fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const;
+    void collateMsgFragments(MsgFragments &fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const;
 
     /*!
 	 * Note that if all fragments for a group are not found then its fragments are dropped
