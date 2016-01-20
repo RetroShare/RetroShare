@@ -25,9 +25,9 @@
 
 #include "SysTrayStatus.h"
 
-#define IMAGE_NOONLINE          ":/images/logo/logo_24_0.png"
-#define IMAGE_ONEONLINE         ":/images/logo/logo_24_1.png"
-#define IMAGE_TWOONLINE         ":/images/logo/logo_24_2.png"
+#define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
+#define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
+#define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 
 SysTrayStatus::SysTrayStatus(QWidget *parent) :
   QWidget(parent)
@@ -40,7 +40,6 @@ SysTrayStatus::SysTrayStatus(QWidget *parent) :
 	imageButton->setIcon(QIcon(IMAGE_NOONLINE));
 	imageButton->setFlat(true);
 	imageButton->setCheckable(false);
-	imageButton->setMaximumSize(24, 24);
 	imageButton->setFocusPolicy(Qt::ClickFocus);
 	hbox->addWidget(imageButton);
 
