@@ -233,7 +233,7 @@
 #define REJECTED_MESSAGE_RETRY_DELAY                   24*3600  // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
 #define GROUP_STATS_UPDATE_DELAY                          1800  // update unsubscribed group statistics every 30 mins
 #define GROUP_STATS_UPDATE_NB_PEERS                          2  // update unsubscribed group statistics every 30 mins
-#define MAX_ALLOWED_GXS_MESSAGE_SIZE                    180000  // 200,000 bytes. Should be still ok after adding signature and headers
+#define MAX_ALLOWED_GXS_MESSAGE_SIZE                    199000  // 200,000 bytes including signature and headers
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
