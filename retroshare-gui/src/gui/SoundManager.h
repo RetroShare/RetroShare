@@ -30,6 +30,10 @@
 #define SOUND_MESSAGE_ARRIVED   "MessageArrived"
 #define SOUND_DOWNLOAD_COMPLETE "DownloadComplete"
 
+#ifdef UBUNTU
+#include <phonon/mediaobject.h>
+#endif
+
 class SoundEvents
 {
 public:
@@ -84,9 +88,12 @@ public:
 
 	static QString eventFilename(const QString &event);
 	static void setEventFilename(const QString &event, const QString &filename);
-
+    
 private:
 	SoundManager();
+#ifdef UBUNTU    
+   	static Phonon::MediaObject *mediaObject ;
+#endif
 };
 
 extern SoundManager *soundManager;
