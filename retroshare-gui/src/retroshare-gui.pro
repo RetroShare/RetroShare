@@ -66,7 +66,6 @@ linux-* {
 
 	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS *= -lphonon
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU

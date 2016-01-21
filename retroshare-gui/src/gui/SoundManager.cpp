@@ -37,14 +37,6 @@
 #define GROUP_ENABLE    "Enable"
 #define GROUP_SOUNDFILE "SoundFilePath"
 
-#ifdef UBUNTU
-#include <phonon/audiooutput.h>
-#include <phonon/mediaobject.h>
-#include <phonon/mediasource.h>
-
-Phonon::MediaObject *SoundManager::mediaObject = NULL ;
-#endif
-
 SoundManager *soundManager = NULL;
 
 SoundEvents::SoundEvents()
@@ -243,23 +235,11 @@ void SoundManager::playFile(const QString &filename)
 
 	QString playFilename = realFilename(filename);
     
-#ifdef UBUNTU
-    	// The media object is only deleted before being used, so as to avoid a memory leak. We cannot delete it after calling play() because the
-    	// playing is asynchronous. The way to do this properly would be to connect the finish() signal of the player to some slot that delete it,
-    	// assuming it's not done in a static method like now.
-    
-    	if(mediaObject != NULL)
-            delete mediaObject ;
-        
-        mediaObject = Phonon::createPlayer(Phonon::NotificationCategory, Phonon::MediaSource(QUrl::fromLocalFile(filename)));
-	mediaObject->play();
-#else
-
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 	if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) 
 #else
 	if (QSound::isAvailable()) 
 #endif
 		QSound::play(playFilename);
-#endif
 }
+
