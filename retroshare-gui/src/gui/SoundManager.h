@@ -67,6 +67,10 @@ signals:
 public:
 	static void create();
 
+#ifdef Q_OS_LINUX
+    static QString soundDetectPlayer();
+#endif
+
 	static void initDefault();
 	static QString defaultFilename(const QString &event, bool check);
 	static QString convertFilename(const QString &filename);
