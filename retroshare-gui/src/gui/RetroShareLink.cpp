@@ -38,7 +38,7 @@
 #include "MainWindow.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
-#include "SearchDialog.h"
+#include "FileTransfer/SearchDialog.h"
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
