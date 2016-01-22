@@ -68,6 +68,7 @@ class GlobalRouterStatisticsWidget:  public QWidget
 
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);
+		virtual void wheelEvent(QWheelEvent *event);
 
 		void updateContent() ;
 	private:
@@ -75,5 +76,11 @@ class GlobalRouterStatisticsWidget:  public QWidget
 
 		QPixmap pixmap ;
 		int maxWidth,maxHeight ;
+        	int mCurrentN ;
+            	int mNumberOfKnownKeys ;
+                int mMinWheelZoneX ;
+                int mMinWheelZoneY ;
+                int mMaxWheelZoneX ;
+                int mMaxWheelZoneY ;
 };
 

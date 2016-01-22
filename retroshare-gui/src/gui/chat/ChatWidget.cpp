@@ -1657,7 +1657,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toLatin1()))); // displays info for 5 secs.
+    ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
 	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {

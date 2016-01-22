@@ -171,6 +171,7 @@ private:
         RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
         TurtleFileHash hash ;		// hash that is last used. This is necessary for handling tunnel establishment
         std::set<uint32_t> client_services ;// services that used this tunnel
+        std::map<uint64_t,time_t> received_data_prints ; // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
         uint32_t total_sent ;
         uint32_t total_received ;
     };
@@ -251,8 +252,6 @@ private:
     p3turtle 	*mTurtle ;
     RsGixs 	*mGixs ;
     RsMutex  	 mGxsTunnelMtx ;
-    
-    uint64_t 	 global_item_counter ;
     
     std::map<uint32_t,RsGxsTunnelClientService*> mRegisteredServices ;
     

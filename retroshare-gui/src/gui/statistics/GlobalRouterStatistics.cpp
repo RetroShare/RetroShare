@@ -23,6 +23,7 @@
 #include <QTimer>
 #include <QObject>
 #include <QFontMetrics>
+#include <QWheelEvent>
 #include <time.h>
 
 #include <QMenu>
@@ -52,7 +53,7 @@
 #define COL_RECEIVED      7
 #define COL_SEND          8
 
-
+static const int PARTIAL_VIEW_SIZE           = 5 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 static QColor colorScale(float f)
@@ -211,6 +212,7 @@ GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 
     maxWidth = 400*fact ;
 	maxHeight = 0 ;
+    mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
 }
 
 void GlobalRouterStatisticsWidget::updateContent()
@@ -218,6 +220,8 @@ void GlobalRouterStatisticsWidget::updateContent()
     RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
 
     rsGRouter->getRoutingMatrixInfo(matrix_info) ;
+    
+    mNumberOfKnownKeys = matrix_info.per_friend_probabilities.size() ;
 
     float size = QFontMetricsF(font()).height() ;
     float fact = size/14.0 ;
@@ -302,44 +306,85 @@ void GlobalRouterStatisticsWidget::updateContent()
     oy += celly ;
     oy += celly ;
 
-	//print friends in the same order their prob is shown
-	QString FO = tr("Friend Order  (");
-	RsPeerDetails peer_ssl_details;
-	for(uint32_t i=0;i<matrix_info.friend_ids.size();++i){
-		rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
-		QString fn = QString::fromUtf8(peer_ssl_details.name.c_str());
-		FO+=fn;
-		FO+=" ";
-
-	}
-	FO+=")";
-
-	painter.drawText(ox+0*cellx,oy+fm_times.height(),FO) ;
-	oy += celly ;
-	oy += celly ;
+//	//print friends in the same order their prob is shown
+//	QString FO = tr("Friend Order  (");
+//	RsPeerDetails peer_ssl_details;
+//	for(uint32_t i=0;i<matrix_info.friend_ids.size();++i){
+//		rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
+//		QString fn = QString::fromUtf8(peer_ssl_details.name.c_str());
+//		FO+=fn;
+//		FO+=" ";
+//
+//	}
+//	FO+=")";
+//
+//	painter.drawText(ox+0*cellx,oy+fm_times.height(),FO) ;
+//	oy += celly ;
+//	oy += celly ;
 
     static const int MaxKeySize = 20*fact ;
     painter.setFont(monospace_f) ;
 
-    for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it)
+    int n=0;
+    QString ids;
+    std::vector<float> current_probs ;
+    int current_oy = 0 ;
+    
+    mMinWheelZoneX = ox+2*cellx ;
+    mMinWheelZoneY = oy ;
+    
+    for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it,++n)
+        if(n >= mCurrentN-PARTIAL_VIEW_SIZE/2 && n <= mCurrentN+PARTIAL_VIEW_SIZE/2)
+	{
+		//bool is_null = false ;
+
+		//for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+		//	if(it->second[i] > 0.0)
+		//		is_null = false ;
+
+		//if(!is_null)
+		//{
+		ids = QString::fromStdString(it->first.toStdString())+" : " ;
+		mMaxWheelZoneX = ox+2*cellx + fm_monospace.width(ids);
+		painter.drawText(ox+2*cellx,oy+celly,ids) ;
+
+		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+			painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy+0.15*celly,cellx,celly,colorScale(it->second[i])) ;
+
+		if(n == mCurrentN)
+		{
+			current_probs = it->second ;
+			current_oy = oy ;
+		}
+
+		oy += celly ;
+		//}
+
+	}
+    mMaxWheelZoneY = oy+celly ;
+    
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
+    
+    painter.setPen(QColor::fromRgb(0.5,0.5,0.5));
+    painter.drawRect(ox+2*cellx,current_oy+0.15*celly,fm_monospace.width(ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
+
+    float total_length = (matrix_info.friend_ids.size()+2)*cellx ;
+    
+    if(!current_probs.empty())
+    for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
     {
-        bool is_null = true ;
-
-        for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-            if(it->second[i] > 0.0)
-                is_null = false ;
-
-        if(!is_null)
-        {
-            QString ids = QString::fromStdString(it->first.toStdString())+" : " ;
-            painter.drawText(ox+2*cellx,oy+celly,ids) ;
-
-            for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
-                painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy,cellx,celly,colorScale(it->second[i])) ;
-
-            oy += celly ;
-        }
+        float x1 = ox+(i+0.5)*cellx+fm_monospace.width(ids) ;
+        float y1 = oy+0.15*celly ;
+        float y2 = y1+(matrix_info.friend_ids.size()-1-i+1)*celly;
+        
+	RsPeerDetails peer_ssl_details;
+	rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
+        
+        painter.drawLine(x1,y1,x1,y2);
+        painter.drawLine(x1,y2,x1 + total_length - i*cellx,y2) ;
+	painter.drawText(cellx+ x1 + total_length - i*cellx,y2+(0.35)*celly, QString::fromUtf8(peer_ssl_details.name.c_str()) + " ("+QString::number(current_probs[i])+")");
     }
+    oy += celly * (2+matrix_info.friend_ids.size());
 
     oy += celly ;
     oy += celly ;
@@ -348,6 +393,24 @@ void GlobalRouterStatisticsWidget::updateContent()
     //
     pixmap = tmppixmap;
     maxHeight = oy ;
+}
+
+void GlobalRouterStatisticsWidget::wheelEvent(QWheelEvent *e)
+{
+    if(e->x() < mMinWheelZoneX || e->x() > mMaxWheelZoneX || e->y() < mMinWheelZoneY || e->y() > mMaxWheelZoneY)
+    {
+        QWidget::wheelEvent(e) ;
+        return ;
+    }
+    
+    if(e->delta() > 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
+	    mCurrentN++ ;
+    
+    if(e->delta() < 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
+	    mCurrentN-- ;
+    
+    updateContent();
+    update();
 }
 
 QString GlobalRouterStatisticsWidget::speedString(float f)

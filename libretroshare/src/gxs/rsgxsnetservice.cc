@@ -891,7 +891,13 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     else
         it->second->msgUpdateTS = 0 ; // reset!
     
-    // no need to update mGrpServerUpdateItem since the ::updateServerSyncTS() call will do it.
+    // We also update mGrpServerUpdateItem so as to trigger a new grp list exchange with friends (friends will send their known ClientTS which
+    // will be lower than our own grpUpdateTS, triggering our sending of the new subscribed grp list.
+    
+    if(mGrpServerUpdateItem == NULL)
+	    mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
+    
+    mGrpServerUpdateItem->grpUpdateTS = time(NULL) ;
 }
 
 bool RsGxsNetService::fragmentMsg(RsNxsMsg& msg, MsgFragments& msgFragments) const
@@ -1816,6 +1822,10 @@ void RsGxsNetService::updateServerSyncTS()
 	// retrieve all grps and update TS
 	mDataStore->retrieveGxsGrpMetaData(gxsMap);
 
+#ifdef TO_REMOVE
+   	// (cyril) This code is removed because it is inconsistent: the list of grps does not need to be updated when 
+    	// new posts arrive. The two (grp list and msg list) are handled independently.
+    
 	// as a grp list server also note this is the latest item you have
 	if(mGrpServerUpdateItem == NULL)
 		mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
@@ -1824,6 +1834,7 @@ void RsGxsNetService::updateServerSyncTS()
     	// we have unsubscribed a group.
     
 	mGrpServerUpdateItem->grpUpdateTS = 0 ;
+#endif
 	bool change = false;
 
     	// then remove from mServerMsgUpdateMap, all items that are not in the group list!
@@ -1861,6 +1872,7 @@ void RsGxsNetService::updateServerSyncTS()
 		ServerMsgMap::iterator mapIT = mServerMsgUpdateMap.find(grpId);
 		RsGxsServerMsgUpdateItem* msui = NULL;
 
+#ifdef TO_REMOVE
 		// That accounts for modification of the meta data.
 
 		if(mGrpServerUpdateItem->grpUpdateTS < grpMeta->mPublishTs)
@@ -1870,6 +1882,7 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 			mGrpServerUpdateItem->grpUpdateTS = grpMeta->mPublishTs;
 		}
+#endif
 
 		if(mapIT == mServerMsgUpdateMap.end())
 		{
@@ -1893,6 +1906,7 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 		}
 
+#ifdef TO_REMOVE
 		// This might be very inefficient with time. This is needed because an old message might have been received, so the last modification time
         	// needs to account for this so that a friend who hasn't 
         
@@ -1904,6 +1918,7 @@ void RsGxsNetService::updateServerSyncTS()
 			mGrpServerUpdateItem->grpUpdateTS = grpMeta->mRecvTS;
 			change = true;
 		}
+#endif
 	}
     
 	// actual change in config settings, then save configuration

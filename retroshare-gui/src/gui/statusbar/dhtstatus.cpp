@@ -55,7 +55,8 @@ DHTStatus::DHTStatus(QWidget *parent)
 
     dhtnetworkLabel = new QLabel( this );
     dhtnetworkLabel->setVisible(false);
-    dhtnetworkLabel->setPixmap(QPixmap(":/images/dht32.png"));
+    int S = QFontMetricsF(dhtnetworkLabel->font()).height();
+    dhtnetworkLabel->setPixmap(QPixmap(":/images/dht32.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(dhtnetworkLabel);
 
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
