@@ -1067,6 +1067,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	}
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 	text = sl.join("\n>");
+	text.replace(QChar(-4),"");//Char used when image on text.
 	return QString(">") + text;
 }
 
