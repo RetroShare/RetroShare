@@ -397,7 +397,7 @@ void GraphWidget::setNameSearch(QString s)
     
 	if (s.length() == 0){
 		for(uint32_t i=0;i<_nodes.size();++i)
-			_nodes[i]->setNodeDrawSize(20 * f);
+			_nodes[i]->setNodeDrawSize(12 * f);
 		forceRedraw();
 		return;
 	}
