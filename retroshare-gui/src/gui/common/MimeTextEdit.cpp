@@ -269,7 +269,7 @@ void MimeTextEdit::pasteOwnCertificateLink()
 
 void MimeTextEdit::pastePlainText()
 {
-	insertPlainText(QApplication::clipboard()->text());
+	insertPlainText(QApplication::clipboard()->text().remove(QChar(-4)));//Char used when image on text.
 }
 
 void MimeTextEdit::spoiler()

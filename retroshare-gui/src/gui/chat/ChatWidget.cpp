@@ -1693,6 +1693,7 @@ void ChatWidget::quote()
 	{
 		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 		text = sl.join("\n>");
+		text.replace(QChar(-4),"");//Char used when image on text.
 		emit ui->chatTextEdit->append(QString(">") + text);
 	}
 }
