@@ -391,25 +391,26 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	std::list<RsItem*>::const_iterator it;
 	uint32_t sizeItems = 0, sizeItem = 0;
 	uint32_t offset = 0;
-	char* data = NULL;
 
 	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
-		sizeItems += rsSerialiser->size(*it);
+        	if(*it != NULL)
+			sizeItems += rsSerialiser->size(*it);
 
-	data = new char[sizeItems];
+    	RsTemporaryMemory data(sizeItems) ;
 
 	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
-	{
-		sizeItem = rsSerialiser->size(*it);
+	    if(*it != NULL)
+	    {
+		    sizeItem = rsSerialiser->size(*it);
 
-		if(rsSerialiser->serialise(*it, (data+offset),&sizeItem))
-			offset += sizeItem;
-		else
-			std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
+		    if(rsSerialiser->serialise(*it, &data[offset],&sizeItem))
+			    offset += sizeItem;
+		    else
+			    std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
 
-		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
-			delete *it;
-	}
+		    if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			    delete *it;
+	    }
 
 	bool result = true;
 
@@ -417,9 +418,6 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 		enc_bio->senddata(data, sizeItems);
 	else
 		result = false;
-
-	if(data != NULL)
-		delete[] data;
 
 	return result;
 }
