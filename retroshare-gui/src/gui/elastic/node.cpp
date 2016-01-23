@@ -205,8 +205,8 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 	QRectF sceneRect = scene()->sceneRect();
 	newPos = pos() + QPointF(_speedx, _speedy) / friction_factor;
-	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
-	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left()), sceneRect.right()));
+	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top()) , sceneRect.bottom()));
 }
 
 bool Node::advance()
@@ -222,20 +222,22 @@ bool Node::advance()
 
 QRectF Node::boundingRect() const
 {
-	    qreal adjust = 2;
+        float m = QFontMetricsF(graph->font()).height();
+        float f = m/16.0;
+    qreal adjust = 2*f;
     /* add in the size of the text */
-    qreal realwidth = 40;
+    qreal realwidth = 40*f;
+    
     if (mDeterminedBB)
     {
 	realwidth = mBBWidth + adjust;
     }
-    if (realwidth < 23 + adjust)
+    if (realwidth < 23*f + adjust)
     {
-    	realwidth = 23 + adjust;
+    	realwidth = 23*f + adjust;
     }
 
-    return QRectF(-10 - adjust, -10 - adjust,
-                  realwidth, 23 + adjust);
+    return QRectF(-10*f - adjust, -10*f - adjust, realwidth, 23*f + adjust);
 }
 
 QPainterPath Node::shape() const
@@ -314,12 +316,17 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
 	painter->drawEllipse(-mNodeDrawSize2, -mNodeDrawSize2, mNodeDrawSize, mNodeDrawSize);
-	painter->drawText(-10, 0, QString::fromUtf8(_desc_string.c_str()));
+    
+    	QString txt = QString::fromUtf8(_desc_string.c_str());
+        float m = QFontMetricsF(graph->font()).height();
+        float f = m/16.0;
+        
+	painter->drawText(-10, 5*f, txt) ;
 
 	if (!mDeterminedBB)
 	{
-		QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromUtf8(_desc_string.c_str()));
-		mBBWidth = textBox.width();
+		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetricsF(graph->font()).width(txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
+		mBBWidth = textBox.width()+40*f;
 		mDeterminedBB = true;
 	}
 }
