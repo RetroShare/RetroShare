@@ -127,7 +127,8 @@ GraphWidget::GraphWidget(QWidget *)
 //    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 //	 scene->clear() ;
 //    setScene(scene);
-//    scene->setSceneRect(0, 0, 500, 500);
+    
+//    scene()->setSceneRect(0, 0, width(), height());
 
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -154,7 +155,8 @@ void GraphWidget::clearGraph()
 //	}
 
 	scene()->clear();
-	scene()->setSceneRect(-200, -200, 1000, 1000);
+	scene()->setSceneRect(0, 0, width(), height());
+    
 	_edges.clear();
 	_nodes.clear();
 	_friction_factor = 1.0f ;
@@ -391,9 +393,11 @@ void GraphWidget::setEdgeLength(uint32_t l)
 
 void GraphWidget::setNameSearch(QString s)
 {
+    float f = QFontMetrics(font()).height()/16.0 ;
+    
 	if (s.length() == 0){
 		for(uint32_t i=0;i<_nodes.size();++i)
-			_nodes[i]->setNodeDrawSize(20);
+			_nodes[i]->setNodeDrawSize(12 * f);
 		forceRedraw();
 		return;
 	}
@@ -405,10 +409,10 @@ void GraphWidget::setNameSearch(QString s)
 
 		if (ns.find(qs) != std::string::npos) {
 			//std::cout << "found!" << '\n';
-			ni->setNodeDrawSize(22);
+			ni->setNodeDrawSize(22 * f);
 			//std::cout << ni->getNodeDrawSize() << '\n';
 		} else {
-			ni->setNodeDrawSize(12);
+			ni->setNodeDrawSize(12 * f);
 
 		}
 	}
@@ -420,47 +424,53 @@ void GraphWidget::forceRedraw()
 	for(uint32_t i=0;i<_nodes.size();++i)
 		_nodes[i]->update(_nodes[i]->boundingRect()) ;
 }
+
+void GraphWidget::resizeEvent(QResizeEvent *event)
+{
+    scene()->setSceneRect(QRectF(QPointF(0,0),event->size()));
+}
+
 void GraphWidget::wheelEvent(QWheelEvent *event)
 {
     scaleView(pow((double)2, -event->delta() / 240.0));
 }
 
-void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    Q_UNUSED(rect);
-
-    // Shadow
-    QRectF sceneRect = this->sceneRect();
-    QRectF rightShadow(sceneRect.right(), sceneRect.top() + 5, 5, sceneRect.height());
-    QRectF bottomShadow(sceneRect.left() + 5, sceneRect.bottom(), sceneRect.width(), 5);
-    if (rightShadow.intersects(rect) || rightShadow.contains(rect))
-	painter->fillRect(rightShadow, Qt::darkGray);
-    if (bottomShadow.intersects(rect) || bottomShadow.contains(rect))
-	painter->fillRect(bottomShadow, Qt::darkGray);
-
-    // Fill
-    QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
-    gradient.setColorAt(0, Qt::white);
-    gradient.setColorAt(1, Qt::lightGray);
-    painter->fillRect(rect.intersected(sceneRect), gradient);
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(sceneRect);
-
-    // Text
-    QRectF textRect(sceneRect.left() + 4, sceneRect.top() + 4,
-                    sceneRect.width() - 4, sceneRect.height() - 4);
-    QString message(tr("Click and drag the nodes around, and zoom with the mouse "
-                       "wheel or the '+' and '-' keys"));
-
-    QFont font = painter->font();
-    font.setBold(true);
-    font.setPointSize(14);
-    painter->setFont(font);
-    painter->setPen(Qt::lightGray);
-    painter->drawText(textRect.translated(2, 2), message);
-    painter->setPen(Qt::black);
-    painter->drawText(textRect, message);
-}
+//void GraphWidget::drawBackground(QPainter *painter, const QRectF &rect)
+//{
+//    Q_UNUSED(rect);
+//
+//    // Shadow
+//    QRectF sceneRect = this->sceneRect();
+//    QRectF rightShadow(sceneRect.right(), sceneRect.top() + 5, 5, sceneRect.height());
+//    QRectF bottomShadow(sceneRect.left() + 5, sceneRect.bottom(), sceneRect.width(), 5);
+//    if (rightShadow.intersects(rect) || rightShadow.contains(rect))
+//	painter->fillRect(rightShadow, Qt::darkGray);
+//    if (bottomShadow.intersects(rect) || bottomShadow.contains(rect))
+//	painter->fillRect(bottomShadow, Qt::darkGray);
+//
+//    // Fill
+//    QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
+//    gradient.setColorAt(0, Qt::white);
+//    gradient.setColorAt(1, Qt::lightGray);
+//    painter->fillRect(rect.intersected(sceneRect), gradient);
+//    painter->setBrush(Qt::NoBrush);
+//    painter->drawRect(sceneRect);
+//
+//    // Text
+//    QRectF textRect(sceneRect.left() + 4, sceneRect.top() + 4,
+//                    sceneRect.width() - 4, sceneRect.height() - 4);
+//    QString message(tr("Click and drag the nodes around, and zoom with the mouse "
+//                       "wheel or the '+' and '-' keys"));
+//
+//    QFont font = painter->font();
+//    font.setBold(true);
+//    font.setPointSize(14);
+//    painter->setFont(font);
+//    painter->setPen(Qt::lightGray);
+//    painter->drawText(textRect.translated(2, 2), message);
+//    painter->setPen(Qt::black);
+//    painter->drawText(textRect, message);
+//}
 
 void GraphWidget::scaleView(qreal scaleFactor)
 {

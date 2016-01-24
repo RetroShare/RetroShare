@@ -14,7 +14,8 @@ protected slots:
     void updateComboBoxes() ;
     void updateUpDownSelection(int n);
     void updateUnitSelection(int n);
-
+    void toggleLogScale(bool b);
+    
 private:
     Ui::BwStatsWidget ui;
 

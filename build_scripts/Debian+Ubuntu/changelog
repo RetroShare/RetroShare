@@ -1,5 +1,46 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  f13c81b csoler Sat, 23 Jan 2016 13:17:12 -0500 Merge pull request #258 from PhenomRetroShare/Fix_QuoteLinesWithImage
+  9b64b96 csoler Sat, 23 Jan 2016 13:03:29 -0500 fixed potential crash in pqisslstore
+  1d2be23 Phenom Sat, 23 Jan 2016 18:17:49 +0100 Fix Quote Lines With Image
+  70bf938 defnax Sat, 23 Jan 2016 13:37:08 +0100 reduced the default width & height reorder in MessagePage, move Distant Message box to the top.
+  fc0067f csoler Fri, 22 Jan 2016 22:06:31 -0500 fixed bug in network graph search sizes
+  c428739 csoler Fri, 22 Jan 2016 21:32:35 -0500 cleaned the network graph a little bit. Removed text, updated bounding boxes, removed background
+  b362544 csoler Fri, 22 Jan 2016 09:31:40 -0500 fixed compilation
+  b3df4c1 csoler Thu, 21 Jan 2016 23:55:22 -0500 made the Global router stats widget more efficient/compact/explicit
+  449aba9 csoler Thu, 21 Jan 2016 22:44:48 -0500 fixed compilation of SearchDialog.cpp
+  94b5868 csoler Thu, 21 Jan 2016 21:49:52 -0500 moved SearchDialog into FileTransfer/
+  6a32da2 csoler Thu, 21 Jan 2016 21:40:48 -0500 removed explicit size constraint on listview for config page (screws up the view in HDPI screens
+  55d0a21 csoler Thu, 21 Jan 2016 21:19:40 -0500 added cache of latest GXS tunnel data items for the last 10 minutes in order to avoid replays of
+  9347b86 csoler Thu, 21 Jan 2016 11:48:41 -0500 new simple solution for sound on linux based on using system sound player. To be tested.
+  9999742 csoler Thu, 21 Jan 2016 11:32:17 -0500 reverted commit for phonon since phonon is deprecated. Will be replaced by qtmultimedia in 
+  7488ba1 csoler Wed, 20 Jan 2016 23:56:22 -0500 removed feedback from messages to mGrpServerUpdateTS, which is now only updated when the subscri
+  c473200 csoler Wed, 20 Jan 2016 23:34:25 -0500 moved getCurrentTS() inside RTT packet sending loop (suggestion from Jo)
+  e25787b csoler Wed, 20 Jan 2016 23:25:08 -0500 fixed sound on linux using phonon. This should be extensible to all unix systems
+  fc3606c csoler Wed, 20 Jan 2016 14:02:13 -0500 fixed DHT icon size problem
+  9063612 csoler Wed, 20 Jan 2016 11:19:36 -0500 fixed utf8 issue in ChatWidget. To be tested.
+  c597c8c csoler Tue, 19 Jan 2016 23:19:46 -0500 removed explicit spacing sizes in plugins page
+  3203249 csoler Tue, 19 Jan 2016 22:59:11 -0500 fixed size of help icons in MainPage class
+  597f541 csoler Tue, 19 Jan 2016 22:44:27 -0500 added 2 icons
+  3d58f9b csoler Tue, 19 Jan 2016 22:35:58 -0500 added correct icons in ToasterStatus
+  b382c3e csoler Tue, 19 Jan 2016 22:16:25 -0500 fixed icon sizes in peerstatus/statusbar
+  a2d8cc8 csoler Tue, 19 Jan 2016 22:01:26 -0500 fixed DHT status icon sizes and added tooltip
+  37204d7 csoler Tue, 19 Jan 2016 21:46:22 -0500 fixed icon in NewsFeed, added missing spacer in IdDialog
+  49c1d56 csoler Tue, 19 Jan 2016 21:45:55 -0500 increased GXS post size limit to just below 200K
+  1471979 csoler Tue, 19 Jan 2016 18:08:47 -0500 added a few tooltips in Tor configuration panel
+  43ee506 csoler Tue, 19 Jan 2016 10:13:24 -0500 added automatic GXS message rejection when item size exceeds 200K. Should fix the forums that go
+  dedd6d4 csoler Mon, 18 Jan 2016 23:53:54 -0500 disabled debug info
+  68a0395 csoler Mon, 18 Jan 2016 23:53:06 -0500 fixed a few bugs in existing msg fragmentation code. Signature checking still not working, not N
+  2b52456 defnax Mon, 18 Jan 2016 13:36:38 +0100 Added new iconset for Voip, by Beluga
+  39e6a9b csoler Sat, 16 Jan 2016 20:44:52 -0500 fixed up People context menu so as to handle actions for multiple persons at once
+  1edfcf9 csoler Sat, 16 Jan 2016 13:41:24 -0500 do not time stamp banned GXS ids
+  8296fa9 csoler Sat, 16 Jan 2016 11:30:15 -0500 added checkbox to toggle logscale in statistics
+  63b88ec defnax Sat, 16 Jan 2016 14:50:12 +0100 correct sorting for "Reputation" in People, patch by Eugene Tooms
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 23 Jan 2016 16:00:00 +0100
+
+retroshare06 (0.6.0-1.20160115.a34f66aa~trusty) trusty; urgency=low
+
   0ff6349 thunder2    Fri, 15 Jan 2016 12:01:37 +0100 Fixed possibility of XXE injection in FeedReader plugin.
   748147f thunder2    Fri, 15 Jan 2016 12:00:02 +0100 Fixed Windows compile.
   b5f6059 Cyril Soler Fri, 15 Jan 2016 10:07:21 -0500 deprecated updateClientSyncTS() which is not needed anymore

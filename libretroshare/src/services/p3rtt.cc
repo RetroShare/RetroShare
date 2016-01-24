@@ -190,8 +190,6 @@ void p3rtt::sendPingMeasurements()
 
 	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, idList);
 
-	double ts = getCurrentTS();
-
 #ifdef DEBUG_RTT
 	std::cerr << "p3rtt::sendPingMeasurements() @ts: " << ts;
 	std::cerr << std::endl;
@@ -205,7 +203,8 @@ void p3rtt::sendPingMeasurements()
 		std::cerr << "p3rtt::sendPingMeasurements() Pinging: " << *it;
 		std::cerr << std::endl;
 #endif
-
+    		double ts = getCurrentTS();
+            
 		/* create the packet */
 		RsRttPingItem *pingPkt = new RsRttPingItem();
 		pingPkt->PeerId(*it);

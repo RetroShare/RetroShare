@@ -53,11 +53,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	QSize buttonSize = QSize(iconSize + QSize(3,3));
 
 	QIcon iconaudioListenToggleButton ;
-	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-muted.png")) ;
-	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Normal,QIcon::On) ;
-	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Disabled,QIcon::On) ;
-	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Active,QIcon::On) ;
-	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/audio-volume-high.png"),QIcon::Selected,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/speaker_mute.png")) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/speaker.png"),QIcon::Normal,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/speaker.png"),QIcon::Disabled,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/speaker.png"),QIcon::Active,QIcon::On) ;
+	iconaudioListenToggleButton.addPixmap(QPixmap(":/images/speaker.png"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton = new QToolButton ;
 	audioListenToggleButton->setIcon(iconaudioListenToggleButton) ;
@@ -71,11 +71,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	audioListenToggleButton->setEnabled(false);
 
 	QIcon iconaudioCaptureToggleButton ;
-	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-start.png")) ;
-	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Normal,QIcon::On) ;
-	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Disabled,QIcon::On) ;
-	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Active,QIcon::On) ;
-	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/call-hold.png"),QIcon::Selected,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/phone.png")) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/microphone_mute.png"),QIcon::Normal,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/microphone_mute.png"),QIcon::Disabled,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/microphone_mute.png"),QIcon::Active,QIcon::On) ;
+	iconaudioCaptureToggleButton.addPixmap(QPixmap(":/images/microphone_mute.png"),QIcon::Selected,QIcon::On) ;
 
 	audioCaptureToggleButton = new QToolButton ;
 	audioCaptureToggleButton->setIcon(iconaudioCaptureToggleButton) ;
@@ -88,11 +88,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	audioCaptureToggleButton->setToolTip(tr("Start Call"));
 
 	QIcon iconvideoCaptureToggleButton ;
-	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-on.png")) ;
-	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Normal,QIcon::On) ;
-	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Disabled,QIcon::On) ;
-	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Active,QIcon::On) ;
-	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/video-icon-off.png"),QIcon::Selected,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/filmcam.png")) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/filmcam-off.png"),QIcon::Normal,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/filmcam-off.png"),QIcon::Disabled,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/filmcam-off.png"),QIcon::Active,QIcon::On) ;
+	iconvideoCaptureToggleButton.addPixmap(QPixmap(":/images/filmcam-off.png"),QIcon::Selected,QIcon::On) ;
 
 	videoCaptureToggleButton = new QToolButton ;
 	videoCaptureToggleButton->setIcon(iconvideoCaptureToggleButton) ;
@@ -105,7 +105,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	videoCaptureToggleButton->setToolTip(tr("Start Video Call"));
 
 	hangupButton = new QToolButton ;
-	hangupButton->setIcon(QIcon(":/images/call-stop.png")) ;
+	hangupButton->setIcon(QIcon(":/images/phone_hangup.png")) ;
 	hangupButton->setIconSize(iconSize) ;
 	hangupButton->setMinimumSize(buttonSize) ;
 	hangupButton->setMaximumSize(buttonSize) ;
@@ -116,11 +116,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	hangupButton->hide();
 
 	QIcon iconhideChatTextToggleButton ;
-	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/orange-bubble-64.png")) ;
-	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Normal,QIcon::On) ;
-	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Disabled,QIcon::On) ;
-	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Active,QIcon::On) ;
-	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/white-bubble-64.png"),QIcon::Selected,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/chat-bubble.png")) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/chat-bubble.png"),QIcon::Normal,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/chat-bubble.png"),QIcon::Disabled,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/chat-bubble.png"),QIcon::Active,QIcon::On) ;
+	iconhideChatTextToggleButton.addPixmap(QPixmap(":/images/chat-bubble.png"),QIcon::Selected,QIcon::On) ;
 
 	hideChatTextToggleButton = new QToolButton ;
 	hideChatTextToggleButton->setIcon(iconhideChatTextToggleButton) ;
@@ -134,11 +134,11 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	hideChatTextToggleButton->setEnabled(false) ;
 
 	QIcon iconfullscreenToggleButton ;
-	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/channels32.png")) ;
-	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Normal,QIcon::On) ;
-	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Disabled,QIcon::On) ;
-	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Active,QIcon::On) ;
-	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/folder-draft24.png"),QIcon::Selected,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/fullscreen_arrows.png")) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/fullscreen.png"),QIcon::Normal,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/fullscreen.png"),QIcon::Disabled,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/fullscreen.png"),QIcon::Active,QIcon::On) ;
+	iconfullscreenToggleButton.addPixmap(QPixmap(":/images/fullscreen.png"),QIcon::Selected,QIcon::On) ;
 
 	fullscreenToggleButton = new QToolButton ;
 	fullscreenToggleButton->setIcon(iconfullscreenToggleButton) ;
@@ -236,7 +236,7 @@ VOIPChatWidgetHolder::VOIPChatWidgetHolder(ChatWidget *chatWidget, VOIPNotify *n
 	videoCaptureToggleButtonFS->setToolTip(tr("Start Video Call"));
 
 	hangupButtonFS = new QToolButton(fullScreenFrame) ;
-	hangupButtonFS->setIcon(QIcon(":/images/call-stop.png")) ;
+	hangupButtonFS->setIcon(QIcon(":/images/phone_hangup.png")) ;
 	hangupButtonFS->setIconSize(iconSize) ;
 	hangupButtonFS->setMinimumSize(buttonSize) ;
 	hangupButtonFS->setMaximumSize(buttonSize) ;

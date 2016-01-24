@@ -26,16 +26,16 @@
 
 #include "rshare.h"
 #include "SearchDialog.h"
-#include "RetroShareLink.h"
-#include "msgs/MessageComposer.h"
 #include "gui/RSHumanReadableDelegate.h"
+#include "gui/RetroShareLink.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "gui/msgs/MessageComposer.h"
 #include "gui/common/RsCollectionFile.h"
 #include "gui/common/FilesDefs.h"
-#include <gui/common/RsUrlHandler.h>
-#include "settings/rsharesettings.h"
-#include "advsearch/advancedsearchdialog.h"
-#include "common/RSTreeWidgetItem.h"
+#include "gui/common/RsUrlHandler.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/advsearch/advancedsearchdialog.h"
+#include "gui/common/RSTreeWidgetItem.h"
 #include "util/QtVersion.h"
 
 #include <retroshare/rsfiles.h>
@@ -857,7 +857,7 @@ void SearchDialog::searchKeywords(const QString& keywords)
 			req_id = rsTurtle->turtleSearch(lin_exp) ;
 	}
 	else
-		req_id = ((((uint32_t)rand()) << 16)^0x1e2fd5e4) + (((uint32_t)rand())^0x1b19acfe) ; // generate a random 32 bits request id
+		req_id = RSRandom::random_u32() ; // generate a random 32 bits request id
 
 	initSearchResult(keywords,req_id, ui.FileTypeComboBox->currentIndex(), false) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
 
