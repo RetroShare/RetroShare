@@ -14,6 +14,9 @@
             var ui = require("main");
             var main = document.getElementById("main");
             ui.init(main);
+			if (m.initControl != undefined) {
+      			m.initControl.focus();
+      		}
         }
     </script>
 </body>

@@ -32,10 +32,15 @@ module.exports = {view: function(){
     	    accounts.map(function(account){
     	    	accountMap.set(account.id,account);
     	    	return [
-    	    	    m("div.btn2", {onclick: m.withAttr("account", selAccount), account:account.id }, account.location + " (" + account.name + ")"),
+    	    	    m("div.btn2", {
+    	    	        onclick: m.withAttr("account", selAccount),
+    	    	        account:account.id
+    	    	    },
+    	    	    account.location + " (" + account.name + ")"),
     	    	    m("br")
-    	    	    ]
-        })]);
+    	    	]
+            })
+        ]);
     } else {
         return m("div", "logging in ..." );
     }

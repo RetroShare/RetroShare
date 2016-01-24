@@ -27,12 +27,27 @@ function Page(content, runst){
         } else if (runstate.runstate == null){
             return m("h2", "server down");
         } else if (needpasswd != undefined && needpasswd.want_password === true){
+            m.initControl = "txtpasswd";
             return m("div",[
                 m("h2","password required"),
                 m("h3",needpasswd.key_name),
-                m("input",{type:"password", onchange:m.withAttr("value", setPasswd)}),
+                m("input",{
+                    id: "txtpasswd",
+                    type:"password",
+                    onchange:m.withAttr("value", setPasswd),
+                    onkeydown: function(event){
+                        if (event.keyCode == 13){
+                            setPasswd(this.value);
+                            sendPassword(needpasswd);
+                        }
+                    }
+                }),
                 m("br"),
-                m("input[type=button][value=send password]",{onclick: function(){sendPassword(needpasswd);}}),
+                m("input[type=button][value=send password]",{
+                    onclick: function(){
+                        sendPassword(needpasswd);
+                    }
+                }),
             ]);
         } else {
             if ("waiting_init|waiting_startup".match(runstate.runstate)) {

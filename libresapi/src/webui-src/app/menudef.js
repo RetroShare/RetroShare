@@ -9,6 +9,12 @@ module.exports = {  nodes: [
 		runstate: "waiting_account_select",
 	},
 	{
+	    name: "create login",
+	    path: "/createlogin",
+	    module: "createlogin",
+	    runstate: "waiting_account_select",
+	},
+	{
 		name: "peers",
 		runstate: "running_ok.*",
 		counter: "peers",

@@ -88,6 +88,7 @@ function check_for_changes(){
             m.sync(requests).then(function trigger_render(){
                 m.startComputation();
                 m.endComputation();
+                checkFocus();
                 setTimeout(check_for_changes, 500);
             });
         }
@@ -148,8 +149,21 @@ function schedule_request_missing(){
         m.sync(requests).then(function trigger_render(){
             m.startComputation();
             m.endComputation();
+            checkFocus();
         });
     });
+}
+
+function checkFocus(){
+	if (m.initControl != undefined) {
+	    var ctrl = document.getElementById(m.initControl);
+	    if (ctrl!= null) {
+		    ctrl.focus();
+		    m.initControl = undefined;
+	    } else {
+	        console.log("focus-control '" + m.initControl + "' not found!")
+	    }
+	}
 }
 
 // called every time, rs or rs.request failed, only response or value is set
