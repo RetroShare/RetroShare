@@ -88,6 +88,36 @@ function createLocation() {
     m.route("/createlogin",{state:wait});
 }
 
+function certDrop(event)
+{
+	console.log("onDrop()");
+	console.log(event.dataTransfer.files);
+	event.preventDefault();
+
+	var reader = new FileReader();
+
+	var widget = this;
+
+	reader.onload = function(evt) {
+		console.log("onDrop(): file loaded");
+		rs.request(
+		    "control/import_pgp",{
+		        key_string:evt.target.result,
+		    }, importCallback);
+	};
+	reader.readAsText(event.dataTransfer.files[0]);
+	m.route("/createlogin",{state:"waiting"});
+}
+
+function importCallback(resp)
+{
+	console.log("importCallback()" + resp);
+	m.route("/createlogin",{
+	    id:resp.pgp_id,
+	    name:"",
+	});
+}
+
 
 module.exports = {
     view: function(){
@@ -214,6 +244,11 @@ module.exports = {
                     },
                 } ,"<create new profile>"),
                 m("div.btn2",{
+                	ondragover:function(event){
+                	    /*important: block default event*/
+                	    event.preventDefault();
+                	},
+					ondrop: certDrop,
                 } ,"<import profile (drag and drop a profile here)>"),
                 listprofiles()
             ]);
