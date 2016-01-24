@@ -52,7 +52,7 @@ This package provides a plugin for RetroShare, a secured Friend-to-Friend commun
 
 %build
 cd lib/sqlcipher
-./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
+./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-fPIC -DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
 make
 cd -
 cd src
