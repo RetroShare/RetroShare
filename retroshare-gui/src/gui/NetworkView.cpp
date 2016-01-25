@@ -43,7 +43,7 @@ NetworkView::NetworkView(QWidget *parent)
 
   mScene = new QGraphicsScene();
   mScene->setItemIndexMethod(QGraphicsScene::NoIndex);
-  mScene->setSceneRect(-200, -200, 1200, 1200);
+  mScene->setSceneRect(0, 0, ui.graphicsView->width(), ui.graphicsView->height());
 
   ui.graphicsView->setScene(mScene);
   ui.graphicsView->setEdgeLength(ui.edgeLengthSB->value()) ;
