@@ -1212,7 +1212,7 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 	bool changed = false;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if (sockaddr_storage_same(mExtAddr, addr))
+		if (!sockaddr_storage_same(mExtAddr, addr))
 		{
 			changed = true;
 		}
