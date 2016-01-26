@@ -17,7 +17,14 @@ function sendPassword(data) {
     });
 }
 
-function Page(content, runst){
+function Page(menu){
+    this.menu = menu;
+    this.module = (menu.module != undefined) ? menu.module : menu.name;
+    this.path = menu.path != undefined ? menu.path : ("/" + menu.name);
+
+    var runst = menu.runstate;
+    var content = require(module);
+
     this.view = function(){
         var runstate = rs("control/runstate");
         var needpasswd = rs("control/password");
@@ -85,10 +92,9 @@ module.exports = {
 
         menudef.nodes.map(function(menu){
             if (menu.action === undefined) {
-                var path = menu.path != undefined ? menu.path : ("/" + menu.name);
-                var module = menu.module != undefined ? menu.module : menu.name
-                console.log("adding route " + menu.name + " for " + path + " with module " + module);
-                maps[path] = new Page(require(module), menu.runstate);
+                var p = new Page(menu)
+                console.log("adding route " + menu.name + " for " + p.path + " with module " + p.module);
+                maps[p.path] = p;
             }
         });
         m.route.mode = "hash";

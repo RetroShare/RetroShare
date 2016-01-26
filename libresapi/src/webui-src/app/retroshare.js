@@ -161,7 +161,8 @@ function checkFocus(){
 		    ctrl.focus();
 		    m.initControl = undefined;
 	    } else {
-	        console.log("focus-control '" + m.initControl + "' not found!")
+	        console.log("focus-control '" + m.initControl + "' not found!");
+	        m.initControl = undefined;
 	    }
 	}
 }
