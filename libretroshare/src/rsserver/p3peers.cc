@@ -296,8 +296,17 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
 		d.hiddenType = ps.hiddenType;
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
+        
+		if(sockaddr_storage_isnull(ps.localaddr))	// that happens if the address is not initialised.
+        	{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0 ;
+        	}
+            	else
+        	{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+        	}
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
