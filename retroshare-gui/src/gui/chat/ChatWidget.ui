@@ -514,6 +514,42 @@ border-image: url(:/images/closepressed.png)
             </widget>
            </item>
            <item>
+            <widget class="QToolButton" name="sendAsPlainTextButton">
+             <property name="toolTip">
+              <string>Send as plain text without font.</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/ColoredText.png</normaloff>
+               <normalon>:/images/SimpleText.png</normalon>:/images/ColoredText.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="noEmbedButton">
+             <property name="toolTip">
+              <string>Don't replace tag with Emote Icon.</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>
+               <normalon>:/images/SmileyText.png</normalon>:/images/emoticons/kopete/kopete020.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QFrame" name="pluginButtonFrame">
              <property name="frameShape">
               <enum>QFrame::NoFrame</enum>
