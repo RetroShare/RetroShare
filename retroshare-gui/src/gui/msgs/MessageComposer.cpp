@@ -1285,7 +1285,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
 	 mi.rsgxsid_srcId = RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()) ;
 
-	 std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
+	 //std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
     // needed to send system flags with reply

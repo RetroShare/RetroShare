@@ -434,9 +434,9 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	std::map<RsPeerId, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
-#endif
 	std::cerr << "pqipersongrp::removePeer() id: " << id;
 	std::cerr << std::endl;
+#endif
 
   	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
