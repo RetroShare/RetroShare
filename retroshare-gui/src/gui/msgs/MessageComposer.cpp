@@ -420,6 +420,10 @@ void MessageComposer::processSettings(bool bLoad)
         int index = Settings->value("ShowType", 0).toInt();
         ui.filterComboBox->setCurrentIndex(index);
         
+        RsGxsId resp_to_id ( Settings->value("LastRespondTo").toString().toStdString());
+        
+       	if(!resp_to_id.isNull())
+		ui.respond_to_CB->setDefaultId(resp_to_id);
     } else {
         // save settings
 
@@ -433,6 +437,7 @@ void MessageComposer::processSettings(bool bLoad)
         // state of filter combobox
         Settings->setValue("ShowType", ui.filterComboBox->currentIndex());
  
+        Settings->setValue("LastRespondTo",ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString());
     }
 
     Settings->endGroup();
