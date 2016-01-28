@@ -67,7 +67,8 @@ public:
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
-    static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types=ICON_TYPE_ALL);
+	static QString getToolTip(const RsIdentityDetails &details, QFont font);
+	static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types=ICON_TYPE_ALL);
 
 	static QString getEmptyIdText();
 	static QString getLoadingText(const RsGxsId &id);

@@ -63,8 +63,6 @@
 
 #include <time.h>
 
-#define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
-
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -558,20 +556,7 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 					if(!mId.isNull()) {
 						RsIdentityDetails details;
 						if (rsIdentity->getIdDetails(mId, details)){
-							RsGxsImage mAvatar = details.mAvatar;
-							QImage pix;
-
-							if(rsReputations->isIdentityBanned(mId))
-								pix = QImage(BANNED_IMAGE) ;
-							else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG"))
-								pix = GxsIdDetails::makeDefaultIcon(mId);
-
-							int S = QFontMetricsF(font()).height();
-							toolTipText = GxsIdDetails::getComment(details);
-							QString embeddedImage;
-							if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
-								toolTipText = "<table><tr><td>" + embeddedImage + "</td><td>" + toolTipText + "</td></table>";
-							}
+							toolTipText = GxsIdDetails::getToolTip(details, font());
 						}
 					}
 				}
