@@ -299,10 +299,10 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		return false;
 	}
 
-	std::cerr << "BITDHT Load Item:";
-	std::cerr << std::endl;
+	//std::cerr << "BITDHT Load Item:";
+	//std::cerr << std::endl;
 
-	config->print(std::cerr, 0);
+	//config->print(std::cerr, 0);
 
 	std::list<std::string> servers;
 	int peers[RSDHT_RELAY_NUM_CLASS] = {0};
@@ -320,16 +320,16 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		{
 			/* add to RELAY_SERVER List */
 			servers.push_back(value);
-			std::cerr << "p3BitDht::loadList() Found Server: " << value;
-			std::cerr << std::endl;
+			//std::cerr << "p3BitDht::loadList() Found Server: " << value;
+			//std::cerr << std::endl;
 		}
 		else if (0 == strncmp(key.c_str(), "RELAY_MODE", 10))
 		{
 			mode = atoi(value.c_str());
 			haveMode = true;
 
-			std::cerr << "p3BitDht::loadList() Found Mode: " << mode;
-			std::cerr << std::endl;
+			//std::cerr << "p3BitDht::loadList() Found Mode: " << mode;
+			//std::cerr << std::endl;
 		}
 		else if (0 == strncmp(key.c_str(), "RELAY_CLASS", 11))
 		{
@@ -358,24 +358,24 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 
 			if (key[13] == 'C')
 			{
-				std::cerr << "p3BitDht::loadList() Found Count(" << idx << "): ";
-				std::cerr << val;
-				std::cerr << std::endl;
+				//std::cerr << "p3BitDht::loadList() Found Count(" << idx << "): ";
+				//std::cerr << val;
+				//std::cerr << std::endl;
 				peers[idx] = val;
 			}
 			else
 			{
-				std::cerr << "p3BitDht::loadList() Found Bandwidth(" << idx << "): ";
-				std::cerr << val;
-				std::cerr << std::endl;
+				//std::cerr << "p3BitDht::loadList() Found Bandwidth(" << idx << "): ";
+				//std::cerr << val;
+				//std::cerr << std::endl;
 				bandwidth[idx] = val;
 			}
 		}
 		else
 		{
-			std::cerr << "p3BitDht::loadList() Unknown Key:value: " << key;
-			std::cerr << ":" << value;
-			std::cerr << std::endl;
+			//std::cerr << "p3BitDht::loadList() Unknown Key:value: " << key;
+			//std::cerr << ":" << value;
+			//std::cerr << std::endl;
 		}
 	}
 

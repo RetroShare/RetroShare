@@ -591,7 +591,7 @@ void RsGxsNetService::syncWithPeers()
         grp->PeerId(*sit);
         grp->updateTS = updateTS;
 
-        NxsBandwidthRecorder::recordEvent(mServType,grp) ;
+        //NxsBandwidthRecorder::recordEvent(mServType,grp) ;
 
 #ifdef NXS_NET_DEBUG_5
 	GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
@@ -626,7 +626,11 @@ void RsGxsNetService::syncWithPeers()
 
     sit = peers.begin();
 
-    float sending_probability = NxsBandwidthRecorder::computeCurrentSendingProbability() ;
+    // Jan. 26, 2016. This has been disabled, since GXS has been fixed, groups will not re-ask for data. So even if outqueues are filled up by multiple
+    // attempts of the same request, the transfer will eventually end up. The code for NxsBandwidthRecorder should be kept for a while, 
+    // just in case.
+    
+    // float sending_probability = NxsBandwidthRecorder::computeCurrentSendingProbability() ;
 #ifdef NXS_NET_DEBUG_2
     std::cerr << "  syncWithPeers(): Sending probability = " << sending_probability << std::endl;
 #endif
@@ -682,22 +686,24 @@ void RsGxsNetService::syncWithPeers()
             msg->grpId = grpId;
             msg->updateTS = updateTS;
 
-            NxsBandwidthRecorder::recordEvent(mServType,msg) ;
+            //NxsBandwidthRecorder::recordEvent(mServType,msg) ;
 
-            if(RSRandom::random_f32() < sending_probability)
-            {
-                sendItem(msg);
+            //if(RSRandom::random_f32() < sending_probability)
+            //{
+            
+            sendItem(msg);
+            
 #ifdef NXS_NET_DEBUG_5
 		GXSNETDEBUG_PG(*sit,grpId) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself" << std::endl;
 #endif
-            }
-            else
-            {
-                delete msg ;
-#ifdef NXS_NET_DEBUG_0
-                GXSNETDEBUG_PG(*sit,grpId) << "    cancel RsNxsSyncMsg req (last local update TS for group+peer) for grpId=" << grpId << " to peer " << *sit << ": not enough bandwidth." << std::endl;
-#endif
-            }
+            //}
+            //else
+            //{
+            //    delete msg ;
+            //#ifdef NXS_NET_DEBUG_0
+            //    GXSNETDEBUG_PG(*sit,grpId) << "    cancel RsNxsSyncMsg req (last local update TS for group+peer) for grpId=" << grpId << " to peer " << *sit << ": not enough bandwidth." << std::endl;
+            //#endif
+            //}
         }
     }
 
@@ -2308,7 +2314,6 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    and updating mClientGrpUpdateMap for peer " << peerFrom << " of new time stamp " << nice_time_stamp(time(NULL),updateTS) << std::endl;
 #endif
 
-#warning should not we conservatively use the most recent one, in case the peer has reset its mServerGrpUpdate time?? What happens if the peer unsubscribed a recent group?
             item->grpUpdateTS = updateTS;
             item->peerId = peerFrom;
 
@@ -2591,7 +2596,12 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
     RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
 
-#warning TODO: what if grpMeta is NULL?
+    if(grpMeta == NULL) // this should not happen, but just in case...
+    {
+        std::cerr << "(EE) grpMeta is NULL in " << __PRETTY_FUNCTION__ << " line " << __LINE__ << ". This is very unexpected." << std::endl;
+        return ;
+    }
+    
     if(! (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ))
     {
         // For unsubscribed groups, we update the timestamp something more recent, so that the group content will not be asked to the same

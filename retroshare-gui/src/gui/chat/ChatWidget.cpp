@@ -923,7 +923,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	QString strGxsId = "";
 	if (!gxsId.isNull())
 		strGxsId = QString::fromStdString(gxsId.toStdString());
-	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"%1\">").arg(strGxsId));
+	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"Person Id: %1\">").arg(strGxsId));
 
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
