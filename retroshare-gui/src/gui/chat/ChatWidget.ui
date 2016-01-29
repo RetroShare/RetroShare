@@ -1052,6 +1052,14 @@ border-image: url(:/images/closepressed.png)
     <string>Quotes the selected text</string>
    </property>
   </action>
+  <action name="actionDropPlacemark">
+   <property name="text">
+    <string>Drop Placemark</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert horizontal rule</string>
+   </property>
+  </action>
   <action name="actionSave_image">
    <property name="icon">
     <iconset resource="../images.qrc">
