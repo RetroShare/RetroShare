@@ -127,6 +127,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
+	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -979,6 +980,7 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
 	contextMnu->addAction(ui->actionQuote);
+	contextMnu->addAction(ui->actionDropPlacemark);
 
 	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
 	if(ImageUtil::checkImage(cursor))
@@ -1696,6 +1698,11 @@ void ChatWidget::quote()
 		text.replace(QChar(-4),"");//Char used when image on text.
 		emit ui->chatTextEdit->append(QString(">") + text);
 	}
+}
+
+void ChatWidget::dropPlacemark()
+{
+	ui->textBrowser->append("----------");        
 }
 
 void ChatWidget::saveImage()
