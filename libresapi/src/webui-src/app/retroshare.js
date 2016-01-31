@@ -203,6 +203,7 @@ function rs(path, args, callback, options){
 
 module.exports = rs;
 
+// single request for action
 rs.request=function(path, args, callback, options){
     if (options === undefined) {
         options = {};
@@ -226,6 +227,7 @@ rs.request=function(path, args, callback, options){
     return req;
 };
 
+// force reload for path
 rs.forceUpdate = function(path){
    cache[path].requested=false;
 }
@@ -241,13 +243,25 @@ rs.apiurl = function(path) {
     return api_url + path;
 }
 
+// counting in menu
 rs.counting = function(path, counterfnkt) {
     return function () {
         var data=rs(path);
         if (data != undefined) {
+            if (counterfnkt === undefined) {
+                return " (" + data.length + ")";
+            }
             return " (" + counterfnkt(data) + ")";
         }
         return "";
     }
 }
 
+// listing data-elements
+rs.list = function(path, buildfktn){
+    var list = rs(path);
+    if (list === undefined) {
+        return "< waiting for server ... >"
+    }
+    return list.map(buildfktn);
+}

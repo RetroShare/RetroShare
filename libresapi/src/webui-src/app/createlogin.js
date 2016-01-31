@@ -189,9 +189,7 @@ module.exports = {
                 m("br"),
                 m("input",{
                     type: "button",
-                    onclick: function(){
-                        createLocation();
-                    },
+                    onclick: createLocation,
                     value: "create location",
                 }),
             ]);
@@ -228,9 +226,7 @@ module.exports = {
                 m("br"),
                 m("input",{
                     type: "button",
-                    onclick: function(){
-                        createLocation();
-                    },
+                    onclick: createLocation,
                     value: "create location",
                 }),
             ]);

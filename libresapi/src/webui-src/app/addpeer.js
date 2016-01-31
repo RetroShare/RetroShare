@@ -61,7 +61,7 @@ module.exports = {
                 }
             };
             return m("div",[
-                m("h2","add new friend (Step 2/3)"),
+                m("h2","add new friend (Step 3/3)"),
                 m("p","Do you want to add "
                     + m.route.param("name")
                     + " (" + m.route.param("location") + ")"
@@ -79,6 +79,7 @@ module.exports = {
                 }), "Auto download recommended files from this node",
                 m("div.btn2",{
                     onclick: function(){
+                        m.route("/waiting");
                         rs.request("peers",result,function(data, responsetoken){
                             m.route("/peers");
                         })

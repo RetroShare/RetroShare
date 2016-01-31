@@ -40,6 +40,16 @@ module.exports = {  nodes: [
 	    show: false,
 	},
 	{
+	    name: "identities",
+	    runstate: "running_ok.*",
+	    counter: rs.counting("identity/own"),
+	},
+	{
+	    name: "addidentity",
+	    runstate: "running_ok.*",
+	    show: false,
+	},
+	{
 	    name:"searchresult",
 	    path: "/search/:id",
 	    runstate: "running_ok.*",
@@ -51,9 +61,7 @@ module.exports = {  nodes: [
 	{
 		name: "downloads",
 		runstate: "running_ok.*",
-		counter: rs.counting("transfers/downloads", function(data) {
-		    return data.length;
-		})
+		counter: rs.counting("transfers/downloads")
 	},
 	{
 		name: "chat",
@@ -69,6 +77,10 @@ module.exports = {  nodes: [
 				m.redraw();
 			});
 		}
+	},
+	{
+	    name: "waiting",
+	    show: false,
 	},
 ]
 }
