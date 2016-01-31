@@ -41,11 +41,64 @@ protected:
 
 };
 
+class CreateIdentityTask: public GxsResponseTask
+{
+public:
+    CreateIdentityTask(RsIdentity* idservice):
+        GxsResponseTask(idservice, idservice->getTokenService()), mState(BEGIN), mToken(0), mRsIdentity(idservice){}
+private:
+    enum State {BEGIN, WAIT_ACKN, WAIT_ID};
+    State mState;
+    uint32_t mToken;
+    RsIdentity* mRsIdentity;
+    RsGxsId mId;
+protected:
+    virtual void gxsDoWork(Request &req, Response &resp)
+    {
+        switch(mState)
+        {
+        case BEGIN:{
+            RsIdentityParameters params;
+            req.mStream << makeKeyValueReference("name", params.nickname) << makeKeyValueReference("pgp_linked", params.isPgpLinked);
+
+            if(params.nickname == "")
+            {
+                resp.setFail("name can't be empty");
+                done();
+                return;
+            }
+            mRsIdentity->createIdentity(mToken, params);
+            addWaitingToken(mToken);
+            mState = WAIT_ACKN;
+            break;
+        }
+        case WAIT_ACKN:{
+            RsGxsGroupId grpId;
+            if(!mRsIdentity->acknowledgeGrp(mToken, grpId))
+            {
+                resp.setFail("acknowledge of group id failed");
+                done();
+                return;
+            }
+            mId = RsGxsId(grpId);
+            requestGxsId(mId);
+            mState = WAIT_ID;
+            break;
+        }
+        case WAIT_ID:
+            streamGxsId(mId, resp.mDataStream);
+            resp.setOk();
+            done();
+        }
+    }
+};
+
 IdentityHandler::IdentityHandler(RsIdentity *identity):
     mRsIdentity(identity)
 {
     addResourceHandler("*", this, &IdentityHandler::handleWildcard);
     addResourceHandler("own", this, &IdentityHandler::handleOwn);
+    addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
 }
 
 void IdentityHandler::handleWildcard(Request &req, Response &resp)
@@ -132,6 +185,11 @@ ResponseTask* IdentityHandler::handleOwn(Request &req, Response &resp)
     resp.mDataStream.getStreamToMember();
     resp.setWarning("identities not loaded yet");
     return 0;
+}
+
+ResponseTask* IdentityHandler::handleCreateIdentity(Request &req, Response &resp)
+{
+    return new CreateIdentityTask(mRsIdentity);
 }
 
 } // namespace resource_api

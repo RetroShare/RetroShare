@@ -15,5 +15,6 @@ private:
     RsIdentity* mRsIdentity;
     void handleWildcard(Request& req, Response& resp);
     ResponseTask *handleOwn(Request& req, Response& resp);
+    ResponseTask *handleCreateIdentity(Request& req, Response& resp);
 };
 } // namespace resource_api
