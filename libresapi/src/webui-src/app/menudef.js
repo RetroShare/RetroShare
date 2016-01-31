@@ -1,3 +1,4 @@
+rs=require("retroshare");
 module.exports = {  nodes: [
 	{
 		name: "home",
@@ -17,8 +18,7 @@ module.exports = {  nodes: [
 	{
 		name: "peers",
 		runstate: "running_ok.*",
-		counter: "peers",
-		counterfnkt: function(data){
+		counter: rs.counting("peers", function(data){
 		    var onlinecount = 0;
 		    data.map(function(peer) {
 		        var is_online = false;
@@ -32,7 +32,7 @@ module.exports = {  nodes: [
 		        }
 		    });
 		    return onlinecount + "/" + data.length;
-		}
+		})
 	},
 	{
 	    name: "addpeer",
@@ -51,10 +51,9 @@ module.exports = {  nodes: [
 	{
 		name: "downloads",
 		runstate: "running_ok.*",
-		counter: "transfers/downloads",
-		counterfnkt: function(data){
+		counter: rs.counting("transfers/downloads", function(data) {
 		    return data.length;
-		}
+		})
 	},
 	{
 		name: "chat",
@@ -63,7 +62,7 @@ module.exports = {  nodes: [
 	{
 		name: "shutdown",
 		runstate: "running_ok|waiting_account_select",
-		action: function(rs, m){
+		action: function(m){
 			rs.request("control/shutdown",null,function(){
 				rs("control/runstate").runstate=null;
 				rs.forceUpdate("control/runstate");

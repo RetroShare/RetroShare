@@ -17,11 +17,8 @@ function buildmenu(menu, tagname, runstate, ignore){
         && (menu.show === undefined || menu.show)
     )  {
         var name = menu.name;
-        if (menu.counter != undefined && menu.counterfnkt != undefined) {
-            var data=rs(menu.counter);
-            if (data != undefined) {
-                name += " (" + menu.counterfnkt(data) + ")";
-            }
+        if (menu.counter != undefined) {
+            name += menu.counter();
         }
         if (menu.action === undefined) {
             return m(tagname , {
@@ -32,7 +29,7 @@ function buildmenu(menu, tagname, runstate, ignore){
                 }
             }, name);
         } else {
-            return m(tagname, {onclick: function(){menu.action(rs,m)}}, name);
+            return m(tagname, {onclick: function(){menu.action(m)}}, name);
         }
     }
 }

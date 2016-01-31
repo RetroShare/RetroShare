@@ -241,3 +241,13 @@ rs.apiurl = function(path) {
     return api_url + path;
 }
 
+rs.counting = function(path, counterfnkt) {
+    return function () {
+        var data=rs(path);
+        if (data != undefined) {
+            return " (" + counterfnkt(data) + ")";
+        }
+        return "";
+    }
+}
+
