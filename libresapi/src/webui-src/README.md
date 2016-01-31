@@ -48,3 +48,4 @@ should provide forward, backward and follow-list-end
 [ ] make routines to handle retroshare links
 [ ] backend: edit shared folders
 [ ] backend: view shared files
+[ ] redirect if a url is not usable in the current runstate (e.g. redirect from login page to home page, after login)
