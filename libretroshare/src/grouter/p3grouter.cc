@@ -198,7 +198,7 @@
 #include "grouterclientservice.h"
 
 /**********************/
-#define GROUTER_DEBUG
+//#define GROUTER_DEBUG
 /**********************/
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
@@ -916,56 +916,56 @@ void p3GRouter::routePendingObjects()
 
             std::map<RsPeerId,uint32_t> peers_and_duplication_factors ;
 
-//            if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS)
-//                locked_collectAvailableTunnels(it->second.tunnel_hash,it->second.data_item->duplication_factor,peers_and_duplication_factors);
-//
-//            if(!peers_and_duplication_factors.empty())
-//	    {
-//#ifdef GROUTER_DEBUG
-//		std::cerr << "  tunnels available! sending!" << std::endl;
-//#endif
-//		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
-//
-//		    // change item state in waiting list
-//
-//		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
-//		    it->second.data_transaction_TS = now ;
-//
-//		    pending_messages_changed = true ;
-//                    continue ;					// no need to seek for friend asynced routes since tunnels directly go to the final destination!
-//	    }
+            if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS)
+                locked_collectAvailableTunnels(it->second.tunnel_hash,it->second.data_item->duplication_factor,peers_and_duplication_factors);
+
+            if(!peers_and_duplication_factors.empty())
+	    {
+#ifdef GROUTER_DEBUG
+		std::cerr << "  tunnels available! sending!" << std::endl;
+#endif
+		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
+
+		    // change item state in waiting list
+
+		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
+		    it->second.data_transaction_TS = now ;
+
+		    pending_messages_changed = true ;
+                    continue ;					// no need to seek for friend asynced routes since tunnels directly go to the final destination!
+	    }
             
             if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_FRIENDS)
                 locked_collectAvailableFriends(it->second.data_item->destination_key,it->second.incoming_routes.ids,it->second.data_item->duplication_factor,peers_and_duplication_factors);
 
-//            if(!peers_and_duplication_factors.empty())
-//	    {
-//#ifdef GROUTER_DEBUG
-//		std::cerr << "  friends available! sending!" << std::endl;
-//#endif
-//		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
-//
-//		    // change item state in waiting list
-//
-//		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
-//		    it->second.data_transaction_TS = now ;
-//
-//		    pending_messages_changed = true ;
-//	    }
-//            else
-//            {
-//#ifdef GROUTER_DEBUG
-//                std::cerr << "  no direct friends available" << std::endl;
-//#endif
-//
-//                if(it->second.received_time_TS + DIRECT_FRIEND_TRY_DELAY < now && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS))
-//                {
-//#ifdef GROUTER_DEBUG
-//                    std::cerr << "  enabling tunnels for this message." << std::endl;
-//#endif
-//                    it->second.routing_flags |= GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS ;
-//                }
-//            }
+            if(!peers_and_duplication_factors.empty())
+	    {
+#ifdef GROUTER_DEBUG
+		std::cerr << "  friends available! sending!" << std::endl;
+#endif
+		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
+
+		    // change item state in waiting list
+
+		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
+		    it->second.data_transaction_TS = now ;
+
+		    pending_messages_changed = true ;
+	    }
+            else
+            {
+#ifdef GROUTER_DEBUG
+                std::cerr << "  no direct friends available" << std::endl;
+#endif
+
+                if(it->second.received_time_TS + DIRECT_FRIEND_TRY_DELAY < now && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS))
+                {
+#ifdef GROUTER_DEBUG
+                    std::cerr << "  enabling tunnels for this message." << std::endl;
+#endif
+                    it->second.routing_flags |= GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS ;
+                }
+            }
 
         }
         else if(it->second.data_status == RS_GROUTER_DATA_STATUS_ONGOING && now > MAX_TRANSACTION_ACK_WAITING_TIME + it->second.data_transaction_TS)
