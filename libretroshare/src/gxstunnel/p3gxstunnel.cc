@@ -101,7 +101,6 @@ bool p3GxsTunnelService::registerClientService(uint32_t service_id,RsGxsTunnelSe
 
 int p3GxsTunnelService::tick()
 {
-    static time_t last_dump = 0 ;
     
 #ifdef DEBUG_GXS_TUNNEL    
     time_t now = time(NULL);
