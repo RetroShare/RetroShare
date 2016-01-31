@@ -23,7 +23,8 @@ function Page(menu){
     this.path = menu.path != undefined ? menu.path : ("/" + menu.name);
 
     var runst = menu.runstate;
-    var content = require(module);
+    var content = require(this.module);
+    var mm = require("menu");
 
     this.view = function(){
         var runstate = rs("control/runstate");
@@ -62,7 +63,7 @@ function Page(menu){
             } else if("waiting_account_select|running_ok.*".match(runstate.runstate)) {
                 if (runst === undefined || runst.match(runstate.runstate)) {
                     return m("div", [
-                        m("div", menu.view()),
+                        m("div", mm.view()),
         	            m("hr"),
                         m("div", content)
                     ]);
@@ -70,7 +71,7 @@ function Page(menu){
                     // funktion currently not available
                     m.route("/");
                     return m("div", [
-                        m("div", menu.view()),
+                        m("div", mm.view()),
         	            m("hr"),
                         m("div", require("home").view())
                     ]);
