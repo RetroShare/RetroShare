@@ -18,6 +18,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
+ *
+ *  ccr . 2016 Jan 26
+ *
+ *  Play sound on incoming messages.
+ *
  ****************************************************************/
 
 #include <unistd.h>
@@ -42,6 +47,7 @@
 #include "gui/gxs/GxsIdChooser.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
+#include "gui/SoundManager.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -400,7 +406,8 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
             name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
 
         ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-		emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
+        emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
+        SoundManager::play(SOUND_NEW_LOBBY_MESSAGE);
 
         // This is a trick to translate HTML into text.
         QTextEdit editor;

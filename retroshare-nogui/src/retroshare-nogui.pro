@@ -72,6 +72,14 @@ win32 {
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 	LIBS += -lcrypto -lws2_32 -lgdi32

@@ -85,6 +85,7 @@ void SoundManager::soundEvents(SoundEvents &events)
 	events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 	events.addEvent(tr("Message"), tr("Message arrived"), SOUND_MESSAGE_ARRIVED, QFileInfo(baseDir, "receive.wav").absoluteFilePath());
 	events.addEvent(tr("Download"), tr("Download complete"), SOUND_DOWNLOAD_COMPLETE, QFileInfo(baseDir, "ft_complete.wav").absoluteFilePath());
+    events.addEvent(tr("Lobby"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 
 	/* add plugin events */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -243,9 +244,9 @@ void SoundManager::playFile(const QString &filename)
         bool played = false ;
     
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-	if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) 
+    if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty())
 #else
-	if (QSound::isAvailable()) 
+    if (QSound::isAvailable())
 #endif
         {
         QSound::play(playFilename);

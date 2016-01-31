@@ -186,6 +186,7 @@ private slots:
 	bool fileSaveAs();
 
 	void quote();
+	void dropPlacemark();
 	void saveImage();
 
 private:

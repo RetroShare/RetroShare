@@ -354,7 +354,6 @@ int     p3MsgService::checkOutgoingMessages()
 	 * if online, send
 	 */
 
-    time_t now = time(NULL);
     bool changed = false ;
     std::list<RsMsgItem*> output_queue ;
 

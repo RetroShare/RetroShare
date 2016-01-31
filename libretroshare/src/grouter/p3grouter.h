@@ -272,8 +272,9 @@ private:
     //bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
     bool locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& item);
 
-    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, const std::set<RsPeerId>& incoming_routes,bool is_origin);
-    void locked_collectAvailableTunnels(const TurtleFileHash& hash,std::list<RsPeerId>& tunnel_peers);
+    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id, const std::set<RsPeerId>& incoming_routes,uint32_t duplication_factor, std::map<RsPeerId, uint32_t> &friend_peers_and_duplication_factors);
+    void locked_collectAvailableTunnels(const TurtleFileHash& hash, uint32_t total_duplication, std::map<RsPeerId, uint32_t> &tunnel_peers_and_duplication_factors);
+    void locked_sendToPeers(RsGRouterGenericDataItem *data_item, const std::map<RsPeerId, uint32_t> &peers_and_duplication_factors);
 
     //===================================================//
     //                  p3Config methods                 //

@@ -203,7 +203,7 @@ void GRouterMatrix::debugDump() const
         	std::cerr << "        " << it->first << ": from " << it->second.friend_id << " " << now - it->second.time_stamp << " secs ago." << std::endl;
 }
 
-bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const
+bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas, float& maximum) const
 {
 	// Routing probabilities are computed according to routing clues
 	//
@@ -239,6 +239,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		return  false ;
 	}
 	const std::vector<float>& w(it2->second) ;
+    	maximum = 0.0f ;
 	
 	for(uint32_t i=0;i<friends.size();++i)
 	{
@@ -250,6 +251,9 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		{
 			probas[i] = w[findex] ;
 			total += w[findex] ;
+            
+            		if(maximum < w[findex])
+                        	maximum = w[findex] ;
 		}
 	}
 
