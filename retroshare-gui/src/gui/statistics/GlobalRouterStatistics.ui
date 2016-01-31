@@ -35,7 +35,7 @@
          <x>0</x>
          <y>0</y>
          <width>593</width>
-         <height>159</height>
+         <height>156</height>
         </rect>
        </property>
       </widget>
@@ -99,6 +99,11 @@
         <column>
          <property name="text">
           <string>Send</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Branching factor</string>
          </property>
         </column>
        </widget>

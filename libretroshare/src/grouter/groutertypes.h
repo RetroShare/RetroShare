@@ -44,6 +44,8 @@ static const uint32_t RS_GROUTER_MAX_KEEP_TRACKING_CLUES      =  86400*10 ; // m
 
 static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG          = 1.0f ;	// base contribution of routed message clue to routing matrix
 static const float RS_GROUTER_BASE_WEIGHT_GXS_PACKET          = 0.1f ;	// base contribution of GXS message to routing matrix
+static const float RS_GROUTER_PROBABILITY_THRESHOLD_FOR_RANDOM_ROUTING = 0.01f ;	// routing probability under which the routage is performed randomly
+static const float RS_GROUTER_PROBABILITY_THRESHOLD_BEST_PEERS_SELECT  = 0.5f ;	// min ratio of forward proba with respect to best peer.
 
 static const uint32_t MAX_TUNNEL_WAIT_TIME                 = 60          ; // wait for 60 seconds at most for a tunnel response.
 static const uint32_t MAX_TUNNEL_UNMANAGED_TIME            = 600         ; // min time before retry tunnels for that msg.
@@ -54,6 +56,8 @@ static const uint32_t MAX_GROUTER_DATA_SIZE                = 2*1024*1024 ; // 2M
 static const uint32_t MAX_TRANSACTION_ACK_WAITING_TIME     = 60          ; // wait for at most 60 secs for a ACK. If not restart the transaction.
 static const uint32_t DIRECT_FRIEND_TRY_DELAY              = 20          ; // wait for 20 secs if no friends available, then try tunnels.
 static const uint32_t MAX_INACTIVE_DATA_PIPE_DELAY         = 300         ; // clean inactive data pipes for more than 5 mins
+static const uint32_t GROUTER_MAX_DUPLICATION_FACTOR       = 10          ; // max number of duplicates for a given message to keep in the network
+static const uint32_t GROUTER_MAX_BRANCHING_FACTOR         = 3           ; // max number of branches, for locally forwarding items
 
 static const time_t   RS_GROUTER_DEBUG_OUTPUT_PERIOD       =      10 ; // Output everything
 static const time_t   RS_GROUTER_AUTOWASH_PERIOD           =      10 ; // Autowash every minute. Not a costly operation.
