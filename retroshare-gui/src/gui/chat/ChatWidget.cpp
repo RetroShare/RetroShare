@@ -59,6 +59,7 @@
 #include <retroshare/rshistory.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
+#include <rsserver/p3face.h>
 
 #include <time.h>
 
@@ -1410,6 +1411,7 @@ void ChatWidget::clearChatHistory()
 	if (chatType() == CHATTYPE_LOBBY) {
 		if (notify) notify->chatLobbyCleared(chatId.toLobbyId(),"");
 	}
+	RsServer::notify()->notifyChatCleared(chatId);
 }
 
 void ChatWidget::deleteChatHistory()
