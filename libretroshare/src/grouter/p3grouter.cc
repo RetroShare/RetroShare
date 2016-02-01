@@ -191,6 +191,7 @@
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsreputations.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -1170,8 +1171,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
     for(uint32_t i=0;i<tmp_peers.size();++i)
         std::cerr << "    " << tmp_peers[i] << ", probability: " << probas[i] << std::endl;
 #endif
-    float probability_threshold = RS_GROUTER_PROBABILITY_THRESHOLD_FOR_RANDOM_ROUTING ;
-
     std::vector<std::pair<float,RsPeerId> > mypairs ;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
@@ -1184,7 +1183,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
     uint32_t n=0 ;
     
     float duplication_factor_delta =0.0;
-    uint32_t duplication_factor_buff =duplication_factor ;
 
     for(int i=mypairs.size()-1;i>=0 && n<max_count;--i)
     {
@@ -1294,8 +1292,7 @@ void p3GRouter::autoWash()
         RS_STACK_MUTEX(grMtx) ;
 
         for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();)
-            if( (it->second.data_status == RS_GROUTER_DATA_STATUS_DONE &&
-                (!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
+            if( (it->second.data_status == RS_GROUTER_DATA_STATUS_DONE && (!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
                     || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now))
             || ((it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
                                 && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN)
@@ -1490,7 +1487,6 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
     // in the proxy case, we should only store the receipt.
 
     GRouterClientService *client_service = NULL;
-    GRouterServiceId service_id ;
     GRouterMsgPropagationId mid = 0 ;
 
     {
@@ -1953,7 +1949,11 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 {
     try
     {
-        RsTlvSecurityKey signature_key ;
+        if(rsReputations->isIdentityBanned(item->signature.keyId))
+        {
+            std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
+            return false ;
+        }
 
         uint32_t data_size = item->signed_data_size() ;
           RsTemporaryMemory data(data_size) ;
@@ -1966,12 +1966,20 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 
 
         uint32_t error_status ;
-
+        
         if(!mGixs->validateData(data,data_size,item->signature,true,error_status))
         {
             switch(error_status)
             {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify." << std::endl;
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: 
+                		{
+                			std::list<RsPeerId> peer_ids ;
+                            		peer_ids.push_back(item->PeerId()) ;
+                                    	
+                			std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify. Asking key to peer " << item->PeerId() << std::endl;
+                                    
+                			mGixs->requestKey(item->signature.keyId,peer_ids) ;   // request the key around
+            			}
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/Corrupted/MITM?." << std::endl;
                                         break ;

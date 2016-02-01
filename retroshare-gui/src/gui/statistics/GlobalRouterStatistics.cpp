@@ -54,7 +54,7 @@
 #define COL_SEND                8
 #define COL_DUPLICATION_FACTOR  9
 
-static const int PARTIAL_VIEW_SIZE           = 5 ;
+static const int PARTIAL_VIEW_SIZE           = 9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 static QColor colorScale(float f)
@@ -350,7 +350,6 @@ void GlobalRouterStatisticsWidget::updateContent()
 		//if(!is_null)
 		//{
 		ids = QString::fromStdString(it->first.toStdString())+" : " ;
-		mMaxWheelZoneX = ox+2*cellx + fm_monospace.width(ids);
 		painter.drawText(ox+2*cellx,oy+celly,ids) ;
 
 		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
@@ -368,10 +367,13 @@ void GlobalRouterStatisticsWidget::updateContent()
 		//}
 
 	}
+    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + fm_monospace.width(ids);
     
     RsIdentityDetails iddetails ;
     if(rsIdentity->getIdDetails(current_id,iddetails))
         painter.drawText(current_width+cellx, current_oy+celly, QString::fromUtf8(iddetails.mNickname.c_str())) ;
+    else
+        painter.drawText(current_width+cellx, current_oy+celly, tr("[Unknown identity]")) ;
         
     mMaxWheelZoneY = oy+celly ;
     
@@ -415,10 +417,10 @@ void GlobalRouterStatisticsWidget::wheelEvent(QWheelEvent *e)
         return ;
     }
     
-    if(e->delta() > 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
+    if(e->delta() < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
 	    mCurrentN++ ;
     
-    if(e->delta() < 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
+    if(e->delta() > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
 	    mCurrentN-- ;
     
     updateContent();

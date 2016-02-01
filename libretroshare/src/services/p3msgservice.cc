@@ -2032,6 +2032,7 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
         RS_STACK_MUTEX(mMsgMtx) ;
         _ongoing_messages[grouter_message_id] = msgitem->msgId ;
     }
+    IndicateConfigChanged();	// save _ongoing_messages
 }
 
 
