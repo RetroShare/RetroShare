@@ -1137,7 +1137,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 #endif
     
     // remove incoming peers and peers for which the proba is less than half the maximum proba
-    float total_probas = 0.0f ;
     uint32_t count=0;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
@@ -1150,8 +1149,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 		    tmp_peers[count] = tmp_peers[i] ;
 		    probas[count] = (max_probability==0.0)? (0.5+0.001*RSRandom::random_f32()) : probas[i] ;
             		++count ;
-            
-            		total_probas+=probas[i] ;
             }
     
     tmp_peers.resize(count) ;
@@ -1174,17 +1171,29 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
     std::vector<std::pair<float,RsPeerId> > mypairs ;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
-        mypairs.push_back(std::make_pair(probas[i]/total_probas,tmp_peers[i])) ;
+        mypairs.push_back(std::make_pair(probas[i],tmp_peers[i])) ;
 
     // now sort them up
     std::sort(mypairs.begin(),mypairs.end(),item_comparator_001()) ;
 
-    uint32_t max_count = std::min(std::min((uint32_t)mypairs.size(),(uint32_t)GROUTER_MAX_BRANCHING_FACTOR),duplication_factor);
-    uint32_t n=0 ;
+    int max_count = std::min(std::min((uint32_t)mypairs.size(),(uint32_t)GROUTER_MAX_BRANCHING_FACTOR),duplication_factor);
     
+    // normalise the probabilities
+#ifdef GROUTER_DEBUG
+    std::cerr << "  Normalising probabilities..." << std::endl;
+#endif
+
+    float total_probas = 0.0f ;
+
+    if(mypairs.size() > 0 && max_count > 0)
+    {
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) total_probas += mypairs[i].first ;
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) mypairs[i].first /= total_probas ;
+    }
+
     float duplication_factor_delta =0.0;
 
-    for(int i=mypairs.size()-1;i>=0 && n<max_count;--i)
+    for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n)
     {
         float ideal_dupl = duplication_factor*mypairs[i].first - duplication_factor_delta ;	// correct what was taken in advance
         
@@ -1194,7 +1203,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
         std::cerr << "    Peer " << mypairs[i].second << " prob=" << mypairs[i].first << ", ideal_dupl=" << ideal_dupl << ", real=" << real_dupl << ". Delta = " << duplication_factor_delta << std::endl;
         
 	friend_peers_and_duplication_factors[ mypairs[i].second ] = real_dupl ;	// should be updated correctly
-	++n ;
     }
 }
 
