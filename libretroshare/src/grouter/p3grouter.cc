@@ -1286,18 +1286,30 @@ void p3GRouter::autoWash()
     bool items_deleted = false ;
     time_t now = time(NULL) ;
 
-    std::map<GRouterMsgPropagationId,GRouterClientService *> failed_msgs ;
+    std::map<GRouterMsgPropagationId,std::pair<GRouterClientService *,RsGxsId> > failed_msgs ;
 
     {
         RS_STACK_MUTEX(grMtx) ;
 
         for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();)
-            if( (it->second.data_status == RS_GROUTER_DATA_STATUS_DONE && (!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-                    || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now))
-            || ((it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
-                                && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN)
-                    && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-            ))	// is the item too old for cache
+        {
+            bool delete_entry = false ;
+            
+            if(it->second.data_status == RS_GROUTER_DATA_STATUS_DONE )
+            {
+                if(!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION) || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now)	// is the item too old for cache
+			delete_entry = true ;
+            }
+            else if(it->second.data_status == RS_GROUTER_DATA_STATUS_RECEIPT_OK )
+            {
+                if(it->second.received_time_TS + MAX_RECEIPT_KEEP_TIME < now)	// is the item too old for cache
+                    delete_entry = true ;
+            }
+            else
+                if(it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
+                    delete_entry = true ;
+                    
+            if(delete_entry)
             {
 #ifdef GROUTER_DEBUG
                 grouter_debug() << "  Removing cached item " << std::hex << it->first << std::dec << std::endl;
@@ -1310,7 +1322,7 @@ void p3GRouter::autoWash()
                     GRouterClientService *client = NULL;
                     
 			if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client))
-				failed_msgs[it->first] = client ;
+				failed_msgs[it->first] = std::make_pair(client,it->second.data_item->signature.keyId) ;
 			else
 				std::cerr << "  ERROR: client id " << it->second.client_id << " not registered. Consistency error." << std::endl;
 		}
@@ -1329,6 +1341,7 @@ void p3GRouter::autoWash()
             }
             else
                 ++it ;
+        }
 
         // also check all existing tunnels
 
@@ -1368,12 +1381,12 @@ void p3GRouter::autoWash()
     }
     // Look into pending items.
 
-    for(std::map<GRouterMsgPropagationId,GRouterClientService*>::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
+    for(std::map<GRouterMsgPropagationId,std::pair<GRouterClientService*,RsGxsId> >::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
     {
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client for message id " << std::hex << it->first << " state = FAILED" << std::endl;
 #endif
-        it->second->notifyDataStatus(it->first ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
+        it->second.first->notifyDataStatus(it->first,it->second.second ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
     }
 
     if(items_deleted)
@@ -1481,6 +1494,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
     std::cerr << "Item content:" << std::endl;
     receipt_item->print(std::cerr,2) ;
 #endif
+    RsGxsId signer_id ;
 
     // Because we don't do proxy-transmission yet, the client needs to be notified. Otherwise, we will need to
     // first check if we're a proxy or not. We also remove the message from the global router sending list.
@@ -1498,6 +1512,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
             std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
             return ;
         }
+        signer_id = it->second.data_item->signature.keyId ;
 
         // check hash.
 
@@ -1554,7 +1569,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client " << (void*)client_service << " that msg " << std::hex << mid << std::dec << " was received." << std::endl;
 #endif
-        client_service->notifyDataStatus(mid, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
+        client_service->notifyDataStatus(mid, signer_id, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
     }
 
     // also note the incoming route in the routing matrix

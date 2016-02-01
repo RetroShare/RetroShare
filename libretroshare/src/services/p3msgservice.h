@@ -142,7 +142,7 @@ private:
 
     virtual bool acceptDataFromPeer(const RsGxsId& gxs_id) ;
     virtual void receiveGRouterData(const RsGxsId& destination_key,const RsGxsId& signing_key, GRouterServiceId &client_id, uint8_t *data, uint32_t data_size) ;
-    virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,uint32_t data_status) ;
+    virtual void notifyDataStatus(const GRouterMsgPropagationId& msg_id,const RsGxsId& signer_id,uint32_t data_status) ;
 
     // Utility functions
 
