@@ -2367,7 +2367,8 @@ void RsGenExchange::publishGrps()
 						else
                             mDataAccess->addGroupData(grp);
 
-                        mNetService->subscribeStatusChanged(grpId,true) ;
+                        if(mNetService!=NULL)
+                mNetService->subscribeStatusChanged(grpId,true) ;
 					}
 					else
 					{
