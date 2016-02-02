@@ -2365,7 +2365,9 @@ void RsGenExchange::publishGrps()
 						if(ggps.mIsUpdate)
 							mDataAccess->updateGroupData(grp);
 						else
-							mDataAccess->addGroupData(grp);
+                            mDataAccess->addGroupData(grp);
+
+                        mNetService->subscribeStatusChanged(grpId,true) ;
 					}
 					else
 					{
