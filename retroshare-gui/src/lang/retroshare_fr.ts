@@ -2626,7 +2626,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
     </message>
     <message>
         <source>Enter the certificate manually</source>
-        <translation type="unfinished"></translation>
+        <translation>Echanger manuellement des certificats</translation>
     </message>
     <message>
         <source>Enter RetroShare ID manually</source>
@@ -2634,7 +2634,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Web Mail Providers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Invitation par Web Mail</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Email 
@@ -2643,19 +2643,19 @@ contact même si vous n&apos;êtes pas amis.</translation>
     </message>
     <message>
         <source>Recommend many friends to each other</source>
-        <translation type="unfinished"></translation>
+        <translation>Recommender des noeud voisins entre eux</translation>
     </message>
     <message>
         <source>The text below is your Retroshare certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Ceci est votre certificat Retroshare. Vous devez fournir celui de votre futur ami</translation>
     </message>
     <message>
         <source>Please, paste your friend&apos;s Retroshare certificate into the box below</source>
-        <translation type="unfinished"></translation>
+        <translation>Collez ici le certificat de votre futur ami</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend&apos;s Retroshare certificate. WARNING: this is different from your friend&apos;s PGP key. Do not paste your friend&apos;s PGP key here (not even a part of it). It&apos;s not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cet emplacement attend un certificat Retroshare. ATTENTION: ce n&apos;est pas la même chose qu&apos;une clé PGP. N&apos;essayez pas d&apos;introduire une clé PGP ou une partie d&quot;une clé PGP ici: cela ne marchera pas.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>RetroShare is better with Friends </source>
@@ -2663,7 +2663,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
     </message>
     <message>
         <source>Invite your Friends from other Networks to RetroShare.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">QS</translation>
     </message>
     <message>
         <source>GMail</source>
@@ -2696,15 +2696,15 @@ contact même si vous n&apos;êtes pas amis.</translation>
     <message>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add too many friends. You can add as many friends as you like, but more than 40 will probably require too much 
 resources.</source>
-        <translation type="unfinished"></translation>
+        <translation>Notew bien que Retroshare va consommer d&apos;autant plus de bande passante et de CPU que vous aurez d&apos;amis. Sur une connexion ADSL avoir plus de 30-40 amis risque de laisser trop peu de bande passante pour chacun d&apos;entre eux</translation>
     </message>
     <message>
         <source>IP-Addr:</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse IP</translation>
     </message>
     <message>
         <source>IP-Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse IP</translation>
     </message>
 </context>
 <context>
