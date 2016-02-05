@@ -57,7 +57,7 @@ retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
   8296fa9 csoler      Sat, 16 Jan 2016 11:30:15 -0500 added checkbox to toggle logscale in statistics
   63b88ec defnax      Sat, 16 Jan 2016 14:50:12 +0100 correct sorting for "Reputation" in People, patch by Eugene Tooms
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 01 Fev 2016 20:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 01 Feb 2016 20:00:00 +0100
 
 retroshare06 (0.6.0-1.20160115.a34f66aa~trusty) trusty; urgency=low
 
