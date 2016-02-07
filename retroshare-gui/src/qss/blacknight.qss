@@ -273,4 +273,22 @@ QTextEdit {
 	color: white;
 }
 
-
+/* OpModeStatus need to be at end to overload other values*/
+OpModeStatus {
+	qproperty-opMode_Full_Color: #007000;
+	qproperty-opMode_NoTurtle_Color: #000070;
+	qproperty-opMode_Gaming_Color: #707000;
+	qproperty-opMode_Minimal_Color: #700000;
+}
+OpModeStatus[opMode="Full"] {
+	background: #007000;
+}
+OpModeStatus[opMode="NoTurtle"] {
+	background: #000070;
+}
+OpModeStatus[opMode="Gaming"] {
+	background: #707000;
+}
+OpModeStatus[opMode="Minimal"] {
+	background: #700000;
+}
