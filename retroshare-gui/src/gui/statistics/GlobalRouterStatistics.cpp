@@ -43,17 +43,18 @@
 #include "util/QtVersion.h"
 #include "util/misc.h"
 
-#define COL_ID            0
-#define COL_NICKNAME      1
-#define COL_DESTINATION   2
-#define COL_DATASTATUS    3
-#define COL_TUNNELSTATUS  4
-#define COL_DATASIZE      5
-#define COL_DATAHASH      6
-#define COL_RECEIVED      7
-#define COL_SEND          8
+#define COL_ID                  0
+#define COL_NICKNAME            1
+#define COL_DESTINATION         2
+#define COL_DATASTATUS          3
+#define COL_TUNNELSTATUS        4
+#define COL_DATASIZE            5
+#define COL_DATAHASH            6
+#define COL_RECEIVED            7
+#define COL_SEND                8
+#define COL_DUPLICATION_FACTOR  9
 
-static const int PARTIAL_VIEW_SIZE           = 5 ;
+static const int PARTIAL_VIEW_SIZE           = 9 ;
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
 static QColor colorScale(float f)
@@ -187,6 +188,7 @@ void GlobalRouterStatistics::updateContent()
         item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
         item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
         item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
+        item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
     }
 }
 
@@ -333,6 +335,9 @@ void GlobalRouterStatisticsWidget::updateContent()
     mMinWheelZoneX = ox+2*cellx ;
     mMinWheelZoneY = oy ;
     
+    RsGxsId current_id ;
+    float current_width=0 ;
+    
     for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it,++n)
         if(n >= mCurrentN-PARTIAL_VIEW_SIZE/2 && n <= mCurrentN+PARTIAL_VIEW_SIZE/2)
 	{
@@ -345,7 +350,6 @@ void GlobalRouterStatisticsWidget::updateContent()
 		//if(!is_null)
 		//{
 		ids = QString::fromStdString(it->first.toStdString())+" : " ;
-		mMaxWheelZoneX = ox+2*cellx + fm_monospace.width(ids);
 		painter.drawText(ox+2*cellx,oy+celly,ids) ;
 
 		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
@@ -355,12 +359,22 @@ void GlobalRouterStatisticsWidget::updateContent()
 		{
 			current_probs = it->second ;
 			current_oy = oy ;
+            		current_id = it->first ;
+                    	current_width = ox+matrix_info.friend_ids.size()*cellx+fm_monospace.width(ids);
 		}
 
 		oy += celly ;
 		//}
 
 	}
+    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + fm_monospace.width(ids);
+    
+    RsIdentityDetails iddetails ;
+    if(rsIdentity->getIdDetails(current_id,iddetails))
+        painter.drawText(current_width+cellx, current_oy+celly, QString::fromUtf8(iddetails.mNickname.c_str())) ;
+    else
+        painter.drawText(current_width+cellx, current_oy+celly, tr("[Unknown identity]")) ;
+        
     mMaxWheelZoneY = oy+celly ;
     
     painter.setPen(QColor::fromRgb(0,0,0)) ;
@@ -382,7 +396,7 @@ void GlobalRouterStatisticsWidget::updateContent()
         
         painter.drawLine(x1,y1,x1,y2);
         painter.drawLine(x1,y2,x1 + total_length - i*cellx,y2) ;
-	painter.drawText(cellx+ x1 + total_length - i*cellx,y2+(0.35)*celly, QString::fromUtf8(peer_ssl_details.name.c_str()) + " ("+QString::number(current_probs[i])+")");
+	painter.drawText(cellx+ x1 + total_length - i*cellx,y2+(0.35)*celly, QString::fromUtf8(peer_ssl_details.name.c_str()) + " - " + QString::fromUtf8(peer_ssl_details.location.c_str()) + " ("+QString::number(current_probs[i])+")");
     }
     oy += celly * (2+matrix_info.friend_ids.size());
 
@@ -403,10 +417,10 @@ void GlobalRouterStatisticsWidget::wheelEvent(QWheelEvent *e)
         return ;
     }
     
-    if(e->delta() > 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
+    if(e->delta() < 0 && mCurrentN+PARTIAL_VIEW_SIZE/2+1 < mNumberOfKnownKeys)
 	    mCurrentN++ ;
     
-    if(e->delta() < 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
+    if(e->delta() > 0 && mCurrentN > PARTIAL_VIEW_SIZE/2+1)
 	    mCurrentN-- ;
     
     updateContent();

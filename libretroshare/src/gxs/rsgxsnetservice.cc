@@ -231,8 +231,8 @@
 #define TRANSAC_TIMEOUT                                   2000  // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
 #define SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE           3600  // force re-update if there happens to be a large delay between our server side TS and the client side TS of friends
 #define REJECTED_MESSAGE_RETRY_DELAY                   24*3600  // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
-#define GROUP_STATS_UPDATE_DELAY                          1800  // update unsubscribed group statistics every 30 mins
-#define GROUP_STATS_UPDATE_NB_PEERS                          2  // update unsubscribed group statistics every 30 mins
+#define GROUP_STATS_UPDATE_DELAY                           240  // update unsubscribed group statistics every 3 mins
+#define GROUP_STATS_UPDATE_NB_PEERS                          2  // number of peers to which the group stats are asked
 #define MAX_ALLOWED_GXS_MESSAGE_SIZE                    199000  // 200,000 bytes including signature and headers
 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
@@ -1400,31 +1400,33 @@ private:
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
+    RS_STACK_MUTEX(mNxsMutex) ;
 
-    	// The delete is done in StoreHere, if necessary
+    // The delete is done in StoreHere, if necessary
+
+    std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
+
+    // We reset group statistics here. This is the best place since we know at this point which are all unsubscribed groups.
     
-	std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mGrpServerUpdateItem));
-        time_t now = time(NULL);
-        
-	for(ClientMsgMap::iterator it = mClientMsgUpdateMap.begin();it!=mClientMsgUpdateMap.end();++it)
-		for(std::map<RsGxsGroupId,RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator it2(it->second->msgUpdateInfos.begin());it2!=it->second->msgUpdateInfos.end();++it2)
-		{
-			RsGroupNetworkStatsRecord& gnsr = mGroupNetworkStats[it2->first] ;
+    time_t now = time(NULL);
+    
+    for(std::map<RsGxsGroupId,RsGroupNetworkStatsRecord>::iterator it(mGroupNetworkStats.begin());it!=mGroupNetworkStats.end();++it)
+    {
+		    // At each reload, we reset the count of visible messages. It will be rapidely restored to its real value from friends.
 
-			// At each reload, divide the last count by 2. This gradually flushes old information away.
+		    it->second.max_visible_count = 0; // std::max(it2->second.message_count,gnsr.max_visible_count) ;
+            
+            	    // the update time stamp is randomised so as not to ask all friends at once about group statistics.
+            
+		    it->second.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
 
-			gnsr.max_visible_count = std::max(it2->second.message_count,gnsr.max_visible_count/2) ;
-			gnsr.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
+		    // Similarly, we remove all suppliers. 
+		    // Actual suppliers will come back automatically.  
 
-			// Similarly, we remove some of the suppliers randomly. If they are
-			// actual suppliers, they will come back automatically.  If they are
-			// not, they will be forgotten.
+		    it->second.suppliers.clear() ;
+    }
 
-			if(RSRandom::random_f32() > 0.2)
-				gnsr.suppliers.insert(it->first) ;
-		}
-	return true;
+    return true;
 }
 
 #include <algorithm>
@@ -3736,12 +3738,19 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
 }
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
-	if (!item)
-		return;
+    if (!item)
+	    return;
 
-	RS_STACK_MUTEX(mNxsMutex) ;
+    RS_STACK_MUTEX(mNxsMutex) ;
 
     const RsPeerId& peer = item->PeerId();
+
+    // Insert the PeerId in suppliers list for this grpId
+#ifdef NXS_NET_DEBUG_6
+    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "RsGxsNetService::handleRecvSyncMessage(): Inserting PeerId " << item->PeerId() << " in suppliers list for group " << item->grpId << std::endl;
+#endif
+    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[item->grpId]) ;	// this creates it if needed
+    rec.suppliers.insert(peer) ;
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "handleRecvSyncMsg(): Received last update TS of group " << item->grpId << ", for peer " << peer << ", TS = " << time(NULL) - item->updateTS << " secs ago." ;

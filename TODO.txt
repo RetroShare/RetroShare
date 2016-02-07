@@ -55,6 +55,8 @@ GXS
 VOIP
      H  [ ] use proper video encoding. What we have now is decent for video, but sound should be prioritized. Experiments 
             with QtAV seem to work nicely. Finish and integrate!
+     M  [ ] Implement Voice for Video Chat
+     M  [ ] Improve Voice and Video Quality    
      M  [ ] Video Quality/Resolution Settings (High, Medium, Low) HD, HQ, SD )
      M  [ ] Video Device: WebCam(s) or Desktop Selection
      M  [ ] Audio Input Device Selection (Microphone)

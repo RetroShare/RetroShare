@@ -133,7 +133,7 @@ class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRoute
         uint32_t data_size ;
         uint8_t *data_bytes;
 
-        uint32_t randomized_distance ;	// number of hops (tunnel wise. Does not preclude of the real distance)
+        uint32_t duplication_factor ;	// number of duplicates allowed. Should be capped at each de-serialise operation!
 
     // utility methods for signing data
     virtual uint32_t signed_data_size() const ;

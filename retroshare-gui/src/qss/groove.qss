@@ -65,4 +65,3 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
 
 }
 
-Q

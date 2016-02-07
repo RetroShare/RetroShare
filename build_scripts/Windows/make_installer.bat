@@ -33,14 +33,7 @@ if errorlevel 1 goto exit
 
 if "%Revision%"=="" (
 	echo.
-	echo Version not found in
-	echo %VersionFile%
-	goto exit
-)
-if "%BuildAdd%"=="" (
-	echo.
-	echo Version not found in
-	echo %VersionFile%
+	echo Version not found
 	goto exit
 )
 

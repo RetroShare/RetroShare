@@ -508,7 +508,7 @@
     <message>
         <location filename="../gui/VOIPChatWidgetHolder.cpp" line="+63"/>
         <source>Mute</source>
-        <translation type="unfinished"/>
+        <translation>Muto</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -518,7 +518,7 @@
     <message>
         <location line="+28"/>
         <source>Start Video Call</source>
-        <translation type="unfinished"/>
+        <translation>Inizia una Video Chiamata</translation>
     </message>
     <message>
         <location line="-14"/>
@@ -548,7 +548,7 @@
     <message>
         <location line="-198"/>
         <source>Outgoing Call stopped.</source>
-        <translation type="unfinished"/>
+        <translation>Chiamata in uscita terminata.</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -568,48 +568,48 @@
     <message>
         <location line="+20"/>
         <source>Shut camera off</source>
-        <translation type="unfinished"/>
+        <translation>Spegni webcam/videocamera</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>You&apos;re now sending video...</source>
-        <translation type="unfinished"/>
+        <translation>Invio video in corso...</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+21"/>
         <source>Activate camera</source>
-        <translation type="unfinished"/>
+        <translation>Attiva webcam/videocamera</translation>
     </message>
     <message>
         <location line="-15"/>
         <source>Video call stopped</source>
-        <translation type="unfinished"/>
+        <translation>Video chiamata terminata</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
+        <translation>%1 vuole iniziare una conversazione video con te. Accetti o Rifiuti l&apos;invito?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Accept Video Call</source>
-        <translation type="unfinished"/>
+        <translation>Accetta Video Chiamata</translation>
     </message>
     <message>
         <location line="+91"/>
         <source>%1 inviting you to start a audio conversation. do you want Accept or Decline the invitation?</source>
-        <translation type="unfinished"/>
+        <translation>%1 vuole iniziare una conversazione audio con te. Accetti o Rifiuti l&apos;invito?</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Accept Call</source>
-        <translation type="unfinished"/>
+        <translation>Accetta Chiamata</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Activate audio</source>
-        <translation type="unfinished"/>
+        <translation>Attiva audio</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -635,7 +635,7 @@
     <message>
         <location line="+4"/>
         <source>Answer with video</source>
-        <translation type="unfinished"/>
+        <translation>Rispondi con video</translation>
     </message>
 </context>
 <context>
@@ -653,12 +653,12 @@
     <message>
         <location line="+1"/>
         <source>Bandwidth Information</source>
-        <translation type="unfinished"/>
+        <translation>Informazioni Larghezza Banda</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Audio or Video Data</source>
-        <translation type="unfinished"/>
+        <translation>Informazioni Audio o Video</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -668,17 +668,17 @@
     <message>
         <location line="+1"/>
         <source>Invitation</source>
-        <translation type="unfinished"/>
+        <translation>Invito</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Audio Call</source>
-        <translation type="unfinished"/>
+        <translation>Audio Chiamata</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Video Call</source>
-        <translation type="unfinished"/>
+        <translation>Video Chiamata</translation>
     </message>
     <message>
         <location line="+110"/>
@@ -744,7 +744,7 @@
         <location line="+25"/>
         <location line="+24"/>
         <source>calling</source>
-        <translation type="unfinished"/>
+        <translation>in chiamata</translation>
     </message>
 </context>
 </TS>
