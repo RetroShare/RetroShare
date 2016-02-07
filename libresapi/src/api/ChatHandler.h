@@ -81,6 +81,12 @@ public:
         }
     };
 
+    class LobbyParticipantsInfo{
+    public:
+        StateToken state_token;
+        std::map<RsGxsId, time_t> participants;
+    };
+
     class ChatInfo{
     public:
         bool is_broadcast;
@@ -96,6 +102,7 @@ private:
     void handleLobbies(Request& req, Response& resp);
     void handleSubscribeLobby(Request& req, Response& resp);
     void handleUnsubscribeLobby(Request& req, Response& resp);
+    ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);
     void handleSendMessage(Request& req, Response& resp);
     void handleMarkChatAsRead(Request& req, Response& resp);
@@ -123,6 +130,8 @@ private:
 
     StateToken mLobbiesStateToken;
     std::vector<Lobby> mLobbies;
+
+    std::map<ChatLobbyId, LobbyParticipantsInfo> mLobbyParticipantsInfos;
 
     StateToken mUnreadMsgsStateToken;
 

@@ -97,6 +97,39 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
     return left;
 }
 
+class SendLobbyParticipantsTask: public GxsResponseTask
+{
+public:
+    SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
+        GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
+    {
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            requestGxsId(mit->first);
+        }
+    }
+private:
+    ChatHandler::LobbyParticipantsInfo mParticipantsInfo;
+protected:
+    virtual void gxsDoWork(Request &req, Response &resp)
+    {
+        resp.mDataStream.getStreamToMember();
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            StreamBase& stream = resp.mDataStream.getStreamToMember();
+            double last_active = mit->second;
+            stream << makeKeyValueReference("last_active", last_active);
+            streamGxsId(mit->first, stream.getStreamToMember("identity"));
+        }
+        resp.mStateToken = mParticipantsInfo.state_token;
+        resp.setOk();
+        done();
+    }
+
+};
+
 ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, RsPeers* peers, RsIdentity* identity, UnreadMsgNotify* unread):
     mStateTokenServer(sts), mNotify(notify), mRsMsgs(msgs), mRsPeers(peers), mRsIdentity(identity), mUnreadMsgNotify(unread), mMtx("ChatHandler::mMtx")
 {
@@ -111,6 +144,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
+    addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
     addResourceHandler("mark_chat_as_read", this, &ChatHandler::handleMarkChatAsRead);
@@ -170,7 +204,44 @@ void ChatHandler::tick()
             l.is_broadcast = false;
             l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
+
+            // update the lobby participants list
+            // maybe it causes to much traffic to do this in every tick,
+            // because the client would get the whole list every time a message was received
+            // we could reduce the checking frequency
+            std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.find(*lit);
+            if(mit == mLobbyParticipantsInfos.end())
+            {
+                mLobbyParticipantsInfos[*lit].participants = info.gxs_ids;
+                mLobbyParticipantsInfos[*lit].state_token = mStateTokenServer->getNewToken();
+            }
+            else
+            {
+                LobbyParticipantsInfo& pi = mit->second;
+                if(!std::equal(pi.participants.begin(), pi.participants.end(), info.gxs_ids.begin()))
+                {
+                    pi.participants = info.gxs_ids;
+                    mStateTokenServer->replaceToken(pi.state_token);
+                }
+            }
         }
+    }
+
+    // remove participants info of old lobbies
+    std::vector<ChatLobbyId> participants_info_to_delete;
+    for(std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.begin();
+        mit != mLobbyParticipantsInfos.end(); ++mit)
+    {
+        if(std::find(subscribed_ids.begin(), subscribed_ids.end(), mit->first) == subscribed_ids.end())
+        {
+            participants_info_to_delete.push_back(mit->first);
+        }
+    }
+    for(std::vector<ChatLobbyId>::iterator vit = participants_info_to_delete.begin(); vit != participants_info_to_delete.end(); ++vit)
+    {
+        LobbyParticipantsInfo& pi = mLobbyParticipantsInfos[*vit];
+        mStateTokenServer->discardToken(pi.state_token);
+        mLobbyParticipantsInfos.erase(*vit);
     }
 
     {
@@ -496,11 +567,31 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
+    resp.setOk();
+}
+
+ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+
+    ChatId id(req.mPath.top());
+    if(!id.isLobbyId())
+    {
+        resp.setFail("Path element \""+req.mPath.top()+"\" is not a ChatLobbyId.");
+        return 0;
+    }
+    std::map<ChatLobbyId, LobbyParticipantsInfo>::const_iterator mit = mLobbyParticipantsInfos.find(id.toLobbyId());
+    if(mit == mLobbyParticipantsInfos.end())
+    {
+        resp.setFail("lobby not found");
+        return 0;
+    }
+    return new SendLobbyParticipantsTask(mRsIdentity, mit->second);
 }
 
 void ChatHandler::handleMessages(Request &req, Response &resp)
