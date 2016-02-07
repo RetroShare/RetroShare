@@ -771,9 +771,20 @@ void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
 
 }
 
-void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
+void ChatHandler::handleSendStatus(Request &req, Response &resp)
 {
-
+    std::string chat_id;
+    std::string status;
+    req.mStream << makeKeyValueReference("chat_id", chat_id)
+                << makeKeyValueReference("status", status);
+    ChatId id(chat_id);
+    if(id.isNotSet())
+    {
+        resp.setFail("chat_id is invalid");
+        return;
+    }
+    mRsMsgs->sendStatusString(id, status);
+    resp.setOk();
 }
 
 void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)
