@@ -40,7 +40,7 @@
 #include "ui_MainWindow.h"
 #include "MessengerWindow.h"
 #include "NetworkDialog.h"
-#include "SearchDialog.h"
+#include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "MessagesDialog.h"
 #include "SharedFilesDialog.h"

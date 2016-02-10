@@ -127,6 +127,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionChooseColor, SIGNAL(triggered()), this, SLOT(chooseColor()));
 	connect(ui->actionResetFont, SIGNAL(triggered()), this, SLOT(resetFont()));
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
+	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -923,7 +924,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 	QString strGxsId = "";
 	if (!gxsId.isNull())
 		strGxsId = QString::fromStdString(gxsId.toStdString());
-	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"%1\">").arg(strGxsId));
+	formatMsg.replace(QString("<a name=\"name\">"),QString("<a name=\"Person Id: %1\">").arg(strGxsId));
 
 	QTextCursor textCursor = QTextCursor(ui->textBrowser->textCursor());
 	textCursor.movePosition(QTextCursor::End);
@@ -979,6 +980,7 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addSeparator();
 	contextMnu->addAction(ui->actionClearChatHistory);
 	contextMnu->addAction(ui->actionQuote);
+	contextMnu->addAction(ui->actionDropPlacemark);
 
 	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
 	if(ImageUtil::checkImage(cursor))
@@ -1657,7 +1659,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toLatin1()))); // displays info for 5 secs.
+    ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
 	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {
@@ -1693,8 +1695,14 @@ void ChatWidget::quote()
 	{
 		QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 		text = sl.join("\n>");
+		text.replace(QChar(-4),"");//Char used when image on text.
 		emit ui->chatTextEdit->append(QString(">") + text);
 	}
+}
+
+void ChatWidget::dropPlacemark()
+{
+	ui->textBrowser->append("----------");        
 }
 
 void ChatWidget::saveImage()

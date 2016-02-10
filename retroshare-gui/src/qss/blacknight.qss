@@ -272,3 +272,5 @@ QTextBrowser {
 QTextEdit {
 	color: white;
 }
+
+

@@ -61,7 +61,7 @@ public:
 
     // This method is called by the global router when a message has been received, or cannot be sent, etc.
     //
-    virtual void notifyDataStatus(const GRouterMsgPropagationId& received_id,uint32_t data_status)
+    virtual void notifyDataStatus(const GRouterMsgPropagationId& received_id,const RsGxsId& signer_id,uint32_t data_status)
     {
 	    std::cerr << "!!!!!! Received Data status from global router, but the client service is not handling it !!!!!!!!!!" << std::endl ;
 	    std::cerr << "   message ID  = " << received_id << std::endl;

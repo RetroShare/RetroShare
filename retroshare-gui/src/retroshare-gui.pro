@@ -158,6 +158,14 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
@@ -321,7 +329,6 @@ HEADERS +=  rshare.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
-            gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
             gui/ShareDialog.h \
@@ -330,6 +337,7 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/common/AvatarDialog.h \
+            gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/xprogressbar.h \
             gui/FileTransfer/DetailsDialog.h \
             gui/FileTransfer/FileTransferInfoWidget.h \
@@ -559,11 +567,11 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/AvatarDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
+            gui/FileTransfer/SearchDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
-            gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
             gui/ShareDialog.ui \
@@ -683,7 +691,6 @@ SOURCES +=  main.cpp \
             gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLink.cpp \
             gui/SearchTreeWidget.cpp \
-            gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/ShareDialog.cpp \
@@ -695,6 +702,7 @@ SOURCES +=  main.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
+            gui/FileTransfer/SearchDialog.cpp \
             gui/FileTransfer/TransfersDialog.cpp \
             gui/FileTransfer/FileTransferInfoWidget.cpp \
             gui/FileTransfer/DLListDelegate.cpp \

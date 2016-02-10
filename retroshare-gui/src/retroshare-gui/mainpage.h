@@ -30,6 +30,7 @@
 class UserNotify;
 class QAbstractButton ;
 class FloatingHelpBrowser;
+class QToolButton;
 
 class MainPage : public QWidget
 {
@@ -60,7 +61,7 @@ public:
 		// Overload this to add some help info  to the page. The way the info is 
 		// shown is handled by showHelp() below;
 	//
-	void registerHelpButton(QAbstractButton *button, const QString& help_html_text) ;
+	void registerHelpButton(QToolButton *button, const QString& help_html_text) ;
 
 private:
 	FloatingHelpBrowser *mHelpBrowser ;

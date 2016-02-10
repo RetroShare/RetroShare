@@ -25,7 +25,7 @@
 #include <rshare.h>
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
-#include "gui/SearchDialog.h"
+#include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "gui/SharedFilesDialog.h"
 #include "gui/NetworkDialog.h"

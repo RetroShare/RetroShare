@@ -22,6 +22,8 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
 
     ui.unit_CB->addItem(tr("KB/s")) ;
     ui.unit_CB->addItem(tr("Count")) ;
+    
+    ui.logScale_CB->setChecked(true) ;
 
     ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_FRIEND,BWGraphSource::GRAPH_TYPE_SUM) ;
     ui.bwgraph_BW->source()->setSelector(BWGraphSource::SELECTOR_TYPE_SERVICE,BWGraphSource::GRAPH_TYPE_SUM) ;
@@ -33,6 +35,7 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     QObject::connect(ui.updn_CB   ,SIGNAL(currentIndexChanged(int)),this, SLOT( updateUpDownSelection(int))) ;
     QObject::connect(ui.unit_CB   ,SIGNAL(currentIndexChanged(int)),this, SLOT(   updateUnitSelection(int))) ;
     QObject::connect(ui.service_CB,SIGNAL(currentIndexChanged(int)),this, SLOT(updateServiceSelection(int))) ;
+    QObject::connect(ui.logScale_CB,SIGNAL(toggled(bool)),this, SLOT(toggleLogScale(bool))) ;
 
     // setup one timer for auto-update
 
@@ -42,6 +45,13 @@ BandwidthStatsWidget::BandwidthStatsWidget(QWidget *parent)
     mTimer->start(2000) ;
 }
 
+void BandwidthStatsWidget::toggleLogScale(bool b)
+{
+    if(b)
+	ui.bwgraph_BW->setFlags(RSGraphWidget::RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    else
+	ui.bwgraph_BW->resetFlags(RSGraphWidget::RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+}
 void BandwidthStatsWidget::updateComboBoxes()
 {
     if(!isVisible())

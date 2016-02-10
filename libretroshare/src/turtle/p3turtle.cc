@@ -1872,6 +1872,7 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		// No tunnels at start, but this triggers digging new tunnels.
 		//
 		_incoming_file_hashes[hash].tunnels.clear();
+        _incoming_file_hashes[hash].use_aggressive_mode = allow_multi_tunnels ;
 
 		// also should send associated request to the file transfer module.
 		_incoming_file_hashes[hash].last_digg_time = RSRandom::random_u32()%10 ;

@@ -354,7 +354,6 @@ int     p3MsgService::checkOutgoingMessages()
 	 * if online, send
 	 */
 
-    time_t now = time(NULL);
     bool changed = false ;
     std::list<RsMsgItem*> output_queue ;
 
@@ -1853,7 +1852,7 @@ void p3MsgService::manageDistantPeers()
     }
 }
 
-void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t data_status)
+void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id, const RsGxsId &signer_id, uint32_t data_status)
 {
     if(data_status == GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED)
     {
@@ -1861,7 +1860,7 @@ void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t d
 
 	    std::cerr << "(WW) p3MsgService::notifyDataStatus: Global router tells us that item ID " << id << " could not be delivered on time." ;
 	    std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
-
+            
 	    if(it == _ongoing_messages.end())
 	    {
 		    std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
@@ -1869,6 +1868,7 @@ void p3MsgService::notifyDataStatus(const GRouterMsgPropagationId& id,uint32_t d
 	    }
 	    uint32_t msg_id = it->second ;
 	    std::cerr << "  message id = " << msg_id << std::endl;
+	    mDistantOutgoingMsgSigners[msg_id] = signer_id ;	// this is needed because it's not saved in config, but we should probably include it in _ongoing_messages
 
 	    std::map<uint32_t,RsMsgItem*>::iterator mit = msgOutgoing.find(msg_id) ;
 
@@ -1992,7 +1992,15 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
     {
         RS_STACK_MUTEX(mMsgMtx) ;
 
-        signing_key_id = mDistantOutgoingMsgSigners[msgitem->msgId] ;
+        std::map<uint32_t,RsGxsId>::const_iterator it = mDistantOutgoingMsgSigners.find(msgitem->msgId) ;
+        
+        if(it == mDistantOutgoingMsgSigners.end())
+        {
+            std::cerr << "(EE) no signer registered for distant message " << msgitem->msgId << ". Cannot send!" << std::endl;
+            return ;
+        }
+            
+        signing_key_id = it->second ;
 
         if(signing_key_id.isNull())
         {
@@ -2033,6 +2041,7 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
         RS_STACK_MUTEX(mMsgMtx) ;
         _ongoing_messages[grouter_message_id] = msgitem->msgId ;
     }
+    IndicateConfigChanged();	// save _ongoing_messages
 }
 
 

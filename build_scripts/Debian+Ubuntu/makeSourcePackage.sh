@@ -133,6 +133,9 @@ for i in ${dist}; do
         cp ../control.squeeze_bubba3 debian/control
     elif test "${i}" = "precise" ; then
         cp ../control.precise debian/control
+    elif test "${i}" = "stretch" ; then
+        cp ../control.${i} debian/control
+        cp ../rules.${i} debian/rules
     else
         cp ../debian/control debian/control
     fi

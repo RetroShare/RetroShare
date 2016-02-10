@@ -254,10 +254,10 @@ void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const Token
 	for(uint32_t i=0;i<datavector.size();++i)
 	{
 		gxsIds.push_back(datavector[i].mMeta.mGroupId) ;
-		std::cerr << "  got ID = " << datavector[i].mMeta.mGroupId << std::endl;
+		//std::cerr << "  got ID = " << datavector[i].mMeta.mGroupId << std::endl;
 	}
 
-	std::cerr << "Got all " << datavector.size() << " ids from rsIdentity. Calling update of list." << std::endl;
+	//std::cerr << "Got all " << datavector.size() << " ids from rsIdentity. Calling update of list." << std::endl;
 	fillList() ;
 }
 

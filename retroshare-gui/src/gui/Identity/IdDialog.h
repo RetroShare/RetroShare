@@ -85,8 +85,9 @@ private slots:
 	void  addtoContacts();
   void  removefromContacts();
 
-	void banPerson();
-	void unbanPerson();
+	void negativePerson();
+	void positivePerson();
+	void neutralPerson();
 	
 	static QString inviteMessage();
 	void sendInvite();

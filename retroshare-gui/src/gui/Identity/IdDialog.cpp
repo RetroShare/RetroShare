@@ -87,7 +87,26 @@
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
-
+// quick solution for RSID_COL_VOTES sorting
+class TreeWidgetItem : public QTreeWidgetItem {
+  public:
+  TreeWidgetItem(int type=Type): QTreeWidgetItem(type) {}
+  TreeWidgetItem(QTreeWidget *tree): QTreeWidgetItem(tree) {}
+  TreeWidgetItem(const QStringList& strings): QTreeWidgetItem (strings) {}
+  bool operator< (const QTreeWidgetItem& other ) const {
+    int column = treeWidget()->sortColumn();
+    const QVariant v1 = data(column, Qt::DisplayRole);
+    const QVariant v2 = other.data(column, Qt::DisplayRole);
+    double value1 = v1.toDouble();
+    double value2 = v2.toDouble();
+      if (value1 != value2) {
+          return value1 < value2;
+                }
+      else {
+           return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
+                }
+  }
+};
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
     RsGxsUpdateBroadcastPage(rsIdentity, parent),
@@ -637,7 +656,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		return false;
 
 	if (!item)
-        item = new QTreeWidgetItem();
+        item = new TreeWidgetItem();
         
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
@@ -1225,105 +1244,133 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
-	QMenu contextMnu( this );
+    QMenu contextMnu( this );
 
 
-	std::list<RsGxsId> own_identities ;
-	rsIdentity->getOwnIds(own_identities) ;
+    std::list<RsGxsId> own_identities ;
+    rsIdentity->getOwnIds(own_identities) ;
 
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	
-	if(item != allItem && item != contactsItem) {
-		uint32_t item_flags = item->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
+    // make some stats about what's selected. If the same value is used for all selected items, it can be switched.
 
-		if(!(item_flags & RSID_FILTER_OWNED_BY_YOU))
-		{
-			if(own_identities.size() <= 1)
-			{
-				QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 
-				if(own_identities.empty())
-					action->setEnabled(false) ;
-				else
-					action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-			}
-			else
-			{
-				QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+    bool root_node_present = false ;
+    bool one_item_owned_by_you = false ;
+    uint32_t n_positive_reputations = 0 ;
+    uint32_t n_negative_reputations = 0 ;
+    uint32_t n_neutral_reputations = 0 ;
+    uint32_t n_is_a_contact = 0 ;
+    uint32_t n_is_not_a_contact = 0 ;
+    uint32_t n_selected_items =0 ;
 
-				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-				{
-					RsIdentityDetails idd ;
-					rsIdentity->getIdDetails(*it,idd) ;
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+	    if(*it == allItem || *it == contactsItem)
+	    {
+		    root_node_present = true ;
+		    continue ;
+	    }
 
-					QPixmap pixmap ;
+	    uint32_t item_flags = (*it)->data(RSID_COL_KEYID,Qt::UserRole).toUInt() ;
 
-					if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-						pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+        if(item_flags & RSID_FILTER_OWNED_BY_YOU)
+		one_item_owned_by_you = true ;
+        
+        	std::cerr << "  item flags = " << item_flags << std::endl;
+	    RsGxsId keyId((*it)->text(RSID_COL_KEYID).toStdString());
 
-					QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
-					action->setData(QString::fromStdString((*it).toStdString())) ;
-				}
-			}
+	    RsReputations::ReputationInfo info ;
+	    rsReputations->getReputationInfo(keyId,info) ;
 
-			contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMsg()));
-			
-			contextMnu.addSeparator();
+        	switch(info.mOwnOpinion)
+            {
+            case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
+		    break ;
+            
+	    case RsReputations::OPINION_POSITIVE: ++n_positive_reputations ;
+                break ;
+                
+	    case RsReputations::OPINION_NEUTRAL: ++n_neutral_reputations ;
+                break ;
+            }
 
-						RsIdentityDetails details;
-      std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+	    ++n_selected_items ;
 
-			rsIdentity->getIdDetails(RsGxsId(keyId), details);
-			
-			QAction *addContact = contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
-			QAction *removeContact = contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+	    if(rsIdentity->isARegularContact(keyId))
+		    ++n_is_a_contact ;
+	    else
+		    ++n_is_not_a_contact ;
+    }
 
-			
-			if(details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT)
-			{
-				addContact->setVisible(false);
-				removeContact->setVisible(true);
-			}
-			else
-			{
-				addContact->setVisible(true);
-				removeContact->setVisible(false);
-			}
-      
-			contextMnu.addSeparator();
+    if(root_node_present)	// don't show menu if some of the root nodes are present
+	    return ;
 
-			RsReputations::ReputationInfo info ;
-			std::string Id = item->text(RSID_COL_KEYID).toStdString();
-			rsReputations->getReputationInfo(RsGxsId(Id),info) ;
-    
+    if(!one_item_owned_by_you)
+    {
+	    if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item 
+		    if(own_identities.size() <= 1)
+		    {
+			    QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
-			QAction *banaction = contextMnu.addAction(QIcon(":/images/denied16.png"), tr("Ban this person"), this, SLOT(banPerson()));
-			QAction *unbanaction = contextMnu.addAction(QIcon(), tr("Unban this person"), this, SLOT(unbanPerson()));
+			    if(own_identities.empty())
+				    action->setEnabled(false) ;
+			    else
+				    action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+		    }
+		    else
+		    {
+			    QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
 
-			
-			if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
-			{
-				banaction->setVisible(false);
-				unbanaction->setVisible(true);
-			}
-			else
-			{
-				banaction->setVisible(true);
-				unbanaction->setVisible(false);
-			}
+			    for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+			    {
+				    RsIdentityDetails idd ;
+				    rsIdentity->getIdDetails(*it,idd) ;
 
-		}
-		
+				    QPixmap pixmap ;
+
+				    if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+					    pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+				    QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+				    action->setData(QString::fromStdString((*it).toStdString())) ;
+			    }
+		    }
+
+	    // always allow to send messages
+	    contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+
+	    contextMnu.addSeparator();
+
+	    if(n_is_a_contact == 0)
+		    contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+        
+	    if(n_is_not_a_contact == 0)
+		    contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+
+	    contextMnu.addSeparator();
+
+	    if(n_positive_reputations == 0)	// only unban when all items are banned
+		    contextMnu.addAction(QIcon(), tr("Set positive opinion"), this, SLOT(positivePerson()));
+
+	    if(n_neutral_reputations == 0)	// only unban when all items are banned
+		    contextMnu.addAction(QIcon(), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+        
+	    if(n_negative_reputations == 0)
+		    contextMnu.addAction(QIcon(":/images/denied16.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+    }
+
+    if(one_item_owned_by_you && n_selected_items==1)
+    {
+	    contextMnu.addSeparator();
+
+	    contextMnu.addAction(ui->editIdentity);
+	    contextMnu.addAction(ui->removeIdentity);
+    }
+
+
     contextMnu.addSeparator();
 
-    contextMnu.addAction(ui->editIdentity);
-    contextMnu.addAction(ui->removeIdentity);
-	}
-
-	
-	contextMnu.addSeparator();
-
-	contextMnu.exec(QCursor::pos());
+    contextMnu.exec(QCursor::pos());
 }
 
 void IdDialog::chatIdentity()
@@ -1352,25 +1399,27 @@ void IdDialog::chatIdentity()
 
 void IdDialog::sendMsg()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-		return;
-	}
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 
-	MessageComposer *nMsgDialog = MessageComposer::newMsg();
-	if (nMsgDialog == NULL) {
-		return;
-	}
+    if(selected_items.empty())
+	    return ;
 
-    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL)
+	    return;
 
-    nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
-		nMsgDialog->show();
-		nMsgDialog->activateWindow();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+	    QTreeWidgetItem *item = *it ;
+
+	    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+	    nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
+    }
+    nMsgDialog->show();
+    nMsgDialog->activateWindow();
 
     /* window will destroy itself! */
-
 }
 
 QString IdDialog::inviteMessage()
@@ -1409,33 +1458,48 @@ void IdDialog::sendInvite()
 
 }
 
-void IdDialog::banPerson()
+void IdDialog::negativePerson()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-		return;
-	}
-
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+        QTreeWidgetItem *item = *it ;
+        
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
 	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEGATIVE) ;
+    }
 
 	requestIdDetails();
 	requestIdList();
 }
 
-void IdDialog::unbanPerson()
+void IdDialog::neutralPerson()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-		return;
-	}
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+        QTreeWidgetItem *item = *it ;
+
+	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+
+	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEUTRAL) ;
+    }
+
+	requestIdDetails();
+	requestIdList();
+}
+void IdDialog::positivePerson()
+{
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+        QTreeWidgetItem *item = *it ;
 
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
 	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_POSITIVE) ;
+    }
 
 	requestIdDetails();
 	requestIdList();
@@ -1443,30 +1507,28 @@ void IdDialog::unbanPerson()
 
 void IdDialog::addtoContacts()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-		return;
-	}
-
+    QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+        QTreeWidgetItem *item = *it ;
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
 	rsIdentity->setAsRegularContact(RsGxsId(Id),true);
+    }
 
 	requestIdList();
 }
 
 void IdDialog::removefromContacts()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
-	if (!item)
-	{
-		return;
-	}
-
+QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
+    {
+        QTreeWidgetItem *item = *it ;
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
 	rsIdentity->setAsRegularContact(RsGxsId(Id),false);
+    }
 
 	requestIdList();
 }

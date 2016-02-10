@@ -1336,7 +1336,14 @@ int RsServer::StartupRetroShare()
             false,false); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
 
+        // Normally we wouldn't need this (we do in other service):
+        //	mGxsIdService->setNetworkExchangeService(gxsid_ns) ;
+        // ...since GxsIds are propagated manually. But that requires the gen exchange of GXSids to
+        // constantly test that mNetService is not null. The call below is to make the service aware of the
+        // netService so that it can request the missing ids. We'll need to fix this.
+
         mGxsIdService->setNes(gxsid_ns);
+
         /**** GxsCircle service ****/
 
         // create GXS Circle service

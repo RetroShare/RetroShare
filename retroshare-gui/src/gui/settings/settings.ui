@@ -23,16 +23,7 @@
      <property name="spacing">
       <number>6</number>
      </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
+     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -106,29 +97,17 @@
    </item>
    <item row="0" column="0" rowspan="3">
     <widget class="QListWidget" name="listWidget">
-     <property name="minimumSize">
-      <size>
-       <width>130</width>
-       <height>0</height>
-      </size>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>130</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
+     <property name="defaultDropAction">
+      <enum>Qt::IgnoreAction</enum>
      </property>
      <property name="textElideMode">
-      <enum>Qt::ElideMiddle</enum>
+      <enum>Qt::ElideRight</enum>
      </property>
      <property name="movement">
       <enum>QListView::Static</enum>
@@ -147,12 +126,6 @@
      </property>
      <property name="spacing">
       <number>0</number>
-     </property>
-     <property name="gridSize">
-      <size>
-       <width>100</width>
-       <height>26</height>
-      </size>
      </property>
      <property name="viewMode">
       <enum>QListView::ListMode</enum>
@@ -191,21 +164,12 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>666</width>
-        <height>517</height>
+        <width>540</width>
+        <height>495</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="leftMargin">
-        <number>3</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>3</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>3</number>
        </property>
        <item>

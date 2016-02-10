@@ -20,6 +20,8 @@
  ****************************************************************/
 
 #include <QApplication>
+#include <QFile>
+#include <QProcess>
 #include <QSound>
 #include <QDir>
 
@@ -27,6 +29,10 @@
 #include <QAudio>
 #include <QAudioDeviceInfo>
 #endif
+
+// #ifdef QMEDIAPLAYER
+// #nclude <QMediaPlayer>
+// #endif
 
 #include "SoundManager.h"
 #include "settings/rsharesettings.h"
@@ -79,6 +85,7 @@ void SoundManager::soundEvents(SoundEvents &events)
 	events.addEvent(tr("Chatmessage"), tr("New Msg"), SOUND_NEW_CHAT_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 	events.addEvent(tr("Message"), tr("Message arrived"), SOUND_MESSAGE_ARRIVED, QFileInfo(baseDir, "receive.wav").absoluteFilePath());
 	events.addEvent(tr("Download"), tr("Download complete"), SOUND_DOWNLOAD_COMPLETE, QFileInfo(baseDir, "ft_complete.wav").absoluteFilePath());
+    events.addEvent(tr("Lobby"), tr("Message arrived"), SOUND_NEW_LOBBY_MESSAGE, QFileInfo(baseDir, "incomingchat.wav").absoluteFilePath());
 
 	/* add plugin events */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -234,12 +241,60 @@ void SoundManager::playFile(const QString &filename)
 	}
 
 	QString playFilename = realFilename(filename);
-
+        bool played = false ;
+    
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-	if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty()) {
+    if (!QAudioDeviceInfo::availableDevices(QAudio::AudioOutput).isEmpty())
 #else
-	if (QSound::isAvailable()) {
+    if (QSound::isAvailable())
 #endif
-		QSound::play(playFilename);
-	}
+        {
+        QSound::play(playFilename);
+            played = true ;
+        }
+
+        if(!played)	// let's go for the hard core stuff
+    {
+        // #ifdef QMEDIAPLAYER
+        //         static QMediaPlayer *qmplayer;
+        //         if (qmplayer == NULL) {
+        //             qmplayer = new QMediaPlayer();
+        //             qmplayer->setMedia(QMediaContent(QUrl::fromLocalFile(playFilename)));
+        //         }
+        //         std::cerr << "Play QMediaPlayer" << std::endl;
+        //         qmplayer->play();
+        //         return;
+        // #endif
+
+#ifdef Q_OS_LINUX
+        QString player_cmd = soundDetectPlayer();
+        QStringList args = player_cmd.split(' ');
+        args += filename;
+        QString prog = args.takeFirst();
+        //std::cerr << "Play " << prog.toStdString() << std::endl;
+        QProcess::startDetached(prog, args);
+#endif
+    }
 }
+
+
+#ifdef Q_OS_LINUX
+/** Detect default player helper on unix like systems
+ * Inspired by Psi IM (0.15) in common.cpp
+ */
+QString SoundManager::soundDetectPlayer()
+{
+    // prefer ALSA on linux
+
+    if (QFile("/proc/asound").exists()) {
+        return "aplay -q";
+    }
+    // fallback to "play"
+    return "play";
+}
+#endif
+
+
+
+
+
