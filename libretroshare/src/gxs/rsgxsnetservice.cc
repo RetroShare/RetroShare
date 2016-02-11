@@ -211,7 +211,7 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-//#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
@@ -2454,7 +2454,7 @@ void RsGxsNetService::locked_processCompletedOutgoingTrans(NxsTransaction* tr)
     uint16_t flag = tr->mTransaction->transactFlag;
 
 #ifdef NXS_NET_DEBUG_0
-    RsNxsTransac *nxsTrans = tr->mTransaction;
+    RsNxsTransacItem *nxsTrans = tr->mTransaction;
     GXSNETDEBUG_P_(nxsTrans->PeerId()) << "locked_processCompletedOutgoingTrans(): tr->flags = " << flag << std::endl;
 #endif
 
