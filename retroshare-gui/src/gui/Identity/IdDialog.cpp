@@ -362,6 +362,8 @@ void IdDialog::createExternalCircle()
 	CreateCircleDialog dlg;
 	dlg.editNewId(true);
 	dlg.exec();
+    
+    requestCircleGroupMeta();	// update GUI
 }
 void IdDialog::editExistingCircle()
 {
@@ -377,6 +379,8 @@ void IdDialog::editExistingCircle()
 	CreateCircleDialog dlg;
 	dlg.editExistingId(id);
 	dlg.exec();
+    
+    requestCircleGroupMeta();	// update GUI
 }
 
 void IdDialog::CircleListCustomPopupMenu( QPoint )
