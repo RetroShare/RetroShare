@@ -170,7 +170,11 @@ function checkFocus(){
 // called every time, rs or rs.request failed, only response or value is set
 function requestFail(path, response, value) {
     rs.error = "error on " + path;
-    console.log("Error on " + path + (response == null ? ", value " + value : ", response " + response));
+    console.log("Error on " + path +
+        (response == null ? ", value: " + value : (", response: " +
+            (response.debug_msg === undefined ? response : response.debug_msg)
+        ))
+    );
 }
 
 function rs(path, args, callback, options){
@@ -260,8 +264,8 @@ rs.counting = function(path, counterfnkt) {
 // listing data-elements
 rs.list = function(path, buildfktn){
     var list = rs(path);
-    if (list === undefined) {
+    if (list === undefined|| list == null) {
         return "< waiting for server ... >"
-    }
+    };
     return list.map(buildfktn);
 }
