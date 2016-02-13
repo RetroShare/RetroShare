@@ -51,6 +51,7 @@ static const uint32_t MAX_TUNNEL_WAIT_TIME                 = 60          ; // wa
 static const uint32_t MAX_TUNNEL_UNMANAGED_TIME            = 600         ; // min time before retry tunnels for that msg.
 static const uint32_t MAX_DELAY_FOR_RESEND                 = 2*86400+300 ; // re-send if held for more than 2 days (cache store period) plus security delay.
 static const uint32_t MAX_DESTINATION_KEEP_TIME            = 20*86400    ; // keep for 20 days in destination cache to avoid re-
+static const uint32_t MAX_RECEIPT_KEEP_TIME                = 20*86400    ; // keep for 20 days in destination cache to avoid re-
 static const uint32_t TUNNEL_OK_WAIT_TIME                  = 2           ; // wait for 2 seconds after last tunnel ok, so that we have a complete set of tunnels.
 static const uint32_t MAX_GROUTER_DATA_SIZE                = 2*1024*1024 ; // 2MB size limit. This is of course arbitrary.
 static const uint32_t MAX_TRANSACTION_ACK_WAITING_TIME     = 60          ; // wait for at most 60 secs for a ACK. If not restart the transaction.

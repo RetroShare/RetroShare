@@ -1,8 +1,8 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fr" version="2.0">
 <context>
     <name>AWidget</name>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="+177"/>
+        <location filename="../gui/AboutDialog.cpp" line="+182"/>
         <source>version</source>
         <translation>version</translation>
     </message>
@@ -21,12 +21,17 @@
         <translation>À propos de Retroshare</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+40"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+7"/>
+        <source>Copy Info</source>
+        <translation>Infos sur la copie</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>close</source>
         <translation>Fermer</translation>
     </message>
@@ -495,7 +500,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearancePage</name>
     <message>
-        <location filename="../gui/settings/AppearancePage.ui" line="+35"/>
+        <location filename="../gui/settings/AppearancePage.ui" line="+44"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
@@ -535,24 +540,28 @@ p, li { white-space: pre-wrap; }
         <translation>Barre d&apos;outils</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <location line="+49"/>
+        <location line="+27"/>
+        <location line="+58"/>
         <source>On Tool Bar</source>
         <translation>Sur la barre d&apos;outils</translation>
     </message>
     <message>
-        <location line="-42"/>
-        <location line="+49"/>
+        <location line="+7"/>
         <source>On List Item</source>
         <translation>Article sur liste</translation>
     </message>
     <message>
-        <location line="-26"/>
+        <location line="-35"/>
         <source>Where do you want to have the buttons for menu?</source>
         <translation>Où voulez-vous avoir les boutons pour le menu ?</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="-23"/>
+        <source>On List Ite&amp;m</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+81"/>
         <source>Where do you want to have the buttons for the page?</source>
         <translation>Où voulez-vous avoir les boutons pour la page ?</translation>
     </message>
@@ -588,24 +597,36 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+8"/>
-        <location line="+24"/>
+        <location line="+34"/>
         <source>Icon Size = 8x8</source>
         <translation>Taille d&apos;icône = 8x8</translation>
     </message>
     <message>
-        <location line="-19"/>
-        <location line="+24"/>
+        <location line="-29"/>
+        <location line="+34"/>
         <source>Icon Size = 16x16</source>
         <translation>Taille d&apos;icône = 16x16</translation>
     </message>
     <message>
-        <location line="-19"/>
-        <location line="+24"/>
+        <location line="-29"/>
+        <location line="+34"/>
         <source>Icon Size = 24x24</source>
         <translation>Taille d&apos;icône = 24x24</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-24"/>
+        <location line="+34"/>
+        <source>Icon Size = 64x64</source>
+        <translation>Taille d&apos;icône = 64x64</translation>
+    </message>
+    <message>
+        <location line="-29"/>
+        <location line="+34"/>
+        <source>Icon Size = 128x128</source>
+        <translation>Taille d&apos;icône = 128x128</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Status Bar</source>
         <translation>Barre de statut</translation>
     </message>
@@ -635,8 +656,13 @@ p, li { white-space: pre-wrap; }
         <translation>Afficher zone de notification sur la barre de statut</translation>
     </message>
     <message>
-        <location line="-68"/>
-        <location line="+24"/>
+        <location line="+7"/>
+        <source>Disable SysTray ToolTip</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-95"/>
+        <location line="+34"/>
         <source>Icon Size = 32x32</source>
         <translation>Taille icône = 32x32</translation>
     </message>
@@ -741,7 +767,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>AvatarWidget</name>
     <message>
-        <location filename="../gui/common/AvatarWidget.cpp" line="+148"/>
+        <location filename="../gui/common/AvatarWidget.cpp" line="+157"/>
         <source>Click to change your avatar</source>
         <translation>Cliquez pour modifier votre avatar</translation>
     </message>
@@ -749,7 +775,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>BWGraphSource</name>
     <message>
-        <location filename="../gui/statistics/bwgraph.h" line="+21"/>
+        <location filename="../gui/statistics/BWGraph.cpp" line="+311"/>
         <source>KB/s</source>
         <translation>KO/s</translation>
     </message>
@@ -757,7 +783,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>BWListDelegate</name>
     <message>
-        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+60"/>
+        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+62"/>
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
@@ -765,13 +791,13 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>BandwidthGraph</name>
     <message>
-        <location filename="../gui/bwgraph/BandwidthGraphWindow.ui" line="+14"/>
+        <location filename="../gui/statistics/BandwidthGraphWindow.ui" line="+14"/>
         <source>RetroShare Bandwidth Usage</source>
         <translation>Utilisation de la bande passante par Retroshare</translation>
     </message>
     <message>
         <location line="+19"/>
-        <location filename="../gui/bwgraph/BandwidthGraphWindow.cpp" line="+224"/>
+        <location filename="../gui/statistics/BandwidthGraphWindow.cpp" line="+224"/>
         <source>Show Settings</source>
         <translation>Options</translation>
     </message>
@@ -826,7 +852,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../gui/bwgraph/BandwidthGraphWindow.cpp" line="-75"/>
+        <location filename="../gui/statistics/BandwidthGraphWindow.cpp" line="-75"/>
         <source>Since:</source>
         <translation>Statistiques enregistrées depuis :</translation>
     </message>
@@ -834,6 +860,31 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <location line="+67"/>
         <source>Hide Settings</source>
         <translation>Masquer les options</translation>
+    </message>
+</context>
+<context>
+    <name>BandwidthStatsWidget</name>
+    <message>
+        <location filename="../gui/statistics/BandwidthStatsWidget.cpp" line="+17"/>
+        <location line="+3"/>
+        <source>Sum</source>
+        <translation>Somme</translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <location line="+3"/>
+        <source>All</source>
+        <translation>Tout</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>KB/s</source>
+        <translation>KO/s</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Count</source>
+        <translation>Compte</translation>
     </message>
 </context>
 <context>
@@ -899,7 +950,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Allowed Recvd</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+177"/>
+        <location filename="../gui/statistics/BwCtrlWindow.cpp" line="+182"/>
         <source>TOTALS</source>
         <translation>TOTAUX</translation>
     </message>
@@ -912,6 +963,49 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <location filename="../gui/statistics/BwCtrlWindow.ui" line="-69"/>
         <source>Form</source>
         <translation>Formulaire</translation>
+    </message>
+</context>
+<context>
+    <name>BwStatsWidget</name>
+    <message>
+        <location filename="../gui/statistics/BandwidthStatsWidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Friend:</source>
+        <translation>Ami :</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Type:</source>
+        <translation>Type :</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Up</source>
+        <translation>Monter</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Down</source>
+        <translation>Descendre</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Service:</source>
+        <translation>Service :</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Unit:</source>
+        <translation>Unité :</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Log scale</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -943,14 +1037,6 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
     </message>
 </context>
 <context>
-    <name>ChatDialog</name>
-    <message>
-        <location filename="../gui/chat/ChatDialog.cpp" line="+110"/>
-        <source>Talking to</source>
-        <translation>Parlant à</translation>
-    </message>
-</context>
-<context>
     <name>ChatLobbyDialog</name>
     <message>
         <location filename="../gui/chat/ChatLobbyDialog.ui" line="+114"/>
@@ -963,17 +1049,32 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Changer de pseudo</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+72"/>
+        <location filename="../gui/chat/ChatLobbyDialog.cpp" line="+87"/>
         <source>Mute participant</source>
         <translation>Mute le participant</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+2"/>
+        <source>Send Message</source>
+        <translation>Envoyer le message</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Sort by Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Sort by Activity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Invite friends to this lobby</source>
         <translation>Inviter des amis à ce salon</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+37"/>
         <source>Leave this lobby (Unsubscribe)</source>
         <translation>Quitter ce salon (se désabonner)</translation>
     </message>
@@ -988,7 +1089,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Selectionner les amis à inviter :</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+72"/>
         <source>Welcome to lobby %1</source>
         <translation>Bienvenue dans le salon %1</translation>
     </message>
@@ -998,13 +1099,13 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Sujet : %1</translation>
     </message>
     <message>
-        <location line="+150"/>
+        <location line="+163"/>
         <location line="+2"/>
         <source>Lobby chat</source>
         <translation>Salons de tchat</translation>
     </message>
     <message>
-        <location line="+270"/>
+        <location line="+305"/>
         <location line="+5"/>
         <location line="+21"/>
         <source>Lobby management</source>
@@ -1036,7 +1137,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Voulez-vous vraiment quitter ce salon ?</translation>
     </message>
     <message>
-        <location line="-252"/>
+        <location line="-283"/>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
         <translation>Clic droit pour mute/de-mute les participants&lt;br/&gt;Double clic pour s&apos;adresser à cette personne&lt;br/&gt;</translation>
     </message>
@@ -1051,14 +1152,14 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation> secondes</translation>
     </message>
     <message>
-        <location line="-375"/>
+        <location line="-421"/>
         <source>Start private chat</source>
         <translation>Démarrer un tchat privé</translation>
     </message>
     <message>
-        <location line="+476"/>
+        <location line="+523"/>
         <source>Decryption failed.</source>
-        <translation>Le décryptage a échoué.</translation>
+        <translation>Le déchiffrement a échoué.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1102,7 +1203,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>ChatLobbyUserNotify</name>
     <message>
-        <location filename="../gui/chat/ChatLobbyUserNotify.cpp" line="+35"/>
+        <location filename="../gui/chat/ChatLobbyUserNotify.cpp" line="+36"/>
         <source>Chat Lobbies</source>
         <translation>Salons de tchat</translation>
     </message>
@@ -1141,18 +1242,18 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
 <context>
     <name>ChatLobbyWidget</name>
     <message>
-        <location filename="../gui/ChatLobbyWidget.ui" line="+60"/>
+        <location filename="../gui/ChatLobbyWidget.ui" line="+51"/>
         <source>Chat lobbies</source>
         <translation>Salons de tchat</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+82"/>
-        <location line="+78"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+85"/>
+        <location line="+80"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location line="-77"/>
+        <location line="-79"/>
         <source>Count</source>
         <translation>Participants</translation>
     </message>
@@ -1173,23 +1274,23 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
     </message>
     <message>
         <location filename="../gui/ChatLobbyWidget.ui" line="+84"/>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+113"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+135"/>
         <source>Create chat lobby</source>
         <translation>Créer un nouveau salon de tchat</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+77"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+86"/>
         <location line="+1"/>
         <source>[No topic provided]</source>
         <translation>[Sans sujet déterminé]</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.ui" line="+64"/>
+        <location filename="../gui/ChatLobbyWidget.ui" line="+61"/>
         <source>Selected lobby info</source>
         <translation>Info du salon sélectionné</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+461"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+494"/>
         <source>Private</source>
         <translation>Privé</translation>
     </message>
@@ -1199,12 +1300,17 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Public</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Anonymous IDs accepted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location line="+3"/>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Vous n&apos;êtes pas abonné à ce salon. Double cliquer dessus pour y accéder et discuter.</translation>
     </message>
     <message>
-        <location line="-496"/>
+        <location line="-530"/>
         <source>Remove Auto Subscribe</source>
         <translation>Retirer des abonnements auto</translation>
     </message>
@@ -1214,27 +1320,37 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Ajouter aux abonnements auto</translation>
     </message>
     <message>
-        <location line="+720"/>
+        <location line="+761"/>
         <source>%1 invites you to chat lobby named %2</source>
         <translation>%1 vous invite dans le salon de tchat %2</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.ui" line="-71"/>
+        <location filename="../gui/ChatLobbyWidget.ui" line="-68"/>
         <source>Search Chat lobbies</source>
         <translation>Rechercher des salons de tchat</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="-840"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="-910"/>
         <source>Search Name</source>
         <translation>Rechercher par nom</translation>
     </message>
     <message>
-        <location line="-75"/>
+        <location line="-77"/>
         <source>Subscribed</source>
         <translation>Abonné</translation>
     </message>
     <message>
-        <location line="+204"/>
+        <location line="+84"/>
+        <source>                          &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you                                     invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=%2/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Salons de tchat&lt;/h1&gt; &lt;p&gt;Les salons de tchat sont des salles de tchat distribuées, et fonctionnent presque de la même façon que IRC. Ils vous permettent de discuter anonymement avec de nombreuses personnes sans avoir besoin d&apos;être des amis.&lt;/p&gt; &lt;p&gt;Un salon de tchat peut être de type public (vos amis le voient) ou privé (vos amis ne le voient pas, à moins que vous les invitiez avec &lt;img src=&quot;:/images/add_24x24.png&quot; width=%2/&gt;). Une fois que vous avez été invité à un salon privé, vous serez capable de le voir lorsque vos amis l&apos;utiliseront.&lt;/p&gt; &lt;p&gt;La liste à gauche montre les salons de tchat auxquels vos amis participent. Vous pouvez soit &lt;ul&gt; &lt;li&gt;Faire un clic droit pour créer un nouveau salon de tchat&lt;/li&gt; &lt;li&gt;Faire un double clic sur un salon pour y entrer, tchatter, et le montrer à vos amis&lt;/li&gt; &lt;/ul&gt; Note : pour que les salons de tchat fonctionnent correctement, votre ordinateur doit être à l&apos;heure. Alors vérifiez l&apos;horloge de votre système ! &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <location line="+110"/>
+        <source>Create a non anonymous identity and enter this lobby</source>
+        <translation>Créer une identité non-anonyme et entrer dans ce salon</translation>
+    </message>
+    <message>
+        <location line="+41"/>
         <source>Columns</source>
         <translation>Colonnes</translation>
     </message>
@@ -1249,7 +1365,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.ui" line="+87"/>
+        <location filename="../gui/ChatLobbyWidget.ui" line="+84"/>
         <source>Lobby Name:</source>
         <translation>Nom du salon :</translation>
     </message>
@@ -1261,12 +1377,17 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
     <message>
         <location line="+13"/>
         <source>Topic:</source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Type:</source>
         <translation>Type :</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Security:</source>
+        <translation>Sécurité :</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -1278,12 +1399,13 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
         <location line="+13"/>
         <location line="+13"/>
         <location line="+16"/>
+        <location line="+7"/>
         <location line="+13"/>
         <source>TextLabel</source>
         <translation>Etiquette</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+467"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+508"/>
         <source>No lobby selected. 
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
@@ -1292,7 +1414,7 @@ Sélectionner un salon à gauche pour afficher ses détails.
 Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
-        <location line="-690"/>
+        <location line="-762"/>
         <source>Private Subscribed Lobbies</source>
         <translation>Salons abonnés privés</translation>
     </message>
@@ -1302,22 +1424,17 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Salons abonnés publics</translation>
     </message>
     <message>
-        <location line="+61"/>
-        <source>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              	                      &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      	                      They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    	                      &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           	                      invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                      Once you have been invited to a private lobby, you will be able to see it when your friends   	                      are using it.&lt;/p&gt;                                                                                               	                      &lt;p&gt;The list at left shows                                                                                     	                      chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!	                      &lt;/p&gt;                                      	                      </source>
-        <translation>	                      &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Salons de tchat&lt;/h1&gt;                              	                      &lt;p&gt;Le salons de tchat sont des salles de tchat distribuées, et marchent presque de la même façon que IRC.                                      	                      Elles vous permettent de discuter anonymement avec beaucoup de gens sans le besoin de faire des amis.&lt;/p&gt;                    	                      &lt;p&gt;Un salon de tchat peut être de type public (vos amis le voient) ou privé (vos amis ne le voient pas, à moins que vous les invitiez avec &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). 	                    Une fois que vous avez été invité à un salon privé, vous serez capable de le voir lorsque vos amis l&apos;utiliseront.&lt;/p&gt;                                                                                               	                      &lt;p&gt;La liste à gauche montre les salons de tchat que auxquels vos amis participent. Vous pouvez soit &lt;ul&gt;                                                                                                            			  &lt;li&gt;Faire un clic droit pour créer un nouveau salon de tchat&lt;/li&gt;                                                              		     &lt;li&gt;Faire un double clic sur un salon pour y entrer, tchatter, et le montrer à vos amis&lt;/li&gt;                      	                      &lt;/ul&gt; 	                      Note : pour que les salons de tchat fonctionnent correctement, votre ordinateur doit être à l&apos;heure. Alors vérifiez l&apos;horloge de votre système !	                      &lt;/p&gt;                                      	                  </translation>
-    </message>
-    <message>
         <location filename="../gui/ChatLobbyWidget.h" line="+38"/>
         <source>Chat Lobbies</source>
         <translation>Salons de tchat</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+76"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+159"/>
         <source>Leave this lobby</source>
         <translation>Quitter ce salon</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+21"/>
         <source>Enter this lobby</source>
         <translation>Entrer dans ce salon</translation>
     </message>
@@ -1327,22 +1444,42 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Entrer dans ce salon en tant que ...</translation>
     </message>
     <message>
-        <location line="+517"/>
+        <location line="+504"/>
+        <source>Default identity is anonymous</source>
+        <translation>Identité par défaut est anonyme</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>You cannot join this lobby with your default identity, since it is anonymous and the lobby forbids it.</source>
+        <translation>Vous ne pouvez pas rejoindre ce salon avec votre identité par défaut, car il s&apos;agit d&apos;un salon anonyme qui l&apos;interdit.</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>No anonymous IDs</source>
+        <translation>Aucune IDs anonymes</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>You will need to create a non anonymous identity in order to join this chat lobby.</source>
+        <translation>Vous devrez vous créer une identité non-anonyme pour pouvoir rejoindre ce salon.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>You will need to create an identity in order to join chat lobbies.</source>
         <translation>Vous devrez créer une identité afin de rejoindre des salons de tchat.</translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+232"/>
         <source>Choose an identity for this lobby:</source>
         <translation>Choisissez une identité pour ce salon :</translation>
     </message>
     <message>
-        <location line="-756"/>
+        <location line="-797"/>
         <source>Create an identity and enter this lobby</source>
         <translation>Créer une identité pour entrer dans ce salon</translation>
     </message>
     <message>
-        <location line="-111"/>
+        <location line="-140"/>
         <location line="+3"/>
         <location line="+3"/>
         <source>Show</source>
@@ -1395,7 +1532,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+250"/>
+        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+253"/>
         <source>Quick Message</source>
         <translation>Message instantané</translation>
     </message>
@@ -1404,12 +1541,37 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <name>ChatPage</name>
     <message>
         <location filename="../gui/settings/ChatPage.ui" line="+21"/>
-        <location line="+696"/>
+        <location line="+768"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location line="-682"/>
+        <location line="-762"/>
+        <source>Distant Chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Everyone</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Nobody</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Accept encrypted distant chat from</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Chat Settings</source>
         <translation>Paramètres du tchat</translation>
     </message>
@@ -1434,7 +1596,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Activer la taille de la police personnalisée</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+15"/>
+        <source>Minimum font size</source>
+        <translation>Taille de police minimale</translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>Enable bold</source>
         <translation>Activer le gras</translation>
     </message>
@@ -1548,7 +1715,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Tchat privé</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+329"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+339"/>
         <source>Incoming</source>
         <translation>Entrant</translation>
     </message>
@@ -1591,6 +1758,16 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <location line="+0"/>
         <source>System message</source>
         <translation>Message système</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>UserName</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>/me is sending a message with /me</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gui/settings/ChatPage.h" line="+44"/>
@@ -1683,7 +1860,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Afficher la barre par défaut</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="-45"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="-46"/>
         <source>Private chat invite from</source>
         <translation>Invitation de tchat privé reçue de </translation>
     </message>
@@ -1706,7 +1883,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+483"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+501"/>
         <source>Standard style for group chat</source>
         <translation>Le style standard pour le tchat en groupe</translation>
     </message>
@@ -1755,17 +1932,17 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
 <context>
     <name>ChatWidget</name>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="+419"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="+184"/>
         <source>Close</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location line="+335"/>
+        <location line="+372"/>
         <source>Send</source>
         <translation>Envoyer</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+357"/>
         <source>Bold</source>
         <translation>Gras</translation>
     </message>
@@ -1780,12 +1957,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Italique</translation>
     </message>
     <message>
-        <location line="-127"/>
+        <location line="-483"/>
         <source>Attach a Picture</source>
         <translation>Joindre une image</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+493"/>
         <source>Strike</source>
         <translation>Découverte</translation>
     </message>
@@ -1836,12 +2013,37 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Réinitialiser à la valeur par défaut</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="+997"/>
+        <location line="+62"/>
+        <source>Quote</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Quotes the selected text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Drop Placemark</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Insert horizontal rule</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Save image</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/chat/ChatWidget.cpp" line="+1046"/>
         <source>is typing...</source>
         <translation>écrit...</translation>
     </message>
     <message>
-        <location line="+365"/>
+        <location line="+371"/>
         <source>Do you really want to physically delete the history?</source>
         <translation>Etes-vous vraiment sûr de vouloir supprimer définitivement l&apos;historique ?</translation>
     </message>
@@ -1866,7 +2068,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Fichier texte (*.txt );;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+60"/>
         <source>appears to be Offline.</source>
         <translation>semble être hors ligne.</translation>
     </message>
@@ -1891,7 +2093,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>est occupé et peut ne pas répondre</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="+8"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-74"/>
         <source>Find Case Sensitively</source>
         <translation>Trouver en tenant compte de la casse</translation>
     </message>
@@ -1913,7 +2115,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Ne pas cesser de colorer après X articles trouvés (nécessite davantage de CPU)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="-1439"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="-1499"/>
         <source>&lt;b&gt;Find Previous &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</source>
         <translation>&lt;b&gt;Trouver le précédent &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+Shift+G&lt;/i&gt;</translation>
     </message>
@@ -1928,12 +2130,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>&lt;b&gt;Trouver &lt;/b&gt;&lt;br/&gt;&lt;i&gt;Ctrl+F&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.ui" line="-801"/>
+        <location filename="../gui/chat/ChatWidget.ui" line="-371"/>
         <source>(Status)</source>
         <translation>(Statut)</translation>
     </message>
     <message>
-        <location line="+529"/>
+        <location line="-257"/>
         <source>Set text font &amp; color</source>
         <translation>Régler police de caractères du texte et couleur</translation>
     </message>
@@ -1943,7 +2145,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Joindre un fichier</translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+564"/>
         <source>WARNING: Could take a long time on big history.</source>
         <translation>AVERTISSEMENT : cela pourrait prendre longtemps si c&apos;est un historique de grande taille.</translation>
     </message>
@@ -1954,7 +2156,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatWidget.cpp" line="+12"/>
-        <location line="+1155"/>
+        <location line="+1203"/>
         <source>&lt;b&gt;Mark this selected text&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</source>
         <translation>&lt;b&gt;Marquer ce texte comme sélectionné&lt;/b&gt;&lt;br&gt;&lt;i&gt;Ctrl+M&lt;/i&gt;</translation>
     </message>
@@ -1989,12 +2191,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Boîte de recherche</translation>
     </message>
     <message>
-        <location line="-367"/>
+        <location line="-732"/>
         <source>Type a message here</source>
-        <translation>Tapez un message ici</translation>
+        <translation>Saisissez votre message ici</translation>
     </message>
     <message>
-        <location filename="../gui/chat/ChatWidget.cpp" line="-1168"/>
+        <location filename="../gui/chat/ChatWidget.cpp" line="-1216"/>
         <source>Don&apos;t stop to color after</source>
         <translation>Ne pas cesser de colorer après</translation>
     </message>
@@ -2004,7 +2206,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>éléments trouvés (besoin de plus de CPU)</translation>
     </message>
     <message>
-        <location line="+943"/>
+        <location line="+991"/>
         <source>Warning:</source>
         <translation>Avertissement : </translation>
     </message>
@@ -2162,7 +2364,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Détails</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+8"/>
+        <source>Node info</source>
+        <translation>Info noeud</translation>
+    </message>
+    <message>
+        <location line="+180"/>
         <source>Peer Address</source>
         <translation>Adresses IP du contact</translation>
     </message>
@@ -2249,12 +2456,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Détails de noeud Retroshare</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>Location info</source>
-        <translation>Info emplacement</translation>
-    </message>
-    <message>
-        <location line="+22"/>
+        <location line="+87"/>
         <source>Node name :</source>
         <translation>Nom de noeud :</translation>
     </message>
@@ -2290,6 +2492,11 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+67"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Auto-download recommended files from this node</source>
         <translation>Télécharger automatiquement les fichiers recommandés par ce noeud</translation>
     </message>
@@ -2345,14 +2552,14 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Requiert l&apos;autorisation en liste blanche</translation>
     </message>
     <message>
-        <location line="-320"/>
+        <location line="-323"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the ID of the node&apos;s &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt; certifcate, which is signed by the above &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; key. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est l&apos;ID du certificat &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt; du noeud, qui est signé par la clé &lt;span style=&quot; font-weight:600;&quot;&gt;PGP&lt;/span&gt; ci-dessus. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the encryption method used by &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est la méthode de cryptage utilisée par &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. La connexion aux noeuds amis est &lt;/p&gt;&lt;p&gt;toujours lourdement cryptée et si la DHE est présente, la connexion utilise ensuite &lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est la méthode de chiffrement utilisée par &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. La connexion aux noeuds amis est &lt;/p&gt;&lt;p&gt;toujours lourdement chiffrée, et si la DHE est présente la connexion utilise ensuite &lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="-17"/>
@@ -2378,19 +2585,9 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Ajouter un nouvel ami</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation>Cet assistant vous aidera à vous connecter à vos amis à l&apos;aide deRetroshare.&lt;br&gt;Les possibilités de le faire sont :</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>&amp;Enter the certificate manually</source>
-        <translation>&amp;Entrez manuellement le certificat</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+19"/>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation>Vous possédez le certificat de votre ami dans un &amp;Fichier</translation>
+        <translation>Vous avez un possédez le certificat de votre ami dans un &amp;Fichier</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -2398,19 +2595,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Devenir a&amp;mi avec les amis sélectionnés de vos amis</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&amp;Enter RetroShare ID manually</source>
-        <translation>&amp;Entrez manuellement l&apos;ID Retroshare</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&amp;Send an Invitation by Email 
- (She/He receives an email with instructions how to to download RetroShare)</source>
-        <translation>Envoyez une invitation par e-mail 
- (Elle/il recevra par e-mail les instructions pour télécharger Retroshare)</translation>
-    </message>
-    <message>
-        <location line="+16"/>
+        <location line="+37"/>
         <source>Text certificate</source>
         <translation>Certificat version texte</translation>
     </message>
@@ -2420,13 +2605,8 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Utiliser la version texte du certificat PGP.</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation>Le texte ci-dessous est votre certificat PGP. Vous devez le fournir à votre ami</translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+911"/>
+        <location line="+67"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+938"/>
         <source>Include signatures</source>
         <translation>Inclure les signatures</translation>
     </message>
@@ -2447,18 +2627,23 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+54"/>
-        <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Veuillez coller le certificat PGP de votre ami dans la case ci-dessous</translation>
+        <source>Please, paste your friend&apos;s Retroshare certificate into the box below</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend&apos;s Retroshare certificate. WARNING: this is different from your friend&apos;s PGP key. Do not paste your friend&apos;s PGP key here (not even a part of it). It&apos;s not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+76"/>
         <source>Certificate files</source>
-        <translation>fichiers de certificat</translation>
+        <translation>Fichiers de certificats</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Use PGP certificates saved in files.</source>
-        <translation>Utilisez des certificats PGP contenu dans un fichier.</translation>
+        <translation>Utiliser des certificats PGP contenus dans des fichiers.</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -2532,6 +2717,46 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>RetroShare is better with Friends </source>
+        <translation>Retroshare c&apos;est mieux avec des amis</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invite your Friends from other Networks to RetroShare.</source>
+        <translation>Invitez vos amis d&apos;autres réseaux à Retroshare.</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>GMail</source>
+        <translation>GMail</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Yahoo</source>
+        <translation>Yahoo</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Outlook</source>
+        <translation>Outlook</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>AOL</source>
+        <translation>AOL</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Yandex</source>
+        <translation>Yandex</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Email</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+79"/>
         <source>Invite Friends by Email</source>
         <translation>Inviter un ami à rejoindre Retroshare par e-mail</translation>
     </message>
@@ -2553,11 +2778,11 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <location line="+11"/>
         <source>Subject:</source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-668"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-681"/>
         <location line="+26"/>
         <source>Friend request</source>
         <translation>Demande d&apos;ami</translation>
@@ -2571,61 +2796,103 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+43"/>
-        <location line="+372"/>
+        <location line="+373"/>
         <source>Peer details</source>
         <translation>Détails du contact</translation>
     </message>
     <message>
-        <location line="-363"/>
-        <location line="+386"/>
+        <location line="-364"/>
+        <location line="+387"/>
         <source>Name:</source>
         <translation>Nom :</translation>
     </message>
     <message>
-        <location line="-372"/>
-        <location line="+386"/>
+        <location line="-373"/>
+        <location line="+387"/>
         <source>Email:</source>
         <translation>E-Mail :</translation>
     </message>
     <message>
-        <location line="-379"/>
-        <location line="+393"/>
+        <location line="-380"/>
+        <source>Node:</source>
+        <translation>Noeud :</translation>
+    </message>
+    <message>
+        <location line="+249"/>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add too many friends. You can add as many friends as you like, but more than 40 will probably require too much 
+resources.</source>
+        <translation>Veuillez noter que Retroshare nécessitera beaucoup de bande passante, mémoire et CPU si vous ajoutez de nombreux amis. Vous pouvez ajouter autant d&apos;amis que vous le souhaitez, mais avec plus de 40 vous nécessitera probablement trop de ressources.</translation>
+    </message>
+    <message>
+        <location line="+145"/>
         <source>Location:</source>
         <translation>Emplacement :</translation>
     </message>
     <message>
-        <location line="-365"/>
+        <location line="-366"/>
         <location line="+50"/>
-        <location line="+413"/>
+        <location line="+428"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location line="-449"/>
-        <location line="+433"/>
+        <location line="-1340"/>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;Select how you would like to add a friend:</source>
+        <translation>Cet assistant vous aidera à vous connecter à vos amis avec Retroshare.&lt;br&gt;Il y a diverses possibilités pour le faire :</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Enter the certificate manually</source>
+        <translation>Entrer manuellement le certificat</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Enter RetroShare ID manually</source>
+        <translation>Entrer manuellement l&apos;ID Retroshare</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&amp;Send an Invitation by Web Mail Providers</source>
+        <translation>Envoyez une invitation par me&amp;ssagerie électronique</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&amp;Send an Invitation by Email 
+ (Your friend will receive an email with instructions how to to download RetroShare)</source>
+        <translation>Envoyez une invitation par e-mail 
+ (Votre ami recevra par e-mail les instructions pour télécharger Retroshare)</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Recommend many friends to each other</source>
+        <translation>Recommander plusieurs amis les uns aux autres</translation>
+    </message>
+    <message>
+        <location line="+824"/>
+        <location line="+448"/>
         <source>Add friend to group:</source>
         <translation>Ajouter l&apos;ami à un groupe :</translation>
     </message>
     <message>
-        <location line="-414"/>
-        <location line="+384"/>
+        <location line="-429"/>
+        <location line="+399"/>
         <source>Authenticate friend (Sign PGP Key)</source>
-        <translation>Ami authentifié (Clé PGP signée)</translation>
+        <translation>Ami authentifié (clé PGP signée)</translation>
     </message>
     <message>
-        <location line="-377"/>
-        <location line="+384"/>
+        <location line="-392"/>
+        <location line="+399"/>
         <source>Add as friend to connect with</source>
         <translation>Ajouter cet ami pour communiquer avec lui</translation>
     </message>
     <message>
-        <location line="-326"/>
-        <location line="+482"/>
+        <location line="-341"/>
+        <location line="+497"/>
         <source>To accept the Friend Request, click the Finish button.</source>
         <translation>Pour accepter la demande d&apos;amitié, cliquez sur le bouton Terminer.</translation>
     </message>
     <message>
-        <location line="-461"/>
+        <location line="-476"/>
         <source>Sorry, some error appeared</source>
         <translation>Désolé, des erreurs sont survenues</translation>
     </message>
@@ -2645,7 +2912,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>À propos de votre ami : </translation>
     </message>
     <message>
-        <location line="+181"/>
+        <location line="+182"/>
         <source>Key validity:</source>
         <translation>Validité de la clé :</translation>
     </message>
@@ -2701,12 +2968,12 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+31"/>
-        <location line="+369"/>
+        <location line="+380"/>
         <source>Certificate Load Failed</source>
         <translation>Le chargement du certificat à échoué</translation>
     </message>
     <message>
-        <location line="-361"/>
+        <location line="-372"/>
         <source>Cannot get peer details of PGP key %1</source>
         <translation>Impossible d&apos;obtenir les détails de la clé PGP %1</translation>
     </message>
@@ -2741,12 +3008,13 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>ID du contact</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-240"/>
+        <location line="+259"/>
         <source>RetroShare Invitation</source>
         <translation>Invitation Retroshare</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+87"/>
         <source>Ultimate</source>
         <translation>Ultime</translation>
     </message>
@@ -2772,7 +3040,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <location line="+21"/>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>You have a friend request from</source>
         <translation>Vous avez une demande d&apos;amitié de</translation>
     </message>
@@ -2787,7 +3055,7 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Ce contact %1 n&apos;est pas disponible dans votre réseau</translation>
     </message>
     <message>
-        <location line="+221"/>
+        <location line="+223"/>
         <source>Use new certificate format (safer, more robust)</source>
         <translation>Utiliser le nouveau format de certificat (plus sure, plus robuste)</translation>
     </message>
@@ -2809,17 +3077,17 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <location line="+35"/>
         <source>No or misspelled BEGIN tag found</source>
-        <translation>BEGIN tag non trouvé ou mal orthographié</translation>
+        <translation>Tag BEGIN non trouvé ou mal orthographié</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No or misspelled END tag found</source>
-        <translation>END tag non trouvé ou mal orthographié</translation>
+        <translation>Tag END non trouvé ou mal orthographié</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation>Pas de checksum trouvé (les 5 derniers caractères doivent être séparés par un &apos;=&apos;), ou aucun saut de ligne après la ligne d&apos;étiquette (p.ex. ligne commençant avec Version:)</translation>
+        <translation>Pas de checksum trouvée (les 5 derniers caractères doivent être séparés par un &apos;=&apos;), ou aucun saut de ligne après la ligne d&apos;étiquette (p.ex. ligne commençant avec Version:)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2885,13 +3153,22 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>*** Aucune ***</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-337"/>
+        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-338"/>
         <source>Use as direct source, when available</source>
         <translation>Utiliser en source directe, quand disponible</translation>
     </message>
     <message>
-        <location line="-651"/>
-        <location line="+1189"/>
+        <location line="+348"/>
+        <source>IP-Addr:</source>
+        <translation>Addr-IP :</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>IP-Address</source>
+        <translation>Adresse IP</translation>
+    </message>
+    <message>
+        <location line="+198"/>
         <source>Recommend many friends to each others</source>
         <translation>Recommander plusieurs amis les uns aux autres</translation>
     </message>
@@ -2901,12 +3178,17 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Recommandations d&apos;amis</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-1396"/>
+        <source>The text below is your Retroshare certificate. You have to provide it to your friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1432"/>
         <source>Message:</source>
         <translation>Message :</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-582"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-584"/>
         <source>Recommend friends</source>
         <translation>Amis recommandés</translation>
     </message>
@@ -2923,20 +3205,15 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <location line="+8"/>
         <source>Please select at least one friend as recipient.</source>
-        <translation>S&apos;il vous plaît sélectionner au moins un destinataire.</translation>
+        <translation>Veuillez sélectionner au moins un destinataire.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-406"/>
-        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
-        <translation>Veuillez noter que RetroShare nécessitera des quantités excessives de bande passante, mémoire et CPU si vous ajoutez à de nombreux amis. Vous pouvez ajouter autant d&apos;amis que vous le souhaitez, mais avec plus de 40 vous aurez probablement besoin de trop de ressources.</translation>
-    </message>
-    <message>
-        <location line="+189"/>
+        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-217"/>
         <source>Add key to keyring</source>
         <translation>Ajouter la clé au trousseau</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-309"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-310"/>
         <source>This key is already in your keyring</source>
         <translation>Cette clé est déjà dans votre trousseau</translation>
     </message>
@@ -2952,7 +3229,7 @@ l&apos;envoi de messages distants à ce
 contact même si vous n&apos;êtes pas amis.</translation>
     </message>
     <message>
-        <location line="-192"/>
+        <location line="-202"/>
         <source>Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.</source>
         <translation>Le certificat a un mauvais numéro de version. Souvenez-vous que les réseaux v0.6 et v0.5 sont incompatibles.</translation>
     </message>
@@ -2962,8 +3239,8 @@ contact même si vous n&apos;êtes pas amis.</translation>
         <translation>L&apos;ID de noeud est invalide.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-347"/>
-        <location line="+413"/>
+        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-362"/>
+        <location line="+428"/>
         <source>Auto-download recommended files</source>
         <translation>Télécharger automatiquement les fichiers recommandés</translation>
     </message>
@@ -2973,8 +3250,8 @@ contact même si vous n&apos;êtes pas amis.</translation>
         <translation>Possibilité d&apos;être utilisé comme source directe</translation>
     </message>
     <message>
-        <location line="-399"/>
-        <location line="+413"/>
+        <location line="-414"/>
+        <location line="+428"/>
         <source>Require whitelist clearance to connect</source>
         <translation>Requiert l&apos;autorisation en liste blanche pour être connecté</translation>
     </message>
@@ -2984,7 +3261,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
         <translation>Ajouter l&apos;IP dans la liste blanche</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+181"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+191"/>
         <source>No IP in this certificate!</source>
         <translation>Pas d&apos;IP dans ce certificat !</translation>
     </message>
@@ -2994,17 +3271,17 @@ contact même si vous n&apos;êtes pas amis.</translation>
         <translation>&lt;p&gt;Ce certificat n&apos;a pas d&apos;IP. Vous devrez compter sur la découverte et la DHT pour le trouver. Parce que vous exigez l&apos;autorisation liste blanche, le pair lèvera un avertissement de sécurité dans l&apos;onglet &quot;Fil d&apos;actualités&quot;. De là, vous pourrez passer son IP en liste blanche.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+428"/>
+        <location line="+431"/>
         <source>Added with certificate from %1</source>
-        <translation>Ajout&amp;eacute; avec certificat depuis %1</translation>
+        <translation>Ajouté avec certificat depuis %1</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-779"/>
+        <location filename="../gui/connect/ConnectFriendWizard.ui" line="-1006"/>
         <source>Paste Cert of your friend from Clipboard</source>
         <translation>Coller le certificat de votre ami depuis le presse-papier</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-181"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-183"/>
         <source>Certificate Load Failed:can&apos;t read from file %1</source>
         <translation>Échec de chargement du certificat : ne peut pas lire le fichier %1</translation>
     </message>
@@ -3371,7 +3648,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
     <message>
         <location line="-13"/>
         <source>Please contact them to add your Certificate</source>
-        <translation>S&apos;il vous plaît contactez les pour les faire ajouter votre certificat</translation>
+        <translation>Veuillez les contacter afin qu&apos;ils ajoutent votre certificat</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3388,7 +3665,7 @@ contact même si vous n&apos;êtes pas amis.</translation>
     <message>
         <location line="+4"/>
         <source>Please contact them to add your Full Certificate</source>
-        <translation>S&apos;il vous plaît contactez les pour les faire ajouter votre certificat entier</translation>
+        <translation>Veuillez les contacter afin qu&apos;ils ajoutent votre certificat entier</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3747,9 +4024,9 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Utiliser le &quot;glisser-déposer&quot; / le bouton ajouter, pour hasher de nouveaux fichiers.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copier/Coller les liens Retroshare de vos partages&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Pièces jointes :&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Utiliser &quot;glisser-déposer&quot; / le bouton d&apos;ajout, pour hacher de nouveaux fichiers.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copier/collez des liens Retroshare depuis vos partages.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3848,7 +4125,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.ui" line="+18"/>
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="-26"/>
         <source>Generate mass data</source>
-        <translation>Générer des données de masse</translation>
+        <translation>Générer des données en masse</translation>
     </message>
     <message>
         <location filename="../gui/gxschannels/CreateGxsChannelMsg.cpp" line="+0"/>
@@ -3875,7 +4152,7 @@ p, li { white-space: pre-wrap; }
         <translation>Poster un message sur le forum</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+87"/>
         <source>Forum</source>
         <translation>Forum</translation>
     </message>
@@ -3885,7 +4162,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sujet</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+73"/>
         <source>Attach File</source>
         <translation>Joindre un fichier</translation>
     </message>
@@ -3915,12 +4192,12 @@ p, li { white-space: pre-wrap; }
         <translation>Lancer un nouveau fil</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+58"/>
         <source>No Forum</source>
         <translation>Aucun forum</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+87"/>
         <source>In Reply to</source>
         <translation>En réponse à</translation>
     </message>
@@ -3950,7 +4227,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="+18"/>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="-62"/>
         <source>Generate mass data</source>
-        <translation>Générer des données de masse</translation>
+        <translation>Générer des données en masse</translation>
     </message>
     <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.cpp" line="+0"/>
@@ -3958,12 +4235,12 @@ p, li { white-space: pre-wrap; }
         <translation>Voulez-vous vraiment générer %1 messages ?</translation>
     </message>
     <message>
-        <location line="-245"/>
+        <location line="-254"/>
         <source>Send</source>
         <translation>Envoyer</translation>
     </message>
     <message>
-        <location line="+277"/>
+        <location line="+286"/>
         <source>Forum Message</source>
         <translation>Message de forum</translation>
     </message>
@@ -3975,7 +4252,7 @@ Do you want to reject this message?</source>
 Voulez-vous rejeter ce message ?</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="-169"/>
+        <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="-178"/>
         <source>Post as</source>
         <translation>Poster en tant que</translation>
     </message>
@@ -4006,12 +4283,12 @@ Voulez-vous rejeter ce message ?</translation>
     <message>
         <location line="+13"/>
         <source>Lobby topic:</source>
-        <translation>Sujet du salon :</translation>
+        <translation>Sujet du salon : </translation>
     </message>
     <message>
         <location line="+23"/>
-        <source>Security policy:</source>
-        <translation>Politique de sécurité :</translation>
+        <source>Visibility:</source>
+        <translation>Visibilité :</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -4024,7 +4301,22 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Privé (sur invitation uniquement)</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+11"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you check this, only PGP-signed ids can be used to join and talk in this lobby. This limitation prevents anonymous spamming as it becomes possible for at least some people in the lobby to locate the spammer&apos;s node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>require PGP-signed identities</source>
+        <translation>nécessite des identités signées PGP</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Security:</source>
+        <translation>Sécurité :</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <source>Select the Friends with which you want to group chat.</source>
         <translation>Selectionner les amis avec qui vous voulez communiquer.</translation>
     </message>
@@ -4034,12 +4326,22 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Amis invités</translation>
     </message>
     <message>
-        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+20"/>
+        <location filename="../gui/chat/CreateLobbyDialog.cpp" line="+8"/>
+        <source>Put a sensible lobby name here</source>
+        <translation>Mettez un nom sensé pour le salon ici</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Set a descriptive topic here</source>
+        <translation>Mettez un titre descriptif ici</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Contacts:</source>
         <translation>Contacts :</translation>
     </message>
     <message>
-        <location filename="../gui/chat/CreateLobbyDialog.ui" line="-97"/>
+        <location filename="../gui/chat/CreateLobbyDialog.ui" line="-120"/>
         <source>Identity to use:</source>
         <translation>Identité à utiliser :</translation>
     </message>
@@ -4198,7 +4500,12 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>DHT</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+1"/>
+        <source>&lt;p&gt;Retroshare uses Bittorrent&apos;s DHT as a proxy for connexions. It does not &quot;store&quot; your IP in the DHT. 				                        Instead the DHT is used by your friends to reach you while processing standard DHT requests. 												The status bullet will turn green as soon as Retroshare gets a DHT response from one of your friends.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+45"/>
         <source>DHT Off</source>
         <translation>DHT Off</translation>
     </message>
@@ -4220,8 +4527,8 @@ Voulez-vous rejeter ce message ?</translation>
     </message>
     <message>
         <location line="+14"/>
-        <source>DHT Error</source>
-        <translation>La DHT est en erreur</translation>
+        <source>No peer found in DHT</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4318,7 +4625,7 @@ Voulez-vous rejeter ce message ?</translation>
 <context>
     <name>DhtWindow</name>
     <message>
-        <location filename="../gui/statistics/DhtWindow.ui" line="+57"/>
+        <location filename="../gui/statistics/DhtWindow.ui" line="+52"/>
         <source>Net Status</source>
         <translation>État du réseau</translation>
     </message>
@@ -4348,7 +4655,7 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Adresse du contact</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+344"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
@@ -4393,7 +4700,7 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Rs ID</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-107"/>
         <source>Bucket</source>
         <translation>Bucket</translation>
     </message>
@@ -4419,17 +4726,17 @@ Voulez-vous rejeter ce message ?</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+45"/>
+        <location line="+131"/>
         <source>Last Sent</source>
         <translation>Dernier envoi</translation>
     </message>
     <message>
-        <location line="-40"/>
+        <location line="-126"/>
         <source>Last Recv</source>
         <translation>Dernier reçu</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+96"/>
         <source>Relay Mode</source>
         <translation>Mode relais</translation>
     </message>
@@ -4464,7 +4771,22 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Bande passante</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/DhtWindow.cpp" line="+109"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="+59"/>
+        <source>IP</source>
+        <translation>IP</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Search IP</source>
+        <translation>Rechercher IP</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Copy %1 to clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+70"/>
         <source>Unknown NetState</source>
         <translation>Netstate inconnu</translation>
     </message>
@@ -4669,7 +4991,7 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+73"/>
         <source>RELAY END</source>
         <translation>FIN DU RELAIS</translation>
     </message>
@@ -4703,19 +5025,24 @@ Voulez-vous rejeter ce message ?</translation>
     <message>
         <location line="+4"/>
         <location line="+1"/>
-        <location line="+86"/>
+        <location line="+81"/>
         <location line="+9"/>
         <location line="+3"/>
         <source>%1 secs ago</source>
         <translation>%1 secs avant</translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location line="-92"/>
         <source>%1B/s</source>
         <translation>%1 o/s</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+14"/>
+        <source>Relays</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+65"/>
         <source>0x%1 EX:0x%2</source>
         <translation>0x%1 EX:0x%2</translation>
     </message>
@@ -4725,13 +5052,15 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>jamais</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/DhtWindow.ui" line="-580"/>
+        <location filename="../gui/statistics/DhtWindow.ui" line="-631"/>
         <location line="+10"/>
+        <location line="+441"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="+24"/>
         <source>DHT</source>
         <translation>DHT</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-423"/>
         <source>Net Status:</source>
         <translation>Statut réseau :</translation>
     </message>
@@ -4801,19 +5130,40 @@ Voulez-vous rejeter ce message ?</translation>
         <translation>Relais :</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+99"/>
+        <source>Filter:</source>
+        <translation>Filtre :</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Search Network</source>
+        <translation>Chercher dans le réseau</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="-186"/>
+        <source>Peers</source>
+        <translation>Contacts</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Relay</source>
+        <translation>Relais</translation>
+    </message>
+    <message>
+        <location line="+58"/>
         <source>DHT Graph</source>
         <translation>Graphe DHT</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/DhtWindow.cpp" line="-266"/>
+        <location filename="../gui/statistics/DhtWindow.cpp" line="-102"/>
         <source>Proxy VIA</source>
-        <translation type="unfinished"/>
+        <translation>VIA Proxy</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Relay VIA</source>
-        <translation type="unfinished"/>
+        <translation>VIA Relais</translation>
     </message>
 </context>
 <context>
@@ -4942,7 +5292,7 @@ des fichiers quand vous le rebrancher.</translation>
 <context>
     <name>ExprParamElement</name>
     <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="+368"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="+365"/>
         <location line="+13"/>
         <location line="+115"/>
         <source>to</source>
@@ -5047,7 +5397,7 @@ des fichiers quand vous le rebrancher.</translation>
 <context>
     <name>FileTransferInfoWidget</name>
     <message>
-        <location filename="../gui/FileTransfer/FileTransferInfoWidget.cpp" line="+124"/>
+        <location filename="../gui/FileTransfer/FileTransferInfoWidget.cpp" line="+137"/>
         <source>Chunk map</source>
         <translation>Répartition des paquets </translation>
     </message>
@@ -5222,7 +5572,7 @@ des fichiers quand vous le rebrancher.</translation>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+659"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+675"/>
         <source>Friends Directories</source>
         <translation>Dossiers partagés de mes amis</translation>
     </message>
@@ -5298,90 +5648,40 @@ des fichiers quand vous le rebrancher.</translation>
 <context>
     <name>FriendList</name>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="+123"/>
-        <location line="+29"/>
-        <source>Status</source>
-        <translation>Statut</translation>
-    </message>
-    <message>
-        <location line="-24"/>
-        <location line="+100"/>
-        <location line="+11"/>
+        <location filename="../gui/common/FriendList.ui" line="+121"/>
         <source>Last Contact</source>
         <translation>Dernier contact</translation>
     </message>
     <message>
-        <location line="-121"/>
-        <location line="+88"/>
-        <source>Avatar</source>
-        <translation>Avatar</translation>
-    </message>
-    <message>
-        <location line="-62"/>
+        <location line="+16"/>
         <source>Hide Offline Friends</source>
         <translation>Cacher mes amis hors ligne</translation>
     </message>
     <message>
-        <location line="+16"/>
-        <source>State</source>
-        <translation>Statut</translation>
+        <location line="+27"/>
+        <source>export friendlist</source>
+        <translation>Exporter la liste d&apos;amis</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Sort by State</source>
-        <translation>Trier par statut</translation>
+        <source>export your friendlist including groups</source>
+        <translation>Exporter votre liste d&apos;amis en incluant les groupes</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Hide State</source>
-        <translation>Cacher le statut</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+3"/>
-        <source>Sort Descending Order</source>
-        <translation>Trier par ordre décroissant</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <location line="+3"/>
-        <source>Sort Ascending Order</source>
-        <translation>Trier par ordre croissant</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Show Avatar Column</source>
-        <translation>Afficher la colonne des avatars</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Name</source>
-        <translation>Nom</translation>
+        <location line="+5"/>
+        <source>import friendlist</source>
+        <translation>Importer la liste d&apos;amis</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Sort by Name</source>
-        <translation>Trier par nom</translation>
+        <source>import your friendlist including groups</source>
+        <translation>Importer votre liste d&apos;amis en incluant les groupes</translation>
     </message>
     <message>
-        <location line="+11"/>
-        <source>Sort by last contact</source>
-        <translation>Trier par dernier contact</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Show Last Contact Column</source>
-        <translation>Afficher la colonne des derniers contact</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Set root is Decorated</source>
-        <translation>Afficher l&apos;arborescence</translation>
-    </message>
-    <message>
+        <location line="-30"/>
         <location line="+3"/>
-        <source>Set Root Decorated</source>
-        <translation>Afficher l&apos;arborescence</translation>
+        <source>Show State</source>
+        <translation>Afficher l&apos;état</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -5390,7 +5690,7 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Afficher les groupes</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="+357"/>
+        <location filename="../gui/common/FriendList.cpp" line="+312"/>
         <source>Group</source>
         <translation>Groupe</translation>
     </message>
@@ -5431,7 +5731,17 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Ajouter à un groupe</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-230"/>
+        <source>Search</source>
+        <translation>Rechercher</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Sort by state</source>
+        <translation>Trier par état</translation>
+    </message>
+    <message>
+        <location line="+236"/>
         <source>Move to group</source>
         <translation>Déplacer dans le groupe</translation>
     </message>
@@ -5461,40 +5771,109 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Tout replier </translation>
     </message>
     <message>
-        <location line="+583"/>
-        <location line="+2"/>
+        <location line="+668"/>
         <source>Available</source>
         <translation>Disponible</translation>
     </message>
     <message>
-        <location line="+384"/>
+        <location line="+393"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Désirez-vous supprimer cet ami ?</translation>
     </message>
     <message>
-        <location line="+497"/>
-        <source>Columns</source>
-        <translation>Colonnes</translation>
+        <location line="+261"/>
+        <location line="+18"/>
+        <source>Done!</source>
+        <translation>Terminé !</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="-131"/>
-        <location line="+139"/>
-        <location line="+11"/>
+        <location line="-17"/>
+        <source>Your friendlist is stored at:
+</source>
+        <translation>Votre liste d&apos;amis est enregistrée dans :
+
+</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>
+(keep in mind that the file is unencrypted!)</source>
+        <translation>
+(Gardez à l&apos;esprit que ce fichier n&apos;est pas crypté !)</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <location line="+7"/>
+        <source>Your friendlist was imported from:
+</source>
+        <translation>Votre liste d&apos;amis a été importée depuis :
+</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>Done - but errors happened!</source>
+        <translation>Terminé - mais avec des erreurs !</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>
+at least one peer was not added</source>
+        <translation>
+au moins un contact n&apos;a pas été ajouté</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>
+at least one peer was not added to a group</source>
+        <translation>
+au moins un contact n&apos;a pas été ajouté au groupe</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Select file for importing yoour friendlist from</source>
+        <translation>Sélectionnez le fichier d&apos;importation de votre liste d&apos;amis</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select a file for exporting your friendlist to</source>
+        <translation>Sélectionnez le fichier d&apos;exportation de votre liste d&apos;amis</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>XML File (*.xml);;All Files (*)</source>
+        <translation>Fichier XML (*.xml);;Tous les fichiers (*)</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+27"/>
+        <location line="+112"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location line="-138"/>
+        <source>Failed to get a file!</source>
+        <translation>Échec de la récupération du fichier !</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>File is not writeable!
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+112"/>
+        <source>File is not readable!
+</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/common/FriendList.ui" line="-33"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location line="-8"/>
-        <source>Sort by IP</source>
-        <translation>Trier par IP</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Show IP Column</source>
-        <translation>Afficher la colonne des IPs</translation>
-    </message>
-    <message>
-        <location filename="../gui/common/FriendList.cpp" line="-1486"/>
+        <location filename="../gui/common/FriendList.cpp" line="-1539"/>
         <source>Attempt to connect</source>
         <translation>Tentative de connexion</translation>
     </message>
@@ -5504,7 +5883,7 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Créer un nouveau groupe</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="-236"/>
+        <location filename="../gui/common/FriendList.ui" line="-58"/>
         <source>Display</source>
         <translation>Affichage</translation>
     </message>
@@ -5514,12 +5893,7 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Collez le lien de votre certificat</translation>
     </message>
     <message>
-        <location line="+1476"/>
-        <source>Sort by</source>
-        <translation>Trier par</translation>
-    </message>
-    <message>
-        <location line="-1603"/>
+        <location line="-127"/>
         <source>Node</source>
         <translation>Noeud</translation>
     </message>
@@ -5529,17 +5903,17 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Enlever noeud d&apos;ami</translation>
     </message>
     <message>
-        <location line="+991"/>
+        <location line="+1083"/>
         <source>Do you want to remove this node?</source>
         <translation>Voulez-vous retirer ce noeud ?</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.ui" line="+63"/>
+        <location filename="../gui/common/FriendList.ui" line="+45"/>
         <source>Friend nodes</source>
         <translation>Noeuds amis</translation>
     </message>
     <message>
-        <location filename="../gui/common/FriendList.cpp" line="-1098"/>
+        <location filename="../gui/common/FriendList.cpp" line="-1190"/>
         <source>Send message to whole group</source>
         <translation>Envoyer le message au groupe entier</translation>
     </message>
@@ -5587,30 +5961,35 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Rechercher :</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>All</source>
-        <translation>Tout</translation>
+        <location filename="../gui/common/FriendSelectionWidget.cpp" line="+108"/>
+        <source>Sort by state</source>
+        <translation>Trier par état</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>None</source>
-        <translation>Aucune</translation>
-    </message>
-    <message>
-        <location filename="../gui/common/FriendSelectionWidget.cpp" line="+109"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Search Friends</source>
         <translation>Rechercher des amis</translation>
+    </message>
+    <message>
+        <location line="+690"/>
+        <source>Mark all</source>
+        <translation>Tout marquer</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mark none</source>
+        <translation>Marquer aucun</translation>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
     <message>
-        <location filename="../gui/FriendsDialog.ui" line="+162"/>
+        <location filename="../gui/FriendsDialog.ui" line="+144"/>
         <source>Edit status message</source>
         <translation>Modifier le message d&apos;état</translation>
     </message>
@@ -5704,12 +6083,17 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Trousseau</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="+63"/>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Réseau&lt;/h1&gt; &lt;p&gt;L&apos;onglet réseau montre les noeuds de vos amis Retroshare : les noeuds Retroshare voisins qui sont connectés à vous.&lt;/p&gt; &lt;p&gt;Vous pouvez grouper les noeuds ensemble pour permettre un niveau d&apos;accès plus fin à l&apos;information, par exemple pour permettre seulement à quelques noeuds de voir vos fichiers.&lt;/p&gt; &lt;p&gt;Sur la droite, vous trouverez 3 onglets utiles : &lt;ul&gt; &lt;li&gt;Tchat entre amis (en anglais : &quot;broadcast&quot;) : diffuse les messages immédiatement à tous les noeuds amis connectés&lt;/li&gt; &lt;li&gt;Graphe réseau : ce graphe montre le réseau autours de vous, en se basant sur l&apos;information de découverte&lt;/li&gt; &lt;li&gt;Trousseau : contient les clés des noeuds que vous avez collecté, elles sont transférées jusqu&apos;à vous principalement par les noeuds de vos amis&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <location line="-83"/>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation>Retroshare broadcast chat : les messages sont envoyés à tous vos amis en ligne.</translation>
     </message>
     <message>
-        <location filename="../gui/FriendsDialog.ui" line="-288"/>
+        <location filename="../gui/FriendsDialog.ui" line="-270"/>
         <location filename="../gui/FriendsDialog.h" line="+60"/>
         <source>Network</source>
         <translation>Réseau</translation>
@@ -5720,12 +6104,7 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Graphe réseau</translation>
     </message>
     <message>
-        <location line="+67"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Network&lt;/h1&gt;                                       &lt;p&gt;The Network tab shows your friend Retroshare nodes: the neighbor Retroshare nodes that are connected to you.     &lt;/p&gt;                                                       &lt;p&gt;You can group nodes together to allow a finer level of information access, for instance to only allow          some nodes to see some of your files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected nodes at once&lt;/li&gt;                                   &lt;li&gt;Local network graph shows the network around you, based on discovery information&lt;/li&gt;                       &lt;li&gt;Keyring contains node keys you collected, mostly forwarded to you by your friend nodes&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Réseau&lt;/h1&gt;                                       &lt;p&gt;L&apos;onglet réseau montre les noeuds de vos amis Retroshare : les noeuds Retroshare voisins qui sont connectés à vous.&lt;/p&gt;                                                       &lt;p&gt;Vous pouvez grouper les noeuds ensemble pour permettre un niveau d&apos;accès à l&apos;information plus fin, par exemple pour permettre seulement à quelques noeuds de voir vos fichiers.&lt;/p&gt;     &lt;p&gt;Sur la droite, vous trouverez 3 onglets utiles : &lt;ul&gt;                                                                                                                &lt;li&gt;Chat entre amis (broadcast) : envoie les messages immédiatement à tous les noeuds connectés&lt;/li&gt;                                   &lt;li&gt;Réseau local : ce graphique montre le réseau autours de vous, en se basant sur l&apos;information de découverte&lt;/li&gt;                       &lt;li&gt;Trousseau (de clés) : contient les clés des noeuds que vous avez collecté, elles ont été transférées vers vous principalement par les noeuds de vos amis&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt; </translation>
-    </message>
-    <message>
-        <location line="+145"/>
+        <location line="+209"/>
         <source>Set your status message here.</source>
         <translation>Mettez ici votre message de statut.</translation>
     </message>
@@ -5738,7 +6117,7 @@ des fichiers quand vous le rebrancher.</translation>
         <translation>Créer un nouveau profil</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+379"/>
         <source>Name</source>
         <translation>Pseudo</translation>
     </message>
@@ -5792,14 +6171,14 @@ mais pour rester anonyme, vous pouvez utiliser un faux courrier électronique.</
         <translation>Mot de passe (contrôle)</translation>
     </message>
     <message>
-        <location line="+239"/>
+        <location line="+290"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Avant de continuer, déplacez votre souris pour aider Retroshare à recueillir autant de données aléatoires que possible. Remplir la barre de progression jusqu&apos;à 20&amp;#37; est nécessaire, 100&amp;#37; est conseillé.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="-323"/>
         <source>[Required] Type the same password again here.</source>
-        <translation>[Obligatoire] Tapez le même mot de passe ici.</translation>
+        <translation>[Obligatoire] Saisissez le même mot de passe ici.</translation>
     </message>
     <message>
         <location line="+332"/>
@@ -5807,7 +6186,7 @@ mais pour rester anonyme, vous pouvez utiliser un faux courrier électronique.</
         <translation>Les mots de passe ne correspondent pas</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-92"/>
+        <location filename="../gui/GenCertDialog.ui" line="-143"/>
         <source>Port</source>
         <translation>Port</translation>
     </message>
@@ -5851,29 +6230,24 @@ mais pour rester anonyme, vous pouvez utiliser un faux courrier électronique.</
         <translation>Noeud caché invalide</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Please enter a valid address of the form: 31769173498.onion:7800</source>
-        <translation>Veuillez entrer une adresse valide sous la forme : 31769173498.onion:7800</translation>
-    </message>
-    <message>
-        <location line="+12"/>
+        <location line="+13"/>
         <source>Node field is required with a minimum of 3 characters</source>
         <translation>Le champ noeud est exigé avec un minimum de 3 caractères</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+101"/>
         <source>Failed to generate your new certificate, maybe PGP password is wrong!</source>
         <translation>Échec lors de la génération de votre nouveau certificat, peut-être que votre mot de passe PGP est faux !</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.ui" line="-251"/>
+        <location filename="../gui/GenCertDialog.ui" line="-314"/>
         <source>You can create a new profile with this form.
 Alternatively you can use an existing profile. Just uncheck &quot;Create a new profile&quot;</source>
         <translation>Vous pouvez créer un nouveau profil avec ce formulaire.
 Autrement vous pouvez utiliser un profil existant. Il vous suffit de décocher &quot;Créer un nouveau profil&quot;</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+81"/>
         <source>You can create and run Retroshare nodes on different computers using the same profile. To do so just export the selected profile, import it on the other computer and create a new node with it.</source>
         <translation>Vous pouvez créer et exécuter des noeuds Retroshare sur des ordinateurs différents mais utilisant le même profil. Pour faire cela il vous suffit d&apos;exporter le profil choisi, puis l&apos;importer sur l&apos;autre ordinateur et créer un nouveau noeud avec.</translation>
     </message>
@@ -5895,7 +6269,7 @@ Autrement vous pouvez utiliser un profil existant. Il vous suffit de décocher &
     </message>
     <message>
         <location line="-52"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-445"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-446"/>
         <source>Create a new profile</source>
         <translation>Créer un nouveau profil</translation>
     </message>
@@ -5920,12 +6294,17 @@ Autrement vous pouvez utiliser un profil existant. Il vous suffit de décocher &
         <translation>Créer un noeud caché</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+38"/>
         <source>Use profile</source>
         <translation>Utiliser le profil</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+60"/>
+        <source>hidden address</source>
+        <translation>adresse cachée</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Your profile is associated with a PGP key pair. RetroShare currently ignores DSA keys.</source>
         <translation>Votre profil est associé à une paire de clé PGP. Actuellement RetroShare ignore les clés DSA.</translation>
     </message>
@@ -5941,12 +6320,17 @@ Autrement vous pouvez utiliser un profil existant. Il vous suffit de décocher &
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est votre port de connexion.&lt;/p&gt;&lt;p&gt;N&apos;importe quelle valeur entre 1024 et 65535 &lt;/p&gt;&lt;p&gt; devrait être OK. Il vous sera possible de la changer plus tard.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+22"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;br/&gt;or an I2P address in the form: [52 characters].b32.i2p &lt;/p&gt;&lt;p&gt;In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;Hidden Service configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+26"/>
         <source>PGP key length</source>
         <translation>Longueur de la clé PGP</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+120"/>
         <location filename="../gui/GenCertDialog.cpp" line="+104"/>
         <location line="+52"/>
         <source>Create new profile</source>
@@ -5963,7 +6347,12 @@ Autrement vous pouvez utiliser un profil existant. Il vous suffit de décocher &
         <translation>Cliquez pour créer votre noeud et/ou profil</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+58"/>
+        <source>[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)</source>
+        <translation>[Requis] Adresse Tor/I2P - Exemples : xa76giaf6ifda7ri63i263.onion (obtenu par vous depuis TOR)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>[Required] This password protects your private PGP key.</source>
         <translation>[Requis] Ce mot de passe protège votre clé PGP privée.</translation>
     </message>
@@ -6079,7 +6468,12 @@ et l&apos;utiliser au moyen du bouton d&apos;importation afin de le charger</tra
         <translation>Votre profil a été importé avec succès :</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+22"/>
+        <source>Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p</source>
+        <translation>Veuillez entrer une adresse valide sous la forme : 31769173498.onion:7800 ou [52caractères].b32.i2p</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <location line="+21"/>
         <location line="+9"/>
         <source>PGP key pair generation failure</source>
@@ -6087,12 +6481,12 @@ et l&apos;utiliser au moyen du bouton d&apos;importation afin de le charger</tra
     </message>
     <message>
         <location line="-20"/>
-        <location line="+90"/>
+        <location line="+91"/>
         <source>Profile generation failure</source>
         <translation>Échec lors de la génération du profil</translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="-90"/>
         <source>Missing PGP certificate</source>
         <translation>Certificat PGP manquant</translation>
     </message>
@@ -6109,21 +6503,6 @@ Remplissez votre mot de passe PGP une fois demandé, afin de signer votre nouvel
         <location line="-269"/>
         <source>You can create a new profile with this form.</source>
         <translation>Vous pouvez créer un nouveau profil au moyen de ce formulaire.</translation>
-    </message>
-    <message>
-        <location filename="../gui/GenCertDialog.ui" line="-258"/>
-        <source>Tor address</source>
-        <translation>Adresse Tor</translation>
-    </message>
-    <message>
-        <location line="+173"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;In order to get one, you must configure Tor to create a new hidden service. If you do not yet have one, you can still go on, and make it right later in Retroshare&apos;s Options-&amp;gt;Server-&amp;gt;Tor configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est une adresse Onion Tor sous la forme : xa76giaf6ifda7ri63i263.onion &lt;/p&gt;&lt;p&gt;Afin d&apos;en obtenir une, vous devez configurer Tor afin qu&apos;il crée un nouveau service caché. Si vous n&apos;en avez pas encore un, vous pouvez toujours continuer et le faire plus tard depuis les Options de Retroshare panneau de configuration Tor -&amp;gt;Serveur-&amp;gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html</translation>
-    </message>
-    <message>
-        <location filename="../gui/GenCertDialog.cpp" line="-72"/>
-        <source>[Required] Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)</source>
-        <translation>[Requise] Exemples: xa76giaf6ifda7ri63i263.onion (obtenue par vous depuis Tor)</translation>
     </message>
 </context>
 <context>
@@ -6283,29 +6662,18 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you their invitations, click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Quand vos amis vous ont envoyé leurs invitations, cliquez pour ouvrir la fenêtre d&apos;ajout d&apos;amis.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Coupez puis collez leurs &quot;certificats d&apos;identité&quot; dans la fenêtre pour les ajouter en tant qu&apos;amis.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+31"/>
-        <source>Connect To Friends</source>
-        <translation>Se connecter aux amis</translation>
-    </message>
-    <message>
-        <location line="+54"/>
+        <location line="+85"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be Online at the same time, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be Online at the same time as your friends, and RetroShare will automatically connect you!&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Your client needs to find the RetroShare Network before it can make connections.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;
@@ -6316,26 +6684,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Soyez en ligne en même temps, et Retroshare va automatiquement vous connecter !&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Votre client a besoin de trouver le réseau Retroshare avant qu&apos;il puisse faire des connexions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cela prend 5 à 30 minutes la première fois que vous démarrez Retroshare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;L&apos;indicateur de la DHT (dans la barre d&apos;état) devient vert quand elle devient capable de faire des connexions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Après quelques minutes, l&apos;indicateur NAT (également dans la barre d&apos;état) se colore en jaune ou en vert.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Si il reste rouge, alors vous avez un ennuyeux pare-feu, que Retroshare ne parvient pas à traverser.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Regardez dans la section Aide supplémentaire pour plus de conseils sur la connexion.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+36"/>
-        <source>Advanced: Open Firewall Port</source>
-        <translation>Avancé : ouvrir un port dans le pare-feu</translation>
+        <location line="+84"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As each router is different, you will need to find out your Router Model and search the Internet for instructions.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense to you, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location line="+48"/>
@@ -6343,71 +6709,37 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can improve your Retroshare performance by opening an External Port. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This will speed up connections and allow more people to connect with you &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;The easiest way to do this is by enabling UPnP on your Wireless Box or Router.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As each router is different, you need to find out your Router Model and Google for instructions.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Vous pouvez améliorer les performances de Retroshare en ouvrant un port externe. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Cela accélérera les connexions et permettra à plus de gens de se connecter avec vous&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;La façon la plus simple de faire est en activant l&apos;UPnP dans votre Box ou dans votre routeur.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Parce que chaque routeur est différent, vous devrez trouver le modèle de votre routeur puis lancer une recherche sur le net pour trouver des instructions appropriées.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Si rien de tout cela n&apos;a de sens pour vous, ne vous inquiétez pas Retroshare fonctionnera quand même.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+42"/>
-        <source>Further Help and Support</source>
-        <translation>Aide supplémentaire et support</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Having trouble getting started with RetroShare?&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) look at the FAQ Wiki. This is a bit old, we trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) Look at the FAQ Wiki. This is a bit old, we are trying to bring it up to date.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) Check out the Online Forums. Ask questions and discuss features.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) Try the Internal RetroShare Forums &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;	- These come online once you are connected to friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Vous avez du mal à débuter avec Retroshare ?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) Consulter la FAQ dans le Wiki. Elle est un peu vieille, mais nous essayons de la mettre à jour.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) Consulter les forums en ligne. Posez des questions et discuter des fonctionnalités.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) Essayez les forums internes de Retroshare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Ceux-ci apparaissent une fois que vous êtes connecté à des amis.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) Si vous êtes toujours coincé. Envoyez nous un email.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Profitez de Retroshare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="-186"/>
+        <source>Connect To Friends</source>
+        <translation>Se connecter aux amis</translation>
+    </message>
+    <message>
+        <location line="+90"/>
+        <source>Advanced: Open Firewall Port</source>
+        <translation>Avancé : ouvrir un port dans le pare-feu</translation>
+    </message>
+    <message>
+        <location line="+90"/>
+        <source>Further Help and Support</source>
+        <translation>Aide supplémentaire et support</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <source>Open RS Website</source>
         <translation>Ouvrir le site web de RS</translation>
     </message>
@@ -6500,80 +6832,102 @@ p, li { white-space: pre-wrap; }
         <translation>Statistiques du routeur</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/GlobalRouterStatistics.cpp" line="+109"/>
+        <location line="+34"/>
+        <source>GroupBox</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Identity Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Destinaton</source>
+        <translation>Destination</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data status</source>
+        <translation>Statut données</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Tunnel status</source>
+        <translation>Statut tunnel</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data size</source>
+        <translation>Taille données</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Data hash</source>
+        <translation>Hash données</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Received</source>
+        <translation>Reçu</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Send</source>
+        <translation>Envoyé</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Branching factor</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/statistics/GlobalRouterStatistics.cpp" line="+124"/>
+        <source>Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+26"/>
         <source>Unknown Peer</source>
         <translation>Contact inconnu</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Pending packets</source>
+        <translation>Paquets en suspens</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Unknown</source>
+        <translation>Inconnu</translation>
     </message>
 </context>
 <context>
     <name>GlobalRouterStatisticsWidget</name>
     <message>
-        <location line="+76"/>
-        <source>Pending packets</source>
-        <translation>Paquets en suspens</translation>
-    </message>
-    <message>
-        <location line="-15"/>
+        <location line="+92"/>
         <source>Managed keys</source>
         <translation>Clés gérées</translation>
     </message>
     <message>
-        <location line="+102"/>
+        <location line="+21"/>
         <source>Routing matrix  (</source>
         <translation>Matrice de routage (</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <source>Id</source>
-        <translation>Id</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Destination</source>
-        <translation>Destination</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Data status</source>
-        <translation>Statut données</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Tunnel status</source>
-        <translation>Statut tunnel</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Data size</source>
-        <translation>Taille données</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Data hash</source>
-        <translation>Hash données</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Received</source>
-        <translation>Reçu</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Send</source>
-        <translation>Envoyé</translation>
-    </message>
-    <message>
-        <location line="-27"/>
-        <source> : Service ID =</source>
+        <location line="+83"/>
+        <source>[Unknown identity]</source>
         <translation type="unfinished"/>
     </message>
-</context>
-<context>
-    <name>GraphWidget</name>
     <message>
-        <location filename="../gui/elastic/graphwidget.cpp" line="+452"/>
-        <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation>Cliquez et glissez les noeuds, zoomez avec la roulette de la souris ou les touches &apos;+&apos; et &apos;-&apos;</translation>
+        <location line="-97"/>
+        <source> : Service ID =</source>
+        <translation> : ID de service = </translation>
     </message>
 </context>
 <context>
@@ -6756,7 +7110,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupTreeWidget</name>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.cpp" line="+100"/>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+104"/>
         <source>Title</source>
         <translation>Titre</translation>
     </message>
@@ -6776,7 +7130,7 @@ p, li { white-space: pre-wrap; }
         <translation>Rechercher description</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+115"/>
         <source>Sort by Name</source>
         <translation>Trier par nom</translation>
     </message>
@@ -6791,12 +7145,17 @@ p, li { white-space: pre-wrap; }
         <translation>Trier par dernier message</translation>
     </message>
     <message>
+        <location line="+4"/>
+        <source>Sort by Posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../gui/common/GroupTreeWidget.ui" line="+47"/>
         <source>Display</source>
         <translation>Affichage</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.cpp" line="+155"/>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+161"/>
         <source>You have admin rights</source>
         <translation>Vous avez les droits d&apos;administration</translation>
     </message>
@@ -6809,7 +7168,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GuiExprElement</name>
     <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="-437"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="-434"/>
         <source>and</source>
         <translation>et</translation>
     </message>
@@ -6907,7 +7266,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GxsChannelDialog</name>
     <message>
-        <location filename="../gui/gxschannels/GxsChannelDialog.cpp" line="+78"/>
+        <location filename="../gui/gxschannels/GxsChannelDialog.cpp" line="+83"/>
         <location filename="../gui/gxschannels/GxsChannelDialog.h" line="+40"/>
         <source>Channels</source>
         <translation>Chaînes</translation>
@@ -6918,17 +7277,22 @@ p, li { white-space: pre-wrap; }
         <translation>Créer une chaîne</translation>
     </message>
     <message>
-        <location line="+69"/>
+        <location line="+106"/>
         <source>Enable Auto-Download</source>
         <translation>Activer le téléchargement automatique</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="-99"/>
         <source>My Channels</source>
         <translation>Vos chaînes</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-33"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chaînes&lt;/h1&gt; &lt;p&gt;Les chaînes vous permettent de poster des données (ex&amp;nbsp: films, musiques) qui seront diffusées dans le réseau&lt;/p&gt; &lt;p&gt;Vous pouvez voir les chaînes auxquelles sont abonnés vos amis, et vous transférez automatiquement à vos amis les chaînes auxquelles vous êtes abonné. Ceci promeut les bonnes chaînes dans le réseau.&lt;/p&gt; &lt;p&gt;Seul le créateur d&apos;une chaîne peut poster dans cette chaîne. Les autre pairs dans le réseau peuvent seulement lire dedans, à moins que la chaîne ne soit privée. Vous pouvez cependant partager les droits de poster ou de lire avec des noeuds de vos amis Retroshare.&lt;/p&gt; &lt;p&gt;Les chaînes peuvent être anonymes, ou attachées à une identité Retroshare afin que les lecteurs puissent prendre contact avec vous si besoin. Permettez &quot;Autoriser commentaires&quot; si vous voulez laisser la possibilité aux utilisateurs de commenter vos postages.&lt;/p&gt; &lt;p&gt;Les messages postés dans les chaînes sont effacés après %1 mois.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Subscribed Channels</source>
         <translation>Chaînes abonnées</translation>
     </message>
@@ -6943,14 +7307,30 @@ p, li { white-space: pre-wrap; }
         <translation>Autres chaînes</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+62"/>
+        <source>Select channel download directory</source>
+        <translation>Spécifier le répertoire de téléchargement pour cette chaîne</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <source>Disable Auto-Download</source>
         <translation>Désactiver le téléchargement automatique</translation>
     </message>
     <message>
-        <location line="-94"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;        &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network&lt;/p&gt;                &lt;p&gt;You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to     your friends. This promotes good channels in the network.&lt;/p&gt;    &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share 	 the posting rights or the reading rights with friend Retroshare nodes.&lt;/p&gt;	 &lt;p&gt;Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.	 Enable &quot;Allow Comments&quot; if you want to let users comment on your posts.&lt;/p&gt;    &lt;p&gt;Channel posts get deleted after %1 months.&lt;/p&gt;    </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chaînes&lt;/h1&gt;        &lt;p&gt;Les chaînes vous permettent de poster des données (ex: films, musiques) qui vont se diffuser dans le réseau&lt;/p&gt;                &lt;p&gt;Vous pouvez voir les chaînes auxquelles sont abonnés vos amis, et transférer automatiquement à vos amis les chaînes auxquelles vous êtes abonné. Ceci promeut les bonnes chaînes dans le réseau.&lt;/p&gt;    &lt;p&gt;Seul le créateur d&apos;une chaîne peut poster dans cette chaîne. Les autre pairs dans le réseau peuvent seulement lire dedans, à moins que la chaîne ne soit privée. Vous pouvez cependant partager les droits de poster ou de lire avec des noeuds de vos amis Retroshare.&lt;/p&gt;	 &lt;p&gt;Les chaînes peuvent être anonymes, ou attachées à une identité Retroshare afin que les lecteurs puissent prendre contact avec vous si besoin.	 Permettez &quot;Autoriser commentaires&quot; si vous voulez laisser les utilisateurs commenter vos postages.&lt;/p&gt;   &lt;p&gt;Les messages postés dans les chaînes sont effacés après %1 mois.&lt;/p&gt;</translation>
+        <location line="+9"/>
+        <source>Set download directory</source>
+        <translation>Spécifier le répertoire de téléchargement</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+2"/>
+        <source>[Default directory]</source>
+        <translation>[Répertoire par défaut]</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Specify...</source>
+        <translation>Spécifier...</translation>
     </message>
 </context>
 <context>
@@ -7242,7 +7622,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/gxschannels/GxsChannelPostsWidget.ui" line="+152"/>
         <source>Post to Channel</source>
-        <translation>Poster un article dans la chaîne</translation>
+        <translation>Poster dans la chaîne</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -7262,7 +7642,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Search Title</source>
-        <translation>Rechercher titre</translation>
+        <translation>Chercher titre</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7290,7 +7670,7 @@ p, li { white-space: pre-wrap; }
         <translation>Aucune chaîne sélectionnée</translation>
     </message>
     <message>
-        <location line="+288"/>
+        <location line="+289"/>
         <source>Disable Auto-Download</source>
         <translation>Désactiver le téléchargement automatique</translation>
     </message>
@@ -7310,7 +7690,7 @@ p, li { white-space: pre-wrap; }
         <translation>Afficher les fichiers</translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+234"/>
         <source>Feeds</source>
         <translation>Flux</translation>
     </message>
@@ -7320,7 +7700,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fichiers</translation>
     </message>
     <message>
-        <location line="-341"/>
+        <location line="-345"/>
         <source>Subscribers</source>
         <translation>Abonnés</translation>
     </message>
@@ -7483,7 +7863,7 @@ avant de pouvoir commenter</translation>
 <context>
     <name>GxsForumGroupDialog</name>
     <message>
-        <location filename="../gui/gxsforums/GxsForumGroupDialog.cpp" line="+75"/>
+        <location filename="../gui/gxsforums/GxsForumGroupDialog.cpp" line="+76"/>
         <source>Create New Forum</source>
         <translation>Créer un nouveau forum</translation>
     </message>
@@ -7563,7 +7943,7 @@ avant de pouvoir commenter</translation>
         <location filename="../gui/feeds/GxsForumMsgItem.ui" line="+92"/>
         <location line="+276"/>
         <source>Subject: </source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="-228"/>
@@ -7615,12 +7995,12 @@ avant de pouvoir commenter</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+50"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Lancer un nouveau fil dans le forum sélectionné</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+112"/>
         <source>Search forums</source>
         <translation>Chercher</translation>
     </message>
@@ -7641,7 +8021,7 @@ avant de pouvoir commenter</translation>
     </message>
     <message>
         <location line="+35"/>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+172"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+183"/>
         <source>Title</source>
         <translation>Titre</translation>
     </message>
@@ -7654,13 +8034,18 @@ avant de pouvoir commenter</translation>
     <message>
         <location line="+5"/>
         <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="+1"/>
-        <location line="+556"/>
+        <location line="+617"/>
         <source>Author</source>
         <translation>Auteur</translation>
     </message>
     <message>
-        <location line="-94"/>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-460"/>
+        <location line="+266"/>
+        <source>Save image</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-360"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-518"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
@@ -7690,7 +8075,7 @@ avant de pouvoir commenter</translation>
         <translation>Suivant non lu</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-98"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-101"/>
         <source>Search Title</source>
         <translation>Rechercher titre</translation>
     </message>
@@ -7715,17 +8100,27 @@ avant de pouvoir commenter</translation>
         <translation>Rechercher contenu</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+109"/>
         <source>No name</source>
         <translation>Aucun nom</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+121"/>
         <source>Reply</source>
         <translation>Répondre</translation>
     </message>
     <message>
         <location line="+6"/>
+        <source>Ban this author</source>
+        <translation>Bannir cet auteur</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This will block/hide messages from this person, and notify neighbor nodes.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Start New Thread</source>
         <translation>Lancer un nouveau fil</translation>
     </message>
@@ -7763,7 +8158,7 @@ avant de pouvoir commenter</translation>
         <translation>Copier le lien Retroshare</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+69"/>
         <source>Hide</source>
         <translation>Cacher</translation>
     </message>
@@ -7773,7 +8168,38 @@ avant de pouvoir commenter</translation>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+23"/>
+        <source>This message was obtained from %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+191"/>
+        <source>[Banned]</source>
+        <translation>[Banni]</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Anonymous IDs reputation threshold set to 0.4</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Message routing info kept for 10 days</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+3"/>
+        <source>Anti-spam</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+161"/>
+        <source>[ ... Redacted message ... ]</source>
+        <translation>[ ... Message rédigé ... ]</translation>
+    </message>
+    <message>
+        <location line="+34"/>
         <source>Anonymous</source>
         <translation>Anonyme</translation>
     </message>
@@ -7793,29 +8219,55 @@ avant de pouvoir commenter</translation>
         <translation>[ ... Message manquant... ]</translation>
     </message>
     <message>
-        <location line="+700"/>
-        <location line="+31"/>
+        <location line="+370"/>
+        <source>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;The author of this message (with ID %1) is banned.&lt;/b&gt;</source>
+        <translation>&lt;p&gt;&lt;font color=&quot;#ff0000&quot;&gt;&lt;b&gt;L&apos;auteur de ce message (avec l&apos;ID %1) est banni.&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;UL&gt;&lt;li&gt;&lt;b&gt;&lt;font color=&quot;#ff0000&quot;&gt;Messages from this author are not forwarded. &lt;/font&gt;&lt;/b&gt;&lt;/li&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;li&gt;&lt;b&gt;&lt;font color=&quot;#ff0000&quot;&gt;Messages from this author are replaced by this text. &lt;/font&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;p&gt;&lt;b&gt;&lt;font color=&quot;#ff0000&quot;&gt;You can force the visibility and forwarding of messages by setting a different opinion for that Id in People&apos;s tab.&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+329"/>
         <location line="+33"/>
+        <location line="+26"/>
+        <location line="+12"/>
+        <location line="+33"/>
+        <location line="+28"/>
         <source>RetroShare</source>
         <translation>Retroshare</translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-132"/>
         <source>No Forum Selected!</source>
         <translation>Aucun forum selectionné !</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+33"/>
+        <location line="+26"/>
+        <location line="+12"/>
         <source>You cant reply to a non-existant Message</source>
         <translation>Vous ne pouvez pas répondre à un message inexistant</translation>
     </message>
     <message>
         <location line="+33"/>
+        <location line="+28"/>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Vous ne pouvez pas répondre à un auteur anonyme</translation>
     </message>
     <message>
-        <location line="-48"/>
+        <location line="-116"/>
         <source>Original Message</source>
         <translation>Message d&apos;origine</translation>
     </message>
@@ -7840,7 +8292,7 @@ avant de pouvoir commenter</translation>
         <translation>Le %1, %2 a écrit :</translation>
     </message>
     <message>
-        <location line="-935"/>
+        <location line="-977"/>
         <source>Forum name</source>
         <translation>Nom de forum</translation>
     </message>
@@ -7852,10 +8304,10 @@ avant de pouvoir commenter</translation>
     <message>
         <location line="+1"/>
         <source>Posts (at neighbor nodes)</source>
-        <translation>Posts (aux noeuds voisins)</translation>
+        <translation>Posts (chez les noeuds voisins)</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+9"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
@@ -7865,12 +8317,12 @@ avant de pouvoir commenter</translation>
         <translation>Par</translation>
     </message>
     <message>
-        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-525"/>
+        <location filename="../gui/gxsforums/GxsForumThreadWidget.cpp" line="-591"/>
         <source>&lt;p&gt;Subscribing to the forum will gather                                            available posts from your subscribed friends, and make the                                            forum visible to all other friends.&lt;/p&gt;&lt;p&gt;Afterwards you can unsubscribe from the context menu of the forum list at left.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;L&apos;abonnement au forum rassemblera les posts disponibles depuis vos amis qui y sont abonnés et rendra le forum visible à tous les amis.&lt;/p&gt; &lt;p&gt;Ensuite vous pourrez vous désabonner via le menu de contexte de la liste des forums à gauche.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;L&apos;abonnement au forum rassemblera les messages disponibles à partir de vos amis qui y sont abonnés et rendra le forum visible à tous vos autres amis.&lt;/p&gt; &lt;p&gt;Ensuite vous pourrez vous désabonner via le menu de contexte de la liste des forums à gauche.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+200"/>
         <source>Reply with private message</source>
         <translation>Répondre avec message privé</translation>
     </message>
@@ -7886,7 +8338,12 @@ avant de pouvoir commenter</translation>
 <context>
     <name>GxsForumsDialog</name>
     <message>
-        <location filename="../gui/gxsforums/GxsForumsDialog.cpp" line="+80"/>
+        <location filename="../gui/gxsforums/GxsForumsDialog.cpp" line="+52"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt; &lt;p&gt;Les forums de Retroshare ressemblent aux forums d&apos;internet, mais ils fonctionnent de façon décentralisée&lt;/p&gt; &lt;p&gt;Vous voyez les forums auxquels sont abonnés vos amis, et vous transférez à vos amis les forums auxquels vous vous êtes abonné. Ceci promeut automatiquement dans le réseau les forums intéressants.&lt;/p&gt; &lt;p&gt;Les messages des forums sont effacés automatiquement après %1 mois.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <location filename="../gui/gxsforums/GxsForumsDialog.h" line="+38"/>
         <source>Forums</source>
         <translation>Forums</translation>
@@ -7916,11 +8373,6 @@ avant de pouvoir commenter</translation>
         <source>Other Forums</source>
         <translation>Autres forums</translation>
     </message>
-    <message>
-        <location line="-45"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;               			&lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way&lt;/p&gt;    			&lt;p&gt;You see forums your friends are subscribed to, and you forward subscribed forums to      			your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                        &lt;p&gt;Forum messages get deleted after %1 months.&lt;/p&gt;                </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt; &lt;p&gt;Les forums de Retroshare ressemblent aux forums d&apos;internet, mais ils fonctionnent de façon décentralisée&lt;/p&gt; &lt;p&gt;Vous voyez les forums auxquels sont abonnés vos amis, et vous transférez à vos amis les forums auxquels vous vous êtes abonné. Ceci promeut automatiquement dans le réseau les forums intéressants.&lt;/p&gt; &lt;p&gt;Les messages des forums sont effacés automatiquement après %1 mois.&lt;/p&gt;</translation>
-    </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
@@ -7943,13 +8395,13 @@ avant de pouvoir commenter</translation>
 <context>
     <name>GxsGroupDialog</name>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.ui" line="+128"/>
-        <location line="+646"/>
+        <location filename="../gui/gxs/GxsGroupDialog.ui" line="+119"/>
+        <location line="+704"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location line="-617"/>
+        <location line="-675"/>
         <source>Add Icon</source>
         <translation>Ajouter une icône</translation>
     </message>
@@ -7964,7 +8416,7 @@ avant de pouvoir commenter</translation>
         <translation>Partager la clé de publication</translation>
     </message>
     <message>
-        <location line="+338"/>
+        <location line="+41"/>
         <source>check peers you would like to share private publish key with</source>
         <translation>Visualiser les personnes avec qui vous partagez votre clé de publication privée</translation>
     </message>
@@ -7974,36 +8426,36 @@ avant de pouvoir commenter</translation>
         <translation>Clé partagée avec</translation>
     </message>
     <message>
-        <location line="-48"/>
-        <location line="+385"/>
+        <location line="+60"/>
+        <location line="+343"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
     <message>
-        <location line="-480"/>
+        <location line="-325"/>
         <source>Message Distribution</source>
         <translation>Distribution de message</translation>
     </message>
     <message>
         <location line="+15"/>
-        <location line="+251"/>
+        <location line="+385"/>
         <source>Public</source>
         <translation>Public</translation>
     </message>
     <message>
-        <location line="-226"/>
-        <location line="+203"/>
+        <location line="-360"/>
+        <location line="+337"/>
         <source>Restricted to Group</source>
         <translation>Limité au groupe</translation>
     </message>
     <message>
-        <location line="-173"/>
-        <location line="+219"/>
+        <location line="-307"/>
+        <location line="+353"/>
         <source>Only For Your Friends</source>
         <translation>Seulement pour vos amis</translation>
     </message>
     <message>
-        <location line="-479"/>
+        <location line="-328"/>
         <source>Publish Signatures</source>
         <translation>Signatures publiées</translation>
     </message>
@@ -8025,7 +8477,7 @@ avant de pouvoir commenter</translation>
     <message>
         <location line="+7"/>
         <source>Encrypted Msgs</source>
-        <translation>Msgs encryptés</translation>
+        <translation>Msgs chiffrés</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -8033,7 +8485,7 @@ avant de pouvoir commenter</translation>
         <translation>Signature personnelle</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+6"/>
         <source>PGP Required</source>
         <translation>PGP requis</translation>
     </message>
@@ -8049,12 +8501,12 @@ avant de pouvoir commenter</translation>
     </message>
     <message>
         <location line="+23"/>
-        <location line="+513"/>
+        <location line="+377"/>
         <source>Comments</source>
         <translation>Commentaires</translation>
     </message>
     <message>
-        <location line="-492"/>
+        <location line="-356"/>
         <source>Allow Comments</source>
         <translation>Autoriser les commentaires</translation>
     </message>
@@ -8064,33 +8516,73 @@ avant de pouvoir commenter</translation>
         <translation>Pas de commentaires</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="+114"/>
+        <location line="+23"/>
+        <source>Spam-protection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This makes the media increase the reputation threshold to 0.4 for anonymous ids, while keeping it to 0.0 for PGP-linked ids. Therefore, anonymous ids can still post, if their local reputation score is above that threshold.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Favor PGP-signed ids</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who forwarded each message to you, for the last 10 days. Although useless if alone (and already available whatsoever) this information can be used by a group of collaborative friends to easily locate the source of spams. To be used with care, since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Keep track of posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+323"/>
+        <source>Anti spam</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>PGP-signed ids</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Track of Posts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="+120"/>
         <source>Contacts:</source>
         <translation>Contacts :</translation>
     </message>
     <message>
-        <location line="+437"/>
+        <location line="+452"/>
         <source>Please add a Name</source>
         <translation>Veuillez ajoutez un nom</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+171"/>
         <source>Load Group Logo</source>
         <translation>Charger le logo du groupe</translation>
     </message>
     <message>
-        <location line="-529"/>
+        <location line="-545"/>
         <source>Submit Group Changes</source>
         <translation>Soumettre des changements de groupe</translation>
     </message>
     <message>
-        <location line="+290"/>
+        <location line="+301"/>
         <location line="+82"/>
         <source>Failed to Prepare Group MetaData - please Review</source>
         <translation>Echec à préparer les méta-données de groupe - veuillez examiner</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.ui" line="-181"/>
+        <location filename="../gui/gxs/GxsGroupDialog.ui" line="-787"/>
         <source>Will be used to send feedback</source>
         <translation>Sera utilisé pour envoyer du retour d&apos;information</translation>
     </message>
@@ -8100,12 +8592,12 @@ avant de pouvoir commenter</translation>
         <translation>Propriétaire :</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-436"/>
+        <location filename="../gui/gxs/GxsGroupDialog.cpp" line="-451"/>
         <source>Set a descriptive description here</source>
         <translation>Mettez ici une description descriptive</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupDialog.ui" line="+424"/>
+        <location filename="../gui/gxs/GxsGroupDialog.ui" line="+482"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -8178,7 +8670,7 @@ avant de pouvoir commenter</translation>
         <translation>Aperçu avant impression</translation>
     </message>
     <message>
-        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+263"/>
+        <location filename="../gui/gxs/GxsGroupFrameDialog.cpp" line="+271"/>
         <source>Unsubscribe</source>
         <translation>Se désabonner</translation>
     </message>
@@ -8188,12 +8680,12 @@ avant de pouvoir commenter</translation>
         <translation>S&apos;abonner</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-10"/>
         <source>Open in new tab</source>
         <translation>Ouvrir dans un nouvel onglet</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+18"/>
         <source>Show Details</source>
         <translation>Afficher détails</translation>
     </message>
@@ -8218,12 +8710,12 @@ avant de pouvoir commenter</translation>
         <translation>Tout marquer comme non lu</translation>
     </message>
     <message>
-        <location line="+370"/>
+        <location line="+374"/>
         <source>AUTHD</source>
         <translation>Authentification</translation>
     </message>
     <message>
-        <location line="-388"/>
+        <location line="-392"/>
         <source>Share admin permissions</source>
         <translation>Partager des permissions d&apos;administration</translation>
     </message>
@@ -8231,7 +8723,7 @@ avant de pouvoir commenter</translation>
 <context>
     <name>GxsIdChooser</name>
     <message>
-        <location filename="../gui/gxs/GxsIdChooser.cpp" line="+177"/>
+        <location filename="../gui/gxs/GxsIdChooser.cpp" line="+211"/>
         <source>No Signature</source>
         <translation>Sans signature</translation>
     </message>
@@ -8244,7 +8736,7 @@ avant de pouvoir commenter</translation>
 <context>
     <name>GxsIdDetails</name>
     <message>
-        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+773"/>
+        <location filename="../gui/gxs/GxsIdDetails.cpp" line="+801"/>
         <source>Loading</source>
         <translation>Chargement</translation>
     </message>
@@ -8259,8 +8751,15 @@ avant de pouvoir commenter</translation>
         <translation>Sans signature</translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+16"/>
+        <location line="+55"/>
+        <location line="+23"/>
+        <source>[Banned]</source>
+        <translation>[Banni]</translation>
+    </message>
+    <message>
         <location line="+12"/>
+        <location line="+13"/>
         <source>Authentication</source>
         <translation>Authentification</translation>
     </message>
@@ -8275,7 +8774,7 @@ avant de pouvoir commenter</translation>
         <translation>anonyme</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-20"/>
         <source>Identity&amp;nbsp;name</source>
         <translation>Nom&amp;nbsp;d&apos;identité</translation>
     </message>
@@ -8290,7 +8789,7 @@ avant de pouvoir commenter</translation>
         <translation>Signé&amp;nbsp;par</translation>
     </message>
     <message>
-        <location line="-9"/>
+        <location line="-14"/>
         <source>[Unknown]</source>
         <translation>[Inconnu]</translation>
     </message>
@@ -8306,6 +8805,49 @@ avant de pouvoir commenter</translation>
         <location line="+10"/>
         <source>No name</source>
         <translation>Aucun nom</translation>
+    </message>
+</context>
+<context>
+    <name>GxsTunnelsDialog</name>
+    <message>
+        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="+306"/>
+        <source>Authenticated tunnels:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Tunnel ID: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>from: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>to: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>status: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>total sent: %1 bytes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>total recv: %1 bytes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Unknown Peer</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8503,44 +9045,7 @@ avant de pouvoir commenter</translation>
         <translation>À propos</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twiter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare est une plateforme de communication, privée et sécurisée, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;open source et trans-plateformes.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Il vous laisse partager de façon sécurisée avec vos amis, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;en utilisant la technique web-of-trust (web de confiance) afin d&apos;authentifier vos amis, et OpenSSL pour chiffrer toute la communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare permet le partage de fichiers, tchat, messages et chaînes&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Liens externes utiles pour davantage d&apos;informations :&lt;/span&gt;&lt;/p&gt;
- &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Le site web de Retroshare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Le Wiki de Retroshare&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Les forums de Retroshare&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;La page du projet Retroshare&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Le blog de l&apos;équipe de Retroshare&lt;/a&gt;&lt;/li&gt;
- &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Le Twitter Dev de Retroshare&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+37"/>
+        <location line="+65"/>
         <source>Authors</source>
         <translation>Auteurs</translation>
     </message>
@@ -8604,7 +9109,44 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="-119"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is an Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralized commmunication platform.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides file sharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Useful external links to more information:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare's Forum&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twitter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare est un logiciel open source trans-plate-formes, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;destiné à être une plate-forme private de communication décentralisée et sécurisée.	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Il vous laisse partager de façon sécurisée avec vos amis, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;en utilisant un web de confiance (web-of-trust) afin d&apos;authentifier les pairs, et utilise OpenSSL pour chiffrer toutes les communications. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare permet le partage de fichiers, tchat, messages et chaînes&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Des liens utiles vers davantage d&apos;informations :&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Page web RetroShare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Wiki de Retroshare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Forum de RetroShare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Page du projet Retroshare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Blog de l&apos;équipe de RetroShare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Twitter du développement de RetroShare&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+175"/>
         <source>Libraries</source>
         <translation>Bibliothèques</translation>
     </message>
@@ -8646,7 +9188,7 @@ p, li { white-space: pre-wrap; }
     <name>IdDetailsDialog</name>
     <message>
         <location filename="../gui/Identity/IdDetailsDialog.ui" line="+14"/>
-        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+94"/>
+        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+84"/>
         <source>Person Details</source>
         <translation>Détails de la personne</translation>
     </message>
@@ -8681,78 +9223,88 @@ p, li { white-space: pre-wrap; }
         <translation>ID de l&apos;identité :</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+30"/>
+        <source>Last used:</source>
+        <translation>Dernièrement utilisée :</translation>
+    </message>
+    <message>
+        <location line="+27"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
         <translation>Votre avatar</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+24"/>
         <source>Reputation</source>
         <translation>Réputation</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Overall</source>
-        <translation>Global</translation>
+        <location line="+8"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Implicit</source>
-        <translation>Implicite</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Opinion</source>
-        <translation>Opinion</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Peers</source>
-        <translation>Contacts</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Edit Reputation</source>
-        <translation>Modifier la réputation</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Tweak Opinion</source>
-        <translation>Tordre opinion</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Accept (+100)</source>
-        <translation>Accepter (+100)</translation>
+        <location line="+10"/>
+        <source>Your opinion:</source>
+        <translation>Votre opinion :</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Positive (+10)</source>
-        <translation>Positive (+10)</translation>
+        <source>Neighbor nodes:</source>
+        <translation>Nodes voisins :</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Negative (-10)</source>
-        <translation>Négative (-10)</translation>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your own opinion about an identity rules the visibility of that identity for yourself,&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;and is shared among friends. A final score is calculated according to a formula that accounts your own opinion and your friends' opinions about someone:&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;  S = own_opinion * a + friends_opinion * (1-a)&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The factor 'a' depends on the type of ID. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- anonymous IDs: &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- PGP-signed IDs by unknown PGP keys: a=&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity:&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;S &amp;lt; -0.5: Posts are not stored, nor forwarded &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;S &amp;lt; 0.2: Posts are hidden, but still transmitted&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;S &amp;lt; 0.0: &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall rating is computed in such a way that it is not possible for a single person to deterministically change someone's status at neighbor nodes.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Ban (-100)</source>
-        <translation>Bannir (-100)</translation>
+        <location line="+27"/>
+        <source>Negative</source>
+        <translation>Négative</translation>
     </message>
     <message>
         <location line="+9"/>
-        <source>Custom</source>
-        <translation>Personnalisé</translation>
+        <source>Neutral</source>
+        <translation>Neutre</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>Modify</source>
-        <translation>Modifier</translation>
+        <location line="+5"/>
+        <source>Positive</source>
+        <translation>Positive</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+84"/>
+        <location line="+8"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends&apos;.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Overall:</source>
+        <translation>Générale :</translation>
+    </message>
+    <message>
+        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+103"/>
         <source>Unknown real name</source>
         <translation>Vrai nom inconnu</translation>
     </message>
@@ -8791,37 +9343,58 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous identity</source>
         <translation>Identité anonyme</translation>
     </message>
+    <message>
+        <location line="+18"/>
+        <source>+50 Known PGP</source>
+        <translation>+50 PGP connues</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>+10 UnKnown PGP</source>
+        <translation>+10 PGP inconnues</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>+5 Anon Id</source>
+        <translation>+5 ID anonymes</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Banned</source>
+        <translation>Banni</translation>
+    </message>
 </context>
 <context>
     <name>IdDialog</name>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+156"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+159"/>
         <source>New ID</source>
         <translation>Nouvelle ID</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="+167"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+106"/>
+        <location line="+73"/>
         <source>All</source>
         <translation>Tout</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+325"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+69"/>
+        <location line="+249"/>
         <source>Reputation</source>
         <translation>Réputation</translation>
     </message>
     <message>
-        <location line="-389"/>
-        <source>Todo</source>
-        <translation>À faire</translation>
-    </message>
-    <message>
         <location filename="../gui/Identity/IdDialog.cpp" line="+11"/>
-        <location line="+2"/>
         <source>Search</source>
         <translation>Rechercher</translation>
     </message>
     <message>
-        <location line="+454"/>
+        <location line="+461"/>
         <source>Unknown real name</source>
         <translation>Vrai nom inconnu</translation>
     </message>
@@ -8831,72 +9404,29 @@ p, li { white-space: pre-wrap; }
         <translation>ID anonyme</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="+61"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-321"/>
         <source>Create new Identity</source>
         <translation>Créer une nouvelle identité</translation>
     </message>
     <message>
-        <location line="+342"/>
-        <source>Overall</source>
-        <translation>Global</translation>
+        <location line="+57"/>
+        <source>Persons</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Implicit</source>
-        <translation>Implicite</translation>
+        <location line="+299"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your own opinion about an identity rules the visibility of that identity for yourself and your friend nodes. Your own opinion is shared among friends and used to compute a reputation score: If your opinion about an identity is neutral, the reputation score is the average of your friend's opinions. If not, your own opinion gives the score.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity. When the overall score is lower than -0.6, the identity is banned, which prevents all messages and forums/channels authored by this identity to be forwarded, both ways. Some forums also have special anti-spam flags that require a higher reputation level, making them more sensitive to bad opinions. Banned identities gradually lose their activity and eventually disappear (after 30 days).  &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Opinion</source>
-        <translation>Opinion</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Peers</source>
-        <translation>Contacts</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Edit reputation</source>
-        <translation>Modifier la réputation</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Tweak Opinion</source>
-        <translation>Tordre opinion</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Accept (+100)</source>
-        <translation>Accepter (+100)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Positive (+10)</source>
-        <translation>Positive (+10)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Negative (-10)</source>
-        <translation>Négative (-10)</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Ban (-100)</source>
-        <translation>Bannir (-100)</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Custom</source>
-        <translation>Personnaliser</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Modify</source>
-        <translation>Modifier</translation>
-    </message>
-    <message>
-        <location line="+33"/>
+        <location line="+88"/>
         <location line="+3"/>
         <source>Edit identity</source>
         <translation>Modifier l&apos;identité</translation>
@@ -8917,42 +9447,42 @@ p, li { white-space: pre-wrap; }
         <translation>Lancer un tchat distant avec ce pair</translation>
     </message>
     <message>
-        <location line="-502"/>
-        <source>Identity name</source>
-        <translation>Nom de l&apos;identité</translation>
-    </message>
-    <message>
-        <location line="+142"/>
+        <location line="-306"/>
         <source>Owner node ID :</source>
         <translation>ID du noeud propriétaire :</translation>
     </message>
     <message>
-        <location line="-27"/>
+        <location line="-7"/>
         <source>Identity name :</source>
         <translation>Nom de l&apos;identité :</translation>
     </message>
     <message>
-        <location line="-110"/>
+        <location line="-229"/>
+        <source>()</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+136"/>
         <source>Identity ID</source>
         <translation>ID de l&apos;identité</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+390"/>
         <source>Send message</source>
         <translation>Envoyer message</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="+72"/>
         <source>Identity info</source>
         <translation>Info d&apos;identité</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+14"/>
         <source>Identity ID :</source>
         <translation>ID de l&apos;identité :</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+51"/>
         <source>Owner node name :</source>
         <translation>Nom du noeud propriétaire :</translation>
     </message>
@@ -8962,7 +9492,57 @@ p, li { white-space: pre-wrap; }
         <translation>Type :</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-470"/>
+        <location line="+61"/>
+        <source>Send Invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Your opinion:</source>
+        <translation>Votre opinion :</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Neighbor nodes:</source>
+        <translation>Nodes voisins :</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Negative</source>
+        <translation>Négative</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Neutral</source>
+        <translation>Neutre</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Positive</source>
+        <translation>Positive</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends&apos;.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Overall:</source>
+        <translation>Générale :</translation>
+    </message>
+    <message>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-936"/>
+        <source>Contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+71"/>
         <source>Owned by you</source>
         <translation>Possédée(s) par vous</translation>
     </message>
@@ -8972,12 +9552,17 @@ p, li { white-space: pre-wrap; }
         <translation>Anonymes</translation>
     </message>
     <message>
-        <location line="+39"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identités&lt;/h1&gt;    			&lt;p&gt;Dans cet onglet vous pouvez créer/éditer des identités pseudo-anonymes. 			&lt;/p&gt;                                                   			&lt;p&gt;Les identités sont utilisées pour identifier vos données de façon sécurisée : signer vos messages dans les forums et chaînes, et recevoir du compte rendu en utilisant le système embarqué de messagerie de Retroshare, poster des commentaires à la suite de messages postés dans des chaînes, etc.&lt;/p&gt; 			&lt;p&gt;  			En option, les identités peuvent être signées par le certificat de votre noeud Retroshare. Il est plus facile de faire confiance à des identités signées, mais il est aussi plus facile de faire le rapprochement avec l&apos;adresse IP de votre noeud.  			&lt;/p&gt;  			&lt;p&gt;  			Les identités anonymes vous permettent d&apos;interagir anonymement avec d&apos;autres utilisateurs. Elles ne peuvent pas êtres usurpées, mais personne ne peut non plus prouver qui est celui qui possède une identité précise.  			&lt;/p&gt; 			</translation>
+        <location line="+7"/>
+        <source>ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+195"/>
+        <location line="+0"/>
+        <source>Search ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+220"/>
         <source>This identity is owned by you</source>
         <translation>Cette identité est possédée par vous-même</translation>
     </message>
@@ -8993,7 +9578,7 @@ p, li { white-space: pre-wrap; }
         <translation>ID de clé inconnu</translation>
     </message>
     <message>
-        <location line="+220"/>
+        <location line="+232"/>
         <source>Identity owned by you, linked to your Retroshare node</source>
         <translation>Identité possédée par vous, liée à votre noeud Retroshare</translation>
     </message>
@@ -9008,7 +9593,42 @@ p, li { white-space: pre-wrap; }
         <translation>Identité anonyme</translation>
     </message>
     <message>
-        <location line="+413"/>
+        <location line="+48"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Banned</source>
+        <translation>Banni</translation>
+    </message>
+    <message>
+        <location line="+309"/>
+        <source>Add to Contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Remove from Contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Set positive opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set neutral opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set negative opinion</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>Distant chat cannot work</source>
         <translation>Le tchat distant ne peut pas fonctionner</translation>
     </message>
@@ -9018,15 +9638,35 @@ p, li { white-space: pre-wrap; }
         <translation>Code erreur</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-322"/>
-        <location line="+185"/>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-933"/>
-        <location filename="../gui/Identity/IdDialog.h" line="+51"/>
-        <source>People</source>
-        <translation>Gens</translation>
+        <location line="+30"/>
+        <source>Hi,&lt;br&gt;I want to be friends with you on RetroShare.&lt;br&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+13"/>
+        <source>You have a friend invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Respond now:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Thanks, &lt;br&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/Identity/IdDialog.ui" line="-489"/>
+        <location line="+205"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-990"/>
+        <location filename="../gui/Identity/IdDialog.h" line="+51"/>
+        <source>People</source>
+        <translation>Pers.</translation>
+    </message>
+    <message>
+        <location line="+140"/>
         <source>Your Avatar</source>
         <extracomment>Click here to change your avatar</extracomment>
         <translation>Votre avatar</translation>
@@ -9047,7 +9687,12 @@ p, li { white-space: pre-wrap; }
         <translation>Liée(s) aux noeuds distants</translation>
     </message>
     <message>
-        <location line="+498"/>
+        <location line="+33"/>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identities&lt;/h1&gt;    			&lt;p&gt;In this tab you can create/edit pseudo-anonymous identities. 			&lt;/p&gt;                                                   			&lt;p&gt;Identities are used to securely identify your data: sign forum and channel posts,				and receive feedback using Retroshare built-in email system, post comments 				after channel posts, etc.&lt;/p&gt; 			&lt;p&gt;  			Identities can optionally be signed by your Retroshare node&apos;s certificate.   			Signed identities are easier to trust but are easily linked to your node&apos;s IP address.  			&lt;/p&gt;  			&lt;p&gt;  			Anonymous identities allow you to anonymously interact with other users. They cannot be   			spoofed, but noone can prove who really owns a given identity.  			&lt;/p&gt; 			</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Identités&lt;/h1&gt; &lt;p&gt;Dans cet onglet vous pouvez créer/éditer des identités pseudo-anonymes. &lt;/p&gt; &lt;p&gt;Les identités sont utilisées pour identifier vos données de façon sécurisée : signer vos messages dans les forums et chaînes, et recevoir du compte rendu en utilisant le système embarqué de messagerie de Retroshare, poster des commentaires à la suite de messages postés dans des chaînes, etc.&lt;/p&gt; &lt;p&gt; En option, les identités peuvent être signées par le certificat de votre noeud Retroshare. Il est plus facile de faire confiance à des identités signées, mais il est aussi plus facile de faire le rapprochement avec l&apos;adresse IP de votre noeud. &lt;/p&gt; &lt;p&gt; Les identités anonymes vous permettent d&apos;interagir anonymement avec d&apos;autres utilisateurs. Elles ne peuvent pas êtres usurpées, mais personne ne peut non plus prouver qui est celui qui possède une identité précise. &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <location line="+470"/>
         <source>Linked to a friend Retroshare node</source>
         <translation>Liée(s) à un noeud Retroshare ami</translation>
     </message>
@@ -9062,7 +9707,7 @@ p, li { white-space: pre-wrap; }
         <translation>Liée(s) à un noeud Retroshare inconnu</translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+328"/>
         <source>Chat with this person</source>
         <translation>Tchater avec cette personne </translation>
     </message>
@@ -9072,17 +9717,7 @@ p, li { white-space: pre-wrap; }
         <translation>Tchater avec cette personne en tant que ...</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <source>Send message to this person</source>
-        <translation>Envoyer un message à cette personne</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Columns</source>
-        <translation>Colonnes</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+75"/>
         <source>Distant chat refused with this person.</source>
         <translation>Tchat distant avec cette personne refusé</translation>
     </message>
@@ -9092,7 +9727,7 @@ p, li { white-space: pre-wrap; }
         <translation>Dernièrement utilisée :</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-360"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-384"/>
         <source>+50 Known PGP</source>
         <translation>+50 PGP connue</translation>
     </message>
@@ -9107,29 +9742,17 @@ p, li { white-space: pre-wrap; }
         <translation>+5 ID anonyme</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+125"/>
         <source>Do you really want to delete this identity?</source>
         <translation>Voulez-vous vraiment supprimer cette identité ?</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.ui" line="-196"/>
+        <location filename="../gui/Identity/IdDialog.ui" line="-159"/>
         <source>Owned by</source>
         <translation>Possédé par </translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-677"/>
-        <location line="+4"/>
-        <source>Show</source>
-        <translation>Montrer</translation>
-    </message>
-    <message>
-        <location line="-4"/>
-        <location line="+4"/>
-        <source>column</source>
-        <translation>colonne</translation>
-    </message>
-    <message>
-        <location line="+240"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-412"/>
         <source>Node name:</source>
         <translation>Nom de noeud : </translation>
     </message>
@@ -9139,7 +9762,7 @@ p, li { white-space: pre-wrap; }
         <translation>ID de noeud :</translation>
     </message>
     <message>
-        <location line="+432"/>
+        <location line="+411"/>
         <source>Really delete?</source>
         <translation>Vraiment supprimer ?</translation>
     </message>
@@ -9182,8 +9805,8 @@ p, li { white-space: pre-wrap; }
         <translation>Nouvelle identité</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location line="+52"/>
+        <location line="+11"/>
+        <location line="+56"/>
         <source>To be generated</source>
         <translation>Doit être généré</translation>
     </message>
@@ -9191,7 +9814,7 @@ p, li { white-space: pre-wrap; }
         <location line="-12"/>
         <location line="+1"/>
         <location line="+1"/>
-        <location line="+68"/>
+        <location line="+74"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+55"/>
@@ -9201,13 +9824,13 @@ p, li { white-space: pre-wrap; }
         <translation>N/A</translation>
     </message>
     <message>
-        <location line="-98"/>
+        <location line="-104"/>
         <location line="+2"/>
         <source>Edit identity</source>
         <translation>Modifier l&apos;identité</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+31"/>
         <source>Error getting key!</source>
         <translation>Erreur lors de la récupération de la clé !</translation>
     </message>
@@ -9227,7 +9850,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vrai nom inconnu</translation>
     </message>
     <message>
-        <location line="-232"/>
+        <location line="-248"/>
         <source>Create New Identity</source>
         <translation>Créer une nouvelle identité</translation>
     </message>
@@ -9282,7 +9905,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vous pouvez avoir une seule ou plusieurs identités. Elles sont utilisées lorsque vous écrivez dans des salons de tchat, forums, et dans les commentaires de chaînes. Elles agissent comme destination pour le tchat distant et pour le système de courrier distant de Retroshare.</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdEditDialog.cpp" line="+444"/>
+        <location filename="../gui/Identity/IdEditDialog.cpp" line="+460"/>
         <source>The nickname is too short. Please input at least %1 characters.</source>
         <translation>Ce pseudonyme est trop court. Veuillez saisir au moins %1 caractères.</translation>
     </message>
@@ -9350,7 +9973,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+58"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+268"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+279"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
@@ -9381,15 +10004,34 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ImageUtil</name>
+    <message>
+        <location filename="../util/imageutil.cpp" line="+35"/>
+        <location line="+6"/>
+        <source>Save image</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Cannot save the image, invalid filename</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Not an image</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>LocalSharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="+209"/>
-        <location line="+709"/>
+        <location line="+706"/>
         <source>Open File</source>
         <translation>Ouvrir le fichier</translation>
     </message>
     <message>
-        <location line="-707"/>
+        <location line="-704"/>
         <source>Open Folder</source>
         <translation>Ouvrir le dossier de destination</translation>
     </message>
@@ -9399,7 +10041,7 @@ p, li { white-space: pre-wrap; }
         <translation>Modifier les droits de partage</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+208"/>
         <source>Checking...</source>
         <translation>Vérification en cours...</translation>
     </message>
@@ -9448,7 +10090,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MainWindow.cpp" line="+492"/>
+        <location filename="../gui/MainWindow.cpp" line="+447"/>
         <location line="+125"/>
         <source>Options</source>
         <translation>Options</translation>
@@ -9482,12 +10124,12 @@ p, li { white-space: pre-wrap; }
         <translation>Assistant de configuration rapide</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-290"/>
+        <location filename="../gui/MainWindow.cpp" line="-244"/>
         <source>RetroShare %1 a secure decentralized communication platform</source>
         <translation>Retroshare %1 - Logiciel de communication sécurisé et décentralisé</translation>
     </message>
     <message>
-        <location line="+280"/>
+        <location line="+234"/>
         <source>Unfinished</source>
         <translation>Inachevé</translation>
     </message>
@@ -9525,7 +10167,12 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>Notifications</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+4"/>
+        <source>Open Messenger</source>
+        <translation>Ouvrir le messenger</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Open Messages</source>
         <translation>Ouvrir la messagerie</translation>
     </message>
@@ -9575,7 +10222,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>%1 nouveau(x) message(s)</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+42"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Réception : %1 (Ko/s)</translation>
     </message>
@@ -9642,10 +10289,10 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     <message>
         <location line="+3"/>
         <source>Service permissions matrix</source>
-        <translation>Matrice des autorisations des services</translation>
+        <translation>Matrice des autorisations de services</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-973"/>
+        <location filename="../gui/MainWindow.cpp" line="-981"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
@@ -9670,7 +10317,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>dossier a beaucoup diminué ! (la limite actuelle est</translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+548"/>
         <source>Really quit ?</source>
         <translation>Voulez-vous vraiment quitter ?</translation>
     </message>
@@ -9679,38 +10326,17 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+14"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+907"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+885"/>
         <source>Compose</source>
         <translation>Écrire</translation>
     </message>
     <message>
-        <location line="+45"/>
-        <location line="+1108"/>
+        <location line="+1168"/>
         <source>Contacts</source>
         <translation>Contacts</translation>
     </message>
     <message>
-        <location line="-1051"/>
-        <source>&gt;&gt; To</source>
-        <translation>&gt;&gt; Pour</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&gt;&gt; Cc</source>
-        <translation>&gt;&gt; Copie à</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>&gt;&gt; Bcc</source>
-        <translation>&gt;&gt; Copie cachée à</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&gt;&gt; Recommend</source>
-        <translation>&gt;&gt; Recommander</translation>
-    </message>
-    <message>
-        <location line="+73"/>
+        <location line="-949"/>
         <source>Paragraph</source>
         <translation>Paragraphe</translation>
     </message>
@@ -9791,9 +10417,9 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>Souligné</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+345"/>
         <source>Subject:</source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="+32"/>
@@ -9802,12 +10428,22 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <location line="-82"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-556"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-532"/>
         <source>Tags</source>
         <translation>Mots clés</translation>
     </message>
     <message>
-        <location line="-225"/>
+        <location line="-822"/>
+        <source>Address list:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+109"/>
+        <source>Recommend this friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+479"/>
         <source>Set Text color</source>
         <translation>Définir la couleur du texte</translation>
     </message>
@@ -9817,7 +10453,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>Définir la couleur de fond du texte</translation>
     </message>
     <message>
-        <location line="+391"/>
+        <location line="+409"/>
         <source>Recommended Files</source>
         <translation>Fichiers recommandés</translation>
     </message>
@@ -9887,7 +10523,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>Ajouter une citation</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-131"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-132"/>
         <source>Send To:</source>
         <translation>Envoyer à :</translation>
     </message>
@@ -9912,47 +10548,22 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <translation>&amp;Justifier le texte</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Bullet List (Disc)</source>
+        <location line="+29"/>
+        <source>All addresses (mixed)</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <location line="+2"/>
-        <source>Bullet List (Circle)</source>
+        <source>All people</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Bullet List (Square)</source>
+        <location line="+1"/>
+        <source>My contacts</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Ordered List (Decimal)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Ordered List (Alpha lower)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Ordered List (Alpha upper)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Ordered List (Roman lower</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Ordered List (Roman upper)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location line="+268"/>
+        <location line="+263"/>
         <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
         <translation>Bonjour, &lt;br&gt;Je vous recommande un(e) bon(nne) ami(e), vous pouvez lui faire confiance autant qu&apos;à moi. &lt;br&gt;</translation>
     </message>
@@ -9978,12 +10589,12 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <location line="+44"/>
-        <location line="+1714"/>
+        <location line="+1710"/>
         <source>Save Message</source>
         <translation>Enregistrer le message</translation>
     </message>
     <message>
-        <location line="-1713"/>
+        <location line="-1709"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Le message n&apos;a pas été envoyé
@@ -9995,7 +10606,7 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
         <translation>Coller le lien Retroshare</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+1290"/>
         <source>Add to &quot;To&quot;</source>
         <translation>Ajouter à &quot;A&quot;</translation>
     </message>
@@ -10015,12 +10626,7 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
         <translation>Ajouter comme fichier recommandé</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Friend Details</source>
-        <translation>Détails de cet ami</translation>
-    </message>
-    <message>
-        <location line="+394"/>
+        <location line="-905"/>
         <source>Original Message</source>
         <translation>Message d&apos;origine</translation>
     </message>
@@ -10030,19 +10636,21 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
         <translation>De</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="-1086"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+1"/>
         <location line="+458"/>
         <source>To</source>
         <translation>Pour</translation>
     </message>
     <message>
-        <location line="-455"/>
+        <location line="-13"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-455"/>
         <location line="+456"/>
         <source>Cc</source>
         <translation>Cc</translation>
     </message>
     <message>
-        <location line="-453"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-453"/>
         <source>Sent</source>
         <translation>Eléments envoyés</translation>
     </message>
@@ -10084,12 +10692,13 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
         <translation>Veuillez inscrire au moins un destinataire.</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+26"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+119"/>
         <source>Bcc</source>
         <translation>Cci</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+36"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
@@ -10199,7 +10808,12 @@ Désirez-vous enregistrer le message dans les brouillons?</translation>
         <translation>&amp;Format</translation>
     </message>
     <message>
-        <location line="+271"/>
+        <location line="+20"/>
+        <source>Details</source>
+        <translation>Détails</translation>
+    </message>
+    <message>
+        <location line="+276"/>
         <source>Open File...</source>
         <translation>Ouvrir un fichier...</translation>
     </message>
@@ -10247,12 +10861,7 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Ajouter un fichier supplémentaire</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.ui" line="-1030"/>
-        <source>Show:</source>
-        <translation>Afficher :</translation>
-    </message>
-    <message>
-        <location line="+658"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+692"/>
         <source>Close</source>
         <translation>Fermer</translation>
     </message>
@@ -10262,32 +10871,57 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>De :</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-2245"/>
-        <source>All</source>
-        <translation>Tout</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-2246"/>
         <source>Friend Nodes</source>
         <translation>Noeuds amis</translation>
     </message>
     <message>
-        <location line="+455"/>
-        <source>Person Details</source>
-        <translation>Détails de la personne</translation>
+        <location line="-23"/>
+        <source>Bullet list (disc)</source>
+        <translation>Liste à puces (disque)</translation>
     </message>
     <message>
-        <location line="-454"/>
-        <source>Distant peer identities</source>
-        <translation>Identités de pair distant</translation>
+        <location line="+2"/>
+        <source>Bullet list (circle)</source>
+        <translation>Liste à puces (cercle)</translation>
     </message>
     <message>
-        <location line="+292"/>
+        <location line="+2"/>
+        <source>Bullet list (square)</source>
+        <translation>Liste à puces (carré)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered list (decimal)</source>
+        <translation>Liste ordonnée (décimale)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered list (alpha lower)</source>
+        <translation>Liste ordonnée (alpha minuscule)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered list (alpha upper)</source>
+        <translation>Liste ordonnée (alpha majuscule)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered list (roman lower)</source>
+        <translation>Liste ordonnée (romain minuscule)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Ordered list (roman upper)</source>
+        <translation>Liste ordonnée (romain majuscule)</translation>
+    </message>
+    <message>
+        <location line="+308"/>
         <source>Thanks, &lt;br&gt;</source>
         <translation>Remerciements, &lt;br&gt;</translation>
     </message>
     <message>
-        <location line="+992"/>
+        <location line="+963"/>
         <source>Distant identity:</source>
         <translation>Identité distante :</translation>
     </message>
@@ -10310,7 +10944,27 @@ Voulez-vous enregistrer votre message ?</translation>
 <context>
     <name>MessagePage</name>
     <message>
-        <location filename="../gui/settings/MessagePage.ui" line="+23"/>
+        <location filename="../gui/settings/MessagePage.ui" line="+30"/>
+        <source>Everyone</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Nobody</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Accept encrypted distant messages from</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Reading</source>
         <translation>Lecture</translation>
     </message>
@@ -10325,7 +10979,7 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Ouvrir le message dans</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+15"/>
         <source>Tags</source>
         <translation>Mots clés</translation>
     </message>
@@ -10365,7 +11019,7 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Une nouvelle fenêtre</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+134"/>
         <source>Edit Tag</source>
         <translation>Modifier le mot clé</translation>
     </message>
@@ -10375,22 +11029,12 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Message</translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.ui" line="-92"/>
+        <location filename="../gui/settings/MessagePage.ui" line="-138"/>
         <source>Distant messages:</source>
         <translation>Messages distants :</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Le lien ci-dessous permet aux gens dans le réseau de vous envoyer des messages cryptés, en utilisant des tunnels. Pour ce faire, ils ont besoin de votre clé PGP publique, qu&apos;ils obtiendront en utilisant le système de la découverte de Retroshare.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Accept encrypted distant messages from everyone</source>
-        <translation>Accepter les messages cryptés distants de tout le monde</translation>
-    </message>
-    <message>
-        <location line="-40"/>
+        <location line="+48"/>
         <source>Load embedded images</source>
         <translation>Charger les images incorporées</translation>
     </message>
@@ -10426,7 +11070,7 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <location line="-302"/>
         <source>Subject:</source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="+16"/>
@@ -10671,7 +11315,7 @@ Voulez-vous enregistrer votre message ?</translation>
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="+75"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+634"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+633"/>
         <source>New Message</source>
         <translation>Nouveau message</translation>
     </message>
@@ -10738,24 +11382,24 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <location line="+57"/>
         <location line="+3"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-457"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-456"/>
         <location line="+73"/>
         <location line="+25"/>
         <source>Tags</source>
         <translation>Mots clés</translation>
     </message>
     <message>
-        <location line="+233"/>
-        <location filename="../gui/MessagesDialog.cpp" line="+612"/>
-        <location line="+841"/>
+        <location line="+209"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+609"/>
+        <location line="+856"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Boîte de réception</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-847"/>
-        <location line="+860"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-862"/>
+        <location line="+875"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Boîte d&apos;envoi</translation>
@@ -10767,14 +11411,14 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-860"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-875"/>
         <source>Sent</source>
         <translation>Eléments envoyés</translation>
     </message>
     <message>
         <location line="+9"/>
         <location filename="../gui/MessagesDialog.cpp" line="+4"/>
-        <location line="+887"/>
+        <location line="+902"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Corbeille</translation>
@@ -10843,7 +11487,7 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1567"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1579"/>
         <source>Reply to All</source>
         <translation>Répondre à tous</translation>
     </message>
@@ -10861,12 +11505,12 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <location line="-73"/>
         <location line="+74"/>
-        <location line="+707"/>
+        <location line="+704"/>
         <source>From</source>
         <translation>De</translation>
     </message>
     <message>
-        <location line="-778"/>
+        <location line="-775"/>
         <location line="+72"/>
         <source>Date</source>
         <translation>Date</translation>
@@ -10894,12 +11538,12 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+770"/>
+        <location line="+767"/>
         <source>Click to sort by from</source>
         <translation>Cliquer pour trier par expéditeur</translation>
     </message>
     <message>
-        <location line="-768"/>
+        <location line="-765"/>
         <source>Click to sort by date</source>
         <translation>Cliquer pour trier par date</translation>
     </message>
@@ -10954,7 +11598,12 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Rechercher pièces jointes</translation>
     </message>
     <message>
-        <location line="+183"/>
+        <location line="+46"/>
+        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;    &lt;p&gt;Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt; &lt;p&gt;Retroshare a son propre système de messagerie interne. Vous pouvez en envoyer/recevoir vers/depuis les noeuds de vos amis connectés.&lt;/p&gt; &lt;p&gt;Il est aussi possible d&apos;envoyer des messages vers les Identités d&apos;autres personnes en utilisant le système de routage global. Ces messages sont toujours chiffrés et sont relayés par des noeuds intermédiaires jusqu&apos;à ce qu&apos;ils atteignent leur destination finale. &lt;/p&gt; &lt;p&gt;Les messages distants restent dans votre boite d&apos;envoi jusqu&apos;à ce qu&apos;un accusé de réception soit reçu.&lt;/p&gt; &lt;p&gt;De façon générale, vous pouvez utiliser les messages afin de recommander des fichiers à vos amis en y collant des liens de fichiers, ou recommander des noeuds amis à d&apos;autres noeuds amis, afin de renforcer votre réseau, ou envoyer du retour d&apos;information (feedback) au propriétaire d&apos;une chaîne.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+136"/>
         <source>Starred</source>
         <translation>Suivi</translation>
     </message>
@@ -11019,14 +11668,14 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Vider la corbeille</translation>
     </message>
     <message>
-        <location line="+247"/>
-        <location line="+876"/>
+        <location line="+245"/>
+        <location line="+891"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Brouillons</translation>
     </message>
     <message>
-        <location line="-851"/>
+        <location line="-866"/>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
         <translation>Il n&apos;y a pas de messages suivis. Suivre un message vous permettra de le retrouver plus facilement ultérieurement. Pour suivre un message, cliquez sur l&apos;étoile grise devant n&apos;importe quel message.</translation>
     </message>
@@ -11046,7 +11695,12 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Cliquer pour trier par destinataire</translation>
     </message>
     <message>
-        <location line="+741"/>
+        <location line="+300"/>
+        <source>This message goes to a distant person.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+456"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -11055,18 +11709,18 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Total :</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-682"/>
+        <location filename="../gui/MessagesDialog.ui" line="-658"/>
         <location filename="../gui/MessagesDialog.h" line="+48"/>
         <source>Messages</source>
         <translation>Messages</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1529"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1541"/>
         <source>Click to sort by signature</source>
         <translation>Cliquer pour trier par signature</translation>
     </message>
     <message>
-        <location line="+1063"/>
+        <location line="+1077"/>
         <source>This message was signed and the signature checks</source>
         <translation>Ce message a été signé et la signature vérifiée</translation>
     </message>
@@ -11076,14 +11730,9 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Ce message a été signé mais la signature n&apos;a pas été vérifiée</translation>
     </message>
     <message>
-        <location line="-13"/>
+        <location line="-17"/>
         <source>This message comes from a distant person.</source>
         <translation>Ce message vient d&apos;une personne distante.</translation>
-    </message>
-    <message>
-        <location line="-945"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to other people&apos;s Identities using the global routing system. These messages  	are always encrypted and are relayed by intermediate nodes until they reach their final destination. &lt;/p&gt;	&lt;p&gt;It is recommended to cryptographically sign distant messages, as a proof of your identity, using 	the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  	in the message composer window. Distant messages stay into your Outbox until an acknowledgement of receipt has been received.&lt;/p&gt; &lt;p&gt;Generally, you may use messages to recommend files to your friends by pasting file links,  or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback  to a channel&apos;s owner.&lt;/p&gt;                    </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt; &lt;p&gt;Retroshare a son propre système de messagerie interne. Vous pouvez en envoyer/recevoir vers/depuis les noeuds de vos amis connectés.&lt;/p&gt; &lt;p&gt;Il est aussi possible d&apos;envoyer des messages vers les Identités d&apos;autres personnes en utilisant le système de routage global. Ces messages sont toujours chiffrés et sont relayés par des noeuds intermédiaires jusqu&apos;à ce qu&apos;ils atteignent leur destination finale. &lt;/p&gt;	&lt;p&gt;Il est recommandé de signer cryptographiquement les messages distants, comme preuve de votre identité, en utilisant le bouton &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; dans la fenêtre de composition du message. Les messages distants restent dans votre boite d&apos;envoi jusqu&apos;à ce qu&apos;un accusé de réception soit reçu.&lt;/p&gt; &lt;p&gt;De façon générale, vous pouvez utiliser les messages afin de recommander des fichiers à vos amis en y collant des liens de fichiers, ou recommander des noeuds amis à d&apos;autres noeuds amis, afin de renforcer votre réseau, ou envoyer du retour d&apos;information (feedback) au propriétaire d&apos;une chaîne.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -11107,7 +11756,22 @@ Voulez-vous enregistrer votre message ?</translation>
 <context>
     <name>MimeTextEdit</name>
     <message>
-        <location filename="../gui/common/MimeTextEdit.cpp" line="+232"/>
+        <location filename="../gui/common/MimeTextEdit.cpp" line="+234"/>
+        <source>Paste as plain text</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spoiler</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select text to hide, then push this button</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Paste RetroShare Link</source>
         <translation>Coller le lien Retroshare</translation>
     </message>
@@ -11141,7 +11805,7 @@ Voulez-vous enregistrer votre message ?</translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/MsgItem.cpp" line="+236"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="+234"/>
         <source>Expand</source>
         <translation>Développer</translation>
     </message>
@@ -11184,7 +11848,7 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>&lt;strong&gt;NAT :&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+30"/>
         <source>Network Status Unknown</source>
         <translation>État du réseau inconnu</translation>
     </message>
@@ -11227,26 +11891,6 @@ Voulez-vous enregistrer votre message ?</translation>
         <location line="+7"/>
         <source>Forwarded Port</source>
         <translation>Port redirigé</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>OK | RetroShare Server</source>
-        <translation>OK | Serveur Retroshare</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Internet connection</source>
-        <translation>Connexion internet</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>No internet connection</source>
-        <translation>Pas de connexion internet</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>No local network</source>
-        <translation>Pas de réseau local</translation>
     </message>
 </context>
 <context>
@@ -11361,9 +12005,9 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>ID du contact</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+40"/>
         <source>Deny friend</source>
-        <translation>Ignorer cet ami</translation>
+        <translation>Refuser cet ami</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -11426,7 +12070,7 @@ Par mesure de sécurité votre trousseau précédent à été sauvegardé sous f
         <translation>Impossible de créer le fichier de sauvegarde. Vérifiez les permissions du répertoire PGP, espace disque, etc..</translation>
     </message>
     <message>
-        <location line="+175"/>
+        <location line="+179"/>
         <source>Personal signature</source>
         <translation>Signature personnelle</translation>
     </message>
@@ -11493,7 +12137,7 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <translation>Moi</translation>
     </message>
     <message>
-        <location line="-271"/>
+        <location line="-275"/>
         <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
         <translation>Incohérence des données dans le trousseau de clés. Il s&apos;agit très probablement d&apos;un bug. S&apos;il vous plaît contacter les développeurs.</translation>
     </message>
@@ -11508,7 +12152,7 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <translation>Clés de confiance uniquement</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-106"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-102"/>
         <source>Trust level</source>
         <translation>Niveau de confiance</translation>
     </message>
@@ -11528,12 +12172,12 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <translation>ID du certificat</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+90"/>
         <source>Make friend...</source>
         <translation>Devenir ami ...</translation>
     </message>
     <message>
-        <location line="-102"/>
+        <location line="-98"/>
         <source>Did peer authenticate you</source>
         <translation>Le pair vous a-t-il authentifié ?</translation>
     </message>
@@ -11563,7 +12207,7 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
         <translation>Chercher ID de pair</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+117"/>
         <source>Key removal has failed. Your keyring remains intact.
 
 Reported error:</source>
@@ -11634,7 +12278,7 @@ Erreur remontée :</translation>
 <context>
     <name>NewsFeed</name>
     <message>
-        <location filename="../gui/NewsFeed.ui" line="+63"/>
+        <location filename="../gui/NewsFeed.ui" line="+54"/>
         <source>News Feed</source>
         <translation>Fil d&apos;actualités</translation>
     </message>
@@ -11654,17 +12298,12 @@ Erreur remontée :</translation>
         <translation>C&apos;est un test.</translation>
     </message>
     <message>
-        <location line="-369"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fil d&apos;actualités&lt;/h1&gt; &lt;p&gt;Le fil d&apos;actualité affiche les derniers événements survenus dans votre réseau, triés selon le moment où vous les avez reçus. Il vous donne un résumé de l&apos;activité de vos amis. Vous pouvez configurer les événements à afficher en cliquant sur &lt;b&gt;Options&lt;/ b&gt;. &lt;/p&gt; &lt;p&gt; Les divers événements affichés sont : &lt;ul&gt; &lt;li&gt;Les tentatives de connexion (utile pour ajouter de nouveaux amis et savoir qui essaie de vous contacter) &lt;/li&gt; &lt;li&gt; Les nouveaux articles dans les chaînes et les forums&lt;/li&gt; &lt;li&gt;Les nouvelles chaînes et forums auxquels vous pouvez vous abonner&lt;/li&gt; &lt;li&gt;Les messages privés de vos amis &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
-    </message>
-    <message>
         <location filename="../gui/NewsFeed.h" line="+52"/>
         <source>News feed</source>
         <translation>Fil d&apos;actualités</translation>
     </message>
     <message>
-        <location filename="../gui/NewsFeed.cpp" line="-9"/>
+        <location filename="../gui/NewsFeed.cpp" line="-378"/>
         <source>Newest on top</source>
         <translation>Les plus récents en haut</translation>
     </message>
@@ -11672,6 +12311,11 @@ Erreur remontée :</translation>
         <location line="+1"/>
         <source>Oldest on top</source>
         <translation>Les plus anciens en haut</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fil d&apos;actualités&lt;/h1&gt; &lt;p&gt;Le fil d&apos;actualités affiche les derniers événements survenus dans votre réseau, triés selon le moment où vous les avez reçus. Cela vous donne un résumé de l&apos;activité de vos amis. Vous pouvez configurer les événements à afficher en cliquant sur &lt;b&gt;Options&lt;/ b&gt;. &lt;/p&gt; &lt;p&gt; Les divers événements affichés sont : &lt;ul&gt; &lt;li&gt;Les tentatives de connexion (utile pour ajouter de nouveaux amis et savoir qui essaie de vous contacter) &lt;/li&gt; &lt;li&gt; Les nouveaux articles dans les chaînes et les forums&lt;/li&gt; &lt;li&gt;Les nouvelles chaînes et forums auxquels vous pouvez vous abonner&lt;/li&gt; &lt;li&gt;Les messages privés de vos amis &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -11816,7 +12460,12 @@ Erreur remontée :</translation>
         <translation>Clignotement</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+45"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notifications&lt;/h1&gt; &lt;p&gt;Retroshare vous informe sur ce qui se passe dans votre réseau. En fonction de votre utilisation, vous pouvez activer ou désactiver une partie des notifications. Cette page est conçue pour cela !&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+129"/>
         <source>Top Left</source>
         <translation>En haut à gauche</translation>
     </message>
@@ -11839,12 +12488,6 @@ Erreur remontée :</translation>
         <location filename="../gui/settings/NotifyPage.h" line="+85"/>
         <source>Notify</source>
         <translation>Notifications</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/NotifyPage.cpp" line="-132"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notifications&lt;/h1&gt;
-&lt;p&gt;Retroshare vous informe sur ce qui se passe dans votre réseau. En fonction de votre utilisation, vous pouvez activer ou désactiver une partie des notifications. Cette page est conçue pour ça!&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="-233"/>
@@ -11895,7 +12538,7 @@ Erreur remontée :</translation>
 <context>
     <name>NotifyQt</name>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="+253"/>
+        <location filename="../gui/notifyqt.cpp" line="+268"/>
         <source>PGP key passphrase</source>
         <translation>Mot de passe de la clé PGP</translation>
     </message>
@@ -11927,7 +12570,7 @@ Erreur remontée :</translation>
     <message>
         <location line="+5"/>
         <source>Hashing file</source>
-        <translation>Hashage fichiers</translation>
+        <translation>Hachage fichier</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -11935,7 +12578,7 @@ Erreur remontée :</translation>
         <translation>Enregistrement de l&apos;index des fichiers...</translation>
     </message>
     <message>
-        <location line="+394"/>
+        <location line="+387"/>
         <source>Test</source>
         <translation>Test</translation>
     </message>
@@ -11950,13 +12593,13 @@ Erreur remontée :</translation>
         <translation>Titre inconnu</translation>
     </message>
     <message>
-        <location line="-181"/>
-        <location line="+181"/>
+        <location line="-174"/>
+        <location line="+174"/>
         <source>Encrypted message</source>
-        <translation>Message encrypté</translation>
+        <translation>Message chiffré</translation>
     </message>
     <message>
-        <location line="-733"/>
+        <location line="-726"/>
         <source>Please enter your PGP password for key</source>
         <translation>Veuillez entrer votre mot de passe PGP pour la clé</translation>
     </message>
@@ -12009,24 +12652,6 @@ Trafic faible : 10% du trafic standard et TODO : tous les transferts de fichiers
     </message>
 </context>
 <context>
-    <name>OutQueueStatisticsWidget</name>
-    <message>
-        <location filename="../gui/statistics/OutQueueStatistics.cpp" line="+83"/>
-        <source>Outqueue statistics</source>
-        <translation>Statistiques de file d&apos;attente</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>By priority:</source>
-        <translation>Par priorité :</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>By service :</source>
-        <translation>Par service :</translation>
-    </message>
-</context>
-<context>
     <name>PGPKeyDialog</name>
     <message>
         <location filename="../gui/connect/PGPKeyDialog.ui" line="+14"/>
@@ -12049,12 +12674,22 @@ Trafic faible : 10% du trafic standard et TODO : tous les transferts de fichiers
         <translation>Empreinte :</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PGP key fingerprint is a---supposedly unforgeable---characteristics of the PGP key. In order to make sure that you&apos;re dealing with the right key, compare the fingerprints.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Trust level:</source>
         <translation>Niveau de confiance :</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The trust level is an optional and local parameter that you can set in order to remember your option about a given PGP key. It is not used whatsoever to authorize connections. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Unset</source>
         <translation>Démettre</translation>
     </message>
@@ -12089,39 +12724,51 @@ Trafic faible : 10% du trafic standard et TODO : tous les transferts de fichiers
         <translation>Signatures de clé :</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+6"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Signer la clé d&apos;un ami est la manière d&apos;exprimer votre confiance en cet ami, à vos autres amis. De plus, seuls les amis dont vous avez signé la clé pourront recevoir les informations sur vos autres amis de confiance.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;La signature d&apos;une clé ne peut pas être révoquée, donc faîtes attention à qui vous accordez votre confiance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+7"/>
         <source>Sign this PGP key</source>
         <translation>Signer cette clé PGP</translation>
     </message>
     <message>
         <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend&apos;s key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Sign PGP key</source>
         <translation>Signer la clé PGP</translation>
     </message>
     <message>
         <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here if you want to refuse connections to nodes authenticated by this key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Deny connections</source>
         <translation>Refuser connexions</translation>
     </message>
     <message>
         <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click this if you want your node to accept connecting to Retroshare nodes authenticated by this PGP key. This is done automatically when exchanging your Retroshare certificate with someone. In order to make friends, it is better to exchange certificates than accept connections from a given key, since the certificate also contain useful connection information (IP, DNS, SSL ids, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Accept connections</source>
         <translation>Accepter connexions</translation>
     </message>
@@ -12132,6 +12779,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+18"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button will toggle the inclusion of signatures in the ascii display of the PGP key. See the comments about signatures in the other tab. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Include signatures</source>
         <translation>Inclure les signatures</translation>
     </message>
@@ -12187,7 +12839,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vous ne faites pas confiance à ce contact.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/PGPKeyDialog.ui" line="-146"/>
+        <location filename="../gui/connect/PGPKeyDialog.ui" line="-160"/>
         <location filename="../gui/connect/PGPKeyDialog.cpp" line="+11"/>
         <source>This key has signed your own PGP key</source>
         <translation>Ce contact a signé votre propre clé PGP</translation>
@@ -12361,12 +13013,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerStatus</name>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="+39"/>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="+40"/>
         <source>Friends: 0/0</source>
         <translation>Amis : 0/0</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+14"/>
         <source>Online Friends/Total Friends</source>
         <translation>Amis en ligne/Nombre total d&apos;amis</translation>
     </message>
@@ -12382,7 +13034,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/People/PeopleDialog.ui" line="+75"/>
         <location filename="../gui/People/PeopleDialog.h" line="+53"/>
         <source>People</source>
-        <translation>Gens</translation>
+        <translation>Pers.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -12393,7 +13045,7 @@ p, li { white-space: pre-wrap; }
         <location line="+41"/>
         <location line="+69"/>
         <source>Drag your circles or people to each other.</source>
-        <translation>Traînez vos cercles ou gens l&apos;un vers l&apos;autre.</translation>
+        <translation>Traînez vos cercles ou personnes les uns vers les autres.</translation>
     </message>
     <message>
         <location line="-41"/>
@@ -12735,7 +13387,7 @@ p, li { white-space: pre-wrap; }
         <translation>le dossier de base %1 n&apos;existe pas, le chargement par défaut a échoué</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+141"/>
         <source>Error: instance &apos;%1&apos;can&apos;t create a widget</source>
         <translation>Erreur: l&apos;instance &apos;%1&apos; ne peut pas créer un widget</translation>
     </message>
@@ -12796,19 +13448,19 @@ p, li { white-space: pre-wrap; }
         <translation>Autoriser toutes les extensions</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Loaded plugins</source>
-        <translation>Extensions chargées</translation>
-    </message>
-    <message>
-        <location line="+46"/>
+        <location line="+50"/>
         <source>Plugin look-up directories</source>
         <translation>Dossiers des extensions</translation>
     </message>
     <message>
-        <location filename="../gui/settings/PluginsPage.cpp" line="+61"/>
-        <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation>Hachage rejeté. Activer le manuellement et redémarrer, si vous avez besoin.</translation>
+        <location filename="../gui/settings/PluginsPage.cpp" line="+63"/>
+        <source>Plugin disabled. Click the enable button and restart Retroshare</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>[disabled]</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location line="+3"/>
@@ -12816,27 +13468,36 @@ p, li { white-space: pre-wrap; }
         <translation>Aucun numéro d&apos;API fourni. S&apos;il vous plaît lire le manuel de développement des extensions.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <location line="+4"/>
+        <source>[loading problem]</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="-13"/>
         <source>No SVN number supplied. Please read plugin development manual.</source>
         <translation>Aucun numéro de SVN fourni. S&apos;il vous plaît lire le manuel de développement des extensions.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Loading error.</source>
         <translation>Erreur de chargement.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Missing symbol. Wrong version?</source>
         <translation>Symbole manquant. Mauvaise version ?</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>No plugin object</source>
         <translation>Pas d&apos;extension</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Plugins is loaded.</source>
         <translation>L&apos;extension est chargée</translation>
     </message>
@@ -12846,22 +13507,7 @@ p, li { white-space: pre-wrap; }
         <translation>Statut inconnue.</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Title unavailable</source>
-        <translation>Titre indisponible</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Description unavailable</source>
-        <translation>Description indisponible</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Unknown version</source>
-        <translation>Version inconnue</translation>
-    </message>
-    <message>
-        <location line="+58"/>
+        <location line="+67"/>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
@@ -12872,14 +13518,15 @@ en vérifiant la valeur de hachage cela vous protège contre les
 comportements malveillants des extensions.</translation>
     </message>
     <message>
+        <location line="+7"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Extensions&lt;/h1&gt; &lt;p&gt;Les extensions sont chargées depuis les répertoires affichés dans la liste tout en bas.&lt;/p&gt; &lt;p&gt;Pour des raisons de sécurité, les extensions reconnues sont chargées automatiquement, jusqu&apos;à ce que l&apos;exécutable principal Retroshare ou que de la bibliothèque de plug-in ne changent. Dans un tel cas, l&apos;utilisateur doit confirmer les plugins à nouveau. Après le démarrage du programme, vous pouvez activer un plugin manuellement en cliquant sur ​​le bouton &quot;Activer&quot; puis ensuite redémarrer Retroshare.&lt;/p&gt; &lt;p&gt;Si vous voulez développer vos propres extensions, contactez l&apos;équipe de développeurs, ils seront heureux de vous aider !&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/PluginsPage.ui" line="-43"/>
         <location filename="../gui/settings/PluginsPage.h" line="+41"/>
         <source>Plugins</source>
         <translation>Extensions</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/PluginsPage.cpp" line="+7"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Extensions&lt;/h1&gt; &lt;p&gt;Les extensions sont chargés depuis les répertoires listés dans la liste du bas.&lt;/p&gt; &lt;p&gt;Pour des raisons de sécurité, les extensions reconnues sont chargées automatiquement jusqu&apos;à ce que l&apos;exécutable principal Retroshare ou que de la bibliothèque de plug-in changent. Dans un tel cas, l&apos;utilisateur doit confirmer à nouveau. Après le démarrage du programme, vous pouvez activer un plugin manuellement en cliquant sur ​​le bouton &quot;Activer&quot; puis redémarrez Retroshare.&lt;/p&gt; &lt;p&gt;Si vous voulez développer vos propres extensions, contactez l&apos;équipe de développeurs, ils seront heureux de vous aider!&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -12948,14 +13595,19 @@ comportements malveillants des extensions.</translation>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="+108"/>
+        <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="+111"/>
+        <source>Chat remotely closed. Please close this window.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
         <translation>La personne à laquelle vous parliez a supprimé le tunnel de tchat sécurisé. Vous pouvez maintenant supprimer la fenêtre de chat.</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+33"/>
         <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
-        <translation>La fermeture de cette fenêtre met fin à la conversation, informez le contact puis supprimez le tunnel crypté.</translation>
+        <translation>La fermeture de cette fenêtre met fin à la conversation, informez le contact puis supprimez le tunnel chiffré.</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -12963,12 +13615,7 @@ comportements malveillants des extensions.</translation>
         <translation>Tuer ce tunnel ?</translation>
     </message>
     <message>
-        <location line="-52"/>
-        <source>Hash Error. No tunnel.</source>
-        <translation>Erreur de hachage. Pas de tunnel.</translation>
-    </message>
-    <message>
-        <location line="+3"/>
+        <location line="-42"/>
         <source>Can&apos;t send message, because there is no tunnel.</source>
         <translation>Ne peut pas envoyer le message, parce qu&apos;il n&apos;y a pas de tunnel.</translation>
     </message>
@@ -13018,7 +13665,7 @@ comportements malveillants des extensions.</translation>
     <message>
         <location filename="../gui/Posted/PostedCreatePostDialog.cpp" line="-26"/>
         <source>Submit a new Post</source>
-        <translation>Soumettre un nouveau sujet </translation>
+        <translation>Soumettre un nouveau lien </translation>
     </message>
     <message>
         <location line="+40"/>
@@ -13049,7 +13696,12 @@ comportements malveillants des extensions.</translation>
         <translation>Publié</translation>
     </message>
     <message>
-        <location filename="../gui/Posted/PostedDialog.cpp" line="+2"/>
+        <location filename="../gui/Posted/PostedDialog.cpp" line="-16"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Publié&lt;/h1&gt; &lt;p&gt;Le service de publication vous permet de partager des liens internet, qui se propagent entre les nœuds Retroshare à la manière des forums et des chaînes&lt;/p&gt; &lt;p&gt;Les liens peuvent être commentés par les utilisateurs inscrits. Un système de promotion donne également la possibilité de mettre en avant les liens importants.&lt;/p&gt; &lt;p&gt;Il n&apos;y a aucune restriction concernant les liens qui sont partagés. Soyez prudent lorsque vous cliquez sur eux.&lt;/p&gt; &lt;p&gt;Les publications sont effacées après %1 mois.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+18"/>
         <source>Create Topic</source>
         <translation>Créer un sujet</translation>
     </message>
@@ -13072,11 +13724,6 @@ comportements malveillants des extensions.</translation>
         <location line="+2"/>
         <source>Other Topics</source>
         <translation>Autres sujets</translation>
-    </message>
-    <message>
-        <location line="-33"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Posted&lt;/h1&gt;        &lt;p&gt;The posted service allows you to share internet links, that spread among Retroshare nodes like forums and 	 channels&lt;/p&gt; 	 &lt;p&gt;Links can be commented by subscribed users. A promotion system also gives the opportunity to  	 enlight important links.&lt;/p&gt;      &lt;p&gt;There is no restriction on which links are shared. Be careful when clicking on them.&lt;/p&gt;     &lt;p&gt;Posted links get deleted after %1 months.&lt;/p&gt;     </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Publication&lt;/h1&gt;        &lt;p&gt;Le service de publication vous permet de partager des liens internet, qui se propage entre les nœuds Retroshare comme les forums et les canaux&lt;/p&gt; 	 &lt;p&gt;Les liens peuvent être commentés par les utilisateurs inscrits. Un système de promotion donne également la possibilité de mettre en avant liens importants.&lt;/p&gt;      &lt;p&gt;Il n&apos;y a aucune restriction lorsque ces liens sont partagés. Soyez donc prudent lorsque vous cliquez.&lt;/p&gt;     &lt;p&gt;Les publications sont effacées après %1 mois.&lt;/p&gt;     </translation>
     </message>
 </context>
 <context>
@@ -13235,7 +13882,7 @@ comportements malveillants des extensions.</translation>
     <message>
         <location line="+83"/>
         <source>Hot</source>
-        <translation>Hot</translation>
+        <translation>Chaud</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -13265,7 +13912,7 @@ comportements malveillants des extensions.</translation>
     <message>
         <location line="+5"/>
         <source>This Month</source>
-        <translation>Ce mois</translation>
+        <translation>Ce mois-ci</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -13275,7 +13922,7 @@ comportements malveillants des extensions.</translation>
     <message>
         <location line="-132"/>
         <source>Submit a new Post</source>
-        <translation>Soumettre un nouveau poste</translation>
+        <translation>Soumettre un nouveau lien</translation>
     </message>
     <message>
         <location line="+161"/>
@@ -13332,7 +13979,7 @@ comportements malveillants des extensions.</translation>
 <context>
     <name>PrintPreview</name>
     <message>
-        <location filename="../util/printpreview.cpp" line="+230"/>
+        <location filename="../util/printpreview.cpp" line="+200"/>
         <source>RetroShare Message - Print Preview</source>
         <translation>Message Retroshare - Aperçu avant impression</translation>
     </message>
@@ -13414,8 +14061,8 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation>Votre identité a été enregistrée avec succès
-Elle est cryptée
+        <translation>Votre identité a été enregistrée avec succès,
+elle est chiffrée
 
 Vous pouvez maintenant la copier sur un autre ordinateur
 et utiliser le bouton d&apos;importation pour la charger</translation>
@@ -13688,7 +14335,8 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../gui/MainWindow.cpp" line="+312"/>
-        <location filename="../gui/RetroShareLink.cpp" line="+992"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+1009"/>
+        <location line="+164"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
@@ -13698,7 +14346,7 @@ p, li { white-space: pre-wrap; }
         <translation>Voulez-vous que ce lien soit traité par votre système ?</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-366"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-530"/>
         <source>Click to add this RetroShare cert to your PGP keyring
 and open the Make Friend Wizard.
 </source>
@@ -13726,7 +14374,12 @@ et ouvrir Ajouter un ami.</translation>
         <translation>Souhaitez-vous traiter les %1 liens ?</translation>
     </message>
     <message>
-        <location line="+354"/>
+        <location line="+165"/>
+        <source>This file already exists. Do you want to open it ?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+218"/>
         <source>%1 of %2 RetroShare link processed.</source>
         <translation>%1 des %2 lien Retroshare traité.</translation>
     </message>
@@ -13893,9 +14546,9 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
         <translation>Impossible de créer le fichier collection</translation>
     </message>
     <message>
-        <location filename="../gui/elastic/node.cpp" line="+374"/>
+        <location filename="../gui/elastic/node.cpp" line="+382"/>
         <source>Deny friend</source>
-        <translation>Ignorer cet ami</translation>
+        <translation>Refuser cet ami</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13913,7 +14566,7 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
         <translation>Demande de fichier annulée</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="+183"/>
+        <location filename="../main.cpp" line="+184"/>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
         <translation>Cette version de Retroshare utilise OpenPGP SDK. En contre partie, elle n&apos;utilise plus le système de trousseau de clés PGP, mais possède son propre trousseau de clés partagé par toutes les instances de Retroshare. &lt;br&gt;&lt;br&gt; Vous ne semblez pas posséder un tel trousseau, bien que des clés PGP apparaissent pour les comptes Retroshare existants, probablement parce que vous venez d&apos;installer cette nouvelle version du logiciel.</translation>
     </message>
@@ -13944,7 +14597,7 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
         <translation>Une erreur inattendue s&apos;est produite. Vous pouvez la reporter &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location filename="../rshare.cpp" line="+642"/>
+        <location filename="../rshare.cpp" line="+686"/>
         <location line="+7"/>
         <source>Multiple instances</source>
         <translation>Instances multiples</translation>
@@ -13954,9 +14607,8 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation>Une autre instance de Retroshare utilise actuellement le même profil sur votre système. Veuillez dans un premier temps fermer ce profil puis réessayez de l&apos;ouvrir.
- Fichier vérrouillé :
-</translation>
+        <translation>Une autre instance de RetroShare utilisant le même profil est actuellement en fonctionnement sur votre système. Veuillez d&apos;abord la refermer.
+Fichier verrouillé :</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13984,11 +14636,6 @@ Les caractères &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; seront rem
     </message>
     <message>
         <location line="+8"/>
-        <source>Secured tunnel established. Waiting for ACK...</source>
-        <translation>Tunnel sécurisé établi. En attente d&apos;ACK ...</translation>
-    </message>
-    <message>
-        <location line="+8"/>
         <source>Secured tunnel is working. You can talk!</source>
         <translation>Le tunnel sécurisé fonctionne. Vous pouvez parler !</translation>
     </message>
@@ -14004,7 +14651,7 @@ L&apos;erreur rapportée est :
 %2 </translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="-812"/>
+        <location filename="../gui/RetroShareLink.cpp" line="-841"/>
         <source>Click to send a private message to %1 (%2).</source>
         <translation>Cliquer pour envoyer un message privé à %1 (%2).</translation>
     </message>
@@ -14054,7 +14701,7 @@ L&apos;erreur rapportée est :
         <translation>Données transférées</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="-228"/>
+        <location filename="../main.cpp" line="-229"/>
         <source>You appear to have nodes associated to DSA keys:</source>
         <translation>Vous semblez avoir des noeuds associés à vos clés DSA :</translation>
     </message>
@@ -14064,7 +14711,7 @@ L&apos;erreur rapportée est :
         <translation>Les clés DSA ne sont pas encore supportées par cette version de RetroShare. Tous ces noeuds seront inutilisables. Nous sommes vraiment désolés pour cela.</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="+194"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="+225"/>
         <source>enabled</source>
         <translation>activé</translation>
     </message>
@@ -14074,12 +14721,12 @@ L&apos;erreur rapportée est :
         <translation>désactivé</translation>
     </message>
     <message>
-        <location line="+660"/>
+        <location line="+699"/>
         <source>Join chat lobby</source>
         <translation>Rejoindre le salon de tchat</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+510"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+521"/>
         <source>Move IP %1 to whitelist</source>
         <translation>Ajouter l&apos;IP %1 en liste blanche</translation>
     </message>
@@ -14094,49 +14741,56 @@ L&apos;erreur rapportée est :
         <translation>ajouter la plage entière %1 en liste blanche</translation>
     </message>
     <message>
-        <location filename="../gui/Identity/IdDialog.cpp" line="-316"/>
+        <location filename="../gui/Identity/IdDetailsDialog.cpp" line="-164"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="-541"/>
         <source>%1 seconds ago</source>
         <translation>%1 secondes avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 minute ago</source>
         <translation>%1 minute avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 minutes ago</source>
         <translation>%1 minutes avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 hour ago</source>
         <translation>%1 heure avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 hours ago</source>
         <translation>%1 heures avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 day ago</source>
         <translation>%1 jour avant</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location filename="../gui/Identity/IdDialog.cpp" line="+2"/>
         <source>%1 days ago</source>
         <translation>il y a %1 jours</translation>
     </message>
     <message>
-        <location filename="../gui/ChatLobbyWidget.cpp" line="-662"/>
+        <location filename="../gui/ChatLobbyWidget.cpp" line="-701"/>
         <source>Subject:</source>
-        <translation>Sujet :</translation>
+        <translation>Sujet : </translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Participants:</source>
-        <translation>Participants :</translation>
+        <translation>Participants : </translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14149,6 +14803,12 @@ L&apos;erreur rapportée est :
         <translation>Id : </translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>
+Security: no anonymous IDs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../gui/RetroShareLink.cpp" line="-138"/>
         <location line="+136"/>
         <source>This cert is malformed. Error code:</source>
@@ -14159,6 +14819,16 @@ L&apos;erreur rapportée est :
         <source>The following has not been added to your download list, because you already have it:</source>
         <translation>Celui qui suit n&apos;a pas été ajouté à votre liste de téléchargement, parce que vous l&apos;avez déjà : </translation>
     </message>
+    <message>
+        <location filename="../gui/common/FriendList.cpp" line="+1524"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>unable to parse XML file!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -14168,7 +14838,7 @@ L&apos;erreur rapportée est :
         <translation>Assistant de configuration rapide</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+83"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -14206,21 +14876,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+66"/>
-        <location line="+262"/>
-        <location line="+233"/>
+        <location line="+271"/>
+        <location line="+242"/>
+        <location line="+119"/>
         <source>Next &gt;</source>
         <translation>Suivant &gt;</translation>
     </message>
     <message>
-        <location line="-485"/>
-        <location line="+262"/>
-        <location line="+233"/>
-        <location line="+205"/>
+        <location line="-622"/>
+        <location line="+271"/>
+        <location line="+242"/>
+        <location line="+119"/>
+        <location line="+223"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location line="-640"/>
+        <location line="-786"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
         <translation>Pour obtenir de meilleures performances, Retroshare a besoin d&apos;informations au sujet de votre connexion internet.</translation>
     </message>
@@ -14287,13 +14959,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+61"/>
-        <location line="+233"/>
-        <location line="+205"/>
+        <location line="+242"/>
+        <location line="+119"/>
+        <location line="+223"/>
         <source>&lt; Back</source>
         <translation>&lt; Précédent</translation>
     </message>
     <message>
-        <location line="-356"/>
+        <location line="-493"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -14318,7 +14991,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../gui/QuickStartWizard.cpp" line="+288"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="+303"/>
         <source>Network Wide</source>
         <translation>Anonyme</translation>
     </message>
@@ -14343,7 +15016,27 @@ p, li { white-space: pre-wrap; }
         <translation>Partager automatiquement le dossier de réception (recommandé)</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+93"/>
+        <source>RetroShare Page Display Style</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Where do you want to have the buttons for the page?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>ToolBar View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>List View</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+135"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -14421,7 +15114,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+43"/>
         <source>Browsable</source>
-        <translation>Visible</translation>
+        <translation>Parcourable</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -14436,7 +15129,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>If checked, the share is browsable by your friends.</source>
-        <translation>Si coché, le partage est visible par vos amis.</translation>
+        <translation>Si coché, le partage est visible et parcourable par vos amis.</translation>
     </message>
     <message>
         <location line="-31"/>
@@ -14452,13 +15145,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-50"/>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation>Etes-vous certain(e) de ne plus vouloir partager ce dossier ?</translation>
+        <translation>Etes-vous certain(e) de ne plus vouloir partager ce répertoire ?</translation>
     </message>
 </context>
 <context>
     <name>RSGraphWidget</name>
     <message>
-        <location filename="../gui/common/RSGraphWidget.cpp" line="+493"/>
+        <location filename="../gui/common/RSGraphWidget.cpp" line="+542"/>
         <source>%1 KB</source>
         <translation>%1 Ko</translation>
     </message>
@@ -14494,7 +15187,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSPermissionMatrixWidget</name>
     <message>
-        <location filename="../gui/settings/RSPermissionMatrixWidget.cpp" line="+439"/>
+        <location filename="../gui/settings/RSPermissionMatrixWidget.cpp" line="+464"/>
         <source>Allowed by default</source>
         <translation>Autorisé par défaut</translation>
     </message>
@@ -14521,12 +15214,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Disabled by remote peer</source>
-        <translation>Désactivé pour ce pair distant</translation>
+        <translation>Désactivé par ce pair distant</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Switched Off</source>
-        <translation>Éteint</translation>
+        <source>Globally switched Off</source>
+        <translation>Globalement éteint</translation>
     </message>
     <message>
         <location line="-18"/>
@@ -14536,18 +15229,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+2"/>
         <source>Peer name:</source>
-        <translation>Nom du contact :</translation>
+        <translation>Nom du pair :</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Peer Id:</source>
-        <translation>ID du contact :</translation>
+        <translation>ID du pair :</translation>
     </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="+219"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="+222"/>
         <source>Error Saving Configuration on page</source>
         <translation>Une erreur est survenue lors de l&apos;enregistrement de la configuration sur la page </translation>
     </message>
@@ -14656,8 +15349,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/settings/RelayPage.cpp" line="+58"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relais&lt;/h1&gt; &lt;p&gt;En activant les relais, vous permettez à votre Retroshare d&apos;agir comme un pont entre les utilisateurs qui ne peuvent pas se connecter directement, par exemple lorsqu&apos;ils sont derrière un Firewall.&lt;/p&gt; &lt;p&gt;Vous pouvez choisir de servir de relais en cochant &lt;i&gt;Activer les connexions relais&lt;/i&gt;, ou tout simplement profiter d&apos;autres serveurs relais en cochant &lt;i&gt;Utiliser les serveurs relais&lt;/i&gt;. Pour les premiers, vous pouvez spécifier la bande passante allouée lorsqu&apos;il agit comme un relais pour les amis à vous, pour les amis de vos amis, ou pour n&apos;importe qui dans le réseau Retroshare.&lt;/p&gt; &lt;p&gt;Dans tous les cas, un nœud Retroshare agissant comme un relais ne peut pas voir le trafic relayé, car le trafic est crypté et authentifié par les deux nœuds relayés.&lt;/p&gt;</translation>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relais&lt;/h1&gt; &lt;p&gt;En activant les relais, vous permettez à votre Retroshare d&apos;agir comme un pont entre les utilisateurs qui ne peuvent pas se connecter directement, par exemple lorsqu&apos;ils sont derrière un pare-feu (firewall).&lt;/p&gt; &lt;p&gt;Vous pouvez choisir de servir de relais en cochant &lt;i&gt;Activer les connexions relais&lt;/i&gt;, ou tout simplement profiter d&apos;autres serveurs relais en cochant &lt;i&gt;Utiliser les serveurs relais&lt;/i&gt;. Pour les premiers, vous pouvez spécifier la bande passante allouée lorsqu&apos;il agit comme relais pour des amis à vous, pour des amis de vos amis, ou pour n&apos;importe qui dans le réseau Retroshare.&lt;/p&gt; &lt;p&gt;Dans tous les cas, un nœud Retroshare agissant comme un relais ne peut pas voir le trafic relayé, car le trafic est chiffré et authentifié par les deux nœuds relayés.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -14681,7 +15374,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RetroshareDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="-435"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="-451"/>
         <source>NEW</source>
         <translation>NOUVEAU</translation>
     </message>
@@ -14711,7 +15404,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Unknown</source>
-        <translation>Inconnu</translation>
+        <translation>Inconnue</translation>
     </message>
 </context>
 <context>
@@ -14719,7 +15412,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/RsBanListToolButton.cpp" line="+89"/>
         <source>Add IP to whitelist</source>
-        <translation>Ajouter l&apos;IP dans liste blanche</translation>
+        <translation>Ajouter l&apos;IP à la liste blanche</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -15021,7 +15714,7 @@ Si vous pensez qu&apos;il est correct, supprimez la ligne correspondante du fich
 <context>
     <name>RsHtml</name>
     <message>
-        <location filename="../util/HandleRichText.cpp" line="+829"/>
+        <location filename="../util/HandleRichText.cpp" line="+1014"/>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
         <translation>L&apos;image est trop grande pour la transmission.
@@ -15039,7 +15732,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
 <context>
     <name>Rshare</name>
     <message>
-        <location filename="../rshare.cpp" line="-403"/>
+        <location filename="../rshare.cpp" line="-446"/>
         <source>Resets ALL stored RetroShare settings.</source>
         <translation>Réinitialisation de tous les paramètres de Retroshare.</translation>
     </message>
@@ -15084,17 +15777,17 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Impossible d&apos;ouvrir le journal &apos;%1&apos;: %2</translation>
     </message>
     <message>
-        <location line="+169"/>
+        <location line="+211"/>
         <source>built-in</source>
         <translation>intégré</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+87"/>
         <source>Could not create data directory: %1</source>
         <translation>N&apos;a pas pu créer le dossier de données : %1</translation>
     </message>
     <message>
-        <location line="-408"/>
+        <location line="-451"/>
         <source>Revision</source>
         <translation>Révision</translation>
     </message>
@@ -15123,32 +15816,9 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
     </message>
 </context>
 <context>
-    <name>SFListDelegate</name>
-    <message>
-        <location filename="../gui/SFListDelegate.cpp" line="+42"/>
-        <source>B</source>
-        <translation>O</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>KB</source>
-        <translation>Ko</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>MB</source>
-        <translation>Mo</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>GB</source>
-        <translation>Go</translation>
-    </message>
-</context>
-<context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+70"/>
+        <location filename="../gui/FileTransfer/SearchDialog.ui" line="+70"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Entrez un mot clé ici (minimum 3 caractères)</translation>
     </message>
@@ -15330,12 +16000,12 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Télécharger la sélection</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="+197"/>
+        <location filename="../gui/FileTransfer/SearchDialog.cpp" line="+197"/>
         <source>File Name</source>
         <translation>Nom du fichier</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+130"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
@@ -15404,7 +16074,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Ouvrir répertoire</translation>
     </message>
     <message>
-        <location line="-246"/>
+        <location line="-247"/>
         <source>Create Collection...</source>
         <translation>Créer une collection ...</translation>
     </message>
@@ -15424,7 +16094,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Télécharger à partir d&apos;un fichier collection...</translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+228"/>
         <source>Collection</source>
         <translation>Collection</translation>
     </message>
@@ -15531,7 +16201,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
     <message>
         <location line="+26"/>
         <source>Deny friend</source>
-        <translation>Ignorer cet ami</translation>
+        <translation>Refuser cet ami</translation>
     </message>
     <message>
         <location line="+48"/>
@@ -15667,12 +16337,22 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
 <context>
     <name>ServerPage</name>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="+24"/>
+        <location filename="../gui/settings/ServerPage.ui" line="+33"/>
         <source>Network Configuration</source>
         <translation>Configuration du réseau</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+21"/>
+        <source>Network Mode</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Nat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+142"/>
         <source>Automatic (UPnP)</source>
         <translation>Automatique (UPnP)</translation>
     </message>
@@ -15687,7 +16367,7 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Redirection de port manuelle</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="+18"/>
         <source>Public: DHT &amp; Discovery</source>
         <translation>Publique : DHT &amp; Découverte</translation>
     </message>
@@ -15707,13 +16387,13 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>Dark Net : Aucun</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <location line="+778"/>
+        <location line="-178"/>
+        <location line="+925"/>
         <source>Local Address</source>
         <translation>Adresse locale</translation>
     </message>
     <message>
-        <location line="-771"/>
+        <location line="-918"/>
         <source>External Address</source>
         <translation>Adresse externe</translation>
     </message>
@@ -15723,28 +16403,28 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
         <translation>DNS dynamique</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+68"/>
         <location line="+26"/>
         <source>Port:</source>
         <translation>Port :</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+138"/>
         <source>Local network</source>
         <translation>Réseau local</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-33"/>
         <source>External ip address finder</source>
         <translation>Découverte de l&apos;adresse IP externe</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+94"/>
         <source>UPnP</source>
         <translation>UPnP</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+59"/>
         <source>Known / Previous IPs:</source>
         <translation>IPs connues / précédentes :</translation>
     </message>
@@ -15770,13 +16450,13 @@ derrière un pare-feu ou un VPN (virtual private network).</translation>
         <translation>Autoriser Retroshare à récupérer mon adresse IP à partir de ces sites :</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <location line="+45"/>
+        <location line="-358"/>
+        <location line="+201"/>
         <source>kB/s</source>
         <translation>Ko/s</translation>
     </message>
     <message>
-        <location line="-308"/>
+        <location line="-175"/>
         <source>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</source>
         <translation>La gamme de ports acceptables s&apos;étend de 10 à 65535. Normalement les ports en dessous de 1024 sont réservés à votre système.</translation>
     </message>
@@ -15786,24 +16466,12 @@ derrière un pare-feu ou un VPN (virtual private network).</translation>
         <translation>La gamme de ports acceptables s&apos;étend de 10 à 65535. Normalement les ports en dessous de 1024 sont réservés à votre système.</translation>
     </message>
     <message>
-        <location line="+707"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+471"/>
         <source>Onion Address</source>
         <translation>Adresse Onion</translation>
     </message>
     <message>
-        <location line="+59"/>
-        <source>Expected torrc Port Configuration:</source>
-        <translation>Configuration de port torrc attendue :</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
-HiddenServicePort 9191 127.0.0.1:9191</source>
-        <translation>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
-HiddenServicePort 9191 127.0.0.1:9191</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+359"/>
+        <location line="-94"/>
         <source>Discovery On (recommended)</source>
         <translation>Découverte activée (recommandé)</translation>
     </message>
@@ -15813,17 +16481,65 @@ HiddenServicePort 9191 127.0.0.1:9191</translation>
         <translation>Découverte désactivée</translation>
     </message>
     <message>
-        <location line="+206"/>
+        <location line="+32"/>
+        <source>Hidden - See Config</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>I2P Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>I2P incoming ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Points at: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Tor incoming ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>incoming ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+145"/>
+        <location line="+14"/>
         <source>Proxy seems to work.</source>
         <translation>Le proxy semble fonctionner.</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="-928"/>
+        <location line="+5"/>
+        <source>I2P proxy is not enabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+58"/>
+        <source>You are reachable through the hidden service.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>The proxy is not enabled or broken.
+Are all services up and running fine??
+Also check your ports!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/settings/ServerPage.ui" line="+234"/>
         <source>[Hidden mode]</source>
         <translation>[Mode caché]</translation>
     </message>
     <message>
-        <location line="+284"/>
+        <location line="+37"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci vide la liste d&apos;adresses connues. Cette action est utile si, pour une raison quelconque, votre liste d&apos;adresse contient une adresse invalide/sans rapport/expirée que vous voulez éviter de passer à vos amis en tant qu&apos;adresse de contact.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -15833,90 +16549,95 @@ HiddenServicePort 9191 127.0.0.1:9191</translation>
         <translation>Effacer</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="-362"/>
         <source>Download limit (KB/s) </source>
         <translation>Limite de téléchargement (KB/s)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+33"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This download limit covers the whole application. However, in some situations, such as when transfering many small files at once, the estimated bandwidth becomes unreliable and the total value reported by Retroshare might exceed that limit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cette limite du téléchargement concerne l&apos;application entière. Cependant, dans quelques situations, comme lors du transfert de beaucoup de petits fichiers simultanément, la bande passante évaluée devient incertaine et la valeur totale rapportée par Retroshare peut excéder cette limite.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="-20"/>
         <source>Upload limit (KB/s) </source>
         <translation>Limite d&apos;envoi (KB/s)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+221"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The upload limit covers the entire software. Too small an upload limit might eventually block low priority services (forums, channels). A minimum recommended value is 50KB/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La limite de téléversement (upload) concerne le logiciel entier. Une trop petite limite de téléversement pourrait éventuellement bloquer des services à basse priorité (forums, chaînes). La valeur minimum recommandée est 50 Ko/s. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+409"/>
+        <location line="+635"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your hidden address using the corresponding proxy. If your hidden node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &amp;quot;security warning&amp;quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it, which you should interpret as a sign of good communication.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Test</source>
         <translation>Test</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.h" line="+48"/>
+        <location filename="../gui/settings/ServerPage.h" line="+49"/>
         <source>Network</source>
         <translation>Réseau</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="-376"/>
+        <location filename="../gui/settings/ServerPage.ui" line="-449"/>
         <source>IP Filters</source>
         <translation>Filtres d&apos;IP</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>IP blacklist</source>
         <translation>Liste noire d&apos;IP</translation>
     </message>
     <message>
         <location line="+25"/>
-        <location line="+116"/>
+        <location line="+114"/>
         <source>IP range</source>
         <translation>Plage d&apos;IP</translation>
     </message>
     <message>
-        <location line="-111"/>
-        <location line="+116"/>
-        <location filename="../gui/settings/ServerPage.cpp" line="-1009"/>
+        <location line="-109"/>
+        <location line="+114"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="-1169"/>
         <source>Status</source>
         <translation>Statut</translation>
     </message>
     <message>
-        <location line="-111"/>
-        <location line="+116"/>
+        <location line="-109"/>
+        <location line="+114"/>
         <location filename="../gui/settings/ServerPage.cpp" line="+1"/>
         <source>Origin</source>
         <translation>Origine</translation>
     </message>
     <message>
-        <location line="-111"/>
-        <location line="+116"/>
+        <location line="-109"/>
+        <location line="+114"/>
         <source>Reason</source>
         <translation>Raison</translation>
     </message>
     <message>
-        <location line="-111"/>
-        <location line="+116"/>
+        <location line="-109"/>
+        <location line="+114"/>
         <location filename="../gui/settings/ServerPage.cpp" line="+1"/>
         <source>Comment</source>
         <translation>Commentaire</translation>
     </message>
     <message>
-        <location line="-76"/>
+        <location line="-74"/>
         <source>  IPs</source>
         <translation>IPs</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+29"/>
         <source>IP whitelist</source>
         <translation>Liste blanche d&apos;IP</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+57"/>
         <source>Manual input</source>
         <translation>Saisie manuelle</translation>
     </message>
@@ -15941,12 +16662,118 @@ HiddenServicePort 9191 127.0.0.1:9191</translation>
         <translation>Ajouter en liste blanche</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="-3"/>
+        <location line="+13"/>
+        <source>Hidden Service Configuration</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Outgoing Connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the Tor Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though Tor. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>I2P Socks Proxy</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the port of the I2P Socks proxy. Your Retroshare node can use this port to connect to&lt;/p&gt;&lt;p&gt;Hidden nodes. The led at right turns green when this port is active on your computer. &lt;/p&gt;&lt;p&gt;This does not mean however that your Retroshare traffic transits though I2P. It does only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>I2P outgoing Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Tor Socks Proxy default: 127.0.0.1:9050.  Set in torrc config and update here.
+
+I2P Socks Proxy: see http://127.0.0.1:7657/i2ptunnelmgr for setting up a client tunnel:
+Tunnel Wizard -&gt; Client Tunnel -&gt; SOCKS 4/4a/5 -&gt; enter a name -&gt; leave 'Outproxies' empty -&gt; enter port (memorize!) [you may also want to set the reachability to 127.0.0.1] -&gt; check 'Auto Start' -&gt; finish!
+Now enter the address (e.g. 127.0.0.1) and the port you've picked before for the I2P Proxy.
+
+You can connect to Hidden Nodes, even if you are running a standard Node, so why not setup Tor and/or I2P?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Incoming Service Connections</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+42"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+935"/>
+        <source>Service Address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your hidden address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;[something].b32.i2p. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor. You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;. For I2P: Setup a server tunnel ( http://127.0.0.1:7657/i2ptunnelmgr ) and copy it&apos;s base32 address when it is started (should end with .b32.i2p)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led turns green only if you launch an active test using the above button. &lt;/p&gt;&lt;p&gt;When it does, it means that your hidden node can be reached from anywhere, using the Tor (resp. I2P) &lt;/p&gt;&lt;p&gt;network. Congratulations!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>incoming  ok</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Expected Configuration:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Please fill in a service address</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>To Receive Connections, you must first setup a Tor/I2P Hidden Service. 
+For Tor: See torrc and documentation for HOWTO details.
+For I2P: See http://127.0.0.1:7657/i2ptunnelmgr for setting up a server tunnel:
+Tunnel Wizard -&gt; Server Tunnel -&gt; Standard -&gt; enter a name -&gt; enter the address and port your RS is using (see Local Address above) -&gt; check 'Auto Start' -&gt; finish!
+
+Once this is done, paste the Onion/I2P (Base32) Address in the box above.
+This is your external address on the Tor/I2P network.
+Finally make sure that the Ports match the configuration.
+
+If you have issues connecting over Tor check the Tor logs too.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/settings/ServerPage.cpp" line="-938"/>
         <source>IP Range</source>
         <translation>Plage d&apos;IP</translation>
     </message>
     <message>
-        <location line="+387"/>
+        <location line="+398"/>
         <source>Reported by DHT for IP masquerading</source>
         <translation>Rapporté par la DHT concernant masquerading d&apos;IP (se fait passer pour).</translation>
     </message>
@@ -15969,32 +16796,33 @@ HiddenServicePort 9191 127.0.0.1:9191</translation>
         <translation>Ajouté par vous</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="-104"/>
+        <location filename="../gui/settings/ServerPage.ui" line="-445"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;White listed IPs are gathered from the following sources: IPs coming inside a manually exchanged certificate, IP ranges entered by you in this window, or in the security feed items.&lt;/p&gt;&lt;p&gt;The default behavior for Retroshare is to (1) always allow connection to peers with IP in the whitelist, even if that IP is also blacklisted; (2) optionally require IPs to be  in the whitelist. You can change this behavior for each peer in the &amp;quot;Details&amp;quot; window of each Retroshare node. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Les adresses IP de la liste blanche sont rassemblées depuis les sources suivantes : IPs venant à l&apos;intérieur d&apos;un certificat échangé manuellement, gammes IP entrées par vous dans cette fenêtre, ou dans les articles du flux de sécurité.&lt;/p&gt;&lt;p&gt;Le comportement par défaut de Retroshare est de (1) toujours permettre la connexion aux pairs ayant leur IP dans la liste blanche, même si cette IP est aussi présente dans la liste noire; (2) exiger facultativement que les IPs soient dans la liste blanche. Vous pouvez changer ce comportement pour chaque pair à partir de la fenêtre &amp;quot;Détails&amp;quot de chaque noeud Retroshare. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-552"/>
+        <location line="-431"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The DHT allows you to answer connection requests from your friends using BitTorrent&apos;s DHT. It greatly improves the connectivity. No information is actually stored in the DHT. It is only used as a proxy system to get in touch with other Retroshare nodes.&lt;/p&gt;&lt;p&gt;The Discovery service sends node name and ids of your trusted contacts to connected peers, to help them choose new friends. The friendship is never automatic however, and both peers still need to trust each other to allow connection. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La DHT vous permet de répondre aux demandes de connexion de vos amis utilisant la DHT de BitTorrent. Elle améliore grandement la connectivité. Aucune informations ne sont stockées en réalité dans la DHT. Elle est seulement utilisé comme un système de proxy afin de se mettre en contact avec d&apos;autres noeuds Retroshare.&lt;/p&gt;&lt;p&gt;Le service de Découverte envoie le nom de noeud et les IDs de vos contacts éprouvés à vos pairs connectés, afin de les aider à choisir de nouveaux amis. L&apos;amitié n&apos;est cependant jamais automatique, et deux pairs doivent toujours avoir confiance l&apos;un en l&apos;autre pour permettre la connexion. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+184"/>
+        <location line="+51"/>
+        <location line="+136"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The bullet turns green as soon as Retroshare manages to get your own IP from the websites listed below, if you enabled that action. Retroshare will also use other means to find out your own IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La balle devient verte aussitôt que Retroshare réussit à obtenir votre propre IP depuis les sites Web listés ci-dessous, si vous avez permis cette action. Retroshare utilisera aussi d&apos;autres moyens pour découvrir votre propre IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+130"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This list gets automatically filled with information gathered at multiple sources: masquerading peers reported by the DHT, IP ranges entered by you, and IP ranges reported by your friends. Default settings should protect you against large scale traffic relaying.&lt;/p&gt;&lt;p&gt;Automatically guessing masquerading IPs can put your friends IPs in the blacklist. In this case, use the context menu to whitelist them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cette liste est automatiquement remplie d&apos;informations rassemblées depuis des sources multiples : pairs en mode masquerading rapportés par la DHT, plages IP entrées par vous et plages IP rapportées par vos amis. Les réglages par défaut devraient vous protéger contre le relayage de trafic de grande échelle.&lt;/p&gt;&lt;p&gt;Devenir automatiquement les IPs employant le masquage peut avoir pour conséquence de placer vos IPs amies dans la liste noire. Dans ce cas, utilisez le menu de contexte afin de les mettre en liste blanche.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-20"/>
         <source>activate IP filtering</source>
         <translation>Activer le filtrage d&apos;IP</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+64"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is very drastic, be careful. Since masquerading IPs might be actual real IPs, this option might cause disconnection, and will probably force you to add your friends&apos; IPs into the whitelist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est très radical, soyez prudent. Sachant que des IPs en masquerading pourraient être des IPs réelles actuelles, cette option pourrait causer la déconnexion, et probablement vous forcer à ajouter dans la liste blanche les IPs de vos amis.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -16024,110 +16852,19 @@ HiddenServicePort 9191 127.0.0.1:9191</translation>
         <translation>Bannir automatiquement de la DHT les plages auxquelles débutent les IP masquerading</translation>
     </message>
     <message>
-        <location line="-537"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This Retroshare node is running in &amp;quot;Hidden Mode&amp;quot;. That means it can only be reached though the Tor network.&lt;/p&gt;&lt;p&gt;As such, some network options are disabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ce noeud Retroshare fonctionne en &quot;%Mode caché&quot;. Cela signifie qu&apos;il peut seulement être atteint à travers le réseau Tor.&lt;/p&gt;&lt;p&gt;C&apos;est la raison pour laquelle certaines options réseau sont désactivées.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+701"/>
-        <source>Tor Configuration</source>
-        <translation>Configuration TOR</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Outgoing Tor Connections</source>
-        <translation>Connections Tor sortantes</translation>
-    </message>
-    <message>
-        <location line="+10"/>
+        <location line="+179"/>
         <source>Tor Socks Proxy</source>
         <translation>Proxy Socks de Tor</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+46"/>
         <source>Tor outgoing Okay</source>
         <translation>Tor sortant OK</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <source>Tor Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
-
-You can connect to Hidden Nodes, even if you 
-are running a standard Node, so why not setup Tor? </source>
-        <translation>Paramètres par défaut du proxy Socks de Tor : 127.0.01:9050.  Paramétrez torrc config, et mettez à jour ici.
-
-Vous pouvez vous connecter à des noeuds cachés, même si vous
-êtes en train de faire fonctionner un noeud standard, alors pourquoi ne pas paramétrer Tor ? </translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Incoming Tor Connections</source>
-        <translation>Connexions Tor entrantes</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This button simulates a SSL connection to your Tor address using the Tor proxy. If your Tor node is reachable, it should cause a SSL handshake error, which RS will interpret as a valid connection state. This operation might also cause several &quot;security warning&quot; about connections from your local host IP (127.0.0.1) in the News Feed if you enabled it,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ce bouton simule une connexion SSL à votre adresse Tor utilisant le proxy Tor. Si votre noeud Tor est accessible, cela devrait causer une erreur de poignée de main SSL, que RS interprétera comme un état de connexion valable. Cette opération pourrait aussi causer plusieurs &quot;avertissements de sécurité&quot; au sujet de connexions depuis votre adresse locale IP d&apos;hôte (127.0.0.1) dans le &quot;Fil d&apos;actualités&quot; si vous l&apos;avez permis,&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is your onion address. It should look like &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;If you configured a hidden service with Tor, the onion address is generated automatically by Tor.  You can get it in e.g. &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est votre addresse onion. Elle devrait avoir une apparence de type &lt;span style=&quot; font-weight:600;&quot;&gt;[something].onion. &lt;/span&gt;Si vous configurez un service caché avec Tor, l&apos;adresse onion est générée automatiquement par Tor.  Vous pouvez l&apos;obtenir par exemple dans &lt;span style=&quot; font-weight:600;&quot;&gt;/var/lib/tor/[service name]/hostname&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the local address to which the Tor hidden service points at your localhost. Most of the time, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; is the right answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ceci est l&apos;adresse locale vers laquelle pointe le service caché Tor vers votre localhost. La plupart du temps, &lt;span style=&quot; font-weight:600;&quot;&gt;127.0.0.1&lt;/span&gt; est la bonne réponse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Tor incoming  ok</source>
-        <translation>Tor entrant OK</translation>
-    </message>
-    <message>
-        <location line="+69"/>
-        <source>To Receive Connections, you must first setup a Tor Hidden Service. 
-See Tor documentation for HOWTO details.
-
-Once this is done, paste the Onion Address in the box above.
-This is your external address on the Tor network.
-Finally make sure that the Ports match the Tor configuration.
-
-If you have issues connecting over Tor check the Tor logs too.</source>
-        <translation>Afin de recevoir des connexions, vous devez d&apos;abord paramétrer un service caché Tor. 
-Voyez la documentation de Tor pour des détails sur comment faire.
-
-Une fois ceci fait, collez l&apos;adresse Onion dans la boîte ci-dessous.
-C&apos;est votre adresse externe dans le réseau Tor.
-Finalement assurez-vous que les ports correspondent à la configuration de Tor.
-
-Si vous avez des soucis pour vous connecter via Tor, vérifiez aussi les logs de Tor.</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/ServerPage.cpp" line="+320"/>
-        <source>Hidden - See Tor Config</source>
-        <translation>Caché - Voir la config de Tor</translation>
-    </message>
-    <message>
-        <location line="+179"/>
+        <location filename="../gui/settings/ServerPage.cpp" line="+562"/>
         <source>Tor proxy is not enabled</source>
         <translation>Le proxy de Tor n&apos;est pas activé</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <location line="+52"/>
-        <source>You are reachable through Tor.</source>
-        <translation>Vous êtes accessible à travers Tor</translation>
-    </message>
-    <message>
-        <location line="-47"/>
-        <location line="+56"/>
-        <source>Tor proxy is not enabled or broken.
-Are you running a Tor hidden service?
-Check your ports!</source>
-        <translation>Le proxy Tor n&apos;est pas activé ou est cassé.
-Exécutez-vous un service caché Tor ?
-Vérifiez vos ports !</translation>
     </message>
 </context>
 <context>
@@ -16161,7 +16898,7 @@ Vérifiez vos ports !</translation>
 <context>
     <name>ServicePermissionsPage</name>
     <message>
-        <location filename="../gui/settings/ServicePermissionsPage.ui" line="+19"/>
+        <location filename="../gui/settings/ServicePermissionsPage.ui" line="+59"/>
         <source>ServicePermissions</source>
         <translation>Service des droits</translation>
     </message>
@@ -16176,14 +16913,14 @@ Vérifiez vos ports !</translation>
         <translation>Droits</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ServicePermissionsPage.cpp" line="+45"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both needs to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allow to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Les permissions vous permettent de contrôler quels sont les services disponibles selon les amis&lt;/p&gt;    &lt;p&gt;Chaque interrupteur montre deux lumières, indiquant si vous ou votre ami a activé ce service. Tous deux nécessitent d&apos;être ALLUMÉS (montrant &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;)  afin de laisser l&apos;information être transférée afin de permettre un service spécifique / combinaison d&apos;ami.&lt;/p&gt;                   &lt;p&gt;Pour chaque service, l&apos;onglet global &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;  permet de basculer un service ON/OFF pour tous les amis à la fois.&lt;/p&gt;                   &lt;p&gt;Soyez très prudent : certains services dépendent l&apos;un de l&apos;autre. Par exemple éteindre Turtle va aussi stopper tout le transfert anonyme, le tchat distant, et la messagerie distante.&lt;/p&gt;</translation>
-    </message>
-    <message>
         <location filename="../gui/settings/ServicePermissionsPage.ui" line="-23"/>
         <source>hide offline</source>
         <translation>cacher ceux hors-ligne</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/ServicePermissionsPage.cpp" line="+48"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt;      &lt;p&gt;Permissions allow you to control which services are available to which friends.&lt;/p&gt;    &lt;p&gt;Each interruptor shows two lights, indicating whether you or your friend has enabled             that service. Both need to be ON (showing &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) to                   let information transfer for a specific service/friend combination.&lt;/p&gt;                   &lt;p&gt;For each service, the global switch &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt;                   allows you to turn a service ON/OFF for all friends at once.&lt;/p&gt;                   &lt;p&gt;Be very careful: Some services depend on each other. For instance turning turtle OFF will also                   stop all anonymous transfer, distant chat and distant messaging.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Permissions&lt;/h1&gt; &lt;p&gt;Les permissions vous permettent de contrôler quels sont les services disponibles selon les amis&lt;/p&gt; &lt;p&gt;Chaque interrupteur montre deux lumières, indiquant si vous ou votre ami a activé ce service. Tous deux nécessitent d&apos;être ALLUMÉS (montrant &lt;img height=20 src=&quot;:/images/switch11.png&quot;/&gt;) afin de laisser l&apos;information être transférée afin de permettre un service spécifique / combinaison d&apos;ami.&lt;/p&gt; &lt;p&gt;Pour chaque service, l&apos;onglet global &lt;img height=20 src=&quot;:/images/global_switch_on.png&quot;&gt; / &lt;img height=20 src=&quot;:/images/global_switch_off.png&quot;&gt; permet de basculer un service ON/OFF pour tous les amis à la fois.&lt;/p&gt; &lt;p&gt;Soyez très prudent : certains services dépendent l&apos;un de l&apos;autre. Par exemple éteindre Turtle va aussi stopper tout le transfert anonyme, le tchat distant, et la messagerie distante.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -16447,7 +17184,7 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
         <translation>Télécharger</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="-295"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="-292"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Copier le lien Retroshare</translation>
     </message>
@@ -16472,7 +17209,7 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
         <translation>Ajouter les liens Retroshare dans le nuage de liens</translation>
     </message>
     <message>
-        <location line="+429"/>
+        <location line="+426"/>
         <source>RetroShare Link</source>
         <translation>Lien Retroshare</translation>
     </message>
@@ -16488,7 +17225,7 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
         <translation>Ajouter un partage</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="-610"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="-607"/>
         <source>Create Collection...</source>
         <translation>Créer une collection ...</translation>
     </message>
@@ -16511,7 +17248,7 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
 <context>
     <name>SoundManager</name>
     <message>
-        <location filename="../gui/SoundManager.cpp" line="+82"/>
+        <location filename="../gui/SoundManager.cpp" line="+84"/>
         <source>Friend</source>
         <translation>Ami</translation>
     </message>
@@ -16537,11 +17274,12 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
     </message>
     <message>
         <location line="+0"/>
+        <location line="+2"/>
         <source>Message arrived</source>
         <translation>Message arrivé</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
@@ -16549,6 +17287,11 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
         <location line="+0"/>
         <source>Download complete</source>
         <translation>Téléchargement terminé</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Lobby</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -16599,18 +17342,18 @@ Sélectionnez les amis avec lesquels vous voulez partager votre chaîne.</transl
     <message>
         <location filename="../gui/statusbar/SoundStatus.cpp" line="+59"/>
         <source>Sound is off, click to turn it on</source>
-        <translation>Le son est débranché, cliquer pour l&apos;allumer</translation>
+        <translation>Le son est éteint, cliquer pour l&apos;allumer</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Sound is on, click to turn it off</source>
-        <translation>Le son est branché, cliquer pour l&apos;éteindre</translation>
+        <translation>Le son est allumé, cliquer pour l&apos;éteindre</translation>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="+200"/>
+        <location filename="../main.cpp" line="+201"/>
         <source>Load profile</source>
         <translation>Chargement du profil</translation>
     </message>
@@ -16870,12 +17613,12 @@ Ce choix peut être inversé dans des paramétrages.</translation>
     </message>
     <message>
         <location line="+30"/>
-        <location line="+89"/>
+        <location line="+94"/>
         <source>Connected</source>
         <translation>Connecté</translation>
     </message>
     <message>
-        <location line="-87"/>
+        <location line="-92"/>
         <source>Unreachable</source>
         <translation>Indisponible</translation>
     </message>
@@ -16891,18 +17634,18 @@ Ce choix peut être inversé dans des paramétrages.</translation>
     </message>
     <message>
         <location line="+13"/>
-        <location line="+58"/>
+        <location line="+62"/>
         <source>Trying TCP</source>
         <translation>Tentative TCP</translation>
     </message>
     <message>
-        <location line="-55"/>
-        <location line="+58"/>
+        <location line="-59"/>
+        <location line="+62"/>
         <source>Trying UDP</source>
         <translation>Tentative UDP</translation>
     </message>
     <message>
-        <location line="-55"/>
+        <location line="-59"/>
         <source>Connected: TCP</source>
         <translation>Connecté : TCP</translation>
     </message>
@@ -16913,6 +17656,11 @@ Ce choix peut être inversé dans des paramétrages.</translation>
     </message>
     <message>
         <location line="+8"/>
+        <source>Connected: I2P</source>
+        <translation>Connecté : I2P</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Connected: Unknown</source>
         <translation>Connecté : Inconnu</translation>
     </message>
@@ -16922,7 +17670,7 @@ Ce choix peut être inversé dans des paramétrages.</translation>
         <translation>DHT : Connectée</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+42"/>
         <source>TCP-in</source>
         <translation>TCP-entrant</translation>
     </message>
@@ -16932,7 +17680,7 @@ Ce choix peut être inversé dans des paramétrages.</translation>
         <translation>TCP-sortant</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-59"/>
         <source>inbound connection</source>
         <translation>connexion entrante</translation>
     </message>
@@ -16942,7 +17690,7 @@ Ce choix peut être inversé dans des paramétrages.</translation>
         <translation>connexion sortante</translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+61"/>
         <source>UDP</source>
         <translation>UDP</translation>
     </message>
@@ -16958,11 +17706,21 @@ Ce choix peut être inversé dans des paramétrages.</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>I2P-in</source>
+        <translation>I2P-entrant</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>I2P-out</source>
+        <translation>I2P-sortant</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>unkown</source>
         <translation>inconnu</translation>
     </message>
     <message>
-        <location line="-80"/>
+        <location line="-88"/>
         <source>Connected: Tor</source>
         <translation>Connecté : Tor</translation>
     </message>
@@ -17179,7 +17937,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TBoard</name>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="+275"/>
+        <location filename="../gui/AboutDialog.cpp" line="+280"/>
         <source>Pause</source>
         <translation>En pause</translation>
     </message>
@@ -17228,7 +17986,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ToasterDisable</name>
     <message>
-        <location filename="../gui/statusbar/ToasterDisable.cpp" line="+59"/>
+        <location filename="../gui/statusbar/ToasterDisable.cpp" line="+62"/>
         <source>All Toasters are disabled</source>
         <translation>Toutes les notifications grille-pain sont empêchées</translation>
     </message>
@@ -17362,16 +18120,18 @@ p, li { white-space: pre-wrap; }
     <name>TransfersDialog</name>
     <message>
         <location filename="../gui/FileTransfer/TransfersDialog.ui" line="+117"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+1406"/>
         <source>Downloads</source>
         <translation>Téléchargements</translation>
     </message>
     <message>
         <location line="+98"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+1"/>
         <source>Uploads</source>
         <translation>Envois</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+194"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-1213"/>
         <location line="+76"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
@@ -17567,25 +18327,25 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+2"/>
-        <location line="+530"/>
+        <location line="+531"/>
         <source>Slower</source>
         <translation>Basse</translation>
     </message>
     <message>
-        <location line="-528"/>
-        <location line="+529"/>
+        <location line="-529"/>
+        <location line="+530"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Normale</translation>
     </message>
     <message>
-        <location line="-529"/>
-        <location line="+528"/>
+        <location line="-530"/>
+        <location line="+529"/>
         <source>Faster</source>
         <translation>Rapide</translation>
     </message>
     <message>
-        <location line="-526"/>
+        <location line="-527"/>
         <source>Random</source>
         <translation>Aléatoire</translation>
     </message>
@@ -17610,7 +18370,12 @@ p, li { white-space: pre-wrap; }
         <translation>Spécifier...</translation>
     </message>
     <message>
-        <location line="+213"/>
+        <location line="+63"/>
+        <source> &lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=%2 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;%1&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Partage de fichiers&lt;/h1&gt; &lt;p&gt;Retroshare utilise deux modes de transfert de fichiers : les transferts directs depuis vos amis, et les transferts distants anonymes par tunnels. En plus, le transfert de fichier est multi-source et permet l&apos;essaimage (vous pouvez être une source pendant le téléchargement) &lt;/p&gt; &lt;p&gt;Vous pouvez partager des fichiers en utilisant l&apos;icône &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=%2 /&gt; dans la barre latérale gauche. Ces fichiers seront listés dans l&apos;onglet &quot;Vos fichiers&quot;. Vous pouvez décider pour chaque groupe d&apos;amis s&apos;ils peuvent ou pas voir ces fichiers dans l&apos;onglet Mes amis&lt;/p&gt; &lt;p&gt;L&apos;onglet &quot;Rechercher&quot; liste les fichiers de vos amis et des fichiers distants qui peuvent être atteints anonymement en utilisant le système à effet tunnel à sauts multiples.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+151"/>
         <source>Move in Queue...</source>
         <translation>Mettre en file d&apos;attente...</translation>
     </message>
@@ -17636,39 +18401,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+35"/>
-        <location line="+239"/>
+        <location line="+240"/>
         <location line="+181"/>
         <source>Failed</source>
         <translation>Echoué</translation>
     </message>
     <message>
-        <location line="-419"/>
-        <location line="+242"/>
+        <location line="-420"/>
+        <location line="+243"/>
         <location line="+178"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-419"/>
-        <location line="+420"/>
+        <location line="-420"/>
+        <location line="+421"/>
         <source>Waiting</source>
         <translation>En attente</translation>
     </message>
     <message>
-        <location line="-419"/>
+        <location line="-420"/>
         <source>Downloading</source>
         <translation>Téléchargement en cours</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+251"/>
+        <location line="+252"/>
         <location line="+169"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Terminé</translation>
     </message>
     <message>
-        <location line="-420"/>
+        <location line="-421"/>
         <source>Queued</source>
         <translation>En file d&apos;attente</translation>
     </message>
@@ -17711,7 +18476,7 @@ les blocs défectueux, et de les télécharger à nouveau
 Essayez d&apos;être patient !</translation>
     </message>
     <message>
-        <location line="+178"/>
+        <location line="+179"/>
         <source>Transferring</source>
         <translation>En cours de transfert</translation>
     </message>
@@ -17721,7 +18486,7 @@ Essayez d&apos;être patient !</translation>
         <translation>En cours d&apos;envoi</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+102"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Etes-vous sûr de vouloir annuler et supprimer ces fichiers ?</translation>
     </message>
@@ -17779,7 +18544,7 @@ Essayez d&apos;être patient !</translation>
         <translation>S&apos;il vous plaît entrez un nouveau--et valide--nomdefichier</translation>
     </message>
     <message>
-        <location line="-1729"/>
+        <location line="-1738"/>
         <source>Last Time Seen</source>
         <comment>i.e: Last Time Receiced Data</comment>
         <translation>Dernière fois vu</translation>
@@ -17885,7 +18650,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Afficher la colonne des derniers vus</translation>
     </message>
     <message>
-        <location line="+367"/>
+        <location line="+368"/>
         <source>Columns</source>
         <translation>Colonnes</translation>
     </message>
@@ -17895,7 +18660,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Transferts de fichiers</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-627"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="-628"/>
         <source>Path</source>
         <comment>i.e: Where file is saved</comment>
         <translation>Chemin</translation>
@@ -17911,12 +18676,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Afficher la colonne des chemins</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Partage de fichiers&lt;/h1&gt; &lt;p&gt;Retroshare utilise deux modes de transfert de fichiers : les transferts directs depuis vos amis, et les transferts distants anonymes par tunnels. En plus, le transfert de fichier est multi-source et permet l&apos;essaimage (vous pouvez être une source pendant le téléchargement) &lt;/p&gt; &lt;p&gt;Vous pouvez partager des fichiers en utilisant &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; l&apos;icône dans la barre latérale gauche. Ces fichiers seront listés dans l&apos;onglet Vos fichiers. Vous pouvez décider pour chaque groupe d&apos;ami s&apos;ils peuvent ou pas voir ces fichiers dans l&apos;onglet Mes amis&lt;/p&gt; &lt;p&gt;L&apos;onglet recherche des fichiers liste les fichiers de vos amis et des fichiers distants qui peuvent être atteints anonymement en utilisant le système à effet tunnel à sauts multiples.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location line="+1291"/>
+        <location line="+1312"/>
         <source>Could not delete preview file</source>
         <translation>N&apos;a pas pu supprimer le fichier d&apos;aperçu</translation>
     </message>
@@ -17926,7 +18686,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Le réessayer ?</translation>
     </message>
     <message>
-        <location line="-1347"/>
+        <location line="-1356"/>
         <source>Create Collection...</source>
         <translation>Créer une collection ...</translation>
     </message>
@@ -17941,7 +18701,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Vue collection ...</translation>
     </message>
     <message>
-        <location line="+222"/>
+        <location line="+223"/>
         <source>Collection</source>
         <translation>Collection</translation>
     </message>
@@ -17951,17 +18711,17 @@ Essayez d&apos;être patient !</translation>
         <translation>Partage de fichiers</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+762"/>
+        <location filename="../gui/FileTransfer/TransfersDialog.cpp" line="+770"/>
         <source>Anonymous tunnel 0x</source>
-        <translation>Tunnels anonymes 0x</translation>
+        <translation>Tunnel anonymes 0x</translation>
     </message>
     <message>
-        <location line="-1061"/>
+        <location line="-1070"/>
         <source>Show file list transfers</source>
         <translation>Afficher les transferts de listes de fichiers</translation>
     </message>
     <message>
-        <location line="+690"/>
+        <location line="+691"/>
         <source>version:</source>
         <translation>version : </translation>
     </message>
@@ -17997,7 +18757,7 @@ Essayez d&apos;être patient !</translation>
         <translation>REP</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+149"/>
         <source>Friends Directories</source>
         <translation>Dossiers partagés de vos amis</translation>
     </message>
@@ -18040,7 +18800,7 @@ Essayez d&apos;être patient !</translation>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
-        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="+26"/>
+        <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="-315"/>
         <location line="+126"/>
         <source>Search requests</source>
         <translation>Requêtes de recherche</translation>
@@ -18103,7 +18863,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Statistiques de routage</translation>
     </message>
     <message>
-        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="+144"/>
+        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="+147"/>
         <source>Age in seconds</source>
         <translation>Ancienneté en secondes</translation>
     </message>
@@ -18118,7 +18878,17 @@ Essayez d&apos;être patient !</translation>
         <translation>total</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+48"/>
+        <source>Anonymous tunnels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Authenticated tunnels</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location line="+68"/>
         <source>Unknown Peer</source>
         <translation>Contact inconnu</translation>
     </message>
@@ -18127,16 +18897,11 @@ Essayez d&apos;être patient !</translation>
         <source>Turtle Router</source>
         <translation>Routeur Turtle</translation>
     </message>
-    <message>
-        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="-64"/>
-        <source>Tunnel Requests</source>
-        <translation>Requêtes tunnels</translation>
-    </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
-        <location line="+99"/>
+        <location filename="../gui/statistics/TurtleRouterStatistics.cpp" line="+40"/>
         <source>Search requests repartition</source>
         <translation>Répartition des requêtes de recherche </translation>
     </message>
@@ -18335,9 +19100,19 @@ Essayez d&apos;être patient !</translation>
         <translation>Remarque : ces paramètres n&apos;affectent pas retroshare-nogui. Retroshare-nogui dispose d&apos;un commutateur en ligne de commande permettant d&apos;activer l&apos;interface web.</translation>
     </message>
     <message>
-        <location filename="../gui/settings/WebuiPage.cpp" line="+120"/>
+        <location filename="../gui/settings/WebuiPage.cpp" line="+69"/>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows you to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/icons/help_64.png&quot;&gt;&amp;nbsp;&amp;nbsp;Interrface WEB&lt;/h1&gt;       &lt;p&gt;L&apos;interface web vous permet de contrôler Retroshare à partir de votre navigateur. Plusieurs périphériques peuvent partager le contrôle d&apos;une instance Retroshare. Donc, vous pourriez commencer une conversation sur une tablette et utiliser plus tard un ordinateur de bureau pour la continuer.&lt;/p&gt;&lt;p&gt;Attention : ne pas exposer l&apos;interface web à l&apos;Internet, car il n&apos;y a aucun contrôle d&apos;accès et aucun chiffrement. Si vous voulez utiliser l&apos;interface web sur Internet, utiliser un tunnel SSH ou un proxy pour sécuriser la connexion.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+51"/>
         <source>Webinterface not enabled</source>
         <translation>Interface web non permise</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>The webinterface is not enabled. Enable it in Settings -&gt; Webinterface.</source>
+        <translation>L&apos;interface web n&apos;est pas activée. Activez là via Options -&gt; Interface web.</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -18348,11 +19123,6 @@ Essayez d&apos;être patient !</translation>
         <location filename="../gui/settings/WebuiPage.h" line="+28"/>
         <source>Webinterface</source>
         <translation>Interface web</translation>
-    </message>
-    <message>
-        <location filename="../gui/settings/WebuiPage.cpp" line="-75"/>
-        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Webinterface&lt;/h1&gt;       &lt;p&gt;The webinterface allows to control Retroshare from the browser. Multiple devices can share control over one Retroshare instance. So you could start a conversation on a tablet computer and later use a desktop computer to continue it.&lt;/p&gt;     &lt;p&gt;Warning: don&apos;t expose the webinterface to the internet, because there is no access control and no encryption. If you want to use the webinterface over the internet, use a SSH tunnel or a proxy to secure the connection.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Interrface WEB&lt;/h1&gt;       &lt;p&gt;L&apos;interface web permet de contrôler Retroshare à partir du navigateur. Plusieurs périphériques peuvent partager le contrôle sur une instance Retroshare. Donc, vous pourriez commencer une conversation sur une tablette et utiliser plus tard un ordinateur de bureau pour continuer.&lt;/p&gt;     &lt;p&gt;Attention: ne pas exposer l&apos;interface web à l&apos;Internet, car il n&apos;y a pas de contrôle d&apos;accès et aucun chiffrement. Si vous voulez utiliser l&apos;interface web sur Internet, utiliser un tunnel SSH ou un proxy pour sécuriser la connexion.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -18543,7 +19313,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Rechercher</translation>
     </message>
     <message>
-        <location filename="../gui/WikiPoos/WikiDialog.cpp" line="+116"/>
+        <location filename="../gui/WikiPoos/WikiDialog.cpp" line="+111"/>
         <source>My Groups</source>
         <translation>Vos groupes</translation>
     </message>
@@ -18563,7 +19333,7 @@ Essayez d&apos;être patient !</translation>
         <translation>Autres groupes</translation>
     </message>
     <message>
-        <location line="+482"/>
+        <location line="+461"/>
         <source>Subscribe to Group</source>
         <translation>S&apos;abonner au groupe</translation>
     </message>

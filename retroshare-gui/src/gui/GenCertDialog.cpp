@@ -532,7 +532,9 @@ void GenCertDialog::genPerson()
 		setCursor(Qt::WaitCursor) ;
 
 		QCoreApplication::processEvents();
-		while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ;
+		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
+		if (ed->hasPendingEvents())
+			while(ed->processEvents(QEventLoop::AllEvents));
 
 		std::string email_str = "" ;
 		RsAccounts::GeneratePGPCertificate(

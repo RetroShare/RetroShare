@@ -102,7 +102,7 @@ Var StyleSheetDir
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
-!define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare06.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -175,8 +175,8 @@ Section $(Section_Main) Section_Main
 
   ; Main binaries
   SetOutPath "$INSTDIR"
-  File /oname=RetroShare.exe "${RELEASEDIR}\retroshare-gui\src\release\RetroShare06.exe"
-  File /oname=retroshare-nogui.exe "${RELEASEDIR}\retroshare-nogui\src\release\RetroShare06-nogui.exe"
+  File /oname=RetroShare06.exe "${RELEASEDIR}\retroshare-gui\src\release\RetroShare06.exe"
+  File /oname=retroshare06-nogui.exe "${RELEASEDIR}\retroshare-nogui\src\release\RetroShare06-nogui.exe"
 
   ; Qt binaries
   File "${QTDIR}\bin\QtCore4.dll"
@@ -265,7 +265,7 @@ SectionEnd
 ;  WriteRegStr HKCR retroshare "" "PQI File"
 ;  WriteRegBin HKCR retroshare EditFlags 00000100
 ;  WriteRegStr HKCR "retroshare\shell" "" open
-;  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\RetroShare.exe" "%1"`
+;  WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\RetroShare06.exe" "%1"`
 ;SectionEnd
 
 # Shortcuts
@@ -274,24 +274,24 @@ Section $(Section_StartMenu) Section_StartMenu
   SetOutPath "$INSTDIR"
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
   CreateShortCut "$SMPROGRAMS\${APPNAME}\$(Link_Uninstall).lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\RetroShare06.exe" "" "$INSTDIR\RetroShare06.exe" 0
 SectionEnd
 
 Section $(Section_Desktop) Section_Desktop
-  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+  CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\RetroShare06.exe" "" "$INSTDIR\RetroShare06.exe" 0
 SectionEnd
 
 Section $(Section_QuickLaunch) Section_QuickLaunch
-  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+  CreateShortCut "$QUICKLAUNCH\${APPNAME}.lnk" "$INSTDIR\RetroShare06.exe" "" "$INSTDIR\RetroShare06.exe" 0
 SectionEnd
 SectionGroupEnd
 
 Section $(Section_AutoStart) Section_AutoStart
-  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${APPNAME}.exe -m"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "RetroShare"   "$INSTDIR\${APPNAME}06.exe -m"
 SectionEnd
 
 ;Section $(Section_AutoStart) Section_AutoStart
-;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe -m" 0
+;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare06.exe" "" "$INSTDIR\RetroShare06.exe -m" 0
 ;SectionEnd
 
 Section -FinishSection
@@ -300,7 +300,7 @@ Section -FinishSection
     WriteRegStr HKLM "Software\${APPNAME}" "Version" "${VERSION}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\RetroShare.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\RetroShare06.exe"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "${PUBLISHER}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoModify" "1"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoRepair" "1"

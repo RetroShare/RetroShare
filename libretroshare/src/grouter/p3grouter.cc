@@ -191,6 +191,7 @@
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsreputations.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -1136,7 +1137,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 #endif
     
     // remove incoming peers and peers for which the proba is less than half the maximum proba
-    float total_probas = 0.0f ;
     uint32_t count=0;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
@@ -1149,8 +1149,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 		    tmp_peers[count] = tmp_peers[i] ;
 		    probas[count] = (max_probability==0.0)? (0.5+0.001*RSRandom::random_f32()) : probas[i] ;
             		++count ;
-            
-            		total_probas+=probas[i] ;
             }
     
     tmp_peers.resize(count) ;
@@ -1170,23 +1168,32 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
     for(uint32_t i=0;i<tmp_peers.size();++i)
         std::cerr << "    " << tmp_peers[i] << ", probability: " << probas[i] << std::endl;
 #endif
-    float probability_threshold = RS_GROUTER_PROBABILITY_THRESHOLD_FOR_RANDOM_ROUTING ;
-
     std::vector<std::pair<float,RsPeerId> > mypairs ;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
-        mypairs.push_back(std::make_pair(probas[i]/total_probas,tmp_peers[i])) ;
+        mypairs.push_back(std::make_pair(probas[i],tmp_peers[i])) ;
 
     // now sort them up
     std::sort(mypairs.begin(),mypairs.end(),item_comparator_001()) ;
 
-    uint32_t max_count = std::min(std::min((uint32_t)mypairs.size(),(uint32_t)GROUTER_MAX_BRANCHING_FACTOR),duplication_factor);
-    uint32_t n=0 ;
+    int max_count = std::min(std::min((uint32_t)mypairs.size(),(uint32_t)GROUTER_MAX_BRANCHING_FACTOR),duplication_factor);
     
-    float duplication_factor_delta =0.0;
-    uint32_t duplication_factor_buff =duplication_factor ;
+    // normalise the probabilities
+#ifdef GROUTER_DEBUG
+    std::cerr << "  Normalising probabilities..." << std::endl;
+#endif
 
-    for(int i=mypairs.size()-1;i>=0 && n<max_count;--i)
+    float total_probas = 0.0f ;
+
+    if(mypairs.size() > 0 && max_count > 0)
+    {
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) total_probas += mypairs[i].first ;
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) mypairs[i].first /= total_probas ;
+    }
+
+    float duplication_factor_delta =0.0;
+
+    for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n)
     {
         float ideal_dupl = duplication_factor*mypairs[i].first - duplication_factor_delta ;	// correct what was taken in advance
         
@@ -1196,7 +1203,6 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
         std::cerr << "    Peer " << mypairs[i].second << " prob=" << mypairs[i].first << ", ideal_dupl=" << ideal_dupl << ", real=" << real_dupl << ". Delta = " << duplication_factor_delta << std::endl;
         
 	friend_peers_and_duplication_factors[ mypairs[i].second ] = real_dupl ;	// should be updated correctly
-	++n ;
     }
 }
 
@@ -1288,19 +1294,30 @@ void p3GRouter::autoWash()
     bool items_deleted = false ;
     time_t now = time(NULL) ;
 
-    std::map<GRouterMsgPropagationId,GRouterClientService *> failed_msgs ;
+    std::map<GRouterMsgPropagationId,std::pair<GRouterClientService *,RsGxsId> > failed_msgs ;
 
     {
         RS_STACK_MUTEX(grMtx) ;
 
         for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();)
-            if( (it->second.data_status == RS_GROUTER_DATA_STATUS_DONE &&
-                (!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-                    || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now))
-            || ((it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
-                                && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN)
-                    && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-            ))	// is the item too old for cache
+        {
+            bool delete_entry = false ;
+            
+            if(it->second.data_status == RS_GROUTER_DATA_STATUS_DONE )
+            {
+                if(!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION) || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now)	// is the item too old for cache
+			delete_entry = true ;
+            }
+            else if(it->second.data_status == RS_GROUTER_DATA_STATUS_RECEIPT_OK )
+            {
+                if(it->second.received_time_TS + MAX_RECEIPT_KEEP_TIME < now)	// is the item too old for cache
+                    delete_entry = true ;
+            }
+            else
+                if(it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
+                    delete_entry = true ;
+                    
+            if(delete_entry)
             {
 #ifdef GROUTER_DEBUG
                 grouter_debug() << "  Removing cached item " << std::hex << it->first << std::dec << std::endl;
@@ -1313,7 +1330,7 @@ void p3GRouter::autoWash()
                     GRouterClientService *client = NULL;
                     
 			if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client))
-				failed_msgs[it->first] = client ;
+				failed_msgs[it->first] = std::make_pair(client,it->second.data_item->signature.keyId) ;
 			else
 				std::cerr << "  ERROR: client id " << it->second.client_id << " not registered. Consistency error." << std::endl;
 		}
@@ -1332,6 +1349,7 @@ void p3GRouter::autoWash()
             }
             else
                 ++it ;
+        }
 
         // also check all existing tunnels
 
@@ -1371,12 +1389,12 @@ void p3GRouter::autoWash()
     }
     // Look into pending items.
 
-    for(std::map<GRouterMsgPropagationId,GRouterClientService*>::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
+    for(std::map<GRouterMsgPropagationId,std::pair<GRouterClientService*,RsGxsId> >::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
     {
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client for message id " << std::hex << it->first << " state = FAILED" << std::endl;
 #endif
-        it->second->notifyDataStatus(it->first ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
+        it->second.first->notifyDataStatus(it->first,it->second.second ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
     }
 
     if(items_deleted)
@@ -1484,13 +1502,13 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
     std::cerr << "Item content:" << std::endl;
     receipt_item->print(std::cerr,2) ;
 #endif
+    RsGxsId signer_id ;
 
     // Because we don't do proxy-transmission yet, the client needs to be notified. Otherwise, we will need to
     // first check if we're a proxy or not. We also remove the message from the global router sending list.
     // in the proxy case, we should only store the receipt.
 
     GRouterClientService *client_service = NULL;
-    GRouterServiceId service_id ;
     GRouterMsgPropagationId mid = 0 ;
 
     {
@@ -1502,6 +1520,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
             std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
             return ;
         }
+        signer_id = it->second.data_item->signature.keyId ;
 
         // check hash.
 
@@ -1558,7 +1577,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client " << (void*)client_service << " that msg " << std::hex << mid << std::dec << " was received." << std::endl;
 #endif
-        client_service->notifyDataStatus(mid, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
+        client_service->notifyDataStatus(mid, signer_id, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
     }
 
     // also note the incoming route in the routing matrix
@@ -1953,7 +1972,11 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 {
     try
     {
-        RsTlvSecurityKey signature_key ;
+        if(rsReputations->isIdentityBanned(item->signature.keyId))
+        {
+            std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
+            return false ;
+        }
 
         uint32_t data_size = item->signed_data_size() ;
           RsTemporaryMemory data(data_size) ;
@@ -1966,12 +1989,20 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
 
 
         uint32_t error_status ;
-
+        
         if(!mGixs->validateData(data,data_size,item->signature,true,error_status))
         {
             switch(error_status)
             {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify." << std::endl;
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: 
+                		{
+                			std::list<RsPeerId> peer_ids ;
+                            		peer_ids.push_back(item->PeerId()) ;
+                                    	
+                			std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify. Asking key to peer " << item->PeerId() << std::endl;
+                                    
+                			mGixs->requestKey(item->signature.keyId,peer_ids) ;   // request the key around
+            			}
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/Corrupted/MITM?." << std::endl;
                                         break ;

@@ -588,7 +588,7 @@
     <message>
         <location line="+13"/>
         <source>%1 inviting you to start a video conversation. do you want Accept or Decline the invitation?</source>
-        <translation>%1 le está invitando a iniciar una conversación de vídeo. ¿Quiere aceptar o declinar la invitación?</translation>
+        <translation>%1 le está invitando a iniciar una conversación de vídeo. ¿Quiere aceptar o rechazar la invitación?</translation>
     </message>
     <message>
         <location line="+1"/>

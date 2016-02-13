@@ -1,43 +1,63 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
-  f13c81b csoler Sat, 23 Jan 2016 13:17:12 -0500 Merge pull request #258 from PhenomRetroShare/Fix_QuoteLinesWithImage
-  9b64b96 csoler Sat, 23 Jan 2016 13:03:29 -0500 fixed potential crash in pqisslstore
-  1d2be23 Phenom Sat, 23 Jan 2016 18:17:49 +0100 Fix Quote Lines With Image
-  70bf938 defnax Sat, 23 Jan 2016 13:37:08 +0100 reduced the default width & height reorder in MessagePage, move Distant Message box to the top.
-  fc0067f csoler Fri, 22 Jan 2016 22:06:31 -0500 fixed bug in network graph search sizes
-  c428739 csoler Fri, 22 Jan 2016 21:32:35 -0500 cleaned the network graph a little bit. Removed text, updated bounding boxes, removed background
-  b362544 csoler Fri, 22 Jan 2016 09:31:40 -0500 fixed compilation
-  b3df4c1 csoler Thu, 21 Jan 2016 23:55:22 -0500 made the Global router stats widget more efficient/compact/explicit
-  449aba9 csoler Thu, 21 Jan 2016 22:44:48 -0500 fixed compilation of SearchDialog.cpp
-  94b5868 csoler Thu, 21 Jan 2016 21:49:52 -0500 moved SearchDialog into FileTransfer/
-  6a32da2 csoler Thu, 21 Jan 2016 21:40:48 -0500 removed explicit size constraint on listview for config page (screws up the view in HDPI screens
-  55d0a21 csoler Thu, 21 Jan 2016 21:19:40 -0500 added cache of latest GXS tunnel data items for the last 10 minutes in order to avoid replays of
-  9347b86 csoler Thu, 21 Jan 2016 11:48:41 -0500 new simple solution for sound on linux based on using system sound player. To be tested.
-  9999742 csoler Thu, 21 Jan 2016 11:32:17 -0500 reverted commit for phonon since phonon is deprecated. Will be replaced by qtmultimedia in 
-  7488ba1 csoler Wed, 20 Jan 2016 23:56:22 -0500 removed feedback from messages to mGrpServerUpdateTS, which is now only updated when the subscri
-  c473200 csoler Wed, 20 Jan 2016 23:34:25 -0500 moved getCurrentTS() inside RTT packet sending loop (suggestion from Jo)
-  e25787b csoler Wed, 20 Jan 2016 23:25:08 -0500 fixed sound on linux using phonon. This should be extensible to all unix systems
-  fc3606c csoler Wed, 20 Jan 2016 14:02:13 -0500 fixed DHT icon size problem
-  9063612 csoler Wed, 20 Jan 2016 11:19:36 -0500 fixed utf8 issue in ChatWidget. To be tested.
-  c597c8c csoler Tue, 19 Jan 2016 23:19:46 -0500 removed explicit spacing sizes in plugins page
-  3203249 csoler Tue, 19 Jan 2016 22:59:11 -0500 fixed size of help icons in MainPage class
-  597f541 csoler Tue, 19 Jan 2016 22:44:27 -0500 added 2 icons
-  3d58f9b csoler Tue, 19 Jan 2016 22:35:58 -0500 added correct icons in ToasterStatus
-  b382c3e csoler Tue, 19 Jan 2016 22:16:25 -0500 fixed icon sizes in peerstatus/statusbar
-  a2d8cc8 csoler Tue, 19 Jan 2016 22:01:26 -0500 fixed DHT status icon sizes and added tooltip
-  37204d7 csoler Tue, 19 Jan 2016 21:46:22 -0500 fixed icon in NewsFeed, added missing spacer in IdDialog
-  49c1d56 csoler Tue, 19 Jan 2016 21:45:55 -0500 increased GXS post size limit to just below 200K
-  1471979 csoler Tue, 19 Jan 2016 18:08:47 -0500 added a few tooltips in Tor configuration panel
-  43ee506 csoler Tue, 19 Jan 2016 10:13:24 -0500 added automatic GXS message rejection when item size exceeds 200K. Should fix the forums that go
-  dedd6d4 csoler Mon, 18 Jan 2016 23:53:54 -0500 disabled debug info
-  68a0395 csoler Mon, 18 Jan 2016 23:53:06 -0500 fixed a few bugs in existing msg fragmentation code. Signature checking still not working, not N
-  2b52456 defnax Mon, 18 Jan 2016 13:36:38 +0100 Added new iconset for Voip, by Beluga
-  39e6a9b csoler Sat, 16 Jan 2016 20:44:52 -0500 fixed up People context menu so as to handle actions for multiple persons at once
-  1edfcf9 csoler Sat, 16 Jan 2016 13:41:24 -0500 do not time stamp banned GXS ids
-  8296fa9 csoler Sat, 16 Jan 2016 11:30:15 -0500 added checkbox to toggle logscale in statistics
-  63b88ec defnax Sat, 16 Jan 2016 14:50:12 +0100 correct sorting for "Reputation" in People, patch by Eugene Tooms
+  a41d9df csoler      Mon,  1 Feb 2016 09:59:13 -0500 fixed small bug in probability computation in grouter
+  6d1a393 csoler      Mon,  1 Feb 2016 00:33:11 -0500 fixed but in re-sending of failed grouter items
+  aa194ca csoler      Sun, 31 Jan 2016 20:27:53 -0500 fixed bug preventing save of routage info in distant messaging
+  a85b5d2 csoler      Sat, 30 Jan 2016 20:35:08 -0500 re-enabled GRouter tunnels (disabled for testing). Removed debug output.
+  f0a49a4 csoler      Sat, 30 Jan 2016 20:27:56 -0500 changed global router routing strategy. Should be more effective now.
+  59d4c2c csoler      Sat, 30 Jan 2016 20:27:27 -0500 removed some compilation warnings
+  3cfd976 thunder2    Fri, 29 Jan 2016 16:23:28 +0100 Added Windows installer script for Qt5.
+  58e59d1 csoler      Thu, 28 Jan 2016 20:19:44 -0500 added sounds to chat lobbies (patch fromManuel Davis)
+  8dde723 thunder2    Thu, 28 Jan 2016 16:20:11 +0100 Added security hardening flags for ASLR and DEP protection for Windows compile.
+  85cdfcc csoler      Thu, 28 Jan 2016 10:44:37 -0500 fixed bug causing multi-tunneling not to be used (found by jo)
+  b1f165f csoler      Thu, 28 Jan 2016 10:22:32 -0500 added sound event to lobbies (patch from Manuel Davis)
+  3bc444b csoler      Tue, 26 Jan 2016 23:00:10 -0500 removed some debug info
+  af770fd csoler      Tue, 26 Jan 2016 22:46:07 -0500 fixed messagebox to remember which from ID was used last time
+  749ca08 csoler      Tue, 26 Jan 2016 22:30:04 -0500 slightly improved message shown over lobby names
+  f063e5b csoler      Tue, 26 Jan 2016 22:16:45 -0500 Allow main window to resize to much smaller size when needed. Should help people with
+  2072ca4 csoler      Tue, 26 Jan 2016 22:08:17 -0500 fixed bug in getPeerDetails causing callstacks to be displayed for non initialised IP
+  b70057a csoler      Tue, 26 Jan 2016 18:50:33 -0500 removed sending probability in GXS since it is not justified anymore. This should fix
+  39b3df9 csoler      Mon, 25 Jan 2016 22:39:10 -0500 fixed bug causing net reset when closing config
+  49e2ee1 csoler      Mon, 25 Jan 2016 21:45:58 -0500 Merge pull request #247 from heini/stretch_qt5
+  2f3350f electron128 Sun, 24 Jan 2016 19:56:53 +0100 Merge pull request #248 from heini/sqlcipher_needs_fpic
+  f13c81b csoler      Sat, 23 Jan 2016 13:17:12 -0500 Merge pull request #258 from PhenomRetroShare/Fix_QuoteLinesWithImage
+  9b64b96 csoler      Sat, 23 Jan 2016 13:03:29 -0500 fixed potential crash in pqisslstore
+  1d2be23 Phenom      Sat, 23 Jan 2016 18:17:49 +0100 Fix Quote Lines With Image
+  70bf938 defnax      Sat, 23 Jan 2016 13:37:08 +0100 reduced the default width & height reorder in MessagePage, move Distant Message box to the top.
+  fc0067f csoler      Fri, 22 Jan 2016 22:06:31 -0500 fixed bug in network graph search sizes
+  c428739 csoler      Fri, 22 Jan 2016 21:32:35 -0500 cleaned the network graph a little bit. Removed text, updated bounding boxes, removed background
+  b362544 csoler      Fri, 22 Jan 2016 09:31:40 -0500 fixed compilation
+  b3df4c1 csoler      Thu, 21 Jan 2016 23:55:22 -0500 made the Global router stats widget more efficient/compact/explicit
+  449aba9 csoler      Thu, 21 Jan 2016 22:44:48 -0500 fixed compilation of SearchDialog.cpp
+  94b5868 csoler      Thu, 21 Jan 2016 21:49:52 -0500 moved SearchDialog into FileTransfer/
+  6a32da2 csoler      Thu, 21 Jan 2016 21:40:48 -0500 removed explicit size constraint on listview for config page (screws up the view in HDPI screens
+  55d0a21 csoler      Thu, 21 Jan 2016 21:19:40 -0500 added cache of latest GXS tunnel data items for the last 10 minutes in order to avoid replays of
+  9347b86 csoler      Thu, 21 Jan 2016 11:48:41 -0500 new simple solution for sound on linux based on using system sound player. To be tested.
+  9999742 csoler      Thu, 21 Jan 2016 11:32:17 -0500 reverted commit for phonon since phonon is deprecated. Will be replaced by qtmultimedia in 
+  7488ba1 csoler      Wed, 20 Jan 2016 23:56:22 -0500 removed feedback from messages to mGrpServerUpdateTS, which is now only updated when the subscri
+  c473200 csoler      Wed, 20 Jan 2016 23:34:25 -0500 moved getCurrentTS() inside RTT packet sending loop (suggestion from Jo)
+  e25787b csoler      Wed, 20 Jan 2016 23:25:08 -0500 fixed sound on linux using phonon. This should be extensible to all unix systems
+  fc3606c csoler      Wed, 20 Jan 2016 14:02:13 -0500 fixed DHT icon size problem
+  9063612 csoler      Wed, 20 Jan 2016 11:19:36 -0500 fixed utf8 issue in ChatWidget. To be tested.
+  c597c8c csoler      Tue, 19 Jan 2016 23:19:46 -0500 removed explicit spacing sizes in plugins page
+  3203249 csoler      Tue, 19 Jan 2016 22:59:11 -0500 fixed size of help icons in MainPage class
+  597f541 csoler      Tue, 19 Jan 2016 22:44:27 -0500 added 2 icons
+  3d58f9b csoler      Tue, 19 Jan 2016 22:35:58 -0500 added correct icons in ToasterStatus
+  b382c3e csoler      Tue, 19 Jan 2016 22:16:25 -0500 fixed icon sizes in peerstatus/statusbar
+  a2d8cc8 csoler      Tue, 19 Jan 2016 22:01:26 -0500 fixed DHT status icon sizes and added tooltip
+  37204d7 csoler      Tue, 19 Jan 2016 21:46:22 -0500 fixed icon in NewsFeed, added missing spacer in IdDialog
+  49c1d56 csoler      Tue, 19 Jan 2016 21:45:55 -0500 increased GXS post size limit to just below 200K
+  1471979 csoler      Tue, 19 Jan 2016 18:08:47 -0500 added a few tooltips in Tor configuration panel
+  43ee506 csoler      Tue, 19 Jan 2016 10:13:24 -0500 added automatic GXS message rejection when item size exceeds 200K. Should fix the forums that go
+  dedd6d4 csoler      Mon, 18 Jan 2016 23:53:54 -0500 disabled debug info
+  68a0395 csoler      Mon, 18 Jan 2016 23:53:06 -0500 fixed a few bugs in existing msg fragmentation code. Signature checking still not working, not N
+  2b52456 defnax      Mon, 18 Jan 2016 13:36:38 +0100 Added new iconset for Voip, by Beluga
+  39e6a9b csoler      Sat, 16 Jan 2016 20:44:52 -0500 fixed up People context menu so as to handle actions for multiple persons at once
+  1edfcf9 csoler      Sat, 16 Jan 2016 13:41:24 -0500 do not time stamp banned GXS ids
+  8296fa9 csoler      Sat, 16 Jan 2016 11:30:15 -0500 added checkbox to toggle logscale in statistics
+  63b88ec defnax      Sat, 16 Jan 2016 14:50:12 +0100 correct sorting for "Reputation" in People, patch by Eugene Tooms
 
- -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 23 Jan 2016 16:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 01 Feb 2016 20:00:00 +0100
 
 retroshare06 (0.6.0-1.20160115.a34f66aa~trusty) trusty; urgency=low
 

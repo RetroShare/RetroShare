@@ -172,3 +172,4 @@ QSplitter#splitter{
     border-image: url(qss/blue/blue.png);
 
 }
+
