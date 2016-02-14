@@ -46,15 +46,37 @@ function getLobbyDetails(lobbyid){
 }
 
 function lobby(lobbyid){
+    var msgs;
     var lobby = getLobbyDetails(lobbyid);
-    if (lobby == null) {
-        return m("div","waiting ...");
-    }
-    var msgs = rs("chat/messages/" + lobbyid);
     var info = rs("chat/info/" + lobbyid);
-    if (msgs === undefined || info === undefined) {
+    if (lobby == null || info === undefined) {
         return m("div","waiting ...");
     }
+
+    var mem = rs.memory("chat/info/" + lobbyid);
+    if (mem.msg === undefined) {
+        mem.msg = [];
+    };
+
+    var reqData = {};
+    if (mem.lastKnownMsg != undefined) {
+        reqData.begin_after = mem.lastKnownMsg;
+    }
+
+    rs.request("chat/messages/" + lobbyid, reqData, function (data) {
+        mem.msg = mem.msg.concat(data);
+        if (mem.msg.length > 0) {
+            mem.lastKnownMsg = mem.msg[mem.msg.length -1].id;
+        }
+        if (data.length > 0 ) {
+            rs.request("chat/mark_chat_as_read/" + lobbyid,{}, null,
+                {allow: "ok|not_set"});
+        }
+    }, {
+        onmismatch: function (){},
+        log:function(){} //no logging (pulling)
+    });
+
     var intro = [
             m("h2",lobby.name),
             m("p",lobby.topic),
@@ -81,7 +103,7 @@ function lobby(lobbyid){
     }
     return [
         intro,
-        msgs.map(function(item){
+        mem.msg.map(function(item){
             var d = new Date(new Number(item.send_time)*1000);
             return msg(
                 item.author_name,

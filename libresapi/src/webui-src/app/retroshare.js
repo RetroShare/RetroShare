@@ -179,25 +179,21 @@ function requestFail(path, response, value) {
 
 function rs(path, args, callback, options){
     if(cache[path] === undefined){
-        if (options === undefined){
-            options = {};
-        }
+        options=optionsPrep(options,path);
         var req = {
             data: args,
             statetoken: undefined,
             requested: false,
-            allow: options.allow === undefined ? "ok" : options.allow,
+            allow: options.allow,
             then: function(response){
-                console.log(path + ": response: " + response.returncode);
+                options.log(path + ": response: " + response.returncode);
                 if (!this.allow.match(response.returncode)) {
-                    requestFail(path, response, null);
+                    options.onmismatch(response);
                 } else if (callback != undefined && callback != null) {
                     callback(response.data, response.statetoken);
                 }
             },
-            errorCallback: function(value){
-                requestFail(path, null, value);
-            }
+            errorCallback: options.onfail
         };
         cache[path] = req;
         schedule_request_missing();
@@ -209,9 +205,7 @@ module.exports = rs;
 
 // single request for action
 rs.request=function(path, args, callback, options){
-    if (options === undefined) {
-        options = {};
-    }
+    options = optionsPrep(options, path);
     var req = m.request({
         method: options.method === undefined ? "POST" : options.method,
         url: api_url + path,
@@ -219,17 +213,44 @@ rs.request=function(path, args, callback, options){
         background: true
     });
     req.then(function checkResponseAndCallback(response){
-        console.log(path + ": response: " + response.returncode);
-        if (response.returncode != "ok") {
-            requestFail(path, response, null);
+        options.log(path + ": response: " + response.returncode);
+        if (!options.allow.match(response.returncode)) {
+            options.onmismatch(response);
         } else if (callback != undefined && callback != null) {
             callback(response.data, response.statetoken);
         }
-    }, function errhandling(value){
-        requestFail(path, null, value);
-    });
+    }, options.onfail);
     return req;
 };
+
+//set default-values for shared options in rs() and rs.request()
+function optionsPrep(options, path) {
+    if (options === undefined) {
+        options = {};
+    }
+
+    if (options.onfail === undefined) {
+        options.onfail = function errhandling(value){
+            requestFail(path, null, value);
+        }
+    };
+    if (options.onmismatch === undefined) {
+        options.onmismatch = function errhandling(response){
+            requestFail(path, response,null);
+        }
+    };
+
+    if (options.log === undefined)  {
+        options.log = function(message) {
+            console.log(message);
+        }
+    }
+
+    if (options.allow === undefined) {
+        options.allow = "ok";
+    };
+    return options;
+}
 
 // force reload for path
 rs.forceUpdate = function(path){
@@ -269,3 +290,17 @@ rs.list = function(path, buildfktn){
     };
     return list.map(buildfktn);
 }
+
+//remember additional data (feature of last resort)
+rs.memory = function(path, args){
+    var item = cache[path];
+    if (item === undefined) {
+        rs(path, args);
+        item =  cache[path];
+    }
+    if (item.memory === undefined) {
+        item.memory = {};
+    }
+    return item.memory;
+};
+
