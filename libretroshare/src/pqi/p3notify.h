@@ -114,10 +114,7 @@ class p3Notify: public RsNotify
 
 		void notifyPeerStatusChangedSummary   () ;
 		void notifyDiscInfoChanged            () ;
-#ifdef REMOVE
-		void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
-		void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
-#endif
+
 		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) ;
 		void notifyDownloadComplete           (const std::string& /* fileHash  */) ;
 		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;

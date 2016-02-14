@@ -61,10 +61,6 @@ class NotifyQt: public QObject, public NotifyClient
 
         virtual void notifyGxsChange(const RsGxsChanges& change);
 
-#ifdef REMOVE
-		virtual void notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status);
-		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
-#endif
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;

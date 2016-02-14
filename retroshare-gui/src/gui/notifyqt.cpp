@@ -421,29 +421,6 @@ void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
     emit gxsChange(changes);
 }
 
-#ifdef REMOVE
-void NotifyQt::notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	emit forumMsgReadSatusChanged(QString::fromStdString(forumId), QString::fromStdString(msgId), status);
-}
-
-void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	emit channelMsgReadSatusChanged(QString::fromStdString(channelId), QString::fromStdString(msgId), status);
-}
-#endif
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
 	{
