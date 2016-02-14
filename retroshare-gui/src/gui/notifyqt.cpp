@@ -104,6 +104,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     qRegisterMetaType<ChatId>("ChatId");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<RsGxsChanges>("RsGxsChanges");
+    qRegisterMetaType<RsGxsId>("RsGxsId");
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -513,7 +514,7 @@ void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 	}
 }
 
-void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const std::string& nickname,const std::string& str) 
+void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -524,7 +525,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat lobby event message: lobby #" << std::hex << lobby_id  << std::dec << ", event=" << event_type << ", str=\"" << str << "\"" << std::endl ;
 #endif
-	emit chatLobbyEvent(lobby_id,event_type,QString::fromUtf8(nickname.c_str()),QString::fromUtf8(str.c_str())) ;
+    emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
 }
 
 void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)

@@ -49,7 +49,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
-		virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /*nickname*/,const std::string& /* any string */) ;
+        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
 
 		virtual void notifyOwnStatusMessageChanged() ;
@@ -107,7 +107,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void transfersChanged() const ;
 		void friendsChanged() const ;
 		void lobbyListChanged() const ;
-		void chatLobbyEvent(qulonglong,int,const QString&,const QString&) ;
+        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;
