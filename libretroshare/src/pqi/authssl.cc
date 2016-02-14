@@ -334,6 +334,13 @@ static  int initLib = 0;
 	sslctx = SSL_CTX_new(SSLv23_method());
 	SSL_CTX_set_options(sslctx,SSL_OP_NO_SSLv3) ;
 
+	//SSL_OP_SINGLE_DH_USE 	CVE-2016-0701
+	//https://www.openssl.org/docs/manmaster/ssl/SSL_CTX_set_options.html
+	//If "strong" primes were used, it is not strictly necessary to generate a new DH key during each handshake but it is also recommended. SSL_OP_SINGLE_DH_USE should therefore be enabled whenever temporary/ephemeral DH parameters are used.
+	//SSL_CTX_set_options() adds the options set via bitmask in options to ctx. Options already set before are not cleared!
+        SSL_CTX_set_options(sslctx,SSL_OP_SINGLE_DH_USE) ;
+
+
 	// Setup cipher lists:
 	//
 	//       std::string cipherString = "HIGH:!DSS:!aNULL:!3DES";
