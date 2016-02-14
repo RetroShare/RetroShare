@@ -117,3 +117,10 @@ distant_machine:~/ >  ssh rs_host -L 9090:localhost:9090 -N
       http://localhost:9090
 
 That also works with a retroshare GUI of course.
+
+Compile and run tests
+---------------------
+
+qmake CONFIG+=tests
+make
+tests/unittests/unittests
