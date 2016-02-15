@@ -405,6 +405,7 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 	return false;
 }
 
+
 bool GxsSecurity::initEncryption(GxsSecurity::MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey>& keys)
 {
     // prepare an array of encrypted keys ek and public keys puk

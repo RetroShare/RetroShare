@@ -53,7 +53,7 @@ class GxsSecurity
     		class MultiEncryptionContext
 	    	{
 	    	public:
-		   	 MultiEncryptionContext()  { clear() ;}
+		   	 MultiEncryptionContext()  { ekl=NULL;ek=NULL;}
 		   	 ~MultiEncryptionContext() { clear() ;}
 
 		   	 void clear() 
@@ -61,7 +61,9 @@ class GxsSecurity
                  		for(uint32_t i=0;i<ids.size();++i)
                             free(ek[i]) ;
                             
+                        	if(ekl)
                         	free(ekl) ;
+                        	if(ek)
                             free(ek) ;
                             
                             ekl = NULL ;
