@@ -425,6 +425,8 @@ bool RsNxsSessionKeyItem::serialise(void *data, uint32_t& size) const
     if(!serialise_header(data,size,tlvsize,offset))
         return false ;
 
+    ok &= setRawUInt32(data, size, &offset, transactionNumber);
+    
     if(offset + EVP_MAX_IV_LENGTH >= size)
     {
         std::cerr << "RsNxsSessionKeyItem::serialize(): error. Not enough room for IV !" << std::endl;
@@ -460,6 +462,7 @@ bool RsNxsEncryptedDataItem::serialise(void *data, uint32_t& size) const
     if(!serialise_header(data,size,tlvsize,offset))
         return false ;
 
+    ok &= setRawUInt32(data, size, &offset, transactionNumber);
     ok &= aes_encrypted_data.SetTlv(data, size, &offset) ;
 
     if(offset != tlvsize)
@@ -840,6 +843,8 @@ RsNxsSessionKeyItem      *RsNxsSerialiser::deserialNxsSessionKeyItem(void* data,
     uint32_t offset = 8 ;
 
     RsNxsSessionKeyItem* item = new RsNxsSessionKeyItem(SERVICE_TYPE);
+    
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
 
     if(offset + EVP_MAX_IV_LENGTH >= *size)
     {
@@ -891,6 +896,9 @@ RsNxsEncryptedDataItem   *RsNxsSerialiser::deserialNxsEncryptedDataItem(void* da
 
     RsNxsEncryptedDataItem* item = new RsNxsEncryptedDataItem(SERVICE_TYPE);
 
+    ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
+    item->aes_encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
+    
     ok &= item->aes_encrypted_data.GetTlv(data,*size,&offset) ;
     
     if (offset != *size)
@@ -1037,6 +1045,7 @@ uint32_t RsNxsEncryptedDataItem::serial_size() const
 {
     uint32_t s = 8; // header size
 
+    s += 4; // transaction number
     s += aes_encrypted_data.TlvSize() ;
 
     return s;
@@ -1045,6 +1054,7 @@ uint32_t RsNxsSessionKeyItem::serial_size() const
 {
     uint32_t s = 8; // header size
 
+    s += 4; 			// transaction number
     s += EVP_MAX_IV_LENGTH ;	// iv
     s += 4 ; 			// encrypted_session_keys.size() ;
     

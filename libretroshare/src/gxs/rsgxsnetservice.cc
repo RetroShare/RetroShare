@@ -2140,7 +2140,21 @@ void RsGxsNetService::processTransactions()
                     sendItem(trans);
 
                     // move to completed transactions
-                    mComplTransactions.push_back(tr);
+                    
+                    // try to decrypt, if needed. This function returns true if the transaction is not encrypted.
+                    
+                    if(decryptTransaction(tr))
+                    {
+#ifdef NXS_NET_DEBUG_7
+                        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   successfully decrypted transaction " << transN << std::endl;
+#endif
+			    mComplTransactions.push_back(tr);
+                    }
+#ifdef NXS_NET_DEBUG_7
+                    else
+                        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   no decryption occurred in transaction " << transN << std::endl;
+#endif
+                    
 #ifdef NXS_NET_DEBUG_1
                     int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
                     GXSNETDEBUG_P_(mit->first) << "    incoming completed " << tr->mTransaction->nItems << " items transaction in " << total_transaction_time << " seconds." << std::endl;
@@ -3465,6 +3479,8 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
 #endif
     GxsSecurity::MultiEncryptionContext muctx ; 
     GxsSecurity::initEncryption(muctx,recipient_keys);
+    
+    uint32_t trNumber = 0 ;
             
     // 3 - serialise and encrypt each message, converting it into a NxsEncryptedDataItem
     
@@ -3494,7 +3510,10 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
         
         enc_item->aes_encrypted_data.bin_len  = encrypted_len ;
         enc_item->aes_encrypted_data.bin_data = encrypted_data ;
-        enc_item->aes_encrypted_data.tlvtype  = TLV_TYPE_BIN_ENCRYPTED ;
+        enc_item->transactionNumber = (*it)->transactionNumber ;
+        enc_item->PeerId((*it)->PeerId()) ;
+        
+        trNumber= (*it)->transactionNumber ;
         
         encrypted_items.push_back(enc_item) ;
 #ifdef NXS_NET_DEBUG_7
@@ -3515,6 +3534,8 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     GXSNETDEBUG_P_(peerId) << "  Creating session key" << std::endl;
 #endif
     RsNxsSessionKeyItem *session_key_item = new RsNxsSessionKeyItem(mServType) ;
+    session_key_item->PeerId(tr->mTransaction->PeerId()) ;
+    session_key_item->transactionNumber = trNumber ;
     
     memcpy(session_key_item->iv,muctx.initialisation_vector(),EVP_MAX_IV_LENGTH) ;
     
@@ -3556,9 +3577,9 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     if(esk == NULL)
     {
 #ifdef NXS_NET_DEBUG_7
-        GXSNETDEBUG_P_(peerId) << "  (II) nothing to decrypt. No session key packet in this transaction." << std::endl;
+        GXSNETDEBUG_P_(peerId) << "  (II) nothing to decrypt. No session key packet in this transaction. Transaction is not encrypted" << std::endl;
 #endif
-        return false ;
+        return true ;
     }
     // 2 - Try to decrypt the session key. If not, return false. That probably means
     //     we don't own that identity.
@@ -3578,7 +3599,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
                     
                     if(!mGixs->getPrivateKey(private_key_id,private_key))
                     {
-                        std::cerr << "(EE) Cannot find private key to decrypt incoming transaction, for ID " << it->first << ". This is a bug since the key is supposed ot be here." << std::endl;
+                        std::cerr << "  (EE) Cannot find private key to decrypt incoming transaction, for ID " << it->first << ". This is a bug since the key is supposed ot be here." << std::endl;
                         return false;
                     }
                     
@@ -3643,7 +3664,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     // 4 - put back in transaction.
     
 #ifdef NXS_NET_DEBUG_7
-    GXSNETDEBUG_P_(peerId) << "  replacing items with clear items" << std::endl;
+    GXSNETDEBUG_P_(peerId) << "  Decryption successful: replacing items with clear items" << std::endl;
 #endif
     
     for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)

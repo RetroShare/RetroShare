@@ -277,7 +277,11 @@ class RsNxsEncryptedDataItem : public RsNxsItem
 
 public:
 
-    RsNxsEncryptedDataItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SESSION_KEY_ITEM),aes_encrypted_data(servtype) { clear(); }
+    RsNxsEncryptedDataItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM),aes_encrypted_data(servtype) 
+    { 
+	aes_encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
+	clear(); 
+    }
     virtual ~RsNxsEncryptedDataItem() {}
 
 	virtual bool serialise(void *data,uint32_t& size) const;	
