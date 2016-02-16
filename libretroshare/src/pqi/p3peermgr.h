@@ -65,6 +65,9 @@ const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
 const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
 const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
 
+/* remove locations offline since 90 days */
+const time_t RS_PEER_OLD_PEER = (90 * 24 * 3600);
+
 class peerState
 {
 	public:
