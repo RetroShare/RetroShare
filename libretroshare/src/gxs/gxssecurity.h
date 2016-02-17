@@ -57,20 +57,20 @@ class GxsSecurity
 		   	 ~MultiEncryptionContext() { clear() ;}
 
 		   	 void clear() 
-             		{
-                 		for(uint32_t i=0;i<ids.size();++i)
-                            free(ek[i]) ;
-                            
-                        	if(ekl)
-                        	free(ekl) ;
-                        	if(ek)
-                            free(ek) ;
-                            
-                            ekl = NULL ;
-                            ek = NULL ;
-                            
-                            ids.clear() ;
-                        }
+			 {
+				 for(uint32_t i=0;i<ids.size();++i)
+					 free(ek[i]) ;
+
+				 if(ekl)
+					 free(ekl) ;
+				 if(ek)
+					 free(ek) ;
+
+				 ekl = NULL ;
+				 ek = NULL ;
+
+				 ids.clear() ;
+			 }
 
 		   	 // The functions below give access to the encrypted symmetric key to be used.
 		   	 // 
@@ -110,21 +110,22 @@ class GxsSecurity
 		 *@param in
 		 *@param inlen
 		 */
-        static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys) ;
 
 		/*!
 		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
 		 * parameter.
 		 */
-        static bool initEncryption(MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey> &keys) ;
-        static bool initDecryption(MultiEncryptionContext& encryption_context, const RsTlvSecurityKey& key, unsigned char *IV, uint32_t IV_size, unsigned char *encrypted_session_key, uint32_t encrypted_session_key_size) ;
+		static bool initEncryption(MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey> &keys) ;
+		static bool initDecryption(MultiEncryptionContext& encryption_context, const RsTlvSecurityKey& key, unsigned char *IV, uint32_t IV_size, unsigned char *encrypted_session_key, uint32_t encrypted_session_key_size) ;
         
 		/*!
 		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
 		 * parameter.
 		 */
-        static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
-        static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
+		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
+		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
 
 		/**
 		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
@@ -135,7 +136,7 @@ class GxsSecurity
 		 * @param inlen
 		 * @return false if encryption failed
 		 */
-        static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
 
 		/*!
 		 * uses grp signature to check if group has been
