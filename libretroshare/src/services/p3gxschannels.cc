@@ -514,20 +514,20 @@ bool p3GxsChannels::setChannelDownloadDirectory(const RsGxsGroupId &groupId, con
     return true;
 }
 
-bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & id,std::string& directory)
+bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std::string& directory)
 {
 #ifdef GXSCHANNELS_DEBUG
-    std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")" << std::endl;
+    std::cerr << "p3GxsChannels::getChannelDownloadDirectory(" << id << ")" << std::endl;
 #endif
 
     std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
 
-    it = mSubscribedGroups.find(id);
+    it = mSubscribedGroups.find(groupId);
 
     if (it == mSubscribedGroups.end())
     {
 #ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::autoDownloadEnabled() No Entry" << std::endl;
+        std::cerr << "p3GxsChannels::getChannelDownloadDirectory() No Entry" << std::endl;
 #endif
 
         return false;
@@ -535,6 +535,26 @@ bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & id,std::str
 
     /* extract from ServiceString */
     SSGxsChannelGroup ss;
+    if (it->second.mServiceString.empty())
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "p3GxsChannels::getChannelDownloadDirectory() No ServiceString make new one." << std::endl;
+#endif
+        std::string serviceString = ss.save();
+        uint32_t token;
+
+        it->second.mServiceString = serviceString; // update Local Cache.
+        RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
+
+        /* now reload it */
+        std::list<RsGxsGroupId> groups;
+        groups.push_back(groupId);
+
+        request_SpecificSubscribedGroups(groups);
+
+        return false;
+    }
+
     ss.load(it->second.mServiceString);
     directory = ss.mDownloadDirectory;
 
@@ -904,7 +924,7 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 /********************************************************************************************/
 
 
-bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
+bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enabled)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")";
@@ -913,7 +933,7 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
 
 	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
 
-	it = mSubscribedGroups.find(id);
+	it = mSubscribedGroups.find(groupId);
 	if (it == mSubscribedGroups.end())
 	{
 #ifdef GXSCHANNELS_DEBUG
@@ -926,10 +946,30 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
 
 	/* extract from ServiceString */
 	SSGxsChannelGroup ss;
-	ss.load(it->second.mServiceString);
-            enabled = ss.mAutoDownload;
+	if (it->second.mServiceString.empty())
+	{
+#ifdef GXSCHANNELS_DEBUG
+		std::cerr << "p3GxsChannels::autoDownloadEnabled() No ServiceString make new one." << std::endl;
+#endif
+		std::string serviceString = ss.save();
+		uint32_t token;
 
-    return true ;
+		it->second.mServiceString = serviceString; // update Local Cache.
+		RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
+
+		/* now reload it */
+		std::list<RsGxsGroupId> groups;
+		groups.push_back(groupId);
+
+		request_SpecificSubscribedGroups(groups);
+
+		return false;
+	}
+
+	ss.load(it->second.mServiceString);
+	enabled = ss.mAutoDownload;
+
+	return true;
 }
 
 bool SSGxsChannelGroup::load(const std::string &input)
