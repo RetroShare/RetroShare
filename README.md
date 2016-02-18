@@ -90,6 +90,7 @@ git clone git://github.com/sqlcipher/sqlcipher.git
 cd sqlcipher
 ./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
 make
+make install
 cd ..
 ```
 
