@@ -64,8 +64,6 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &pe
     connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
     connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-
     avatar->setId(ChatId(mPeerId));
 
     updateItemStatic();
