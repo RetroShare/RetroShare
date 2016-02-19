@@ -66,7 +66,8 @@ SOURCES += \
     api/LivereloadHandler.cpp \
     api/TmpBlobStore.cpp \
     util/ContentTypes.cpp \
-    api/ApiPluginHandler.cpp
+    api/ApiPluginHandler.cpp \
+    api/ChannelsHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -91,4 +92,5 @@ HEADERS += \
     api/LivereloadHandler.h \
     api/TmpBlobStore.h \
     util/ContentTypes.h \
-    api/ApiPluginHandler.h
+    api/ApiPluginHandler.h \
+    api/ChannelsHandler.h

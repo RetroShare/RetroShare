@@ -14,6 +14,7 @@
 #include "StateTokenServer.h" // for the state token serialisers
 
 #include "ApiPluginHandler.h"
+#include "ChannelsHandler.h"
 
 /*
 data types in json       http://json.org/
@@ -232,7 +233,8 @@ public:
         mFileSearchHandler(sts, ifaces.mNotify, ifaces.mTurtle, ifaces.mFiles),
         mTransfersHandler(sts, ifaces.mFiles),
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
-        mApiPluginHandler(sts, ifaces)
+        mApiPluginHandler(sts, ifaces),
+        mChannelsHandler(ifaces.mGxsChannels)
     {
         // the dynamic cast is to not confuse the addResourceHandler template like this:
         // addResourceHandler(derived class, parent class)
@@ -254,6 +256,8 @@ public:
                                   &ChatHandler::handleRequest);
         router.addResourceHandler("apiplugin", dynamic_cast<ResourceRouter*>(&mApiPluginHandler),
                                   &ChatHandler::handleRequest);
+        router.addResourceHandler("channels", dynamic_cast<ResourceRouter*>(&mChannelsHandler),
+                                  &ChannelsHandler::handleRequest);
     }
 
     PeersHandler mPeersHandler;
@@ -264,6 +268,7 @@ public:
     TransfersHandler mTransfersHandler;
     ChatHandler mChatHandler;
     ApiPluginHandler mApiPluginHandler;
+    ChannelsHandler mChannelsHandler;
 };
 
 ApiServer::ApiServer():
