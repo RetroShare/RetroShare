@@ -2749,7 +2749,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 		std::map<RsPeerId, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
-			if (now - it->second.lastcontact > RS_PEER_OLD_PEER)
+			if (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE)
 			{
 				toRemove.push_back(it->first);
 

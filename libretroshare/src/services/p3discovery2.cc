@@ -931,10 +931,10 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
             // We pass RS_NODE_PERM_ALL because the PGP id is already a friend, so we should keep the existing
             // permission flags. Therefore the mask needs to be 0xffff.
 
-			// set last seen to RS_PEER_OLD_PEER minus 1 day so that the DHT has a fair chance to establish a connection
-			// before the location gets automatically removed again
+			// set last seen to RS_PEER_OFFLINE_NO_DISC minus 1 so that it won't be shared with other friends
+			// until a first connection is established
 
-			mPeerMgr->addFriend(item->sslId, item->pgpId, item->netMode, RS_VS_DISC_OFF, RS_VS_DHT_FULL, time(NULL) - RS_PEER_OLD_PEER + (24 * 3600), RS_NODE_PERM_ALL);
+			mPeerMgr->addFriend(item->sslId, item->pgpId, item->netMode, RS_VS_DISC_OFF, RS_VS_DHT_FULL, time(NULL) - RS_PEER_OFFLINE_NO_DISC - 1, RS_NODE_PERM_ALL);
 			updatePeerAddresses(item);
 		}
 	}
