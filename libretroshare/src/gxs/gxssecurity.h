@@ -112,7 +112,7 @@ class GxsSecurity
 		 */
 		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
 		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys) ;
-
+#ifdef TO_REMOVE
 		/*!
 		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
 		 * parameter.
@@ -126,6 +126,7 @@ class GxsSecurity
 		 */
 		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
 		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
+#endif
 
 		/**
 		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
@@ -137,6 +138,7 @@ class GxsSecurity
 		 * @return false if encryption failed
 		 */
 		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys);
 
 		/*!
 		 * uses grp signature to check if group has been

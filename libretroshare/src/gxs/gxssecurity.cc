@@ -34,7 +34,9 @@
  * #define GXS_SECURITY_DEBUG 	1
  ***/
 
-static const uint32_t HEADER_MULTI_ENCRYPTION_FORMAT_v001 = 0xFACE;
+static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_HEADER              = 0xFACE;
+static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE         = 2 ;
+static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE = 2 ;
         
 static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 {
@@ -407,7 +409,7 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 	return false;
 }
 
-
+#ifdef TO_REMOVE
 bool GxsSecurity::initEncryption(GxsSecurity::MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey>& keys)
 {
     // prepare an array of encrypted keys ek and public keys puk
@@ -521,6 +523,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
         return false ;
     }
 }
+#endif
 
 bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
 {
@@ -684,9 +687,6 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 			throw std::runtime_error("malloc error on encrypted keys") ;
         }
         
-        static const int HEADER_SIZE = 2 ;
-        static const int NUMBER_OF_KEYS_SIZE = 2 ;
-        
 	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
 	int cipher_block_size = EVP_CIPHER_block_size(cipher);
 
@@ -699,7 +699,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
         for(uint32_t i=0;i<keys.size();++i)
             total_ek_size += eklen[i] + 1 ;
         
-	int max_outlen = HEADER_SIZE + NUMBER_OF_KEYS_SIZE + total_ek_size + EVP_MAX_IV_LENGTH + (inlen + cipher_block_size) ;
+	int max_outlen = MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE + MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE + total_ek_size + EVP_MAX_IV_LENGTH + (inlen + cipher_block_size) ;
     
 	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
 	out = (uint8_t*)rs_malloc(max_outlen);
@@ -711,8 +711,8 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
     
     	// header
     
-    	out[out_offset++] =  HEADER_MULTI_ENCRYPTION_FORMAT_v001       & 0xff ;
-    	out[out_offset++] = (HEADER_MULTI_ENCRYPTION_FORMAT_v001 >> 8) & 0xff ;
+    	out[out_offset++] =  MULTI_ENCRYPTION_FORMAT_v001_HEADER       & 0xff ;
+    	out[out_offset++] = (MULTI_ENCRYPTION_FORMAT_v001_HEADER >> 8) & 0xff ;
         
         // number of keys
         
@@ -776,6 +776,8 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
         return false ;
     }
 }
+
+#ifdef TO_REMOVE
 bool GxsSecurity::initDecryption(GxsSecurity::MultiEncryptionContext& encryption_context, const RsTlvSecurityKey& key,unsigned char *IV,uint32_t IV_size,unsigned char *encrypted_session_key,uint32_t encrypted_session_key_size)
 {
 	// prepare an array of encrypted keys ek and public keys puk
@@ -861,6 +863,7 @@ bool GxsSecurity::decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, ui
 
     return true ;
 }
+#endif
 
 bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
 {
@@ -934,7 +937,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
         return false;
     }
 
-	 if(inlen < in_offset)
+	 if(inlen < (uint32_t)in_offset)
 	 {
 		 std::cerr << "Severe error in " << __PRETTY_FUNCTION__ << ": cannot encrypt. " << std::endl;
 		 return false ;
@@ -966,7 +969,146 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	 return true;
 }
 
+bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys)
+{
+        // Decrypts (in,inlen) into (out,outlen) using one of the given RSA public keys, trying them all in a row.
+        // The format of the encrypted data is:
+        //
+        //   [--- ID ---|--- number of encrypted keys---|  n * (--- Encrypted session key length ---|--- Encrypted session keys ---)    |---      IV     ---|---- Encrypted data ---]
+    	//      2 bytes              2 byte = n                              1 byte = X                          X bytes                  EVP_MAX_IV_LENGTH       Rest of packet
+        //
+        // This method can be used to decrypt multi-encrypted data, if passing he correct encrypted key block (corresponding to the given key)
 
+#ifdef DISTRIB_DEBUG
+	std::cerr << "GxsSecurity::decrypt() " << std::endl;
+#endif
+    
+    try
+    {
+	    // check that the input block has a valid format.
+
+	    uint32_t offset = 0 ;
+	    uint16_t format_id = in[offset] + (in[offset+1] << 8) ;
+
+	    if(format_id != MULTI_ENCRYPTION_FORMAT_v001_HEADER)
+	    {
+		    std::cerr << "Unrecognised format in encrypted block. Header id = " << std::hex << format_id << std::dec << std::endl;
+		    throw std::runtime_error("Unrecognised format in encrypted block.") ; 
+	    }
+	    offset += MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE;
+
+	    // read number of encrypted keys
+
+	    uint32_t number_of_keys = in[offset] + (in[offset+1] << 8) ;
+	    offset += MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE;
+
+	    // reach the actual data offset
+
+	    uint32_t encrypted_block_offset = offset ;
+	    uint32_t encrypted_keys_offset  = offset ;
+	    uint32_t encrypted_block_size   = 0 ;
+
+	    for(uint32_t i=0;i<number_of_keys;++i)
+	    {
+		    uint8_t s = in[encrypted_block_offset++] ;
+		    encrypted_block_offset += s ;
+
+		    if(encrypted_block_offset >= inlen)
+			    throw std::runtime_error("Offset error") ;
+	    }
+
+	    // read IV offset
+
+	    uint32_t IV_offset = encrypted_block_offset ;
+	    encrypted_block_offset += EVP_MAX_IV_LENGTH ;
+
+		if(encrypted_block_offset >= inlen)
+			    throw std::runtime_error("Offset error") ;
+                
+	    encrypted_block_size = inlen - encrypted_block_offset ;
+	    std::cerr << "  number of keys in envelop: " << number_of_keys << std::endl;
+	    std::cerr << "  IV offset                : " << IV_offset << std::endl;
+	    std::cerr << "  encrypted block offset   : " << encrypted_block_offset << std::endl;
+	    std::cerr << "  encrypted block size     : " << encrypted_block_size << std::endl;
+
+	    // decrypt
+
+	    EVP_CIPHER_CTX ctx;
+	    EVP_CIPHER_CTX_init(&ctx);
+	    bool succeed = false;
+
+	    for(uint32_t j=0;j<keys.size() && !succeed;++j)
+	    {
+		    RSA *rsa_private = extractPrivateKey(keys[j]) ;
+		    EVP_PKEY *privateKey = NULL;
+
+		    std::cerr << "  trying key " << keys[j].keyId << std::endl;
+
+		    if(rsa_private != NULL)
+		    {
+			    privateKey = EVP_PKEY_new();
+			    EVP_PKEY_assign_RSA(privateKey, rsa_private);
+		    }
+		    else
+		    {
+			    RSA_free(rsa_private) ;
+			    std::cerr << "(EE) Cannot extract private key from key Id " << keys[j].keyId << ". This is a bug. Non owned key?"  << std::endl;
+			    continue ;
+		    }
+
+		    uint32_t sff = encrypted_keys_offset ;
+
+		    for(uint32_t i=0;i<number_of_keys && !succeed;++i)
+		    {
+			    succeed = EVP_OpenInit(&ctx, EVP_aes_128_cbc(), in+sff+1, in[sff], in+IV_offset, privateKey);
+
+			    std::cerr << "    encrypted key at offset " << sff << ": " << succeed << std::endl;
+
+			    sff += 1 + in[sff] ;
+		    }
+
+		    EVP_PKEY_free(privateKey) ;
+	    }
+
+	    if(!succeed)
+		    throw std::runtime_error("No matching key available.") ;
+
+	    std::cerr << "  now decrypting with the matching key." << std::endl;
+
+	    out = (uint8_t*)rs_malloc(encrypted_block_size) ;
+
+	    if(out == NULL)
+		    throw std::runtime_error("Memory allocation error") ;
+
+	    int out_currOffset = 0 ;
+
+	    if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + encrypted_block_offset, encrypted_block_size)) 
+		    throw std::runtime_error("Decryption error in EVP_OpenUpdate") ;
+
+	    outlen = out_currOffset;
+
+	    if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) 
+		    throw std::runtime_error("Decryption error in EVP_OpenFinal") ;
+
+	    outlen += out_currOffset;
+        
+        	std::cerr << "  successfully decrypted block of size " << outlen << std::endl;
+	    return true;
+    }
+    catch(std::exception& e)
+    {
+        // cleanup and return false
+        
+        std::cerr << "  (EE) error caught: " << e.what() << std::endl;
+        if(out)
+        {
+            free(out) ;
+            out = NULL ;
+        }
+        
+        return false;
+    }
+}
 bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
 {
 #ifdef GXS_SECURITY_DEBUG

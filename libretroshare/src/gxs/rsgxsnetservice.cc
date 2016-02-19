@@ -2141,7 +2141,7 @@ void RsGxsNetService::processTransactions()
 
                     // move to completed transactions
                     
-                    // try to decrypt, if needed. This function returns true if the transaction is not encrypted.
+                    // Try to decrypt the items that need to be decrypted. This function returns true if the transaction is not encrypted.
                     
                     if(decryptTransaction(tr))
                     {
@@ -3477,6 +3477,8 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
 #ifdef NXS_NET_DEBUG_7
     GXSNETDEBUG_P_ (peerId) << "  Encrypting..." << std::endl;
 #endif
+    
+#ifdef USE_MULTI_ENCRYPTION_WITH_SESSION_KEY
     GxsSecurity::MultiEncryptionContext muctx ; 
     GxsSecurity::initEncryption(muctx,recipient_keys);
     
@@ -3552,7 +3554,47 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     }
     
     tr->mItems.push_front(session_key_item) ;
+#else
+    std::list<RsNxsItem*> encrypted_items ;
     
+    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+    {
+        uint32_t size = (*it)->serial_size() ;
+        RsTemporaryMemory tempmem( size ) ;
+        
+        if(!(*it)->serialise(tempmem,size))
+        {
+            std::cerr << "  (EE) Cannot serialise item. Something went wrong." << std::endl;
+            continue ;
+        }
+        
+        unsigned char *encrypted_data = NULL ;
+        uint32_t encrypted_len  = 0 ;
+        
+        if(!GxsSecurity::encrypt(encrypted_data, encrypted_len,tempmem,size,recipient_keys))
+        {
+            std::cerr << "  (EE) Cannot multi-encrypt item. Something went wrong." << std::endl;
+            continue ;
+        }
+        
+        RsNxsEncryptedDataItem *enc_item = new RsNxsEncryptedDataItem(mServType) ;
+        
+        enc_item->aes_encrypted_data.bin_len  = encrypted_len ;
+        enc_item->aes_encrypted_data.bin_data = encrypted_data ;
+        enc_item->transactionNumber = (*it)->transactionNumber ;
+        enc_item->PeerId((*it)->PeerId()) ;
+        
+        encrypted_items.push_back(enc_item) ;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_(peerId) << "    encrypted item of size " << encrypted_len << std::endl;
+#endif
+    }
+    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+        delete *it ;
+    
+    tr->mItems = encrypted_items ;
+#endif
+ 
     return true ;
 }
 
@@ -3564,6 +3606,7 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     GXSNETDEBUG_P_(peerId) << "  Circle Id: " << tr->destination_circle << std::endl;   
 #endif
          
+#ifdef USE_MULTI_ENCRYPTION_WITH_SESSION_KEY
     // 1 - Checks that the transaction is encrypted. It should contain
     // 	   one packet with an encrypted session key for the group,
     //     and as many encrypted data items as necessary.
@@ -3660,20 +3703,83 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 
 		free(tempmem) ;
 	}
-        
-    // 4 - put back in transaction.
+#else 
+    std::list<RsNxsItem*> decrypted_items ;
+    std::vector<RsTlvSecurityKey> private_keys ;
     
+    // get all private keys. Normally we should look into the circle name and only supply the keys that we have
+
+    std::list<RsGxsId> own_keys ;
+    
+    mGixs->getOwnIds(own_keys) ;
+    
+    for(std::list<RsGxsId>::const_iterator it(own_keys.begin());it!=own_keys.end();++it)
+    {
+	    RsTlvSecurityKey private_key ;
+
+	    if(mGixs->getPrivateKey(*it,private_key))
+	    {
+		    std::cerr << "(EE) Cannot retrieve private key for ID " << *it << std::endl;
+		    return false ;
+	    }
+	    private_keys.push_back(private_key) ;
+	    std::cerr << "  retrived private key " << *it << std::endl;
+    }
+                        
+    for(std::list<RsNxsItem*>::iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+    {
+        RsNxsEncryptedDataItem *encrypted_item = dynamic_cast<RsNxsEncryptedDataItem*>(*it) ;
+        
+        if(encrypted_item == NULL)
+        {
+            std::cerr << "  skipping unencrypted item..." << std::endl;
+            continue ;
+        }
+    
+        // we do this only when something actually needs to be decrypted.
+        
+        unsigned char *decrypted_mem = NULL;
+        uint32_t decrypted_len =0;
+        
+        std::cerr << "  Trying to decrypt item..." ;
+        
+        if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->aes_encrypted_data.bin_data,encrypted_item->aes_encrypted_data.bin_len,private_keys))
+        {
+            std::cerr << "Failed! Cannot decrypt transaction. Giving up." << std::endl;
+            return false ;
+	}
+	std::cerr << "Succeeded! deserialising..." << std::endl;
+        
+        // deserialise the item
+        
+    	RsItem *ditem =  RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
+        
+        if(ditem == NULL)
+        {
+            std::cerr << "   Cannot deserialise. Item encoding error!" << std::endl;
+            return false ;
+        }
+        RsNxsItem *nxsitem = dynamic_cast<RsNxsItem*>(ditem) ;
+        
+        if(nxsitem == NULL)
+        {
+            std::cerr << "   Deserialised item is not an NxsItem. Weird. Dropping transaction." << std::endl;
+            return false ;
+        }
+            
+        // replace the encrypted item with the clear one
+	std::cerr << "  Replacing the encrypted item with the clear one." << std::endl;
+        
+        it = tr->mItems.erase(it) ;
+        tr->mItems.insert(it,nxsitem) ;
+        --it ; // this is to make sure the ++it in the for loop is not goign to skip the item just after the one being inserted
+    }
+#endif
+        
 #ifdef NXS_NET_DEBUG_7
     GXSNETDEBUG_P_(peerId) << "  Decryption successful: replacing items with clear items" << std::endl;
 #endif
-    
-    for(std::list<RsNxsItem*>::const_iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
-        delete *it ;
-    
-    tr->mItems = decrypted_items ;
-    
     return true ;
-
 }
 
 void RsGxsNetService::cleanTransactionItems(NxsTransaction* tr) const
