@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -107,7 +107,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="expandFrameGLayout">
       <property name="margin">
        <number>2</number>
       </property>
@@ -159,7 +159,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <spacer name="verticalSpacer">
+       <spacer name="labelVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>

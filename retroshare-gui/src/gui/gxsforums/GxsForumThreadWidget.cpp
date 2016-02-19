@@ -209,8 +209,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->postText->clear();
     ui->by_label->setId(RsGxsId());
     ui->time_label->clear() ;
-    ui->line->hide() ;
-    ui->line_2->hide() ;
+    ui->rightVLine->hide() ;
+    ui->leftVLine->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
     ui->postText->setImageBlockWidget(ui->imageBlockWidget);
@@ -1349,8 +1349,8 @@ void GxsForumThreadWidget::insertMessage()
 	ui->postText->clear();
     ui->by_label->setId(RsGxsId());
     ui->time_label->clear() ;
-    ui->line->hide() ;
-    ui->line_2->hide() ;
+    ui->rightVLine->hide() ;
+    ui->leftVLine->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
 
@@ -1411,8 +1411,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
     ui->by_label->setId(msg.mMeta.mAuthorId) ;
 
-    ui->line->show() ;
-    ui->line_2->show() ;
+    ui->rightVLine->show() ;
+    ui->leftVLine->show() ;
     ui->by_text_label->show() ;
     ui->by_label->show() ;
 

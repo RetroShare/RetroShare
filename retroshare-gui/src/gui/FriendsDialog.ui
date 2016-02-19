@@ -10,8 +10,17 @@
     <height>491</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
+  <layout class="QGridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -28,8 +37,17 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="margin">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -50,7 +68,7 @@
        </widget>
       </item>
       <item>
-       <spacer>
+       <spacer name="titleBarVSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -88,7 +106,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="friendListVLayout">
        <property name="spacing">
         <number>1</number>
        </property>
@@ -103,7 +121,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="headFrameGLayout">
           <property name="leftMargin">
            <number>1</number>
           </property>
@@ -204,7 +222,7 @@
        <attribute name="title">
         <string>Broadcast</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="groupChatTabGLayout">
         <item row="0" column="0">
          <widget class="ChatWidget" name="chatWidget" native="true"/>
         </item>
@@ -321,15 +339,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>FriendList</class>

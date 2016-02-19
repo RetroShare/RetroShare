@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="RSImageBlockWidgetHLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -92,7 +92,7 @@
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="infoFrameHLayout">
       <property name="margin">
        <number>6</number>
       </property>

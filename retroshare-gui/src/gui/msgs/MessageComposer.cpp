@@ -151,8 +151,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
     connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
     connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
-    connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
-    connect(ui.color2btn, SIGNAL(clicked()), this, SLOT(textbackgroundColor()));
+    connect(ui.colorTextBtn, SIGNAL(clicked()), this, SLOT(textColor()));
+    connect(ui.colorBackBtn, SIGNAL(clicked()), this, SLOT(textbackgroundColor()));
 
     connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
     connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
@@ -306,11 +306,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     QPixmap pxm(24,24);
     pxm.fill(Qt::black);
-    ui.colorbtn->setIcon(pxm);
+    ui.colorTextBtn->setIcon(pxm);
     
     QPixmap pxm2(24,24);
     pxm2.fill(Qt::white);
-    ui.color2btn->setIcon(pxm2);
+    ui.colorBackBtn->setIcon(pxm2);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _smheader = ui.msgFileList->header () ;
@@ -413,8 +413,8 @@ void MessageComposer::processSettings(bool bLoad)
         ui.contactsdockWidget->setVisible(Settings->value("ContactSidebar", true).toBool());
 
         // state of splitter
-        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
-        ui.splitter_2->restoreState(Settings->value("Splitter2").toByteArray());
+        ui.mainSplitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.messageSplitter->restoreState(Settings->value("Splitter2").toByteArray());
         
         // state of filter combobox
         int index = Settings->value("ShowType", 0).toInt();
@@ -431,8 +431,8 @@ void MessageComposer::processSettings(bool bLoad)
         Settings->setValue("ContactSidebar", ui.contactsdockWidget->isVisible());
 
         // state of splitter
-        Settings->setValue("Splitter", ui.splitter->saveState());
-        Settings->setValue("Splitter2", ui.splitter_2->saveState());
+        Settings->setValue("Splitter", ui.mainSplitter->saveState());
+        Settings->setValue("Splitter2", ui.messageSplitter->saveState());
         
         // state of filter combobox
         Settings->setValue("ShowType", ui.filterComboBox->currentIndex());
@@ -2234,14 +2234,14 @@ void MessageComposer::colorChanged(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
-    ui.colorbtn->setIcon(pix);
+    ui.colorTextBtn->setIcon(pix);
 }
 
 void MessageComposer::colorChanged2(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
-    ui.color2btn->setIcon(pix);
+    ui.colorBackBtn->setIcon(pix);
 }
 
 void MessageComposer::alignmentChanged(Qt::Alignment a)

@@ -16,15 +16,15 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="distantGBox">
      <property name="title">
       <string>Distant messages:</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="distantGBoxGLayout">
       <item row="0" column="2">
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="distantComboBox">
         <item>
          <property name="text">
           <string>Everyone</string>
@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="distantLabel">
         <property name="text">
          <string>Accept encrypted distant messages from</string>
         </property>
@@ -53,11 +53,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="readingGBox">
      <property name="title">
       <string>Reading</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="readingGBoxGLayout">
       <item row="0" column="0">
        <widget class="QCheckBox" name="setMsgToReadOnActivate">
         <property name="text">
@@ -73,7 +73,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="openHLayout">
         <item>
          <widget class="QLabel" name="openLabel">
           <property name="text">
@@ -90,20 +90,20 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="tagsGBox">
      <property name="title">
       <string>Tags</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="tagsGBoxGLayout">
       <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="tagsLabel">
         <property name="text">
          <string>Tags can be used to categorize and prioritize your messages</string>
         </property>
        </widget>
       </item>
       <item row="4" column="1">
-       <spacer name="verticalSpacer_2">
+       <spacer name="tagsTopVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -136,7 +136,7 @@
        </widget>
       </item>
       <item row="6" column="1">
-       <spacer name="verticalSpacer">
+       <spacer name="tagBottomVSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>

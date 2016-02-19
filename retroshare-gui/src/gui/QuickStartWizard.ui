@@ -35,7 +35,7 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -57,10 +57,10 @@
    <item row="1" column="0">
     <widget class="QStackedWidget" name="pagesWizard">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="pageWelcomeGLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -90,7 +90,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="frameWelcomeGLayout">
           <property name="leftMargin">
            <number>4</number>
           </property>
@@ -136,7 +136,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="1" column="0">
-           <spacer name="verticalSpacer_6">
+           <spacer name="welcomeVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -152,7 +152,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="welcomeButtonHLayout">
          <property name="topMargin">
           <number>4</number>
          </property>
@@ -160,7 +160,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer">
+          <spacer name="welcomeButtonLHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -190,7 +190,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2">
+          <spacer name="welcomeButtonRHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -205,7 +205,7 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item row="1" column="0">
-        <widget class="Line" name="line">
+        <widget class="Line" name="welcomeHLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -214,7 +214,7 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="pageConnection">
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout" name="pageConnectionGLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -244,7 +244,7 @@ p, li { white-space: pre-wrap; }
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="frameConnectionGLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="labelConnectionHeader">
             <property name="sizePolicy">
@@ -287,7 +287,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="5" column="0">
-           <spacer name="verticalSpacer_5">
+           <spacer name="connectionVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -322,7 +322,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="4" column="0">
-           <layout class="QFormLayout" name="formLayout_2">
+           <layout class="QFormLayout" name="connectionFLayout">
             <property name="fieldGrowthPolicy">
              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
             </property>
@@ -406,14 +406,14 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="Line" name="line_2">
+        <widget class="Line" name="connectionHLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="connectionButtonHLayout">
          <property name="topMargin">
           <number>4</number>
          </property>
@@ -421,7 +421,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer_3">
+          <spacer name="connectionButtonLHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -461,7 +461,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_4">
+          <spacer name="connectionButtonRHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -478,7 +478,7 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="pageShares">
-      <layout class="QGridLayout" name="gridLayout_7">
+      <layout class="QGridLayout" name="pageSharesGLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -495,7 +495,7 @@ p, li { white-space: pre-wrap; }
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_3">
+        <widget class="QFrame" name="frameShares">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -514,7 +514,7 @@ p, li { white-space: pre-wrap; }
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
+         <layout class="QGridLayout" name="frameSharesGLayout">
           <item row="0" column="0" colspan="3">
            <widget class="QLabel" name="labelSharesHeader">
             <property name="sizePolicy">
@@ -548,7 +548,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="1" column="0" colspan="3">
-           <layout class="QGridLayout" name="gridLayout_17">
+           <layout class="QGridLayout" name="sharesListGLayout">
             <property name="sizeConstraint">
              <enum>QLayout::SetMaximumSize</enum>
             </property>
@@ -556,7 +556,7 @@ p, li { white-space: pre-wrap; }
              <number>0</number>
             </property>
             <item row="0" column="0" rowspan="2">
-             <widget class="QTableWidget" name="shareddirList">
+             <widget class="QTableWidget" name="sharedDirList">
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -612,7 +612,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="3" column="2">
-           <spacer name="horizontalSpacer_16">
+           <spacer name="sharesHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -625,7 +625,7 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item row="4" column="0" colspan="3">
-           <spacer name="verticalSpacer_4">
+           <spacer name="sharesVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -648,14 +648,14 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="Line" name="line_3">
+        <widget class="Line" name="sharesHLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="sharesButtonHLayout">
          <property name="topMargin">
           <number>4</number>
          </property>
@@ -663,7 +663,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer_5">
+          <spacer name="sharesButtonLHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -703,7 +703,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_6">
+          <spacer name="sharesButtonRHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -720,9 +720,9 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="pageStyle">
-      <layout class="QGridLayout" name="gridLayout_9">
+      <layout class="QGridLayout" name="pageStyleGLayout">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="grpToolBar">
+        <widget class="QGroupBox" name="styleGBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -735,7 +735,7 @@ p, li { white-space: pre-wrap; }
          <property name="title">
           <string>RetroShare Page Display Style</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_8">
+         <layout class="QGridLayout" name="styleGBoxGLayout">
           <item row="0" column="0">
            <widget class="QLabel" name="labelPageToolBar">
             <property name="text">
@@ -758,7 +758,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="3" column="0">
-           <spacer name="verticalSpacer_2">
+           <spacer name="styleVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -774,7 +774,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="styleButtonHLayout">
          <property name="topMargin">
           <number>4</number>
          </property>
@@ -782,7 +782,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer_8">
+          <spacer name="styleButtonLHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -822,7 +822,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_9">
+          <spacer name="styleButtonRHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -839,7 +839,7 @@ p, li { white-space: pre-wrap; }
       </layout>
      </widget>
      <widget class="QWidget" name="pageSystem">
-      <layout class="QGridLayout" name="gridLayout_16">
+      <layout class="QGridLayout" name="pageSystemGLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -856,7 +856,7 @@ p, li { white-space: pre-wrap; }
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="frame_6">
+        <widget class="QFrame" name="frameSystem">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -869,7 +869,7 @@ p, li { white-space: pre-wrap; }
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_15">
+         <layout class="QGridLayout" name="frameSystemGLayout">
           <property name="leftMargin">
            <number>6</number>
           </property>
@@ -922,7 +922,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="3" column="0">
-           <layout class="QGridLayout" name="gridLayout_19">
+           <layout class="QGridLayout" name="systemGLayout">
             <item row="5" column="0">
              <widget class="QCheckBox" name="checkBoxQuit">
               <property name="text">
@@ -945,9 +945,9 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="2" column="0">
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="startMiniHLayout">
               <item>
-               <spacer name="horizontalSpacer_7">
+               <spacer name="startMiniHSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -974,7 +974,7 @@ p, li { white-space: pre-wrap; }
            </layout>
           </item>
           <item row="10" column="0">
-           <spacer name="verticalSpacer">
+           <spacer name="systemVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -990,14 +990,14 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="Line" name="line_6">
+        <widget class="Line" name="systemHLine">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QHBoxLayout" name="systemButtonHLayout">
          <property name="topMargin">
           <number>4</number>
          </property>
@@ -1005,7 +1005,7 @@ p, li { white-space: pre-wrap; }
           <number>4</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer_12">
+          <spacer name="systemButtonLHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -1045,7 +1045,7 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_13">
+          <spacer name="systemButtonRHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>

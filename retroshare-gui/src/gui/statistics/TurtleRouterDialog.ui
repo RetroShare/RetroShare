@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Router Statistics</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <item row="0" column="0">
     <widget class="QTreeWidget" name="_f2f_TW">
      <property name="headerHidden">

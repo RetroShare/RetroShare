@@ -29,14 +29,14 @@
       </attribute>
       <layout class="QGridLayout">
        <item row="1" column="0">
-        <layout class="QGridLayout" name="_2">
+        <layout class="QGridLayout" name="statusHLayout">
          <property name="margin">
           <number>6</number>
          </property>
          <item row="0" column="0">
-          <layout class="QGridLayout" name="_3">
+          <layout class="QGridLayout" name="doneGLayout">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="doneIndic">
              <property name="text">
               <string/>
              </property>
@@ -46,7 +46,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="doneLabel">
              <property name="text">
               <string>Done</string>
              </property>
@@ -55,9 +55,9 @@
           </layout>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout" name="_4">
+          <layout class="QGridLayout" name="activeGLayout">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_6">
+            <widget class="QLabel" name="activeIndic">
              <property name="text">
               <string/>
              </property>
@@ -67,7 +67,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="activeLabel">
              <property name="text">
               <string>Active</string>
              </property>
@@ -76,9 +76,9 @@
           </layout>
          </item>
          <item row="0" column="3">
-          <layout class="QGridLayout" name="_5">
+          <layout class="QGridLayout" name="outstandingGLayout">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="outstandingIndic">
              <property name="text">
               <string/>
              </property>
@@ -88,7 +88,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="label_9">
+            <widget class="QLabel" name="outstandingLabel">
              <property name="text">
               <string>Outstanding</string>
              </property>
@@ -97,7 +97,7 @@
           </layout>
          </item>
          <item row="0" column="4">
-          <spacer name="horizontalSpacer_4">
+          <spacer name="statusHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -110,9 +110,9 @@
           </spacer>
          </item>
          <item row="0" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="needCheckingGLayout">
            <item>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="needCheckingIndic">
              <property name="text">
               <string/>
              </property>
@@ -122,7 +122,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QLabel" name="needCheckingLabel">
              <property name="text">
               <string>Needs checking</string>
              </property>
@@ -149,7 +149,7 @@
             <x>0</x>
             <y>0</y>
             <width>747</width>
-            <height>505</height>
+            <height>509</height>
            </rect>
           </property>
          </widget>
@@ -163,13 +163,13 @@
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="linksGBox">
          <property name="title">
           <string>retroshare link</string>
          </property>
          <layout class="QGridLayout">
           <item row="1" column="0">
-           <widget class="QTextEdit" name="Linktext"/>
+           <widget class="QTextEdit" name="linkText"/>
           </item>
           <item row="0" column="0">
            <widget class="QPushButton" name="copylinkdetailsButton">

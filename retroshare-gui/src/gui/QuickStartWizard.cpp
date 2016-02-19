@@ -59,11 +59,11 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
 //    ui.checkBoxTunnelConnection->setChecked(b) ;
     
-    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
-    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(ui.sharedDirList->horizontalHeader(), 0, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(ui.sharedDirList->horizontalHeader(), 2, QHeaderView::Interactive);
  
-    ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
-    ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
+    ui.sharedDirList->horizontalHeader()->resizeSection( 0, 360 );
+    ui.sharedDirList->horizontalHeader()->setStretchLastSection(false);
 	  
   /* Hide platform specific features */
 #ifndef Q_OS_WIN
@@ -248,7 +248,7 @@ void QuickStartWizard::on_pushButtonSharesRemove_clicked()
 {
 	/* id current dir */
 	/* ask for removal */
-	QTableWidget *listWidget = ui.shareddirList;
+	QTableWidget *listWidget = ui.sharedDirList;
 	int row = listWidget -> currentRow();
 	QTableWidgetItem *qdir = listWidget->item(row,0) ;
 
@@ -285,7 +285,7 @@ void QuickStartWizard::loadShare()
 	ui.shareIncomingDirectory->setChecked(rsFiles->getShareDownloadDirectory());
 
 	/* get a link to the table */
-	QTableWidget *listWidget = ui.shareddirList;
+	QTableWidget *listWidget = ui.sharedDirList;
 
 	/* remove old items ??? */
 	listWidget->clearContents() ;
@@ -364,8 +364,8 @@ void QuickStartWizard::updateFlags(bool b)
 	{
 		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
 		FileStorageFlags current_flags(0u) ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,1)))->isChecked()? DIR_FLAGS_NETWORK_WIDE_OTHERS:(FileStorageFlags)0u ;
-		current_flags |= (dynamic_cast<QCheckBox*>(ui.shareddirList->cellWidget(row,2)))->isChecked()? DIR_FLAGS_BROWSABLE_OTHERS   :(FileStorageFlags)0u ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.sharedDirList->cellWidget(row,1)))->isChecked()? DIR_FLAGS_NETWORK_WIDE_OTHERS:(FileStorageFlags)0u ;
+		current_flags |= (dynamic_cast<QCheckBox*>(ui.sharedDirList->cellWidget(row,2)))->isChecked()? DIR_FLAGS_BROWSABLE_OTHERS   :(FileStorageFlags)0u ;
 
 		if( ((*it).shareflags ^ current_flags).toUInt32() )
 		{

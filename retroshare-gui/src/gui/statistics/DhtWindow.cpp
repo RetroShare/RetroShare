@@ -131,16 +131,16 @@ void DhtWindow::updateNetStatus()
 	}
 #endif
 
-		status = QString::fromStdString(rsDht->getUdpAddressString());
-	oldstatus = ui.peerAddressLabel->text();
+	status = QString::fromStdString(rsDht->getUdpAddressString());
+	oldstatus = ui.peerAddress->text();
 	if (oldstatus != status)
 	{
-		ui.peerAddressLabel->setText(status);
+		ui.peerAddress->setText(status);
 	}
 
 	uint32_t netMode = rsConfig->getNetworkMode();
 
-	QLabel *label = ui.networkLabel;
+	QLabel *label = ui.network;
 	switch(netMode)
 	{
 		case RSNET_NETWORK_UNKNOWN:
@@ -160,7 +160,7 @@ void DhtWindow::updateNetStatus()
 			break;
 	}
 
-	label = ui.natTypeLabel;
+	label = ui.natType;
 
 	uint32_t natType = rsConfig->getNatTypeMode();
 	switch(natType)
@@ -190,7 +190,7 @@ void DhtWindow::updateNetStatus()
 
 
 
-	label = ui.natHoleLabel;
+	label = ui.natHole;
 	uint32_t natHole = rsConfig->getNatHoleMode();
 
 	switch(natHole)
@@ -214,7 +214,7 @@ void DhtWindow::updateNetStatus()
 
 	uint32_t connect = rsConfig->getConnectModes();
 
-	label = ui.connectLabel;
+	label = ui.connect;
 	QString connOut;
 	if (connect & RSNET_CONNECT_OUTGOING_TCP)
 	{
@@ -241,7 +241,7 @@ void DhtWindow::updateNetStatus()
 
 	uint32_t netState = rsConfig->getNetState();
 
-	label = ui.netStatusLabel;
+	label = ui.netStatus;
 	switch(netState)
 	{
 		case RSNET_NETSTATE_BAD_UNKNOWN:
@@ -279,7 +279,9 @@ void DhtWindow::updateNetStatus()
 
 void DhtWindow::updateNetPeers()
 {
+#if 0
 	QTreeWidget *peerTreeWidget = ui.peerTreeWidget;
+#endif
 
 	std::list<RsPeerId> peerIds;
 	std::list<RsPeerId>::iterator it;
@@ -504,20 +506,20 @@ void DhtWindow::updateNetPeers()
 	connstr += tr(",#relay:") + QString::number(nRelayPeers);
 	connstr += ")";*/
 	
-	ui.label_peers->setText(QString::number(nPeers));
-	ui.label_offline->setText(QString::number(nOfflinePeers)); 
-	ui.label_unreachable->setText(QString::number(nUnreachablePeers)); 
-	ui.label_online->setText(QString::number(nOnlinePeers)); 
+	ui.peers->setText(QString::number(nPeers));
+	ui.offline->setText(QString::number(nOfflinePeers));
+	ui.unreachable->setText(QString::number(nUnreachablePeers));
+	ui.online->setText(QString::number(nOnlinePeers));
 	
-	ui.label_disconnected->setText(QString::number(nDisconnPeers));
-	ui.label_direct->setText(QString::number(nDirectPeers)); 
-	ui.label_proxy->setText(QString::number(nProxyPeers)); 
-	ui.label_relay->setText(QString::number(nRelayPeers)); 
+	ui.disconnected->setText(QString::number(nDisconnPeers));
+	ui.direct->setText(QString::number(nDirectPeers));
+	ui.proxy->setText(QString::number(nProxyPeers));
+	ui.relay->setText(QString::number(nRelayPeers));
 	
-	ui.tabWidget_2->setTabText(1, tr("Peers") + " (" + QString::number(ui.peerTreeWidget->topLevelItemCount()) + ")" );
+	ui.dhtTWidget->setTabText(1, tr("Peers") + " (" + QString::number(ui.peerTreeWidget->topLevelItemCount()) + ")" );
 
 
-	//peerSummaryLabel->setText(connstr);
+	//peerSummary->setText(connstr);
 }
 
 
@@ -605,7 +607,7 @@ void DhtWindow::updateRelays()
 
 	}
 	
-		ui.tabWidget_2->setTabText(2, tr("Relays") + " (" + QString::number(ui.relayTreeWidget->topLevelItemCount()) + ")" );
+		ui.dhtTWidget->setTabText(2, tr("Relays") + " (" + QString::number(ui.relayTreeWidget->topLevelItemCount()) + ")" );
 
 }
 
@@ -654,8 +656,6 @@ void DhtWindow::updateDhtPeers()
 		}
 	}
 
-	QTreeWidget *dhtTreeWidget = ui.dhtTreeWidget;
-
 	ui.dhtTreeWidget->clear();
 
 	time_t now = time(NULL);
@@ -700,7 +700,7 @@ void DhtWindow::updateDhtPeers()
 		filterItems(ui.filterLineEdit->text());
     }
     
-    ui.tabWidget_2->setTabText(0, tr("DHT") + " (" + QString::number(ui.dhtTreeWidget->topLevelItemCount()) + ")" );
+    ui.dhtTWidget->setTabText(0, tr("DHT") + " (" + QString::number(ui.dhtTreeWidget->topLevelItemCount()) + ")" );
 	}
 	
 

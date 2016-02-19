@@ -246,7 +246,7 @@ void PhotoShare::clearAlbums()
     clearPhotos();
 
     std::cerr << "PhotoShare::clearAlbums()" << std::endl;
-    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    QLayout *alayout = ui.scrollAreaWidgetContentsTop->layout();
 
     QSetIterator<AlbumItem*> sit(mAlbumItems);
 
@@ -268,7 +268,7 @@ void PhotoShare::clearAlbums()
 void PhotoShare::deleteAlbums()
 {
     std::cerr << "PhotoShare::clearAlbums()" << std::endl;
-    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    QLayout *alayout = ui.scrollAreaWidgetContentsTop->layout();
 
     QSetIterator<AlbumItem*> sit(mAlbumItems);
 
@@ -289,7 +289,7 @@ void PhotoShare::clearPhotos()
 {
     std::cerr << "PhotoShare::clearPhotos()" << std::endl;
 
-    QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
+    QLayout *layout = ui.scrollAreaWidgetContentsBottom->layout();
 
     if(mAlbumSelected)
     {
@@ -312,7 +312,7 @@ void PhotoShare::updateAlbums()
 
     clearAlbums();
 
-    QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+    QLayout *alayout = ui.scrollAreaWidgetContentsTop->layout();
     QSetIterator<AlbumItem*> sit(mAlbumItems);
 
     if(ui.pushButton_YourAlbums->isChecked())
@@ -386,7 +386,7 @@ void PhotoShare::deleteAlbum(const RsGxsGroupId &grpId)
                 mAlbumSelected = NULL;
             }
 
-            QLayout *alayout = ui.scrollAreaWidgetContents->layout();
+            QLayout *alayout = ui.scrollAreaWidgetContentsTop->layout();
             alayout->removeWidget(item);
             mAlbumItems.remove(item);
             item->setParent(NULL);
@@ -445,7 +445,7 @@ void PhotoShare::updatePhotos()
 
         while(sit.hasNext())
         {
-            QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
+            QLayout *layout = ui.scrollAreaWidgetContentsBottom->layout();
             layout->addWidget(sit.next());
         }
     }

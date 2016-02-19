@@ -10,9 +10,9 @@
     <height>331</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QScrollArea" name="scrollArea">
+    <widget class="QScrollArea" name="mainSArea">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -28,20 +28,11 @@
         <x>0</x>
         <y>0</y>
         <width>619</width>
-        <height>280</height>
+        <height>276</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
+      <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
@@ -52,9 +43,9 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="buttonHLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="lb_ServPerm">
        <property name="text">
         <string>ServicePermissions</string>
        </property>
@@ -71,7 +62,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="buttonHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -84,7 +75,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pb_Reset">
        <property name="text">
         <string>Reset</string>
        </property>

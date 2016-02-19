@@ -21,25 +21,25 @@
 
 #include "PluginItem.h"
 
-PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon)
+PluginItem::PluginItem(const QString& pluginVersion, int pluginId, const QString& pluginTitle,const QString& pluginDescription,const QString& pluginStatus, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon)
 	:QWidget(NULL)
 {
 	setupUi(this) ;
 
-	_id = id ;
-	_statusLabel->setText(status) ;
-	_statusLabel->setToolTip(error_string);
-	_hashLabel->setText(file_hash) ;
-	_name_LE->setText(file_name) ;
-	_pluginIcon->setIcon(icon) ;
-	_pluginIcon->setText(QString()) ;
+	_id = pluginId ;
+	status->setText(pluginStatus) ;
+	status->setToolTip(error_string);
+	hash->setText(file_hash) ;
+	name->setText(file_name) ;
+	pluginIcon->setIcon(icon) ;
+	pluginIcon->setText(QString()) ;
 	msgLabel->setText(pluginDescription) ;
-	subjectLabel->setText(pluginTitle + "  "+ pluginVersion) ;
-	infoLabel->setText(pluginTitle + " " + tr("will be enabled after your restart RetroShare.")) ;
-	infoLabel->hide();
+	subject->setText(pluginTitle + "  "+ pluginVersion) ;
+	info->setText(pluginTitle + " " + tr("will be enabled after your restart RetroShare.")) ;
+	info->hide();
 
-	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
-	QObject::connect(_about_PB,SIGNAL(clicked()),this,SLOT(aboutPlugin())) ;
+	QObject::connect(configureButton,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;
+	QObject::connect(aboutButton,SIGNAL(clicked()),this,SLOT(aboutPlugin())) ;
 	
 	QObject::connect(enableButton,SIGNAL(clicked()),this,SLOT(enablePlugin())) ;
 	QObject::connect(disableButton,SIGNAL(clicked()),this,SLOT(disablePlugin())) ;
@@ -49,16 +49,16 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 
 void PluginItem::enablePlugin()
 {
-	emit( pluginEnabled(_hashLabel->text()) ) ;
-	infoLabel->show();
+	emit( pluginEnabled(hash->text()) ) ;
+	info->show();
 	disableButton->show();	
 	enableButton->hide();
 }
 
 void PluginItem::disablePlugin()
 {
-	emit( pluginDisabled(_hashLabel->text()) ) ;
-	infoLabel->hide();
+	emit( pluginDisabled(hash->text()) ) ;
+	info->hide();
 	enableButton->show();
 	disableButton->hide();	
 }

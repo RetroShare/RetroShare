@@ -16,7 +16,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QGroupBox" name="albumGroup">
      <property name="sizePolicy">
@@ -28,7 +28,7 @@
      <property name="title">
       <string>Photo</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="albumGroupVLayout">
       <item>
        <widget class="QLabel" name="label_Photo">
         <property name="sizePolicy">
@@ -132,7 +132,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0" colspan="2">
        <widget class="QScrollArea" name="scrollArea">
         <property name="sizePolicy">
@@ -155,7 +155,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>328</width>
+           <width>318</width>
            <height>20</height>
           </rect>
          </property>
@@ -165,9 +165,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
+           <layout class="QVBoxLayout" name="scrollAreaVLayout">
             <property name="spacing">
              <number>1</number>
             </property>
@@ -191,7 +191,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="groupBox_Summary">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -207,7 +207,7 @@
      <property name="title">
       <string>Summary</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="groupBox_SummaryGLayout">
       <item row="0" column="1">
        <widget class="QLineEdit" name="lineEdit_Title">
         <property name="enabled">
@@ -222,7 +222,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="label_Caption">
         <property name="text">
          <string>Caption</string>
         </property>
@@ -242,7 +242,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="label_Where">
         <property name="text">
          <string>Where:</string>
         </property>
@@ -275,14 +275,14 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="label_Title">
         <property name="text">
          <string>Photo Title:</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="label_When">
         <property name="text">
          <string>When</string>
         </property>
@@ -306,7 +306,7 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="2">
-    <spacer name="horizontalSpacer">
+    <spacer name="buttonHSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

@@ -10,14 +10,14 @@
     <height>370</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <item row="1" column="0">
     <widget class="QGroupBox" name="eventGroup">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="eventGroupVLayout">
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="eventDataGLayout">
         <item row="3" column="1">
-         <layout class="QHBoxLayout" name="horizontalLayout_1">
+         <layout class="QHBoxLayout" name="eventFilenameHLayout">
           <property name="spacing">
            <number>2</number>
           </property>
@@ -41,7 +41,7 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="fileNameLabel">
           <property name="text">
            <string>Filename:</string>
           </property>
@@ -50,9 +50,9 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="buttonHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

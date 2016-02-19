@@ -65,7 +65,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="findHLayout">
          <property name="spacing">
           <number>6</number>
          </property>
@@ -117,7 +117,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="labelFind">
            <property name="contextMenuPolicy">
             <enum>Qt::NoContextMenu</enum>
            </property>
@@ -167,7 +167,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="3">
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="matchHLayout">
          <property name="spacing">
           <number>6</number>
          </property>
@@ -175,7 +175,7 @@
           <number>0</number>
          </property>
          <item>
-          <spacer>
+          <spacer name="matchHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -231,7 +231,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabTOC">
         <property name="windowTitle">
@@ -304,7 +304,7 @@
           <number>6</number>
          </property>
          <item row="2" column="1">
-          <layout class="QHBoxLayout">
+          <layout class="QHBoxLayout" name="searchHLayout">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -312,7 +312,7 @@
             <number>0</number>
            </property>
            <item>
-            <spacer>
+            <spacer name="searchHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -337,7 +337,7 @@
           </layout>
          </item>
          <item row="0" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="searchLabel">
            <property name="contextMenuPolicy">
             <enum>Qt::NoContextMenu</enum>
            </property>

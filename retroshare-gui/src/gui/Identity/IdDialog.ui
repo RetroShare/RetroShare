@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
+  <layout class="QGridLayout">
    <property name="horizontalSpacing">
     <number>0</number>
    </property>
@@ -40,7 +40,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
       <property name="margin">
        <number>2</number>
       </property>
@@ -84,7 +84,7 @@
        </widget>
       </item>
       <item>
-       <spacer name="titleBarSpacer">
+       <spacer name="titleBarHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -102,7 +102,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -121,8 +121,8 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+     <widget class="QWidget" name="listWidget">
+      <layout class="QVBoxLayout" name="listVLayout">
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="frameShape">
@@ -131,7 +131,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="toolBarFrameHLayout">
           <property name="margin">
            <number>2</number>
           </property>
@@ -235,8 +235,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+     <widget class="QWidget" name="detailWidget">
+      <layout class="QVBoxLayout" name="detailVLayout">
        <item>
         <widget class="QFrame" name="headerFrame">
          <property name="frameShape">
@@ -245,7 +245,7 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="headerFrameGLayout">
           <property name="horizontalSpacing">
            <number>12</number>
           </property>
@@ -289,9 +289,9 @@
          <property name="title">
           <string>Identity info</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
+         <layout class="QGridLayout" name="detailsGroupBoxGLayout">
           <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="infoGLayout">
             <property name="margin">
              <number>6</number>
             </property>
@@ -299,28 +299,28 @@
              <number>6</number>
             </property>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="keyId_Label">
               <property name="text">
                <string>Identity ID :</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="nickname_Label">
               <property name="text">
                <string>Identity name :</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="PgpId_LB">
+             <widget class="QLabel" name="nodeId_Label">
               <property name="text">
                <string>Owner node ID :</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_Nickname">
+             <widget class="QLineEdit" name="nickname_LEdit">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -330,7 +330,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_KeyId">
+             <widget class="QLineEdit" name="keyId_LEdit">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -340,7 +340,7 @@
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_GpgId">
+             <widget class="QLineEdit" name="nodeId_LEdit">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -350,14 +350,14 @@
              </widget>
             </item>
             <item row="5" column="0">
-             <widget class="QLabel" name="PgpName_LB">
+             <widget class="QLabel" name="nodeName_Label">
               <property name="text">
                <string>Owner node name :</string>
               </property>
              </widget>
             </item>
             <item row="5" column="1">
-             <widget class="QLineEdit" name="lineEdit_GpgName">
+             <widget class="QLineEdit" name="nodeName_LEdit">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -367,29 +367,29 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="type_Label">
               <property name="text">
                <string>Type:</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEdit_Type"/>
+             <widget class="QLineEdit" name="type_LEdit"/>
             </item>
             <item row="6" column="0">
-             <widget class="QLabel" name="label_7">
+             <widget class="QLabel" name="lastUsed_Label">
               <property name="text">
                <string>Last used:</string>
               </property>
              </widget>
             </item>
             <item row="6" column="1">
-             <widget class="QLineEdit" name="lineEdit_LastUsed"/>
+             <widget class="QLineEdit" name="lastUsed_LEdit"/>
             </item>
            </layout>
           </item>
           <item row="0" column="1">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="avatarVLayout">
             <item>
              <widget class="QLabel" name="avatarLabel">
               <property name="sizePolicy">
@@ -435,7 +435,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_3">
+             <spacer name="avatarVSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -448,19 +448,6 @@
              </spacer>
             </item>
            </layout>
-          </item>
-          <item row="1" column="0">
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>
@@ -476,9 +463,9 @@
          <property name="title">
           <string>Reputation</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QVBoxLayout" name="reputationGroupBoxVLayout">
           <item>
-           <layout class="QGridLayout" name="gridLayout_2">
+           <layout class="QGridLayout" name="repGLayout">
             <property name="margin">
              <number>6</number>
             </property>
@@ -493,14 +480,14 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_6">
+             <widget class="QLabel" name="ownOpinion_Label">
               <property name="text">
                <string>Your opinion:</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="neighborNodesOpinion_Label">
               <property name="text">
                <string>Neighbor nodes:</string>
               </property>
@@ -553,7 +540,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="overallOpinion_Label">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -571,7 +558,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer name="detailVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -627,14 +614,14 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledElidedLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -642,15 +629,16 @@ p, li { white-space: pre-wrap; }
    <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
+   <class>StyledElidedLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -20,8 +20,17 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout_8">
-   <property name="margin">
+  <layout class="QGridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -31,14 +40,14 @@
     <widget class="HeaderFrame" name="headerFrame"/>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame_2">
+    <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_6">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0">
        <widget class="QTabWidget" name="tabWidget">
         <property name="mouseTracking">
@@ -53,15 +62,15 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="channelPostTab">
          <attribute name="title">
           <string>Channel Post</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_7">
+         <layout class="QGridLayout" name="channelPostTabGLayout">
           <item row="0" column="0" colspan="3">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="postToHLayout">
             <item>
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel" name="postToLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -86,9 +95,9 @@
            </layout>
           </item>
           <item row="1" column="0">
-           <layout class="QGridLayout" name="gridLayout_5">
+           <layout class="QGridLayout" name="attachGLayout">
             <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="attachLabel">
               <property name="text">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -144,7 +153,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="1" column="2">
-           <spacer name="horizontalSpacer_2">
+           <spacer name="channelHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -157,15 +166,15 @@ p, li { white-space: pre-wrap; }
            </spacer>
           </item>
           <item row="2" column="0" colspan="3">
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="messGBox">
             <property name="title">
              <string>Message</string>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <layout class="QVBoxLayout" name="messGBoxVLayout">
              <item>
-              <layout class="QHBoxLayout">
+              <layout class="QHBoxLayout" name="messHLayout">
                <item>
-                <widget class="QLabel" name="label_5">
+                <widget class="QLabel" name="subjectLabel">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -190,7 +199,7 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="fileAttachTab">
          <attribute name="icon">
           <iconset resource="../images.qrc">
            <normaloff>:/images/attachment.png</normaloff>:/images/attachment.png</iconset>
@@ -198,9 +207,9 @@ p, li { white-space: pre-wrap; }
          <attribute name="title">
           <string>Attachments</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="fileAttachTabGLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="fileAttachPicture">
             <property name="text">
              <string/>
             </property>
@@ -210,7 +219,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="fileAttachLabel">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -229,7 +238,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="0" column="2">
-           <spacer>
+           <spacer name="fileAttachHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -293,7 +302,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
+               <width>523</width>
                <height>24</height>
               </rect>
              </property>
@@ -303,11 +312,20 @@ p, li { white-space: pre-wrap; }
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QVBoxLayout" name="verticalLayout">
+             <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
               <property name="spacing">
                <number>3</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
                <number>3</number>
               </property>
               <item>
@@ -324,7 +342,7 @@ p, li { white-space: pre-wrap; }
                 <property name="toolTip">
                  <string>Drag and Drop Files from Search Results</string>
                 </property>
-                <layout class="QGridLayout" name="gridLayout_3"/>
+                <layout class="QGridLayout" name="fileFrameGLayout"/>
                </widget>
               </item>
              </layout>
@@ -336,7 +354,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <item>
          <widget class="QCheckBox" name="generateCheckBox">
           <property name="text">
@@ -380,7 +398,6 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

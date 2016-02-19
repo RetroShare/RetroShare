@@ -10,7 +10,7 @@
     <height>292</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="FriendListVLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -34,7 +34,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
       <property name="spacing">
        <number>3</number>
       </property>

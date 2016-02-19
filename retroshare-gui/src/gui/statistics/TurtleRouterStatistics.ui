@@ -13,23 +13,29 @@
   <property name="windowTitle">
    <string>Router Statistics</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="routertabWidget">
+    <widget class="QTabWidget" name="routerTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="turtleTab">
       <attribute name="title">
        <string>Turtle Router</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="turtleTabGLayout">
        <item row="0" column="0">
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
          <widget class="QScrollArea" name="_tunnel_statistics_F">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>120</height>
+           </size>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
@@ -48,7 +54,7 @@
              <x>0</x>
              <y>0</y>
              <width>640</width>
-             <height>248</height>
+             <height>120</height>
             </rect>
            </property>
            <property name="autoFillBackground">
@@ -56,19 +62,17 @@
            </property>
           </widget>
          </widget>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="TurtleGraph" name="frmGraph" native="true">
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>200</height>
-          </size>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
-         </property>
+         <widget class="TurtleGraph" name="frmGraph" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>120</height>
+           </size>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
+         </widget>
         </widget>
        </item>
       </layout>

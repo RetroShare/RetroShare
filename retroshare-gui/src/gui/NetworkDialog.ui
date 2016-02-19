@@ -10,9 +10,9 @@
     <height>567</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="filterHLayout">
      <item>
       <widget class="QLabel" name="filterLabel">
        <property name="text">

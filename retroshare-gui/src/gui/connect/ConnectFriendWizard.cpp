@@ -317,9 +317,9 @@ void ConnectFriendWizard::initializePage(int id)
 		connect(ui->userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
 		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
 		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
-		connect(ui->userCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
 		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
 		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
+		connect(ui->friendCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
 		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 
 		cleanfriendCertTimer = new QTimer(this);
@@ -389,32 +389,32 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
-            ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
-            ui->_require_WL_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
+			ui->cp_direct_transfer_CB->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
+			ui->cp_allow_push_CB->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
+			ui->cp_require_WL_CB->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
-        sockaddr_storage addr ;
+			sockaddr_storage addr ;
 
-    std::cerr << "Cert IP = " << peerDetails.extAddr << std::endl;
-        if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
-        {
-            QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
+			std::cerr << "Cert IP = " << peerDetails.extAddr << std::endl;
+			if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
+			{
+				QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
 
-            ui->_addIPToWhiteList_CB_2->setChecked(true) ;
-            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0) ;
-            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/24") ;
-            ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/16") ;
-            ui->_addIPToWhiteList_ComboBox_2->setEnabled(true) ;
-            ui->_addIPToWhiteList_CB_2->setEnabled(true) ;
-        }
-        else if(ui->_require_WL_CB_2->isChecked())
-        {
-        ui->_addIPToWhiteList_ComboBox_2->addItem(tr("No IP in this certificate!")) ;
-            ui->_addIPToWhiteList_ComboBox_2->setToolTip(tr("<p>This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.</p>")) ;
-            ui->_addIPToWhiteList_ComboBox_2->setEnabled(false) ;
-            ui->_addIPToWhiteList_CB_2->setChecked(false) ;
-            ui->_addIPToWhiteList_CB_2->setEnabled(false) ;
-        }
+				ui->_addIPToWhiteList_CB->setChecked(true) ;
+				ui->_addIPToWhiteList_ComboBox->addItem(ipstring0) ;
+				ui->_addIPToWhiteList_ComboBox->addItem(ipstring0+"/24") ;
+				ui->_addIPToWhiteList_ComboBox->addItem(ipstring0+"/16") ;
+				ui->_addIPToWhiteList_ComboBox->setEnabled(true) ;
+				ui->_addIPToWhiteList_CB->setEnabled(true) ;
+			}
+			else if(ui->cp_require_WL_CB->isChecked())
+			{
+				ui->_addIPToWhiteList_ComboBox->addItem(tr("No IP in this certificate!")) ;
+				ui->_addIPToWhiteList_ComboBox->setToolTip(tr("<p>This certificate has no IP. You will rely on discovery and DHT to find it. Because you require whitelist clearance, the peer will raise a security warning in the NewsFeed tab. From there, you can whitelist his IP.</p>")) ;
+				ui->_addIPToWhiteList_ComboBox->setEnabled(false) ;
+				ui->_addIPToWhiteList_CB->setChecked(false) ;
+				ui->_addIPToWhiteList_CB->setEnabled(false) ;
+			}
 
 			RsPeerDetails tmp_det ;
 			bool already_in_keyring = rsPeers->getGPGDetails(peerDetails.gpg_id, tmp_det) ;
@@ -571,7 +571,7 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->fr_nodeEdit->setText(loc);
 			
-			ui->fr_label_3->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->fr_labelTop->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}
@@ -698,6 +698,8 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 			break;
 		}
+	case Page_WebMail:
+		break;
 	case Page_Email:
 		{
 			QString mailaddresses = ui->addressEdit->text();
@@ -782,13 +784,13 @@ ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 
     if (hasVisitedPage(Page_FriendRequest))
     {
-        if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
-        if(  ui->_allow_push_CB->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
-        if(  ui->_require_WL_CB->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
+        if(  ui->fr_direct_transfer_CB->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
+        if(  ui->fr_allow_push_CB->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
+        if(  ui->fr_require_WL_CB->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
     } else if (hasVisitedPage(Page_Conclusion)) {
-        if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
-        if(  ui->_allow_push_CB_2->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
-        if(  ui->_require_WL_CB_2->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
+        if(  ui->cp_direct_transfer_CB->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
+        if(  ui->cp_allow_push_CB->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
+        if(  ui->cp_require_WL_CB->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
     }
     return flags ;
 }
@@ -835,13 +837,13 @@ void ConnectFriendWizard::accept()
         rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
         rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
 
-    if(ui->_addIPToWhiteList_CB_2->isChecked())
+    if(ui->_addIPToWhiteList_CB->isChecked())
     {
         sockaddr_storage addr ;
         if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
         {
             std::cerr << "ConclusionPage::adding IP " << sockaddr_storage_tostring(addr) << " to whitelist." << std::endl;
-            rsBanList->addIpRange(addr,ui->_addIPToWhiteList_ComboBox_2->currentIndex(),RSBANLIST_TYPE_WHITELIST,std::string(tr("Added with certificate from %1").arg(ui->nameEdit->text()).toUtf8().constData()));
+            rsBanList->addIpRange(addr,ui->_addIPToWhiteList_ComboBox->currentIndex(),RSBANLIST_TYPE_WHITELIST,std::string(tr("Added with certificate from %1").arg(ui->nameEdit->text()).toUtf8().constData()));
         }
     }
 

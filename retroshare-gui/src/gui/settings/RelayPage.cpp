@@ -47,7 +47,7 @@ RelayPage::RelayPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.addPushButton,SIGNAL(clicked()),this,SLOT(addServer()));
 	QObject::connect(ui.removePushButton,SIGNAL(clicked()),this,SLOT(removeServer()));
-	QObject::connect(ui.DhtLineEdit,SIGNAL(textChanged(const QString &)),this,SLOT(checkKey()));
+	QObject::connect(ui.dhtLineEdit,SIGNAL(textChanged(const QString &)),this,SLOT(checkKey()));
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(stateChanged(int)),this,SLOT(updateEnabled()));
@@ -198,23 +198,23 @@ void RelayPage::updateEnabled()
 
 	if (ui.enableCheckBox->isChecked())
 	{
-		ui.groupBox->setEnabled(true);
+		ui.optionsGBox->setEnabled(true);
 		if (ui.serverCheckBox->isChecked())
 		{
 			std::cerr << "RelayPage::updateEnabled() Both Enabled" << std::endl;
-			ui.serverGroupBox->setEnabled(true);
+			ui.serverGBox->setEnabled(true);
 		}
 		else
 		{
 			std::cerr << "RelayPage::updateEnabled() Options Only Enabled" << std::endl;
-			ui.serverGroupBox->setEnabled(false);
+			ui.serverGBox->setEnabled(false);
 		}
 	}
 	else
 	{
 		std::cerr << "RelayPage::updateEnabled() Both Disabled" << std::endl;
-		ui.groupBox->setEnabled(false);
-		ui.serverGroupBox->setEnabled(false);
+		ui.optionsGBox->setEnabled(false);
+		ui.serverGBox->setEnabled(false);
 	}
 
 }
@@ -223,7 +223,7 @@ void RelayPage::updateEnabled()
 void RelayPage::checkKey()
 {
 
-	std::string server = ui.DhtLineEdit->text().toStdString();
+	std::string server = ui.dhtLineEdit->text().toStdString();
 	std::cerr << "RelayPage::checkKey() length: " << server.length();
 	std::cerr << std::endl;
 	if (server.length() == 40)
@@ -247,12 +247,12 @@ void RelayPage::addServer()
 		return;
 	}
 
-	std::string server = ui.DhtLineEdit->text().toStdString();
+	std::string server = ui.dhtLineEdit->text().toStdString();
 
 	bool ok = rsDht->addRelayServer(server);
 	if (ok)
 	{
-		ui.DhtLineEdit->setText(QString(""));
+		ui.dhtLineEdit->setText(QString(""));
 	}	
 	loadServers();
 }

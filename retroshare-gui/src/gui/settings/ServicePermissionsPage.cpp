@@ -40,7 +40,7 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
     ui.frame->setHideOffline(ui.cb_hideOffline->isChecked());
 
     // Not implemented?
-    ui.pushButton->hide();
+    ui.pb_Reset->hide();
 }
 
 QString ServicePermissionsPage::helpText() const

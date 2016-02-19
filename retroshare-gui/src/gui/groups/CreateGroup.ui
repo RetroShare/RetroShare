@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Create a Group</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout">
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
@@ -34,7 +34,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="frameVLayout">
       <item>
        <layout class="QHBoxLayout" name="groupLayout">
         <property name="spacing">

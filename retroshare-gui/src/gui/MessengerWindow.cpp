@@ -103,7 +103,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
-    connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
+    connect(ui.messageLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
 
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
@@ -124,7 +124,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
         expandedGroups = NULL;
     }
 
-    ui.messagelineEdit->setMinimumWidth(20);
+    ui.messageLineEdit->setMinimumWidth(20);
 
     /* Initialize friend list */
     QToolButton *button = new QToolButton(this);
@@ -230,13 +230,13 @@ void MessengerWindow::openShareManager()
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
-    ui.messagelineEdit->setEditText( QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
+    ui.messageLineEdit->setEditText( QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 /** Save own status message */
 void MessengerWindow::savestatusmessage()
 {
-    rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toUtf8().constData());
+    rsMsgs->setCustomStateString(ui.messageLineEdit->currentText().toUtf8().constData());
 }
 
 void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)

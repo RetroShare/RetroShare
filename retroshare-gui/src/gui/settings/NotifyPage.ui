@@ -6,11 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>512</height>
+    <width>495</width>
+    <height>413</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -20,13 +20,13 @@
       <attribute name="title">
        <string>Feed</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
+      <layout class="QVBoxLayout" name="tabFeedVLayout">
        <item>
-        <widget class="QGroupBox" name="notify_ForumNewMsg">
+        <widget class="QGroupBox" name="newsFeedGBox">
          <property name="title">
           <string>News Feed</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="newsFeedGBoxHLayout">
           <property name="spacing">
            <number>0</number>
           </property>
@@ -34,7 +34,7 @@
            <number>6</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="newsFeedNotifyVLayout">
             <item>
              <widget class="QCheckBox" name="notify_Peers">
               <property name="text">
@@ -99,12 +99,12 @@
              </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="feedLayout"/>
+             <layout class="QVBoxLayout" name="pluginFeedNotifyLayout"/>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="testFeedVLayout">
             <item>
              <widget class="QPushButton" name="testFeedButton">
               <property name="text">
@@ -113,7 +113,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_2">
+             <spacer name="testFeedVSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -135,7 +135,7 @@
          <property name="title">
           <string>Message</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="messageGroupBoxVLayout">
           <item>
            <widget class="QCheckBox" name="message_ConnectAttempt">
             <property name="text">
@@ -147,7 +147,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer name="feedVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -165,7 +165,7 @@
       <attribute name="title">
        <string>Toasters</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+      <layout class="QVBoxLayout" name="tabToastersVLayout">
        <item>
         <widget class="QPushButton" name="pushButtonDisableAll">
          <property name="toolTip">
@@ -180,7 +180,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="toastersGBox">
          <property name="title">
           <string>Toasters</string>
          </property>
@@ -192,9 +192,9 @@
            <number>9</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="toasterVLayout">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
+             <layout class="QVBoxLayout" name="toasterNotifyVLayout">
               <item>
                <widget class="QCheckBox" name="popup_Connect">
                 <property name="text">
@@ -245,12 +245,12 @@
                </widget>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="toasterLayout"/>
+               <layout class="QVBoxLayout" name="pluginToasterNotifyLayout"/>
               </item>
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_9">
+             <layout class="QVBoxLayout" name="testToasterVLayout">
               <item>
                <widget class="QPushButton" name="testToasterButton">
                 <property name="text">
@@ -259,7 +259,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_3">
+               <spacer name="testToasterVSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -276,7 +276,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="toasterPositionGLayout">
             <item row="1" column="0">
              <widget class="QLabel" name="labelToasterPosition">
               <property name="sizePolicy">
@@ -355,7 +355,7 @@
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_6">
+           <spacer name="toastersVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -376,25 +376,25 @@
       <attribute name="title">
        <string>Systray</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_12">
+      <layout class="QVBoxLayout" name="tabSystrayVLayout">
        <item>
         <widget class="QGroupBox" name="trayNotifyGroupBox">
          <property name="title">
           <string>Systray Icon</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <layout class="QVBoxLayout" name="trayNotifyGroupBoxVLayout">
           <item>
-           <layout class="QGridLayout" name="notifyLayout"/>
+           <layout class="QGridLayout" name="userNotifyLayout"/>
           </item>
          </layout>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="systrayMessageGBox">
          <property name="title">
           <string>Systray message</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <layout class="QVBoxLayout" name="systrayMessageGBoxVLayout">
           <item>
            <widget class="QCheckBox" name="systray_GroupChat">
             <property name="text">
@@ -413,7 +413,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_4">
+        <spacer name="systrayVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -431,7 +431,7 @@
       <attribute name="title">
        <string>Chat Lobbies</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_13">
+      <layout class="QVBoxLayout" name="tabChatLobbiesVLayout">
        <item>
         <widget class="QCheckBox" name="chatLobbies_CountUnRead">
          <property name="text">
@@ -457,7 +457,7 @@
         <widget class="QPlainTextEdit" name="chatLobbies_TextToNotify"/>
        </item>
        <item>
-        <spacer name="verticalSpacer_5">
+        <spacer name="chatLobbies_VSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

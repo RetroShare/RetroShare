@@ -49,7 +49,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
     ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
     
-    connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantMsgsComboBoxChanged(int)));
+    connect(ui.distantComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantMsgsComboBoxChanged(int)));
 
 
 	 //ui.encryptedMsgs_CB->setEnabled(false) ;
@@ -88,7 +88,7 @@ MessagePage::save(QString &/*errmsg*/)
     Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
     
     // state of distant Message combobox
-    Settings->setValue("DistantMessages", ui.comboBox->currentIndex());
+    Settings->setValue("DistantMessages", ui.distantComboBox->currentIndex());
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
     for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
@@ -124,11 +124,11 @@ MessagePage::load()
     uint32_t flags = rsMail->getDistantMessagingPermissionFlags() ;
     
     if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
-	    ui.comboBox->setCurrentIndex(2);
+	    ui.distantComboBox->setCurrentIndex(2);
     else if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
-	    ui.comboBox->setCurrentIndex(1);
+	    ui.distantComboBox->setCurrentIndex(1);
     else
-	    ui.comboBox->setCurrentIndex(0);
+	    ui.distantComboBox->setCurrentIndex(0);
 	  
     // fill items
     rsMail->getMessageTagTypes(*m_pTags);

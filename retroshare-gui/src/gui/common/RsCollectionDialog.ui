@@ -20,7 +20,7 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="RsCollectionDialogGLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -45,13 +45,13 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0">
        <widget class="QSplitter" name="_mainSplitter">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <widget class="QFrame" name="_FrameEdit">
+        <widget class="QFrame" name="_frameEdit">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -87,14 +87,14 @@
               <number>0</number>
              </property>
              <item>
-              <layout class="QHBoxLayout">
+              <layout class="QHBoxLayout" name="infoLabelHLayout">
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
                <item>
-                <layout class="QVBoxLayout">
+                <layout class="QVBoxLayout" name="infoLabelVLayout">
                  <item>
-                  <widget class="QLabel" name="label_filename">
+                  <widget class="QLabel" name="filename_Label">
                    <property name="text">
                     <string>File name :</string>
                    </property>
@@ -104,7 +104,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_totalsize">
+                  <widget class="QLabel" name="totalsize_label">
                    <property name="text">
                     <string>Total size :</string>
                    </property>
@@ -114,7 +114,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_selectedFiles">
+                  <widget class="QLabel" name="selectedFiles_label">
                    <property name="text">
                     <string>Selected files :</string>
                    </property>
@@ -128,9 +128,9 @@
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout">
+              <layout class="QVBoxLayout" name="infoTextVLayout">
                <item>
-                <layout class="QHBoxLayout">
+                <layout class="QHBoxLayout" name="filename_HLayout">
                  <item>
                   <widget class="QLabel" name="_filename_TL">
                    <property name="text">
@@ -173,7 +173,7 @@
               </layout>
              </item>
              <item>
-              <spacer>
+              <spacer name="infoHSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -224,7 +224,7 @@
                   </widget>
                  </item>
                  <item>
-                  <layout class="QVBoxLayout">
+                  <layout class="QVBoxLayout" name="separatorVLayout">
                    <item>
                     <widget class="QPushButton" name="_add_PB">
                      <property name="minimumSize">
@@ -314,7 +314,7 @@
                     </widget>
                    </item>
                    <item>
-                    <spacer>
+                    <spacer name="separatorVSpacer">
                      <property name="orientation">
                       <enum>Qt::Vertical</enum>
                      </property>
@@ -358,9 +358,9 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout">
+           <layout class="QHBoxLayout" name="buttonHLayout">
             <item>
-             <spacer>
+             <spacer name="buttonHSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -405,12 +405,6 @@
        </widget>
       </item>
      </layout>
-     <zorder></zorder>
-     <zorder></zorder>
-     <zorder>_mainSplitter</zorder>
-     <zorder>_listSplitter</zorder>
-     <zorder></zorder>
-     <zorder>_mainSplitter</zorder>
     </widget>
    </item>
   </layout>

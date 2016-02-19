@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>763</width>
-    <height>241</height>
+    <height>256</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -128,7 +128,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QGridLayout">
+          <layout class="QGridLayout" name="titleHLayout">
            <property name="horizontalSpacing">
             <number>6</number>
            </property>
@@ -190,7 +190,7 @@
           </layout>
          </item>
          <item row="0" column="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="timeHLayout">
            <item>
             <widget class="QLabel" name="timeLabel">
              <property name="font">
@@ -210,7 +210,7 @@
           </layout>
          </item>
          <item row="1" column="1" colspan="2">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="buttonHLayout">
            <item>
             <widget class="QToolButton" name="friendRequesttoolButton">
              <property name="focusPolicy">
@@ -290,7 +290,7 @@
             </widget>
            </item>
            <item>
-            <spacer>
+            <spacer name="buttonHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -335,7 +335,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer_3">
+            <spacer name="buttonRHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -396,11 +396,11 @@
        <widget class="QFrame" name="expandFrame">
         <layout class="QGridLayout">
          <item row="0" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="expandHLayout">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <layout class="QVBoxLayout" name="expandLVLayout">
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="nameMainLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -413,7 +413,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="idMainLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -426,7 +426,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="trustMainLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -445,7 +445,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="locMainLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -458,7 +458,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="ipMainLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -471,7 +471,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="connMainLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -484,7 +484,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="typeLabel">
+              <widget class="QLabel" name="statusMainLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -506,7 +506,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <layout class="QVBoxLayout" name="expandRVLayout">
              <item>
               <widget class="QLabel" name="nameLabel">
                <property name="sizePolicy">
@@ -612,15 +612,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

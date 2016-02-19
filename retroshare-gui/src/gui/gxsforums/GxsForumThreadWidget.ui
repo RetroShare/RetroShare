@@ -13,14 +13,14 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QSplitter" name="threadSplitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="postWidget">
+      <layout class="QVBoxLayout" name="postVLayout">
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="minimumSize">
@@ -35,8 +35,17 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="margin">
+         <layout class="QHBoxLayout" name="toolBarFrameHLayout">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -107,7 +116,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="toolBarHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -232,7 +241,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QGridLayout" name="postLayout">
+        <layout class="QGridLayout" name="buttonHLayout">
          <item row="0" column="5">
           <widget class="QToolButton" name="downloadButton">
            <property name="maximumSize">
@@ -326,21 +335,21 @@
           </widget>
          </item>
          <item row="0" column="6">
-          <widget class="Line" name="line_2">
+          <widget class="Line" name="leftVLine">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="8">
-          <widget class="Line" name="line">
+          <widget class="Line" name="rightVLine">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="11">
-          <spacer name="horizontalSpacer_2">
+          <spacer name="buttonHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -449,8 +458,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="">
-      <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="imageWidget">
+      <layout class="QVBoxLayout" name="imageVLayout">
        <item>
         <widget class="RSImageBlockWidget" name="imageBlockWidget" native="true">
          <property name="sizePolicy">
@@ -491,19 +500,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SubscribeToolButton</class>
-   <extends>QToolButton</extends>
-   <header>gui/common/SubscribeToolButton.h</header>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -511,9 +510,19 @@
    <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SubscribeToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>

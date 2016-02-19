@@ -13,13 +13,92 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
+   <item row="0" column="1" colspan="3">
+    <widget class="QTextEdit" name="pulseTEdit"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="post_PB">
+     <property name="text">
+      <string>Post Pulse to Wire</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3">
+    <widget class="QGroupBox" name="urlGBox">
+     <property name="title">
+      <string>URL Adder</string>
+     </property>
+     <layout class="QGridLayout" name="urlGBoxGLayout">
+      <item row="0" column="1">
+       <spacer name="urlHSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>331</width>
+          <height>24</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="addURL_PB">
+        <property name="text">
+         <string>Add to Pulse</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="displayAsLabel">
+        <property name="text">
+         <string>Display As</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QLineEdit" name="displayAsLEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="urlLabel">
+        <property name="text">
+         <string>URL</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="urlLEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <spacer name="buttonHSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>298</width>
+       <height>24</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="cancel_PB">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0" rowspan="3">
-    <widget class="QSplitter" name="splitter">
+    <widget class="QSplitter" name="leftSplitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="fromFrame">
       <property name="maximumSize">
        <size>
         <width>160</width>
@@ -32,15 +111,29 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="margin">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="fromFrameVLayout">
        <item>
-        <widget class="QScrollArea" name="scrollArea_2">
+        <widget class="QLabel" name="fromLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Post From:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="fromSArea">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -50,53 +143,39 @@
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <widget class="QWidget" name="fromSAreaWC">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>156</width>
-            <height>184</height>
+            <width>109</width>
+            <height>102</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="fromSAreaWCVLayout">
            <item>
-            <widget class="QLabel" name="label">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Post From:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="checkBox">
+            <widget class="QCheckBox" name="fromAccount1_CB">
              <property name="text">
               <string>Account 1</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_2">
+            <widget class="QCheckBox" name="fromAccount2_CB">
              <property name="text">
               <string>Account 2</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBox_3">
+            <widget class="QCheckBox" name="fromAccount3_CB">
              <property name="text">
               <string>Account 3</string>
              </property>
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_2">
+            <spacer name="fromVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -114,175 +193,99 @@
        </item>
       </layout>
      </widget>
-     <widget class="QScrollArea" name="scrollArea_3">
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_3">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>158</width>
-         <height>372</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="pushButton_AddTo">
-          <property name="text">
-           <string>Add to Pulse</string>
+     <widget class="QFrame" name="addFrame">
+      <layout class="QVBoxLayout" name="addFrameVLayout">
+       <item>
+        <widget class="QPushButton" name="addTo_PB">
+         <property name="text">
+          <string>Add to Pulse</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="filterLEdit">
+         <property name="text">
+          <string>filter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QScrollArea" name="addSArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="addSAreaWC">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>127</width>
+            <height>343</height>
+           </rect>
           </property>
+          <layout class="QVBoxLayout" name="addSAreaWCVLayout">
+           <item>
+            <widget class="QCheckBox" name="addAccount1_CB">
+             <property name="text">
+              <string>Account 1</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="addAccount2_CB">
+             <property name="text">
+              <string>Account 2</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="addAccount3_CB">
+             <property name="text">
+              <string>Account 3</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="addVSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>70</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_3">
-          <property name="text">
-           <string>filter</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QScrollArea" name="scrollArea">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>138</width>
-             <height>286</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="QCheckBox" name="checkBox_5">
-              <property name="text">
-               <string>Account 1</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_6">
-              <property name="text">
-               <string>Account 2</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox_7">
-              <property name="text">
-               <string>Account 3</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>70</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="0" column="1" colspan="3">
-    <widget class="QTextEdit" name="textEdit_Pulse"/>
-   </item>
-   <item row="1" column="1" colspan="3">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>URL Adder</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>331</width>
-          <height>24</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="pushButton_AddURL">
-        <property name="text">
-         <string>Add to Pulse</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Display As</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_2"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>URL</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="pushButton_Cancel">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <spacer name="horizontalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>298</width>
-       <height>24</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="3">
-    <widget class="QPushButton" name="pushButton_Post">
-     <property name="text">
-      <string>Post Pulse to Wire</string>
-     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../LinksCloud/images.qrc"/>
- </resources>
+ <tabstops>
+  <tabstop>pulseTEdit</tabstop>
+  <tabstop>fromAccount1_CB</tabstop>
+  <tabstop>fromAccount2_CB</tabstop>
+  <tabstop>fromAccount3_CB</tabstop>
+  <tabstop>addTo_PB</tabstop>
+  <tabstop>filterLEdit</tabstop>
+  <tabstop>addAccount1_CB</tabstop>
+  <tabstop>addAccount2_CB</tabstop>
+  <tabstop>addAccount3_CB</tabstop>
+  <tabstop>addURL_PB</tabstop>
+  <tabstop>displayAsLEdit</tabstop>
+  <tabstop>urlLEdit</tabstop>
+  <tabstop>cancel_PB</tabstop>
+  <tabstop>post_PB</tabstop>
+  <tabstop>fromSArea</tabstop>
+  <tabstop>addSArea</tabstop>
+ </tabstops>
+ <resources/>
  <connections/>
 </ui>

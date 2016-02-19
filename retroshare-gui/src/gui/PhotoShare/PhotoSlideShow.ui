@@ -13,9 +13,9 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="frameGLayout">
      <item row="0" column="0" colspan="3">
       <widget class="QLabel" name="albumLabel">
        <property name="sizePolicy">
@@ -30,7 +30,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <spacer name="horizontalSpacer_3">
+      <spacer name="leftHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -56,7 +56,7 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <spacer name="horizontalSpacer_4">
+      <spacer name="rightHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -71,7 +71,7 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="buttonHLayout">
      <item>
       <widget class="QPushButton" name="pushButton_ShowDetails">
        <property name="text">
@@ -80,7 +80,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="buttonLHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -131,7 +131,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer_2">
+      <spacer name="buttonRHSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -155,7 +155,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="Photo_images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

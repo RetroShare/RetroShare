@@ -10,7 +10,7 @@
     <height>71</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
+  <layout class="QGridLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -25,9 +25,9 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="titleHLayout">
         <item>
          <widget class="QLabel" name="fileLabel">
           <property name="font">
@@ -48,7 +48,7 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <item>
          <widget class="QProgressBar" name="progressBar">
           <property name="sizePolicy">

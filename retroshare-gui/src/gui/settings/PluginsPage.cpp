@@ -118,21 +118,21 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
                                             QString::fromStdString(file_hash.toStdString()),QString::fromStdString(error_string),
 											plugin_icon) ;
 
-			 ui._pluginsLayout->insertWidget(0,item) ;
+			 ui.pluginsLayout->insertWidget(0,item) ;
 
 
 			 if(plugin == NULL || plugin->qt_config_panel() == NULL)
-                 item->_configure_PB->hide() ;
+                 item->configureButton->hide() ;
 				 
 
 			 if(plugin != NULL){
 				 item->enableButton->hide();
 				 item->disableButton->show();
-				 }else{
+			 }else{
 				 item->enableButton->show();
 				 item->disableButton->hide();
-                 item->_about_PB->hide();
-				 }
+				 item->aboutButton->hide();
+			 }
 
 			 //if(rsPlugins->getAllowAllPlugins())
 
@@ -142,7 +142,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 			 QObject::connect(item,SIGNAL(pluginConfigure(int)),this,SLOT(configurePlugin(int))) ;
 			 QObject::connect(item,SIGNAL(pluginAbout(int)),this,SLOT(aboutPlugin(int))) ;
 		 }
-	 ui._pluginsLayout->update() ;
+	 ui.pluginsLayout->update() ;
 
 	 const std::vector<std::string>& dirs(rsPlugins->getPluginDirectories()) ;
 	 text = "" ;
@@ -150,7 +150,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 	 for(uint i=0;i<dirs.size();++i)
 		 text += "<b>"+QString::fromStdString(dirs[i]) + "</b><br>" ;
 
-	 ui._lookupDirectories_TB->setHtml(text) ;
+	 ui.lookupDirectories_TB->setHtml(text) ;
 
 	// todo
 	ui.enableAll->setChecked(rsPlugins->getAllowAllPlugins());

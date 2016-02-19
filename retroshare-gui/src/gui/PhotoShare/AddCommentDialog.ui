@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Add Comment</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
     <widget class="QTextEdit" name="textEditAddComment"/>
    </item>

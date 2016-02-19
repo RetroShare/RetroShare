@@ -14,7 +14,7 @@
    <string notr="true">MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="centralwidgetHLayout">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -223,7 +223,7 @@
   <customwidget>
    <class>MainPageStack</class>
    <extends>QWidget</extends>
-   <header location="global">gui/mainpagestack.h</header>
+   <header>gui/mainpagestack.h</header>
   </customwidget>
  </customwidgets>
  <resources>

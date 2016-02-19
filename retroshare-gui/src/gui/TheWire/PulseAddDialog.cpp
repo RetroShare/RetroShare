@@ -33,16 +33,16 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
-	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
-	connect(ui.pushButton_AddTo, SIGNAL( clicked( void ) ), this, SLOT( addTo( void ) ) );
-	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
+	connect(ui.post_PB, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
+	connect(ui.addURL_PB, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
+	connect(ui.addTo_PB, SIGNAL( clicked( void ) ), this, SLOT( addTo( void ) ) );
+	connect(ui.cancel_PB, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 #if 0
-	connect(ui.scrollAreaWidgetContents, SIGNAL( buttonStatus( uint32_t ) ), this, SLOT( updateMoveButtons( uint32_t ) ) );
-	connect(ui.pushButton_ShiftRight, SIGNAL( clicked( void ) ), ui.scrollAreaWidgetContents, SLOT( moveRight( void ) ) );
-	connect(ui.pushButton_EditPhotoDetails, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
+	connect(ui.photoSAreaWC, SIGNAL( buttonStatus( uint32_t ) ), this, SLOT( updateMoveButtons( uint32_t ) ) );
+	connect(ui.shiftRight_PB, SIGNAL( clicked( void ) ), ui.addSAreaWC, SLOT( moveRight( void ) ) );
+	connect(ui.editPhotoDetails_PB, SIGNAL( clicked( void ) ), this, SLOT( showPhotoDetails( void ) ) );
 
-	connect(ui.pushButton_Publish, SIGNAL( clicked( void ) ), this, SLOT( publishAlbum( void ) ) );
+	connect(ui.publish_PB, SIGNAL( clicked( void ) ), this, SLOT( publishAlbum( void ) ) );
 #endif
 
 	mPhotoDetails = NULL;
@@ -90,20 +90,20 @@ void PulseAddDialog::updateMoveButtons(uint32_t status)
 	switch(status)
 	{
 		case PHOTO_SHIFT_NO_BUTTONS:
-                	ui.pushButton_ShiftLeft->setEnabled(false);
-                	ui.pushButton_ShiftRight->setEnabled(false);
+                	ui.shiftLeft_PB->setEnabled(false);
+                	ui.shiftRight_PB->setEnabled(false);
 			break;
 		case PHOTO_SHIFT_LEFT_ONLY:
-                	ui.pushButton_ShiftLeft->setEnabled(true);
-                	ui.pushButton_ShiftRight->setEnabled(false);
+                	ui.shiftLeft_PB->setEnabled(true);
+                	ui.shiftRight_PB->setEnabled(false);
 			break;
 		case PHOTO_SHIFT_RIGHT_ONLY:
-                	ui.pushButton_ShiftLeft->setEnabled(false);
-                	ui.pushButton_ShiftRight->setEnabled(true);
+                	ui.shiftLeft_PB->setEnabled(false);
+                	ui.shiftRight_PB->setEnabled(true);
 			break;
 		case PHOTO_SHIFT_BOTH:
-                	ui.pushButton_ShiftLeft->setEnabled(true);
-                	ui.pushButton_ShiftRight->setEnabled(true);
+                	ui.shiftLeft_PB->setEnabled(true);
+                	ui.shiftRight_PB->setEnabled(true);
 			break;
 	}
 #endif
@@ -122,7 +122,7 @@ void PulseAddDialog::showPhotoDetails()
 		mPhotoDetails = new PhotoDetailsDialog(NULL);
 	}
 
-	PhotoItem *item = ui.scrollAreaWidgetContents->getSelectedPhotoItem();
+	PhotoItem *item = ui.photoSAreaWC->getSelectedPhotoItem();
 
 	mPhotoDetails->setPhotoItem(item);
 	mPhotoDetails->show();
@@ -150,22 +150,22 @@ void PulseAddDialog::postPulse()
 	album.mShareOptions.mCommentMode = 0;
 	album.mShareOptions.mResizeMode = 0;
 
-	album.mTitle = ui.lineEdit_Title->text().toStdString();
+	album.mTitle = ui.titleLEdit->text().toStdString();
 	album.mCategory = "Unknown";
-	album.mCaption = ui.lineEdit_Caption->text().toStdString();
-	album.mWhere = ui.lineEdit_Where->text().toStdString();
-	album.mWhen = ui.lineEdit_When->text().toStdString();
+	album.mCaption = ui.captionLEdit->text().toStdString();
+	album.mWhere = ui.whereLEdit->text().toStdString();
+	album.mWhen = ui.whenLEdit->text().toStdString();
 
 	if (rsPhoto->submitAlbumDetails(album, albumThumb))
 	{
 		/* now have path and album id */
-		int photoCount = ui.scrollAreaWidgetContents->getPhotoCount();
+		int photoCount = ui.photoSAreaWC->getPhotoCount();
 
 		for(int i = 0; i < photoCount; ++i)
 		{
 			RsPhotoPhoto photo;
 			RsPhotoThumbnail thumbnail;
-			PhotoItem *item = ui.scrollAreaWidgetContents->getPhotoIdx(i);
+			PhotoItem *item = ui.photoSAreaWC->getPhotoIdx(i);
 			photo = item->mDetails;
 			item->getPhotoThumbnail(thumbnail);
 	
@@ -195,14 +195,14 @@ void PulseAddDialog::postPulse()
 void PulseAddDialog::clearDialog()
 {
 
-	ui.textEdit_Pulse->setPlainText("");
+	ui.pulseTEdit->setPlainText("");
 #if 0
-	ui.lineEdit_Title->setText(QString("title"));
-	ui.lineEdit_Caption->setText(QString("Caption"));
-	ui.lineEdit_Where->setText(QString("Where"));
-	ui.lineEdit_When->setText(QString("When"));
+	ui.titleLEdit->setText(tr("Title"));
+	ui.captionLEdit->setText(tr("Caption"));
+	ui.whereLEdit->setText(tr("Where"));
+	ui.whenLEdit->setText(tr("When"));
 
-	ui.scrollAreaWidgetContents->clearPhotos();
+	ui.photoSAreaWC->clearPhotos();
 #endif
 }
 

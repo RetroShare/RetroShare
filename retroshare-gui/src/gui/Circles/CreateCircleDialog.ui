@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="CreateCircleDialogGLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -38,15 +38,15 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="mainHLayout">
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="circleGBox">
           <property name="title">
            <string>Circle Membership</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="circleGBoxVLayout">
            <item>
             <widget class="QTreeWidget" name="treeWidget_membership">
              <property name="sortingEnabled">
@@ -68,9 +68,9 @@
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="separatorVLayout">
           <item>
-           <spacer name="verticalSpacer">
+           <spacer name="separatorTopVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -111,7 +111,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_2">
+           <spacer name="separatorBottumVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -126,11 +126,11 @@
          </layout>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_4">
+         <widget class="QGroupBox" name="knownIDGBox">
           <property name="title">
            <string>Known Identities</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
+          <layout class="QVBoxLayout" name="knownIDGBoxVLayout">
            <item>
             <widget class="QFrame" name="frame_PgpTypes">
              <property name="frameShape">
@@ -139,7 +139,7 @@
              <property name="frameShadow">
               <enum>QFrame::Raised</enum>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <layout class="QHBoxLayout" name="frame_PgpTypesHLayout">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -171,9 +171,9 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <layout class="QHBoxLayout" name="filterHLayout">
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="IdFilter_Label">
                <property name="text">
                 <string>Filter</string>
                </property>
@@ -223,11 +223,11 @@
         <property name="title">
          <string>Circle Details</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <layout class="QVBoxLayout" name="groupBox_titleVLayout">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <layout class="QHBoxLayout" name="nameHLayout">
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="circleNameLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -268,7 +268,7 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="frame_DistributionHLayout">
             <property name="spacing">
              <number>9</number>
             </property>
@@ -276,7 +276,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="distributionLabel">
               <property name="font">
                <font>
                 <weight>75</weight>
@@ -313,7 +313,7 @@
              <widget class="GxsCircleChooser" name="circleComboBox"/>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
+             <spacer name="distributionHSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -343,11 +343,6 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -357,6 +352,11 @@
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>GxsCircleChooser</class>

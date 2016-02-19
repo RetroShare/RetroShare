@@ -162,17 +162,17 @@ void ConnectProgressDialog::initDialog()
 
 	ui->progressFrame->setEnabled(true);
 	/* initialise GUI data */
-	ui->NetResult->setText(tr("N/A"));
-	ui->ContactResult->setText(tr("N/A"));
+	ui->netResult->setText(tr("N/A"));
+	ui->contactResult->setText(tr("N/A"));
 
-	ui->DhtResult->setText(tr("DHT Startup"));
-	ui->DhtProgressBar->setValue(0);
+	ui->dhtResult->setText(tr("DHT Startup"));
+	ui->dhtProgressBar->setValue(0);
 
-	ui->LookupResult->setText(tr("N/A"));
-	ui->LookupProgressBar->setValue(0);
+	ui->lookupResult->setText(tr("N/A"));
+	ui->lookupProgressBar->setValue(0);
 
-	ui->UdpResult->setText(tr("N/A"));
-	ui->UdpProgressBar->setValue(0);
+	ui->udpResult->setText(tr("N/A"));
+	ui->udpProgressBar->setValue(0);
 
 	sayInProgress();
 
@@ -254,7 +254,7 @@ void ConnectProgressDialog::updateNetworkStatus()
 {
 	uint32_t netState = rsConfig->getNetState();
 
-	QLabel *label = ui->NetResult;
+	QLabel *label = ui->netResult;
 	switch(netState)
 	{
 		case RSNET_NETSTATE_BAD_UNKNOWN:
@@ -299,7 +299,7 @@ void ConnectProgressDialog::updateContactStatus()
 		return;
 
 	QString status = StatusDefs::connectStateString(details);
-	ui->ContactResult->setText(status);
+	ui->contactResult->setText(status);
 
 	time_t now = time(NULL);
 
@@ -366,8 +366,8 @@ void ConnectProgressDialog::updateDhtStatus()
 		case CONNECT_DHT_INIT:
 			if (now > mInitTS + CONNECT_DHT_PERIOD)
 			{
-				ui->DhtProgressBar->setValue(100);
-				ui->DhtResult->setText(tr("DHT Failed"));
+				ui->dhtProgressBar->setValue(100);
+				ui->dhtResult->setText(tr("DHT Failed"));
 				mDhtStatus = CONNECT_DHT_FAIL;
 				mState = CONNECT_STATE_FAILED;
 		
@@ -387,8 +387,8 @@ void ConnectProgressDialog::updateDhtStatus()
 		mDhtStatus = CONNECT_DHT_DISABLED;
 		
 		/* ERROR message */
-		ui->DhtProgressBar->setValue(100);
-		ui->DhtResult->setText(tr("DHT Disabled"));
+		ui->dhtProgressBar->setValue(100);
+		ui->dhtResult->setText(tr("DHT Disabled"));
 
 		return;
 	}
@@ -397,15 +397,15 @@ void ConnectProgressDialog::updateDhtStatus()
 	{
 		if (status.netDhtRsNetSize > 10)
 		{
-			ui->DhtProgressBar->setValue(100);
-			ui->DhtResult->setText(tr("DHT Okay"));
+			ui->dhtProgressBar->setValue(100);
+			ui->dhtResult->setText(tr("DHT Okay"));
 			mDhtStatus = CONNECT_DHT_OKAY;
 			return;
 		}
-		ui->DhtResult->setText(tr("Finding RS Peers"));
+		ui->dhtResult->setText(tr("Finding RS Peers"));
 	}
 
-	ui->DhtProgressBar->setValue(calcProgress(now, mInitTS, CONNECT_DHT_TYPICAL, CONNECT_DHT_SLOW, CONNECT_DHT_PERIOD));
+	ui->dhtProgressBar->setValue(calcProgress(now, mInitTS, CONNECT_DHT_TYPICAL, CONNECT_DHT_SLOW, CONNECT_DHT_PERIOD));
 
 	return;
 }
@@ -449,8 +449,8 @@ void ConnectProgressDialog::updateLookupStatus()
 		case CONNECT_DHT_DISABLED:
 		case CONNECT_DHT_FAIL:
 			mLookupStatus = CONNECT_LOOKUP_FAIL;
-			ui->LookupProgressBar->setValue(0);
-			ui->LookupResult->setText(tr("Lookup requires DHT"));
+			ui->lookupProgressBar->setValue(0);
+			ui->lookupResult->setText(tr("Lookup requires DHT"));
 
 		case CONNECT_DHT_INIT:
 
@@ -462,7 +462,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			if (mLookupStatus == CONNECT_LOOKUP_INIT)
 			{
 				mLookupStatus = CONNECT_LOOKUP_SEARCH;
-				ui->LookupResult->setText(tr("Searching DHT"));
+				ui->lookupResult->setText(tr("Searching DHT"));
 				mLookupTS = now;
 			}
 	}
@@ -472,8 +472,8 @@ void ConnectProgressDialog::updateLookupStatus()
 
 	if (now > mLookupTS + CONNECT_LOOKUP_PERIOD)
 	{
-		ui->LookupProgressBar->setValue(100);
-		ui->LookupResult->setText(tr("Lookup Timeout"));
+		ui->lookupProgressBar->setValue(100);
+		ui->lookupResult->setText(tr("Lookup Timeout"));
 		mLookupStatus = CONNECT_LOOKUP_FAIL;
 
 		mState = CONNECT_STATE_FAILED;
@@ -482,7 +482,7 @@ void ConnectProgressDialog::updateLookupStatus()
 		return;
 	}
 
-	ui->LookupProgressBar->setValue(calcProgress(now, mLookupTS, CONNECT_LOOKUP_TYPICAL, CONNECT_LOOKUP_SLOW, CONNECT_LOOKUP_PERIOD));
+	ui->lookupProgressBar->setValue(calcProgress(now, mLookupTS, CONNECT_LOOKUP_TYPICAL, CONNECT_LOOKUP_SLOW, CONNECT_LOOKUP_PERIOD));
 
 	/* now actually look at the DHT Details */
 	RsDhtNetPeer status;
@@ -492,31 +492,31 @@ void ConnectProgressDialog::updateLookupStatus()
 	{
 		default:
 		case RSDHT_PEERDHT_NOT_ACTIVE:
-			ui->LookupProgressBar->setValue(0);
-			ui->LookupResult->setText(tr("Peer DHT NOT ACTIVE"));
+			ui->lookupProgressBar->setValue(0);
+			ui->lookupResult->setText(tr("Peer DHT NOT ACTIVE"));
 			mLookupStatus = CONNECT_LOOKUP_NODHTCONFIG;
 			break;
 		case RSDHT_PEERDHT_SEARCHING:
-			ui->LookupResult->setText(tr("Searching"));
+			ui->lookupResult->setText(tr("Searching"));
 			break;
 		case RSDHT_PEERDHT_FAILURE:
-			ui->LookupProgressBar->setValue(0);
-			ui->LookupResult->setText(tr("Lookup Failure"));
+			ui->lookupProgressBar->setValue(0);
+			ui->lookupResult->setText(tr("Lookup Failure"));
 			mLookupStatus = CONNECT_LOOKUP_FAIL;
 			break;
 		case RSDHT_PEERDHT_OFFLINE:
-			ui->LookupProgressBar->setValue(100);
-			ui->LookupResult->setText(tr("Peer Offline"));
+			ui->lookupProgressBar->setValue(100);
+			ui->lookupResult->setText(tr("Peer Offline"));
 			mLookupStatus = CONNECT_LOOKUP_OFFLINE;
 			break;
 		case RSDHT_PEERDHT_UNREACHABLE:
-			ui->LookupProgressBar->setValue(100);
-			ui->LookupResult->setText(tr("Peer Firewalled"));
+			ui->lookupProgressBar->setValue(100);
+			ui->lookupResult->setText(tr("Peer Firewalled"));
 			mLookupStatus = CONNECT_LOOKUP_UNREACHABLE;
 			break;
 		case RSDHT_PEERDHT_ONLINE:
-			ui->LookupProgressBar->setValue(100);
-			ui->LookupResult->setText(tr("Peer Online"));
+			ui->lookupProgressBar->setValue(100);
+			ui->lookupResult->setText(tr("Peer Online"));
 			mLookupStatus = CONNECT_LOOKUP_ONLINE;
 			break;
 	}
@@ -549,7 +549,7 @@ void ConnectProgressDialog::updateUdpStatus()
 		case CONNECT_UDP_INIT:
 			mUdpTS = time(NULL);
 			mUdpStatus = CONNECT_UDP_PROGRESS;
-			ui->UdpResult->setText(tr("UDP Setup"));
+			ui->udpResult->setText(tr("UDP Setup"));
 			break;
 		default:
 		case CONNECT_UDP_PROGRESS:
@@ -560,8 +560,8 @@ void ConnectProgressDialog::updateUdpStatus()
 	time_t now = time(NULL);
 	if (now > mUdpTS + CONNECT_UDP_PERIOD)
 	{
-		ui->UdpProgressBar->setValue(100);
-		ui->UdpResult->setText(tr("UDP Connect Timeout"));
+		ui->udpProgressBar->setValue(100);
+		ui->udpResult->setText(tr("UDP Connect Timeout"));
 		mUdpStatus = CONNECT_UDP_FAIL;
 
 		mState = CONNECT_STATE_FAILED;
@@ -570,7 +570,7 @@ void ConnectProgressDialog::updateUdpStatus()
 		return;
 	}
 
-	ui->UdpProgressBar->setValue(calcProgress(now, mUdpTS, CONNECT_UDP_TYPICAL, CONNECT_UDP_SLOW, CONNECT_UDP_PERIOD));
+	ui->udpProgressBar->setValue(calcProgress(now, mUdpTS, CONNECT_UDP_TYPICAL, CONNECT_UDP_SLOW, CONNECT_UDP_PERIOD));
 
 	/* now lookup details from Dht */
 	RsDhtNetPeer status;
@@ -578,7 +578,7 @@ void ConnectProgressDialog::updateUdpStatus()
 
 	QString fullString = QString::fromStdString(status.mConnectState);
 	QString connectString = fullString.section(':',0,0);
-	ui->UdpResult->setText(connectString);
+	ui->udpResult->setText(connectString);
 
 	if (connectString == "Failed Wait")
 	{

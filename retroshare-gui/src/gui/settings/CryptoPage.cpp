@@ -82,7 +82,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         rsPeers->getGPGAcceptedList(ids);
         int friends = ids.size();
 
-        ui.friendsEdit->setText(QString::number(friends));
+        ui.friends->setText(QString::number(friends));
     }
 	 load() ;
 }

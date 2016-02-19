@@ -7,23 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>40</height>
+    <height>48</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+  <layout class="QVBoxLayout" name="GroupFrameSettingsWidgetVLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>

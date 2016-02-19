@@ -10,7 +10,7 @@
     <height>320</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="FriendSelectionWidgetVLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -22,7 +22,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="filterHLayout">
      <item>
       <widget class="LineEditClear" name="filterLineEdit"/>
      </item>

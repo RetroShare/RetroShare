@@ -10,7 +10,7 @@
     <height>177</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
+  <layout class="QVBoxLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -28,16 +28,16 @@
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
+     <layout class="QVBoxLayout" name="frameVLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="HeaderHLayout">
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <layout class="QVBoxLayout" name="iconVLayout">
           <property name="sizeConstraint">
            <enum>QLayout::SetDefaultConstraint</enum>
           </property>
           <item>
-           <widget class="QPushButton" name="_pluginIcon">
+           <widget class="QPushButton" name="pluginIcon">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>48</horstretch>
@@ -73,16 +73,16 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <layout class="QVBoxLayout" name="headerVLayout">
           <item>
-           <widget class="QLabel" name="infoLabel">
+           <widget class="QLabel" name="info">
             <property name="text">
              <string>TextLabel</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="StyledLabel" name="subjectLabel">
+           <widget class="StyledLabel" name="subject">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -104,7 +104,7 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <layout class="QHBoxLayout" name="buttonHLayout">
             <item>
              <widget class="QLabel" name="msgLabel">
               <property name="sizePolicy">
@@ -140,7 +140,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
+             <spacer name="buttonHSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -173,7 +173,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_configure_PB">
+             <widget class="QPushButton" name="configureButton">
               <property name="toolTip">
                <string>Launch configuration panel, if provided by the plugin</string>
               </property>
@@ -183,7 +183,7 @@ p, li { white-space: pre-wrap; }
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_about_PB">
+             <widget class="QPushButton" name="aboutButton">
               <property name="text">
                <string>About</string>
               </property>
@@ -196,7 +196,7 @@ p, li { white-space: pre-wrap; }
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="expandHLayout">
         <item>
          <widget class="QFrame" name="expandFrame">
           <property name="frameShape">
@@ -205,16 +205,16 @@ p, li { white-space: pre-wrap; }
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="expandFrameGLayout">
            <item row="1" column="0">
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="nameLabel">
              <property name="text">
               <string>File name: </string>
              </property>
             </widget>
            </item>
            <item row="1" column="1" colspan="2">
-            <widget class="QLabel" name="_name_LE">
+            <widget class="QLabel" name="name">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -230,14 +230,14 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="hashLabel">
              <property name="text">
               <string>File hash:</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1" colspan="2">
-            <widget class="QLabel" name="_hashLabel">
+            <widget class="QLabel" name="hash">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -253,14 +253,14 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="statusLabel">
              <property name="text">
               <string>Status: </string>
              </property>
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="_statusLabel">
+            <widget class="QLabel" name="status">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>

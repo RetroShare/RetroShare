@@ -16,7 +16,7 @@
     <verstretch>76</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="HeaderFrameVLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -37,7 +37,7 @@
        <height>76</height>
       </size>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="frameHLayout">
       <property name="spacing">
        <number>12</number>
       </property>

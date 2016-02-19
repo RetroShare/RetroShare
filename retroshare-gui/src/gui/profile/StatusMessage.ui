@@ -49,7 +49,7 @@
 border: 1px solid #CCCCCC;}
 </string>
    </property>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="messageLabel">
     <property name="geometry">
      <rect>
       <x>91</x>
@@ -73,7 +73,7 @@ border: 1px solid #CCCCCC;}
     </property>
    </widget>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="statusLabel">
    <property name="geometry">
     <rect>
      <x>100</x>
@@ -90,7 +90,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="enterLabel">
    <property name="geometry">
     <rect>
      <x>100</x>
@@ -107,7 +107,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="icon">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -129,7 +129,7 @@ p, li { white-space: pre-wrap; }
     <pixmap resource="../images.qrc">:/images/user/personal64.png</pixmap>
    </property>
   </widget>
-  <widget class="QFrame" name="frame_2">
+  <widget class="QFrame" name="backFrame">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -139,7 +139,7 @@ p, li { white-space: pre-wrap; }
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">QFrame#frame_2{ 
+    <string notr="true">QFrame#backFrame{
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
 stop:0 #FEFEFE, stop:1 #E8E8E8);
 
@@ -166,14 +166,13 @@ border: 1px solid #CCCCCC;}
     </property>
    </widget>
   </widget>
-  <zorder>frame_2</zorder>
+  <zorder>backFrame</zorder>
   <zorder>frame</zorder>
-  <zorder>label_3</zorder>
-  <zorder>label_2</zorder>
-  <zorder>label</zorder>
+  <zorder>statusLabel</zorder>
+  <zorder>enterLabel</zorder>
+  <zorder>icon</zorder>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

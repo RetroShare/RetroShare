@@ -56,10 +56,10 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 QHBoxLayout *hb2 = new QHBoxLayout() ;
 	 hb2->addWidget(new QLabel(tr("Share flags and groups:")+" ")) ;
 
-	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
+	 groupflagsbox = new GroupFlagsWidget(ui.shareFlags_GB) ;
 	 groupflagsbox->setFlags(DIR_FLAGS_NETWORK_WIDE_OTHERS) ;	// default value
 	
-	 messageBox = new QTextEdit(ui.shareflags_GB) ;
+	 messageBox = new QTextEdit(ui.shareFlags_GB) ;
 	 messageBox->setReadOnly(true) ;
 	 messageBox->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred)) ;
 
@@ -69,11 +69,11 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 vbox->addWidget(messageBox) ;
 
 	 QHBoxLayout *hbox = new QHBoxLayout() ;
-	 groupselectionbox = new GroupSelectionBox(ui.shareflags_GB);
+	 groupselectionbox = new GroupSelectionBox(ui.shareFlags_GB);
 	 hbox->addLayout(vbox) ;
 	 hbox->addWidget(groupselectionbox) ;
 
-	 ui.shareflags_GB->setLayout(hbox) ;
+	 ui.shareFlags_GB->setLayout(hbox) ;
 	 updateInfoMessage() ;
 
      connect(groupselectionbox,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(updateInfoMessage())) ;
@@ -91,10 +91,10 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
                 /* fill dialog */
                 ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 
-                ui.localpath_lineEdit->setText(QString::fromUtf8(it->filename.c_str()));
-                ui.localpath_lineEdit->setDisabled(true);
+                ui.localPath_lineEdit->setText(QString::fromUtf8(it->filename.c_str()));
+                ui.localPath_lineEdit->setDisabled(true);
                 ui.browseButton->setDisabled(true);
-                ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
+                ui.virtualPath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
 
 				groupflagsbox->setFlags(it->shareflags) ;
 				groupselectionbox->setSelectedGroupIds(it->parent_groups) ;
@@ -130,18 +130,18 @@ void ShareDialog::browseDirectory()
         return;
     }
     ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-    ui.localpath_lineEdit->setText(qdir);
+    ui.localPath_lineEdit->setText(qdir);
 }
 
 void ShareDialog::addDirectory()
 {
     SharedDirInfo sdi ;
-    sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
-    sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
+    sdi.filename = ui.localPath_lineEdit->text().toUtf8().constData();
+    sdi.virtualname = ui.virtualPath_lineEdit->text().toUtf8().constData();
     sdi.shareflags = groupflagsbox->flags() ;
     groupselectionbox->selectedGroupIds(sdi.parent_groups);
 
-    if (ui.localpath_lineEdit->isEnabled()) 
+    if (ui.localPath_lineEdit->isEnabled())
 	 {
         /* add new share */
         rsFiles->addSharedDirectory(sdi);
