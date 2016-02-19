@@ -327,29 +327,32 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 
 	bool bVisible = text.isEmpty();
 
-	switch(filter)
+	if (!bVisible)
 	{
-	case FILTER_TITLE:
-		bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_MSG:
-		bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_FILE_NAME:
-	{
-		std::list<SubFileItem *> fileItems = item->getFileItems();
-		std::list<SubFileItem *>::iterator lit;
-		for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+		switch(filter)
 		{
-			SubFileItem *fi = *lit;
-			QString fileName = QString::fromUtf8(fi->FileName().c_str());
-			bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+			case FILTER_TITLE:
+				bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_MSG:
+				bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_FILE_NAME:
+			{
+				std::list<SubFileItem *> fileItems = item->getFileItems();
+				std::list<SubFileItem *>::iterator lit;
+				for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+				{
+					SubFileItem *fi = *lit;
+					QString fileName = QString::fromUtf8(fi->FileName().c_str());
+					bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+				}
+				break;
+			}
+			default:
+				bVisible = true;
+			break;
 		}
-		break;
-	}
-	default:
-		bVisible = true;
-		break;
 	}
 
 	return bVisible;

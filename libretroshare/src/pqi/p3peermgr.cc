@@ -64,8 +64,6 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
-#define VERY_OLD_PEER  (90 * 24 * 3600)      // 90 days.
-
 /****
  * #define PEER_DEBUG 1
  ***/
@@ -2751,7 +2749,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 		std::map<RsPeerId, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
-			if (now - it->second.lastcontact > VERY_OLD_PEER)
+			if (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE)
 			{
 				toRemove.push_back(it->first);
 
