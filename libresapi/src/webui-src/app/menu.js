@@ -11,9 +11,9 @@ function goback(){
 
 function buildmenu(menu, tagname, runstate, ignore){
     if (
-        (menu.runstate === undefined || runstate.match(menu.runstate))
+        (menu.runstate === undefined || runstate.match(menu.runstate)!=null)
         && (!ignore.match(menu.name))
-        && (menu.path === undefined || !menu.path.contains(":"))
+        && (menu.path === undefined || menu.path.match(":")==null)
         && (menu.show === undefined || menu.show)
     )  {
         var name = menu.name;
