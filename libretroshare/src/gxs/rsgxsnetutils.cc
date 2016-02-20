@@ -222,12 +222,12 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId)
+bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId,bool& should_encrypt)
 {
 	if(mCircles->isLoaded(circleId))
 	{
 		const RsPgpId& pgpId = mPgpUtils->getPGPId(peerId);
-		return mCircles->canSend(circleId, pgpId);
+		return mCircles->canSend(circleId, pgpId,should_encrypt);
 	}
 
 	mCircles->loadCircle(circleId);
@@ -250,7 +250,7 @@ bool GrpCircleIdRequestVetting::cleared()
 
 		if(!gic.mCleared)
 		{
-			if(canSend(mPeerId, gic.mCircleId))
+			if(canSend(mPeerId, gic.mCircleId,gic.mShouldEncrypt))
 			{
 				gic.mCleared = true;
 				count++;
@@ -285,7 +285,7 @@ MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
 bool MsgCircleIdsRequestVetting::cleared()
 {
 
-	return canSend(mPeerId, mCircleId);
+	return canSend(mPeerId, mCircleId, mShouldEncrypt);
 
 }
 

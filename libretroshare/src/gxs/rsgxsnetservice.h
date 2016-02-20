@@ -349,22 +349,20 @@ private:
      * @param toVet groupid/peer to vet are stored here if their circle id is not cached
      * @return false, if you cannot send to this peer, true otherwise
      */
-    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
-
-
+    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
     bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
     bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
-    void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
-    void locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend);
+    bool locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend) ;
+    bool locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend) ;
 
     void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN); // forms a grp list request
     void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);	// forms a msg list request
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
-    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN,const RsGxsCircleId& destination_circle);
+    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
     
     void syncWithPeers();
     void syncGrpStatistics();
@@ -454,8 +452,11 @@ private:
     /*!
     * encrypts/decrypts the transaction for the destination circle id.
     */
+#ifdef TO_REMOVE
     bool encryptTransaction(NxsTransaction *tr);
-    bool decryptTransaction(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
+#endif
+    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
 
     void cleanRejectedMessages();
     void processObserverNotifications();

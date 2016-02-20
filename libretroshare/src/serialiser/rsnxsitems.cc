@@ -463,7 +463,7 @@ bool RsNxsEncryptedDataItem::serialise(void *data, uint32_t& size) const
         return false ;
 
     ok &= setRawUInt32(data, size, &offset, transactionNumber);
-    ok &= aes_encrypted_data.SetTlv(data, size, &offset) ;
+    ok &= encrypted_data.SetTlv(data, size, &offset) ;
 
     if(offset != tlvsize)
     {
@@ -897,9 +897,9 @@ RsNxsEncryptedDataItem   *RsNxsSerialiser::deserialNxsEncryptedDataItem(void* da
     RsNxsEncryptedDataItem* item = new RsNxsEncryptedDataItem(SERVICE_TYPE);
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
-    item->aes_encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
+    item->encrypted_data.tlvtype = TLV_TYPE_BIN_ENCRYPTED ;
     
-    ok &= item->aes_encrypted_data.GetTlv(data,*size,&offset) ;
+    ok &= item->encrypted_data.GetTlv(data,*size,&offset) ;
     
     if (offset != *size)
     {
@@ -1046,7 +1046,7 @@ uint32_t RsNxsEncryptedDataItem::serial_size() const
     uint32_t s = 8; // header size
 
     s += 4; // transaction number
-    s += aes_encrypted_data.TlvSize() ;
+    s += encrypted_data.TlvSize() ;
 
     return s;
 }
@@ -1127,7 +1127,7 @@ void RsNxsTransacItem::clear(){
     transactionNumber = 0;
 }
 void RsNxsEncryptedDataItem::clear(){
-    aes_encrypted_data.TlvClear() ;
+    encrypted_data.TlvClear() ;
 }
 void RsNxsSessionKeyItem::clear()
 {
@@ -1337,9 +1337,9 @@ std::ostream& RsNxsEncryptedDataItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsNxsEncryptedDataItem", indent);
 
-    out << "  encrypted data: " << RsUtil::BinToHex((char*)aes_encrypted_data.bin_data,std::min(50u,aes_encrypted_data.bin_len)) ;
+    out << "  encrypted data: " << RsUtil::BinToHex((char*)encrypted_data.bin_data,std::min(50u,encrypted_data.bin_len)) ;
     
-    if(aes_encrypted_data.bin_len > 50u)
+    if(encrypted_data.bin_len > 50u)
         out << "..." ;
     
     out << std::endl;

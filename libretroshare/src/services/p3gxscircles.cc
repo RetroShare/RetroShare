@@ -341,16 +341,17 @@ bool p3GxsCircles::loadCircle(const RsGxsCircleId &circleId)
 	return cache_request_load(circleId);
 }
 
-int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id)
+int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool& should_encrypt)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))
 	{
 		RsGxsCircleCache &data = mCircleCache.ref(circleId);
+		should_encrypt = (data.mCircleType == GXS_CIRCLE_TYPE_EXTERNAL);
+                
 		if (data.isAllowedPeer(id))
-		{
 			return 1;
-		}
+        
 		return 0;
 	}
 	return -1;

@@ -68,8 +68,6 @@ public:
      */
     RsNxsTransacItem* mTransaction;
     std::list<RsNxsItem*> mItems; // items received or sent
-    
-    RsGxsCircleId destination_circle;
 };
 
 /*!
@@ -216,7 +214,9 @@ public:
 	RsGxsGroupId mGroupId;
 	RsGxsCircleId mCircleId;
 	RsGxsId mAuthorId;
+    
 	bool mCleared;
+	bool mShouldEncrypt;
 };
 
 class MsgIdCircleVet
@@ -254,7 +254,7 @@ public:
 	virtual bool cleared() = 0;
 
 protected:
-	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId);
+	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId, bool& should_encrypt);
 
 private:
 
@@ -288,6 +288,7 @@ public:
 	RsGxsGroupId mGrpId;
 	RsPeerId mPeerId;
 	RsGxsCircleId mCircleId;
+	bool mShouldEncrypt;
 };
 
 

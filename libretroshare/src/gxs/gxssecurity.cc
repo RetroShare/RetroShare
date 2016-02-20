@@ -98,7 +98,9 @@ static void setRSAPublicKeyData(RsTlvSecurityKey & key, RSA *rsa_pub)
 
 bool GxsSecurity::checkPrivateKey(const RsTlvSecurityKey& key)
 {
+#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking private key " << key.keyId << " ..." << std::endl;
+#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_FULL)
     {
@@ -133,7 +135,9 @@ bool GxsSecurity::checkPrivateKey(const RsTlvSecurityKey& key)
 }
 bool GxsSecurity::checkPublicKey(const RsTlvSecurityKey& key)
 {
+#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking public key " << key.keyId << " ..." << std::endl;
+#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_PUBLIC_ONLY)
     {
@@ -229,7 +233,7 @@ bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecu
     {
         std::cerr << std::endl;
         std::cerr << "WARNING: GXS ID key pair " << private_key.keyId << " has inconsistent fingerprint. This is an old key " << std::endl;
-        std::cerr << "         that is unsecured (can be faked easily) should not be used anymore. Please delete it." << std::endl;
+        std::cerr << "         that is unsecure (can be faked easily). You should delete it!" << std::endl;
         std::cerr << std::endl;
 
         public_key.keyId = private_key.keyId ;
@@ -875,7 +879,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	//
         // This method can be used to decrypt multi-encrypted data, if passing he correct encrypted key block (corresponding to the given key)
 
-#ifdef DISTRIB_DEBUG
+#ifdef GXS_SECURITY_DEBUG
 	std::cerr << "GxsSecurity::decrypt() " << std::endl;
 #endif
 	RSA *rsa_publish = extractPrivateKey(key) ;
@@ -891,7 +895,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	}
 	else
 	{
-#ifdef DISTRIB_DEBUG
+#ifdef GXS_SECURITY_DEBUG
 		std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
 			<< std::endl;
 #endif
@@ -1017,10 +1021,12 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 		    throw std::runtime_error("Offset error") ;
                 
 	    encrypted_block_size = inlen - encrypted_block_offset ;
+#ifdef GXS_SECURITY_DEBUG
 	    std::cerr << "  number of keys in envelop: " << number_of_keys << std::endl;
 	    std::cerr << "  IV offset                : " << IV_offset << std::endl;
 	    std::cerr << "  encrypted block offset   : " << encrypted_block_offset << std::endl;
 	    std::cerr << "  encrypted block size     : " << encrypted_block_size << std::endl;
+#endif
 
 	    // decrypt
 
@@ -1033,7 +1039,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 		    RSA *rsa_private = extractPrivateKey(keys[j]) ;
 		    EVP_PKEY *privateKey = NULL;
 
+#ifdef GXS_SECURITY_DEBUG
 		    std::cerr << "  trying key " << keys[j].keyId << std::endl;
+#endif
 
 		    if(rsa_private != NULL)
 		    {
@@ -1051,7 +1059,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 		    {
 			    succeed = EVP_OpenInit(&ctx, EVP_aes_128_cbc(),in + encrypted_keys_offset + i*MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE , MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE, in+IV_offset, privateKey);
 
+#ifdef GXS_SECURITY_DEBUG
 			    std::cerr << "    encrypted key at offset " << encrypted_keys_offset + i*MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE << ": " << succeed << std::endl;
+#endif
 		    }
 
 		    EVP_PKEY_free(privateKey) ;
@@ -1060,7 +1070,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	    if(!succeed)
 		    throw std::runtime_error("No matching key available.") ;
 
+#ifdef GXS_SECURITY_DEBUG
 	    std::cerr << "  now decrypting with the matching key." << std::endl;
+#endif
 
 	    out = (uint8_t*)rs_malloc(encrypted_block_size) ;
 
@@ -1079,7 +1091,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 
 	    outlen += out_currOffset;
         
+#ifdef GXS_SECURITY_DEBUG
         	std::cerr << "  successfully decrypted block of size " << outlen << std::endl;
+#endif
 	    return true;
     }
     catch(std::exception& e)

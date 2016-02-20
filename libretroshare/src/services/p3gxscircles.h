@@ -175,7 +175,7 @@ virtual RsServiceInfo getServiceInfo();
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
 
-	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt);
 	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId> &gxs_ids);
