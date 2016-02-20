@@ -752,7 +752,7 @@ continue_packet:
 					p3Notify *notify = RsServer::notify();
 					if (notify)
 					{
-						std::string title = "Warning: Error Completing Read";
+						//std::string title = "Warning: Error Completing Read";
 
 						std::string msgout;
 						msgout =   "               **** WARNING ****     \n";
@@ -837,6 +837,36 @@ continue_packet:
 #ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
 #endif
+			p3Notify *notify = RsServer::notify();
+			if (notify)
+			{
+				//std::string title = "Warning: Error Completing Read";
+
+				std::string msgout;
+				msgout =   "               **** WARNING ****     \n";
+				msgout +=  "Retroshare failed to handle Packet from Peer:";
+				msgout += PeerId().toStdString();
+				msgout +=  "\n";
+				rs_sprintf_append(msgout, "(Packet Lenght:%d)\n", pktlen);
+				msgout +=  "\n";
+				msgout +=  "Note: this error might as well happen (rarely) when a peer send bad packet.\n";
+				msgout +=  "If it happens manny time, please contact the developers, and send them these numbers:";
+				msgout +=  "\n";
+
+				rs_sprintf_append(msgout, "block = %d %d %d %d %d %d %d %d\n",
+				                  (int)(((unsigned char*)block)[0]),
+				                  (int)(((unsigned char*)block)[1]),
+				                  (int)(((unsigned char*)block)[2]),
+				                  (int)(((unsigned char*)block)[3]),
+				                  (int)(((unsigned char*)block)[4]),
+				                  (int)(((unsigned char*)block)[5]),
+				                  (int)(((unsigned char*)block)[6]),
+				                  (int)(((unsigned char*)block)[7]));
+
+				//notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
+
+				std::cerr << msgout << std::endl;
+			}
 		}
 
 		mReading_state = reading_state_initial ;	// restart at state 1.

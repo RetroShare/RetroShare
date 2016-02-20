@@ -415,7 +415,7 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 				std::string out;
 				rs_sprintf(out, "%x", getRsItemId(data));
 
-				std::cerr << "RsSerialiser::deserialise() PacketId: ";
+				std::cerr << " PacketId: ";
 				std::cerr << out << std::endl;
 #endif
 				return NULL;
