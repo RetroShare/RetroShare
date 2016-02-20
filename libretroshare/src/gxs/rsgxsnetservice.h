@@ -455,7 +455,7 @@ private:
     * encrypts/decrypts the transaction for the destination circle id.
     */
     bool encryptTransaction(NxsTransaction *tr);
-    bool decryptTransaction(NxsTransaction *tr);
+    bool decryptTransaction(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
 
     void cleanRejectedMessages();
     void processObserverNotifications();

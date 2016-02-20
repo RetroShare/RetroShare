@@ -306,7 +306,10 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
                                  PgpAuxUtils *pgpUtils, bool grpAutoSync,bool msgAutoSync)
                                      : p3ThreadedService(), p3Config(), mTransactionN(0),
-                                       mObserver(nxsObs),mGixs(gixs), mDataStore(gds), mServType(servType),
+                                       mObserver(nxsObs),
+                                       mDataStore(gds), 
+                                       mServType(servType),
+                                       mGixs(gixs), 
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
                                        mSyncTs(0), mLastKeyPublishTs(0),mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations),
 					mPgpUtils(pgpUtils),
@@ -2144,25 +2147,28 @@ void RsGxsNetService::processTransactions()
                     // Try to decrypt the items that need to be decrypted. This function returns true if the transaction is not encrypted.
                     
                     if(decryptTransaction(tr))
-                    {
+		    {
 #ifdef NXS_NET_DEBUG_7
-                        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   successfully decrypted transaction " << transN << std::endl;
+			    GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   successfully decrypted/processed transaction " << transN << ". Adding to completed list." << std::endl;
 #endif
 			    mComplTransactions.push_back(tr);
-                    }
-#ifdef NXS_NET_DEBUG_7
-                    else
-                        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   no decryption occurred in transaction " << transN << std::endl;
-#endif
-                    
-#ifdef NXS_NET_DEBUG_1
-                    int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
-                    GXSNETDEBUG_P_(mit->first) << "    incoming completed " << tr->mTransaction->nItems << " items transaction in " << total_transaction_time << " seconds." << std::endl;
-#endif
 
-                    // transaction processing done
-                    // for this id, add to removal list
-                    toRemove.push_back(mmit->first);
+			    // transaction processing done
+			    // for this id, add to removal list
+			    toRemove.push_back(mmit->first);
+#ifdef NXS_NET_DEBUG_1
+			    int total_transaction_time = (int)time(NULL) - (tr->mTimeOut - mTransactionTimeOut) ;
+			    GXSNETDEBUG_P_(mit->first) << "    incoming completed " << tr->mTransaction->nItems << " items transaction in " << total_transaction_time << " seconds." << std::endl;
+#endif
+		    }
+		    else 
+		    {
+#ifdef NXS_NET_DEBUG_7
+			    GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "   no decryption occurred because of unloaded keys. Will retry later. TransN=" << transN << std::endl;
+#endif
+		    }
+                    
+
                 }
                 else if(flag & NxsTransaction::FLAG_STATE_STARTING)
                 {
@@ -3598,6 +3604,10 @@ bool RsGxsNetService::encryptTransaction(NxsTransaction *tr)
     return true ;
 }
 
+// Tries to decrypt the transaction. First load the keys and process all items.
+// If keys are loaded, encrypted items that cannot be decrypted are discarded.
+// Otherwise the transaction is untouched for retry later.
+
 bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
 {
 #ifdef NXS_NET_DEBUG_7
@@ -3709,31 +3719,48 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
     
     // get all private keys. Normally we should look into the circle name and only supply the keys that we have
 
-    std::list<RsGxsId> own_keys ;
-    
-    mGixs->getOwnIds(own_keys) ;
-    
-    for(std::list<RsGxsId>::const_iterator it(own_keys.begin());it!=own_keys.end();++it)
-    {
-	    RsTlvSecurityKey private_key ;
-
-	    if(mGixs->getPrivateKey(*it,private_key))
-	    {
-		    std::cerr << "(EE) Cannot retrieve private key for ID " << *it << std::endl;
-		    return false ;
-	    }
-	    private_keys.push_back(private_key) ;
-	    std::cerr << "  retrived private key " << *it << std::endl;
-    }
-                        
-    for(std::list<RsNxsItem*>::iterator it(tr->mItems.begin());it!=tr->mItems.end();++it)
+    for(std::list<RsNxsItem*>::iterator it(tr->mItems.begin());it!=tr->mItems.end();)
     {
         RsNxsEncryptedDataItem *encrypted_item = dynamic_cast<RsNxsEncryptedDataItem*>(*it) ;
         
         if(encrypted_item == NULL)
         {
             std::cerr << "  skipping unencrypted item..." << std::endl;
+            ++it ;
             continue ;
+        }
+        
+        // we need the private keys to decrypt the item. First load them in!
+        bool key_loading_failed = false ;
+        
+        if(private_keys.empty())
+	{
+            std::cerr << "  need to retrieve private keys..." << std::endl;
+            
+		std::list<RsGxsId> own_keys ;
+		mGixs->getOwnIds(own_keys) ;
+
+		for(std::list<RsGxsId>::const_iterator it(own_keys.begin());it!=own_keys.end();++it)
+		{
+			RsTlvSecurityKey private_key ;
+
+			if(mGixs->getPrivateKey(*it,private_key))
+			{
+				private_keys.push_back(private_key) ;
+				std::cerr << "    retrieved private key " << *it << std::endl;
+			}
+			else
+			{
+				std::cerr << "    (EE) Cannot retrieve private key for ID " << *it << std::endl;
+				key_loading_failed = true ;
+				break ;
+			}
+		}
+	}
+        if(key_loading_failed)
+        {
+	    std::cerr << "  Some keys not loaded.Returning false to retry later." << std::endl;
+            return false ;
         }
     
         // we do this only when something actually needs to be decrypted.
@@ -3741,38 +3768,44 @@ bool RsGxsNetService::decryptTransaction(NxsTransaction *tr)
         unsigned char *decrypted_mem = NULL;
         uint32_t decrypted_len =0;
         
-        std::cerr << "  Trying to decrypt item..." ;
+        std::cerr << "    Trying to decrypt item..." ;
         
         if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->aes_encrypted_data.bin_data,encrypted_item->aes_encrypted_data.bin_len,private_keys))
         {
-            std::cerr << "Failed! Cannot decrypt transaction. Giving up." << std::endl;
-            return false ;
+            std::cerr << "Failed! Cannot decrypt this item." << std::endl;
+            decrypted_mem = NULL ; // for safety
 	}
-	std::cerr << "Succeeded! deserialising..." << std::endl;
+	std::cerr << "    Succeeded! deserialising..." << std::endl;
         
         // deserialise the item
         
-    	RsItem *ditem =  RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
+
+    	RsItem *ditem = NULL ;
+        RsNxsItem *nxsitem = NULL ;
         
-        if(ditem == NULL)
-        {
-            std::cerr << "   Cannot deserialise. Item encoding error!" << std::endl;
-            return false ;
-        }
-        RsNxsItem *nxsitem = dynamic_cast<RsNxsItem*>(ditem) ;
+        if(decrypted_mem!=NULL)
+	{
+		ditem = RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
+
+		if(ditem == NULL)
+			std::cerr << "    Cannot deserialise. Item encoding error!" << std::endl;
+
+		nxsitem = dynamic_cast<RsNxsItem*>(ditem) ;
+
+		if(nxsitem == NULL)
+			std::cerr << "    (EE) Deserialised item is not an NxsItem. Weird. Dropping transaction." << std::endl;
+	}           
         
-        if(nxsitem == NULL)
-        {
-            std::cerr << "   Deserialised item is not an NxsItem. Weird. Dropping transaction." << std::endl;
-            return false ;
-        }
-            
-        // replace the encrypted item with the clear one
-	std::cerr << "  Replacing the encrypted item with the clear one." << std::endl;
-        
+        // remove the encrypted item. After that it points to the next item to handle
         it = tr->mItems.erase(it) ;
-        tr->mItems.insert(it,nxsitem) ;
-        --it ; // this is to make sure the ++it in the for loop is not goign to skip the item just after the one being inserted
+        
+        if(nxsitem != NULL)
+	{
+		std::cerr << "    Replacing the encrypted item with the clear one." << std::endl;
+		tr->mItems.insert(it,nxsitem) ;	// inserts before it, so no need to ++it
+	}
+        
+        delete encrypted_item ;
     }
 #endif
         
