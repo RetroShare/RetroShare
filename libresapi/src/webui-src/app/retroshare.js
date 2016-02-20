@@ -280,16 +280,19 @@ rs.counting = function(path, counterfnkt) {
         }
         return "";
     }
-}
+};
 
 // listing data-elements
-rs.list = function(path, buildfktn){
+rs.list = function(path, buildfktn, sortfktn){
     var list = rs(path);
     if (list === undefined|| list == null) {
         return "< waiting for server ... >"
     };
+    if (sortfktn != undefined && sortfktn != null) {
+        list=list.sort(sortfktn);
+    }
     return list.map(buildfktn);
-}
+};
 
 //remember additional data (feature of last resort)
 rs.memory = function(path, args){
@@ -304,3 +307,22 @@ rs.memory = function(path, args){
     return item.memory;
 };
 
+//return sorting-function for string, based on property name
+//using: list.sort(rs.sort("name"));
+// -----
+//innersort: cascading sorting - using:
+//list.sort(rs.sort("type",rs.sort("name")))
+rs.sort = function(name, innersort){
+    return function(a,b){
+        if (a[name].toLowerCase() == b[name].toLowerCase()) {
+            if (innersort === undefined) {
+                return 0
+            }
+            return innersort(a,b);
+        } else if (a[name].toLowerCase() < b[name].toLowerCase()) {
+            return -1
+        } else {
+            return 1
+        }
+    }
+}

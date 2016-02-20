@@ -117,7 +117,13 @@ function lobby(lobbyid){
 module.exports = {
     frame: function(content, right){
         return m(".chat.container", [
-            m(".chat.header", "headerbar"),
+            m(".chat.header", [
+                m(
+                    "h2",
+                    {style:{margin:"0px"}},
+                    "chat"
+                )
+            ]),
             m(".chat.left", [
                 m("div.chat.header[style=position:relative]","lobbies:"),
                 m("br"),
@@ -136,7 +142,11 @@ module.exports = {
             );
         };
         return this.frame(
-                m("div", "please select lobby"),
+                m(
+                    "div",
+                    {style: {margin:"10px"}},
+                    "please select lobby"
+                ),
                 m("div","right"));
     }
 }

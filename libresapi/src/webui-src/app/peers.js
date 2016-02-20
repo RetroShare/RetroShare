@@ -14,6 +14,7 @@ module.exports = {view: function(){
             m("h3","waiting_server"),
         ]);
     };
+    peers = peers.sort(rs.sort("name"));
 
     //building peerlist (prebuild for counting)
     var online = 0;

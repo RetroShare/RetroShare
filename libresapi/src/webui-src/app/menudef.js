@@ -64,6 +64,10 @@ module.exports = {  nodes: [
 		counter: rs.counting("transfers/downloads")
 	},
 	{
+	    name: "forums",
+	    runstate: "running_ok.*",
+	},
+	{
 		name: "chat",
 		runstate: "running_ok.*",
 	},

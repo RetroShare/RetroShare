@@ -34,11 +34,11 @@ TODO
 [ ] make stylesheets or find reusable sass/css components
 google material design has nice rules for color, spacing and everything: https://www.google.de/design/spec/material-design/introduction.html
 [ ] find icons, maybe use google material design iconfont
-[ ] use urls/mithril routing for the menu. urls could replace state stored in rs.content
-[ ] drag and drop private key upload and import
+[X] use urls/mithril routing for the menu. urls could replace state stored in rs.content
+[X] drag and drop private key upload and import
 [ ] link from peer location to chat (use urls and mithril routing)
-[ ] add/remove friend, own cert
-[ ] downloads, search
+[X] add/remove friend, own cert
+[X] downloads, search
 [ ] make reusable infinite list controller, the js part to load data from Pagination.h (tweak Pagination.h to make everything work)
 should provide forward, backward and follow-list-end
 [ ] backend: view/create identities
@@ -49,4 +49,4 @@ should provide forward, backward and follow-list-end
 [ ] backend: edit shared folders
 [ ] backend: view shared files
 [ ] redirect if a url is not usable in the current runstate (e.g. redirect from login page to home page, after login)
-[ ] sort friendslist
+[X] sort friendslist

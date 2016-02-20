@@ -15,7 +15,8 @@ module.exports = {view: function(){
         m("ul",
             rs.list("identity/own", function(item){
                 return m("li",[m("h2",item.name)]);
-            })
+            },
+            rs.sort("name"))
         )
     ]);
 }}
