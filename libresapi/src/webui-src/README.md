@@ -43,7 +43,7 @@ google material design has nice rules for color, spacing and everything: https:/
 should provide forward, backward and follow-list-end
 [ ] backend: view/create identities
 [ ] backend: chat lobby participants list
-[ ] chat: send_message
+[X] chat: send_message
 [ ] backend: chat typing notifications
 [ ] make routines to handle retroshare links
 [ ] backend: edit shared folders

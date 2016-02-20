@@ -3,7 +3,9 @@
 var m = require("mithril");
 var rs = require("retroshare");
 
-function msg(from, when, text){
+var msg = null;
+
+function dspmsg(from, when, text){
     return m(".chat.msg.container",[
         m(".chat.msg.from", from),
         m(".chat.msg.when", when),
@@ -43,6 +45,15 @@ function getLobbyDetails(lobbyid){
         }
     }
     return null;
+}
+
+function sendmsg(msgid){
+    var txtmsg = document.getElementById("txtNewMsg");
+	rs.request("chat/send_message", {
+		chat_id: msgid,
+		msg: txtmsg.value
+	});
+    txtmsg.value="";
 }
 
 function lobby(lobbyid){
@@ -100,12 +111,30 @@ function lobby(lobbyid){
                 },"subscribe as " + item.name);
             }),
         ];
+    } else {
+        msg = m(".chat.bottom",[
+            m("div","enter new message:"),
+            m("input",{
+                id:"txtNewMsg",
+                onkeydown: function(event){
+                    if (event.keyCode == 13){
+                        sendmsg(lobbyid);
+                    }
+                }
+            }),
+            m("div.btn2", {
+                style: {textAlign:"center"},
+                onclick: function(){
+                    sendmsg(lobbyid);
+                }
+            },"submit")
+        ]);
     }
     return [
         intro,
         mem.msg.map(function(item){
             var d = new Date(new Number(item.send_time)*1000);
-            return msg(
+            return dspmsg(
                 item.author_name,
                 d.toLocaleDateString() + " " + d.toLocaleTimeString(),
                 item.msg
@@ -116,37 +145,45 @@ function lobby(lobbyid){
 
 module.exports = {
     frame: function(content, right){
-        return m(".chat.container", [
-            m(".chat.header", [
-                m(
-                    "h2",
-                    {style:{margin:"0px"}},
-                    "chat"
-                )
+        return m("div", [
+            m(".chat.container", [
+                m(".chat.header", [
+                    m(
+                        "h2",
+                        {style:{margin:"0px"}},
+                        "chat"
+                    )
+                ]),
+                m(".chat.left", [
+                    m("div.chat.header[style=position:relative]","lobbies:"),
+                    m("br"),
+                    lobbies(),
+                ]),
+                m(".chat.right", right),
+                m(".chat.middle", content),
+                m(".chat.clear", ""),
             ]),
-            m(".chat.left", [
-                m("div.chat.header[style=position:relative]","lobbies:"),
-                m("br"),
-                lobbies(),
-            ]),
-            m(".chat.right", right),
-            m(".chat.middle", content),
-            m(".chat.clear", ""),
+            msg != null
+            ? msg
+            : [],
         ]);
     },
     view: function(){
         var lobbyid = m.route.param("lobby");
+        msg = null;
         if (lobbyid != undefined ) {
             return this.frame(
-                lobby(lobbyid),[]
+                lobby(lobbyid),
+                []
             );
         };
         return this.frame(
-                m(
-                    "div",
-                    {style: {margin:"10px"}},
-                    "please select lobby"
-                ),
-                m("div","right"));
+            m(
+                "div",
+                {style: {margin:"10px"}},
+                "please select lobby"
+            ),
+            m("div","right")
+        );
     }
 }
