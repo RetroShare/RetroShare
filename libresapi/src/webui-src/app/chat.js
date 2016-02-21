@@ -140,10 +140,10 @@ function lobby(lobbyid){
             rs.list("identity/own", function(item){
                 return m("div.btn2",{
                     onclick:function(){
-                        console.log("subscribe - id:" + lobbyid +", "
+                        console.log("subscribe - id:" + lobdt.id +", "
                             + "gxs_id:" + item.gxs_id)
 			            rs.request("chat/subscribe_lobby",{
-			                id:lobbyid,
+			                id:lobdt.id,
 			                gxs_id:item.gxs_id
 			            })
                     }
