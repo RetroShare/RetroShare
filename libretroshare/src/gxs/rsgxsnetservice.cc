@@ -209,6 +209,7 @@
 #include "retroshare/rsgxscircles.h"
 #include "pgp/pgpauxutils.h"
 #include "util/rsmemory.h"
+#include "util/stacktrace.h"
 
 /***
  * Use the following defines to debug:
@@ -583,6 +584,23 @@ public:
     }
 };
         
+template<class T>
+class RsGxsMetaDataTemporaryMapVector: public std::vector<T*>
+{
+public:
+    virtual ~RsGxsMetaDataTemporaryMapVector()
+    {
+        clear() ;
+    }
+    
+    virtual void clear()
+    {
+        for(typename RsGxsMetaDataTemporaryMapVector<T>::iterator it = this->begin();it!=this->end();++it)
+            if(it->second != NULL)
+		    delete it->second ;
+        std::vector<T*>::clear() ;
+    }
+};
 void RsGxsNetService::syncWithPeers()
 {
 #ifdef NXS_NET_DEBUG_0
@@ -2012,16 +2030,15 @@ bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 
 void RsGxsNetService::processTransactions()
 {
-#ifdef NXS_NET_DEBUG_1
-    if(!mTransactions.empty())
-        GXSNETDEBUG___ << "processTransactions()" << std::endl;
-#endif
     RS_STACK_MUTEX(mNxsMutex) ;
 
-    TransactionsPeerMap::iterator mit = mTransactions.begin();
-
-    for(; mit != mTransactions.end(); ++mit)
+    for(TransactionsPeerMap::iterator mit = mTransactions.begin();mit != mTransactions.end(); ++mit)
     {
+#ifdef NXS_NET_DEBUG_1
+        if(!mit->second.empty())
+		GXSNETDEBUG_P_(mit->first) << "processTransactions from/to peer " << mit->first << std::endl;
+#endif
+        
         TransactionIdMap& transMap = mit->second;
         TransactionIdMap::iterator mmit = transMap.begin(),  mmit_end = transMap.end();
 
@@ -2496,6 +2513,13 @@ void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransacItem *nxsTrans, c
     const RsPeerId& peerFrom = nxsTrans->PeerId();
 
     ClientMsgMap::iterator it = mClientMsgUpdateMap.find(peerFrom);
+    
+    if(peerFrom.isNull())
+    {
+        std::cerr << "(EE) update from null peer!" << std::endl;
+        print_stacktrace() ;
+    }
+        
 
     RsGxsMsgUpdateItem* mui = NULL;
 
@@ -3859,10 +3883,13 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
 	{
 		ditem = RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
 
-		if(ditem == NULL)
+		if(ditem != NULL)
+		{
+			ditem->PeerId((*it)->PeerId()) ;	// This is needed because the deserialised item has no peer id
+			nxsitem = dynamic_cast<RsNxsItem*>(ditem) ;
+		}
+		else
 			std::cerr << "    Cannot deserialise. Item encoding error!" << std::endl;
-
-		nxsitem = dynamic_cast<RsNxsItem*>(ditem) ;
 
 		if(nxsitem == NULL)
 			std::cerr << "    (EE) Deserialised item is not an NxsItem. Weird. Dropping transaction." << std::endl;
@@ -4343,12 +4370,12 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem *item)
         const RsGxsServerMsgUpdateItem *msui = cit->second;
 
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  local time stamp: " << std::dec<< time(NULL) - msui->msgUpdateTS << " secs ago. Update sent: " << (item->updateTS < msui->msgUpdateTS)  ;
+        GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  local time stamp: " << std::dec<< time(NULL) - msui->msgUpdateTS << " secs ago. Update sent: " << (item->updateTS < msui->msgUpdateTS) << std::endl;
 #endif
         return item->updateTS < msui->msgUpdateTS ;
     }
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  no local time stamp for this grp. " ;
+    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  no local time stamp for this grp. "<< std::endl;
 #endif
     
     return false;
@@ -4381,9 +4408,6 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
 	    return;
     }
 
-    GxsMsgMetaResult metaResult;
-    GxsMsgReq req;
-
     RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
     grpMetas[item->grpId] = NULL;
 
@@ -4405,7 +4429,10 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
 	    return ;
     }
 
+    GxsMsgReq req;
     req[item->grpId] = std::vector<RsGxsMessageId>();
+
+    GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);
     std::vector<RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
 
@@ -4428,10 +4455,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
-    {
-	    std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
-
-	    for(; vit != msgMetas.end(); ++vit)
+	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
 	    {
 		    RsGxsMsgMetaData* m = *vit;
 
@@ -4457,7 +4481,17 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
 				    delete mItem ;
 			    }
 			    else
-				    std::cerr << "    (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << std::endl;
+			    {
+				    // Something's not ready (probably the circle content. We could put on a vetting list, but actually the client will re-ask the list asap. 
+
+				    std::cerr << "  (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << ". Dropping the whole list." << std::endl;
+
+				    for(std::list<RsNxsItem*>::const_iterator it(itemL.begin());it!=itemL.end();++it)
+					    delete *it ;
+
+				    itemL.clear() ;
+				    break ;
+			    }
 		    }
 		    else
 		    {
@@ -4466,28 +4500,27 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item)
 #endif
 			    itemL.push_back(mItem);
 		    }
-	    }
-
-	    if(!itemL.empty())
-	    {
-#ifdef NXS_NET_DEBUG_0
-		    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  sending final msg info list of " << itemL.size() << " items." << std::endl;
-#endif
-		    locked_pushMsgRespFromList(itemL, peer, item->grpId,transN);
-	    }
-#ifdef NXS_NET_DEBUG_0
-	    else
-		    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  list is empty! Not sending anything." << std::endl;
-#endif
-    }
+	    }   
 #ifdef NXS_NET_DEBUG_0
     else
 	    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  vetting forbids sending. Nothing will be sent." << itemL.size() << " items." << std::endl;
 #endif
 
-    std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
+    if(!itemL.empty())
+    {
+#ifdef NXS_NET_DEBUG_0
+	    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  sending final msg info list of " << itemL.size() << " items." << std::endl;
+#endif
+	    locked_pushMsgRespFromList(itemL, peer, item->grpId,transN);
+    }
+#ifdef NXS_NET_DEBUG_0
+    else
+	    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  list is empty! Not sending anything." << std::endl;
+#endif
+        
+
     // release meta resource
-    for(vit = msgMetas.begin(); vit != msgMetas.end(); ++vit)
+    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin(); vit != msgMetas.end(); ++vit)
 	    delete *vit;
 }
 
