@@ -2788,7 +2788,6 @@ void RsGenExchange::processRecvdGroups()
 			if(ret == VALIDATE_SUCCESS)
 			{
 				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
-				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
 
 				computeHash(grp->grp, meta->mHash);
 
@@ -2808,6 +2807,8 @@ void RsGenExchange::processRecvdGroups()
 					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 						meta->mOriginator = grp->PeerId();
 
+					meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
+                    
 					grps.insert(std::make_pair(grp, meta));
 					grpIds.push_back(grp->grpId);
 				}
