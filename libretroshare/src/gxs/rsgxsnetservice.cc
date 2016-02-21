@@ -906,8 +906,8 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    RS_STACK_MUTEX(mNxsMutex) ;
 	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[grs->grpId]) ;
 
-	    int32_t old_count = rec.max_visible_count ;
-	    int32_t old_suppliers_count = rec.suppliers.size() ;
+	    uint32_t old_count = rec.max_visible_count ;
+	    uint32_t old_suppliers_count = rec.suppliers.size() ;
         
 	    rec.suppliers.insert(grs->PeerId()) ;
 	    rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
@@ -2456,6 +2456,9 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
                 else
                     std::cerr << "RsGxsNetService::processCompletedTransactions(): item did not caste to msg" << std::endl;
             }
+            
+#warning We need here to queue all incoming items into a list where the vetting will be checked
+#warning in order to avoid someone without the proper rights to post in a group protected with an external circle
 
 #ifdef NXS_FRAG
             // (cyril) This code does not work. Since we do not really need message fragmenting, I won't fix it.
