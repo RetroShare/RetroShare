@@ -52,8 +52,8 @@ function lobbies(){
                     }
                 },
                 peer.name + " / " + loc.location  + (
-                    lobby.unread_msgs > 0
-                    ? ("(" + lobby.unread_msgs + ")")
+                    loc.unread_msgs > 0
+                    ? ("(" + loc.unread_msgs + ")")
                     : "")
                 );
             })
