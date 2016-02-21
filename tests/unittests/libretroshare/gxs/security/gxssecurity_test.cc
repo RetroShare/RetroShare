@@ -75,9 +75,9 @@ TEST(libretroshare_gxs, GxsSecurity)
 	// test encryption/decryption
 
 	uint8_t *out = NULL ;
-	int outlen = 0 ;
+    uint32_t outlen = 0 ;
 	uint8_t *out2 = NULL ;
-	int outlen2 = 0 ;
+    uint32_t outlen2 = 0 ;
 
 	EXPECT_TRUE(GxsSecurity::encrypt(out,outlen,(const uint8_t*)data,data_len,pub_key) );
 

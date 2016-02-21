@@ -40,8 +40,8 @@ bool createCircle(const std::string &name,
                 uint32_t circleType,
                 const RsGxsCircleId &circleId,
                 const RsGxsId &authorId,
-                std::list<RsPgpId> localMembers,
-                std::list<RsGxsId> externalMembers,
+                std::set<RsPgpId> localMembers,
+                std::set<RsGxsId> externalMembers,
                 RsGxsGroupId &groupId);
 
 bool createGroup(const std::string &name,

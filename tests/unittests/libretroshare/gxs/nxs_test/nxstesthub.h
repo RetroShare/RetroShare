@@ -35,7 +35,7 @@ namespace rs_nxs_test
 	 * and synchronise according to their subscriptions. The default is to subscribe to all groups held by other peer
 	 * The threads for both net instances are started which begins their processing of transactions
 	 */
-	class NxsTestHub : public RsThread, public RecvPeerItemIface
+    class NxsTestHub : public RsTickingThread, public RecvPeerItemIface
 	{
 	public:
 
@@ -57,12 +57,6 @@ namespace rs_nxs_test
 		 * otherwise undefined
 		 */
 		bool testsPassed();
-
-		/*!
-		 *  This simulates the p3Service ticker and calls both gxs net services tick methods
-		 *  Also enables transport of messages between both services
-		 */
-		void run();
 
 		/*!
 		 * Begings test, equivalent to CreateThread(this)
@@ -97,13 +91,19 @@ namespace rs_nxs_test
 
 	private:
 
-	    void tick();
+        /*!
+         *  This simulates the p3Service ticker and calls both gxs net services tick methods
+         *  Also enables transport of messages between both services
+         */
+        virtual void data_tick();
 
 	private:
 
 	    typedef std::pair<RsPeerId, RsRawItem*> PayLoad;
 
 	    typedef std::map<RsPeerId, RsGxsNetService::pointer > PeerNxsMap ;
+
+        RsMutex mMtx;
 		PeerNxsMap mPeerNxsMap;
 		NxsTestScenario::pointer mTestScenario;
 		std::queue<PayLoad> mPayLoad;

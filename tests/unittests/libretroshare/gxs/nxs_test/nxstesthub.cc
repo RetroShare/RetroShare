@@ -1,6 +1,6 @@
 #include "nxstesthub.h"
 
-
+#include <unistd.h>
 
 class NotifyWithPeerId : public RsNxsObserver
 {
@@ -19,6 +19,16 @@ public:
     void notifyNewGroups(std::vector<RsNxsGrp*>& groups)
     {
     	mTestHub.notifyNewGroups(mPeerId, groups);
+    }
+
+    void notifyReceivePublishKey(const RsGxsGroupId& )
+    {
+
+    }
+
+    void notifyChangedGroupStats(const RsGxsGroupId&)
+    {
+
     }
 
 private:
@@ -50,7 +60,7 @@ private:
 };
 
 rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
- : mTestScenario(testScenario)
+ : mTestScenario(testScenario), mMtx("NxsTestHub Mutex")
 {
 	std::list<RsPeerId> peers;
 	mTestScenario->getPeers(peers);
@@ -94,27 +104,6 @@ bool rs_nxs_test::NxsTestHub::testsPassed()
 	return mTestScenario->checkTestPassed();
 }
 
-
-void rs_nxs_test::NxsTestHub::run()
-{
-	bool running = isRunning();
-	double timeDelta = .2;
-	while(running)
-	{
-#ifndef WINDOWS_SYS
-        usleep((int) (timeDelta * 1000000));
-#else
-        Sleep((int) (timeDelta * 1000));
-#endif
-
-        tick();
-
-		running = isRunning();
-	}
-
-}
-
-
 void rs_nxs_test::NxsTestHub::StartTest()
 {
 	// get all services up and running
@@ -131,7 +120,7 @@ void rs_nxs_test::NxsTestHub::StartTest()
 void rs_nxs_test::NxsTestHub::EndTest()
 {
 	// then stop this thread
-	join();
+    join();
 
 	// stop services
 	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
@@ -144,6 +133,7 @@ void rs_nxs_test::NxsTestHub::EndTest()
 void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 		std::vector<RsNxsMsg*>& messages)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 
 	std::map<RsNxsMsg*, RsGxsMsgMetaData*> toStore;
 	std::vector<RsNxsMsg*>::iterator it = messages.begin();
@@ -151,6 +141,13 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 	{
 		RsNxsMsg* msg = *it;
 		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+        // local meta is not touched by the deserialisation routine
+        // have to initialise it
+        meta->mMsgStatus = 0;
+        meta->mMsgSize = 0;
+        meta->mChildTs = 0;
+        meta->recvTS = 0;
+        meta->validated = false;
 		bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 		toStore.insert(std::make_pair(msg, meta));
 	}
@@ -162,6 +159,8 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 
 void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<RsNxsGrp*>& groups)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
+
 	std::map<RsNxsGrp*, RsGxsGrpMetaData*> toStore;
 	std::vector<RsNxsGrp*>::iterator it = groups.begin();
 	for(; it != groups.end(); it++)
@@ -189,6 +188,7 @@ void rs_nxs_test::NxsTestHub::Wait(int seconds) {
 
 bool rs_nxs_test::NxsTestHub::recvItem(RsRawItem* item, const RsPeerId& peerFrom)
 {
+    RS_STACK_MUTEX(mMtx); /***** MTX LOCKED *****/
 	PayLoad p(peerFrom, item);
 	mPayLoad.push(p);
 	return true;
@@ -199,13 +199,14 @@ void rs_nxs_test::NxsTestHub::CleanUpTest()
 	mTestScenario->cleanTestScenario();
 }
 
-void rs_nxs_test::NxsTestHub::tick()
+void rs_nxs_test::NxsTestHub::data_tick()
 {
 	// for each nxs instance pull out all items from each and then move to destination peer
 
 	PeerNxsMap::iterator it = mPeerNxsMap.begin();
 
 	// deliver payloads to peer's net services
+    mMtx.lock();
 	while(!mPayLoad.empty())
 	{
 		PayLoad& p = mPayLoad.front();
@@ -214,9 +215,12 @@ void rs_nxs_test::NxsTestHub::tick()
 		RsPeerId peerFrom = p.first;
 		RsPeerId peerTo = item->PeerId();
 		item->PeerId(peerFrom);
-		mPeerNxsMap[peerTo]->recv(item); //
+        mMtx.unlock();
+            mPeerNxsMap[peerTo]->recv(item);
+        mMtx.lock();
 		mPayLoad.pop();
 	}
+    mMtx.unlock();
 
 	// then tick net services
 	for(; it != mPeerNxsMap.end(); it++)
@@ -226,6 +230,8 @@ void rs_nxs_test::NxsTestHub::tick()
 
 	}
 
+    double timeDelta = .2;
+    usleep(timeDelta * 1000000);
 }
 
 
