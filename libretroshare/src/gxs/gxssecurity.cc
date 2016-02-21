@@ -896,7 +896,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
     {
         // cleanup and return false
         
+#ifdef GXS_SECURITY_DEBUG
         std::cerr << "  (EE) error caught: " << e.what() << std::endl;
+#endif
         if(out)
         {
             free(out) ;

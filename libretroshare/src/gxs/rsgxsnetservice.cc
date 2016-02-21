@@ -3737,9 +3737,6 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
         delete encrypted_item ;
     }
         
-#ifdef NXS_NET_DEBUG_7
-    GXSNETDEBUG_P_(peerId) << "  Decryption successful: replacing items with clear items" << std::endl;
-#endif
     return true ;
 }
 
