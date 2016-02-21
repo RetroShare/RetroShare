@@ -121,6 +121,6 @@ That also works with a retroshare GUI of course.
 Compile and run tests
 ---------------------
 
-qmake CONFIG+=tests
-make
-tests/unittests/unittests
+      qmake CONFIG+=tests
+      make
+      tests/unittests/unittests
