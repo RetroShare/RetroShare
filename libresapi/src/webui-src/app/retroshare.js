@@ -326,3 +326,19 @@ rs.sort = function(name, innersort){
         }
     }
 }
+
+//return sorting-function for boolean, based on property name
+rs.sort.bool = function(name, innersort){
+    return function(a,b){
+        if (a[name] == b[name]) {
+            if (innersort === undefined) {
+                return 0
+            }
+            return innersort(a,b);
+        } else if (a[name]) {
+            return -1
+        } else {
+            return 1
+        }
+    }
+}

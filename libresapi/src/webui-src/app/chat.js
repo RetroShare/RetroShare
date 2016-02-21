@@ -14,24 +14,51 @@ function dspmsg(from, when, text){
 }
 
 function lobbies(){
-    var lobs = rs("chat/lobbies");
-    if (lobs === undefined) {
-        return m("div","loading ...")
-    };
-    var dta = lobs.map(function (lobby){
-        return m("div.btn",{
-            title: "topic: " + lobby.topic + "\n"
-                + "subscribed: " + lobby.subscribed,
-            style: {
-                backgroundColor: lobby.subscribed ? 'blue' : 'darkred',
+    return [
+        rs.list("chat/lobbies",function(lobby){
+            return m("div.btn",{
+                title: "topic: " + lobby.topic + "\n"
+                    + "subscribed: " + lobby.subscribed,
+                style: {
+                    backgroundColor: lobby.subscribed ? 'blue' : 'darkred',
+                },
+                onclick: function(){
+                    m.route("/chat?lobby=" + lobby.chat_id);
+                }
             },
-            onclick: function(){
-                m.route("/chat?lobby=" + lobby.chat_id);
-            }
-                    },lobby.name + (lobby.unread_msg_count > 0 ? ("(" + lobby.unread_msg_count + ")") : ""));
-    });
-    return dta;
-
+            lobby.name + (
+                lobby.unread_msg_count > 0
+                ? ("(" + lobby.unread_msg_count + ")")
+                : "")
+            );
+        },
+            rs.sort.bool("is_broadcast",
+                rs.sort.bool("subscribed",
+                    rs.sort("name")))
+        ),
+        m("br"),
+        m("h3","peers:"),
+        rs.list("peers",function(peer){
+            return peer.locations.map(function(loc){
+                if (loc.location == "") {
+                    return [];
+                };
+                return m("div.btn",{
+                    style: {
+                        backgroundColor: loc.is_online ? 'blue' : 'darkred',
+                    },
+                    onclick: function(){
+                        m.route("/chat?lobby=" + loc.chat_id);
+                    }
+                },
+                peer.name + " / " + loc.location  + (
+                    lobby.unread_msgs > 0
+                    ? ("(" + lobby.unread_msgs + ")")
+                    : "")
+                );
+            })
+        })
+    ];
 }
 
 function getLobbyDetails(lobbyid){
@@ -42,6 +69,18 @@ function getLobbyDetails(lobbyid){
     for(var i = 0, l = lobs.length; i < l; ++i) {
         if (lobs[i].chat_id == lobbyid) {
             return lobs[i];
+        }
+    }
+    var peers = rs("peers");
+    if (peers === undefined) {
+        return null;
+    };
+    for(var i = 0, l = peers.length; i < l; ++i) {
+        var peer = peers[i];
+        for(var i1 = 0, l1 = peer.locations.length; i1 < l1; ++i1) {
+            if (peer.locations[i1].chat_id == lobbyid) {
+                return peer.locations[i1];
+            }
         }
     }
     return null;
@@ -58,9 +97,9 @@ function sendmsg(msgid){
 
 function lobby(lobbyid){
     var msgs;
-    var lobby = getLobbyDetails(lobbyid);
+    var lobdt = getLobbyDetails(lobbyid);
     var info = rs("chat/info/" + lobbyid);
-    if (lobby == null || info === undefined) {
+    if (lobdt == null || info === undefined) {
         return m("div","waiting ...");
     }
 
@@ -89,11 +128,11 @@ function lobby(lobbyid){
     });
 
     var intro = [
-            m("h2",lobby.name),
-            m("p",lobby.topic),
+            m("h2",lobdt.name),
+            m("p",lobdt.topic),
             m("hr")
     ]
-    if (!lobby.subscribed) {
+    if (lobdt.subscribed != undefined && !lobdt.subscribed) {
         return [
             intro,
             m("b","select subscribe identity:"),
@@ -101,10 +140,10 @@ function lobby(lobbyid){
             rs.list("identity/own", function(item){
                 return m("div.btn2",{
                     onclick:function(){
-                        console.log("subscribe - id:" + lobby.id +", "
+                        console.log("subscribe - id:" + lobbyid +", "
                             + "gxs_id:" + item.gxs_id)
 			            rs.request("chat/subscribe_lobby",{
-			                id:lobby.id,
+			                id:lobbyid,
 			                gxs_id:item.gxs_id
 			            })
                     }
