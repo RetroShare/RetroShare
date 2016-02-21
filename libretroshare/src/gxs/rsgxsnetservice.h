@@ -452,9 +452,6 @@ private:
     /*!
     * encrypts/decrypts the transaction for the destination circle id.
     */
-#ifdef TO_REMOVE
-    bool encryptTransaction(NxsTransaction *tr);
-#endif
     bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *& encrypted_item, uint32_t &status) ;
     bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
 

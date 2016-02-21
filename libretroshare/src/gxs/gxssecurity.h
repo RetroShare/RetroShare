@@ -42,53 +42,6 @@
 class GxsSecurity 
 {
 	public:
-    	    /*!
-             * \brief The MultiEncryptionContext struct
-             * 
-             * This structure is used to store encryption keys generated when encrypting for multiple keys at once, so that
-             * the client doesn't need to know about all the libcrypto variables involved.
-             * Typically, the client will first ask to init a MultiEncryptionContext by providing several GXS ids,
-             * and then pass the structure as a parameter to encrypt some data with the same key.
-             */
-    		class MultiEncryptionContext
-	    	{
-	    	public:
-		   	 MultiEncryptionContext()  { ekl=NULL;ek=NULL;}
-		   	 ~MultiEncryptionContext() { clear() ;}
-
-		   	 void clear() 
-			 {
-				 for(uint32_t i=0;i<ids.size();++i)
-					 free(ek[i]) ;
-
-				 if(ekl)
-					 free(ekl) ;
-				 if(ek)
-					 free(ek) ;
-
-				 ekl = NULL ;
-				 ek = NULL ;
-
-				 ids.clear() ;
-			 }
-
-		   	 // The functions below give access to the encrypted symmetric key to be used.
-		   	 // 
-		   	 int            n_encrypted_keys() const { return ids.size();}
-		   	 RsGxsId        encrypted_key_id  (int i) const { return ids[i];}
-		   	 unsigned char *encrypted_key_data(int i) const { return ek[i];}
-		   	 int            encrypted_key_size(int i) { return ekl[i] ; }
-		   	 const unsigned char *initialisation_vector() const { return iv ; }
-
-	    	protected:
-		   	 std::vector<RsGxsId> ids;		// array of destination ids
-		   	 int *ekl ;                           // array of encrypted keys length 
-		   	 unsigned char **ek ;                 // array of encrypted keys 
-		   	 EVP_CIPHER_CTX ctx;                  // EVP encryption context
-		   	 unsigned char iv[EVP_MAX_IV_LENGTH]; // initialization vector of the cipher.
-             
-             		friend class GxsSecurity ;
-	    	};
 		/*!
 		 * Extracts a public key from a private key.
 		 */
@@ -112,21 +65,6 @@ class GxsSecurity
 		 */
 		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
 		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys) ;
-#ifdef TO_REMOVE
-		/*!
-		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
-		 * parameter.
-		 */
-		static bool initEncryption(MultiEncryptionContext& encryption_context, const std::vector<RsTlvSecurityKey> &keys) ;
-		static bool initDecryption(MultiEncryptionContext& encryption_context, const RsTlvSecurityKey& key, unsigned char *IV, uint32_t IV_size, unsigned char *encrypted_session_key, uint32_t encrypted_session_key_size) ;
-        
-		/*!
-		 * Encrypts/decrypt data using envelope encryption using the key pre-computed in the encryption context passed as
-		 * parameter.
-		 */
-		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
-		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, MultiEncryptionContext& encryption_context) ;
-#endif
 
 		/**
 		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
