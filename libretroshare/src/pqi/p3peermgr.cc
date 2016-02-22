@@ -2732,10 +2732,51 @@ bool p3PeerMgrIMPL::removeBannedIps()
 // 	return ret;
 // }
 
-
+/**
+ * @brief p3PeerMgrIMPL::removeUnusedLocations Removes all location offline for RS_PEER_OFFLINE_DELETE seconds or more. Keeps the most recent location per PGP id.
+ * @return true on success
+ *
+ * This function removes all location that are offline for too long defined by RS_PEER_OFFLINE_DELETE.
+ * It also makes sure that at least one location (the most recent) is kept.
+ *
+ * The idea of the function is the following:
+ *  - keep track if there is at least one location per PGP id that is not offline for too long
+ *      -> hasRecentLocation
+ *  - keep track of most recent location per PGP id that is offline for too long (and its time stamp)
+ *      -> mostRecentLocation
+ *      -> mostRecentTime
+ *
+ * When a location is found that is offline for too long the following points are checked from the top to the bottom:
+ * 1) remove it when the PGP id has a location that is not offline for too long
+ * 2) remove it when the PGP id has a more recent location
+ * 3) keep it when it is the most recent location
+ *      This location will possibly be removed when a more recent (but still offline for too long) is found
+ */
 bool p3PeerMgrIMPL::removeUnusedLocations()
 {
 	std::list<RsPeerId> toRemove;
+
+	std::map<RsPgpId, bool>     hasRecentLocation;
+	std::map<RsPgpId, time_t>   mostRecentTime;
+	std::map<RsPgpId, RsPeerId> mostRecentLocation;
+
+	// init maps
+	{
+		std::list<RsPgpId> pgpList;
+
+		if(!rsPeers->getGPGAcceptedList(pgpList))
+			return false;
+
+		std::list<RsPgpId>::iterator it;
+		for(it = pgpList.begin(); it != pgpList.end(); ++it)
+		{
+			hasRecentLocation[*it] = false;
+			mostRecentTime[*it] = (time_t)0;
+		}
+	}
+
+	const time_t now = time(NULL);
+	RsPgpId pgpID;
 	
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -2744,19 +2785,71 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
 #endif
 		
-		time_t now = time(NULL);
-		
 		std::map<RsPeerId, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
 		{
+			pgpID = it->second.gpg_id;
+
+			// store some references to speed up accessing
+			RsPeerId &idRef = mostRecentLocation[pgpID];
+			bool &recentRef = hasRecentLocation[pgpID];
+
 			if (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE)
 			{
-				toRemove.push_back(it->first);
-
+				// location is too old
+				if(recentRef)
+				{
+					// there is already one location that won't get removed
+					// -> we can safely remove this one
+					toRemove.push_back(it->first);
 #ifdef PEER_DEBUG
-                std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+					std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
 #endif
-				
+				}
+				else
+				{
+					// we need to take care that the most recent location it not removed
+					time_t &timeRef = mostRecentTime[pgpID];
+
+					if(timeRef > it->second.lastcontact)
+					{
+						// this (it) location is longer offline compared to mostRecentLocation
+						// -> we can remove this one
+						toRemove.push_back(it->first);
+#ifdef PEER_DEBUG
+						std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+#endif
+					}
+					else
+					{
+						// this (it) location is more recent compared to mostRecentLocation
+						// -> we can remove mostRecentLocation
+						if(!idRef.isNull())
+						{
+							toRemove.push_back(idRef);
+#ifdef PEER_DEBUG
+							std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+#endif
+						}
+						// update maps
+						idRef = it->first;
+						timeRef = it->second.lastcontact;
+					}
+				}
+			}
+			else
+			{
+				// found a location that won't get removed
+				recentRef = true;
+
+				// we can remove mostRecentLocation if it is set
+				if(!idRef.isNull())
+				{
+					toRemove.push_back(idRef);
+#ifdef PEER_DEBUG
+					std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+#endif
+				}
 			}
 			
 //			if (isDummyFriend(it->first))
@@ -2771,11 +2864,11 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 			
 		}
 	}
-	std::list<RsPeerId>::iterator it;
-	
+
+	std::list<RsPeerId>::iterator it;	
 	for(it = toRemove.begin(); it != toRemove.end(); ++it)
 	{
-		removeFriend(*it,false);
+		removeFriend(*it, false);
 	}
 
 	return true;
