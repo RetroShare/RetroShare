@@ -535,26 +535,6 @@ bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std
 
     /* extract from ServiceString */
     SSGxsChannelGroup ss;
-    if (it->second.mServiceString.empty())
-    {
-#ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::getChannelDownloadDirectory() No ServiceString make new one." << std::endl;
-#endif
-        std::string serviceString = ss.save();
-        uint32_t token;
-
-        it->second.mServiceString = serviceString; // update Local Cache.
-        RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
-
-        /* now reload it */
-        std::list<RsGxsGroupId> groups;
-        groups.push_back(groupId);
-
-        request_SpecificSubscribedGroups(groups);
-
-        return false;
-    }
-
     ss.load(it->second.mServiceString);
     directory = ss.mDownloadDirectory;
 
@@ -946,26 +926,6 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enable
 
 	/* extract from ServiceString */
 	SSGxsChannelGroup ss;
-	if (it->second.mServiceString.empty())
-	{
-#ifdef GXSCHANNELS_DEBUG
-		std::cerr << "p3GxsChannels::autoDownloadEnabled() No ServiceString make new one." << std::endl;
-#endif
-		std::string serviceString = ss.save();
-		uint32_t token;
-
-		it->second.mServiceString = serviceString; // update Local Cache.
-		RsGenExchange::setGroupServiceString(token, groupId, serviceString); // update dbase.
-
-		/* now reload it */
-		std::list<RsGxsGroupId> groups;
-		groups.push_back(groupId);
-
-		request_SpecificSubscribedGroups(groups);
-
-		return false;
-	}
-
 	ss.load(it->second.mServiceString);
 	enabled = ss.mAutoDownload;
 
@@ -974,15 +934,17 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enable
 
 bool SSGxsChannelGroup::load(const std::string &input)
 {
+    if(input.empty())
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "SSGxsChannelGroup::load() asked to load a null string." << std::endl;
+#endif
+        return true ;
+    }
     int download_val;
     mAutoDownload = false;
     mDownloadDirectory.clear();
 
-    if(input.empty())
-    {
-        std::cerr << "(EE) SSGxsChannelGroup::load() asked to load a null string. Weird." << std::endl;
-        return false ;
-    }
     
     RsTemporaryMemory tmpmem(input.length());
 
