@@ -41,7 +41,7 @@ linux-* {
 	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
+	LIBS *= -lcrypto -ldl -lX11 -lz -lpthread
 
         #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
