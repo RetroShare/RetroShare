@@ -65,13 +65,15 @@ VOIP
      M  [ ] Video Snapshots https://support.skype.com/en/faq/FA1222/what-is-video-snapshot
      M  [ ] Voice Messaging (record and send a voice message)
      M  [ ] Video Messages (send a video greeting to multiple friends/coworkers/developers at once.)
+     M  [ ] Add Call status (when im on the phone changes my status with phone icon)
      H  [ ] Audio Conference
      H  [ ] Video Conference
 
 Messages
     H  [X] make the mail system re-send failed emails notified by the global router. This is hard because it needs a proper management of duplicate messages
     E  [X] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
-    M  [ ] add Signature feature to rs messages
+    M  [ ] add Signature feature to messages
+    M  [ ] add vacation responser for messages (automatic replies) 
 
 Chat
     E  [X] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
