@@ -2331,7 +2331,6 @@ void RsGenExchange::publishGrps()
 			{
 				grp->metaData = new RsGxsGrpMetaData();
 				grpItem->meta.mPublishTs = time(NULL);
-                //grpItem->meta.mParentGrpId = std::string("empty");
 				*(grp->metaData) = grpItem->meta;
 
 				// TODO: change when publish key optimisation added (public groups don't have publish key
@@ -2927,6 +2926,11 @@ void RsGenExchange::performUpdateValidation()
 			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
 
+            		// Keep subscriptionflag to what it was. This avoids clearing off the flag when updates to group meta information
+            		// is received.
+            
+            		gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
+            
 			grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
 		}
 		else
