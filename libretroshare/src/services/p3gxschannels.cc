@@ -353,7 +353,18 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 				}
 				else
 				{
-					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
+					RsGxsCommentItem* cmt = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(!cmt)
+					{
+						RsGxsMsgItem* msg = (*vit);
+						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
+						std::cerr << "Not a GxsChannelPostItem neither a RsGxsCommentItem"
+											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+											<< " , deleting!" << std::endl;
+					}
 					delete *vit;
 				}
 			}
@@ -401,7 +412,18 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 				}
 				else
 				{
-					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
+					RsGxsCommentItem* cmt = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(!cmt)
+					{
+						RsGxsMsgItem* msg = (*vit);
+						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
+						std::cerr << "Not a GxsChannelPostItem neither a RsGxsCommentItem"
+											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+											<< " , deleting!" << std::endl;
+					}
 					delete *vit;
 				}
 			}
@@ -1560,7 +1582,7 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 
 		default:
 			/* error */
-			std::cerr << "p3GxsChannels::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << "p3GxsChannels::handle_event() Unknown Event Type: " << event_type << " elabel:" << elabel;
 			std::cerr << std::endl;
 			break;
 	}

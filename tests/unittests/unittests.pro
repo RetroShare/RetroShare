@@ -3,8 +3,6 @@ CONFIG += bitdht
 
 CONFIG += gxs debug
 
-LIBS += -lgtest
-
 gxs {
 	DEFINES += RS_ENABLE_GXS
 }
@@ -14,6 +12,21 @@ TARGET = unittests
 
 OPENPGPSDK_DIR = ../../openpgpsdk/src
 INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+
+# it is impossible to use precompield googletest lib
+# because googletest must be compiled with same compiler flags as the tests!
+!exists(../googletest/googletest/src/gtest-all.cc){
+    message(trying to git clone googletest...)
+    !system(git clone https://github.com/google/googletest.git ../googletest){
+        error(Could not git clone googletest files. You can manually download them to /tests/googletest)
+    }
+}
+
+INCLUDEPATH += \
+    ../googletest/googletest/include   \
+    ../googletest/googletest
+
+SOURCES += ../googletest/googletest/src/gtest-all.cc
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -28,28 +41,32 @@ linux-* {
 	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
+	LIBS *= -lcrypto -ldl -lX11 -lz -lpthread
 
-	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+        #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+        contains(CONFIG, NO_SQLCIPHER) {
+                DEFINES *= NO_SQLCIPHER
+                PKGCONFIG *= sqlite3
+        } else {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-	SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-	isEmpty(SQLCIPHER_OK) {
-	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+                SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+                isEmpty(SQLCIPHER_OK) {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 
-		! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-			message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
-				error(Please fix this and try again. Will stop now.)
-		}
+                        ! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+                                message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
+                                error(Please fix this and try again. Will stop now.)
+                        }
 
-		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-		INCLUDEPATH += ../../../lib/sqlcipher/src/
-		INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
-
-	} else {
-		LIBS += -lsqlcipher
-	}
+                        LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+                        INCLUDEPATH += ../../../lib/sqlcipher/src/
+                        INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
+                } else {
+                        LIBS += -lsqlcipher
+                }
+        }
 
 
 	LIBS *= -lglib-2.0
@@ -256,13 +273,13 @@ SOURCES +=  libretroshare/serialiser/rsturtleitem_test.cc \
 		libretroshare/serialiser/rsstatusitem_test.cc \
 		libretroshare/serialiser/rsnxsitems_test.cc \
 		libretroshare/serialiser/rsgxsiditem_test.cc \
-		libretroshare/serialiser/rsphotoitem_test.cc \
+#		libretroshare/serialiser/rsphotoitem_test.cc \
 		libretroshare/serialiser/tlvbase_test2.cc \
 		libretroshare/serialiser/tlvrandom_test.cc \
 		libretroshare/serialiser/tlvbase_test.cc \
 		libretroshare/serialiser/tlvstack_test.cc \
 		libretroshare/serialiser/tlvitems_test.cc \
-		libretroshare/serialiser/rsgrouteritem_test.cc \
+#		libretroshare/serialiser/rsgrouteritem_test.cc \
 		libretroshare/serialiser/tlvtypes_test.cc \
 		libretroshare/serialiser/tlvkey_test.cc \
 		libretroshare/serialiser/support.cc \

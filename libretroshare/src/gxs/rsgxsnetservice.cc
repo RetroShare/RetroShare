@@ -482,6 +482,13 @@ public:
 
 	static float computeCurrentSendingProbability()
 	{
+        // FIXTESTS global variable rsConfig not available in unittests!
+        if(rsConfig == 0)
+        {
+            std::cerr << "computeCurrentSendingProbability(): rsConfig not initialised, returning 1.0"<<std::endl;
+            return 1.0;
+        }
+
 		int maxIn=50,maxOut=50;
 		float currIn=0,currOut=0 ;
 
@@ -1830,19 +1837,15 @@ void RsGxsNetService::updateServerSyncTS()
 	// retrieve all grps and update TS
 	mDataStore->retrieveGxsGrpMetaData(gxsMap);
 
-#ifdef TO_REMOVE
-   	// (cyril) This code is removed because it is inconsistent: the list of grps does not need to be updated when 
-    	// new posts arrive. The two (grp list and msg list) are handled independently.
+   	// (cyril) This code was previously removed because it sounded inconsistent: the list of grps normally does not need to be updated when 
+    	// new posts arrive. The two (grp list and msg list) are handled independently. Still, when group meta data updates are received,
+    	// the server TS needs to be updated, because it is the only way to propagate the changes. So we update it to the publish time stamp,
+    	// if needed.
     
 	// as a grp list server also note this is the latest item you have
 	if(mGrpServerUpdateItem == NULL)
 		mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
 
-    	// First reset it. That's important because it will re-compute correct TS in case
-    	// we have unsubscribed a group.
-    
-	mGrpServerUpdateItem->grpUpdateTS = 0 ;
-#endif
 	bool change = false;
 
     	// then remove from mServerMsgUpdateMap, all items that are not in the group list!
@@ -1914,19 +1917,18 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 		}
 
-#ifdef TO_REMOVE
-		// This might be very inefficient with time. This is needed because an old message might have been received, so the last modification time
-        	// needs to account for this so that a friend who hasn't 
+		// This is needed for group metadata updates to actually propagate: only a new grpUpdateTS will trigger the exchange of groups mPublishTs which
+        	// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
+        	// an update, all in rsgenexchange.cc, after group/update validation. It is therefore a local TS, that can be compared to grpUpdateTS (same machine).
         
 		if(mGrpServerUpdateItem->grpUpdateTS < grpMeta->mRecvTS)
 		{
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpId << std::endl;
+			GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpId << ". This is probably because an update has been received." << std::endl;
 #endif
 			mGrpServerUpdateItem->grpUpdateTS = grpMeta->mRecvTS;
 			change = true;
 		}
-#endif
 	}
     
 	// actual change in config settings, then save configuration
@@ -2705,8 +2707,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
                 continue;
             }
-            
-            if(rsReputations->isIdentityBanned(syncItem->authorId))
+            // FIXTESTS global variable rsReputations not available in unittests!
+            if(rsReputations == 0){ std::cerr << "rsReputations==0, accepting all messages!" << std::endl; }
+            if(rsReputations && rsReputations->isIdentityBanned(syncItem->authorId))
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -2944,8 +2947,9 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
             haveItem = true;
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
-        
-	if(!grpSyncItem->authorId.isNull() && rsReputations->isIdentityBanned(grpSyncItem->authorId))
+        // FIXTESTS global variable rsReputations not available in unittests!
+        if(rsReputations == 0){ std::cerr << "rsReputations==0, accepting all groups!" << std::endl; }
+    if(!grpSyncItem->authorId.isNull() && rsReputations && rsReputations->isIdentityBanned(grpSyncItem->authorId))
 	{
 #ifdef NXS_NET_DEBUG_0
                 GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;

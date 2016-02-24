@@ -217,7 +217,7 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 
 #define FOR_ALL_NOTIFY_CLIENTS for(std::list<NotifyClient*>::const_iterator it(notifyClients.begin());it!=notifyClients.end();++it)
 
-void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const std::string& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
+void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const RsGxsId& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
 
 void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListPreChange(list,type) ; }
 void p3Notify::notifyListChange   (int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListChange   (list,type) ; }
@@ -239,10 +239,7 @@ void p3Notify::notifyGxsChange              (const RsGxsChanges& changes) {FOR_A
 
 void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
 void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 
-#ifdef REMOVE
-void p3Notify::notifyForumMsgReadSatusChanged   (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyForumMsgReadSatusChanged   (channelId,msgId,status) ; }
-void p3Notify::notifyChannelMsgReadSatusChanged (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChannelMsgReadSatusChanged (channelId,msgId,status) ; }
-#endif
+
 void p3Notify::notifyDownloadComplete           (const std::string& fileHash )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadComplete           (fileHash) ; }
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }

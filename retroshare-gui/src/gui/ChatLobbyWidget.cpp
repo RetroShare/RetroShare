@@ -62,7 +62,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myChatLobbyUserNotify = NULL;
 
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
+    QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)));
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
@@ -1054,10 +1054,10 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
     subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& gxs_id, const QString& str)
+void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId &gxs_id, const QString& str)
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
-        cld->displayLobbyEvent(event_type, RsGxsId(gxs_id.toStdString()), str);
+        cld->displayLobbyEvent(event_type, gxs_id, str);
     }
 }
 

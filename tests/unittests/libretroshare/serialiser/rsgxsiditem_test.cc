@@ -34,14 +34,13 @@
 
 bool operator==(const RsGxsIdGroupItem& it1,const RsGxsIdGroupItem& it2)
 {
-	if(it1.group.mPgpIdSign != it2.group.mPgpIdSign) return false ;
+    if(it1.mPgpIdSign != it2.mPgpIdSign) return false ;
 
 	return true ;
 }
 RsSerialType* init_item(RsGxsIdGroupItem& item)
 {
-	item.group.mPgpIdSign = "hello";
-	item.group.mPgpKnown = false;
+    item.mPgpIdSign = "hello";
 
 	return new RsGxsIdSerialiser();
 }

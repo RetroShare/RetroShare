@@ -141,7 +141,7 @@ bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& ks
 
 bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
 {
-	std::list<RsPeerId>::const_iterator it1 = pids1.ids.begin(),
+    std::set<RsPeerId>::const_iterator it1 = pids1.ids.begin(),
 			it2 = pids2.ids.begin();
 
 
@@ -239,7 +239,7 @@ bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
 void init_item(RsTlvHashSet& hs)
 {
 	for(int i=0; i < 10; i++)
-		hs.ids.push_back(RsFileHash::random());
+        hs.ids.insert(RsFileHash::random());
 
 	return;
 }
@@ -247,14 +247,14 @@ void init_item(RsTlvHashSet& hs)
 void init_item(RsTlvPeerIdSet& ps)
 {
 	for(int i=0; i < 10; i++)
-		ps.ids.push_back(RsPeerId::random());
+        ps.ids.insert(RsPeerId::random());
 
 	return;
 }
 
 bool operator==(const RsTlvHashSet& hs1,const RsTlvHashSet& hs2)
 {
-	std::list<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
+    std::set<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
 			it2 = hs2.ids.begin();
 
 	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); it1++, it2++)
