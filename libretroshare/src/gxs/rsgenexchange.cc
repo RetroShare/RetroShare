@@ -2803,13 +2803,17 @@ void RsGenExchange::processRecvdGroups()
                     std::cerr << "  Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
 #endif
 
-            if(!meta->mAuthorId.isNull())
-                mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+		    		if(!meta->mAuthorId.isNull())
+					mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+                                
+                                // This has been moved here (as opposed to inside part for new groups below) because it is used to update the server TS when updates
+                                // of grp metadata arrive.
+                                
+				meta->mRecvTS = time(NULL);
 
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
 				{
-					meta->mRecvTS = time(NULL);
 					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 						meta->mOriginator = grp->PeerId();
 
