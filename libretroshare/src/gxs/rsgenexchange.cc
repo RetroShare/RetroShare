@@ -2942,6 +2942,18 @@ void RsGenExchange::performUpdateValidation()
 	}
 
 	mDataStore->updateGroup(grps);
+    
+    	// notify the client
+    
+        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+        
+        for(uint32_t i=0;i<mGroupUpdates.size();++i)
+		c->mGrpIdList.push_back(mGroupUpdates[i].oldGrpMeta->mGroupId) ;
+        
+        mNotifications.push_back(c);
+        
+        // cleanup
+        
 	mGroupUpdates.clear();
 }
 
