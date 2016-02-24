@@ -950,6 +950,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
+        cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
         cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId.toStdString());
 
         offset = 0;
