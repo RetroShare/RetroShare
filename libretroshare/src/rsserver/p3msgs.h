@@ -132,7 +132,13 @@ class p3Msgs: public RsMsgs
        * @param chat_id chat id to send status string to
 	   * @param status_string immediate status to send
 	   */
-      virtual void    sendStatusString(const ChatId& chat_id, const std::string& status_string) ;
+      virtual void    sendStatusString(const ChatId& id, const std::string& status_string) ;
+
+    /**
+     * @brief clearChatLobby: Signal chat was cleared by GUI.
+     * @param id: Chat id cleared.
+     */
+    virtual void clearChatLobby(const ChatId &id);
 
 	  /****************************************/
 

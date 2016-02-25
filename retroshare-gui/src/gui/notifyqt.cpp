@@ -530,7 +530,7 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat cleared." << std::endl ;
 #endif
-    emit chatCleared(chat_id);
+	emit chatCleared(chat_id);
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files)
