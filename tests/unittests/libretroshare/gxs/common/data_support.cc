@@ -32,6 +32,7 @@ bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
     if(!(l.keys == r.keys)) return false;
     if(l.mGroupFlags != r.mGroupFlags) return false;
     if(l.mPublishTs != r.mPublishTs) return false;
+    if(l.mSignFlags != r.mSignFlags) return false;
     if(l.mAuthorId != r.mAuthorId) return false;
     if(l.mGroupName != r.mGroupName) return false;
     if(l.mGroupId != r.mGroupId) return false;
@@ -282,7 +283,8 @@ bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
 
     if(l.transactFlag != r.transactFlag) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
-    if(l.timestamp != r.timestamp) return false;
+    // timestamp is not serialised, see rsnxsitems.h
+    //if(l.timestamp != r.timestamp) return false;
     if(l.nItems != r.nItems) return false;
 
 

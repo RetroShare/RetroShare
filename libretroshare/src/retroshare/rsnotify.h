@@ -212,7 +212,7 @@ class NotifyClient
 		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
         virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
         virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
-		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) {}
+        virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
 		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
 		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
 		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
@@ -227,10 +227,7 @@ class NotifyClient
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary   () {}
 		virtual void notifyDiscInfoChanged            () {}
-#ifdef REMOVE
-		virtual void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-		virtual void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-#endif
+
 		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) { signature_result = false ;return true; }
 		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
 		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}

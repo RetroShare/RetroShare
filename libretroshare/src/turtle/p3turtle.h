@@ -161,6 +161,7 @@ class ftDataMultiplex;
 class RsSerialiser;
 
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
+static const int TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE = 200 ;
 
 // This class is used to keep trace of requests (searches and tunnels).
 //

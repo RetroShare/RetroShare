@@ -1141,9 +1141,17 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
 	    if(incoming_routes.find(tmp_peers[i]) != incoming_routes.end())
+		 {
+#ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " which is an incoming route" << std::endl;
+#endif
+		 }
 	    else if(probas[i] < RS_GROUTER_PROBABILITY_THRESHOLD_BEST_PEERS_SELECT*max_probability)
+		 {
+#ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " because probability is below best peers threshold" << std::endl;
+#endif
+		 }
 	    else
             {
 		    tmp_peers[count] = tmp_peers[i] ;
@@ -1200,7 +1208,9 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
         uint32_t real_dupl = std::min( duplication_factor - max_count+1,std::max(1u,uint32_t(rint(ideal_dupl)))) ;
         duplication_factor_delta = real_dupl - ideal_dupl ;
         
+#ifdef GROUTER_DEBUG
         std::cerr << "    Peer " << mypairs[i].second << " prob=" << mypairs[i].first << ", ideal_dupl=" << ideal_dupl << ", real=" << real_dupl << ". Delta = " << duplication_factor_delta << std::endl;
+#endif
         
 	friend_peers_and_duplication_factors[ mypairs[i].second ] = real_dupl ;	// should be updated correctly
     }

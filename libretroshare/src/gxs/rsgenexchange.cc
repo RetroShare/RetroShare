@@ -2013,8 +2013,12 @@ void RsGenExchange::publishMsgs()
 				grpId = msg->grpId;
 				msg->metaData->recvTS = time(NULL);
                 
-				mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
-				mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
+                // FIXTESTS global variable rsPeers not available in unittests!
+                if(rsPeers)
+                {
+                    mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
+                    mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
+                }
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
@@ -2327,7 +2331,6 @@ void RsGenExchange::publishGrps()
 			{
 				grp->metaData = new RsGxsGrpMetaData();
 				grpItem->meta.mPublishTs = time(NULL);
-                //grpItem->meta.mParentGrpId = std::string("empty");
 				*(grp->metaData) = grpItem->meta;
 
 				// TODO: change when publish key optimisation added (public groups don't have publish key
@@ -2797,13 +2800,17 @@ void RsGenExchange::processRecvdGroups()
 				std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
 #endif
 
-				if(!meta->mAuthorId.isNull())
+		    		if(!meta->mAuthorId.isNull())
 					mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+                                
+                                // This has been moved here (as opposed to inside part for new groups below) because it is used to update the server TS when updates
+                                // of grp metadata arrive.
+                                
+				meta->mRecvTS = time(NULL);
 
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
 				{
-					meta->mRecvTS = time(NULL);
 					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 						meta->mOriginator = grp->PeerId();
 
@@ -2919,6 +2926,11 @@ void RsGenExchange::performUpdateValidation()
 			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
 
+            		// Keep subscriptionflag to what it was. This avoids clearing off the flag when updates to group meta information
+            		// is received.
+            
+            		gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
+            
 			grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
 		}
 		else
@@ -2930,6 +2942,18 @@ void RsGenExchange::performUpdateValidation()
 	}
 
 	mDataStore->updateGroup(grps);
+    
+    	// notify the client
+    
+        RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
+        
+        for(uint32_t i=0;i<mGroupUpdates.size();++i)
+		c->mGrpIdList.push_back(mGroupUpdates[i].oldGrpMeta->mGroupId) ;
+        
+        mNotifications.push_back(c);
+        
+        // cleanup
+        
 	mGroupUpdates.clear();
 }
 

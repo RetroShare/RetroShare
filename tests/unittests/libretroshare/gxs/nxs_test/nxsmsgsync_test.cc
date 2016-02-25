@@ -17,7 +17,7 @@
 using namespace rs_nxs_test;
 
 rs_nxs_test::NxsMsgSync::NxsMsgSync()
- : mPgpUtils(NULL) {
+ : mPgpUtils(NULL), mServType(0) {
 	int numPeers = 2;
 
 	// create 2 peers

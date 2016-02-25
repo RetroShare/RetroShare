@@ -768,7 +768,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 		}
 	}
-    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId.toStdString(),item->string1) ;
+    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1) ;
 }
 void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {
@@ -1834,7 +1834,7 @@ void DistributedChatService::cleanLobbyCaches()
 
 	// update the gui
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
-        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"","") ;
+        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,RsGxsId(),"") ;
 
 	// send connection challenges
 	//
