@@ -45,12 +45,12 @@
 class SSGxsChannelGroup
 {
 	public:
-
+	SSGxsChannelGroup(): mAutoDownload(false), mDownloadDirectory("") {}
 	bool load(const std::string &input);
 	std::string save() const;
 
 	bool mAutoDownload;
-        std::string mDownloadDirectory ;
+	std::string mDownloadDirectory;
 };
 
 
@@ -176,7 +176,7 @@ static uint32_t channelsAuthenPolicy();
 	void updateSubscribedGroup(const RsGroupMetaData &group);
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
-    bool autoDownloadEnabled(const RsGxsGroupId &id, bool &enabled);
+	bool autoDownloadEnabled(const RsGxsGroupId &groupId, bool &enabled);
 
 
 
