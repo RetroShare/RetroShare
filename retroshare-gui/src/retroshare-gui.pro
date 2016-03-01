@@ -5,6 +5,7 @@ QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
 TARGET = RetroShare06
+DEFINES += TARGET=\\\"$TARGET\\\"
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -214,9 +215,13 @@ win32 {
 ##################################### MacOS ######################################
 
 macx {
-    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	#CONFIG += ppc x86
+	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
+	#CONFIG += ppc x86
 	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	QMAKE_INFO_PLIST = Info.plist
+	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
+	mac_icon.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += mac_icon
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
@@ -377,7 +382,6 @@ HEADERS +=  rshare.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
-            util/EventReceiver.h \
             util/Widget.h \
             util/RsAction.h \
             util/RsUserdata.h \
@@ -727,7 +731,6 @@ SOURCES +=  main.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
-            util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
             util/printpreview.cpp \

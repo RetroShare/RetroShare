@@ -128,8 +128,6 @@ class RsInitConfig
 		std::string load_trustedpeer_file;
 
 		bool udpListenerOnly;
-
-		std::string RetroShareLink;
 };
 
 static RsInitConfig *rsInitConfig = NULL;
@@ -363,7 +361,8 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			   >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
-			   >> parameter('r',"link"          ,rsInitConfig->RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+			// by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
+			// by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
@@ -772,11 +771,6 @@ bool RsInit::isWindowsXP()
 bool RsInit::getStartMinimised()
 {
 	return rsInitConfig->startMinimised;
-}
-
-std::string RsInit::getRetroShareLink()
-{
-	return rsInitConfig->RetroShareLink;
 }
 
 int RsInit::getSslPwdLen(){
