@@ -102,10 +102,10 @@ class pqistreamer: public PQInterface
 		float	outTimeSlice_locked();
 
 		int	outAllowedBytes_locked();
-		void	outSentBytes_locked(int );
+		void	outSentBytes_locked(uint32_t );
 
 		int	inAllowedBytes_locked();
-		void	inReadBytes_locked(int );
+		void	inReadBytes_locked(uint32_t );
 
 
 

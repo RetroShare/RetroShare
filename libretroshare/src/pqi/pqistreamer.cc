@@ -823,8 +823,6 @@ continue_packet:
 		std::cerr << "[" << (void*)pthread_self() << "] " << "deserializing. Size=" << pktlen << std::endl ;
 #endif
 
-        inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
-
         RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
@@ -832,6 +830,7 @@ continue_packet:
 #ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
 #endif
+			inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
 		}
 		else
 		{
@@ -952,7 +951,7 @@ int     pqistreamer::inAllowedBytes_locked()
 static const float AVG_PERIOD = 5; // sec
 static const float AVG_FRAC = 0.8; // for low pass filter.
 
-void    pqistreamer::outSentBytes_locked(int outb)
+void    pqistreamer::outSentBytes_locked(uint32_t outb)
 {
 #ifdef DEBUG_PQISTREAMER
 	{
@@ -1022,7 +1021,7 @@ void    pqistreamer::outSentBytes_locked(int outb)
 	return;
 }
 
-void    pqistreamer::inReadBytes_locked(int inb)
+void    pqistreamer::inReadBytes_locked(uint32_t inb)
 {
 #ifdef DEBUG_PQISTREAMER
 	{
