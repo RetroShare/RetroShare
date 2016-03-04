@@ -393,6 +393,10 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>&
     
     for(std::set<RsGxsId>::const_iterator it(details.mUnknownPeers.begin());it!=details.mUnknownPeers.end();++it)
 	    gxs_ids.push_back(*it) ;
+    
+    for(std::map<RsPgpId,std::list<RsGxsId> >::const_iterator it(details.mAllowedPeers.begin());it!=details.mAllowedPeers.end();++it)
+        for(std::list<RsGxsId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
+            gxs_ids.push_back(*it2) ;
             
     return true;
 }
