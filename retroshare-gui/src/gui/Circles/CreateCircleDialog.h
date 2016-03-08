@@ -46,11 +46,12 @@ public:
 	void addCircle(const RsGxsCircleDetails &cirDetails);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
+    
 private slots:
 	void addMember();
 	void removeMember();
 
+	void updateCircleType(bool b);
 	void selectedId(QTreeWidgetItem*, QTreeWidgetItem*);
 	void selectedMember(QTreeWidgetItem*, QTreeWidgetItem*);
 

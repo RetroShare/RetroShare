@@ -87,6 +87,10 @@ CreateCircleDialog::CreateCircleDialog()
 	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
 	QObject::connect(ui.radioButton_ListKnownPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
 
+	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+	QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
+    
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 	mClearList = true;
@@ -135,6 +139,28 @@ void CreateCircleDialog::editNewId(bool isExternal)
 	/* enable stuff that might be locked */
 }
 
+void CreateCircleDialog::updateCircleType(bool b)
+{
+    if(!b)
+	    return ;	// no need to change when b<-false
+
+    if(ui.radioButton_Self->isChecked())
+	    setupForPersonalCircle() ;
+    else
+	    setupForExternalCircle() ;
+
+    if(ui.radioButton_Restricted->isChecked())
+    {
+	    ui.circleComboBox->setEnabled(true) ;
+		ui.circleComboBox->show() ;
+    }
+    else
+    {
+	    ui.circleComboBox->setEnabled(false) ;
+		ui.circleComboBox->hide() ;
+    }
+}
+
 void CreateCircleDialog::setupForPersonalCircle()
 {
 	mIsExternalCircle = false;
@@ -143,7 +169,7 @@ void CreateCircleDialog::setupForPersonalCircle()
 
 	ui.groupBox_title->setTitle(tr("Circle Details"));
 	ui.frame_PgpTypes->hide();
-	ui.frame_Distribution->hide();
+	//ui.frame_Distribution->hide();
 	ui.idChooserLabel->hide();
 	ui.idChooser->hide();
 	//ui.toolButton_NewId->hide();

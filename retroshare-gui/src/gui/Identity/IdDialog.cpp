@@ -53,8 +53,9 @@
 #define IDDIALOG_REPLIST    3
 #define IDDIALOG_REFRESH    4
 
-#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME 0
-#define CIRCLEGROUP_CIRCLE_COL_GROUPID   1
+#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME  0
+#define CIRCLEGROUP_CIRCLE_COL_GROUPID    1
+#define CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS 2
 
 #define CIRCLEGROUP_FRIEND_COL_NAME 0
 #define CIRCLEGROUP_FRIEND_COL_ID   1
@@ -310,18 +311,18 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
 	//personalCirclesItem->setText(0, tr("Personal Circles"));
 	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
-
-	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-	externalAdminCirclesItem->setText(0, tr("Circles (Admin)"));
-	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
+    
+	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
+	externalOtherCirclesItem->setText(0, tr("Circles (Other)"));
+	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
 	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
 	externalSubCirclesItem->setText(0, tr("Circles (Subscribed)"));
 	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
 
-	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
-	externalOtherCirclesItem->setText(0, tr("Circles (Other)"));
-	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
+	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
+	externalAdminCirclesItem->setText(0, tr("Circles (Admin)"));
+	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
 	{
@@ -332,7 +333,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
 		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-        groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+		groupItem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 
 		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 		{
@@ -481,17 +483,25 @@ void IdDialog::circle_selected()
 		return;
 	}
 
+	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+
+	if(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		ui->pushButton_editCircle->setEnabled(true) ;
+	else
+		ui->pushButton_editCircle->setEnabled(false) ;
+
 	set_item_background(item, BLUE_BACKGROUND);
 
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
-    RsGxsCircleId id ( coltext.toStdString()) ;
+	RsGxsCircleId id ( coltext.toStdString()) ;
 
+#ifdef SUSPENDED
 	/* update friend lists */
 	RsGxsCircleDetails details;
 	if (rsGxsCircles->getCircleDetails(id, details))
 	{
 		/* now mark all the members */
-        std::set<RsPgpId> members;
+		std::set<RsPgpId> members;
 		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
 		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); ++it)
 		{
@@ -500,12 +510,13 @@ void IdDialog::circle_selected()
 			std::cerr << std::endl;
 		}
 
-//		mark_matching_tree(ui->treeWidget_friends, members, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
+		mark_matching_tree(ui->treeWidget_friends, members, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
 	}
 	else
 	{
-//		set_tree_background(ui->treeWidget_friends, GRAY_BACKGROUND);
+		set_tree_background(ui->treeWidget_friends, GRAY_BACKGROUND);
 	}
+#endif
 	mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, true);
 }
 
