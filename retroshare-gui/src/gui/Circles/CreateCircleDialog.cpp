@@ -277,43 +277,44 @@ void  CreateCircleDialog::removeMember()
 
 void CreateCircleDialog::createCircle()
 {
-	std::cerr << "CreateCircleDialog::createCircle()";
-	std::cerr << std::endl;
+    std::cerr << "CreateCircleDialog::createCircle()";
+    std::cerr << std::endl;
 
-	QString name = ui.circleName->text();
+    QString name = ui.circleName->text();
 
-	if(name.isEmpty()) {
-		/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
+    if(name.isEmpty()) {
+	    /* error message */
+	    QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
 
-		return; //Don't add  a empty Subject!!
-	}//if(name.isEmpty())
+	    return; //Don't add  a empty Subject!!
+    }//if(name.isEmpty())
 
-	RsGxsCircleGroup circle;
+    RsGxsCircleGroup circle = mCircleGroup;	// init with loaded group
 
-	circle.mMeta.mGroupName = std::string(name.toUtf8());
+    circle.mMeta.mGroupName = std::string(name.toUtf8());
 
-	RsGxsId authorId;
-	switch (ui.idChooser->getChosenId(authorId)) {
-		case GxsIdChooser::KnowId:
-		case GxsIdChooser::UnKnowId:
-		circle.mMeta.mAuthorId = authorId;
-		std::cerr << "CreateCircleDialog::createCircle() AuthorId: " << authorId;
-		std::cerr << std::endl;
+    RsGxsId authorId;
+    switch (ui.idChooser->getChosenId(authorId))
+    {
+    case GxsIdChooser::KnowId:
+    case GxsIdChooser::UnKnowId:
+	    circle.mMeta.mAuthorId = authorId;
+	    std::cerr << "CreateCircleDialog::createCircle() AuthorId: " << authorId;
+	    std::cerr << std::endl;
 
-		break;
-		case GxsIdChooser::NoId:
-		case GxsIdChooser::None:
-		default:
-		std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";
-		std::cerr << std::endl;
-	}//switch (ui.idChooser->getChosenId(authorId))
+	    break;
+    case GxsIdChooser::NoId:
+    case GxsIdChooser::None:
+    default:
+	    std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";
+	    std::cerr << std::endl;
+    }//switch (ui.idChooser->getChosenId(authorId))
 
 
-	/* copy Ids from GUI */
-	QTreeWidget *tree = ui.treeWidget_membership;
-	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; ++i)  
+    /* copy Ids from GUI */
+    QTreeWidget *tree = ui.treeWidget_membership;
+    int count = tree->topLevelItemCount();
+    for(int i = 0; i < count; ++i)  
     {
 	    QTreeWidgetItem *item = tree->topLevelItem(i);
 	    QString keyId = item->text(RSCIRCLEID_COL_KEYID);
@@ -350,77 +351,94 @@ void CreateCircleDialog::createCircle()
 
     }
 
-	if (mIsExistingCircle) 
+    //	if (mIsExistingCircle) 
+    //    {
+    //		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
+    //		std::cerr << std::endl;
+    //
+    //		// cannot edit these yet.
+    //		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
+    //		return; 
+    //	}
+
+    if (mIsExternalCircle) 
     {
-		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
-		std::cerr << std::endl;
+	    std::cerr << "CreateCircleDialog::createCircle() External Circle";
+	    std::cerr << std::endl;
 
-		// cannot edit these yet.
-		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
-		return; 
-	}
+	    // set distribution from GUI.
+	    circle.mMeta.mCircleId.clear() ;
+	    if (ui.radioButton_Public->isChecked()) {
+		    std::cerr << "CreateCircleDialog::createCircle() Public Circle";
+		    std::cerr << std::endl;
 
-	if (mIsExternalCircle) {
-		std::cerr << "CreateCircleDialog::createCircle() External Circle";
-		std::cerr << std::endl;
+		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_PUBLIC;
 
-		// set distribution from GUI.
-		circle.mMeta.mCircleId.clear() ;
-		if (ui.radioButton_Public->isChecked()) {
-			std::cerr << "CreateCircleDialog::createCircle() Public Circle";
-			std::cerr << std::endl;
+	    } else if (ui.radioButton_Self->isChecked()) {
+		    std::cerr << "CreateCircleDialog::createCircle() ExtSelfRef Circle";
+		    std::cerr << std::endl;
 
-			circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_PUBLIC;
+		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXT_SELF;
+	    } else if (ui.radioButton_Restricted->isChecked()) {
+		    std::cerr << "CreateCircleDialog::createCircle() External (Other) Circle";
+		    std::cerr << std::endl;
 
-		} else if (ui.radioButton_Self->isChecked()) {
-			std::cerr << "CreateCircleDialog::createCircle() ExtSelfRef Circle";
-			std::cerr << std::endl;
+		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXTERNAL;
 
-			circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXT_SELF;
-		} else if (ui.radioButton_Restricted->isChecked()) {
-			std::cerr << "CreateCircleDialog::createCircle() External (Other) Circle";
-			std::cerr << std::endl;
+		    /* grab circle ID from chooser */
+		    RsGxsCircleId chosenId;
+		    if (ui.circleComboBox->getChosenCircle(chosenId)) {
+			    std::cerr << "CreateCircleDialog::createCircle() ChosenId: " << chosenId;
+			    std::cerr << std::endl;
 
-			circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXTERNAL;
+			    circle.mMeta.mCircleId = chosenId;
+		    } else {//if (ui.circleComboBox->getChosenCircle(chosenId))
+			    std::cerr << "CreateCircleDialog::createCircle() Error no Id Chosen";
+			    std::cerr << std::endl;
 
-			/* grab circle ID from chooser */
-			RsGxsCircleId chosenId;
-			if (ui.circleComboBox->getChosenCircle(chosenId)) {
-				std::cerr << "CreateCircleDialog::createCircle() ChosenId: " << chosenId;
-				std::cerr << std::endl;
+			    QMessageBox::warning(this, tr("RetroShare"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
+			    return; 
+		    }//else (ui.circleComboBox->getChosenCircle(chosenId))
+	    } 
+	    else 
+	    { //if (ui.radioButton_Public->isChecked())
+		    QMessageBox::warning(this, tr("RetroShare"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
+		    return; 
+	    }//else (ui.radioButton_Public->isChecked())
+    } 
+    else 
+    {//if (mIsExternalCircle)
+	    std::cerr << "CreateCircleDialog::createCircle() Personal Circle";
+	    std::cerr << std::endl;
 
- 				circle.mMeta.mCircleId = chosenId;
-			} else {//if (ui.circleComboBox->getChosenCircle(chosenId))
-				std::cerr << "CreateCircleDialog::createCircle() Error no Id Chosen";
-				std::cerr << std::endl;
+	    // set personal distribution
+	    circle.mMeta.mCircleId.clear() ;
+	    circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
+    }//else (mIsExternalCircle)
 
-				QMessageBox::warning(this, tr("RetroShare"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
-				return; 
-			}//else (ui.circleComboBox->getChosenCircle(chosenId))
-		} else { //if (ui.radioButton_Public->isChecked())
-			QMessageBox::warning(this, tr("RetroShare"),tr("No Circle Limitations Selected"), QMessageBox::Ok, QMessageBox::Ok);
-			return; 
-		}//else (ui.radioButton_Public->isChecked())
-	} else {//if (mIsExternalCircle)
-		std::cerr << "CreateCircleDialog::createCircle() Personal Circle";
-		std::cerr << std::endl;
+    uint32_t token;
+    
+    if(mIsExistingCircle) 
+    {
+	    std::cerr << "CreateCircleDialog::updateCircle() : mCircleType: " << circle.mMeta.mCircleType << std::endl;
+	    std::cerr << "CreateCircleDialog::updateCircle() : mCircleId: " << circle.mMeta.mCircleId << std::endl;
+	    std::cerr << "CreateCircleDialog::updateCircle() : mGroupId: " << circle.mMeta.mGroupId << std::endl;
 
-		// set personal distribution
-		circle.mMeta.mCircleId.clear() ;
-		circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
-	}//else (mIsExternalCircle)
+	    std::cerr << "CreateCircleDialog::updateCircle() Checks and Balances Okay - calling service proper.."<< std::endl;
 
-	std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType;
-	std::cerr << std::endl;
-	std::cerr << "CreateCircleDialog::createCircle() : mCircleId: " << circle.mMeta.mCircleId;
-	std::cerr << std::endl;
+	    rsGxsCircles->updateGroup(token, circle);
+    }
+    else
+    {    
+	    std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType << std::endl;
+	    std::cerr << "CreateCircleDialog::createCircle() : mCircleId: " << circle.mMeta.mCircleId << std::endl;
 
-	std::cerr << "CreateCircleDialog::createCircle() Checks and Balances Okay - calling service proper..";
-	std::cerr << std::endl;
+	    std::cerr << "CreateCircleDialog::createCircle() Checks and Balances Okay - calling service proper.."<< std::endl;
 
-	uint32_t token;
-	rsGxsCircles->createGroup(token, circle);
-	close();
+	    rsGxsCircles->createGroup(token, circle);
+    }
+
+    close();
 }
 
 void CreateCircleDialog::updateCircleGUI()
