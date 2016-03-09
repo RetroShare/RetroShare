@@ -1,9 +1,13 @@
+Legend:
+  [X]: done, [ ]: pending, [-]: Cancelled, [/]: ongoing
+
 GUI
   [X] disable edit circles or make it work
   [X] make GUI update when creating a circle
   [ ] handle the display of encrypted forums/channels/etc when we do not have the keys
   [ ] disable posting to circles for which we do not have the rights
   [ ] group "show details" should be made up to date for rstrinction options
+  [ ] allow to share circles publish rights
 
 Tests
   [X] create a safe testing environment: 2 peers with no other contacts, 2 IDs each, and some forums
@@ -19,5 +23,5 @@ Backend
   [X] add debug output later RS_NXS_DEBUG_7 in rsgxsnetservice.cc for the crypto layer
 
 Bugs
-  [ ] Peers cannot be remobed from a circle
+  [X] Peers cannot be removed from a circle
 
