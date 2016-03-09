@@ -318,6 +318,8 @@ void CreateCircleDialog::createCircle()
     RsGxsCircleGroup circle = mCircleGroup;	// init with loaded group
 
     circle.mMeta.mGroupName = std::string(name.toUtf8());
+    circle.mInvitedMembers.clear() ;
+    circle.mLocalFriends.clear() ;
 
     RsGxsId authorId;
     switch (ui.idChooser->getChosenId(authorId))
