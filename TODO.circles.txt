@@ -24,4 +24,9 @@ Backend
 
 Bugs
   [X] Peers cannot be removed from a circle
+  [ ] Context menu should not allow to edit non admin circles
+  [ ] Editing circles make them subscribed, even non admin ones.
+  [ ] Disable autosync for circles (in rsinit.cc)
+  [ ] Add explicit circle sync request for all grps restricted to a circle (same as IDs)
+
 
