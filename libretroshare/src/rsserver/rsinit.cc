@@ -1351,7 +1351,9 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,mGxsIdService,
-			pgpAuxUtils);
+			pgpAuxUtils,
+	            true,false); // synchronise group automatic 
+			// don't sync messages at all.
 
         /**** Posted GXS service ****/
 
