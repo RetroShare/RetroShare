@@ -6,7 +6,8 @@ GUI
   [X] make GUI update when creating a circle
   [ ] handle the display of encrypted forums/channels/etc when we do not have the keys
   [ ] disable posting to circles for which we do not have the rights
-  [ ] group "show details" should be made up to date for rstrinction options
+  [ ] warn about creating a circle without one of your ids in it
+  [ ] group "show details" should be made up to date for restrinction options
   [ ] allow to share circles publish rights
 
 Tests
@@ -17,16 +18,16 @@ Tests
   [-] test #004: peers subscribed to encrypted circles shouldn't keep asking for the data if they cannot decrypt
   [X] test #005: peers can be added/removed from circles, and the circles update between friends
   [ ] test #006: peers subscribed to encrypted circles who recently got added to the circle should get the data
-  [ ] test #007: peers outside shouldn't be able to post (or posts shouldn't propagate)
+  [ ] test #007: peers outside a circle shouldn't be able to post (or posts shouldn't propagate)
 
 Backend
   [X] add debug output later RS_NXS_DEBUG_7 in rsgxsnetservice.cc for the crypto layer
 
 Bugs
   [X] Peers cannot be removed from a circle
-  [ ] Context menu should not allow to edit non admin circles
+  [X] Context menu should not allow to edit non admin circles
   [ ] Editing circles make them subscribed, even non admin ones.
-  [ ] Disable autosync for circles (in rsinit.cc)
-  [ ] Add explicit circle sync request for all grps restricted to a circle (same as IDs)
+  [X] Disable autosync for circles (in rsinit.cc)
+  [-] Add explicit circle sync request for all grps restricted to a circle (same as IDs)
 
 

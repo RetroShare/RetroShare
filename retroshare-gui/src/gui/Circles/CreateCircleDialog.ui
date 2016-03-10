@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
+    <width>881</width>
     <height>515</height>
    </rect>
   </property>
@@ -266,7 +266,11 @@
             </widget>
            </item>
            <item>
-            <widget class="GxsIdChooser" name="idChooser"/>
+            <widget class="GxsIdChooser" name="idChooser">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The creator of a circle does not need to be known. It is however useful for public circles so that people know to whom to send a request for membership.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -300,6 +304,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Public">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Publicly distributed circles are visible to your friends, which will get to know the circle data (Creator, members, etc)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Public</string>
               </property>
@@ -307,6 +314,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Self">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Self-restricted circles (the very existance of the circle, and its actual content) are only visible to the members of these circles. In practice the circle uses itself to limit its own distribution. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Self-Restricted</string>
               </property>
@@ -314,6 +324,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Restricted">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Circles can be restricted to the members of another circle. Only the members of that second circle will be allowed to see the new circle and its content (list of members, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Restricted to:</string>
               </property>

@@ -387,6 +387,8 @@ void IdDialog::editExistingCircle()
 
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
+    // (cyril) Removed this because we have a edit button already.
+#ifdef SUSPENDED
 	QMenu contextMnu( this );
 
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
@@ -397,6 +399,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 	}
 
 	contextMnu.exec(QCursor::pos());
+#endif
 }
 
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
