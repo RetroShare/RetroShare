@@ -36,6 +36,7 @@
 
 #define CIRCLEGROUP_CIRCLE_COL_GROUPNAME 0
 #define CIRCLEGROUP_CIRCLE_COL_GROUPID   1
+#define CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS   2
 
 #define CIRCLEGROUP_FRIEND_COL_NAME 0
 #define CIRCLEGROUP_FRIEND_COL_ID   1
@@ -135,8 +136,10 @@ void CirclesDialog::editExistingCircle()
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
     RsGxsGroupId id ( coltext.toStdString());
 
+	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+    
 	CreateCircleDialog dlg;
-	dlg.editExistingId(id);
+	dlg.editExistingId(id,true,!!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
 	dlg.exec();
 }
 

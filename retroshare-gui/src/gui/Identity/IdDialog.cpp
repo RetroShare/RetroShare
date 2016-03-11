@@ -374,12 +374,15 @@ void IdDialog::editExistingCircle()
 	{
 		return;
 	}
-
+    
+	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+	
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
     RsGxsGroupId id ( coltext.toStdString());
 
 	CreateCircleDialog dlg;
-	dlg.editExistingId(id);
+    
+	dlg.editExistingId(id,true,!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
 	dlg.exec();
     
     requestCircleGroupMeta();	// update GUI
@@ -483,15 +486,18 @@ void IdDialog::circle_selected()
 	if ((!item) || (!item->parent()))
 	{
 		mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
+		ui->pushButton_editCircle->setText(tr("Show details")) ;
+		ui->pushButton_editCircle->setEnabled(false) ;
 		return;
 	}
 
 	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+		ui->pushButton_editCircle->setEnabled(true) ;
 
 	if(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-		ui->pushButton_editCircle->setEnabled(true) ;
+		ui->pushButton_editCircle->setText(tr("Edit circle")) ;
 	else
-		ui->pushButton_editCircle->setEnabled(false) ;
+		ui->pushButton_editCircle->setText(tr("Show details")) ;
 
 	set_item_background(item, BLUE_BACKGROUND);
 

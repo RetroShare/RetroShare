@@ -516,7 +516,7 @@ void PeopleDialog::addToCircleExt()
 				dlg.addMember(idWidget->groupInfo());
 			}//if((itFound=_gxs_identity_widgets.find(gxs_id)) != _gxs_identity_widgets.end())
 
-			dlg.editExistingId(circle->groupInfo().mGroupId, false);
+			dlg.editExistingId(circle->groupInfo().mGroupId, false,false);
 			dlg.exec();
 		}//if((itFound=_ext_circles_widgets.find(groupId)) != _ext_circles_widgets.end())
 	}//if (action)
@@ -545,7 +545,7 @@ void PeopleDialog::addToCircleInt()
 				dlg.addMember(idWidget->keyId(), idWidget->idtype(), idWidget->nickname());
 			}//if((itFound=_pgp_identity_widgets.find(pgp_id)) != _pgp_identity_widgets.end())
 
-			dlg.editExistingId(circle->groupInfo().mGroupId, false);
+			dlg.editExistingId(circle->groupInfo().mGroupId, false,false);
 			dlg.exec();
 		}//if((itFound=_ext_circles_widgets.find(groupId)) != _ext_circles_widgets.end())
 	}//if (action)
@@ -721,7 +721,7 @@ void PeopleDialog::fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem *>flListItem
 		if (bCreateNewCircle){
 			dlg.editNewId(true);
 		} else {//if (bCreateNewCircle)
-			dlg.editExistingId(cirDest->groupInfo().mGroupId, false);
+			dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
 		}//else (bCreateNewCircle)
 
 		dlg.exec();
@@ -781,7 +781,7 @@ void PeopleDialog::fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem *>flListItem
 		if (bCreateNewCircle){
 			dlg.editNewId(false);
 		} else {//if (bCreateNewCircle)
-			dlg.editExistingId(cirDest->groupInfo().mGroupId, false);
+			dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
 		}//else (bCreateNewCircle)
 
 		dlg.exec();
@@ -922,7 +922,7 @@ void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
 			if (bCreateNewCircle){
 				dlg.editNewId(true);
 			} else {//if (bCreateNewCircle)
-				dlg.editExistingId(cirDest->groupInfo().mGroupId, false);
+				dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
 			}//else (bCreateNewCircle)
 
 			dlg.exec();
@@ -1012,7 +1012,7 @@ void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 			if (bCreateNewCircle){
 				dlg.editNewId(false);
 			} else {//if (bCreateNewCircle)
-				dlg.editExistingId(cirDest->groupInfo().mGroupId, false);
+				dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
 			}//else (bCreateNewCircle)
 
 	dlg.exec();

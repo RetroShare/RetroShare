@@ -105,16 +105,36 @@ CreateCircleDialog::~CreateCircleDialog()
 	delete(mIdQueue);
 }
 
-void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/)
+void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
 {
 	/* load this circle */
 	mIsExistingCircle = true;
+    	mReadOnly=readonly;
 
 	mClearList = clearList;
 	requestCircle(circleId);
 	
 	ui.headerFrame->setHeaderText(tr("Edit Circle"));
 
+    ui.radioButton_Public->setEnabled(!readonly) ;
+    ui.radioButton_Self->setEnabled(!readonly) ;
+    ui.radioButton_Restricted->setEnabled(!readonly) ;
+    ui.circleName->setReadOnly(readonly) ;
+    
+    ui.idChooser->setEnabled(!readonly) ;
+    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
+    
+	ui.addButton->setEnabled(!readonly) ;
+	ui.removeButton->setEnabled(!readonly) ;
+    
+    if(readonly)
+    {
+	ui.buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
+	ui.buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Close"));
+    	ui.peersSelection_GB->hide() ;
+	ui.addButton->hide() ;
+	ui.removeButton->hide() ;
+    }
 }
 
 
@@ -122,6 +142,7 @@ void CreateCircleDialog::editNewId(bool isExternal)
 {
 	/* load this circle */
 	mIsExistingCircle = false;
+    	mReadOnly = false ;
 
 	/* setup personal or external circle */
 	if (isExternal)
@@ -183,7 +204,7 @@ void CreateCircleDialog::setupForExternalCircle()
 
 	/* show distribution line */
 	ui.groupBox_title->setTitle(tr("Circle Details"));
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
+        
 	ui.frame_PgpTypes->show();
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
@@ -303,6 +324,12 @@ void  CreateCircleDialog::removeMember()
 
 void CreateCircleDialog::createCircle()
 {
+    if(mReadOnly)
+    {
+        close() ;
+        return ;
+    }
+    
     std::cerr << "CreateCircleDialog::createCircle()";
     std::cerr << std::endl;
 
