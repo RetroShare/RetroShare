@@ -1551,7 +1551,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
         
         uint32_t error_status ;
 
-        if(! verifySignedDataItem(receipt_item))
+        if(! verifySignedDataItem(receipt_item,error_status))
             if( (it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN) || (error_status !=  RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE))
 	    {
 		    std::cerr << "  checking receipt signature : FAILED. Receipt is dropped. Error status=" << error_status << std::endl;
@@ -1705,7 +1705,9 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 #ifdef GROUTER_DEBUG
         std::cerr << "  step B: item is for us and is new, so make sure it's authentic and create a receipt" << std::endl;
 #endif
-        if(!verifySignedDataItem(data_item))	// we should get proper flags out of this
+        uint32_t error_status ;
+        
+        if(!verifySignedDataItem(data_item,error_status))	// we should get proper flags out of this
         {
             std::cerr << "    verifying item signature: FAILED! Droping that item" ;
             std::cerr << "    You probably received a message from a person you don't have key." << std::endl;
@@ -2119,8 +2121,9 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     }
 
     // Verify the signature. If that fails, there's a bug somewhere!!
-
-    if(!verifySignedDataItem(data_item))
+	uint32_t error_status;
+            
+    if(!verifySignedDataItem(data_item,error_status))
     {
         std::cerr << "Cannot verify data item that was just signed. Some error occured!" << std::endl;
 	delete data_item;
