@@ -9,6 +9,7 @@ GUI
   [ ] warn about creating a circle without one of your ids in it
   [ ] group "show details" should be made up to date for restrinction options
   [ ] allow to share circles publish rights
+  [ ] allow non admin to see circles details but not edit
 
 Tests
   [X] create a safe testing environment: 2 peers with no other contacts, 2 IDs each, and some forums
@@ -29,5 +30,8 @@ Bugs
   [ ] Editing circles make them subscribed, even non admin ones.
   [X] Disable autosync for circles (in rsinit.cc)
   [-] Add explicit circle sync request for all grps restricted to a circle (same as IDs)
+  [ ] when a peer receives a circle, there is no way to view its details, only the id is available
+  [ ] if a peer has circles available in "Circles (others)"... if you click on
+	  "Create Circle" on the gui, then all circles are automatically subscribed
 
 
