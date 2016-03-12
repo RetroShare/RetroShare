@@ -21,6 +21,8 @@
  *
  */
 
+#include <unistd.h>
+
 #include <QMessageBox>
 #include <QMenu>
 
@@ -430,6 +432,19 @@ static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 	item->setBackground (0, brush);
 }
 
+static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 
+{
+    w->selectionModel()->clearSelection() ;
+    
+    for(std::set<RsGxsId>::const_iterator it(members.begin());it!=members.end();++it)
+    {
+	QList<QTreeWidgetItem*> clist = w->findItems( QString::fromStdString((*it).toStdString()), Qt::MatchExactly|Qt::MatchRecursive, col);
+    
+    	foreach(QTreeWidgetItem* item, clist)
+		item->setSelected(true) ;
+    }
+}
+
 static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 {
 	int count = item->childCount();
@@ -479,7 +494,7 @@ void IdDialog::circle_selected()
 	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
 	std::cerr << std::endl;
 
-	set_tree_background(ui->treeWidget_membership, CLEAR_BACKGROUND);
+	//set_tree_background(ui->treeWidget_membership, CLEAR_BACKGROUND);
 	//set_tree_background(ui->treeWidget_friends, CLEAR_BACKGROUND);
 	//set_tree_background(ui->treeWidget_category, CLEAR_BACKGROUND);
 
@@ -499,33 +514,30 @@ void IdDialog::circle_selected()
 	else
 		ui->pushButton_editCircle->setText(tr("Show details")) ;
 
-	set_item_background(item, BLUE_BACKGROUND);
+	//set_item_background(item, BLUE_BACKGROUND);
 
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId id ( coltext.toStdString()) ;
 
-#ifdef SUSPENDED
 	/* update friend lists */
 	RsGxsCircleDetails details;
-	if (rsGxsCircles->getCircleDetails(id, details))
-	{
-		/* now mark all the members */
-		std::set<RsPgpId> members;
-		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); ++it)
+    
+    	for(int i=0;i<6 && !(rsGxsCircles->getCircleDetails(id, details));++i) usleep(300*1000) ;
+        
+	/* now mark all the members */
+        
+	std::set<RsGxsId> members = details.mUnknownPeers;
+
+	for(std::map<RsPgpId, std::list<RsGxsId> >::iterator it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); ++it)
+		for(std::list<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
 		{
-			members.insert(it->first);
+			members.insert( (*it2) ) ;
 			std::cerr << "Circle member: " << it->first;
 			std::cerr << std::endl;
 		}
 
-		mark_matching_tree(ui->treeWidget_friends, members, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
-	}
-	else
-	{
-		set_tree_background(ui->treeWidget_friends, GRAY_BACKGROUND);
-	}
-#endif
+	mark_matching_tree(ui->idTreeWidget, members, RSID_COL_KEYID) ;
+    
 	mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, true);
 }
 
