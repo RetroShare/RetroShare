@@ -503,6 +503,7 @@ void IdDialog::circle_selected()
 		mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
 		ui->pushButton_editCircle->setText(tr("Show details")) ;
 		ui->pushButton_editCircle->setEnabled(false) ;
+		mark_matching_tree(ui->idTreeWidget, std::set<RsGxsId>(), RSID_COL_KEYID) ;
 		return;
 	}
 
@@ -522,7 +523,10 @@ void IdDialog::circle_selected()
 	/* update friend lists */
 	RsGxsCircleDetails details;
     
-    	for(int i=0;i<6 && !(rsGxsCircles->getCircleDetails(id, details));++i) usleep(300*1000) ;
+    	// This is a trick to force caching the circle data, allowing to wait for at most 1.2 secs.
+    	// A better choice would be to make the loading asynced.
+    
+    	for(int i=0;i<6 && !(rsGxsCircles->getCircleDetails(id, details));++i) usleep(200*1000) ;
         
 	/* now mark all the members */
         
