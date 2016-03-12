@@ -60,7 +60,7 @@ protected:
     void requestCircleGroupMeta();
 private slots:
     void createExternalCircle();
-    void editExistingCircle();
+    void showEditExistingCircle();
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);

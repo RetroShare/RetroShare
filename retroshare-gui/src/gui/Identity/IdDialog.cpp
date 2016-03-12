@@ -256,7 +256,7 @@ IdDialog::IdDialog(QWidget *parent) :
     // circles stuff
     
     connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
-    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(editExistingCircle()));
+    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(showEditExistingCircle()));
     connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
 
@@ -369,7 +369,7 @@ void IdDialog::createExternalCircle()
     
     requestCircleGroupMeta();	// update GUI
 }
-void IdDialog::editExistingCircle()
+void IdDialog::showEditExistingCircle()
 {
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
 	if ((!item) || (!item->parent()))
@@ -460,6 +460,7 @@ static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 	}
 }
 
+#ifdef SUSPENDED
 static void set_tree_background(QTreeWidget *tree, uint32_t type)
 {
 	std::cerr << "CirclesDialog set_tree_background()";
@@ -487,6 +488,7 @@ static void check_mark_item(QTreeWidgetItem *item, const std::set<RsPgpId> &name
 		std::cerr << std::endl;
 	}
 }
+#endif
 void IdDialog::circle_selected()
 {
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
