@@ -62,10 +62,22 @@ function Page(menu){
                 return m("h2","server starting ...")
             } else if("waiting_account_select|running_ok.*".match(runstate.runstate)) {
                 if (runst === undefined || runst.match(runstate.runstate)) {
-                    return m("div", [
+                    return m("div", {
+                        style: {
+                            height: "100%",
+                            "box-sizing": "border-box",
+                            "padding-bottom": "40px"
+                        }
+                    }, [
                         m("div", mm.view()),
         	            m("hr"),
-                        m("div", content)
+                        m("div", {
+                            style: {
+                                height: "100%",
+                                "box-sizing": "border-box",
+                                "padding-bottom":"40px"
+                            }
+                        }, content)
                     ]);
                 } else {
                     // funktion currently not available

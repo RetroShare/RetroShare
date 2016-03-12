@@ -9,6 +9,7 @@
         height: 100%
         padding: 0px
         position: relative
+        box-sizing: border-box
     &.header
         position: absolute
         top: 0px
@@ -24,7 +25,7 @@
         bottom: 0px
         left: 0px
         width: $left_width
-        border-right: solid 1px gray
+        //border-right: solid 1px gray
         box-sizing: border-box
         background-color: black
     &.right
@@ -34,22 +35,24 @@
         bottom: 0px
         width: $right_width
         box-sizing: border-box
-        border-left: solid 1px gray
+        //border-left: solid 1px gray
     &.middle
         //background-color: blue
         position: absolute
-        top: $header_height
+        top: 0px
+        margin-top: $header_height
         left: $left_width
         right: $right_width
         box-sizing: border-box
-        padding-top: 0px
-        padding-left: 0px
-        padding-right: 0px
+        padding: 0px
+        height: 100%
+        overflow-y: scroll
     &.bottom
         position: absolute
         bottom: 0px
         right: $right_width
         left: $left_width
+        padding: 5px
     &.msg
         padding: 0px
         $author_width: 100px
@@ -57,6 +60,7 @@
             position: relative
             border-bottom: solid 1px lightgray
             padding: 10px
+            height: unset
             //background-color: lime
         &.from
             position: absolute
@@ -73,3 +77,5 @@
             padding-left: $author_width
             top: 0px
             left: $author_width
+            white-space: pre-wrap
+            height: initial

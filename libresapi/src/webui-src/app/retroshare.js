@@ -286,15 +286,14 @@ rs.counting = function(path, counterfnkt) {
 rs.counting2 = function(targets) {
     return function () {
         var sum = 0;
-        targets.map(function(target) {
-            var data=rs(target.path);
+        for (var path in targets) {
+            var data=rs(path);
             if (data != undefined) {
                 data.map(function(item){
-                    sum += parseInt(target.counter(item));
+                    sum += parseInt(targets[path](item));
                 });
             };
-            return null;
-        });
+        };
         if (sum > 0) {
             return " (" + sum + ")";
         }
@@ -327,23 +326,30 @@ rs.memory = function(path, args){
     return item.memory;
 };
 
+// Sortierfunktion für Texte von Objekten,
+// falls einfache Namen nicht funktionieren
+rs.stringSort = function(textA,textB, innersort, objectA, objectB){
+        if (textA.toLowerCase() == textB.toLowerCase()) {
+            if (innersort === undefined) {
+                return 0
+            }
+            return innersort(objectA,objectB);
+        } else if (textA.toLowerCase() < textB.toLowerCase()) {
+            return -1
+        } else {
+            return 1
+        }
+    }
+
+
 //return sorting-function for string, based on property name
 //using: list.sort(rs.sort("name"));
 // -----
 //innersort: cascading sorting - using:
 //list.sort(rs.sort("type",rs.sort("name")))
 rs.sort = function(name, innersort){
-    return function(a,b){
-        if (a[name].toLowerCase() == b[name].toLowerCase()) {
-            if (innersort === undefined) {
-                return 0
-            }
-            return innersort(a,b);
-        } else if (a[name].toLowerCase() < b[name].toLowerCase()) {
-            return -1
-        } else {
-            return 1
-        }
+    return function(a,b) {
+        return rs.stringSort(a[name],b[name],innersort,a,b);
     }
 }
 

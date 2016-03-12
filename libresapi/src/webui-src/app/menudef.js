@@ -70,24 +70,18 @@ module.exports = {  nodes: [
 	{
 		name: "chat",
 		runstate: "running_ok.*",
-		counter: rs.counting2([
-		    {
-		        path: "peers",
-		        counter: function(peer) {
-		            var sum = 0;
-		            peer.locations.map(function (loc) {
-		                sum += parseInt(loc.unread_msgs);
-		            });
-		            return sum;
-		        }
-		    },
-		    {
-		        path: "chat/lobbies",
-		        counter: function(lobby) {
-		            return lobby.unread_msg_count;
-		        }
-		    }
-		])
+		counter: rs.counting2({
+	        "peers": function(peer) {
+	            var sum = 0;
+	            peer.locations.map(function (loc) {
+	                sum += parseInt(loc.unread_msgs);
+	            });
+	            return sum;
+	        },
+	        "chat/lobbies": function(lobby) {
+	            return lobby.unread_msg_count;
+	        }
+		})
 	},
 	{
 		name: "shutdown",

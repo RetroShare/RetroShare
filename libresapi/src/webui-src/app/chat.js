@@ -4,6 +4,7 @@ var m = require("mithril");
 var rs = require("retroshare");
 
 var msg = null;
+var particips = [];
 
 function dspmsg(from, when, text){
     return m(".chat.msg.container",[
@@ -169,6 +170,24 @@ function lobby(lobbyid){
             },"submit")
         ]);
     }
+    if (lobdt.subscribed != undefined
+        && lobdt.subscribed
+        && !lobdt.is_broadcast
+        ) {
+        //set participants
+        particips = [
+            m("h3","participants:"),
+            rs.list(
+                "chat/lobby_participants/" + lobbyid,
+                function(item) {
+                    return m("div",item.identity.name);
+                },
+                function (a,b){
+                    return rs.stringSort(a.identity.name,b.identity.name);
+                }
+            )
+        ]
+    }
     return [
         intro,
         mem.msg.map(function(item){
@@ -184,7 +203,13 @@ function lobby(lobbyid){
 
 module.exports = {
     frame: function(content, right){
-        return m("div", [
+        return m("div", {
+            style: {
+                "height": "100%",
+                "box-sizing": "border-box",
+                "padding-bottom": "170px",
+            }
+        },[
             m(".chat.container", [
                 m(".chat.header", [
                     m(
@@ -211,9 +236,10 @@ module.exports = {
         var lobbyid = m.route.param("lobby");
         msg = null;
         if (lobbyid != undefined ) {
+            particips = [];
             return this.frame(
                 lobby(lobbyid),
-                []
+                particips
             );
         };
         return this.frame(
@@ -222,7 +248,7 @@ module.exports = {
                 {style: {margin:"10px"}},
                 "please select lobby"
             ),
-            m("div","right")
+            m("div","")
         );
     }
 }
