@@ -50,3 +50,9 @@ should provide forward, backward and follow-list-end
 [ ] backend: view shared files
 [ ] redirect if a url is not usable in the current runstate (e.g. redirect from login page to home page, after login)
 [X] sort friendslist
+
+need 4 master
+-------------
+[ ] unsubscribe lobby
+[ ] unread chat message counter in menu
+[ ] list chat-lobby participants
