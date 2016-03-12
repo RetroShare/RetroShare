@@ -17,12 +17,12 @@ TEST(libretroshare_gxs, RsGxsData)
     msgMeta1.clear();
     init_item(&msgMeta1);
 
-    uint32_t pktsize = grpMeta1.serial_size();
+    uint32_t pktsize = grpMeta1.serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
     char grp_data[pktsize];
 
     bool ok = true;
 
-    ok &= grpMeta1.serialise(grp_data, pktsize);
+    ok &= grpMeta1.serialise(grp_data, pktsize, RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
     grpMeta2.clear();
     ok &= grpMeta2.deserialise(grp_data, pktsize);
 

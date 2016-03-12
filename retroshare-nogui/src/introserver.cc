@@ -624,7 +624,8 @@ bool	RsIntroStore::loadPeers()
 		std::cerr << "RsIntroStore::loadPeers() Cannot open file, trying tmp";
 		std::cerr << std::endl;
 
-		FILE *fd = fopen(mTempStoreFile.c_str(), "r");
+		fd = fopen(mTempStoreFile.c_str(), "r");
+
 		if (!fd)
 		{
 			std::cerr << "RsIntroStore::loadPeers() Cannot open tmp file";

@@ -914,7 +914,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	QDateTime dtTimestamp=incoming ? sendTime : recvTime;
-	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag);
+	QString formatMsg = chatStyle.formatMessage(type, name, dtTimestamp, formattedMessage, formatFlag, backgroundColor);
 	QString timeStamp = dtTimestamp.toString(Qt::ISODate);
 
 	//replace Date and Time anchors

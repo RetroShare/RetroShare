@@ -265,7 +265,13 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
     return style;
 }
 
-QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
+QString ChatStyle::formatMessage(enumFormatMessage type
+                                 , const QString &name
+                                 , const QDateTime &timestamp
+                                 , const QString &message
+                                 , unsigned int flag
+                                 , const QColor &backgroundColor /*= Qt::white*/
+                                 )
 {
 	bool me = false;
 	QDomDocument doc ;
@@ -343,20 +349,27 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 	}
 
 #ifdef COLORED_NICKNAMES
-    QColor color;
-    if (flag & CHAT_FORMATMSG_SYSTEM) {
-        color = Qt::darkBlue;
+	QColor color;
+	QString colorName;
+
+	if (flag & CHAT_FORMATMSG_SYSTEM) {
+		color = Qt::darkBlue;
 	} else {
-        // Calculate color from the name
-        uint hash = 0;
-        for (int i = 0; i < name.length(); ++i) {
-            hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
+		// Calculate color from the name
+		uint hash = 0;
+		for (int i = 0; i < name.length(); ++i) {
+			hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
 		}
 
-        color.setHsv(hash, 255, 150);
+		color.setHsv(hash, 255, 150);
+		// Always fix colors
+		qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+		colorName = color.name();
+		RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
 	}
 #else
-    Q_UNUSED(flag);
+	Q_UNUSED(flag);
+	Q_UNUSED(backgroundColor);
 #endif
 
 	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
@@ -381,7 +394,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 	                         .replace("%date%", strDate)
 	                         .replace("%time%", strTime)
 #ifdef COLORED_NICKNAMES
-	                         .replace("%color%", color.name())
+	                         .replace("%color%", colorName)
 #endif
 	                         .replace("%message%", messageBody ) ;
 	if ( !styleOptimized.isEmpty() ) {

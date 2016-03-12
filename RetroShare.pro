@@ -38,3 +38,12 @@ wikipoos {
     pegmarkdown.file = supportlibs/pegmarkdown/pegmarkdown.pro
     retroshare_gui.depends += pegmarkdown
 }
+
+tests {
+    SUBDIRS += librssimulator
+    librssimulator.file = tests/librssimulator/librssimulator.pro
+
+    SUBDIRS += unittests
+    unittests.file = tests/unittests/unittests.pro
+    unittests.depends = libretroshare librssimulator
+}

@@ -70,7 +70,7 @@ void PeerNode::provideFileHash(const RsFileHash& hash)
 void PeerNode::manageFileHash(const RsFileHash& hash)
 {
 	_managed_hashes.insert(hash) ;
-	_turtle->monitorTunnels(hash,_turtle_client) ;
+    _turtle->monitorTunnels(hash,_turtle_client, false) ;
 }
 void PeerNode::sendToGRKey(const GRouterKeyId& key_id)
 {
