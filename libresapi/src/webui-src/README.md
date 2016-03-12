@@ -54,5 +54,5 @@ should provide forward, backward and follow-list-end
 need 4 master
 -------------
 [ ] unsubscribe lobby
-[ ] unread chat message counter in menu
+[X] unread chat message counter in menu
 [ ] list chat-lobby participants

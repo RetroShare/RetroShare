@@ -282,6 +282,26 @@ rs.counting = function(path, counterfnkt) {
     }
 };
 
+// counting in menu
+rs.counting2 = function(targets) {
+    return function () {
+        var sum = 0;
+        targets.map(function(target) {
+            var data=rs(target.path);
+            if (data != undefined) {
+                data.map(function(item){
+                    sum += parseInt(target.counter(item));
+                });
+            };
+            return null;
+        });
+        if (sum > 0) {
+            return " (" + sum + ")";
+        }
+        return "";
+    }
+};
+
 // listing data-elements
 rs.list = function(path, buildfktn, sortfktn){
     var list = rs(path);
