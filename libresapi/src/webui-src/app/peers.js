@@ -34,6 +34,9 @@ module.exports = {view: function(){
             return m("div",{
                 style:"color:" + (location.is_online ? "lime": "grey")
                     + ";cursor:pointer",
+                onclick: function(){
+                    m.route("/chat?lobby=" + location.chat_id)
+                }
 
             },location.location);
         });

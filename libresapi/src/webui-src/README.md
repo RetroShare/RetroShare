@@ -36,7 +36,7 @@ google material design has nice rules for color, spacing and everything: https:/
 [ ] find icons, maybe use google material design iconfont
 [X] use urls/mithril routing for the menu. urls could replace state stored in rs.content
 [X] drag and drop private key upload and import
-[ ] link from peer location to chat (use urls and mithril routing)
+[X] link from peer location to chat (use urls and mithril routing)
 [X] add/remove friend, own cert
 [X] downloads, search
 [ ] make reusable infinite list controller, the js part to load data from Pagination.h (tweak Pagination.h to make everything work)
