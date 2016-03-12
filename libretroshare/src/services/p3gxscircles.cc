@@ -1235,9 +1235,27 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 	}
 
 	/* if we appear in the group - then autosubscribe, and mark as processed */
+        
 	const RsPgpId& ownId = mPgpUtils->getPGPOwnId();
 	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = cache.mAllowedPeers.find(ownId);
-	if (it != cache.mAllowedPeers.end())
+    
+    	bool am_I_allowed =  it != cache.mAllowedPeers.end() ;
+        
+        if(!am_I_allowed)
+	{
+		// also check if there's an unknown anonymous identity in the list that would belong to us
+		std::list<RsGxsId> own_gxs_ids ;
+		rsIdentity->getOwnIds(own_gxs_ids) ;
+
+		for(std::list<RsGxsId>::const_iterator it(own_gxs_ids.begin());it!=own_gxs_ids.end();++it)
+			if(cache.mUnknownPeers.end() != cache.mUnknownPeers.find(*it))
+			{
+				am_I_allowed = true ;
+				break ;
+			}
+	}
+        
+	if(am_I_allowed)
 	{
 #ifdef DEBUG_CIRCLES
 		/* we are part of this group - subscribe, clear unprocessed flag */
