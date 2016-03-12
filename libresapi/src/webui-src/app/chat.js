@@ -176,6 +176,17 @@ function lobby(lobbyid){
         ) {
         //set participants
         particips = [
+            m("div.btn", {
+                style: {
+                    "text-align":"center"
+                },
+                onclick: function (){
+		            rs.request("chat/unsubscribe_lobby",{
+		                id:lobdt.id,
+		            });
+                    m.route("/chat");
+                }
+            },"unsubscribe"),
             m("h3","participants:"),
             rs.list(
                 "chat/lobby_participants/" + lobbyid,

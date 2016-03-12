@@ -53,6 +53,6 @@ should provide forward, backward and follow-list-end
 
 need 4 master
 -------------
-[ ] unsubscribe lobby
+[X] unsubscribe lobby
 [X] unread chat message counter in menu
-[ ] list chat-lobby participants
+[X] list chat-lobby participants
