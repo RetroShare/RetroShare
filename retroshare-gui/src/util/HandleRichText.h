@@ -77,6 +77,7 @@ public:
 
 	static QString makeQuotedText(RSTextBrowser* browser);
 	static void insertSpoilerText(QTextCursor cursor);
+	static void findBestColor(QString &val, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0);
 
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);
