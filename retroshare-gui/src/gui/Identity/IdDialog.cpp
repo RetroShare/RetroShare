@@ -319,11 +319,11 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
 	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
-	externalSubCirclesItem->setText(0, tr("Circles (Subscribed)"));
+	externalSubCirclesItem->setText(0, tr("Circles I belong to)"));
 	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
 
 	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-	externalAdminCirclesItem->setText(0, tr("Circles (Admin)"));
+	externalAdminCirclesItem->setText(0, tr("Circles I own"));
 	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
