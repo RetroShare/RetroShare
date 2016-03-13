@@ -1355,6 +1355,8 @@ int RsServer::StartupRetroShare()
 	            true,false); // synchronise group automatic 
 			// don't sync messages at all.
 
+	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
+    
         /**** Posted GXS service ****/
 
 

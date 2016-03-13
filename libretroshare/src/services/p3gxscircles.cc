@@ -37,6 +37,7 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
+#define DEBUG_CIRCLES	 1
 
 RsGxsCircles *rsGxsCircles = NULL;
 
@@ -183,10 +184,10 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::vector<RsGxsNotify *>::iterator it;
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
-	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
-	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-	       if (msgChange && !msgChange->metaChange())
-	       {
+		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+		if (msgChange && !msgChange->metaChange())
+		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::notifyChanges() Found Message Change Notification";
 			std::cerr << std::endl;
@@ -201,9 +202,9 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << std::endl;
 #endif
 			}
-	       }
+		}
 
-	       /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
+		/* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
 		if (groupChange && !groupChange->metaChange())
 		{
 #ifdef DEBUG_CIRCLES
@@ -216,20 +217,20 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			for(git = groupList.begin(); git != groupList.end(); ++git)
 			{
 #ifdef DEBUG_CIRCLES
-				std::cerr << "p3GxsCircles::notifyChanges() Incoming Group: " << *git;
-				std::cerr << std::endl;
+				std::cerr << "p3GxsCircles::notifyChanges() Incoming Group: " << *git << ". Forcing cache load." << std::endl;
 #endif
 
 				// for new circles we need to add them to the list.
-                // we don't know the type of this circle here
-                // original behavior was to add all ids to the external ids list
-                addCircleIdToList(RsGxsCircleId(*git), 0);
+				// we don't know the type of this circle here
+				// original behavior was to add all ids to the external ids list
+				addCircleIdToList(RsGxsCircleId(*git), 0);
+				cache_request_load(RsGxsCircleId(*git)) ;
 
-                // reset the cached circle data for this id
-                {
-                    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-                    mCircleCache.erase(RsGxsCircleId(*git));
-                }
+				// reset the cached circle data for this id
+				{
+					RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+					mCircleCache.erase(RsGxsCircleId(*git));
+				}
 			}
 		}
 	}
@@ -1265,8 +1266,9 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 
 	
 		uint32_t token, token2;	
-		RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId.toStdString()), true);
-		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
+		RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId), true);
+		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
+        
 		cache.mGroupStatus ^= GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
 		return true;
 	}
