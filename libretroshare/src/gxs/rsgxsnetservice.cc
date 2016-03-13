@@ -1844,6 +1844,13 @@ void RsGxsNetService::debugDump()
     time_t now = time(NULL) ;
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
+    
+    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
+    
+    if(!group_id_to_print.isNull())
+        grpMetas[group_id_to_print] = NULL ;
+    
+    mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
     if(mGrpServerUpdateItem != NULL)
 	    GXSNETDEBUG___<< "  mGrpServerUpdateItem time stamp: " << nice_time_stamp(time(NULL) , mGrpServerUpdateItem->grpUpdateTS) << " (is the last local modification time over all groups of this service)" << std::endl;
@@ -1853,7 +1860,13 @@ void RsGxsNetService::debugDump()
     GXSNETDEBUG___<< "  mServerMsgUpdateMap: (is for each subscribed group, the last local modification time)" << std::endl;
 
     for(std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
-	    GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(time(NULL),it->second->msgUpdateTS) << std::endl;
+    {
+        RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData>::const_iterator it2 = grpMetas.find(it->first) ;
+        RsGxsGrpMetaData *grpMeta = (it2 != grpMetas.end())? it2->second : NULL;
+        std::string subscribe_string = (grpMeta==NULL)?"Unknown" :  ((grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)?" Subscribed":" NOT Subscribed") ;
+        
+	GXSNETDEBUG__G(it->first) << "    Grp:" << it->first << " last local modification (secs ago): " << nice_time_stamp(time(NULL),it->second->msgUpdateTS) << ", " << subscribe_string  << std::endl;
+    }
 
     GXSNETDEBUG___<< "  mClientGrpUpdateMap: (is for each friend, last modif time of group meta data at that friend, all groups included, sent by the friend himself)" << std::endl;
 
