@@ -91,6 +91,8 @@ CreateCircleDialog::CreateCircleDialog()
 	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
     
+	ui.radioButton_Public->setChecked(true) ;
+    
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 	mClearList = true;
