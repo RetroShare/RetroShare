@@ -83,9 +83,9 @@ CreateCircleDialog::CreateCircleDialog()
 	ui.addButton->setEnabled(false);
 	ui.radioButton_ListAll->setChecked(true);
 
-	QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
-	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
-	QObject::connect(ui.radioButton_ListKnownPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
+	QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+	QObject::connect(ui.radioButton_ListKnownPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
 
 	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
@@ -764,6 +764,10 @@ void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest
 	}//if (queue == mIdQueue)
 }
 
+void CreateCircleDialog::idTypeChanged()
+{
+	requestGxsIdentities();
+}
 void CreateCircleDialog::filterChanged(const QString &text)
 {
 	Q_UNUSED(text);
