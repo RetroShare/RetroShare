@@ -315,7 +315,7 @@ void mark_circle_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names)
         std::set<RsPgpId>::iterator it;
 		for(it = names.begin(); it != names.end(); ++it)
 		{
-            if (details.mAllowedPeers.end() != details.mAllowedPeers.find(*it))
+            if (details.mAllowedSignedPeers.end() != details.mAllowedSignedPeers.find(*it))
 			{
 				set_item_background(item, GREEN_BACKGROUND);
 				std::cerr << "CirclesDialog mark_circle_item: found match: " << id;
@@ -389,7 +389,7 @@ void CirclesDialog::circle_selected()
 		/* now mark all the members */
         std::set<RsPgpId> members;
 		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); ++it)
+		for(it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
 		{
 			members.insert(it->first);
 			std::cerr << "Circle member: " << it->first;

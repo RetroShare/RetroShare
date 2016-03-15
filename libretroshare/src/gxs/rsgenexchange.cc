@@ -1139,6 +1139,8 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
         }
         delete n;
     }
+    changes.clear() ;
+    
     RsServer::notify()->notifyGxsChange(out);
 }
 
@@ -2798,12 +2800,14 @@ void RsGenExchange::processRecvdGroups()
 
 				// group has been validated. Let's notify the global router for the clue
 
+		    		if(!meta->mAuthorId.isNull())
+		    		{
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
+				    std::cerr << "Group routage info: Identity=" << meta->mAuthorId << " from " << grp->PeerId() << std::endl;
 #endif
 
-		    		if(!meta->mAuthorId.isNull())
-					mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+			    		mRoutingClues[meta->mAuthorId].insert(grp->PeerId()) ;
+		    		}
                                 
                                 // This has been moved here (as opposed to inside part for new groups below) because it is used to update the server TS when updates
                                 // of grp metadata arrive.

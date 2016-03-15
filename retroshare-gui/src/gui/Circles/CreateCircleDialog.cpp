@@ -281,8 +281,8 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 {
 	typedef std::set<RsGxsId>::iterator itUnknownPeers;
-	for (itUnknownPeers it = cirDetails.mUnknownPeers.begin()
-	     ; it != cirDetails.mUnknownPeers.end()
+	for (itUnknownPeers it = cirDetails.mAllowedAnonPeers.begin()
+	     ; it != cirDetails.mAllowedAnonPeers.end()
 	     ; ++it) {
 		RsGxsId gxs_id = *it;
 		RsIdentityDetails gxs_details ;
@@ -298,8 +298,8 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 	}//for (itUnknownPeers it = cirDetails.mUnknownPeers.begin()
 
 	typedef std::map<RsPgpId, std::list<RsGxsId> >::const_iterator itAllowedPeers;
-	for (itAllowedPeers it = cirDetails.mAllowedPeers.begin()
-	     ; it != cirDetails.mAllowedPeers.end()
+	for (itAllowedPeers it = cirDetails.mAllowedSignedPeers.begin()
+	     ; it != cirDetails.mAllowedSignedPeers.end()
 	     ; ++it ) {
 		RsPgpId gpg_id = it->first;
 		RsPeerDetails details ;

@@ -146,12 +146,14 @@ class RsGxsCircleCache
 	uint32_t      mGroupStatus;
 
 	time_t mUpdateTime;
+#ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
-	std::set<RsGxsId> mUnprocessedPeers;
-
 	std::set<RsGxsCircleId> mProcessedCircles;
-	std::set<RsGxsId> mUnknownPeers;
-	std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
+#endif
+	std::set<RsGxsId> mUnprocessedPeers;
+    
+	std::set<RsGxsId> mAllowedAnonPeers;
+	std::map<RsPgpId, std::list<RsGxsId> > mAllowedSignedPeers;
 };
 
 
