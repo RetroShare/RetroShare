@@ -234,6 +234,11 @@ void RsGenExchange::tick()
 
 					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
 					gc->mGrpIdList = grpIds;
+#ifdef GEN_EXCH_DEBUG
+                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
+                                	for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+                                        	std::cerr << "    " << *it << std::endl;
+#endif
 					mNotifications.push_back(gc);
 				}
 
@@ -1818,6 +1823,11 @@ void RsGenExchange::processGrpMetaChanges()
         RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, true);
         gc->mGrpIdList = grpChanged;
         mNotifications.push_back(gc);
+#ifdef GEN_EXCH_DEBUG
+                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
+                                	for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
+                                        	std::cerr << "    " << *it << std::endl;
+#endif
     }
 }
 
@@ -2462,6 +2472,11 @@ void RsGenExchange::publishGrps()
     	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
     	gc->mGrpIdList = grpChanged;
     	mNotifications.push_back(gc);
+#ifdef GEN_EXCH_DEBUG
+                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
+                                	for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
+                                        	std::cerr << "    " << *it << std::endl;
+#endif
     }
 
 }
@@ -2882,6 +2897,11 @@ void RsGenExchange::processRecvdGroups()
 		c->mGrpIdList = grpIds;
 		mNotifications.push_back(c);
 		mDataStore->storeGroup(grps);
+#ifdef GEN_EXCH_DEBUG
+                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
+                                	for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+                                        	std::cerr << "    " << *it << std::endl;
+#endif
 	}
 }
 
@@ -2942,9 +2962,11 @@ void RsGenExchange::performUpdateValidation()
 		else
 		{
 			delete gu.newGrp;
+            		gu.newGrp = NULL ;
 		}
 
 		delete gu.oldGrpMeta;
+        	gu.oldGrpMeta = NULL ;
 	}
 
 	mDataStore->updateGroup(grps);
@@ -2953,8 +2975,16 @@ void RsGenExchange::performUpdateValidation()
     
         RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
         
+#ifdef GEN_EXCH_DEBUG
+                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
+#endif
         for(uint32_t i=0;i<mGroupUpdates.size();++i)
-		c->mGrpIdList.push_back(mGroupUpdates[i].oldGrpMeta->mGroupId) ;
+        {
+		c->mGrpIdList.push_back(mGroupUpdates[i].newGrp->grpId) ;
+#ifdef GEN_EXCH_DEBUG
+	std::cerr << "    " << mGroupUpdates[i].newGrp->grpId << std::endl;
+#endif
+        }
         
         mNotifications.push_back(c);
         
