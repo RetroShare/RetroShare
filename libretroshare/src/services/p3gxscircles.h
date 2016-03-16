@@ -144,6 +144,7 @@ class RsGxsCircleCache
 	bool	      mIsExternal;
 
 	uint32_t      mGroupStatus;
+	uint32_t      mGroupSubscribeFlags;
 
 	time_t mUpdateTime;
 #ifdef SUBSCIRCLES
