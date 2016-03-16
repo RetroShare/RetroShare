@@ -223,6 +223,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	bool cache_request_load(const RsGxsCircleId &id);
 	bool cache_start_load();
+	bool force_cache_reload(const RsGxsCircleId& id);
 	bool cache_load_for_token(uint32_t token);
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 

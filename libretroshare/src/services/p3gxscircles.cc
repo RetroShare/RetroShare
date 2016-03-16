@@ -239,7 +239,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #ifdef DEBUG_CIRCLES
 		    std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
-		    cache_request_load(RsGxsCircleId(*git)) ;
+		    force_cache_reload(RsGxsCircleId(*git)) ;
 	    }
     }
     RsGxsIfaceHelper::receiveChanges(changes);	// this clear up the vector and delete its elements
@@ -780,6 +780,33 @@ bool p3GxsCircles::cachetest_handlerequest(uint32_t token)
 /************************************************************************************/
 // Complicated deal of loading Circles.
 
+bool p3GxsCircles::force_cache_reload(const RsGxsCircleId& id)
+{
+#ifdef DEBUG_CIRCLES
+    std::cerr << "p3GxsCircles::force_cache_reload(): Forcing cache reload of Circle ID " << id << std::endl;
+#endif
+    
+    {
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+
+#ifdef DEBUG_CIRCLES
+	    std::cerr << "  clearing from existing cache entries..." << std::endl;
+#endif
+
+	    std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it = mLoadingCache.find(id);
+	    if (it != mLoadingCache.end())
+	    {
+		    mLoadingCache.erase(it) ;
+#ifdef DEBUG_CIRCLES
+		    std::cerr << "  removed item from currently loading cache entries..." << std::endl;
+#endif
+	    }
+	    mCircleCache.erase(id) ;
+    }
+    cache_request_load(id) ;
+    
+    return true ;
+}
 
 bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 {
