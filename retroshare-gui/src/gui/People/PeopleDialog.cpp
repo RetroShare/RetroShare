@@ -82,11 +82,11 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 
 	{//First Get Item created in Qt Designer for Internal
 		int count = idInternal->children().count();
-	for (int curs = 0; curs < count; ++curs){
+		for (int curs = 0; curs < count; ++curs){
 			QObject *obj = idInternal->children().at(curs);
-		QWidget *wid = qobject_cast<QWidget *>(obj);
+			QWidget *wid = qobject_cast<QWidget *>(obj);
 			if (wid) _flowLayoutInt->addWidget(wid);
-	}//for (int curs = 0; curs < count; ++curs)
+		}//for (int curs = 0; curs < count; ++curs)
 	}//End First Get Item created in Qt Designer for Internal
 
 	pictureFlowWidgetExternal->setAcceptDrops(true);

@@ -1176,6 +1176,7 @@ identities {
 	
 gxscircles {
 	DEFINES += RS_USE_CIRCLES
+#	DEFINES += RS_USE_NEW_PEOPLE_DIALOG
 
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
