@@ -293,9 +293,9 @@ PictureFlowState::PictureFlowState():
 
 PictureFlowState::~PictureFlowState()
 {
-	while (! slideImages.isEmpty()) {
-		delete slideImages.takeFirst();
-	}
+    for(uint i=0;i<slideImages.size();++i)
+        delete slideImages[i] ;
+    slideImages.clear() ;
 }
 
 // readjust the settings, call this when slide dimension is changed
@@ -1104,10 +1104,10 @@ void PictureFlow::setCenterIndex(int index)
 
 void PictureFlow::clear()
 {
-	while (! d->state->slideImages.isEmpty()) {
-		delete d->state->slideImages.takeFirst();
-	}
-
+    for(uint i=0;i<d->state->slideImages.size();++i)
+        delete d->state->slideImages[i] ;
+    d->state->slideImages.clear() ;
+    
 	d->state->reset();
 	triggerRender();
 }
