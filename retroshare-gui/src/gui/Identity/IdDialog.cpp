@@ -1184,6 +1184,7 @@ void IdDialog::updateDisplay(bool complete)
 		requestIdList();
 		requestIdDetails();
 		requestRepList();
+		requestCircleGroupMeta();
 
 		return;
 	}

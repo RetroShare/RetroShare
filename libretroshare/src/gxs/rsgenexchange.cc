@@ -1142,6 +1142,9 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
             }
         }
+        else
+            std::cerr << "(EE) Unknown changes type!!" << std::endl;
+        
         delete n;
     }
     changes.clear() ;
