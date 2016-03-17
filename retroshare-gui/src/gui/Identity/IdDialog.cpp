@@ -378,7 +378,13 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     ++vit ;
                     continue ;
                 }
-        
+		if(!subscribed && !admin && item->parent() != mExternalOtherCircleItem)
+                {
+                    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+                    delete item ;
+                    ++vit ;
+                    continue ;
+                }
         	// the item is at the right place. Just remove it from the list of items to add.
 		std::cerr << "  item already in place. Removing from list." << std::endl;
         	vit = groupInfo.erase(vit) ;

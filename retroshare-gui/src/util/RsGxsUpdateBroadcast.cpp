@@ -43,6 +43,8 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 
 void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
 {
+    std::cerr << "onChangesReceived()" << std::endl;
+    
     if(changes.mService != mIfaceImpl->getTokenService())
         return;
 

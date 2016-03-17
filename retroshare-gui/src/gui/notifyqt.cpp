@@ -57,6 +57,7 @@
 /*****
  * #define NOTIFY_DEBUG
  ****/
+#define NOTIFY_DEBUG
 
 /*static*/ NotifyQt *NotifyQt::_instance = NULL;
 /*static*/ bool NotifyQt::_disableAllToaster = false;
