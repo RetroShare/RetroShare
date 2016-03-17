@@ -61,6 +61,7 @@ protected:
 private slots:
     void createExternalCircle();
     void showEditExistingCircle();
+	void updateCirclesDisplay(bool);
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
@@ -121,6 +122,7 @@ private:
 	QTreeWidgetItem *mExternalSubCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mExternalAdminCircleItem;
+    	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	RsGxsGroupId mId;
 

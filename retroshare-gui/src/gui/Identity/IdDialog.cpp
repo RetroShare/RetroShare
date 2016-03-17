@@ -30,6 +30,7 @@
 #include "ui_IdDialog.h"
 #include "IdEditDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -118,6 +119,10 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	mIdQueue = NULL;
+    
+    	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
+	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
+	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
     
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));
@@ -272,6 +277,11 @@ IdDialog::IdDialog(QWidget *parent) :
     requestCircleGroupMeta();
 }	
 
+void IdDialog::updateCirclesDisplay(bool)
+{
+    std::cerr << "!!Updating circles display!" << std::endl;
+    requestCircleGroupMeta() ;
+}
 
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
@@ -1190,10 +1200,10 @@ void IdDialog::updateDisplay(bool complete)
 		requestIdList();
 		requestIdDetails();
 		requestRepList();
-		requestCircleGroupMeta();
 
 		return;
 	}
+	requestCircleGroupMeta();
 
 	std::list<RsGxsGroupId> grpIds;
 	getAllGrpIds(grpIds);
