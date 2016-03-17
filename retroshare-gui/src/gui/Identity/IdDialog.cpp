@@ -125,6 +125,11 @@ IdDialog::IdDialog(QWidget *parent) :
 	contactsItem = new QTreeWidgetItem();
 	contactsItem->setText(0, tr("Contacts"));
 
+	ui->treeWidget_membership->clear();
+    
+    	mExternalOtherCircleItem = NULL ;
+    	mExternalSubCircleItem = NULL ;
+    	mExternalAdminCircleItem = NULL ;
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -294,8 +299,6 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
 	std::cerr << std::endl;
 
-	ui->treeWidget_membership->clear();
-
 	std::list<RsGroupMetaData> groupInfo;
 	std::list<RsGroupMetaData>::iterator vit;
 
@@ -314,50 +317,103 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	//personalCirclesItem->setText(0, tr("Personal Circles"));
 	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
     
-	QTreeWidgetItem *externalOtherCirclesItem = new QTreeWidgetItem();
-	externalOtherCirclesItem->setText(0, tr("Circles (Other)"));
-	ui->treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
+    	if(!mExternalOtherCircleItem)
+        {
+		mExternalOtherCircleItem = new QTreeWidgetItem();
+		mExternalOtherCircleItem->setText(0, tr("Circles (Other)"));
+        
+		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
+        }
 
-	QTreeWidgetItem *externalSubCirclesItem = new QTreeWidgetItem();
-	externalSubCirclesItem->setText(0, tr("Circles I belong to"));
-	ui->treeWidget_membership->addTopLevelItem(externalSubCirclesItem);
-
-	QTreeWidgetItem *externalAdminCirclesItem = new QTreeWidgetItem();
-	externalAdminCirclesItem->setText(0, tr("Circles I own"));
-	ui->treeWidget_membership->addTopLevelItem(externalAdminCirclesItem);
-
-	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+	if(!mExternalSubCircleItem )
 	{
-		/* Add Widget, and request Pages */
-		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId;
-		std::cerr << " Group: " << vit->mGroupName;
-		std::cerr << std::endl;
+		mExternalSubCircleItem = new QTreeWidgetItem();
+		mExternalSubCircleItem->setText(0, tr("Circles I belong to"));
+		ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
+    	}
 
-		QTreeWidgetItem *groupItem = new QTreeWidgetItem();
-		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-		groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
-		groupItem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-
-		if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-		{
-			//personalCirclesItem->addChild(groupItem);
-		}
-		else
-		{
-			if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-			{
-				externalAdminCirclesItem->addChild(groupItem);
-			}
-			else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-			{
-				externalSubCirclesItem->addChild(groupItem);
-			}
-			else
-			{
-				externalOtherCirclesItem->addChild(groupItem);
-			}
-		}
+    	if(!mExternalAdminCircleItem)
+	{
+		mExternalAdminCircleItem = new QTreeWidgetItem();
+		mExternalAdminCircleItem->setText(0, tr("Circles I own"));
+		ui->treeWidget_membership->addTopLevelItem(mExternalAdminCircleItem);
 	}
+
+	for(vit = groupInfo.begin(); vit != groupInfo.end();)
+    	{
+		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+        
+		QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
+        
+        	if(clist.empty())
+	    	{
+                	++vit ;
+                	std::cerr << "  group not already in list." << std::endl;
+                	continue ;
+            	}
+            
+            	if(clist.size() > 1)
+                {
+                    	std::cerr << "  (EE) found " << clist.size() << " items in tree for group id " << vit->mGroupId << ": this is unexpected." << std::endl;
+        		vit = groupInfo.erase(vit) ;
+                	continue ;
+                }
+                QTreeWidgetItem *item = clist.front() ;
+                
+                bool subscribed = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ;
+                bool admin      = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN ;
+                
+                if(admin && item->parent() != mExternalAdminCircleItem)
+                {
+                    std::cerr << "  (EE) weird. Existing group is not in admin sub-items although it is admin." << std::endl;
+                    delete item ;
+                    ++vit ;
+                    continue ;
+                }
+        
+		if(subscribed && !admin && item->parent() != mExternalSubCircleItem)
+                {
+                    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+                    delete item ;
+                    ++vit ;
+                    continue ;
+                }
+        
+        	// the item is at the right place. Just remove it from the list of items to add.
+		std::cerr << "  item already in place. Removing from list." << std::endl;
+        	vit = groupInfo.erase(vit) ;
+    	}
+    
+	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+    {
+	    if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+	    {	
+		    std::cerr << "(WW) Local circle not added to tree widget. Needs to be implmeented." << std::endl;
+		    continue ;
+	    }
+	    /* Add Widget, and request Pages */
+
+	    QTreeWidgetItem *groupItem = new QTreeWidgetItem();
+	    groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+	    groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+	    groupItem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+
+	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+	    {
+        	std::cerr << "  adding item for group " << vit->mGroupId << " to admin"<< std::endl;
+		    mExternalAdminCircleItem->addChild(groupItem);
+	    }
+	    else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+	    {
+        	std::cerr << "  adding item for group " << vit->mGroupId << " to subscribed"<< std::endl;
+		    mExternalSubCircleItem->addChild(groupItem);
+	    }
+	    else
+        {
+        	std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
+		    mExternalOtherCircleItem->addChild(groupItem);
+        }
+    }
 }
 
 

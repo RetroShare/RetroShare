@@ -118,6 +118,9 @@ private:
 
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
+	QTreeWidgetItem *mExternalSubCircleItem;
+	QTreeWidgetItem *mExternalOtherCircleItem;
+	QTreeWidgetItem *mExternalAdminCircleItem;
 
 	RsGxsGroupId mId;
 
