@@ -59,7 +59,7 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
     }
     if(changes.mService != mIfaceImpl->getTokenService())
     {
-        std::cerr << "(EE) Incorrect service. Dropping." << std::endl;
+       // std::cerr << "(EE) Incorrect service. Dropping." << std::endl;
         
         return;
     }

@@ -167,10 +167,10 @@ void CreateCircleDialog::updateCircleType(bool b)
     if(!b)
 	    return ;	// no need to change when b<-false
 
-    if(ui.radioButton_Self->isChecked())
-	    setupForPersonalCircle() ;
-    else
-	    setupForExternalCircle() ;
+    //if(ui.radioButton_Self->isChecked())
+	   // setupForPersonalCircle() ;
+    //else
+    setupForExternalCircle() ;
 
     if(ui.radioButton_Restricted->isChecked())
     {
@@ -509,6 +509,10 @@ void CreateCircleDialog::updateCircleGUI()
 	std::cerr << "CreateCircleDialog::updateCircleGUI() : CIRCLETYPE: " << mCircleGroup.mMeta.mCircleType;
 	std::cerr << std::endl;
 
+    ui.radioButton_Public->setChecked(false);
+				ui.radioButton_Self->setChecked(false);
+				ui.radioButton_Restricted->setChecked(false);
+            
 	switch(mCircleGroup.mMeta.mCircleType) {
 #ifdef RS_ALLOW_LOCAL_CIRCLES
 		case GXS_CIRCLE_TYPE_LOCAL:
@@ -527,15 +531,14 @@ void CreateCircleDialog::updateCircleGUI()
 			break;
 
 		case GXS_CIRCLE_TYPE_EXT_SELF:
-			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXT_SELF CIRCLE (fallthrough)";
-			std::cerr << std::endl;
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXT_SELF CIRCLE (fallthrough)"<< std::endl;
 		case GXS_CIRCLE_TYPE_EXTERNAL:
-			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXTERNAL CIRCLETYPE";
-			std::cerr << std::endl;
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXTERNAL CIRCLETYPE"<< std::endl;
 
-			if (mCircleGroup.mMeta.mCircleId.toStdString() == mCircleGroup.mMeta.mGroupId.toStdString()) {
+			if (RsGxsGroupId(mCircleGroup.mMeta.mCircleId) == mCircleGroup.mMeta.mGroupId) 
+				ui.radioButton_Self->setChecked(true);
+            else
 				ui.radioButton_Restricted->setChecked(true);
-			}//if (mCircleGroup.mMeta.mCircleId.toStdString() == mCircleGroup.mMeta.mGroupId.toStdString())
 
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mCircleGroup.mMeta.mCircleId);
 			
