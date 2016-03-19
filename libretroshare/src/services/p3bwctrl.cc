@@ -280,7 +280,7 @@ int p3BandwidthControl::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRate
 
 }
 
-int     p3BandwidthControl::ExtractTrafficInfo(std::list<RSTrafficClue>& in_stats,std::list<RSTrafficClue>& out_stats)
+int     p3BandwidthControl::ExtractTrafficInfo(std::list<RSTrafficClue>& out_stats, std::list<RSTrafficClue>& in_stats)
 {
     return mPg->ExtractTrafficInfo(out_stats,in_stats) ;
 }
