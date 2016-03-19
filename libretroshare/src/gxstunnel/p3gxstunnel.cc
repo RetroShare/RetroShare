@@ -763,7 +763,6 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
         uint32_t encrypted_size = data_size - GXS_TUNNEL_ENCRYPTION_IV_SIZE - GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
         uint32_t decrypted_size = RsAES::get_buffer_size(encrypted_size);
         uint8_t *encrypted_data = (uint8_t*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE+GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
-        uint8_t *decrypted_data = new uint8_t[decrypted_size];
         uint8_t aes_key[GXS_TUNNEL_AES_KEY_SIZE] ;
 
         std::map<TurtleVirtualPeerId,GxsTunnelDHInfo>::iterator it = _gxs_tunnel_virtual_peer_ids.find(virtual_peer_id) ;
@@ -800,13 +799,12 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             std::cerr << "(EE) packet HMAC does not match. Computed HMAC=" << RsUtil::BinToHex((char*)hm,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
             std::cerr << "(EE) resetting new DH session." << std::endl;
 
-            delete[] decrypted_data ;
-
             locked_restartDHSession(virtual_peer_id,it2->second.own_gxs_id) ;
 
             return false ;
         }
 
+        uint8_t *decrypted_data = new uint8_t[decrypted_size];
         if(!RsAES::aes_decrypt_8_16(encrypted_data,encrypted_size, aes_key,(uint8_t*)data_bytes,decrypted_data,decrypted_size))
         {
             std::cerr << "(EE) packet decryption failed." << std::endl;
