@@ -763,15 +763,19 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
         uint32_t encrypted_size = data_size - GXS_TUNNEL_ENCRYPTION_IV_SIZE - GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
         uint32_t decrypted_size = RsAES::get_buffer_size(encrypted_size);
         uint8_t *encrypted_data = (uint8_t*)data_bytes+GXS_TUNNEL_ENCRYPTION_IV_SIZE+GXS_TUNNEL_ENCRYPTION_HMAC_SIZE;
-        uint8_t *decrypted_data = new uint8_t[decrypted_size];
+        
+        RsTemporaryMemory decrypted_data(decrypted_size);
         uint8_t aes_key[GXS_TUNNEL_AES_KEY_SIZE] ;
+        
+        if(!decrypted_data)
+            return false ;
 
         std::map<TurtleVirtualPeerId,GxsTunnelDHInfo>::iterator it = _gxs_tunnel_virtual_peer_ids.find(virtual_peer_id) ;
 
         if(it == _gxs_tunnel_virtual_peer_ids.end())
         {
             std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. hash=" << hash << ", peer id = " << virtual_peer_id << std::endl;
-            return true ;
+            return false ;
         }
 
         tunnel_id = it->second.tunnel_id ;
@@ -780,7 +784,7 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
         if(it2 == _gxs_tunnel_contacts.end())
         {
             std::cerr << "(EE) no tunnel data for tunnel ID=" << tunnel_id << ". This is a bug." << std::endl;
-            return true ;
+            return false ;
         }
         memcpy(aes_key,it2->second.aes_key,GXS_TUNNEL_AES_KEY_SIZE) ;
 
@@ -800,8 +804,6 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             std::cerr << "(EE) packet HMAC does not match. Computed HMAC=" << RsUtil::BinToHex((char*)hm,GXS_TUNNEL_ENCRYPTION_HMAC_SIZE) << std::endl;
             std::cerr << "(EE) resetting new DH session." << std::endl;
 
-            delete[] decrypted_data ;
-
             locked_restartDHSession(virtual_peer_id,it2->second.own_gxs_id) ;
 
             return false ;
@@ -811,8 +813,6 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
         {
             std::cerr << "(EE) packet decryption failed." << std::endl;
             std::cerr << "(EE) resetting new DH session." << std::endl;
-
-            delete[] decrypted_data ;
 
             locked_restartDHSession(virtual_peer_id,it2->second.own_gxs_id) ;
 
@@ -829,8 +829,6 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
         //
         citem = dynamic_cast<RsGxsTunnelItem*>(RsGxsTunnelSerialiser().deserialise(decrypted_data,&decrypted_size)) ;
         
-        delete[] decrypted_data ;
-
         if(citem == NULL)
         {
             std::cerr << "(EE) item could not be de-serialized. That is an error." << std::endl;
