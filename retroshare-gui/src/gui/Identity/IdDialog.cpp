@@ -395,6 +395,12 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     ++vit ;
                     continue ;
                 }
+                if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
+                {
+                    std::cerr << "  Existing group has a new name. Updating it in the tree." << std::endl;
+		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+                }
+                    
         	// the item is at the right place. Just remove it from the list of items to add.
 		std::cerr << "  item already in place. Removing from list." << std::endl;
         	vit = groupInfo.erase(vit) ;
