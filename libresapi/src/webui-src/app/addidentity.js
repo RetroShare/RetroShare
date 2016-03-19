@@ -6,7 +6,8 @@ var rs = require("retroshare");
 function createidentity(){
     var data = {
         name: document.getElementById("txtname").value,
-        pgp_linked: document.getElementById("chklinked").checked,
+        pgp_linked: false,
+        //document.getElementById("chklinked").checked,
     };
     m.route("/waiting");
     rs.request("identity/create_identity",data, function(){
@@ -32,6 +33,7 @@ module.exports = {view: function(){
             }
             */
         }),
+        /*
         m("b","linked with pgp-id: "),
         m("input", {
             type: "checkbox",
@@ -41,6 +43,7 @@ module.exports = {view: function(){
                 width: "0%",
             }
         }),
+        */
         m("p"," "),
         m("input.btn2", {
             onclick: createidentity,
