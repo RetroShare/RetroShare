@@ -96,7 +96,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
 						temp.sprintf("%.2f ", fileSize / multi);
@@ -115,7 +115,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (remaining < 1024) {
 						remaining = index.data().toLongLong();
 						temp.sprintf("%.2f ", remaining / multi);
@@ -134,7 +134,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (completed < 1024) {
 						completed = index.data().toLongLong();
 						temp.sprintf("%.2f ", completed / multi);

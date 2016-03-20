@@ -768,7 +768,7 @@ void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
 
 		QWidget *wid =
 		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
-		FlowLayout *layout;
+		FlowLayout *layout = NULL;
 		if (wid) layout =
 		    qobject_cast<FlowLayout *>(wid->layout());
 		if (layout) {
@@ -858,7 +858,7 @@ void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 
 		QWidget *wid =
 		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
-		FlowLayout *layout;
+		FlowLayout *layout = NULL;
 		if (wid) layout =
 		    qobject_cast<FlowLayout *>(wid->layout());
 		if (layout) {

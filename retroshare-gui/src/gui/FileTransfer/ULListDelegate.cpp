@@ -85,7 +85,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
 						temp.sprintf("%.2f ", fileSize / multi);
@@ -104,7 +104,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (transferred < 1024) {
 						transferred = index.data().toLongLong();
 						temp.sprintf("%.2f ", transferred / multi);
