@@ -177,7 +177,7 @@ void AvatarWidget::refreshStatus()
     }
     case STATUS_FRAME:
     {
-        uint32_t status ;
+        uint32_t status = 0;
 
     if(mId.isNotSet())
         return ;
