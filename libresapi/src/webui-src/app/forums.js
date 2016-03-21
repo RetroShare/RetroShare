@@ -6,6 +6,7 @@ var rs = require("retroshare");
 module.exports = {view: function(){
     return m("div",[
         m("h2","forums"),
+        m("p","(work in progress, currently only listing)"),
         m("hr"),
         /*
         m("div.btn2", {

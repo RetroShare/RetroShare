@@ -84,6 +84,16 @@ module.exports = {  nodes: [
 		})
 	},
 	{
+	    name:"options",
+	    runstate: "running_ok.*",
+	},
+	{
+	    name:"servicecontrol",
+	    runstate: "running_ok.*",
+	    path:"/options/servicecontrol",
+	    show: false,
+	},
+	{
 		name: "shutdown",
 		runstate: "running_ok|waiting_account_select",
 		action: function(m){

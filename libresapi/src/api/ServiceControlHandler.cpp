@@ -4,6 +4,8 @@
 
 #include "Operators.h"
 
+#include <stdlib.h>
+
 namespace resource_api
 {
 // maybe move to another place later
@@ -73,7 +75,42 @@ void ServiceControlHandler::handleWildcard(Request &req, Response &resp)
         }
         else if(req.isPut())
         {
+            // change service default
 
+            std::string serviceidtext;
+            bool enabled;
+
+            req.mStream << makeKeyValueReference("service_id", serviceidtext)
+                        << makeKeyValueReference("default_allowed", enabled);
+
+            RsServicePermissions serv_perms ;
+            //uint32_t serviceid = fromString<uint32_t>(serviceidtext);
+            uint32_t serviceid  = atoi(serviceidtext.c_str());
+            if (serviceid == 0) {
+                resp.setFail("serviceid missed");
+                return;
+            }
+
+            if(!rsServiceControl->getServicePermissions(serviceid, serv_perms)){
+                resp.setFail("service_id " + serviceidtext + " is invalid");
+                return;
+            }
+
+            serv_perms.mDefaultAllowed = enabled;
+            if(serv_perms.mDefaultAllowed)
+            {
+                serv_perms.mPeersDenied.clear() ;
+            }
+            else
+            {
+                serv_perms.mPeersAllowed.clear() ;
+            }
+
+            ok = rsServiceControl->updateServicePermissions(serviceid,serv_perms);
+            if (!ok) {
+                resp.setFail("updateServicePermissions failed");
+                return;
+            }
         }
     }
     if(ok)

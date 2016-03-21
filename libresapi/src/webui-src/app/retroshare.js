@@ -253,8 +253,12 @@ function optionsPrep(options, path) {
 }
 
 // force reload for path
-rs.forceUpdate = function(path){
-   cache[path].requested=false;
+rs.forceUpdate = function(path, removeCache){
+    if (removeCache === undefined || !removeCache) {
+        cache[path].requested=false;
+    } else {
+        delete cache[path];
+    }
 }
 
 //return api-path
