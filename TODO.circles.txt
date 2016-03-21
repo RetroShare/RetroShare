@@ -12,7 +12,7 @@ GUI
   [X] allow non admin to see circles details but not edit
 
   [ ] update TS of groups linked to a modified circle, so as to cause updates when a new member is addded to the group
-  [ ] forums GUI should show correct restriction options for restricted forums
+  [X] forums GUI should show correct restriction options for restricted forums
   [X] changing a circle's name should update the GUI
   [ ] make sure we cannot post in forums using IDs that are not in the circle
   [ ] make sure unauthorised ids are rejected when validating posts from a circle restricted group
