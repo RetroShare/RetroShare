@@ -261,6 +261,12 @@ rs.forceUpdate = function(path, removeCache){
     }
 }
 
+// force reload for all
+rs.clearCache = function(path, removeCache){
+    cache = {};
+}
+
+
 //return api-path
 rs.apiurl = function(path) {
     if (path === undefined) {
@@ -371,4 +377,20 @@ rs.sort.bool = function(name, innersort){
             return 1
         }
     }
+}
+
+// searching a element in a list
+// items: list to search in
+// name: name of attribute to lookup
+// value: attribute's value to compare
+rs.find = function(items, name, value) {
+    if (items === undefined||items == null) {
+        return null;
+    };
+    for(var i = 0, l = items.length; i < l; ++i) {
+        if (items[i][name] == value) {
+            return items[i];
+        }
+    }
+    return null;
 }

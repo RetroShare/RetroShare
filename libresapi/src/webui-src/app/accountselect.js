@@ -16,6 +16,7 @@ function selAccount(account){
     m.redraw();
     rs.request("control/login", {id: curraccount.id}, function(){
         console.log("login sent");
+        rs.clearCache();
     });
 }
 

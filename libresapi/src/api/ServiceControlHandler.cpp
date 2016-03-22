@@ -46,6 +46,7 @@ ServiceControlHandler::ServiceControlHandler(RsServiceControl* control):
     mRsServiceControl(control)
 {
     addResourceHandler("*", this, &ServiceControlHandler::handleWildcard);
+    addResourceHandler("user", this, &ServiceControlHandler::handleUser);
 }
 
 void ServiceControlHandler::handleWildcard(Request &req, Response &resp)
@@ -87,7 +88,7 @@ void ServiceControlHandler::handleWildcard(Request &req, Response &resp)
             //uint32_t serviceid = fromString<uint32_t>(serviceidtext);
             uint32_t serviceid  = atoi(serviceidtext.c_str());
             if (serviceid == 0) {
-                resp.setFail("serviceid missed");
+                resp.setFail("service_id missed");
                 return;
             }
 
@@ -121,6 +122,64 @@ void ServiceControlHandler::handleWildcard(Request &req, Response &resp)
     {
         resp.setFail();
     }
+}
+
+
+void ServiceControlHandler::handleUser(Request& req, Response& resp){
+    // no get, only put (post) to allow user or delete to remove user
+
+    std::string serviceidtext;
+    std::string peeridtext;
+    bool enabled;
+    bool ok;
+
+    req.mStream << makeKeyValueReference("service_id", serviceidtext)
+                << makeKeyValueReference("peer_id", peeridtext)
+                << makeKeyValueReference("enabled", enabled);
+
+    RsPeerId peer_id(peeridtext);
+
+    if (peer_id.isNull()) {
+        resp.setFail("peer_id missing or not found");
+        return;
+    }
+
+    RsServicePermissions serv_perms ;
+    uint32_t serviceid  = atoi(serviceidtext.c_str());
+    if (serviceid == 0) {
+        resp.setFail("service_id missed");
+        return;
+    }
+
+    if(!rsServiceControl->getServicePermissions(serviceid, serv_perms)){
+        resp.setFail("service_id " + serviceidtext + " is invalid");
+        return;
+    }
+
+    if(req.isPut())
+    {
+        if (enabled && !serv_perms.peerHasPermission(peer_id))
+        {
+            serv_perms.setPermission(peer_id);
+        } else  if (!enabled && serv_perms.peerHasPermission(peer_id)){
+            serv_perms.resetPermission(peer_id);
+        } else {
+            //nothing todo
+            resp.setOk();
+            return;
+        }
+
+    } else {
+        resp.setFail("only POST supported.");
+        return;
+    }
+    ok = rsServiceControl->updateServicePermissions(serviceid,serv_perms);
+    if (!ok) {
+        resp.setFail("updateServicePermissions failed");
+        return;
+    }
+
+    resp.setOk();
 }
 
 } // namespace resource_api

@@ -8,7 +8,7 @@ module.exports = {view: function(){
     //console.log("peers:" + peers);
 
     //waiting for peerlist ...
-    if(peers === undefined){
+    if(peers === undefined || peers == null){
         return m("div",[
             m("h2","peers"),
             m("h3","waiting_server"),
@@ -31,14 +31,14 @@ module.exports = {view: function(){
             if (location.avatar_address != "" && avatar_address =="") {
                 avatar_address=location.avatar_address;
             }
-            return m("div",{
+            return m("li",{
                 style:"color:" + (location.is_online ? "lime": "grey")
                     + ";cursor:pointer",
                 onclick: function(){
                     m.route("/chat?lobby=" + location.chat_id)
                 }
 
-            },location.location);
+            }, location.location);
         });
 
         //return friend (peer + locations)
@@ -58,7 +58,7 @@ module.exports = {view: function(){
                     {style:"color:" + (isonline ? "lime": "grey")} ,
                     peer.name
                 ),
-                m("div", loclist ),
+                m("ul", loclist ),
             ]),
             //remove-button
             m("div", {
