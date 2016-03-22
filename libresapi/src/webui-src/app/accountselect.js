@@ -3,21 +3,26 @@
 var m = require("mithril");
 var rs = require("retroshare");
 
-var curraccount = null;
-var accountMap = new Map();
-
 function cancel(){
-    curraccount=null;
+    rs.memory("control/locations").curraccount=null;
     m.redraw();
 }
 
 function selAccount(account){
-    curraccount=accountMap.get(account);
+    rs.memory("control/locations").curraccount=account;
     m.redraw();
-    rs.request("control/login", {id: curraccount.id}, function(){
+    rs.request("control/login", {id: account.id}, function(){
         console.log("login sent");
-        rs.clearCache();
     });
+}
+
+function curraccount() {
+    var mem;
+    mem = rs.memory("control/locations");
+    if (mem.curraccount === undefined) {
+        return null;
+    }
+    return mem.curraccount;
 }
 
 module.exports = {view: function(){
@@ -25,17 +30,16 @@ module.exports = {view: function(){
     if(accounts === undefined || accounts == null){
         return m("div", "accounts: waiting_server");
     }
-    if (curraccount == null) {
-    	accountMap.clear();
+    if (curraccount() == null) {
         return m("div", [
     	    m("h2","login:"),
             m("hr"),
     	    accounts.map(function(account){
-    	    	accountMap.set(account.id,account);
     	    	return [
     	    	    m("div.btn2", {
-    	    	        onclick: m.withAttr("account", selAccount),
-    	    	        account:account.id
+    	    	        onclick: function(){
+    	    	            selAccount(account)
+    	    	        }
     	    	    },
     	    	    account.location + " (" + account.name + ")"),
     	    	    m("br")
@@ -43,7 +47,18 @@ module.exports = {view: function(){
             })
         ]);
     } else {
-        return m("div", "logging in ..." );
+//        rs.untoken("control/password");
+        return m("div", [
+            m("div", "logging in ... (waiting for password-request)"),
+            /*
+            m("hr"),
+            m(".btn2", {
+                onclick: function() {
+                    cancel();
+                }
+            },"Cancel " + curraccount().name + " login "),
+            */
+            ]);
     }
 }
 };

@@ -40,10 +40,13 @@ var last_update_ts = 0;
 
 function check_for_changes(){
     var tokens = [];
-//    console.log("start-check");
+    var paths_to_fetch = [];
+//    console.log("start-check " + Object.keys(cache));
     for_key_in_obj(cache, function(path){
         var token = cache[path].statetoken;
-        if(token !== undefined){
+        if(token === undefined || token== null) {
+            paths_to_fetch.push(path)
+        } else if (tokens.indexOf(token)<0) {
             tokens.push(token);
         }
     });
@@ -56,8 +59,7 @@ function check_for_changes(){
     });
     
     req.then(function handle_statetoken_response(response){
-//        console.log("checking result " + response);
-        var paths_to_fetch = [];
+//        console.log("checking result " + response.data ? Object.keys(response.data) : "<null>") ;
         for_key_in_obj(cache, function(path){
             var found = false;
             for(var i = 0; i < response.data.length; i++){
@@ -69,7 +71,7 @@ function check_for_changes(){
                 paths_to_fetch.push(path);
             }
         });
-//        console.log("generating Results for " + paths_to_fetch.length + " paths");
+//        console.log("generating Results for paths " + paths_to_fetch);
         var requests = [];
         paths_to_fetch.map(function request_it(path){
             var req2 = m.request({
@@ -263,7 +265,17 @@ rs.forceUpdate = function(path, removeCache){
 
 // force reload for all
 rs.clearCache = function(path, removeCache){
+    console.log("clearing Cache ...")
     cache = {};
+    console.log("update_scheduled: " + update_scheduled);
+    update_scheduled = false;
+    check_for_changes();
+    console.log("Cache cleared.")
+}
+
+// dismiss statetoken (= force reload)
+rs.untoken = function(path) {
+    cache[path].statetoken = null;
 }
 
 

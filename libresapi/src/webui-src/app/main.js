@@ -33,6 +33,10 @@ function Page(menu){
         if(runstate === undefined){
             return m("h2", "waiting_server ... ");
         } else if (runstate.runstate == null){
+            // try clean reboot ...
+            rs.clearCache();
+            rs("control/runstate"); //reboot detector
+            console.log("i'm down");
             return m("h2", "server down");
         } else if (needpasswd != undefined && needpasswd.want_password === true){
             m.initControl = "txtpasswd";

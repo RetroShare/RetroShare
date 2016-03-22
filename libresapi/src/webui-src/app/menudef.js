@@ -8,6 +8,7 @@ module.exports = {  nodes: [
 		name: "login",
 		module: "accountselect",
 		runstate: "waiting_account_select",
+		counter: rs.counting("control/locations"),
 	},
 	{
 	    name: "create login",
