@@ -130,7 +130,7 @@ function lobby(lobbyid){
 
     var intro = [
             m("h2",lobdt.name),
-            m("p",lobdt.topic),
+            m("p",lobdt.topic ? lobdt.topic: lobdt.location),
             m("hr")
     ]
     if (lobdt.subscribed != undefined && !lobdt.subscribed) {
