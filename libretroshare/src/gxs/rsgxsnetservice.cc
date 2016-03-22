@@ -1929,63 +1929,95 @@ void RsGxsNetService::updateClientSyncTS()
 
 void RsGxsNetService::updateServerSyncTS()
 {
-	RS_STACK_MUTEX(mNxsMutex) ;
-
 	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> gxsMap;
 
-#ifdef NXS_NET_DEBUG_0
+//#ifdef NXS_NET_DEBUG_0
     	GXSNETDEBUG___<< "updateServerSyncTS(): updating last modification time stamp of local data." << std::endl;
-#endif
+//#endif
     	
-	// retrieve all grps and update TS
-	mDataStore->retrieveGxsGrpMetaData(gxsMap);
+	{
+		RS_STACK_MUTEX(mNxsMutex) ;
+		// retrieve all grps and update TS
+		mDataStore->retrieveGxsGrpMetaData(gxsMap);
 
-   	// (cyril) This code was previously removed because it sounded inconsistent: the list of grps normally does not need to be updated when 
-    	// new posts arrive. The two (grp list and msg list) are handled independently. Still, when group meta data updates are received,
-    	// the server TS needs to be updated, because it is the only way to propagate the changes. So we update it to the publish time stamp,
-    	// if needed.
-    
-	// as a grp list server also note this is the latest item you have
-	if(mGrpServerUpdateItem == NULL)
-		mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
+		// (cyril) This code was previously removed because it sounded inconsistent: the list of grps normally does not need to be updated when 
+		// new posts arrive. The two (grp list and msg list) are handled independently. Still, when group meta data updates are received,
+		// the server TS needs to be updated, because it is the only way to propagate the changes. So we update it to the publish time stamp,
+		// if needed.
 
-	bool change = false;
+		// as a grp list server also note this is the latest item you have
+		if(mGrpServerUpdateItem == NULL)
+			mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
 
-    	// then remove from mServerMsgUpdateMap, all items that are not in the group list!
-    
-#ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG___ << "  cleaning server map of groups with no data:" << std::endl;
-#endif
-                                  
-    for(std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*>::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();)
-	    if(gxsMap.find(it->first) == gxsMap.end())
-	    {
-		    // not found! Removing server update info for this group
+		// then remove from mServerMsgUpdateMap, all items that are not in the group list!
 
 #ifdef NXS_NET_DEBUG_0
-		    GXSNETDEBUG__G(it->first) << "    removing server update info for group " << it->first << std::endl;
+		GXSNETDEBUG___ << "  cleaning server map of groups with no data:" << std::endl;
 #endif
-		    std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*>::iterator tmp(it) ;
-		    ++tmp ;
-		    mServerMsgUpdateMap.erase(it) ;
-		    it = tmp ;
-	    }
-	    else
-		    ++it;
+
+		for(std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*>::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();)
+			if(gxsMap.find(it->first) == gxsMap.end())
+			{
+				// not found! Removing server update info for this group
+
+#ifdef NXS_NET_DEBUG_0
+				GXSNETDEBUG__G(it->first) << "    removing server update info for group " << it->first << std::endl;
+#endif
+				std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*>::iterator tmp(it) ;
+				++tmp ;
+				mServerMsgUpdateMap.erase(it) ;
+				it = tmp ;
+			}
+			else
+				++it;
+	}
 
 #ifdef NXS_NET_DEBUG_0
     	if(gxsMap.empty())
             GXSNETDEBUG___<< "  database seems to be empty. The modification timestamp will be reset." << std::endl;
 #endif
     	// finally, update timestamps.
+	bool change = false;
         
 	for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator mit = gxsMap.begin();mit != gxsMap.end(); ++mit)
 	{
 		const RsGxsGroupId& grpId = mit->first;
-		const RsGxsGrpMetaData* grpMeta = mit->second;
-		ServerMsgMap::iterator mapIT = mServerMsgUpdateMap.find(grpId);
-		RsGxsServerMsgUpdateItem* msui = NULL;
 
+        	// Check if the group is subscribed and restricted to a circle. If the circle has changed, update the
+        	// global TS to reflect that change to clients who may be able to see/subscribe to that particular group.
+        
+        	if( (mit->second->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) && !mit->second->mCircleId.isNull())
+	    	{
+                	// ask to the GxsNetService of circles what the server TS is for that circle. If more recent, we update the serverTS of the 
+                	// local group
+                
+                        time_t circle_group_server_ts ;
+                        time_t circle_msg_server_ts ;
+                
+                        // This call needs to be off-mutex, because of self-restricted circles.
+                        
+                        if(mCircles->getLocalCircleServerUpdateTS(mit->second->mCircleId,circle_group_server_ts,circle_msg_server_ts))
+                        {
+                            std::cerr << "Group " << mit->first << " is conditionned to circle " << mit->second->mCircleId << ". local Grp TS=" << time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago, circle grp server update TS=" << time(NULL) - circle_group_server_ts << " secs ago";
+                            
+                            if(circle_group_server_ts > mGrpServerUpdateItem->grpUpdateTS)
+			    {
+				    std::cerr << " - Updating local Grp Server update TS to follow changes in circles." << std::endl;
+
+				    RS_STACK_MUTEX(mNxsMutex) ;
+				    mGrpServerUpdateItem->grpUpdateTS = circle_group_server_ts ;
+			    }
+                            else
+                                std::cerr << " - Nothing to do." << std::endl;
+                        }
+                        else
+                            std::cerr << "(EE) Cannot retrieve attached circle TS" << std::endl;
+            	}
+            
+		RS_STACK_MUTEX(mNxsMutex) ;
+        
+		const RsGxsGrpMetaData* grpMeta = mit->second;
+		RsGxsServerMsgUpdateItem* msui = NULL;
 #ifdef TO_REMOVE
 		// That accounts for modification of the meta data.
 
@@ -1998,6 +2030,8 @@ void RsGxsNetService::updateServerSyncTS()
 		}
 #endif
 
+		ServerMsgMap::iterator mapIT = mServerMsgUpdateMap.find(grpId);
+        
 		if(mapIT == mServerMsgUpdateMap.end())
 		{
 			msui = new RsGxsServerMsgUpdateItem(mServType);
@@ -4831,4 +4865,23 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	{
 		std::cerr << "(EE) could not update database. Something went wrong." << std::endl;
 	}
+}
+
+bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& group_server_update_TS, time_t& msg_server_update_TS)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    if(mGrpServerUpdateItem == NULL)
+	    return false ;
+
+    group_server_update_TS = mGrpServerUpdateItem->grpUpdateTS ;
+
+    std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::iterator it = mServerMsgUpdateMap.find(gid) ;
+
+    if(mServerMsgUpdateMap.end() == it)
+	    msg_server_update_TS = 0 ;
+    else
+	    msg_server_update_TS = it->second->msgUpdateTS ;
+
+    return true ;
 }

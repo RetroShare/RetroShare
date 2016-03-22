@@ -156,6 +156,11 @@ RsGenExchange::~RsGenExchange()
 
 }
 
+bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, time_t& grp_server_update_TS, time_t& msg_server_update_TS) 
+{
+    return mNetService->getGroupServerUpdateTS(gid,grp_server_update_TS,msg_server_update_TS) ;
+}
+
 void RsGenExchange::data_tick()
 {
 

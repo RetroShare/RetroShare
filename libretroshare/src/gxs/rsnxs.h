@@ -134,6 +134,16 @@ public:
      * \param msgId
      */
     virtual void rejectMessage(const RsGxsMessageId& msgId) =0;
+    
+    /*!
+     * \brief getGroupServerUpdateTS
+     * 		Returns the server update time stamp for that group. This is used for synchronisation of TS between
+     * 		various network exchange services, suhc as channels/circles or forums/circles
+     * \param gid	group for that request
+     * \param tm	time stamp computed
+     * \return 		false if the group is not found, true otherwise
+     */
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };
 
 #endif // RSGNP_H

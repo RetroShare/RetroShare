@@ -154,6 +154,8 @@ public:
 
     virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
     
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    
     /* p3Config methods */
 public:
 

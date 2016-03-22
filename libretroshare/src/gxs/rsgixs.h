@@ -215,6 +215,8 @@ class RsGcxs
         virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) = 0;
+        
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };
 
 
@@ -225,8 +227,12 @@ public:
 	RsGxsCircleExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, 
 			uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy)
 	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
-virtual ~RsGxsCircleExchange() { return; }
-
+	virtual ~RsGxsCircleExchange() { return; }
+    
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) 
+	{
+		return RsGenExchange::getGroupServerUpdateTS(RsGxsGroupId(gid),grp_server_update_TS,msg_server_update_TS) ;
+	}
 };
 
 
