@@ -56,3 +56,4 @@ need 4 master
 [X] unsubscribe lobby
 [X] unread chat message counter in menu
 [X] list chat-lobby participants
+[ ] creating app.js on build (no need for npm on regulary build)

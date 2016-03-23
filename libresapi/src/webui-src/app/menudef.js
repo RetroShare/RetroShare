@@ -1,4 +1,4 @@
-rs=require("retroshare");
+var rs=require("retroshare");
 module.exports = {  nodes: [
 	{
 		name: "home",
