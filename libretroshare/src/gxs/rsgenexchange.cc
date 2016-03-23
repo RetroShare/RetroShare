@@ -2976,26 +2976,29 @@ void RsGenExchange::performUpdateValidation()
 		delete gu.oldGrpMeta;
         	gu.oldGrpMeta = NULL ;
 	}
-
-	mDataStore->updateGroup(grps);
-    
     	// notify the client
     
         RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVE, true);
         
+        for(uint32_t i=0;i<mGroupUpdates.size();++i)
+            if(mGroupUpdates[i].newGrp != NULL)
+	    {
+		    c->mGrpIdList.push_back(mGroupUpdates[i].newGrp->grpId) ;
+#ifdef GEN_EXCH_DEBUG
+		    std::cerr << "    " << mGroupUpdates[i].newGrp->grpId << std::endl;
+#endif
+	    }
+        
+        mNotifications.push_back(c);
+ 
+        // Warning: updateGroup will destroy the objects in grps. Dont use it afterwards!
+        
+	mDataStore->updateGroup(grps);
+    
 #ifdef GEN_EXCH_DEBUG
                     			std::cerr << "  adding the following grp ids to notification: " << std::endl;
 #endif
-        for(uint32_t i=0;i<mGroupUpdates.size();++i)
-        {
-		c->mGrpIdList.push_back(mGroupUpdates[i].newGrp->grpId) ;
-#ifdef GEN_EXCH_DEBUG
-	std::cerr << "    " << mGroupUpdates[i].newGrp->grpId << std::endl;
-#endif
-        }
-        
-        mNotifications.push_back(c);
-        
+       
         // cleanup
         
 	mGroupUpdates.clear();
