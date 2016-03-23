@@ -31,7 +31,7 @@ var upload_url = window.location.protocol + "//" + window.location.hostname + ":
 function for_key_in_obj(obj, callback){
     var key;
     for(key in obj){
-        callback(key);
+        callback(key, obj[key]);
     }
 }
 
@@ -42,8 +42,8 @@ function check_for_changes(){
     var tokens = [];
     var paths_to_fetch = [];
 //    console.log("start-check " + Object.keys(cache));
-    for_key_in_obj(cache, function(path){
-        var token = cache[path].statetoken;
+    for_key_in_obj(cache, function(path, item){
+        var token = item.statetoken;
         if(token === undefined || token== null) {
             paths_to_fetch.push(path)
         } else if (tokens.indexOf(token)<0) {
@@ -60,10 +60,10 @@ function check_for_changes(){
     
     req.then(function handle_statetoken_response(response){
 //        console.log("checking result " + response.data ? Object.keys(response.data) : "<null>") ;
-        for_key_in_obj(cache, function(path){
+        for_key_in_obj(cache, function(path, item){
             var found = false;
             for(var i = 0; i < response.data.length; i++){
-                if(response.data[i] === cache[path].statetoken){
+                if(response.data[i] === item.statetoken){
                     found = true;
                 }
             }
@@ -118,8 +118,8 @@ function schedule_request_missing(){
     setTimeout(function request_missing(){
         update_scheduled = false;
         var requests = [];
-        for_key_in_obj(cache, function(path){
-            if(!cache[path].requested){
+        for_key_in_obj(cache, function(path, item){
+            if(!item.requested){
                 var req = m.request({
                     method: "GET",
                     url: api_url + path,
@@ -128,25 +128,25 @@ function schedule_request_missing(){
 
                 req.then(function fill_data(response){
                     // TODO: add errorhandling
-                    cache[path].data = response.data;
-                    cache[path].statetoken = response.statetoken;
-                    if (cache[path].then != undefined && cache[path].then != null) {
+                    item.data = response.data;
+                    item.statetoken = response.statetoken;
+                    if (item.then != undefined && item.then != null) {
                         try {
-                            cache[path].then(response);
+                            item.then(response);
                         } catch (ex) {
-                            if (cache[path].errorCallback != undefined && cache[path].errorCallback != null) {
-                                cache[path].errorCallback(ex);
+                            if (item.errorCallback != undefined && item.errorCallback != null) {
+                                item.errorCallback(ex);
                             };
                         }
                     };
                 }, function errhandling(value){
-                    if (cache[path].errorCallback != undefined && cache[path].errorCallback != null) {
-                        cache[path].errorCallback(value);
+                    if (item.errorCallback != undefined && item.errorCallback != null) {
+                        item.errorCallback(value);
                     }
                 });
                 requests.push(req);
             }
-            cache[path].requested = true;
+            item.requested = true;
         });
         m.sync(requests).then(function trigger_render(){
             m.startComputation();
@@ -204,6 +204,8 @@ function rs(path, args, callback, options){
 }
 
 module.exports = rs;
+
+rs.for_key_in_obj = for_key_in_obj;
 
 // single request for action
 rs.request=function(path, args, callback, options){

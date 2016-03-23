@@ -85,13 +85,13 @@ module.exports = {  nodes: [
 		})
 	},
 	{
-	    name:"options",
+	    name:"settings",
 	    runstate: "running_ok.*",
 	},
 	{
 	    name:"servicecontrol",
 	    runstate: "running_ok.*",
-	    path:"/options/servicecontrol",
+	    path:"/settings/servicecontrol",
 	    show: false,
 	},
 	{

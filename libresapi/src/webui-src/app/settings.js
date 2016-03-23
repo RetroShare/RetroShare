@@ -6,11 +6,11 @@ var rs = require("retroshare");
 module.exports = {
     view: function(){
         return m("div", [
-            m("h2","Options"),
+            m("h2","settings"),
             m("hr"),
             m("div.btn2",{
                 onclick: function(){
-                    m.route("/options/servicecontrol");
+                    m.route("/settings/servicecontrol");
                 },
             }, "rights")
         ]);

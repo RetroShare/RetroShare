@@ -34,8 +34,11 @@ function createSwitch(isOn, width) {
             style: {
                 float:"left",
                 width: width,
-                color: "#303030",
                 textAlign: "center",
+                color: "#303030",
+                borderColor: isOn
+                    ? "lime"
+                    : "red",
                 backgroundColor: !isOn
                     ? "black"
                     : "lime",
@@ -48,12 +51,31 @@ function createSwitch(isOn, width) {
                 textAlign: "center",
                 marginRight:"5px",
                 color: "#303030",
+                borderColor: isOn
+                    ? "lime"
+                    : "red",
                 backgroundColor: isOn
                     ? "black"
-                    : "lime",
+                    : "red",
             }
         }, "OFF"),
     ];
+}
+
+function breadcrums(name, parts){
+    var result = [];
+    rs.for_key_in_obj(parts, function(partname,item){
+        result.push(
+            m("span.btn",{
+                onclick: function(){
+                    m.route(item)
+                }
+            },partname)
+        );
+        result.push(" / ");
+    });
+    result.push(name);
+    return result;
 }
 
 function serviceView(serviceid) {
@@ -66,12 +88,10 @@ function serviceView(serviceid) {
         ? service.peers_denied
         : service.peers_allowed;
     return m("div", [
-        m("h2","Options / Rights / " + service.service_name),
-        m("div.btn2",{
-            onclick: function(){
-                m.route("/options/servicecontrol")
-            },
-        },"back to options / rights"),
+        m("h2", breadcrums(service.service_name, {
+            settings:"/settings",
+            rights: "/settings/servicecontrol",
+        })),
         m("hr"),
         m("h2",{
             style:{
@@ -129,7 +149,7 @@ function serviceView(serviceid) {
                     m("div",
                         {
                             style: {
-                                color: "lime",
+                                //color: "lime",
                                 float:"left",
                                 marginLeft: "5px",
                                 marginRight: "5px",
@@ -158,12 +178,9 @@ module.exports = {
             return serviceView(m.route.param("service_id"));
         }
         return m("div", [
-            m("h2","Options / Rights"),
-            m("div.btn2",{
-                onclick: function(){
-                    m.route("/options")
-                },
-            },"back to options"),
+            m("h2", breadcrums("rights", {
+                settings:"/settings",
+            })),
             m("hr"),
             m("ul", rs.list("servicecontrol", function(item){
                     return m("li", {
@@ -185,7 +202,10 @@ module.exports = {
                         m("div.menu",
                             {
                                 style: {
-                                    color: "lime",
+                                    // color: "lime",
+                                    borderColor: item.default_allowed
+                                        ? "lime"
+                                        : "red",
                                     float: "left",
                                     marginLeft: "5px",
                                     marginRight: "5px",
@@ -193,7 +213,7 @@ module.exports = {
                                     paddingRight: "2px",
                                 },
                                 onclick: function(){
-                                    m.route("/options/servicecontrol/", {
+                                    m.route("/settings/servicecontrol/", {
                                         service_id: item.service_id,
                                     })
                                 }
@@ -202,7 +222,7 @@ module.exports = {
                         m("div",
                             {
                                 style: {
-                                    color: "lime",
+                                    // color: "lime",
                                     float:"left",
                                     marginLeft: "5px",
                                     marginRight: "5px",

@@ -49,7 +49,11 @@ module.exports = {view: function(){
     } else {
 //        rs.untoken("control/password");
         return m("div", [
-            m("div", "logging in ... (waiting for password-request)"),
+            m("div", [
+                "logging in ...",
+                m("br"),
+                "(waiting for password-request)",
+            ]),
             /*
             m("hr"),
             m(".btn2", {
