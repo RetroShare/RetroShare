@@ -404,8 +404,6 @@ bool p3GxsCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id)
 
 bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>& gxs_ids)
 {
-    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-    
     RsGxsCircleDetails details ;
 
     if(!getCircleDetails(circleId, details))
