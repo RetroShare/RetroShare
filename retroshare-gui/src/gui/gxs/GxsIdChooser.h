@@ -62,6 +62,8 @@ public:
     
     	void setIdConstraintSet(const std::set<RsGxsId>& s) ;
         bool isInConstraintSet(const RsGxsId& id) const ;
+        
+	uint32_t countEnabledEntries() const ;
 signals:
     // emitted after first load of own ids
     void idsLoaded();

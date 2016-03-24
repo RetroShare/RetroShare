@@ -507,7 +507,7 @@ void CreateGxsForumMsg::loadForumCircleInfo(const uint32_t& token)
     ui.idChooser->setFlags(IDCHOOSER_NO_CREATE | ui.idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
     
     RsGxsId tmpid ;
-    if(ui.idChooser->getChosenId(tmpid) == GxsIdChooser::None)
+    if(ui.idChooser->countEnabledEntries() == 0)
     {
         QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("Sorry, but this forum is restricted to a circle that contains none of your identities. As a consequence you cannot post in this forum, since your posts could not be propagated.")) ;
         close() ;
