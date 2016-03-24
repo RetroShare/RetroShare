@@ -57,7 +57,11 @@ protected:
 	virtual void updateDisplay(bool complete);
     
     void loadCircleGroupMeta(const uint32_t &token);
+    void loadCircleGroupData(const uint32_t &token);
+    
     void requestCircleGroupMeta();
+    void requestCircleGroupData(const RsGxsCircleId& circle_id);
+    
 private slots:
     void createExternalCircle();
     void showEditExistingCircle();

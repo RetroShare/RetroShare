@@ -69,7 +69,9 @@
 #define RED_BACKGROUND   3
 #define GRAY_BACKGROUND  4
 
-#define CIRCLESDIALOG_GROUPMETA			1
+#define CIRCLESDIALOG_GROUPMETA  1
+#define CIRCLESDIALOG_GROUPDATA  2
+
 /****************************************************************
  */
 
@@ -302,6 +304,25 @@ void IdDialog::requestCircleGroupMeta()
 	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
 
+void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
+{
+	mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, true);
+
+	std::cerr << "CirclesDialog::requestGroupData()";
+	std::cerr << std::endl;
+
+	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPDATA);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+    	std::list<RsGxsGroupId> grps ;
+        grps.push_back(RsGxsGroupId(circle_id));
+        
+	uint32_t token;
+	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPDATA);
+}
+
 void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
@@ -438,6 +459,79 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
     }
 }
 
+static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 
+{
+    w->selectionModel()->clearSelection() ;
+    
+    for(std::set<RsGxsId>::const_iterator it(members.begin());it!=members.end();++it)
+    {
+	QList<QTreeWidgetItem*> clist = w->findItems( QString::fromStdString((*it).toStdString()), Qt::MatchExactly|Qt::MatchRecursive, col);
+    
+    	foreach(QTreeWidgetItem* item, clist)
+		item->setSelected(true) ;
+    }
+}
+
+void IdDialog::loadCircleGroupData(const uint32_t& token)
+{
+    std::cerr << "Loading circle info" << std::endl;
+    
+    std::vector<RsGxsCircleGroup> circle_grp_v ;
+    rsGxsCircles->getGroupData(token, circle_grp_v);
+
+    if (circle_grp_v.empty())
+    {
+        std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
+        return ;
+    }
+        
+    if (circle_grp_v.size() != 1)
+    {
+        std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
+        return ;
+    }
+    
+    RsGxsCircleGroup cg = circle_grp_v.front();
+    RsGxsCircleId requested_cid(cg.mMeta.mGroupId) ;
+
+    QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+    if ((!item) || (!item->parent()))
+	    return;
+    
+    QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+    RsGxsCircleId id ( coltext.toStdString()) ;
+    
+    if(requested_cid != id)
+    {
+        std::cerr << "(WW) not the same circle. Dropping request." << std::endl;
+        return ;
+    }
+    
+//    /* update friend lists */
+//    RsGxsCircleDetails details;
+//
+//    if(!rsGxsCircles->getCircleDetails(id, details))
+//    {
+//        std::cerr << "(EE) Cannot load circle details. Weird." << std::endl;
+//        return ;
+//    }
+        
+    /* now mark all the members */
+
+    std::set<RsGxsId> members = cg.mInvitedMembers;
+
+//    for(std::map<RsPgpId, std::set<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
+//	    for(std::set<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
+//	    {
+//		    members.insert( (*it2) ) ;
+//		    std::cerr << "Circle member: " << it->first << std::endl;
+//	    }
+
+    mark_matching_tree(ui->idTreeWidget, members, RSID_COL_KEYID) ;
+    
+    mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, false);
+}
 
 void IdDialog::createExternalCircle()
 {
@@ -510,19 +604,6 @@ static void set_item_background(QTreeWidgetItem *item, uint32_t type)
 	item->setBackground (0, brush);
 }
 
-static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 
-{
-    w->selectionModel()->clearSelection() ;
-    
-    for(std::set<RsGxsId>::const_iterator it(members.begin());it!=members.end();++it)
-    {
-	QList<QTreeWidgetItem*> clist = w->findItems( QString::fromStdString((*it).toStdString()), Qt::MatchExactly|Qt::MatchRecursive, col);
-    
-    	foreach(QTreeWidgetItem* item, clist)
-		item->setSelected(true) ;
-    }
-}
-
 static void update_children_background(QTreeWidgetItem *item, uint32_t type)
 {
 	int count = item->childCount();
@@ -574,10 +655,6 @@ void IdDialog::circle_selected()
 	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
 	std::cerr << std::endl;
 
-	//set_tree_background(ui->treeWidget_membership, CLEAR_BACKGROUND);
-	//set_tree_background(ui->treeWidget_friends, CLEAR_BACKGROUND);
-	//set_tree_background(ui->treeWidget_category, CLEAR_BACKGROUND);
-
 	if ((!item) || (!item->parent()))
 	{
 		mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
@@ -600,32 +677,9 @@ void IdDialog::circle_selected()
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId id ( coltext.toStdString()) ;
 
-	/* update friend lists */
-	RsGxsCircleDetails details;
-    
-    	// This is a trick to force caching the circle data, allowing to wait for at most 1.2 secs.
-    	// A better choice would be to make the loading asynced.
-    
-    	for(int i=0;i<6 && !(rsGxsCircles->getCircleDetails(id, details));++i) usleep(200*1000) ;
-        
-	/* now mark all the members */
-        
-	std::set<RsGxsId> members = details.mAllowedAnonPeers;
-
-	for(std::map<RsPgpId, std::set<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
-		for(std::set<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
-		{
-			members.insert( (*it2) ) ;
-			std::cerr << "Circle member: " << it->first;
-			std::cerr << std::endl;
-		}
-
-	mark_matching_tree(ui->idTreeWidget, members, RSID_COL_KEYID) ;
-    
-	mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, true);
+    	requestCircleGroupData(id) ;
 }
-
-
+    
 IdDialog::~IdDialog()
 {
 	// save settings
@@ -1353,6 +1407,10 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 	    {
 	    case CIRCLESDIALOG_GROUPMETA:
 		    loadCircleGroupMeta(req.mToken);
+		    break;
+
+	    case CIRCLESDIALOG_GROUPDATA:
+		    loadCircleGroupData(req.mToken);
 		    break;
 
 	    default:
