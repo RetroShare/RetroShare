@@ -60,6 +60,7 @@ GxsIdChooser::GxsIdChooser(QWidget *parent)
 	setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
 	mFirstLoad = true;
+    	mAllowedCount = 0 ;
 
 	mDefaultId.clear() ;
 
@@ -99,6 +100,13 @@ void GxsIdChooser::showEvent(QShowEvent *event)
 	QComboBox::showEvent(event);
 }
 
+void GxsIdChooser::setIdConstraintSet(const std::set<RsGxsId>& s) 
+{
+    mConstraintIdsSet = s ;
+    
+	updateDisplay(true);
+	update(); // Qt flush
+}
 void GxsIdChooser::loadIds(uint32_t chooserFlags, const RsGxsId &defId)
 {
 	mFlags = chooserFlags;
@@ -118,6 +126,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	if (!chooser) {
 		return;
 	}
+    
 
     // this prevents the objects that depend on what's in the combo-box to activate and
     // perform any change.Only user-changes should cause this.
@@ -167,13 +176,22 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
             //std::cerr << " - disabling ID - entry = " << index << std::endl;
             chooser->setEntryEnabled(index,false) ;
         }
-        std::cerr << std::endl;
-                    
+        
+        if(!chooser->isInConstraintSet(details.mId))
+            chooser->setEntryEnabled(index,false) ;
+        
     chooser->model()->sort(0);
 
     chooser->blockSignals(false) ;
 }
 
+bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const 
+{
+            if(mConstraintIdsSet.empty())	// special case: empty set means no constraint
+            	return true ;
+            
+            return mConstraintIdsSet.find(id) != mConstraintIdsSet.end() ;
+}
 void GxsIdChooser::setEntryEnabled(int indx,bool enabled)
 {
     bool disable = !enabled ;
@@ -238,8 +256,7 @@ void GxsIdChooser::loadPrivateIds()
 	}
 
 	for (std::list<RsGxsId>::iterator it = ids.begin(); it != ids.end(); ++it) {
-		/* add to Chooser */
-		GxsIdDetails::process(*it, loadPrivateIdsCallback, this);
+	    GxsIdDetails::process(*it, loadPrivateIdsCallback, this); /* add to Chooser */
 	}
 
 	if (mFirstLoad) {

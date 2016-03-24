@@ -58,7 +58,10 @@ public:
 	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
 
-    void setEntryEnabled(int index, bool enabled);
+	void setEntryEnabled(int index, bool enabled);
+    
+    	void setIdConstraintSet(const std::set<RsGxsId>& s) ;
+        bool isInConstraintSet(const RsGxsId& id) const ;
 signals:
     // emitted after first load of own ids
     void idsLoaded();
@@ -79,7 +82,9 @@ private:
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
 	bool mFirstLoad;
+    uint32_t mAllowedCount ;
 
+    std::set<RsGxsId> mConstraintIdsSet ; // leave empty if all allowed
     RsGxsUpdateBroadcastBase *mBase;
 };
 

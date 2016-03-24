@@ -28,6 +28,7 @@
 #include <QPushButton>
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsgxscircles.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
@@ -43,6 +44,7 @@
 
 #define CREATEGXSFORUMMSG_FORUMINFO		1
 #define CREATEGXSFORUMMSG_PARENTMSG		2
+#define CREATEGXSFORUMMSG_CIRCLENFO		3
 
 //#define ENABLE_GENERATE
 
@@ -57,6 +59,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -100,6 +103,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	mParentMsgLoaded = false;
 	mForumMetaLoaded = false;
+    	mForumCircleLoaded = false;
 
 	newMsg();
 
@@ -112,6 +116,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 CreateGxsForumMsg::~CreateGxsForumMsg()
 {
 	delete(mForumQueue);
+	delete(mCirclesQueue);
 }
 
 void  CreateGxsForumMsg::newMsg()
@@ -297,33 +302,33 @@ void  CreateGxsForumMsg::createMsg()
 	if (ui.signBox->isChecked()) {
 		RsGxsId authorId;
 		switch (ui.idChooser->getChosenId(authorId)) {
-			case GxsIdChooser::KnowId:
-			case GxsIdChooser::UnKnowId:
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId:
 			msg.mMeta.mAuthorId = authorId;
 			std::cerr << "CreateGxsForumMsg::createMsg() AuthorId: " << authorId;
 			std::cerr << std::endl;
 
 			break;
-            case GxsIdChooser::None:
-            {
-                // This is ONLY for the case where no id exists yet
-                // If an id exists, the chooser would not return None
-                IdEditDialog dlg(this);
-                dlg.setupNewId(false);
-                dlg.exec();
-                // fetch new id, we will then see if the identity creation was successful
-                std::list<RsGxsId> own_ids;
-                if(!rsIdentity->getOwnIds(own_ids) || own_ids.size() != 1)
-                    return;
-                // we have only a single id, so we can use the first one
-                authorId = own_ids.front();
-                break;
-            }
-			case GxsIdChooser::NoId:
-			default:
+		case GxsIdChooser::None:
+		{
+			// This is ONLY for the case where no id exists yet
+			// If an id exists, the chooser would not return None
+			IdEditDialog dlg(this);
+			dlg.setupNewId(false);
+			dlg.exec();
+			// fetch new id, we will then see if the identity creation was successful
+			std::list<RsGxsId> own_ids;
+			if(!rsIdentity->getOwnIds(own_ids) || own_ids.size() != 1)
+				return;
+			// we have only a single id, so we can use the first one
+			authorId = own_ids.front();
+			break;
+		}
+		case GxsIdChooser::NoId:
+		default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-            QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
+			QMessageBox::warning(this, tr("RetroShare"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}//switch (ui.idChooser->getChosenId(authorId))
@@ -431,29 +436,82 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 
 void CreateGxsForumMsg::loadForumInfo(const uint32_t &token)
 {
-	std::cerr << "CreateGxsForumMsg::loadForumInfo()";
-	std::cerr << std::endl;
+    std::cerr << "CreateGxsForumMsg::loadForumInfo()";
+    std::cerr << std::endl;
 
-	std::list<RsGroupMetaData> groupInfo;
-	rsGxsForums->getGroupSummary(token, groupInfo);
+    std::list<RsGroupMetaData> groupInfo;
+    rsGxsForums->getGroupSummary(token, groupInfo);
 
-	if (groupInfo.size() == 1)
-	{
-		RsGroupMetaData fi = groupInfo.front();
+    if (groupInfo.size() == 1)
+    {
+	    RsGroupMetaData fi = groupInfo.front();
 
-		mForumMeta = fi;
-		mForumMetaLoaded = true;
+	    mForumMeta = fi;
+	    mForumMetaLoaded = true;
 
-		loadFormInformation();
-	}
-	else
-	{
-		std::cerr << "CreateGxsForumMsg::loadForumInfo() ERROR INVALID Number of Forums";
-		std::cerr << std::endl;
+	    if(!fi.mCircleId.isNull())
+	    {
+		    std::cerr << "Circle ID is not null: " << fi.mCircleId << ": loading circle info to add constraint to the GXS ID chooser." << std::endl;
 
-		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
-		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
-	}
+		    RsTokReqOptions opts;
+		    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+		    std::list<RsGxsGroupId> groupIds;
+		    groupIds.push_back(RsGxsGroupId(fi.mCircleId));
+            		uint32_t _token;
+
+		    mCirclesQueue->requestGroupInfo(_token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, CREATEGXSFORUMMSG_CIRCLENFO);
+	    }
+
+	    loadFormInformation();
+    }
+    else
+    {
+	    std::cerr << "CreateGxsForumMsg::loadForumInfo() ERROR INVALID Number of Forums";
+	    std::cerr << std::endl;
+
+	    mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+	    mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+    }
+}
+void CreateGxsForumMsg::loadForumCircleInfo(const uint32_t& token)
+{
+    std::cerr << "Loading forum circle info" << std::endl;
+    
+    std::vector<RsGxsCircleGroup> circle_grp_v ;
+    rsGxsCircles->getGroupData(token, circle_grp_v);
+
+    if (circle_grp_v.empty())
+    {
+        std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
+        return ;
+    }
+        
+    if (circle_grp_v.size() != 1)
+    {
+        std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
+        return ;
+    }
+    
+    RsGxsCircleGroup cg = circle_grp_v.front();
+
+    mForumCircleData = cg;
+    mForumCircleLoaded = true;
+
+    std::cerr << "Loaded content of circle " << cg.mMeta.mGroupId << std::endl;
+    
+    for(std::set<RsGxsId>::const_iterator it(cg.mInvitedMembers.begin());it!=cg.mInvitedMembers.end();++it)
+	    std::cerr << "  added constraint to circle element " << *it << std::endl;
+    
+    ui.idChooser->setIdConstraintSet(cg.mInvitedMembers) ;
+    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE | ui.idChooser->flags()) ;	// since there's a circle involved, no ID creation can be needed
+    
+    RsGxsId tmpid ;
+    if(ui.idChooser->getChosenId(tmpid) == GxsIdChooser::None)
+    {
+        QMessageBox::information(NULL,tr("No compatible ID for this forum"),tr("Sorry, but this forum is restricted to a circle that contains none of your identities. As a consequence you cannot post in this forum, since your posts could not be propagated.")) ;
+        close() ;
+    }
 }
 
 void CreateGxsForumMsg::loadParentMsg(const uint32_t &token)
@@ -501,10 +559,23 @@ void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest 
 				loadParentMsg(req.mToken);
 				break;
 			default:
-				std::cerr << "CreateGxsForum::loadRequest() UNKNOWN UserType ";
+				std::cerr << "CreateGxsForumMsg::loadRequest() UNKNOWN UserType " << req.mUserType << " for token request in mForumQueue";
 				std::cerr << std::endl;
 		}
 	}
+    
+    	if(queue == mCirclesQueue)
+        {
+            switch(req.mUserType)
+            {
+            case CREATEGXSFORUMMSG_CIRCLENFO:
+                loadForumCircleInfo(req.mToken) ;
+                break ;
+            default:
+				std::cerr << "CreateGxsForumMsg::loadRequest() UNKNOWN UserType " << req.mUserType << " for token request in mCirclesQueue";
+				std::cerr << std::endl;
+            }
+        }
 }
 
 void CreateGxsForumMsg::insertPastedText(QString msg)
