@@ -312,10 +312,11 @@ void GxsGroupDialog::setupDefaults()
         
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
-    ui.typeLocal->setEnabled(false);
     ui.typeGroup_3->setEnabled(false);
     ui.typeLocal_3->setEnabled(false);
 #endif
+    ui.typeLocal->setEnabled(false);	// for now, since local circles not fully tested.
+    ui.typeLocal->setToolTip(tr("This feature is not yet available, but it will be available very soon!"));	// for now, since local circles not fully tested.
 }
 
 void GxsGroupDialog::setupVisibility()

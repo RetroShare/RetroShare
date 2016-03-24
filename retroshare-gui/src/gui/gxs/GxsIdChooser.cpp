@@ -199,6 +199,7 @@ void GxsIdChooser::setEntryEnabled(int indx,bool enabled)
 {
     removeItem(indx) ;
     
+#ifdef TO_REMOVE
 //    bool disable = !enabled ;
 //    
 //    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
@@ -218,12 +219,14 @@ void GxsIdChooser::setEntryEnabled(int indx,bool enabled)
 //    model->setData(ii,QVariant(v),Qt::UserRole-1) ;
 //    
 //    std::cerr << "model data after operation: " <<  model->data(ii,Qt::UserRole-1).toUInt() << std::endl;
+#endif
 }
 
 uint32_t GxsIdChooser::countEnabledEntries() const
 {
     return count() ;
     
+#ifdef TO_REMOVE
 //    uint32_t res = 0 ;
 //    QSortFilterProxyModel* model = qobject_cast<QSortFilterProxyModel*>(QComboBox::model());
 //
@@ -238,6 +241,7 @@ uint32_t GxsIdChooser::countEnabledEntries() const
 //    }
 //
 //    return res ;
+#endif
 }
 
 void GxsIdChooser::loadPrivateIds()

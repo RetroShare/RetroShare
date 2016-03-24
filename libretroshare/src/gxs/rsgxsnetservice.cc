@@ -223,14 +223,14 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-#define NXS_NET_DEBUG_0 	1
-#define NXS_NET_DEBUG_1 	1
+//#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
-#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_4 	1
+//#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
-#define NXS_NET_DEBUG_7 	1
+//#define NXS_NET_DEBUG_7 	1
 
 #define GIXS_CUT_OFF 0
 //#define NXS_FRAG
@@ -252,6 +252,13 @@
 #define GROUP_STATS_UPDATE_NB_PEERS                          2  // number of peers to which the group stats are asked
 #define MAX_ALLOWED_GXS_MESSAGE_SIZE                    199000  // 200,000 bytes including signature and headers
 
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_CIRCLE_ERROR        = 0x02 ;
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_ENCRYPTION_ERROR    = 0x03 ;
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_SERIALISATION_ERROR = 0x04 ;
+static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
+ 
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
@@ -264,9 +271,6 @@ static const uint32_t     service_to_print  = 0x218 ;                       	// 
 
 class nullstream: public std::ostream {};
         
-#if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
- || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
-
 static std::string nice_time_stamp(time_t now,time_t TS)
 {
     if(TS == 0)
@@ -278,15 +282,8 @@ static std::string nice_time_stamp(time_t now,time_t TS)
         return s.str() ;
     }
 }
-#endif
 
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_CIRCLE_ERROR        = 0x02 ;
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_ENCRYPTION_ERROR    = 0x03 ;
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_SERIALISATION_ERROR = 0x04 ;
-static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
-    
+   
 static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp_id,uint32_t service_type) 
 {
     static nullstream null ;
@@ -1931,9 +1928,9 @@ void RsGxsNetService::updateServerSyncTS()
 {
 	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> gxsMap;
 
-//#ifdef NXS_NET_DEBUG_0
+#ifdef NXS_NET_DEBUG_0
     	GXSNETDEBUG___<< "updateServerSyncTS(): updating last modification time stamp of local data." << std::endl;
-//#endif
+#endif
     	
 	{
 		RS_STACK_MUTEX(mNxsMutex) ;
@@ -2512,8 +2509,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
                     std::cerr << "RsGxsNetService::processCompletedTransactions(): item did not caste to msg" << std::endl;
             }
             
-#warning We need here to queue all incoming items into a list where the vetting will be checked
-#warning in order to avoid someone without the proper rights to post in a group protected with an external circle
+//#warning We need here to queue all incoming items into a list where the vetting will be checked
+//#warning in order to avoid someone without the proper rights to post in a group protected with an external circle
 
 #ifdef NXS_FRAG
             // (cyril) This code does not work. Since we do not really need message fragmenting, I won't fix it.

@@ -281,7 +281,9 @@ IdDialog::IdDialog(QWidget *parent) :
 
 void IdDialog::updateCirclesDisplay(bool)
 {
+#ifdef ID_DEBUG
     std::cerr << "!!Updating circles display!" << std::endl;
+#endif
     requestCircleGroupMeta() ;
 }
 
@@ -292,8 +294,10 @@ void IdDialog::requestCircleGroupMeta()
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
 
+#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::requestGroupMeta()";
 	std::cerr << std::endl;
+#endif
 
 	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
 
@@ -308,8 +312,10 @@ void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, true);
 
+#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::requestGroupData()";
 	std::cerr << std::endl;
+#endif
 
 	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPDATA);
 
@@ -327,8 +333,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
 
+#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<RsGroupMetaData> groupInfo;
 	std::list<RsGroupMetaData>::iterator vit;
@@ -372,14 +380,18 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end();)
     	{
+#ifdef ID_DEBUG
 		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+#endif
         
 		QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
         
         	if(clist.empty())
 	    	{
                 	++vit ;
+#ifdef ID_DEBUG
                 	std::cerr << "  group not already in list." << std::endl;
+#endif
                 	continue ;
             	}
             
@@ -404,26 +416,34 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
         
 		if(subscribed && !admin && item->parent() != mExternalSubCircleItem)
                 {
+#ifdef ID_DEBUG
                     std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+#endif
                     delete item ;
                     ++vit ;
                     continue ;
                 }
 		if(!subscribed && !admin && item->parent() != mExternalOtherCircleItem)
                 {
+#ifdef ID_DEBUG
                     std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+#endif
                     delete item ;
                     ++vit ;
                     continue ;
                 }
                 if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
                 {
+#ifdef ID_DEBUG
                     std::cerr << "  Existing group has a new name. Updating it in the tree." << std::endl;
+#endif
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
                 }
                     
         	// the item is at the right place. Just remove it from the list of items to add.
+#ifdef ID_DEBUG
 		std::cerr << "  item already in place. Removing from list." << std::endl;
+#endif
         	vit = groupInfo.erase(vit) ;
     	}
     
@@ -443,17 +463,23 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 	    {
+#ifdef ID_DEBUG
         	std::cerr << "  adding item for group " << vit->mGroupId << " to admin"<< std::endl;
+#endif
 		    mExternalAdminCircleItem->addChild(groupItem);
 	    }
 	    else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	    {
+#ifdef ID_DEBUG
         	std::cerr << "  adding item for group " << vit->mGroupId << " to subscribed"<< std::endl;
+#endif
 		    mExternalSubCircleItem->addChild(groupItem);
 	    }
 	    else
         {
+#ifdef ID_DEBUG
         	std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
+#endif
 		    mExternalOtherCircleItem->addChild(groupItem);
         }
     }
@@ -474,7 +500,9 @@ static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members,
 
 void IdDialog::loadCircleGroupData(const uint32_t& token)
 {
+#ifdef ID_DEBUG
     std::cerr << "Loading circle info" << std::endl;
+#endif
     
     std::vector<RsGxsCircleGroup> circle_grp_v ;
     rsGxsCircles->getGroupData(token, circle_grp_v);
@@ -508,25 +536,9 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
         return ;
     }
     
-//    /* update friend lists */
-//    RsGxsCircleDetails details;
-//
-//    if(!rsGxsCircles->getCircleDetails(id, details))
-//    {
-//        std::cerr << "(EE) Cannot load circle details. Weird." << std::endl;
-//        return ;
-//    }
-        
     /* now mark all the members */
 
     std::set<RsGxsId> members = cg.mInvitedMembers;
-
-//    for(std::map<RsPgpId, std::set<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
-//	    for(std::set<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
-//	    {
-//		    members.insert( (*it2) ) ;
-//		    std::cerr << "Circle member: " << it->first << std::endl;
-//	    }
 
     mark_matching_tree(ui->idTreeWidget, members, RSID_COL_KEYID) ;
     
@@ -652,8 +664,10 @@ void IdDialog::circle_selected()
 {
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
 
+#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
 	std::cerr << std::endl;
+#endif
 
 	if ((!item) || (!item->parent()))
 	{
@@ -1399,8 +1413,10 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
     
     if(queue == mCircleQueue)
     {
+#ifdef ID_DEBUG
 	    std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
 	    std::cerr << std::endl;
+#endif
 
 	    /* now switch on req */
 	    switch(req.mUserType)
@@ -1455,7 +1471,9 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
         if(item_flags & RSID_FILTER_OWNED_BY_YOU)
 		one_item_owned_by_you = true ;
         
+#ifdef ID_DEBUG
         	std::cerr << "  item flags = " << item_flags << std::endl;
+#endif
 	    RsGxsId keyId((*it)->text(RSID_COL_KEYID).toStdString());
 
 	    RsReputations::ReputationInfo info ;
