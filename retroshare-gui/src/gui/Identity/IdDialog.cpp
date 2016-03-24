@@ -612,8 +612,8 @@ void IdDialog::circle_selected()
         
 	std::set<RsGxsId> members = details.mAllowedAnonPeers;
 
-	for(std::map<RsPgpId, std::list<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
-		for(std::list<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
+	for(std::map<RsPgpId, std::set<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
+		for(std::set<RsGxsId>::const_iterator it2=it->second.begin();it2!=it->second.end();++it2)
 		{
 			members.insert( (*it2) ) ;
 			std::cerr << "Circle member: " << it->first;

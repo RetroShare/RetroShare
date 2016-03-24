@@ -132,8 +132,9 @@ class RsGxsCircleCache
 	bool loadBaseCircle(const RsGxsCircleGroup &circle);
 	bool loadSubCircle(const RsGxsCircleCache &subcircle);
 
-	bool getAllowedPeersList(std::list<RsPgpId> &friendlist);
-	bool isAllowedPeer(const RsPgpId &id);
+	bool getAllowedPeersList(std::list<RsPgpId> &friendlist) const;
+	bool isAllowedPeer(const RsPgpId &id) const;
+	bool isAllowedPeer(const RsGxsId &id) const;
 	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
 	bool addLocalFriend(const RsPgpId &pgpid);
 
@@ -154,7 +155,7 @@ class RsGxsCircleCache
 	std::set<RsGxsId> mUnprocessedPeers;
     
 	std::set<RsGxsId> mAllowedAnonPeers;
-	std::map<RsPgpId, std::list<RsGxsId> > mAllowedSignedPeers;
+	std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
 };
 
 
@@ -180,8 +181,9 @@ virtual RsServiceInfo getServiceInfo();
 
 	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt);
 	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId> &gxs_ids);
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) ;
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId> &gxs_ids) ;
+	virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) ;
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);

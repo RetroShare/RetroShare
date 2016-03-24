@@ -127,7 +127,7 @@ class RsGxsCircleDetails
 	}
 
         std::set<RsGxsId> mAllowedAnonPeers;
-        std::map<RsPgpId, std::list<RsGxsId> > mAllowedSignedPeers;
+        std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper

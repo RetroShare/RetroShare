@@ -63,15 +63,14 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 			}//if(!gxs_id.isNull())
 		}//for (itUnknownPeers it = _circle_details.mUnknownPeers.begin()
 
-		typedef std::map<RsPgpId, std::list<RsGxsId> >::const_iterator itAllowedPeers;
-		for (itAllowedPeers it = _circle_details.mAllowedSignedPeers.begin()
-		     ; it != _circle_details.mAllowedSignedPeers.end()
-		     ; ++it ) {
+		typedef std::map<RsPgpId, std::set<RsGxsId> >::const_iterator itAllowedPeers;
+		for (itAllowedPeers it = _circle_details.mAllowedSignedPeers.begin() ; it != _circle_details.mAllowedSignedPeers.end() ; ++it ) 
+        {
 			RsPgpId pgp_id = it->first;
 			emit askForPGPIdentityWidget(pgp_id);
 
-			std::list<RsGxsId> gxs_id_list = it->second;
-			typedef std::list<RsGxsId>::const_iterator itGxsId;
+			std::set<RsGxsId> gxs_id_list = it->second;
+			typedef std::set<RsGxsId>::const_iterator itGxsId;
 			for (itGxsId curs=gxs_id_list.begin()
 			     ; curs != gxs_id_list.end()
 			     ; ++curs) {

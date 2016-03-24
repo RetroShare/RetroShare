@@ -391,8 +391,21 @@ bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>&
 	return false;
 }
 
+bool p3GxsCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) 
+{
+	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	if (mCircleCache.is_cached(circleId))
+	{
+		const RsGxsCircleCache &data = mCircleCache.ref(circleId);
+		return data.isAllowedPeer(id);
+	}
+	return false;
+}
+
 bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>& gxs_ids)
 {
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    
     RsGxsCircleDetails details ;
 
     if(!getCircleDetails(circleId, details))
@@ -401,8 +414,8 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>&
     for(std::set<RsGxsId>::const_iterator it(details.mAllowedAnonPeers.begin());it!=details.mAllowedAnonPeers.end();++it)
 	    gxs_ids.push_back(*it) ;
     
-    for(std::map<RsPgpId,std::list<RsGxsId> >::const_iterator it(details.mAllowedSignedPeers.begin());it!=details.mAllowedSignedPeers.end();++it)
-        for(std::list<RsGxsId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
+    for(std::map<RsPgpId,std::set<RsGxsId> >::const_iterator it(details.mAllowedSignedPeers.begin());it!=details.mAllowedSignedPeers.end();++it)
+        for(std::set<RsGxsId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
             gxs_ids.push_back(*it2) ;
             
     return true;
@@ -561,9 +574,9 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 	return true;
 }
 
-bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist)
+bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist) const
 {
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
+	std::map<RsPgpId, std::set<RsGxsId> >::const_iterator it;
 	for(it = mAllowedSignedPeers.begin(); it != mAllowedSignedPeers.end(); ++it)
 	{
 		friendlist.push_back(it->first);
@@ -571,9 +584,24 @@ bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist)
 	return true;
 }
 
-bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id)
+bool RsGxsCircleCache::isAllowedPeer(const RsGxsId &id) const
 {
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = mAllowedSignedPeers.find(id);
+    if(mUnprocessedPeers.find(id) != mUnprocessedPeers.end())
+        return true ;
+    
+    if(mAllowedAnonPeers.find(id) != mAllowedAnonPeers.end())
+        return true ;
+    
+    for(std::map<RsPgpId,std::set<RsGxsId> >::const_iterator it = mAllowedSignedPeers.begin();it!=mAllowedSignedPeers.end();++it)
+        if(it->second.find(id) != it->second.end())
+            return true ;
+    
+    return false ;
+}
+
+bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id) const
+{
+	std::map<RsPgpId, std::set<RsGxsId> >::const_iterator it = mAllowedSignedPeers.find(id);
 	if (it != mAllowedSignedPeers.end())
 	{
 		return true;
@@ -584,8 +612,7 @@ bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id)
 bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId)
 {
 	/* created if doesn't exist */
-	std::list<RsGxsId> &gxsList = mAllowedSignedPeers[pgpId];
-	gxsList.push_back(gxsId);
+	mAllowedSignedPeers[pgpId].insert(gxsId);
 	return true;
 }
 
@@ -593,7 +620,7 @@ bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId
 bool RsGxsCircleCache::addLocalFriend(const RsPgpId &pgpId)
 {
 	/* empty list as no GxsID associated */
-	std::list<RsGxsId> &gxsList = mAllowedSignedPeers[pgpId];
+            mAllowedSignedPeers.insert(std::make_pair(pgpId,std::set<RsGxsId>()));
 	return true;
 }
 
@@ -1272,7 +1299,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
         
 	const RsPgpId& ownId = mPgpUtils->getPGPOwnId();
     
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = cache.mAllowedSignedPeers.find(ownId);
+	std::map<RsPgpId, std::set<RsGxsId> >::iterator it = cache.mAllowedSignedPeers.find(ownId);
     	bool am_I_allowed =  it != cache.mAllowedSignedPeers.end() ;
         
         if(!am_I_allowed)

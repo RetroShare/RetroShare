@@ -388,8 +388,7 @@ void CirclesDialog::circle_selected()
 	{
 		/* now mark all the members */
         std::set<RsPgpId> members;
-		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-		for(it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
+		for( std::map<RsPgpId, std::set<RsGxsId> >::iterator it = details.mAllowedSignedPeers.begin(); it != details.mAllowedSignedPeers.end(); ++it)
 		{
 			members.insert(it->first);
 			std::cerr << "Circle member: " << it->first;

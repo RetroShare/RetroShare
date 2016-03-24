@@ -1998,17 +1998,23 @@ void RsGxsNetService::updateServerSyncTS()
                         
                         if(mCircles->getLocalCircleServerUpdateTS(mit->second->mCircleId,circle_group_server_ts,circle_msg_server_ts))
                         {
-                            std::cerr << "Group " << mit->first << " is conditionned to circle " << mit->second->mCircleId << ". local Grp TS=" << time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago, circle grp server update TS=" << time(NULL) - circle_group_server_ts << " secs ago";
+#ifdef NXS_NET_DEBUG_0
+                            GXSNETDEBUG__G(mit->first) << "  Group " << mit->first << " is conditionned to circle " << mit->second->mCircleId << ". local Grp TS=" << time(NULL) - mGrpServerUpdateItem->grpUpdateTS << " secs ago, circle grp server update TS=" << time(NULL) - circle_group_server_ts << " secs ago";
+#endif
                             
                             if(circle_group_server_ts > mGrpServerUpdateItem->grpUpdateTS)
 			    {
-				    std::cerr << " - Updating local Grp Server update TS to follow changes in circles." << std::endl;
+#ifdef NXS_NET_DEBUG_0
+				    GXSNETDEBUG__G(mit->first) << " - Updating local Grp Server update TS to follow changes in circles." << std::endl;
+#endif
 
 				    RS_STACK_MUTEX(mNxsMutex) ;
 				    mGrpServerUpdateItem->grpUpdateTS = circle_group_server_ts ;
 			    }
+#ifdef NXS_NET_DEBUG_0
                             else
-                                std::cerr << " - Nothing to do." << std::endl;
+                                GXSNETDEBUG__G(mit->first) << " - Nothing to do." << std::endl;
+#endif
                         }
                         else
                             std::cerr << "(EE) Cannot retrieve attached circle TS" << std::endl;
@@ -3334,15 +3340,24 @@ void RsGxsNetService::runVetting()
 	std::vector<GrpCircleVetting*>::iterator vit2 = mPendingCircleVets.begin();
 	for(; vit2 != mPendingCircleVets.end(); )
 	{
+#ifdef NXS_NET_DEBUG_4
+		GXSNETDEBUG___ << "   Examining/clearing pending vetting of type " << (*vit2)->getType() << std::endl;
+#endif
 		GrpCircleVetting*& gcv = *vit2;
 		if(gcv->cleared() || gcv->expired())
 		{
 			if(gcv->getType() == GrpCircleVetting::GRP_ID_PEND)
 			{
 				GrpCircleIdRequestVetting* gcirv = static_cast<GrpCircleIdRequestVetting*>(gcv);
+#ifdef NXS_NET_DEBUG_4
+				GXSNETDEBUG_P_(gcirv->mPeerId) << "     vetting is a GRP ID PENDING Response" << std::endl;
+#endif
 
 				if(!locked_createTransactionFromPending(gcirv))
                     		{
+#ifdef NXS_NET_DEBUG_4
+		    			GXSNETDEBUG_P_(gcirv->mPeerId)  << "     Response sent!" << std::endl;
+#endif
                     			++vit2 ;
                     			continue ;
                 		}
@@ -3351,9 +3366,17 @@ void RsGxsNetService::runVetting()
 			{
 				MsgCircleIdsRequestVetting* mcirv = static_cast<MsgCircleIdsRequestVetting*>(gcv);
 
+#ifdef NXS_NET_DEBUG_4
+				GXSNETDEBUG_P_(mcirv->mPeerId) << "     vetting is a MSG ID PENDING Response" << std::endl;
+#endif
 				if(mcirv->cleared())
+                		{
+#ifdef NXS_NET_DEBUG_4
+		    			GXSNETDEBUG_P_(mcirv->mPeerId) << "     vetting cleared! Sending..." << std::endl;
+#endif
 					if(!locked_createTransactionFromPending(mcirv))
                         			continue ;					// keep it in the list for retry
+                    		}
 			}
 			else
 			{
@@ -3367,6 +3390,9 @@ void RsGxsNetService::runVetting()
 		}
 		else
 		{
+#ifdef NXS_NET_DEBUG_4
+			GXSNETDEBUG___ << "   ... not cleared yet." << std::endl;
+#endif
 			++vit2;
 		}
 	}
@@ -4462,7 +4488,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
             
 }
 
-bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
+bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
 {
 #ifdef NXS_NET_DEBUG_4
 	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;
@@ -4494,9 +4520,29 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 #ifdef NXS_NET_DEBUG_4
 	    GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: EXTERNAL => returning true. Msgs ids list will be encrypted." << std::endl;
 #endif
-	should_encrypt_id = circleId ;
-        	return true ;
-            
+	    should_encrypt_id = circleId ;
+        
+        	// For each message ID, check that the author is in the circle. If not, do not send the message, which means, remove it from the list.
+        
+		if(mCircles->isLoaded(circleId))
+		{
+			for(uint32_t i=0;i<msgMetas.size();)
+				if(!mCircles->isRecipient(circleId, msgMetas[i]->mAuthorId))
+				{
+#ifdef NXS_NET_DEBUG_4
+					GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   deleting MsgMeta entry for msg ID " << msgMetas[i]->mMsgId << " signed by " << msgMetas[i]->mAuthorId << " who is not in group circle " << circleId << std::endl;
+#endif
+
+					delete msgMetas[i] ;
+					msgMetas[i] = msgMetas[msgMetas.size()-1] ;
+					msgMetas.pop_back() ;
+				}
+				else
+					++i ;
+                        
+			return true ;
+		}
+
 #ifdef TO_BE_REMOVED_OLD_VETTING_FOR_EXTERNAL_CIRCLES
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: EXTERNAL. Circle Id: " << circleId << std::endl;
@@ -4510,6 +4556,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 #endif
             		return res ;
 		}
+#endif
 
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle info not loaded. Putting in vetting list and returning false." << std::endl;
@@ -4526,11 +4573,9 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 		}
 
 		if(!toVet.empty())
-			mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, mPgpUtils, toVet, grpMeta.mGroupId,
-					sslId, grpMeta.mCircleId));
+			mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, mPgpUtils, toVet, grpMeta.mGroupId, sslId, grpMeta.mCircleId));
 
 		return false;
-#endif
 	}
 
 	if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY)

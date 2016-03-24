@@ -256,8 +256,6 @@ public:
 protected:
 	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId, bool& should_encrypt);
 
-private:
-
 	RsGcxs* const mCircles;
 	PgpAuxUtils *mPgpUtils;
 	time_t mTimeStamp;

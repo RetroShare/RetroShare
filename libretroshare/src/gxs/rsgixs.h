@@ -215,6 +215,7 @@ class RsGcxs
         virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) = 0;
+        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) = 0;
         
 	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };

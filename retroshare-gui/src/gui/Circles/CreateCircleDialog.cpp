@@ -297,10 +297,9 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 		}//if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
 	}//for (itUnknownPeers it = cirDetails.mUnknownPeers.begin()
 
-	typedef std::map<RsPgpId, std::list<RsGxsId> >::const_iterator itAllowedPeers;
-	for (itAllowedPeers it = cirDetails.mAllowedSignedPeers.begin()
-	     ; it != cirDetails.mAllowedSignedPeers.end()
-	     ; ++it ) {
+	typedef std::map<RsPgpId, std::set<RsGxsId> >::const_iterator itAllowedPeers;
+	for (itAllowedPeers it = cirDetails.mAllowedSignedPeers.begin() ; it != cirDetails.mAllowedSignedPeers.end() ; ++it ) 
+    {
 		RsPgpId gpg_id = it->first;
 		RsPeerDetails details ;
 		if(!gpg_id.isNull() && rsPeers->getGPGDetails(gpg_id,details)) {
