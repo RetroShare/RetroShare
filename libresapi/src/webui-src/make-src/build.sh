@@ -1,28 +1,31 @@
 #!/usr/bin/sh
-echo $1
+
+# create webfiles from sources at compile time (works without npm/node.js)
+
 if [ "$1" == "" ];then
-	publicdest=../public-gen
+	publicdest=../../webui
 	src=..
 else
-	publicdest=$1/public-gen
-	src=$1
+	publicdest=$1/webui
+	src=$1/webui-src
 fi
-echo $publicdest
 
 if [ -d "$publicdest" ]; then
-	echo remove $publicdest
+	echo remove existing $publicdest
 	rm $publicdest -R
 fi
+
 echo mkdir $publicdest
 mkdir $publicdest
 
-echo copy template.js ...
+echo building app.js
+echo - copy template.js ...
 cp $src/make-src/template.js $publicdest/app.js
 
 for filename in $src/app/*.js; do
 	fname=$(basename "$filename")
 	fname="${fname%.*}"
-	echo adding $fname ...
+	echo - adding $fname ...
 	echo require.register\(\"$fname\", function\(exports, require, module\) { >> $publicdest/app.js
 	cat $filename >> $publicdest/app.js
 	echo >> $publicdest/app.js

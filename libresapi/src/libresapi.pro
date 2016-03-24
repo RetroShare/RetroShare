@@ -15,21 +15,19 @@ INCLUDEPATH += ../../libretroshare/src
 unix {
 
         webui_files.path = "$${DATA_DIR}/webui"
-        webui_files.files = webui-src/public-gen/app.js
-        webui_files.files += webui-src/public-gen/app.css
-        webui_files.files += webui-src/public-gen/index.html
+        webui_files.files = webfiles/*
 	INSTALLS += webui_files        
 
 	webui_img_files.path = "$${DATA_DIR}/webui/img"
 	webui_img_files.files = ../../retroshare-gui/src/gui/images/logo/logo_splash.png
 	INSTALLS += webui_img_files
 
-        create_webfiles.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_/webui-src
+        create_webfiles.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_
         QMAKE_EXTRA_TARGETS += create_webfiles
         PRE_TARGETDEPS += create_webfiles
 
-        system($$create_webfiles.commands)
-
+        # create dummy files
+        system(webui-src/make-src/init.sh .)
 }
 
 win32{
