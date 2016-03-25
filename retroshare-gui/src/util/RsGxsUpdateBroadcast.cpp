@@ -5,6 +5,8 @@
 
 #include <retroshare/rsgxsifacehelper.h>
 
+//#define DEBUG_GXS_BROADCAST 1
+
 // previously gxs allowed only one event consumer to poll for changes
 // this required a single broadcast instance per service
 // now the update notify works through rsnotify and notifyqt
@@ -43,6 +45,7 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 
 void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
 {
+#ifdef DEBUG_GXS_BROADCAST
     std::cerr << "onChangesReceived()" << std::endl;
     
      {
@@ -57,6 +60,7 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
             for(uint32_t i=0;i<it->second.size();++i)
                 std::cerr << "    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
     }
+#endif
     if(changes.mService != mIfaceImpl->getTokenService())
     {
        // std::cerr << "(EE) Incorrect service. Dropping." << std::endl;

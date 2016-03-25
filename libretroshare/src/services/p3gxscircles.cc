@@ -37,7 +37,6 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
-#define DEBUG_CIRCLES	 1
 
 RsGxsCircles *rsGxsCircles = NULL;
 

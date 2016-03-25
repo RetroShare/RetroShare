@@ -359,7 +359,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
     	if(!mExternalOtherCircleItem)
         {
 		mExternalOtherCircleItem = new QTreeWidgetItem();
-		mExternalOtherCircleItem->setText(0, tr("Circles (Other)"));
+		mExternalOtherCircleItem->setText(0, tr("Other visible circles"));
         
 		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
         }
@@ -374,7 +374,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
     	if(!mExternalAdminCircleItem)
 	{
 		mExternalAdminCircleItem = new QTreeWidgetItem();
-		mExternalAdminCircleItem->setText(0, tr("Circles I own"));
+		mExternalAdminCircleItem->setText(0, tr("Circles I admin"));
 		ui->treeWidget_membership->addTopLevelItem(mExternalAdminCircleItem);
 	}
 

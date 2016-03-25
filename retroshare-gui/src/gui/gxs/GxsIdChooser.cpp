@@ -135,8 +135,6 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	QString text = GxsIdDetails::getNameForType(type, details);
 	QString id = QString::fromStdString(details.mId.toStdString());
 
-    std::cerr << "chooser: in callback. details.mId=" << details.mId << ", name=" << details.mNickname << " count before=" << chooser->count()<< std::endl;
-    
 	/* Find and replace text of exisiting item */
 	int index = chooser->findData(id);
 	if (index >= 0) {
@@ -146,7 +144,6 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		chooser->addItem(text, id);
 		index = chooser->count() - 1;
 	}
-    std::cerr << "chooser: in callback. count after=" << chooser->count()<< std::endl;
 
 	QList<QIcon> icons;
 

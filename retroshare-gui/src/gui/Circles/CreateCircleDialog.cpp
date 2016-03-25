@@ -871,11 +871,8 @@ void CreateCircleDialog::MembershipListCustomPopupMenu( QPoint )
 	QMenu contextMnu( this );
 
 	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
-	if (item) {
-
+	if (item && !mReadOnly)
 			contextMnu.addAction(QIcon(":/images/delete.png"), tr("Remove Member"), this, SLOT(removeMember()));
-	
-	}
 
 	contextMnu.exec(QCursor::pos());
 }

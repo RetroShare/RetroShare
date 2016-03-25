@@ -3734,7 +3734,9 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
         
         if(encrypted_item == NULL)
         {
-            std::cerr << "  skipping unencrypted item..." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+            GXSNETDEBUG_P_(peerId) << "  skipping unencrypted item..." << std::endl;
+#endif
             ++it ;
             continue ;
         }
@@ -3744,7 +3746,9 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
         
         if(private_keys.empty())
 	{
-            std::cerr << "  need to retrieve private keys..." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+            GXSNETDEBUG_P_(peerId) << "  need to retrieve private keys..." << std::endl;
+#endif
             
 		std::list<RsGxsId> own_keys ;
 		mGixs->getOwnIds(own_keys) ;
@@ -3756,7 +3760,9 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
 			if(mGixs->getPrivateKey(*it,private_key))
 			{
 				private_keys.push_back(private_key) ;
-				std::cerr << "    retrieved private key " << *it << std::endl;
+#ifdef NXS_NET_DEBUG_7
+				GXSNETDEBUG_P_(peerId)<< "    retrieved private key " << *it << std::endl;
+#endif
 			}
 			else
 			{
@@ -3768,7 +3774,9 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
 	}
         if(key_loading_failed)
         {
-	    std::cerr << "  Some keys not loaded.Returning false to retry later." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+	    GXSNETDEBUG_P_(peerId) << "  Some keys not loaded.Returning false to retry later." << std::endl;
+#endif
             return false ;
         }
     
@@ -3777,14 +3785,18 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
         unsigned char *decrypted_mem = NULL;
         uint32_t decrypted_len =0;
         
-        std::cerr << "    Trying to decrypt item..." ;
+#ifdef NXS_NET_DEBUG_7
+        GXSNETDEBUG_P_(peerId)<< "    Trying to decrypt item..." ;
+#endif
         
         if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->encrypted_data.bin_data,encrypted_item->encrypted_data.bin_len,private_keys))
         {
             std::cerr << "Failed! Cannot decrypt this item." << std::endl;
             decrypted_mem = NULL ; // for safety
 	}
-	std::cerr << "    Succeeded! deserialising..." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+	GXSNETDEBUG_P_(peerId)<< "    Succeeded! deserialising..." << std::endl;
+#endif
         
         // deserialise the item
         
@@ -3813,7 +3825,9 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
         
         if(nxsitem != NULL)
 	{
-		std::cerr << "    Replacing the encrypted item with the clear one." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+		GXSNETDEBUG_P_(peerId) << "    Replacing the encrypted item with the clear one." << std::endl;
+#endif
 		tr->mItems.insert(it,nxsitem) ;	// inserts before it, so no need to ++it
 	}
         
