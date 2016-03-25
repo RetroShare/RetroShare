@@ -35,6 +35,8 @@
 
 #include <algorithm>
 
+//#define DEBUG_CREATE_CIRCLE_DIALOG 1
+
 #define CREATECIRCLEDIALOG_CIRCLEINFO 2
 #define CREATECIRCLEDIALOG_IDINFO     3
 
@@ -116,6 +118,9 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 	mClearList = clearList;
 	requestCircle(circleId);
 	
+    if(readonly)
+	ui.headerFrame->setHeaderText(tr("Circle Details"));
+        else
 	ui.headerFrame->setHeaderText(tr("Edit Circle"));
 
     ui.radioButton_Public->setEnabled(!readonly) ;
@@ -262,8 +267,10 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	for(int i = 0; i < count; ++i){
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		if (keyId == item->text(RSCIRCLEID_COL_KEYID)) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::addMember() Already is a Member: " << keyId.toStdString();
 			std::cerr << std::endl;
+#endif
 			return;
 		}//if (keyId == item->text(RSCIRCLEID_COL_KEYID))
 	}//for(int i = 0; i < count; ++i)
@@ -331,8 +338,10 @@ void CreateCircleDialog::createCircle()
         return ;
     }
     
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
     std::cerr << "CreateCircleDialog::createCircle()";
     std::cerr << std::endl;
+#endif
 
     QString name = ui.circleName->text();
 
@@ -355,15 +364,19 @@ void CreateCircleDialog::createCircle()
     case GxsIdChooser::KnowId:
     case GxsIdChooser::UnKnowId:
 	    circle.mMeta.mAuthorId = authorId;
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() AuthorId: " << authorId;
 	    std::cerr << std::endl;
+#endif
 
 	    break;
     case GxsIdChooser::NoId:
     case GxsIdChooser::None:
-    default:
+    default: ;
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";
 	    std::cerr << std::endl;
+#endif
     }//switch (ui.idChooser->getChosenId(authorId))
 
 
@@ -387,8 +400,10 @@ void CreateCircleDialog::createCircle()
 		    } 
 
 		    circle.mInvitedMembers.insert(key_id_gxs) ;
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
 		    std::cerr << std::endl;
+#endif
 	    } 
 	    else 
 	    {
@@ -401,8 +416,10 @@ void CreateCircleDialog::createCircle()
 		    } 
 
 		    circle.mLocalFriends.insert(key_id_pgp) ;
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
 		    std::cerr << std::endl;
+#endif
 	    }
 
     }
@@ -419,38 +436,50 @@ void CreateCircleDialog::createCircle()
 
     if (mIsExternalCircle) 
     {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() External Circle";
 	    std::cerr << std::endl;
+#endif
 
 	    // set distribution from GUI.
 	    circle.mMeta.mCircleId.clear() ;
 	    if (ui.radioButton_Public->isChecked()) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() Public Circle";
 		    std::cerr << std::endl;
+#endif
 
 		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_PUBLIC;
 
 	    } else if (ui.radioButton_Self->isChecked()) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() ExtSelfRef Circle";
 		    std::cerr << std::endl;
+#endif
 
 		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXT_SELF;
 	    } else if (ui.radioButton_Restricted->isChecked()) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::createCircle() External (Other) Circle";
 		    std::cerr << std::endl;
+#endif
 
 		    circle.mMeta.mCircleType =  GXS_CIRCLE_TYPE_EXTERNAL;
 
 		    /* grab circle ID from chooser */
 		    RsGxsCircleId chosenId;
 		    if (ui.circleComboBox->getChosenCircle(chosenId)) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			    std::cerr << "CreateCircleDialog::createCircle() ChosenId: " << chosenId;
 			    std::cerr << std::endl;
+#endif
 
 			    circle.mMeta.mCircleId = chosenId;
 		    } else {//if (ui.circleComboBox->getChosenCircle(chosenId))
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			    std::cerr << "CreateCircleDialog::createCircle() Error no Id Chosen";
 			    std::cerr << std::endl;
+#endif
 
 			    QMessageBox::warning(this, tr("RetroShare"),tr("No Restriction Circle Selected"), QMessageBox::Ok, QMessageBox::Ok);
 			    return; 
@@ -464,8 +493,10 @@ void CreateCircleDialog::createCircle()
     } 
     else 
     {//if (mIsExternalCircle)
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() Personal Circle";
 	    std::cerr << std::endl;
+#endif
 
 	    // set personal distribution
 	    circle.mMeta.mCircleId.clear() ;
@@ -476,20 +507,24 @@ void CreateCircleDialog::createCircle()
     
     if(mIsExistingCircle) 
     {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::updateCircle() : mCircleType: " << circle.mMeta.mCircleType << std::endl;
 	    std::cerr << "CreateCircleDialog::updateCircle() : mCircleId: " << circle.mMeta.mCircleId << std::endl;
 	    std::cerr << "CreateCircleDialog::updateCircle() : mGroupId: " << circle.mMeta.mGroupId << std::endl;
 
 	    std::cerr << "CreateCircleDialog::updateCircle() Checks and Balances Okay - calling service proper.."<< std::endl;
+#endif
 
 	    rsGxsCircles->updateGroup(token, circle);
     }
     else
     {    
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	    std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType << std::endl;
 	    std::cerr << "CreateCircleDialog::createCircle() : mCircleId: " << circle.mMeta.mCircleId << std::endl;
 
 	    std::cerr << "CreateCircleDialog::createCircle() Checks and Balances Okay - calling service proper.."<< std::endl;
+#endif
 
 	    rsGxsCircles->createGroup(token, circle);
     }
@@ -499,14 +534,18 @@ void CreateCircleDialog::createCircle()
 
 void CreateCircleDialog::updateCircleGUI()
 {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::updateCircleGUI()";
 	std::cerr << std::endl;
+#endif
 
 	ui.circleName->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
 
 	bool isExternal = true;
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::updateCircleGUI() : CIRCLETYPE: " << mCircleGroup.mMeta.mCircleType;
 	std::cerr << std::endl;
+#endif
 
     ui.radioButton_Public->setChecked(false);
 				ui.radioButton_Self->setChecked(false);
@@ -515,24 +554,33 @@ void CreateCircleDialog::updateCircleGUI()
 	switch(mCircleGroup.mMeta.mCircleType) {
 #ifdef RS_ALLOW_LOCAL_CIRCLES
 		case GXS_CIRCLE_TYPE_LOCAL:
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : LOCAL CIRCLETYPE";
 			std::cerr << std::endl;
+#endif
 
 			isExternal = false;
 			break;
 #endif
 
 		case GXS_CIRCLE_TYPE_PUBLIC:
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : PUBLIC CIRCLETYPE";
 			std::cerr << std::endl;
+#endif
 
 			ui.radioButton_Public->setChecked(true);
 			break;
 
 		case GXS_CIRCLE_TYPE_EXT_SELF:
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXT_SELF CIRCLE (fallthrough)"<< std::endl;
+#endif
 		case GXS_CIRCLE_TYPE_EXTERNAL:
+        
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXTERNAL CIRCLETYPE"<< std::endl;
+#endif
 
 			if (RsGxsGroupId(mCircleGroup.mMeta.mCircleId) == mCircleGroup.mMeta.mGroupId) 
 				ui.radioButton_Self->setChecked(true);
@@ -567,8 +615,10 @@ void CreateCircleDialog::requestCircle(const RsGxsGroupId &groupId)
 	std::list<RsGxsGroupId> groupIds;
 	groupIds.push_back(groupId);
 
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::requestCircle() Requesting Group Summary(" << groupId << ")";
 	std::cerr << std::endl;
+#endif
 
 	uint32_t token;
 	mCircleQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, CREATECIRCLEDIALOG_CIRCLEINFO);
@@ -576,8 +626,10 @@ void CreateCircleDialog::requestCircle(const RsGxsGroupId &groupId)
 
 void CreateCircleDialog::loadCircle(uint32_t token)
 {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::loadCircle(" << token << ")";
 	std::cerr << std::endl;
+#endif
 
 	QTreeWidget *tree = ui.treeWidget_membership;
 
@@ -588,18 +640,19 @@ void CreateCircleDialog::loadCircle(uint32_t token)
 		std::cerr << "CreateCircleDialog::loadCircle() Error getting GroupData";
 		std::cerr << std::endl;
 		return;
-	}//if (!rsGxsCircles->getGroupData(token, groups))
+	}
 
 	if (groups.size() != 1) {
 		std::cerr << "CreateCircleDialog::loadCircle() Error Group.size() != 1";
 		std::cerr << std::endl;
 		return;
-	}//if (groups.size() != 1)
+	}
 		
-	std::cerr << "CreateCircleDialog::loadCircle() LoadedGroup.meta: " << mCircleGroup.mMeta;
-	std::cerr << std::endl;
-
 	mCircleGroup = groups[0];
+    
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
+	std::cerr << "CreateCircleDialog::loadCircle() LoadedGroup.meta: " << mCircleGroup.mMeta << std::endl;
+#endif
 	updateCircleGUI();
 }
 
@@ -645,8 +698,10 @@ void CreateCircleDialog::requestGxsIdentities()
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::requestIdentities()";
 	std::cerr << std::endl;
+#endif
 
 	uint32_t token;
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, CREATECIRCLEDIALOG_IDINFO);
@@ -654,8 +709,10 @@ void CreateCircleDialog::requestGxsIdentities()
 
 void CreateCircleDialog::loadIdentities(uint32_t token)
 {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::loadIdentities(" << token << ")";
 	std::cerr << std::endl;
+#endif
 
 	QTreeWidget *tree = ui.treeWidget_IdList;
 
@@ -689,8 +746,10 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 	    }//else if (data.mPgpKnown)
 
 	    if (!ok) {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 		    std::cerr << "CreateCircleDialog::insertIdentities() Skipping ID: " << data.mMeta.mGroupId;
 		    std::cerr << std::endl;
+#endif
 		    continue;
 	    }//if (!ok)
 
@@ -736,8 +795,10 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 
 void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 	std::cerr << "CreateCircleDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	if (queue == mCircleQueue) {
 		/* now switch on req */
