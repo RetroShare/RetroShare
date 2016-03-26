@@ -1,5 +1,70 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  bb26069 csoler      Wed, 2  Mar 2016 19:00:51 -0500 attempt at fixing negative bw rates in GUI that may pop up when an erro
+  20fcf63 electron128 Fri, 26 Feb 2016 18:13:20 +0100 Merge pull request #285 from PhenomRetroShare/Fix_SSGxsChannelGro
+  1a110e4 Phenom      Mon, 22 Feb 2016 19:07:49 +0100 Define empty service string as a valid case.
+  3c3d23b Phenom      Wed, 17 Feb 2016 19:27:28 +0100 Fix error "(EE) SSGxsChannelGroup::load() asked to load a null string.
+  0bcf52c csoler      Wed, 24 Feb 2016 16:51:25 -0500 added missing update of mRecvTS in database when updating a group meta
+  d1fd5d3 defnax      Wed, 24 Feb 2016 21:51:34 +0100 update todo
+  7b1460c defnax      Wed, 24 Feb 2016 21:45:43 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  f5eb791 csoler      Tue, 23 Feb 2016 23:04:04 -0500 added notification for modified metadata in group. Does not yet work o
+  b8c42a9 csoler      Tue, 23 Feb 2016 22:43:13 -0500 added copy of previous subscription flags when group update is receive
+  fafe75d csoler      Tue, 23 Feb 2016 22:20:40 -0500 added update of mServerUpdateTS up to last mRecvTS of each group, whic
+  a6f0b8d csoler      Mon, 22 Feb 2016 16:57:13 -0500 Merge pull request #290 from sehraf/pr-improved-unused-location-c
+  dbdfdcd sehraf      Mon, 22 Feb 2016 21:09:10 +0100 removed unused map lookups
+  77166cb sehraf      Mon, 22 Feb 2016 16:41:31 +0100 impoved cleanup of unused locations
+  cd4d743 csoler      Mon, 22 Feb 2016 10:14:29 -0500 added missing -lpthread
+  3446e20 csoler      Sun, 21 Feb 2016 11:47:44 -0500 removed debug output from p3grouter.cc
+  1222e82 electron128 Sun, 21 Feb 2016 11:23:33 +0100 fix format in readme
+  dcbd99f electron128 Sun, 21 Feb 2016 11:20:14 +0100 Merge pull request #202 from electron128/fixtests
+  5a48070 csoler      Fri, 19 Feb 2016 10:45:18 -0500 Merge pull request #281 from sehraf/pr-disc-increase-auto-clean-t
+  4140969 sehraf      Fri, 19 Feb 2016 16:32:57 +0100 added seperated limit for discovery (30 days)
+  6695a38 Thunder     Thu, 18 Feb 2016 17:21:15 +0100 Merge pull request #283 from PhenomRetroShare/Fix_ChatMsgItemAvatar_u
+  e639dc5 Phenom      Wed, 17 Feb 2016 17:37:09 +0100 Fix connect for avatar updateAvatar in ChatMsgItem and MessengerWindow
+  b059a8e Thunder     Wed, 17 Feb 2016 20:23:44 +0100 Merge pull request #284 from PhenomRetroShare/Fix_CannotUpdateAvatarE
+  dc2578b Phenom      Wed, 17 Feb 2016 18:18:56 +0100 Fix "(EE) cannot update avatar. mId has unhandled type." error.
+  697ef40 csoler      Wed, 17 Feb 2016 09:38:36 -0500 added test against arbitrary large items in turtle search requests.
+  51d90a4 csoler      Wed, 17 Feb 2016 09:37:34 -0500 added test against arbitrary large items in turtle search requests.
+  c15e8b5 csoler      Tue, 16 Feb 2016 17:46:34 -0500 Merge pull request #282 from PhenomRetroShare/Add_MinSizeForStack
+  d878334 csoler      Tue, 16 Feb 2016 17:45:49 -0500 Merge pull request #206 from realityfabric/master
+  3276790 Phenom      Tue, 16 Feb 2016 23:15:33 +0100 Add minimal Size for stackPages in MainWindow for first start.
+  841299d sehraf      Tue, 16 Feb 2016 20:20:41 +0100 discovery: don't remove new added locations too soon
+  efadc7d csoler      Sun, 14 Feb 2016 13:38:08 -0500 Merge pull request #270 from PhenomRetroShare/Fix_GxsChannelFilte
+  44882b9 csoler      Sun, 14 Feb 2016 13:35:32 -0500 Merge pull request #278 from PhenomRetroShare/Fix_bencode.c_Compi
+  3ab7c89 csoler      Sun, 14 Feb 2016 13:33:27 -0500 Merge pull request #279 from cavebeat/single_dh_op
+  9843c83 cave beat   Sun, 14 Feb 2016 18:49:37 +0100 added openSSL option SSL_OP_SINGLE_DH_USE regarding CVE-2016-0701
+  7d21666 Phenom      Sun, 14 Feb 2016 17:40:10 +0100 Fix compilation of bencode.c for C compilator.
+  821c144 electron128 Sun, 14 Feb 2016 12:48:52 +0100 remove dead code from RsNotify (old forum and channel read status
+  63a8260 electron128 Sun, 14 Feb 2016 11:53:27 +0100 change RsNotify to use RsGxsId for chat lobby events
+  36135d4 electron128 Sun, 14 Feb 2016 10:23:37 +0100 added info about tests to readme
+  11dcbb7 electron128 Sun, 14 Feb 2016 10:23:26 +0100 remove wrong info about webui from readme (webui settings in gui 
+  68cd1f9 electron128 Sun, 14 Feb 2016 10:21:48 +0100 disabled gxs_grp_sync test, because it fails after rebase to mast
+  abf7a72 defnax      Sat, 13 Feb 2016 17:38:01 +0100 increase default font size for the ListWidget.
+  8637d3c defnax      Sat, 13 Feb 2016 16:15:41 +0100 Fixed issue #263
+  a031d1e electron128 Thu, 24 Dec 2015 12:57:52 +0100 disabled tlvrandom test because it is buggy and fails sometimes
+  b874167 electron128 Thu, 24 Dec 2015 11:58:57 +0100 give gxs grp sync test more time, because of sync and timestamp u
+  8f64df0 electron128 Sun, 20 Dec 2015 17:24:13 +0100 fix compile for new gxs metadata serialisation
+  a6a3d66 electron128 Sun, 20 Dec 2015 14:32:11 +0100 exclude not serialised member from operator== for RsNxsTransac
+  a8b2bc7 electron128 Sun, 20 Dec 2015 14:31:26 +0100 fixed threading issue in NxsTestHub. NxsTesthub has to wait for i
+  63c6629 electron128 Sun, 20 Dec 2015 14:29:24 +0100 added missing initialisation of local, not serialised msg meta da
+  dca7dec electron128 Wed, 16 Dec 2015 17:34:35 +0100 attempt to fix output redirect for unittests in travis
+  218daa8 electron128 Sun, 13 Dec 2015 20:50:31 +0100 enabled RsNxsItem test
+  c03ce56 electron128 Sun, 13 Dec 2015 20:50:08 +0100 added missing mutex in nxstesthub
+  aa93505 electron128 Sun, 13 Dec 2015 20:49:44 +0100 added missing lock in RsSharedPtr destructor
+  64b9e34 electron128 Sun, 13 Dec 2015 20:48:55 +0100 fixed uninitialised memory read in test libretroshare_gxs.gxs_grp
+  7d0845e electron128 Sun, 13 Dec 2015 20:48:05 +0100 redirect travis testing output to /dev/null, because the logfile 
+  8d15f44 electron128 Sun, 13 Dec 2015 18:44:24 +0100 added CONFIG+=NO_SQLCIPHER support to unittests (travis wants thi
+  9f92212 electron128 Sun, 13 Dec 2015 17:22:31 +0100 - make tests compile - added tests to travis.yml - excluded grout
+  3e4c154 csoler      Fri, 12 Feb 2016 23:08:59 -0500 Merge pull request #275 from PhenomRetroShare/Fix_GenCertDialogOn
+  3ebb8c6 Phenom      Fri, 12 Feb 2016 17:54:35 +0100 Fix GenCertDialog on Mac stay on.
+  4033f35 defnax      Mon, 8  Feb 2016 21:34:45 +0100 update todo
+  5f0afb3 Phenom      Mon, 8  Feb 2016 19:42:56 +0100 Fix Channel filter when loading big post. And fix "Not a GxsChannelPost
+  7ded128 thunder2    Sat, 6  Feb 2016 19:18:22 +0100 Update rsversion.in
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 06 Mar 2016 20:00:00 -0500
+
+retroshare06 (0.6.0-1.20160206.4a8edee6~trusty) trusty; urgency=low
+
   a41d9df csoler      Mon,  1 Feb 2016 09:59:13 -0500 fixed small bug in probability computation in grouter
   6d1a393 csoler      Mon,  1 Feb 2016 00:33:11 -0500 fixed but in re-sending of failed grouter items
   aa194ca csoler      Sun, 31 Jan 2016 20:27:53 -0500 fixed bug preventing save of routage info in distant messaging

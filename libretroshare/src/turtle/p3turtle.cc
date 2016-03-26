@@ -859,7 +859,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Dropping, because the serial size exceeds the accepted limit." << std::endl ;
 #endif
-		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item->serial_size() << ". This is not allowed => dropping." << std::endl;
+		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item->serial_size() << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
 		return ;
 	}
     

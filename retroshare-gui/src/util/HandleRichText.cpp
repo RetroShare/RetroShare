@@ -258,7 +258,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 		return;
 
 	QDomNodeList children = currentElement.childNodes();
-	for(uint index = 0; index < children.length(); index++) {
+	for(uint index = 0; index < (uint)children.length(); index++) {
 		QDomNode node = children.item(index);
 		if(node.isElement()) {
 			// child is an element, we skip it if it's an <a> tag
@@ -473,7 +473,7 @@ static void findElements(QDomDocument& doc, QDomElement& currentElement, const Q
 	}
 
 	QDomNodeList children = currentElement.childNodes();
-	for (uint index = 0; index < children.length(); index++) {
+	for (uint index = 0; index < (uint)children.length(); index++) {
 		QDomNode node = children.item(index);
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
@@ -555,6 +555,7 @@ static qreal getContrastRatio(qreal lum1, qreal lum2)
  * @brief Find a color with the same hue that provides the desired contrast with bglum.
  * @param[in,out] val Name of the original color. Will be modified.
  * @param bglum Background's relative luminance as returned by getRelativeLuminance().
+ * @param desiredContrast Contrast to get.
  */
 static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 {
@@ -651,7 +652,7 @@ static void optimizeHtml(QDomDocument& doc
 	bool addBR = false;
 
 	QDomNodeList children = currentElement.childNodes();
-	for (uint index = 0; index < children.length(); ) {
+	for (uint index = 0; index < (uint)children.length(); ) {
 		QDomNode node = children.item(index);
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
@@ -1087,3 +1088,9 @@ void RsHtml::insertSpoilerText(QTextCursor cursor)
 	QString html = QString("<a href=\"hidden:%1\" title=\"%1\">%2</a>").arg(encoded, publictext);
 	cursor.insertHtml(html);
 }
+
+void RsHtml::findBestColor(QString &val, const QColor &backgroundColor /*= Qt::white*/, qreal desiredContrast /*= 1.0*/)
+{
+	::findBestColor(val, ::getRelativeLuminance(backgroundColor), desiredContrast);
+}
+

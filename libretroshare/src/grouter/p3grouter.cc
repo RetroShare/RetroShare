@@ -1543,13 +1543,20 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
         else
             std::cerr << "  checking receipt hash : OK" << std::endl;
 #endif
-        // check signature.
+        // check signature. The policy if the following:
+        // 	if we're the destination: 
+        //		signature should check and signing key should be available	// always ensures the receipt is valid
+        //	else
+        //		if key is available, signature should check 			// early protects against frodulent receipts that we can check
+        
+        uint32_t error_status ;
 
-        if(! verifySignedDataItem(receipt_item))
-        {
-            std::cerr << "  checking receipt signature : FAILED. Receipt is dropped." << std::endl;
-            return ;
-        }
+        if(! verifySignedDataItem(receipt_item,error_status))
+            if( (it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN) || (error_status !=  RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE))
+	    {
+		    std::cerr << "  checking receipt signature : FAILED. Receipt is dropped. Error status=" << error_status << std::endl;
+		    return ;
+	    }
 #ifdef GROUTER_DEBUG
         std::cerr << "  checking receipt signature : OK. " << std::endl;
         std::cerr << "  removing messsage from cache." << std::endl;
@@ -1698,7 +1705,9 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 #ifdef GROUTER_DEBUG
         std::cerr << "  step B: item is for us and is new, so make sure it's authentic and create a receipt" << std::endl;
 #endif
-        if(!verifySignedDataItem(data_item))	// we should get proper flags out of this
+        uint32_t error_status ;
+        
+        if(!verifySignedDataItem(data_item,error_status))	// we should get proper flags out of this
         {
             std::cerr << "    verifying item signature: FAILED! Droping that item" ;
             std::cerr << "    You probably received a message from a person you don't have key." << std::endl;
@@ -1978,7 +1987,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         return false ;
     }
 }
-bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
+bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,uint32_t& error_status)
 {
     try
     {
@@ -1997,9 +2006,6 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
         if(!item->serialise_signed_data(data,data_size))
             throw std::runtime_error("Cannot serialise signed data.") ;
 
-
-        uint32_t error_status ;
-        
         if(!mGixs->validateData(data,data_size,item->signature,true,error_status))
         {
             switch(error_status)
@@ -2115,8 +2121,9 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     }
 
     // Verify the signature. If that fails, there's a bug somewhere!!
-
-    if(!verifySignedDataItem(data_item))
+	uint32_t error_status;
+            
+    if(!verifySignedDataItem(data_item,error_status))
     {
         std::cerr << "Cannot verify data item that was just signed. Some error occured!" << std::endl;
 	delete data_item;

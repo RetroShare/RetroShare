@@ -2873,11 +2873,11 @@ void RsGenExchange::processRecvdGroups()
 
         		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
         		{
-        			delete grp;
-        			erase = true;
 #ifdef GEN_EXCH_DEBUG
 				std::cerr << "  max attempts " << VALIDATE_MAX_ATTEMPTS << " reached. Will delete group " << grp->grpId << std::endl;
 #endif
+        			delete grp;
+        			erase = true;
         		}
         		else
         		{

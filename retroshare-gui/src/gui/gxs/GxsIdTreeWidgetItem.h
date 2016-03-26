@@ -52,6 +52,10 @@ public:
 
 	void setAvatar(const RsGxsImage &avatar);
 	virtual QVariant data(int column, int role) const;
+	void forceUpdate();
+    
+    	void setBannedState(bool b) { mBannedState = b; }	// does not actually change the state, but used instead by callbacks to leave a trace
+    	void updateBannedState() ;				// checks reputation, and update is needed
 
 private slots:
 	void startProcess();
@@ -62,8 +66,9 @@ private:
 	RsGxsId mId;
 	int mColumn;
 	bool mIdFound;
+    	bool mBannedState ;
 	bool mRetryWhenFailed;
-    uint32_t mIconTypeMask;
+	uint32_t mIconTypeMask;
 	RsGxsImage mAvatar;
 };
 

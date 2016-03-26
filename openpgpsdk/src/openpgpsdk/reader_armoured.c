@@ -572,7 +572,15 @@ static int parse_headers(dearmour_arg_t *arg,ops_error_t **errors,
 			if(size <= nbuf+1)
 			{
 				size+=size+80;
-				buf=realloc(buf,size);
+				char *nbuf;
+				nbuf=realloc(buf,size);
+				if (nbuf == NULL)
+				{
+					free(buf);
+					rtn=-1;
+					goto end;
+				}
+				buf = nbuf;
 			}
 			buf[nbuf++]=c;
 		}
