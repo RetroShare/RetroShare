@@ -261,7 +261,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Creator</string>
+              <string>Creator:</string>
              </property>
             </widget>
            </item>
