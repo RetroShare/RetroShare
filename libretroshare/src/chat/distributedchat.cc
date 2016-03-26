@@ -138,6 +138,12 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << std::endl;
         return false ;
     }
+    
+    if(rsReputations->isIdentityBanned(cli->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
+        return false ;
+    }
     if(!checkSignature(cli,cli->PeerId()))	// check the object's signature and possibly request missing keys
     {
         std::cerr << "Signature mismatched for this lobby event item. Item will be dropped: " << std::endl;
@@ -183,11 +189,6 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
 
 		    return false ;
 	    }
-    }
-    if(rsReputations->isIdentityBanned(cli->signature.keyId))
-    {
-        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
-        return false ;
     }
     
     if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
@@ -648,6 +649,11 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 	time_t now = time(NULL) ;
 
+    if(rsReputations->isIdentityBanned(item->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
+        return ;
+    }
     if(!checkSignature(item,item->PeerId()))	// check the object's signature and possibly request missing keys
     {
         std::cerr << "Signature mismatched for this lobby event item: " << std::endl;
@@ -674,11 +680,6 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
 		    return ;
 	    }
-    }
-    if(rsReputations->isIdentityBanned(item->signature.keyId))
-    {
-        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
-        return ;
     }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
