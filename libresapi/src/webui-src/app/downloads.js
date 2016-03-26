@@ -50,6 +50,12 @@ module.exports = {
         }
         return m("div", [
             m("h2","Downloads (" + paths.length +")"),
+            m("div.btn2", {
+                onclick: function(){
+                    m.route("/downloads/add");
+                }
+            }, "add retrohare downloads"),
+            m("hr"),
             m('table', [
                 m("tr",[
                     m("th","name"),

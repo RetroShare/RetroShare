@@ -57,3 +57,22 @@ need 4 master
 [X] unread chat message counter in menu
 [X] list chat-lobby participants
 [X] creating app.js on build (no need for npm on regulary build)
+
+url-handling (brainstorming)
+----------------------------
+* normal weblinks (bbcode? => only with gui support)
+* rslinks
+  - files
+  - (chatrooms)
+  - forum retroshare://forum?name=Developers%27%20Discussions&id=8fd22bd8f99754461e7ba1ca8a727995
+  - own cert link (paste)
+  - cert-links
+  - searches
+  - [X] downloads pasten
+  - uploads?
+* enter / display urls
+  - use urls in href like used for input (so it can be copy-link)
+  - handle RS-urls with javascript, other with target _blank
+* smilies
+* Bilder
+* KEEP IT SIMPLE

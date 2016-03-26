@@ -65,6 +65,12 @@ module.exports = {  nodes: [
 		counter: rs.counting("transfers/downloads")
 	},
 	{
+		name: "adddownloads",
+		runstate: "running_ok.*",
+		path: "/downloads/add",
+		show: false,
+	},
+	{
 	    name: "forums",
 	    runstate: "running_ok.*",
 	},
