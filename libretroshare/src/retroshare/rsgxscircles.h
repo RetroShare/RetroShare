@@ -111,8 +111,8 @@ class RsGxsCircleDetails
 		      && mCircleName == rGxsDetails.mCircleName
 		      && mCircleType == rGxsDetails.mCircleType
 		      && mIsExternal == rGxsDetails.mIsExternal
-		      && mUnknownPeers == rGxsDetails.mUnknownPeers
-		      && mAllowedPeers == rGxsDetails.mAllowedPeers
+		      && mAllowedAnonPeers == rGxsDetails.mAllowedAnonPeers
+		      && mAllowedSignedPeers == rGxsDetails.mAllowedSignedPeers
 		      );
 	}
 
@@ -121,13 +121,13 @@ class RsGxsCircleDetails
 		      || mCircleName != rGxsDetails.mCircleName
 		      || mCircleType != rGxsDetails.mCircleType
 		      || mIsExternal != rGxsDetails.mIsExternal
-		      || mUnknownPeers != rGxsDetails.mUnknownPeers
-		      || mAllowedPeers != rGxsDetails.mAllowedPeers
+		      || mAllowedAnonPeers != rGxsDetails.mAllowedAnonPeers
+		      || mAllowedSignedPeers != rGxsDetails.mAllowedSignedPeers
 		      );
 	}
 
-        std::set<RsGxsId> mUnknownPeers;
-        std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
+        std::set<RsGxsId> mAllowedAnonPeers;
+        std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper

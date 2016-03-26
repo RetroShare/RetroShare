@@ -61,7 +61,7 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		_haveGXSId = true;
 
 		m_myName = QString::fromUtf8(_group_info.mMeta.mGroupName.c_str());
-	ui->labelName->setText(m_myName);
+		ui->labelName->setText(m_myName);
 		if (_havePGPDetail) {
 			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
 			                          .append(tr("PGP name:").append(" "+_nickname)));
@@ -75,17 +75,23 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		ui->labelGXSId->setToolTip(tr("GXS id:").append(" "+_gxsId));
 
 		if (!_havePGPDetail) {
-	QFont font = ui->labelName->font();
+			QFont font = ui->labelName->font();
 			font.setItalic(false);
-	ui->labelName->setFont(font);
+			ui->labelName->setFont(font);
 
 			_keyId=QString::fromStdString(_group_info.mMeta.mGroupId.toStdString());
 			ui->labelKeyId->setText(_keyId);
 			ui->labelKeyId->setToolTip(tr("GXS id:").append(" "+_keyId));
-	ui->labelKeyId->setVisible(false);
+			ui->labelKeyId->setVisible(false);
 
-	/// (TODO) Get real ident icon
-			QImage image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+    /// (TODO) Get real ident icon
+		QImage image;
+		
+		if(_group_info.mImage.mSize > 0 && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG"))
+			image = image;
+		else
+			 image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+			
 			if (_avatar != image) {
 				_avatar = image;
 				_scene->clear();
@@ -122,13 +128,14 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
 
 		QPixmap avatar;
-		AvatarDefs::getAvatarFromGpgId(_details.gpg_id.toStdString(), avatar);
+		/*AvatarDefs::getAvatarFromGpgId(_details.gpg_id, avatar);
 		if (_avatar != avatar.toImage()) {
 			_avatar = avatar.toImage();
 			_scene->clear();
 			_scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
 			emit imageUpdated();
-		}//if (_avatar != avatar.toImage())
+		}*///if (_avatar != avatar.toImage())
+		
 
 	//}//if (_details != gpg_details)
 }
@@ -200,3 +207,4 @@ void IdentityWidget::pbAdd_clicked()
 {
 	emit addButtonClicked();
 }
+

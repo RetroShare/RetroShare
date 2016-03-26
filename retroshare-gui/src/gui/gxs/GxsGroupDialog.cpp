@@ -103,7 +103,7 @@ void GxsGroupDialog::init()
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
 	ui.typePublic->setChecked(true);
-	ui.typePublic_3->setChecked(true);
+	ui.distributionValueLabel->setText(tr("Public"));
 	updateCircleOptions();
 
 	connect(ui.typePublic, SIGNAL(clicked()), this , SLOT(updateCircleOptions()));
@@ -218,23 +218,25 @@ void GxsGroupDialog::setupDefaults()
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC)
 		{
 			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
+			ui.distributionValueLabel->setText(tr("Public"));
+            		ui.distributionCircleComboBox->setVisible(false) ;
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_GROUP)
 		{
 			ui.typeGroup->setChecked(true);
-			ui.typeGroup_3->setChecked(true);
+			ui.distributionValueLabel->setText(tr("Restricted to circle:"));
+            		ui.distributionCircleComboBox->setVisible(true) ;
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_DISTRIB_LOCAL)
 		{
 			ui.typeLocal->setChecked(true);
-			ui.typeLocal_3->setChecked(true);
+			ui.distributionValueLabel->setText(tr("Limited to your friends"));
+            		ui.distributionCircleComboBox->setVisible(false) ;
 		}
 		else
 		{
 			// default
 			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
 		}
 	}
 
@@ -285,31 +287,36 @@ void GxsGroupDialog::setupDefaults()
 		if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_YES)
 		{
 			ui.comments_allowed->setChecked(true);
-			ui.comments_allowed_3->setChecked(true);
+			ui.commentsValueLabel->setText(tr("Allowed"));
 		}
 		else if (mDefaultsFlags & GXS_GROUP_DEFAULTS_COMMENTS_NO)
 		{
 			ui.comments_no->setChecked(true);
-			ui.comments_no_3->setChecked(true);
+			ui.commentsValueLabel->setText(tr("Disallowed"));
 		}
 		else
 		{
 			// default
 			ui.comments_no->setChecked(true);
-			ui.comments_no_3->setChecked(true);
+			ui.commentsValueLabel->setText(tr("Allowed"));
 		}
 	}
 	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
 	    ui.antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
-	    ui.antiSpam_trackMessages_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antiSpam_signedIds_2->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+        
+        QString antispam_string ;
+        if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK) antispam_string += tr("Message tracking") ;
+	if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP) antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
+    
+    	ui.antiSpamValueLabel->setText(antispam_string) ;
         
 #ifndef RS_USE_CIRCLES
     ui.typeGroup->setEnabled(false);
-    ui.typeLocal->setEnabled(false);
     ui.typeGroup_3->setEnabled(false);
     ui.typeLocal_3->setEnabled(false);
 #endif
+    ui.typeLocal->setEnabled(false);	// for now, since local circles not fully tested.
+    ui.typeLocal->setToolTip(tr("This feature is not yet available, but it will be available very soon!"));	// for now, since local circles not fully tested.
 }
 
 void GxsGroupDialog::setupVisibility()
@@ -322,10 +329,12 @@ void GxsGroupDialog::setupVisibility()
 	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
 	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
-	ui.distribGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	ui.distributionLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
+	ui.distributionValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
     
 	ui.spamProtection_GB->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
-	ui.spamProtection_GB_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
+	ui.antiSpamLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
+	ui.antiSpamValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ANTI_SPAM);
 
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
@@ -334,8 +343,9 @@ void GxsGroupDialog::setupVisibility()
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
 	ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-	ui.commentGroupBox_2->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-	ui.commentslabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.commentsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	ui.commentsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+	//ui.commentslabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
@@ -363,10 +373,10 @@ void GxsGroupDialog::setupReadonly()
 	
 	ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 
-	ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
-	ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+	//ui.distribGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
+	//ui.commentGroupBox_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
 	ui.spamProtection_GB->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
-	ui.spamProtection_GB_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
+	//ui.spamProtection_GB_2->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ANTI_SPAM));
 
 	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 #ifndef UNFINISHED
@@ -417,9 +427,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 		break;
 		case MODE_SHOW:{
 			ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-			if (mPicture.isNull())
-			return;
-			ui.headerFrame->setHeaderImage(mPicture);
+			if (!mPicture.isNull())
+				ui.headerFrame->setHeaderImage(mPicture);
 		}
 		break;
 		case MODE_EDIT:{
@@ -428,21 +437,27 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
   }
 	/* set description */
 	ui.groupDesc->setPlainText(description);
+    	QString distribution_string = "[Unknown]";
 
 	switch(mGrpMeta.mCircleType)
 	{
 		case GXS_CIRCLE_TYPE_YOUREYESONLY:
 			ui.typeLocal->setChecked(true);
-			ui.typeLocal_3->setChecked(true);
+			distribution_string = tr("Your friends only") ;
 			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
+			ui.distributionCircleComboBox->setVisible(true) ;
+			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
 			break;
 		case GXS_CIRCLE_TYPE_PUBLIC:
 			ui.typePublic->setChecked(true);
-			ui.typePublic_3->setChecked(true);
+			distribution_string = tr("Public") ;
+			ui.distributionCircleComboBox->setVisible(false) ;
 			break;
 		case GXS_CIRCLE_TYPE_EXTERNAL:
 			ui.typeGroup->setChecked(true);
-			ui.typeGroup_3->setChecked(true);
+			distribution_string = tr("Restricted to circle:") ;
+			ui.distributionCircleComboBox->setVisible(true) ;
+			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			break;
 		default:
@@ -450,6 +465,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 			std::cerr << std::endl;
 			break;
 	}
+    ui.distributionValueLabel->setText(distribution_string) ;
 
 	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
 
@@ -642,8 +658,14 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
     
 		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
 		ui.antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
-		ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
+        
+        QString antispam_string ;
+        if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
+	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
+    
+    	ui.antiSpamValueLabel->setText(antispam_string) ;
+		//ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
+		//ui.antiSpam_signedIds_2    ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
 		//ui.SignEdIds->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
 		//ui.trackmessagesradioButton->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
     
@@ -651,13 +673,15 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if ((signFlags & GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD) &&
 	    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN))
 	{
+        	// (cyril) very weird piece of code. Need to clear this up.
+        
 		ui.comments_allowed->setChecked(true);
-		ui.comments_allowed_3->setChecked(true);
+        	ui.commentsValueLabel->setText("Allowed") ;
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
-		ui.comments_no_3->setChecked(true);
+        	ui.commentsValueLabel->setText("Allowed") ;
 	}
 }
 

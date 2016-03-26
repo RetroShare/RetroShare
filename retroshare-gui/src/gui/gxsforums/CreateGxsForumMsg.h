@@ -27,6 +27,7 @@
 #include "util/TokenQueue.h"
 
 #include <retroshare/rsgxsforums.h>
+#include <retroshare/rsgxscircles.h>
 
 class UIStateHelper;
 
@@ -54,22 +55,28 @@ private slots:
 
 protected:
 	void closeEvent (QCloseEvent * event);
-
+    
 private:
 	void loadFormInformation();
 
 	void loadForumInfo(const uint32_t &token);
 	void loadParentMsg(const uint32_t &token);
+    	void loadForumCircleInfo(const uint32_t &token);
 
 	 RsGxsGroupId mForumId;
+     	RsGxsCircleId mCircleId ;
         RsGxsMessageId mParentId;
 
 	bool mParentMsgLoaded;
 	bool mForumMetaLoaded;
+    	bool mForumCircleLoaded ;
 	RsGxsForumMsg mParentMsg;
 	RsGroupMetaData mForumMeta;
+    	RsGxsCircleGroup mForumCircleData ;
 
 	TokenQueue *mForumQueue;
+	TokenQueue *mCirclesQueue;
+    
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */

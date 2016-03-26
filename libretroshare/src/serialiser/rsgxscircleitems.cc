@@ -29,8 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#define CIRCLE_DEBUG	1
-
+//#define CIRCLE_DEBUG	1
 
 uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 {

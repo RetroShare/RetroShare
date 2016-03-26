@@ -39,10 +39,13 @@ namespace rs_nxs_test
 		bool isLoaded(const RsGxsCircleId &circleId);
 		bool loadCircle(const RsGxsCircleId &circleId);
 
-		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 
+	        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) ;
+	        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) ;
+        virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	};
 
 	/*!
@@ -66,10 +69,13 @@ namespace rs_nxs_test
 		bool isLoaded(const RsGxsCircleId &circleId);
 		bool loadCircle(const RsGxsCircleId &circleId);
 
-		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 
+	        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) { return true ;}
+	        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) { return allowed(circleId) ; }
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	private:
 
 		bool allowed(const RsGxsCircleId& circleId);

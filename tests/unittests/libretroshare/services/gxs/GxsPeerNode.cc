@@ -67,7 +67,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 		mGxsIdNs = new RsGxsNetService(
 				RS_SERVICE_GXS_TYPE_GXSID, mGxsIdDs, nxsMgr,
 				mGxsIdService, mGxsIdService->getServiceInfo(),
-				mGxsIdService, mGxsCircles,
+				mGxsIdService, mGxsCircles,mGxsIdService,
 				mPgpAuxUtils,
 				false); // don't synchronise group automatic (need explicit group request)
 
@@ -81,7 +81,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 #endif
 				(RS_SERVICE_GXS_TYPE_GXSCIRCLE, mGxsCirclesDs, nxsMgr,
 				mGxsCircles, mGxsCircles->getServiceInfo(),
-				mGxsIdService, mGxsCircles,
+				mGxsIdService, mGxsCircles,NULL,
 				mPgpAuxUtils);
 	}
 	else
@@ -107,7 +107,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 #endif
 			(RS_SERVICE_GXS_TYPE_TEST, mTestDs, nxsMgr,
 			mTestService, mTestService->getServiceInfo(),
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			mPgpAuxUtils);
 
 	if (mUseIdentityService)

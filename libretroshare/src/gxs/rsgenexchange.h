@@ -615,6 +615,14 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
+    
+    /*!
+     * Returns the local TS of the group as known by the network service.
+     * This is useful to allow various network services to sync their update TS
+     * when needed. Typical use case is forums and circles.
+     * @param gid GroupId the TS is which is requested
+     */
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
 
 protected:
 

@@ -66,7 +66,7 @@ public:
      * c timeout set for this transaction
      * c and itemCount
      */
-    RsNxsTransac* mTransaction;
+    RsNxsTransacItem* mTransaction;
     std::list<RsNxsItem*> mItems; // items received or sent
 };
 
@@ -214,7 +214,9 @@ public:
 	RsGxsGroupId mGroupId;
 	RsGxsCircleId mCircleId;
 	RsGxsId mAuthorId;
+    
 	bool mCleared;
+	bool mShouldEncrypt;
 };
 
 class MsgIdCircleVet
@@ -252,9 +254,7 @@ public:
 	virtual bool cleared() = 0;
 
 protected:
-	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId);
-
-private:
+	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId, bool& should_encrypt);
 
 	RsGcxs* const mCircles;
 	PgpAuxUtils *mPgpUtils;
@@ -286,6 +286,7 @@ public:
 	RsGxsGroupId mGrpId;
 	RsPeerId mPeerId;
 	RsGxsCircleId mCircleId;
+	bool mShouldEncrypt;
 };
 
 

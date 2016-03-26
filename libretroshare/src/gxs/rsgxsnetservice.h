@@ -91,7 +91,7 @@ public:
                 RsNxsNetMgr *netMgr,
         RsNxsObserver *nxsObs,  // used to be = NULL.
         const RsServiceInfo serviceInfo,
-        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL,
+        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
         PgpAuxUtils *pgpUtils = NULL,
         bool grpAutoSync = true, bool msgAutoSync = true);
 
@@ -154,6 +154,8 @@ public:
 
     virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
     
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    
     /* p3Config methods */
 public:
 
@@ -215,7 +217,7 @@ private:
      * @param item the transaction item to process
      * @return false ownership of item left with callee
      */
-    bool locked_processTransac(RsNxsTransac* item);
+    bool locked_processTransac(RsNxsTransacItem* item);
 
     /*!
      * This adds a transaction
@@ -318,19 +320,19 @@ private:
      * of groups held by user
      * @param item contains grp sync info
      */
-    void handleRecvSyncGroup(RsNxsSyncGrp* item);
+    void handleRecvSyncGroup(RsNxsSyncGrpReqItem* item);
 
     /*!
      * Handles an nxs item for group statistics
      * @param item contaims update time stamp and number of messages
      */
-    void handleRecvSyncGrpStatistics(RsNxsSyncGrpStats *grs);
+    void handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs);
     
     /*!
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
-    void handleRecvSyncMessage(RsNxsSyncMsg* item);
+    void handleRecvSyncMessage(RsNxsSyncMsgReqItem* item);
 
     /*!
      * Handles an nxs item for group publish key
@@ -349,22 +351,21 @@ private:
      * @param toVet groupid/peer to vet are stored here if their circle id is not cached
      * @return false, if you cannot send to this peer, true otherwise
      */
-    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
-
-
-    bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId);
+    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
+    bool canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
     bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
-    void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
-    void locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend);
+    bool locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend) ;
+    bool locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend) ;
 
-    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
-    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
+    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN); // forms a grp list request
+    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);	// forms a msg list request
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
+    
     void syncWithPeers();
     void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
@@ -375,15 +376,15 @@ private:
 
     void processExplicitGroupRequests();
 
-    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
+    void locked_doMsgUpdateWork(const RsNxsTransacItem* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
 #ifdef TO_REMOVE
     void updateClientSyncTS();
 #endif
 
-    bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
-    bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem* item);
 
 private:
 
@@ -450,8 +451,15 @@ private:
 
     void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
 
+    /*!
+    * encrypts/decrypts the transaction for the destination circle id.
+    */
+    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
+
     void cleanRejectedMessages();
     void processObserverNotifications();
+
 private:
 
 
@@ -469,8 +477,8 @@ private:
     /*** transactions ***/
 
     /*** synchronisation ***/
-    std::list<RsNxsSyncGrp*> mSyncGrp;
-    std::list<RsNxsSyncMsg*> mSyncMsg;
+    std::list<RsNxsSyncGrpItem*> mSyncGrp;
+    std::list<RsNxsSyncMsgItem*> mSyncMsg;
     /*** synchronisation ***/
 
     RsNxsObserver* mObserver;
@@ -496,6 +504,7 @@ private:
     int mUpdateCounter ;
 
     RsGcxs* mCircles;
+    RsGixs *mGixs;
     RsGixsReputation* mReputations;
     PgpAuxUtils *mPgpUtils;
     bool mGrpAutoSync;
@@ -516,7 +525,6 @@ public:
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
-
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
