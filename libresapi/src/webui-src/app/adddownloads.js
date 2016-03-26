@@ -181,12 +181,17 @@ function cancelBtn(){
 
 // paste links
 function step1(){
-    rs.initControl = "txt";
+    m.initControl = "txtInput";
     return [
         m("h3","step 1 / 5: paste retroshare-links:"),
         m("textarea[id=txtInput]", {
             style: {
                 height:"100%",
+            },
+            onkeydown: function(event){
+                if (event.keyCode == 13){
+                    parseDownloads();
+                }
             }
         }),
         m("div.btn2", {
@@ -200,7 +205,6 @@ function step1(){
 
 // parsing links
 function step2(){
-    rs.initControl = "txt";
     return [
         m("h3","step 2 / 5: parsing input ..."),
         m("p",
@@ -211,7 +215,6 @@ function step2(){
 
 // parsing confirm
 function step3(){
-    rs.initControl = "txt";
     return [
         m("h3","step 3 / 5: confirm-links:"),
         m("ul",
@@ -237,7 +240,6 @@ function step3(){
 
 // adding links
 function step4(){
-    rs.initControl = "txt";
     return [
         m("h3","step 4 / 5: adding downloads:"),
         m("p",
@@ -264,7 +266,6 @@ function step4(){
 
 // show result
 function step5(){
-    rs.initControl = "txt";
     return [
         m("h3","step 5 / 5: Result:"),
         m("p",
@@ -288,10 +289,7 @@ function step5(){
             style:{
                 textAlign: "center",
             },
-            onclick: function(){
-                me.toResult=[];
-                refresh();
-            },
+            onclick: cancel,
         },"ok"),
     ]
 }
