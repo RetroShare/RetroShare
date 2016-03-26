@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
+    <width>881</width>
     <height>515</height>
    </rect>
   </property>
@@ -44,11 +44,14 @@
         <item>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
-           <string>Circle Membership</string>
+           <string>Circle Members</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QTreeWidget" name="treeWidget_membership">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -126,9 +129,9 @@
          </layout>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_4">
+         <widget class="QGroupBox" name="peersSelection_GB">
           <property name="title">
-           <string>Known Identities</string>
+           <string>Known People</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -186,6 +189,9 @@
            </item>
            <item>
             <widget class="RSTreeWidget" name="treeWidget_IdList">
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -240,7 +246,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="circleName"/>
+            <widget class="QLineEdit" name="circleName">
+             <property name="placeholderText">
+              <string>Circle name</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="idChooserLabel">
@@ -251,12 +261,23 @@
               </font>
              </property>
              <property name="text">
-              <string>Creator</string>
+              <string>Creator:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="GxsIdChooser" name="idChooser"/>
+            <widget class="GxsIdLabel" name="circleAdminLabel">
+             <property name="text">
+              <string>[Circle Admin]</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="GxsIdChooser" name="idChooser">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The creator of a circle does not need to be known. It is however useful for public circles so that people know to whom to send a request for membership.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -290,6 +311,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Public">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Publicly distributed circles are visible to your friends, which will get to know the circle data (Creator, members, etc)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Public</string>
               </property>
@@ -297,6 +321,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Self">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Self-restricted circles (the very existance of the circle, and its actual content) are only visible to the members of these circles. In practice the circle uses itself to limit its own distribution. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Self-Restricted</string>
               </property>
@@ -304,6 +331,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_Restricted">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Circles can be restricted to the members of another circle. Only the members of that second circle will be allowed to see the new circle and its content (list of members, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Restricted to:</string>
               </property>
@@ -362,6 +392,11 @@
    <class>GxsCircleChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsCircleChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

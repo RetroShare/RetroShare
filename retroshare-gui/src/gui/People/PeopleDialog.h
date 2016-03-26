@@ -83,6 +83,10 @@ private slots:
 	void pf_dragMoveEventOccurs(QDragMoveEvent *event);
 	void pf_dropEventOccursExt(QDropEvent *event);
 	void pf_dropEventOccursInt(QDropEvent *event);
+	
+	void chatIdentity();
+  void sendMessage();
+  void personDetails();
 
 private:
 	void reloadAll();

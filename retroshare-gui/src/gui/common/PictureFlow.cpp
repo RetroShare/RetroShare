@@ -293,8 +293,9 @@ PictureFlowState::PictureFlowState():
 
 PictureFlowState::~PictureFlowState()
 {
-	for(int i = 0; i < (int)slideImages.count(); ++i)
-		delete slideImages[i];
+    for(uint i=0;i<slideImages.size();++i)
+        delete slideImages[i] ;
+    slideImages.clear() ;
 }
 
 // readjust the settings, call this when slide dimension is changed
@@ -482,7 +483,7 @@ PictureFlowSoftwareRenderer::~PictureFlowSoftwareRenderer()
 {
 	surfaceCache.clear();
 	buffer = QImage();
-	delete blankSurface;
+	if (blankSurface) delete blankSurface;
 }
 
 void PictureFlowSoftwareRenderer::paint()
@@ -516,6 +517,7 @@ void PictureFlowSoftwareRenderer::init()
 		return;
 
 	surfaceCache.clear();
+	if (blankSurface) delete blankSurface;
 	blankSurface = 0;
 
 	size = widget->size();
@@ -687,7 +689,7 @@ QImage* PictureFlowSoftwareRenderer::surface(int slideIndex)
 	bool empty = img ? img->isNull() : true;
 	if(empty) {
 		surfaceCache.remove(key);
-		imageHash.remove(slideIndex);
+		delete imageHash.take(slideIndex);
 		if(!blankSurface) {
 			int sw = state->slideWidth;
 			int sh = state->slideHeight;
@@ -723,29 +725,28 @@ QImage* PictureFlowSoftwareRenderer::surface(int slideIndex)
 		return blankSurface;
 	}//if(empty)
 
+#ifdef PICTUREFLOW_QT2
+	if(img == imageHash[slideIndex])
+#endif
+#ifdef PICTUREFLOW_QT3
+	bool exist = imageHash.find(slideIndex) != imageHash.end();
+	if(exist)
+		if(img == imageHash.find(slideIndex).data())
+#endif
 #ifdef PICTUREFLOW_QT4
 	bool exist = imageHash.contains(slideIndex);
 	if(exist)
 		if(img == imageHash.find(slideIndex).value())
 #endif
-#ifdef PICTUREFLOW_QT3
-			bool exist = imageHash.find(slideIndex) != imageHash.end();
-	if(exist)
-		if(img == imageHash.find(slideIndex).data())
-#endif
-#ifdef PICTUREFLOW_QT2
-			if(img == imageHash[slideIndex])
-#endif
-				if(surfaceCache.contains(key))
-					return surfaceCache[key];
+			if(surfaceCache.contains(key))
+				return surfaceCache[key];
 
-    QImage* sr = prepareSurface(img, state->slideWidth, state->slideHeight, bgcolor, state->reflectionEffect);
-    QImage *sr_copy = new QImage(*sr) ;
+	QImage* sr = prepareSurface(img, state->slideWidth, state->slideHeight, bgcolor, state->reflectionEffect);
 
-    surfaceCache.insert(key, sr);	// this takes ownership on sr. So we can't use it afterwards
+	surfaceCache.insert(key, sr); // QCache takes ownership on sr. And delete it when removed.
 	imageHash.insert(slideIndex, img);
 
-    return sr_copy;
+	return sr;
 }
 
 // Renders a slide to offscreen buffer. Returns a rect of the rendered area.
@@ -756,7 +757,7 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 	if(!blend)
 		return QRect();
 
-	QImage* src = surface(slide.slideIndex);
+	QImage* src = surface(slide.slideIndex); // src is owned by surfaceCache(QCache) don't delete it.
 	if(!src)
 		return QRect();
 
@@ -787,11 +788,8 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 	PFreal dist = distance * PFREAL_ONE;
 
 	int xi = qMax((PFreal)0, ((w*PFREAL_ONE/2) + fdiv(xs*h, dist+ys)) >> PFREAL_SHIFT);
-    if(xi >= w)
-    {
-        delete src ;
-        return rect;
-    }
+	if(xi >= w)
+		return rect;
 
 	bool flag = false;
 	rect.setLeft(xi);
@@ -860,8 +858,7 @@ QRect PictureFlowSoftwareRenderer::renderSlide(const SlideInfo &slide, int col1,
 	}//for(int x = qMax(xi, col1); x <= col2; ++x)
 
 	rect.setTop(0);
-    rect.setBottom(h-1);
-    delete src ;
+	rect.setBottom(h-1);
 
 	return rect;
 }
@@ -1107,11 +1104,10 @@ void PictureFlow::setCenterIndex(int index)
 
 void PictureFlow::clear()
 {
-	int c = d->state->slideImages.count();
-	for(int i = 0; i < c; ++i)
-		delete d->state->slideImages[i];
-	d->state->slideImages.resize(0);
-
+    for(uint i=0;i<d->state->slideImages.size();++i)
+        delete d->state->slideImages[i] ;
+    d->state->slideImages.clear() ;
+    
 	d->state->reset();
 	triggerRender();
 }

@@ -132,8 +132,9 @@ class RsGxsCircleCache
 	bool loadBaseCircle(const RsGxsCircleGroup &circle);
 	bool loadSubCircle(const RsGxsCircleCache &subcircle);
 
-	bool getAllowedPeersList(std::list<RsPgpId> &friendlist);
-	bool isAllowedPeer(const RsPgpId &id);
+	bool getAllowedPeersList(std::list<RsPgpId> &friendlist) const;
+	bool isAllowedPeer(const RsPgpId &id) const;
+	bool isAllowedPeer(const RsGxsId &id) const;
 	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
 	bool addLocalFriend(const RsPgpId &pgpid);
 
@@ -144,14 +145,17 @@ class RsGxsCircleCache
 	bool	      mIsExternal;
 
 	uint32_t      mGroupStatus;
+	uint32_t      mGroupSubscribeFlags;
 
 	time_t mUpdateTime;
+#ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
-	std::set<RsGxsId> mUnprocessedPeers;
-
 	std::set<RsGxsCircleId> mProcessedCircles;
-	std::set<RsGxsId> mUnknownPeers;
-	std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
+#endif
+	std::set<RsGxsId> mUnprocessedPeers;
+    
+	std::set<RsGxsId> mAllowedAnonPeers;
+	std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
 };
 
 
@@ -175,9 +179,11 @@ virtual RsServiceInfo getServiceInfo();
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
 
-	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt);
 	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) ;
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId> &gxs_ids) ;
+	virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) ;
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
@@ -219,6 +225,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	bool cache_request_load(const RsGxsCircleId &id);
 	bool cache_start_load();
+	bool force_cache_reload(const RsGxsCircleId& id);
 	bool cache_load_for_token(uint32_t token);
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 

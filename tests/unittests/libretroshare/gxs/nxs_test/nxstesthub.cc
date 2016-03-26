@@ -81,6 +81,7 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
 				mTestScenario->getServiceInfo(),
 				mTestScenario->getDummyReputations(*cit),
 				mTestScenario->getDummyCircles(*cit),
+				NULL,
 				mTestScenario->getDummyPgpUtils(),
 				true
 				)

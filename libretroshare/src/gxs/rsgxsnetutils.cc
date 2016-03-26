@@ -222,12 +222,12 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId)
+bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId,bool& should_encrypt)
 {
 	if(mCircles->isLoaded(circleId))
 	{
 		const RsPgpId& pgpId = mPgpUtils->getPGPId(peerId);
-		return mCircles->canSend(circleId, pgpId);
+		return mCircles->canSend(circleId, pgpId,should_encrypt);
 	}
 
 	mCircles->loadCircle(circleId);
@@ -250,7 +250,7 @@ bool GrpCircleIdRequestVetting::cleared()
 
 		if(!gic.mCleared)
 		{
-			if(canSend(mPeerId, gic.mCircleId))
+			if(canSend(mPeerId, gic.mCircleId,gic.mShouldEncrypt))
 			{
 				gic.mCleared = true;
 				count++;
@@ -284,9 +284,30 @@ MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
 
 bool MsgCircleIdsRequestVetting::cleared()
 {
-
-	return canSend(mPeerId, mCircleId);
-
+    if(!mCircles->isLoaded(mCircleId))
+    {
+	    mCircles->loadCircle(mCircleId);
+	    return false ;
+    }
+    
+    for(uint32_t i=0;i<mMsgs.size();)
+        if(!mCircles->isRecipient(mCircleId,mMsgs[i].mAuthorId))
+        {
+            std::cerr << "(WW) MsgCircleIdsRequestVetting::cleared() filtering out message " << mMsgs[i].mMsgId << " because it's signed by author " << mMsgs[i].mAuthorId << " which is not in circle " << mCircleId << std::endl;
+            
+            mMsgs[i] = mMsgs[mMsgs.size()-1] ;
+            mMsgs.pop_back();
+        }
+        else
+            ++i ;
+    
+    RsPgpId pgpId = mPgpUtils->getPGPId(mPeerId);
+    bool can_send_res = mCircles->canSend(mCircleId, pgpId,mShouldEncrypt);
+    
+    if(mShouldEncrypt)		// that means the circle is external
+        return true ;
+    else
+        return can_send_res ;
 }
 
 int MsgCircleIdsRequestVetting::getType() const

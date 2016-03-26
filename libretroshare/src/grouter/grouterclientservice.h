@@ -66,6 +66,7 @@ public:
 	    std::cerr << "!!!!!! Received Data status from global router, but the client service is not handling it !!!!!!!!!!" << std::endl ;
 	    std::cerr << "   message ID  = " << received_id << std::endl;
 	    std::cerr << "   data status = " << data_status << std::endl;
+	    std::cerr << "   signer ID   = " << signer_id << std::endl;
     }
 
     // This function is mandatory. It should do two things:

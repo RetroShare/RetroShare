@@ -123,16 +123,12 @@ public:
     virtual bool encryptData(const uint8_t *clear_data,uint32_t clear_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) = 0 ;
     virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& clear_data,uint32_t& clear_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) = 0 ;
 
-//    virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
-
     virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
     virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
 
- //   virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) = 0 ;
-
-	// Key related interface - used for validating msgs and groups.
+    // Key related interface - used for validating msgs and groups.
     /*!
      * Use to query a whether given key is available by its key reference
      * @param keyref the keyref of key that is being checked for
@@ -147,8 +143,8 @@ public:
      */
     virtual bool havePrivateKey(const RsGxsId &id) = 0;
 
-	// The fetchKey has an optional peerList.. this is people that had the msg with the signature.
-	// These same people should have the identity - so we ask them first.
+    // The fetchKey has an optional peerList.. this is people that had the msg with the signature.
+    // These same people should have the identity - so we ask them first.
     /*!
      * Use to request a given key reference
      * @param keyref the KeyRef of the key being requested
@@ -167,9 +163,6 @@ public:
     virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
     virtual bool  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
     virtual bool  getIdDetails(const RsGxsId& id, RsIdentityDetails& details) = 0 ;  // Proxy function so that we get p3Identity info from Gxs
-#ifdef SUSPENDED
-#endif
-
 };
 
 class GixsReputation
@@ -218,9 +211,13 @@ class RsGcxs
         virtual bool isLoaded(const RsGxsCircleId &circleId) = 0;
         virtual bool loadCircle(const RsGxsCircleId &circleId) = 0;
 
-        virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) = 0;
+        virtual int  canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt) = 0;
+        virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) = 0;
+        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) = 0;
+        
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };
 
 
@@ -231,8 +228,12 @@ public:
 	RsGxsCircleExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, 
 			uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy)
 	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
-virtual ~RsGxsCircleExchange() { return; }
-
+	virtual ~RsGxsCircleExchange() { return; }
+    
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) 
+	{
+		return RsGenExchange::getGroupServerUpdateTS(RsGxsGroupId(gid),grp_server_update_TS,msg_server_update_TS) ;
+	}
 };
 
 

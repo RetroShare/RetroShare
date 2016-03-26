@@ -63,7 +63,8 @@ class GxsSecurity
 		 *@param in
 		 *@param inlen
 		 */
-        static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool encrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys) ;
 
 		/**
 		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
@@ -74,7 +75,8 @@ class GxsSecurity
 		 * @param inlen
 		 * @return false if encryption failed
 		 */
-        static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool decrypt(uint8_t *&out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key) ;
+		static bool decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys);
 
 		/*!
 		 * uses grp signature to check if group has been

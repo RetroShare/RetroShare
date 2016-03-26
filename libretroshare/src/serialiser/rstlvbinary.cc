@@ -37,10 +37,14 @@
 /*!********************************** RsTlvFileBinaryData **********************************/
 
 
+RsTlvBinaryData::RsTlvBinaryData()
+	:tlvtype(0), bin_len(0), bin_data(NULL)
+{
+}
+
 RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 	:tlvtype(t), bin_len(0), bin_data(NULL)
 {
-	return;
 }
 
 RsTlvBinaryData::RsTlvBinaryData(const RsTlvBinaryData &b)
