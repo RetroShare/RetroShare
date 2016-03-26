@@ -99,7 +99,7 @@ CreateCircleDialog::CreateCircleDialog()
 	mIsExternalCircle = true;
 	mClearList = true;
 
-    ui.idChooser->loadIds(0,RsGxsId());
+    //ui.idChooser->loadIds(0,RsGxsId());
     ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 }
 
@@ -116,7 +116,6 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     	mReadOnly=readonly;
 
 	mClearList = clearList;
-	requestCircle(circleId);
 	
     if(readonly)
 	ui.headerFrame->setHeaderText(tr("Circle Details"));
@@ -128,7 +127,17 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     ui.radioButton_Restricted->setEnabled(!readonly) ;
     ui.circleName->setReadOnly(readonly) ;
     
-    ui.idChooser->setEnabled(!readonly) ;
+    if(readonly)
+    {
+	    ui.circleAdminLabel->setVisible(true) ;
+	    ui.idChooser->setVisible(false) ;
+    }
+    else
+    {
+	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.idChooser->setVisible(true) ;
+    }
+    
     ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Update"));
     
 	ui.addButton->setEnabled(!readonly) ;
@@ -142,6 +151,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 	ui.addButton->hide() ;
 	ui.removeButton->hide() ;
     }
+	requestCircle(circleId);
 }
 
 
@@ -199,6 +209,7 @@ void CreateCircleDialog::setupForPersonalCircle()
 	ui.frame_PgpTypes->hide();
 	//ui.frame_Distribution->hide();
 	ui.idChooserLabel->hide();
+	ui.circleAdminLabel->hide();
 	ui.idChooser->hide();
 	//ui.toolButton_NewId->hide();
 
@@ -215,6 +226,7 @@ void CreateCircleDialog::setupForExternalCircle()
 	ui.frame_PgpTypes->show();
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
+	ui.circleAdminLabel->show();
 	ui.idChooser->show();
 	//ui.toolButton_NewId->show();
 	
@@ -377,7 +389,7 @@ void CreateCircleDialog::createCircle()
 	    std::cerr << "CreateCircleDialog::createCircle() No AuthorId Chosen!";
 	    std::cerr << std::endl;
 #endif
-    }//switch (ui.idChooser->getChosenId(authorId))
+    }
 
 
     /* copy Ids from GUI */
@@ -595,14 +607,31 @@ void CreateCircleDialog::updateCircleGUI()
 			std::cerr << std::endl;
 	}
 
-	// set preferredId.
-	ui.idChooser->loadIds(0,mCircleGroup.mMeta.mAuthorId);
-
 	/* setup personal or external circle */
 	if (isExternal) 
 		setupForExternalCircle();
 	else 
 		setupForPersonalCircle();
+    
+	// set preferredId.
+    std::cerr << "LoadCircle: setting author id to be " << mCircleGroup.mMeta.mAuthorId << std::endl;
+	//ui.idChooser->loadIds(0,mCircleGroup.mMeta.mAuthorId);
+    
+    if(mReadOnly)
+    {
+	    ui.circleAdminLabel->setId(mCircleGroup.mMeta.mAuthorId) ;
+        	ui.idChooser->setVisible(false) ;
+    }
+    else
+    {
+	    std::set<RsGxsId> ids ;
+	    ids.insert(mCircleGroup.mMeta.mAuthorId) ;
+	    ui.idChooser->setDefaultId(mCircleGroup.mMeta.mAuthorId) ;
+	    ui.idChooser->setChosenId(mCircleGroup.mMeta.mAuthorId) ;
+	    ui.idChooser->setIdConstraintSet(ids) ;
+	    ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE) ;
+	    ui.circleAdminLabel->setVisible(false) ;
+    }
 }
 
 void CreateCircleDialog::requestCircle(const RsGxsGroupId &groupId)

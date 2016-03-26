@@ -266,6 +266,13 @@
             </widget>
            </item>
            <item>
+            <widget class="GxsIdLabel" name="circleAdminLabel">
+             <property name="text">
+              <string>[Circle Admin]</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="GxsIdChooser" name="idChooser">
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The creator of a circle does not need to be known. It is however useful for public circles so that people know to whom to send a request for membership.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -385,6 +392,11 @@
    <class>GxsCircleChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsCircleChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
