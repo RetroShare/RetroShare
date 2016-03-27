@@ -4,7 +4,6 @@ var rs = require("retroshare");
 module.exports = {
     view: function(){
         var id=m.route.param("id");
-        console.log("search_id: " + id);
         var results = rs("filesearch/" + id ,{},null,{allow:"not_set|ok"});
         if (results === undefined || results.length == undefined) {
             results = [];
