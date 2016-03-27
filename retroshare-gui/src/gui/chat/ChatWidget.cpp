@@ -1410,6 +1410,7 @@ void ChatWidget::clearChatHistory()
 	if (chatType() == CHATTYPE_LOBBY) {
 		if (notify) notify->chatLobbyCleared(chatId.toLobbyId(),"");
 	}
+	rsMsgs->clearChatLobby(chatId);
 }
 
 void ChatWidget::deleteChatHistory()

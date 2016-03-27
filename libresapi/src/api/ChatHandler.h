@@ -25,6 +25,7 @@ public:
     // from NotifyClient
     // note: this may get called from the own and from foreign threads
     virtual void notifyChatMessage(const ChatMessage& msg);
+    virtual void notifyChatCleared(const ChatId& chat_id);
 
     // from tickable
     virtual void tick();

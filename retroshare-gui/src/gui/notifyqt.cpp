@@ -519,7 +519,21 @@ void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_
     emit chatStatusChanged(chat_id, QString::fromUtf8(status_string.c_str()));
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
+void NotifyQt::notifyChatCleared(const ChatId& chat_id)
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received chat cleared." << std::endl ;
+#endif
+	emit chatCleared(chat_id);
+}
+
+void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files)
 {
 	{
 		QMutexLocker m(&_mutex) ;

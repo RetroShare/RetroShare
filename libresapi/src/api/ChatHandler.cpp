@@ -132,6 +132,13 @@ void ChatHandler::notifyChatMessage(const ChatMessage &msg)
     mRawMsgs.push_back(msg);
 }
 
+void ChatHandler::notifyChatCleared(const ChatId &chat_id)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    std::list<Msg>& msgs = mMsgs[chat_id];
+    msgs.clear();
+}
+
 // to be removed
 /*
 ChatHandler::Lobby ChatHandler::getLobbyInfo(ChatLobbyId id)

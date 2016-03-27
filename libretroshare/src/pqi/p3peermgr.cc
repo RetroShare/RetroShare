@@ -1567,7 +1567,7 @@ bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_sto
     return true ;
 }
  
-bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& isstable)
+bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& /*isstable*/)
 {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
         
