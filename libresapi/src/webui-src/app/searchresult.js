@@ -18,6 +18,16 @@ module.exports = {
                 }
             });
         }
+
+        var dl_ids = [];
+
+        var downloads =rs("transfers/downloads");
+        if (downloads !== undefined) {
+            downloads.map(function(item){
+                dl_ids.push(item.hash);
+            })
+        }
+
         return m("div",[
             m("h2","turtle file search results"),
             m("h3", "searchtext: " + searchdetail + " (" + results.length + ")"),
@@ -29,21 +39,29 @@ module.exports = {
                     m("th",""),
                 ]),
                 results.map(function(file){
+                    if (dl_ids.indexOf(file.hash)>=0) {
+                        file.state="in download queue"
+                    }
                     return m("tr",[
                         m("th",file.name),
                         m("th",file.size),
                         m("th",[
-                            m("span.btn", {
+                            file.state === undefined
+                            ? m("span.btn", {
                                 onclick:function(){
 				                    rs.request("transfers/control_download", {
 					                    action: "begin",
 					                    name: file.name,
 					                    size: file.size,
 					                    hash: file.hash,
+				                    }, function(){
+				                      result="added";
 				                    });
+                                    m.startComputation();
+                                    m.endComputation();
                                 }
-                            },
-                            "download")
+                            },  "download")
+                            : file.state
                         ]),
                     ])
                 })
