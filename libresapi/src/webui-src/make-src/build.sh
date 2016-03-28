@@ -1,8 +1,8 @@
-#!/usr/bin/sh
+#!/usr/bin/env sh
 
 # create webfiles from sources at compile time (works without npm/node.js)
 
-if [ "$1" == "" ];then
+if [ "$1" = "" ];then
 	publicdest=../../webui
 	src=..
 else
