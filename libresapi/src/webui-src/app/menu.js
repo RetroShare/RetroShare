@@ -11,8 +11,9 @@ function goback(){
 
 function buildmenu(menu, tagname, runstate, ignore){
     if (
-        (menu.runstate === undefined || runstate.match(menu.runstate)!=null)
-        && (!ignore.match(menu.name))
+        (menu.runstate === undefined
+            || runstate.match("^(" + menu.runstate + ")$")!=null)
+        && (!menu.name.match(ignore))
         && (menu.path === undefined || menu.path.match(":")==null)
         && (menu.show === undefined || menu.show)
     )  {
@@ -36,13 +37,15 @@ function buildmenu(menu, tagname, runstate, ignore){
 
 module.exports = {view: function(){
     var runstate = rs("control/runstate");
-    if (runstate === undefined || runstate.runstate === undefined || runstate.runstate == null)
+    if (runstate === undefined
+        || runstate.runstate === undefined
+        || runstate.runstate == null)
     	return m("div.nav","menu: waiting for server ...");
     if (m.route() != "/")
     return m("span",[
             m("span"," | "),
         	mnodes.nodes.map(function(menu){
-        	    var item = buildmenu(menu,"span.menu", runstate.runstate, "");
+        	    var item = buildmenu(menu,"span.menu", runstate.runstate, "-");
         	    if (item != null){
         	        return [
             	        item,

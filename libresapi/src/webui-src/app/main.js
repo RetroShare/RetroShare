@@ -62,10 +62,10 @@ function Page(menu){
                 }),
             ]);
         } else {
-            if ("waiting_init|waiting_startup".match(runstate.runstate)) {
+            if (runstate.runstate.match("waiting_init|waiting_startup")) {
                 return m("h2","server starting ...")
-            } else if("waiting_account_select|running_ok.*".match(runstate.runstate)) {
-                if (runst === undefined || runst.match(runstate.runstate)) {
+            } else if(runstate.runstate.match("waiting_account_select|running_ok.*")) {
+                if (runst === undefined || runstate.runstate.match(runst)) {
                     return m("div", {
                         style: {
                             height: "100%",
