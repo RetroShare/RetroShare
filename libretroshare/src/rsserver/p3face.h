@@ -194,9 +194,15 @@ class RsServer: public RsControl, public RsTickingThread
     double mAvgTickRate ;
     double mTimeDelta ;
 
+#if (__cplusplus > 199711L)
+    static constexpr double minTimeDelta = 0.1; // 25;
+    static constexpr double maxTimeDelta = 0.5;
+    static constexpr double kickLimit = 0.15;
+#else
     static const double minTimeDelta = 0.1; // 25;
     static const double maxTimeDelta = 0.5;
     static const double kickLimit = 0.15;
+#endif
 };
 
 /* Helper function to convert windows paths
