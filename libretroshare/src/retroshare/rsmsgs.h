@@ -307,7 +307,6 @@ public:
     bool isBroadcast() const;
 
     RsPeerId    toPeerId()  const;
-    RsGxsId     toGxsId()   const;
     ChatLobbyId toLobbyId() const;
     DistantChatPeerId toDistantChatId() const;
 

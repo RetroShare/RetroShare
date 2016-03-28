@@ -193,6 +193,8 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
                 ok &= mRsPeers->getPeerDetails(*lit, details);
                 detailsVec.push_back(details);
             }
+            // mark response as list, in case it is empty
+            resp.mDataStream.getStreamToMember();
             for(std::list<RsPgpId>::iterator lit = identities.begin(); lit != identities.end(); ++lit)
             {
                 // if no own ssl id is known, then hide the own id from the friendslist

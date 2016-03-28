@@ -97,6 +97,39 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
     return left;
 }
 
+class SendLobbyParticipantsTask: public GxsResponseTask
+{
+public:
+    SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
+        GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
+    {
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            requestGxsId(mit->first);
+        }
+    }
+private:
+    ChatHandler::LobbyParticipantsInfo mParticipantsInfo;
+protected:
+    virtual void gxsDoWork(Request &req, Response &resp)
+    {
+        resp.mDataStream.getStreamToMember();
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            StreamBase& stream = resp.mDataStream.getStreamToMember();
+            double last_active = mit->second;
+            stream << makeKeyValueReference("last_active", last_active);
+            streamGxsId(mit->first, stream.getStreamToMember("identity"));
+        }
+        resp.mStateToken = mParticipantsInfo.state_token;
+        resp.setOk();
+        done();
+    }
+
+};
+
 ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, RsPeers* peers, RsIdentity* identity, UnreadMsgNotify* unread):
     mStateTokenServer(sts), mNotify(notify), mRsMsgs(msgs), mRsPeers(peers), mRsIdentity(identity), mUnreadMsgNotify(unread), mMtx("ChatHandler::mMtx")
 {
@@ -111,11 +144,12 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
+    addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
     addResourceHandler("mark_chat_as_read", this, &ChatHandler::handleMarkChatAsRead);
     addResourceHandler("info", this, &ChatHandler::handleInfo);
-    addResourceHandler("typing_label", this, &ChatHandler::handleTypingLabel);
+    addResourceHandler("receive_status", this, &ChatHandler::handleReceiveStatus);
     addResourceHandler("send_status", this, &ChatHandler::handleSendStatus);
     addResourceHandler("unread_msgs", this, &ChatHandler::handleUnreadMsgs);
 }
@@ -132,20 +166,21 @@ void ChatHandler::notifyChatMessage(const ChatMessage &msg)
     mRawMsgs.push_back(msg);
 }
 
-// to be removed
-/*
-ChatHandler::Lobby ChatHandler::getLobbyInfo(ChatLobbyId id)
+void ChatHandler::notifyChatStatus(const ChatId &chat_id, const std::string &status)
 {
-    tick();
-
-    RS_STACK_MUTEX(mMtx); // ********* LOCKED **********
-    for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
-        if(vit->id == id)
-            return *vit;
-    std::cerr << "ChatHandler::getLobbyInfo Error: Lobby not found" << std::endl;
-    return Lobby();
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    locked_storeTypingInfo(chat_id, status);
 }
-*/
+
+void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
+                                       const RsGxsId &nickname, const std::string& any_string)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    if(event_type == RS_CHAT_LOBBY_EVENT_PEER_STATUS)
+    {
+        locked_storeTypingInfo(ChatId(lobby_id), any_string, nickname);
+    }
+}
 
 void ChatHandler::tick()
 {
@@ -170,7 +205,44 @@ void ChatHandler::tick()
             l.is_broadcast = false;
             l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
+
+            // update the lobby participants list
+            // maybe it causes to much traffic to do this in every tick,
+            // because the client would get the whole list every time a message was received
+            // we could reduce the checking frequency
+            std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.find(*lit);
+            if(mit == mLobbyParticipantsInfos.end())
+            {
+                mLobbyParticipantsInfos[*lit].participants = info.gxs_ids;
+                mLobbyParticipantsInfos[*lit].state_token = mStateTokenServer->getNewToken();
+            }
+            else
+            {
+                LobbyParticipantsInfo& pi = mit->second;
+                if(!std::equal(pi.participants.begin(), pi.participants.end(), info.gxs_ids.begin()))
+                {
+                    pi.participants = info.gxs_ids;
+                    mStateTokenServer->replaceToken(pi.state_token);
+                }
+            }
         }
+    }
+
+    // remove participants info of old lobbies
+    std::vector<ChatLobbyId> participants_info_to_delete;
+    for(std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.begin();
+        mit != mLobbyParticipantsInfos.end(); ++mit)
+    {
+        if(std::find(subscribed_ids.begin(), subscribed_ids.end(), mit->first) == subscribed_ids.end())
+        {
+            participants_info_to_delete.push_back(mit->first);
+        }
+    }
+    for(std::vector<ChatLobbyId>::iterator vit = participants_info_to_delete.begin(); vit != participants_info_to_delete.end(); ++vit)
+    {
+        LobbyParticipantsInfo& pi = mLobbyParticipantsInfos[*vit];
+        mStateTokenServer->discardToken(pi.state_token);
+        mLobbyParticipantsInfos.erase(*vit);
     }
 
     {
@@ -439,6 +511,15 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
     }
 }
 
+void ChatHandler::locked_storeTypingInfo(const ChatId &chat_id, std::string status, RsGxsId lobby_gxs_id)
+{
+    TypingLabelInfo& info = mTypingLabelInfo[chat_id];
+    info.timestamp = time(0);
+    info.status = status;
+    mStateTokenServer->replaceToken(info.state_token);
+    info.author_id = lobby_gxs_id;
+}
+
 void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
@@ -496,11 +577,31 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
+    resp.setOk();
+}
+
+ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+
+    ChatId id(req.mPath.top());
+    if(!id.isLobbyId())
+    {
+        resp.setFail("Path element \""+req.mPath.top()+"\" is not a ChatLobbyId.");
+        return 0;
+    }
+    std::map<ChatLobbyId, LobbyParticipantsInfo>::const_iterator mit = mLobbyParticipantsInfos.find(id.toLobbyId());
+    if(mit == mLobbyParticipantsInfos.end())
+    {
+        resp.setFail("lobby not found");
+        return 0;
+    }
+    return new SendLobbyParticipantsTask(mRsIdentity, mit->second);
 }
 
 void ChatHandler::handleMessages(Request &req, Response &resp)
@@ -573,89 +674,6 @@ void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
     mStateTokenServer->replaceToken(mUnreadMsgsStateToken);
 }
 
-// to be removed
-// we do now cache chat info, to be able to include it in new message notify easily
-/*
-class InfoResponseTask: public GxsResponseTask
-{
-public:
-    InfoResponseTask(ChatHandler* ch, RsPeers* peers, RsIdentity* identity): GxsResponseTask(identity, 0), mChatHandler(ch), mRsPeers(peers), mState(BEGIN){}
-
-    enum State {BEGIN, WAITING};
-    ChatHandler* mChatHandler;
-    RsPeers* mRsPeers;
-    State mState;
-    bool is_broadcast;
-    bool is_gxs_id;
-    bool is_lobby;
-    bool is_peer;
-    std::string remote_author_id;
-    std::string remote_author_name;
-    virtual void gxsDoWork(Request& req, Response& resp)
-    {
-        ChatId id(req.mPath.top());
-        if(id.isNotSet())
-        {
-            resp.setFail("not a valid chat id");
-            done();
-            return;
-        }
-        if(mState == BEGIN)
-        {
-            is_broadcast = false;
-            is_gxs_id = false;
-            is_lobby = false;
-            is_peer = false;
-            if(id.isBroadcast())
-            {
-                is_broadcast = true;
-            }
-            else if(id.isGxsId())
-            {
-                is_gxs_id = true;
-                remote_author_id = id.toGxsId().toStdString();
-                requestGxsId(id.toGxsId());
-            }
-            else if(id.isLobbyId())
-            {
-                is_lobby = true;
-                remote_author_id = "";
-                remote_author_name = mChatHandler->getLobbyInfo(id.toLobbyId()).name;
-            }
-            else if(id.isPeerId())
-            {
-                is_peer = true;
-                remote_author_id = id.toPeerId().toStdString();
-                remote_author_name = mRsPeers->getPeerName(id.toPeerId());
-            }
-            else
-            {
-                std::cerr << "Error in InfoResponseTask::gxsDoWork(): unhandled chat_id=" << id.toStdString() << std::endl;
-            }
-            mState = WAITING;
-        }
-        else
-        {
-            if(is_gxs_id)
-                remote_author_name = getName(id.toGxsId());
-            resp.mDataStream << makeKeyValueReference("remote_author_id", remote_author_id)
-                             << makeKeyValueReference("remote_author_name", remote_author_name)
-                             << makeKeyValueReference("is_broadcast", is_broadcast)
-                             << makeKeyValueReference("is_gxs_id", is_gxs_id)
-                             << makeKeyValueReference("is_lobby", is_lobby)
-                             << makeKeyValueReference("is_peer", is_peer);
-            resp.setOk();
-            done();
-        }
-    }
-};
-
-ResponseTask *ChatHandler::handleInfo(Request &req, Response &resp)
-{
-    return new InfoResponseTask(this, mRsPeers, mRsIdentity);
-}
-*/
-
 void ChatHandler::handleInfo(Request &req, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
@@ -675,14 +693,99 @@ void ChatHandler::handleInfo(Request &req, Response &resp)
     resp.setOk();
 }
 
-void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
+class SendTypingLabelInfo: public GxsResponseTask
 {
+public:
+    SendTypingLabelInfo(RsIdentity* identity, RsPeers* peers, ChatId id, const ChatHandler::TypingLabelInfo& info):
+        GxsResponseTask(identity), mState(BEGIN), mPeers(peers),mId(id), mInfo(info) {}
+private:
+    enum State {BEGIN, WAITING_ID};
+    State mState;
+    RsPeers* mPeers;
+    ChatId mId;
+    ChatHandler::TypingLabelInfo mInfo;
+protected:
+    void gxsDoWork(Request& /*req*/, Response& resp)
+    {
+        if(mState == BEGIN)
+        {
+            // lobby and distant require to fetch a gxs_id
+            if(mId.isLobbyId())
+            {
+                requestGxsId(mInfo.author_id);
+            }
+            else if(mId.isDistantChatId())
+            {
+                DistantChatPeerInfo dcpinfo ;
+                rsMsgs->getDistantChatStatus(mId.toDistantChatId(), dcpinfo);
+                requestGxsId(dcpinfo.to_id);
+            }
+            mState = WAITING_ID;
+        }
+        else
+        {
+            std::string name = "BUG: case not handled in SendTypingLabelInfo";
+            if(mId.isPeerId())
+            {
+                name = mPeers->getPeerName(mId.toPeerId());
+            }
+            else if(mId.isDistantChatId())
+            {
+                DistantChatPeerInfo dcpinfo ;
+                rsMsgs->getDistantChatStatus(mId.toDistantChatId(), dcpinfo);
+                name = getName(dcpinfo.to_id);
+            }
+            else if(mId.isLobbyId())
+            {
+                name = getName(mInfo.author_id);
+            }
+            else if(mId.isBroadcast())
+            {
+                name = mPeers->getPeerName(mId.broadcast_status_peer_id);
+            }
+            uint32_t ts = mInfo.timestamp;
+            resp.mDataStream << makeKeyValueReference("author_name", name)
+                             << makeKeyValueReference("timestamp", ts)
+                             << makeKeyValueReference("status_string", mInfo.status);
+            resp.mStateToken = mInfo.state_token;
+            resp.setOk();
+            done();
+        }
+    }
+};
 
+ResponseTask* ChatHandler::handleReceiveStatus(Request &req, Response &resp)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    ChatId id(req.mPath.top());
+    if(id.isNotSet())
+    {
+        resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
+        return 0;
+    }
+    std::map<ChatId, TypingLabelInfo>::iterator mit = mTypingLabelInfo.find(id);
+    if(mit == mTypingLabelInfo.end())
+    {
+        locked_storeTypingInfo(id, "");
+        mit = mTypingLabelInfo.find(id);
+    }
+    return new SendTypingLabelInfo(mRsIdentity, mRsPeers, id, mit->second);
 }
 
-void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
+void ChatHandler::handleSendStatus(Request &req, Response &resp)
 {
-
+    std::string chat_id;
+    std::string status;
+    req.mStream << makeKeyValueReference("chat_id", chat_id)
+                << makeKeyValueReference("status", status);
+    ChatId id(chat_id);
+    if(id.isNotSet())
+    {
+        resp.setFail("chat_id is invalid");
+        return;
+    }
+    mRsMsgs->sendStatusString(id, status);
+    resp.setOk();
 }
 
 void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)

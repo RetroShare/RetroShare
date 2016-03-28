@@ -26,6 +26,13 @@ public:
     // note: this may get called from the own and from foreign threads
     virtual void notifyChatMessage(const ChatMessage& msg);
 
+    // typing label for peer, broadcast and distant chat
+    virtual void notifyChatStatus     (const ChatId&      /* chat_id  */, const std::string& /* status_string */);
+
+    //typing label for lobby chat, peer join and leave messages
+    virtual void notifyChatLobbyEvent (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,
+                                       const RsGxsId& /* nickname */,const std::string& /* any string */);
+
     // from tickable
     virtual void tick();
 
@@ -81,6 +88,12 @@ public:
         }
     };
 
+    class LobbyParticipantsInfo{
+    public:
+        StateToken state_token;
+        std::map<RsGxsId, time_t> participants;
+    };
+
     class ChatInfo{
     public:
         bool is_broadcast;
@@ -91,20 +104,32 @@ public:
         std::string remote_author_name;
     };
 
+    class TypingLabelInfo{
+    public:
+        time_t timestamp;
+        std::string status;
+        StateToken state_token;
+        // only for lobbies
+        RsGxsId author_id;
+    };
+
 private:
     void handleWildcard(Request& req, Response& resp);
     void handleLobbies(Request& req, Response& resp);
     void handleSubscribeLobby(Request& req, Response& resp);
     void handleUnsubscribeLobby(Request& req, Response& resp);
+    ResponseTask* handleLobbyParticipants(Request& req, Response& resp);
     void handleMessages(Request& req, Response& resp);
     void handleSendMessage(Request& req, Response& resp);
     void handleMarkChatAsRead(Request& req, Response& resp);
     void handleInfo(Request& req, Response& resp);
-    void handleTypingLabel(Request& req, Response& resp);
+    ResponseTask *handleReceiveStatus(Request& req, Response& resp);
     void handleSendStatus(Request& req, Response& resp);
     void handleUnreadMsgs(Request& req, Response& resp);
 
     void getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links);
+    // last parameter is only used for lobbies!
+    void locked_storeTypingInfo(const ChatId& chat_id, std::string status, RsGxsId lobby_gxs_id = RsGxsId());
 
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
@@ -121,8 +146,12 @@ private:
 
     std::map<ChatId, ChatInfo> mChatInfo;
 
+    std::map<ChatId, TypingLabelInfo> mTypingLabelInfo;
+
     StateToken mLobbiesStateToken;
     std::vector<Lobby> mLobbies;
+
+    std::map<ChatLobbyId, LobbyParticipantsInfo> mLobbyParticipantsInfos;
 
     StateToken mUnreadMsgsStateToken;
 

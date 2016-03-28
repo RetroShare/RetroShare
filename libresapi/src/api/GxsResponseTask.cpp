@@ -62,6 +62,7 @@ bool GxsResponseTask::doWork(Request &req, Response &resp)
         {
             more = false; // pause when an id failed, to give the service time tim fetch the data
             ready = false;
+            // TODO: remove identities which failed many times from list, to avoid blocking when ids fail
         }
     }
     if(!ready)

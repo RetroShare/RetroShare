@@ -16,5 +16,6 @@ public:
 private:
     RsServiceControl* mRsServiceControl;
     void handleWildcard(Request& req, Response& resp);
+    void handleUser(Request& req, Response& resp);
 };
 } // namespace resource_api

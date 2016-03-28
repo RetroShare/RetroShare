@@ -114,6 +114,7 @@ void StateTokenServer::handleWildcard(Request &req, Response &resp)
     RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
     // want to lookpup many tokens at once, return a list of invalid tokens
     // TODO: make generic list serialiser/deserialiser
+    resp.mDataStream.getStreamToMember();
     while(req.mStream.hasMore())
     {
         StateToken token;

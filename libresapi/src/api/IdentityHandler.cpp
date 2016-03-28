@@ -16,17 +16,18 @@ namespace resource_api
 class SendIdentitiesListTask: public GxsResponseTask
 {
 public:
-    SendIdentitiesListTask(RsIdentity* idservice, std::list<RsGxsId> ids):
-        GxsResponseTask(idservice, 0)
+    SendIdentitiesListTask(RsIdentity* idservice, std::list<RsGxsId> ids, StateToken state):
+        GxsResponseTask(idservice, 0), mStateToken(state)
     {
         for(std::list<RsGxsId>::iterator vit = ids.begin(); vit != ids.end(); ++vit)
         {
             requestGxsId(*vit);
-            mIds.push_back(*vit);// convert fro list to vector
+            mIds.push_back(*vit);// convert from list to vector
         }
     }
 private:
     std::vector<RsGxsId> mIds;
+    StateToken mStateToken;
 protected:
     virtual void gxsDoWork(Request &req, Response &resp)
     {
@@ -35,17 +36,89 @@ protected:
         {
             streamGxsId(*vit, resp.mDataStream.getStreamToMember());
         }
+        resp.mStateToken = mStateToken;
         resp.setOk();
         done();
     }
 
 };
 
-IdentityHandler::IdentityHandler(RsIdentity *identity):
-    mRsIdentity(identity)
+class CreateIdentityTask: public GxsResponseTask
 {
+public:
+    CreateIdentityTask(RsIdentity* idservice):
+        GxsResponseTask(idservice, idservice->getTokenService()), mState(BEGIN), mToken(0), mRsIdentity(idservice){}
+private:
+    enum State {BEGIN, WAIT_ACKN, WAIT_ID};
+    State mState;
+    uint32_t mToken;
+    RsIdentity* mRsIdentity;
+    RsGxsId mId;
+protected:
+    virtual void gxsDoWork(Request &req, Response &resp)
+    {
+        switch(mState)
+        {
+        case BEGIN:{
+            RsIdentityParameters params;
+            req.mStream << makeKeyValueReference("name", params.nickname) << makeKeyValueReference("pgp_linked", params.isPgpLinked);
+
+            if(params.nickname == "")
+            {
+                resp.setFail("name can't be empty");
+                done();
+                return;
+            }
+            mRsIdentity->createIdentity(mToken, params);
+            addWaitingToken(mToken);
+            mState = WAIT_ACKN;
+            break;
+        }
+        case WAIT_ACKN:{
+            RsGxsGroupId grpId;
+            if(!mRsIdentity->acknowledgeGrp(mToken, grpId))
+            {
+                resp.setFail("acknowledge of group id failed");
+                done();
+                return;
+            }
+            mId = RsGxsId(grpId);
+            requestGxsId(mId);
+            mState = WAIT_ID;
+            break;
+        }
+        case WAIT_ID:
+            streamGxsId(mId, resp.mDataStream);
+            resp.setOk();
+            done();
+        }
+    }
+};
+
+IdentityHandler::IdentityHandler(StateTokenServer *sts, RsNotify *notify, RsIdentity *identity):
+    mStateTokenServer(sts), mNotify(notify), mRsIdentity(identity),
+    mMtx("IdentityHandler Mtx"), mStateToken(sts->getNewToken())
+{
+    mNotify->registerNotifyClient(this);
+
     addResourceHandler("*", this, &IdentityHandler::handleWildcard);
     addResourceHandler("own", this, &IdentityHandler::handleOwn);
+    addResourceHandler("create_identity", this, &IdentityHandler::handleCreateIdentity);
+}
+
+IdentityHandler::~IdentityHandler()
+{
+    mNotify->unregisterNotifyClient(this);
+}
+
+void IdentityHandler::notifyGxsChange(const RsGxsChanges &changes)
+{
+    RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+    // if changes come from identity service, invalidate own state token
+    if(changes.mService == mRsIdentity->getTokenService())
+    {
+        mStateTokenServer->replaceToken(mStateToken);
+    }
 }
 
 void IdentityHandler::handleWildcard(Request &req, Response &resp)
@@ -54,6 +127,7 @@ void IdentityHandler::handleWildcard(Request &req, Response &resp)
 
     if(req.isPut())
     {
+#ifdef REMOVE
         RsIdentityParameters params;
         req.mStream << makeKeyValueReference("name", params.nickname);
         if(req.mStream.isOK())
@@ -67,9 +141,14 @@ void IdentityHandler::handleWildcard(Request &req, Response &resp)
         {
             ok = false;
         }
+#endif
     }
     else
     {
+        {
+            RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+            resp.mStateToken = mStateToken;
+        }
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
         uint32_t token;
@@ -126,12 +205,22 @@ void IdentityHandler::handleWildcard(Request &req, Response &resp)
 
 ResponseTask* IdentityHandler::handleOwn(Request &req, Response &resp)
 {
+    StateToken state;
+    {
+        RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
+        state = mStateToken;
+    }
     std::list<RsGxsId> ids;
     if(mRsIdentity->getOwnIds(ids))
-        return new SendIdentitiesListTask(mRsIdentity, ids);
+        return new SendIdentitiesListTask(mRsIdentity, ids, state);
     resp.mDataStream.getStreamToMember();
     resp.setWarning("identities not loaded yet");
     return 0;
+}
+
+ResponseTask* IdentityHandler::handleCreateIdentity(Request &req, Response &resp)
+{
+    return new CreateIdentityTask(mRsIdentity);
 }
 
 } // namespace resource_api
