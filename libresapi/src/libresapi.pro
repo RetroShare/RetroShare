@@ -33,6 +33,14 @@ unix {
 win32{
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
+
+        # create_webfiles.commands = $$_PRO_FILE_PWD_/webui-src/make-src/build.bat $$_PRO_FILE_PWD_
+        # QMAKE_EXTRA_TARGETS += create_webfiles
+        # PRE_TARGETDEPS += create_webfiles
+
+
+        # # create dummy files
+        # system(webui-src/make-src/init.bat .)
 }
 
 libmicrohttpd{
