@@ -87,6 +87,12 @@ Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget
 		_auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ;
 }
 
+const float Node::MASS_FACTOR = 10 ;
+const float Node::FRICTION_FACTOR = 10.8f ;
+const float Node::REPULSION_FACTOR = 4;
+const float Node::NODE_DISTANCE = 130.0f ;
+
+
 void Node::addEdge(Edge *edge)
 {
     edgeList << edge;

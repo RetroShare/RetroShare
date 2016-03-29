@@ -1565,7 +1565,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			// LIKE THIS BELOW...
 			//std::string grpId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_GROUPID).toString().toStdString();
 
-			RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), msgId);
+            RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), RsGxsMessageId(msgId));
 
 			uint32_t token;
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);

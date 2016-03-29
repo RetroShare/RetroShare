@@ -34,7 +34,7 @@ class pqiQoSstreamer: public pqithreadstreamer, public pqiQoS
 		pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
 		static const uint32_t PQI_QOS_STREAMER_MAX_LEVELS =  10 ;
-		static const float    PQI_QOS_STREAMER_ALPHA      = 2.0 ;
+        static const float    PQI_QOS_STREAMER_ALPHA ;
 
 		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
 		virtual int locked_out_queue_size() const { return _total_item_count ; }
