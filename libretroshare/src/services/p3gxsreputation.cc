@@ -303,6 +303,10 @@ void p3GxsReputation::updateActiveFriends()
 
 }
 
+const float RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM = 1.4f ;
+const float RsReputations::REPUTATION_THRESHOLD_DEFAULT   = 1.0f ;
+
+
 static RsReputations::Opinion safe_convert_uint32t_to_opinion(uint32_t op)
 {
 	return RsReputations::Opinion(std::min((uint32_t)op,UPPER_LIMIT)) ;

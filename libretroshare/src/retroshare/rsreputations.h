@@ -31,8 +31,8 @@
 class RsReputations
 {
 public:
-    	static const float REPUTATION_THRESHOLD_ANTI_SPAM = 1.4f ;
-    	static const float REPUTATION_THRESHOLD_DEFAULT   = 1.0f ;
+        static const float REPUTATION_THRESHOLD_ANTI_SPAM;
+        static const float REPUTATION_THRESHOLD_DEFAULT;
         
 	// This is the interface file for the reputation system
 	//

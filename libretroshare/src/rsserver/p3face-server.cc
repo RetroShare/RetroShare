@@ -69,6 +69,10 @@ static double getCurrentTS()
         return cts;
 }
 
+const double RsServer::minTimeDelta = 0.1; // 25;
+const double RsServer::maxTimeDelta = 0.5;
+const double RsServer::kickLimit = 0.15;
+
 
 RsServer::RsServer()
 	: coreMutex("RsServer")
