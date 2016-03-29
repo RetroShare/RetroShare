@@ -15,7 +15,7 @@ INCLUDEPATH += ../../libretroshare/src
 unix {
 
         webui_files.path = "$${DATA_DIR}/webui"
-        webui_files.files = webfiles/*
+        webui_files.files = webui/*
 	INSTALLS += webui_files        
 
 	webui_img_files.path = "$${DATA_DIR}/webui/img"
