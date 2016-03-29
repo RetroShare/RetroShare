@@ -8,6 +8,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <time.h>
 
 namespace resource_api
 {
