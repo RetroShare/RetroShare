@@ -47,7 +47,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid wily"
+	dist="precise trusty vivid wily xenial"
 fi
 
 echo Attempting to get revision number...

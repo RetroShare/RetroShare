@@ -1,5 +1,118 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  3701366 electron128 Mon, 28 Mar 2016 14:07:19 +0200 Merge pull request #327 from zeners/webui
+  dfa2cba zeners      Mon, 28 Mar 2016 13:03:49 +0200 webui: menu in gui mode fixed
+  a11cd25 zeners      Mon, 28 Mar 2016 11:35:44 +0200 Merge branch 'master'
+  bf374b3 zeners      Mon, 28 Mar 2016 11:34:33 +0200 webui 4 windows build prepare
+  68b4cd8 electron128 Mon, 28 Mar 2016 10:19:10 +0200 Merge pull request #323 from zeners/webui
+  0482655 zeners      Sun, 27 Mar 2016 20:29:48 +0200 webui: removed searchresult debug output
+  bbdb04f zeners      Sun, 27 Mar 2016 20:13:47 +0200 webui: searchresult cross-checking with downloads
+  3bbd370 zeners      Sun, 27 Mar 2016 18:28:32 +0200 webui: windows creating batch-files
+  d96a8ef zeners      Sat, 26 Mar 2016 23:38:18 +0100 Merge branch 'master'
+  0c138d7 csoler      Sat, 26 Mar 2016 18:36:52 -0400 moved discarding of banned identities from lobbies before signature checking, so as to avoid to time stamp their GXSI
+  215402b zeners      Sat, 26 Mar 2016 23:36:02 +0100 webui: add downloads: focus fixed
+  922644f zeners      Sat, 26 Mar 2016 23:24:29 +0100 Merge branch 'master'
+  502b137 csoler      Sat, 26 Mar 2016 17:51:51 -0400 Merge pull request #325 from csoler/v0.6-Circles
+  ebf54d1 csoler      Sat, 26 Mar 2016 17:25:15 -0400 fixed unit tests
+  a67c1d7 zeners      Sat, 26 Mar 2016 18:19:33 +0100 webui: paste RS-links for download
+  1b8b9d4 csoler      Fri, 25 Mar 2016 21:10:01 -0400 turned PeopleDialog to unix ff
+  6c8737c csoler      Fri, 25 Mar 2016 21:09:37 -0400 merged with upstream/master
+  4831465 csoler      Fri, 25 Mar 2016 21:03:09 -0400 fixed tiny bits in circles/people GUI
+  9efc29f csoler      Fri, 25 Mar 2016 20:58:10 -0400 improved display of circle creator ID
+  d1b09b9 csoler      Fri, 25 Mar 2016 18:54:13 -0400 removed some debug info
+  083dc62 csoler      Fri, 25 Mar 2016 18:27:20 -0400 small code cleaning bits
+  3d45947 csoler      Fri, 25 Mar 2016 18:21:37 -0400 fixed small bug in debug output; cleanup debug output
+  44cadc2 csoler      Thu, 24 Mar 2016 19:46:08 -0400 cleaned debug info and disabled local circles before merge
+  7d8001b csoler      Thu, 24 Mar 2016 19:23:34 -0400 fixed display of warning in posting into forums without proper credentials
+  9dc7328 csoler      Thu, 24 Mar 2016 18:41:15 -0400 fixed async-ed circle loading in IdDialog
+  30193fe zeners      Thu, 24 Mar 2016 18:07:21 +0100 webui: switch from react to mithril
+  d33a1e8 csoler      Thu, 24 Mar 2016 00:05:54 -0400 added disabling of combo elements in GxsIdChooser for creating forums posts with unautorised GXS ids. Still needs a b
+  40d2350 csoler      Wed, 23 Mar 2016 21:50:41 -0400 removed deadlock
+  981f81d csoler      Wed, 23 Mar 2016 20:54:45 -0400 added anon ids to offline vetting
+  cef07ff zeners      Thu, 24 Mar 2016 00:33:22 +0100 webui: integrate new webui in unix build process
+  57f4463 csoler      Wed, 23 Mar 2016 18:23:10 -0400 fixed potential crash due to using deleted data (found by dimqua)
+  a19a068 zeners      Wed, 23 Mar 2016 13:11:14 +0100 webui: options>settings, playing with colors
+  585c43b zeners      Tue, 22 Mar 2016 23:19:36 +0100 webui: RS-reboot / RS-reboot-detection improved
+  60e9f0f zeners      Tue, 22 Mar 2016 21:09:33 +0100 undo gitignore
+  a069db5 zeners      Tue, 22 Mar 2016 16:37:48 +0100 webui: chat: display peer location
+  4733523 zeners      Tue, 22 Mar 2016 16:33:05 +0100 webui: view / change rights per user
+  
+  83ff00e zeners      Tue, 22 Mar 2016 12:08:23 +0100 webui: updated mithril to v0.2.3
+  1fb1f3e csoler      Mon, 21 Mar 2016 23:21:26 -0400 update of groups up to the latest attached circle server update TS. Should re-send groups that depend on a circle whe
+  51e0d83 zeners      Mon, 21 Mar 2016 17:04:21 +0100 webui: options / rights (only defaults)
+  1c94ff7 zeners      Mon, 21 Mar 2016 16:41:21 +0100 Merge branch 'master'
+  b153c2e csoler      Sun, 20 Mar 2016 22:23:32 -0400 updated TODO
+  c304a3a csoler      Sun, 20 Mar 2016 22:21:09 -0400 fixed display of properties in restricted groups
+  90347bd csoler      Sun, 20 Mar 2016 12:51:30 -0400 Merge pull request #315 from dartraiden/master
+  c627e1b dartraiden  Sun, 20 Mar 2016 19:27:28 +0300 Fix typo
+  c123761 csoler      Sun, 20 Mar 2016 09:11:55 -0400 Merge pull request #314 from PhenomRetroShare/Fix_CppCheckerError
+  b13292b Phenom      Sun, 20 Mar 2016 12:10:56 +0100 Fix error reported by CppChecker:
+  2e9d22c csoler      Sat, 19 Mar 2016 18:47:46 -0400 used RsTemporaryMemory to avoid memory leak in case of error in GxsTunnels
+  d1bb939 csoler      Sat, 19 Mar 2016 17:14:00 -0400 Merge pull request #312 from PhenomRetroShare/AddPluginsPathForApple
+  5061046 Phenom      Sat, 19 Mar 2016 18:58:00 +0100 Add Plugins Path for Apple
+  12c0efb zeners      Sat, 19 Mar 2016 17:39:46 +0100 webui: pgp-linked identity disabled
+  ecf8e7f zeners      Sat, 19 Mar 2016 17:39:34 +0100 Merge remote branch 'origin/master'
+  24ba909 csoler      Sat, 19 Mar 2016 11:39:53 -0400 fixed mixup between in/out bandwidth traffic info
+  526a83a csoler      Fri, 18 Mar 2016 22:11:07 -0400 fixed update of circle name in the GUI
+  4e0ee29 csoler      Thu, 17 Mar 2016 20:18:54 -0400 fixed creation/distribution of self-restricted circles
+  b6388d7 csoler      Thu, 17 Mar 2016 18:17:58 -0400 fixed update of GUI when circles change
+  36edde6 csoler      Wed, 16 Mar 2016 23:30:23 -0400 fixed bug causing GUI to not auto-unsubscribe in circles
+  a2a9079 csoler      Wed, 16 Mar 2016 23:03:46 -0400 fixed qt4 compilation
+  31356ba csoler      Wed, 16 Mar 2016 21:27:08 -0400 added reload of grp meta on update
+  b219295 csoler      Wed, 16 Mar 2016 20:59:52 -0400 added update of GUI, instead of re-creating everything when a circle change
+  5b00c03 csoler      Wed, 16 Mar 2016 14:17:16 -0400 Merge pull request #4 from PhenomRetroShare/Fix_PictureFlowDeletion
+  76fddb29 Phenom     Wed, 16 Mar 2016 19:05:22 +0100 Fix delete in PictureFlow
+  b6e51b2 csoler      Wed, 16 Mar 2016 09:56:36 -0400 Merge pull request #308 from dartraiden/master
+  5ba4f42 dartraiden  Wed, 16 Mar 2016 16:24:06 +0300 correct path to Hidden Service configuration panel
+  384131a csoler      Tue, 15 Mar 2016 22:41:59 -0400 added force reload of cache for circles that are modified
+  6466209 csoler      Tue, 15 Mar 2016 22:11:36 -0400 added test to only subscribe/unsubscribe circles when needed, hence avoiding an unnecessary TS update
+  80aaf30 csoler      Tue, 15 Mar 2016 00:00:39 -0400 fixed potential crash due to bad usage of updates
+  bdb326a csoler      Mon, 14 Mar 2016 23:19:37 -0400 attempt at fixing circle cache loop. Renamed a few variables and fixed logic. Not yet fully working
+  83e39d8 csoler      Sun, 13 Mar 2016 17:29:38 -0400 fixed effect of selecting known/signed IDs in circle creation dialog
+  4cf57d6 csoler      Sun, 13 Mar 2016 17:19:14 -0400 set default value for circle distribution type
+  9c649aa csoler      Sun, 13 Mar 2016 12:08:03 -0400 improved debugDump(), showing the subscription status of each grp
+  5fe390d csoler      Sun, 13 Mar 2016 11:41:33 -0400 changed titles of tree root nodes in circles
+  0518062 csoler      Sun, 13 Mar 2016 11:29:21 -0400 fixed circle auto-subscribe
+  
+  1b72d2c zeners      Sat, 12 Mar 2016 23:38:39 +0100 webui: unsubscribe chat-lobby
+  41a8e53 zeners      Sat, 12 Mar 2016 23:28:27 +0100 webui: chat-layout fixed
+  0afa2e3 zeners      Sat, 12 Mar 2016 20:20:56 +0100 webui: unread chat message counter in menu
+  e9af179 zeners      Sat, 12 Mar 2016 19:17:37 +0100 webui: need for master
+  b1286f0 zeners      Sat, 12 Mar 2016 17:44:43 +0100 webui: route peer location to chat-lobby
+  a065dba csoler      Sat, 12 Mar 2016 11:05:03 -0500 cleaned code a little bit
+  61c7da7 csoler      Sat, 12 Mar 2016 11:02:32 -0500 unselect all IDs when no circle is selected
+  b1da4ed zeners      Sat, 12 Mar 2016 16:46:33 +0100 Merge branch 'master'
+  456a882 csoler      Sat, 12 Mar 2016 10:41:35 -0500 added highlighting of currently selected circle members
+  5d2833f csoler      Sat, 12 Mar 2016 09:25:28 -0500 improved one line of debug output in turtle
+  670fb3d csoler      Sat, 12 Mar 2016 09:25:00 -0500 merged
+  4e2fd4e csoler      Sat, 12 Mar 2016 09:22:28 -0500 Merge pull request #303 from PhenomRetroShare/Fix_CorrectColoredNameContrast
+  16c59af Phenom      Sat, 12 Mar 2016 13:25:10 +0100 Correct Colored Name Contrast in chat, same way than text.
+  9e8a4cd csoler      Fri, 11 Mar 2016 22:36:47 -0500 fixed auto-subscribe of circles when unsigned identities are locally owned
+  b97c5df csoler      Fri, 11 Mar 2016 17:47:12 -0500 fixed culumn name in GR stats
+  692b549 csoler      Fri, 11 Mar 2016 17:27:40 -0500 fixing compilation problem
+  232dba2 csoler      Fri, 11 Mar 2016 17:21:27 -0500 allow non signature checking for GR message recepts at intermediate peers when key is missing. Should fix return rece
+  ecebace csoler      Fri, 11 Mar 2016 14:26:27 -0500 Merge pull request #301 from PhenomRetroShare/Add_NewColumnInRsCollForPath
+  c0cf05c csoler      Fri, 11 Mar 2016 14:25:18 -0500 Merge pull request #302 from PhenomRetroShare/Fix_RsLinkCopyForExtraFile
+  d62a205 Phenom      Fri, 11 Mar 2016 20:08:28 +0100 Fix Paste RetroShare Link action when copy File link.
+  7e76e28 Phenom      Fri, 11 Mar 2016 17:26:18 +0100 Add a new column in RsColl Editor to get only name in first one.
+  4136d09 csoler      Thu, 10 Mar 2016 23:55:20 -0500 updated Circles TODO
+  4e4980b csoler      Thu, 10 Mar 2016 22:57:04 -0500 fixed display of info for non admin circles, and added readonly system to not allow editing them
+  5361c85 csoler      Thu, 10 Mar 2016 22:02:21 -0500 updated circles TODO
+  0282c2a csoler      Wed,  9 Mar 2016 21:49:24 -0500 added ban menu entry to chat lobby participant list
+  3fc6f6b csoler      Wed,  9 Mar 2016 20:53:49 -0500 updated TODO(circles), removed useless context menu, added tooltips for circle distribution options
+  4eebe24 csoler      Wed,  9 Mar 2016 20:23:33 -0500 disabled auto-sync for messages in GXS circles, while keeping Grp auto-sync
+  76e7893 csoler      Wed,  9 Mar 2016 20:18:19 -0500 updated circles TODO
+  2017f92 csoler      Tue,  8 Mar 2016 23:12:27 -0500 updated circles todo
+  cf75983 csoler      Tue,  8 Mar 2016 23:01:43 -0500 added TODO file specific to circles
+  7e31bda csoler      Tue,  8 Mar 2016 23:00:24 -0500 fixed removal of peers from circles
+  cba4795 csoler      Tue,  8 Mar 2016 00:02:16 -0500 improved circles GUI logic
+  9b92f66 csoler      Mon,  7 Mar 2016 22:51:23 -0500 added edit of existing circles
+  49605a3 csoler      Mon,  7 Mar 2016 22:10:18 -0500 fixed variable scope problem in introserver.cc
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 28 Mar 2016 20:00:00 -0500
+
+retroshare06 (0.6.0-1.20160306.ecf4a991~precise) precise; urgency=low
+
   bb26069 csoler      Wed, 2  Mar 2016 19:00:51 -0500 attempt at fixing negative bw rates in GUI that may pop up when an erro
   20fcf63 electron128 Fri, 26 Feb 2016 18:13:20 +0100 Merge pull request #285 from PhenomRetroShare/Fix_SSGxsChannelGro
   1a110e4 Phenom      Mon, 22 Feb 2016 19:07:49 +0100 Define empty service string as a valid case.
