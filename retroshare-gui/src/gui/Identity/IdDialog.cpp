@@ -199,12 +199,13 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->headerTextLabel->setText(tr("People"));
 
 	/* Initialize splitter */
-	ui->splitter->setStretchFactor(0, 1);
-	ui->splitter->setStretchFactor(1, 0);
-
+	ui->splitter->setStretchFactor(0, 0);
+	ui->splitter->setStretchFactor(1, 1);
+	
+  /*remove
 	QList<int> sizes;
 	sizes << width() << 500; // Qt calculates the right sizes
-	ui->splitter->setSizes(sizes);
+	ui->splitter->setSizes(sizes);*/
 
 	/* Add filter types */
     ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);

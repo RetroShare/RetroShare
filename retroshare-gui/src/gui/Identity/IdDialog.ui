@@ -19,8 +19,20 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_6">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -35,7 +47,16 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -56,7 +77,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">:/images/user/friends24.png</pixmap>
+         <pixmap resource="../images.qrc">:/images/user/friends24.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -96,7 +117,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -110,7 +131,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -126,7 +147,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -153,7 +183,7 @@
              <string>New ID</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
             </property>
             <property name="iconSize">
@@ -222,7 +252,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeft|AlignVCenter</set>
+           <set>AlignLeading|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -295,7 +325,16 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout">
-               <property name="margin">
+               <property name="leftMargin">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="rightMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
                 <number>6</number>
                </property>
                <property name="spacing">
@@ -469,7 +508,16 @@
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
-               <property name="margin">
+               <property name="leftMargin">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>6</number>
+               </property>
+               <property name="rightMargin">
+                <number>6</number>
+               </property>
+               <property name="bottomMargin">
                 <number>6</number>
                </property>
                <item row="2" column="1">
@@ -654,7 +702,7 @@ p, li { white-space: pre-wrap; }
   </layout>
   <action name="editIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
    </property>
    <property name="text">
@@ -666,7 +714,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="removeIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
    </property>
    <property name="text">
@@ -675,7 +723,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="chatIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/toaster/chat.png</normaloff>:/images/toaster/chat.png</iconset>
    </property>
    <property name="text">
@@ -712,7 +760,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../../../trunk/retroshare-gui/src/gui/images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
