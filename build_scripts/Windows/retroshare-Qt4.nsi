@@ -221,7 +221,7 @@ Section $(Section_Main) Section_Main
 
   ; WebUI
   SetOutPath "$INSTDIR\webui"
-  File /r "${SOURCEDIR}\libresapi\src\webfiles\*.*"
+  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
 
   ; License
   SetOutPath "$INSTDIR\license"
