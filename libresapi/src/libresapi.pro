@@ -34,13 +34,22 @@ win32{
 	DEFINES *= WINDOWS_SYS
 	INCLUDEPATH += . $$INC_DIR
 
-        # create_webfiles.commands = $$_PRO_FILE_PWD_/webui-src/make-src/build.bat $$_PRO_FILE_PWD_
-        # QMAKE_EXTRA_TARGETS += create_webfiles
-        # PRE_TARGETDEPS += create_webfiles
+	greaterThan(QT_MAJOR_VERSION, 4) {
+		# Qt 5
+		PRO_PATH=$$shell_path($$_PRO_FILE_PWD_)
+		MAKE_SRC=$$shell_path($$PRO_PATH/webui-src/make-src)
+	} else {
+		# Qt 4
+		PRO_PATH=$$replace(_PRO_FILE_PWD_, /, \\)
+		MAKE_SRC=$$PRO_PATH\\webui-src\\make-src
+	}
 
+	create_webfiles.commands = $$MAKE_SRC\\build.bat $$PRO_PATH
+	QMAKE_EXTRA_TARGETS += create_webfiles
+	PRE_TARGETDEPS += create_webfiles
 
-        # # create dummy files
-        # system(webui-src/make-src/init.bat .)
+	# create dummy files
+	system($$MAKE_SRC\\init.bat .)
 }
 
 libmicrohttpd{
