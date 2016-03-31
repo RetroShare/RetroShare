@@ -244,6 +244,11 @@ void p3ChatService::sendStatusString(const ChatId& id , const std::string& statu
     }
 }
 
+void p3ChatService::clearChatLobby(const ChatId& id)
+{
+	RsServer::notify()->notifyChatCleared(id);
+}
+
 void p3ChatService::sendChatItem(RsChatItem *item)
 {
 	if(DistantChatService::handleOutgoingItem(item))

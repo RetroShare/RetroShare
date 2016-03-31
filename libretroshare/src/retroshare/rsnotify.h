@@ -210,9 +210,10 @@ class NotifyClient
 		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
 		virtual void notifyListChange                 (int /* list */, int /* type */) {}
 		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
-        virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
-        virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
-        virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
+		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
+		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
+		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
 		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
 		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
 		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}

@@ -95,7 +95,13 @@ public:
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
 		 * e.g currently used to update user when a peer 'is typing' during a chat
 		 */
-	void  sendStatusString(const ChatId& peer_id,const std::string& status_str) ;
+	void  sendStatusString(const ChatId& id,const std::string& status_str) ;
+
+	/**
+	 * @brief clearChatLobby: Signal chat was cleared by GUI.
+	 * @param id: Chat id cleared.
+	 */
+	virtual void clearChatLobby(const ChatId& id);
 
 	/*!
 		 * send to all peers online

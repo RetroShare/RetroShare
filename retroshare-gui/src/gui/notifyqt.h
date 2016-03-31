@@ -42,8 +42,9 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-        virtual void notifyChatMessage(const ChatMessage&        /* msg */);
-        virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
+		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
@@ -113,7 +114,8 @@ class NotifyQt: public QObject, public NotifyClient
 #endif
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-        void chatStatusChanged(const ChatId&,const QString&) const ;
+		void chatStatusChanged(const ChatId&,const QString&) const ;
+		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
