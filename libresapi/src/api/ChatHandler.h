@@ -25,6 +25,7 @@ public:
     // from NotifyClient
     // note: this may get called from the own and from foreign threads
     virtual void notifyChatMessage(const ChatMessage& msg);
+    virtual void notifyChatCleared(const ChatId& chat_id);
 
     // typing label for peer, broadcast and distant chat
     virtual void notifyChatStatus     (const ChatId&      /* chat_id  */, const std::string& /* status_string */);
