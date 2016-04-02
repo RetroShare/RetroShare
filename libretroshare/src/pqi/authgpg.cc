@@ -308,6 +308,11 @@ bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, un
 	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,withfingerprint) ;
 }
 
+bool AuthGPG::parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id)
+{
+    return PGPHandler::parseSignature((unsigned char*)sig,siglen,issuer_id) ;
+}
+
 bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id) 
 {
 	return PGPHandler::exportGPGKeyPair(fname,exported_id) ;

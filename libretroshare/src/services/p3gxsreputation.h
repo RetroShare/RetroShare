@@ -76,6 +76,8 @@ public:
 
     	float mFriendAverage ;
 	float mReputation;
+        
+        RsPgpId mOwnerNode;
     
     	uint32_t mIdentityFlags;
 };
@@ -97,6 +99,9 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
 		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
 		virtual bool isIdentityBanned(const RsGxsId& id) ;
+        
+        	virtual void setNodeAutoBanThreshold(uint32_t n) ;
+        	virtual uint32_t nodeAutoBanThreshold() ;
                 
 		/***** overloaded from p3Service *****/
 		virtual int   tick();
@@ -111,8 +116,8 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
 		virtual void saveDone();
 		virtual bool loadList(std::list<RsItem*>& load) ;
-
-	private:
+        
+private:
 
 		bool 	processIncoming();
 
@@ -120,6 +125,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		bool RecvReputations(RsGxsReputationUpdateItem *item);
 		bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
         	void updateActiveFriends() ;
+		void updateBannedNodesList();
         
         	// internal update of data. Takes care of cleaning empty boxes.
         	void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
@@ -138,6 +144,7 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		time_t mLastActiveFriendsUpdate;
 		time_t mRequestTime;
 		time_t mStoreTime;
+            	time_t mLastBannedNodesUpdate ;
 		bool   mReputationsUpdated;
         	uint32_t mAverageActiveFriends ;
 
@@ -149,7 +156,11 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 		std::multimap<time_t, RsGxsId> mUpdated;
 
 		// set of Reputations to send to p3IdService.
-        std::set<RsGxsId> mUpdatedReputations;
+		std::set<RsGxsId> mUpdatedReputations;
+        
+        	// PGP Ids auto-banned. This is updated regularly.
+        	std::set<RsPgpId> mBannedPgpIds ; 
+            	uint32_t mPgpAutoBanThreshold ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

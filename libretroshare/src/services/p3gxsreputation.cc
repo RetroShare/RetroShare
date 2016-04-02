@@ -30,6 +30,7 @@
 
 #include "services/p3gxsreputation.h"
 #include "serialiser/rsgxsreputationitems.h"
+#include "serialiser/rsconfigitems.h"
 
 #include <sys/time.h>
 
@@ -38,6 +39,7 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
+#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -134,7 +136,9 @@ static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
-
+static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
+static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
+static const uint32_t BANNED_NODES_UPDATE_DELAY           = 613 ;     // update approx every 10 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
@@ -142,11 +146,13 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 {
     addSerialType(new RsGxsReputationSerialiser());
 
+    mPgpAutoBanThreshold = PGP_AUTO_BAN_THRESHOLD_DEFAULT ;
     mRequestTime = 0;
     mStoreTime = 0;
     mReputationsUpdated = false;
     mLastActiveFriendsUpdate = 0 ;
     mAverageActiveFriends = 0 ;
+    mLastBannedNodesUpdate = 0 ;
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -181,14 +187,21 @@ int	p3GxsReputation::tick()
 	}
 
     	static time_t last_identity_flags_update = 0 ;
+    	static time_t last_banned_nodes_update = 0 ;
         
         // no more than once per 5 second chunk.
         
-        if(now > 100+last_identity_flags_update)
+        if(now > IDENTITY_FLAGS_UPDATE_DELAY+last_identity_flags_update)
         {
             last_identity_flags_update = now ;
             
             updateIdentityFlags() ;
+        }
+        if(now > BANNED_NODES_UPDATE_DELAY+mLastBannedNodesUpdate)	// 613 is not a multiple of 100, to avoid piling up work
+        {
+            mLastBannedNodesUpdate = now ;
+            
+            updateBannedNodesList();
         }
         
 #ifdef DEBUG_REPUTATION
@@ -203,9 +216,63 @@ int	p3GxsReputation::tick()
 	return 0;
 }
 
+void p3GxsReputation::setNodeAutoBanThreshold(uint32_t n) 
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    if(n != mPgpAutoBanThreshold)
+    {
+	    mLastBannedNodesUpdate = 0 ;
+	    mPgpAutoBanThreshold = n ;
+            IndicateConfigChanged() ;
+    }
+}
+uint32_t p3GxsReputation::nodeAutoBanThreshold() 
+{
+    return mPgpAutoBanThreshold ;
+}
+
 int	p3GxsReputation::status()
 {
 	return 1;
+}
+class ZeroInitCnt
+{
+	public:
+		ZeroInitCnt(): cnt(0) {}
+		uint32_t cnt ;
+        
+        	operator uint32_t& () { return cnt ; }
+        	operator uint32_t() const { return cnt ; }
+};
+
+void p3GxsReputation::updateBannedNodesList()
+{
+#ifdef DEBUG_REPUTATION
+	std::cerr << "Updating PGP ban list based on signed GxsIds to ban" << std::endl;
+#endif
+	std::map<RsGxsId, Reputation> tmpreps ;
+
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	tmpreps = mReputations ;
+
+	std::map<RsPgpId,ZeroInitCnt> pgp_ids_to_ban ;
+
+	for( std::map<RsGxsId, Reputation>::iterator rit = tmpreps.begin();rit!=tmpreps.end();++rit)
+		if((rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && rit->second.mOwnOpinion == p3GxsReputation::OPINION_NEGATIVE)
+			++pgp_ids_to_ban[rit->second.mOwnerNode] ;
+
+	mBannedPgpIds.clear() ;
+
+	if(mPgpAutoBanThreshold > 0)
+		for(std::map<RsPgpId,ZeroInitCnt>::const_iterator it(pgp_ids_to_ban.begin());it!=pgp_ids_to_ban.end();++it)
+		{
+#ifdef DEBUG_REPUTATION
+			std::cerr << "PGP Id: " << it->first << ". Ban count=" << it->second << " - " << (( it->second >= mPgpAutoBanThreshold)?"Banned!":"OK" ) << std::endl;
+#endif
+			if(it->second >= mPgpAutoBanThreshold)
+				mBannedPgpIds.insert(it->first) ;
+		}
 }
 
 void p3GxsReputation::updateIdentityFlags()
@@ -248,7 +315,11 @@ void p3GxsReputation::updateIdentityFlags()
 	    }
 	    it->second.mIdentityFlags = 0 ;
 
-	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) 
+	    {
+		    it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+		    it->second.mOwnerNode = details.mPgpId ;
+	    }
 	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
 
 #ifdef DEBUG_REPUTATION
@@ -614,6 +685,13 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     info.mOverallReputationScore = rep.mReputation ;
     info.mFriendAverage = rep.mFriendAverage ;
 
+    if( (rep.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && (mBannedPgpIds.find(rep.mOwnerNode) != mBannedPgpIds.end()))
+    {
+	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+        std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << rep.mOwnerNode << " is banned." << std::endl;
+        return true;
+    }
+                          
     if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
 	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
     else
@@ -693,6 +771,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	mUpdated.insert(std::make_pair(now, gxsid));
 	mUpdatedReputations.insert(gxsid);
 	mReputationsUpdated = true;	
+	mLastBannedNodesUpdate = 0 ;	// for update of banned nodes
     
 	// Switched to periodic save due to scale of data.
 	IndicateConfigChanged();		
@@ -709,6 +788,7 @@ RsSerialiser *p3GxsReputation::setupSerialiser()
 {
         RsSerialiser *rss = new RsSerialiser ;
 	rss->addSerialType(new RsGxsReputationSerialiser());
+	rss->addSerialType(new RsGeneralConfigSerialiser());
         return rss ;
 }
 
@@ -757,6 +837,15 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		savelist.push_back(item);
 		count++;
 	}
+    
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "AUTO_BAN_NODES_THRESHOLD" ;
+	rs_sprintf(kv.value, "%d", mPgpAutoBanThreshold);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	savelist.push_back(vitem) ;
+
 	return true;
 }
 
@@ -770,35 +859,52 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 #ifdef DEBUG_REPUTATION
     std::cerr << "p3GxsReputation::saveList()" << std::endl;
 #endif
-	std::list<RsItem *>::iterator it;
-	std::set<RsPeerId> peerSet;
+    std::list<RsItem *>::iterator it;
+    std::set<RsPeerId> peerSet;
 
-	for(it = loadList.begin(); it != loadList.end(); ++it)
-	{
-		RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
+    for(it = loadList.begin(); it != loadList.end(); ++it)
+    {
+	    RsGxsReputationConfigItem *item = dynamic_cast<RsGxsReputationConfigItem *>(*it);
 
-		// Configurations are loaded first. (to establish peerSet).
-		if (item)
-		{
-			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-			RsPeerId peerId(item->mPeerId);
-			ReputationConfig &config = mConfig[peerId];
-			config.mPeerId = peerId;
-			config.mLatestUpdate = item->mLatestUpdate;
-			config.mLastQuery = 0;
+	    // Configurations are loaded first. (to establish peerSet).
+	    if (item)
+	    {
+		    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+		    RsPeerId peerId(item->mPeerId);
+		    ReputationConfig &config = mConfig[peerId];
+		    config.mPeerId = peerId;
+		    config.mLatestUpdate = item->mLatestUpdate;
+		    config.mLastQuery = 0;
 
-			peerSet.insert(peerId);
-		}
+		    peerSet.insert(peerId);
+	    }
 
-		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
-		if (set)
-			loadReputationSet(set, peerSet);
+	    RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
+	    if (set)
+		    loadReputationSet(set, peerSet);
 
-		delete (*it);
-	}
+	    RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
+	    if(vitem)
+		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+		    {
+			    if(kit->key == "AUTO_BAN_NODES_THRESHOLD")
+			    {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+					    mPgpAutoBanThreshold = val ;
+					    std::cerr << "Setting AutoBanNode threshold to " << val << std::endl ;
+					    mLastBannedNodesUpdate = 0 ;	// force update
+				    }
+			    };
+		    }
+
+	    delete (*it);
+    }
 
     loadList.clear() ;
-	return true;
+    return true;
 }
 
 bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<RsPeerId> &peerSet)

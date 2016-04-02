@@ -901,12 +901,13 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			tooltip += tr("Node Id  :")+" " + QString::fromStdString(data.mPgpId.toStdString()) ;
 			item->setToolTip(RSID_COL_KEYID,tooltip) ;
 		}
-		else
+		else 
 		{
-			item->setText(RSID_COL_IDTYPE, tr("Unknown PGP key"));
-			item->setToolTip(RSID_COL_IDTYPE,tr("Unknown key ID")) ;
-			item->setToolTip(RSID_COL_KEYID,tr("Unknown key ID")) ;
+            		QString txt =  tr("[Unknown node]");
+			item->setText(RSID_COL_IDTYPE, txt);
+			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
 
+			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
 		}
 	}
 	else
@@ -1081,7 +1082,10 @@ void IdDialog::insertIdDetails(uint32_t token)
     ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
-    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    if(data.mPgpKnown)
+	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+    else
+	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
 
     time_t now = time(NULL) ;
     ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
@@ -1109,29 +1113,32 @@ void IdDialog::insertIdDetails(uint32_t token)
 	else
 	{
 		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-		{
-			ui->lineEdit_GpgName->setText(tr("Unknown real name"));
-		}
+			ui->lineEdit_GpgName->setText(tr("[Unknown node]"));
 		else
-		{
 			ui->lineEdit_GpgName->setText(tr("Anonymous Id"));
-		}
 	}
 
 	if(data.mPgpId.isNull())
 	{
 		ui->lineEdit_GpgId->hide() ;
-		ui->lineEdit_GpgName->hide() ;
 		ui->PgpId_LB->hide() ;
-		ui->PgpName_LB->hide() ;
 	}
 	else
 	{
 		ui->lineEdit_GpgId->show() ;
-		ui->lineEdit_GpgName->show() ;
 		ui->PgpId_LB->show() ;
-		ui->PgpName_LB->show() ;
 	}
+    
+    if(data.mPgpKnown)
+    {
+		ui->lineEdit_GpgName->show() ;
+		ui->PgpName_LB->show() ;
+    }
+    else
+    {
+		ui->lineEdit_GpgName->hide() ;
+		ui->PgpName_LB->hide() ;
+    }
 
     bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
     bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);

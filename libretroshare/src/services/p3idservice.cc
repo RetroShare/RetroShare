@@ -59,6 +59,7 @@
 #define GXSID_MAX_CACHE_SIZE 5000
 
 static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
+static const uint32_t MAX_KEEP_BANNED_KEYS      = 30*86400 ; // remove banned keys after 5 days
 static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
 
 RsIdentity *rsIdentity = NULL;
@@ -312,21 +313,25 @@ void p3IdService::cleanUnusedKeys()
 
     // we need to stash all ids to delete into an off-mutex structure since deleteIdentity() will trigger the lock
     {
-        RS_STACK_MUTEX(mIdMtx) ;
+	    RS_STACK_MUTEX(mIdMtx) ;
 
-        if(!mOwnIdsLoaded)
-        {
-            std::cerr << "(EE) Own ids not loaded. Cannot clean unused keys." << std::endl;
-            return ;
-        }
+	    if(!mOwnIdsLoaded)
+	    {
+		    std::cerr << "(EE) Own ids not loaded. Cannot clean unused keys." << std::endl;
+		    return ;
+	    }
 
-    // grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
-        time_t now = time(NULL) ;
-    int n=0 ;
+	    // grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
+	    time_t now = time(NULL) ;
+	    int n=0 ;
 
-        for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end() && n < 10;++it)
-            if(it->second + MAX_KEEP_UNUSED_KEYS < now && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
-                ids_to_delete.push_back(it->first),++n ;
+	    for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end() && n < 10;++it)
+	    {
+		    if(it->second + MAX_KEEP_UNUSED_KEYS < now && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
+			    ids_to_delete.push_back(it->first),++n ;
+		    else if(it->second + MAX_KEEP_BANNED_KEYS < now && rsReputations->isIdentityBanned(it->first)) 
+			    ids_to_delete.push_back(it->first),++n ;
+	    }
     }
 
     for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
@@ -1023,7 +1028,7 @@ bool p3IdService::opinion_handlerequest(uint32_t token)
 
 	// update IdScore too.
 	bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
-	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.idKnown);
+	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
 	ssdata.score.rep.update();
 
 	/* save string */
@@ -1089,7 +1094,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 				SSGxsIdGroup ssdata;
 				if (ssdata.load(group.mMeta.mServiceString))
 				{
-					group.mPgpKnown = ssdata.pgp.idKnown;
+					group.mPgpKnown = ssdata.pgp.validatedSignature;
 					group.mPgpId    = ssdata.pgp.pgpId;
 					group.mReputation = ssdata.score.rep;
 #ifdef DEBUG_IDS
@@ -1282,7 +1287,16 @@ bool SSGxsIdPgp::load(const std::string &input)
 	uint32_t attempts = 0;
 	if (1 == sscanf(input.c_str(), "K:1 I:%[^)]", pgpline))
 	{
-		idKnown = true;
+		validatedSignature = true;
+		std::string str_line = pgpline;
+		pgpId = RsPgpId(str_line);
+		return true;
+	}
+	else if (3 == sscanf(input.c_str(), "K:0 T:%d C:%d I:%[^)]", &timestamp, &attempts,pgpline))
+	{
+		lastCheckTs = timestamp;
+		checkAttempts = attempts;
+		validatedSignature = false;
 		std::string str_line = pgpline;
 		pgpId = RsPgpId(str_line);
 		return true;
@@ -1291,21 +1305,21 @@ bool SSGxsIdPgp::load(const std::string &input)
 	{
 		lastCheckTs = timestamp;
 		checkAttempts = attempts;
-		idKnown = false;
+		validatedSignature = false;
 		return true;
 	}
 	else if (1 == sscanf(input.c_str(), "K:0 T:%d", &timestamp))
 	{
 		lastCheckTs = timestamp;
 		checkAttempts = 0;
-		idKnown = false;
+		validatedSignature = false;
 		return true;
 	}
 	else 
 	{
 		lastCheckTs = 0;
 		checkAttempts = 0;
-		idKnown = false;
+		validatedSignature = false;
 		return false;
 	}
 }
@@ -1313,7 +1327,7 @@ bool SSGxsIdPgp::load(const std::string &input)
 std::string SSGxsIdPgp::save() const
 {
 	std::string output;
-	if (idKnown)
+	if (validatedSignature)
 	{
 		output += "K:1 I:";
 		output += pgpId.toStdString();
@@ -1321,6 +1335,9 @@ std::string SSGxsIdPgp::save() const
 	else
 	{
 		rs_sprintf(output, "K:0 T:%d C:%d", lastCheckTs, checkAttempts);
+        
+        	if(!pgpId.isNull())
+			output += " I:"+pgpId.toStdString();
 	}
 	return output;
 }
@@ -1663,9 +1680,9 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 	{
 		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
-	    		if(ssdata.pgp.idKnown) details.mFlags |= RS_IDENTITY_FLAGS_PGP_KNOWN ;
+	    		if(ssdata.pgp.validatedSignature) details.mFlags |= RS_IDENTITY_FLAGS_PGP_KNOWN ;
                         
-			if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
+			if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 				details.mPgpId = ssdata.pgp.pgpId;
 			else
 				details.mPgpId.clear();
@@ -2800,7 +2817,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 			SSGxsIdGroup ssdata;
 			if (ssdata.load(vit->mMeta.mServiceString))
 			{
-				if (ssdata.pgp.idKnown)
+				if (ssdata.pgp.validatedSignature)
 				{
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::pgphash_request() discarding Already Known";
@@ -2919,7 +2936,7 @@ bool p3IdService::pgphash_process()
 #endif // DEBUG_IDS
 
 		/* update */
-		ssdata.pgp.idKnown = true;
+		ssdata.pgp.validatedSignature = true;
 		ssdata.pgp.pgpId = pgpId;
 
 	}
@@ -2939,12 +2956,13 @@ bool p3IdService::pgphash_process()
 
 		ssdata.pgp.lastCheckTs = time(NULL);
 		ssdata.pgp.checkAttempts++;
+		ssdata.pgp.pgpId = pgpId;	// read from the signature, but not verified
 	}
 
     if(!error)
     {
         // update IdScore too.
-        ssdata.score.rep.updateIdScore(true, ssdata.pgp.idKnown);
+        ssdata.score.rep.updateIdScore(true, ssdata.pgp.validatedSignature);
         ssdata.score.rep.update();
 
         /* set new Group ServiceString */
@@ -2981,6 +2999,24 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 
 	/* iterate through and check hash */
 	Sha1CheckSum ans = grp.mPgpIdHash;
+    
+#ifdef DEBUG_IDS
+    std::string esign ;
+    Radix64::encode((char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),esign) ;
+    std::cerr << "Checking group signature " << esign << std::endl;
+#endif
+    RsPgpId issuer_id ;
+
+    if(mPgpUtils->parseSignature((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),issuer_id))
+    {
+	    std::cerr << "Issuer found: " << issuer_id << std::endl;
+	    pgpId = issuer_id ;
+    }
+    else
+    {
+	    std::cerr << "Signature parsing failed!!" << std::endl;
+	    pgpId.clear() ;
+    }
 
 #ifdef DEBUG_IDS
 	std::cerr << "\tExpected Answer: " << ans.toStdString();
@@ -2995,6 +3031,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 		Sha1CheckSum hash;
         calcPGPHash(RsGxsId(grp.mMeta.mGroupId), mit->second, hash);
 
+               
 		if (ans == hash)
 		{
 #ifdef DEBUG_IDS
@@ -3342,7 +3379,7 @@ bool p3IdService::recogn_process()
 
 	// update IdScore too.
 	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
-	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.idKnown);
+	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.validatedSignature);
 	ssdata.score.rep.update();
 
 	/* set new Group ServiceString */

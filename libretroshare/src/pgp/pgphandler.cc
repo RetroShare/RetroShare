@@ -1692,6 +1692,24 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 	return to_add.size() > 0 ;
 }
 
+bool PGPHandler::parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) 
+{
+    uint64_t issuer ;
+    
+    if(!PGPKeyManagement::parseSignature(sign,signlen,issuer))
+        return false ;
+    
+    unsigned char bytes[8] ;
+    for(int i=0;i<8;++i)
+    {
+        bytes[7-i] = issuer & 0xff ;
+        issuer >>= 8 ;
+    }
+    issuer_id = RsPgpId(bytes) ;
+    
+    return true ;     
+}
+
 bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
 {
 	if(trustlvl < 0 || trustlvl >= 6 || trustlvl == 1)

@@ -100,12 +100,12 @@ class SSGxsIdPgp: public SSBit
 {
 	public:
 	SSGxsIdPgp()
-	:idKnown(false), lastCheckTs(0), checkAttempts(0) { return; }
+	:validatedSignature(false), lastCheckTs(0), checkAttempts(0) { return; }
 
 virtual	bool load(const std::string &input);
 virtual	std::string save() const;
 
-	bool idKnown;
+	bool validatedSignature;
 	time_t lastCheckTs;
 	uint32_t checkAttempts;
 	RsPgpId pgpId;
