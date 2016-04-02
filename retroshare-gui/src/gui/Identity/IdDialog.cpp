@@ -905,9 +905,17 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		{
             		QString txt =  tr("[Unknown node]");
 			item->setText(RSID_COL_IDTYPE, txt);
+            
+            		if(!data.mPgpId.isNull())
+                    {
 			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
-
 			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
+                    }
+                    else
+                    {
+			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature")) ;
+			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature")) ;
+                    }
 		}
 	}
 	else
