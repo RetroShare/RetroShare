@@ -894,7 +894,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
-			item->setToolTip(RSID_COL_IDTYPE,QString::fromStdString(data.mPgpId.toStdString())) ;
+			item->setToolTip(RSID_COL_IDTYPE,"Verified signature from node "+QString::fromStdString(data.mPgpId.toStdString())) ;
 			
 			
 			tooltip += tr("Node name:")+" " + QString::fromUtf8(details.name.c_str()) + "\n";
@@ -908,13 +908,13 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
             
             		if(!data.mPgpId.isNull())
                     {
-			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
-			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from ")+QString::fromStdString(data.mPgpId.toStdString())) ;
+			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
+			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature from node ")+QString::fromStdString(data.mPgpId.toStdString())) ;
                     }
                     else
                     {
-			item->setToolTip(RSID_COL_IDTYPE,tr("Unverified signature")) ;
-			item->setToolTip(RSID_COL_KEYID,tr("Unverified signature")) ;
+			item->setToolTip(RSID_COL_IDTYPE,tr("Unchecked signature")) ;
+			item->setToolTip(RSID_COL_KEYID,tr("Unchecked signature")) ;
                     }
 		}
 	}
