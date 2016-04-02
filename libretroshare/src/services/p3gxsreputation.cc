@@ -258,7 +258,7 @@ void p3GxsReputation::updateBannedNodesList()
 	std::map<RsPgpId,ZeroInitCnt> pgp_ids_to_ban ;
 
 	for( std::map<RsGxsId, Reputation>::iterator rit = tmpreps.begin();rit!=tmpreps.end();++rit)
-		if((rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && rit->second.mOwnOpinion == p3GxsReputation::OPINION_NEGATIVE)
+		if((rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && !rit->second.mOwnerNode.isNull() && rit->second.mOwnOpinion == p3GxsReputation::OPINION_NEGATIVE)
 			++pgp_ids_to_ban[rit->second.mOwnerNode] ;
 
 	mBannedPgpIds.clear() ;
