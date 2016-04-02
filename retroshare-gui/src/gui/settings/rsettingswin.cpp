@@ -36,6 +36,7 @@
 #include "RelayPage.h"
 #include "ChatPage.h"
 #include "ChannelPage.h"
+#include "PeoplePage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
 #include "PostedPage.h"
@@ -142,6 +143,7 @@ RSettingsWin::initStackedWidget()
     addPage(new PluginsPage() );
     addPage(new NotifyPage());
     addPage(new CryptoPage());
+    addPage(new PeoplePage());
     addPage(new ChatPage());
     addPage(new MessagePage());
     addPage(new ChannelPage());

@@ -39,7 +39,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -187,7 +186,6 @@ int	p3GxsReputation::tick()
 	}
 
     	static time_t last_identity_flags_update = 0 ;
-    	static time_t last_banned_nodes_update = 0 ;
         
         // no more than once per 5 second chunk.
         
@@ -201,6 +199,7 @@ int	p3GxsReputation::tick()
         {
             mLastBannedNodesUpdate = now ;
             
+            updateIdentityFlags() ;	// needed before updateBannedNodesList!
             updateBannedNodesList();
         }
         
@@ -248,9 +247,9 @@ class ZeroInitCnt
 
 void p3GxsReputation::updateBannedNodesList()
 {
-#ifdef DEBUG_REPUTATION
+//#ifdef DEBUG_REPUTATION
 	std::cerr << "Updating PGP ban list based on signed GxsIds to ban" << std::endl;
-#endif
+//#endif
 	std::map<RsGxsId, Reputation> tmpreps ;
 
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
@@ -267,9 +266,9 @@ void p3GxsReputation::updateBannedNodesList()
 	if(mPgpAutoBanThreshold > 0)
 		for(std::map<RsPgpId,ZeroInitCnt>::const_iterator it(pgp_ids_to_ban.begin());it!=pgp_ids_to_ban.end();++it)
 		{
-#ifdef DEBUG_REPUTATION
+//#ifdef DEBUG_REPUTATION
 			std::cerr << "PGP Id: " << it->first << ". Ban count=" << it->second << " - " << (( it->second >= mPgpAutoBanThreshold)?"Banned!":"OK" ) << std::endl;
-#endif
+//#endif
 			if(it->second >= mPgpAutoBanThreshold)
 				mBannedPgpIds.insert(it->first) ;
 		}
@@ -688,7 +687,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     if( (rep.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && (mBannedPgpIds.find(rep.mOwnerNode) != mBannedPgpIds.end()))
     {
 	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+#ifdef DEBUG_REPUTATION
         std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << rep.mOwnerNode << " is banned." << std::endl;
+#endif
         return true;
     }
                           
@@ -1019,9 +1020,9 @@ void p3GxsReputation::sendReputationRequests()
 int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 {
 #ifdef DEBUG_REPUTATION
+    time_t now = time(NULL) ;
 	std::cerr << "  p3GxsReputation::sendReputationRequest(" << peerid << ") " ;
 #endif
-    time_t now = time(NULL) ;
 
 	/* */
 	RsGxsReputationRequestItem *requestItem =  new RsGxsReputationRequestItem();

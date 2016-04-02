@@ -51,6 +51,8 @@ public:
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
 	virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) =0 ;
+	virtual void setNodeAutoBanThreshold(uint32_t n) =0;
+	virtual uint32_t nodeAutoBanThreshold() =0;
         
         // This one is a proxy designed to allow fast checking of a GXS id.
         // it basically returns true if assessment is not ASSESSMENT_OK
