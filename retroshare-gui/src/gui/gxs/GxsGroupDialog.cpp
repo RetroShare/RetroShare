@@ -468,6 +468,9 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     ui.distributionValueLabel->setText(distribution_string) ;
 
 	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
+    
+    	if(!mGrpMeta.mAuthorId.isNull())
+		ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
 
 	updateCircleOptions();
 }
@@ -552,7 +555,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << " Invalid GroupName";
 		std::cerr << std::endl;
 		return false;
-	}//if(name.isEmpty())
+	}
 
 	// Fill in the MetaData as best we can.
 	meta.mGroupName = std::string(name.toUtf8());
@@ -565,7 +568,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << " Invalid Circles";
 		std::cerr << std::endl;
 		return false;
-	}//if (!setCircleParameters(meta))
+	}
 
 	std::cerr << "void GxsGroupDialog::prepareGroupMetaData() meta.mCircleType: ";
 	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
