@@ -29,6 +29,7 @@
 #include <time.h>
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "util/rsprint.h"
 
 #include "pqi/pqistreamer.h"
 #include "rsserver/p3face.h"
@@ -837,6 +838,12 @@ continue_packet:
 #ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
 #endif
+            		std::cerr << "Incoming Packet  could not be deserialised:" << std::endl;
+            		std::cerr << "  Incoming peer id: " << PeerId() << std::endl;
+                    	if(pktlen >= 8)
+				std::cerr << "  Packet header   : " << RsUtil::BinToHex((unsigned char*)block,8) << std::endl;
+                    	if(pktlen >  8)
+				std::cerr << "  Packet data     : " << RsUtil::BinToHex((unsigned char*)block+8,std::min(50u,pktlen-8)) << ((pktlen>58)?"...":"") << std::endl;
 		}
 
 		mReading_state = reading_state_initial ;	// restart at state 1.
