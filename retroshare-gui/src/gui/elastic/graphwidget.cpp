@@ -259,7 +259,7 @@ void GraphWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-static void convolveWithGaussian(double *forceMap,int S,int /*s*/)
+static void convolveWithGaussian(double *forceMap,unsigned int S,int /*s*/)
 {
 	static double *bf = NULL ;
 
@@ -267,8 +267,8 @@ static void convolveWithGaussian(double *forceMap,int S,int /*s*/)
 	{
 		bf = new double[S*S*2] ;
 
-		for(int i=0;i<S;++i)
-			for(int j=0;j<S;++j)
+        for(unsigned int i=0;i<S;++i)
+            for(unsigned int j=0;j<S;++j)
 			{
 				int x = (i<S/2)?i:(S-i) ;
 				int y = (j<S/2)?j:(S-j) ;
@@ -284,8 +284,8 @@ static void convolveWithGaussian(double *forceMap,int S,int /*s*/)
 	unsigned long nn[2] = {S,S};
 	fourn(&forceMap[-1],&nn[-1],2,1) ;
 
-	for(int i=0;i<S;++i)
-		for(int j=0;j<S;++j)
+    for(unsigned int i=0;i<S;++i)
+        for(unsigned int j=0;j<S;++j)
 		{
 			float a = forceMap[2*(i+S*j)]*bf[2*(i+S*j)] - forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)+1] ;
 			float b = forceMap[2*(i+S*j)]*bf[2*(i+S*j)+1] + forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)] ;
@@ -296,7 +296,7 @@ static void convolveWithGaussian(double *forceMap,int S,int /*s*/)
 
 	fourn(&forceMap[-1],&nn[-1],2,-1) ;
 
-	for(int i=0;i<S*S*2;++i)
+    for(unsigned int i=0;i<S*S*2;++i)
 		forceMap[i] /= S*S;
 }
 

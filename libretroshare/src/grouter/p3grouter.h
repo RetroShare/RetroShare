@@ -225,20 +225,13 @@ private:
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
     static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
-#ifdef __APPLE__
-public:
-#endif
-    class nullstream: public std::ostream {};
 
     std::ostream& grouter_debug() const
     {
-        static nullstream null ;
-
+        static std::ostream null(0);
         return _debug_enabled?(std::cerr):null;
     }
-#ifdef __APPLE__
-private:
-#endif
+
     void routePendingObjects() ;
     void handleTunnels() ;
     void autoWash() ;
@@ -364,5 +357,3 @@ private:
 
     uint64_t _random_salt ;
 };
-
-template<typename T> p3GRouter::nullstream& operator<<(p3GRouter::nullstream& ns,const T&) { return ns ; }

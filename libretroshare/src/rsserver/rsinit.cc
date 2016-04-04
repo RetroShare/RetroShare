@@ -366,11 +366,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
-#ifdef __APPLE__
  				>> help('h',"help","Display this Help") ;
-#else
-				>> help() ;
-#endif
 
 			as.defaultErrorHandling(true) ;
 

@@ -362,21 +362,21 @@ Rshare::showUsageMessageBox()
   out << "<table>";
   //out << trow(tcol("-"ARG_HELP) + 
   //            tcol(tr("Displays this usage message and exits.")));
-  out << trow(tcol("-"ARG_RESET) +
+  out << trow(tcol("-" ARG_RESET) +
               tcol(tr("Resets ALL stored RetroShare settings.")));
-  out << trow(tcol("-"ARG_DATADIR" &lt;dir&gt;") +
+  out << trow(tcol("-" ARG_DATADIR" &lt;dir&gt;") +
               tcol(tr("Sets the directory RetroShare uses for data files.")));
-  out << trow(tcol("-"ARG_LOGFILE" &lt;file&gt;") +
+  out << trow(tcol("-" ARG_LOGFILE" &lt;file&gt;") +
               tcol(tr("Sets the name and location of RetroShare's logfile.")));
-  out << trow(tcol("-"ARG_LOGLEVEL" &lt;level&gt;") +
+  out << trow(tcol("-" ARG_LOGLEVEL" &lt;level&gt;") +
               tcol(tr("Sets the verbosity of RetroShare's logging.") +
                    "<br>[" + Log::logLevels().join("|") +"]"));
-  out << trow(tcol("-"ARG_GUISTYLE" &lt;style&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLE" &lt;style&gt;") +
               tcol(tr("Sets RetroShare's interface style.") +
                    "<br>[" + QStyleFactory::keys().join("|") + "]"));
-  out << trow(tcol("-"ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
               tcol(tr("Sets RetroShare's interface stylesheets.")));                   
-  out << trow(tcol("-"ARG_LANGUAGE" &lt;language&gt;") + 
+  out << trow(tcol("-" ARG_LANGUAGE" &lt;language&gt;") +
               tcol(tr("Sets RetroShare's language.") +
                    "<br>[" + LanguageSupport::languageCodes().join("|") + "]"));
   out << "</table>";
