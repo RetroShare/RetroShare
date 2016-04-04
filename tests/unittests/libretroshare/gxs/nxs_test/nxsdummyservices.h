@@ -155,6 +155,7 @@ namespace rs_nxs_test
 		bool getGPGAllList(std::list<RsPgpId> &ids) ;
 		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 
+		bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;
 		bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
 		bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
 

@@ -122,28 +122,42 @@ const RsPgpId& rs_nxs_test::RsDummyPgpUtils::getPGPOwnId() {
 	return mOwnId;
 }
 
-RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& sslid) {
+RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& /*sslid*/) {
 	return RsPgpId().random();
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& ids) {
+bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& /*ids*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::getKeyFingerprint(const RsPgpId& id,
-		PGPFingerprintType& fp) const {
+bool rs_nxs_test::RsDummyPgpUtils::getKeyFingerprint(const RsPgpId& /*id*/,
+                                                     PGPFingerprintType& /*fp*/
+                                                     ) const {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* data, uint32_t len,
-		unsigned char* sign, unsigned int signlen,
-		const PGPFingerprintType& withfingerprint) {
+bool rs_nxs_test::RsDummyPgpUtils::parseSignature(unsigned char* /*sign*/,
+                                                  unsigned int /*signlen*/,
+                                                  RsPgpId& /*issuer*/
+                                                  ) const {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* data,
-		const uint32_t len, unsigned char* sign, unsigned int* signlen,
-		int& signature_result) {
+bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* /*data*/,
+                                                 uint32_t /*len*/,
+                                                 unsigned char* /*sign*/,
+                                                 unsigned int /*signlen*/,
+                                                 const PGPFingerprintType& /*withfingerprint*/
+                                                 ) {
+	return true;
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* /*data*/,
+                                                               const uint32_t /*len*/,
+                                                               unsigned char* /*sign*/,
+                                                               unsigned int* /*signlen*/,
+                                                               int& /*signature_result*/
+                                                               ) {
 	return true;
 }
 

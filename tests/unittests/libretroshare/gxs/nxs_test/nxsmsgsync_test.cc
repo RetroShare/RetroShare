@@ -12,7 +12,8 @@
 #include "gxs/rsdataservice.h"
 #include "nxsdummyservices.h"
 #include "../common/data_support.h"
-#include <auto_ptr.h>
+//#include <auto_ptr.h> //Already include in memory, a better way.
+#include <memory>
 
 using namespace rs_nxs_test;
 
