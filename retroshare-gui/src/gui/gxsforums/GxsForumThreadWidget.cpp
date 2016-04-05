@@ -799,6 +799,33 @@ void GxsForumThreadWidget::insertGroupData()
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
+    
+    QString distrib_string = tr("[unknown]");
+    switch(group.mMeta.mCircleType)
+    {
+    case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+	    break ;
+    case GXS_CIRCLE_TYPE_EXTERNAL: 
+    {
+	    RsGxsCircleDetails det ;
+        
+        	// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+        
+	    if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det)) 
+		    distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+	    else
+		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+    }
+	    break ;
+    case GXS_CIRCLE_TYPE_YOUREYESONLY: distrib_string = tr("Your eyes only");
+	    break ;
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+	    break ;
+    default:
+	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+    }
+            
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
        
        if(!anti_spam_features1.isNull())
