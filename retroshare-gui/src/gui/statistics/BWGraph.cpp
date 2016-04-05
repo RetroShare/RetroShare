@@ -63,7 +63,11 @@ void BWGraphSource::update()
     // now, convert data to current curve points.
 
     std::map<std::string,float> vals ;
-    convertTrafficClueToValues(thc.out_rstcl,vals) ;
+    
+    if(_current_direction == BWGraphSource::DIRECTION_UP)
+	    convertTrafficClueToValues(thc.out_rstcl,vals) ;
+    else
+	    convertTrafficClueToValues(thc.in_rstcl,vals) ;
 
     qint64 ms = getTime() ;
 
