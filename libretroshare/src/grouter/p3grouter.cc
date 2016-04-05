@@ -1141,24 +1141,30 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
 	    if(incoming_routes.find(tmp_peers[i]) != incoming_routes.end())
-		 {
+	    {
 #ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " which is an incoming route" << std::endl;
 #endif
-		 }
+	    }
+    	    else if(online_ids.find(tmp_peers[i]) == online_ids.end())
+            {
+#ifdef GROUTER_DEBUG
+		    std::cerr << "  removing " << tmp_peers[i] << " because it is offline now!" << std::endl;
+#endif
+            }
 	    else if(probas[i] < RS_GROUTER_PROBABILITY_THRESHOLD_BEST_PEERS_SELECT*max_probability)
-		 {
+	    {
 #ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " because probability is below best peers threshold" << std::endl;
 #endif
-		 }
+	    }
 	    else
-            {
+	    {
 		    tmp_peers[count] = tmp_peers[i] ;
 		    probas[count] = (max_probability==0.0)? (0.5+0.001*RSRandom::random_f32()) : probas[i] ;
-            		++count ;
-            }
-    
+		    ++count ;
+	    }
+
     tmp_peers.resize(count) ;
     probas.resize(count) ;
     
