@@ -968,10 +968,10 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     {
         RsGxsServerMsgUpdateItem *item = new RsGxsServerMsgUpdateItem(mServType) ;
         item->grpId = grpId ;
-        item->msgUpdateTS = 0 ;
+        item->msgUpdateTS = time(NULL) ;
     }
     else
-        it->second->msgUpdateTS = 0 ; // reset!
+        it->second->msgUpdateTS = time(NULL) ; // reset!
     
     // We also update mGrpServerUpdateItem so as to trigger a new grp list exchange with friends (friends will send their known ClientTS which
     // will be lower than our own grpUpdateTS, triggering our sending of the new subscribed grp list.
