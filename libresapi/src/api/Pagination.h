@@ -24,6 +24,7 @@ void handlePaginationRequest(Request& req, Response& resp, C& data)
         // set result type to list
         resp.mDataStream.getStreamToMember();
         resp.mDebug << "note: list is empty" << std::endl;
+        resp.setOk();
         return;
     }
 
