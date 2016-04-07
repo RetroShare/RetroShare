@@ -223,14 +223,14 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-//#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
-//#define NXS_NET_DEBUG_7 	1
+#define NXS_NET_DEBUG_7 	1
 
 #define GIXS_CUT_OFF 0
 //#define NXS_FRAG
@@ -266,7 +266,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("" )) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x218 ;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -747,9 +747,17 @@ void RsGxsNetService::syncWithPeers()
             msg->updateTS = updateTS;
 
             if(encrypt_to_this_circle_id.isNull()) 
+	    {
+#ifdef NXS_NET_DEBUG_7
+		    GXSNETDEBUG_PG(*sit,grpId) << "    Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself - in clear " << std::endl;
+#endif
 		    sendItem(msg);
+	    }
             else
             {
+#ifdef NXS_NET_DEBUG_7
+		    GXSNETDEBUG_PG(*sit,grpId) << "    Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself - encrypted for circle " <<  encrypt_to_this_circle_id << std::endl;
+#endif
                     RsNxsItem *encrypted_item = NULL ;
                     uint32_t status ;
                     
@@ -1600,6 +1608,9 @@ void RsGxsNetService::recvNxsItemQueue()
 
                 continue;
             }
+            
+            // Check whether the item is encrypted. If so, try to decrypt it, and replace ni with the decrypted item..
+            
             bool item_was_encrypted = false ;
 
             if(ni->PacketSubType() == RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
@@ -1609,10 +1620,9 @@ void RsGxsNetService::recvNxsItemQueue()
                 
                 if(decryptSingleNxsItem(dynamic_cast<RsNxsEncryptedDataItem*>(ni),decrypted_item))
                 {
-                    delete ni ;
-                    ni = decrypted_item ;
+                    item = ni = decrypted_item ;
                     item_was_encrypted = true ;
-#ifdef NXS_NET_DEBUG_1
+#ifdef NXS_NET_DEBUG_7
 		    GXSNETDEBUG_P_(item->PeerId()) << "    decrypted item "  << std::endl;
 #endif
                 }
@@ -3809,7 +3819,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
     if(private_keys.empty())
     {
 #ifdef NXS_NET_DEBUG_7
-	    GXSNETDEBUG_P_(peerId) << "  need to retrieve private keys..." << std::endl;
+	    GXSNETDEBUG_P_(encrypted_item->PeerId()) << "  need to retrieve private keys..." << std::endl;
 #endif
 
 	    std::list<RsGxsId> own_keys ;
@@ -3823,7 +3833,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
 		    {
 			    private_keys.push_back(private_key) ;
 #ifdef NXS_NET_DEBUG_7
-			    GXSNETDEBUG_P_(peerId)<< "    retrieved private key " << *it << std::endl;
+			    GXSNETDEBUG_P_(encrypted_item->PeerId())<< "    retrieved private key " << *it << std::endl;
 #endif
 		    }
 		    else
@@ -3837,7 +3847,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
     if(key_loading_failed)
     {
 #ifdef NXS_NET_DEBUG_7
-	    GXSNETDEBUG_P_(peerId) << "  Some keys not loaded.Returning false to retry later." << std::endl;
+	    GXSNETDEBUG_P_(encrypted_item->PeerId()) << "  Some keys not loaded.Returning false to retry later." << std::endl;
 #endif
 	    return false ;
     }
@@ -3848,16 +3858,17 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
     uint32_t decrypted_len =0;
 
 #ifdef NXS_NET_DEBUG_7
-    GXSNETDEBUG_P_(peerId)<< "    Trying to decrypt item..." ;
+    GXSNETDEBUG_P_(encrypted_item->PeerId())<< "    Trying to decrypt item..." ;
 #endif
 
     if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->encrypted_data.bin_data,encrypted_item->encrypted_data.bin_len,private_keys))
     {
 	    std::cerr << "Failed! Cannot decrypt this item." << std::endl;
 	    decrypted_mem = NULL ; // for safety
+	return false ;
     }
 #ifdef NXS_NET_DEBUG_7
-    GXSNETDEBUG_P_(peerId)<< "    Succeeded! deserialising..." << std::endl;
+    GXSNETDEBUG_P_(encrypted_item->PeerId())<< "    Succeeded! deserialising..." << std::endl;
 #endif
 
     // deserialise the item
