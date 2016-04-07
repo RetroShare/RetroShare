@@ -113,7 +113,7 @@ public:
 private:
     ChatHandler::LobbyParticipantsInfo mParticipantsInfo;
 protected:
-    virtual void gxsDoWork(Request &req, Response &resp)
+    virtual void gxsDoWork(Request &/*req*/, Response &resp)
     {
         resp.mDataStream.getStreamToMember();
         const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
@@ -145,6 +145,7 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
+    addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
     addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
@@ -590,6 +591,14 @@ void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
+    resp.setOk();
+}
+
+void ChatHandler::handleClearLobby(Request &req, Response &resp)
+{
+    ChatLobbyId id = 0;
+    req.mStream << makeKeyValueReference("id", id);
+    notifyChatCleared(ChatId(id));
     resp.setOk();
 }
 
