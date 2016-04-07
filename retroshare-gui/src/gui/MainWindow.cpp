@@ -203,6 +203,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
@@ -1095,6 +1096,12 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
+void MainWindow::receiveNewArgs(QStringList args)
+{
+	Rshare::parseArguments(args, false);
+	processLastArgs();
+}
+
 void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
 {
 	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
@@ -1431,6 +1438,33 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     QList<RetroShareLink> links;
     links.append(link);
     RetroShareLink::process(links);
+}
+
+void MainWindow::openRsCollection(const QString &filename)
+{
+	QFileInfo qinfo(filename);
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath());
+		}
+	}
+}
+
+void MainWindow::processLastArgs()
+{
+	while (!Rshare::links()->isEmpty()) {
+		std::cerr << "MainWindow::processLastArgs() : " << Rshare::links()->count() << std::endl;
+		/* Now use links from the command line, because no RetroShare was running */
+		RetroShareLink link(Rshare::links()->takeFirst());
+		if (link.valid()) {
+			retroshareLinkActivated(link.toUrl());
+		}
+	}
+	while (!Rshare::files()->isEmpty()) {
+		/* Now use files from the command line, because no RetroShare was running */
+		openRsCollection(Rshare::files()->takeFirst());
+	}
 }
 
 //void MainWindow::servicePermission()

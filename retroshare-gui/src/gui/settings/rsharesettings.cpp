@@ -741,31 +741,47 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 #endif
 }
 
-#if defined(Q_OS_WIN)
 static QString getAppPathForProtocol()
 {
+#if defined(Q_OS_WIN)
 	return "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
-}
+#elif defined(Q_OS_LINUX)
+	return QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + " %U";
 #endif
+}
 
 /** Returns true if retroshare:// is registered as protocol */
 bool RshareSettings::getRetroShareProtocol()
 {
 #if defined(Q_OS_WIN)
 	/* Check key */
-	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+	QSettings retroshare("HKEY_CURRENT_USER\\Software\\Classes\\retroshare", QSettings::NativeFormat);
 	if (retroshare.contains("Default")) {
-		/* Check profile */
-		if (retroshare.value("Profile").toString().toStdString() == rsPeers->getOwnId().toStdString()) {
+		/* URL Protocol */
+		if (retroshare.contains("URL Protocol")) {
 			/* Check app path */
-			QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+			QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 			if (command.value("Default").toString() == getAppPathForProtocol()) {
 				return true;
 			}
 		}
 	}
+#elif defined(Q_OS_LINUX)
+	QFile desktop("/usr/share/applications/retroshare06.desktop");
+	if (desktop.exists()) {
+		desktop.open(QIODevice::ReadOnly | QIODevice::Text);
+		QTextStream in(&desktop);
+		QStringList lines;
+		while(!in.atEnd()) {
+			lines << in.readLine();
+		}
+		desktop.close();
+		if (lines.contains("Exec=" + getAppPathForProtocol()))
+			if (lines.contains("MimeType=x-scheme-handler/retroshare"))
+				return true;
+	}
 #else
-	/* Platforms other than windows aren't supported yet */
+	/* Platforms not supported yet */
 #endif
 	return false;
 }
@@ -774,48 +790,70 @@ bool RshareSettings::getRetroShareProtocol()
 bool RshareSettings::canSetRetroShareProtocol()
 {
 #if defined(Q_OS_WIN)
-	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
-	return retroshare.isWritable();
+	QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
+	return classRoot.isWritable();
+#elif defined(Q_OS_LINUX)
+	return RshareSettings::getRetroShareProtocol();
 #else
 	return false;
 #endif
 }
 
 /** Register retroshare:// as protocol */
-bool RshareSettings::setRetroShareProtocol(bool value)
+bool RshareSettings::setRetroShareProtocol(bool value, QString &error)
 {
+	error = "";
 #if defined(Q_OS_WIN)
 	if (value) {
-		QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+		QSettings retroshare("HKEY_CURRENT_USER\\Software\\Classes\\retroshare", QSettings::NativeFormat);
 		retroshare.setValue("Default", "URL: RetroShare protocol");
 
 		QSettings::Status state = retroshare.status();
 		if (state == QSettings::AccessError) {
+			error = tr("Registry Access Error. Maybe you need Administrator right.");
 			return false;
 		}
 		retroshare.setValue("URL Protocol", "");
-		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
-		QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+		QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());
 		state = command.status();
 	} else {
-		QSettings retroshare("HKEY_CLASSES_ROOT", QSettings::NativeFormat);
-		retroshare.remove("retroshare");
+		QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
+		classRoot.remove("retroshare");
 
-		QSettings::Status state = retroshare.status();
+		QSettings::Status state = classRoot.status();
 		if (state == QSettings::AccessError) {
+			error = tr("Registry Access Error. Maybe you need Administrator right.");
 			return false;
 		}
 	}
 
 	return true;
-#else
-	/* Platforms other than windows aren't supported yet */
+#elif defined(Q_OS_LINUX)
+	/* RetroShare protocol is always activated for Linux */
 	Q_UNUSED(value);
-
+	return true;
+#else
+	/* Platforms not supported yet */
+	Q_UNUSED(value);
 	return false;
 #endif
+}
+
+/** Returns true if this instance have to run Local Server*/
+bool RshareSettings::getUseLocalServer()
+{
+	return value("UseLocalServer", true).toBool();
+}
+
+/** Sets whether to run Local Server */
+void RshareSettings::setUseLocalServer(bool value)
+{
+	if (value != getUseLocalServer()) {
+		setValue("UseLocalServer", value);
+		Rshare::updateLocalServer();
+	}
 }
 
 /** Saving Generic Widget Size / Location */

@@ -173,13 +173,16 @@ public:
     SysTrayStatus *sysTrayStatusInstance();
 
 public slots:
+    void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
 
-    void retroshareLinkActivated(const QUrl &url);
     void externalLinkActivated(const QUrl &url);
+    void retroshareLinkActivated(const QUrl &url);
+    void openRsCollection(const QString &filename);
+    void processLastArgs();
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
