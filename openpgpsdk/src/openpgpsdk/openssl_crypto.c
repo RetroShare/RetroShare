@@ -439,7 +439,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 	 {
 		 ERR_load_crypto_strings() ;
 		 unsigned long err = 0 ;
-		 while(err = ERR_get_error())
+         while((err = ERR_get_error()) > 0)
 			 fprintf(stderr,"DSA_do_verify(): ERR = %ld. lib error:\"%s\", func_error:\"%s\", reason:\"%s\"\n",err,ERR_lib_error_string(err),ERR_func_error_string(err),ERR_reason_error_string(err)) ;
     	//assert(ret >= 0);
 		return ops_false ;
