@@ -64,6 +64,8 @@ void	pqithreadstreamer::data_tick()
         sleep_period = mSleepPeriod;
         isactive = mBio->isactive();
     }
+    
+    updateRates() ;
 
     if (!isactive)
     {

@@ -38,7 +38,9 @@
 
 const int pqistreamerzone = 8221;
 
-const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
+static const int   PQISTREAM_ABS_MAX    = 100000000; /* 100 MB/sec (actually per loop) */
+static const int   PQISTREAM_AVG_PERIOD = 5; 		// update speed estimate every 5 seconds
+static const float PQISTREAM_AVG_FRAC   = 0.8; 	// for bandpass filter over speed estimate.
 
 /* This removes the print statements (which hammer pqidebug) */
 /***
@@ -173,65 +175,41 @@ RsItem *pqistreamer::GetItem()
 	return osr;
 }
 
-// // PQInterface
-int	pqistreamer::tick()
+void pqistreamer::updateRates()
 {
+    // now update rates both ways.
+
+    time_t t = time(NULL); // get current timestep.
+
+    if (t > mAvgLastUpdate + PQISTREAM_AVG_PERIOD)
+    {
+	    float avgReadpSec = getRate(true) * PQISTREAM_AVG_FRAC   +     (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * (t - mAvgLastUpdate));
+	    float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC   +     (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * (t - mAvgLastUpdate));
 
 #ifdef DEBUG_PQISTREAMER
-	{
-		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-		std::string out = "pqistreamer::tick()\n" + PeerId();
-		rs_sprintf_append(out, ": currRead/Sent: %d/%d", mCurrRead, mCurrSent);
-
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
-	}
+	    std::cerr << "Peer " << PeerId() << ": Current speed estimates: " << avgReadpSec << " / " << avgSentpSec << std::endl;
 #endif
+	    /* pretend our rate is zero if we are 
+		 * not bandwidthLimited().
+		 */
+	    if (mBio->bandwidthLimited())
+	    {
+		    setRate(true, avgReadpSec);
+		    setRate(false, avgSentpSec);
+	    }
+	    else
+	    {
+		    std::cerr << "Warning: setting to 0" << std::endl;
+		    setRate(true, 0);
+		    setRate(false, 0);
+	    }
 
-	if (!tick_bio())
-	{
-		return 0;
-	}
-
-	tick_recv(0);
-	tick_send(0);
-
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-#ifdef DEBUG_PQISTREAMER
-	/* give details of the packets */
-	{
-		std::list<void *>::iterator it;
-
-		std::string out = "pqistreamer::tick() Queued Data: for " + PeerId();
-
-		if (mBio->isactive())
-		{
-			out += " (active)";
-		}
-		else
-		{
-			out += " (waiting)";
-		}
-		out += "\n";
-
-		{
-			int total = locked_compute_out_pkt_size() ;
-
-			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", locked_out_queue_size(), total);
-            rs_sprintf_append(out, "\t Incoming    [%d]\n", mIncomingSize);
-		}
-
-		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
-	}
-#endif
-
-	/* if there is more stuff in the queues */
-    if ((!mIncoming.empty()) || (locked_out_queue_size() > 0))
-	{
-		return 1;
-	}
-	return 0;
+	    mAvgLastUpdate = t;
+	    mAvgReadCount = 0;
+	    mAvgSentCount = 0;
+    }
 }
-
+ 
 int 	pqistreamer::tick_bio()
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
@@ -955,9 +933,6 @@ int     pqistreamer::inAllowedBytes_locked()
 }
 
 
-static const float AVG_PERIOD = 5; // sec
-static const float AVG_FRAC = 0.8; // for low pass filter.
-
 void    pqistreamer::outSentBytes_locked(uint32_t outb)
 {
 #ifdef DEBUG_PQISTREAMER
@@ -981,50 +956,10 @@ void    pqistreamer::outSentBytes_locked(uint32_t outb)
 	}
 
 #endif
-	
-	
-
-
-
-
 	mTotalSent += outb;
 	mCurrSent += outb;
 	mAvgSentCount += outb;
 
-	int t = time(NULL); // get current timestep.
-	if (t - mAvgLastUpdate > AVG_PERIOD)
-	{
-		float avgReadpSec = getRate(true);
-		float avgSentpSec = getRate(false);
-
-		avgReadpSec *= AVG_FRAC;
-		avgReadpSec += (1.0 - AVG_FRAC) * mAvgReadCount / 
-				(1000.0 * (t - mAvgLastUpdate));
-
-		avgSentpSec *= AVG_FRAC;
-		avgSentpSec += (1.0 - AVG_FRAC) * mAvgSentCount / 
-				(1000.0 * (t - mAvgLastUpdate));
-
-	
-		/* pretend our rate is zero if we are 
-		 * not bandwidthLimited().
-		 */
-		if (mBio->bandwidthLimited())
-		{
-			setRate(true, avgReadpSec);
-			setRate(false, avgSentpSec);
-		}
-		else
-		{
-			setRate(true, 0);
-			setRate(false, 0);
-		}
-
-
-		mAvgLastUpdate = t;
-		mAvgReadCount = 0;
-		mAvgSentCount = 0;
-	}
 	return;
 }
 

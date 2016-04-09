@@ -55,8 +55,6 @@ class pqistreamer: public PQInterface
 		}
 		virtual int     SendItem(RsItem *,uint32_t& serialized_size);
 		virtual RsItem *GetItem();
-
-		virtual int     tick();
 		virtual int     status();
 
 		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
@@ -81,6 +79,7 @@ class pqistreamer: public PQInterface
         //virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
 		virtual int     locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
 
+        	void updateRates() ;
 
 	protected:
 		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
@@ -139,10 +138,11 @@ class pqistreamer: public PQInterface
 		// these are representative (but not exact)
 		int mCurrRead;
 		int mCurrSent;
-		int mCurrReadTS; // TS from which these are measured.
-		int mCurrSentTS;
+        
+		time_t mCurrReadTS; // TS from which these are measured.
+		time_t mCurrSentTS;
 
-		int mAvgLastUpdate; // TS from which these are measured.
+		time_t mAvgLastUpdate; // TS from which these are measured.
 		float mAvgReadCount;
 		float mAvgSentCount;
 

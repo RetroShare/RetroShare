@@ -141,9 +141,19 @@ int	pqiperson::tick()
 	{
 		RS_STACK_MUTEX(mPersonMtx);
 
+#ifdef PERSON_DEBUG
+        if(active)
+        {
+        std::cerr << "pqiperson: peer=" << (activepqi? (activepqi->PeerId()): (RsPeerId())) <<", active=" << active << ", last HB=" << time(NULL) - lastHeartbeatReceived << " secs ago." ;
+        if(lastHeartbeatReceived==0)
+            std::cerr << "!!!!!!!" << std::endl;
+        else
+            std::cerr << std::endl;
+        }
+#endif
+        
 		//if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-		if ( active && (lastHeartbeatReceived != 0)
-			 && (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5)
+		if ( active  && time(NULL)  > lastHeartbeatReceived + HEARTBEAT_REPEAT_TIME * 5)
 		{
 			int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
 
@@ -157,12 +167,7 @@ int	pqiperson::tick()
 	
 			if (ageLastIncoming > 60) // Check timeout
 			{
-#ifdef PERSON_DEBUG
-				std::cerr << "pqiperson::tick() " << PeerId().toStdString()
-						  << " No Heartbeat & No Packets -> assume dead."
-						  << "calling pqissl::reset()" << std::endl;
-#endif
-
+				std::cerr << "pqiperson::tick() " << PeerId().toStdString() << " No Heartbeat & No Packets for 60 secs -> assume dead." << std::endl;
 				this->reset_locked();
 			}
 	
@@ -338,7 +343,7 @@ int pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState,
 
 			// mark as active.
 			active = true;
-			lastHeartbeatReceived = 0;
+			lastHeartbeatReceived = time(NULL) ;
 			activepqi = pqi;
 			inConnectAttempt = false;
 
