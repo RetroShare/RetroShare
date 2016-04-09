@@ -203,7 +203,7 @@ void IdentityHandler::handleWildcard(Request &req, Response &resp)
     }
 }
 
-ResponseTask* IdentityHandler::handleOwn(Request &req, Response &resp)
+ResponseTask* IdentityHandler::handleOwn(Request & /* req */, Response &resp)
 {
     StateToken state;
     {

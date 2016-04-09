@@ -115,13 +115,15 @@ function lobby(lobbyid){
     }
 
     rs.request("chat/messages/" + lobbyid, reqData, function (data) {
-        mem.msg = mem.msg.concat(data);
-        if (mem.msg.length > 0) {
-            mem.lastKnownMsg = mem.msg[mem.msg.length -1].id;
-        }
         if (data.length > 0 ) {
+            mem.msg = mem.msg.concat(data);
+            if (mem.msg.length > 0) {
+                mem.lastKnownMsg = mem.msg[mem.msg.length -1].id;
+            }
             rs.request("chat/mark_chat_as_read/" + lobbyid,{}, null,
                 {allow: "ok|not_set"});
+        } else {
+            mem.msg = [];
         }
     }, {
         onmismatch: function (){},
@@ -181,12 +183,23 @@ function lobby(lobbyid){
                     "text-align":"center"
                 },
                 onclick: function (){
-		            rs.request("chat/unsubscribe_lobby",{
-		                id:lobdt.id,
-		            });
+                    rs.request("chat/unsubscribe_lobby",{
+                        id:lobdt.id,
+                    });
                     m.route("/chat");
                 }
             },"unsubscribe"),
+            m("div.btn", {
+                style: {
+                    "text-align":"center"
+                },
+                onclick: function (){
+                    rs.request("chat/clear_lobby",{
+                        id:lobdt.id,
+                    });
+                    m.route("/chat?lobby=" + lobbyid);
+                }
+            },"clear"),
             m("h3","participants:"),
             rs.list(
                 "chat/lobby_participants/" + lobbyid,

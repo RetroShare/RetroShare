@@ -128,54 +128,55 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
   {
     QString serverName = QString(TARGET);
 
-    if (args.isEmpty()) args.append("Empty");
-    // load into shared memory
-    QBuffer buffer;
-    buffer.open(QBuffer::ReadWrite);
-    QDataStream out(&buffer);
-    out << args;
-    int size = buffer.size();
+    if (!args.isEmpty()) {
+      // load into shared memory
+      QBuffer buffer;
+      buffer.open(QBuffer::ReadWrite);
+      QDataStream out(&buffer);
+      out << args;
+      int size = buffer.size();
 
-    QSharedMemory newArgs;
-    newArgs.setKey(serverName + "_newArgs");
-    if (newArgs.isAttached()) newArgs.detach();
+      QSharedMemory newArgs;
+      newArgs.setKey(serverName + "_newArgs");
+      if (newArgs.isAttached()) newArgs.detach();
 
-    if (!newArgs.create(size)) {
-      std::cerr << "(EE) Rshare::Rshare Unable to create shared memory segment of size:"
-                << size << " error:" << newArgs.errorString().toStdString() << "." << std::endl;
+      if (!newArgs.create(size)) {
+        std::cerr << "(EE) Rshare::Rshare Unable to create shared memory segment of size:"
+                  << size << " error:" << newArgs.errorString().toStdString() << "." << std::endl;
 #ifdef Q_OS_UNIX
-      std::cerr << "Look with `ipcs -m` for nattch==0 segment. And remove it with `ipcrm -m 'shmid'`." << std::endl;
-      //No need for windows, as it removes shared segment directly even when crash.
+        std::cerr << "Look with `ipcs -m` for nattch==0 segment. And remove it with `ipcrm -m 'shmid'`." << std::endl;
+        //No need for windows, as it removes shared segment directly even when crash.
 #endif
-      newArgs.detach();
-      ::exit(EXIT_FAILURE);
-    }
-    newArgs.lock();
-    char *to = (char*)newArgs.data();
-    const char *from = buffer.data().data();
-    memcpy(to, from, qMin(newArgs.size(), size));
-    newArgs.unlock();
+        newArgs.detach();
+        ::exit(EXIT_FAILURE);
+      }
+      newArgs.lock();
+      char *to = (char*)newArgs.data();
+      const char *from = buffer.data().data();
+      memcpy(to, from, qMin(newArgs.size(), size));
+      newArgs.unlock();
 
-    // Connect to the Local Server of the main process to notify it
-    // that a new process had been started
-    QLocalSocket localSocket;
-    localSocket.connectToServer(QString(TARGET));
+      // Connect to the Local Server of the main process to notify it
+      // that a new process had been started
+      QLocalSocket localSocket;
+      localSocket.connectToServer(QString(TARGET));
 
-    std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
-    if( localSocket.waitForConnected(100) )
-    {
-      std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
-      localSocket.waitForDisconnected(1000);
+      std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
+      if( localSocket.waitForConnected(100) )
+      {
+        std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
+        localSocket.waitForDisconnected(1000);
+        newArgs.detach();
+        ::exit(EXIT_SUCCESS); // Terminate the program using STDLib's exit function
+      }
       newArgs.detach();
-      ::exit(EXIT_SUCCESS); // Terminate the program using STDLib's exit function
-    } else {
-      newArgs.detach();
-      // No main process exists
-      // So we start a Local Server to listen for connections from new process
-      localServer= new QLocalServer();
-      QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
-      updateLocalServer();
     }
+    // No main process exists
+    // Or started without arguments
+    // So we start a Local Server to listen for connections from new process
+    localServer= new QLocalServer();
+    QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
+    updateLocalServer();
   }
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
