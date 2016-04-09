@@ -1224,7 +1224,9 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 
     if(it == _gxs_tunnel_contacts.end())
     {
-        std::cerr << "(EE) Cannot find contact key info for tunnel id " << tunnel_id << ". Cannot send message!" << std::endl;
+#ifdef DEBUG_GXS_TUNNEL
+        std::cerr << "  Cannot find contact key info for tunnel id " << tunnel_id << ". Cannot send message!" << std::endl;
+#endif
         return false;
     }
     if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
