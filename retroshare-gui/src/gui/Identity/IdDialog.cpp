@@ -126,11 +126,14 @@ IdDialog::IdDialog(QWidget *parent) :
 	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
     
+	ownItem = new QTreeWidgetItem();
+	ownItem->setText(0, tr("My own identities"));
+
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));
 
 	contactsItem = new QTreeWidgetItem();
-	contactsItem->setText(0, tr("Contacts"));
+	contactsItem->setText(0, tr("My contacts"));
 
 	ui->treeWidget_membership->clear();
     
@@ -749,6 +752,7 @@ void IdDialog::processSettings(bool load)
 		//save expanding
 		Settings->setValue("ExpandAll", allItem->isExpanded());
 		Settings->setValue("ExpandContacts", contactsItem->isExpanded());
+		Settings->setValue("ExpandOwn", ownItem->isExpanded());
 	}
 
 	Settings->endGroup();
@@ -974,7 +978,7 @@ void IdDialog::insertIdList(uint32_t token)
 
 		if(it == ids_set.end())
 		{
-			if(item != allItem && item != contactsItem)
+			if(item != allItem && item != contactsItem && item != ownItem)
 				delete(item);
                         
                         continue ;
@@ -996,28 +1000,35 @@ void IdDialog::insertIdList(uint32_t token)
 
 	/* Insert new items */
 	for (std::map<RsGxsGroupId,RsGxsIdGroup>::const_iterator vit = ids_set.begin(); vit != ids_set.end(); ++vit)
-	{
-		data = vit->second ;
+    {
+	    data = vit->second ;
 
-		item = NULL;
+	    item = NULL;
 
-		ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
-		ui->idTreeWidget->insertTopLevelItem(0, allItem);
+	    ui->idTreeWidget->insertTopLevelItem(0, ownItem);
+	    ui->idTreeWidget->insertTopLevelItem(0, allItem);
+	    ui->idTreeWidget->insertTopLevelItem(0, contactsItem );  
 
-		Settings->beginGroup("IdDialog");
-		allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
-		contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
-    	Settings->endGroup();
-    	
-		if (fillIdListItem(vit->second, item, ownPgpId, accept))
-			if(vit->second.mIsAContact)
-				contactsItem->addChild(item);
-			else
-				allItem->addChild(item);
-	}
+	    Settings->beginGroup("IdDialog");
+	    allItem->setExpanded(Settings->value("ExpandAll", QVariant(true)).toBool());
+	    ownItem->setExpanded(Settings->value("ExpandOwn", QVariant(true)).toBool());
+	    contactsItem->setExpanded(Settings->value("ExpandContacts", QVariant(true)).toBool());
+
+	    Settings->endGroup();
+
+                if (fillIdListItem(vit->second, item, ownPgpId, accept))
+                {
+		    if(vit->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			    ownItem->addChild(item);
+		    else if(vit->second.mIsAContact)
+			    contactsItem->addChild(item);
+		    else
+			    allItem->addChild(item);
+                }
+    }
 	
 	/* count items */
-	int itemCount = contactsItem->childCount() + allItem->childCount();
+	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
 
 	filterIds();
@@ -1476,7 +1487,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
     for(QList<QTreeWidgetItem*>::const_iterator it(selected_items.begin());it!=selected_items.end();++it)
     {
-	    if(*it == allItem || *it == contactsItem)
+	    if(*it == allItem || *it == contactsItem || *it == ownItem)
 	    {
 		    root_node_present = true ;
 		    continue ;

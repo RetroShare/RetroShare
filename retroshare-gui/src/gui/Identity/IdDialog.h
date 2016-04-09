@@ -123,6 +123,7 @@ private:
 
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
+	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalSubCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
 	QTreeWidgetItem *mExternalAdminCircleItem;
