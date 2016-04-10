@@ -93,6 +93,8 @@
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
+#define IMAGE_CREATE               ":/icons/circle_new_128.png"
+
 // quick solution for RSID_COL_VOTES sorting
 class TreeWidgetItem : public QTreeWidgetItem {
   public:
@@ -139,7 +141,6 @@ IdDialog::IdDialog(QWidget *parent) :
     
     	mExternalOtherCircleItem = NULL ;
     	mExternalSubCircleItem = NULL ;
-    	mExternalAdminCircleItem = NULL ;
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -182,6 +183,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Connect signals */
 	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
+	connect(ui->toolButton_NewCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -198,8 +200,10 @@ IdDialog::IdDialog(QWidget *parent) :
 
 
 	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
+	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
 
 	ui->headerTextLabel->setText(tr("People"));
+	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
 	/* Initialize splitter */
 	ui->splitter->setStretchFactor(0, 0);
@@ -271,8 +275,8 @@ IdDialog::IdDialog(QWidget *parent) :
 
     // circles stuff
     
-    connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
-    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(showEditExistingCircle()));
+//    connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
+//    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(showEditExistingCircle()));
     connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
 
@@ -375,11 +379,11 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
     	}
 
-    	if(!mExternalAdminCircleItem)
+    	if(!mExternalLocalCircleItem)
 	{
-		mExternalAdminCircleItem = new QTreeWidgetItem();
-		mExternalAdminCircleItem->setText(0, tr("Circles I admin"));
-		ui->treeWidget_membership->addTopLevelItem(mExternalAdminCircleItem);
+		mExternalLocalCircleItem = new QTreeWidgetItem();
+		mExternalLocalCircleItem->setText(0, tr("Local circles"));
+		ui->treeWidget_membership->addTopLevelItem(mExternalLocalCircleItem);
 	}
 
 	for(vit = groupInfo.begin(); vit != groupInfo.end();)
@@ -408,17 +412,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                 QTreeWidgetItem *item = clist.front() ;
                 
                 bool subscribed = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ;
-                bool admin      = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN ;
                 
-                if(admin && item->parent() != mExternalAdminCircleItem)
-                {
-                    std::cerr << "  (EE) weird. Existing group is not in admin sub-items although it is admin." << std::endl;
-                    delete item ;
-                    ++vit ;
-                    continue ;
-                }
-        
-		if(subscribed && !admin && item->parent() != mExternalSubCircleItem)
+		if(subscribed && item->parent() != mExternalSubCircleItem)
                 {
 #ifdef ID_DEBUG
                     std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
@@ -427,7 +422,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     ++vit ;
                     continue ;
                 }
-		if(!subscribed && !admin && item->parent() != mExternalOtherCircleItem)
+		if(!subscribed && item->parent() != mExternalOtherCircleItem)
                 {
 #ifdef ID_DEBUG
                     std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
@@ -465,14 +460,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
 	    groupItem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 
-	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-	    {
-#ifdef ID_DEBUG
-        	std::cerr << "  adding item for group " << vit->mGroupId << " to admin"<< std::endl;
-#endif
-		    mExternalAdminCircleItem->addChild(groupItem);
-	    }
-	    else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	    {
 #ifdef ID_DEBUG
         	std::cerr << "  adding item for group " << vit->mGroupId << " to subscribed"<< std::endl;
@@ -485,6 +473,15 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
         	std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
 #endif
 		    mExternalOtherCircleItem->addChild(groupItem);
+        }
+        
+	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+        {
+	    QFont font = groupItem->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
+		font.setBold(true) ;
+		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
         }
     }
 }
@@ -580,19 +577,24 @@ void IdDialog::showEditExistingCircle()
 
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
-    // (cyril) Removed this because we have a edit button already.
-#ifdef SUSPENDED
 	QMenu contextMnu( this );
 
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-	if (item) {
+    
+    	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create Circle"), this, SLOT(createExternalCircle()));
+        
+	if (item) 
+	{
+		uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 
-			contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(editExistingCircle()));
-	
+		if(item->parent() != NULL)
+			if(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
+			else
+				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
 	}
-
+    
 	contextMnu.exec(QCursor::pos());
-#endif
 }
 
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)
@@ -675,13 +677,13 @@ void IdDialog::circle_selected()
 
 	if ((!item) || (!item->parent()))
 	{
-		mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
-		ui->pushButton_editCircle->setText(tr("Show details")) ;
-		ui->pushButton_editCircle->setEnabled(false) ;
+		//mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
+		//ui->pushButton_editCircle->setText(tr("Show details")) ;
+		//ui->pushButton_editCircle->setEnabled(false) ;
 		mark_matching_tree(ui->idTreeWidget, std::set<RsGxsId>(), RSID_COL_KEYID) ;
 		return;
 	}
-
+#ifdef TO_REMOVE
 	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 		ui->pushButton_editCircle->setEnabled(true) ;
 
@@ -689,6 +691,7 @@ void IdDialog::circle_selected()
 		ui->pushButton_editCircle->setText(tr("Edit circle")) ;
 	else
 		ui->pushButton_editCircle->setText(tr("Show details")) ;
+#endif
 
 	//set_item_background(item, BLUE_BACKGROUND);
 
@@ -1120,7 +1123,6 @@ void IdDialog::insertIdDetails(uint32_t token)
 #endif
 
     ui->avlabel->setPixmap(pixmap);
-
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)

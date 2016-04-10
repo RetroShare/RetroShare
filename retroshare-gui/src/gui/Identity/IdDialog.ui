@@ -20,16 +20,7 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -47,16 +38,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -147,18 +129,6 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>2</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
           <item>
            <widget class="LineEditClear" name="filterLineEdit"/>
           </item>
@@ -185,6 +155,38 @@
             <property name="icon">
              <iconset resource="../images.qrc">
               <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NewCircle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Create new circle</string>
+            </property>
+            <property name="text">
+             <string>New ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/circles_new_128.png</normaloff>:/icons/circles_new_128.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -252,7 +254,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
+           <set>AlignLeft|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -261,9 +263,13 @@
      </widget>
      <widget class="QTabWidget" name="tabWidget1">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_2">
+       <attribute name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/no_avatar_background.png</normaloff>:/images/no_avatar_background.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Person</string>
        </attribute>
@@ -325,16 +331,7 @@
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
               <layout class="QGridLayout" name="gridLayout">
-               <property name="leftMargin">
-                <number>6</number>
-               </property>
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>6</number>
                </property>
                <property name="spacing">
@@ -508,16 +505,7 @@
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <layout class="QGridLayout" name="gridLayout_2">
-               <property name="leftMargin">
-                <number>6</number>
-               </property>
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <property name="bottomMargin">
+               <property name="margin">
                 <number>6</number>
                </property>
                <item row="2" column="1">
@@ -565,7 +553,7 @@ p, li { white-space: pre-wrap; }
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>../../../../../trunk/retroshare-gui/src/gui/icons/yellow_biohazard64.png</normaloff>../../../../../trunk/retroshare-gui/src/gui/icons/yellow_biohazard64.png</iconset>
+                    <normaloff>../icons/yellow_biohazard64.png</normaloff>../icons/yellow_biohazard64.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -629,42 +617,62 @@ p, li { white-space: pre-wrap; }
        </layout>
       </widget>
       <widget class="QWidget" name="tab">
+       <attribute name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/circles/circles_64.png</normaloff>:/images/circles/circles_64.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Circles</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QPushButton" name="pushButton_extCircle">
-            <property name="text">
-             <string>Create Circle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_editCircle">
-            <property name="text">
-             <string>Edit Circle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QFrame" name="headerFrame_2">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <item row="0" column="0" rowspan="2">
+            <widget class="QLabel" name="avlabel_Circles">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>64</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>64</width>
+               <height>64</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" rowspan="2" colspan="2">
+            <widget class="StyledElidedLabel" name="headerTextLabel_Circles">
+             <property name="text">
+              <string>Circles</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
-        <item row="1" column="0">
+        <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
@@ -761,6 +769,7 @@ p, li { white-space: pre-wrap; }
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

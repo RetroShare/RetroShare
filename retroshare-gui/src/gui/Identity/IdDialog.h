@@ -126,7 +126,7 @@ private:
 	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalSubCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
-	QTreeWidgetItem *mExternalAdminCircleItem;
+	QTreeWidgetItem *mExternalLocalCircleItem;
     	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	RsGxsGroupId mId;
