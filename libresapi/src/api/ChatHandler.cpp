@@ -6,8 +6,9 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
-#include <sstream>
 #include <algorithm>
+#include <limits>
+#include <sstream>
 #include <time.h>
 
 namespace resource_api
@@ -450,6 +451,46 @@ void ChatHandler::tick()
     }
 }
 
+static void writeUTF8 ( std::ostream & Out, unsigned int Ch )
+/* writes Ch in UTF-8 encoding to Out. Note this version only deals
+   with characters up to 16 bits.
+   From: http://www.codecodex.com/wiki/Unescape_HTML_special_characters_from_a_String*/
+{
+    if (Ch >= 0x800)
+    {
+        Out.put(0xE0 | ((Ch >> 12) & 0x0F));
+        Out.put(0x80 | ((Ch >>  6) & 0x3F));
+        Out.put(0x80 | ((Ch      ) & 0x3F));
+    }
+    else if (Ch >= 0x80)
+    {
+        Out.put(0xC0 | ((Ch >>  6) & 0x1F));
+        Out.put(0x80 | ((Ch      ) & 0x3F));
+    }
+    else
+    {
+        Out.put(Ch);
+    }
+}
+
+static unsigned int stringToDecUInt ( std::string str)
+{
+    unsigned int out = 0;
+    unsigned int max = std::numeric_limits<int>::max() / 10;
+    int lenght = str.length();
+    for (int curs = 0; curs < lenght; ++curs) {
+        char c = str[curs];
+        if ( (c >= '0')
+             && (c <= '9')
+             && (out < max)
+             ) {
+            out *= 10;
+            out += (int)( c - '0');
+        } else return 0;
+    }
+    return out;
+}
+
 void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links)
 {
     if (in.size() == 0)
@@ -467,6 +508,9 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
     std::string last_six_chars;
     unsigned int tag_start_index = 0;
     Triple current_link;
+    bool onEscapeChar = false;
+    unsigned int escapeCharIndexStart = -1;
+
     for(unsigned int i = 0; i < in.size(); ++i)
     {
         if(keep_link && in[i] == '"')
@@ -489,10 +533,12 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
         if(!ignore || keep_link)
             out += in[i];
         // "falling edge" resets mode to keep
-        if(in[i] == '>') {
+        if(in[i] == '>' && ignore) {
             // leave ignore mode on, if it's a style tag
-            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style")
+            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style") {
                 ignore = false;
+                tag_start_index = 0;
+            }
         }
 
         last_six_chars += in[i];
@@ -516,6 +562,238 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
                 links.push_back(current_link);
             }
             current_link = Triple();
+        }
+        std::string br = "<br/>";
+        if(last_six_chars.size() >= br.size()
+           && last_six_chars.substr(last_six_chars.size()-br.size()) == br)
+        {
+            out += "\n";
+        }
+        if (in[i] == '&') {
+            onEscapeChar = true;
+            escapeCharIndexStart = out.length();
+        }
+        if (ignore || keep_link) {
+            onEscapeChar = false;
+            escapeCharIndexStart = -1;
+        }
+        if ((in[i] == ';') && onEscapeChar) {
+            onEscapeChar = false;
+            bool escapeFound = true;
+            std::string escapeReplace = "";
+            //Keep only escape value to replace it
+            std::string escapeCharValue = out.substr(escapeCharIndexStart,
+                                                     out.length() - escapeCharIndexStart - 1);
+            if (escapeCharValue[0] == '#') {
+                int escapedCharUTF8 = stringToDecUInt(escapeCharValue.substr(1));
+                std::ostringstream escapedSStream;
+                writeUTF8( escapedSStream, escapedCharUTF8);
+                escapeReplace = escapedSStream.str();
+            } else if (escapeCharValue == "euro") {
+                escapeReplace = "€";
+            } else if (escapeCharValue == "nbsp") {
+                escapeReplace = " ";
+            } else if (escapeCharValue == "quot") {
+                escapeReplace = "\"";
+            } else if (escapeCharValue == "amp") {
+                escapeReplace = "&";
+            } else if (escapeCharValue == "lt") {
+                escapeReplace = "<";
+            } else if (escapeCharValue == "gt") {
+                escapeReplace = ">";
+            } else if (escapeCharValue == "iexcl") {
+                escapeReplace = "¡";
+            } else if (escapeCharValue == "cent") {
+                escapeReplace = "¢";
+            } else if (escapeCharValue == "pound") {
+                escapeReplace = "£";
+            } else if (escapeCharValue == "curren") {
+                escapeReplace = "¤";
+            } else if (escapeCharValue == "yen") {
+                escapeReplace = "¥";
+            } else if (escapeCharValue == "brvbar") {
+                escapeReplace = "¦";
+            } else if (escapeCharValue == "sect") {
+                escapeReplace = "§";
+            } else if (escapeCharValue == "uml") {
+                escapeReplace = "¨";
+            } else if (escapeCharValue == "copy") {
+                escapeReplace = "©";
+            } else if (escapeCharValue == "ordf") {
+                escapeReplace = "ª";
+            } else if (escapeCharValue == "not") {
+                escapeReplace = "¬";
+            } else if (escapeCharValue == "shy") {
+                escapeReplace = " ";//?
+            } else if (escapeCharValue == "reg") {
+                escapeReplace = "®";
+            } else if (escapeCharValue == "macr") {
+                escapeReplace = "¯";
+            } else if (escapeCharValue == "deg") {
+                escapeReplace = "°";
+            } else if (escapeCharValue == "plusmn") {
+                escapeReplace = "±";
+            } else if (escapeCharValue == "sup2") {
+                escapeReplace = "²";
+            } else if (escapeCharValue == "sup3") {
+                escapeReplace = "³";
+            } else if (escapeCharValue == "acute") {
+                escapeReplace = "´";
+            } else if (escapeCharValue == "micro") {
+                escapeReplace = "µ";
+            } else if (escapeCharValue == "para") {
+                escapeReplace = "¶";
+            } else if (escapeCharValue == "middot") {
+                escapeReplace = "·";
+            } else if (escapeCharValue == "cedil") {
+                escapeReplace = "¸";
+            } else if (escapeCharValue == "sup1") {
+                escapeReplace = "¹";
+            } else if (escapeCharValue == "ordm") {
+                escapeReplace = "º";
+            } else if (escapeCharValue == "raquo") {
+                escapeReplace = "»";
+            } else if (escapeCharValue == "frac14") {
+                escapeReplace = "¼";
+            } else if (escapeCharValue == "frac12") {
+                escapeReplace = "½";
+            } else if (escapeCharValue == "frac34") {
+                escapeReplace = "¾";
+            } else if (escapeCharValue == "iquest") {
+                escapeReplace = "¿";
+            } else if (escapeCharValue == "Agrave") {
+                escapeReplace = "À";
+            } else if (escapeCharValue == "Aacute") {
+                escapeReplace = "Á";
+            } else if (escapeCharValue == "Acirc") {
+                escapeReplace = "Â";
+            } else if (escapeCharValue == "Atilde") {
+                escapeReplace = "Ã";
+            } else if (escapeCharValue == "Auml") {
+                escapeReplace = "Ä";
+            } else if (escapeCharValue == "Aring") {
+                escapeReplace = "Å";
+            } else if (escapeCharValue == "AElig") {
+                escapeReplace = "Æ";
+            } else if (escapeCharValue == "Ccedil") {
+                escapeReplace = "Ç";
+            } else if (escapeCharValue == "Egrave") {
+                escapeReplace = "È";
+            } else if (escapeCharValue == "Eacute") {
+                escapeReplace = "É";
+            } else if (escapeCharValue == "Ecirc") {
+                escapeReplace = "Ê";
+            } else if (escapeCharValue == "Euml") {
+                escapeReplace = "Ë";
+            } else if (escapeCharValue == "Igrave") {
+                escapeReplace = "Ì";
+            } else if (escapeCharValue == "Iacute") {
+                escapeReplace = "Í";
+            } else if (escapeCharValue == "Icirc") {
+                escapeReplace = "Î";
+            } else if (escapeCharValue == "Iuml") {
+                escapeReplace = "Ï";
+            } else if (escapeCharValue == "ETH") {
+                escapeReplace = "Ð";
+            } else if (escapeCharValue == "Ntilde") {
+                escapeReplace = "Ñ";
+            } else if (escapeCharValue == "Ograve") {
+                escapeReplace = "Ò";
+            } else if (escapeCharValue == "Oacute") {
+                escapeReplace = "Ó";
+            } else if (escapeCharValue == "Ocirc") {
+                escapeReplace = "Ô";
+            } else if (escapeCharValue == "Otilde") {
+                escapeReplace = "Õ";
+            } else if (escapeCharValue == "Ouml") {
+                escapeReplace = "Ö";
+            } else if (escapeCharValue == "times") {
+                escapeReplace = "×";
+            } else if (escapeCharValue == "Oslash") {
+                escapeReplace = "Ø";
+            } else if (escapeCharValue == "Ugrave") {
+                escapeReplace = "Ù";
+            } else if (escapeCharValue == "Uacute") {
+                escapeReplace = "Ú";
+            } else if (escapeCharValue == "Ucirc") {
+                escapeReplace = "Û";
+            } else if (escapeCharValue == "Uuml") {
+                escapeReplace = "Ü";
+            } else if (escapeCharValue == "Yacute") {
+                escapeReplace = "Ý";
+            } else if (escapeCharValue == "THORN") {
+                escapeReplace = "Þ";
+            } else if (escapeCharValue == "szlig") {
+                escapeReplace = "ß";
+            } else if (escapeCharValue == "agrave") {
+                escapeReplace = "à";
+            } else if (escapeCharValue == "aacute") {
+                escapeReplace = "á";
+            } else if (escapeCharValue == "acirc") {
+                escapeReplace = "â";
+            } else if (escapeCharValue == "atilde") {
+                escapeReplace = "ã";
+            } else if (escapeCharValue == "auml") {
+                escapeReplace = "ä";
+            } else if (escapeCharValue == "aring") {
+                escapeReplace = "å";
+            } else if (escapeCharValue == "aelig") {
+                escapeReplace = "æ";
+            } else if (escapeCharValue == "ccedil") {
+                escapeReplace = "ç";
+            } else if (escapeCharValue == "egrave") {
+                escapeReplace = "è";
+            } else if (escapeCharValue == "eacute") {
+                escapeReplace = "é";
+            } else if (escapeCharValue == "ecirc") {
+                escapeReplace = "ê";
+            } else if (escapeCharValue == "euml") {
+                escapeReplace = "ë";
+            } else if (escapeCharValue == "igrave") {
+                escapeReplace = "ì";
+            } else if (escapeCharValue == "iacute") {
+                escapeReplace = "í";
+            } else if (escapeCharValue == "icirc") {
+                escapeReplace = "î";
+            } else if (escapeCharValue == "iuml") {
+                escapeReplace = "ï";
+            } else if (escapeCharValue == "eth") {
+                escapeReplace = "ð";
+            } else if (escapeCharValue == "ntilde") {
+                escapeReplace = "ñ";
+            } else if (escapeCharValue == "ograve") {
+                escapeReplace = "ò";
+            } else if (escapeCharValue == "oacute") {
+                escapeReplace = "ó";
+            } else if (escapeCharValue == "ocirc") {
+                escapeReplace = "ô";
+            } else if (escapeCharValue == "otilde") {
+                escapeReplace = "õ";
+            } else if (escapeCharValue == "ouml") {
+                escapeReplace = "ö";
+            } else if (escapeCharValue == "divide") {
+                escapeReplace = "÷";
+            } else if (escapeCharValue == "oslash") {
+                escapeReplace = "ø";
+            } else if (escapeCharValue == "ugrave") {
+                escapeReplace = "ù";
+            } else if (escapeCharValue == "uacute") {
+                escapeReplace = "ú";
+            } else if (escapeCharValue == "ucirc") {
+                escapeReplace = "û";
+            } else if (escapeCharValue == "uuml") {
+                escapeReplace = "ü";
+            } else if (escapeCharValue == "yacute") {
+                escapeReplace = "ý";
+            } else if (escapeCharValue == "thorn") {
+                escapeReplace = "þ";
+            } else {
+                escapeFound = false;
+            }
+            if (escapeFound) {
+                out = out.substr(0, escapeCharIndexStart-1);
+                out += escapeReplace;
+            }
         }
     }
 }
