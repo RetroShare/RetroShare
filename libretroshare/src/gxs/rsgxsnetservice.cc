@@ -4602,11 +4602,13 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 	    should_encrypt_id = circleId ;
         
         	// For each message ID, check that the author is in the circle. If not, do not send the message, which means, remove it from the list.
+        	// Unsigned messages are still transmitted. This is because in some groups (channels) the posts are not signed. Whether an unsigned post
+        	// is allowed at this point is anyway already vetted by the RsGxsGenExchange service.
         
 		if(mCircles->isLoaded(circleId))
 		{
 			for(uint32_t i=0;i<msgMetas.size();)
-				if(!mCircles->isRecipient(circleId, msgMetas[i]->mAuthorId))
+				if( (!msgMetas[i]->mAuthorId.isNull()) && !mCircles->isRecipient(circleId, msgMetas[i]->mAuthorId))
 				{
 #ifdef NXS_NET_DEBUG_4
 					GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   deleting MsgMeta entry for msg ID " << msgMetas[i]->mMsgId << " signed by " << msgMetas[i]->mAuthorId << " who is not in group circle " << circleId << std::endl;
