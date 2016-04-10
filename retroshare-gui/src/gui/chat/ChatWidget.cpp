@@ -218,7 +218,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->vl_Plugins->addWidget(w) ;
+	ui->pluginsVLayout->addWidget(w) ;
 	update() ;
 }
 
@@ -234,8 +234,8 @@ void ChatWidget::addTitleBarWidget(QWidget *w)
 
 void ChatWidget::hideChatText(bool hidden)
 {
-	ui->frame_ChatText->setHidden(hidden); ;
-	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
+	ui->chatTextFrame->setHidden(hidden); ;
+	ui->searchFrame->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
@@ -400,12 +400,12 @@ void ChatWidget::processSettings(bool load)
 		// load settings
 
 		// state of splitter
-		ui->chatsplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
+		ui->chatVSplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
 	} else {
 		// save settings
 
 		// state of splitter
-		Settings->setValue("ChatSplitter", ui->chatsplitter->saveState());
+		Settings->setValue("ChatSplitter", ui->chatVSplitter->saveState());
 	}
 
 	Settings->endGroup();
@@ -835,7 +835,7 @@ void ChatWidget::on_notifyButton_clicked()
 	QIcon icoLobby=(ui->notifyButton->icon());
 
 	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
-	menu->exec(ui->notifyButton->mapToGlobal(ui->notifyButton->geometry().bottomLeft()));
+	menu->exec(ui->notifyButton->mapToGlobal(QPoint(0,ui->notifyButton->geometry().height())));
 
 }
 
@@ -1031,7 +1031,7 @@ void ChatWidget::chatCharFormatChanged()
 void ChatWidget::resetStatusBar()
 {
 	ui->typingLabel->clear();
-	ui->typingpixmapLabel->clear();
+	ui->typingPixmapLabel->clear();
 
 	typing = false;
 
@@ -1430,11 +1430,11 @@ void ChatWidget::messageHistory()
 void ChatWidget::searchHistory()
 {
 	if(ui->actionSearch_History->isChecked()){
-      ui->searchframe->show();
-  }else {
-      ui->searchframe->hide();
-  }
-  
+		ui->searchFrame->show();
+	}else {
+		ui->searchFrame->hide();
+	}
+
 }
 
 void ChatWidget::addExtraFile()
@@ -1660,8 +1660,8 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-    ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
+	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;
