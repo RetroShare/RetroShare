@@ -53,7 +53,7 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 		virtual QString pageName() const { return tr("People") ; } //MainPage
 		virtual QString helpText() const { return ""; } //MainPage
 
-	void loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req) ;
+	void loadRequest(const TokenQueue * queue, const TokenRequest &req) ;
 
 	void requestIdList() ;
 	void requestCirclesList() ;
@@ -67,6 +67,8 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 	//End RsGxsUpdateBroadcastPage
 
 private slots:
+	void updateCirclesDisplay(bool);
+
 	void iw_AddButtonClickedExt();
 	void iw_AddButtonClickedInt();
 	void addToCircleExt();
@@ -95,6 +97,7 @@ private:
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
+	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;
