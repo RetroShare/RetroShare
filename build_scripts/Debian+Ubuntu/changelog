@@ -1,5 +1,62 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  3b45fd8 csoler      Sat,  9 Apr 2016 17:50:46 -0400 create new item "My own identities" to store own ids in IdDialog
+  a5044bd csoler      Sat,  9 Apr 2016 14:48:05 -0400 improved calculation of speed in pqistreamer (was called before only when sending bytes), and prevented situation wher
+  993d7d4 csoler      Sat,  9 Apr 2016 14:46:12 -0400 removed debug info in rsgxsnetservice
+  0853773 csoler      Sat,  9 Apr 2016 12:51:15 -0400 merged and removed debug output in rsgxsnetservice.cc
+  10a32d3 csoler      Sat,  9 Apr 2016 11:38:07 -0400 Merge pull request #343 from csoler/v0.6-Circles
+  ca0f769 csoler      Fri,  8 Apr 2016 21:08:22 -0400 removed warning that would show up too often when a GxsTunnel is down and message cannot be sent
+  85c8274 csoler      Fri,  8 Apr 2016 20:41:12 -0400 Merge pull request #342 from PhenomRetroShare/Fix_AllowOnlyOneInst
+  08e5679 Phenom      Fri,  8 Apr 2016 02:14:27 +0200 Fix Allow Only One Instance
+  554251d csoler      Thu,  7 Apr 2016 19:50:02 -0400 Merge pull request #341 from PhenomRetroShare/Add_WebUIClearButton
+  24b3f0d Phenom      Fri,  8 Apr 2016 01:31:36 +0200 Add a Clear button on WebUI
+  b90808d csoler      Thu,  7 Apr 2016 18:26:18 -0400 changed update of server update TS in subscribeStatusChange from 0 to time(NULL)
+  c8cae4c csoler      Thu,  7 Apr 2016 00:09:00 -0400 Merge pull request #297 from PhenomRetroShare/Add_AllowOnlyOneIntanceAndPassArg
+  4ad3b11 csoler      Wed,  6 Apr 2016 22:27:02 -0400 fixed compiler warning
+  4bf9262 csoler      Wed,  6 Apr 2016 22:26:34 -0400 merged with upstream/master
+  60ffcd2 csoler      Wed,  6 Apr 2016 22:23:10 -0400 fixed double item deletion in RsGxsNetService::handleRecvItem()
+  c79c9ba csoler      Wed,  6 Apr 2016 21:12:54 -0400 added encryption of message sync requests for external circles-restricted groups, and verification that properly encry
+  10bb542 Phenom      Tue,  1 Mar 2016 13:08:33 +0100 Allow only one instance for useLocalServer option activated. If exists, pass to it arguments.
+  f26348b csoler      Tue,  5 Apr 2016 18:09:02 -0400 fixed bug in grouter which caused sending of messages to some offline peers, hence wasting some routes, and causing " 
+  7817a54 csoler      Tue,  5 Apr 2016 17:55:03 -0400 merged with trunk
+  9871b37 csoler      Mon,  4 Apr 2016 23:02:09 -0400 Merge pull request #305 from realityfabric/openssl_crypto_infinite_loop
+  9217ec3 csoler      Mon,  4 Apr 2016 21:36:37 -0400 added circle distribution info in forum summary page
+  ff4c360 csoler      Mon,  4 Apr 2016 21:15:49 -0400 fixed display bug in bw statistics graph
+  b206317 csoler      Mon,  4 Apr 2016 12:17:34 -0400 Merge pull request #339 from PhenomRetroShare/Fix_UnitTests_Compilation
+  f2b9957 Phenom      Mon,  4 Apr 2016 17:18:42 +0200 Fix UnitTests Compilation
+  d34b2e8 csoler      Sun,  3 Apr 2016 17:11:13 -0400 allow to change the author ID of a group during update. Set proper value in group author widget
+  18dd7ee csoler      Sun,  3 Apr 2016 11:42:45 -0400 moved "too many routing clues" message to debug output, since it can be caused by normal lobby operation
+  3554e48 csoler      Sun,  3 Apr 2016 11:38:53 -0400 output packet error with some details (inspired by Phenom-PR289)
+  a3890ad csoler      Sun,  3 Apr 2016 11:00:03 -0400 added gathering of routing clues from lobbies
+  9ced517 csoler      Sat,  2 Apr 2016 16:54:30 -0400 improved tooltips in people list
+  53dbc52 csoler      Sat,  2 Apr 2016 16:50:22 -0400 removed mention of null PGP ids in People
+  f8639e5 csoler      Sat,  2 Apr 2016 16:44:41 -0400 fixed bug considering null PGP ids in ban list
+  5bbaa1e csoler      Sat,  2 Apr 2016 16:14:08 -0400 added people settings page, removed debug output
+  9d9b790 csoler      Sat,  2 Apr 2016 14:04:08 -0400 exposed un-verified PGP signatures on GXS ids in GUI. Added auto-ban of GXS ids signed by a PGP ids that has already s
+  9a6bcf8 csoler      Sat,  2 Apr 2016 14:02:04 -0400 removed blue color for admin flag in forums, since admin flag is already indicated by position in "My Forums" list, an
+  7c4d85d csoler      Sat,  2 Apr 2016 14:00:04 -0400 fixed compilation for ubuntu xenial
+  0350c1d csoler      Fri,  1 Apr 2016 17:47:03 -0400 Merge pull request #335 from PhenomRetroShare/Add_ClearWebAPIWhenClearChatHistory2
+  c6f1cc4 Phenom      Thu, 31 Mar 2016 22:52:53 +0200 Clear WebAPI when clear chat history in GUI.
+  ab78825 thunder2    Thu, 31 Mar 2016 10:23:23 +0200 Enabled webui build script for Windows compile
+  21421ab csoler      Wed, 30 Mar 2016 14:03:50 -0400 Merge pull request #334 from zeners/master
+  8def617 zeners      Wed, 30 Mar 2016 19:50:11 +0200 webui: windows build-script
+  741db13 csoler      Wed, 30 Mar 2016 12:34:32 -0400 Merge pull request #333 from zeners/webui
+  f570477 zeners      Wed, 30 Mar 2016 18:20:59 +0200 webui: patch init.sh like build.sh
+  cee3477 defnax      Wed, 30 Mar 2016 17:06:34 +0200 Fixed the default splitter expanding of People Dialog
+  351af47 csoler      Tue, 29 Mar 2016 15:42:23 -0400 Merge pull request #332 from zeners/master
+  aca8830 zeners      Tue, 29 Mar 2016 21:22:14 +0200 compatible to g++11 / QT5
+  5783c59 electron128 Tue, 29 Mar 2016 20:16:44 +0200 Merge pull request #318 from realityfabric/remove_empty_file
+  475cb40 electron128 Tue, 29 Mar 2016 20:13:24 +0200 Merge pull request #328 from PhenomRetroShare/Fix_WebUI_MakeSrcBuild
+  5b5504c electron128 Tue, 29 Mar 2016 19:42:07 +0200 Merge pull request #330 from zeners/webui
+  be328e2 zeners      Tue, 29 Mar 2016 18:57:18 +0200 webui: include files in install
+  f5f27ed zeners      Tue, 29 Mar 2016 18:56:00 +0200 Merge branch 'master'
+  a53fbad thunder2    Tue, 29 Mar 2016 08:13:28 +0200 Fixed Windows compile.
+  7c288fc csoler      Mon, 28 Mar 2016 23:24:50 -0400 added xenial as build target
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 09 Apr 2016 23:00:00 -0500
+
+retroshare06 (0.6.0-1.20160330.21421ab8~trusty) trusty; urgency=low
+
   3701366 electron128 Mon, 28 Mar 2016 14:07:19 +0200 Merge pull request #327 from zeners/webui
   dfa2cba zeners      Mon, 28 Mar 2016 13:03:49 +0200 webui: menu in gui mode fixed
   a11cd25 zeners      Mon, 28 Mar 2016 11:35:44 +0200 Merge branch 'master'
