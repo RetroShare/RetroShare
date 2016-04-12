@@ -127,8 +127,8 @@ void GxsIdDetails::connectObject_locked(QObject *object, bool doConnect)
 
 	/* Search Object in pending list */
     
-    	if(mPendingData.find(object) != mPendingData.end())
-            return ;
+	if(mPendingData.find(object) == mPendingData.end())	// force disconnect when not in the list
+	   doConnect = false ;
 
 	if (doConnect) {
 		connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
@@ -169,9 +169,9 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 								pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
 
 								QObject *object = pendingData.mObject;
-								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
-                                
 								connectObject_locked(object, false);
+
+								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
 
 								continue;
 							}
@@ -182,9 +182,9 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 								pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
 
 								QObject *object = pendingData.mObject;
-								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
-                                
 								connectObject_locked(object, false);
+
+								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
 
 								continue;
 							}
