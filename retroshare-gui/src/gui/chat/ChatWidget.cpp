@@ -1102,15 +1102,21 @@ void ChatWidget::updateLenOfChatTextEdit()
 		break;
 	}
 
-	bool msgToLarge = false;
+	int charRemains = 0;
 	if (maxMessageSize > 0) {
-		msgToLarge = (msg.length() >= maxMessageSize);
+		charRemains = maxMessageSize - msg.length();
 	}
 
-	ui->sendButton->setEnabled(!msgToLarge);
-	text = tr("%1This message consists of %2 characters.").arg(msgToLarge ? tr("Warning:")+" " : "").arg(msg.length());
+	ui->sendButton->setEnabled(charRemains>=0);
+	if (charRemains>0)
+		text = tr("It remains %1 characters\nafter HTML conversion.").arg(charRemains);
+	else if(charRemains<0)
+		text = tr("Warning: This message is too big of %1 characters\nafter HTML conversion.").arg((0-charRemains));
+	else
+		text = "";
+
 	ui->sendButton->setToolTip(text);
-	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
+	ui->chatTextEdit->setToolTip(text);
 }
 
 void ChatWidget::sendChat()
