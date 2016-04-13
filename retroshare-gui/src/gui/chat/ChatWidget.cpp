@@ -107,7 +107,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionMoveToCursor, SIGNAL(triggered()), this, SLOT(toogle_MoveToCursor()));
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
-	connect(ui->actionSearch_History, SIGNAL(triggered()), this, SLOT(searchHistory()));
 
 	notify=NULL;
 	ui->notifyButton->setVisible(false);
@@ -146,9 +145,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
 	
-	ui->actionSearch_History->setChecked(Settings->getChatSearchShowBarByDefault());
-	searchHistory();
-
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
@@ -165,7 +161,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionDeleteChatHistory);
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
-	menu->addAction(ui->actionSearch_History);
 	ui->pushtoolsButton->setMenu(menu);
 
 	ui->textBrowser->installEventFilter(this);
@@ -235,7 +230,6 @@ void ChatWidget::addTitleBarWidget(QWidget *w)
 void ChatWidget::hideChatText(bool hidden)
 {
 	ui->chatTextFrame->setHidden(hidden); ;
-	ui->searchFrame->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
@@ -316,7 +310,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         messageCount = Settings->getPublicChatHistoryCount();
 
         ui->titleBarFrame->setVisible(false);
-        ui->actionSearch_History->setVisible(false);
     }
 
 	if (rsHistory->getEnable(hist_chat_type)) 
@@ -1425,16 +1418,6 @@ void ChatWidget::messageHistory()
 {
     ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
 	imBrowser.exec();
-}
-
-void ChatWidget::searchHistory()
-{
-	if(ui->actionSearch_History->isChecked()){
-		ui->searchFrame->show();
-	}else {
-		ui->searchFrame->hide();
-	}
-
 }
 
 void ChatWidget::addExtraFile()
