@@ -62,6 +62,8 @@
 
 #include <time.h>
 
+#define FMM 2//fontMetricsMultiplicator
+
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -70,6 +72,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
     QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
+
+	int iconHeight = FMM*QFontMetricsF(font()).height() ;
+	QSize iconSize = QSize(iconHeight,iconHeight);
+	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
 
 	newMessages = false;
 	typing = false;
@@ -82,6 +88,29 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	lastStatusSendTime = 0 ;
 
+	//Resize Tool buttons
+	ui->emoteiconButton->setFixedSize(buttonSize);
+	ui->emoteiconButton->setIconSize(iconSize);
+	ui->fontButton->setFixedSize(buttonSize);
+	ui->fontButton->setIconSize(iconSize);
+	ui->attachPictureButton->setFixedSize(buttonSize);
+	ui->attachPictureButton->setIconSize(iconSize);
+	ui->addFileButton->setFixedSize(buttonSize);
+	ui->addFileButton->setIconSize(iconSize);
+	ui->pushtoolsButton->setFixedSize(buttonSize);
+	ui->pushtoolsButton->setIconSize(iconSize);
+	ui->notifyButton->setFixedSize(buttonSize);
+	ui->notifyButton->setIconSize(iconSize);
+	ui->markButton->setFixedSize(buttonSize);
+	ui->markButton->setIconSize(iconSize);
+	ui->leSearch->setFixedHeight(iconHeight);
+	ui->searchBefore->setFixedHeight(iconHeight);
+	ui->searchAfter->setFixedHeight(iconHeight);
+	ui->searchButton->setFixedSize(buttonSize);
+	ui->searchButton->setIconSize(iconSize);
+	ui->sendButton->setFixedHeight(iconHeight);
+
+	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
 	bFindWholeWords=Settings->getChatSearchWholeWords();
@@ -89,7 +118,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	bSearchWithoutLimit=Settings->getChatSearchSearchWithoutLimit();
 	uiMaxSearchLimitColor=Settings->getChatSearchMaxSearchLimitColor();
 	cFoundColor=Settings->getChatSearchFoundColor();
-
 
 	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
@@ -102,6 +130,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setChecked(false);
 	ui->searchButton->setToolTip(tr("<b>Find </b><br/><i>Ctrl+F</i>"));
 	ui->leSearch->installEventFilter(this);
+
 	connect(ui->actionFindCaseSensitively, SIGNAL(triggered()), this, SLOT(toogle_FindCaseSensitively()));
 	connect(ui->actionFindWholeWords, SIGNAL(triggered()), this, SLOT(toogle_FindWholeWords()));
 	connect(ui->actionMoveToCursor, SIGNAL(triggered()), this, SLOT(toogle_MoveToCursor()));
@@ -113,11 +142,11 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
-	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
-	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
-
-	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
+	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
+	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
+	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
+
 	connect(ui->actionSaveChatHistory, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 	connect(ui->actionClearChatHistory, SIGNAL(triggered()), this, SLOT(clearChatHistory()));
 	connect(ui->actionDeleteChatHistory, SIGNAL(triggered()), this, SLOT(deleteChatHistory()));
@@ -219,6 +248,10 @@ void ChatWidget::addChatHorizontalWidget(QWidget *w)
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
+	int iconHeight = FMM*QFontMetricsF(font()).height() ;
+	QSize iconSize = QSize(iconHeight,iconHeight);
+	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
