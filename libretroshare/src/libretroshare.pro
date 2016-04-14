@@ -354,6 +354,10 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
 
+HEADERS += directory_updater.h \
+				directory_list.h \
+				p3filelists.h
+
 HEADERS += chat/distantchat.h \
 			  chat/p3chatservice.h \
 			  chat/distributedchat.h \

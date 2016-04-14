@@ -87,6 +87,20 @@ Generating sync events
    * Server side
       - after a change, broadcast a "directory changed" packet to all connected friends
    
+
+   DirectoryWatcher (watches a hierarchy)        File List (stores a directory hierarchy)
+         |                                          |
+         |                                          |
+         |                                          |
+         +-----------------------+------------------+
+                                 |                  |
+                        Shared File Service         |
+                                 |                  |
+                                 |                  |
+                                 +----------- own file list -------+---------- Encrypted/compressed save to disk
+                                 |                  |              |
+                                 +----------- friend file lists ---+
+
 Roadmap
 -------
 
@@ -98,4 +112,31 @@ Roadmap
 
 - optionally
    - change the saving system of FileIndex to make it locally encrypted and compact
+
+TODO
+====
+   [ ] implement directory updater
+         [ ] local directory updater
+         [ ] remote directory updater
+
+   [ ] implement directory handler
+   [ ] implement p3FileLists with minimal functonality: no exchange. Only storage of own
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
