@@ -1017,8 +1017,6 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 	// Is this result's target actually ours ?
 
-	++(item->depth) ;			// increase depth
-
 	if(it->second.origin == _own_id)
 		returnSearchResult(item) ;		// Yes, so send upward.
 	else
@@ -1032,7 +1030,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		// of the files found can be further reached by a tunnel.
 
 		fwd_item->PeerId(it->second.origin) ;
-		fwd_item->depth = 2 + (rand() % 256) ; // obfuscate the depth for non immediate friends.
+		fwd_item->depth = 0 ; // obfuscate the depth for non immediate friends. Result will always be 0. This effectively removes the information.
 
 		sendItem(fwd_item) ;
 	}

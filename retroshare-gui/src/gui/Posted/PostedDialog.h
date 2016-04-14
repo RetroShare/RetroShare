@@ -46,7 +46,7 @@ public:
 
 protected:
 	virtual QString getHelpString() const ;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_POSTED; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Posted; }
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 

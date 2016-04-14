@@ -145,6 +145,7 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
+          case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:
@@ -173,6 +174,7 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
+        case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:

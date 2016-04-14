@@ -624,12 +624,12 @@ void CreateCircleDialog::updateCircleGUI()
     }
     else
     {
-	    std::set<RsGxsId> ids ;
-	    ids.insert(mCircleGroup.mMeta.mAuthorId) ;
+	    //std::set<RsGxsId> ids ;
+	    //ids.insert(mCircleGroup.mMeta.mAuthorId) ;
 	    ui.idChooser->setDefaultId(mCircleGroup.mMeta.mAuthorId) ;
 	    ui.idChooser->setChosenId(mCircleGroup.mMeta.mAuthorId) ;
-	    ui.idChooser->setIdConstraintSet(ids) ;
-	    ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE) ;
+	    //ui.idChooser->setIdConstraintSet(ids) ;
+	    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE) ;
 	    ui.circleAdminLabel->setVisible(false) ;
     }
 }
