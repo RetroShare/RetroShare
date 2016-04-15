@@ -119,9 +119,8 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
 	// Dummy Circles.
-//	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
-    mDummyIdToken = 0;
-
+	//	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
+	mDummyIdToken = 0;
 }
 
 
@@ -978,6 +977,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 			RsGxsCircleCache &cache = it->second;
 			cache.loadBaseCircle(group);
+	    		cache.mOriginator = item->meta.mOriginator ;
 			delete item;
 
 
@@ -1043,6 +1043,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 #endif
 
 						std::list<PeerId> peers;
+                        			peers.push_back(cache.mOriginator) ;
+                                    
 						mIdentities->requestKey(*pit, peers);
 
 						/* store in to_process queue. */
@@ -1114,12 +1116,12 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				isUnprocessedPeers = false;
 			}
 
-
+            	// we can check for self inclusion in the circle right away, since own ids are always loaded.
+            	// that allows to subscribe/unsubscribe uncomplete circles 
+	    checkCircleCacheForAutoSubscribe(cache);
 
 			if (isComplete)
 			{
-				checkCircleCacheForAutoSubscribe(cache);
-
 				/* move straight into the cache */
 				mCircleCache.store(id, cache);
 				mCircleCache.resize();
@@ -1266,8 +1268,11 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 
 
 /* We need to AutoSubscribe if the Circle is relevent to us */
+
 bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 {
+#warning we should also check for items in mLoadingCache in this method.
+    
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() : "<< cache.mCircleId << std::endl;
 #endif

@@ -2840,8 +2840,8 @@ void RsGenExchange::processRecvdGroups()
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
 				{
-					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
-						meta->mOriginator = grp->PeerId();
+					//if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+					meta->mOriginator = grp->PeerId();
 
 					meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
                     

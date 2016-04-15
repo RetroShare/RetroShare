@@ -262,7 +262,11 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
             	if(it != mInstance->mPendingData.end())
                 {
 			mInstance->connectObject_locked(object, false);
-			mInstance->mPendingData.erase(it) ;
+            
+            		if(mInstance->mPendingDataIterator == it)
+				mInstance->mPendingDataIterator = mInstance->mPendingData.erase(it) ;
+                        else
+				mInstance->mPendingData.erase(it) ;
                 }
                
 		/* Connect signal "destroy" */
