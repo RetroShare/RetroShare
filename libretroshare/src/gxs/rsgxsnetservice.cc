@@ -3669,8 +3669,6 @@ bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId&
 #ifdef NXS_NET_DEBUG_7
 	GXSNETDEBUG_P_ (item->PeerId()) << "Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << " - Encrypting single item for peer " << item->PeerId() << ", for circle ID " << destination_circle  << std::endl;
 #endif
-	std::cerr << "RsGxsNetService::encryptSingleNxsItem()" << std::endl;
-
 	// 1 - Find out the list of GXS ids to encrypt for
 	//     We could do smarter things (like see if the peer_id owns one of the circle's identities
 	//     but for now we aim at the simplest solution: encrypt for all identities in the circle.

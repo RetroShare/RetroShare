@@ -496,10 +496,12 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 	/* first check the filters */
         if (!mFilterPeers.addrOkay(&(id->addr)))
 	{
+#ifdef DEBUG_NODE_MSGS 
 		std::cerr << "bdNode::checkPotentialPeer(";
 		mFns->bdPrintId(std::cerr, id);
 		std::cerr << ") BAD ADDRESS!!!! SHOULD DISCARD POTENTIAL PEER";
 		std::cerr << std::endl;
+#endif
 
 		return;
 	}

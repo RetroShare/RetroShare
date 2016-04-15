@@ -3009,7 +3009,9 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
 
     if(mPgpUtils->parseSignature((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),issuer_id))
     {
+#ifdef DEBUG_IDS
 	    std::cerr << "Issuer found: " << issuer_id << std::endl;
+#endif
 	    pgpId = issuer_id ;
     }
     else

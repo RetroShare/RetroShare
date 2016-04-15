@@ -173,7 +173,9 @@ bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sig
 
     PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
     
+#ifdef DEBUG_PGPUTIL
     std::cerr << "Packet tag : " << (int)packet_tag << ", length=" << packet_length << std::endl;
+#endif
     
     // 2 - parse key data, only keep public key data, user id and self-signature.
 
