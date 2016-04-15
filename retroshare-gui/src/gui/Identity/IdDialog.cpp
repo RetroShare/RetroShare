@@ -882,9 +882,6 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
 	 }
 
-#ifdef ID_DEBUG
-	std::cerr << "Setting item image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
-#endif
     QPixmap pixmap ;
 
     if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
@@ -1119,7 +1116,7 @@ void IdDialog::insertIdDetails(uint32_t token)
         pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
 
 #ifdef ID_DEBUG
-	std::cerr << "Setting header frame image : " << pix.width() << " x " << pix.height() << std::endl;
+	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
     ui->avlabel->setPixmap(pixmap);
@@ -1263,7 +1260,7 @@ void IdDialog::modifyReputation()
     	rsReputations->setOwnOpinion(id,op) ;
 
 #ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
+	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
 	std::cerr << std::endl;
 #endif
 
@@ -1279,11 +1276,6 @@ void IdDialog::modifyReputation()
 		std::cerr << std::endl;
 #endif
 	}
-#endif
-
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
-	std::cerr << std::endl;
 #endif
 
 	// trigger refresh when finished.
