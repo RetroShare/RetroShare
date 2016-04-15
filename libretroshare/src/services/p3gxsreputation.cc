@@ -137,7 +137,7 @@ static const int      kReputationStoreWait                = 180;      // 3 minut
 static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
 static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
-static const uint32_t BANNED_NODES_UPDATE_DELAY           = 613 ;     // update approx every 10 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
+static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
@@ -247,9 +247,9 @@ class ZeroInitCnt
 
 void p3GxsReputation::updateBannedNodesList()
 {
-//#ifdef DEBUG_REPUTATION
+#ifdef DEBUG_REPUTATION
 	std::cerr << "Updating PGP ban list based on signed GxsIds to ban" << std::endl;
-//#endif
+#endif
 	std::map<RsGxsId, Reputation> tmpreps ;
 
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
@@ -266,9 +266,9 @@ void p3GxsReputation::updateBannedNodesList()
 	if(mPgpAutoBanThreshold > 0)
 		for(std::map<RsPgpId,ZeroInitCnt>::const_iterator it(pgp_ids_to_ban.begin());it!=pgp_ids_to_ban.end();++it)
 		{
-//#ifdef DEBUG_REPUTATION
+#ifdef DEBUG_REPUTATION
 			std::cerr << "PGP Id: " << it->first << ". Ban count=" << it->second << " - " << (( it->second >= mPgpAutoBanThreshold)?"Banned!":"OK" ) << std::endl;
-//#endif
+#endif
 			if(it->second >= mPgpAutoBanThreshold)
 				mBannedPgpIds.insert(it->first) ;
 		}
