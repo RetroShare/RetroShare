@@ -1,5 +1,38 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  2552b55 defnax      Fri, 15 Apr 2016 20:32:00 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  85942f4 defnax      Fri, 15 Apr 2016 20:30:32 +0200 improving the create circle layout
+  cb6c2c9 csoler      Thu, 14 Apr 2016 23:49:55 -0400 Merge pull request #350 from csoler/v0.6-Circles
+  048192e csoler      Thu, 14 Apr 2016 23:47:42 -0400 added mOriginator to CircleCache entry and auto-ask for unknown GXS ids to the friend who suppl
+  ba1a1b2 csoler      Thu, 14 Apr 2016 23:09:59 -0400 fixed auto-subscribed of circles when some IDs are unknown
+  47dd442 csoler      Thu, 14 Apr 2016 18:26:47 -0400 merge upstream/master
+  971f8e0 csoler      Wed, 13 Apr 2016 18:41:49 -0400 fixed potential crash due to not updating mPendingDataIterator after deleting map entry
+  92eb9c5 csoler      Wed, 13 Apr 2016 18:15:56 -0400 Merge pull request #346 from PhenomRetroShare/Move_ChatNotifyButtonToToolBar
+  aad295d defnax      Wed, 13 Apr 2016 21:00:07 +0200 Fixed layout margin
+  45f77de Phenom      Wed, 13 Apr 2016 20:42:12 +0200 Change Lobby Send button tooltip.
+  718d6f9 Phenom      Wed, 13 Apr 2016 20:26:36 +0200 Resize Chat Tool Bar Button for Hight DPI screen.
+  42a2b37 Phenom      Wed, 13 Apr 2016 19:21:18 +0200 Move SearchBar to Tool Bar and remove Show/Hide action.
+  c5873f3 Phenom      Sun, 10 Apr 2016 16:42:15 +0200 Move Chat notify button from search bar to tool bar.
+  d512c4a csoler      Tue, 12 Apr 2016 22:59:12 -0400 enabled new link type for posted (patch from Fanch)
+  cf746f1 csoler      Tue, 12 Apr 2016 10:06:01 -0400 fixed possible crash in GxsIdDetails
+  d5ed84e csoler      Mon, 11 Apr 2016 23:43:18 -0400 allow one to change the contact author of a circle
+  8f9028d csoler      Mon, 11 Apr 2016 23:30:42 -0400 fixed bug in GxsIdLabel due to not removign existing jobs for a given widget before setting it 
+  6b2de05 csoler      Mon, 11 Apr 2016 22:42:02 -0400 added channel admin and distribution method in channel summary page
+  a52bd98 csoler      Mon, 11 Apr 2016 10:10:10 -0400 fixed potential div by 0 in speed estimations. To be tested.
+  b148239 csoler      Sun, 10 Apr 2016 21:09:47 -0400 always pass data accept test in distant chat when we are on the client side of the tunnel
+  c97f197 csoler      Sun, 10 Apr 2016 20:39:08 -0400 removed depth obfucation of search results and replaced by 0 always, effectively removing any i
+  123041a csoler      Sun, 10 Apr 2016 18:55:05 -0400 skip circle vetting when sending message posts with no author
+  0d5b9ae csoler      Sun, 10 Apr 2016 18:55:05 -0400 fixed last commit
+  b8075d6 csoler      Sun, 10 Apr 2016 18:53:49 -0400 skip circle vetting when sending message posts with no author
+  4fe66d6 csoler      Sun, 10 Apr 2016 10:53:21 -0400 removed Edit/New circles buttons, put them in context menu. Added header frame (needs a proper 
+  c9c15e5 csoler      Sun, 10 Apr 2016 09:49:31 -0400 Merge pull request #345 from PhenomRetroShare/Update_CircleGraphical
+  d727311 Phenom      Sun, 10 Apr 2016 12:00:23 +0200 Fix Graphic Circles update.
+  3eb9a5e electron128 Sun, 10 Apr 2016 11:14:32 +0200 Merge pull request #344 from Phenom: Fix Escaped charaters in WebUI
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 09 Apr 2016 23:00:00 -0500
+
+retroshare06 (0.6.0-1.20160409.33d32589~trusty) trusty; urgency=low
+
   3b45fd8 csoler      Sat,  9 Apr 2016 17:50:46 -0400 create new item "My own identities" to store own ids in IdDialog
   a5044bd csoler      Sat,  9 Apr 2016 14:48:05 -0400 improved calculation of speed in pqistreamer (was called before only when sending bytes), and prevented situation wher
   993d7d4 csoler      Sat,  9 Apr 2016 14:46:12 -0400 removed debug info in rsgxsnetservice
