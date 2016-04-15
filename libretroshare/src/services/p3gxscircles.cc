@@ -37,7 +37,6 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
-#define DEBUG_CIRCLES	 1
 
 RsGxsCircles *rsGxsCircles = NULL;
 
@@ -978,6 +977,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 			RsGxsCircleCache &cache = it->second;
 			cache.loadBaseCircle(group);
+	    		cache.mOriginator = item->meta.mOriginator ;
 			delete item;
 
 
@@ -1043,6 +1043,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 #endif
 
 						std::list<PeerId> peers;
+                        			peers.push_back(cache.mOriginator) ;
+                                    
 						mIdentities->requestKey(*pit, peers);
 
 						/* store in to_process queue. */

@@ -156,6 +156,8 @@ class RsGxsCircleCache
     
 	std::set<RsGxsId> mAllowedAnonPeers;
 	std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
+    
+    	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
 };
 
 
