@@ -260,14 +260,20 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	QString hlp_str = tr(
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
-			<p>In this tab you can create/edit pseudo-anonymous identities.</p>                \
-			<p>Identities are used to securely identify your data: sign forum and channel posts,\
-				and receive feedback using Retroshare built-in email system, post comments \
-				after channel posts, etc.</p> \
-			<p>Identities can optionally be signed by your Retroshare node's certificate.   \
+			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
+			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
+				receive feedback using the Retroshare built-in email system, post comments \
+				after channel posts, chat using secured tunnels, etc.</p> \
+			<p>Identities can optionally be <b>signed</b> by your Retroshare node's certificate.   \
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
-			<p> Anonymous identities allow you to anonymously interact with other users. They cannot be   \
-			spoofed, but noone can prove who really owns a given identity.</p>") ;
+			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
+			spoofed, but noone can prove who really owns a given identity.</p> \
+                	<p><b>External circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
+                		used to restrict the visibility to forums, channels, etc. </p> \
+                	<p>An <b>external circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
+                		or even self-restricted, meaning that it is only visible to its members.</p> \
+                	<p>A <b>local circle</b> is a group of friend nodes (represented by their PGP Ids), and can also be used to restrict the \
+                		visibility of forums and channels. They are not shared over the network, and their list of members is only visible to you.</p>") ;
 
 	registerHelpButton(ui->helpButton, hlp_str) ;
 
@@ -380,7 +386,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
     if(!mExternalOtherCircleItem)
     {
 	    mExternalOtherCircleItem = new QTreeWidgetItem();
-	    mExternalOtherCircleItem->setText(0, tr("Other visible circles"));
+	    mExternalOtherCircleItem->setText(0, tr("Other visible external circles"));
 
 	    ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
     }
@@ -388,7 +394,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
     if(!mExternalSubCircleItem )
     {
 	    mExternalSubCircleItem = new QTreeWidgetItem();
-	    mExternalSubCircleItem->setText(0, tr("Circles I belong to"));
+	    mExternalSubCircleItem->setText(0, tr("External circles my identities belong to"));
 	    ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
     }
 
