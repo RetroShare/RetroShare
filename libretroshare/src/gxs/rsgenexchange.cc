@@ -2957,7 +2957,7 @@ void RsGenExchange::performUpdateValidation()
 
 		if(gu.validUpdate)
 		{
-			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
 
             		// Keep subscriptionflag to what it was. This avoids clearing off the flag when updates to group meta information

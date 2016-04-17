@@ -48,18 +48,18 @@ class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
 
 typedef RsPgpId RsPgpId;
-//typedef RsGxsCircleId RsCircleInternalId;
 
-#define GXS_CIRCLE_TYPE_PUBLIC            0x0001
-#define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
-#define GXS_CIRCLE_TYPE_YOUREYESONLY      0x0003
-#define GXS_CIRCLE_TYPE_LOCAL		  0x0004
+// The meaning of the different circle types is:
+//
+//	
+static const uint32_t GXS_CIRCLE_TYPE_PUBLIC            = 0x0001 ;	// not restricted to a circle
+static const uint32_t GXS_CIRCLE_TYPE_EXTERNAL          = 0x0002 ;	// restricted to an external circle, made of RsGxsId
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY = 0x0003 ;	// restricted to a subset of friend nodes of a given RS node given by a RsPgpId list
+static const uint32_t GXS_CIRCLE_TYPE_LOCAL             = 0x0004 ;	// not distributed at all
+static const uint32_t GXS_CIRCLE_TYPE_EXT_SELF          = 0x0005 ;	// self-restricted. Not used, except at creation time when the circle ID isn't known yet. Set to EXTERNAL afterwards.
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006 ;	// distributed to nodes signed by your own PGP key only.
 
-// A special one - used only by Circles themselves - meaning Circle ID == Group ID.
-#define GXS_CIRCLE_TYPE_EXT_SELF	  0x0005	
-
-/* Permissions is part of GroupMetaData 
- */
+/* Permissions is part of GroupMetaData  */
 
 class GxsPermissions
 {
@@ -109,13 +109,14 @@ class RsGxsCircleDetails
 	bool 	    mIsExternal;
     	bool		mAmIAllowed ;
 
+#ifdef TO_REMOVE
 	bool operator ==(const RsGxsCircleDetails& rGxsDetails) {
 		return ( mCircleId == rGxsDetails.mCircleId
 		      && mCircleName == rGxsDetails.mCircleName
 		      && mCircleType == rGxsDetails.mCircleType
 		      && mIsExternal == rGxsDetails.mIsExternal
-		      && mAllowedAnonPeers == rGxsDetails.mAllowedAnonPeers
-		      && mAllowedSignedPeers == rGxsDetails.mAllowedSignedPeers
+		      && mAllowedGxsIds == rGxsDetails.mAllowedGxsIds
+		      && mAllowedNodes == rGxsDetails.mAllowedNodes
 		      );
 	}
 
@@ -124,13 +125,14 @@ class RsGxsCircleDetails
 		      || mCircleName != rGxsDetails.mCircleName
 		      || mCircleType != rGxsDetails.mCircleType
 		      || mIsExternal != rGxsDetails.mIsExternal
-		      || mAllowedAnonPeers != rGxsDetails.mAllowedAnonPeers
-		      || mAllowedSignedPeers != rGxsDetails.mAllowedSignedPeers
+		      || mAllowedGxsIds != rGxsDetails.mAllowedGxsIds
+		      || mAllowedNodes != rGxsDetails.mAllowedNodes
 		      );
 	}
+#endif
 
-        std::set<RsGxsId> mAllowedAnonPeers;
-        std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
+        std::set<RsGxsId> mAllowedGxsIds;
+        std::set<RsPgpId> mAllowedNodes;
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper

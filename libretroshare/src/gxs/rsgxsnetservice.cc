@@ -4152,7 +4152,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 #endif
 	}
 
-	if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+	if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 	{
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId)<< "  YOUREYESONLY, checking further"<< std::endl;
@@ -4216,125 +4216,125 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 	return true;
 }
 
-bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, RsGxsCircleId &should_encrypt_id)
+bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, RsGxsCircleId& should_encrypt_id)
 {
 
-	#ifdef NXS_NET_DEBUG_4
-		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::checkCanRecvMsgFromPeer()";
-        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  peer Id = " << sslId << ", grpId=" << grpMeta.mGroupId <<std::endl;
-	#endif
-		// first do the simple checks
-		uint8_t circleType = grpMeta.mCircleType;
-        	should_encrypt_id.clear() ;
+#ifdef NXS_NET_DEBUG_4
+	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::checkCanRecvMsgFromPeer()";
+	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  peer Id = " << sslId << ", grpId=" << grpMeta.mGroupId <<std::endl;
+#endif
+	// first do the simple checks
+	uint8_t circleType = grpMeta.mCircleType;
+	should_encrypt_id.clear() ;
 
-		if(circleType == GXS_CIRCLE_TYPE_LOCAL)
+	if(circleType == GXS_CIRCLE_TYPE_LOCAL)
+	{
+#ifdef NXS_NET_DEBUG_4
+		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  LOCAL_CIRCLE, cannot request sync from peer" << std::endl;
+#endif
+		return false;
+	}
+
+	if(circleType == GXS_CIRCLE_TYPE_PUBLIC)
+	{
+#ifdef NXS_NET_DEBUG_4
+		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  PUBLIC_CIRCLE, can request msg sync" << std::endl;
+#endif
+		return true;
+	}
+
+	if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
+	{
+#ifdef NXS_NET_DEBUG_4
+		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: EXTERNAL => returning true. Msgs will be encrypted." << std::endl;
+#endif
+		should_encrypt_id = grpMeta.mCircleId ;
+		return true ;
+#ifdef TO_BE_REMOVED_OLD_VETTING_FOR_EXTERNAL_CIRCLES
+		const RsGxsCircleId& circleId = grpMeta.mCircleId;
+		if(circleId.isNull())
 		{
-	#ifdef NXS_NET_DEBUG_4
-            GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  LOCAL_CIRCLE, cannot request sync from peer" << std::endl;
-	#endif
-			return false;
+#ifdef NXS_NET_DEBUG_0
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  ERROR; EXTERNAL_CIRCLE missing NULL CircleId";
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << grpMeta.mGroupId;
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << std::endl;
+#endif
+
+			// should just be shared. ? no - this happens for
+			// Circle Groups which lose their CircleIds.
+			// return true;
 		}
 
-		if(circleType == GXS_CIRCLE_TYPE_PUBLIC)
-		{
-	#ifdef NXS_NET_DEBUG_4
-            GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  PUBLIC_CIRCLE, can request msg sync" << std::endl;
-	#endif
-			return true;
-		}
-
-		if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
+		if(mCircles->isLoaded(circleId))
 		{
 #ifdef NXS_NET_DEBUG_4
-	    GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: EXTERNAL => returning true. Msgs will be encrypted." << std::endl;
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  EXTERNAL_CIRCLE, checking mCircles->canSend" << std::endl;
 #endif
-        	should_encrypt_id = grpMeta.mCircleId ;
-        	return true ;
-#ifdef TO_BE_REMOVED_OLD_VETTING_FOR_EXTERNAL_CIRCLES
-			const RsGxsCircleId& circleId = grpMeta.mCircleId;
-			if(circleId.isNull())
-			{
-#ifdef NXS_NET_DEBUG_0
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  ERROR; EXTERNAL_CIRCLE missing NULL CircleId";
-				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << grpMeta.mGroupId;
-				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << std::endl;
+			const RsPgpId& pgpId = mPgpUtils->getPGPId(sslId);
+			return mCircles->canSend(circleId, pgpId);
+		}
+		else
+			mCircles->loadCircle(circleId); // simply request for next pass
+
+		return false;
+#endif
+	}
+
+	if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY) // do not attempt to sync msg unless to originator or those permitted
+	{
+#ifdef NXS_NET_DEBUG_4
+		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  YOUREYESONLY, checking further" << std::endl;
+#endif
+		// a non empty internal circle id means this
+		// is the personal circle owner
+		if(!grpMeta.mInternalCircle.isNull())
+		{
+			const RsGxsCircleId& internalCircleId = grpMeta.mInternalCircle;
+#ifdef NXS_NET_DEBUG_4
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    have mInternalCircle - we are Group creator" << std::endl;
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mCircleId: " << grpMeta.mCircleId << std::endl;
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mInternalCircle: " << grpMeta.mInternalCircle << std::endl;
 #endif
 
-				// should just be shared. ? no - this happens for
-				// Circle Groups which lose their CircleIds.
-				// return true;
-			}
-
-			if(mCircles->isLoaded(circleId))
+			if(mCircles->isLoaded(internalCircleId))
 			{
-	#ifdef NXS_NET_DEBUG_4
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  EXTERNAL_CIRCLE, checking mCircles->canSend" << std::endl;
-	#endif
+#ifdef NXS_NET_DEBUG_4
+				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    circle Loaded - checking mCircles->canSend" << std::endl;
+#endif
 				const RsPgpId& pgpId = mPgpUtils->getPGPId(sslId);
-				return mCircles->canSend(circleId, pgpId);
+				bool should_encrypt ;
+				return mCircles->canSend(internalCircleId, pgpId,should_encrypt);
 			}
 			else
-				mCircles->loadCircle(circleId); // simply request for next pass
+				mCircles->loadCircle(internalCircleId); // request for next pass
 
 			return false;
-#endif
 		}
-
-		if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY) // do not attempt to sync msg unless to originator or those permitted
+		else
 		{
-	#ifdef NXS_NET_DEBUG_4
-            GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  YOUREYESONLY, checking further" << std::endl;
-	#endif
-			// a non empty internal circle id means this
-			// is the personal circle owner
-			if(!grpMeta.mInternalCircle.isNull())
+			// an empty internal circle id means this peer can only
+			// send circle related info from peer he received it
+#ifdef NXS_NET_DEBUG_4
+			GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mInternalCircle not set, someone else's personal circle" << std::endl;
+#endif
+			if(grpMeta.mOriginator == sslId)
 			{
-				const RsGxsCircleId& internalCircleId = grpMeta.mInternalCircle;
-	#ifdef NXS_NET_DEBUG_4
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    have mInternalCircle - we are Group creator" << std::endl;
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mCircleId: " << grpMeta.mCircleId << std::endl;
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mInternalCircle: " << grpMeta.mInternalCircle << std::endl;
-	#endif
-
-				if(mCircles->isLoaded(internalCircleId))
-				{
-	#ifdef NXS_NET_DEBUG_4
-                    GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    circle Loaded - checking mCircles->canSend" << std::endl;
-	#endif
-					const RsPgpId& pgpId = mPgpUtils->getPGPId(sslId);
-                    bool should_encrypt ;
-					return mCircles->canSend(internalCircleId, pgpId,should_encrypt);
-				}
-				else
-					mCircles->loadCircle(internalCircleId); // request for next pass
-
-				return false;
+#ifdef NXS_NET_DEBUG_4
+				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    Originator matches -> can send" << std::endl;
+#endif
+				return true;
 			}
 			else
 			{
-				// an empty internal circle id means this peer can only
-				// send circle related info from peer he received it
-	#ifdef NXS_NET_DEBUG_4
-                GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    mInternalCircle not set, someone else's personal circle" << std::endl;
-	#endif
-				if(grpMeta.mOriginator == sslId)
-				{
-	#ifdef NXS_NET_DEBUG_4
-                    GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    Originator matches -> can send" << std::endl;
-	#endif
-					return true;
-				}
-				else
-				{
-	#ifdef NXS_NET_DEBUG_4
-                    GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    Originator doesn't match -> cannot send"<< std::endl;
-	#endif
-					return false;
-				}
+#ifdef NXS_NET_DEBUG_4
+				GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "    Originator doesn't match -> cannot send"<< std::endl;
+#endif
+				return false;
 			}
 		}
+	}
 
-		return true;
+	return true;
 }
 
 bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem *item)
@@ -4639,7 +4639,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
             return true ;
     }
 
-	if(circleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+	if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 	{
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: YOUR EYES ONLY" << std::endl;

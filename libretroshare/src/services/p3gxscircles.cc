@@ -268,8 +268,8 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 			details.mCircleType = data.mCircleType;
 			details.mIsExternal = data.mIsExternal;
 
-			details.mAllowedAnonPeers = data.mAllowedAnonPeers;
-			details.mAllowedSignedPeers = data.mAllowedSignedPeers;
+			details.mAllowedGxsIds = data.mAllowedGxsIds;
+			details.mAllowedNodes = data.mAllowedNodes;
             
             		details.mAmIAllowed = data.mAmIAllowed ;
 			return true;
@@ -409,13 +409,9 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>&
     if(!getCircleDetails(circleId, details))
 	    return false;
     
-    for(std::set<RsGxsId>::const_iterator it(details.mAllowedAnonPeers.begin());it!=details.mAllowedAnonPeers.end();++it)
+    for(std::set<RsGxsId>::const_iterator it(details.mAllowedGxsIds.begin());it!=details.mAllowedGxsIds.end();++it)
 	    gxs_ids.push_back(*it) ;
     
-    for(std::map<RsPgpId,std::set<RsGxsId> >::const_iterator it(details.mAllowedSignedPeers.begin());it!=details.mAllowedSignedPeers.end();++it)
-        for(std::set<RsGxsId>::const_iterator it2(it->second.begin());it2!=it->second.end();++it2)
-            gxs_ids.push_back(*it2) ;
-            
     return true;
 }
 
@@ -574,53 +570,36 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 	return true;
 }
 
-bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist) const
+bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId>& friendlist) const
 {
-	std::map<RsPgpId, std::set<RsGxsId> >::const_iterator it;
-	for(it = mAllowedSignedPeers.begin(); it != mAllowedSignedPeers.end(); ++it)
-	{
-		friendlist.push_back(it->first);
-	}
+    friendlist.clear() ;
+    
+	for(std::set<RsPgpId>::const_iterator it = mAllowedNodes.begin(); it != mAllowedNodes.end(); ++it)
+		friendlist.push_back(*it) ;
+	
 	return true;
 }
 
-bool RsGxsCircleCache::isAllowedPeer(const RsGxsId &id) const
+bool RsGxsCircleCache::isAllowedPeer(const RsGxsId& id) const
 {
     if(mUnprocessedPeers.find(id) != mUnprocessedPeers.end())
         return true ;
     
-    if(mAllowedAnonPeers.find(id) != mAllowedAnonPeers.end())
+    if(mAllowedGxsIds.find(id) != mAllowedGxsIds.end())
         return true ;
-    
-    for(std::map<RsPgpId,std::set<RsGxsId> >::const_iterator it = mAllowedSignedPeers.begin();it!=mAllowedSignedPeers.end();++it)
-        if(it->second.find(id) != it->second.end())
-            return true ;
     
     return false ;
 }
 
 bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id) const
 {
-	std::map<RsPgpId, std::set<RsGxsId> >::const_iterator it = mAllowedSignedPeers.find(id);
-	if (it != mAllowedSignedPeers.end())
-	{
-		return true;
-	}
-	return false;
+    return mAllowedNodes.find(id) != mAllowedNodes.end() ;
 }
-
-bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId)
-{
-	/* created if doesn't exist */
-	mAllowedSignedPeers[pgpId].insert(gxsId);
-	return true;
-}
-
 
 bool RsGxsCircleCache::addLocalFriend(const RsPgpId &pgpId)
 {
 	/* empty list as no GxsID associated */
-            mAllowedSignedPeers.insert(std::make_pair(pgpId,std::set<RsGxsId>()));
+            mAllowedNodes.insert(pgpId) ;
 	return true;
 }
 
@@ -1027,33 +1006,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 					/* check cache */
 					if (mIdentities->haveKey(*pit))
-					{
-						/* we can process now! */
-						RsIdentityDetails details;
-						if (mIdentities->getIdDetails(*pit, details))
-						{
-							if ((details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) &&(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
-							{
-#ifdef DEBUG_CIRCLES
-								std::cerr << "    Is Known -> AllowedPeer: " << *pit << std::endl;
-#endif
-								cache.addAllowedPeer(details.mPgpId, *pit);
-							}
-							else
-							{
-#ifdef DEBUG_CIRCLES
-								std::cerr << "    Is Unknown -> UnknownPeer: " << *pit << std::endl;
-#endif
-								cache.mAllowedAnonPeers.insert(*pit);
-							}
-						}
-						else
-						{
-							std::cerr << "p3GxsCircles::cache_load_for_token() ERROR no details: " << *pit;
-							std::cerr << std::endl;
-							// ERROR.
-						}
-					}
+						cache.mAllowedGxsIds.insert(*pit);
 					else
 					{
 #ifdef DEBUG_CIRCLES
@@ -1226,27 +1179,12 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 			RsIdentityDetails details;
 			if (mIdentities->getIdDetails(*pit, details))
 			{
-				if ((details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) &&(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
-				{
-					cache.addAllowedPeer(details.mPgpId, *pit);
-
+					cache.mAllowedGxsIds.insert(*pit);
 #ifdef DEBUG_CIRCLES
 					std::cerr << "p3GxsCircles::cache_reloadids() AllowedPeer: ";
 					std::cerr << *pit;
 					std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
-				}
-				else
-				{
-					cache.mAllowedAnonPeers.insert(*pit);
-
-#ifdef DEBUG_CIRCLES
-					std::cerr << "p3GxsCircles::cache_reloadids() UnknownPeer: ";
-					std::cerr << *pit;
-					std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-				}
-                
 			}
 			else
 			{
@@ -1333,7 +1271,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
         
 	const RsPgpId& ownPgpId = mPgpUtils->getPGPOwnId();
     
-    	bool am_I_allowed = cache.mAmIAllowed || (cache.mAllowedSignedPeers.find(ownPgpId) != cache.mAllowedSignedPeers.end()) ;
+    	bool am_I_allowed = cache.mAmIAllowed || (cache.mAllowedNodes.find(ownPgpId) != cache.mAllowedNodes.end()) ;
         
 	if(am_I_allowed)
 	{

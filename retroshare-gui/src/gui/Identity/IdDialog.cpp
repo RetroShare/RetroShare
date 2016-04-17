@@ -501,13 +501,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
 	    }
 
-
-#ifdef ID_DEBUG
 	    if (subscribed)
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
 	    else
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
-#endif
     }
 }
 

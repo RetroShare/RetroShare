@@ -441,7 +441,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 
 	switch(mGrpMeta.mCircleType)
 	{
-		case GXS_CIRCLE_TYPE_YOUREYESONLY:
+		case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			ui.typeLocal->setChecked(true);
 			distribution_string = tr("Your friends only") ;
 			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
@@ -740,7 +740,7 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 	}
 	else if (ui.typeLocal->isChecked())
 	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
+		meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
 		meta.mCircleId.clear();
 		meta.mOriginator.clear();
 		meta.mInternalCircle.clear() ;

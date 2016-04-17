@@ -135,7 +135,7 @@ class RsGxsCircleCache
 	bool getAllowedPeersList(std::list<RsPgpId> &friendlist) const;
 	bool isAllowedPeer(const RsPgpId &id) const;
 	bool isAllowedPeer(const RsGxsId &id) const;
-	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
+	bool addAllowedPeer(const RsPgpId &pgpid);
 	bool addLocalFriend(const RsPgpId &pgpid);
 
 	RsGxsCircleId mCircleId;
@@ -155,8 +155,8 @@ class RsGxsCircleCache
 #endif
 	std::set<RsGxsId> mUnprocessedPeers;
     
-	std::set<RsGxsId> mAllowedAnonPeers;
-	std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
+	std::set<RsGxsId> mAllowedGxsIds;
+	std::set<RsPgpId> mAllowedNodes;
     
     	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
 };
