@@ -100,11 +100,14 @@ class RsGxsCircleMsg
 class RsGxsCircleDetails
 {
         public:
+    		RsGxsCircleDetails() : mCircleType(GXS_CIRCLE_TYPE_EXTERNAL), mIsExternal(true), mAmIAllowed(false) {}
+            
         RsGxsCircleId mCircleId;
         std::string mCircleName;
 
 	uint32_t    mCircleType;
 	bool 	    mIsExternal;
+    	bool		mAmIAllowed ;
 
 	bool operator ==(const RsGxsCircleDetails& rGxsDetails) {
 		return ( mCircleId == rGxsDetails.mCircleId

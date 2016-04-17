@@ -143,6 +143,7 @@ class RsGxsCircleCache
 
 	uint32_t      mCircleType;
 	bool	      mIsExternal;
+    	bool 		mAmIAllowed ;
 
 	uint32_t      mGroupStatus;
 	uint32_t      mGroupSubscribeFlags;

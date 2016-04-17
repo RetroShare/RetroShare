@@ -339,150 +339,158 @@ void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 
 void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 {
-	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
+    mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
 
 #ifdef ID_DEBUG
-	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
-	std::cerr << std::endl;
+    std::cerr << "CirclesDialog::loadCircleGroupMeta()";
+    std::cerr << std::endl;
 #endif
 
-	std::list<RsGroupMetaData> groupInfo;
-	std::list<RsGroupMetaData>::iterator vit;
+    std::list<RsGroupMetaData> groupInfo;
+    std::list<RsGroupMetaData>::iterator vit;
 
-	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
-	{
-		std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
-		std::cerr << std::endl;
-		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
-		return;
-	}
-
-	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
-
-	/* add the top level item */
-	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
-	//personalCirclesItem->setText(0, tr("Personal Circles"));
-	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
-    
-    	if(!mExternalOtherCircleItem)
-        {
-		mExternalOtherCircleItem = new QTreeWidgetItem();
-		mExternalOtherCircleItem->setText(0, tr("Other visible circles"));
-        
-		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
-        }
-
-	if(!mExternalSubCircleItem )
-	{
-		mExternalSubCircleItem = new QTreeWidgetItem();
-		mExternalSubCircleItem->setText(0, tr("Circles I belong to"));
-		ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
-    	}
-
-    	if(!mExternalLocalCircleItem)
-	{
-		mExternalLocalCircleItem = new QTreeWidgetItem();
-		mExternalLocalCircleItem->setText(0, tr("Local circles"));
-		ui->treeWidget_membership->addTopLevelItem(mExternalLocalCircleItem);
-	}
-
-	for(vit = groupInfo.begin(); vit != groupInfo.end();)
-    	{
-#ifdef ID_DEBUG
-		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
-#endif
-        
-		QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
-        
-        	if(clist.empty())
-	    	{
-                	++vit ;
-#ifdef ID_DEBUG
-                	std::cerr << "  group not already in list." << std::endl;
-#endif
-                	continue ;
-            	}
-            
-            	if(clist.size() > 1)
-                {
-                    	std::cerr << "  (EE) found " << clist.size() << " items in tree for group id " << vit->mGroupId << ": this is unexpected." << std::endl;
-        		vit = groupInfo.erase(vit) ;
-                	continue ;
-                }
-                QTreeWidgetItem *item = clist.front() ;
-                
-                bool subscribed = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ;
-                
-		if(subscribed && item->parent() != mExternalSubCircleItem)
-                {
-#ifdef ID_DEBUG
-                    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
-#endif
-                    delete item ;
-                    ++vit ;
-                    continue ;
-                }
-		if(!subscribed && item->parent() != mExternalOtherCircleItem)
-                {
-#ifdef ID_DEBUG
-                    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
-#endif
-                    delete item ;
-                    ++vit ;
-                    continue ;
-                }
-                if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
-                {
-#ifdef ID_DEBUG
-                    std::cerr << "  Existing group has a new name. Updating it in the tree." << std::endl;
-#endif
-		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-                }
-                    
-        	// the item is at the right place. Just remove it from the list of items to add.
-#ifdef ID_DEBUG
-		std::cerr << "  item already in place. Removing from list." << std::endl;
-#endif
-        	vit = groupInfo.erase(vit) ;
-    	}
-    
-	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
+    if (!rsGxsCircles->getGroupSummary(token,groupInfo))
     {
-	    if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-	    {	
-		    std::cerr << "(WW) Local circle not added to tree widget. Needs to be implmeented." << std::endl;
-		    continue ;
-	    }
-	    /* Add Widget, and request Pages */
+	    std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
+	    std::cerr << std::endl;
+	    mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
+	    return;
+    }
 
-	    QTreeWidgetItem *groupItem = new QTreeWidgetItem();
-	    groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-	    groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
-	    groupItem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+    mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
-	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+    /* add the top level item */
+    //QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+    //personalCirclesItem->setText(0, tr("Personal Circles"));
+    //ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
+
+    if(!mExternalOtherCircleItem)
+    {
+	    mExternalOtherCircleItem = new QTreeWidgetItem();
+	    mExternalOtherCircleItem->setText(0, tr("Other visible circles"));
+
+	    ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
+    }
+
+    if(!mExternalSubCircleItem )
+    {
+	    mExternalSubCircleItem = new QTreeWidgetItem();
+	    mExternalSubCircleItem->setText(0, tr("Circles I belong to"));
+	    ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
+    }
+
+    if(!mExternalLocalCircleItem)
+    {
+	    mExternalLocalCircleItem = new QTreeWidgetItem();
+	    mExternalLocalCircleItem->setText(0, tr("Local circles"));
+	    ui->treeWidget_membership->addTopLevelItem(mExternalLocalCircleItem);
+    }
+
+    for(vit = groupInfo.begin(); vit != groupInfo.end();++vit)
+    {
+#ifdef ID_DEBUG
+	    std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+#endif
+	    RsGxsCircleDetails details;
+	    rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details) ;
+
+	    bool should_re_add = true ;
+	    bool subscribed = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ;
+	    bool am_I_in_circle = details.mAmIAllowed ;
+	    QTreeWidgetItem *item = NULL ;
+        
+        std::cerr << "Loaded info for circle " << vit->mGroupId << ". ubscribed=" << subscribed << ", am_I_in_circle=" << am_I_in_circle << std::endl;
+
+	    // find already existing items for this circle
+
+	    QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
+
+	    if(!clist.empty())
+	    {
+		    // delete all duplicate items. This should not happen, but just in case it does.
+
+		    while(clist.size() > 1)	
 	    {
 #ifdef ID_DEBUG
-        	std::cerr << "  adding item for group " << vit->mGroupId << " to subscribed"<< std::endl;
+			    std::cerr << "  more than 1 item correspond to this ID. Removing!" << std::endl;
 #endif
-		    mExternalSubCircleItem->addChild(groupItem);
-	    }
-	    else
-        {
+			    delete clist.front() ;
+            }
+
+		    item = clist.front() ;
+
+		    if(am_I_in_circle && item->parent() != mExternalSubCircleItem)
+		    {
 #ifdef ID_DEBUG
-        	std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
+			    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
 #endif
-		    mExternalOtherCircleItem->addChild(groupItem);
-        }
-        
-	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-        {
-	    QFont font = groupItem->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
-		font.setBold(true) ;
-		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
-		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
-		groupItem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
-        }
+			    delete item ;
+			    item = NULL ;
+		    }
+		    else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
+		    {
+#ifdef ID_DEBUG
+			    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+#endif
+			    delete item ;
+			    item = NULL ;
+		    }
+	    		else
+			    should_re_add = false ;	// item already exists
+	    }
+
+//	    if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+//	    {	
+//		    std::cerr << "(WW) Local circle not added to tree widget. Needs to be implmeented." << std::endl;
+//		    continue ;
+//	    }
+	    /* Add Widget, and request Pages */
+
+	    if(should_re_add)
+	    {
+		    item = new QTreeWidgetItem();
+
+		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+		    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+
+		    if(am_I_in_circle)
+		    {
+#ifdef ID_DEBUG
+			    std::cerr << "  adding item for group " << vit->mGroupId << " to own circles"<< std::endl;
+#endif
+			    mExternalSubCircleItem->addChild(item);
+		    }
+		    else
+		    {
+#ifdef ID_DEBUG
+			    std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
+#endif
+			    mExternalOtherCircleItem->addChild(item);
+		    }
+	    }
+	    else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
+	    {
+#ifdef ID_DEBUG
+		    std::cerr << "  Existing group has a new name. Updating it in the tree." << std::endl;
+#endif
+		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+	    }
+            
+	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+	    {
+		    QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
+		    font.setBold(true) ;
+		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
+	    }
+
+
+	    if (subscribed)
+		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
+	else
+		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
     }
 }
 
