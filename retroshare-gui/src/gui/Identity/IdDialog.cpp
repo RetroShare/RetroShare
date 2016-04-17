@@ -29,6 +29,7 @@
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
 #include "IdEditDialog.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/common/UIStateHelper.h"
@@ -275,8 +276,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
     // circles stuff
     
-//    connect(ui->pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
-//    connect(ui->pushButton_editCircle, SIGNAL(clicked()), this, SLOT(showEditExistingCircle()));
     connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
 
@@ -285,10 +284,24 @@ IdDialog::IdDialog(QWidget *parent) :
     mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
     
     requestCircleGroupMeta();
+    
+    // This timer shouldn't be needed, but it is now, because the update of subscribe status and appartenance to the
+    // circle doesn't trigger a proper GUI update.
+    
+    QTimer *tmer = new QTimer(this) ;
+    connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
+    
+    tmer->start(10000) ;	// update every minute. 
 }	
 
-void IdDialog::updateCirclesDisplay(bool)
+void IdDialog::updateCirclesDisplay()
 {
+    if(RsAutoUpdatePage::eventsLocked())
+        return ;
+    
+    if(!isVisible())
+        return ;
+    
 #ifdef ID_DEBUG
     std::cerr << "!!Updating circles display!" << std::endl;
 #endif
@@ -302,10 +315,10 @@ void IdDialog::requestCircleGroupMeta()
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
 
-#ifdef ID_DEBUG
+//#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::requestGroupMeta()";
 	std::cerr << std::endl;
-#endif
+//#endif
 
 	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
 
@@ -399,7 +412,9 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    bool am_I_in_circle = details.mAmIAllowed ;
 	    QTreeWidgetItem *item = NULL ;
         
+#ifdef ID_DEBUG
         std::cerr << "Loaded info for circle " << vit->mGroupId << ". ubscribed=" << subscribed << ", am_I_in_circle=" << am_I_in_circle << std::endl;
+#endif
 
 	    // find already existing items for this circle
 
@@ -487,10 +502,12 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    }
 
 
+#ifdef ID_DEBUG
 	    if (subscribed)
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
-	else
+	    else
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
+#endif
     }
 }
 

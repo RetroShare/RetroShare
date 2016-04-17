@@ -65,7 +65,7 @@ protected:
 private slots:
     void createExternalCircle();
     void showEditExistingCircle();
-	void updateCirclesDisplay(bool);
+	void updateCirclesDisplay();
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);

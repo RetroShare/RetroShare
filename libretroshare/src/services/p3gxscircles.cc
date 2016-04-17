@@ -37,7 +37,6 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
-#define DEBUG_CIRCLES	 1
 
 RsGxsCircles *rsGxsCircles = NULL;
 
@@ -999,7 +998,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
                 
                 		std::list<RsGxsId> myOwnIds;
                         
-                        	rsIdentity->getOwnIds(myOwnIds) ;
+                        	if(rsIdentity->getOwnIds(myOwnIds))
+                            {
                             	bool ownIdInCircle = false ;
 	
                                 for(std::list<RsGxsId>::const_iterator it(myOwnIds.begin());it!=myOwnIds.end() && !ownIdInCircle;++it)
@@ -1010,6 +1010,13 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 #endif
                                 
                                 cache.mAmIAllowed = ownIdInCircle;
+                            }
+                            else
+                            {
+                                std::cerr << "  own ids not loaded yet." << std::endl;
+						isComplete = false;
+						isUnprocessedPeers = true;
+                            }
                                 
 				// need to trigger the searches.
 				for(pit = peers.begin(); pit != peers.end(); ++pit)
@@ -1197,6 +1204,18 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 
 	RsGxsCircleCache &cache = it->second;
 
+	std::list<RsGxsId> myOwnIds;
+                        
+	if(rsIdentity->getOwnIds(myOwnIds)) 
+    {
+	    bool ownIdInCircle = false ;
+
+	    for(std::list<RsGxsId>::const_iterator it(myOwnIds.begin());it!=myOwnIds.end() && !ownIdInCircle;++it)
+		    ownIdInCircle =  ownIdInCircle || cache.isAllowedPeer(*it) ;
+            
+            cache.mAmIAllowed = ownIdInCircle ;
+    }
+        
 	/* try reload Ids */
 	for(std::set<RsGxsId>::const_iterator pit = cache.mUnprocessedPeers.begin(); pit != cache.mUnprocessedPeers.end(); ++pit)
 	{
@@ -1227,6 +1246,7 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 					std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
 				}
+                
 			}
 			else
 			{
