@@ -30,6 +30,7 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsprint.h"
+#include "util/rsscopetimer.h"
 
 #include "pqi/pqistreamer.h"
 #include "rsserver/p3face.h"
@@ -440,18 +441,12 @@ int	pqistreamer::handleoutgoing_locked()
 	    if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
 	    {
 
-#ifdef DEBUG_TRANSFERS
+//#ifdef DEBUG_PQISTREAMER
 		    if (maxbytes < sentbytes)
-		    {
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
-			    std::cerr << std::endl;
-		    }
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: bio not ready. maxbytes=" << maxbytes << ", sentbytes=" << sentbytes << std::endl;
 		    else
-		    {
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending at cansend() is false";
-			    std::cerr << std::endl;
-		    }
-#endif
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: sentbytes=" << sentbytes << ", max=" << maxbytes << std::endl;
+//#endif
 
 		    return 0;
 	    }
@@ -493,6 +488,8 @@ int	pqistreamer::handleoutgoing_locked()
 #endif
 	    if (mPkt_wpending)
 	    {
+            	RsScopeTimer tmer("pqistreamer:"+PeerId().toStdString()) ;
+                
 		    // write packet.
 #ifdef DEBUG_PQISTREAMER
 		    std::cout << "Sending Out Pkt of size " << mPkt_wpending_size << " !" << std::endl;
@@ -507,11 +504,14 @@ int	pqistreamer::handleoutgoing_locked()
 			    //				std::cerr << out << std::endl ;
 			    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
+                		std::cerr << PeerId() << ": sending failed. Only " << ss << " bytes sent over " << mPkt_wpending_size << std::endl;
 
 			    // pkt_wpending will kept til next time.
 			    // ensuring exactly the same data is written (openSSL requirement).
 			    return -1;
 		    }
+            else
+                		std::cerr << PeerId() << ": sent " << ss << " bytes " << std::endl;
 		    ++nsent;
             outSentBytes_locked(mPkt_wpending_size);	// this is the only time where we know exactly what was sent.
 
