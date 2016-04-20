@@ -141,7 +141,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->treeWidget_membership->clear();
     
     	mExternalOtherCircleItem = NULL ;
-    	mExternalSubCircleItem = NULL ;
+    	mExternalBelongingCircleItem = NULL ;
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -391,18 +391,11 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
     }
 
-    if(!mExternalSubCircleItem )
+    if(!mExternalBelongingCircleItem )
     {
-	    mExternalSubCircleItem = new QTreeWidgetItem();
-	    mExternalSubCircleItem->setText(0, tr("External circles my identities belong to"));
-	    ui->treeWidget_membership->addTopLevelItem(mExternalSubCircleItem);
-    }
-
-    if(!mExternalLocalCircleItem)
-    {
-	    mExternalLocalCircleItem = new QTreeWidgetItem();
-	    mExternalLocalCircleItem->setText(0, tr("Local circles"));
-	    ui->treeWidget_membership->addTopLevelItem(mExternalLocalCircleItem);
+	    mExternalBelongingCircleItem = new QTreeWidgetItem();
+	    mExternalBelongingCircleItem->setText(0, tr("External circles my identities belong to"));
+	    ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
     }
 
     for(vit = groupInfo.begin(); vit != groupInfo.end();++vit)
@@ -440,7 +433,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		    item = clist.front() ;
 
-		    if(am_I_in_circle && item->parent() != mExternalSubCircleItem)
+		    if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
 		    {
 #ifdef ID_DEBUG
 			    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
@@ -460,11 +453,6 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			    should_re_add = false ;	// item already exists
 	    }
 
-//	    if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-//	    {	
-//		    std::cerr << "(WW) Local circle not added to tree widget. Needs to be implmeented." << std::endl;
-//		    continue ;
-//	    }
 	    /* Add Widget, and request Pages */
 
 	    if(should_re_add)
@@ -480,7 +468,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #ifdef ID_DEBUG
 			    std::cerr << "  adding item for group " << vit->mGroupId << " to own circles"<< std::endl;
 #endif
-			    mExternalSubCircleItem->addChild(item);
+			    mExternalBelongingCircleItem->addChild(item);
 		    }
 		    else
 		    {
@@ -508,9 +496,15 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    }
 
 	    if (subscribed)
+	    {
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
+		    item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("This circle is \"subscribed\" i.e. advertised to neighbor nodes")) ;
+	    }
 	    else
+	    {
 		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
+		    item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
+	    }
     }
 }
 
@@ -609,8 +603,6 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
     
-    	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create Circle"), this, SLOT(createExternalCircle()));
-        
 	if (item) 
 	{
 		uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
@@ -621,7 +613,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 			else
 				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
 	}
-    
+    	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create external circle"), this, SLOT(createExternalCircle()));
 	contextMnu.exec(QCursor::pos());
 }
 
