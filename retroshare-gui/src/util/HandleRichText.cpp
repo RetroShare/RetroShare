@@ -17,6 +17,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
+ *
+ *  ccr . 2016 Jan 30 . Change regular expression(s) for identifying
+ *      .             . hotlinks in feral text.
+ *
  ****************************************************************/
 
 #include <QApplication>
@@ -56,7 +60,7 @@ protected:
 
 public:
 	const EmbeddedType myType;
-	QRegExp myRE;
+        QList<QRegExp> myREs;
 };
 
 /**
@@ -67,10 +71,42 @@ class EmbedInHtmlAhref : public EmbedInHtml
 public:
 	EmbedInHtmlAhref() : EmbedInHtml(Ahref)
 	{
-		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
-	}
-};
+	  // myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
 
+	  // The following regular expressions for finding URLs in
+	  // plain text are borrowed from *gnome-terminal*:
+
+	  QString regPassCharset = "[-\\w,?;\\.:/!%$^*&~\\\"#']";
+	  QString regHost = "[-\\w]+(\\.[-\\w]+)*";
+	  QString regPort = "(?:\\:\\d{1,5})?";
+	  QString regPathCharset = "[-\\w_$\\.+!*,;@&=?/~#%]";
+	  QString regPathTermSet = "[^\\]'.}<>) \\t\\r\\n,\\\"]";
+      QStringList regSchemes;
+//	  regSchemes.append("news:");
+//	  regSchemes.append("telnet:");
+//	  regSchemes.append("nntp:");
+//	  regSchemes.append("file:/");
+	  regSchemes.append("https?:");
+//	  regSchemes.append("ftps?:");
+//	  regSchemes.append("sftp:");
+//	  regSchemes.append("webcal:");
+	  regSchemes.append("retroshare:");
+	  QString regScheme = "((?:" + regSchemes.join(")|(?:") + "))";
+	  QString regUserPass = "[-\\w]+(?:%s+)?" % regPassCharset;
+	  QString regUrlPath = "(?:(/" + regPathCharset + "+(?:[(]" + regPathCharset +"*[)])*" + regPathCharset + "*)*" + regPathTermSet + ")?";
+	  QStringList regHotLinkFinders;
+	  regHotLinkFinders.append(regScheme + "//(?:" + regUserPass + "@)?"+ regHost + regPort + regUrlPath);
+//	  regHotLinkFinders.append("(?:(?:www)|(?:ftp))[-\\w]*\\." + regHost + regPort + regUrlPath);
+//	  regHotLinkFinders.append("(?:(?:callto:)|(?:h323:)|(?:sip:))[-\\w][-\\w\\.]*(?:" + regPort + "/[a-z0-9]+)?@" + regHost);
+//	  regHotLinkFinders.append("(?:mailto:)?[-\\w][-\\w\\.]*@[-\\w]+\\." + regHost);
+//	  regHotLinkFinders.append("news:[\\w^_{|}~!\\\"#$%&'()*+,\\./;:=?`]+");
+	  while (!regHotLinkFinders.isEmpty()) {
+        myREs.append(QRegExp(regHotLinkFinders.takeFirst(), Qt::CaseInsensitive));
+	  };
+    }
+};
+	  
+     
 /**
   * This class is used to store information for embedding smileys into <img/> tags.
   *
@@ -134,7 +170,7 @@ void RsHtml::initEmoticons(const QHash< QString, QString >& hash)
 			 */
 		}
 	newRE.chop(1);	// remove last |
-	defEmbedImg.myRE.setPattern(newRE);
+	defEmbedImg.myREs.append(QRegExp(newRE));
 }
 
 bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link)
@@ -243,7 +279,7 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
  * nodes. Any other kind of node is terminal.
  *
  * If the node is of type Text, its data is checked against the user-provided
- * regular expression. If there is a match, the text is cut in three parts: the
+ * regular expression(s). If there is a match, the text is cut in three parts: the
  * preceding part that will be inserted before, the part to be replaced, and the
  * following part which will be itself checked against the regular expression.
  *
@@ -252,13 +288,10 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
  *
  * @param[in] doc The whole DOM tree, necessary to create new nodes
  * @param[in,out] currentElement The current node (which is of type Element)
- * @param[in] embedInfos The regular expression and the type of embedding to use
+ * @param[in] embedInfos The regular expression(s) and the type of embedding to use
  */
 void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos, ulong flag)
 {
-	if(embedInfos.myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
-		return;
-
 	QDomNodeList children = currentElement.childNodes();
 	for(uint index = 0; index < (uint)children.length(); index++) {
 		QDomNode node = children.item(index);
@@ -298,15 +331,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 			}
 		}
 		else if(node.isText()) {
-			// child is a text, we parse it
-			QString tempText = node.toText().data();
-			if(embedInfos.myRE.indexIn(tempText) == -1)
+          // child is a text, we parse it
+          QString tempText = node.toText().data();
+          for (int patNdx = 0; patNdx < embedInfos.myREs.size(); ++patNdx) {
+            QRegExp myRE = embedInfos.myREs.at(patNdx);
+            if(myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
+                return;
+
+			if(myRE.indexIn(tempText) == -1)
 				continue;
 
 			// there is at least one link inside, we start replacing
 			int currentPos = 0;
 			int nextPos = 0;
-			while((nextPos = embedInfos.myRE.indexIn(tempText, currentPos)) != -1) {
+			while((nextPos = myRE.indexIn(tempText, currentPos)) != -1) {
 				// if nextPos == 0 it means the text begins by a link
 				if(nextPos > 0) {
 					QDomText textPart = doc.createTextNode(tempText.mid(currentPos, nextPos - currentPos));
@@ -320,10 +358,10 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 					case Ahref:
 							{
 								insertedTag = doc.createElement("a");
-								insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
-								insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+								insertedTag.setAttribute("href", myRE.cap(0));
+								insertedTag.appendChild(doc.createTextNode(myRE.cap(0)));
 
-								RetroShareLink link(embedInfos.myRE.cap(0));
+								RetroShareLink link(myRE.cap(0));
 								if (link.valid()) {
 									QString title = link.title();
 									if (!title.isEmpty()) {
@@ -340,11 +378,11 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 							{
 								insertedTag = doc.createElement("img");
 								const EmbedInHtmlImg& embedImg = static_cast<const EmbedInHtmlImg&>(embedInfos);
-								// embedInfos.myRE.cap(0) may include spaces at the end/beginning -> trim!
-								insertedTag.setAttribute("src", embedImg.smileys[embedInfos.myRE.cap(0).trimmed()]);
+								// myRE.cap(0) may include spaces at the end/beginning -> trim!
+								insertedTag.setAttribute("src", embedImg.smileys[myRE.cap(0).trimmed()]);
 								/*
 								 * NOTE
-								 * Trailing spaces are matched, too. This leads to embedInfos.myRE.matchedLength() being incorrect.
+								 * Trailing spaces are matched, too. This leads to myRE.matchedLength() being incorrect.
 								 * This hack reduces nextPos by one so that the new value of currentPos is calculated corretly.
 								 * This is needed to match multiple smileys since the leading whitespace in front of a smiley is required!
 								 *
@@ -353,7 +391,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 								 * NOTE
 								 * Preceding spaces are also matched and removed.
 								 */
-								if(embedInfos.myRE.cap(0).endsWith(' '))
+								if(myRE.cap(0).endsWith(' '))
 									nextPos--;
 							}
 							break;
@@ -362,7 +400,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				currentElement.insertBefore(insertedTag, node);
 				index++;
 
-				currentPos = nextPos + embedInfos.myRE.matchedLength();
+				currentPos = nextPos + myRE.matchedLength();
 			}
 
 			// text after the last link, only if there's one, don't touch the index
@@ -375,9 +413,17 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				index--;
 
 			currentElement.removeChild(node);
+            break;
+            // We'd better not expect that
+            // subsequent hotlink patterns
+            // wouldn't also match replacements
+            // we've already made.  They might, so
+            // skip 'em to be safe.
+		  };
 		}
 	}
 }
+
 
 /**
  * Save space and tab out of bracket that XML loose.
