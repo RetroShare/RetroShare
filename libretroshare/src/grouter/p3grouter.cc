@@ -613,7 +613,6 @@ RsGRouterAbstractMsgItem *GRouterDataInfo::addDataChunk(RsGRouterTransactionChun
     {
         RsItem *data_item = RsGRouterSerialiser().deserialise(incoming_data_buffer->chunk_data,&incoming_data_buffer->chunk_size) ;
 
-        incoming_data_buffer->chunk_data = NULL;
         delete incoming_data_buffer;
         incoming_data_buffer = NULL ;
 
