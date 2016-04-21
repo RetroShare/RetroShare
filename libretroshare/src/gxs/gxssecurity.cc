@@ -425,6 +425,8 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
         //   [--- Encrypted session key length ---|--- Encrypted session key ---|--- IV ---|---- Encrypted data ---]
         //
 
+    	out = NULL ;
+    
 	RSA *tmpkey = ::extractPublicKey(key) ;
 	RSA *rsa_publish_pub = RSAPublicKey_dup(tmpkey) ;
 	RSA_free(tmpkey) ;
@@ -681,6 +683,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	//
         // This method can be used to decrypt multi-encrypted data, if passing he correct encrypted key block (corresponding to the given key)
 
+    out = NULL ;
 #ifdef GXS_SECURITY_DEBUG
 	std::cerr << "GxsSecurity::decrypt() " << std::endl;
 #endif
