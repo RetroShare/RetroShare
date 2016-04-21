@@ -658,7 +658,7 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
  */
 static void optimizeHtml(QDomDocument& doc
                        , QDomElement& currentElement
-                       , QHash<QString, QStringList*> &stylesList
+                       , QHash<QString, QStringList> &stylesList
                        , QHash<QString, QString> &knownStyle)
 {
 	if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
@@ -677,10 +677,10 @@ static void optimizeHtml(QDomDocument& doc
 				QString keyvalue = pair.at(1);
 				keyvalue.replace(";","");
 				QStringList classUsingIt(pair.at(0).split(','));
-				QStringList* exported = new QStringList();
+				QStringList exported ;
 				foreach (QString keyVal, classUsingIt) {
 					if(!keyVal.trimmed().isEmpty()) {
-						exported->append(keyVal.trimmed().replace(".",""));
+						exported.append(keyVal.trimmed().replace(".",""));
 					}
 				}
 
@@ -805,14 +805,10 @@ static void optimizeHtml(QDomDocument& doc
 					foreach (QString pair, styles) {
 						pair.replace(" ","");
 						if (!pair.isEmpty()) {
-							QStringList* stylesListItem = stylesList.value(pair);
-							if(!stylesListItem){
-								// If value doesn't exist create it
-								stylesListItem = new QStringList();
-								stylesList.insert(pair, stylesListItem);
-							}
+							QStringList& stylesListItem = stylesList[pair];
+							
 							//Add the new class to this value
-							stylesListItem->push_back(className);
+							stylesListItem.push_back(className);
 						}
 					}
 				}
@@ -846,7 +842,7 @@ static void optimizeHtml(QDomDocument& doc
  * @param desiredMinimumFontSize: Minimum font size.
  */
 static void styleCreate(QDomDocument& doc
-                        , QHash<QString, QStringList*> stylesList
+                        , QHash<QString, QStringList>& stylesList
                         , unsigned int flag
                         , qreal bglum
                         , qreal desiredContrast
@@ -886,12 +882,12 @@ static void styleCreate(QDomDocument& doc
 
 	QString style = "";
 
-	QHashIterator<QString, QStringList*> it(stylesList);
+	QHashIterator<QString, QStringList> it(stylesList);
 	while(it.hasNext()) {
 		it.next();
-		QStringList* classUsingIt = it.value();
+		const QStringList& classUsingIt ( it.value()) ;
 		bool first = true;
-		foreach(QString className, *classUsingIt) {
+		foreach(QString className, classUsingIt) {
 			if (!className.trimmed().isEmpty()) {
 				style += QString(first?".":",.") + className;// + " ";
 				first = false;
@@ -1007,7 +1003,8 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
 	}
 
 	QDomElement body = doc.documentElement();
-	QHash<QString, QStringList*> stylesList;
+    
+	QHash<QString, QStringList> stylesList;
 	QHash<QString, QString> knownStyle;
 
 	::optimizeHtml(doc, body, stylesList, knownStyle);
