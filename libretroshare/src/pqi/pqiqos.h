@@ -36,55 +36,128 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <iostream>
 #include <vector>
 #include <list>
+
+#include <util/rsmemory.h>
 
 class pqiQoS
 {
 	public:
 		pqiQoS(uint32_t max_levels,float alpha) ;
 
+                struct ItemRecord
+                {
+                    void *data ;
+                    uint32_t current_offset ;
+                    uint32_t size ;
+                    uint32_t id ;
+                };
+                
 		class ItemQueue 
 		{
-            public:
-            ItemQueue()
-            {
-                _item_count =0 ;
-            }
-				void *pop() 
+		public:
+			ItemQueue()
+			{
+				_item_count =0 ;
+			}
+			void *pop() 
+			{
+				if(_items.empty())
+					return NULL ;
+
+				void *item = _items.front().data ;
+				_items.pop_front() ;
+				--_item_count ;
+
+				return item ;
+			}
+            
+            		void *slice(uint32_t max_size,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) 
+		    	{
+				if(_items.empty())
+					return NULL ;
+                        	
+				ItemRecord& rec(_items.front()) ;
+				packet_id = rec.id ;
+                
+                		// readily get rid of the item if it can be sent as a whole
+                
+                		if(rec.current_offset == 0 && rec.size < max_size)
+                            	{
+                            		offset = 0 ;
+                                    	starts = true ;
+                                    	ends = true ;
+                                    	size = rec.size ;
+                                    	
+                            		return pop() ;
+                        	}
+				starts = (rec.current_offset == 0) ;
+				ends   = (rec.current_offset + max_size > rec.size) ;
+                            
+                		if(rec.size < rec.current_offset)
 				{
-					if(_items.empty())
-						return NULL ;
-
-					void *item = _items.front() ;
-                    _items.pop_front() ;
-                    --_item_count ;
-
-					return item ;
+                            		std::cerr << "(EE) severe error in slicing in QoS." << std::endl;
+                                    	pop() ;
+                            		return NULL ;
 				}
-
-				void push(void *item) 
+                        
+                		size = std::min(max_size, uint32_t((int)rec.size - (int)rec.current_offset)) ;
+                        	void *mem = rs_malloc(size) ;
+                            
+                            	if(!mem)
 				{
-                    _items.push_back(item) ;
-                    ++_item_count ;
-                }
+                            		std::cerr << "(EE) memory allocation error in QoS." << std::endl;
+                                    	pop() ;
+                            		return NULL ;
+				}
+                            
+                            	memcpy(mem,&((unsigned char*)rec.data)[rec.current_offset],size) ;
+                                                        
+                		if(ends)	// we're taking the whole stuff. So we can delete the entry.
+                            	{
+                            		free(rec.data) ;
+                            		_items.pop_front() ;
+                                }
+				else
+                        	    rec.current_offset += size ;
+                        
+                        	return mem ;
+                    	}
 
-                uint32_t size() const { return _item_count ; }
+			void push(void *item,uint32_t size,uint32_t id) 
+			{
+                		ItemRecord rec ;
+                        
+                        	rec.data = item ;
+                            	rec.current_offset = 0 ;
+                            	rec.size = size ;
+                            	rec.id = id ;
+                        
+				_items.push_back(rec) ;
+				++_item_count ;
+			}
 
-				float _threshold ;
-				float _counter ;
-                float _inc ;
-                uint32_t _item_count ;
-				std::list<void*> _items ;
+			uint32_t size() const { return _item_count ; }
+
+			float _threshold ;
+			float _counter ;
+			float _inc ;
+			uint32_t _item_count ;
+                        
+			std::list<ItemRecord> _items ;
 		};
 
 		// This function pops items from the queue, y order of priority
 		//
 		void *out_rsItem() ;
+		void *out_rsItem(uint32_t max_slice_size,uint32_t offset_unit,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) ;
 
 		// This function is used to queue items.
 		//
-		void in_rsItem(void *item,int priority) ;
+		void in_rsItem(void *item, int size, int priority) ;
 
 		void print() const ;
 		uint64_t qos_queue_size() const { return _nb_items ; }
@@ -105,6 +178,8 @@ class pqiQoS
 		std::vector<ItemQueue> _item_queues ;
 		float _alpha ;
 		uint64_t _nb_items ;
+        
+        	uint32_t _id_counter ;
 };
 
 

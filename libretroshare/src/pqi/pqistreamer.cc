@@ -400,6 +400,37 @@ time_t	pqistreamer::getLastIncomingTS()
 	return mLastIncomingTs;
 }
 
+// Packet slicing:
+//
+//          Old :    02 0014 03 00000026  [data,  26 bytes] =>   [version 1B] [service 2B][subpacket 1B] [size 4B]
+//          New1:    fv 0014 03 xxxxx sss [data, sss bytes] =>   [flags 0.5B version 0.5B] [service 2B][subpacket 1B] [packet counter 2.5B size 1.5B]
+//          New2:    f xxxxxx ooo sssss   [data, sss bytes] =>   [flags 0.5B] [2^24 packet count] [2^16 offset (in units of 16)] [size] 
+//
+//          Flags:  0x1 => incomplete packet continued after
+//          Flags:  0x2 => packet ending a previously incomplete packet
+//
+//	- backward compatibility:
+//		* send one packet with service + subpacket = ffffff. Old peers will silently ignore such packets.
+//		* if received, mark the peer as able to decode the new packet type
+//
+//      Mode 1:
+//		- Encode length    on 1.5 Bytes (10 bits) => max slice size = 1024
+//		- Encode packet ID on 2.5 Bytes (20 bits) => packet counter = [0...1056364]
+//      Mode 2:
+//           	- Encode flags     on 0.5 Bytes ( 4 bits)
+//		- Encode packet ID on 3.5 Bytes (28 bits) => packet counter = [0...16777216]
+//		- Encode offset    on 2.0 Bytes (16 bits) => 65536 * 16 = 				// ax packet size = 1048576
+//		- Encode size      on 2.0 Bytes (16 bits) => 65536					// max slice size = 65536
+//
+//      - limit packet grouping to max size 1024.
+//      - new peers need to read flux, and properly extract partial sizes, and combine packets based on packet counter.
+//	- on sending, RS should grab slices of max size 1024 from pqiQoS. If smaller, possibly pack them together.
+//	  pqiQoS keeps track of sliced packets and makes sure the output is consistent:
+//		* when a large packet needs to be send, only takes a slice and return it, and update the remaining part
+//		* always consider priority when taking new slices => a newly arrived fast packet will always get through.
+//
+//	Max slice size should be customisable, depending on bandwidth.
+
 int	pqistreamer::handleoutgoing_locked()
 {
 #ifdef DEBUG_PQISTREAMER
@@ -450,18 +481,16 @@ int	pqistreamer::handleoutgoing_locked()
 
 		    return 0;
 	    }
-#define GROUP_OUTGOING_PACKETS 1
-#define PACKET_GROUPING_SIZE_LIMIT 32768
+#define OPTIMAL_PACKET_SIZE 512	
 	    // send a out_pkt., else send out_data. unless
 	    // there is a pending packet.
 	    if (!mPkt_wpending)
-#ifdef GROUP_OUTGOING_PACKETS
 	    {
 		    void *dta;
 		    mPkt_wpending_size = 0 ;
 		    int k=0;
             
-		    while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PACKET_GROUPING_SIZE_LIMIT && (dta = locked_pop_out_data())!=NULL )
+		    while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < OPTIMAL_PACKET_SIZE && (dta = locked_pop_out_data())!=NULL )
 		    {
 			    uint32_t s = getRsItemSize(dta);
 			    mPkt_wpending = realloc(mPkt_wpending,s+mPkt_wpending_size) ;
@@ -475,17 +504,7 @@ int	pqistreamer::handleoutgoing_locked()
 			    std::cerr << "Packed " << k << " packets into " << mPkt_wpending_size << " bytes." << std::endl;
 #endif
 	    }
-#else
-	{
-		void *dta = locked_pop_out_data() ;
-
-		if(dta != NULL)
-		{
-			mPkt_wpending = dta ;
-			mPkt_wpending_size = getRsItemSize(dta);
-		}
-	}
-#endif
+        
 	    if (mPkt_wpending)
 	    {
             	RsScopeTimer tmer("pqistreamer:"+PeerId().toStdString()) ;
@@ -804,6 +823,7 @@ continue_packet:
 		std::cerr << "[" << (void*)pthread_self() << "] " << "deserializing. Size=" << pktlen << std::endl ;
 #endif
 
+        std::cerr << "Got packet with header " << RsUtil::BinToHex((char*)block,8) << std::endl;
         RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
 
 		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
