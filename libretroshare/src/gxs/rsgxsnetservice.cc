@@ -1626,8 +1626,10 @@ void RsGxsNetService::recvNxsItemQueue()
 		    GXSNETDEBUG_P_(item->PeerId()) << "    decrypted item "  << std::endl;
 #endif
                 }
+#ifdef NXS_NET_DEBUG_7
                 else
-                    std::cerr << "(EE) Could not decrypt incoming encrypted NXS item.  Probably a friend subscribed to a circle-restricted group." << std::endl;
+                    GXSNETDEBUG_P_(item->PeerId()) << "    (EE) Could not decrypt incoming encrypted NXS item.  Probably a friend subscribed to a circle-restricted group." << std::endl;
+#endif
             }
 
             switch(ni->PacketSubType())
@@ -1638,7 +1640,8 @@ void RsGxsNetService::recvNxsItemQueue()
             case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
 
             default:
-                std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
+                if(ni->PacketSubType() != RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
+			std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
             }
             delete item ;
         }
