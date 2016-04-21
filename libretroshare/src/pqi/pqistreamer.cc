@@ -456,7 +456,7 @@ int	pqistreamer::handleoutgoing_locked()
 		    return 0;
 	    }
 #define GROUP_OUTGOING_PACKETS 1
-#define PACKET_GROUPING_SIZE_LIMIT 32768
+#define PACKET_GROUPING_SIZE_LIMIT 512
 	    // send a out_pkt., else send out_data. unless
 	    // there is a pending packet.
 	    if (!mPkt_wpending)
