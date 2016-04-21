@@ -942,7 +942,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
-	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
+
+	qlonglong downloadtime = (fileInfo.tfRate > 0)?( (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0) ) : 0 ;
 	qint64 qi64LastDL = fileInfo.lastTS ; //std::numeric_limits<qint64>::max();
 
 	if (qi64LastDL == 0)	// file is complete, or any raison why the time has not been set properly
@@ -1355,7 +1356,7 @@ void TransfersDialog::insertTransfers()
 			qlonglong fileSize 	= info.size;
 			qlonglong completed 	= pit->transfered;
 //			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
-			qlonglong remaining   = (info.size - pit->transfered) / (pit->tfRate * 1024.0);
+			qlonglong remaining   = (pit->tfRate>0)?((info.size - pit->transfered) / (pit->tfRate * 1024.0)):0;
 
 			// Estimate the completion. We need something more accurate, meaning that we need to
 			// transmit the completion info.
