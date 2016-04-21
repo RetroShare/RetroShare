@@ -3876,6 +3876,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
     if(decrypted_mem!=NULL)
     {
 	    ditem = RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
+		free(decrypted_mem) ;
 
 	    if(ditem != NULL)
 	    {
