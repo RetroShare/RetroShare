@@ -219,8 +219,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
-    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
-    connect(Shortcut, SIGNAL(activated()), this, SLOT( cancel ()));
+    mShortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
+    connect(mShortcut, SIGNAL(activated()), this, SLOT( cancel ()));
 
   	//Selection Setup
     selection = ui.downloadList->selectionModel();

@@ -31,6 +31,7 @@
 
 #define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
+class QShortcut;
 class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
@@ -271,6 +272,8 @@ public slots:
     qlonglong getLastDL(int row, QStandardItemModel *model);
     qlonglong getPath(int row, QStandardItemModel *model);
     QString getSources(int row, QStandardItemModel *model);
+    
+    QShortcut *mShortcut ;
 };
 
 #endif
