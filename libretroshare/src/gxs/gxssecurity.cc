@@ -544,11 +544,10 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
     out = NULL ;
     EVP_CIPHER_CTX ctx;
     EVP_CIPHER_CTX_init(&ctx);
+    std::vector<EVP_PKEY *> public_keys(keys.size(),NULL);
     
     try
     {
-    	std::vector<EVP_PKEY *> public_keys(keys.size(),NULL);
-
         for(uint32_t i=0;i<keys.size();++i)
 	{
 		RSA *tmpkey = ::extractPublicKey(keys[i]) ;
@@ -591,6 +590,11 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), ek.data(), eklen.data(), iv, public_keys.data(), keys.size())) 
        		 return false;
 
+    	// now we can release the encryption keys
+    	for(uint32_t i=0;i<public_keys.size();++i)
+            EVP_PKEY_free(public_keys[i]) ;
+        public_keys.clear() ;
+    
     	int total_ek_size = MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE * keys.size() ;
         
 	int max_outlen = MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE + MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE + total_ek_size + EVP_MAX_IV_LENGTH + (inlen + cipher_block_size) ;
@@ -669,6 +673,10 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
     
 	if(out) free(out) ;
 	out = NULL ;
+        
+    	for(uint32_t i=0;i<public_keys.size();++i)
+            EVP_PKEY_free(public_keys[i]) ;
+        public_keys.clear() ;
         
         return false ;
     }
@@ -867,6 +875,9 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 		    {
 			    succeed = EVP_OpenInit(&ctx, EVP_aes_128_cbc(),in + encrypted_keys_offset + i*MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE , MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE, in+IV_offset, privateKey);
 
+			if(!succeed)
+					EVP_CIPHER_CTX_cleanup(&ctx);
+                            
 #ifdef GXS_SECURITY_DEBUG
 			    std::cerr << "    encrypted key at offset " << encrypted_keys_offset + i*MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE << ": " << succeed << std::endl;
 #endif
