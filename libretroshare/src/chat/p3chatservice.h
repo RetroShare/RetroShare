@@ -205,7 +205,8 @@ private:
 	void receiveStateString(const RsPeerId& id,const std::string& s) ;
 
 	/// methods for handling various Chat items.
-	bool handleRecvChatMsgItem(RsChatMsgItem *&item) ;			// NULL-ifies the item if memory ownership is taken
+	virtual bool handleRecvChatMsgItem(RsChatMsgItem *&item) ;			// NULL-ifies the item if memory ownership is taken
+    
 	void handleRecvChatStatusItem(RsChatStatusItem *item) ;
 	void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 
