@@ -63,7 +63,7 @@ public:
 
     // derived in p3ChatService, so as to pass down some info
     virtual void handleIncomingItem(RsItem *) = 0;
-    virtual bool handleRecvChatMsgItem(RsChatMsgItem *ci)=0 ;
+    virtual bool handleRecvChatMsgItem(RsChatMsgItem *& ci)=0 ;
 
     bool handleOutgoingItem(RsChatItem *) ;
     bool handleRecvItem(RsChatItem *) ;

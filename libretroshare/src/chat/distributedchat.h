@@ -90,7 +90,6 @@ class DistributedChatService
 		void addToSaveList(std::list<RsItem*>& list) const ;
         bool processLoadListItem(const RsItem *item) ;
 
-        bool locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *) ;
         void checkSizeAndSendLobbyMessage(RsChatItem *) ;
 
         bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;

@@ -268,6 +268,8 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
     item->PeerId(RsPeerId(tunnel_id)) ;
     handleRecvChatMsgItem(item) ;
     
+    delete item ;	// item is replaced by NULL if partial, but this is not the case here.
+    
     return true ;
 }
 

@@ -205,7 +205,7 @@ private:
 	void receiveStateString(const RsPeerId& id,const std::string& s) ;
 
 	/// methods for handling various Chat items.
-	bool handleRecvChatMsgItem(RsChatMsgItem *item) ;			// returns false if the item should be deleted.
+	bool handleRecvChatMsgItem(RsChatMsgItem *&item) ;			// NULL-ifies the item if memory ownership is taken
 	void handleRecvChatStatusItem(RsChatStatusItem *item) ;
 	void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 
@@ -220,7 +220,8 @@ private:
 	void checkSizeAndSendMessage(RsChatMsgItem *item) ;	// keep for compatibility for a few weeks.
 
 	/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
-	bool locked_checkAndRebuildPartialMessage(RsChatMsgItem *) ;
+        /// if so, the chat item will be turned to NULL
+	bool locked_checkAndRebuildPartialMessage(RsChatMsgItem *&) ;
 
 	RsChatAvatarItem *makeOwnAvatarItem() ;
 	RsChatStatusItem *makeOwnCustomStateStringItem() ;
