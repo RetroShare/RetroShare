@@ -3864,7 +3864,9 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
 
     if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->encrypted_data.bin_data,encrypted_item->encrypted_data.bin_len,private_keys))
     {
-	    std::cerr << "Failed! Cannot decrypt this item." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+	 GXSNETDEBUG_P_(encrypted_item->PeerId()) << "    Failed! Cannot decrypt this item." << std::endl;
+#endif
 	    decrypted_mem = NULL ; // for safety
 	return false ;
     }
