@@ -244,6 +244,8 @@ private:
       QString downloads;
       QString uploads;
 
+    QShortcut *mShortcut ;
+
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;
 
@@ -272,8 +274,6 @@ public slots:
     qlonglong getLastDL(int row, QStandardItemModel *model);
     qlonglong getPath(int row, QStandardItemModel *model);
     QString getSources(int row, QStandardItemModel *model);
-    
-    QShortcut *mShortcut ;
 };
 
 #endif
