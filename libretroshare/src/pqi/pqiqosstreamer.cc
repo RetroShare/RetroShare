@@ -50,9 +50,8 @@ int pqiQoSstreamer::getQueueSize(bool in)
 //    return pqiQoS::gatherStatistics(per_service_count,per_priority_count) ;
 //}
 
-void pqiQoSstreamer::locked_storeInOutputQueue(void *ptr,int priority)
+void pqiQoSstreamer::locked_storeInOutputQueue(void *ptr,int size,int priority)
 {
-    	uint32_t size = getRsItemSize(ptr) ;
 	_total_item_size += size ;
 	++_total_item_count ;
 

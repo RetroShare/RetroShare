@@ -71,13 +71,12 @@ class pqistreamer: public PQInterface
 
 		// These methods are redefined in pqiQoSstreamer
 		//
-		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
+		virtual void locked_storeInOutputQueue(void *ptr, int size, int priority) ;
 		virtual int locked_out_queue_size() const ;
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const ;
-		virtual void *locked_pop_out_data() ;
-        //virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
-		virtual int     locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
+		virtual void *locked_pop_out_data(uint32_t max_slice_size,uint32_t offset_unit,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id);
+		virtual int   locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
 
         	void updateRates() ;
 
@@ -156,7 +155,8 @@ class pqistreamer: public PQInterface
         	std::list<RSTrafficClue> mCurrentStatsChunk_Out ;
 		time_t mStatisticsTimeStamp ;
 
-            void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
+        void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
+        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_offset, uint32_t slice_packet_id);
 };
 
 #endif //MRK_PQI_STREAMER_HEADER
