@@ -1,5 +1,40 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  0dc43c3 csoler       Sat, 23 Apr 2016 08:29:53 -0400 Merge pull request #338 from Nyfor/master
+  5e94c77 Nyfor        Mon,  4 Apr 2016 12:07:09 +0200 Fixed compilation for Clang.
+  d696f72 csoler       Fri, 22 Apr 2016 20:38:07 -0400 fixed compilation
+  acd059b csoler       Fri, 22 Apr 2016 18:49:42 -0400 removed potential memory leak in TransfersDialog
+  52cf66a csoler       Fri, 22 Apr 2016 17:55:15 -0400 fixed memory leak in SubscribeToolButton menu
+  55e8087 csoler       Fri, 22 Apr 2016 17:30:55 -0400 added missing free for public keys used in envelop encryption
+  10230df csoler       Fri, 22 Apr 2016 16:50:43 -0400 added missing SSL shutdown when replacing existing connection
+  5261c3c csoler       Thu, 21 Apr 2016 22:23:07 -0400 prevented turtle to not deleting a config item when it is not cast
+  e9fa9eb csoler       Thu, 21 Apr 2016 22:07:50 -0400 removed tricky memory leak in chat lobbies due to handling of partial messages
+  7aea6e5 csoler       Thu, 21 Apr 2016 22:07:10 -0400 removed some debug info
+  eca83fd csoler       Thu, 21 Apr 2016 19:54:50 -0400 removed some debug info
+  fba3d37 csoler       Thu, 21 Apr 2016 19:47:34 -0400 fixed memory leak after receiving RsNxsItem deserialised from decrypted memory
+  0d3ff0e csoler       Thu, 21 Apr 2016 19:46:47 -0400 fixed possible uninitialised memory read in memory decryption return
+  0c711a4 csoler       Thu, 21 Apr 2016 19:41:21 -0400 added missing calls to EVP_CIPHER_CTX_cleanup() to release memory after decryption, causing memory
+  3fae108 csoler       Thu, 21 Apr 2016 12:58:48 -0400 removed div by zero in transfers dialog
+  0572492 csoler       Wed, 20 Apr 2016 21:20:47 -0400 severely reduced packet grouping, which limited the effectiveness of QoS
+  d6ae71e csoler       Wed, 20 Apr 2016 20:21:29 -0400 removed pointer to QStringList in QHash, causing memory loss
+  aba3d2f csoler       Wed, 20 Apr 2016 18:24:02 -0400 removed memory leak due to zeroing (on purpose!) a data chunk in GRouter before deleting it
+  d017771 csoler       Wed, 20 Apr 2016 18:08:26 -0400 fixed missing sendTime in distant chat, causing inconsistent display in GUI
+  80a9fec csoler       Tue, 19 Apr 2016 22:18:25 -0400 Merge pull request #353 from crhode/master
+  39553a6 csoler       Tue, 19 Apr 2016 21:58:30 -0400 removed debug info
+  5645e44 Manuel Davis Tue, 19 Apr 2016 11:32:56 -0500 Change regular expression(s) for identifying hotlinks in feral text.
+  8be53dd Manuel Davis Tue, 19 Apr 2016 11:11:58 -0500 Improve inserting placemark in ChatLobby.
+  26af7c9 csoler       Sun, 17 Apr 2016 22:58:48 -0400 changed heart beat limit to a larger value. Apparently too tight a value causes disconnections due
+  c14c240 csoler       Sun, 17 Apr 2016 00:51:45 -0400 fixed update of circles GUI using a timer. This is not optimal, and should be replaced by a proper
+  3000f94 csoler       Sat, 16 Apr 2016 22:44:06 -0400 separated subscribe status from wether we are part of a circle or not. Still needs update of GUI
+  b861aa9 csoler       Sat, 16 Apr 2016 17:10:36 -0400 Merge pull request #352 from AsamK/trailing_semicolon
+  e7ec204 AsamK        Sat, 16 Apr 2016 20:40:24 +0200 Add trailing semi-colon to MimeType in .desktop files
+  fa8a585 csoler       Fri, 15 Apr 2016 18:25:53 -0400 removed some debug info
+  d642934 csoler       Fri, 15 Apr 2016 18:25:41 -0400 increased frequency of update for banned PGP nodes
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sun, 24 Apr 2016 12:00:00 -0500
+
+retroshare06 (0.6.0-1.20160415.26574fd9~trusty) trusty; urgency=low
+
   2552b55 defnax      Fri, 15 Apr 2016 20:32:00 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
   85942f4 defnax      Fri, 15 Apr 2016 20:30:32 +0200 improving the create circle layout
   cb6c2c9 csoler      Thu, 14 Apr 2016 23:49:55 -0400 Merge pull request #350 from csoler/v0.6-Circles
