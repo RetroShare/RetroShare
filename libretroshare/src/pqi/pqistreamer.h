@@ -40,6 +40,12 @@
 // The interface does not handle connection, just communication.
 // possible bioflags: BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
+struct PartialPacketRecord
+{
+    void *mem ;
+    uint32_t size ;
+};
+
 class pqistreamer: public PQInterface
 {
 	public:
@@ -156,7 +162,9 @@ class pqistreamer: public PQInterface
 		time_t mStatisticsTimeStamp ;
 
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
-        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_offset, uint32_t slice_packet_id);
+        RsItem *addPartialPacket(void *block, uint32_t len, uint32_t slice_offset, uint32_t slice_packet_id,bool packet_starting,bool packet_ending);
+        
+        std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
 };
 
 #endif //MRK_PQI_STREAMER_HEADER
