@@ -6,7 +6,7 @@
 
 #include "pqiqos.h"
 
-static const uint32_t MAX_COUNTER_VALUE = 1024u*1024u ;	// 2^20
+const uint32_t pqiQoS::MAX_PACKET_COUNTER_VALUE = (1 << 24) ;
 
 pqiQoS::pqiQoS(uint32_t nb_levels,float alpha)
 	: _item_queues(nb_levels),_alpha(alpha)
@@ -16,6 +16,7 @@ pqiQoS::pqiQoS(uint32_t nb_levels,float alpha)
 	float c = 1.0f ;
 	float inc = alpha ;
 	_nb_items = 0 ;
+    	_id_counter = 0 ;
 
 for(int i=((int)nb_levels)-1;i>=0;--i,c *= alpha)
 	{
@@ -57,7 +58,7 @@ void pqiQoS::in_rsItem(void *ptr,int size,int priority)
 	_item_queues[priority].push(ptr,size,_id_counter++) ;
 	++_nb_items ;
     
-    	if(_id_counter >= MAX_COUNTER_VALUE)
+    	if(_id_counter >= MAX_PACKET_COUNTER_VALUE)
             _id_counter = 0 ;
 }
 
