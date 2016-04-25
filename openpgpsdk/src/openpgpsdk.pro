@@ -9,8 +9,6 @@ macx {
 
 DEFINES *= OPENSSL_NO_IDEA 
 
-QMAKE_CXXFLAGS *= -Wall -Werror -W
-
 TARGET = ops
 DESTDIR = lib
 DEPENDPATH += .
@@ -18,23 +16,8 @@ INCLUDEPATH += .
 
 #################################### Windows #####################################
 
-linux-* {
-	OBJECTS_DIR = temp/linux/obj
-}
-
 win32 {
 	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-
-	# Switch off optimization for release version
-	QMAKE_CXXFLAGS_RELEASE -= -O2
-	QMAKE_CXXFLAGS_RELEASE += -O0
-	QMAKE_CFLAGS_RELEASE -= -O2
-	QMAKE_CFLAGS_RELEASE += -O0
-
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
-
 	DEPENDPATH += $$INC_DIR
 	INCLUDEPATH += $$INC_DIR
 }

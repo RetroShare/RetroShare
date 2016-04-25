@@ -10,29 +10,6 @@ DESTDIR = lib
 
 #CONFIG += dsdv
 
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
-
-debug {
-#	DEFINES *= DEBUG
-#	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
-#	DEFINES *= CONTROL_DEBUG FT_DEBUG DEBUG_FTCHUNK P3TURTLE_DEBUG
-#	DEFINES *= P3TURTLE_DEBUG 
-#	DEFINES *= NET_DEBUG
-#	DEFINES *= DISTRIB_DEBUG
-#	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
-#	DEFINES *= STATUS_DEBUG SERV_DEBUG RSSERIAL_DEBUG #CONN_DEBUG 
-
-        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
-
 dsdv {
 DEFINES *= SERVICES_DSDV
 HEADERS += services/p3dsdv.h \
@@ -121,9 +98,6 @@ HEADERS += $$PUBLIC_HEADERS
 linux-* {
 	CONFIG += link_pkgconfig
 
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
-	QMAKE_CC = g++
-
 	contains(CONFIG, NO_SQLCIPHER) {
 		DEFINES *= NO_SQLCIPHER
 		PKGCONFIG *= sqlite3
@@ -181,14 +155,6 @@ unix {
 	#INSTALLS *= target
 }
 
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
-}
-
-linux-g++-64 {
-	OBJECTS_DIR = temp/linux-g++-64/obj
-}
-
 version_detail_bash_script {
     linux-* {
         QMAKE_EXTRA_TARGETS += write_version_detail
@@ -225,7 +191,6 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-	QMAKE_CC = g++
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
@@ -259,7 +224,6 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
