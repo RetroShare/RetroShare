@@ -1725,7 +1725,11 @@ void ChatWidget::quote()
 
 void ChatWidget::dropPlacemark()
 {
-	ui->textBrowser->append("----------");        
+    ui->textBrowser->moveCursor(QTextCursor::End);       // *append* inserts text at end but with formatting in effect at
+    ui->textBrowser->append("----------");               // current cursor position, such as in the middle of a hotlink,
+                                                         // which would be strange.  This OTOH inserts text with
+                                                         // formatting in effect on the last line, which may be strange
+                                                         // or not.
 }
 
 void ChatWidget::saveImage()

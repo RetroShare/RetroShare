@@ -140,16 +140,11 @@ namespace
 		protected:
 			inline OptionHolder(char s,
 					const char* l,
-					const char* desc);  
-#ifdef __APPLE__
+                                        const char* desc);
  			friend OptionHolder help(char s,
  					const char* l,
  					const char* desc);
-#else
-			friend OptionHolder help(char s='h',
-					const char* l="help",
-					const char* desc="Display this help");
-#endif
+
 		private:
 			std::string shortName_;
 			std::string longName_;

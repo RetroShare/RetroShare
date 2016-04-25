@@ -491,7 +491,7 @@ int	pqistreamer::handleoutgoing_locked()
 	    // send a out_pkt., else send out_data. unless there is a pending packet. The strategy is to
             //	- grab as many packets as possible while below the optimal packet size, so as to allow some packing and decrease encryption padding overhead (suposeddly)
             //	- limit packets size to OPTIMAL_PACKET_SIZE when sending big packets so as to keep as much QoS as possible.
-            
+        
 	    if (!mPkt_wpending)
 	{
 		void *dta;

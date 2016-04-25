@@ -264,8 +264,11 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
     RsChatMsgItem *item = new RsChatMsgItem;
     item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
     item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
+    item->sendTime = time(NULL) ;
     item->PeerId(RsPeerId(tunnel_id)) ;
     handleRecvChatMsgItem(item) ;
+    
+    delete item ;	// item is replaced by NULL if partial, but this is not the case here.
     
     return true ;
 }

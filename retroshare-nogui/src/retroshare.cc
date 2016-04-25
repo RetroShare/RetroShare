@@ -85,12 +85,9 @@ int main(int argc, char **argv)
     args >> parameter("docroot",      docroot,  "path", "Serve static files from this path.", false);
     // unfinished
     //args >> parameter("http-listen", listenAddress, "ipv6 address", "Listen only on the specified address.", false);
-    args >> option("http-allow-all", allowAllIps, "allow connections from all IP adresses (default= localhost only)");
-#ifdef __APPLE__    
+    args >> option("http-allow-all", allowAllIps, "allow connections from all IP adresses (default= localhost only)"); 
     args >> help('h',"help","Display this Help");
-#else
-    args >> help();
-#endif
+
     if (args.helpRequested())
     {
         std::cerr << args.usage() << std::endl;
