@@ -75,7 +75,7 @@ public:
 			return item ;
 		}
 
-		void *slice(uint32_t max_size,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) 
+		void *slice(uint32_t max_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) 
 		{
 			if(_items.empty())
 				return NULL ;
@@ -87,7 +87,6 @@ public:
 
 			if(rec.current_offset == 0 && rec.size < max_size)
 			{
-				offset = 0 ;
 				starts = true ;
 				ends = true ;
 				size = rec.size ;
@@ -151,8 +150,7 @@ public:
 
 	// This function pops items from the queue, y order of priority
 	//
-	void *out_rsItem() ;
-	void *out_rsItem(uint32_t max_slice_size,uint32_t offset_unit,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) ;
+	void *out_rsItem(uint32_t max_slice_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) ;
 
 	// This function is used to queue items.
 	//

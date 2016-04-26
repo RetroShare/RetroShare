@@ -86,20 +86,7 @@ void pqiQoS::in_rsItem(void *ptr,int size,int priority)
 // }
 
 
-void *pqiQoS::out_rsItem()
-{
-    bool starts,ends ;
-    uint32_t packet_id,offset,size ;
-    
-    void *res = out_rsItem(~0u,16,offset,size,starts,ends,packet_id) ;
-    
-    if(!starts || !ends)
-        std::cerr << "(EE) protocol error in pqiQoS. Will eventually kill connection!" << std::endl;
-    
-    return res ;
-}
-
-void *pqiQoS::out_rsItem(uint32_t max_slice_size,uint32_t offset_unit,uint32_t& offset,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id) 
+void *pqiQoS::out_rsItem(uint32_t max_slice_size, uint32_t& size, bool& starts, bool& ends, uint32_t& packet_id) 
 {
 	// Go through the queues. Increment counters.
 
@@ -127,15 +114,10 @@ void *pqiQoS::out_rsItem(uint32_t max_slice_size,uint32_t offset_unit,uint32_t& 
         
         	// now chop a slice of this item
         
-        	void *res = _item_queues[last].slice(max_slice_size,offset,size,starts,ends,packet_id) ;
+        	void *res = _item_queues[last].slice(max_slice_size,size,starts,ends,packet_id) ;
             
             	if(ends)
 			--_nb_items ;
-                
-                if( (offset % offset_unit) != 0)
-                    	std::cerr << "(EE) Severe error in pqiQoS::out_rsItem(). offset unit inconsistent with calculated offset." << std::endl;
-                
-                offset /= offset_unit ;
                 
 		return res ;
 	}
