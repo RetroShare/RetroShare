@@ -23,9 +23,8 @@
 #define FRIENDLIST_H
 
 #include <set>
-
+#include <QShortcut>
 #include <QWidget>
-
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "retroshare/rsstatus.h"
 
@@ -110,6 +109,7 @@ private:
     Ui::FriendList *ui;
     RSTreeWidgetItemCompareRole *mCompareRole;
     QAction *mActionSortByState;
+    QShortcut *mShortcut;
 
     // Settings for peer list display
     bool mShowGroups;

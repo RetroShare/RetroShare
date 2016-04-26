@@ -92,16 +92,15 @@ void UserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem)
 {
 	mMainAction = mainAction;
+    mListItem = listItem;
 	if (mMainAction) {
 		mButtonText = mMainAction->text();
 		if (mainToolBar) {
 			mMainToolButton = dynamic_cast<QToolButton*>(mainToolBar->widgetForAction(mMainAction));
 		}
-	}
-	mListItem = listItem;
-	if (mListItem && !mMainAction) {
-		mButtonText = mMainAction->text();
-	}
+    } else {
+        mButtonText = mListItem->text();
+    }
 }
 
 void UserNotify::createIcons(QMenu *notifyMenu)

@@ -21,7 +21,6 @@
 
 #include <algorithm>
 
-#include <QShortcut>
 #include <QTimer>
 #include <QTreeWidgetItem>
 #include <QWidgetAction>
@@ -150,8 +149,8 @@ FriendList::FriendList(QWidget *parent) :
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
-    QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
-    connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
+    mShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
+    connect(mShortcut, SIGNAL(activated()), this, SLOT(removefriend()));
 
     /* Initialize tree */
     ui->peerTreeWidget->enableColumnCustomize(true);
@@ -177,6 +176,7 @@ FriendList::FriendList(QWidget *parent) :
 
 FriendList::~FriendList()
 {
+    mShortcut->deleteLater();
     delete ui;
     delete(mCompareRole);
 }
