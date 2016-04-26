@@ -726,14 +726,14 @@ void SharedFilesDialog::collOpen()
 			if (qinfo.exists()) {
 				if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 					RsCollectionFile collection;
-					if (collection.load(qinfo.absoluteFilePath(), this)) {
+                    if (collection.load(qinfo.absoluteFilePath(), true)) {
 						collection.downloadFiles();
 						return;
-					}//if (collection.load(this))
-				}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-			}//if (qinfo.exists())
-		}//if (rsFiles->FileDetails(
-	}//if(files_info.size() == 1)
+                    }
+                }
+            }
+        }
+    }
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {

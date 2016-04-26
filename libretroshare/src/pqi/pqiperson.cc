@@ -40,8 +40,7 @@ const int pqipersonzone = 82371;
 
 pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg) :
 	PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
-	active(false), activepqi(NULL), inConnectAttempt(false), waittimes(0),
-	pqipg(pg) {} // TODO: must check id!
+    active(false), activepqi(NULL), inConnectAttempt(false), pqipg(pg) {} // TODO: must check id!
 
 pqiperson::~pqiperson()
 {

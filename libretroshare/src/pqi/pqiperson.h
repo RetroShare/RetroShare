@@ -66,7 +66,7 @@ public:
 	virtual int reset() { return ni->reset(); }
 	virtual int disconnect() { return ni->reset(); }
 	virtual bool connect_parameter(uint32_t type, uint32_t value) { return ni->connect_parameter(type, value);}
-	virtual bool connect_parameter(uint32_t type, std::string value) { return ni->connect_parameter(type, value);}
+    virtual bool connect_parameter(uint32_t type, const std::string& value) { return ni->connect_parameter(type, value);}
 	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr) { return ni->connect_additional_address(type, addr); }
 	virtual int getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
 
@@ -171,7 +171,6 @@ private:
 	bool active;
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
-	int waittimes;
 	time_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };
