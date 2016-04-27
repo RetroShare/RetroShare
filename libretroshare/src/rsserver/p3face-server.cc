@@ -47,6 +47,7 @@ int rsserverzone = 101;
 /****
 #define DEBUG_TICK 1
 ****/
+#define DEBUG_TICK 1
 
 #define WARN_BIG_CYCLE_TIME	(0.2)
 #ifdef WINDOWS_SYS
@@ -69,8 +70,8 @@ static double getCurrentTS()
         return cts;
 }
 
-const double RsServer::minTimeDelta = 0.1; // 25;
-const double RsServer::maxTimeDelta = 0.5;
+const double RsServer::minTimeDelta = 0.05; // 25;
+const double RsServer::maxTimeDelta = 0.1;
 const double RsServer::kickLimit = 0.15;
 
 
@@ -138,6 +139,8 @@ void 	RsServer::data_tick()
 
     double ts = getCurrentTS();
     double delta = ts - mLastts;
+    
+    std::cerr << "[data tick] delta = " << delta << std::endl;
 
     /* for the fast ticked stuff */
     if (delta > mTimeDelta)
