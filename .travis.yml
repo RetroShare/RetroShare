@@ -1,16 +1,13 @@
+sudo: required
+dist: trusty
 language: cpp
 
 compiler:
   - gcc
 
 before_install:
-  - echo $LANG
-  - echo $LC_ALL
   - sudo apt-get update
-  - sudo apt-get install build-essential checkinstall cmake g++ git libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libdc1394-22-dev libglib2.0-dev libcv-dev libopencv-highgui-dev libhighgui-dev
-  - sudo apt-get install libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev
-  - sudo apt-get install libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev
-  - sudo apt-get install libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev make pkg-config protobuf-compiler python-dev python-numpy subversion git yasm qtmobility-dev
+  - sudo apt-get install -y build-essential checkinstall cmake libavutil-dev libavcodec-dev libavformat-dev libbz2-dev libcurl4-openssl-dev libcv-dev libopencv-highgui-dev libhighgui-dev libgnome-keyring-dev libgstreamer-plugins-base0.10-dev libgstreamer0.10-dev libjasper-dev libjpeg-dev libmicrohttpd-dev libopencv-dev libprotobuf-dev libqt4-dev libspeex-dev libspeexdsp-dev libsqlite3-dev libssl-dev libswscale-dev libtbb-dev libtiff4-dev libupnp-dev libv4l-dev libxine-dev libxslt1-dev libxss-dev pkg-config protobuf-compiler python-dev qtmobility-dev
 #  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update && sudo apt-get install -y llvm-3.4 llvm-3.4-dev; fi
 #  - rvm use $RVM --install --binary --fuzzy
 #  - gem update --system
@@ -32,7 +29,7 @@ addons:
     branch_pattern: coverity_scan
 
 before_script:
-  - qmake CONFIG+=NO_SQLCIPHER CONFIG+=tests
+  - qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=NO_SQLCIPHER CONFIG+=tests
 
 #script: make
 script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make && tests/unittests/unittests >/dev/null 2>&1 ; fi
@@ -64,6 +61,3 @@ notifications:
 
 #env:
 #  - RVM=2.0.0 LANG="en_US.UTF-8"
-
-os:
-  - linux
