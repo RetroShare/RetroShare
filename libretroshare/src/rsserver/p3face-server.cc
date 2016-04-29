@@ -69,8 +69,12 @@ static double getCurrentTS()
         return cts;
 }
 
+// These values should be tunable from the GUI, to offer a compromise between speed and CPU use.
+// In some cases (VOIP) it's likely that we will need to set them temporarily to a very low 
+// value, in order to favor a fast feedback
+
 const double RsServer::minTimeDelta = 0.05; // 25;
-const double RsServer::maxTimeDelta = 0.1;
+const double RsServer::maxTimeDelta = 0.2;
 const double RsServer::kickLimit = 0.15;
 
 
