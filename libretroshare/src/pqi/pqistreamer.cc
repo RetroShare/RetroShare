@@ -603,8 +603,6 @@ int	pqistreamer::handleoutgoing_locked()
         
 	    if (mPkt_wpending)
 	    {
-            	RsScopeTimer tmer("pqistreamer:"+PeerId().toStdString()) ;
-                
 		    // write packet.
 #ifdef DEBUG_PQISTREAMER
 		std::cout << "Sending Out Pkt of size " << mPkt_wpending_size << " !" << std::endl;

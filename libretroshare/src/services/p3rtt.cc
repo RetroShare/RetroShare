@@ -39,8 +39,6 @@
 /****
  * #define DEBUG_RTT		1
  ****/
-#define DEBUG_RTT		1
-
 
 /* DEFINE INTERFACE POINTER! */
 RsRtt *rsRtt = NULL;
@@ -264,7 +262,9 @@ int p3rtt::handlePing(RsItem *item)
 	pong->mPongTS = convertTsTo64bits(ts);
 
     static double mLastResponseToPong = 0.0 ;// bad stuff
+#ifdef DEBUG_RTT
     std::cerr << "Delay since last response to PONG: " << ts - mLastResponseToPong << std::endl;
+#endif
     
     mLastResponseToPong = ts ;
 	sendItem(pong);
@@ -309,7 +309,9 @@ int	p3rtt::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 	/* find corresponding local data */
 	RttPeerInfo *peerInfo = locked_GetPeerInfo(id);
 
+#ifdef DEBUG_RTT
     std::cerr << "Delay since previous ping attempt: " << ts - peerInfo->mCurrentPingTS << std::endl;
+#endif
 	peerInfo->mCurrentPingTS = ts;
 	peerInfo->mCurrentPingCounter = seqno;
 
@@ -343,8 +345,10 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 	{
 		peerInfo->mCurrentPongRecvd = true;
 	}
+#ifdef DEBUG_RTT
     if(!peerInfo->mPongResults.empty())
     	std::cerr << "Delay since last pong: "  << recv_ts - peerInfo->mPongResults.back().mTS << std::endl;
+#endif
 
 	peerInfo->mPongResults.push_back(RsRttPongResult(recv_ts, rtt, offset));
 
