@@ -96,6 +96,9 @@ const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID    = 0x2001;
 const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID   = 0x2002;
 const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER  = 0x2003;
 
+// Reserved for packet slicing probes.
+const uint16_t RS_SERVICE_TYPE_PACKET_SLICING_PROBE = 0xAABB;
+
 // Nabu's services.
 const uint16_t RS_SERVICE_TYPE_PLUGIN_FIDO_GW     = 0xF1D0;
 const uint16_t RS_SERVICE_TYPE_PLUGIN_ZERORESERVE = 0xBEEF;
