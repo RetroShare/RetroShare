@@ -47,7 +47,6 @@ int rsserverzone = 101;
 /****
 #define DEBUG_TICK 1
 ****/
-#define DEBUG_TICK 1
 
 #define WARN_BIG_CYCLE_TIME	(0.2)
 #ifdef WINDOWS_SYS
@@ -140,8 +139,6 @@ void 	RsServer::data_tick()
     double ts = getCurrentTS();
     double delta = ts - mLastts;
     
-    std::cerr << "[data tick] delta = " << delta << std::endl;
-
     /* for the fast ticked stuff */
     if (delta > mTimeDelta)
     {

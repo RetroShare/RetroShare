@@ -150,7 +150,6 @@ RsServiceInfo p3rtt::getServiceInfo()
 
 int	p3rtt::tick()
 {
-    std::cerr << "p3rtt::tick() " << getCurrentTS() << std::endl;
 	sendPackets();
 
 	return 0;
