@@ -63,7 +63,6 @@ static uint8_t PACKET_SLICING_PROBE_BYTES[8] =  { 0x02, 0xaa, 0xbb, 0xcc, 0x00, 
 #define DEBUG_PQISTREAMER 1
 #define DEBUG_PACKET_SLICING 1
  ***/
-#define DEBUG_PACKET_SLICING 1
 
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
