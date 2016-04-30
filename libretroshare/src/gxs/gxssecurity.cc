@@ -44,13 +44,12 @@ static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
         int lenn = BN_num_bytes(pubkey -> n);
         int lene = BN_num_bytes(pubkey -> e);
 
-        unsigned char *tmp = new unsigned char[lenn+lene];
+        RsTemporaryMemory tmp(lenn+lene) ;
 
         BN_bn2bin(pubkey -> n, tmp);
         BN_bn2bin(pubkey -> e, &tmp[lenn]);
 
-		  Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
-		  delete[] tmp ;
+	Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
 
         // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
 		  // We should not be using strings here, but a real ID. To be done later.
@@ -363,35 +362,41 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
             RsGxsMessageId msgId = msgMeta.mMsgId, origMsgId = msgMeta.mOrigMsgId;
             msgMeta.mOrigMsgId.clear();
             msgMeta.mMsgId.clear();
+	    int signOk = 0 ;
 
-            uint32_t metaDataLen = msgMeta.serial_size();
-            uint32_t allMsgDataLen = metaDataLen + msg.msg.bin_len;
-            char* metaData = new char[metaDataLen];
-            char* allMsgData = new char[allMsgDataLen]; // msgData + metaData
+	{
+		EVP_PKEY *signKey = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA(signKey, rsakey);
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
-            msgMeta.serialise(metaData, &metaDataLen);
+		uint32_t metaDataLen = msgMeta.serial_size();
+		uint32_t allMsgDataLen = metaDataLen + msg.msg.bin_len;
 
-            // copy msg data and meta in allmsgData buffer
-            memcpy(allMsgData, msg.msg.bin_data, msg.msg.bin_len);
-            memcpy(allMsgData+(msg.msg.bin_len), metaData, metaDataLen);
+		RsTemporaryMemory metaData(metaDataLen) ;
+		RsTemporaryMemory allMsgData(allMsgDataLen) ;
 
-				delete[] metaData ;
+		if(!metaData || !allMsgData)
+		{
+			std::cerr << "(EE) Cannot allocate temporary memory for signature checking. Sizes=" << metaDataLen << ", " << allMsgDataLen << ". Out of memory??" << std::endl;
+			return false ;
+		}
+		msgMeta.serialise(metaData, &metaDataLen);
 
-            EVP_PKEY *signKey = EVP_PKEY_new();
-            EVP_PKEY_assign_RSA(signKey, rsakey);
+		// copy msg data and meta in allmsgData buffer
+		memcpy(allMsgData, msg.msg.bin_data, msg.msg.bin_len);
+		memcpy(allMsgData+(msg.msg.bin_len), metaData, metaDataLen);
 
-            /* calc and check signature */
-            EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+		/* calc and check signature */
 
-            EVP_VerifyInit(mdctx, EVP_sha1());
-            EVP_VerifyUpdate(mdctx, allMsgData, allMsgDataLen);
-            int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+		EVP_VerifyInit(mdctx, EVP_sha1());
+		EVP_VerifyUpdate(mdctx, allMsgData, allMsgDataLen);
 
-				delete[] allMsgData ;
+		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
 
-            /* clean up */
-            EVP_PKEY_free(signKey);
-            EVP_MD_CTX_destroy(mdctx);
+		/* clean up */
+		EVP_PKEY_free(signKey);
+		EVP_MD_CTX_destroy(mdctx);
+	}
 
             msgMeta.mOrigMsgId = origMsgId;
             msgMeta.mMsgId = msgId;
