@@ -30,6 +30,7 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsprint.h"
+#include "util/rsscopetimer.h"
 
 #include "pqi/pqistreamer.h"
 #include "rsserver/p3face.h"
@@ -38,15 +39,29 @@
 
 const int pqistreamerzone = 8221;
 
-static const int   PQISTREAM_ABS_MAX    = 100000000; /* 100 MB/sec (actually per loop) */
-static const int   PQISTREAM_AVG_PERIOD = 5; 		// update speed estimate every 5 seconds
-static const float PQISTREAM_AVG_FRAC   = 0.8; 	// for bandpass filter over speed estimate.
+static const int   PQISTREAM_ABS_MAX    			= 100000000; /* 100 MB/sec (actually per loop) */
+static const int   PQISTREAM_AVG_PERIOD 			= 5; 		// update speed estimate every 5 seconds
+static const float PQISTREAM_AVG_FRAC   			= 0.8; 		// for bandpass filter over speed estimate.
+static const int   PQISTREAM_OPTIMAL_PACKET_SIZE  		= 512;		// It is believed that this value should be lower than TCP slices and large enough as compare to encryption padding.
+										// most importantly, it should be constant, so as to allow correct QoS.
+static const int   PQISTREAM_SLICE_FLAG_STARTS			= 0x01;		// 
+static const int   PQISTREAM_SLICE_FLAG_ENDS 			= 0x02;		// these flags should be kept in the range 0x01-0x08
+static const int   PQISTREAM_SLICE_PROTOCOL_VERSION_ID_01     = 0x10;		// Protocol version ID. Should hold on the 4 lower bits.
+static const int   PQISTREAM_PARTIAL_PACKET_HEADER_SIZE	= 8;   		// Same size than normal header, to make the code simpler.
+static const int   PQISTREAM_PACKET_SLICING_PROBE_DELAY	= 60;  		// send every 60 secs.
+
+// This is a probe packet, that won't deserialise (it's empty) but will not cause problems to old peers either, since they will ignore
+// it. This packet however will be understood by new peers as a signal to enable packet slicing. This should go when all peers use the
+// same protocol.
+
+static uint8_t PACKET_SLICING_PROBE_BYTES[8] =  { 0x02, 0xaa, 0xbb, 0xcc, 0x00, 0x00, 0x00,  0x08 } ;
 
 /* This removes the print statements (which hammer pqidebug) */
 /***
 #define RSITEM_DEBUG 1
 #define DEBUG_TRANSFERS	 1
 #define DEBUG_PQISTREAMER 1
+#define DEBUG_PACKET_SLICING 1
  ***/
 
 #ifdef DEBUG_TRANSFERS
@@ -64,6 +79,9 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
+    mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
+    mLastSentPacketSlicingProbe = 0 ;
+    
     mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
     mIncomingSize = 0 ;
 
@@ -95,7 +113,9 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 pqistreamer::~pqistreamer()
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
+#ifdef DEBUG_PQISTREAMER
+    	std::cerr << "Closing pqistreamer." << std::endl;
+#endif
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Destruction!");
 
 	if (mBio_flags & BIN_FLAGS_NO_CLOSE)
@@ -185,8 +205,8 @@ void pqistreamer::updateRates()
     {
         int64_t diff = int64_t(t) - int64_t(mAvgLastUpdate) ;
 
-        float avgReadpSec = getRate(true) * PQISTREAM_AVG_FRAC   +     (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * float(diff));
-        float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC   +     (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * float(diff));
+        float avgReadpSec = getRate(true ) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * float(diff));
+        float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * float(diff));
 
 #ifdef DEBUG_PQISTREAMER
 	    std::cerr << "Peer " << PeerId() << ": Current speed estimates: " << avgReadpSec << " / " << avgSentpSec << std::endl;
@@ -256,6 +276,7 @@ int 	pqistreamer::tick_send(uint32_t timeout)
 	{
 		handleoutgoing_locked();
 	}
+    
 	return 1;
 }
 
@@ -278,7 +299,7 @@ int	pqistreamer::status()
 	return 0;
 }
 
-void pqistreamer::locked_storeInOutputQueue(void *ptr,int)
+void pqistreamer::locked_storeInOutputQueue(void *ptr,int,int)
 {
 	mOutPkts.push_back(ptr);
 }
@@ -316,7 +337,7 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 
 	if (mRsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
-		locked_storeInOutputQueue(ptr,pqi->priority_level()) ;
+		locked_storeInOutputQueue(ptr,pktsize,pqi->priority_level()) ;
 
 		if (!(mBio_flags & BIN_FLAGS_NO_DELETE))
 		{
@@ -399,6 +420,37 @@ time_t	pqistreamer::getLastIncomingTS()
 	return mLastIncomingTs;
 }
 
+// Packet slicing:
+//
+//          Old :    02 0014 03 00000026  [data,  26 bytes] =>   [version 1B] [service 2B][subpacket 1B] [size 4B]
+//          New1:    fv 0014 03 xxxxx sss [data, sss bytes] =>   [flags 0.5B version 0.5B] [service 2B][subpacket 1B] [packet counter 2.5B size 1.5B]
+//          New2:    pp ff xxxxxxxx ssss  [data, sss bytes] =>   [flags 1B] [protocol version 1B] [2^32 packet count] [2^16 size]
+//
+//          Flags:  0x1 => incomplete packet continued after
+//          Flags:  0x2 => packet ending a previously incomplete packet
+//
+//	- backward compatibility:
+//		* send one packet with service + subpacket = ffffff. Old peers will silently ignore such packets.
+//		* if received, mark the peer as able to decode the new packet type
+//
+//      Mode 1:
+//		- Encode length    on 1.5 Bytes (10 bits) => max slice size = 1024
+//		- Encode packet ID on 2.5 Bytes (20 bits) => packet counter = [0...1056364]
+//      Mode 2:
+//           	- Encode protocol  on 1.0 Bytes ( 8 bits)
+//           	- Encode flags     on 1.0 Bytes ( 8 bits)
+//		- Encode packet ID on 4.0 Bytes (32 bits) => packet counter = [0...2^32]
+//		- Encode size      on 2.0 Bytes (16 bits) => 65536					// max slice size = 65536
+//
+//      - limit packet grouping to max size 1024.
+//      - new peers need to read flux, and properly extract partial sizes, and combine packets based on packet counter.
+//	- on sending, RS should grab slices of max size 1024 from pqiQoS. If smaller, possibly pack them together.
+//	  pqiQoS keeps track of sliced packets and makes sure the output is consistent:
+//		* when a large packet needs to be send, only takes a slice and return it, and update the remaining part
+//		* always consider priority when taking new slices => a newly arrived fast packet will always get through.
+//
+//	Max slice size should be customisable, depending on bandwidth.
+
 int	pqistreamer::handleoutgoing_locked()
 {
 #ifdef DEBUG_PQISTREAMER
@@ -417,6 +469,10 @@ int	pqistreamer::handleoutgoing_locked()
     {
 	    /* if we are not active - clear anything in the queues. */
 	    locked_clear_out_queue() ;
+#ifdef DEBUG_PACKET_SLICING 
+        	std::cerr << "(II) Switching off packet slicing." << std::endl;
+#endif
+        	mAcceptsPacketSlicing = false ;
 
 	    /* also remove the pending packets */
 	    if (mPkt_wpending)
@@ -440,62 +496,116 @@ int	pqistreamer::handleoutgoing_locked()
 	    if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
 	    {
 
-#ifdef DEBUG_TRANSFERS
+#ifdef DEBUG_PACKET_SLICING
 		    if (maxbytes < sentbytes)
-		    {
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
-			    std::cerr << std::endl;
-		    }
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: bio not ready. maxbytes=" << maxbytes << ", sentbytes=" << sentbytes << std::endl;
 		    else
-		    {
-			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending at cansend() is false";
-			    std::cerr << std::endl;
-		    }
+			    std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending: sentbytes=" << sentbytes << ", max=" << maxbytes << std::endl;
 #endif
 
 		    return 0;
 	    }
-#define GROUP_OUTGOING_PACKETS 1
-#define PACKET_GROUPING_SIZE_LIMIT 512
-	    // send a out_pkt., else send out_data. unless
-	    // there is a pending packet.
+	    // send a out_pkt., else send out_data. unless there is a pending packet. The strategy is to
+            //	- grab as many packets as possible while below the optimal packet size, so as to allow some packing and decrease encryption padding overhead (suposeddly)
+            //	- limit packets size to OPTIMAL_PACKET_SIZE when sending big packets so as to keep as much QoS as possible.
+        
 	    if (!mPkt_wpending)
-#ifdef GROUP_OUTGOING_PACKETS
-	    {
-		    void *dta;
-		    mPkt_wpending_size = 0 ;
-		    int k=0;
-            
-		    while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PACKET_GROUPING_SIZE_LIMIT && (dta = locked_pop_out_data())!=NULL )
-		    {
-			    uint32_t s = getRsItemSize(dta);
-			    mPkt_wpending = realloc(mPkt_wpending,s+mPkt_wpending_size) ;
-			    memcpy( &((char*)mPkt_wpending)[mPkt_wpending_size],dta,s) ;
-			    free(dta);
-			    mPkt_wpending_size += s ;
-			    ++k ;
-		    }
-#ifdef DEBUG_PQISTREAMER
-		    if(k > 1)
-			    std::cerr << "Packed " << k << " packets into " << mPkt_wpending_size << " bytes." << std::endl;
-#endif
-	    }
-#else
 	{
-		void *dta = locked_pop_out_data() ;
+		void *dta;
+		mPkt_wpending_size = 0 ;
+		int k=0;
 
-		if(dta != NULL)
-		{
-			mPkt_wpending = dta ;
-			mPkt_wpending_size = getRsItemSize(dta);
-		}
-	}
+        	// Checks for inserting a packet slicing probe. We do that to send the other peer the information that packet slicing can be used.
+        	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
+		time_t now = time(NULL) ;
+        
+        	if((!mAcceptsPacketSlicing) && now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
+        	{
+#ifdef DEBUG_PACKET_SLICING
+                	std::cerr << "(II) Inserting packet slicing probe in traffic" << std::endl;
 #endif
+                    
+                    	mPkt_wpending_size = 8 ;
+                    	mPkt_wpending = rs_malloc(8) ;
+                        memcpy(mPkt_wpending,PACKET_SLICING_PROBE_BYTES,8) ;
+                        
+                	mLastSentPacketSlicingProbe = now ;
+        	}
+            
+        	uint32_t slice_size=0;
+		bool slice_starts=true ;
+		bool slice_ends=true ;
+		uint32_t slice_packet_id=0 ;
+
+		do
+		{
+            		int desired_packet_size = mAcceptsPacketSlicing?PQISTREAM_OPTIMAL_PACKET_SIZE:(getRsPktMaxSize());
+                    
+			dta = locked_pop_out_data(desired_packet_size,slice_size,slice_starts,slice_ends,slice_packet_id) ;
+
+			if(!dta)
+				break ;
+
+			if(slice_size > 0xffff)
+			{
+				std::cerr << "(EE) protocol error in pqitreamer: slice size is too large and cannot be encoded." ;
+				free(mPkt_wpending) ;
+				mPkt_wpending_size = 0;
+			}
+
+			if(slice_starts && slice_ends)	// good old method. Send the packet as is, since it's a full packet.
+			{
+#ifdef DEBUG_PACKET_SLICING
+				std::cerr << "sending full slice, old style. Size=" << slice_size << std::endl;
+#endif
+				mPkt_wpending = realloc(mPkt_wpending,slice_size+mPkt_wpending_size) ;
+				memcpy( &((char*)mPkt_wpending)[mPkt_wpending_size],dta,slice_size) ;
+				free(dta);
+				mPkt_wpending_size += slice_size ;
+				++k ;
+			}
+			else	// partial packet. We make a special header for it and insert it in the stream
+			{
+#ifdef DEBUG_PACKET_SLICING
+				std::cerr << "sending partial slice, packet ID=" << std::hex << slice_packet_id << std::dec << ", size=" << slice_size << std::endl;
+#endif
+
+				mPkt_wpending = realloc(mPkt_wpending,slice_size+mPkt_wpending_size+PQISTREAM_PARTIAL_PACKET_HEADER_SIZE) ;
+				memcpy( &((char*)mPkt_wpending)[mPkt_wpending_size+PQISTREAM_PARTIAL_PACKET_HEADER_SIZE],dta,slice_size) ;
+				free(dta);
+
+				// New2: pp ff xxxxxxxx ssss  [data, sss bytes] => [flags 1B] [protocol version 1B] [2^32 packet count] [2^16 size]
+
+				uint8_t partial_flags = 0 ;
+				if(slice_starts) partial_flags |= PQISTREAM_SLICE_FLAG_STARTS  ;
+				if(slice_ends  ) partial_flags |= PQISTREAM_SLICE_FLAG_ENDS  ;
+
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x00] = PQISTREAM_SLICE_PROTOCOL_VERSION_ID_01 ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x01] = partial_flags ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x02] = uint8_t(slice_packet_id >> 24) & 0xff ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x03] = uint8_t(slice_packet_id >> 16) & 0xff ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x04] = uint8_t(slice_packet_id >>  8) & 0xff ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x05] = uint8_t(slice_packet_id >>  0) & 0xff ;	
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x06] = uint8_t(slice_size      >>  8) & 0xff ;
+				((char*)mPkt_wpending)[mPkt_wpending_size+0x07] = uint8_t(slice_size      >>  0) & 0xff ;
+
+				mPkt_wpending_size += slice_size + PQISTREAM_PARTIAL_PACKET_HEADER_SIZE;
+				++k ;
+			}
+		} 
+       		 while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PQISTREAM_OPTIMAL_PACKET_SIZE ) ;
+             
+#ifdef DEBUG_PQISTREAMER
+		if(k > 1)
+			std::cerr << "Packed " << k << " packets into " << mPkt_wpending_size << " bytes." << std::endl;
+#endif
+	}
+        
 	    if (mPkt_wpending)
 	    {
 		    // write packet.
 #ifdef DEBUG_PQISTREAMER
-		    std::cout << "Sending Out Pkt of size " << mPkt_wpending_size << " !" << std::endl;
+		std::cout << "Sending Out Pkt of size " << mPkt_wpending_size << " !" << std::endl;
 #endif
             		int ss=0;
 
@@ -507,12 +617,19 @@ int	pqistreamer::handleoutgoing_locked()
 			    //				std::cerr << out << std::endl ;
 			    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
+                		std::cerr << PeerId() << ": sending failed. Only " << ss << " bytes sent over " << mPkt_wpending_size << std::endl;
 
 			    // pkt_wpending will kept til next time.
 			    // ensuring exactly the same data is written (openSSL requirement).
 			    return -1;
 		    }
+#ifdef DEBUG_PQISTREAMER
+            else
+                		std::cerr << PeerId() << ": sent " << ss << " bytes " << std::endl;
+#endif
+            
 		    ++nsent;
+            
             outSentBytes_locked(mPkt_wpending_size);	// this is the only time where we know exactly what was sent.
 
 #ifdef DEBUG_TRANSFERS
@@ -541,309 +658,405 @@ int	pqistreamer::handleoutgoing_locked()
  */
 int pqistreamer::handleincoming_locked()
 {
-	int readbytes = 0;
-	static const int max_failed_read_attempts = 2000 ;
+    int readbytes = 0;
+    static const int max_failed_read_attempts = 2000 ;
 
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming_locked()");
+    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming_locked()");
 #endif
 
-	if(!(mBio->isactive()))
-	{
-		mReading_state = reading_state_initial ;
-        free_rpend_locked();
-		return 0;
-	}
+    if(!(mBio->isactive()))
+    {
+	    mReading_state = reading_state_initial ;
+	    free_rpend_locked();
+	    return 0;
+    }
     else
-        allocate_rpend_locked();
+	    allocate_rpend_locked();
 
-	// enough space to read any packet.
-	int maxlen = mPkt_rpend_size; 
-	void *block = mPkt_rpending; 
+    // enough space to read any packet.
+    int maxlen = mPkt_rpend_size; 
+    void *block = mPkt_rpending; 
 
-	// initial read size: basic packet.
-	int blen = getRsPktBaseSize();
+    // initial read size: basic packet.
+    int blen = getRsPktBaseSize();	// this is valid for both packet slices and normal un-sliced packets (same header size)
 
-	int maxin = inAllowedBytes_locked();
+    int maxin = inAllowedBytes_locked();
 
 #ifdef DEBUG_PQISTREAMER
-	std::cerr << "[" << (void*)pthread_self() << "] " << "reading state = " << mReading_state << std::endl ;
+    std::cerr << "[" << (void*)pthread_self() << "] " << "reading state = " << mReading_state << std::endl ;
 #endif
-	switch(mReading_state)
-	{
-		case reading_state_initial: 			/*std::cerr << "jumping to start" << std::endl; */ goto start_packet_read ;
-		case reading_state_packet_started:	/*std::cerr << "jumping to middle" << std::endl;*/ goto continue_packet ;
-	}
+    switch(mReading_state)
+    {
+    case reading_state_initial: 			/*std::cerr << "jumping to start" << std::endl; */ goto start_packet_read ;
+    case reading_state_packet_started:	/*std::cerr << "jumping to middle" << std::endl;*/ goto continue_packet ;
+    }
 
 start_packet_read:
-	{	// scope to ensure variable visibility
-		// read the basic block (minimum packet size)
-		int tmplen;
+    {	// scope to ensure variable visibility
+	    // read the basic block (minimum packet size)
+	    int tmplen;
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "starting packet" << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "starting packet" << std::endl ;
 #endif
-		memset(block,0,blen) ;	// reset the block, to avoid uninitialized memory reads.
+	    memset(block,0,blen) ;	// reset the block, to avoid uninitialized memory reads.
 
-		if (blen != (tmplen = mBio->readdata(block, blen)))
-		{
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
+	    if (blen != (tmplen = mBio->readdata(block, blen)))
+	    {
+		    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
 
-			// error.... (either blocked or failure)
-			if (tmplen == 0)
-			{
+		    // error.... (either blocked or failure)
+		    if (tmplen == 0)
+		    {
 #ifdef DEBUG_PQISTREAMER
-				// most likely blocked!
-				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() read blocked");
-				std::cerr << "[" << (void*)pthread_self() << "] " << "given up 1" << std::endl ;
+			    // most likely blocked!
+			    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() read blocked");
+			    std::cerr << "[" << (void*)pthread_self() << "] " << "given up 1" << std::endl ;
 #endif
-				return 0;
-			}
-			else if (tmplen < 0)
-			{
-				// Most likely it is that the packet is pending but could not be read by pqissl because of stream flow.
-				// So we return without an error, and leave the machine state in 'start_read'.
-				//
-				//pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
+			    return 0;
+		    }
+		    else if (tmplen < 0)
+		    {
+			    // Most likely it is that the packet is pending but could not be read by pqissl because of stream flow.
+			    // So we return without an error, and leave the machine state in 'start_read'.
+			    //
+			    //pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
 #ifdef DEBUG_PQISTREAMER
-					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 2, state = " << mReading_state << std::endl ;
+			    std::cerr << "[" << (void*)pthread_self() << "] " << "given up 2, state = " << mReading_state << std::endl ;
 #endif
-				return 0;
-			}
-			else // tmplen > 0
-			{
-				// strange case....This should never happen as partial reads are handled by pqissl below.
+			    return 0;
+		    }
+		    else // tmplen > 0
+		    {
+			    // strange case....This should never happen as partial reads are handled by pqissl below.
 #ifdef DEBUG_PQISTREAMER
-				std::string out = "pqistreamer::handleincoming() Incomplete ";
-				rs_sprintf_append(out, "(Strange) read of %d bytes", tmplen);
-				pqioutput(PQL_ALERT, pqistreamerzone, out);
+			    std::string out = "pqistreamer::handleincoming() Incomplete ";
+			    rs_sprintf_append(out, "(Strange) read of %d bytes", tmplen);
+			    pqioutput(PQL_ALERT, pqistreamerzone, out);
 
-				std::cerr << "[" << (void*)pthread_self() << "] " << "given up 3" << std::endl ;
+			    std::cerr << "[" << (void*)pthread_self() << "] " << "given up 3" << std::endl ;
 #endif
-				return -1;
-			}
-		}
+			    return -1;
+		    }
+	    }
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " "
-							<< (int)(((unsigned char*)block)[3]) << " "
-							<< (int)(((unsigned char*)block)[4]) << " "
-							<< (int)(((unsigned char*)block)[5]) << " "
-							<< (int)(((unsigned char*)block)[6]) << " "
-							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << RsUtil::BinToHex(block,8) << std::endl;
 #endif
 
-		readbytes += blen;
-        mReading_state = reading_state_packet_started ;
-		mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
-	}
+	    readbytes += blen;
+	    mReading_state = reading_state_packet_started ;
+	    mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
+
+	    // Check for packet slicing probe (04/26/2016). To be removed when everyone uses it.
+
+	    if(!memcmp(block,PACKET_SLICING_PROBE_BYTES,8))
+	    {
+		    mAcceptsPacketSlicing = true ;
+#ifdef DEBUG_PACKET_SLICING
+		    std::cerr << "(II) Enabling packet slicing!" << std::endl;
+#endif
+	    }
+    }
 continue_packet:
-	{
-		// workout how much more to read.
-		int extralen = getRsItemSize(block) - blen;
+    {
+	    // workout how much more to read.
+
+	    bool is_partial_packet  = false ;
+	    bool is_packet_starting = (((char*)block)[1] == PQISTREAM_SLICE_FLAG_STARTS) ; 	// STARTS and ENDS flags are actually never combined.
+	    bool is_packet_ending   = (((char*)block)[1] == PQISTREAM_SLICE_FLAG_ENDS) ; 
+	    bool is_packet_middle   = (((char*)block)[1] == 0x00) ; 
+
+	    uint32_t extralen =0;
+	    uint32_t slice_packet_id =0;
+
+	    if( ((char*)block)[0] == PQISTREAM_SLICE_PROTOCOL_VERSION_ID_01 && ( is_packet_starting || is_packet_middle || is_packet_ending))
+	    {
+		    extralen        = (uint32_t(((uint8_t*)block)[6]) << 8 ) + (uint32_t(((uint8_t*)block)[7]));
+		    slice_packet_id = (uint32_t(((uint8_t*)block)[2]) << 24) + (uint32_t(((uint8_t*)block)[3]) << 16) + (uint32_t(((uint8_t*)block)[4]) << 8) + (uint32_t(((uint8_t*)block)[5]) << 0);
+
+#ifdef DEBUG_PACKET_SLICING
+		    std::cerr << "Reading partial packet from mem block " << RsUtil::BinToHex((char*)block,8) << ": packet_id=" << std::hex << slice_packet_id << std::dec << ", len=" << extralen << std::endl;
+#endif
+		    is_partial_packet = true ;
+            
+            		mAcceptsPacketSlicing = true ; // this is needed 
+	    }
+	    else
+		    extralen = getRsItemSize(block) - blen;	// old style packet type
 
 #ifdef DEBUG_PQISTREAMER
-                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
-                std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
 
-				std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
-		std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  << " "
-							<< (int)(((unsigned char*)block)[4]) << " "
-							<< (int)(((unsigned char*)block)[5]) << " "
-							<< (int)(((unsigned char*)block)[6]) << " "
-							<< (int)(((unsigned char*)block)[7]) << " " << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << RsUtil::BinToHex(block,8) << std::endl;
 #endif
-		if (extralen > maxlen - blen)
-		{
-			pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
+	    if (extralen > maxlen - blen)
+	    {
+		    pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
 
-			p3Notify *notify = RsServer::notify();
-			if (notify)
-			{
-				std::string title =
-					"Warning: Bad Packet Read";
+		    p3Notify *notify = RsServer::notify();
+		    if (notify)
+		    {
+			    std::string title =
+			                    "Warning: Bad Packet Read";
 
-				std::string msg;
-				msg =   "               **** WARNING ****     \n";
-				msg +=  "Retroshare has caught a BAD Packet Read";
-				msg +=  "\n";
-				msg +=  "This is normally caused by connecting to an";
-				msg +=  " OLD version of Retroshare";
-				msg +=  "\n";
-				rs_sprintf_append(msg, "(M:%d B:%d E:%d)\n", maxlen, blen, extralen);
-				msg +=  "\n";
-				rs_sprintf_append(msg, "block = %d %d %d %d %d %d %d %d\n",
-							(int)(((unsigned char*)block)[0]),
-							(int)(((unsigned char*)block)[1]),
-							(int)(((unsigned char*)block)[2]),
-							(int)(((unsigned char*)block)[3]),
-							(int)(((unsigned char*)block)[4]),
-							(int)(((unsigned char*)block)[5]),
-							(int)(((unsigned char*)block)[6]),
-							(int)(((unsigned char*)block)[7])) ;
-				msg +=  "\n";
-				msg +=  "Please get your friends to upgrade to the latest version";
-				msg +=  "\n";
-				msg +=  "\n";
-				msg +=  "If you are sure the error was not caused by an old version";
-				msg +=  "\n";
-				msg +=  "Please report the problem to Retroshare's developers";
-				msg +=  "\n";
+			    std::string msg;
+			    msg =   "               **** WARNING ****     \n";
+			    msg +=  "Retroshare has caught a BAD Packet Read";
+			    msg +=  "\n";
+			    msg +=  "This is normally caused by connecting to an";
+			    msg +=  " OLD version of Retroshare";
+			    msg +=  "\n";
+			    rs_sprintf_append(msg, "(M:%d B:%d E:%d)\n", maxlen, blen, extralen);
+			    msg +=  "\n";
+			    msg +=  "block = " ;
+                	    msg += RsUtil::BinToHex((char*)block,8);
 
-				notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
+			    msg +=  "\n";
+			    msg +=  "Please get your friends to upgrade to the latest version";
+			    msg +=  "\n";
+			    msg +=  "\n";
+			    msg +=  "If you are sure the error was not caused by an old version";
+			    msg +=  "\n";
+			    msg +=  "Please report the problem to Retroshare's developers";
+			    msg +=  "\n";
 
-				std::cerr << "pqistreamer::handle_incoming() ERROR: Read Packet too Big" << std::endl;
-				std::cerr << msg;
-				std::cerr << std::endl;
+			    notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
 
-			}
-			mBio->close();	
-			mReading_state = reading_state_initial ;	// restart at state 1.
-			mFailed_read_attempts = 0 ;
-			return -1;
+			    std::cerr << "pqistreamer::handle_incoming() ERROR: Read Packet too Big" << std::endl;
+			    std::cerr << msg;
+			    std::cerr << std::endl;
 
-			// Used to exit now! exit(1);
-		}
+		    }
+		    mBio->close();	
+		    mReading_state = reading_state_initial ;	// restart at state 1.
+		    mFailed_read_attempts = 0 ;
+		    return -1;
 
-		if (extralen > 0)
-		{
-			void *extradata = (void *) (((char *) block) + blen);
-			int tmplen ;
+		    // Used to exit now! exit(1);
+	    }
 
-			// Don't reset the block now! If pqissl is in the middle of a multiple-chunk
-			// packet (larger than 16384 bytes), and pqistreamer jumped directly yo
-			// continue_packet:, then readdata is going to write after the beginning of
-			// extradata, yet not exactly at start -> the start of the packet would be wiped out.
-			//
-			// so, don't do that:
-			//		memset( extradata,0,extralen ) ;	
+	    if (extralen > 0)
+	    {
+		    void *extradata = (void *) (((char *) block) + blen);
+		    int tmplen ;
 
-			if (extralen != (tmplen = mBio->readdata(extradata, extralen)))
-			{
+		    // Don't reset the block now! If pqissl is in the middle of a multiple-chunk
+		    // packet (larger than 16384 bytes), and pqistreamer jumped directly yo
+		    // continue_packet:, then readdata is going to write after the beginning of
+		    // extradata, yet not exactly at start -> the start of the packet would be wiped out.
+		    //
+		    // so, don't do that:
+		    //		memset( extradata,0,extralen ) ;	
+
+		    if (extralen != (tmplen = mBio->readdata(extradata, extralen)))
+		    {
 #ifdef DEBUG_PQISTREAMER
-				if(tmplen > 0)
-					std::cerr << "[" << (void*)pthread_self() << "] " << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
+			    if(tmplen > 0)
+				    std::cerr << "[" << (void*)pthread_self() << "] " << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
 #endif
 
-				if(++mFailed_read_attempts > max_failed_read_attempts)
-				{
-					std::string out;
-					rs_sprintf(out, "Error Completing Read (read %d/%d)", tmplen, extralen);
-					std::cerr << out << std::endl ;
-					pqioutput(PQL_ALERT, pqistreamerzone, out);
+			    if(++mFailed_read_attempts > max_failed_read_attempts)
+			    {
+				    std::string out;
+				    rs_sprintf(out, "Error Completing Read (read %d/%d)", tmplen, extralen);
+				    std::cerr << out << std::endl ;
+				    pqioutput(PQL_ALERT, pqistreamerzone, out);
 
-					p3Notify *notify = RsServer::notify();
-					if (notify)
-					{
-						std::string title = "Warning: Error Completing Read";
+				    p3Notify *notify = RsServer::notify();
+				    if (notify)
+				    {
+					    std::string title = "Warning: Error Completing Read";
 
-						std::string msgout;
-						msgout =   "               **** WARNING ****     \n";
-						msgout +=  "Retroshare has experienced an unexpected Read ERROR";
-						msgout +=  "\n";
-						rs_sprintf_append(msgout, "(M:%d B:%d E:%d R:%d)\n", maxlen, blen, extralen, tmplen);
-						msgout +=  "\n";
-						msgout +=  "Note: this error might as well happen (rarely) when a peer disconnects in between a transmission of a large packet.\n";
-						msgout +=  "If it happens manny time, please contact the developers, and send them these numbers:";
-						msgout +=  "\n";
+					    std::string msgout;
+					    msgout =   "               **** WARNING ****     \n";
+					    msgout +=  "Retroshare has experienced an unexpected Read ERROR";
+					    msgout +=  "\n";
+					    rs_sprintf_append(msgout, "(M:%d B:%d E:%d R:%d)\n", maxlen, blen, extralen, tmplen);
+					    msgout +=  "\n";
+					    msgout +=  "Note: this error might as well happen (rarely) when a peer disconnects in between a transmission of a large packet.\n";
+					    msgout +=  "If it happens manny time, please contact the developers, and send them these numbers:";
+					    msgout +=  "\n";
 
-						rs_sprintf_append(msgout, "block = %d %d %d %d %d %d %d %d\n",
-							(int)(((unsigned char*)block)[0]),
-							(int)(((unsigned char*)block)[1]),
-							(int)(((unsigned char*)block)[2]),
-							(int)(((unsigned char*)block)[3]),
-							(int)(((unsigned char*)block)[4]),
-							(int)(((unsigned char*)block)[5]),
-							(int)(((unsigned char*)block)[6]),
-							(int)(((unsigned char*)block)[7]));
+					    msgout +=  "block = " ;
+                        			msgout += RsUtil::BinToHex((char*)block,8) + "\n" ;
 
-						//notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
+					    std::cerr << msgout << std::endl;
+				    }
 
-						std::cerr << msgout << std::endl;
-					}
-
-					mBio->close();	
-					mReading_state = reading_state_initial ;	// restart at state 1.
-					mFailed_read_attempts = 0 ;
-					return -1;
-				}
-				else
-				{
+				    mBio->close();	
+				    mReading_state = reading_state_initial ;	// restart at state 1.
+				    mFailed_read_attempts = 0 ;
+				    return -1;
+			    }
+			    else
+			    {
 #ifdef DEBUG_PQISTREAMER
-					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 5, state = " << mReading_state << std::endl ;
+				    std::cerr << "[" << (void*)pthread_self() << "] " << "given up 5, state = " << mReading_state << std::endl ;
 #endif
-					return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
-									// we assume readdata() returned either -1 or the complete read size.
-				}
-			}
+				    return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
+				    // we assume readdata() returned either -1 or the complete read size.
+			    }
+		    }
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
-		std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << (int)(((unsigned char*)extradata)[0]) << " " << (int)(((unsigned char*)extradata)[1]) << " " << (int)(((unsigned char*)extradata)[2]) << " " << (int)(((unsigned char*)extradata)[3])  << " "
-							<< (int)(((unsigned char*)extradata)[4]) << " "
-							<< (int)(((unsigned char*)extradata)[5]) << " "
-							<< (int)(((unsigned char*)extradata)[6]) << " "
-							<< (int)(((unsigned char*)extradata)[7]) << " " << std::endl ;
+		    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
+		    std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << RsUtil::BinToHex(extradata,8) << std::endl;
 #endif
 
-			mFailed_read_attempts = 0 ;
-			readbytes += extralen;
-        }
+		    mFailed_read_attempts = 0 ;
+		    readbytes += extralen;
+	    }
 
-		// create packet, based on header.
+	    // create packet, based on header.
 #ifdef DEBUG_PQISTREAMER
-		{
-			std::string out;
-			rs_sprintf(out, "Read Data Block -> Incoming Pkt(%d)", blen + extralen);
-			//std::cerr << out ;
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
-		}
+	    {
+		    std::string out;
+		    rs_sprintf(out, "Read Data Block -> Incoming Pkt(%d)", blen + extralen);
+		    //std::cerr << out ;
+		    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
+	    }
 #endif
 
-                //		std::cerr << "Deserializing packet of size " << pktlen <<std::endl ;
-
-		uint32_t pktlen = blen+extralen ;
+	    uint32_t pktlen = blen+extralen ;
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "deserializing. Size=" << pktlen << std::endl ;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << RsUtil::BinToHex((char*)block,8) << "...: deserializing. Size=" << pktlen << std::endl ;
 #endif
+	    RsItem *pkt ;
 
-        RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
+	    if(is_partial_packet)
+	    {
+#ifdef DEBUG_PACKET_SLICING
+		    std::cerr << "Inputing partial packet " << RsUtil::BinToHex((char*)block,8) << std::endl;
+#endif
+		    pkt = addPartialPacket(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending) ;
+	    }
+	    else
+		    pkt = mRsSerialiser->deserialise(block, &pktlen);
 
-		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
-		{
+	    if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt,pktlen)))
+	    {
 #ifdef DEBUG_PQISTREAMER
-			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
+		    pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
 #endif
-			inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
-		}
-		else
-		{
+		    inReadBytes_locked(pktlen);	// only count deserialised packets, because that's what is actually been transfered.
+	    }
+	    else if (!is_partial_packet)
+	    {
 #ifdef DEBUG_PQISTREAMER
-			pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
+		    pqioutput(PQL_ALERT, pqistreamerzone, "Failed to handle Packet!");
 #endif
-            		std::cerr << "Incoming Packet  could not be deserialised:" << std::endl;
-            		std::cerr << "  Incoming peer id: " << PeerId() << std::endl;
-                    	if(pktlen >= 8)
-				std::cerr << "  Packet header   : " << RsUtil::BinToHex((unsigned char*)block,8) << std::endl;
-                    	if(pktlen >  8)
-				std::cerr << "  Packet data     : " << RsUtil::BinToHex((unsigned char*)block+8,std::min(50u,pktlen-8)) << ((pktlen>58)?"...":"") << std::endl;
-		}
+		    std::cerr << "Incoming Packet  could not be deserialised:" << std::endl;
+		    std::cerr << "  Incoming peer id: " << PeerId() << std::endl;
+		    if(pktlen >= 8)
+			    std::cerr << "  Packet header   : " << RsUtil::BinToHex((unsigned char*)block,8) << std::endl;
+		    if(pktlen >  8)
+			    std::cerr << "  Packet data     : " << RsUtil::BinToHex((unsigned char*)block+8,std::min(50u,pktlen-8)) << ((pktlen>58)?"...":"") << std::endl;
+	    }
 
-		mReading_state = reading_state_initial ;	// restart at state 1.
-		mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
-	}
+	    mReading_state = reading_state_initial ;	// restart at state 1.
+	    mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
+    }
 
-	if(maxin > readbytes && mBio->moretoread(0))
-		goto start_packet_read ;
+    if(maxin > readbytes && mBio->moretoread(0))
+	    goto start_packet_read ;
 
 #ifdef DEBUG_TRANSFERS
-	if (readbytes >= maxin)
-	{
-		std::cerr << "pqistreamer::handleincoming() Stopped reading as readbytes >= maxin. Read " << readbytes << " bytes ";
-		std::cerr << std::endl;
-	}
+    if (readbytes >= maxin)
+    {
+	    std::cerr << "pqistreamer::handleincoming() Stopped reading as readbytes >= maxin. Read " << readbytes << " bytes ";
+	    std::cerr << std::endl;
+    }
 #endif
 
-	return 0;
+    return 0;
 }
 
+RsItem *pqistreamer::addPartialPacket(const void *block,uint32_t len,uint32_t slice_packet_id,bool is_packet_starting,bool is_packet_ending) 
+{
+#ifdef DEBUG_PACKET_SLICING
+    std::cerr << "Receiving partial packet. size=" << len << ", ID=" << std::hex << slice_packet_id << std::dec << ", starting:" << is_packet_starting << ", ending:" << is_packet_ending ;
+#endif
+
+    if(is_packet_starting && is_packet_ending)
+    {
+	    std::cerr << " (EE) unexpected situation: both starting and ending" << std::endl;
+	    return NULL ;
+    }
+
+    uint32_t slice_length = len - PQISTREAM_PARTIAL_PACKET_HEADER_SIZE ;
+    unsigned char *slice_data = &((unsigned char*)block)[PQISTREAM_PARTIAL_PACKET_HEADER_SIZE] ;
+
+    std::map<uint32_t,PartialPacketRecord>::iterator it = mPartialPackets.find(slice_packet_id) ;
+
+    if(it == mPartialPackets.end())
+    {
+	    // make sure we really have a starting packet. Otherwise this is an error.
+
+	    if(!is_packet_starting)
+	    {
+		    std::cerr << " (EE) non starting packet has no record. Dropping" << std::endl;
+		    return NULL ;
+	    }
+	    PartialPacketRecord& rec = mPartialPackets[slice_packet_id] ;
+
+	    rec.mem = rs_malloc(slice_length) ;
+
+	    if(!rec.mem)
+	    {
+		    std::cerr << " (EE) Cannot allocate memory for slice of size " << slice_length << std::endl;
+		    return NULL ;
+	    }
+
+	    memcpy(rec.mem, slice_data, slice_length) ; ;
+	    rec.size = slice_length ;
+
+#ifdef DEBUG_PACKET_SLICING
+	    std::cerr << " => stored in new record (size=" << rec.size << std::endl;
+#endif
+
+	    return NULL ;	// no need to check for ending
+    }
+    else
+    {
+	    PartialPacketRecord& rec = it->second ;
+
+	    if(is_packet_starting)
+	    {
+		    std::cerr << "(WW) dropping unfinished existing packet that gets to be replaced by new starting packet." << std::endl;
+		    free(rec.mem);
+		    rec.size = 0 ;
+	    }
+	    // make sure this is a continuing packet, otherwise this is an error.
+
+	    rec.mem = realloc(rec.mem, rec.size + slice_length) ;
+	    memcpy( &((char*)rec.mem)[rec.size],slice_data,slice_length) ;
+	    rec.size += slice_length ;
+
+#ifdef DEBUG_PACKET_SLICING
+	    std::cerr << " => added to existing record size=" << rec.size ;
+#endif
+
+	    if(is_packet_ending)
+	    {
+#ifdef DEBUG_PACKET_SLICING
+		    std::cerr << " => deserialising: mem=" << RsUtil::BinToHex((char*)rec.mem,std::min(8u,rec.size)) << std::endl;
+#endif
+		    RsItem *item = mRsSerialiser->deserialise(rec.mem, &rec.size);
+
+		    free(rec.mem) ;
+		    mPartialPackets.erase(it) ;
+		    return item ;
+	    }
+	    else
+	    {
+#ifdef DEBUG_PACKET_SLICING
+		    std::cerr << std::endl;
+#endif
+		    return NULL ;
+	    }
+    }
+}
 
 /* BandWidth Management Assistance */
 
@@ -1074,8 +1287,13 @@ int pqistreamer::locked_gatherStatistics(std::list<RSTrafficClue>& out_lst,std::
     return 1 ;
 }
 
-void *pqistreamer::locked_pop_out_data() 
+void *pqistreamer::locked_pop_out_data(uint32_t max_slice_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id)
 {
+    size = 0 ;
+    starts = true ;
+    ends = true ;
+    packet_id = 0 ;
+    
 	void *res = NULL ;
 
 	if (!mOutPkts.empty())
@@ -1089,3 +1307,5 @@ void *pqistreamer::locked_pop_out_data()
 	}
 	return res ;
 }
+
+    

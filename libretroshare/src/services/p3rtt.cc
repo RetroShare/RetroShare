@@ -23,6 +23,8 @@
  *
  */
 
+#include <iomanip>
+
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
 #include "pqi/pqibin.h"
@@ -37,7 +39,6 @@
 /****
  * #define DEBUG_RTT		1
  ****/
-
 
 /* DEFINE INTERFACE POINTER! */
 RsRtt *rsRtt = NULL;
@@ -168,7 +169,7 @@ int	p3rtt::sendPackets()
 		pt = mSentPingTime;
 	}
 
-	if (now - pt > RTT_PING_PERIOD)
+	if (now >= pt+RTT_PING_PERIOD)
 	{
 		sendPingMeasurements();
 
@@ -190,19 +191,10 @@ void p3rtt::sendPingMeasurements()
 
 	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, idList);
 
-#ifdef DEBUG_RTT
-	std::cerr << "p3rtt::sendPingMeasurements() @ts: " << ts;
-	std::cerr << std::endl;
-#endif
-
 	/* prepare packets */
 	std::set<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); ++it)
 	{
-#ifdef DEBUG_RTT
-		std::cerr << "p3rtt::sendPingMeasurements() Pinging: " << *it;
-		std::cerr << std::endl;
-#endif
     		double ts = getCurrentTS();
             
 		/* create the packet */
@@ -214,11 +206,8 @@ void p3rtt::sendPingMeasurements()
 		storePingAttempt(*it, ts, mCounter);
 
 #ifdef DEBUG_RTT
-		std::cerr << "p3rtt::sendPingMeasurements() With Packet:";
-		std::cerr << std::endl;
-		pingPkt->print(std::cerr, 10);
+		std::cerr << "p3rtt::sendPingMeasurements() Pinging: " << *it << " [" << pingPkt->mSeqNo << "," << std::hex << pingPkt->mPingTS << std::dec << "]" << std::endl;;
 #endif
-
 		sendItem(pingPkt);
 	}
 
@@ -256,30 +245,28 @@ int p3rtt::handlePing(RsItem *item)
 	/* cast to right type */
 	RsRttPingItem *ping = (RsRttPingItem *) item;
 
+	double ts = getCurrentTS();
 #ifdef DEBUG_RTT
-	std::cerr << "p3rtt::handlePing() Recvd Packet from: " << ping->PeerId();
-	std::cerr << std::endl;
+	std::cerr << "p3rtt::handlePing() from: " << ping->PeerId() << " - [" << ping->mSeqNo << "," << std::hex << ping->mPingTS << std::dec << "] " << std::endl;
+    	std::cerr << "incoming ping travel time: " << ts - convert64bitsToTs(ping->mPingTS) << std::endl;
 #endif
 
 	/* with a ping, we just respond as quickly as possible - they do all the analysis */
 	RsRttPongItem *pong = new RsRttPongItem();
-
 
 	pong->PeerId(ping->PeerId());
 	pong->mPingTS = ping->mPingTS;
 	pong->mSeqNo = ping->mSeqNo;
 
 	// add our timestamp.
-	double ts = getCurrentTS();
 	pong->mPongTS = convertTsTo64bits(ts);
 
-
+    static double mLastResponseToPong = 0.0 ;// bad stuff
 #ifdef DEBUG_RTT
-	std::cerr << "p3rtt::handlePing() With Packet:";
-	std::cerr << std::endl;
-	pong->print(std::cerr, 10);
+    std::cerr << "Delay since last response to PONG: " << ts - mLastResponseToPong << std::endl;
 #endif
-
+    
+    mLastResponseToPong = ts ;
 	sendItem(pong);
 	return true ;
 }
@@ -291,9 +278,7 @@ int p3rtt::handlePong(RsItem *item)
 	RsRttPongItem *pong = (RsRttPongItem *) item;
 
 #ifdef DEBUG_RTT
-	std::cerr << "p3rtt::handlePong() Recvd Packet from: " << pong->PeerId();
-	std::cerr << std::endl;
-	pong->print(std::cerr, 10);
+	std::cerr << "p3rtt::handlePong() from: " << pong->PeerId() << " - [" << pong->mSeqNo << "," << std::hex << pong->mPingTS << " -> " << pong->mPongTS << std::dec << "] "<< std::endl;
 #endif
 
 	/* with a pong, we do the maths! */
@@ -305,21 +290,12 @@ int p3rtt::handlePong(RsItem *item)
 	double offset = pongTS - (recvTS - rtt / 2.0);  // so to get to their time, we go ourTS + offset.
 
 #ifdef DEBUG_RTT
-	std::cerr << "p3rtt::handlePong() Timing:";
-	std::cerr << std::endl;
-	std::cerr << "\tpingTS: " << pingTS;
-	std::cerr << std::endl;
-	std::cerr << "\tpongTS: " << pongTS;
-	std::cerr << std::endl;
-	std::cerr << "\trecvTS: " << recvTS;
-	std::cerr << std::endl;
-	std::cerr << "\t ==> rtt: " << rtt;
-	std::cerr << std::endl;
-	std::cerr << "\t ==> offset: " << offset;
-	std::cerr << std::endl;
+    	std::cerr << "incoming pong travel time: " << recvTS - convert64bitsToTs(pong->mPongTS) << std::endl;
+	std::cerr << "  RTT analysis: pingTS: " << std::setprecision(16) << pingTS << ", pongTS: " << pongTS
+		<< ", recvTS: " << std::setprecision(16) << recvTS << " ==> rtt: " << rtt << ", offset: " << offset << std::endl;
 #endif
 
-	storePongResult(pong->PeerId(), pong->mSeqNo, pingTS, rtt, offset);
+	storePongResult(pong->PeerId(), pong->mSeqNo, recvTS, rtt, offset);
 	return true ;
 }
 
@@ -333,6 +309,9 @@ int	p3rtt::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 	/* find corresponding local data */
 	RttPeerInfo *peerInfo = locked_GetPeerInfo(id);
 
+#ifdef DEBUG_RTT
+    std::cerr << "Delay since previous ping attempt: " << ts - peerInfo->mCurrentPingTS << std::endl;
+#endif
 	peerInfo->mCurrentPingTS = ts;
 	peerInfo->mCurrentPingCounter = seqno;
 
@@ -349,7 +328,7 @@ int	p3rtt::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 
 
 
-int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset)
+int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts, double rtt, double offset)
 {
 	RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 
@@ -366,8 +345,12 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double ts, doub
 	{
 		peerInfo->mCurrentPongRecvd = true;
 	}
+#ifdef DEBUG_RTT
+    if(!peerInfo->mPongResults.empty())
+    	std::cerr << "Delay since last pong: "  << recv_ts - peerInfo->mPongResults.back().mTS << std::endl;
+#endif
 
-	peerInfo->mPongResults.push_back(RsRttPongResult(ts, rtt, offset));
+	peerInfo->mPongResults.push_back(RsRttPongResult(recv_ts, rtt, offset));
 
 
 	while(peerInfo->mPongResults.size() > MAX_PONG_RESULTS)
