@@ -1,5 +1,30 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  7914aeb csoler Sat, 30 Apr 2016 17:33:47 -0400 use RsTemporaryMemory in signature verification
+  be7e87c csoler Sat, 30 Apr 2016 17:25:24 -0400 use RsTemporaryMemory in signature verification
+  01605e5 csoler Sat, 30 Apr 2016 11:19:21 -0400 updated description f packet slicing in comments section of pqistreamer
+  1f7a94d csoler Sat, 30 Apr 2016 11:13:51 -0400 fixed bug causing crash in pqistreamer
+  0bd6670 csoler Sat, 30 Apr 2016 09:47:21 -0400 Merge pull request #362 from zeners/master
+  0a6ae55 zeners Sat, 30 Apr 2016 14:21:09 +0200 webui: redefined building webui
+  baf9404 csoler Fri, 29 Apr 2016 20:09:48 -0400 Merge pull request #360 from csoler/v0.6-RTT3
+  4bdd464 csoler Fri, 29 Apr 2016 18:53:25 -0400 removed a few debug output and timer measurement
+  6d2bfcf csoler Fri, 29 Apr 2016 18:52:58 -0400 restored average kicking rate to a more reasonnable value. To be tested (for to
+  3bc3989 csoler Fri, 29 Apr 2016 18:41:10 -0400 removed debug info for pqistreamer
+  5ab9aed csoler Fri, 29 Apr 2016 18:40:28 -0400 added placeholder service ID for packet slicing probe
+  654e0fc csoler Fri, 29 Apr 2016 17:53:21 -0400 added missing call to SSL_pending, which caused decrypted data to wait in the S
+  a443064 csoler Tue, 26 Apr 2016 23:42:44 -0400 various changes to measure RTTs more accurately
+  87764ab csoler Tue, 26 Apr 2016 21:23:19 -0400 removed debug info in pqistreamer
+  153db5c csoler Tue, 26 Apr 2016 09:22:24 -0400 added on/off mechanism for packet slicing to ensure packward compatibility
+  3b68585 csoler Mon, 25 Apr 2016 23:37:02 -0400 improved/simplified slicing protocol
+  dd81ce3 csoler Mon, 25 Apr 2016 22:50:41 -0400 using BinToHex to display mem blocks in pqistreamer debug
+  18e9e1c csoler Sun, 24 Apr 2016 21:29:55 -0400 moerged with upstream/master
+  f629575 csoler Sun, 24 Apr 2016 21:18:44 -0400 fixed a few bugs in packet slicing in pqiQoS
+  a2c11f9 csoler Sun, 24 Apr 2016 13:43:34 -0400 added packet reconstruction and deserialising
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 30 Apr 2016 18:00:00 -0500
+
+retroshare06 (0.6.0-1.20160424.0d84a558~trusty) trusty; urgency=low
+
   0dc43c3 csoler       Sat, 23 Apr 2016 08:29:53 -0400 Merge pull request #338 from Nyfor/master
   5e94c77 Nyfor        Mon,  4 Apr 2016 12:07:09 +0200 Fixed compilation for Clang.
   d696f72 csoler       Fri, 22 Apr 2016 20:38:07 -0400 fixed compilation
