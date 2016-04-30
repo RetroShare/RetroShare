@@ -1072,7 +1072,7 @@ void ChatWidget::updateStatusTyping()
 		tr("is typing...");
 #endif
 
-        rsMsgs->sendStatusString(chatId, "is typing...");
+		rsMsgs->sendStatusString(chatId, " $$$ WANTED: Wabbit - alive and with CARROT $$$");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
