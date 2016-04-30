@@ -423,33 +423,29 @@ time_t	pqistreamer::getLastIncomingTS()
 // Packet slicing:
 //
 //          Old :    02 0014 03 00000026  [data,  26 bytes] =>   [version 1B] [service 2B][subpacket 1B] [size 4B]
-//          New1:    fv 0014 03 xxxxx sss [data, sss bytes] =>   [flags 0.5B version 0.5B] [service 2B][subpacket 1B] [packet counter 2.5B size 1.5B]
-//          New2:    pp ff xxxxxxxx ssss  [data, sss bytes] =>   [flags 1B] [protocol version 1B] [2^32 packet count] [2^16 size]
+//          New2:    pp ff xxxxxxxx ssss  [data, sss bytes] =>   [protocol version 1B] [flags 1B] [2^32 packet count] [2^16 size]
 //
-//          Flags:  0x1 => incomplete packet continued after
-//          Flags:  0x2 => packet ending a previously incomplete packet
+//           	Encode protocol  on 1.0 Bytes ( 8 bits)
+//           	Encode flags     on 1.0 Bytes ( 8 bits)
+//          		0x01 => incomplete packet continued after
+//          		0x02 => packet ending a previously incomplete packet
 //
-//	- backward compatibility:
-//		* send one packet with service + subpacket = ffffff. Old peers will silently ignore such packets.
+//		Encode packet ID on 4.0 Bytes (32 bits) => packet counter = [0...2^32]
+//		Encode size      on 2.0 Bytes (16 bits) => 65536					// max slice size = 65536
+//
+//	Backward compatibility:
+//		* send one packet with service + subpacket = aabbcc. Old peers will silently ignore such packets. Full packet header is: 02aabbcc 00000008 
 //		* if received, mark the peer as able to decode the new packet type
+//	In pqiQoS:
+//		- limit packet grouping to max size 512.
+//		- new peers need to read flux, and properly extract partial sizes, and combine packets based on packet counter.
+//		- on sending, RS grabs slices of max size 1024 from pqiQoS. If smaller, possibly pack them together.
+//		  pqiQoS keeps track of sliced packets and makes sure the output is consistent:
+//				* when a large packet needs to be send, only takes a slice and return it, and update the remaining part
+//				* always consider priority when taking new slices => a newly arrived fast packet will always get through.
 //
-//      Mode 1:
-//		- Encode length    on 1.5 Bytes (10 bits) => max slice size = 1024
-//		- Encode packet ID on 2.5 Bytes (20 bits) => packet counter = [0...1056364]
-//      Mode 2:
-//           	- Encode protocol  on 1.0 Bytes ( 8 bits)
-//           	- Encode flags     on 1.0 Bytes ( 8 bits)
-//		- Encode packet ID on 4.0 Bytes (32 bits) => packet counter = [0...2^32]
-//		- Encode size      on 2.0 Bytes (16 bits) => 65536					// max slice size = 65536
+//	Max slice size should be customisable, depending on bandwidth. To be tested...
 //
-//      - limit packet grouping to max size 1024.
-//      - new peers need to read flux, and properly extract partial sizes, and combine packets based on packet counter.
-//	- on sending, RS should grab slices of max size 1024 from pqiQoS. If smaller, possibly pack them together.
-//	  pqiQoS keeps track of sliced packets and makes sure the output is consistent:
-//		* when a large packet needs to be send, only takes a slice and return it, and update the remaining part
-//		* always consider priority when taking new slices => a newly arrived fast packet will always get through.
-//
-//	Max slice size should be customisable, depending on bandwidth.
 
 int	pqistreamer::handleoutgoing_locked()
 {
