@@ -546,13 +546,6 @@ int	pqistreamer::handleoutgoing_locked()
 			if(!dta)
 				break ;
 
-			if(slice_size > 0xffff)
-			{
-				std::cerr << "(EE) protocol error in pqitreamer: slice size is too large and cannot be encoded." ;
-				free(mPkt_wpending) ;
-				mPkt_wpending_size = 0;
-			}
-
 			if(slice_starts && slice_ends)	// good old method. Send the packet as is, since it's a full packet.
 			{
 #ifdef DEBUG_PACKET_SLICING
@@ -566,6 +559,13 @@ int	pqistreamer::handleoutgoing_locked()
 			}
 			else	// partial packet. We make a special header for it and insert it in the stream
 			{
+				if(slice_size > 0xffff || !mAcceptsPacketSlicing)
+				{
+					std::cerr << "(EE) protocol error in pqitreamer: slice size is too large and cannot be encoded." ;
+					free(mPkt_wpending) ;
+					mPkt_wpending_size = 0;
+					return -1 ;
+				}
 #ifdef DEBUG_PACKET_SLICING
 				std::cerr << "sending partial slice, packet ID=" << std::hex << slice_packet_id << std::dec << ", size=" << slice_size << std::endl;
 #endif
