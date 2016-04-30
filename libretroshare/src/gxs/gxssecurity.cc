@@ -376,10 +376,8 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 		RsTemporaryMemory allMsgData(allMsgDataLen) ;
 
 		if(!metaData || !allMsgData)
-		{
-			std::cerr << "(EE) Cannot allocate temporary memory for signature checking. Sizes=" << metaDataLen << ", " << allMsgDataLen << ". Out of memory??" << std::endl;
 			return false ;
-		}
+		
 		msgMeta.serialise(metaData, &metaDataLen);
 
 		// copy msg data and meta in allmsgData buffer
