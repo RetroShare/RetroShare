@@ -424,11 +424,6 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     sendChatItem(msg) ;
 }
 
-bool DistributedChatService::locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *ci)
-{
-    return true ;
-}
-
 bool DistributedChatService::handleRecvItem(RsChatItem *item)
 {
 	switch(item->PacketSubType())

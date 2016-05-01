@@ -726,7 +726,7 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 				}
 			}
 
-		delete vitem ;
+		delete *it ;
 	}
     load.clear() ;
 	return true ;

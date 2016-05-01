@@ -36,11 +36,11 @@ class pqiQoSstreamer: public pqithreadstreamer, public pqiQoS
 		static const uint32_t PQI_QOS_STREAMER_MAX_LEVELS =  10 ;
         static const float    PQI_QOS_STREAMER_ALPHA ;
 
-		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
+		virtual void locked_storeInOutputQueue(void *ptr, int size, int priority) ;
 		virtual int locked_out_queue_size() const { return _total_item_count ; }
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const { return _total_item_size ; }
-        virtual void *locked_pop_out_data() ;
+		virtual  void *locked_pop_out_data(uint32_t max_slice_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id);
                 //virtual int  locked_gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const; // extracting data.
 
 

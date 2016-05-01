@@ -1074,6 +1074,12 @@ int 	pqissl::Initiate_SSL_Connection()
 	  "pqissl::Initiate_SSL_Connection() SSL Connection Okay");
 #endif
 
+    	if(ssl_connection != NULL)
+	{
+		SSL_shutdown(ssl_connection);
+		SSL_free(ssl_connection) ;
+	}
+        
 	ssl_connection = ssl;
 
 	net_internal_SSL_set_fd(ssl, sockfd);
@@ -1851,7 +1857,11 @@ bool 	pqissl::moretoread(uint32_t usec)
 #endif
 		return 1;
 	}
-	else
+	else if(SSL_pending(ssl_connection) > 0)
+    {
+        return 1 ;
+    }
+    else
 	{
 #ifdef PQISSL_DEBUG 
 		rslog(RSL_DEBUG_ALL, pqisslzone, 

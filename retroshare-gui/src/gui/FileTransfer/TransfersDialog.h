@@ -31,6 +31,7 @@
 
 #define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
+class QShortcut;
 class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
@@ -242,6 +243,8 @@ private:
     
       QString downloads;
       QString uploads;
+
+    QShortcut *mShortcut ;
 
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;

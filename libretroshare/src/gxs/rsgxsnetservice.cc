@@ -1626,8 +1626,10 @@ void RsGxsNetService::recvNxsItemQueue()
 		    GXSNETDEBUG_P_(item->PeerId()) << "    decrypted item "  << std::endl;
 #endif
                 }
+#ifdef NXS_NET_DEBUG_7
                 else
-                    std::cerr << "(EE) Could not decrypt incoming encrypted NXS item.  Probably a friend subscribed to a circle-restricted group." << std::endl;
+                    GXSNETDEBUG_P_(item->PeerId()) << "    (EE) Could not decrypt incoming encrypted NXS item.  Probably a friend subscribed to a circle-restricted group." << std::endl;
+#endif
             }
 
             switch(ni->PacketSubType())
@@ -1638,7 +1640,8 @@ void RsGxsNetService::recvNxsItemQueue()
             case RS_PKT_SUBTYPE_NXS_GRP_PUBLISH_KEY_ITEM:handleRecvPublishKeys         (dynamic_cast<RsNxsGroupPublishKeyItem*>(ni)) ; break ;
 
             default:
-                std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
+                if(ni->PacketSubType() != RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
+			std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
             }
             delete item ;
         }
@@ -3861,7 +3864,9 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
 
     if(!GxsSecurity::decrypt(decrypted_mem,decrypted_len, (uint8_t*)encrypted_item->encrypted_data.bin_data,encrypted_item->encrypted_data.bin_len,private_keys))
     {
-	    std::cerr << "Failed! Cannot decrypt this item." << std::endl;
+#ifdef NXS_NET_DEBUG_7
+	 GXSNETDEBUG_P_(encrypted_item->PeerId()) << "    Failed! Cannot decrypt this item." << std::endl;
+#endif
 	    decrypted_mem = NULL ; // for safety
 	return false ;
     }
@@ -3876,6 +3881,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
     if(decrypted_mem!=NULL)
     {
 	    ditem = RsNxsSerialiser(mServType).deserialise(decrypted_mem,&decrypted_len) ;
+		free(decrypted_mem) ;
 
 	    if(ditem != NULL)
 	    {

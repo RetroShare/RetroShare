@@ -153,7 +153,7 @@ int	pqiperson::tick()
 #endif
         
 		//if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-		if ( active  && time(NULL)  > lastHeartbeatReceived + HEARTBEAT_REPEAT_TIME * 5)
+		if ( active  && time(NULL)  > lastHeartbeatReceived + HEARTBEAT_REPEAT_TIME * 20)
 		{
 			int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
 

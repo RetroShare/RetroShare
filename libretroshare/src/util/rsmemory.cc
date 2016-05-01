@@ -13,7 +13,7 @@ void *rs_malloc(size_t size)
     
     if(size > SAFE_MEMALLOC_THRESHOLD)
     {
-        std::cerr << "(EE) Memory allocation error. A chunk of size 0 was requested. Callstack:" << std::endl;
+        std::cerr << "(EE) Memory allocation error. A chunk of size larger than " << SAFE_MEMALLOC_THRESHOLD << " was requested. Callstack:" << std::endl;
 	print_stacktrace() ;
     	return NULL ;
     }

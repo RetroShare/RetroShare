@@ -428,7 +428,14 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     return true;
 }
 
-bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *ci)
+// This method might take control over the memory, or modify it, possibly adding missing parts.
+// This function looks weird because it cannot duplicate the message since it does not know
+// what type of object it is and the duplicate method of lobby messages is reserved for 
+// ChatLobby  bouncing objects.
+//
+// Returns false if the item shouldn't be used (and replaced to NULL)
+
+bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *& ci)
 {
 	// Check is the item is ending an incomplete item.
 	//
@@ -445,13 +452,16 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 
 		ci->message = it->second->message + ci->message ;
 		ci->chatFlags |= it->second->chatFlags ;
-
+        
+                // always remove existing partial. The compound message is in ci now.
+                
 		delete it->second ;
-
-		if(!ci_is_incomplete)
-			_pendingPartialMessages.erase(it) ;
+		_pendingPartialMessages.erase(it) ;
 	}
 
+        // now decide what to do: if ci is incomplete, store it and replace the pointer with NULL
+        // if complete, return it.
+        
 	if(ci_is_incomplete)
 	{
 #ifdef CHAT_DEBUG
@@ -459,7 +469,8 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *ci)
 #endif
 		// The item is a partial message. Push it, and wait for the rest.
 		//
-		_pendingPartialMessages[ci->PeerId()] = ci ;
+		_pendingPartialMessages[ci->PeerId()] = ci ; 	// cannot use duplicate() here
+        	ci = NULL ;					// takes memory ownership over ci
 		return false ;
 	}
 	else
@@ -503,8 +514,10 @@ void p3ChatService::handleIncomingItem(RsItem *item)
 	//
 	RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ; 
 	if(ci != NULL) 
-    {
-		if(!  handleRecvChatMsgItem(ci))
+	{
+		handleRecvChatMsgItem(ci);
+        
+        	if(ci)
 			delete ci ;
 
 		return ;	// don't delete! It's handled by handleRecvChatMsgItem in some specific cases only.
@@ -665,7 +678,7 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	return true ;
 }
 
-bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
+bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
 {
 	time_t now = time(NULL);
 	std::string name;
@@ -674,15 +687,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
     {
         RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-        // This crap is because chat lobby messages use a different method for chunking messages using an additional
-        // subpacket ID, and a list of lobbies. We cannot just collapse the two because it would make the normal chat
-        // (and chat lobbies) not backward compatible.
-
-        if(!DistributedChatService::locked_checkAndRebuildPartialLobbyMessage(dynamic_cast<RsChatLobbyMsgItem*>(ci)))
-            return true ;
-
-        if(!locked_checkAndRebuildPartialMessage(ci))
-        return true ;
+        if(!locked_checkAndRebuildPartialMessage(ci))		// we make sure this call does not take control over the memory
+		return true ;					// message is a subpart of an existing message. So everything ok, but we need to return.
     }
 
     // Check for security. This avoids bombing messages, and so on.
