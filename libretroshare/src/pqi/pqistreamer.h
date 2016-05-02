@@ -164,7 +164,7 @@ class pqistreamer: public PQInterface
         bool mAcceptsPacketSlicing ;
         time_t mLastSentPacketSlicingProbe ;
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
-        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending);
+        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         
         std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
 };
