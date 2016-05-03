@@ -22,11 +22,8 @@ unix {
         webui_img_files.files = ../../retroshare-gui/src/gui/images/logo/logo_splash.png
         INSTALLS += webui_img_files
 
-        #create_webfiles.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_
-        #QMAKE_EXTRA_TARGETS += create_webfiles
-        #POST_TARGETDEPS += create_webfiles
-
-        #QMAKE_POST_LINK=sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_
+        # create dummy files, we need it to include files on first try
+        system(webui-src/make-src/init.sh .)
 
         WEBUI_SRC_SCRIPT = webui-src/make-src/build.sh
 
