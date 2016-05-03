@@ -925,7 +925,10 @@ continue_packet:
 #ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "Inputing partial packet " << RsUtil::BinToHex((char*)block,8) << std::endl;
 #endif
-		    pkt = addPartialPacket(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending) ;
+            		uint32_t packet_length = 0 ;
+		    pkt = addPartialPacket(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending,packet_length) ;
+            
+            		pktlen = packet_length ;
 	    }
 	    else
 		    pkt = mRsSerialiser->deserialise(block, &pktlen);
@@ -968,7 +971,7 @@ continue_packet:
     return 0;
 }
 
-RsItem *pqistreamer::addPartialPacket(const void *block,uint32_t len,uint32_t slice_packet_id,bool is_packet_starting,bool is_packet_ending) 
+RsItem *pqistreamer::addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id, bool is_packet_starting, bool is_packet_ending, uint32_t &total_len) 
 {
 #ifdef DEBUG_PACKET_SLICING
     std::cerr << "Receiving partial packet. size=" << len << ", ID=" << std::hex << slice_packet_id << std::dec << ", starting:" << is_packet_starting << ", ending:" << is_packet_ending ;
@@ -1040,6 +1043,7 @@ RsItem *pqistreamer::addPartialPacket(const void *block,uint32_t len,uint32_t sl
 #endif
 		    RsItem *item = mRsSerialiser->deserialise(rec.mem, &rec.size);
 
+		    total_len = rec.size ;
 		    free(rec.mem) ;
 		    mPartialPackets.erase(it) ;
 		    return item ;
