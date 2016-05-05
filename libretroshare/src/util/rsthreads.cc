@@ -62,7 +62,7 @@ void *RsThread::rsthread_init(void* p)
     pthread_detach(pthread_self());
 
 #ifdef DEBUG_THREADS
-    THREAD_DEBUG << " thread is started. Calling runloop()..." << std::endl;
+    std::cerr << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread is started. Calling runloop()..." << std::endl;
 #endif
     
   thread -> runloop();
