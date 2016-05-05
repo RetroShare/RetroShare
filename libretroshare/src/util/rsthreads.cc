@@ -40,6 +40,7 @@
  * #define DEBUG_THREADS 1
  * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.
  *******/
+#define THREAD_DEBUG std::cerr << "[caller thread ID: " << std::hex << pthread_self() << ", thread ID: " << mTid << std::dec << "] "
 
 #ifdef RSMUTEX_ABORT
 	#include <stdlib.h>
@@ -94,7 +95,7 @@ bool RsThread::shouldStop()
 void RsTickingThread::shutdown()
 {
 #ifdef DEBUG_THREADS
-    std::cerr << "pqithreadstreamer::stop()" << std::endl;
+    THREAD_DEBUG << "pqithreadstreamer::shutdown()" << std::endl;
 #endif
 
     int sval =0;
@@ -103,7 +104,7 @@ void RsTickingThread::shutdown()
     if(sval > 0)
     {
 #ifdef DEBUG_THREADS
-        std::cerr << "  thread not running. Quit." << std::endl;
+        THREAD_DEBUG << "  thread not running. Quit." << std::endl;
 #endif
         return ;
     }
@@ -114,7 +115,7 @@ void RsTickingThread::shutdown()
 void RsThread::ask_for_stop()
 {
 #ifdef DEBUG_THREADS
-    std::cerr << "  calling stop" << std::endl;
+    THREAD_DEBUG << "  calling stop" << std::endl;
 #endif
     sem_post(&mShouldStopSemaphore) ;
 }
@@ -124,11 +125,11 @@ void RsTickingThread::fullstop()
     shutdown() ;
 
 #ifdef DEBUG_THREADS
-    std::cerr << "  waiting stop" << std::endl;
+    THREAD_DEBUG << "  waiting stop" << std::endl;
 #endif
     sem_wait(&mHasStoppedSemaphore) ;
 #ifdef DEBUG_THREADS
-    std::cerr << "  finished!" << std::endl;
+    THREAD_DEBUG << "  finished!" << std::endl;
 #endif
 }
 void RsThread::start()
@@ -139,9 +140,7 @@ void RsThread::start()
     RS_STACK_MUTEX(mMutex) ;
 
 #ifdef DEBUG_THREADS
-    std::cerr << "pqithreadstreamer::run()" << std::endl;
-    std::cerr << "  initing should_stop=0" << std::endl;
-    std::cerr << "  initing has_stopped=1" << std::endl;
+    THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0, has_stopped=1" << std::endl;
 #endif
     sem_init(&mHasStoppedSemaphore,0,0) ;
 
@@ -154,15 +153,18 @@ void RsThread::start()
         mTid = tid;
     else
     {
-        std::cerr << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
+        THREAD_DEBUG << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
     sem_init(&mHasStoppedSemaphore,0,1) ;
     }
 }
 
 
 
-RsTickingThread::RsTickingThread ()
+RsTickingThread::RsTickingThread()
 {
+#ifdef DEBUG_THREADS
+    THREAD_DEBUG << "RsTickingThread::RsTickingThread()" << std::endl;
+#endif
     sem_init(&mShouldStopSemaphore,0,0) ;
 }
 
@@ -176,8 +178,7 @@ void RsSingleJobThread::runloop()
 void RsTickingThread::runloop()
 {
 #ifdef DEBUG_THREADS
-    std::cerr << "pqithreadstream::run()";
-    std::cerr << std::endl;
+    THREAD_DEBUG << "pqithreadstream::runloop()" << std::endl;
 #endif
     sem_init(&mShouldStopSemaphore,0,0) ;
 
@@ -186,8 +187,7 @@ void RsTickingThread::runloop()
         if(shouldStop())
         {
 #ifdef DEBUG_THREADS
-            std::cerr << "pqithreadstreamer::run(): asked to stop." << std::endl;
-            std::cerr << "  setting hasStopped=1" << std::endl;
+            THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. setting hasStopped=1, and returning. Thread ends." << std::endl;
 #endif
             sem_post(&mHasStoppedSemaphore) ;
             return ;
@@ -217,9 +217,7 @@ void RsQueueThread::data_tick()
         mLastWork = now;
         mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
 #ifdef DEBUG_THREADS
-        std::cerr << "RsQueueThread::run() done work: sleeping for: " << mLastSleep;
-        std::cerr << " ms";
-        std::cerr << std::endl;
+        THREAD_DEBUG << "RsQueueThread::data_tick() done work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
 
     }
@@ -235,9 +233,7 @@ void RsQueueThread::data_tick()
             mLastSleep = mMaxSleep;
         }
 #ifdef DEBUG_THREADS
-        std::cerr << "RsQueueThread::run() no work: sleeping for: " << mLastSleep;
-        std::cerr << " ms";
-        std::cerr << std::endl;
+        THREAD_DEBUG << "RsQueueThread::data_tick() no work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
     }
     usleep(mLastSleep * 1000); // mLastSleep msec
