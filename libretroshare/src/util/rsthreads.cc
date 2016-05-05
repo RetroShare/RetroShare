@@ -61,6 +61,10 @@ void *RsThread::rsthread_init(void* p)
     // it is a replacement for pthread_join()
     pthread_detach(pthread_self());
 
+#ifdef DEBUG_THREADS
+    THREAD_DEBUG << " thread is started. Calling runloop()..." << std::endl;
+#endif
+    
   thread -> runloop();
   return NULL;
 }
@@ -81,6 +85,9 @@ bool RsThread::isRunning()
     int sval =0;
     sem_getvalue(&mHasStoppedSemaphore,&sval) ;
 
+#ifdef DEBUG_THREADS
+    THREAD_DEBUG << "  isRunning(): returning " << !sval << std::endl;
+#endif
     return !sval ;
 }
 
@@ -89,6 +96,9 @@ bool RsThread::shouldStop()
         int sval =0;
         sem_getvalue(&mShouldStopSemaphore,&sval) ;
 
+#ifdef DEBUG_THREADS
+        THREAD_DEBUG << "  shouldStop(): returning " << (sval > 0) << " (sval=" << sval << ") " << std::endl;
+#endif
         return sval > 0;
 }
 
