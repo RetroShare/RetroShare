@@ -17,6 +17,6 @@ echo create $publicdest
 mkdir $publicdest
 
 echo touch $publicdest/app.js, $publicdest/app.css, $publicdest/index.html
-touch $publicdest/app.js
-touch $publicdest/app.css
-touch $publicdest/index.html
+touch $publicdest/app.js -d 1970-01-01
+touch $publicdest/app.css -d 1970-01-01
+touch $publicdest/index.html -d 1970-01-01
