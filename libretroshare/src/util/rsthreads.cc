@@ -40,7 +40,6 @@
  * #define DEBUG_THREADS 1
  * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.
  *******/
-#define DEBUG_THREADS 1
 #define THREAD_DEBUG std::cerr << "[caller thread ID: " << std::hex << pthread_self() << ", thread ID: " << mTid << std::dec << "] "
 
 #ifdef RSMUTEX_ABORT
