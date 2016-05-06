@@ -67,7 +67,6 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
 			return;
 		 }
     }
-#endif
 
     char *err = NULL;
     rc = sqlite3_exec(mDb, "PRAGMA cipher_migrate;", NULL, NULL, &err);
@@ -81,8 +80,32 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
         std::cerr << std::endl;
         sqlite3_free(err);
     }
-}
 
+	//Test DB for correct sqlcipher version
+	if (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) != SQLITE_OK)
+	{
+		std::cerr << "RetroDb::RetroDb(): Failed to open database: " << dbPath << std::endl << "Trying with settings for sqlcipher version 3...";
+		//Reopening the database with correct settings
+		rc = sqlite3_close(mDb);
+		mDb = NULL;
+		if(!rc)
+			rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
+		if(!rc && !mKey.empty())
+			rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
+		if(!rc)
+			rc = sqlite3_exec(mDb, "PRAGMA kdf_iter = 64000;", NULL, NULL, NULL);
+		if (!rc && (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) == SQLITE_OK))
+		{
+			std::cerr << "\tSuccess" << std::endl;
+		} else {
+			std::cerr << "\tFailed, giving up" << std::endl;
+			sqlite3_close(mDb);
+			mDb = NULL;
+			return;
+		}
+	}
+#endif
+}
 
 RetroDb::~RetroDb(){
 

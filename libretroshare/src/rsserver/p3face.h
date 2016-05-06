@@ -139,6 +139,8 @@ class RsServer: public RsControl, public RsTickingThread
 
 	private: 
 
+		std::string getSQLCipherVersion();
+
 		// The real Server Parts.
 
 		//filedexserver *server;

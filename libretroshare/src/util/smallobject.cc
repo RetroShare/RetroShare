@@ -279,10 +279,6 @@ void *SmallObject::operator new(size_t size)
 #endif
 
 	RsStackMutex m(_mtx) ;
-
-	if(!_allocator._active)
-		return (void*)NULL;
-
 	void *p = _allocator.allocate(size) ;
 #ifdef DEBUG_MEMORY
 	std::cerr << "new RsItem: " << p << ", size=" << size << std::endl;

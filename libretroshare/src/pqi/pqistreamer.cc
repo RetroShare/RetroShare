@@ -1024,6 +1024,7 @@ RsItem *pqistreamer::addPartialPacket(const void *block, uint32_t len, uint32_t 
 	    {
 		    std::cerr << "(WW) dropping unfinished existing packet that gets to be replaced by new starting packet." << std::endl;
 		    free(rec.mem);
+            		rec.mem = NULL ;
 		    rec.size = 0 ;
 	    }
 	    // make sure this is a continuing packet, otherwise this is an error.
