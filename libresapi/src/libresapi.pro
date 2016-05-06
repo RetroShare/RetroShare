@@ -64,19 +64,19 @@ unix {
         create_webfiles_html.output = webui/index.html
         create_webfiles_html.input = WEBUI_SRC_HTML
         create_webfiles_html.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_ index.html .
-        create_webfiles_html.variable_out = OBJECTS
+        create_webfiles_html.variable_out = JUNK
         create_webfiles_html.CONFIG = combine no_link
 
         create_webfiles_js.output = webui/app.js
         create_webfiles_js.input = WEBUI_SRC_JS
         create_webfiles_js.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_ app.js .
-        create_webfiles_js.variable_out = OBJECTS
+        create_webfiles_js.variable_out = JUNK
         create_webfiles_js.CONFIG = combine no_link
 
         create_webfiles_css.output = webui/app.css
         create_webfiles_css.input = WEBUI_SRC_CSS
         create_webfiles_css.commands = sh $$_PRO_FILE_PWD_/webui-src/make-src/build.sh $$_PRO_FILE_PWD_ app.css .
-        create_webfiles_css.variable_out = OBJECTS
+        create_webfiles_css.variable_out = JUNK
         create_webfiles_css.CONFIG = combine no_link
 
 
