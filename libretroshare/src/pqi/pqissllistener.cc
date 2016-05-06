@@ -322,11 +322,12 @@ int	pqissllistenbase::acceptconnection()
 	// can't be arsed making them all the time.
 	struct sockaddr_storage remote_addr;
 	socklen_t addrlen = sizeof(remote_addr);
-	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
-	int err = 0;
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
+	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
+	int err = 0;
+    
         if (fd < 0)
         {
 		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
@@ -347,7 +348,10 @@ int	pqissllistenbase::acceptconnection()
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else //WINDOWS_SYS 
-        if ((unsigned) fd == INVALID_SOCKET)
+	SOCKET fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
+	int err = 0;
+    
+        if (fd == INVALID_SOCKET)
         {
 		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
 		 "pqissllistenbase::acceptconnnection() Nothing to Accept!");
