@@ -29,7 +29,9 @@
 #include <inttypes.h>
 #include <string>
 #include <iostream>
+#include <unistd.h>
 #include <semaphore.h>
+#include <util/rsmemory.h>
 
 /* RsIface Thread Wrappers */
 
@@ -168,6 +170,58 @@ class RsStackMutex
 //
 #define RS_STACK_MUTEX(m) RsStackMutex __local_retroshare_mutex(m,__PRETTY_FUNCTION__,__FILE__,__LINE__) 
 
+// This class handles a Mutex-based semaphore, that makes it cross plateform.
+class RsSemaphore
+{
+	class RsSemStruct
+	{
+	public:
+		RsSemStruct() : mtx("Semaphore mutex"), val(0) {}
+
+		RsMutex mtx ;
+		uint32_t val ;
+	};
+
+public:
+	RsSemaphore()
+	{
+		s = new RsSemStruct ;
+	}
+
+	~RsSemaphore()
+	{
+		delete s ;
+	}
+
+	void set(uint32_t i)
+	{
+		RS_STACK_MUTEX(s->mtx) ;
+		s->val = i ;
+	}
+
+	void post()
+	{
+		RS_STACK_MUTEX(s->mtx) ;
+		++(s->val) ;
+	}
+
+	uint32_t value()
+	{
+		RS_STACK_MUTEX(s->mtx) ;
+		return s->val ;
+	}
+
+	void wait()
+	{
+		while(value() == 0)
+			usleep(1000) ;
+
+		post() ;
+	}
+private:
+	RsSemStruct *s ;
+};
+
 class RsThread;
 
 /* to create a thread! */
@@ -198,11 +252,10 @@ class RsThread
 protected:
     virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
 
-    sem_t mHasStoppedSemaphore;
-    sem_t mShouldStopSemaphore;
+    RsSemaphore mHasStoppedSemaphore;
+    RsSemaphore mShouldStopSemaphore;
 
     static void *rsthread_init(void*) ;
-    RsMutex   mMutex;
     pthread_t mTid;
 };
 
