@@ -23,7 +23,7 @@ unix {
         INSTALLS += webui_img_files
 
         # create dummy files, we need it to include files on first try
-        system(webui-src/make-src/init.sh .)
+        system(webui-src/make-src/build.sh .)
 
         WEBUI_SRC_SCRIPT = webui-src/make-src/build.sh
 
