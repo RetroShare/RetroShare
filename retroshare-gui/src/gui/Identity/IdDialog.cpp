@@ -407,7 +407,6 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details) ;
 
 	    bool should_re_add = true ;
-	    bool subscribed = vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED ;
 	    bool am_I_in_circle = details.mAmIAllowed ;
 	    QTreeWidgetItem *item = NULL ;
         
@@ -495,16 +494,28 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
 	    }
 
-	    if (subscribed)
-	    {
-		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
-		    item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("This circle is \"subscribed\" i.e. advertised to neighbor nodes")) ;
-	    }
-	    else
-	    {
-		    item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
-		    item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
-	    }
+	    switch(details.mSubscribeFlags)
+	{
+	case GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
+		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this group is still pending. You need to wait the administrator to validate it.")) ;
+		break ;
+
+	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST:
+		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_blue_128.png")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this group by the administrator. Right click to join the group.")) ;
+		break ;
+
+	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST | GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
+		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a member of this group.")) ;
+		break ;
+
+	default:
+		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
+		break ;
+	}
     }
 }
 

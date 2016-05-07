@@ -266,12 +266,14 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 			details.mCircleName = data.mCircleName;
 
 			details.mCircleType = data.mCircleType;
-			details.mIsExternal = data.mIsExternal;
 
 			details.mAllowedGxsIds = data.mAllowedGxsIds;
 			details.mAllowedNodes = data.mAllowedNodes;
             
             		details.mAmIAllowed = data.mAmIAllowed ;
+                    
+#warning p3GxsCircles::getCircleDetails(): make this right later when the backend is there
+                    	details.mSubscribeFlags = GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST ;	
 			return true;
 		}
 	}

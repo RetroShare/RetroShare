@@ -59,6 +59,12 @@ static const uint32_t GXS_CIRCLE_TYPE_LOCAL             = 0x0004 ;	// not distri
 static const uint32_t GXS_CIRCLE_TYPE_EXT_SELF          = 0x0005 ;	// self-restricted. Not used, except at creation time when the circle ID isn't known yet. Set to EXTERNAL afterwards.
 static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006 ;	// distributed to nodes signed by your own PGP key only.
 
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST = 0x0001 ;// user is validated by circle admin
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED    = 0x0002 ;// user has subscribed the group
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0003 ;// user is allowed. Combines both flags above.
+
+static const uint32_t GXS_CIRCLE_FLAGS_IS_EXTERNAL   = 0x0008 ;// user is allowed
+
 /* Permissions is part of GroupMetaData  */
 
 class GxsPermissions
@@ -100,36 +106,15 @@ class RsGxsCircleMsg
 class RsGxsCircleDetails
 {
         public:
-    		RsGxsCircleDetails() : mCircleType(GXS_CIRCLE_TYPE_EXTERNAL), mIsExternal(true), mAmIAllowed(false) {}
+    		RsGxsCircleDetails() : mCircleType(GXS_CIRCLE_TYPE_EXTERNAL), mAmIAllowed(false) {}
             
         RsGxsCircleId mCircleId;
         std::string mCircleName;
 
 	uint32_t    mCircleType;
-	bool 	    mIsExternal;
-    	bool		mAmIAllowed ;
-
-#ifdef TO_REMOVE
-	bool operator ==(const RsGxsCircleDetails& rGxsDetails) {
-		return ( mCircleId == rGxsDetails.mCircleId
-		      && mCircleName == rGxsDetails.mCircleName
-		      && mCircleType == rGxsDetails.mCircleType
-		      && mIsExternal == rGxsDetails.mIsExternal
-		      && mAllowedGxsIds == rGxsDetails.mAllowedGxsIds
-		      && mAllowedNodes == rGxsDetails.mAllowedNodes
-		      );
-	}
-
-	bool operator !=(const RsGxsCircleDetails& rGxsDetails) {
-		return ( mCircleId != rGxsDetails.mCircleId
-		      || mCircleName != rGxsDetails.mCircleName
-		      || mCircleType != rGxsDetails.mCircleType
-		      || mIsExternal != rGxsDetails.mIsExternal
-		      || mAllowedGxsIds != rGxsDetails.mAllowedGxsIds
-		      || mAllowedNodes != rGxsDetails.mAllowedNodes
-		      );
-	}
-#endif
+    	uint32_t    mSubscribeFlags ;
+        
+        bool mAmIAllowed ;
 
         std::set<RsGxsId> mAllowedGxsIds;
         std::set<RsPgpId> mAllowedNodes;

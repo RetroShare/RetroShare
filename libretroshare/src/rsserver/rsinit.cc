@@ -1345,14 +1345,12 @@ int RsServer::StartupRetroShare()
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
-	            true,false); // synchronise group automatic 
-			// don't sync messages at all.
+	            	true,	// synchronise group automatic 
+                    	true); 	// sync messages automatic, since they contain subscription requests.
 
 	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
     
         /**** Posted GXS service ****/
-
-
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                         RS_SERVICE_GXS_TYPE_POSTED, 
