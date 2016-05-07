@@ -192,6 +192,11 @@ virtual RsServiceInfo getServiceInfo();
     virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group);
 
 
+    	/* membership management for external circles */
+    
+    	virtual bool requestCircleMembership(const RsGxsCircleId& id) ;
+    	virtual bool cancelCircleMembership(const RsGxsCircleId& id) ;
+    
 	/**********************************************/
 
 	// needed for background processing.

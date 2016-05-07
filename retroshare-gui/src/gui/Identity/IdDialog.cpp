@@ -57,9 +57,10 @@
 #define IDDIALOG_REPLIST    3
 #define IDDIALOG_REFRESH    4
 
-#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME  0
-#define CIRCLEGROUP_CIRCLE_COL_GROUPID    1
-#define CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS 2
+#define CIRCLEGROUP_CIRCLE_COL_GROUPNAME      0
+#define CIRCLEGROUP_CIRCLE_COL_GROUPID        1
+#define CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS     2
+#define CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS 3
 
 #define CIRCLEGROUP_FRIEND_COL_NAME 0
 #define CIRCLEGROUP_FRIEND_COL_ID   1
@@ -321,10 +322,10 @@ void IdDialog::requestCircleGroupMeta()
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
 
-//#ifdef ID_DEBUG
+#ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::requestGroupMeta()";
 	std::cerr << std::endl;
-//#endif
+#endif
 
 	mCircleQueue->cancelActiveRequestTokens(CIRCLESDIALOG_GROUPMETA);
 
@@ -461,6 +462,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
 		    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+		    item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
 		    if(am_I_in_circle)
 		    {
@@ -484,6 +486,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
 	    }
+            // just in case.
+            
+	    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+	    item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
             
 	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 	    {
@@ -608,6 +614,32 @@ void IdDialog::showEditExistingCircle()
     requestCircleGroupMeta();	// update GUI
 }
 
+void IdDialog::acceptCircleSubscription() 
+{
+    QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+    if (!item) 
+	    return ;
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	RsGxsCircleId circle_id ( coltext.toStdString()) ;
+    
+    rsGxsCircles->requestCircleMembership(circle_id) ;
+}
+
+void IdDialog::refuseCircleSubscription() 
+{	
+	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+	if (!item) 
+		return ;
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	RsGxsCircleId circle_id ( coltext.toStdString()) ;
+    
+	rsGxsCircles->cancelCircleMembership(circle_id) ;
+}
+    
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
 	QMenu contextMnu( this );
@@ -616,14 +648,32 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     
 	if (item) 
 	{
-		uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+		uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 
 		if(item->parent() != NULL)
-			if(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
 			else
 				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
 	}
+    
+    contextMnu.addSeparator() ;
+    
+    uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole).toUInt();
+
+    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
+	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Remove me from this circle"), this, SLOT(refuseCircleMembership()));
+	    else
+		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Cancel subscription request"), this, SLOT(refuseCircleMembership()));
+    else 
+	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Accept circle invite and join the circle"), this, SLOT(acceptCircleMembership()));
+	    else
+		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Request to join this circle"), this, SLOT(acceptCircleMembership()));
+
+    contextMnu.addSeparator() ;
+    
     	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create external circle"), this, SLOT(createExternalCircle()));
 	contextMnu.exec(QCursor::pos());
 }

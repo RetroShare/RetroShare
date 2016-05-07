@@ -66,6 +66,9 @@ private slots:
     void createExternalCircle();
     void showEditExistingCircle();
 	void updateCirclesDisplay();
+    
+    void acceptCircleSubscription() ;
+    void refuseCircleSubscription() ;
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);

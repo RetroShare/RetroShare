@@ -1820,4 +1820,14 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 }
 
 
+bool p3GxsCircles::requestCircleMembership(const RsGxsCircleId& id) 
+{
+#warning code missing here !!!
+}
+
+bool p3GxsCircles::cancelCircleMembership(const RsGxsCircleId& id) 
+{
+#warning code missing here !!!
+}
+    
 
