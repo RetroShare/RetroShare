@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
-#ifdef __MAC_10_10
+#ifdef __MACH__
 #include <unordered_set>
 #else
 #include <tr1/unordered_set>
@@ -58,7 +58,7 @@ static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
  ****/
 
 static RsMutex FIndexPtrMtx("FIndexPtrMtx") ;
-#ifdef __MAC_10_10
+#ifdef __MACH__
 std::unordered_set<void*> FileIndex::_pointers ;
 #else
 std::tr1::unordered_set<void*> FileIndex::_pointers ;
