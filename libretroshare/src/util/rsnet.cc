@@ -78,6 +78,20 @@ void sockaddr_clear(struct sockaddr_in *addr)
 
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 {
+    addrinfo *info = NULL;
+    int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
+
+    if(res > 0)
+    {
+	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
+	returned_addr.s_addr = 0 ;
+    }
+    else
+	    returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
+    
+    freeaddrinfo(info) ;
+    
+#ifdef DEPRECATED_TO_REMOVE
 #if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
 	hostent *result = gethostbyname(hostname.c_str()) ;
 #else
@@ -107,6 +121,7 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
     // Use contents of result.
 
     returned_addr.s_addr = *(unsigned long*) (result->h_addr);
+#endif
     
     return true ;
 }
