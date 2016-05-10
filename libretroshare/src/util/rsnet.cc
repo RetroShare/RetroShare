@@ -81,13 +81,13 @@ bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
     addrinfo *info = NULL;
     int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
 
-    if(res > 0)
+    if(res > 0 || info == NULL || info->ai_addr == NULL)
     {
 	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
 	returned_addr.s_addr = 0 ;
     }
     else
-	    returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
+        returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
     
     freeaddrinfo(info) ;
     
