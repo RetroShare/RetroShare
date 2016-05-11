@@ -136,8 +136,8 @@ virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
 
     	/* membership management for external circles */
     
-    	virtual bool requestCircleMembership(const RsGxsCircleId& id)=0 ;
-    	virtual bool cancelCircleMembership(const RsGxsCircleId& id)=0 ;
+    	virtual bool requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
+    	virtual bool cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
     
 	/* standard load */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;

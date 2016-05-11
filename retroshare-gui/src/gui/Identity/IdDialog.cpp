@@ -436,7 +436,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
 		    {
 #ifdef ID_DEBUG
-			    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+			    std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
 #endif
 			    delete item ;
 			    item = NULL ;
@@ -444,7 +444,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
 		    {
 #ifdef ID_DEBUG
-			    std::cerr << "  Existing group is not in subscribed items although it is subscribed. Removing." << std::endl;
+			    std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
 #endif
 			    delete item ;
 			    item = NULL ;
@@ -467,14 +467,14 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    if(am_I_in_circle)
 		    {
 #ifdef ID_DEBUG
-			    std::cerr << "  adding item for group " << vit->mGroupId << " to own circles"<< std::endl;
+			    std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
 #endif
 			    mExternalBelongingCircleItem->addChild(item);
 		    }
 		    else
 		    {
 #ifdef ID_DEBUG
-			    std::cerr << "  adding item for group " << vit->mGroupId << " to others"<< std::endl;
+			    std::cerr << "  adding item for circle " << vit->mGroupId << " to others"<< std::endl;
 #endif
 			    mExternalOtherCircleItem->addChild(item);
 		    }
@@ -482,7 +482,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
 	    {
 #ifdef ID_DEBUG
-		    std::cerr << "  Existing group has a new name. Updating it in the tree." << std::endl;
+		    std::cerr << "  Existing circle has a new name. Updating it in the tree." << std::endl;
 #endif
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
 	    }
@@ -504,17 +504,17 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	{
 	case GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
 		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this group is still pending. You need to wait the administrator to validate it.")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this circle is pending. You need to wait for the administrator to validate it.")) ;
 		break ;
 
 	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST:
 		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_blue_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this group by the administrator. Right click to join the group.")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this circle by the administrator. Right click to join the circle.")) ;
 		break ;
 
 	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST | GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
 		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a member of this group.")) ;
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a validated member of this circle.")) ;
 		break ;
 
 	default:

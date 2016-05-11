@@ -1819,15 +1819,132 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 	}
 }
 
+// Circle membership is requested/denied by posting a message into the cicle group, according to the following rules:
+// 
+//	- a subscription request is a RsItem (which serialises into a radix64 message, that is further signed by the group message publishing system)
+//	  The item contains:
+//		* subscribe order (yes/no), boolean
+//		* circle ID (this is important, otherwise people can copy subscribe messages from one circle to another)
+//		* subscribe date
+//		* subscribe timeout (how long is the message kept. When timed out, the message is removed and subscription cancelled)
+//
+//	- subscribe messages follow the following rules, which are enforced by a timer-based method:
+//		* subscription requests from a given user are always replaced by the last subscription request
+//		* a complete list of who's subscribed to a given group is kept, saved, and regularly updated when new subscribe messages are received, or when admin list is changed.
+//		* getGroupDetails reads this list in order to respond who's subscribed to a group. The list of 
+//
+//	- compatibility with self-restricted circles:
+//		* subscription should be based on admin list, so that non subscribed peers still receive the invitation
+//
+//	- Use cases
+//		* user sees group (not self restricted) and requests to subscribe => RS subscribes the group and the user can propagate the response
+//
+//	- Threat model
+//		* a malicious user forges a new subscription request: NP-hard as it needs to break the RSA key of the GXS id.
+//		* a malicious corrupts a subscription request: NP-hard. Messages are signed.
+//		* a malicious user copies an old subscription of someone else and inserts it in the system.
+//			=> not possible. Either this existing old susbscription already exists, or it has been replaced by a more recent one, which
+//			   will always replace the old one because of the date.
+//		* a malicious user removes someone's subscription messages. This is possible, but the mesh nature of the network will allow the message to propagate anyway.
 
-bool p3GxsCircles::requestCircleMembership(const RsGxsCircleId& id) 
+bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) 
 {
-#warning code missing here !!!
+    // check for some consistency
+    
+    if(request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE &&  request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
+        return false ;
+    
+    std::list<RsGxsId> own_ids ;
+    if(!rsIdentity->getOwnIds(own_ids))
+        return false ;
+    
+    bool found = false ;
+    for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end() && !found;++it)
+        found = ( (*it) == own_gxsid) ;
+
+    if(!found)
+        return false ;
+    
+    // Create a subscribe item
+
+    RsGxsCircleSubscriptionRequestItem s ;
+
+    s.time_stamp           = time(NULL) ;
+    s.subscription_request = RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE ;
+    s.circle_id            = id ;
+    s.time_out             = 0 ;	// means never
+
+    // Serialise it into a base64 string
+
+    uint32_t pktsize = s.serial_size() ;
+
+    RsTemporaryMemory mem(s.serial_size()) ;
+    
+    if(!mem)
+        return false ;
+    
+    s.serialise(mem,pktsize) ;
+
+    std::string msg ;
+    Radix64::encode(mem,pktsize,msg) ;
+
+    // Create the group message to store and publish it
+
+    RsTemporaryMemory tmpmem(RsGxsCircleId::SIZE_IN_BYTES + RsGxsId::SIZE_IN_BYTES) ;
+    
+    if(!tmpmem)
+        return false ;
+    
+    circle_id.serialise(tmpmem,tmpmem.size()) ;
+    own_gxsid.serialise(tmpmem+RsGxsCircleId::SIZE_IN_BYTES,(int)tmpmem.size()-(int)RsGxsCircleId::SIZE_IN_BYTES) ;
+    
+    RsGxsCircleMsgItem* msgItem = new RsGxsCircleMsgItem();
+    msgItem->mMsg = msg;
+
+    msgItem->meta.mGroupId = id ;
+    msgItem->meta.mMsgId.clear();
+    msgItem->meta.mThreadId = sha1sum(tmpmem,tmpmem.size()); // make the ID from the hash of the cirle ID and the author ID
+    msgItem->meta.mAuthorId = own_id;
+
+    // msgItem->meta.mParentId = ; // leave these blank
+    // msgItem->meta.mOrigMsgId= ; 
+
+    std::cerr << "p3GxsCircles::publishSubscribeRequest()" << std::endl;
+    std::cerr << "  GroupId    : " << circle_id << std::endl;
+    std::cerr << "  AuthorId   : " << msgItem->meta.mAuthorId << std::endl;
+    std::cerr << "  ThreadId   : " << msgItem->meta.mThreadId << std::endl;
+    
+#warning Would be nice to wait for a few seconds before publishing, so that the user can potentially cancel a wrong request before it gets piped into the system
+    //RsGenExchange::publishMsg(token, msgItem);
+    return true;
 }
 
-bool p3GxsCircles::cancelCircleMembership(const RsGxsCircleId& id) 
+bool p3GxsCircles::requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
 {
-#warning code missing here !!!
+    return pushCircleMembershipRequest(own_id,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE) ;
+}
+bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_id,const RsGxsCircleId& id) 
+{
+    return pushCircleMembershipRequest(own_id,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
 }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

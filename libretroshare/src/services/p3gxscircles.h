@@ -194,8 +194,8 @@ virtual RsServiceInfo getServiceInfo();
 
     	/* membership management for external circles */
     
-    	virtual bool requestCircleMembership(const RsGxsCircleId& id) ;
-    	virtual bool cancelCircleMembership(const RsGxsCircleId& id) ;
+    	virtual bool requestCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) ;
+    	virtual bool cancelCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) ;
     
 	/**********************************************/
 
@@ -204,6 +204,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	protected:
 
+	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) ;
 	static uint32_t circleAuthenPolicy();
 
 	/** Notifications **/
