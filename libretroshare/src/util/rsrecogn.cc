@@ -486,7 +486,9 @@ bool	RsRecogn::itemToRadix64(RsItem *item, std::string &radstr)
 
 	/* write out the item for signing */
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    
+    	RsTemporaryMemory buf(len) ;
+        
 	if (!serialiser.serialise(item, buf, &len))
 	{
 		return false;
@@ -609,15 +611,13 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 	/* write out the item for signing */
 	RsGxsRecognSerialiser serialiser;
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    RsTemporaryMemory buf(len) ;
 	bool serOk = serialiser.serialise(item, buf, &len);
 
 	if (serOk)
 	{
 		Radix64::encode(buf, len, tag);
 	}
-
-	delete []buf;
 
 	if (!serOk)
 	{

@@ -101,7 +101,7 @@ again:
 		/****************
 		 * create a radix64 encoded string.
 		 */
-		static void encode(const char *data,int len,std::string& out_string)
+		static void encode(const unsigned char *data,int len,std::string& out_string)
 		{
 			char *buffer, *p;
 
