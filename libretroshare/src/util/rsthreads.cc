@@ -117,7 +117,7 @@ void RsThread::ask_for_stop()
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  calling stop" << std::endl;
 #endif
-    mShouldStopSemaphore.post();
+    mShouldStopSemaphore.set(1);
 }
 
 void RsTickingThread::fullstop()
@@ -177,7 +177,6 @@ void RsTickingThread::runloop()
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "pqithreadstream::runloop()" << std::endl;
 #endif
-    mShouldStopSemaphore.set(0) ;
 
     while(1)
     {
@@ -186,7 +185,7 @@ void RsTickingThread::runloop()
 #ifdef DEBUG_THREADS
             THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. setting hasStopped=1, and returning. Thread ends." << std::endl;
 #endif
-            mHasStoppedSemaphore.post();
+            mHasStoppedSemaphore.set(1);
             return ;
         }
 

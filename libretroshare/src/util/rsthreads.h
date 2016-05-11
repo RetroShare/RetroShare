@@ -173,53 +173,66 @@ class RsStackMutex
 // This class handles a Mutex-based semaphore, that makes it cross plateform.
 class RsSemaphore
 {
-	class RsSemStruct
-	{
-	public:
-		RsSemStruct() : mtx("Semaphore mutex"), val(0) {}
+    class RsSemStruct
+    {
+    public:
+        RsSemStruct() : mtx("Semaphore mutex"), val(0) {}
 
-		RsMutex mtx ;
-		uint32_t val ;
-	};
+        RsMutex mtx ;
+        uint32_t val ;
+    };
 
 public:
-	RsSemaphore()
-	{
-		s = new RsSemStruct ;
-	}
+    RsSemaphore()
+    {
+        s = new RsSemStruct ;
+    }
 
-	~RsSemaphore()
-	{
-		delete s ;
-	}
+    ~RsSemaphore()
+    {
+        delete s ;
+    }
 
-	void set(uint32_t i)
-	{
-		RS_STACK_MUTEX(s->mtx) ;
-		s->val = i ;
-	}
+    void set(uint32_t i)
+    {
+        RS_STACK_MUTEX(s->mtx) ;
+        s->val = i ;
+    }
 
-	void post()
-	{
-		RS_STACK_MUTEX(s->mtx) ;
-		++(s->val) ;
-	}
+    void post()
+    {
+        RS_STACK_MUTEX(s->mtx) ;
+        ++(s->val) ;
+    }
 
-	uint32_t value()
-	{
-		RS_STACK_MUTEX(s->mtx) ;
-		return s->val ;
-	}
+    uint32_t value()
+    {
+        RS_STACK_MUTEX(s->mtx) ;
+        return s->val ;
+    }
 
-	void wait()
-	{
-		while(value() == 0)
-			usleep(1000) ;
+    void wait()
+    {
+        static const uint32_t max_waiting_time_before_warning=1000 *5 ;	// 5 secs
+        uint32_t tries=0;
 
-		post() ;
-	}
+        while(true)
+        {
+            usleep(1000) ;
+            if(++tries >= max_waiting_time_before_warning)
+                std::cerr << "(EE) Semaphore waiting for too long. Something is probably wrong in the code." << std::endl;
+
+            RS_STACK_MUTEX(s->mtx) ;
+            if(s->val > 0)
+                    {
+                --(s->val) ;
+                            return ;
+                    }
+        }
+
+    }
 private:
-	RsSemStruct *s ;
+    RsSemStruct *s ;
 };
 
 class RsThread;
