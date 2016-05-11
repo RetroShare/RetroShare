@@ -78,7 +78,6 @@ public:
 	RsGxsCircleId mInternalCircle; // if Originator == ownId, otherwise blank.
 };
 
-
 class RsGxsCircleGroup
 {
 	public:

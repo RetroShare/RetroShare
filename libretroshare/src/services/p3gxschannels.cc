@@ -993,7 +993,7 @@ std::string SSGxsChannelGroup::save() const
     if(!mDownloadDirectory.empty())
     {
         std::string encoded_str ;
-        Radix64::encode(mDownloadDirectory.c_str(),mDownloadDirectory.length(),encoded_str);
+        Radix64::encode((unsigned char*)mDownloadDirectory.c_str(),mDownloadDirectory.length(),encoded_str);
 
         output += " {P:" + encoded_str + "}";
     }

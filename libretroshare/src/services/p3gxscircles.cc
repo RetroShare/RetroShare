@@ -27,6 +27,8 @@
 #include "serialiser/rsgxscircleitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
+#include "util/rsdir.h"
+#include "util/radix64.h"
 #include "util/rsstring.h"
 
 #include "pgp/pgpauxutils.h"
@@ -1867,52 +1869,32 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     
     // Create a subscribe item
 
-    RsGxsCircleSubscriptionRequestItem s ;
+    RsGxsCircleSubscriptionRequestItem *s = new RsGxsCircleSubscriptionRequestItem ;
 
-    s.time_stamp           = time(NULL) ;
-    s.subscription_request = RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE ;
-    s.circle_id            = id ;
-    s.time_out             = 0 ;	// means never
+    s->time_stamp           = time(NULL) ;
+    s->time_out             = 0 ;	// means never
+    s->subscription_type    = RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE ;
 
     // Serialise it into a base64 string
 
-    uint32_t pktsize = s.serial_size() ;
-
-    RsTemporaryMemory mem(s.serial_size()) ;
+    RsTemporaryMemory tmpmem(circle_id.serial_size() + own_gxsid.serial_size()) ;
     
-    if(!mem)
-        return false ;
+    uint32_t off = 0 ;
+    circle_id.serialise(tmpmem,tmpmem.size(),off) ;
+    own_gxsid.serialise(tmpmem+off,tmpmem.size(),off) ;
     
-    s.serialise(mem,pktsize) ;
-
-    std::string msg ;
-    Radix64::encode(mem,pktsize,msg) ;
-
-    // Create the group message to store and publish it
-
-    RsTemporaryMemory tmpmem(RsGxsCircleId::SIZE_IN_BYTES + RsGxsId::SIZE_IN_BYTES) ;
-    
-    if(!tmpmem)
-        return false ;
-    
-    circle_id.serialise(tmpmem,tmpmem.size()) ;
-    own_gxsid.serialise(tmpmem+RsGxsCircleId::SIZE_IN_BYTES,(int)tmpmem.size()-(int)RsGxsCircleId::SIZE_IN_BYTES) ;
-    
-    RsGxsCircleMsgItem* msgItem = new RsGxsCircleMsgItem();
-    msgItem->mMsg = msg;
-
-    msgItem->meta.mGroupId = id ;
-    msgItem->meta.mMsgId.clear();
-    msgItem->meta.mThreadId = sha1sum(tmpmem,tmpmem.size()); // make the ID from the hash of the cirle ID and the author ID
-    msgItem->meta.mAuthorId = own_id;
+    s->meta.mGroupId = RsGxsGroupId(circle_id) ;
+    s->meta.mMsgId.clear();
+    s->meta.mThreadId = RsDirUtil::sha1sum(tmpmem,tmpmem.size()); // make the ID from the hash of the cirle ID and the author ID
+    s->meta.mAuthorId = own_gxsid;
 
     // msgItem->meta.mParentId = ; // leave these blank
     // msgItem->meta.mOrigMsgId= ; 
 
     std::cerr << "p3GxsCircles::publishSubscribeRequest()" << std::endl;
     std::cerr << "  GroupId    : " << circle_id << std::endl;
-    std::cerr << "  AuthorId   : " << msgItem->meta.mAuthorId << std::endl;
-    std::cerr << "  ThreadId   : " << msgItem->meta.mThreadId << std::endl;
+    std::cerr << "  AuthorId   : " << s->meta.mAuthorId << std::endl;
+    std::cerr << "  ThreadId   : " << s->meta.mThreadId << std::endl;
     
 #warning Would be nice to wait for a few seconds before publishing, so that the user can potentially cancel a wrong request before it gets piped into the system
     //RsGenExchange::publishMsg(token, msgItem);
@@ -1921,11 +1903,11 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
 
 bool p3GxsCircles::requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
 {
-    return pushCircleMembershipRequest(own_id,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE) ;
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE) ;
 }
-bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_id,const RsGxsCircleId& id) 
+bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
 {
-    return pushCircleMembershipRequest(own_id,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
 }
     
 

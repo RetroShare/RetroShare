@@ -621,10 +621,14 @@ void IdDialog::acceptCircleSubscription()
     if (!item) 
 	    return ;
 
+#warning we have to find a way to get the correct own id here.
+    
+    RsGxsId own_id ;
+    
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
-    rsGxsCircles->requestCircleMembership(circle_id) ;
+    rsGxsCircles->requestCircleMembership(own_id,circle_id) ;
 }
 
 void IdDialog::refuseCircleSubscription() 
@@ -633,11 +637,15 @@ void IdDialog::refuseCircleSubscription()
 
 	if (!item) 
 		return ;
+    
+#warning we have to find a way to get the correct own id here.
+	RsGxsId own_id ;
+
 
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
-	rsGxsCircles->cancelCircleMembership(circle_id) ;
+	rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
 }
     
 void IdDialog::CircleListCustomPopupMenu( QPoint )
