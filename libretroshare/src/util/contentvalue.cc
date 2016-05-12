@@ -73,42 +73,44 @@ ContentValue::ContentValue(const ContentValue &from){
 
         case INT32_TYPE:
             {
-                int32_t value;
-                from.getAsInt32(currKey, value);
-                put(currKey, value);
+                int32_t value = 0;
+                if (from.getAsInt32(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case INT64_TYPE:
             {
-                int64_t value;
-                from.getAsInt64(currKey, value);
-                put(currKey, value);
+                int64_t value = 0;
+                if (from.getAsInt64(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case STRING_TYPE:
             {
-                from.getAsString(currKey, val);
-                put(currKey, val);
+                if (from.getAsString(currKey, val))
+                    put(currKey, val);
                 break;
             }
         case BOOL_TYPE:
             {
-                bool value;
-                from.getAsBool(currKey, value);
-                put(currKey, value);
+                bool value = false;
+                if (from.getAsBool(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case DATA_TYPE:
             {
-                from.getAsData(currKey, data_len, src);
-                put(currKey, data_len, src);
+                if (from.getAsData(currKey, data_len, src))
+                    put(currKey, data_len, src);
                 break;
             }
         case DOUBLE_TYPE:
-            double value;
-            from.getAsDouble(currKey, value);
-            put(currKey, value);
-            break;
+            {
+                double value = 0;
+                if (from.getAsDouble(currKey, value))
+                    put(currKey, value);
+                break;
+            }
         default:
             std::cerr << "ContentValue::ContentValue(ContentValue &from):"
                     << "Error! Unrecognised data type!" << std::endl;
