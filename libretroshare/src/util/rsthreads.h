@@ -211,7 +211,9 @@ public:
         return s->val ;
     }
 
-    void wait()
+    // waits but does not re-locks the semaphore
+    
+    void wait_no_relock()
     {
         static const uint32_t max_waiting_time_before_warning=1000 *5 ;	// 5 secs
         uint32_t tries=0;
@@ -224,10 +226,7 @@ public:
 
             RS_STACK_MUTEX(s->mtx) ;
             if(s->val > 0)
-                    {
-                --(s->val) ;
-                            return ;
-                    }
+		    return ;
         }
 
     }

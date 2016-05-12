@@ -127,7 +127,13 @@ void RsTickingThread::fullstop()
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  waiting stop" << std::endl;
 #endif
-    mHasStoppedSemaphore.wait();
+    if(pthread_equal(mTid,pthread_self()))
+    {
+        std::cerr << "(WW) RsTickingThread::fullstop() called by same thread. This is unexpected." << std::endl;
+        return ;
+    }
+    
+    mHasStoppedSemaphore.wait_no_relock();
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  finished!" << std::endl;
 #endif
