@@ -1640,7 +1640,7 @@ void	p3NetMgrIMPL::getNetStatus(pqiNetStatus &status)
 	/* must extract data... then update mNetFlags */
 
 	bool dhtOk = netAssistConnectActive();
-	uint32_t netsize, rsnetsize;
+	uint32_t netsize = 0, rsnetsize = 0;
 	netAssistConnectStats(netsize, rsnetsize);
 
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
