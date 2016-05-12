@@ -40,7 +40,7 @@
  * #define DEBUG_THREADS 1
  * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.
  *******/
-#define THREAD_DEBUG std::cerr << "[caller thread ID: " << std::hex << pthread_self() << ", thread ID: " << mTid << std::dec << "] "
+#define THREAD_DEBUG std::cerr << "[this=" << (void*)this << ", caller thread ID: " << std::hex << pthread_self() << ", thread ID: " << mTid << std::dec << "] "
 
 #ifdef RSMUTEX_ABORT
 	#include <stdlib.h>
@@ -75,15 +75,19 @@ RsThread::RsThread()
 #else
     mTid = 0;
 #endif
+    // The thread is certainly not running. This avoids to lock down when calling shutdown on a thread that has never started.
+
+#ifdef DEBUG_THREADS
+    THREAD_DEBUG << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread object created. Initing stopped=1, should_stop=0" << std::endl;
+#endif
+    mHasStoppedSemaphore.set(1) ;
+    mShouldStopSemaphore.set(0) ;
 }
 bool RsThread::isRunning()
 {
     // do we need a mutex for this ?
     int sval = mHasStoppedSemaphore.value() ;
 
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  isRunning(): returning " << !sval << std::endl;
-#endif
     return !sval ;
 }
 
@@ -129,11 +133,11 @@ void RsTickingThread::fullstop()
 #endif
     if(pthread_equal(mTid,pthread_self()))
     {
-        std::cerr << "(WW) RsTickingThread::fullstop() called by same thread. This is unexpected." << std::endl;
+        THREAD_DEBUG << "(WW) RsTickingThread::fullstop() called by same thread. This is unexpected." << std::endl;
         return ;
     }
     
-    mHasStoppedSemaphore.wait_no_relock();
+    mHasStoppedSemaphore.wait_no_relock(); // Wait for semaphore value to become 1, but does not decrement it when obtained.
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  finished!" << std::endl;
 #endif
@@ -144,9 +148,8 @@ void RsThread::start()
     void  *data = (void *)this ;
 
 #ifdef DEBUG_THREADS
-    THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0, has_stopped=1" << std::endl;
+    THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0" << std::endl;
 #endif
-    mHasStoppedSemaphore.set(0) ;
     mShouldStopSemaphore.set(0) ;
 
     int err ;
@@ -174,14 +177,16 @@ RsTickingThread::RsTickingThread()
 
 void RsSingleJobThread::runloop()
 {
-    mShouldStopSemaphore.set(0) ;
+    mHasStoppedSemaphore.set(0) ;
     run() ;
 }
 
 void RsTickingThread::runloop()
 {
+    mHasStoppedSemaphore.set(0) ;	// first time we are 100% the thread is actually running.
+
 #ifdef DEBUG_THREADS
-    THREAD_DEBUG << "pqithreadstream::runloop()" << std::endl;
+    THREAD_DEBUG << "RsTickingThread::runloop(). Setting stopped=0" << std::endl;
 #endif
 
     while(1)
@@ -218,7 +223,7 @@ void RsQueueThread::data_tick()
     {
         mLastWork = now;
         mLastSleep = (uint32_t) (mMinSleep + (mLastSleep - mMinSleep) / 2.0);
-#ifdef DEBUG_THREADS
+#ifdef DEBUG_TICKING
         THREAD_DEBUG << "RsQueueThread::data_tick() done work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
 
@@ -234,7 +239,7 @@ void RsQueueThread::data_tick()
         {
             mLastSleep = mMaxSleep;
         }
-#ifdef DEBUG_THREADS
+#ifdef DEBUG_TICKING
         THREAD_DEBUG << "RsQueueThread::data_tick() no work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
     }
