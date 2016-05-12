@@ -961,7 +961,9 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 				nfile->pop = atoi(tokens[4].c_str());
 				nfile->updtime = atoi(tokens[5].c_str());
 				nfile->parent = ndir;
-				nfile->row = ndir->subdirs.size() + ndir->files.size();
+				if (ndir) {
+					nfile->row = ndir->subdirs.size() + ndir->files.size();
+				}
 				ndir->files[nfile->name] = nfile;
 
 			}
