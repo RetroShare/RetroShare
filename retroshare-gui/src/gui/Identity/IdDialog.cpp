@@ -621,9 +621,7 @@ void IdDialog::acceptCircleSubscription()
     if (!item) 
 	    return ;
 
-#warning we have to find a way to get the correct own id here.
-    
-    RsGxsId own_id ;
+	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
     
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
@@ -638,9 +636,7 @@ void IdDialog::refuseCircleSubscription()
 	if (!item) 
 		return ;
     
-#warning we have to find a way to get the correct own id here.
-	RsGxsId own_id ;
-
+	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
@@ -655,35 +651,92 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
     
 	if (item) 
-	{
-		uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+    {
+	    uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 
-		if(item->parent() != NULL)
-			if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
-			else
-				contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
-	}
+	    if(item->parent() != NULL)
+	    {
+		    if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
+		    else
+			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
+	    }
+    }
     
     contextMnu.addSeparator() ;
     
-    uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole).toUInt();
-
-    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
-	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Remove me from this circle"), this, SLOT(refuseCircleMembership()));
-	    else
-		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Cancel subscription request"), this, SLOT(refuseCircleMembership()));
-    else 
-	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Accept circle invite and join the circle"), this, SLOT(acceptCircleMembership()));
-	    else
-		    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Request to join this circle"), this, SLOT(acceptCircleMembership()));
-
-    contextMnu.addSeparator() ;
+    RsGxsCircleId circle_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole).toString().toStdString());
     
-    	contextMnu.addAction(QIcon(IMAGE_CREATE), tr("Create external circle"), this, SLOT(createExternalCircle()));
-	contextMnu.exec(QCursor::pos());
+    RsGxsCircleDetails details ;
+    rsGxsCircles->getCircleDetails(circle_id,details) ;
+
+    static const int REQUES = 0 ; // Admin list: no          Subscribed:  no
+    static const int ACCEPT = 1 ; // Admin list: yes         Subscribed:  no
+    static const int REMOVE = 2 ; // Admin list: yes         Subscribed:  yes
+    static const int CANCEL = 3 ; // Admin list: no          Subscribed:  yes
+    
+    const QString menu_titles[4] = { tr("Accept circle invitation"), tr("Remove from this circle"),tr("Cancel subscribe request"), tr("Request subscription") } ;
+    const QString image_names[4] = { ":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png" } ;
+    
+    std::vector< std::vector<RsGxsId> > ids ;
+    
+    std::list<RsGxsId> own_identities ;
+    rsIdentity->getOwnIds(own_identities) ;
+                             
+    for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+    {
+	    std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it) ;
+	    uint32_t subscribe_flags = (vit == details.mSubscriptionFlags.end())?0:(vit->second) ;
+
+	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
+		    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+			    ids[REMOVE].push_back(*it) ;
+		    else
+			    ids[CANCEL].push_back(*it) ;
+	    else 
+		    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+			    ids[ACCEPT].push_back(*it) ;
+		    else
+			    ids[REQUES].push_back(*it) ;
+    }
+    contextMnu.addSeparator() ;
+
+    for(int i=0;i<4;++i)
+    {
+        if(ids[i].size() == 1)
+        {
+            QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+            
+	    if(i <2)
+		    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
+	    else
+		    QObject::connect(action,SLOT(), this, SLOT(cancelCircleSubscription()));
+            
+	    action->setData(QString::fromStdString(ids[i][0].toStdString()));
+	    contextMnu.addAction(action) ;
+        }
+	else if(ids[i].size() > 1)
+        {
+            QMenu *menu = new QMenu(menu_titles[i],this) ;
+            
+            for(uint32_t j=0;j<ids[i].size();++j)
+	    {
+		    QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+                    
+                    if(i <2)
+			    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
+                    else
+			    QObject::connect(action,SLOT(), this, SLOT(cancelCircleSubscription()));
+                        
+		    action->setData(QString::fromStdString(ids[i][0].toStdString()));
+		    menu->addAction(action) ;
+	    }
+            
+            contextMnu.addMenu(menu) ;
+        }
+    }
+    
+    contextMnu.exec(QCursor::pos());
 }
 
 static void set_item_background(QTreeWidgetItem *item, uint32_t type)

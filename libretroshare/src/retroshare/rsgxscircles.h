@@ -115,8 +115,10 @@ class RsGxsCircleDetails
         
         bool mAmIAllowed ;
 
-        std::set<RsGxsId> mAllowedGxsIds;
+        std::set<RsGxsId> mAllowedGxsIds;	// This crosses admin list and subscribed list
         std::set<RsPgpId> mAllowedNodes;
+        
+        std::map<RsGxsId,uint32_t> mSubscriptionFlags ;	// subscription flags for all ids
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper
