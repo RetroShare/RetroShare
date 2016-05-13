@@ -1880,7 +1880,8 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 		std::cerr << "TcpStream::toSend() peerUnknown ERROR!!!";
 		std::cerr << std::endl;
 #endif
-                return 0;
+		delete pkt;
+		return 0;
 	}
 
 	/* get accurate timestamp */
