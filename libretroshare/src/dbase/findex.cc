@@ -963,8 +963,8 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 				nfile->parent = ndir;
 				if (ndir) {
 					nfile->row = ndir->subdirs.size() + ndir->files.size();
+					ndir->files[nfile->name] = nfile;
 				}
-				ndir->files[nfile->name] = nfile;
 
 			}
 			/* create new dir and add to stack */
