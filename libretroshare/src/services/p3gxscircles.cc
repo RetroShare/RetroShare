@@ -1877,13 +1877,11 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     s->time_out             = 0 ;	// means never
     s->subscription_type    = RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE ;
 
-    // Serialise it into a base64 string
-
     RsTemporaryMemory tmpmem(circle_id.serial_size() + own_gxsid.serial_size()) ;
     
     uint32_t off = 0 ;
     circle_id.serialise(tmpmem,tmpmem.size(),off) ;
-    own_gxsid.serialise(tmpmem+off,tmpmem.size(),off) ;
+    own_gxsid.serialise(tmpmem,tmpmem.size(),off) ;
     
     s->meta.mGroupId = RsGxsGroupId(circle_id) ;
     s->meta.mMsgId.clear();
