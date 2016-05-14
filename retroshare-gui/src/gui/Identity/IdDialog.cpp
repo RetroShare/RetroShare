@@ -715,9 +715,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
             QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
             
 	    if(i <2)
-		    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
+		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
 	    else
-		    QObject::connect(action,SLOT(), this, SLOT(cancelCircleSubscription()));
+		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(cancelCircleSubscription()));
             
 	    action->setData(QString::fromStdString(ids[i][0].toStdString()));
 	    contextMnu.addAction(action) ;
@@ -738,9 +738,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
                     
                     if(i <2)
-			    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
+			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
                     else
-			    QObject::connect(action,SLOT(), this, SLOT(cancelCircleSubscription()));
+			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(cancelCircleSubscription()));
                         
 		    action->setData(QString::fromStdString(ids[i][j].toStdString()));
 		    menu->addAction(action) ;
