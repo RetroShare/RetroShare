@@ -678,7 +678,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     const QString menu_titles[4] = { tr("Accept circle invitation"), tr("Remove from this circle"),tr("Cancel subscribe request"), tr("Request subscription") } ;
     const QString image_names[4] = { ":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png" } ;
     
-    std::vector< std::vector<RsGxsId> > ids ;
+    std::vector< std::vector<RsGxsId> > ids(4) ;
     
     std::list<RsGxsId> own_identities ;
     rsIdentity->getOwnIds(own_identities) ;
@@ -705,7 +705,14 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     {
         if(ids[i].size() == 1)
         {
-            QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+                RsIdentityDetails det ;
+                QString id_name ;
+                if(rsIdentity->getIdDetails(ids[i][0],det))
+                    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][0].toStdString()) + ")" ;
+                else
+                    id_name = tr("for identity ")+QString::fromStdString(ids[i][0].toStdString()) ;
+                
+            QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
             
 	    if(i <2)
 		    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
@@ -721,14 +728,21 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
             
             for(uint32_t j=0;j<ids[i].size();++j)
 	    {
-		    QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+                RsIdentityDetails det ;
+                QString id_name ;
+                if(rsIdentity->getIdDetails(ids[i][j],det))
+                    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][j].toStdString()) + ")" ;
+                else
+                    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
+                
+		    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
                     
                     if(i <2)
 			    QObject::connect(action,SLOT(), this, SLOT(acceptCircleSubscription()));
                     else
 			    QObject::connect(action,SLOT(), this, SLOT(cancelCircleSubscription()));
                         
-		    action->setData(QString::fromStdString(ids[i][0].toStdString()));
+		    action->setData(QString::fromStdString(ids[i][j].toStdString()));
 		    menu->addAction(action) ;
 	    }
             
