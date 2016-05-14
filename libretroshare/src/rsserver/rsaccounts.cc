@@ -59,14 +59,17 @@ RsAccountsDetail *rsAccounts;
 static bool checkAccount(std::string accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
 AccountDetails::AccountDetails()
-:mIsHiddenLoc(false), mFirstRun(false)
+  :mSslId(""), mAccountDir(""), mPgpId(""), mPgpName(""), mPgpEmail(""),
+    mLocation(""), mIsHiddenLoc(false), mFirstRun(false)
 {
 	return;
 }
 
 RsAccountsDetail::RsAccountsDetail()
-:mAccountsLocked(false)
+:mAccountsLocked(false), mPreferredId(""), mBaseDirectory("")
 {
+	mAccounts.clear();
+	mUnsupportedKeys.clear();
 	return;
 }
 
@@ -812,8 +815,8 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-    if(!check)
-        return dataDirectory;
+	if (!check)
+		return dataDirectory;
 
 	/* Make sure the directory exists, else return emptyString */
 	if (!RsDirUtil::checkDirectory(dataDirectory))
