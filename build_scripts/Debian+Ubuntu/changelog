@@ -1,5 +1,52 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  5bb570e csoler Sat, 14 May 2016 10:57:52 -0400 Merge pull request #384 from PhenomRetroShare/Fix_RsAccountsDetailPrivateInit
+  7fd84f2 Phenom Sat, 14 May 2016 16:50:17 +0200 Fix Initialisation of Private in RsAccountDetails
+  52f488c csoler Fri, 13 May 2016 11:13:07 -0400 Merge pull request #382 from PhenomRetroShare/Fix_CorrectPR378
+  d7efeb9 Phenom Fri, 13 May 2016 17:06:00 +0200 Move nDir->Files into condition nDir exists.
+  4b8a1d2 csoler Thu, 12 May 2016 14:42:31 -0400 Merge pull request #380 from PhenomRetroShare/Fix_ContentValue
+  1c5bcb8 csoler Thu, 12 May 2016 14:41:10 -0400 Merge pull request #379 from PhenomRetroShare/Fix_UninitializedVar
+  2487f3e csoler Thu, 12 May 2016 14:40:37 -0400 Merge pull request #378 from PhenomRetroShare/Fix_CasenDirResetedBefore
+  61e5a62 Phenom Thu, 12 May 2016 20:29:12 +0200 Fix ContentValue::ContentValue if GetAsxxx return false.
+  ed56707 Phenom Thu, 12 May 2016 20:14:59 +0200 Fix in case nDir was reset before
+  a1ece16 Phenom Thu, 12 May 2016 20:00:44 +0200 Fix uninitialized variables netsize, rsnetsize in p3netmgr.cc
+  1d476de csoler Thu, 12 May 2016 10:26:38 -0400 fixed initialisation of semaphores in created thread object
+  96012ef csoler Wed, 11 May 2016 22:18:02 -0400 new attempt to fix thread issues
+  383e403 csoler Wed, 11 May 2016 12:42:59 -0400 tried to improve the RsSemaphore class to avoid and display more info about the 
+  e891e2b csoler Wed, 11 May 2016 10:00:20 -0400 added missing check for ssl_connection that would cause crash when the ssl conne
+  8fdf8f8 csoler Tue, 10 May 2016 09:46:33 -0400 fixed possible crash in rsnet.cc
+  74bb3b6 csoler Mon,  9 May 2016 20:54:58 -0400 replaced deprecated gethostbyname by getaddrinfo. Only linux was using the re-entrant 
+  f8e6937 csoler Sun,  8 May 2016 18:36:41 -0400 Merge pull request #373 from PhenomRetroShare/Fix_LibResAPI_MacOS
+  4b81fb0 csoler Sun,  8 May 2016 10:42:20 -0400 Merge pull request #374 from PhenomRetroShare/Fix_MacOSVersion
+  ceb092c Phenom Fri,  6 May 2016 22:51:25 +0200 Fix preprocessor for MacOS version.
+  61d2ab5 Phenom Fri,  6 May 2016 22:12:40 +0200 Fix compilation of LibResAPI for MacOS
+  6a7bd90 csoler Fri,  6 May 2016 08:59:59 -0400 Merge pull request #372 from zeners/master
+  ae631a1 zeners Fri,  6 May 2016 10:34:13 +0200 Merge remote branch 'origin/master'
+  08be19f zeners Fri,  6 May 2016 10:29:03 +0200 webui: rebuild files on qmake
+  13dec7a zeners Fri,  6 May 2016 10:06:03 +0200 webui: reset file-date on touch to force build
+  48bc31e csoler Thu,  5 May 2016 23:55:16 -0400 Merge pull request #371 from csoler/v0.6-Threads
+  67e9760 csoler Thu,  5 May 2016 22:03:46 -0400 removed debug output from threads
+  b5ace40 csoler Thu,  5 May 2016 21:21:45 -0400 attempt to fix socket problem on 32bits/64bits windows, by using the proper SOCKET typ
+  9847a7a csoler Thu,  5 May 2016 20:52:10 -0400 implemented a new semaphore class that should be cross plateform
+  092345c csoler Thu,  5 May 2016 09:49:56 -0400 Merge pull request #363 from Nyfor/travis
+  ad2df86 csoler Thu,  5 May 2016 09:45:22 -0400 Merge pull request #370 from Nyfor/fix-segfault-on-close
+  dbd0418 Nyfor  Wed,  4 May 2016 18:48:13 +0200 Fix segfault on shutdown.
+  0817aad csoler Wed,  4 May 2016 22:51:33 -0400 improved debugging output of rsthreads.cc (part 3)
+  bb00e39 csoler Wed,  4 May 2016 22:34:03 -0400 improved debugging output of rsthreads.cc (part 2)
+  2e02a89 csoler Wed,  4 May 2016 22:23:36 -0400 improved debugging output of rsthreads.cc
+  e50e686 csoler Wed,  4 May 2016 18:01:18 -0400 updated the debug message for incoming data with no registered tunnel
+  40f8313 csoler Wed,  4 May 2016 15:32:17 -0400 Merge pull request #307 from hunbernd/fix/sqlcipher-version
+  ca003c5 csoler Tue,  3 May 2016 20:55:36 -0400 added missing initialisation of deleted memory before calling realloc
+  0ff2941 csoler Tue,  3 May 2016 13:11:41 -0400 Merge pull request #365 from zeners/master
+  f4a4765 zeners Tue,  3 May 2016 19:04:42 +0200 Merge remote branch 'origin/master'
+  962dd91 zeners Tue,  3 May 2016 19:02:07 +0200 webui: include files on first clean build
+  aec8b4d csoler Mon,  2 May 2016 18:10:39 -0400 fixed bug in counting of incoming data size for sliced packets
+  f3bc978 Nyfor  Wed, 27 Apr 2016 18:32:59 +0200 Updated Travis file.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 14 May 2016 16:00:00 -0500
+
+retroshare06 (0.6.0-1.20160424.0d84a558~trusty) trusty; urgency=low
+
   7914aeb csoler Sat, 30 Apr 2016 17:33:47 -0400 use RsTemporaryMemory in signature verification
   be7e87c csoler Sat, 30 Apr 2016 17:25:24 -0400 use RsTemporaryMemory in signature verification
   01605e5 csoler Sat, 30 Apr 2016 11:19:21 -0400 updated description f packet slicing in comments section of pqistreamer
