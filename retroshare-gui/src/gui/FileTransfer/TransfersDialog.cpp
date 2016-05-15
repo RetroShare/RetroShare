@@ -2141,9 +2141,9 @@ void TransfersDialog::collView()
 			if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 				RsCollectionFile collection;
 				collection.openColl(qinfo.absoluteFilePath(), true);
-			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-		}//if (qinfo.exists())
-	}//if (info.downloadStatus == FT_STATE_COMPLETE)
+            }
+        }
+    }
 }
 
 void TransfersDialog::collOpen()
@@ -2170,20 +2170,20 @@ void TransfersDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+                        if (collection.load(qinfo.absoluteFilePath(), true)) {
 							collection.downloadFiles();
 							return;
-						}//if (collection.load(this))
-					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-				}//if (qinfo.exists())
-			}//if (info.downloadStatus == FT_STATE_COMPLETE)
-		}//if (rsFiles->FileDetails(
-	}//if (items.size() == 1)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
-	}//if (collection.load(this))
+    }
 }
 
 void TransfersDialog::setShowDLSizeColumn(bool show)

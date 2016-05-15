@@ -535,7 +535,7 @@ void SearchDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+                        if (collection.load(qinfo.absoluteFilePath(), true)) {
 							collection.downloadFiles();
 							return;
 						}//if (collection.load(this))

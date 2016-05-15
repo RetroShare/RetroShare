@@ -10,17 +10,6 @@ CONFIG += webui
 CONFIG -= qt xml gui
 CONFIG += link_prl
 
-#CONFIG += debug
-debug {
-        QMAKE_CFLAGS -= -O2
-        QMAKE_CFLAGS += -O0
-        QMAKE_CFLAGS += -g
-
-        QMAKE_CXXFLAGS -= -O2
-        QMAKE_CXXFLAGS += -O0
-        QMAKE_CXXFLAGS += -g
-}
-
 ################################# Linux ##########################################
 linux-* {
 	#CONFIG += version_detail_bash_script
@@ -34,13 +23,6 @@ unix {
 	INSTALLS += target
 }
 
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
-}
-
-linux-g++-64 {
-	OBJECTS_DIR = temp/linux-g++-64/obj
-}
 
 #################### Cross compilation for windows under Linux ###################
 

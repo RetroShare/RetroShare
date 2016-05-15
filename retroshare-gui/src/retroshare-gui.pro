@@ -43,15 +43,6 @@ RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
 
-#CONFIG += debug
-debug {
-	QMAKE_CFLAGS += -g
-	QMAKE_CXXFLAGS -= -O2
-	QMAKE_CXXFLAGS += -O0
-	QMAKE_CFLAGS -= -O2
-	QMAKE_CFLAGS += -O0
-}
-
 DEPENDPATH *= retroshare-gui
 INCLUDEPATH *= retroshare-gui
 
@@ -100,14 +91,6 @@ unix {
 	pixmap_files.files = ../../data/retroshare06.xpm
 	INSTALLS += pixmap_files
 
-}
-
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
-}
-
-linux-g++-64 {
-	OBJECTS_DIR = temp/linux-g++-64/obj
 }
 
 version_detail_bash_script {
@@ -169,16 +152,6 @@ win32 {
 
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
-
-	# Switch off optimization for release version
-	QMAKE_CXXFLAGS_RELEASE -= -O2
-	QMAKE_CXXFLAGS_RELEASE += -O0
-	QMAKE_CFLAGS_RELEASE -= -O2
-	QMAKE_CFLAGS_RELEASE += -O0
-
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
 
 	OBJECTS_DIR = temp/obj
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"

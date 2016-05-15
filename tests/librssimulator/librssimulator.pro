@@ -3,18 +3,7 @@ CONFIG += staticlib
 CONFIG -= qt
 TARGET = rssimulator
 
-CONFIG += gxs debug
-
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
-
-debug {
-        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
+CONFIG += gxs
 
 # gxs defines.
 gxs {
@@ -69,8 +58,6 @@ linux-* {
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 
 	DESTDIR = lib
-	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
-	QMAKE_CC = g++
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
@@ -103,14 +90,6 @@ linux-* {
 	DEFINES *= UBUNTU
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
-}
-
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
-}
-
-linux-g++-64 {
-	OBJECTS_DIR = temp/linux-g++-64/obj
 }
 
 version_detail_bash_script {

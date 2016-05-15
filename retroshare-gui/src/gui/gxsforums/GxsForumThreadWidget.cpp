@@ -571,6 +571,7 @@ void GxsForumThreadWidget::changedThread()
 {
 	/* just grab the ids of the current item */
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+    Q_ASSERT(item != NULL);
 
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
@@ -582,13 +583,13 @@ void GxsForumThreadWidget::changedThread()
     	if(mForumGroup.mMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) 
         {
             RsPeerId providerId ;
-	    std::string msgId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
-        	RsGxsMessageId mid(msgId) ;
-            
-            if(rsGRouter->getTrackingInfo(mid,providerId) && !providerId.isNull() )
-		item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromUtf8(rsPeers->getPeerName(providerId).c_str())));
+            if(item != NULL) {
+                std::string msgId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
+                RsGxsMessageId mid(msgId);
+                if(rsGRouter->getTrackingInfo(mid,providerId) && !providerId.isNull() )
+                    item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromUtf8(rsPeers->getPeerName(providerId).c_str())));
+            }
         }
-        
 	if (mFillThread) {
 		return;
 	}

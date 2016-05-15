@@ -1454,6 +1454,8 @@ bool p3NetMgrIMPL::netAssistConnectActive()
 bool p3NetMgrIMPL::netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+    netsize = 0;
+    localnetsize = 0;
 	for(it = mDhts.begin(); it != mDhts.end(); ++it)
 	{
 		if (((it->second)->getActive()) && ((it->second)->getNetworkStats(netsize, localnetsize)))

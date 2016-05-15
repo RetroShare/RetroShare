@@ -6,39 +6,7 @@ CONFIG -= qt
 TARGET = bitdht
 DESTDIR = lib
 
-QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
-
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
-release {
-	# not much here yet.
-}
-
-#CONFIG += debug
-debug {
-        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
-
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
-
 ################################# Linux ##########################################
-linux-* {
-	QMAKE_CC = g++
-}
-
-linux-g++ {
-	OBJECTS_DIR = temp/linux-g++/obj
-}
-
-linux-g++-64 {
-	OBJECTS_DIR = temp/linux-g++-64/obj
-}
 
 unix {
 	data_files.path = "$${DATA_DIR}"
@@ -64,53 +32,11 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-		QMAKE_CC = g++
-		OBJECTS_DIR = temp/obj
-		MOC_DIR = temp/moc
 		DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-
-		# Switch on extra warnings
-		QMAKE_CFLAGS += -Wextra
-		QMAKE_CXXFLAGS += -Wextra
-
-		# Switch off optimization for release version
-		QMAKE_CXXFLAGS_RELEASE -= -O2
-		QMAKE_CXXFLAGS_RELEASE += -O0
-		QMAKE_CFLAGS_RELEASE -= -O2
-		QMAKE_CFLAGS_RELEASE += -O0
-
-		# Switch on optimization for debug version
-		#QMAKE_CXXFLAGS_DEBUG += -O2
-		#QMAKE_CFLAGS_DEBUG += -O2
 }
 
-################################# MacOSX ##########################################
-
-mac {
-		QMAKE_CC = g++
-		OBJECTS_DIR = temp/obj
-		MOC_DIR = temp/moc
-}
-
-################################# FreeBSD ##########################################
-
-freebsd-* {
-}
-
-################################# OpenBSD ##########################################
-
-openbsd-* {
-}
-
-################################# Haiku ##########################################
-
-haiku-* {
-		DESTDIR = lib
-}
-
-################################### COMMON stuff ##################################
 ################################### COMMON stuff ##################################
 
 DEPENDPATH += .

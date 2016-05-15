@@ -71,6 +71,10 @@ void    pqiConnectCbDummy::peerConnectRequest(const RsPeerId& id,
     std::cerr << std::endl;
 }
 
+void pqiConnectCbDummy::peerConnectRequest(const RsPeerId &id, const sockaddr_storage &raddr, const sockaddr_storage &, const sockaddr_storage &, uint32_t source, uint32_t, uint32_t, uint32_t) {
+    peerConnectRequest(id, raddr, source);
+}
+
 void pqiMonitor::disconnectPeer(const RsPeerId &peer)
 {
     std::cerr << "(EE) pqiMonitor::disconnectPeer() shouldn't be called!!!"<< std::endl;
@@ -78,7 +82,7 @@ void pqiMonitor::disconnectPeer(const RsPeerId &peer)
 
 #if 0
 void    pqiConnectCbDummy::stunStatus(std::string id, const struct sockaddr_storage *raddr, 
-							uint32_t type, uint32_t flags)
+                                      uint32_t type, uint32_t flags)
 {
 	std::cerr << "pqiConnectCbDummy::stunStatus()";
 	std::cerr << " idhash: " << RsUtil::BinToHex(id) << " raddr: " << sockaddr_storage_tostring(raddr);
