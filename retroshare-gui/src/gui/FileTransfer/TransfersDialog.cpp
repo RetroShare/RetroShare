@@ -2170,15 +2170,15 @@ void TransfersDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
-						}//if (collection.load(this))
-					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-				}//if (qinfo.exists())
-			}//if (info.downloadStatus == FT_STATE_COMPLETE)
-		}//if (rsFiles->FileDetails(
-	}//if (items.size() == 1)
+						}
+					}
+				}
+			}
+		}
+	}
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {
