@@ -1212,10 +1212,11 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						qinfo.setFile(QString::fromUtf8(path.c_str()));
 						if (qinfo.exists() && qinfo.isFile()) {
 							QString question = "<html><body>";
-							question += QObject::tr("This file already exists. Do you want to open it ?");
+							question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
+							question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
 							question += "<br><br>" + cleanname + "</body></html>";
 
-							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
+							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes,QMessageBox::No, 0);
 							if (mb.exec() == QMessageBox::Yes) {
 								++countFileOpened;
 								bFileOpened = true;
