@@ -162,4 +162,15 @@ public:
 	uint32_t mToken;
 };
 
+
+class MsgDeletePublish
+{
+public:
+        MsgDeletePublish(const GxsMsgReq& msgs, uint32_t token)
+            : mMsgs(msgs), mToken(token) {}
+        
+	GxsMsgReq mMsgs ;
+	uint32_t mToken;
+};
+
 #endif /* GXSUTIL_H_ */

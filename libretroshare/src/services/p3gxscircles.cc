@@ -73,8 +73,9 @@ RsGxsCircles *rsGxsCircles = NULL;
  */
 
 
-#define CIRCLEREQ_CACHELOAD	0x0001
-#define CIRCLEREQ_CIRCLE_LIST   0x0002
+#define CIRCLEREQ_CACHELOAD	  0x0001
+#define CIRCLEREQ_CIRCLE_LIST    0x0002
+#define CIRCLEREQ_MESSAGE_DATA   0x0003
 
 //#define CIRCLEREQ_PGPHASH 	0x0010
 //#define CIRCLEREQ_REPUTATION 	0x0020
@@ -406,6 +407,11 @@ bool p3GxsCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id)
 	return false;
 }
 
+// This function (will) use the destination group for the transaction in order to decide which list of
+// keys to ecnrypt to. When sending to a self-restricted group, the list of recipients is extended to
+// the admin list rather than just the members list.
+#warning TODO
+
 bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, std::list<RsGxsId>& gxs_ids)
 {
     RsGxsCircleDetails details ;
@@ -586,13 +592,14 @@ bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId>& friendlist) const
 
 bool RsGxsCircleCache::isAllowedPeer(const RsGxsId& id) const
 {
-    if(mUnprocessedPeers.find(id) != mUnprocessedPeers.end())
-        return true ;
+    std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it = mMembershipStatusMap.find(id) ;
     
-    if(mAllowedGxsIds.find(id) != mAllowedGxsIds.end())
-        return true ;
+    if(it == mMembershipStatusMap.end())
+        return false ;
     
-    return false ;
+    // Peers are admitted if in admin list. This is the condition for messages to propagate.
+    
+    return !!(it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
 }
 
 bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id) const
@@ -856,8 +863,7 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 	{
 		if (age < MIN_CIRCLE_LOAD_GAP)
 		{
-			RsTickEvent::schedule_in(CIRCLE_EVENT_CACHELOAD, 
-						MIN_CIRCLE_LOAD_GAP - age);
+			RsTickEvent::schedule_in(CIRCLE_EVENT_CACHELOAD,  MIN_CIRCLE_LOAD_GAP - age);
 			return true;
 		}
 	}
@@ -1090,8 +1096,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				isUnprocessedPeers = false;
 			}
 
-            	// we can check for self inclusion in the circle right away, since own ids are always loaded.
-            	// that allows to subscribe/unsubscribe uncomplete circles 
+	    // we can check for self inclusion in the circle right away, since own ids are always loaded.
+	    // that allows to subscribe/unsubscribe uncomplete circles 
 	    checkCircleCacheForAutoSubscribe(cache);
 
 			if (isComplete)
@@ -1241,7 +1247,24 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 
 	return true;
 }
+    
+bool p3GxsCircles::checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
+{
+	if(cache.mLastUpdatedMembership_TS + < now)
+	{ 
+		// this should be called regularly
+		uint32_t token ;
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+		std::list<RsGxsGroupId> grpIds ;
 
+		grpIds.push_back(grp) ;
+
+		RsGenExchange::getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY,	opts, grpIds);
+		GxsTokenQueue::queueRequest(token, CIRCLEREQ_MESSAGE_DATA);	
+	}
+    return true ;
+}
 
 /* We need to AutoSubscribe if the Circle is relevent to us */
 
@@ -1752,6 +1775,10 @@ void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 			load_CircleIdList(token);
 			break;
 
+		case CIRCLEREQ_MESSAGE_DATA:
+			processMembershipRequests(token);
+			break;
+
 		case CIRCLEREQ_CACHELOAD:
 			cache_load_for_token(token);
 			break;
@@ -1838,8 +1865,22 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 //	- compatibility with self-restricted circles:
 //		* subscription should be based on admin list, so that non subscribed peers still receive the invitation
 //
+//	- two possible subscription models for circle member list (Restricted forums only propagate to members):
+//		1 - list of admin who have not opposed subscription
+//			- solves propagation issue. Only admin see data. They can however unsubscribe using a negative req. Admin needs to remove them.
+//			- bad for security. Admin can refuse to remove them => back to square one
+//		2 - list of admin who have also requested membership
+//			- propagation is ok. On restricted circle, the circle msgs/group should be sent to admin list, instead of member list.
+//			- solves membership issue since people need to actively be in the group.
+//          => choose 2
+//			- forum  group : encrypted for Member list
+//			- circle group : clear / encrypted for admin list (for self-restricted)
+//		We decide between the two by comparing the group we're sending and the circle id it is restricted to.
+//
 //	- Use cases
 //		* user sees group (not self restricted) and requests to subscribe => RS subscribes the group and the user can propagate the response
+//		* user is invited to self-restricted circle. He will see it and can subscribe, so he will be in admin list and receive e.g. forum posts.
+//		* 
 //
 //	- Threat model
 //		* a malicious user forges a new subscription request: NP-hard as it needs to break the RSA key of the GXS id.
@@ -1848,6 +1889,23 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 //			=> not possible. Either this existing old susbscription already exists, or it has been replaced by a more recent one, which
 //			   will always replace the old one because of the date.
 //		* a malicious user removes someone's subscription messages. This is possible, but the mesh nature of the network will allow the message to propagate anyway.
+//		* a malicious user creates a circle with an incriminating name/content and adds everyone in it
+//			=> people can oppose their membership in the circle using a msg
+//
+//
+//	- the table below summarizes the various choices: forum and circle propagation when restricted to a circle, and group subscribe to the circle
+//
+//                                  +------------------------------+-----------------------------+
+//                                  |   User in admin list         |   User not in admin list    |
+//                    +-------------+------------------------------+-----------------------------+
+//                    | User request|   Forum  Grp/Msg: YES        |   Forum  Grp/Msg: NO        |         
+//                    | Subscription|   Circle Grp/Msg: YES/YES    |   Circle Grp/Msg: YES/NO    |         
+//                    |             |   Grp Subscribed: YES        |   Grp Subscribed: YES       |
+//                    +-------------+------------------------------+-----------------------------+
+//                    | No request  |   Forum  Grp/Msg: NO         |   Forum  Grp/Msg: NO        |         
+//                    | Subscription|   Circle Grp/Msg: YES/YES    |   Circle Grp/Msg: YES/NO    |         
+//                    |             |   Grp Subscribed: NO         |   Grp Subscribed: NO        |         
+//                    +-------------+------------------------------+-----------------------------+
 
 bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) 
 {
@@ -1909,7 +1967,79 @@ bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCi
 {
     return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
 }
+
+
+bool p3GxsCircles::processMembershipRequests(uint32_t token)
+{
+    // Go through membership request messages and process them according to the following rule:
+    //	* for each ID only keep the latest membership request. Delete the older ones.
+    //	* for each circle, keep a list of IDs sorted into membership categories (e.g. keep updated flags for each IDs)
+    // Because msg loading is async-ed, the job in split in two methods: one calls the loading, the other one handles the loaded data.
     
+    GxsMsgDataMap msgItems ;
+
+    if(!RsGenExchange::getMsgData(token, msgItems))
+    {
+	    std::cerr << "(EE) Cannot get msg data for circle. Something's weird." << std::endl;
+	    return ;
+    }
+    
+    GxsMsgReq messages_to_delete ;
+
+    for(GxsMsgDataMap::const_iterator it(msgItems.begin());it!=msgItems.end();++it)
+    {
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	    std::cerr << "Circle ID: " << it->first << std::endl;
+
+	    RsGxsCircleId cid = it->first ;
+
+	    if (!mCircleCache.is_cached(cid))
+	    {
+		    std::cerr << "(EE) Circle is not in cache!" << std::endl;
+		    continue ;
+	    }
+            
+            // Find the circle ID in cache and process the list of messages to keep the latest order in time.
+
+	    RsGxsCircleCache& data = mCircleCache.ref(cid);
+
+            for(uint32_t i=0;i<it->second.size();++i)
+            {
+                RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
+                
+                if(item == NULL)
+                   {
+                    std::cerr << "(EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird." << std::endl;
+                    continue ;
+                }
+                    
+                
+                RsGxsCircleSubscriptionStatusInfo& info(data.mSubscriptions[item->meta.mAuthorId]) ;
+                
+                if(info.subscription_TS < item->time_stamp)
+                {
+                    info.subscription_TS = item->time_stamp ;
+                    
+                    if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+                    	info.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
+                    else if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
+                    	info.subscription_flags &= ~GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
+                    else
+                    	std::cerr << "(EE) unknown subscription order type " << item->subscription_type << " for circle " << cid << " by id " << item->meta.mAuthorId << std::endl;
+                }
+                else if(info.subscription_TS > item->time_stamp)
+                {
+                    std::cerr << "  scheduling for deletion" << std::endl;
+                    messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
+                }
+            }
+            
+            data.mLastUpdatedMembershipTS = time(NULL) ;
+    }
+    
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    mDataStore->removeMsgs(messages_to_delete);
+}
 
 
 

@@ -187,6 +187,7 @@ void RsGenExchange::tick()
 	processGroupUpdatePublish();
 
 	processGroupDelete();
+	processMessageDelete();
 
 	processRecvdData();
 
@@ -1620,6 +1621,11 @@ void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 	std::cerr << std::endl;
 #endif
 }
+void RsGenExchange::deleteMsgs(uint32_t& token, const GxsMsgReq& msgs)
+{
+	token = mDataAccess->generatePublicToken();
+	mMsgDeletePublish.push_back(MsgDeletePublish(msgs, token));
+}
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 {
@@ -2188,6 +2194,7 @@ void RsGenExchange::processRoutingClues()
     
     mTrackingClues.clear() ;
 }
+
 void RsGenExchange::processGroupDelete()
 {
 					RS_STACK_MUTEX(mGenMtx) ;
@@ -2233,6 +2240,52 @@ void RsGenExchange::processGroupDelete()
 	}
 
 	mGroupDeletePublish.clear();
+}
+void RsGenExchange::processMessageDelete()
+{
+    RS_STACK_MUTEX(mGenMtx) ;
+#ifdef TODO
+	typedef std::pair<bool, RsGxsGroupId> GrpNote;
+	std::map<uint32_t, GrpNote> toNotify;
+#endif
+
+	for( std::vector<MsgDeletePublish>::iterator vit = mMsgDeletePublish.begin(); vit != mMsgDeletePublish.end(); ++vit)
+	{
+#ifdef TODO 
+		uint32_t token = (*vit).mToken;
+		const RsGxsGroupId& groupId = gdp.grpItem->meta.mGroupId;
+		toNotify.insert(std::make_pair( token, GrpNote(true, groupId)));
+#endif
+		mDataStore->removeMsgs( (*vit).mMsgs );
+	}
+
+
+#warning TODO: notify for deleted messages
+#ifdef SUSPENDED
+	std::list<RsGxsGroupId> grpDeleted;
+	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+	for(; mit != toNotify.end(); ++mit)
+	{
+		GrpNote& note = mit->second;
+		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+
+		mGrpNotify.insert(std::make_pair(mit->first, note.second));
+		mDataAccess->updatePublicRequestStatus(mit->first, status);
+
+		if(note.first)
+			grpDeleted.push_back(note.second);
+	}
+
+	if(!grpDeleted.empty())
+	{
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		gc->mGrpIdList = grpDeleted;
+		mNotifications.push_back(gc);
+	}
+#endif
+
+	mMsgDeletePublish.clear();
 }
 
 bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)

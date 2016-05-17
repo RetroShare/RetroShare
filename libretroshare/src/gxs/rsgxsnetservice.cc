@@ -761,6 +761,7 @@ void RsGxsNetService::syncWithPeers()
                     RsNxsItem *encrypted_item = NULL ;
                     uint32_t status ;
                     
+#warning pass on the group id here so as to know which list to encrypt to (admin/members)
 		    if(encryptSingleNxsItem(msg, encrypt_to_this_circle_id, encrypted_item, status))
 			    sendItem(encrypted_item) ;
 		    else
@@ -1270,6 +1271,7 @@ bool RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 			    RsNxsItem *encrypted_item = NULL ;
 			    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
+#warning pass on the group id here so as to know which list to encrypt to (admin/members)
 			    if(encryptSingleNxsItem(gItem, entry.mCircleId, encrypted_item,status))
 			    {
 				    itemL.push_back(encrypted_item) ;
@@ -1321,6 +1323,7 @@ bool RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
                     RsNxsItem *encrypted_item = NULL ;
                     uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
                     
+#warning pass on the group id here so as to know which list to encrypt to (admin/members)
                     if(encryptSingleNxsItem(mItem,msgPend->mCircleId,encrypted_item,status))
                     {
                         itemL.push_back(encrypted_item) ;
@@ -3678,6 +3681,7 @@ bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId&
 
 	std::list<RsGxsId> recipients ;
 
+#warning recipients should take the destination group ID as parameter and use it to know if is will use the admin list or the members list.
 	if(!mCircles->recipients(destination_circle,recipients))
 	{
 		std::cerr << "  (EE) Cannot encrypt transaction: recipients list not available. Should re-try later." << std::endl;
@@ -4047,7 +4051,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 #endif
 				    RsNxsItem *encrypted_item = NULL ;
 				    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
-
+#warning pass on the group id here so as to know which list to encrypt to (admin/members)
 				    if(encryptSingleNxsItem(gItem, grpMeta->mCircleId, encrypted_item,status))
 				    {
 					    itemL.push_back(encrypted_item) ;
@@ -4471,6 +4475,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 			    RsNxsItem *encrypted_item = NULL ;
 			    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
+#warning pass on the group id here so as to know which list to encrypt to (admin/members)
 			    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId, encrypted_item,status))
 			    {
 				    itemL.push_back(encrypted_item) ;

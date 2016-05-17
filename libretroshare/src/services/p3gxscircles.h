@@ -124,6 +124,15 @@
 /* Permissions is part of GroupMetaData 
  */
 
+class RsGxsCircleMembershipStatus
+{
+public:
+    RsGxsCircleMembershipStatus() : subscription_TS(0), subscription_flags(0) {}
+    
+    time_t   last_subscription_TS ;
+    uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
+};
+
 class RsGxsCircleCache
 {
 	public:
@@ -153,9 +162,10 @@ class RsGxsCircleCache
 	std::set<RsGxsCircleId> mUnprocessedCircles;
 	std::set<RsGxsCircleId> mProcessedCircles;
 #endif
-	std::set<RsGxsId> mUnprocessedPeers;
+	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatusMap;
+    	time_t mLastUpdateMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
     
-	std::set<RsGxsId> mAllowedGxsIds;
+	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
 	std::set<RsPgpId> mAllowedNodes;
     
     	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
@@ -224,6 +234,7 @@ virtual RsServiceInfo getServiceInfo();
 	// Load data.
 	bool request_CircleIdList();
 	bool load_CircleIdList(uint32_t token);
+	bool processMembershipRequests(uint32_t token);
 
 	// Need some crazy arsed cache to store the circle info.
 	// so we don't have to keep loading groups.
@@ -237,6 +248,7 @@ virtual RsServiceInfo getServiceInfo();
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 
 	bool checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
+	bool checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache);
 
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,

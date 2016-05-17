@@ -535,6 +535,14 @@ public:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+    /*!
+     * Deletes the messages \n
+     * This will induce a related change message \n
+     * @param token
+     * @param msgs
+     */
+    void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
+    
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -657,6 +665,7 @@ private:
     void processGroupUpdatePublish();
 
     void processGroupDelete();
+    void processMessageDelete();
     void processRoutingClues();
 
     void publishMsgs();
@@ -869,6 +878,7 @@ private:
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
     std::vector<GroupDeletePublish> mGroupDeletePublish;
+    std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
     std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;
