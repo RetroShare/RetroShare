@@ -172,8 +172,20 @@ void ChatHandler::notifyChatMessage(const ChatMessage &msg)
 void ChatHandler::notifyChatCleared(const ChatId &chat_id)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    //Remove processed messages
     std::list<Msg>& msgs = mMsgs[chat_id];
     msgs.clear();
+    //Remove unprocessed messages
+    for(std::list<ChatMessage>::iterator lit = mRawMsgs.begin(); lit != mRawMsgs.end();)
+    {
+        ChatMessage& msg = *lit;
+        if (msg.chat_id == chat_id)
+       {
+            lit = mRawMsgs.erase(lit);
+        } else {
+            ++lit;
+        }
+    }
 }
 
 void ChatHandler::notifyChatStatus(const ChatId &chat_id, const std::string &status)
