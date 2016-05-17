@@ -3,6 +3,8 @@
 #don't exit even if a command fails
 set +e
 
+pushd $(dirname "$0")
+
 SCRIPT_PATH=$(dirname "`readlink -f "${0}"`")
 
 OLDLANG=${LANG}
@@ -32,5 +34,8 @@ if [[ ${version} != '' ]]; then
 fi
 
 export LANG=${OLDLANG}
+
+popd
+
 echo "script version_detail.sh finished normally"
 exit 0

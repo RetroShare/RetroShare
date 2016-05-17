@@ -123,7 +123,7 @@ version_detail_bash_script {
 		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
 		QMAKE_EXTRA_TARGETS += write_version_detail
 		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = ./version_detail.sh
+		write_version_detail.commands = $$PWD/version_detail.sh
 	}
 	win32 {
 		QMAKE_EXTRA_TARGETS += write_version_detail
