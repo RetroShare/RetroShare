@@ -1978,12 +1978,15 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remov
 	char template_name[_pubring_path.length()+8] ;
 	sprintf(template_name,"%s.XXXXXX",_pubring_path.c_str()) ;
 	
-	if(mktemp(template_name) == NULL)
+	int fd_keyring_backup(mkstemp(template_name));
+
+	if (fd_keyring_backup == -1) 
 	{
 		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
 		return false ;
 	}
+	close(fd_keyring_backup);	// TODO: keep the file open and use the fd
 
 	if(!ops_write_keyring_to_file(_pubring,ops_false,template_name,ops_true)) 
 	{
