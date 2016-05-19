@@ -1905,6 +1905,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     //	* for each circle, keep a list of IDs sorted into membership categories (e.g. keep updated flags for each IDs)
     // Because msg loading is async-ed, the job in split in two methods: one calls the loading, the other one handles the loaded data.
     
+#ifdef DEBUG_CIRCLES
+    std::cerr << "Processing circle membership requests." << std::endl;
+#endif
     GxsMsgDataMap msgItems ;
 
     if(!RsGenExchange::getMsgData(token, msgItems))
@@ -1918,32 +1921,37 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     for(GxsMsgDataMap::const_iterator it(msgItems.begin());it!=msgItems.end();++it)
     {
 	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-	    std::cerr << "Circle ID: " << it->first << std::endl;
+	    std::cerr << "  Circle ID: " << it->first << std::endl;
 
 	    RsGxsCircleId cid ( it->first );
 
 	    if (!mCircleCache.is_cached(cid))
 	    {
-		    std::cerr << "(EE) Circle is not in cache!" << std::endl;
+		    std::cerr << "    (EE) Circle is not in cache!" << std::endl;
 		    continue ;
 	    }
             
             // Find the circle ID in cache and process the list of messages to keep the latest order in time.
 
 	    RsGxsCircleCache& data = mCircleCache.ref(cid);
+	    std::cerr << "    Circle found in cache!" << std::endl;
+	    std::cerr << "    Retrieving messages..." << std::endl;
 
             for(uint32_t i=0;i<it->second.size();++i)
             {
+	    	std::cerr << "      Group ID: " << it->second[i]->meta.mGroupId << ", Message ID: " << it->second[i]->meta.mMsgId << ": " ;
+            
                 RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
                 
                 if(item == NULL)
-                   {
-                    std::cerr << "(EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird." << std::endl;
+		{
+                    std::cerr << "    (EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird." << std::endl;
                     continue ;
                 }
                     
-                
                 RsGxsCircleMembershipStatus& info(data.mMembershipStatus[item->meta.mAuthorId]) ;
+                
+		std::cerr << " is from id " << item->meta.mAuthorId << "  " << time(NULL) - item->time_stamp << " seconds ago, " ;
                 
                 if(info.last_subscription_TS < item->time_stamp)
                 {
@@ -1954,11 +1962,13 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
                     else if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
                     	info.subscription_flags &= ~GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
                     else
-                    	std::cerr << "(EE) unknown subscription order type " << item->subscription_type << " for circle " << cid << " by id " << item->meta.mAuthorId << std::endl;
+                    	std::cerr << " (EE) unknown subscription order type: " << item->subscription_type ;
+                    
+                    std::cerr << " UPDATING" << std::endl;
                 }
                 else if(info.last_subscription_TS > item->time_stamp)
                 {
-                    std::cerr << "  scheduling for deletion" << std::endl;
+                    std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
                     messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
                 }
             }
