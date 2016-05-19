@@ -123,6 +123,7 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 	//int tickServiceSend();
 
 	pqilistener *pqil;
+	RsMutex pqilMtx; /* MUTEX */
 	unsigned long initFlags;
 };
 

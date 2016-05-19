@@ -140,7 +140,7 @@ int pqipersongrp::tickServiceSend()
 
 	// init
 pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, unsigned long flags)
-    :pqihandler(), p3ServiceServer(this, ctrl), pqil(NULL), initFlags(flags)
+    :pqihandler(), p3ServiceServer(this, ctrl), pqil(NULL), pqilMtx("pqipersongrp"), initFlags(flags)
 {
 }
 
@@ -152,7 +152,7 @@ int	pqipersongrp::tick()
 	 */
 
 	{ 
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		if (pqil)
 		{
 			pqil -> tick();
@@ -196,7 +196,7 @@ int	pqipersongrp::tick()
 int	pqipersongrp::status()
 {
 	{ 
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		if (pqil)
 		{
 			pqil -> status();
@@ -213,7 +213,7 @@ int	pqipersongrp::init_listener()
 	/* extract our information from the p3ConnectMgr */
 	if (initFlags & PQIPERSON_NO_LISTENER)
 	{
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqil = NULL;
 	}
 	else
@@ -223,7 +223,7 @@ int	pqipersongrp::init_listener()
 		struct sockaddr_storage laddr;
 		mLinkMgr->getLocalAddress(laddr);
 		
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqil = locked_createListener(laddr);
 	}
 	return 1;
@@ -239,7 +239,7 @@ bool    pqipersongrp::resetListener(const struct sockaddr_storage &local)
 	// change the address.
 	// restart.
 
-	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+	RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 
 	if (pqil != NULL)
 	{
@@ -410,7 +410,7 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 
 	{ 
 		// The Mutex is required here as pqiListener is not thread-safe.
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqiperson *pqip = locked_createPerson(id, pqil);
 	
 		// attach to pqihandler
