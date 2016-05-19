@@ -61,7 +61,8 @@ static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006 ;	// distribute
 
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST = 0x0001 ;// user is validated by circle admin
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED    = 0x0002 ;// user has subscribed the group
-static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0003 ;// user is allowed. Combines both flags above.
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE = 0x0004 ;// key is available, so we can encrypt for this circle
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0007 ;// user is allowed. Combines all flags above.
 
 static const uint32_t GXS_CIRCLE_FLAGS_IS_EXTERNAL   = 0x0008 ;// user is allowed
 
@@ -111,7 +112,6 @@ class RsGxsCircleDetails
         std::string mCircleName;
 
 	uint32_t    mCircleType;
-    	uint32_t    mSubscribeFlags ;
         
         bool mAmIAllowed ;
 

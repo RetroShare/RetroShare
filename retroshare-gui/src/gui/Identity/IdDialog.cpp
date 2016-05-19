@@ -462,7 +462,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
 		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
 		    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-		    item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
+#warning TODO
+		    //item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
 		    if(am_I_in_circle)
 		    {
@@ -489,7 +490,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
             // just in case.
             
 	    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-	    item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
+#warning TODO
+	    //item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
             
 	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 	    {
@@ -500,28 +502,29 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
 	    }
 
-	    switch(details.mSubscribeFlags)
-	{
-	case GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
-		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this circle is pending. You need to wait for the administrator to validate it.")) ;
-		break ;
-
-	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST:
-		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_blue_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this circle by the administrator. Right click to join the circle.")) ;
-		break ;
-
-	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST | GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
-		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a validated member of this circle.")) ;
-		break ;
-
-	default:
-		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
-		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
-		break ;
-	}
+#warning TODO
+//	    switch(details.mSubscribeFlags)
+//	{
+//	case GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
+//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
+//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this circle is pending. You need to wait for the administrator to validate it.")) ;
+//		break ;
+//
+//	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST:
+//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_blue_128.png")) ;
+//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this circle by the administrator. Right click to join the circle.")) ;
+//		break ;
+//
+//	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST | GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
+//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
+//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a validated member of this circle.")) ;
+//		break ;
+//
+//	default:
+//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
+//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
+//		break ;
+//	}
     }
 }
 

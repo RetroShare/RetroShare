@@ -195,7 +195,7 @@ std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 	return out;
 }
 
-uint32_t RsGxsCircleSerialiser::sizeGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem *item)
+uint32_t RsGxsCircleSerialiser::sizeGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem * /* item */)
 {
     uint32_t s=8 ; // header
     

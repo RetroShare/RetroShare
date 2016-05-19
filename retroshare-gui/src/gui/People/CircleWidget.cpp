@@ -43,7 +43,7 @@ static bool same_RsGxsCircleDetails(const RsGxsCircleDetails& d1,const RsGxsCirc
 		return (  d1.mCircleId     == d2.mCircleId
 		       && d1.mCircleName   == d2.mCircleName
 		       && d1.mCircleType   == d2.mCircleType
-		       && d1.mSubscribeFlags   == d2.mSubscribeFlags
+		       && d1.mSubscriptionFlags   == d2.mSubscriptionFlags
 		       && d1.mAllowedGxsIds== d2.mAllowedGxsIds
 		       && d1.mAllowedNodes == d2.mAllowedNodes
 		      );

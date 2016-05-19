@@ -761,8 +761,7 @@ void RsGxsNetService::syncWithPeers()
                     RsNxsItem *encrypted_item = NULL ;
                     uint32_t status ;
                     
-#warning pass on the group id here so as to know which list to encrypt to (admin/members)
-		    if(encryptSingleNxsItem(msg, encrypt_to_this_circle_id, encrypted_item, status))
+		    if(encryptSingleNxsItem(msg, encrypt_to_this_circle_id, grpId, encrypted_item, status))
 			    sendItem(encrypted_item) ;
 		    else
 			    std::cerr << "(WW) could not encrypt for circle ID " << encrypt_to_this_circle_id << ". Not yet in cache?" << std::endl;
@@ -1271,8 +1270,7 @@ bool RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 			    RsNxsItem *encrypted_item = NULL ;
 			    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
-#warning pass on the group id here so as to know which list to encrypt to (admin/members)
-			    if(encryptSingleNxsItem(gItem, entry.mCircleId, encrypted_item,status))
+			    if(encryptSingleNxsItem(gItem, entry.mCircleId, entry.mGroupId,encrypted_item,status))
 			    {
 				    itemL.push_back(encrypted_item) ;
 				    delete gItem ;
@@ -1323,8 +1321,7 @@ bool RsGxsNetService::locked_createTransactionFromPending(MsgCircleIdsRequestVet
                     RsNxsItem *encrypted_item = NULL ;
                     uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
                     
-#warning pass on the group id here so as to know which list to encrypt to (admin/members)
-                    if(encryptSingleNxsItem(mItem,msgPend->mCircleId,encrypted_item,status))
+                    if(encryptSingleNxsItem(mItem,msgPend->mCircleId,msgPend->mGrpId,encrypted_item,status))
                     {
                         itemL.push_back(encrypted_item) ;
                         delete mItem ;
@@ -3668,7 +3665,7 @@ bool RsGxsNetService::locked_addTransaction(NxsTransaction* tr)
 // Returns false when the keys are not loaded. Question to solve: what do we do if we miss some keys??
 // We should probably send anyway.
 
-bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *&encrypted_item, uint32_t& status)
+bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, const RsGxsGroupId& destination_group, RsNxsItem *&encrypted_item, uint32_t& status)
 {
         encrypted_item = NULL ;
 	status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
@@ -3681,8 +3678,7 @@ bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId&
 
 	std::list<RsGxsId> recipients ;
 
-#warning recipients should take the destination group ID as parameter and use it to know if is will use the admin list or the members list.
-	if(!mCircles->recipients(destination_circle,recipients))
+	if(!mCircles->recipients(destination_circle,destination_group,recipients))
 	{
 		std::cerr << "  (EE) Cannot encrypt transaction: recipients list not available. Should re-try later." << std::endl;
         	status = RS_NXS_ITEM_ENCRYPTION_STATUS_CIRCLE_ERROR ;
@@ -4051,8 +4047,8 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
 #endif
 				    RsNxsItem *encrypted_item = NULL ;
 				    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
-#warning pass on the group id here so as to know which list to encrypt to (admin/members)
-				    if(encryptSingleNxsItem(gItem, grpMeta->mCircleId, encrypted_item,status))
+
+				    if(encryptSingleNxsItem(gItem, grpMeta->mCircleId,mit->first, encrypted_item,status))
 				    {
 					    itemL.push_back(encrypted_item) ;
 					    delete gItem ;
@@ -4475,8 +4471,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 			    RsNxsItem *encrypted_item = NULL ;
 			    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
-#warning pass on the group id here so as to know which list to encrypt to (admin/members)
-			    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId, encrypted_item,status))
+			    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId,m->mGroupId, encrypted_item,status))
 			    {
 				    itemL.push_back(encrypted_item) ;
 				    delete mItem ;
@@ -4624,7 +4619,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 			    ++i ;
 		    else 
 		    {
-			    if(mCircles->isLoaded(circleId) && mCircles->isRecipient(circleId, msgMetas[i]->mAuthorId))
+			    if(mCircles->isLoaded(circleId) && mCircles->isRecipient(circleId, grpMeta.mGroupId, msgMetas[i]->mAuthorId))
 			    {
 				    ++i ;
 				    continue ;
