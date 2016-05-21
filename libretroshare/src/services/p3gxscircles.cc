@@ -33,6 +33,7 @@
 
 #include "pgp/pgpauxutils.h"
 #include "retroshare/rsgxscircles.h"
+#include "retroshare/rspeers.h"
 
 #include <sstream>
 #include <stdio.h>
@@ -40,6 +41,7 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
+#define DEBUG_CIRCLES	 1
 
 RsGxsCircles *rsGxsCircles = NULL;
 
@@ -1032,7 +1034,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 	if (cache.mIsExternal)
 	{
 #ifdef DEBUG_CIRCLES
-		std::cerr << "  Loading External Circle" << std::endl;
+		std::cerr << "Processing External Circle " << cache.mCircleId << std::endl;
 #endif
 
 		// need to trigger the searches.
@@ -1052,17 +1054,28 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 #endif
 				}
 				else
-				{
+		{
 #ifdef DEBUG_CIRCLES
-					std::cerr << "    Requesting unknown/unloaded identity: " << *pit << " to originator " << cache.mOriginator << std::endl;
+			std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
 #endif
-					std::list<PeerId> peers;
-					peers.push_back(cache.mOriginator) ;
+			std::list<PeerId> peers;
 
-					mIdentities->requestKey(pit->first, peers);
+			if(!cache.mOriginator.isNull())
+				peers.push_back(cache.mOriginator) ;
+			else
+			{
+                                std::cerr << "(WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+                                
+                                rsPeers->getOnlineList(peers) ;
+			}
 
-					isUnprocessedPeers = true;
-				}
+			mIdentities->requestKey(pit->first, peers);
+			isUnprocessedPeers = true;
+		}
+#ifdef DEBUG_CIRCLES
+	    		else
+                		std::cerr << "  Key is available. Nothing to process." << std::endl;
+#endif
 		}
 
 #ifdef HANDLE_SUBCIRCLES
@@ -1211,7 +1224,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 
 	/* if we appear in the group - then autosubscribe, and mark as processed */
         
-	const RsPgpId& ownPgpId = mPgpUtils->getPGPOwnId();
+//	const RsPgpId& ownPgpId = mPgpUtils->getPGPOwnId();
         
 	std::list<RsGxsId> myOwnIds;
                         
@@ -1235,7 +1248,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
         }
                                 
 #ifdef DEBUG_CIRCLES
-			std::cerr << "  own ID in circle: " << ownIdInCircle << std::endl;
+	std::cerr << "  own ID in circle: " << in_admin_list << std::endl;
 #endif
                                 
 	if(in_admin_list)
