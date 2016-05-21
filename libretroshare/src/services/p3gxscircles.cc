@@ -432,6 +432,7 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId&
 {
 	gxs_ids.clear() ;
 
+#warning Shouldn't we allow to propagate circle restricted info to partially loaded circles? Otherwise if an identity disappears, it will block the circle.
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (!mCircleCache.is_cached(circleId))
 		return false ;
@@ -1055,18 +1056,20 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				}
 				else
 		{
-#ifdef DEBUG_CIRCLES
-			std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
-#endif
 			std::list<PeerId> peers;
 
 			if(!cache.mOriginator.isNull())
+			{
 				peers.push_back(cache.mOriginator) ;
+#ifdef DEBUG_CIRCLES
+				std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
+#endif
+			}
 			else
 			{
-                                std::cerr << "(WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
-                                
-                                rsPeers->getOnlineList(peers) ;
+				std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+
+				rsPeers->getOnlineList(peers) ;
 			}
 
 			mIdentities->requestKey(pit->first, peers);

@@ -359,173 +359,213 @@ void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 
 void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 {
-    mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
+	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
 
 #ifdef ID_DEBUG
-    std::cerr << "CirclesDialog::loadCircleGroupMeta()";
-    std::cerr << std::endl;
+	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
+	std::cerr << std::endl;
 #endif
 
-    std::list<RsGroupMetaData> groupInfo;
-    std::list<RsGroupMetaData>::iterator vit;
+	std::list<RsGroupMetaData> groupInfo;
+	std::list<RsGroupMetaData>::iterator vit;
 
-    if (!rsGxsCircles->getGroupSummary(token,groupInfo))
-    {
-	    std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
-	    std::cerr << std::endl;
-	    mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
-	    return;
-    }
+	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
+	{
+		std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
+		std::cerr << std::endl;
+		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
+		return;
+	}
 
-    mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
-    /* add the top level item */
-    //QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
-    //personalCirclesItem->setText(0, tr("Personal Circles"));
-    //ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
+	/* add the top level item */
+	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
+	//personalCirclesItem->setText(0, tr("Personal Circles"));
+	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
-    if(!mExternalOtherCircleItem)
-    {
-	    mExternalOtherCircleItem = new QTreeWidgetItem();
-	    mExternalOtherCircleItem->setText(0, tr("Other visible external circles"));
+	if(!mExternalOtherCircleItem)
+	{
+		mExternalOtherCircleItem = new QTreeWidgetItem();
+		mExternalOtherCircleItem->setText(0, tr("Other visible external circles"));
 
-	    ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
-    }
+		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
+	}
 
-    if(!mExternalBelongingCircleItem )
-    {
-	    mExternalBelongingCircleItem = new QTreeWidgetItem();
-	    mExternalBelongingCircleItem->setText(0, tr("External circles my identities belong to"));
-	    ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
-    }
+	if(!mExternalBelongingCircleItem )
+	{
+		mExternalBelongingCircleItem = new QTreeWidgetItem();
+		mExternalBelongingCircleItem->setText(0, tr("External circles my identities belong to"));
+		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
+	}
 
-    for(vit = groupInfo.begin(); vit != groupInfo.end();++vit)
-    {
+	std::list<RsGxsId> own_identities ;
+	rsIdentity->getOwnIds(own_identities) ;
+
+	for(vit = groupInfo.begin(); vit != groupInfo.end();++vit)
+	{
 #ifdef ID_DEBUG
-	    std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
+		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
 #endif
-	    RsGxsCircleDetails details;
-	    rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details) ;
+		RsGxsCircleDetails details;
+		rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details) ;
 
-	    bool should_re_add = true ;
-	    bool am_I_in_circle = details.mAmIAllowed ;
-	    QTreeWidgetItem *item = NULL ;
-        
+		bool should_re_add = true ;
+		bool am_I_in_circle = details.mAmIAllowed ;
+		QTreeWidgetItem *item = NULL ;
+
 #ifdef ID_DEBUG
-        std::cerr << "Loaded info for circle " << vit->mGroupId << ". ubscribed=" << subscribed << ", am_I_in_circle=" << am_I_in_circle << std::endl;
+		std::cerr << "Loaded info for circle " << vit->mGroupId << ". ubscribed=" << subscribed << ", am_I_in_circle=" << am_I_in_circle << std::endl;
 #endif
 
-	    // find already existing items for this circle
+		// find already existing items for this circle
 
-	    QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
+		QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
 
-	    if(!clist.empty())
-	    {
-		    // delete all duplicate items. This should not happen, but just in case it does.
+		if(!clist.empty())
+		{
+			// delete all duplicate items. This should not happen, but just in case it does.
 
-		    while(clist.size() > 1)	
-	    {
+			while(clist.size() > 1)	
+			{
 #ifdef ID_DEBUG
-			    std::cerr << "  more than 1 item correspond to this ID. Removing!" << std::endl;
+				std::cerr << "  more than 1 item correspond to this ID. Removing!" << std::endl;
 #endif
-			    delete clist.front() ;
-            }
+				delete clist.front() ;
+			}
 
-		    item = clist.front() ;
+			item = clist.front() ;
 
-		    if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
-		    {
+			if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
+			{
 #ifdef ID_DEBUG
-			    std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
+				std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
 #endif
-			    delete item ;
-			    item = NULL ;
-		    }
-		    else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
-		    {
+				delete item ;
+				item = NULL ;
+			}
+			else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
+			{
 #ifdef ID_DEBUG
-			    std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
+				std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
 #endif
-			    delete item ;
-			    item = NULL ;
-		    }
-	    		else
-			    should_re_add = false ;	// item already exists
-	    }
+				delete item ;
+				item = NULL ;
+			}
+			else
+				should_re_add = false ;	// item already exists
+		}
 
-	    /* Add Widget, and request Pages */
+		/* Add Widget, and request Pages */
 
-	    if(should_re_add)
-	    {
-		    item = new QTreeWidgetItem();
+		if(should_re_add)
+		{
+			item = new QTreeWidgetItem();
 
-		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
-		    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 #warning TODO
-		    //item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
+			//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
-		    if(am_I_in_circle)
-		    {
+			if(am_I_in_circle)
+			{
 #ifdef ID_DEBUG
-			    std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
+				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
 #endif
-			    mExternalBelongingCircleItem->addChild(item);
-		    }
-		    else
-		    {
+				mExternalBelongingCircleItem->addChild(item);
+			}
+			else
+			{
 #ifdef ID_DEBUG
-			    std::cerr << "  adding item for circle " << vit->mGroupId << " to others"<< std::endl;
+				std::cerr << "  adding item for circle " << vit->mGroupId << " to others"<< std::endl;
 #endif
-			    mExternalOtherCircleItem->addChild(item);
-		    }
-	    }
-	    else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
-	    {
+				mExternalOtherCircleItem->addChild(item);
+			}
+		}
+		else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
+		{
 #ifdef ID_DEBUG
-		    std::cerr << "  Existing circle has a new name. Updating it in the tree." << std::endl;
+			std::cerr << "  Existing circle has a new name. Updating it in the tree." << std::endl;
 #endif
-		    item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-	    }
-            // just in case.
+			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+		}
+		// just in case.
+
+		item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+#warning TODO
+		//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
+
+		if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		{
+			QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
+			font.setBold(true) ;
+			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+			item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
+		}
+
+		// now determine for this circle wether we have pending invites
+		// we add a sub-item to the circle (to show the invite system info) in the following two cases:
+		//	- own GXS id is in admin list but not subscribed
+		//	- own GXS id is is admin and subscribed
+		//	- own GXS id is is subscribed
+
+		for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+		{
+			std::map<RsGxsId,uint32_t>::const_iterator it2 = details.mSubscriptionFlags.find(*it) ;
+
+			if(it2 == details.mSubscriptionFlags.end())
+				continue ;
+
+			bool invited ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
+			bool subscrb ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
+
+            		QTreeWidgetItem *subitem = NULL ;
+                    
+            		// see if the item already exists
+            		for(QTreeWidgetItemIterator itt(item);(*itt);++itt)
+                        	if((*itt)->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString() == (*it).toStdString())
+                            {
+                                subitem = *itt ;
+                                break ;
+                            }
+                        
+			if(!(invited || subscrb))
+            		{
+                		if(subitem != NULL)
+                            		delete subitem ;
+				continue ;
+                	}
+
+			            		if(!subitem)
+                        {
+				subitem = new QTreeWidgetItem(item);
+                
+                RsIdentityDetails idd ;
+			rsIdentity->getIdDetails(*it,idd) ;
+
+			QPixmap pixmap ;
+
+			if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+				pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+			subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(it2->first.toStdString())) ;
+			subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it2->second)) ;
+
+			subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
             
-	    item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-#warning TODO
-	    //item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
-            
-	    if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-	    {
-		    QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
-		    font.setBold(true) ;
-		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
-		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
-		    item->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
-	    }
+			item->addChild(subitem) ;
+                        }
 
-#warning TODO
-//	    switch(details.mSubscribeFlags)
-//	{
-//	case GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
-//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_yellow_128.png")) ;
-//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Your request to be in this circle is pending. You need to wait for the administrator to validate it.")) ;
-//		break ;
-//
-//	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST:
-//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_blue_128.png")) ;
-//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are invited to this circle by the administrator. Right click to join the circle.")) ;
-//		break ;
-//
-//	case GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST | GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED:
-//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(":icons/bullet_green_128.png")) ;
-//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("You are a validated member of this circle.")) ;
-//		break ;
-//
-//	default:
-//		item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
-//		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,"") ;
-//		break ;
-//	}
-    }
+			if(invited && !subscrb)
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Invited")) ;
+			if(!invited && subscrb)
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Subscription pending")) ;
+			if(invited && subscrb)
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Member")) ;
+		}    
+	}
 }
 
 static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 

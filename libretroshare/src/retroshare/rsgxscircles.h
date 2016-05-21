@@ -113,7 +113,7 @@ class RsGxsCircleDetails
 
 	uint32_t    mCircleType;
         
-        bool mAmIAllowed ;
+        bool mAmIAllowed ;			// true when one of load GXS ids belong to the circle allowed list (admin list & subscribed list).
 
         std::set<RsGxsId> mAllowedGxsIds;	// This crosses admin list and subscribed list
         std::set<RsPgpId> mAllowedNodes;
