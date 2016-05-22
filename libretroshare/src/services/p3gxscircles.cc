@@ -1127,8 +1127,9 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
     
 	checkCircleCacheForAutoSubscribe(cache);
 
-	if(isUnprocessedPeers)
-		return false ;
+    	// always store in cache even if uncomplete. But do not remove the loading items so that they can be kept in loading state.
+//	if(isUnprocessedPeers)
+	//	return false ;
     
 	/* move straight into the cache */
 	mCircleCache.store(cache.mCircleId, cache);
