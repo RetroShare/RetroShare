@@ -52,6 +52,7 @@ bool RsGxsCircleSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
 	RsGxsCircleGroupItem* grp_item = NULL;
 	RsGxsCircleMsgItem* snap_item = NULL;
+	RsGxsCircleSubscriptionRequestItem* subr_item = NULL;
 
 	if((grp_item = dynamic_cast<RsGxsCircleGroupItem*>(item)) != NULL)
 	{
@@ -60,6 +61,10 @@ bool RsGxsCircleSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	else if((snap_item = dynamic_cast<RsGxsCircleMsgItem*>(item)) != NULL)
 	{
 		return serialiseGxsCircleMsgItem(snap_item, data, size);
+	}
+	else if((subr_item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(item)) != NULL)
+	{
+		return serialiseGxsCircleSubscriptionRequestItem(subr_item, data, size);
 	}
 	return false;
 }
@@ -73,8 +78,7 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 		
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -87,6 +91,9 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 			break;
 		case RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM:
 			return deserialiseGxsCircleMsgItem(data, size);
+			break;
+		case RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM:
+			return deserialiseGxsCircleSubscriptionRequestItem(data, size);
 			break;
 		default:
 #ifdef CIRCLE_DEBUG
