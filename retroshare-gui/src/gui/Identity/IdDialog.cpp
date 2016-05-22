@@ -50,6 +50,7 @@
 /******
  * #define ID_DEBUG 1
  *****/
+#define ID_DEBUG 1
 
 // Data Requests.
 #define IDDIALOG_IDLIST     1
@@ -415,7 +416,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		QTreeWidgetItem *item = NULL ;
 
 #ifdef ID_DEBUG
-		std::cerr << "Loaded info for circle " << vit->mGroupId << ". ubscribed=" << subscribed << ", am_I_in_circle=" << am_I_in_circle << std::endl;
+		std::cerr << "Loaded info for circle " << vit->mGroupId << ". am_I_in_circle=" << am_I_in_circle << std::endl;
 #endif
 
 		// find already existing items for this circle
@@ -511,23 +512,40 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		//	- own GXS id is is admin and subscribed
 		//	- own GXS id is is subscribed
 
+#ifdef ID_DEBUG
+		std::cerr << "  updating status of all identities for this circle:" << std::endl;
+#endif
 		for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
 		{
+#ifdef ID_DEBUG
+			std::cerr << "    ID " << *it << ": " ;
+#endif
 			std::map<RsGxsId,uint32_t>::const_iterator it2 = details.mSubscriptionFlags.find(*it) ;
 
 			if(it2 == details.mSubscriptionFlags.end())
+            {
+#ifdef ID_DEBUG
+			std::cerr << "not in subscription list. Skipping." << std::endl;
+#endif
 				continue ;
+            }
 
 			bool invited ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
 			bool subscrb ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
 
+#ifdef ID_DEBUG
+			std::cerr << "invited: " << invited << ", subscription: " << subscrb ;
+#endif
             		QTreeWidgetItem *subitem = NULL ;
                     
             		// see if the item already exists
-            		for(QTreeWidgetItemIterator itt(item);(*itt);++itt)
-                        	if((*itt)->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString() == (*it).toStdString())
+                    	for(uint32_t k=0;k<item->childCount();++k)
+				if(item->child(k)->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString() == (*it).toStdString())
                             {
-                                subitem = *itt ;
+                                subitem = item->child(k);
+#ifdef ID_DEBUG
+				std::cerr << " found existing sub item." << std::endl;
+#endif
                                 break ;
                             }
                         
@@ -535,11 +553,17 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
             		{
                 		if(subitem != NULL)
                             		delete subitem ;
+#ifdef ID_DEBUG
+				std::cerr << ". not relevant. Skipping." << std::endl;
+#endif
 				continue ;
                 	}
 
-			            		if(!subitem)
+			if(!subitem)
                         {
+#ifdef ID_DEBUG
+				std::cerr << " no existing sub item. Creating new one." << std::endl;
+#endif
 				subitem = new QTreeWidgetItem(item);
                 
                 RsIdentityDetails idd ;
@@ -610,8 +634,8 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
     if ((!item) || (!item->parent()))
 	    return;
     
-    QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
-    RsGxsCircleId id ( coltext.toStdString()) ;
+	QString coltext = (item->parent()->parent())? (item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID)) : (item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID));
+    RsGxsCircleId id( coltext.toStdString()) ;
     
     if(requested_cid != id)
     {
@@ -669,6 +693,9 @@ void IdDialog::acceptCircleSubscription()
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
+    	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
+            circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString()) ;
+    
     rsGxsCircles->requestCircleMembership(own_id,circle_id) ;
 }
 
@@ -684,18 +711,38 @@ void IdDialog::refuseCircleSubscription()
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
+    	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
+            circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString()) ;
+    
 	rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
 }
     
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
-	QMenu contextMnu( this );
+    QMenu contextMnu( this );
 
-	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+    QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+
+    if(!item)
+	    return ;
+
+    RsGxsId current_gxs_id ;
+    RsGxsCircleId circle_id ;
+    RsGxsId item_id(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString());
+    bool is_circle ;
     
-	if (item) 
+    if(rsIdentity->isOwnId(item_id))
+    {
+	    current_gxs_id = RsGxsId(item_id);
+	    circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString());
+            is_circle =false ;
+
+	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
+    }
+    else	// item is for circle
     {
 	    uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+            circle_id = RsGxsCircleId(item_id) ;
 
 	    if(item->parent() != NULL)
 	    {
@@ -704,95 +751,112 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    else
 			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
 	    }
-    }
-    
-    contextMnu.addSeparator() ;
-    
-    RsGxsCircleId circle_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole).toString().toStdString());
-    
-    RsGxsCircleDetails details ;
-    rsGxsCircles->getCircleDetails(circle_id,details) ;
+        
+	    std::cerr << "  Item is a circle item. Adding Edit/Details menu entry." << std::endl;
+            is_circle = true ;
 
-    static const int REQUES = 0 ; // Admin list: no          Subscribed:  no
-    static const int ACCEPT = 1 ; // Admin list: yes         Subscribed:  no
-    static const int REMOVE = 2 ; // Admin list: yes         Subscribed:  yes
-    static const int CANCEL = 3 ; // Admin list: no          Subscribed:  yes
+	    contextMnu.addSeparator() ;
+    }
+    RsGxsCircleDetails details ;
     
-    const QString menu_titles[4] = { tr("Accept circle invitation"), tr("Remove from this circle"),tr("Cancel subscribe request"), tr("Request subscription") } ;
+    if(!rsGxsCircles->getCircleDetails(circle_id,details))// grab real circle ID from parent. Make sure circle id is used correctly afterwards!
+    {
+        std::cerr << "  (EE) cannot get circle info for ID " << circle_id << ". Not in cache?" << std::endl;
+        return ;
+    }
+
+    static const int REQUES = 0 ; // Admin list: no          Subscription request:  no
+    static const int ACCEPT = 1 ; // Admin list: yes         Subscription request:  no
+    static const int REMOVE = 2 ; // Admin list: yes         Subscription request:  yes
+    static const int CANCEL = 3 ; // Admin list: no          Subscription request:  yes
+
+    const QString menu_titles[4] = { tr("Request subscription"), tr("Accept circle invitation"), tr("Quit this circle"),tr("Cancel subscribe request")} ;
     const QString image_names[4] = { ":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png" } ;
-    
+
     std::vector< std::vector<RsGxsId> > ids(4) ;
-    
+
     std::list<RsGxsId> own_identities ;
     rsIdentity->getOwnIds(own_identities) ;
-                             
-    for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
-    {
-	    std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it) ;
-	    uint32_t subscribe_flags = (vit == details.mSubscriptionFlags.end())?0:(vit->second) ;
 
-	    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
-		    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-			    ids[REMOVE].push_back(*it) ;
-		    else
-			    ids[CANCEL].push_back(*it) ;
-	    else 
-		    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
-			    ids[ACCEPT].push_back(*it) ;
-		    else
-			    ids[REQUES].push_back(*it) ;
-    }
+    // policy is:
+    //	- if on a circle item
+    //		=> add possible subscription requests for all ids
+    //	- if on a Id item
+    //		=> only add subscription requests for that ID
+
+    for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+	    if(is_circle || current_gxs_id == *it)
+	    {
+		    std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it) ;
+		    uint32_t subscribe_flags = (vit == details.mSubscriptionFlags.end())?0:(vit->second) ;
+
+		    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED)
+			    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+				    ids[REMOVE].push_back(*it) ;
+			    else
+				    ids[CANCEL].push_back(*it) ;
+		    else 
+			    if(subscribe_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+				    ids[ACCEPT].push_back(*it) ;
+			    else
+				    ids[REQUES].push_back(*it) ;
+	    }
     contextMnu.addSeparator() ;
 
     for(int i=0;i<4;++i)
     {
-        if(ids[i].size() == 1)
-        {
-                RsIdentityDetails det ;
-                QString id_name ;
-                if(rsIdentity->getIdDetails(ids[i][0],det))
-                    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][0].toStdString()) + ")" ;
-                else
-                    id_name = tr("for identity ")+QString::fromStdString(ids[i][0].toStdString()) ;
-                
-            QAction *action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
-            
-	    if(i <2)
-		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
-	    else
-		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(cancelCircleSubscription()));
-            
-	    action->setData(QString::fromStdString(ids[i][0].toStdString()));
-	    contextMnu.addAction(action) ;
-        }
-	else if(ids[i].size() > 1)
-        {
-            QMenu *menu = new QMenu(menu_titles[i],this) ;
-            
-            for(uint32_t j=0;j<ids[i].size();++j)
+	    if(ids[i].size() == 1)
 	    {
-                RsIdentityDetails det ;
-                QString id_name ;
-                if(rsIdentity->getIdDetails(ids[i][j],det))
-                    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][j].toStdString()) + ")" ;
-                else
-                    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
-                
-		    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
-                    
-                    if(i <2)
+		    RsIdentityDetails det ;
+		    QString id_name ;
+		    if(rsIdentity->getIdDetails(ids[i][0],det))
+			    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][0].toStdString()) + ")" ;
+		    else
+			    id_name = tr("for identity ")+QString::fromStdString(ids[i][0].toStdString()) ;
+
+		    QAction *action ;
+
+		    if(is_circle)
+			    action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
+		    else
+			    action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+
+		    if(i <2)
 			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
-                    else
+		    else
 			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(cancelCircleSubscription()));
-                        
-		    action->setData(QString::fromStdString(ids[i][j].toStdString()));
-		    menu->addAction(action) ;
+
+		    action->setData(QString::fromStdString(ids[i][0].toStdString()));
+		    contextMnu.addAction(action) ;
 	    }
-            
-            contextMnu.addMenu(menu) ;
-        }
+	    else if(ids[i].size() > 1)
+	    {
+		    QMenu *menu = new QMenu(menu_titles[i],this) ;
+
+		    for(uint32_t j=0;j<ids[i].size();++j)
+		    {
+			    RsIdentityDetails det ;
+			    QString id_name ;
+			    if(rsIdentity->getIdDetails(ids[i][j],det))
+				    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][j].toStdString()) + ")" ;
+			    else
+				    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
+
+			    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
+
+			    if(i <2)
+				    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
+			    else
+				    QObject::connect(action,SIGNAL(triggered()), this, SLOT(cancelCircleSubscription()));
+
+			    action->setData(QString::fromStdString(ids[i][j].toStdString()));
+			    menu->addAction(action) ;
+		    }
+
+		    contextMnu.addMenu(menu) ;
+	    }
     }
-    
+
     contextMnu.exec(QCursor::pos());
 }
 
@@ -894,7 +958,7 @@ void IdDialog::circle_selected()
 
 	//set_item_background(item, BLUE_BACKGROUND);
 
-	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	QString coltext = (item->parent()->parent())? (item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID)) : (item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID));
 	RsGxsCircleId id ( coltext.toStdString()) ;
 
     	requestCircleGroupData(id) ;
