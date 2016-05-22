@@ -432,7 +432,6 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId&
 {
 	gxs_ids.clear() ;
 
-#warning Shouldn't we allow to propagate circle restricted info to partially loaded circles? Otherwise if an identity disappears, it will block the circle.
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (!mCircleCache.is_cached(circleId))
 		return false ;
@@ -1900,8 +1899,8 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     std::cerr << "  AuthorId   : " << s->meta.mAuthorId << std::endl;
     std::cerr << "  ThreadId   : " << s->meta.mThreadId << std::endl;
     
-#warning Would be nice to wait for a few seconds before publishing, so that the user can potentially cancel a wrong request before it gets piped into the system, or better look if there is a less recent version that we can keep/remove?
-    //RsGenExchange::publishMsg(token, msgItem);
+    uint32_t token ;
+    RsGenExchange::publishMsg(token, s);
     return true;
 }
 
