@@ -103,7 +103,8 @@ RsGxsCircles *rsGxsCircles = NULL;
 #define GXSID_LOAD_CYCLE		10	// GXSID completes a load in this period.
 
 #define MIN_CIRCLE_LOAD_GAP		5
-#define GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE	1200	// re-check every 20 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
+#define GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
+#define GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -122,7 +123,8 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
-
+    	mLastCacheMembershipUpdateTS = 0 ;
+        
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
 	// Dummy Circles.
@@ -183,6 +185,13 @@ void	p3GxsCircles::service_tick()
 {
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
+    
+	time_t now = time(NULL);
+    	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
+	{
+		p3GxsCircles::checkCircleCacheForMembershipUpdate();
+		mLastCacheMembershipUpdateTS = now ;
+	}
 	return;
 }
 
@@ -558,6 +567,7 @@ RsGxsCircleCache::RsGxsCircleCache()
 	mUpdateTime = 0;
 	mGroupStatus = 0;
 	mGroupSubscribeFlags = 0;
+    	mLastUpdatedMembershipTS = 0 ;
 
 	return; 
 }
@@ -1124,7 +1134,8 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 	// We can check for self inclusion in the circle right away, since own ids are always loaded.
 	// that allows to subscribe/unsubscribe uncomplete circles 
     
-	checkCircleCacheForAutoSubscribe(cache);
+	locked_checkCircleCacheForAutoSubscribe(cache);
+	locked_checkCircleCacheForMembershipUpdate(cache);
 
     	// always store in cache even if uncomplete. But do not remove the loading items so that they can be kept in loading state.
 //	if(isUnprocessedPeers)
@@ -1177,32 +1188,42 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
     return true;
 }
     
-bool p3GxsCircles::checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
+bool p3GxsCircles::checkCircleCacheForMembershipUpdate()
 {
-    time_t now = time(NULL) ;
+#warning TODO. Should go over existing cache entries and update/process the membership requests
+    std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
+    return false ;
+}
 
-    if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
-    { 
-	    // this should be called regularly
-	    uint32_t token ;
-	    RsTokReqOptions opts;
-	    opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	    std::list<RsGxsGroupId> grpIds ;
+bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
+{
+	time_t now = time(NULL) ;
 
-	    grpIds.push_back(RsGxsGroupId(cache.mCircleId)) ;
+	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
+	{ 
+		std::cerr << "Cache entry for circle " << cache.mCircleId << " needs a swab over membership requests. Re-scheduling it." << std::endl;
 
-	    RsGenExchange::getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY,	opts, grpIds);
-	    GxsTokenQueue::queueRequest(token, CIRCLEREQ_MESSAGE_DATA);	
-    }
-    return true ;
+		// this should be called regularly
+
+		uint32_t token ;
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+		std::list<RsGxsGroupId> grpIds ;
+
+		grpIds.push_back(RsGxsGroupId(cache.mCircleId)) ;
+
+		RsGenExchange::getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY,	opts, grpIds);
+		GxsTokenQueue::queueRequest(token, CIRCLEREQ_MESSAGE_DATA);	
+	}
+	return true ;
 }
 
 /* We need to AutoSubscribe if the Circle is relevent to us */
 
-bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
+bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() : "<< cache.mCircleId << std::endl;
+	std::cerr << "p3GxsCircles::locked_checkCircleCacheForAutoSubscribe() : "<< cache.mCircleId << std::endl;
 #endif
 
 	/* if processed already - ignore */

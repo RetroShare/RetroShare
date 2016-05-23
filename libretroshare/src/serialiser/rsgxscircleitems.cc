@@ -35,6 +35,7 @@ uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 {
 	RsGxsCircleGroupItem* grp_item = NULL;
 	RsGxsCircleMsgItem* snap_item = NULL;
+	RsGxsCircleSubscriptionRequestItem* subr_item = NULL;
 
 	if((grp_item = dynamic_cast<RsGxsCircleGroupItem*>(item)) != NULL)
 	{
@@ -43,6 +44,10 @@ uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 	else if((snap_item = dynamic_cast<RsGxsCircleMsgItem*>(item)) != NULL)
 	{
 		return sizeGxsCircleMsgItem(snap_item);
+    }
+	else if((subr_item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(item)) != NULL)
+	{
+		return sizeGxsCircleSubscriptionRequestItem(subr_item);
     }
     else
         return 0 ;

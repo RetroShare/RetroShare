@@ -247,9 +247,11 @@ virtual RsServiceInfo getServiceInfo();
 	bool cache_load_for_token(uint32_t token);
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 
-	bool checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
-	bool checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache);
+	bool checkCircleCacheForMembershipUpdate();
+    
+	bool locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
 	bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
+	bool locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache &cache);
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;
@@ -286,6 +288,7 @@ virtual RsServiceInfo getServiceInfo();
 	void checkDummyIdData();
 	void generateDummyCircle();
 
+    time_t mLastCacheMembershipUpdateTS ;
 
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
