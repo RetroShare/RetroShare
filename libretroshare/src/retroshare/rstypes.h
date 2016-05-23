@@ -324,9 +324,9 @@ class CompressedChunkMap
 			uint32_t residue = total_size%chunk_size ;
 
 			if(residue && operator[](nbchks-1))
-				return (filledChunks(nbchks)-1)*chunk_size + (total_size%chunk_size) ;
+				return (filledChunks(nbchks)-1)*(uint64_t)chunk_size + (total_size%chunk_size) ;
 			else
-				return filledChunks(nbchks)*chunk_size ;
+				return filledChunks(nbchks)*(uint64_t)chunk_size ;
 		}
 		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
 
