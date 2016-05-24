@@ -464,6 +464,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
 			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 #warning TODO
 			//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
@@ -539,7 +540,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     
             		// see if the item already exists
                     	for(uint32_t k=0;k<item->childCount();++k)
-				if(item->child(k)->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString() == (*it).toStdString())
+				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == (*it).toStdString())
                             {
                                 subitem = item->child(k);
 #ifdef ID_DEBUG
@@ -573,7 +574,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
 				pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
-			subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(it2->first.toStdString())) ;
+			subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromUtf8(idd.mNickname.c_str())) ;
+			subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it2->first.toStdString())) ;
 			subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it2->second)) ;
 
 			subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
@@ -633,7 +635,7 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
     if ((!item) || (!item->parent()))
 	    return;
     
-	QString coltext = (item->parent()->parent())? (item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID)) : (item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID));
+	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
     RsGxsCircleId id( coltext.toStdString()) ;
     
     if(requested_cid != id)
@@ -669,7 +671,7 @@ void IdDialog::showEditExistingCircle()
     
 	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 	
-	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
     RsGxsGroupId id ( coltext.toStdString());
 
 	CreateCircleDialog dlg;
@@ -689,16 +691,16 @@ void IdDialog::acceptCircleSubscription()
 
 	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
     
-	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
     	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
-            circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString()) ;
+            circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()) ;
     
     rsGxsCircles->requestCircleMembership(own_id,circle_id) ;
 }
 
-void IdDialog::refuseCircleSubscription() 
+void IdDialog::cancelCircleSubscription() 
 {	
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
 
@@ -707,11 +709,11 @@ void IdDialog::refuseCircleSubscription()
     
 	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
 	RsGxsCircleId circle_id ( coltext.toStdString()) ;
     
     	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
-            circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString()) ;
+            circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()) ;
     
 	rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
 }
@@ -727,13 +729,13 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 
     RsGxsId current_gxs_id ;
     RsGxsCircleId circle_id ;
-    RsGxsId item_id(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString());
+    RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
     bool is_circle ;
     
     if(rsIdentity->isOwnId(item_id))
     {
 	    current_gxs_id = RsGxsId(item_id);
-	    circle_id = RsGxsCircleId(item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID).toStdString());
+	    circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
             is_circle =false ;
 
 	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
@@ -957,7 +959,7 @@ void IdDialog::circle_selected()
 
 	//set_item_background(item, BLUE_BACKGROUND);
 
-	QString coltext = (item->parent()->parent())? (item->parent()->text(CIRCLEGROUP_CIRCLE_COL_GROUPID)) : (item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID));
+	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
 	RsGxsCircleId id ( coltext.toStdString()) ;
 
     	requestCircleGroupData(id) ;

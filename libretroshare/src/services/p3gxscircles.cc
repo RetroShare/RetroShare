@@ -293,13 +293,19 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 		    details.mAllowedNodes = data.mAllowedNodes;
 		    details.mSubscriptionFlags.clear();
 		    details.mAllowedGxsIds.clear();
+		    details.mAmIAllowed = false ;
 
 		    for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it(data.mMembershipStatus.begin());it!=data.mMembershipStatus.end();++it)
 		    {
 			    details.mSubscriptionFlags[it->first] = it->second.subscription_flags ;
 
 			    if(it->second.subscription_flags == GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED)
+                		{
 				    details.mAllowedGxsIds.insert(it->first) ;
+                    
+                    			if(rsIdentity->isOwnId(it->first))
+		    				details.mAmIAllowed = true ;
+                    		}
 		    }
 
 
@@ -1899,7 +1905,7 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
 
     s->time_stamp           = time(NULL) ;
     s->time_out             = 0 ;	// means never
-    s->subscription_type    = RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE ;
+    s->subscription_type    = request_type ;
 
     RsTemporaryMemory tmpmem(circle_id.serial_size() + own_gxsid.serial_size()) ;
     
@@ -1922,6 +1928,10 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     
     uint32_t token ;
     RsGenExchange::publishMsg(token, s);
+    
+    // update the cache.
+    force_cache_reload(circle_id);
+    
     return true;
 }
 

@@ -68,7 +68,7 @@ private slots:
 	void updateCirclesDisplay();
     
     void acceptCircleSubscription() ;
-    void refuseCircleSubscription() ;
+    void cancelCircleSubscription() ;
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
