@@ -234,7 +234,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Set initial section sizes */
   QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.2) ;
+  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
 
 	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
@@ -285,7 +285,8 @@ IdDialog::IdDialog(QWidget *parent) :
 
     // circles stuff
     
-    connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
+    // remove this, as it is not necessary anymore with the new display.
+    //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
 
     
@@ -610,6 +611,15 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                         }
 			if(invited && subscrb)
 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Member")) ;
+            
+            		if (is_own_id)
+			{
+				QFont font = subitem->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
+				font.setBold(true) ;
+				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,font) ;
+				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPID,font) ;
+				subitem->setFont(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS,font) ;
+			}
 		}    
         
         	if(am_I_in_circle)
