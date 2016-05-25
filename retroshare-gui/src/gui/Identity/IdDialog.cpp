@@ -420,7 +420,13 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		// find already existing items for this circle
 
-		QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
+        	// implement the search manually, because there's no find based on user role.
+		//QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
+		QList<QTreeWidgetItem*> clist ;
+            	QString test_str = QString::fromStdString(vit->mGroupId.toStdString()) ;
+        	for(QTreeWidgetItemIterator itt(ui->treeWidget_membership);*itt;++itt)
+                	if( (*itt)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString() == test_str)
+                        	clist.push_back(*itt) ;
 
 		if(!clist.empty())
 		{
@@ -463,7 +469,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			item = new QTreeWidgetItem();
 
 			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+			item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 #warning TODO
@@ -564,35 +570,35 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                         	delete subitem ; 
 
 			if(!subitem)
-                        {
+			{
 #ifdef ID_DEBUG
 				std::cerr << " no existing sub item. Creating new one." << std::endl;
 #endif
 				subitem = new QTreeWidgetItem(item);
-                
-                RsIdentityDetails idd ;
-			rsIdentity->getIdDetails(*it,idd) ;
 
-			QPixmap pixmap ;
+				RsIdentityDetails idd ;
+				rsIdentity->getIdDetails(*it,idd) ;
 
-			if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-				pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+				QPixmap pixmap ;
 
-			subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromUtf8(idd.mNickname.c_str())) ;
-			subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it2->first.toStdString())) ;
-			subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it2->second)) ;
+				if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+					pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
-			subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
-            
-			item->addChild(subitem) ;
-                        }
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
+				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it2->second)) ;
+				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it2->first.toStdString())) ;
+
+				subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
+
+				item->addChild(subitem) ;
+			}
 
 			if(invited && !subscrb)
-				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Invited")) ;
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Invited")) ;
 			if(!invited && subscrb)
-				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Subscription pending")) ;
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Subscription pending")) ;
 			if(invited && subscrb)
-				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Member")) ;
+				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Member")) ;
 		}    
 	}
 }
