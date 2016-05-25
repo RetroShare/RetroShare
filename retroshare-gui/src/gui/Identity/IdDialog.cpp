@@ -558,6 +558,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 				continue ;
                 	}
+            		// remove item if flags are not ok.
+            
+                	if(subitem && subitem->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it2->second)
+                        	delete subitem ; 
 
 			if(!subitem)
                         {
