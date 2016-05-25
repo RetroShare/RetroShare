@@ -96,6 +96,8 @@
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
+#define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
+#define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
 
 // quick solution for RSID_COL_VOTES sorting
 class TreeWidgetItem : public QTreeWidgetItem {
@@ -518,26 +520,30 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		//	- own GXS id is is admin and subscribed
 		//	- own GXS id is is subscribed
 
+        	bool am_I_invited = false ;
+        	bool am_I_pending = false ;
 #ifdef ID_DEBUG
 		std::cerr << "  updating status of all identities for this circle:" << std::endl;
 #endif
-		for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+		//for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
 #ifdef ID_DEBUG
 			std::cerr << "    ID " << *it << ": " ;
 #endif
-			std::map<RsGxsId,uint32_t>::const_iterator it2 = details.mSubscriptionFlags.find(*it) ;
+//			std::map<RsGxsId,uint32_t>::const_iterator it2 = details.mSubscriptionFlags.find(*it) ;
+//
+//			if(it2 == details.mSubscriptionFlags.end())
+//			{
+//#ifdef ID_DEBUG
+//			std::cerr << "not in subscription list. Skipping." << std::endl;
+//#endif
+//				continue ;
+//			}
 
-			if(it2 == details.mSubscriptionFlags.end())
-            {
-#ifdef ID_DEBUG
-			std::cerr << "not in subscription list. Skipping." << std::endl;
-#endif
-				continue ;
-            }
-
-			bool invited ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
-			bool subscrb ( it2->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
+			bool is_own_id = rsIdentity->isOwnId(it->first) ;
+			bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
+			bool subscrb ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
 
 #ifdef ID_DEBUG
 			std::cerr << "invited: " << invited << ", subscription: " << subscrb ;
@@ -546,7 +552,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     
             		// see if the item already exists
                     	for(uint32_t k=0;k<item->childCount();++k)
-				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == (*it).toStdString())
+				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
                             {
                                 subitem = item->child(k);
 #ifdef ID_DEBUG
@@ -566,7 +572,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                 	}
             		// remove item if flags are not ok.
             
-                	if(subitem && subitem->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it2->second)
+                	if(subitem && subitem->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it->second)
                         	delete subitem ; 
 
 			if(!subitem)
@@ -577,16 +583,21 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 				subitem = new QTreeWidgetItem(item);
 
 				RsIdentityDetails idd ;
-				rsIdentity->getIdDetails(*it,idd) ;
+				bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
 
 				QPixmap pixmap ;
 
 				if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-					pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+					pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(it->first)) ;
 
-				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
-				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it2->second)) ;
-				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it2->first.toStdString())) ;
+                		if(has_id)
+					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
+                                else
+					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID :")+QString::fromStdString(it->first.toStdString())) ;
+                                
+				subitem->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Indentity ID: ")+QString::fromStdString(it->first.toStdString())) ;
+				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it->second)) ;
+				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it->first.toStdString())) ;
 
 				subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
@@ -594,12 +605,29 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			}
 
 			if(invited && !subscrb)
+                	{
 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Invited")) ;
+                
+                		if(is_own_id)
+					am_I_invited = true ;
+	    		}
 			if(!invited && subscrb)
+			{
 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Subscription pending")) ;
+                
+                		if(is_own_id)
+					am_I_pending = true ;
+                        }
 			if(invited && subscrb)
 				subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, tr("Member")) ;
 		}    
+        
+        	if(am_I_in_circle)
+                	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
+	    	else if(am_I_invited || am_I_pending)
+                	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
+            	else
+                	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
 	}
 }
 
