@@ -207,21 +207,19 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
     {
 	    RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 	    RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 	    if (msgChange && !msgChange->metaChange())
 	    {
 #ifdef DEBUG_CIRCLES
-		    std::cerr << "  Found Message Change Notification";
-		    std::cerr << std::endl;
+		    std::cerr << "  Found circle Message Change Notification" << std::endl;
 #endif
-
-		    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-		    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-		    for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+		    for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
 		    {
 #ifdef DEBUG_CIRCLES
-			    std::cerr << "    Msgs for Group: " << mit->first;
-			    std::cerr << std::endl;
+			    std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
+			    for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator it2(msgChange->msgChangeMap.begin());it2!=msgChange->msgChangeMap.end();++it2)
+				    force_cache_reload(RsGxsCircleId(it2->first)) ;
 		    }
 	    }
 
@@ -229,13 +227,9 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	    if (groupChange && !groupChange->metaChange())
 	    {
 #ifdef DEBUG_CIRCLES
-		    std::cerr << "  Found Group Change Notification";
-		    std::cerr << std::endl;
+		    std::cerr << "  Found Group Change Notification" << std::endl;
 #endif
-
-		    std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-		    std::list<RsGxsGroupId>::iterator git;
-		    for(git = groupList.begin(); git != groupList.end(); ++git)
+		    for(std::list<RsGxsGroupId>::iterator git = groupChange->mGrpIdList.begin(); git != groupChange->mGrpIdList.end(); ++git)
 		    {
 #ifdef DEBUG_CIRCLES
 			    std::cerr << "    Incoming Group: " << *git << ". Forcing cache load." << std::endl;
@@ -244,6 +238,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			    // for new circles we need to add them to the list.
 			    // we don't know the type of this circle here
 			    // original behavior was to add all ids to the external ids list
+
 			    addCircleIdToList(RsGxsCircleId(*git), 0);
 
 			    // reset the cached circle data for this id
@@ -254,14 +249,14 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		    }
 	    }
 
-	if(groupChange)
-	    for(std::list<RsGxsGroupId>::const_iterator git(groupChange->mGrpIdList.begin());git!=groupChange->mGrpIdList.end();++git)
-	    {
+	    if(groupChange)
+		    for(std::list<RsGxsGroupId>::const_iterator git(groupChange->mGrpIdList.begin());git!=groupChange->mGrpIdList.end();++git)
+		    {
 #ifdef DEBUG_CIRCLES
-		    std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
+			    std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
-		    force_cache_reload(RsGxsCircleId(*git)) ;
-	    }
+			    force_cache_reload(RsGxsCircleId(*git)) ;
+		    }
     }
     RsGxsIfaceHelper::receiveChanges(changes);	// this clear up the vector and delete its elements
 }
@@ -2029,8 +2024,6 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     
     return true ;
 }
-
-
 
 
 
