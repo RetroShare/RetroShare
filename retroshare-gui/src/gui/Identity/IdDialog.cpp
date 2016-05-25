@@ -234,7 +234,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Set initial section sizes */
   QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
-  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 280);
+  circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.2) ;
 
 	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
@@ -300,7 +300,7 @@ IdDialog::IdDialog(QWidget *parent) :
     QTimer *tmer = new QTimer(this) ;
     connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
     
-    tmer->start(10000) ;	// update every minute. 
+    tmer->start(10000) ;	// update every 10 secs. 
 }	
 
 void IdDialog::updateCirclesDisplay()
@@ -531,16 +531,6 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #ifdef ID_DEBUG
 			std::cerr << "    ID " << *it << ": " ;
 #endif
-//			std::map<RsGxsId,uint32_t>::const_iterator it2 = details.mSubscriptionFlags.find(*it) ;
-//
-//			if(it2 == details.mSubscriptionFlags.end())
-//			{
-//#ifdef ID_DEBUG
-//			std::cerr << "not in subscription list. Skipping." << std::endl;
-//#endif
-//				continue ;
-//			}
-
 			bool is_own_id = rsIdentity->isOwnId(it->first) ;
 			bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
 			bool subscrb ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
