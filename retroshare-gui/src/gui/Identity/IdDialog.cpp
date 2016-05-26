@@ -285,7 +285,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
     // circles stuff
     
-    // remove this, as it is not necessary anymore with the new display.
     //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
 
@@ -564,7 +563,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
             		// remove item if flags are not ok.
             
                 	if(subitem && subitem->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it->second)
+                    {
                         	delete subitem ; 
+                        subitem = NULL ;
+                    }
 
 			if(!subitem)
 			{
