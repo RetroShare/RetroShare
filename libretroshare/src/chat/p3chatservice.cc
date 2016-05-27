@@ -95,49 +95,51 @@ int	p3ChatService::tick()
 
 void p3ChatService::sendPublicChat(const std::string &msg)
 {
-	/* go through all the peers */
+    /* go through all the peers */
 
-	std::set<RsPeerId> ids;
-	std::set<RsPeerId>::iterator it;
-	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
+    std::set<RsPeerId> ids;
+    std::set<RsPeerId>::iterator it;
+    mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
 
-	/* add in own id -> so get reflection */
-	RsPeerId ownId = mServiceCtrl->getOwnId();
-	ids.insert(ownId);
-
-#ifdef CHAT_DEBUG
-	std::cerr << "p3ChatService::sendChat()";
-	std::cerr << std::endl;
-#endif
-
-	for(it = ids.begin(); it != ids.end(); ++it)
-	{
-		RsChatMsgItem *ci = new RsChatMsgItem();
-
-		ci->PeerId(*it);
-		ci->chatFlags = RS_CHAT_FLAG_PUBLIC;
-		ci->sendTime = time(NULL);
-		ci->recvTime = ci->sendTime;
-		ci->message = msg;
+    /* add in own id -> so get reflection */
+    RsPeerId ownId = mServiceCtrl->getOwnId();
+    ids.insert(ownId);
 
 #ifdef CHAT_DEBUG
-		std::cerr << "p3ChatService::sendChat() Item:";
-		std::cerr << std::endl;
-		ci->print(std::cerr);
-		std::cerr << std::endl;
+    std::cerr << "p3ChatService::sendChat()";
+    std::cerr << std::endl;
 #endif
 
-		if (*it == ownId) {
-            //mHistoryMgr->addMessage(false, RsPeerId(), ownId, ci);
-            ChatMessage message;
-            initChatMessage(ci, message);
-            message.incoming = false;
-            message.online = true;
-            RsServer::notify()->notifyChatMessage(message);
-            mHistoryMgr->addMessage(message);
-		}
-		sendItem(ci);
-	}
+    for(it = ids.begin(); it != ids.end(); ++it)
+    {
+	    RsChatMsgItem *ci = new RsChatMsgItem();
+
+	    ci->PeerId(*it);
+	    ci->chatFlags = RS_CHAT_FLAG_PUBLIC;
+	    ci->sendTime = time(NULL);
+	    ci->recvTime = ci->sendTime;
+	    ci->message = msg;
+
+#ifdef CHAT_DEBUG
+	    std::cerr << "p3ChatService::sendChat() Item:";
+	    std::cerr << std::endl;
+	    ci->print(std::cerr);
+	    std::cerr << std::endl;
+#endif
+
+	    if (*it == ownId) 
+	    {
+		    //mHistoryMgr->addMessage(false, RsPeerId(), ownId, ci);
+		    ChatMessage message;
+		    initChatMessage(ci, message);
+		    message.incoming = false;
+		    message.online = true;
+		    RsServer::notify()->notifyChatMessage(message);
+		    mHistoryMgr->addMessage(message);
+	    }
+	    else
+		    checkSizeAndSendMessage(ci);
+    }
 }
 
 
@@ -567,10 +569,10 @@ uint32_t p3ChatService::getMaxMessageSecuritySize(int type)
 {
 	switch (type)
 	{
-	case RS_CHAT_TYPE_PUBLIC:
 	case RS_CHAT_TYPE_LOBBY:
 		return MAX_MESSAGE_SECURITY_SIZE;
 
+	case RS_CHAT_TYPE_PUBLIC:
 	case RS_CHAT_TYPE_PRIVATE:
 	case RS_CHAT_TYPE_DISTANT:
 		return 0; // unlimited
