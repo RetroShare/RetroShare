@@ -61,6 +61,7 @@ protected:
     
     void requestCircleGroupMeta();
     void requestCircleGroupData(const RsGxsCircleId& circle_id);
+    bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
     
 private slots:
     void createExternalCircle();
@@ -88,7 +89,9 @@ private slots:
 	void IdListCustomPopupMenu( QPoint point );
 
 	void CircleListCustomPopupMenu(QPoint point) ;
+#ifdef SUSPENDED
 	void circle_selected() ;
+#endif
 
 	void  addtoContacts();
   void  removefromContacts();

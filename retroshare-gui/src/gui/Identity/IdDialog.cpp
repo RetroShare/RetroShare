@@ -99,6 +99,9 @@
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
 #define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
 
+// comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
+#define CIRCLE_MEMBERSHIP_CATEGORIES 1
+
 // quick solution for RSID_COL_VOTES sorting
 class TreeWidgetItem : public QTreeWidgetItem {
   public:
@@ -386,6 +389,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	//personalCirclesItem->setText(0, tr("Personal Circles"));
 	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	if(!mExternalOtherCircleItem)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
@@ -400,6 +404,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		mExternalBelongingCircleItem->setText(0, tr("External circles my identities belong to"));
 		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
 	}
+#endif
 
 	std::list<RsGxsId> own_identities ;
 	rsIdentity->getOwnIds(own_identities) ;
@@ -444,6 +449,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 			item = clist.front() ;
 
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
 			{
 #ifdef ID_DEBUG
@@ -461,6 +467,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 				item = NULL ;
 			}
 			else
+#endif
 				should_re_add = false ;	// item already exists
 		}
 
@@ -477,6 +484,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #warning TODO
 			//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle)
 			{
 #ifdef ID_DEBUG
@@ -491,6 +499,9 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 				mExternalOtherCircleItem->addChild(item);
 			}
+#else
+            		ui->treeWidget_membership->addTopLevelItem(item) ;
+#endif
 		}
 		else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
 		{
@@ -672,11 +683,9 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
 
     QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
 
-    if ((!item) || (!item->parent()))
-	    return;
-    
-	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
-    RsGxsCircleId id( coltext.toStdString()) ;
+    RsGxsCircleId id ;
+    if(!getItemCircleId(item,id))
+        return ;
     
     if(requested_cid != id)
     {
@@ -693,6 +702,24 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
     mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, false);
 }
 
+bool IdDialog::getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id)
+{
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES    
+    if ((!item) || (!item->parent()))
+	    return false;
+    
+	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
+    id = RsGxsCircleId( coltext.toStdString()) ;
+#else
+    if(!item)
+	    return false;
+    
+    QString coltext = (item->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
+    id = RsGxsCircleId( coltext.toStdString()) ;
+#endif
+    return true ;
+}
+
 void IdDialog::createExternalCircle()
 {
 	CreateCircleDialog dlg;
@@ -703,101 +730,88 @@ void IdDialog::createExternalCircle()
 }
 void IdDialog::showEditExistingCircle()
 {
-	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-	if ((!item) || (!item->parent()))
-	{
-		return;
-	}
+    RsGxsCircleId id ;
     
-	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+    if(!getItemCircleId(ui->treeWidget_membership->currentItem(),id))
+       return ;
+    
+    uint32_t subscribe_flags = ui->treeWidget_membership->currentItem()->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
 	
-	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
-    RsGxsGroupId id ( coltext.toStdString());
-
-	CreateCircleDialog dlg;
+    CreateCircleDialog dlg;
     
-	dlg.editExistingId(id,true,!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
-	dlg.exec();
+    dlg.editExistingId(RsGxsGroupId(id),true,!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
+    dlg.exec();
     
     requestCircleGroupMeta();	// update GUI
 }
 
 void IdDialog::acceptCircleSubscription() 
 {
-    QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-
-    if (!item) 
-	    return ;
-
-	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+    RsGxsCircleId circle_id ;
     
-	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
-	RsGxsCircleId circle_id ( coltext.toStdString()) ;
-    
-    	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
-            circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()) ;
+    if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
+        return;
+
+    RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
     
     rsGxsCircles->requestCircleMembership(own_id,circle_id) ;
 }
 
 void IdDialog::cancelCircleSubscription() 
 {	
-	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
+    RsGxsCircleId circle_id ;
+    
+    if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
+        return;
 
-	if (!item) 
-		return ;
-    
-	RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+    RsGxsId own_id(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-	QString coltext = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString();
-	RsGxsCircleId circle_id ( coltext.toStdString()) ;
-    
-    	if(RsGxsId(circle_id) == own_id) // we're on a ID item. The circle is the parent item
-            circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()) ;
-    
-	rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
+    rsGxsCircles->cancelCircleMembership(own_id,circle_id) ;
 }
     
 void IdDialog::CircleListCustomPopupMenu( QPoint )
 {
     QMenu contextMnu( this );
 
+    RsGxsCircleId circle_id ;
     QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-
-    if(!item)
-	    return ;
+            
+    if(!getItemCircleId(item,circle_id))
+        return ;
 
     RsGxsId current_gxs_id ;
-    RsGxsCircleId circle_id ;
     RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
     bool is_circle ;
     
-    if(rsIdentity->isOwnId(item_id))
-    {
-	    current_gxs_id = RsGxsId(item_id);
-	    circle_id = RsGxsCircleId(item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
-            is_circle =false ;
-
-	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
-    }
-    else	// item is for circle
+    if(item_id == RsGxsId(circle_id))	// is it a circle?
     {
 	    uint32_t group_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
-            circle_id = RsGxsCircleId(item_id) ;
 
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	    if(item->parent() != NULL)
 	    {
+#endif
 		    if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
 		    else
 			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
+#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	    }
+#endif
         
 	    std::cerr << "  Item is a circle item. Adding Edit/Details menu entry." << std::endl;
             is_circle = true ;
 
 	    contextMnu.addSeparator() ;
     }
+    else if(rsIdentity->isOwnId(item_id))	// is it one of our GXS ids?
+    {
+	    current_gxs_id = RsGxsId(item_id);
+            is_circle =false ;
+
+	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
+    }
+ 
     RsGxsCircleDetails details ;
     
     if(!rsGxsCircles->getCircleDetails(circle_id,details))// grab real circle ID from parent. Make sure circle id is used correctly afterwards!
@@ -969,7 +983,7 @@ static void check_mark_item(QTreeWidgetItem *item, const std::set<RsPgpId> &name
 		std::cerr << std::endl;
 	}
 }
-#endif
+
 void IdDialog::circle_selected()
 {
 	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
@@ -978,25 +992,6 @@ void IdDialog::circle_selected()
 	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
 	std::cerr << std::endl;
 #endif
-
-	if ((!item) || (!item->parent()))
-	{
-		//mStateHelper->setWidgetEnabled(ui->pushButton_editCircle, false);
-		//ui->pushButton_editCircle->setText(tr("Show details")) ;
-		//ui->pushButton_editCircle->setEnabled(false) ;
-		mark_matching_tree(ui->idTreeWidget, std::set<RsGxsId>(), RSID_COL_KEYID) ;
-		return;
-	}
-#ifdef TO_REMOVE
-	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
-		ui->pushButton_editCircle->setEnabled(true) ;
-
-	if(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-		ui->pushButton_editCircle->setText(tr("Edit circle")) ;
-	else
-		ui->pushButton_editCircle->setText(tr("Show details")) ;
-#endif
-
 	//set_item_background(item, BLUE_BACKGROUND);
 
 	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
@@ -1004,6 +999,7 @@ void IdDialog::circle_selected()
 
     	requestCircleGroupData(id) ;
 }
+#endif
     
 IdDialog::~IdDialog()
 {
