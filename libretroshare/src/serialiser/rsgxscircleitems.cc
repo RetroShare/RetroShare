@@ -35,6 +35,7 @@ uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 {
 	RsGxsCircleGroupItem* grp_item = NULL;
 	RsGxsCircleMsgItem* snap_item = NULL;
+	RsGxsCircleSubscriptionRequestItem* subr_item = NULL;
 
 	if((grp_item = dynamic_cast<RsGxsCircleGroupItem*>(item)) != NULL)
 	{
@@ -44,6 +45,10 @@ uint32_t RsGxsCircleSerialiser::size(RsItem *item)
 	{
 		return sizeGxsCircleMsgItem(snap_item);
     }
+	else if((subr_item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(item)) != NULL)
+	{
+		return sizeGxsCircleSubscriptionRequestItem(subr_item);
+    }
     else
         return 0 ;
 }
@@ -52,6 +57,7 @@ bool RsGxsCircleSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
 	RsGxsCircleGroupItem* grp_item = NULL;
 	RsGxsCircleMsgItem* snap_item = NULL;
+	RsGxsCircleSubscriptionRequestItem* subr_item = NULL;
 
 	if((grp_item = dynamic_cast<RsGxsCircleGroupItem*>(item)) != NULL)
 	{
@@ -60,6 +66,10 @@ bool RsGxsCircleSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	else if((snap_item = dynamic_cast<RsGxsCircleMsgItem*>(item)) != NULL)
 	{
 		return serialiseGxsCircleMsgItem(snap_item, data, size);
+	}
+	else if((subr_item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(item)) != NULL)
+	{
+		return serialiseGxsCircleSubscriptionRequestItem(subr_item, data, size);
 	}
 	return false;
 }
@@ -73,8 +83,7 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 		
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)))
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -87,6 +96,9 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 			break;
 		case RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM:
 			return deserialiseGxsCircleMsgItem(data, size);
+			break;
+		case RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM:
+			return deserialiseGxsCircleSubscriptionRequestItem(data, size);
 			break;
 		default:
 #ifdef CIRCLE_DEBUG
@@ -104,6 +116,25 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+void RsGxsCircleSubscriptionRequestItem::clear()
+{
+    time_stamp = 0 ;
+    time_out   = 0 ;
+    subscription_type = SUBSCRIPTION_REQUEST_UNKNOWN;
+}
+
+std::ostream& RsGxsCircleSubscriptionRequestItem::print(std::ostream& out, uint16_t indent)
+{ 
+	printRsItemBase(out, "RsGxsCircleSubscriptionRequestItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printRsItemBase(out, "time stmp: ", indent); out << time_stamp ;
+	printRsItemBase(out, "time out : ", indent); out << time_out ;
+	printRsItemBase(out, "Subs type: ", indent); out << subscription_type ;
+
+	printRsItemEnd(out ,"RsGxsCircleSubscriptionRequestItem", indent);
+	return out;
+}
 
 void RsGxsCircleGroupItem::clear()
 {
@@ -176,6 +207,16 @@ std::ostream& RsGxsCircleGroupItem::print(std::ostream& out, uint16_t indent)
 	return out;
 }
 
+uint32_t RsGxsCircleSerialiser::sizeGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem * /* item */)
+{
+    uint32_t s=8 ; // header
+    
+    s += 4 ; // time_stamp serialised as uint32_t;
+    s += 4 ; // time_out serialised as uint32_t;
+    s += 1 ; //	subscription_type ;
+    
+    return s ;
+}
 
 uint32_t RsGxsCircleSerialiser::sizeGxsCircleGroupItem(RsGxsCircleGroupItem *item)
 {
@@ -188,6 +229,54 @@ uint32_t RsGxsCircleSerialiser::sizeGxsCircleGroupItem(RsGxsCircleGroupItem *ite
 	return s;
 }
 
+bool RsGxsCircleSerialiser::serialiseGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem *item, void *data, uint32_t *size)
+{
+
+#ifdef CIRCLE_DEBUG
+    std::cerr << "RsGxsCircleSerialiser::serialiseGxsCircleSubscriptionRequestItem()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeGxsCircleSubscriptionRequestItem(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize)
+    {
+#ifdef CIRCLE_DEBUG
+	    std::cerr << "RsGxsCircleSerialiser::serialiseGxsCircleSubscriptionRequestItem()" << std::endl;
+#endif
+	    return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* GxsCircleGroupItem */
+    ok &= setRawUInt32(data,tlvsize,&offset,item->time_stamp) ;
+    ok &= setRawUInt32(data,tlvsize,&offset,item->time_out) ;
+    ok &= setRawUInt8(data,tlvsize,&offset,item->subscription_type) ;
+
+    if(offset != tlvsize)
+    {
+	    //#ifdef CIRCLE_DEBUG
+	    std::cerr << "RsGxsCircleSerialiser::serialiseGxsCircleSubscriptionRequestItem() FAIL Size Error! " << std::endl;
+	    //#endif
+	    ok = false;
+    }
+
+    //#ifdef CIRCLE_DEBUG
+    if (!ok)
+	    std::cerr << "RsGxsCircleSerialiser::serialiseGxsCircleSubscriptionRequestItem() NOK" << std::endl;
+    //#endif
+
+    return ok;
+}
+	
 bool RsGxsCircleSerialiser::serialiseGxsCircleGroupItem(RsGxsCircleGroupItem *item, void *data, uint32_t *size)
 {
 	
@@ -238,6 +327,72 @@ bool RsGxsCircleSerialiser::serialiseGxsCircleGroupItem(RsGxsCircleGroupItem *it
 	return ok;
 	}
 	
+RsGxsCircleSubscriptionRequestItem *RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem(void *data, uint32_t *size)
+{
+	
+#ifdef CIRCLE_DEBUG
+	std::cerr << "RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem()" << std::endl;
+#endif
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+	
+	uint32_t offset = 0;
+	
+	
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM != getRsItemSubType(rstype)))
+	{
+#ifdef CIRCLE_DEBUG
+		std::cerr << "RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem() FAIL wrong type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+	
+	if (*size < rssize)    /* check size */
+	{
+#ifdef CIRCLE_DEBUG
+		std::cerr << "RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem() FAIL wrong size" << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+	
+	/* set the packet length */
+	*size = rssize;
+	
+	bool ok = true;
+	
+	RsGxsCircleSubscriptionRequestItem* item = new RsGxsCircleSubscriptionRequestItem();
+	/* skip the header */
+	offset += 8;
+	
+    	uint32_t tmp ;
+    	ok &= getRawUInt32(data,rssize,&offset,&tmp) ; item->time_stamp = tmp ;
+    	ok &= getRawUInt32(data,rssize,&offset,&tmp) ; item->time_out   = tmp ;
+    	ok &= getRawUInt8(data,rssize,&offset,&item->subscription_type) ;
+    
+	if (offset != rssize)
+	{
+#ifdef CIRCLE_DEBUG
+		std::cerr << "RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem() FAIL size mismatch" << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+	
+	if (!ok)
+	{
+#ifdef CIRCLE_DEBUG
+		std::cerr << "RsGxsCircleSerialiser::deserialiseGxsCircleSubscriptionRequestItem() NOK" << std::endl;
+#endif
+		delete item;
+		return NULL;
+	}
+	
+	return item;
+}
 RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void *data, uint32_t *size)
 {
 	

@@ -214,7 +214,7 @@ bool GxsPeerNode::createIdentity(const std::string &name,
 
 	switch(circleType)
 	{
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			id.mMeta.mInternalCircle = circleId;
                         break;
                 case GXS_CIRCLE_TYPE_LOCAL:
@@ -283,7 +283,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
 			// THIS is for LOCAL Storage.... 
 			grp1.mLocalFriends = localMembers;
                         break;
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			// Circle shouldn't use this.
 			// but could potentially.
 			grp1.mMeta.mInternalCircle = circleId;
@@ -343,7 +343,7 @@ bool GxsPeerNode::createGroup(const std::string &name,
 
 	switch(circleType)
 	{
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			grp1.mMeta.mInternalCircle = circleId;
                         break;
                 case GXS_CIRCLE_TYPE_LOCAL:

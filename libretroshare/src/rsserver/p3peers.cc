@@ -1083,12 +1083,12 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
-	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
+	Radix64::encode(mem_block,mem_block_size,gpg_base64_string) ;
 
 	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
 
 	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
-	Radix64::encode((const char *)tmp,3,gpg_base64_checksum) ;
+	Radix64::encode(tmp,3,gpg_base64_checksum) ;
 
 	delete[] mem_block ;
 

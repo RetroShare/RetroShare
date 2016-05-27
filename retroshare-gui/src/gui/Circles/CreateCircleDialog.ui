@@ -14,16 +14,7 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -53,7 +44,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
-           <string>Circle Members</string>
+           <string>Invited Members</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
@@ -155,16 +146,7 @@
               <property name="spacing">
                <number>0</number>
               </property>
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
+              <property name="margin">
                <number>0</number>
               </property>
               <item>
@@ -341,16 +323,7 @@
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <property name="leftMargin">
-               <number>2</number>
-              </property>
-              <property name="topMargin">
-               <number>2</number>
-              </property>
-              <property name="rightMargin">
-               <number>2</number>
-              </property>
-              <property name="bottomMargin">
+              <property name="margin">
                <number>2</number>
               </property>
               <item row="0" column="0">

@@ -454,7 +454,7 @@ private:
     /*!
     * encrypts/decrypts the transaction for the destination circle id.
     */
-    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, const RsGxsGroupId &destination_group, RsNxsItem *& encrypted_item, uint32_t &status) ;
     bool decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypted_item, RsNxsItem *&nxsitem, std::vector<RsTlvSecurityKey> *private_keys=NULL);
     bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
 

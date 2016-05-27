@@ -61,11 +61,15 @@ protected:
     
     void requestCircleGroupMeta();
     void requestCircleGroupData(const RsGxsCircleId& circle_id);
+    bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
     
 private slots:
     void createExternalCircle();
     void showEditExistingCircle();
 	void updateCirclesDisplay();
+    
+    void acceptCircleSubscription() ;
+    void cancelCircleSubscription() ;
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
@@ -85,7 +89,9 @@ private slots:
 	void IdListCustomPopupMenu( QPoint point );
 
 	void CircleListCustomPopupMenu(QPoint point) ;
+#ifdef SUSPENDED
 	void circle_selected() ;
+#endif
 
 	void  addtoContacts();
   void  removefromContacts();
@@ -124,9 +130,8 @@ private:
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
 	QTreeWidgetItem *ownItem;
-	QTreeWidgetItem *mExternalSubCircleItem;
+	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
-	QTreeWidgetItem *mExternalLocalCircleItem;
     	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	RsGxsGroupId mId;

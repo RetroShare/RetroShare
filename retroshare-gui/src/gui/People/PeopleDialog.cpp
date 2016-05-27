@@ -286,7 +286,7 @@ void PeopleDialog::insertCircles(uint32_t token)
 			continue ;
 		}//if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(git->mGroupId), details))
 
-		if (!details.mIsExternal){
+		if (details.mCircleType != GXS_CIRCLE_TYPE_EXTERNAL){
 			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
 			if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end()) {
 				std::cerr << "PeopleDialog::insertExtCircles() add new Internal GroupId: " << gsItem.mGroupId;

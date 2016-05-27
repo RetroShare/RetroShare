@@ -288,7 +288,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 				distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
 		}
 			break ;
-		case GXS_CIRCLE_TYPE_YOUREYESONLY: distrib_string = tr("Your eyes only");
+		case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
 			break ;
 		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
 			break ;
