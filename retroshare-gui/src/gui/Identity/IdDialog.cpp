@@ -536,7 +536,16 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #ifdef ID_DEBUG
 		std::cerr << "  updating status of all identities for this circle:" << std::endl;
 #endif
-		//for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it)
+        	// remove any identity that has an item, but no subscription flag entry
+		std::vector<QTreeWidgetItem*> to_delete ;
+        
+		for(uint32_t k=0;k<item->childCount();++k)
+			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
+				to_delete.push_back(item->child(k));
+                
+        	for(uint32_t k=0;k<to_delete.size();++k)
+                	delete to_delete[k] ;
+        
 		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
 #ifdef ID_DEBUG
