@@ -1,5 +1,48 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  dafb2e6 csoler        Fri, 27 May 2016 17:35:23 -0400 Merge pull request #396 from csoler/v0.6-Circles
+  cfdaa2c csoler        Fri, 27 May 2016 17:09:13 -0400 removed debug info in p3gxscircles
+  d03d733 csoler        Fri, 27 May 2016 12:44:14 -0400 Merge pull request #395 from hasufell/master
+  ed867c5 Julian Ospald Fri, 27 May 2016 18:07:28 +0200 Don't hardcode g++ in the toolchain settings
+  74b4d66 csoler        Thu, 26 May 2016 21:16:21 -0400 added ifdef to allow to remove the sorting of circles into member/not member. To be tested for final decision
+  59aef8a csoler        Thu, 26 May 2016 20:33:24 -0400 added packet slicing for large broadcast chat items, and output warning when chat of serialised item is too big. Als
+  ae5929e csoler        Thu, 26 May 2016 18:58:48 -0400 fixed possible crash due to using a deleted item
+  a32bcba csoler        Wed, 25 May 2016 21:17:09 -0400 changed Members to Invited members in circle creation dialog
+  d1f4e13 csoler        Wed, 25 May 2016 19:04:45 -0400 removed display of circle members in left ID list
+  cfeed5c csoler        Wed, 25 May 2016 18:47:06 -0400 fixed column width and titles in circles
+  605763d csoler        Wed, 25 May 2016 18:34:12 -0400 added all IDs in circle to display tree
+  219dd01 csoler        Wed, 25 May 2016 17:51:23 -0400 improved GUI display in circle list
+  5b69fa0 csoler        Tue, 24 May 2016 21:23:35 -0400 fixed re-draw of subitem in circle tree when flags changed
+  2e91ab6 csoler        Tue, 24 May 2016 21:07:50 -0400 added proper notify for subscription message reception in circles
+  5bc83d9 csoler        Mon, 23 May 2016 21:09:06 -0400 fixed unsubscription of external circles
+  1b5d31f csoler        Sun, 22 May 2016 21:15:18 -0400 attempt to fix the wrong display of uploaded size for files > 4Gb (to be confirmed)
+  55cb15c csoler        Sun, 22 May 2016 20:35:51 -0400 fixed updating of membership when loading circle cache entry
+  fac1fb8 csoler        Sun, 22 May 2016 18:50:18 -0400 enabled message publish for circle subscription requests
+  69573d1 csoler        Sun, 22 May 2016 18:49:54 -0400 fixed serialisation of circle subscription requests
+  68e618b csoler        Sun, 22 May 2016 18:21:48 -0400 fixed GUI for circle invites
+  6554832 csoler        Sun, 22 May 2016 18:21:26 -0400 added isOwnId handle in rsidentity
+  be3be9f csoler        Sun, 22 May 2016 18:21:00 -0400 put loading circles in cache as soon as we get the data for them. The cache entry might be incomplete.
+  d60e99e csoler        Sat, 21 May 2016 16:50:50 -0400 added subwidgets for invited GXS ids in circles
+  82ad7d6 csoler        Sat, 21 May 2016 15:51:49 -0400 improved debugoutput in p3gxscircles
+  4c5c09c csoler        Thu, 19 May 2016 10:11:15 -0400 Merge pull request #390 from PhenomRetroShare/Fix_MutexInPqiPersonGrp
+  3a2b9e8 csoler        Wed, 18 May 2016 21:47:34 -0400 added some debug info in new circle code
+  abe0e02 anon tahoe    Wed, 18 May 2016 14:46:42 +0200 replaced mktemp by mkstemp (cherry-picked from anontahoe repository)
+  722609a csoler        Wed, 18 May 2016 21:13:54 -0400 finished implementing the backend part for the subscription system
+  af5129c Phenom        Wed, 18 May 2016 19:15:37 +0200 Fix Mutex in pqipersongrp for pqilistener by adding local Mutex.
+  9f56069 csoler        Tue, 17 May 2016 11:21:03 -0400 Merge pull request #389 from PhenomRetroShare/Fix_ClearWebAPIWhenClearChatHistory
+  07191a7 Phenom        Tue, 17 May 2016 16:50:59 +0200 Fix Clear WebAPI when clear chat history in GUI and server is not running.
+  f3aed81 csoler        Tue, 17 May 2016 10:39:56 -0400 added test over signature size to avoid possible memory corruption (Anonymous source)
+  89472d6 csoler        Tue, 17 May 2016 00:00:15 -0400 put some notes and comments in the code for what is to be done
+  116e742 csoler        Mon, 16 May 2016 12:25:51 -0400 Merge pull request #388 from PhenomRetroShare/Fix_OpenExistingFileAsWarning
+  a2a0582 Phenom        Mon, 16 May 2016 17:20:53 +0200 Change Open existing file link from Question to Warning.
+  2064870 csoler        Mon, 16 May 2016 10:29:58 -0400 Merge pull request #385 from PhenomRetroShare/Fix_RsCollectionFileLoadCall
+  1f8f413 Phenom        Mon, 16 May 2016 11:32:17 +0200 Fix RsCollectionFile::load(QString, bool) calls.
+  5d69072 csoler        Sat, 14 May 2016 18:53:57 -0400 Merge pull request #383 from PhenomRetroShare/Fix_FreeTcpPacketIfPeersUnknown
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 28 May 2016 10:00:00 -0500
+
+retroshare06 (0.6.0-1.20160514.4dc62d0e~trusty) trusty; urgency=low
+
   5bb570e csoler Sat, 14 May 2016 10:57:52 -0400 Merge pull request #384 from PhenomRetroShare/Fix_RsAccountsDetailPrivateInit
   7fd84f2 Phenom Sat, 14 May 2016 16:50:17 +0200 Fix Initialisation of Private in RsAccountDetails
   52f488c csoler Fri, 13 May 2016 11:13:07 -0400 Merge pull request #382 from PhenomRetroShare/Fix_CorrectPR378
