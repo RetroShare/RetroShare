@@ -1018,12 +1018,16 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 	    if(locked_processLoadingCacheEntry(it->second)) 
 	    {
+#ifdef DEBUG_CIRCLES
 		    std::cerr << "  All peers available. Moving to cache..." << std::endl;
+#endif
 		    mLoadingCache.erase(it);
 	    }
 	    else
 	    {
+#ifdef DEBUG_CIRCLES
 		    std::cerr << "  Unprocessed peers. Requesting reload..." << std::endl;
+#endif
 
 		    /* schedule event to try reload gxsIds */
 		    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
@@ -1179,7 +1183,9 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
     }
     else
     {
+#ifdef DEBUG_CIRCLES
 	    std::cerr << "  Unprocessed peers. Requesting reload for circle " << circleId << std::endl;
+#endif
 
 	    /* schedule event to try reload gxsIds */
 	    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, circleId.toStdString());
@@ -1201,7 +1207,9 @@ bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& 
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
 	{ 
+#ifdef DEBUG_CIRCLES
 		std::cerr << "Cache entry for circle " << cache.mCircleId << " needs a swab over membership requests. Re-scheduling it." << std::endl;
+#endif
 
 		// this should be called regularly
 

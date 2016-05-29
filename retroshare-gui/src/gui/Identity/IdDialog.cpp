@@ -499,6 +499,13 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                     	else
                         	tooltip += tr("unsubscribed (Only receive invite list).") ;
                     
+                    	tooltip += "\n"+tr("Permissions: ") ;
+                        
+                        if(am_I_in_circle)
+                            tooltip += tr("Full member (have access to data limited to this circle)") ;
+                        else
+                            tooltip += tr("Not a member (do not have access to data limited to this circle)") ;
+                    
 			item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tooltip);
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle)
