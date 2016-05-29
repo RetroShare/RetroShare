@@ -1878,7 +1878,9 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 
 bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) 
 {
+#ifdef DEBUG_CIRCLES
     std::cerr << "Circle membership request: own_gxsid = " << own_gxsid << ", circle=" << circle_id << ", req type=" << request_type << std::endl;
+#endif
     
     // check for some consistency
     
@@ -1918,10 +1920,12 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     // msgItem->meta.mParentId = ; // leave these blank
     // msgItem->meta.mOrigMsgId= ; 
 
+#ifdef DEBUG_CIRCLES
     std::cerr << "p3GxsCircles::publishSubscribeRequest()" << std::endl;
     std::cerr << "  GroupId    : " << circle_id << std::endl;
     std::cerr << "  AuthorId   : " << s->meta.mAuthorId << std::endl;
     std::cerr << "  ThreadId   : " << s->meta.mThreadId << std::endl;
+#endif
     
     uint32_t token ;
     RsGenExchange::publishMsg(token, s);
@@ -1965,7 +1969,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     for(GxsMsgDataMap::const_iterator it(msgItems.begin());it!=msgItems.end();++it)
     {
 	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+#ifdef DEBUG_CIRCLES
 	    std::cerr << "  Circle ID: " << it->first << std::endl;
+#endif
 
 	    RsGxsCircleId cid ( it->first );
 
@@ -1978,12 +1984,16 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
             // Find the circle ID in cache and process the list of messages to keep the latest order in time.
 
 	    RsGxsCircleCache& data = mCircleCache.ref(cid);
+#ifdef DEBUG_CIRCLES
 	    std::cerr << "    Circle found in cache!" << std::endl;
 	    std::cerr << "    Retrieving messages..." << std::endl;
+#endif
 
             for(uint32_t i=0;i<it->second.size();++i)
             {
+#ifdef DEBUG_CIRCLES
 	    	std::cerr << "      Group ID: " << it->second[i]->meta.mGroupId << ", Message ID: " << it->second[i]->meta.mMsgId << ": " ;
+#endif
             
                 RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
                 
@@ -1995,7 +2005,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
                     
                 RsGxsCircleMembershipStatus& info(data.mMembershipStatus[item->meta.mAuthorId]) ;
                 
+#ifdef DEBUG_CIRCLES
 		std::cerr << " is from id " << item->meta.mAuthorId << "  " << time(NULL) - item->time_stamp << " seconds ago, " ;
+#endif
                 
                 if(info.last_subscription_TS < item->time_stamp)
                 {
@@ -2008,11 +2020,15 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
                     else
                     	std::cerr << " (EE) unknown subscription order type: " << item->subscription_type ;
                     
+#ifdef DEBUG_CIRCLES
                     std::cerr << " UPDATING" << std::endl;
+#endif
                 }
                 else if(info.last_subscription_TS > item->time_stamp)
                 {
+#ifdef DEBUG_CIRCLES
                     std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
+#endif
                     messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
                 }
             }

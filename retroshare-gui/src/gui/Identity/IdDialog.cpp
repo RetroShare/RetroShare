@@ -419,6 +419,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		bool should_re_add = true ;
 		bool am_I_in_circle = details.mAmIAllowed ;
+		bool am_I_admin (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
+		bool am_I_subscribed (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) ;
 		QTreeWidgetItem *item = NULL ;
 
 #ifdef ID_DEBUG
@@ -478,12 +480,26 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			item = new QTreeWidgetItem();
 
 			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-			item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-#warning TODO
-			//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
+            		QString tooltip ;
+		    	tooltip += tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()) ;
+                
+		    	tooltip += "\n"+tr("Role: ");
+                
+                	if(am_I_admin)
+                        	tooltip += tr("Administrator (Can edit invite list, and request membership).") ;
+                    	else
+                        	tooltip += tr("User (Can only request membership).") ;
+                        
+		    	tooltip += "\n"+tr("Distribution: ");
+                	if(am_I_subscribed)
+                        	tooltip += tr("subscribed (Receive/forward membership requests from others and invite list).") ;
+                    	else
+                        	tooltip += tr("unsubscribed (Only receive invite list).") ;
+                    
+			item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tooltip);
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle)
 			{
@@ -513,10 +529,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		// just in case.
 
 		item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-#warning TODO
-		//item->setData(CIRCLEGROUP_CIRCLE_COL_SUBSCRIBEFLAGS, Qt::UserRole, QVariant(details.mSubscribeFlags));
 
-		if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		if (am_I_admin)
 		{
 			QFont font = item->font(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) ;
 			font.setBold(true) ;
@@ -608,7 +622,22 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
                                 else
 					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID :")+QString::fromStdString(it->first.toStdString())) ;
                                 
-				subitem->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Indentity ID: ")+QString::fromStdString(it->first.toStdString())) ;
+                        	QString tooltip ;
+                            	tooltip += tr("Identity ID: ")+QString::fromStdString(it->first.toStdString()) ;
+                            	tooltip += "\n"+tr("Status: ") ;
+				if(invited)
+					if(subscrb)
+						tooltip += tr("Full member") ;
+					else
+						tooltip += tr("Invited by admin") ;
+				else
+					if(subscrb)
+						tooltip += tr("Subscription request pending") ;
+					else
+						tooltip += tr("unknown") ;
+                                
+				subitem->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tooltip) ;
+                
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it->second)) ;
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it->first.toStdString())) ;
 
