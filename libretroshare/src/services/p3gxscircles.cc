@@ -1262,20 +1262,24 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 	}
                             
 	bool in_admin_list = false ;
+	bool member_request = false ;
 	
-	for(std::list<RsGxsId>::const_iterator it(myOwnIds.begin());it!=myOwnIds.end() && !in_admin_list;++it)
+	for(std::list<RsGxsId>::const_iterator it(myOwnIds.begin());it!=myOwnIds.end() && (!in_admin_list) && (!member_request);++it)
         {
             std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it2 = cache.mMembershipStatus.find(*it) ;
             
             if(it2 != cache.mMembershipStatus.end())
-		in_admin_list = in_admin_list || (it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
+            {
+		in_admin_list = in_admin_list || bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
+		member_request= member_request|| bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED) ;
+            }
         }
                                 
 #ifdef DEBUG_CIRCLES
-	std::cerr << "  own ID in circle: " << in_admin_list << std::endl;
+	std::cerr << "  own ID in circle: " << in_admin_list << ", own subscribe request: " << member_request << std::endl;
 #endif
                                 
-	if(in_admin_list)
+	if(in_admin_list || member_request)
 	{
 		uint32_t token, token2;	
         
