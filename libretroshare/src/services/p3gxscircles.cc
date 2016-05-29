@@ -1246,9 +1246,7 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 		return false;
 	}
 
-	/* if we appear in the group - then autosubscribe, and mark as processed */
-        
-//	const RsPgpId& ownPgpId = mPgpUtils->getPGPOwnId();
+	/* if we appear in the group - then autosubscribe, and mark as processed. This also applies if we're the group admin */
         
 	std::list<RsGxsId> myOwnIds;
                         
@@ -1275,11 +1273,12 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
             }
         }
                                 
-#ifdef DEBUG_CIRCLES
-	std::cerr << "  own ID in circle: " << in_admin_list << ", own subscribe request: " << member_request << std::endl;
-#endif
+    	bool am_I_admin( cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
                                 
-	if(in_admin_list || member_request)
+#ifdef DEBUG_CIRCLES
+	std::cerr << "  own ID in circle: " << in_admin_list << ", own subscribe request: " << member_request << ", am I admin?: " << am_I_admin << std::endl;
+#endif
+	if(in_admin_list || member_request || am_I_admin)
 	{
 		uint32_t token, token2;	
         
