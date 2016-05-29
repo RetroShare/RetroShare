@@ -247,7 +247,7 @@ virtual RsServiceInfo getServiceInfo();
 	bool cache_load_for_token(uint32_t token);
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 
-	bool checkCircleCacheForMembershipUpdate();
+	bool checkCircleCache();
     
 	bool locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
 	bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);

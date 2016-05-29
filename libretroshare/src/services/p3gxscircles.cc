@@ -188,7 +188,7 @@ void	p3GxsCircles::service_tick()
 	time_t now = time(NULL);
     	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
 	{
-		p3GxsCircles::checkCircleCacheForMembershipUpdate();
+		checkCircleCache();
 		mLastCacheMembershipUpdateTS = now ;
 	}
 	return;
@@ -1194,11 +1194,17 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
     return true;
 }
     
-bool p3GxsCircles::checkCircleCacheForMembershipUpdate()
+bool p3GxsCircles::checkCircleCache()
 {
-#warning TODO. Should go over existing cache entries and update/process the membership requests
-    std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
-    return false ;
+#ifdef DEBUG_CIRCLES
+    std::cerr << "checkCircleCache(): calling auto-subscribe check and membership update check." << std::endl;
+#endif
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    
+   mCircleCache.applyToAllCachedEntries(*this,&p3GxsCircles::locked_checkCircleCacheForAutoSubscribe) ;
+//    mCircleCache.applyToAllCachedEntries(*this,&p3GxsCircles::locked_checkCircleCacheForMembershipUpdate) ;
+    
+    return true ;
 }
 
 bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
@@ -1934,8 +1940,11 @@ bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const Rs
     std::cerr << "  AuthorId   : " << s->meta.mAuthorId << std::endl;
     std::cerr << "  ThreadId   : " << s->meta.mThreadId << std::endl;
 #endif
-    
     uint32_t token ;
+    
+    if(request_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+	    RsGenExchange::subscribeToGroup(token, RsGxsGroupId(circle_id), true);
+    
     RsGenExchange::publishMsg(token, s);
     
     // update the cache.

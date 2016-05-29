@@ -483,30 +483,6 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(vit->mGroupId.toStdString()));
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 
-            		QString tooltip ;
-		    	tooltip += tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()) ;
-                
-		    	tooltip += "\n"+tr("Role: ");
-                
-                	if(am_I_admin)
-                        	tooltip += tr("Administrator (Can edit invite list, and request membership).") ;
-                    	else
-                        	tooltip += tr("User (Can only request membership).") ;
-                        
-		    	tooltip += "\n"+tr("Distribution: ");
-                	if(am_I_subscribed)
-                        	tooltip += tr("subscribed (Receive/forward membership requests from others and invite list).") ;
-                    	else
-                        	tooltip += tr("unsubscribed (Only receive invite list).") ;
-                    
-                    	tooltip += "\n"+tr("Permissions: ") ;
-                        
-                        if(am_I_in_circle)
-                            tooltip += tr("Full member (have access to data limited to this circle)") ;
-                        else
-                            tooltip += tr("Not a member (do not have access to data limited to this circle)") ;
-                    
-			item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tooltip);
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle)
 			{
@@ -536,6 +512,31 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		// just in case.
 
 		item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
+        
+		QString tooltip ;
+		tooltip += tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()) ;
+
+		tooltip += "\n"+tr("Role: ");
+
+		if(am_I_admin)
+			tooltip += tr("Administrator (Can edit invite list, and request membership).") ;
+		else
+			tooltip += tr("User (Can only request membership).") ;
+
+		tooltip += "\n"+tr("Distribution: ");
+		if(am_I_subscribed)
+			tooltip += tr("subscribed (Receive/forward membership requests from others and invite list).") ;
+		else
+			tooltip += tr("unsubscribed (Only receive invite list).") ;
+
+		tooltip += "\n"+tr("Permissions: ") ;
+
+		if(am_I_in_circle)
+			tooltip += tr("Full member (have access to data limited to this circle)") ;
+		else
+			tooltip += tr("Not a member (do not have access to data limited to this circle)") ;
+
+		item->setToolTip(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,tooltip);
 
 		if (am_I_admin)
 		{
