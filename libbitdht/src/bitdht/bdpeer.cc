@@ -344,6 +344,8 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 	std::cerr << " Number: " << number;
 	std::cerr << " Bucket #: " << buckno;
 	std::cerr << std::endl;
+#else
+	(void)number;
 #endif
 
 	bdBucket &buck = buckets[buckno];
