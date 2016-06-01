@@ -30,7 +30,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     this->argv = argv;
     // start worker thread
     if(full_control)
-        start("RS ctrl module");
+        start("resapi ctrl mod");
     else
         mRunState = RUNNING_OK_NO_FULL_CONTROL;
 

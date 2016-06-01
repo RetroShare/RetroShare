@@ -1834,7 +1834,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* Startup this thread! */
-    start() ;
+	start("RsServer main") ;
 
 	return 1;
 }
