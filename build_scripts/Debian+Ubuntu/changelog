@@ -1,5 +1,11 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  cbef014 csoler        Sun, 29 May 2016 16:09:56 -0400 added regular test of circle auto-subscribe from cache, and auto-subscribe w
+  2bde81f csoler        Sat, 28 May 2016 21:09:44 -0400 removed more debug info, improved tooltips
+  ccd72cb csoler        Sat, 28 May 2016 20:58:28 -0400 removed some debug info. Added information tooltips on circles and ids in ci
+  9a328f6 csoler        Sat, 28 May 2016 20:25:15 -0400 extended auto-subscribe to circles with admin flag
+  d114b83 csoler        Sat, 28 May 2016 20:17:19 -0400 extended auto-subscribe to circles with requested membership
+  8b5e43f csoler        Sat, 28 May 2016 17:18:25 -0400 remove subitems in circles member list when they are gone from cache
   dafb2e6 csoler        Fri, 27 May 2016 17:35:23 -0400 Merge pull request #396 from csoler/v0.6-Circles
   cfdaa2c csoler        Fri, 27 May 2016 17:09:13 -0400 removed debug info in p3gxscircles
   d03d733 csoler        Fri, 27 May 2016 12:44:14 -0400 Merge pull request #395 from hasufell/master
