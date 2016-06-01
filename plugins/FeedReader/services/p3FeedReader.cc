@@ -65,12 +65,12 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsGxsForums *forums)
 	/* start download thread */
 	p3FeedReaderThread *frt = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, "");
 	mThreads.push_back(frt);
-	frt->start();
+	frt->start("fr download");
 
 	/* start process thread */
 	frt = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, "");
 	mThreads.push_back(frt);
-	frt->start();
+	frt->start("fr process");
 }
 
 /***************************************************************************/
@@ -698,11 +698,11 @@ bool p3FeedReader::addPreviewFeed(const FeedInfo &feedInfo, std::string &feedId)
 
 		/* start download thread for preview */
 		mPreviewDownloadThread = new p3FeedReaderThread(this, p3FeedReaderThread::DOWNLOAD, feedId);
-		mPreviewDownloadThread->start();
+		mPreviewDownloadThread->start("fr preview dl");
 
 		/* start process thread for preview */
 		mPreviewProcessThread = new p3FeedReaderThread(this, p3FeedReaderThread::PROCESS, feedId);
-		mPreviewProcessThread->start();
+		mPreviewProcessThread->start("fr preview proc");
 	}
 
 	return true;
