@@ -592,7 +592,7 @@ bool ftTransferModule::checkFile()
 			// Note: using new is really important to avoid copy and write errors in the thread.
 			//
 			_hash_thread = new HashThread(mFileCreator) ;
-			_hash_thread->start() ;
+			_hash_thread->start("ft hash") ;
 #ifdef FT_DEBUG
 			std::cerr << "ftTransferModule::checkFile(): launched hashing thread for file " << mHash << std::endl ;
 #endif

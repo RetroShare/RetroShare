@@ -120,8 +120,8 @@ class RsServer: public RsControl, public RsTickingThread
 	public:
 		/* Config */
 
-        virtual void    ConfigFinalSave( );
-        virtual void	startServiceThread(RsTickingThread *t) ;
+		virtual void    ConfigFinalSave( );
+		virtual void	startServiceThread(RsTickingThread *t, const std::string &threadName) ;
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
