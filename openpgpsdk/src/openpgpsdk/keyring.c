@@ -616,8 +616,6 @@ ops_boolean_t ops_add_selfsigned_userid_to_keydata(ops_keydata_t* keydata, ops_u
 ops_boolean_t ops_sign_key(ops_keydata_t* keydata, const unsigned char *signers_key_id,ops_secret_key_t *signers_key)
 {
 /*	ops_memory_t* mem_userid=NULL; */
-	ops_create_info_t* cinfo_userid=NULL;
-
 	ops_memory_t* mem_sig=NULL;
 	ops_create_info_t* cinfo_sig=NULL;
 
