@@ -188,19 +188,18 @@ void    ftServer::StartupThreads()
 
 	/* self contained threads */
 	/* startup ExtraList Thread */
-	mFtExtra->start();
+	mFtExtra->start("RS ft extra lst");
 
 	/* startup Monitor Thread */
 	/* startup the FileMonitor (after cache load) */
 	/* start it up */
-	
-	mFiMon->start();
+	mFiMon->start("RS ft monitor");
 
 	/* Controller thread */
-	mFtController->start();
+	mFtController->start("RS ft ctrl");
 
 	/* Dataplex */
-	mFtDataplex->start();
+	mFtDataplex->start("RS ft dataplex");
 }
 
 void ftServer::StopThreads()

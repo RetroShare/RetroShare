@@ -83,6 +83,7 @@ RsThread::RsThread()
     mHasStoppedSemaphore.set(1) ;
     mShouldStopSemaphore.set(0) ;
 }
+
 bool RsThread::isRunning()
 {
     // do we need a mutex for this ?
@@ -142,7 +143,8 @@ void RsTickingThread::fullstop()
     THREAD_DEBUG << "  finished!" << std::endl;
 #endif
 }
-void RsThread::start()
+
+void RsThread::start(const std::string &threadName)
 {
     pthread_t tid;
     void  *data = (void *)this ;
@@ -158,11 +160,27 @@ void RsThread::start()
     // -> the new thread will see mIsRunning() = true
 
     if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
+    {
         mTid = tid;
+
+        // set name
+		if(!threadName.empty()) {
+			// thread names are restricted to 16 characters including the terminating null byte
+			if(threadName.length() > 15)
+			{
+#ifdef DEBUG_THREADS
+				THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
+#endif
+				pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
+			} else {
+				pthread_setname_np(mTid, threadName.c_str());
+			}
+		}
+    }
     else
     {
         THREAD_DEBUG << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
-	mHasStoppedSemaphore.set(1) ;
+        mHasStoppedSemaphore.set(1) ;
     }
 }
 
