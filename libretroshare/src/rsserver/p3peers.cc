@@ -1381,8 +1381,8 @@ RsPeerDetails::RsPeerDetails()
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
-	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0), hiddenType(RS_HIDDEN_TYPE_NONE)
+    lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),
+    hiddenType(RS_HIDDEN_TYPE_NONE), foundDHT(false), wasDeniedConnection(false), deniedTS(0)
 {
 }
 
