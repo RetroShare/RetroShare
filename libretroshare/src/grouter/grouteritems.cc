@@ -532,7 +532,7 @@ bool RsGRouterTransactionAcknItem::serialise(void *data,uint32_t& size) const
 
     return ok;
 }
-bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterGenericDataItem::serialise_signed_data(void *data, uint32_t &/*size*/) const
 {
     bool ok = true;
 
@@ -580,7 +580,7 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 
 	return ok;
 }
-bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data, uint32_t &/*size*/) const
 {
     bool ok = true;
 

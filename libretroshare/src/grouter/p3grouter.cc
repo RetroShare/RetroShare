@@ -483,7 +483,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 #endif
 }
 
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef GROUTER_DEBUG
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;

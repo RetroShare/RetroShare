@@ -81,7 +81,6 @@ void RsGxsReputationUpdateItem::clear()
 std::ostream& RsGxsReputationConfigItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsReputationConfigItem", indent);
-	uint16_t int_Indent = indent + 2;
 
     	out << "mPeerId: " << mPeerId << std::endl;
     	out << "last update: " << time(NULL) - mLatestUpdate << " secs ago." << std::endl;
@@ -94,7 +93,6 @@ std::ostream& RsGxsReputationConfigItem::print(std::ostream &out, uint16_t inden
 std::ostream& RsGxsReputationSetItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsReputationSetItem", indent);
-	uint16_t int_Indent = indent + 2;
 
     	out << "GxsId: " << mGxsId << std::endl;
     	out << "mOwnOpinion: " << mOwnOpinion << std::endl;
@@ -110,7 +108,6 @@ std::ostream& RsGxsReputationSetItem::print(std::ostream &out, uint16_t indent)
 std::ostream& RsGxsReputationUpdateItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsReputationUpdateItem", indent);
-	uint16_t int_Indent = indent + 2;
 
     	out << "from: " << PeerId() << std::endl;
     	out << "last update: " << time(NULL) - mLatestUpdate << " secs ago." << std::endl;
@@ -124,7 +121,6 @@ std::ostream& RsGxsReputationUpdateItem::print(std::ostream &out, uint16_t inden
 std::ostream& RsGxsReputationRequestItem::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsReputationRequestItem", indent);
-	uint16_t int_Indent = indent + 2;
 
     	out << "last update: " << time(NULL) - mLastUpdate << " secs ago." << std::endl;
         

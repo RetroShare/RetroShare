@@ -256,7 +256,7 @@ bool	ftServer::ResumeTransfers()
 	return true;
 }
 
-bool ftServer::checkHash(const RsFileHash& hash,std::string& error_string)
+bool ftServer::checkHash(const RsFileHash& /*hash*/, std::string& /*error_string*/)
 {
     return true ;
 }

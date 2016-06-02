@@ -71,7 +71,7 @@ void    pqiConnectCbDummy::peerConnectRequest(const RsPeerId& id,
     std::cerr << std::endl;
 }
 
-void pqiMonitor::disconnectPeer(const RsPeerId &peer)
+void pqiMonitor::disconnectPeer(const RsPeerId &/*peer*/)
 {
     std::cerr << "(EE) pqiMonitor::disconnectPeer() shouldn't be called!!!"<< std::endl;
 }

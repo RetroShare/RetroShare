@@ -1044,6 +1044,8 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 {
 	bool isUnprocessedPeers = false;
+	// remove unused-but-set warning
+	(void)isUnprocessedPeers;
 
 	if (cache.mIsExternal)
 	{
