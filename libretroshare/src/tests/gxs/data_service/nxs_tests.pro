@@ -76,7 +76,7 @@ linux-* {
 	LIBS += -lssl -lgpgme -lupnp -lixml  -lgnome-keyring -lsqlite3 -lbz2
 	LIBS *= -rdynamic -frtti
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 }
 
 linux-g++ {

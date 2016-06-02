@@ -101,8 +101,8 @@ RshareSettings::RshareSettings()
 
 void RshareSettings::initSettings()
 { 
-#ifdef UBUNTU
-	// use GTK as default style on ubuntu
+#ifdef Q_OS_LINUX
+	// use GTK as default style on linux
 	setDefault(SETTING_STYLE, "GTK+");
 #else
 #if defined(Q_OS_MAC)
