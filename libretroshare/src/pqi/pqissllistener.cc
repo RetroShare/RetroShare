@@ -35,6 +35,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "retroshare/rsbanlist.h"
 #include <unistd.h>
 
 const int pqissllistenzone = 49787;
@@ -373,12 +374,17 @@ int	pqissllistenbase::acceptconnection()
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	{
-	  std::string out;
-	  out += "Accepted Connection from ";
-	  out += sockaddr_storage_tostring(remote_addr);
-	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-	}
+        if(rsBanList != NULL && !rsBanList->isAddressAccepted(remote_addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+        {
+            std::cerr << "(II) pqissllistenner::acceptConnection(): early denying connection attempt from blacklisted IP " << sockaddr_storage_iptostring(remote_addr) << std::endl;
+            return false ;
+        }
+    {
+      std::string out;
+      out += "Accepted Connection from ";
+      out += sockaddr_storage_tostring(remote_addr);
+      pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+    }
 
 	// Negotiate certificates. SSL stylee.
 	// Allow negotiations for secure transaction.
