@@ -323,7 +323,7 @@ RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem_
     uint32_t S ;
     ok &= getRawUInt32(data, tlvsize, &offset, &S);
     
-    for(int i=0;ok && i<S;++i)
+    for(uint32_t i = 0; ok && (i < S); ++i)
     {
             RsPeerId pid ;
             uint32_t op ;
@@ -361,7 +361,7 @@ RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem(
     uint32_t S ;
     ok &= getRawUInt32(data, tlvsize, &offset, &S);
     
-    for(int i=0;ok && i<S;++i)
+    for(uint32_t i = 0; ok && (i < S); ++i)
     {
             RsPeerId pid ;
             uint32_t op ;

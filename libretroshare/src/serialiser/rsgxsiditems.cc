@@ -110,7 +110,6 @@ uint32_t RsGxsIdLocalInfoItem::serial_size()
 std::ostream& RsGxsIdLocalInfoItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsIdLocalInfoItem", indent);
-    uint16_t int_Indent = indent + 2;
 
     // convert from binary to hex.
     for(std::map<RsGxsId,time_t>::const_iterator it(mTimeStamps.begin());it!=mTimeStamps.end();++it)
@@ -382,7 +381,7 @@ RsGxsIdLocalInfoItem *RsGxsIdSerialiser::deserialise_GxsIdLocalInfoItem(void *da
     uint32_t n=0 ;
     ok &= getRawUInt32(data, rssize, &offset, &n) ;
 
-    for(int i=0;ok && i<n;++i)
+    for(uint32_t i=0;ok && i<n;++i)
     {
         RsGxsId gxsid ;
         time_t TS ;
@@ -397,8 +396,8 @@ RsGxsIdLocalInfoItem *RsGxsIdSerialiser::deserialise_GxsIdLocalInfoItem(void *da
     {
 	ok &= getRawUInt32(data, rssize, &offset, &n) ;
     	RsGxsId gxsid ;
-    
-    	for(int i=0;ok && i<n;++i)
+
+        for(uint32_t i=0;ok && i<n;++i)
         {
 		ok &= gxsid.deserialise(data,rssize,offset) ;
         
