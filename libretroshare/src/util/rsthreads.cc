@@ -24,12 +24,13 @@
  *
  */
 
-
 #include "rsthreads.h"
 #include <unistd.h>    // for usleep()
 #include <errno.h>    // for errno
 #include <iostream>
 #include <time.h>
+
+int __attribute__((weak)) pthread_setname_np(pthread_t __target_thread, const char *__buf) ;
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
@@ -164,20 +165,21 @@ void RsThread::start(const std::string &threadName)
         mTid = tid;
 
         // set name
-#ifdef __USE_GNU
-        if(!threadName.empty()) {
-            // thread names are restricted to 16 characters including the terminating null byte
-            if(threadName.length() > 15)
-            {
+
+        if(pthread_setname_np)
+		if(!threadName.empty()) 
+		{
+			// thread names are restricted to 16 characters including the terminating null byte
+			if(threadName.length() > 15)
+			{
 #ifdef DEBUG_THREADS
-                THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
+				THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
 #endif
-                pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
-            } else {
-                pthread_setname_np(mTid, threadName.c_str());
-            }
-        }
-#endif
+				pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
+			} else {
+				pthread_setname_np(mTid, threadName.c_str());
+			}
+		}
     }
     else
     {
