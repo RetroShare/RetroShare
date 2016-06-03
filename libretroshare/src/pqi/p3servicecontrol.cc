@@ -125,7 +125,7 @@ public:
         return ok;
     }
 
-    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t /*size*/)
+    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t size)
     {
         RsServicePermissionItem *item = new RsServicePermissionItem ;
 
