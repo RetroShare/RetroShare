@@ -289,7 +289,7 @@ bool RsGxsIntegrityCheck::check()
 
     // now request a cache update for them, which triggers downloading from friends, if missing.
 
-    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && gxs_ids.size()>0;)
+    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && !gxs_ids.empty();)
     {
 	    uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
 #ifdef GXSUTIL_DEBUG

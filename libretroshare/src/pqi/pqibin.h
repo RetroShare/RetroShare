@@ -76,12 +76,12 @@ virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
 protected:
-	virtual int getFileSize();
+	virtual uint64_t getFileSize();
 
 private:
 	int   bin_flags;
 	FILE *buf;
-	int   size;
+	uint64_t size;
 	pqihash *hash;
 	uint64_t bcount;
 };
@@ -127,7 +127,7 @@ private:
 
 	char* data;
 	bool haveData;
-	int sizeData;
+	uint64_t sizeData;
 	uint64_t cpyCount;
 
 };

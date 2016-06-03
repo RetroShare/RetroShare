@@ -133,6 +133,12 @@ public:
         uint32_t rssize = getRsItemSize(data);
         bool ok = true ;
 
+        if(rssize > size)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+            return NULL ;
+        }
+            
         /* add mandatory parts first */
         ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);

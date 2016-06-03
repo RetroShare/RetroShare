@@ -101,7 +101,7 @@ public:
     virtual ~RsGRouterAbstractMsgItem() {}
 
     virtual uint32_t signed_data_size() const = 0 ;
-    virtual bool serialise_signed_data(void *data,uint32_t& size) const = 0 ;
+    virtual bool serialise_signed_data(void *data,uint32_t size) const = 0 ;
 
     GRouterMsgPropagationId routing_id ;
     GRouterKeyId destination_key ;
@@ -137,7 +137,7 @@ class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRoute
 
     // utility methods for signing data
     virtual uint32_t signed_data_size() const ;
-        virtual bool serialise_signed_data(void *data,uint32_t& size) const ;
+        virtual bool serialise_signed_data(void *data, uint32_t size) const ;
 };
 
 class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
@@ -160,7 +160,7 @@ class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem
 
     // utility methods for signing data
     virtual uint32_t signed_data_size() const ;
-        virtual bool serialise_signed_data(void *data,uint32_t& size) const ;
+        virtual bool serialise_signed_data(void *data, uint32_t size) const ;
 };
 
 // Low-level data items

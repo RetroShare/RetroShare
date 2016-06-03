@@ -170,7 +170,7 @@ uint64_t BinFileInterface::bytecount()
 	return 0;
 }
 
-int BinFileInterface::getFileSize()
+uint64_t BinFileInterface::getFileSize()
 {
 	return size;
 }
@@ -229,7 +229,14 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 	if(!haveData) // read whole data for first call, or first call after close()
 	{
 
-		encrypDataLen = BinFileInterface::getFileSize();
+                uint64_t encrypDataLen64 = BinFileInterface::getFileSize();
+                
+                if(encrypDataLen64 > uint64_t(~(int)0))
+                {
+                    std::cerr << __PRETTY_FUNCTION__ << ": cannot decrypt files of size > " << ~(int)0 << std::endl;
+                    return -1 ;
+                }
+		encrypDataLen = (int)encrypDataLen64 ;
 		encryptedData = new char[encrypDataLen];
 
 		// make sure assign was successful
@@ -245,12 +252,15 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 
 		if((encrypDataLen > 0) && (encryptedData != NULL))
 		{
-				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeData, encryptedData, encrypDataLen))
+            			int sizeDataInt = 0 ;
+                        
+				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeDataInt, encryptedData, encrypDataLen))
 				{
 					delete[] encryptedData;
 					return -1;
 				}
-
+                
+                		sizeData = sizeDataInt ;
 				haveData = true;
 				delete[] encryptedData;
 		}
