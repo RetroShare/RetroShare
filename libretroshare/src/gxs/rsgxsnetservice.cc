@@ -310,17 +310,16 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  const RsServiceInfo serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
                                  PgpAuxUtils *pgpUtils, bool grpAutoSync,bool msgAutoSync)
-                                     : p3ThreadedService(), p3Config(), mTransactionN(0),
-                                       mObserver(nxsObs),
-                                       mDataStore(gds), 
-                                       mServType(servType),
-                                       mGixs(gixs), 
-                                       mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
-                                       mSyncTs(0), mLastKeyPublishTs(0),mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations),
-					mPgpUtils(pgpUtils),
-                    mGrpAutoSync(grpAutoSync),mAllowMsgSync(msgAutoSync), mGrpServerUpdateItem(NULL),
-					mServiceInfo(serviceInfo)
-
+                                 : p3ThreadedService(), p3Config(), mTransactionN(0),
+                                   mObserver(nxsObs), mDataStore(gds),
+                                   mServType(servType), mTransactionTimeOut(TRANSAC_TIMEOUT),
+                                   mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
+                                   mSyncTs(0), mLastKeyPublishTs(0),
+                                   mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD),
+                                   mCircles(circles), mGixs(gixs),
+                                   mReputations(reputations), mPgpUtils(pgpUtils),
+                                   mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),
+                                   mGrpServerUpdateItem(NULL), mServiceInfo(serviceInfo)
 {
 	addSerialType(new RsNxsSerialiser(mServType));
 	mOwnId = mNetMgr->getOwnId();
@@ -1616,7 +1615,6 @@ void RsGxsNetService::recvNxsItemQueue()
             if(ni->PacketSubType() == RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
             {
                 RsNxsItem *decrypted_item ;
-                uint32_t status ;
                 
                 if(decryptSingleNxsItem(dynamic_cast<RsNxsEncryptedDataItem*>(ni),decrypted_item))
                 {

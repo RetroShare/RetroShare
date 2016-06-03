@@ -54,7 +54,7 @@ RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService
 
 bool RsGxsMessageCleanUp::clean()
 {
-	int i = 1;
+	uint32_t i = 1;
 
 	time_t now = time(NULL);
 
@@ -281,7 +281,7 @@ bool RsGxsIntegrityCheck::check()
 	    std::cerr << "    " << *it <<  std::endl;
 #endif
     }
-    int nb_requested_not_in_cache = 0;
+    uint32_t nb_requested_not_in_cache = 0;
 
 #ifdef GXSUTIL_DEBUG
     std::cerr << "  issuing random get on friends for non existing IDs" << std::endl;

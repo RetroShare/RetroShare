@@ -58,7 +58,7 @@ const int pqissllistenzone = 49787;
 
 
 pqissllistenbase::pqissllistenbase(const sockaddr_storage &addr, p3PeerMgr *pm)
-	: laddr(addr), active(false), mPeerMgr(pm)
+	: laddr(addr), mPeerMgr(pm), active(false)
 {
 	if (!(AuthSSL::getAuthSSL()-> active()))
 	{

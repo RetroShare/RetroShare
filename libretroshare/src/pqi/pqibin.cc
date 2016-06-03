@@ -280,7 +280,7 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 	else
 	{
 
-		if((cpyCount + len) <= sizeData)
+		if((cpyCount + len) <= (uint64_t)sizeData)
 		{
 			memcpy(data, (void *) ((this->data) + cpyCount), len);
 			cpyCount += len;
@@ -316,9 +316,9 @@ uint64_t BinEncryptedFileInterface::bytecount()
 bool BinEncryptedFileInterface::moretoread(uint32_t /* usec */)
 {
 	if(haveData)
-		return (cpyCount < sizeData);
+		return (cpyCount < (uint64_t)sizeData);
 	else
-		return cpyCount < getFileSize();
+		return cpyCount < (uint64_t)getFileSize();
 }
 
 BinMemInterface::BinMemInterface(int defsize, int flags)

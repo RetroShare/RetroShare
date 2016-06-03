@@ -1036,7 +1036,7 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
  */
 
 // from pqissl, when a connection failed due to security
-void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming)
+void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &/*addr*/, bool incoming)
 {
 	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
 	std::cerr << " pgpid: " << gpgid;

@@ -125,7 +125,7 @@ public:
         return ok;
     }
 
-    static RsServicePermissionItem *deserialise(uint8_t *data,uint32_t size)
+    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t /*size*/)
     {
         RsServicePermissionItem *item = new RsServicePermissionItem ;
 
@@ -1253,6 +1253,8 @@ void    p3ServiceControl::updatePeerConnect(const RsPeerId &peerId)
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerConnect(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#else
+	(void)peerId;
 #endif
 	return;
 }

@@ -373,7 +373,7 @@ RsGxsTunnelDHPublicKeyItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDHPubl
     return item ;
 }
 
-RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void *dat,uint32_t size)
+RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void *dat,uint32_t /*size*/)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
@@ -456,7 +456,7 @@ RsGxsTunnelDataAckItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataAckIte
     return item ;
 }
 
-RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat,uint32_t size)
+RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat, uint32_t /*size*/)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);

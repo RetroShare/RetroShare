@@ -4,7 +4,7 @@
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
 #include "rsaccounts.h"
-#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <gnome-keyring-1/gnome-keyring.h>
 
 	GnomeKeyringPasswordSchema my_schema = {
@@ -119,7 +119,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
-#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
 
 	gchar *passwd = NULL;
 
@@ -195,7 +195,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	return (status == 0);
 
 	/******************** OSX KeyChain stuff *****************************/
-#else /* UNIX, but not UBUNTU or APPLE */
+#else /* UNIX, but not HAS_GNOME_KEYRING or APPLE */
 
 	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName(ssl_id).c_str(), "r");
 
@@ -246,7 +246,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	return true;
 #endif // APPLE
-#endif	// UBUNTU
+#endif	// HAS_GNOME_KEYRING
 	/******* WINDOWS BELOW *****/
 #else
 
@@ -370,7 +370,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
-#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL)) 
 	{
 		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
@@ -448,7 +448,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 	return true;
 #endif // __APPLE__
-#endif // UBUNTU.
+#endif // HAS_GNOME_KEYRING.
 #else  /* windows */
 
 	/* store password encrypted in a file */
@@ -532,7 +532,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 {
-#ifdef UBUNTU
+#ifdef HAS_GNOME_KEYRING
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.toStdString().c_str(),NULL))
 	{
 		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;

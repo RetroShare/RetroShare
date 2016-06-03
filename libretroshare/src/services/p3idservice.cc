@@ -3871,7 +3871,7 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 
 
 	// Overloaded from RsTickEvent for Event callbacks.
-void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
+void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*/)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::handle_event(" << event_type << ")";

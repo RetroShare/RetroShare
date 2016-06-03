@@ -294,7 +294,7 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 	fclose(in) ;
 	fclose(out) ;
 
-	return true ;
+	return bRet ;
 
 #endif
 
