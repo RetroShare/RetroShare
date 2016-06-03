@@ -341,47 +341,53 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grp
 	return true;
 }
 
-void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys)
+void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys)
 {
-    /* create Keys */
-    RsTlvSecurityKey adminKey, privAdminKey;
-	 GxsSecurity::generateKeyPair(adminKey,privAdminKey) ;
+	/* create Keys */
+	RsTlvPublicRSAKey  pubAdminKey ;
+	RsTlvPrivateRSAKey privAdminKey;
 
-    // for now all public
-    adminKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_PUBLIC_ONLY;
-    privAdminKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL;
+	GxsSecurity::generateKeyPair(pubAdminKey,privAdminKey) ;
 
-    publickeySet.keys[adminKey.keyId] = adminKey;
-    privatekeySet.keys[privAdminKey.keyId] = privAdminKey;
+	// for now all public
+	pubAdminKey.keyFlags  |= RSTLV_KEY_DISTRIB_ADMIN ;
+	privAdminKey.keyFlags |= RSTLV_KEY_DISTRIB_ADMIN ;
 
-    if(genPublishKeys)
+	keySet.public_keys[pubAdminKey.keyId] = pubAdminKey;
+	keySet.private_keys[privAdminKey.keyId] = privAdminKey;
+
+	if(genPublishKeys)
+	{
+		/* set publish keys */
+		RsTlvPublicRSAKey  pubPublishKey ;
+		RsTlvPrivateRSAKey privPublishKey;
+
+		GxsSecurity::generateKeyPair(pubPublishKey,privPublishKey) ;
+
+		// for now all public
+		pubPublishKey.keyFlags  |= RSTLV_KEY_DISTRIB_PUBLISH ;
+		privPublishKey.keyFlags |= RSTLV_KEY_DISTRIB_PUBLISH ;
+
+		keySet.public_keys[pubPublishKey.keyId] = pubPublishKey;
+		keySet.private_keys[privPublishKey.keyId] = privPublishKey;
+	}
+}
+
+void RsGenExchange::generatePublicFromPrivateKeys(RsTlvSecurityKeySet& keySet)
+{
+    // actually just copy settings of one key except mark its key flags public
+
+    keySet.public_keys.clear() ;
+
+    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator cit=keySet.private_keys.begin(); cit != keySet.private_keys.end(); ++cit)
     {
-        /* set publish keys */
-        RsTlvSecurityKey publishKey, privPublishKey;
-    GxsSecurity::generateKeyPair(publishKey,privPublishKey) ;
-
-        // for now all public
-        publishKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_PUBLIC_ONLY;
-        privPublishKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLISH | RSTLV_KEY_TYPE_FULL;
-
-        publickeySet.keys[publishKey.keyId] = publishKey;
-        privatekeySet.keys[privPublishKey.keyId] = privPublishKey;
+	    RsTlvPublicRSAKey pubkey ;
+	    if(GxsSecurity::extractPublicKey(cit->second,pubkey))
+		    keySet.public_keys.insert(std::make_pair(pubkey.keyId, pubkey));
     }
 }
 
-void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &privatekeySet, RsTlvSecurityKeySet &publickeySet)
-{
-	// actually just copy settings of one key except mark its key flags public
-
-	publickeySet = RsTlvSecurityKeySet() ;
-	RsTlvSecurityKey pubkey ;
-
-	for(std::map<RsGxsId, RsTlvSecurityKey>::const_iterator cit=privatekeySet.keys.begin(); cit != privatekeySet.keys.end(); ++cit)
-		if(GxsSecurity::extractPublicKey(cit->second,pubkey))
-			publickeySet.keys.insert(std::make_pair(pubkey.keyId, pubkey));
-}
-
-uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)
+uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 {
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::createGroup()";
@@ -393,19 +399,18 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     /* add public admin and publish keys to grp */
 
     // find private admin key
-    RsTlvSecurityKey privAdminKey;
-    std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = privateKeySet.keys.begin();
-
+    RsTlvPrivateRSAKey privAdminKey;
     bool privKeyFound = false; // private admin key
-    for(; mit != privateKeySet.keys.end(); ++mit)
+
+    for( std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit = keySet.private_keys.begin(); mit != keySet.private_keys.end(); ++mit)
     {
-        RsTlvSecurityKey& key = mit->second;
+        RsTlvPrivateRSAKey& key = mit->second;
 
         if((key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN) && (key.keyFlags & RSTLV_KEY_TYPE_FULL))
         {
             privAdminKey = key;
             privKeyFound = true;
-        break ;
+	    break ;
         }
     }
 
@@ -417,13 +422,17 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     	return false;
     }
 
-    meta->keys = publicKeySet; // only public keys are included to be transported
+    // only public keys are included to be transported. The 2nd line below is very important.
+    
+    meta->keys = keySet; 
+    meta->keys.private_keys.clear() ; 
 
     // group is self signing
     // for the creation of group signature
     // only public admin and publish keys are present in meta
     uint32_t metaDataLen = meta->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
     uint32_t allGrpDataLen = metaDataLen + grp->grp.bin_len;
+    
     char* metaData = new char[metaDataLen];
     char* allGrpData = new char[allGrpDataLen]; // msgData + metaData
 
@@ -503,12 +512,11 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
 
             if(haveKey)
             {
-                RsTlvSecurityKey authorKey;
+                RsTlvPrivateRSAKey authorKey;
                 mGixs->getPrivateKey(grpMeta.mAuthorId, authorKey);
                 RsTlvKeySignature sign;
 
-                if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len,
-                                                authorKey, sign))
+                if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len, authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
                     	mGixs->timeStampKey(grpMeta.mAuthorId) ;
@@ -623,12 +631,12 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     if(needPublishSign)
     {
         // public and shared is publish key
-        RsTlvSecurityKeySet& keys = grpMeta.keys;
-        RsTlvSecurityKey* publishKey;
+        const RsTlvSecurityKeySet& keys = grpMeta.keys;
+        const RsTlvPrivateRSAKey  *publishKey;
 
-        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit =
-                        keys.keys.begin(), mit_end = keys.keys.end();
+        std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator mit = keys.private_keys.begin(), mit_end = keys.private_keys.end();
         bool publish_key_found = false;
+        
         for(; mit != mit_end; ++mit)
         {
 
@@ -672,7 +680,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 
             if(haveKey)
 	    {
-		    RsTlvSecurityKey authorKey;
+		    RsTlvPrivateRSAKey authorKey;
 		    mGixs->getPrivateKey(msgMeta.mAuthorId, authorKey);
 		    RsTlvKeySignature sign;
 
@@ -841,13 +849,13 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
     {
         RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_PUBLISH];
 
-        std::map<RsGxsId, RsTlvSecurityKey>& keys = grpKeySet.keys;
-        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keys.begin();
+        std::map<RsGxsId, RsTlvPublicRSAKey>& keys = grpKeySet.public_keys;
+        std::map<RsGxsId, RsTlvPublicRSAKey>::iterator mit = keys.begin();
 
         RsGxsId keyId;
         for(; mit != keys.end() ; ++mit)
     {
-        RsTlvSecurityKey& key = mit->second;
+        RsTlvPublicRSAKey& key = mit->second;
 
         if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC_deprecated)
         {
@@ -865,7 +873,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 
         if(!keyId.isNull())
         {
-            RsTlvSecurityKey& key = keys[keyId];
+            RsTlvPublicRSAKey& key = keys[keyId];
             publishValidate &= GxsSecurity::validateNxsMsg(*msg, sign, key);
         }
         else
@@ -889,7 +897,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
             if(haveKey)
 	    {
 
-		    RsTlvSecurityKey authorKey;
+		    RsTlvPublicRSAKey authorKey;
 		    bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
 
 		    if (auth_key_fetched)
@@ -1008,7 +1016,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 			    std::cerr << "  have ID key in cache: yes" << std::endl;
 #endif
 
-			    RsTlvSecurityKey authorKey;
+			    RsTlvPublicRSAKey authorKey;
 			    bool auth_key_fetched = mGixs->getKey(metaData.mAuthorId, authorKey) ;
 
 			    if (auth_key_fetched)
@@ -2155,20 +2163,21 @@ void RsGenExchange::processGroupUpdatePublish()
 		//gup.grpItem->meta = *meta;
         GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
 
-		bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
-
-		if(publishAndAdminPrivatePresent)
+		if(checkKeys(meta->keys))
 		{
-			ggps.mPrivateKeys = meta->keys;
-			generatePublicFromPrivateKeys(ggps.mPrivateKeys, ggps.mPublicKeys);
+			ggps.mKeys = meta->keys;
+			generatePublicFromPrivateKeys(ggps.mKeys);
 			ggps.mHaveKeys = true;
 			ggps.mStartTS = time(NULL);
 			ggps.mLastAttemptTS = 0;
 			ggps.mIsUpdate = true;
 			ggps.mToken = gup.mToken;
 			mGrpsToPublish.push_back(ggps);
-		}else
+		}
+        	else
 		{
+            		std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
+                    
 			delete gup.grpItem;
 			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 		}
@@ -2291,14 +2300,15 @@ void RsGenExchange::processMessageDelete()
 bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 {
 
-	typedef std::map<RsGxsId, RsTlvSecurityKey> keyMap;
-	const keyMap& allKeys = keySet.keys;
+	typedef std::map<RsGxsId, RsTlvPrivateRSAKey> keyMap;
+	const keyMap& allKeys = keySet.private_keys;
 	keyMap::const_iterator cit = allKeys.begin();
+    
         bool adminFound = false, publishFound = false;
 	for(; cit != allKeys.end(); ++cit)
 	{
-                const RsTlvSecurityKey& key = cit->second;
-                if(key.keyFlags & RSTLV_KEY_TYPE_FULL)
+                const RsTlvPrivateRSAKey& key = cit->second;
+                if(key.keyFlags & RSTLV_KEY_TYPE_FULL)		// this one is not useful. Just a security.
                 {
                     if(key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
                         adminFound = true;
@@ -2306,6 +2316,11 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
                     if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH)
                         publishFound = true;
 
+                }
+                else if(key.keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY)		// this one is not useful. Just a security.
+                {
+                    std::cerr << "(EE) found a public only key in the private key list" << std::endl;
+                    return false ;
                 }
 	}
 
@@ -2345,29 +2360,23 @@ void RsGenExchange::publishGrps()
         RsNxsGrp* grp = new RsNxsGrp(mServType);
         RsGxsGrpItem* grpItem = ggps.mItem;
 
-        RsTlvSecurityKeySet privatekeySet, publicKeySet;
+        RsTlvSecurityKeySet fullKeySet;
 
         if(!(ggps.mHaveKeys))
         {
-        	generateGroupKeys(privatekeySet, publicKeySet, true);
+        	generateGroupKeys(fullKeySet, true);
         	ggps.mHaveKeys = true;
-        	ggps.mPrivateKeys = privatekeySet;
-        	ggps.mPublicKeys = publicKeySet;
+        	ggps.mKeys = fullKeySet;
         }
         else
-        {
-        	privatekeySet = ggps.mPrivateKeys;
-        	publicKeySet = ggps.mPublicKeys;
-        }
+        	fullKeySet = ggps.mKeys;
 
-		// find private admin key
-        RsTlvSecurityKey privAdminKey;
-        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit_keys = privatekeySet.keys.begin();
-
+	// find private admin key
+        RsTlvPrivateRSAKey privAdminKey;
         bool privKeyFound = false;
-        for(; mit_keys != privatekeySet.keys.end(); ++mit_keys)
+        for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit_keys = fullKeySet.private_keys.begin(); mit_keys != fullKeySet.private_keys.end(); ++mit_keys)
         {
-            RsTlvSecurityKey& key = mit_keys->second;
+            RsTlvPrivateRSAKey& key = mit_keys->second;
 
             if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
             {
@@ -2383,8 +2392,7 @@ void RsGenExchange::publishGrps()
 		    // get group id from private admin key id
 			grpItem->meta.mGroupId = grp->grpId = RsGxsGroupId(privAdminKey.keyId);
 
-			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
-
+			ServiceCreate_Return ret = service_CreateGroup(grpItem, fullKeySet);
 
 			bool serialOk = false, servCreateOk;
 
@@ -2412,7 +2420,7 @@ void RsGenExchange::publishGrps()
 				grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED
 						| GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
 
-				create = createGroup(grp, privatekeySet, publicKeySet);
+				create = createGroup(grp, fullKeySet);
 
 #ifdef GEN_EXCH_DEBUG
 				std::cerr << "RsGenExchange::publishGrps() ";
@@ -2424,15 +2432,22 @@ void RsGenExchange::publishGrps()
 
 				if(create == CREATE_SUCCESS)
 				{
+                    			// Here we need to make sure that no private keys are included. This is very important since private keys
+                    			// can be used to modify the group. Normally the private key set is whiped out by createGroup, but
 
+                    			grp->metaData->keys.private_keys.clear() ;
+                                
 					uint32_t mdSize = grp->metaData->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
-					char* metaData = new char[mdSize];
-					serialOk = grp->metaData->serialise(metaData, mdSize,RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
-					grp->meta.setBinData(metaData, mdSize);
-					delete[] metaData;
+                    
+                    			{
+						RsTemporaryMemory metaData(mdSize);
+						serialOk = grp->metaData->serialise(metaData, mdSize,RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
+#warning TODO: grp->meta should be renamed grp->public_meta !
+						grp->meta.setBinData(metaData, mdSize);
+                    			}
 
-					// place back private keys for publisher
-					grp->metaData->keys = privatekeySet;
+					// Place back private keys for publisher and database storage
+					grp->metaData->keys.private_keys = fullKeySet.private_keys;
 
 					if(mDataStore->validSize(grp) && serialOk)
 					{
@@ -2443,10 +2458,10 @@ void RsGenExchange::publishGrps()
 						if(ggps.mIsUpdate)
 							mDataAccess->updateGroupData(grp);
 						else
-                            mDataAccess->addGroupData(grp);
-
-                        if(mNetService!=NULL)
-                mNetService->subscribeStatusChanged(grpId,true) ;
+							mDataAccess->addGroupData(grp);
+#warning this is bad: addGroupData/updateGroupData actially deletes grp. But it may be used below? grp should be a class object and not deleted manually!
+						if(mNetService!=NULL)
+							mNetService->subscribeStatusChanged(grpId,true) ;
 					}
 					else
 					{
@@ -3074,8 +3089,8 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 
 	RsTlvKeySignature adminSign = mit->second;
 
-	std::map<RsGxsId, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
-	std::map<RsGxsId, RsTlvSecurityKey>::iterator keyMit = keys.find(RsGxsId(oldGrpMeta.mGroupId));
+	std::map<RsGxsId, RsTlvPublicRSAKey>& keys = oldGrpMeta.keys.public_keys;
+	std::map<RsGxsId, RsTlvPublicRSAKey>::iterator keyMit = keys.find(RsGxsId(oldGrpMeta.mGroupId));
 
 	if(keyMit == keys.end())
 	{

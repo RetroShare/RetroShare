@@ -3297,6 +3297,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	RsPeerId peerId = tr->mTransaction->PeerId();
 	for(;mit != grps.end(); ++mit)
 	{
+#warning Should make sure that no private key information is sneaked in here for the grp
 		mit->second->PeerId(peerId); // set so it gets sent to right peer
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);
@@ -3694,11 +3695,11 @@ bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId&
 #ifdef NXS_NET_DEBUG_7
 	GXSNETDEBUG_P_ (item->PeerId()) << "  Dest  Ids: " << std::endl;
 #endif
-	std::vector<RsTlvSecurityKey> recipient_keys ;
+	std::vector<RsTlvPublicRSAKey> recipient_keys ;
 
 	for(std::list<RsGxsId>::const_iterator it(recipients.begin());it!=recipients.end();++it)
 	{
-		RsTlvSecurityKey pkey ;
+		RsTlvPublicRSAKey pkey ;
 
 		if(!mGixs->getKey(*it,pkey))
 		{
@@ -3770,7 +3771,7 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
 #endif
          
     std::list<RsNxsItem*> decrypted_items ;
-    std::vector<RsTlvSecurityKey> private_keys ;
+    std::vector<RsTlvPrivateRSAKey> private_keys ;
     
     // get all private keys. Normally we should look into the circle name and only supply the keys that we have
 
@@ -3806,13 +3807,13 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
     return true ;
 }
 
-bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypted_item, RsNxsItem *& nxsitem,std::vector<RsTlvSecurityKey> *pprivate_keys)
+bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypted_item, RsNxsItem *& nxsitem,std::vector<RsTlvPrivateRSAKey> *pprivate_keys)
 {
     // if private_keys storage is supplied use/update them, otherwise, find which key should be used, and store them in a local std::vector.
 
     nxsitem = NULL ;
-    std::vector<RsTlvSecurityKey> local_keys ;
-    std::vector<RsTlvSecurityKey>& private_keys = pprivate_keys?(*pprivate_keys):local_keys ;
+    std::vector<RsTlvPrivateRSAKey> local_keys ;
+    std::vector<RsTlvPrivateRSAKey>& private_keys = pprivate_keys?(*pprivate_keys):local_keys ;
 
     // we need the private keys to decrypt the item. First load them in!
     bool key_loading_failed = false ;
@@ -3828,7 +3829,7 @@ bool RsGxsNetService::decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypt
 
 	    for(std::list<RsGxsId>::const_iterator it(own_keys.begin());it!=own_keys.end();++it)
 	    {
-		    RsTlvSecurityKey private_key ;
+		    RsTlvPrivateRSAKey private_key ;
 
 		    if(mGixs->getPrivateKey(*it,private_key))
 		    {
@@ -4848,9 +4849,9 @@ void RsGxsNetService::sharePublishKeysPending()
 
         const RsTlvSecurityKeySet& keys = grpMeta->keys;
 
-        std::map<RsGxsId, RsTlvSecurityKey>::const_iterator kit = keys.keys.begin(), kit_end = keys.keys.end();
+        std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator kit = keys.private_keys.begin(), kit_end = keys.private_keys.end();
         bool publish_key_found = false;
-        RsTlvSecurityKey publishKey ;
+        RsTlvPrivateRSAKey publishKey ;
 
         for(; kit != kit_end && !publish_key_found; ++kit)
         {
@@ -4900,7 +4901,7 @@ void RsGxsNetService::sharePublishKeysPending()
 void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 {
 #ifdef NXS_NET_DEBUG_3
-    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "RsGxsNetService::sharePublishKeys() " << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "RsGxsNetService::sharePublishKeys() " << std::endl;
 #endif
 
 	if (!item)
@@ -4909,62 +4910,61 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	RS_STACK_MUTEX(mNxsMutex) ;
 
 #ifdef NXS_NET_DEBUG_3
-	 GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  PeerId : " << item->PeerId() << std::endl;
-	 GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  GrpId: " << item->grpId << std::endl;
-	 GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->key.keyId << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  PeerId : " << item->PeerId() << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  GrpId: " << item->grpId << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->key.keyId << std::endl;
 #endif
 
-	 // Get the meta data for this group Id
-	 //
-	 RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
-	 grpMetaMap[item->grpId] = NULL;
-     
-	 mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+	// Get the meta data for this group Id
+	//
+	RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
+	grpMetaMap[item->grpId] = NULL;
 
-	 // update the publish keys in this group meta info
+	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
-	 RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+	// update the publish keys in this group meta info
 
-	 // Check that the keys correspond, and that FULL keys are supplied, etc.
+	RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+
+	// Check that the keys correspond, and that FULL keys are supplied, etc.
 
 #ifdef NXS_NET_DEBUG_3
-	 GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "  Key received: " << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "  Key received: " << std::endl;
 #endif
 
-	 bool admin = (item->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
-     bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+	bool admin = (item->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+	bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
 #ifdef NXS_NET_DEBUG_3
-     GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
 #endif
 
-     if(!(!admin && publi))
-     {
-         std::cerr << "  Key is not a publish private key. Discarding!" << std::endl;
-         return ;
-     }
-	 // Also check that we don't already have full keys for that group.
-	 
-     std::map<RsGxsId,RsTlvSecurityKey>::iterator it = grpMeta->keys.keys.find(item->key.keyId) ;
+	if(!(!admin && publi))
+	{
+		std::cerr << "  Key is not a publish private key. Discarding!" << std::endl;
+		return ;
+	}
+	// Also check that we don't already have full keys for that group.
 
-     if(it == grpMeta->keys.keys.end())
-     {
-         std::cerr << "   (EE) Key not found in known group keys. This is an inconsistency." << std::endl;
-         return ;
-     }
+	if(grpMeta->keys.public_keys.find(item->key.keyId) == grpMeta->keys.public_keys.end())
+	{
+		std::cerr << "   (EE) Key not found in known group keys. This is an inconsistency." << std::endl;
+		return ;
+	}
 
-     if((it->second.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (it->second.keyFlags & RSTLV_KEY_TYPE_FULL))
-     {
+	if(grpMeta->keys.private_keys.find(item->key.keyId) != grpMeta->keys.private_keys.end())
+	{
 #ifdef NXS_NET_DEBUG_3
-         GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "   (EE) Publish key already present in database. Discarding message." << std::endl;
+		GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "   (EE) Publish key already present in database. Discarding message." << std::endl;
 #endif
-			return ;
-     }
+		return ;
+	}
 
-	  // Store/update the info.
+	// Store/update the info.
 
-     it->second = item->key ;
-     bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
+	grpMeta->keys.private_keys[item->key.keyId] = item->key ;
+    
+	bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
 
 	if(ret)
 	{

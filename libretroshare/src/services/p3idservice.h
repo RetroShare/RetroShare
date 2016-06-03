@@ -32,6 +32,7 @@
 #include "gxs/rsgixs.h"			// Internal Interfaces.
 
 #include "gxs/gxstokenqueue.h"		
+#include "serialiser/rsgxsiditems.h"		
 
 #include <map>
 #include <string>
@@ -189,20 +190,49 @@ virtual	std::string save() const;
 
 class RsGxsIdGroupItem;
 
-class RsGxsIdCache
+template<class KeyClass> class RsGxsIdCache
 {
-	public:
-	RsGxsIdCache();
-	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, 
-		const std::list<RsRecognTag> &tagList);
+public:
+    RsGxsIdCache();
 
-void	updateServiceString(std::string serviceString);
+    RsGxsIdCache(const RsGxsIdGroupItem *item, const KeyClass& in_pkey, const std::list<RsRecognTag> &tagList)
+    {
+	// Save Keys.
+	pubkey = in_pkey;
+    	// Save Time for ServiceString comparisions.
+	mPublishTs = item->meta.mPublishTs;
 
-	time_t mPublishTs;
-	std::list<RsRecognTag> mRecognTags; // Only partially validated.
+	// Save RecognTags.
+	mRecognTags = tagList;
 
-	RsIdentityDetails details;
-	RsTlvSecurityKey pubkey;
+	details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
+
+	// Fill in Details.
+	details.mNickname = item->meta.mGroupName;
+	details.mId = RsGxsId(item->meta.mGroupId);
+
+#ifdef DEBUG_IDS
+	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
+	std::cerr << std::endl;
+#endif // DEBUG_IDS
+
+	details.mFlags = 0 ;
+
+	if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
+	if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
+
+	/* rest must be retrived from ServiceString */
+	updateServiceString(item->meta.mServiceString);
+    }
+    
+    void updateServiceString(std::string serviceString);
+
+    time_t mPublishTs;
+    std::list<RsRecognTag> mRecognTags; // Only partially validated.
+
+    RsIdentityDetails details;
+#warning why the "pub" here??
+    KeyClass pubkey;
 };
 
 
@@ -286,8 +316,8 @@ virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
     virtual bool haveKey(const RsGxsId &id);
     virtual bool havePrivateKey(const RsGxsId &id);
 
-    virtual bool getKey(const RsGxsId &id, RsTlvSecurityKey &key);
-    virtual bool getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
+    virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
+    virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
     virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
     virtual bool requestPrivateKey(const RsGxsId &id);
@@ -350,8 +380,8 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	std::map<RsGxsId, std::list<RsPeerId> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
-	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
-	RsMemCache<RsGxsId, RsGxsIdCache> mPrivateKeyCache;
+	RsMemCache<RsGxsId, RsGxsIdCache<RsTlvPublicRSAKey> > mPublicKeyCache;
+	RsMemCache<RsGxsId, RsGxsIdCache<RsTlvPrivateRSAKey> > mPrivateKeyCache;
 
 /************************************************************************
  * Refreshing own Ids.

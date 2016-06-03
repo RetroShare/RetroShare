@@ -155,8 +155,8 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key){ return false; }
-    bool  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key){ return false; }	// For signing outgoing messages.
+    bool  getKey(const RsGxsId &id, RsTlvPrublicRSAKey& key){ return false; }
+    bool  getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey& key){ return false; }	// For signing outgoing messages.
 
 private:
 

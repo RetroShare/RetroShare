@@ -1958,7 +1958,7 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
 {
     try
     {
-        RsTlvSecurityKey signature_key ;
+        RsTlvSecurityKey_deprecated signature_key ;
 
 #ifdef GROUTER_DEBUG
         std::cerr << "p3GRouter::signDataItem()" << std::endl;

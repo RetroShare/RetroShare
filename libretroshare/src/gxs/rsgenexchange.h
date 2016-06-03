@@ -79,8 +79,7 @@ public:
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
 	bool mIsUpdate;
-	RsTlvSecurityKeySet mPrivateKeys;
-	RsTlvSecurityKeySet mPublicKeys;
+	RsTlvSecurityKeySet mKeys;
 };
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
@@ -694,7 +693,7 @@ private:
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
-    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -742,7 +741,7 @@ private:
      * @param publickeySet contains public generated keys (counterpart of private)
      * @param genPublicKeys should publish key pair also be generated
      */
-    void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
+    void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
 
     /*!
      * Generate public set of keys from their private counterparts
@@ -751,7 +750,7 @@ private:
      * @param publickeySet contains public generated keys (counterpart of private)
      * @return false if key gen failed for a key set
      */
-    void generatePublicFromPrivateKeys(const RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet);
+    void generatePublicFromPrivateKeys(RsTlvSecurityKeySet& keySet);
 
     /*!
      * Attempts to validate msg signatures

@@ -1237,7 +1237,7 @@ RsNxsGrp* RsNxsGrp::clone() const {
 	if(this->metaData)
 	{
 		grp->metaData = new RsGxsGrpMetaData();
-		*(grp->metaData) = *(this->metaData);
+//		*(grp->metaData) = *(this->metaData);
 	}
 
 	return grp;

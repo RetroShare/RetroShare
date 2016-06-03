@@ -447,7 +447,10 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
     {
         RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-        RsGxsIdCache data;
+        
+        {
+        RsGxsIdCache<RsTlvPublicRSAKey> data;
+        
         if (mPublicKeyCache.fetch(id, data))
         {
             details = data.details;
@@ -464,7 +467,10 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
             return true;
         }
+        }
 
+        RsGxsIdCache<RsTlvPrivateRSAKey> data;
+        
         /* try private cache too */
         if (mPrivateKeyCache.fetch(id, data))
         {
@@ -604,12 +610,13 @@ bool p3IdService::getRecognTagRequest(const RsGxsId &id, const std::string &comm
 		return false;
 	}
 
-	RsTlvSecurityKey key;
+	RsTlvPrivateRSAKey key;
 	std::string nickname;
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		RsGxsIdCache data;
+		RsGxsIdCache<RsTlvPrivateRSAKey> data;
+        
 		if (!mPrivateKeyCache.fetch(id, data))
 		{
 #ifdef DEBUG_RECOGN
@@ -669,11 +676,12 @@ bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId)
 	return false;
 }
 
-bool p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
+bool p3IdService::getKey(const RsGxsId &id, RsTlvPublicRSAKey &key)
 {
     {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	RsGxsIdCache data;
+	RsGxsIdCache<RsTlvPublicRSAKey> data;
+    
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		key = data.pubkey;
@@ -695,11 +703,12 @@ bool p3IdService::requestPrivateKey(const RsGxsId &id)
     return cache_request_load(id);
 }
 
-bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
+bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key)
 {
     {
         RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-        RsGxsIdCache data;
+        RsGxsIdCache<RsTlvPrivateRSAKey> data;
+        
         if (mPrivateKeyCache.fetch(id, data))
         {
             key = data.pubkey;
@@ -716,10 +725,7 @@ bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key)
 
 bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId& own_gxs_id,RsTlvKeySignature& signature,uint32_t& error_status)
 {
-    //RsIdentityDetails details  ;
-    RsTlvSecurityKey signature_key ;
-
-    //getIdDetails(own_gxs_id,details);
+    RsTlvPrivateRSAKey signature_key ;
 
     int i ;
     for(i=0;i<6;++i)
@@ -758,7 +764,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 {
    // RsIdentityDetails details ;
    // getIdDetails(signature.keyId,details);
-    RsTlvSecurityKey signature_key ;
+    RsTlvPublicRSAKey signature_key ;
 
     for(int i=0;i< (force_load?6:1);++i)
         if(!getKey(signature.keyId,signature_key) || signature_key.keyData.bin_data == NULL)
@@ -793,7 +799,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
 }
 bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
 {
-    RsTlvSecurityKey encryption_key ;
+    RsTlvPublicRSAKey encryption_key ;
 
     // get the key, and let the cache find it.
     for(int i=0;i<(force_load?6:1);++i)
@@ -823,7 +829,7 @@ bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_d
 
 bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_size,const RsGxsId& key_id,uint32_t& error_status)
 {
-    RsTlvSecurityKey encryption_key ;
+    RsTlvPrivateRSAKey encryption_key ;
 
     // Get the key, and let the cache find it. It's our own key, so we should be able to find it, even if it takes
     // some seconds.
@@ -882,7 +888,8 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	/* this is the key part for accepting messages */
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	RsGxsIdCache data;
+	RsGxsIdCache<RsTlvPublicRSAKey> data;
+    
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		rep.id = id;
@@ -1635,42 +1642,6 @@ std::string SSGxsIdGroup::save() const
  *
  */
 
-RsGxsIdCache::RsGxsIdCache() 
-{ 
-	return; 
-}
-
-RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, const std::list<RsRecognTag> &tagList)
-{
-    // Save Keys.
-    pubkey = in_pkey;
-
-    // Save Time for ServiceString comparisions.
-    mPublishTs = item->meta.mPublishTs;
-
-    // Save RecognTags.
-    mRecognTags = tagList;
-
-    details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
-
-    // Fill in Details.
-    details.mNickname = item->meta.mGroupName;
-    details.mId = RsGxsId(item->meta.mGroupId);
-
-#ifdef DEBUG_IDS
-    std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
-    std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-    details.mFlags = 0 ;
-    
-    if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
-    if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
-
-    /* rest must be retrived from ServiceString */
-    updateServiceString(item->meta.mServiceString);
-}
-
 void RsGxsIdCache::updateServiceString(std::string serviceString)
 {
 	details.mRecognTags.clear();
@@ -1894,8 +1865,8 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 	/* extract key from keys */
     	RsTlvSecurityKeySet keySet;
-    	RsTlvSecurityKey    pubkey;
-    	RsTlvSecurityKey    fullkey;
+    	RsTlvSecurityKey_deprecated    pubkey;
+    	RsTlvSecurityKey_deprecated    fullkey;
 	bool pub_key_ok = false;
 	bool full_key_ok = false;
 
@@ -1908,7 +1879,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 		return false;
 	}
 
-	std::map<RsGxsId, RsTlvSecurityKey>::iterator kit;
+	std::map<RsGxsId, RsTlvSecurityKey_deprecated>::iterator kit;
 
 	//std::cerr << "p3IdService::cache_store() KeySet is:";
 	//keySet.print(std::cerr, 10);
@@ -2367,7 +2338,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				}
 				else
 				{
-					RsTlvSecurityKey seckey;
+					RsTlvSecurityKey_deprecated seckey;
                     if (getKey(*vit, seckey))
 					{
 #ifdef DEBUG_IDS
@@ -2399,7 +2370,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				}
 				else
 				{
-					RsTlvSecurityKey seckey;
+					RsTlvSecurityKey_deprecated seckey;
 					if (getPrivateKey(*vit, seckey))
 					{
 						// success!
@@ -2541,10 +2512,10 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
     // find private admin key
-    std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
+    std::map<RsGxsId, RsTlvSecurityKey_deprecated>::iterator mit = keySet.keys.begin();
     for(; mit != keySet.keys.end(); ++mit)
     {
-        RsTlvSecurityKey& pk = mit->second;
+        RsTlvSecurityKey_deprecated& pk = mit->second;
 
         if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
         {

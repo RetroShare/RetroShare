@@ -406,7 +406,7 @@ class RsChatDHPublicKeyItem: public RsChatItem
 		BIGNUM *public_key ;
 
 		RsTlvKeySignature signature ;	// signs the public key in a row.
-		RsTlvSecurityKey  gxs_key ;	// public key of the signer
+		RsTlvSecurityKey_deprecated  gxs_key ;	// public key of the signer
 
 	private:
 		RsChatDHPublicKeyItem(const RsChatDHPublicKeyItem&) : RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {}						// make the object non copy-able

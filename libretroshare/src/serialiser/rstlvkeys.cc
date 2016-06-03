@@ -27,6 +27,7 @@
 #include "rstlvkeys.h"
 #include "rstlvbase.h"
 #include "rsbaseserial.h"
+#include "util/stacktrace.h"
 
 #include <iostream>
 
@@ -37,13 +38,13 @@
 
 /************************************* RsTlvSecurityKey ************************************/
 
-RsTlvSecurityKey::RsTlvSecurityKey()
+RsTlvSecurityKey_deprecated::RsTlvSecurityKey_deprecated()
 	:RsTlvItem(), keyFlags(0), startTS(0), endTS(0),  keyData(TLV_TYPE_KEY_EVP_PKEY)
 {
 	return;
 }
 
-void RsTlvSecurityKey::TlvClear()
+void RsTlvSecurityKey_deprecated::TlvClear()
 {
 	keyId.clear();
 	keyFlags = 0;
@@ -53,7 +54,7 @@ void RsTlvSecurityKey::TlvClear()
 }
 
 /* clears keyData - but doesn't delete */
-void RsTlvSecurityKey::ShallowClear()
+void RsTlvSecurityKey_deprecated::ShallowClear()
 {
 	keyId.clear();
 	keyFlags = 0;
@@ -63,8 +64,22 @@ void RsTlvSecurityKey::ShallowClear()
 	keyData.bin_len = 0;
 }
 
+uint32_t RsTlvRSAKey::TlvSize() const
+{
+	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
-uint32_t RsTlvSecurityKey::TlvSize() const
+	/* now add comment and title length of this tlv object */
+
+	s += keyId.serial_size(); 
+	s += 4;
+	s += 4;
+	s += 4;
+	s += keyData.TlvSize();
+
+	return s;
+
+}
+uint32_t RsTlvSecurityKey_deprecated::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
@@ -81,11 +96,44 @@ uint32_t RsTlvSecurityKey::TlvSize() const
 	s += keyData.TlvSize();
 
 	return s;
-
 }
 
-bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) const
+bool  RsTlvRSAKey::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
+
+	if (size < tlvend)
+	{
+		std::cerr << "RsTlvSecurityKey::SetTlv() Failed not enough space";
+		std::cerr << std::endl;
+		return false; /* not enough space */
+	}
+
+	bool ok = checkFlags(keyFlags);	// check before serialise, just in case
+
+	/* start at data[offset] */
+        /* add mandatory parts first */
+
+	ok &= SetTlvBase(data, tlvend, offset, tlvType(), tlvsize);
+
+	ok &= keyId.serialise(data, tlvend, *offset) ;
+	ok &= setRawUInt32(data, tlvend, offset, keyFlags);
+	ok &= setRawUInt32(data, tlvend, offset, startTS);
+	ok &= setRawUInt32(data, tlvend, offset, endTS);
+	ok &= keyData.SetTlv(data, tlvend, offset);  
+
+	return ok;
+
+}
+bool  RsTlvSecurityKey_deprecated::SetTlv(void *data, uint32_t size, uint32_t *offset) const
+{
+    std::cerr << "(EE) Serialisation of an old security key format. Will not be done! callstack is:" << std::cerr << std::endl;
+    print_stacktrace() ;
+    
+#warning REMOVE THIS CODE BELOW WHEN IT IS NOT CALLED ANYMORE 
+    
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
 	uint32_t tlvend  = *offset + tlvsize;
@@ -104,7 +152,7 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) cons
 	/* start at data[offset] */
         /* add mandatory parts first */
 
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_SECURITYKEY, tlvsize);
+	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_SECURITYKEY_deprecated, tlvsize);
 
 #ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
 	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId.toStdString());  
@@ -120,8 +168,7 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) cons
 
 }
 
-
-bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
+bool  RsTlvRSAKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -139,7 +186,75 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 		return false; /* not enough space */
 	}
 
-	if (tlvtype != TLV_TYPE_SECURITYKEY) /* check type */
+	if (tlvtype != tlvType()) /* check type */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, wrong type";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+
+	/* ready to load */
+	TlvClear();
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+
+	ok &= keyId.deserialise(data, tlvend, *offset) ;
+	ok &= getRawUInt32(data, tlvend, offset, &(keyFlags));
+	ok &= getRawUInt32(data, tlvend, offset, &(startTS));
+	ok &= getRawUInt32(data, tlvend, offset, &(endTS));
+	ok &= keyData.GetTlv(data, tlvend, offset);  
+
+    	ok &= checkFlags(keyFlags) ;
+        
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
+	if (!ok)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Failed somewhere ok == false";
+		std::cerr << std::endl;
+#endif
+	}
+
+	return ok;
+}
+bool  RsTlvSecurityKey_deprecated::GetTlv(void *data, uint32_t size, uint32_t *offset)
+{
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;	
+	
+	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+	if (size < tlvend)    /* check size */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, not enough space";
+		std::cerr << std::endl;
+#endif
+		return false; /* not enough space */
+	}
+
+	if (tlvtype != TLV_TYPE_SECURITYKEY_deprecated) /* check type */
 	{
 #ifdef TLV_DEBUG
 		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, wrong type";
@@ -196,7 +311,7 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 }
 
 
-std::ostream &RsTlvSecurityKey::print(std::ostream &out, uint16_t indent) const
+std::ostream &RsTlvSecurityKey_deprecated::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvSecurityKey", indent);
 	uint16_t int_Indent = indent + 2;
@@ -233,7 +348,10 @@ std::ostream &RsTlvSecurityKey::print(std::ostream &out, uint16_t indent) const
 void RsTlvSecurityKeySet::TlvClear()
 {
 	groupId.clear();
-	keys.clear(); //empty list
+#ifdef TODO
+	public_keys.clear(); //empty list
+	private_keys.clear(); //empty list
+#endif
 }
 
 uint32_t RsTlvSecurityKeySet::TlvSize() const
@@ -241,17 +359,13 @@ uint32_t RsTlvSecurityKeySet::TlvSize() const
 
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
-	std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
-	
 	s += GetTlvStringSize(groupId); 
 
-	if(!keys.empty())
-	{
-
-		for(it = keys.begin(); it != keys.end() ; ++it)
-			s += (it->second).TlvSize();
-
-	}
+	for(std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator it = public_keys.begin(); it != public_keys.end() ; ++it)
+		s += (it->second).TlvSize();
+    
+	for(std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it = private_keys.begin(); it != private_keys.end() ; ++it)
+		s += (it->second).TlvSize();
 
 	return s;
 }
@@ -279,17 +393,13 @@ bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) c
 	/* groupId */
 	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GROUPID, groupId);
 
-	if(!keys.empty())
-	{
-		std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
-
-		for(it = keys.begin(); it != keys.end() ; ++it)
+    	for(std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator it = public_keys.begin(); it != public_keys.end() ; ++it)
 			ok &= (it->second).SetTlv(data, size, offset);
-	}
-	
+        
+    	for(std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it = private_keys.begin(); it != private_keys.end() ; ++it)
+			ok &= (it->second).SetTlv(data, size, offset);
 
-return ok;
-
+	return ok;
 }
 
 
@@ -319,37 +429,72 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	/* groupId */
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_GROUPID, groupId);
 
-        /* while there is TLV  */
-        while((*offset) + 2 < tlvend)
-        {
-                /* get the next type */
-                uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
+	/* while there is TLV  */
+	while((*offset) + 2 < tlvend)
+	{
+		/* get the next type */
+		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-                switch(tlvsubtype)
-                {
-                        case TLV_TYPE_SECURITYKEY:
+		switch(tlvsubtype)
+		{
+		case TLV_TYPE_SECURITYKEY_deprecated:
+		{
+			RsTlvSecurityKey_deprecated key;
+
+			ok &= key.GetTlv(data, size, offset);
+
+			if (ok)
 			{
-				RsTlvSecurityKey key;
-				ok &= key.GetTlv(data, size, offset);
-				if (ok)
-				{
-					keys[key.keyId] = key;
-					key.TlvClear(); /* so that the Map can get control - should be ref counted*/
-				}
+				std::cerr << "(WW) read RSA key with old format. Will be converted to new format. Flags=" << std::hex << key.keyFlags << std::dec << std::endl;
+
+				if(key.keyFlags & RSTLV_KEY_TYPE_FULL) 
+					private_keys[key.keyId] = RsTlvPrivateRSAKey(key);
+				else
+					public_keys[key.keyId] = RsTlvPublicRSAKey(key);
+
+				key.TlvClear(); /* so that the Map can get control - should be ref counted*/
 			}
-				break;
-                        default:
-                                ok &= SkipUnknownTlv(data, tlvend, offset);
-                                break;
+		}
+			break ;
 
-                }
+		case TLV_TYPE_RSA_KEY_PRIVATE:
+		{
+			RsTlvPrivateRSAKey key;
 
-                if (!ok)
+			if(key.GetTlv(data, size, offset))
+				private_keys[key.keyId] = key;
+			else
+				ok = false ;
+
+			key.TlvClear(); /* so that the Map can get control - should be ref counted*/
+		}
+			break;
+
+		case TLV_TYPE_RSA_KEY_PUBLIC:
+		{
+			RsTlvPublicRSAKey key;
+
+			if(key.GetTlv(data, size, offset))
+				public_keys[key.keyId] = key;
+			else
+				ok = false ;
+
+			key.TlvClear(); /* so that the Map can get control - should be ref counted*/
+		}
+			break;
+
+		default:
+			ok &= SkipUnknownTlv(data, tlvend, offset);
+			break;
+
+		}
+
+		if (!ok)
 			break;
 	}
-   
 
-		
+
+
 	/***************************************************************************
 	 * NB: extra components could be added (for future expansion of the type).
 	 *            or be present (if this code is reading an extended version).
@@ -378,8 +523,9 @@ std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent) con
 	out << "GroupId: " << groupId;
 	out << std::endl;
 
-	std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
-	for(it = keys.begin(); it != keys.end() ; ++it)
+	for( std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator it = public_keys.begin(); it != public_keys.end() ; ++it)
+		(it->second).print(out, int_Indent);
+	for( std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it = private_keys.begin(); it != private_keys.end() ; ++it)
 		(it->second).print(out, int_Indent);
 
 	printEnd(out, "RsTlvSecurityKeySet", indent);
