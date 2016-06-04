@@ -92,18 +92,21 @@ CreateCircleDialog::CreateCircleDialog()
 	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
-    
+
 	ui.radioButton_Public->setChecked(true) ;
-    
+
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 	mClearList = true;
-#if QT_VERSION >= 0x040700
-        ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0, QApplication::UnicodeUTF8));
+#if QT_VERSION_MAJOR >= 5
+	//QCoreApplication::UnicodeUTF8 is deprecated (https://wiki.qt.io/Transition_from_Qt_4.x_to_Qt5)
+	ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
+#elif QT_VERSION >= 0x040700
+	ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0, QApplication::UnicodeUTF8));
 #endif
-        
-    //ui.idChooser->loadIds(0,RsGxsId());
-    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
+
+	//ui.idChooser->loadIds(0,RsGxsId());
+	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 }
 
 CreateCircleDialog::~CreateCircleDialog()
