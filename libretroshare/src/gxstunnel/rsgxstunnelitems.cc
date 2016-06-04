@@ -382,7 +382,7 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     if(rssize > size)
     {
 	std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
-        return false ;
+        return NULL ;
     }
 
     RsGxsTunnelDataItem *item = new RsGxsTunnelDataItem();
@@ -465,7 +465,7 @@ RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(
     if(rssize > size)
     {
 	std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
-        return false ;
+        return NULL ;
     }
 
     RsGxsTunnelStatusItem *item = new RsGxsTunnelStatusItem();
