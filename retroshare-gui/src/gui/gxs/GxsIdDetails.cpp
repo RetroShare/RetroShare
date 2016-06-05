@@ -22,19 +22,20 @@
  */
 
 #include <QApplication>
+#include <QMutexLocker>
+#include <QPainter>
 #include <QThread>
 #include <QTimerEvent>
-#include <QMutexLocker>
-
-#include <math.h>
-#include "GxsIdDetails.h"
-#include "retroshare-gui/RsAutoUpdatePage.h"
-#include "retroshare/rsreputations.h"
-
-#include <retroshare/rspeers.h>
 
 #include <iostream>
-#include <QPainter>
+#include <math.h>
+
+#include "GxsIdDetails.h"
+#include "util/HandleRichText.h"
+#include <retroshare/rspeers.h>
+#include "retroshare/rsreputations.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
+
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
@@ -957,6 +958,59 @@ QString nickname ;
         comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
 
 	return comment;
+}
+
+QString GxsIdDetails::getToolTip(const RsIdentityDetails &details, QFont font)
+{
+	QString toolTipText;
+	QString nickname ;
+	RsGxsImage mAvatar = details.mAvatar;
+	QImage pix;
+
+	bool banned = rsReputations->isIdentityBanned(details.mId) ;
+
+	if(details.mNickname.empty())
+		nickname = tr("[Unknown]") ;
+	else if(banned)
+		nickname = tr("[Banned]") ;
+	else
+		nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
+
+
+	toolTipText = QString("%1:%2<br/>%3:%4").arg(QApplication::translate("GxsIdDetails", "Identity&nbsp;name"),
+																					 nickname,
+																					 QApplication::translate("GxsIdDetails", "Identity&nbsp;Id"),
+																					 QString::fromStdString(details.mId.toStdString()));
+
+	if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
+	{
+		toolTipText += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
+
+		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
+		{
+			/* look up real name */
+			std::string authorName = rsPeers->getGPGName(details.mPgpId);
+
+			toolTipText += QString("%1&nbsp;[%2]").arg(QString::fromUtf8(authorName.c_str()), QString::fromStdString(details.mPgpId.toStdString()));
+		}
+		else
+			toolTipText += QApplication::translate("GxsIdDetails", "unknown Key");
+	}
+	else
+		toolTipText += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
+
+	if(banned)
+		pix = QImage(IMAGE_BANNED) ;
+	else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG"))
+		pix = makeDefaultIcon(details.mId);
+
+	int S = QFontMetricsF(font).height();
+	QString embeddedImage;
+	if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
+		toolTipText = "<table><tr><td>" + embeddedImage + "</td><td>" + toolTipText + "</td></table>";
+	}
+
+	return toolTipText;
 }
 
 void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types)

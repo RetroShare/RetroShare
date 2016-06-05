@@ -47,6 +47,7 @@
 #include "gui/common/FilesDefs.h"
 #include "gui/common/Emoticons.h"
 #include "gui/chat/ChatLobbyDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "gui/chat/ChatUserNotify.h"//For BradCast
@@ -576,6 +577,15 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				}
 			}
 			if (!toolTipText.isEmpty()){
+				if (toolTipText.startsWith("Person Id: ")){
+					RsGxsId mId = RsGxsId(toolTipText.replace("Person Id: ","").toStdString());
+					if(!mId.isNull()) {
+						RsIdentityDetails details;
+						if (rsIdentity->getIdDetails(mId, details)){
+							toolTipText = GxsIdDetails::getToolTip(details, font());
+						}
+					}
+				}
 				QToolTip::showText(helpEvent->globalPos(), toolTipText);
 				return true;
 			} else {

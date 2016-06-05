@@ -24,10 +24,6 @@
 #include "rshare.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
-#include "util/HandleRichText.h"
-#include "retroshare/rsreputations.h"
-
-#define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
@@ -82,7 +78,7 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 	}
 
 	int column = item->idColumn();
-	item->setToolTip(column, GxsIdDetails::getComment(details));
+	item->setToolTip(column, GxsIdDetails::getToolTip(details, item->font(column)));
 
 	item->setText(column, GxsIdDetails::getNameForType(type, details));
 	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
@@ -161,30 +157,5 @@ void GxsIdRSTreeWidgetItem::setAvatar(const RsGxsImage &avatar)
 
 QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 {
-    if (column == idColumn()) 
-    {
-	    if (role == Qt::ToolTipRole)
-	    {
-		    QString t = RSTreeWidgetItem::data(column, role).toString();
-		    QImage pix;
-
-		    if(mId.isNull())
-			    return RSTreeWidgetItem::data(column, role);
-		    else if(rsReputations->isIdentityBanned(mId))
-			    pix = QImage(BANNED_IMAGE) ;
-		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
-			    pix = GxsIdDetails::makeDefaultIcon(mId);
-
-		    int S = QFontMetricsF(font(column)).height();
-
-		    QString embeddedImage;
-		    if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
-			    t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
-		    }
-
-		    return t;
-	    }
-    }
-
     return RSTreeWidgetItem::data(column, role);
 }

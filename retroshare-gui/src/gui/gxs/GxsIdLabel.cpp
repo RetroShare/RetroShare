@@ -42,13 +42,14 @@ static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &de
 	QString toolTip;
 
 	switch (type) {
-	case GXS_ID_DETAILS_TYPE_EMPTY:
-	case GXS_ID_DETAILS_TYPE_LOADING:
-	case GXS_ID_DETAILS_TYPE_FAILED:
+		case GXS_ID_DETAILS_TYPE_EMPTY:
+		case GXS_ID_DETAILS_TYPE_LOADING:
+		case GXS_ID_DETAILS_TYPE_FAILED:
 		break;
 
-	case GXS_ID_DETAILS_TYPE_DONE:
-        toolTip = GxsIdDetails::getComment(details);
+		case GXS_ID_DETAILS_TYPE_DONE:
+		case 	GXS_ID_DETAILS_TYPE_BANNED:
+			toolTip = GxsIdDetails::getToolTip(details, label->font());
 		break;
 	}
 
