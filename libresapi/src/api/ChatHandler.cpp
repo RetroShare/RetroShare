@@ -888,7 +888,12 @@ void ChatHandler::handleClearLobby(Request &req, Response &resp)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
-    notifyChatCleared(ChatId(id));
+    if (id !=0) {
+        notifyChatCleared(ChatId(id));
+    } else {
+        //Is BroadCast
+        notifyChatCleared(ChatId("B"));
+    }
     resp.setOk();
 }
 
