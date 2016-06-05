@@ -152,6 +152,7 @@ class RsGxsCircleCache
 
 	uint32_t      mCircleType;
 	bool	      mIsExternal;
+    	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 
 	uint32_t      mGroupStatus;
 	uint32_t      mGroupSubscribeFlags;

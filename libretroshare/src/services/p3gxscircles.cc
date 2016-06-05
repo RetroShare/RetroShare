@@ -283,6 +283,7 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 		    details.mCircleName = data.mCircleName;
 
 		    details.mCircleType = data.mCircleType;
+		    details.mRestrictedCircleId = data.mRestrictedCircleId;
 
 		    details.mAllowedNodes = data.mAllowedNodes;
 		    details.mSubscriptionFlags.clear();
@@ -588,6 +589,7 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mOriginator = circle.mMeta.mOriginator ;
         
         mAllowedNodes = circle.mLocalFriends ;
+        mRestrictedCircleId = circle.mMeta.mCircleId ;
         
         mMembershipStatus.clear() ;
         
