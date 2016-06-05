@@ -98,6 +98,7 @@
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
 #define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
+#define IMAGE_UNKNOWN              ":/icons/bullet_grey_128.png"
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
@@ -686,7 +687,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	    	else if(am_I_invited || am_I_pending)
                 	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
             	else
-                	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon()) ;
+                	item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_UNKNOWN)) ;
 	}
 }
 
