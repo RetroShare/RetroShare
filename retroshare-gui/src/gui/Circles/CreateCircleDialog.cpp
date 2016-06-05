@@ -99,7 +99,7 @@ CreateCircleDialog::CreateCircleDialog()
 	mIsExternalCircle = true;
 	mClearList = true;
 #if QT_VERSION >= 0x040700
-        ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0, QApplication::UnicodeUTF8));
+        ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
 #endif
         
     //ui.idChooser->loadIds(0,RsGxsId());
