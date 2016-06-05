@@ -301,7 +301,7 @@ void p3GxsTunnelService::handleIncomingItem(const RsGxsTunnelId& tunnel_id,RsGxs
     delete item ;
 }
 
-void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId& id,RsGxsTunnelDataAckItem *item) 
+void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId &/*id*/,RsGxsTunnelDataAckItem *item)
 {
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
     

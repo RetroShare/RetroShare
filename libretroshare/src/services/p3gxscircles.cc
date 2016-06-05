@@ -1043,7 +1043,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 {
-	bool isUnprocessedPeers = false;
+	//bool isUnprocessedPeers = false;
 
 	if (cache.mIsExternal)
 	{
@@ -1086,7 +1086,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 			}
 
 			mIdentities->requestKey(pit->first, peers);
-			isUnprocessedPeers = true;
+			//isUnprocessedPeers = true;
 		}
 #ifdef DEBUG_CIRCLES
 	    		else

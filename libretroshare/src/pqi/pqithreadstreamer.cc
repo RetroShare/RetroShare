@@ -34,7 +34,7 @@
 //#define PQISTREAMER_DEBUG
 
 pqithreadstreamer::pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-:pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mThreadMutex("pqithreadstreamer"),  mTimeout(0)
+:pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mTimeout(0), mThreadMutex("pqithreadstreamer")
 {
     mTimeout = DEFAULT_STREAMER_TIMEOUT;
     mSleepPeriod = DEFAULT_STREAMER_SLEEP;

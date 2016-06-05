@@ -126,7 +126,6 @@ void RsGxsCircleSubscriptionRequestItem::clear()
 std::ostream& RsGxsCircleSubscriptionRequestItem::print(std::ostream& out, uint16_t indent)
 { 
 	printRsItemBase(out, "RsGxsCircleSubscriptionRequestItem", indent);
-	uint16_t int_Indent = indent + 2;
 
 	printRsItemBase(out, "time stmp: ", indent); out << time_stamp ;
 	printRsItemBase(out, "time out : ", indent); out << time_out ;

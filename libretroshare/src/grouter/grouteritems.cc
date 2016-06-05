@@ -532,12 +532,18 @@ bool RsGRouterTransactionAcknItem::serialise(void *data,uint32_t& size) const
 
     return ok;
 }
-bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t size) const
 {
     bool ok = true;
 
     uint32_t offset = 0;
     uint32_t tlvsize = signed_data_size() ;
+    
+    if(tlvsize > size)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! Not enough size in supplied container." << std::endl;
+    }
 
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
@@ -580,12 +586,18 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 
 	return ok;
 }
-bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t size) const
 {
     bool ok = true;
 
     uint32_t offset=0;
     uint32_t tlvsize = signed_data_size() ;
+    
+    if(tlvsize > size)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! Not enough size in supplied container." << std::endl;
+    }
 
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);

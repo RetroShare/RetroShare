@@ -347,7 +347,8 @@ int pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState,
 			activepqi = pqi;
 			inConnectAttempt = false;
 
-			activepqi->start();  // STARTUP THREAD.
+			// STARTUP THREAD
+			activepqi->start("pqi " + PeerId().toStdString().substr(0, 11));
 
 			// reset all other children (clear up long UDP attempt)
 			for(it = kids.begin(); it != kids.end(); ++it)

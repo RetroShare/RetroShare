@@ -245,7 +245,7 @@ class RsThread
     RsThread();
     virtual ~RsThread() {}
 
-    void start() ;
+    void start(const std::string &threadName = "");
 
     // Returns true of the thread is still running.
 

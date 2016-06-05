@@ -46,8 +46,6 @@ bdFilter::bdFilter(const std::string &fname, const bdNodeId *ownid,  uint32_t fi
     mFns = fns;
     mFilename = fname ;
 
-    time_t now = time(NULL) ;
-
     loadBannedIpFile() ;
 
     mFilterFlags = filterFlags;
@@ -91,8 +89,6 @@ void bdFilter::loadBannedIpFile()
         struct sockaddr_in addr;
         memset(&addr, 0, sizeof(struct sockaddr_in));
         addr.sin_family = PF_INET;
-
-        unsigned short port;
 
     FILE *fd = fopen(mFilename.c_str(),"r") ;
 

@@ -378,6 +378,12 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
     bool ok = true ;
+    
+    if(rssize > size)
+    {
+        std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
+        return NULL ;
+    }
 
     RsGxsTunnelDataItem *item = new RsGxsTunnelDataItem();
 
@@ -388,9 +394,9 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     ok &= getRawUInt32(dat, rssize, &offset, &item->service_id);
     ok &= getRawUInt32(dat, rssize, &offset, &item->data_size);
 
-    if(item->data_size > rssize || rssize - item->data_size < offset) 
+    if(item->data_size > rssize || rssize < offset + item->data_size) 
     {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+	    std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
 	    delete item ;
 	    return NULL ;
     }
@@ -450,11 +456,17 @@ RsGxsTunnelDataAckItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataAckIte
     return item ;
 }
 
-RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat,uint32_t size)
+RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat, uint32_t size)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
     bool ok = true ;
+
+    if(rssize > size)
+    {
+        std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
+        return NULL ;
+    }
 
     RsGxsTunnelStatusItem *item = new RsGxsTunnelStatusItem();
 
@@ -464,13 +476,13 @@ RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(
 
     if (offset != rssize)
     {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+	    std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
 	    delete item ;
 	    return NULL ;
     }
     if (!ok)
     {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
+	    std::cerr << "RsGxsTunnelStatusItem::() Unknown error while deserializing." << std::endl ;
 	    delete item ;
 	    return NULL ;
     }

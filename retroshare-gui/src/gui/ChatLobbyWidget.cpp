@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <time.h>
+#include <algorithm>
 #include "ChatLobbyWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "chat/ChatTabWidget.h"
