@@ -524,7 +524,7 @@ void RSGraphWidget::paintTotals()
     float FS = QFontMetricsF(font()).height();
     float fact = FS/14.0 ;
 
-  int x = SCALE_WIDTH*fact + FS, y = 0;
+  //int x = SCALE_WIDTH*fact + FS, y = 0;
   int rowHeight = FS;
 
 #if !defined(Q_OS_MAC)
@@ -626,7 +626,7 @@ void RSGraphWidget::wheelEvent(QWheelEvent *e)
 
 void RSGraphWidget::paintLegend()
 {
-  int bottom = _rec.height();
+  //int bottom = _rec.height();
 
   std::vector<QPointF> vals ;
   _source->getCurrentValues(vals) ;

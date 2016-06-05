@@ -627,6 +627,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
     rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
 }
 
+#ifdef UNUSED_CODE
 void MessageComposer::sendChannelPublishKey(RsGxsChannelGroup &group)
 {
 //    QString channelName = QString::fromUtf8(group.mMeta.mGroupName.c_str());
@@ -658,6 +659,7 @@ void MessageComposer::sendForumPublishKey(RsGxsForumGroup &group)
 //    QString msgText = tr("... %1 ...<br>%2").arg(forumName, link.toHtml());
 //    rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_PUBLISH_KEY);
 }
+#endif
 
 void MessageComposer::closeEvent (QCloseEvent * event)
 {

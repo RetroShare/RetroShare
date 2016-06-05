@@ -1060,6 +1060,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 
 			/* check cache */
 			if(!(pit->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE))
+			{
 				if(mIdentities->haveKey(pit->first))
 				{
 					pit->second.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE;
@@ -1068,26 +1069,27 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 #endif
 				}
 				else
-		{
-			std::list<PeerId> peers;
+				{
+					std::list<PeerId> peers;
 
-			if(!cache.mOriginator.isNull())
-			{
-				peers.push_back(cache.mOriginator) ;
+					if(!cache.mOriginator.isNull())
+					{
+						peers.push_back(cache.mOriginator) ;
 #ifdef DEBUG_CIRCLES
-				std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
+						std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
 #endif
-			}
-			else
-			{
-				std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+					}
+					else
+					{
+						std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
 
-				rsPeers->getOnlineList(peers) ;
-			}
+						rsPeers->getOnlineList(peers) ;
+					}
 
-			mIdentities->requestKey(pit->first, peers);
-			//isUnprocessedPeers = true;
-		}
+					mIdentities->requestKey(pit->first, peers);
+					//isUnprocessedPeers = true;
+				}
+			}
 #ifdef DEBUG_CIRCLES
 	    		else
                 		std::cerr << "  Key is available. Nothing to process." << std::endl;

@@ -227,7 +227,7 @@ void xProgressBar::paint()
 	linearGrad.setColorAt(1.00, gradColor1);
 	painter->setPen(gradBorderColor);
 
-	int width = static_cast<int>(rect.width()-1-2*hSpan) ;
+	uint32_t width = static_cast<uint32_t>(rect.width()-1-2*hSpan) ;
 
 	painter->setBrush(linearGrad);
 

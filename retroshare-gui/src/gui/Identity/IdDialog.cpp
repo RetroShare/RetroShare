@@ -561,7 +561,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
         	// remove any identity that has an item, but no subscription flag entry
 		std::vector<QTreeWidgetItem*> to_delete ;
         
-		for(uint32_t k=0;k<item->childCount();++k)
+		for(int k=0;k<item->childCount();++k)
 			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
 				to_delete.push_back(item->child(k));
                 

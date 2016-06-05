@@ -227,8 +227,8 @@ GxsTunnelsDialog::GxsTunnelsDialog(QWidget *parent)
 	
 	m_bProcessSettings = false;
 
-        float fontHeight = QFontMetricsF(font()).height();
-        float fact = fontHeight/14.0;
+        //float fontHeight = QFontMetricsF(font()).height();
+        //float fact = fontHeight/14.0;
 	
 	maxWidth = 200 ;
 	maxHeight = 200 ;

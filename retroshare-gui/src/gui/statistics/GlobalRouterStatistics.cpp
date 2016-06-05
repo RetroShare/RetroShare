@@ -167,7 +167,7 @@ void GlobalRouterStatistics::updateContent()
     
     groupBox->setTitle(tr("Pending packets")+": " + QString::number(cache_infos.size()) );
 
-    for(int i=0;i<cache_infos.size();++i)
+    for(uint32_t i=0;i<cache_infos.size();++i)
     {
         QTreeWidgetItem *item = new QTreeWidgetItem();
         treeWidget->addTopLevelItem(item);

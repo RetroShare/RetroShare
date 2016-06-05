@@ -594,7 +594,7 @@ void ServerPage::moveToWhiteList2()
 
     rsBanList->addIpRange(addr,2,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
-void ServerPage::ipWhiteListContextMenu(const QPoint& point)
+void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
 {
     QMenu contextMenu(this) ;
     int row = ui.whiteListIpsTable->currentRow();

@@ -12,7 +12,7 @@ public:
     {
         addResourceHandler("eins", this, &TestResource::eins);
     }
-    ResponseTask* eins(Request& req, Response& resp)
+    ResponseTask* eins(Request& /* req */, Response& /* resp */)
     {
         return 0;
     }
