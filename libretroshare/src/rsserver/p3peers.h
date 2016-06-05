@@ -101,6 +101,13 @@ public:
 	virtual bool getAllowServerIPDetermination();
 	virtual bool resetOwnExternalAddressList();
 
+virtual void allowServerNTPDetermination(bool) ;
+virtual bool getAllowServerNTPDetermination() ;
+virtual void setNTPServersList(std::list<std::string>& ip_servers) ;
+virtual void getNTPServersList(std::list<std::string>& ip_servers) ;
+virtual void getNTPError(int *ntp_error) ;
+virtual void forceNTPRefresh() ;
+
 	/* Auth Stuff */
 	// Get the invitation (GPG cert + local/ext address + SSL id for the given peer)
 	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures);

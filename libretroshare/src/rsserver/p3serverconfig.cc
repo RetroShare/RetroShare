@@ -168,6 +168,9 @@ int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 	status.netUpnpOk  = nstatus.mUpnpOk;
 	status.netStunOk  = false;
 	status.netExtAddressOk = nstatus.mExtAddrOk;
+	status.netNTPOk = nstatus.mNTPOk;
+	status.netNTPTime = nstatus.mNTPTime;
+	status.netNTPError = nstatus.mNTPError;
 
 	status.netDhtOk   = nstatus.mDhtOk;
 	status.netDhtNetSize = nstatus.mDhtNetworkSize;

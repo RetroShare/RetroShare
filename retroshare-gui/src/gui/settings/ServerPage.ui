@@ -7,20 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>568</height>
+    <height>671</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="leftMargin">
-    <number>6</number>
-   </property>
-   <property name="topMargin">
-    <number>6</number>
-   </property>
-   <property name="rightMargin">
-    <number>6</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>6</number>
    </property>
    <item>
@@ -28,7 +19,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="Network_TAB">
       <attribute name="title">
        <string>Network Configuration</string>
       </attribute>
@@ -429,7 +420,7 @@
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="label_KnowPrevIps">
            <property name="text">
             <string>Known / Previous IPs:</string>
            </property>
@@ -505,6 +496,115 @@ behind a firewall or a VPN.</string>
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
         </widget>
+       </item>
+       <item row="6" column="0">
+        <layout class="QHBoxLayout">
+         <item>
+          <widget class="QCheckBox" name="allowNTPDeterminationCB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you uncheck this, RetroShare can't determine real time. Leaving this checked heps determine if your computer is on time. If not, you could lost Chat Lobbies.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Allow RetroShare to ask real time to these websites:</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout">
+           <property name="leftMargin">
+            <number>6</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="iconlabel_ntp">
+             <property name="maximumSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="textlabel_ntp">
+             <property name="text">
+              <string>NTP Real Time finder</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QListWidget" name="NTPServersLV">
+           <property name="toolTip">
+            <string>Liste of used server to get real Time.</string>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QPushButton" name="addNTPServer_PB">
+             <property name="toolTip">
+              <string>To add a new NTP Server.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="removeNTPServer_PB">
+             <property name="toolTip">
+              <string>To remove selected server.</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
       </layout>
       <zorder>showDiscStatusBar</zorder>

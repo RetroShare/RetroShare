@@ -193,7 +193,9 @@ class RsConfigNetStatus
 	{
 		localPort = extPort = 0 ;
 		firewalled = forwardPort = false ;
-		DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtAddressOk = false ;
+		DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtAddressOk = netNTPOk = false ;
+		netNTPTime = 0;
+		netNTPError = 0;
 		uPnPState = 0 ;
 		//DHTPeers = 0 ;
         netDhtNetSize = netDhtRsNetSize = 0;
@@ -223,7 +225,9 @@ class RsConfigNetStatus
 	bool			netDhtOk;  /* response from dht */
 	bool			netStunOk;  /* recvd stun / udp packets */
 	bool			netExtAddressOk;  /* from Dht/Stun or External IP Finder */
-
+	bool      netNTPOk;         /* from NTP Finder */
+	time_t    netNTPTime;       /* Time from NTP Finder */
+	int       netNTPError;      /* from NTP Finder */
 	uint32_t		netDhtNetSize;  /* response from dht */
 	uint32_t		netDhtRsNetSize;  /* response from dht */
 };

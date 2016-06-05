@@ -179,6 +179,8 @@ protected:
 	virtual void triggerConfigSave()  { IndicateConfigChanged() ; }
 	/// Same, for storing messages in incoming list
 	virtual void locked_storeIncomingMsg(RsChatMsgItem *) ;
+	/// An item was received with a lot of time shift
+	virtual void manageTimeReceivedError() ;
 
 private:
 	RsMutex mChatMtx;

@@ -40,6 +40,7 @@
 #include <QNetworkRequest>
 #include <QNetworkAccessManager>
 #include <QTimer>
+#include <QInputDialog>
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
@@ -64,6 +65,9 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
 
   manager = NULL ;
+  connect( ui.allowNTPDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleNTPDetermination(bool) ) );
+  connect( ui.addNTPServer_PB, SIGNAL( clicked() ) , this, SLOT( addNTPServer() ) );
+  connect( ui.removeNTPServer_PB, SIGNAL( clicked() ) , this, SLOT( removeNTPServer() ) );
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
@@ -104,6 +108,16 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
+
+	b = rsPeers->getAllowServerNTPDetermination() ;
+	ui.allowNTPDeterminationCB->setChecked(b) ;
+	ui.NTPServersLV->setEnabled(b) ;
+
+	std::list<std::string> ntp_servers ;
+	rsPeers->getNTPServersList(ntp_servers) ;
+
+	for(std::list<std::string>::const_iterator it(ntp_servers.begin());it!=ntp_servers.end();++it)
+		ui.NTPServersLV->addItem(QString::fromStdString(*it)) ;
 
 	ui.hiddenpage_incoming->setVisible(false);
 
@@ -183,9 +197,49 @@ void ServerPage::toggleTunnelConnection(bool b)
         //rsPeers->allowTunnelConnection(b) ;
 }
 
+void ServerPage::toggleNTPDetermination(bool b)
+{
+	rsPeers->allowServerNTPDetermination(b) ;
+	ui.NTPServersLV->setEnabled(b) ;
+}
+
+void ServerPage::addNTPServer()
+{
+	QString ntpServer;
+	bool ok;
+	ntpServer = QInputDialog::getText(this, tr("New NTP Server")
+		                                  , tr("Enter the new server adress.")
+	                                  , QLineEdit::Normal, "", &ok);
+	if (ok) {
+		ui.NTPServersLV->addItem(ntpServer) ;
+		std::list<std::string> ntp_servers ;
+		rsPeers->getNTPServersList(ntp_servers) ;
+		ntp_servers.push_back(ntpServer.toStdString()) ;
+		rsPeers->setNTPServersList(ntp_servers) ;
+	}
+}
+
+void ServerPage::removeNTPServer()
+{
+	QListWidgetItem *pItemWidget = ui.NTPServersLV->currentItem();
+	if (pItemWidget == NULL) {
+		return;
+	}
+
+	QString ntpServer = pItemWidget->text();
+
+	ui.NTPServersLV->selectionModel()->clear();
+	ui.NTPServersLV->removeItemWidget(pItemWidget);
+	delete (pItemWidget);
+
+	std::list<std::string> ntp_servers ;
+	rsPeers->getNTPServersList(ntp_servers) ;
+	ntp_servers.remove(ntpServer.toStdString());
+	rsPeers->setNTPServersList(ntp_servers) ;
+}
+
 /** Saves the changes on this page */
-bool
-ServerPage::save(QString &/*errmsg*/)
+bool ServerPage::save(QString &/*errmsg*/)
 {
     Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked());
 
@@ -709,6 +763,26 @@ void ServerPage::updateStatus()
 
     // check for Tor
 	updateOutProxyIndicator();
+
+	// check for NTP
+
+	if (net_status.netNTPOk)
+		ui.iconlabel_ntp->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_ntp->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	switch (net_status.netNTPError)
+	{
+		case NTP_Error_NoResult: //1
+		ui.iconlabel_ntp->setToolTip(tr("No result from NTP servers."));
+			break;
+		case NTP_Error_TimeBwSrvTL: //2
+		ui.iconlabel_ntp->setToolTip(tr("The time between two server is too large."));
+			break;
+		default:
+		ui.iconlabel_ntp->setToolTip(tr(""));
+			break;
+	}
 }
 
 void ServerPage::toggleUPnP()

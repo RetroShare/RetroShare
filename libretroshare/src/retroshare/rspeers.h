@@ -377,6 +377,13 @@ public:
 	virtual bool resetOwnExternalAddressList() = 0;
 	virtual bool getAllowServerIPDetermination() = 0 ;
 
+	virtual void allowServerNTPDetermination(bool) = 0;
+	virtual bool getAllowServerNTPDetermination() = 0 ;
+	virtual void setNTPServersList(std::list<std::string>& ntp_servers) = 0;
+	virtual void getNTPServersList(std::list<std::string>& ntp_servers) = 0;
+	virtual void getNTPError(int *ntp_error) = 0;
+	virtual void forceNTPRefresh() = 0;
+
 	/* Auth Stuff */
 	virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) = 0;
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;

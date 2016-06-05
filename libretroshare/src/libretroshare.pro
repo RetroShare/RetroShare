@@ -481,6 +481,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
 			util/extaddrfinder.h \
+			util/ntpfinder.h \
 			util/dnsresolver.h \
 			util/rsprint.h \
 			util/rsstring.h \
@@ -636,6 +637,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \
 			util/extaddrfinder.cc \
+			util/ntpfinder.cc \
 			util/dnsresolver.cc \
 			util/rsprint.cc \
 			util/rsstring.cc \

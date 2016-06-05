@@ -39,6 +39,7 @@ class Idle;
 class PeerStatus;
 class NATStatus;
 class DHTStatus;
+class NTPStatus;
 class HashingStatus;
 class DiscStatus;
 class RatesStatus;
@@ -269,6 +270,7 @@ private:
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     DHTStatus *dhtstatus;
+    NTPStatus *ntpstatus;
     HashingStatus *hashingstatus;
     DiscStatus *discstatus;
     RatesStatus *ratesstatus;

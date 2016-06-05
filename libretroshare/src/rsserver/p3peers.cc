@@ -809,6 +809,36 @@ bool p3Peers::getAllowServerIPDetermination()
 	return mNetMgr->getIPServersEnabled() ;
 }
 
+void p3Peers::allowServerNTPDetermination(bool b)
+{
+	mNetMgr->setNTPFinderEnabled(b) ;
+}
+
+bool p3Peers::getAllowServerNTPDetermination()
+{
+	return mNetMgr->getNTPFinderEnabled() ;
+}
+
+void p3Peers::setNTPServersList(std::list<std::string>& ntp_servers)
+{
+	mNetMgr->setNTPServersList(ntp_servers) ;
+}
+
+void p3Peers::getNTPServersList(std::list<std::string>& ntp_servers)
+{
+	mNetMgr->getNTPServersList(ntp_servers); ;
+}
+
+void p3Peers::getNTPError(int *ntp_error)
+{
+	mNetMgr->getNTPError(ntp_error) ;
+}
+
+void p3Peers::forceNTPRefresh()
+{
+	mNetMgr->forceNTPRefresh() ;
+}
+
 bool 	p3Peers::setLocation(const RsPeerId &ssl_id, const std::string &location)
 {
 #ifdef P3PEERS_DEBUG

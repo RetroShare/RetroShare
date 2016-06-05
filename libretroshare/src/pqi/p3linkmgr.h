@@ -36,6 +36,7 @@
 #include "util/rsthreads.h"
 
 class ExtAddrFinder ;
+class NTPFinder ;
 class DNSResolver ;
 
 
@@ -182,6 +183,9 @@ virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 
+	/* NTP Finder */
+virtual void forceNTPRefresh() = 0;
+
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
 virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
@@ -240,6 +244,9 @@ virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr);
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr);
+
+	/* NTP Finder */
+virtual void forceNTPRefresh();
 
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs, 

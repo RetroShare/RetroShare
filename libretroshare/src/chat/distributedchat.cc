@@ -128,6 +128,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << "Message item is:" << std::endl;
         cli->print(std::cerr) ;
         std::cerr << std::endl;
+        manageTimeReceivedError();
         return false ;
     }
     if(now+600 < (time_t) cli->sendTime)	// the message is from the future. Drop it. more than 10 minutes
@@ -136,6 +137,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << "Message item is:" << std::endl;
         cli->print(std::cerr) ;
         std::cerr << std::endl;
+        manageTimeReceivedError();
         return false ;
     }
     
@@ -688,6 +690,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << "Message item is:" << std::endl;
 		item->print(std::cerr) ;
 		std::cerr << std::endl;
+		manageTimeReceivedError();
 		return ;
 	}
 	if(now+600 < (time_t) item->sendTime)	// the message is from the future more than 10 minutes
@@ -696,6 +699,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << "Message item is:" << std::endl;
 		item->print(std::cerr) ;
 		std::cerr << std::endl;
+		manageTimeReceivedError();
 		return ;
 	}
     // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous

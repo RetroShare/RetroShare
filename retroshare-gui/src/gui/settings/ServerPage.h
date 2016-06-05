@@ -32,6 +32,9 @@ class QNetworkAccessManager;
 class BanListPeer;
 struct sockaddr_storage;
 
+#define NTP_Error_NoResult     1 /*No result from NTP servers.*/
+#define NTP_Error_TimeBwSrvTL  2 /*The time between two server is too large.*/
+
 class ServerPage: public ConfigPage
 {
     Q_OBJECT
@@ -80,6 +83,9 @@ private slots:
     void clearKnownAddressList() ;
     void handleNetworkReply(QNetworkReply *reply);
     void updateInProxyIndicator();
+    void toggleNTPDetermination(bool)  ;
+    void addNTPServer()  ;
+    void removeNTPServer()  ;
 
 private:
     // ban list

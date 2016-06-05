@@ -482,6 +482,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatMsgItem *& ci)
 #endif
 		return true ;
 	}
+	mLinkMgr->forceNTPRefresh();
 }
 
 
@@ -785,6 +786,11 @@ void p3ChatService::locked_storeIncomingMsg(RsChatMsgItem */*item*/)
 #ifdef REMOVE
 	privateIncomingList.push_back(item) ;
 #endif
+}
+
+void p3ChatService::manageTimeReceivedError()
+{
+	mLinkMgr->forceNTPRefresh();
 }
 
 void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)

@@ -86,6 +86,7 @@ class DistributedChatService
 		virtual void sendChatItem(RsChatItem *) =0 ;
 		virtual void locked_storeIncomingMsg(RsChatMsgItem *) =0 ;
 		virtual void triggerConfigSave() =0;
+		virtual void manageTimeReceivedError() =0;
 
 		void addToSaveList(std::list<RsItem*>& list) const ;
         bool processLoadListItem(const RsItem *item) ;
