@@ -1376,15 +1376,20 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
-	 name(""),email(""),location(""),
-	org(""),authcode(""),
-		  trustLvl(0), validLvl(0),ownsign(false), 
-	hasSignedMe(false),accept_connection(false),
-	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
-    lastConnect(0),connectState(0),connectStateString(""),
-    hiddenType(RS_HIDDEN_TYPE_NONE),
-    connectPeriod(0),
-    foundDHT(false), wasDeniedConnection(false), deniedTS(0)
+          name(""),email(""),location(""),
+          org(""),authcode(""),
+          trustLvl(0), validLvl(0),ownsign(false), 
+          hasSignedMe(false),accept_connection(false),
+          state(0),actAsServer(false),
+          connectPort(0),
+          isHiddenNode(false),
+          hiddenNodePort(0),
+          hiddenType(RS_HIDDEN_TYPE_NONE),
+          localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
+          lastConnect(0),lastUsed(0),connectState(0),connectStateString(""),
+          connectPeriod(0),
+          foundDHT(false), wasDeniedConnection(false), deniedTS(0),
+          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN)
 {
 }
 
