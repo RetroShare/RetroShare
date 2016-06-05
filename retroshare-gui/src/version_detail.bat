@@ -27,6 +27,7 @@ set RsHash=
 pushd "%~dp0"
 for /f "tokens=1*" %%A in ('"git log --pretty=format:"%%H" --max-count=1"') do set RsHash=%%A
 for /f "tokens=*" %%A in ('git rev-parse --abbrev-ref HEAD') do set RsBranch=%%A
+for /f "tokens=*" %%A in ('git log -1 --date=rfc --pretty=format:%cd') do set RsDate=%%A
 popd
 
 if "%RsBranch%"=="" (
@@ -40,7 +41,11 @@ if "%RsHash%"=="" (
 	exit /B 1
 )
 
-set RsDate=%date% %TIME%
+if "%RsDate%"=="" (
+	echo Git Last Commit RFC_Date_not found.
+	endlocal
+	exit /B 1
+)
 
 :: Create file
 set InFile=%~dp0gui\help\version.html.in
