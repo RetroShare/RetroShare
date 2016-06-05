@@ -324,7 +324,7 @@ void GlobalRouterStatisticsWidget::updateContent()
 //	oy += celly ;
 //	oy += celly ;
 
-    static const int MaxKeySize = 20*fact ;
+    //static const int MaxKeySize = 20*fact ;
     painter.setFont(monospace_f) ;
 
     int n=0;

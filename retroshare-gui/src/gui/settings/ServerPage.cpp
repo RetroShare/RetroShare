@@ -496,7 +496,7 @@ void ServerPage::ipFilterContextMenu(const QPoint& point)
     if(item == NULL)
         return ;
 
-    bool status = item->data(Qt::UserRole).toBool();
+    //bool status = item->data(Qt::UserRole).toBool();
 
     uint32_t reason = ui.filteredIpsTable->item(row,COLUMN_REASON)->data(Qt::UserRole).toUInt();
 

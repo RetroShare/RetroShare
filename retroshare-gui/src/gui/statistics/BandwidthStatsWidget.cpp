@@ -62,7 +62,7 @@ void BandwidthStatsWidget::updateComboBoxes()
 
     // Setup button/combobox info
 
-    uint32_t indx = 2 ;
+    int indx = 2 ;
     //RsPeerDetails details ;
     RsPeerId current_friend_id(ui.friend_CB->itemData(ui.friend_CB->currentIndex()).toString().toStdString()) ;
 

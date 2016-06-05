@@ -1534,7 +1534,7 @@ QString MessageComposer::getRecipientEmailAddress(const RsGxsId& id,const RsIden
     return (QString("%2 <")+tr("Distant identity:")+" %2@%1>").arg(QString::fromStdString(id.toStdString())).arg(QString::fromUtf8(detail.mNickname.c_str())) ;
 }
 
-QString MessageComposer::getRecipientEmailAddress(const RsPeerId& id,const RsPeerDetails& detail)
+QString MessageComposer::getRecipientEmailAddress(const RsPeerId& /* id */,const RsPeerDetails& detail)
 {
     QString location_name = detail.location.empty()?tr("[Missing]"):QString::fromUtf8(detail.location.c_str()) ;
 

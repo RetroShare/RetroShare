@@ -72,7 +72,7 @@ PeersHandler::~PeersHandler()
     mStateTokenServer->unregisterTickClient(this);
 }
 
-void PeersHandler::notifyListChange(int list, int type)
+void PeersHandler::notifyListChange(int list, int /* type */)
 {
     RsStackMutex stack(mMtx); /********** STACK LOCKED MTX ******/
     if(list == NOTIFY_LIST_FRIENDS)

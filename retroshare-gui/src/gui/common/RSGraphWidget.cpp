@@ -332,10 +332,10 @@ void RSGraphWidget::paintEvent(QPaintEvent *)
   _painter->end();
 }
 
-QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
+QSizeF RSGraphWidget::sizeHint(Qt::SizeHint which, const QSizeF& /* constraint */) const
 {
     float FS = QFontMetricsF(font()).height();
-    float fact = FS/14.0 ;
+    //float fact = FS/14.0 ;
 
     switch(which)
     {
@@ -408,7 +408,7 @@ void RSGraphWidget::pointsFromData(const std::vector<QPointF>& values,QVector<QP
 	int x = _rec.width();
 	int y = _rec.height();
 
-	float time_step = 1.0f ;	// number of seconds per pixel
+	//float time_step = 1.0f ;	// number of seconds per pixel
 
 	/* Translate all data points to points on the graph frame */
 
@@ -522,7 +522,7 @@ void RSGraphWidget::paintLine(const QVector<QPointF>& points, QColor color, Qt::
 void RSGraphWidget::paintTotals()
 {
     float FS = QFontMetricsF(font()).height();
-    float fact = FS/14.0 ;
+    //float fact = FS/14.0 ;
 
   //int x = SCALE_WIDTH*fact + FS, y = 0;
   int rowHeight = FS;
@@ -593,12 +593,12 @@ void RSGraphWidget::paintScale2()
     float FS = QFontMetricsF(font()).height();
     float fact = FS/14.0 ;
 
-    int bottom = _rec.height();
+    //int bottom = _rec.height();
     static const int npix = 100*fact ;
 
     for(int i=_rec.width();i>SCALE_WIDTH*fact;i-=npix)
     {
-        qreal pos = bottom - FS;
+        //qreal pos = bottom - FS;
 
         int seconds = (_rec.width()-i)/_time_scale ;	// pixels / (pixels per second) => seconds
         QString text = QString::number(seconds)+ " secs";

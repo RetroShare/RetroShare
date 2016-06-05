@@ -424,7 +424,7 @@ static void sendMessage(MHD_Connection *connection, unsigned int status, std::st
 static std::string escape_html(std::string in)
 {
     std::string out;
-    for(int i = 0; i < in.size(); i++)
+    for(uint32_t i = 0; i < in.size(); i++)
     {
         char a = (in[i]&0xF0)>>4;
         a = a < 10? a+'0': a-10+'A';

@@ -316,7 +316,7 @@ std::string ApiServer::handleRequest(Request &request)
         task = mRouter.handleRequest(request, resp);
     }
 
-    time_t start = time(NULL);
+    //time_t start = time(NULL);
     bool morework = true;
     while(task && morework)
     {

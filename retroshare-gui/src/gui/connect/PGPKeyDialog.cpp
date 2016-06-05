@@ -340,7 +340,7 @@ void PGPKeyDialog::applyDialog()
     }
 
     //check the GPG trustlvl
-    if(ui.trustlevel_CB->currentIndex() != detail.trustLvl)
+    if(ui.trustlevel_CB->currentIndex() != (int)detail.trustLvl)
         rsPeers->trustGPGCertificate(pgpId, ui.trustlevel_CB->currentIndex());
 
      //setServiceFlags() ;
