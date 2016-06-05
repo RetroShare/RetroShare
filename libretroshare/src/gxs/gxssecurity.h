@@ -125,6 +125,15 @@ class GxsSecurity
 
         static bool checkPublicKey(const RsTlvPublicRSAKey &key);
         static bool checkPrivateKey(const RsTlvPrivateRSAKey &key);
+        
+        /*!
+         * Adds possibly missing public keys when private keys are present.
+         * 
+         * \brief createPublicKeysForPrivateKeys
+         * \param set   set of keys to consider
+         * \return 
+         */
+        static void createPublicKeysFromPrivateKeys(RsTlvSecurityKeySet& set) ;
 };
 
 #endif // GXSSECURITY_H

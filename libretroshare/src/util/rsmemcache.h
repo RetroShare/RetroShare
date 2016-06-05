@@ -143,7 +143,7 @@ template<class Key, class Value> template<class ClientClass> bool RsMemCache<Key
     return res ;
 }
 
-template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value &data)
+template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value& data)
 {
 #ifdef DEBUG_RSMEMCACHE
 	std::cerr << "RsMemCache::fetch()";

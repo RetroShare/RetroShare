@@ -373,20 +373,6 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPubli
 	}
 }
 
-void RsGenExchange::generatePublicFromPrivateKeys(RsTlvSecurityKeySet& keySet)
-{
-    // actually just copy settings of one key except mark its key flags public
-
-    keySet.public_keys.clear() ;
-
-    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator cit=keySet.private_keys.begin(); cit != keySet.private_keys.end(); ++cit)
-    {
-	    RsTlvPublicRSAKey pubkey ;
-	    if(GxsSecurity::extractPublicKey(cit->second,pubkey))
-		    keySet.public_keys.insert(std::make_pair(pubkey.keyId, pubkey));
-    }
-}
-
 uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& keySet)
 {
 #ifdef GEN_EXCH_DEBUG
@@ -2166,7 +2152,9 @@ void RsGenExchange::processGroupUpdatePublish()
 		if(checkKeys(meta->keys))
 		{
 			ggps.mKeys = meta->keys;
-			generatePublicFromPrivateKeys(ggps.mKeys);
+            
+            		GxsSecurity::createPublicKeysFromPrivateKeys(ggps.mKeys) ;
+                    
 			ggps.mHaveKeys = true;
 			ggps.mStartTS = time(NULL);
 			ggps.mLastAttemptTS = 0;
@@ -2581,29 +2569,30 @@ RsGeneralDataService* RsGenExchange::getDataStore()
 
 bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet &keySet)
 {
-    if(grpId.isNull())
-        return false;
+	if(grpId.isNull())
+		return false;
 
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 
-    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
-    grpMeta[grpId] = NULL;
-    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
+	grpMeta[grpId] = NULL;
+	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-    if(grpMeta.empty())
-        return false;
+	if(grpMeta.empty())
+		return false;
 
-    RsGxsGrpMetaData* meta = grpMeta[grpId];
+	RsGxsGrpMetaData* meta = grpMeta[grpId];
 
-    if(meta == NULL)
-        return false;
+	if(meta == NULL)
+		return false;
 
-    keySet = meta->keys;
+	keySet = meta->keys;
+        GxsSecurity::createPublicKeysFromPrivateKeys(keySet) ;
 
-    for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator it=grpMeta.begin();it!=grpMeta.end();++it)
-        delete it->second ;
+	for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator it=grpMeta.begin();it!=grpMeta.end();++it)
+		delete it->second ;
 
-    return true;
+	return true;
 }
 
 void RsGenExchange::shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers)

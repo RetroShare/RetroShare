@@ -190,40 +190,13 @@ virtual	std::string save() const;
 
 class RsGxsIdGroupItem;
 
-template<class KeyClass> class RsGxsIdCache
+class RsGxsIdCache
 {
 public:
     RsGxsIdCache();
 
-    RsGxsIdCache(const RsGxsIdGroupItem *item, const KeyClass& in_pkey, const std::list<RsRecognTag> &tagList)
-    {
-	// Save Keys.
-	pubkey = in_pkey;
-    	// Save Time for ServiceString comparisions.
-	mPublishTs = item->meta.mPublishTs;
-
-	// Save RecognTags.
-	mRecognTags = tagList;
-
-	details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
-
-	// Fill in Details.
-	details.mNickname = item->meta.mGroupName;
-	details.mId = RsGxsId(item->meta.mGroupId);
-
-#ifdef DEBUG_IDS
-	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	details.mFlags = 0 ;
-
-	if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
-	if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
-
-	/* rest must be retrived from ServiceString */
-	updateServiceString(item->meta.mServiceString);
-    }
+    RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const RsTlvPrivateRSAKey& privkey, const std::list<RsRecognTag> &tagList);
+    RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const std::list<RsRecognTag> &tagList);
     
     void updateServiceString(std::string serviceString);
 
@@ -231,8 +204,12 @@ public:
     std::list<RsRecognTag> mRecognTags; // Only partially validated.
 
     RsIdentityDetails details;
-#warning why the "pub" here??
-    KeyClass pubkey;
+
+    RsTlvPublicRSAKey pub_key;
+    RsTlvPrivateRSAKey priv_key;
+    
+private:
+    void init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pub_key, const RsTlvPrivateRSAKey& in_priv_key,const std::list<RsRecognTag> &tagList);
 };
 
 
@@ -380,8 +357,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	std::map<RsGxsId, std::list<RsPeerId> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
-	RsMemCache<RsGxsId, RsGxsIdCache<RsTlvPublicRSAKey> > mPublicKeyCache;
-	RsMemCache<RsGxsId, RsGxsIdCache<RsTlvPrivateRSAKey> > mPrivateKeyCache;
+	RsMemCache<RsGxsId, RsGxsIdCache> mKeyCache;
 
 /************************************************************************
  * Refreshing own Ids.

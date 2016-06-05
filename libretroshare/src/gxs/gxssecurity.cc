@@ -174,17 +174,6 @@ bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
     return true ;
 }
 
-static void setRSAPrivateKeyData(RsTlvSecurityKey_deprecated & key, RSA *rsa_priv)
-{
-        unsigned char *data = NULL ;
-        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
-
-        key.keyData.setBinData(data, reqspace);
-        key.keyId = getRsaKeyFingerprint(rsa_priv);
-
-		  free(data) ;
-}
-
 bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAKey& private_key)
 {
 	// admin keys
@@ -991,8 +980,7 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 #endif
 
 	/* extract admin key */
-#warning Souldn't need to do that HERE!!
-	RSA *rsakey =  (key.keyFlags & RSTLV_KEY_TYPE_FULL)? d2i_RSAPrivateKey(NULL, &(keyptr), keylen): d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
 	if (!rsakey)
 	{
@@ -1067,4 +1055,21 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 	return false;
 }
 
-
+void GxsSecurity::createPublicKeysFromPrivateKeys(RsTlvSecurityKeySet& keyset)
+{
+    for( std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it = keyset.private_keys.begin(); it != keyset.private_keys.end() ; ++it)
+        if(keyset.public_keys.find(it->second.keyId) == keyset.public_keys.end())
+        {
+            RsTlvPublicRSAKey pub_key ;
+            
+            if(!extractPublicKey(it->second,pub_key))
+            {
+                std::cerr << "(EE) ERROR when trying to generate public key from private key for ID " << it->second.keyId << ". This is probably a bug with security implications." << std::endl;
+                continue ;
+            }
+            
+            keyset.public_keys[it->second.keyId] = pub_key ;
+            
+            std::cerr << "(II) Generated missing public key for ID " << it->second.keyId << " from private key." << std::endl;
+        }
+}

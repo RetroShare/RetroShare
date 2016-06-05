@@ -744,15 +744,6 @@ private:
     void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
 
     /*!
-     * Generate public set of keys from their private counterparts
-     * No keys will be generated if one fails
-     * @param privatekeySet contains private generated keys
-     * @param publickeySet contains public generated keys (counterpart of private)
-     * @return false if key gen failed for a key set
-     */
-    void generatePublicFromPrivateKeys(RsTlvSecurityKeySet& keySet);
-
-    /*!
      * Attempts to validate msg signatures
      * @param msg message to be validated
      * @param grpFlag the distribution flag for the group the message belongs to

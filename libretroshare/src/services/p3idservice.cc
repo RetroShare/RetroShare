@@ -147,8 +147,7 @@ RsIdentity *rsIdentity = NULL;
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
-	mPublicKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
+	mKeyCache(GXSID_MAX_CACHE_SIZE, "GxsIdKeyCache"), 
 	mIdMtx("p3IdService"), mNes(nes),
 	mPgpUtils(pgpUtils)
 {
@@ -445,49 +444,31 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 	std::cerr << std::endl;
 #endif
 
-    {
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-        
-        {
-        RsGxsIdCache<RsTlvPublicRSAKey> data;
-        
-        if (mPublicKeyCache.fetch(id, data))
-        {
-            details = data.details;
-            details.mLastUsageTS = locked_getLastUsageTS(id) ;
-            
-            if(mContacts.find(id) != mContacts.end())
-		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-        // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
-        if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
-            details.mNickname = "[too long a name]" ;
-        
-        rsReputations->getReputationInfo(id,details.mReputation) ;
+		RsGxsIdCache data;
 
-            return true;
-        }
-        }
+		if (mKeyCache.fetch(id, data))
+		{
+			details = data.details;
+			details.mLastUsageTS = locked_getLastUsageTS(id) ;
 
-        RsGxsIdCache<RsTlvPrivateRSAKey> data;
-        
-        /* try private cache too */
-        if (mPrivateKeyCache.fetch(id, data))
-        {
-            details = data.details;
-            details.mLastUsageTS = locked_getLastUsageTS(id) ;
-            
-            if(mContacts.find(id) != mContacts.end())
-		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
+			if(mContacts.find(id) != mContacts.end())
+				details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
 
-        rsReputations->getReputationInfo(id,details.mReputation) ;
-        
-            return true;
-        }
-    }
+			// one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
+			if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
+				details.mNickname = "[too long a name]" ;
+
+			rsReputations->getReputationInfo(id,details.mReputation) ;
+
+			return true;
+		}
+	}
 
 	/* it isn't there - add to public requests */
-    cache_request_load(id);
+	cache_request_load(id);
 
 	return false;
 }
@@ -598,36 +579,24 @@ bool p3IdService::getRecognTagRequest(const RsGxsId &id, const std::string &comm
 	std::cerr << "p3IdService::getRecognTagRequest()";
 	std::cerr << std::endl;
 #endif
-
-	if (!havePrivateKey(id))
+	if(!isOwnId(id))
 	{
-#ifdef DEBUG_RECOGN
-		std::cerr << "p3IdService::getRecognTagRequest() Dont have private key";
-		std::cerr << std::endl;
-#endif
-		// attempt to load it.
-		cache_request_load(id);
-		return false;
+		std::cerr << "(EE) cannot retrieve own key to create tag request. KeyId=" << id << std::endl;
+		return false ;
 	}
 
 	RsTlvPrivateRSAKey key;
 	std::string nickname;
+	RsGxsIdCache data ;
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		RsGxsIdCache<RsTlvPrivateRSAKey> data;
-        
-		if (!mPrivateKeyCache.fetch(id, data))
-		{
-#ifdef DEBUG_RECOGN
-			std::cerr << "p3IdService::getRecognTagRequest() Cache failure";
-			std::cerr << std::endl;
-#endif
-			return false;
-		}
 
-		key = data.pubkey;
-		nickname = data.details.mNickname;
+		if(!mKeyCache.fetch(id, data))
+			return false ;
+
+		nickname = data.details.mNickname ;
+		key = data.priv_key ;
 	}
 
 	return RsRecogn::createTagRequest(key, id, nickname, tag_class, tag_type, comment,  tag);
@@ -642,13 +611,16 @@ bool p3IdService::getRecognTagRequest(const RsGxsId &id, const std::string &comm
 bool p3IdService::haveKey(const RsGxsId &id)
 {
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	return mPublicKeyCache.is_cached(id);
+	return mKeyCache.is_cached(id);
 }
 
 bool p3IdService::havePrivateKey(const RsGxsId &id)
 {
+    if(! isOwnId(id))
+        return false ;
+    
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	return mPrivateKeyCache.is_cached(id);
+	return mKeyCache.is_cached(id) ;
 }
 
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
@@ -678,21 +650,21 @@ bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId)
 
 bool p3IdService::getKey(const RsGxsId &id, RsTlvPublicRSAKey &key)
 {
-    {
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	RsGxsIdCache<RsTlvPublicRSAKey> data;
-    
-	if (mPublicKeyCache.fetch(id, data))
 	{
-		key = data.pubkey;
-        return true;
-    }
-    }
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		RsGxsIdCache data;
 
-    cache_request_load(id);
+		if (mKeyCache.fetch(id, data))
+		{
+			key = data.pub_key;
+			return true;
+		}
+	}
 
-    key.keyId.clear() ;
-    return false;
+	cache_request_load(id);
+
+	key.keyId.clear() ;
+	return false;
 }
 
 bool p3IdService::requestPrivateKey(const RsGxsId &id)
@@ -705,21 +677,21 @@ bool p3IdService::requestPrivateKey(const RsGxsId &id)
 
 bool p3IdService::getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key)
 {
-    {
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-        RsGxsIdCache<RsTlvPrivateRSAKey> data;
-        
-        if (mPrivateKeyCache.fetch(id, data))
-        {
-            key = data.pubkey;
-            return true;
-        }
-    }
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		RsGxsIdCache data;
 
-    key.keyId.clear() ;
-    cache_request_load(id);
+		if (mKeyCache.fetch(id, data))
+		{
+			key = data.priv_key;
+			return true;
+		}
+	}
 
-    return false ;
+	key.keyId.clear() ;
+	cache_request_load(id);
+
+	return false ;
 }
 
 
@@ -888,9 +860,9 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	/* this is the key part for accepting messages */
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	RsGxsIdCache<RsTlvPublicRSAKey> data;
+	RsGxsIdCache data;
     
-	if (mPublicKeyCache.fetch(id, data))
+	if (mKeyCache.fetch(id, data))
 	{
 		rep.id = id;
                 rep.score = 0;//data.details.mReputation.mOverallScore;
@@ -1155,24 +1127,24 @@ bool 	p3IdService::createGroup(uint32_t& token, RsGxsIdGroup &group)
     return true;
 }
 
-bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
+bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-    RsGxsId id(group.mMeta.mGroupId);
-    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+	RsGxsId id(group.mMeta.mGroupId);
+	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
 
-    item->fromGxsIdGroup(group,false) ;
+	item->fromGxsIdGroup(group,false) ;
 
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::updateGroup() Updating RsGxsId: " << id;
 	std::cerr << std::endl;
 #endif
-	
-    RsGenExchange::updateGroup(token, item);
+
+	RsGenExchange::updateGroup(token, item);
 
 	// if its in the cache - clear it.
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mPublicKeyCache.erase(id))
+		if (mKeyCache.erase(id))
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::updateGroup() Removed from PublicKeyCache";
@@ -1183,21 +1155,6 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::updateGroup() Not in PublicKeyCache";
-			std::cerr << std::endl;
-#endif
-		}
-	
-		if (mPrivateKeyCache.erase(id))
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::updateGroup() Removed from PrivateKeyCache";
-			std::cerr << std::endl;
-#endif
-		}
-		else
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::updateGroup() Not in PrivateKeyCache";
 			std::cerr << std::endl;
 #endif
 		}
@@ -1223,7 +1180,7 @@ bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 	// if its in the cache - clear it.
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (mPublicKeyCache.erase(id))
+		if (mKeyCache.erase(id))
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::deleteGroup() Removed from PublicKeyCache";
@@ -1234,21 +1191,6 @@ bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::deleteGroup() Not in PublicKeyCache";
-			std::cerr << std::endl;
-#endif
-		}
-
-		if (mPrivateKeyCache.erase(id))
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::deleteGroup() Removed from PrivateKeyCache";
-			std::cerr << std::endl;
-#endif
-		}
-		else
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::deleteGroup() Not in PrivateKeyCache";
 			std::cerr << std::endl;
 #endif
 		}
@@ -1642,6 +1584,59 @@ std::string SSGxsIdGroup::save() const
  *
  */
 
+RsGxsIdCache::RsGxsIdCache() {}
+
+RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const std::list<RsRecognTag> &tagList)
+{
+    init(item,in_pkey,RsTlvPrivateRSAKey(),tagList) ;
+}
+
+RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const RsTlvPrivateRSAKey& privkey, const std::list<RsRecognTag> &tagList)
+{
+    init(item,in_pkey,privkey,tagList) ;
+}
+
+void RsGxsIdCache::init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pub_key, const RsTlvPrivateRSAKey& in_priv_key,const std::list<RsRecognTag> &tagList)
+{
+	// Save Keys.
+	pub_key = in_pub_key;
+	priv_key = in_priv_key;
+    
+	// Save Time for ServiceString comparisions.
+	mPublishTs = item->meta.mPublishTs;
+
+	// Save RecognTags.
+	mRecognTags = tagList;
+
+	details.mAvatar.copy((uint8_t *) item->mImage.binData.bin_data, item->mImage.binData.bin_len);
+
+	// Fill in Details.
+	details.mNickname = item->meta.mGroupName;
+	details.mId = RsGxsId(item->meta.mGroupId);
+
+#ifdef DEBUG_IDS
+	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
+	std::cerr << std::endl;
+#endif // DEBUG_IDS
+
+	details.mFlags = 0 ;
+
+	if(item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)		details.mFlags |= RS_IDENTITY_FLAGS_IS_OWN_ID;
+	if(item->meta.mGroupFlags     & RSGXSID_GROUPFLAG_REALID)			details.mFlags |= RS_IDENTITY_FLAGS_PGP_LINKED;
+
+    	// do some tests
+    	if(details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
+        {
+            if(!priv_key.check())
+                std::cerr << "(EE) Private key missing for own identity " << pub_key.keyId << std::endl;
+        }
+	if(!pub_key.check())
+		std::cerr << "(EE) Public key missing for identity " << pub_key.keyId << std::endl;
+                    
+	/* rest must be retrived from ServiceString */
+	updateServiceString(item->meta.mServiceString);
+}
+
 void RsGxsIdCache::updateServiceString(std::string serviceString)
 {
 	details.mRecognTags.clear();
@@ -1853,6 +1848,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 	return true;
 }
 
+// Loads in the cache the group data from the given group item, retrieved from sqlite storage.
 
 bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 {
@@ -1865,56 +1861,42 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 	/* extract key from keys */
     	RsTlvSecurityKeySet keySet;
-    	RsTlvSecurityKey_deprecated    pubkey;
-    	RsTlvSecurityKey_deprecated    fullkey;
+        
+    	RsTlvPublicRSAKey   pubkey;
+    	RsTlvPrivateRSAKey  fullkey;
+        
 	bool pub_key_ok = false;
 	bool full_key_ok = false;
 
     	RsGxsId id (item->meta.mGroupId.toStdString());
+        
     	if (!getGroupKeys(RsGxsGroupId(id.toStdString()), keySet))
 	{
-		std::cerr << "p3IdService::cache_store() ERROR getting GroupKeys for: ";
-		std::cerr << item->meta.mGroupId;
-		std::cerr << std::endl;
+		std::cerr << "p3IdService::cache_store() ERROR getting GroupKeys for: "<< item->meta.mGroupId << std::endl;
 		return false;
 	}
 
-	std::map<RsGxsId, RsTlvSecurityKey_deprecated>::iterator kit;
-
-	//std::cerr << "p3IdService::cache_store() KeySet is:";
-	//keySet.print(std::cerr, 10);
-
-	for (kit = keySet.keys.begin(); kit != keySet.keys.end(); ++kit)
-	{
+	for (std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator kit = keySet.private_keys.begin(); kit != keySet.private_keys.end(); ++kit)
 		if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
 		{
 #ifdef DEBUG_IDS
-			std::cerr << "p3IdService::cache_store() Found Admin Key";
-			std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-			/* save full key - if we have it */
-			if (kit->second.keyFlags & RSTLV_KEY_TYPE_FULL)
-			{
-				fullkey = kit->second;
-				full_key_ok = true;
-
-				if(GxsSecurity::extractPublicKey(fullkey,pubkey))
-					pub_key_ok = true ;
-			}
-			else
-			{
-				pubkey = kit->second;
-				pub_key_ok = true ;
-			}
-
-			/* cache public key always 
-			 * we don't need to check the keyFlags, 
-			 * as both FULL and PUBLIC_ONLY keys contain the PUBLIC key
-			 */
-
+			std::cerr << "p3IdService::cache_store() Found Admin Key" << std::endl;
+#endif 
+			fullkey = kit->second;
+			full_key_ok = true;
 		}
-	}
+        for (std::map<RsGxsId, RsTlvPublicRSAKey>::iterator kit = keySet.public_keys.begin(); kit != keySet.public_keys.end(); ++kit)
+		if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
+		{
+#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::cache_store() Found Admin public Key" << std::endl;
+#endif
+			pubkey = kit->second;
+			pub_key_ok = true ;
+		}
+        
+	assert(!( pubkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
+	assert(!full_key_ok || (fullkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
 	if (!pub_key_ok)
 	{
@@ -1929,19 +1911,11 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-    assert(!(pubkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
-
 	// Create Cache Data.
-	RsGxsIdCache pubcache(item, pubkey, tagList);
-	mPublicKeyCache.store(id, pubcache);
-	mPublicKeyCache.resize();
-
-	if (full_key_ok)
-	{
-		RsGxsIdCache fullcache(item, fullkey, tagList);
-		mPrivateKeyCache.store(id, fullcache);
-		mPrivateKeyCache.resize();
-	}
+	RsGxsIdCache keycache(item, pubkey, fullkey,tagList);
+    
+	mKeyCache.store(id, keycache);
+	mKeyCache.resize();
 
 	return true;
 }
@@ -2145,31 +2119,18 @@ bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceS
 	/* retrieve - update, save */
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-	RsGxsIdCache pub_data;
-	if (mPublicKeyCache.fetch(id, pub_data))
+	RsGxsIdCache updated_data;
+    
+	if(mKeyCache.fetch(id, updated_data))
 	{
 #ifdef DEBUG_IDS
 		std::cerr << "p3IdService::cache_update_if_cached() Updating Public Cache";
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-        assert(!(pub_data.pubkey.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
-
-		pub_data.updateServiceString(serviceString);
-		mPublicKeyCache.store(id, pub_data);
-	}
-
-
-	RsGxsIdCache priv_data;
-	if (mPrivateKeyCache.fetch(id, priv_data))
-	{
-#ifdef DEBUG_IDS
-		std::cerr << "p3IdService::cache_update_if_cached() Updating Private Cache";
-		std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-		priv_data.updateServiceString(serviceString);
-		mPrivateKeyCache.store(id, priv_data);
+		updated_data.updateServiceString(serviceString);
+        
+		mKeyCache.store(id, updated_data);
 	}
 
 	return true;
@@ -2338,7 +2299,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				}
 				else
 				{
-					RsTlvSecurityKey_deprecated seckey;
+					RsTlvPublicRSAKey seckey;
                     if (getKey(*vit, seckey))
 					{
 #ifdef DEBUG_IDS
@@ -2370,7 +2331,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				}
 				else
 				{
-					RsTlvSecurityKey_deprecated seckey;
+					RsTlvPrivateRSAKey seckey;
 					if (getPrivateKey(*vit, seckey))
 					{
 						// success!
@@ -2509,22 +2470,19 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
     item->print(std::cerr);
     std::cerr << std::endl;
 #endif // DEBUG_IDS
+    
+    item->meta.mGroupId.clear();
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
     // find private admin key
-    std::map<RsGxsId, RsTlvSecurityKey_deprecated>::iterator mit = keySet.keys.begin();
-    for(; mit != keySet.keys.end(); ++mit)
-    {
-        RsTlvSecurityKey_deprecated& pk = mit->second;
-
-        if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit = keySet.private_keys.begin();mit != keySet.private_keys.end(); ++mit)
+        if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
         {
-            item->meta.mGroupId = RsGxsGroupId(pk.keyId);
+            item->meta.mGroupId = RsGxsGroupId(mit->second.keyId);
             break;
         }
-    }
 
-    if(mit == keySet.keys.end())
+    if(item->meta.mGroupId.isNull())
     {
         std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
         std::cerr << std::endl;

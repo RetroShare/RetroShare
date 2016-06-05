@@ -4877,7 +4877,7 @@ void RsGxsNetService::sharePublishKeysPending()
             publishKeyItem->clear();
             publishKeyItem->grpId = mit->first;
 
-            publishKeyItem->key = publishKey ;
+            publishKeyItem->private_key = publishKey ;
             publishKeyItem->PeerId(*it);
 
             sendItem(publishKeyItem);
@@ -4932,8 +4932,8 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "  Key received: " << std::endl;
 #endif
 
-	bool admin = (item->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
-	bool publi = (item->key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+	bool admin = (item->private_key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)   && (item->private_key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+	bool publi = (item->private_key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->private_key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
 #ifdef NXS_NET_DEBUG_3
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
@@ -4946,13 +4946,13 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	}
 	// Also check that we don't already have full keys for that group.
 
-	if(grpMeta->keys.public_keys.find(item->key.keyId) == grpMeta->keys.public_keys.end())
+	if(grpMeta->keys.public_keys.find(item->private_key.keyId) == grpMeta->keys.public_keys.end())
 	{
 		std::cerr << "   (EE) Key not found in known group keys. This is an inconsistency." << std::endl;
 		return ;
 	}
 
-	if(grpMeta->keys.private_keys.find(item->key.keyId) != grpMeta->keys.private_keys.end())
+	if(grpMeta->keys.private_keys.find(item->private_key.keyId) != grpMeta->keys.private_keys.end())
 	{
 #ifdef NXS_NET_DEBUG_3
 		GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "   (EE) Publish key already present in database. Discarding message." << std::endl;
@@ -4962,7 +4962,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	// Store/update the info.
 
-	grpMeta->keys.private_keys[item->key.keyId] = item->key ;
+	grpMeta->keys.private_keys[item->private_key.keyId] = item->private_key ;
     
 	bool ret = mDataStore->updateGroupKeys(item->grpId,grpMeta->keys, grpMeta->mSubscribeFlags | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH) ;
 

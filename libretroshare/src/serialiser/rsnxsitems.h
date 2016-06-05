@@ -157,8 +157,7 @@ public:
 	virtual uint32_t serial_size() const; 			
         
     RsGxsGroupId grpId ;
-#warning should be renamed private_key
-    RsTlvPrivateRSAKey key ;
+    RsTlvPrivateRSAKey private_key ;
 };
 
 

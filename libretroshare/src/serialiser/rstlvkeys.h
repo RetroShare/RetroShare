@@ -49,39 +49,17 @@ const uint32_t RSTLV_KEY_DISTRIB_MASK           = 0x00f0;
 
 // Old class for RsTlvSecurityKey. Is kept for backward compatibility, but should not be serialised anymore
 
-class RsTlvSecurityKey_deprecated: public RsTlvItem
-{
-	public:
-		RsTlvSecurityKey_deprecated();
-		virtual ~RsTlvSecurityKey_deprecated() {}
-
-		virtual uint32_t TlvSize() const;
-		virtual void	 TlvClear();
-		virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-		virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
-
-		/* clears KeyData - but doesn't delete - to transfer ownership */
-		void ShallowClear(); 
-
-		RsGxsId keyId;			// Mandatory :
-		uint32_t keyFlags;		// Mandatory ;
-		uint32_t startTS;		// Mandatory : 
-		uint32_t endTS;			// Mandatory : 
-		RsTlvBinaryData keyData; 	// Mandatory : 
-};
-
-class RsTlvRSAKey
+class RsTlvRSAKey: public RsTlvItem
 {
 public:
-    virtual uint32_t tlvType() const = 0 ;
-    virtual bool     checkFlags(uint32_t flags) const = 0 ;
+	RsTlvRSAKey();
+    virtual bool     checkFlags(uint32_t flags) const = 0 ;	// this pure virtual forces people to explicitly declare if they use a public or a private key.
 
     virtual uint32_t TlvSize() const;
     virtual void 	TlvClear();
     virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
     virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-    virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+    virtual std::ostream& print(std::ostream &out, uint16_t indent) const;
 
     /* clears KeyData - but doesn't delete - to transfer ownership */
     void ShallowClear(); 
@@ -100,24 +78,16 @@ public:
 class RsTlvPrivateRSAKey: public RsTlvRSAKey
 {    
 	public:
-		RsTlvPrivateRSAKey();
-		explicit RsTlvPrivateRSAKey(RsTlvSecurityKey_deprecated& key);	// convertion tool. Should be called explicitely and performs some checks
-        
 		virtual ~RsTlvPrivateRSAKey() {}
 
         	virtual bool checkFlags(uint32_t flags) const  { return bool(flags & RSTLV_KEY_TYPE_FULL) && !bool(flags & RSTLV_KEY_TYPE_PUBLIC_ONLY) ; }
-        	virtual uint32_t tlvType() const { return TLV_TYPE_RSA_KEY_PRIVATE ; }
 };
 class RsTlvPublicRSAKey: public RsTlvRSAKey
 {
-#warning TEST IF WE CAN CONVERT PUBLIC TO PRIVATE AND VIS VERSA. NORMALLY WE SHOULDNT
 	public:
-		RsTlvPublicRSAKey();
 		virtual ~RsTlvPublicRSAKey() {}
-		explicit RsTlvPublicRSAKey(RsTlvSecurityKey_deprecated& key);	// convertion tool. Should be called explicitely and performs some checks
 
         	virtual bool checkFlags(uint32_t flags) const  { return bool(flags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && !bool(flags & RSTLV_KEY_TYPE_FULL) ; }
-        	virtual uint32_t tlvType() const { return TLV_TYPE_RSA_KEY_PUBLIC ; }
 };
 
 class RsTlvSecurityKeySet: public RsTlvItem
@@ -126,7 +96,9 @@ public:
 	RsTlvSecurityKeySet() { return; }
 	virtual ~RsTlvSecurityKeySet() { return; }
         
-        void initFromPublicKeys(const RsTlvSecurityKeySet& skset) ;
+    	// creates the public keys that are possible missing although the private keys are present.
+    
+        void createPublicFromPrivateKeys(); 
         
 	virtual uint32_t TlvSize() const;
 	virtual void	 TlvClear();
@@ -137,10 +109,6 @@ public:
 	std::string groupId;					// Mandatory :
 	std::map<RsGxsId, RsTlvPublicRSAKey> public_keys;	// Mandatory :
 	std::map<RsGxsId, RsTlvPrivateRSAKey> private_keys;	// Mandatory :
-    
-//private:
-//    	RsTlvSecurityKeySet& operator=(const RsTlvSecurityKeySet&) { std::cerr << "(EE) " <<__PRETTY_FUNCTION__ << " shouldn't be called!" << std::endl; return *this;}
-//    	RsTlvSecurityKeySet(const RsTlvSecurityKeySet&) { std::cerr << "(EE) " <<__PRETTY_FUNCTION__ << " shouldn't be called!" << std::endl;}
 };
 
 
