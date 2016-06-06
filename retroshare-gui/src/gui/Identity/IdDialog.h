@@ -55,8 +55,22 @@ public:
 
 protected:
 	virtual void updateDisplay(bool complete);
-
+    
+    void loadCircleGroupMeta(const uint32_t &token);
+    void loadCircleGroupData(const uint32_t &token);
+    
+    void requestCircleGroupMeta();
+    void requestCircleGroupData(const RsGxsCircleId& circle_id);
+    bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
+    
 private slots:
+    void createExternalCircle();
+    void showEditExistingCircle();
+	void updateCirclesDisplay();
+    
+    void acceptCircleSubscription() ;
+    void cancelCircleSubscription() ;
+
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
 
@@ -74,11 +88,17 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
 
+	void CircleListCustomPopupMenu(QPoint point) ;
+#ifdef SUSPENDED
+	void circle_selected() ;
+#endif
+
 	void  addtoContacts();
   void  removefromContacts();
 
-	void banPerson();
-	void unbanPerson();
+	void negativePerson();
+	void positivePerson();
+	void neutralPerson();
 	
 	static QString inviteMessage();
 	void sendInvite();
@@ -103,10 +123,16 @@ private:
 
 private:
 	TokenQueue *mIdQueue;
+	TokenQueue *mCircleQueue;
+
 	UIStateHelper *mStateHelper;
 
 	QTreeWidgetItem *contactsItem;
 	QTreeWidgetItem *allItem;
+	QTreeWidgetItem *ownItem;
+	QTreeWidgetItem *mExternalBelongingCircleItem;
+	QTreeWidgetItem *mExternalOtherCircleItem;
+    	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	RsGxsGroupId mId;
 

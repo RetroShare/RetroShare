@@ -7,8 +7,8 @@ Group: Productivity/Networking/Other
 URL: http://retroshare.sourceforge.net/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: qt-x11
-BuildRequires: gcc-c++ qt-devel desktop-file-utils libgnome-keyring-devel glib2-devel libssh-devel protobuf-devel libcurl-devel libxml2-devel libxslt-devel openssl-devel libXScrnSaver-devel libupnp-devel bzip2-devel libmicrohttpd-devel
+Requires: qt5-qtbase-gui qt5-qtmultimedia qt5-qtx11extras qt5-qtbase
+BuildRequires: gcc-c++ desktop-file-utils libgnome-keyring-devel glib2-devel libssh-devel protobuf-devel libcurl-devel libxml2-devel libxslt-devel openssl-devel libXScrnSaver-devel libupnp-devel bzip2-devel libmicrohttpd-devel qt5-qtx11extras-devel qt5-qttools-devel qt5-qtmultimedia-devel qt5-qttools-static
 # This is because of sqlcipher:
 BuildRequires: tcl
 
@@ -52,11 +52,11 @@ This package provides a plugin for RetroShare, a secured Friend-to-Friend commun
 
 %build
 cd lib/sqlcipher
-./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
+./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-fPIC -DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto"
 make
 cd -
 cd src
-qmake-qt4 "CONFIG-=debug" "CONFIG+=release" PREFIX=%{_prefix} LIB_DIR=%{_libdir} RetroShare.pro
+qmake-qt5 "CONFIG-=debug" "CONFIG+=release" PREFIX=%{_prefix} LIB_DIR=%{_libdir} RetroShare.pro
 make
 cd -
 

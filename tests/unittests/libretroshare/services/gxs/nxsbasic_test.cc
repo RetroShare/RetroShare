@@ -54,7 +54,7 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic)
 		std::cerr << "Sending in SyncGrp";
 		std::cerr << std::endl;
 
-		RsNxsSyncGrp *syncGrp = new RsNxsSyncGrp(RS_SERVICE_GXS_TYPE_TEST);
+		RsNxsSyncGrpItem *syncGrp = new RsNxsSyncGrpItem(RS_SERVICE_GXS_TYPE_TEST);
 		syncGrp->flag = 0; //RsNxsSyncGrp::FLAG_USE_SYNC_HASH;
 		syncGrp->PeerId(friendId);
 		tester.sendPacket(syncGrp);
@@ -69,7 +69,7 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic)
 			std::cerr << "Recved in SyncGrp";
 			std::cerr << std::endl;
 
-			RsNxsSyncGrp *grp = dynamic_cast<RsNxsSyncGrp *>(item);
+			RsNxsSyncGrpItem *grp = dynamic_cast<RsNxsSyncGrpItem *>(item);
 			ASSERT_TRUE(grp);
 			delete grp;
 
@@ -134,7 +134,7 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic2)
 	std::cerr << "Created Groups.";
 	std::cerr << std::endl;
 
-	RsNxsSyncGrp *syncGrp = new RsNxsSyncGrp(RS_SERVICE_GXS_TYPE_TEST);
+	RsNxsSyncGrpItem *syncGrp= new RsNxsSyncGrpItem(RS_SERVICE_GXS_TYPE_TEST);
 	syncGrp->flag = 0; //RsNxsSyncGrp::FLAG_USE_SYNC_HASH;
 	syncGrp->PeerId(friendId);
 	tester.sendPacket(syncGrp);
@@ -159,8 +159,8 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic2)
 			item->print(std::cerr);
 
 			// ignore NxsSyncGrp.
-			RsNxsSyncGrp *grp = dynamic_cast<RsNxsSyncGrp *>(item);
-			RsNxsTransac *trans = dynamic_cast<RsNxsTransac *>(item);
+			RsNxsSyncGrpItem *grp = dynamic_cast<RsNxsSyncGrpItem *>(item);
+			RsNxsTransacItem *trans = dynamic_cast<RsNxsTransacItem *>(item);
 			if (grp)
 			{
 				std::cerr << "Recved in SyncGrp - ignoring";

@@ -63,7 +63,7 @@ public:
 
     // derived in p3ChatService, so as to pass down some info
     virtual void handleIncomingItem(RsItem *) = 0;
-    virtual bool handleRecvChatMsgItem(RsChatMsgItem *ci)=0 ;
+    virtual bool handleRecvChatMsgItem(RsChatMsgItem *& ci)=0 ;
 
     bool handleOutgoingItem(RsChatItem *) ;
     bool handleRecvItem(RsChatItem *) ;
@@ -89,7 +89,7 @@ public:
     virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
     
 private:
-    virtual bool acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelService::RsGxsTunnelId& tunnel_id) ;
+    virtual bool acceptDataFromPeer(const RsGxsId& gxs_id, const RsGxsTunnelService::RsGxsTunnelId& tunnel_id, bool is_client_side) ;
     virtual void notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId& tunnel_id,uint32_t tunnel_status) ;
     virtual void receiveData(const RsGxsTunnelService::RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) ;
 

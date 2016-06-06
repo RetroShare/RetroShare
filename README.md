@@ -19,7 +19,7 @@ Compilation on Linux
    sudo zypper install gcc-c++ libqt4-devel libgnome-keyring-devel \
        glib2-devel speex-devel libssh-devel protobuf-devel libcurl-devel \
        libxml2-devel libxslt-devel sqlcipher-devel libmicrohttpd-devel \
-       opencv-devel speexdsp-devel libupnp-devel
+       opencv-devel speexdsp-devel libupnp-devel libavcodec-devel
    ```
    * Arch Linux
    ```bash
@@ -102,8 +102,7 @@ The webUI needs to be enabled as a parameter option in retroshare-nogui:
 ./retroshare-nogui --webinterface 9090 --docroot /usr/share/RetroShare06/webui/
 ```
 
-The webUI is only accessible on localhost:9090 (unless you canged that
-option in the GUI). It is advised to keep it that way so that your RS
+The webUI is only accessible on localhost:9090. It is advised to keep it that way so that your RS
 cannot be controlled using an untrusted connection.
 
 To access your web UI from a distance, just open a SSH tunnel on it:
@@ -118,3 +117,10 @@ distant_machine:~/ >  ssh rs_host -L 9090:localhost:9090 -N
       http://localhost:9090
 
 That also works with a retroshare GUI of course.
+
+Compile and run tests
+---------------------
+
+      qmake CONFIG+=tests
+      make
+      tests/unittests/unittests

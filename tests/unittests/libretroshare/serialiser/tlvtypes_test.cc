@@ -177,7 +177,7 @@ TEST(libretroshare_serialiser, test_RsTlvPeerIdSet)
 	for(int i = 0; i < 15 ; i++)
 	{
         testId = RsPeerId::random();
-		i1.ids.push_back(testId);
+        i1.ids.insert(testId);
 	}
 
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &i1, &i2));
@@ -297,7 +297,7 @@ TEST(libretroshare_serialiser, test_RsTlvHashSet)
 	{
 		RsPeerId randId;
         randId = RsPeerId::random();
-		i1.ids.push_back(randId);
+        i1.ids.insert(randId);
 	}
 
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &i1, &i2));

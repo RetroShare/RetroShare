@@ -1,6 +1,7 @@
 #include <iostream>
 #include "smallobject.h"
 #include "util/rsthreads.h"
+#include "util/rsmemory.h"
 
 using namespace RsMemoryManagement ;
 
@@ -206,7 +207,7 @@ SmallObjectAllocator::~SmallObjectAllocator()
 void *SmallObjectAllocator::allocate(size_t bytes)
 {
 	if(bytes > _maxObjectSize)
-		return malloc(bytes) ;
+		return rs_malloc(bytes) ;
 	else if(_lastAlloc != NULL && _lastAlloc->blockSize() == bytes)
 		return _lastAlloc->allocate() ;
 	else
@@ -278,10 +279,6 @@ void *SmallObject::operator new(size_t size)
 #endif
 
 	RsStackMutex m(_mtx) ;
-
-	if(!_allocator._active)
-		return (void*)NULL;
-
 	void *p = _allocator.allocate(size) ;
 #ifdef DEBUG_MEMORY
 	std::cerr << "new RsItem: " << p << ", size=" << size << std::endl;

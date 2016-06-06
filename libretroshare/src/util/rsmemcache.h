@@ -52,10 +52,10 @@
 
 template<class Key, class Value> class RsMemCache
 {
-	public:
+public:
 
 	RsMemCache(uint32_t max_size = DEFAULT_MEM_CACHE_SIZE, std::string name = "UnknownMemCache")
-	:mDataCount(0), mMaxSize(max_size), mName(name) 
+	        :mDataCount(0), mMaxSize(max_size), mName(name) 
 	{ 
 		clearStats();
 		return;
@@ -69,7 +69,11 @@ template<class Key, class Value> class RsMemCache
 
 	bool resize(); // should be called periodically to cleanup old entries.
 
-	private:
+    	// Apply a method of a given class ClientClass to all cached data. Can be useful...
+    
+	template<class ClientClass> bool applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(Value&));
+    
+private:
 
 	bool update_lrumap(const Key &key, time_t old_ts, time_t new_ts);
 	bool discard_LRU(int count_to_clear);
@@ -77,24 +81,24 @@ template<class Key, class Value> class RsMemCache
 	// internal class.
 	class cache_data
 	{
-		public:
+	public:
 		cache_data() { return; }
 		cache_data(Key in_key, Value in_data, time_t in_ts)
-		:key(in_key), data(in_data), ts(in_ts) { return; }
+		        :key(in_key), data(in_data), ts(in_ts) { return; }
 		Key key;
 		Value data;
 		time_t ts;
 	};
 
 
-        std::map<Key, cache_data > mDataMap;
-        std::multimap<time_t, Key> mLruMap;
-        uint32_t mDataCount;
+	std::map<Key, cache_data > mDataMap;
+	std::multimap<time_t, Key> mLruMap;
+	uint32_t mDataCount;
 	uint32_t mMaxSize;
 	std::string mName;
 
 	// some statistics.
-        void printStats(std::ostream &out);
+	void printStats(std::ostream &out);
 	void clearStats();
 
 	mutable uint32_t mStats_inserted;
@@ -129,6 +133,15 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::is_cached(const Ke
 	
 }
 
+template<class Key, class Value> template<class ClientClass> bool RsMemCache<Key, Value>::applyToAllCachedEntries(ClientClass& c, bool (ClientClass::*method)(Value&))
+{
+    bool res = true ;
+    
+    for(typename std::map<Key,cache_data>::iterator it(mDataMap.begin());it!=mDataMap.end();++it)
+        res = res && ((c.*method)(it->second.data)) ;
+    
+    return res ;
+}
 
 template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &key, Value &data)
 {

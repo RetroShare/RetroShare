@@ -535,6 +535,14 @@ public:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+    /*!
+     * Deletes the messages \n
+     * This will induce a related change message \n
+     * @param token
+     * @param msgs
+     */
+    void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
+    
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -615,6 +623,14 @@ public:
      */
 
     void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
+    
+    /*!
+     * Returns the local TS of the group as known by the network service.
+     * This is useful to allow various network services to sync their update TS
+     * when needed. Typical use case is forums and circles.
+     * @param gid GroupId the TS is which is requested
+     */
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
 
 protected:
 
@@ -649,6 +665,7 @@ private:
     void processGroupUpdatePublish();
 
     void processGroupDelete();
+    void processMessageDelete();
     void processRoutingClues();
 
     void publishMsgs();
@@ -861,6 +878,7 @@ private:
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
     std::vector<GroupDeletePublish> mGroupDeletePublish;
+    std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
     std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;

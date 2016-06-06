@@ -802,6 +802,7 @@ bool fill_stream_data(rsctrl::stream::StreamData &data, const RpcStream &stream)
 	{
 		std::cerr << "fill_stream_data() Failed to get data. data_size=" << data_size << ", base_loc=" << base_loc << " !";
 		std::cerr << std::endl;
+		free(buffer);
 		return false;
 	}
 

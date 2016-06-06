@@ -92,9 +92,9 @@ public:
     uint32_t mMaxVisibleCount ;
 };
 
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsNxsMsg*> > NxsMsgRelatedDataResult;
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
+typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from

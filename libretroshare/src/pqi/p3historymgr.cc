@@ -105,7 +105,6 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 
         if(cm.chat_id.isDistantChatId())
 	{
-		uint32_t status;
 		DistantChatPeerInfo dcpinfo;
 		if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
 			peerName = cm.chat_id.toPeerId().toStdString();
@@ -307,7 +306,8 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 	RsHistoryMsgItem *msgItem;
 	std::list<RsItem*>::iterator it;
 
-	for (it = load.begin(); it != load.end(); ++it) {
+	for (it = load.begin(); it != load.end(); ++it) 
+   	 {
 		if (NULL != (msgItem = dynamic_cast<RsHistoryMsgItem*>(*it))) {
 
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(msgItem->chatPeerId);
@@ -381,6 +381,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 		delete (*it);
 	}
 
+    load.clear() ;
 	return true;
 }
 

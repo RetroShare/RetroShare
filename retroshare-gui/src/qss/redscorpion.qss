@@ -287,3 +287,4 @@ QLabel#threadTitle{
     background: white;
     color: black;
 }
+

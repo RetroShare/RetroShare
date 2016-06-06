@@ -29,6 +29,7 @@
 #define SOUND_USER_ONLINE       "User_go_Online"
 #define SOUND_MESSAGE_ARRIVED   "MessageArrived"
 #define SOUND_DOWNLOAD_COMPLETE "DownloadComplete"
+#define SOUND_NEW_LOBBY_MESSAGE "NewLobbyMessage"
 
 class SoundEvents
 {
@@ -67,6 +68,10 @@ signals:
 public:
 	static void create();
 
+#ifdef Q_OS_LINUX
+    static QString soundDetectPlayer();
+#endif
+
 	static void initDefault();
 	static QString defaultFilename(const QString &event, bool check);
 	static QString convertFilename(const QString &filename);
@@ -84,7 +89,7 @@ public:
 
 	static QString eventFilename(const QString &event);
 	static void setEventFilename(const QString &event, const QString &filename);
-
+    
 private:
 	SoundManager();
 };

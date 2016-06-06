@@ -100,6 +100,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mTokenTypeMessageData = nextTokenType();
 	mTokenTypeReplyMessage = nextTokenType();
 	mTokenTypeReplyForumMessage = nextTokenType();
+    mTokenTypeBanAuthor = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -127,6 +128,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     //mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->threadTitle);
 
 	mSubscribeFlags = 0;
+    mSignFlags = 0;
 	mInProcessSettings = false;
 	mUnreadCount = 0;
 	mNewCount = 0;
@@ -211,6 +213,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->line_2->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
+    ui->postText->setImageBlockWidget(ui->imageBlockWidget);
+    ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
     ui->subscribeToolButton->setToolTip(tr("<p>Subscribing to the forum will gather \
                                            available posts from your subscribed friends, and make the \
@@ -588,6 +592,7 @@ void GxsForumThreadWidget::changedThread()
 	if (mFillThread) {
 		return;
 	}
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
 }
@@ -794,6 +799,33 @@ void GxsForumThreadWidget::insertGroupData()
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
+    
+    QString distrib_string = tr("[unknown]");
+    switch(group.mMeta.mCircleType)
+    {
+    case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+	    break ;
+    case GXS_CIRCLE_TYPE_EXTERNAL: 
+    {
+	    RsGxsCircleDetails det ;
+        
+        	// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+        
+	    if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det)) 
+		    distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+	    else
+		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+    }
+	    break ;
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY: distrib_string = tr("Your eyes only");
+	    break ;
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+	    break ;
+    default:
+	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+    }
+            
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Author"), author);
        
        if(!anti_spam_features1.isNull())
@@ -1560,7 +1592,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 			// LIKE THIS BELOW...
 			//std::string grpId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_GROUPID).toString().toStdString();
 
-			RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), msgId);
+            RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), RsGxsMessageId(msgId));
 
 			uint32_t token;
 			rsGxsForums->setMessageReadStatus(token, msgPair, read);

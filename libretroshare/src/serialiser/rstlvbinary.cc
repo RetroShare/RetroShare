@@ -24,6 +24,7 @@
  *
  */
 
+#include "util/rsmemory.h"
 #include "serialiser/rstlvbinary.h"
 
 #include "serialiser/rstlvbase.h"
@@ -36,10 +37,14 @@
 /*!********************************** RsTlvFileBinaryData **********************************/
 
 
+RsTlvBinaryData::RsTlvBinaryData()
+	:tlvtype(0), bin_len(0), bin_data(NULL)
+{
+}
+
 RsTlvBinaryData::RsTlvBinaryData(uint16_t t)
 	:tlvtype(t), bin_len(0), bin_data(NULL)
 {
-	return;
 }
 
 RsTlvBinaryData::RsTlvBinaryData(const RsTlvBinaryData &b)
@@ -74,7 +79,11 @@ bool     RsTlvBinaryData::setBinData(const void *data, uint32_t size)
 		return true;
 	}
 
-	bin_data = malloc(bin_len);
+	bin_data = rs_malloc(bin_len);
+    
+    	if(bin_data == NULL)
+            return false ;
+        
 	memcpy(bin_data, data, bin_len);
 	return true;
 }

@@ -484,6 +484,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	}
+    load.clear() ;
 	return true;
 }
 

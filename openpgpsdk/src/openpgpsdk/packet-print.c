@@ -998,7 +998,7 @@ int ops_print_packet(const ops_parser_content_t *content_)
 
  case OPS_PTAG_SS_EMBEDDED_SIGNATURE:
      start_subpacket(content_->tag);
-     end_subpacket(content_->tag); // \todo print out contents?
+     end_subpacket(); // \todo print out contents?
      break;
 
     case OPS_PTAG_SS_USERDEFINED00:

@@ -82,6 +82,8 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 	//
 #ifdef WINDOWS_SYS
 	return name.size() > 4 && name.substr(name.size() - 4) == ".dll";
+#elif defined(__MACH__)
+	return name.size() > 6 && !strcmp(name.c_str()+name.size()-6,".dylib") ;
 #else
 	return name.size() > 3 && !strcmp(name.c_str()+name.size()-3,".so") ;
 #endif
@@ -552,7 +554,7 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 // {
 // }
 
-RsPQIService::RsPQIService(uint16_t service_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
+RsPQIService::RsPQIService(uint16_t /*service_type*/, uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(),p3Config()
 {
 }

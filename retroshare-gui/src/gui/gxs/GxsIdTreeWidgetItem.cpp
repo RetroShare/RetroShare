@@ -46,6 +46,7 @@ void GxsIdRSTreeWidgetItem::init()
 {
 	mIdFound = false;
 	mRetryWhenFailed = false;
+    	mBannedState = false ;
 }
 
 static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
@@ -110,6 +111,20 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenF
 
 	mId = id;
 	mColumn = column;
+
+	startProcess();
+}
+
+void GxsIdRSTreeWidgetItem::updateBannedState()
+{
+    if(mBannedState != rsReputations->isIdentityBanned(mId))
+        forceUpdate() ;
+}
+
+void GxsIdRSTreeWidgetItem::forceUpdate()
+{
+	mIdFound = false;
+	mBannedState = rsReputations->isIdentityBanned(mId) ;
 
 	startProcess();
 }

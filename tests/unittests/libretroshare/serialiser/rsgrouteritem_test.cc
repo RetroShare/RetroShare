@@ -49,11 +49,13 @@ RsSerialType* init_item(RsGRouterGenericDataItem& cmi)
 
 	return new RsGRouterSerialiser();
 }
-RsSerialType* init_item(RsGRouterReceiptItem& cmi)
+RsSerialType* init_item(RsGRouterSignedReceiptItem& cmi)
 {
-	cmi.mid = RSRandom::random_u64() ;
-	cmi.state = RSRandom::random_u32() ;
-	cmi.destination_key = GRouterKeyId::random() ;
+    cmi.routing_id = RSRandom::random_u64() ;
+    cmi.destination_key = GRouterKeyId::random() ;
+    cmi.service_id = RSRandom::random_u32() ;
+
+    cmi.flags = RSRandom::random_u32() ;
 
     init_item(cmi.signature) ;
 

@@ -496,10 +496,12 @@ void bdNode::checkPotentialPeer(bdId *id, bdId *src)
 	/* first check the filters */
         if (!mFilterPeers.addrOkay(&(id->addr)))
 	{
+#ifdef DEBUG_NODE_MSGS 
 		std::cerr << "bdNode::checkPotentialPeer(";
 		mFns->bdPrintId(std::cerr, id);
 		std::cerr << ") BAD ADDRESS!!!! SHOULD DISCARD POTENTIAL PEER";
 		std::cerr << std::endl;
+#endif
 
 		return;
 	}
@@ -2399,6 +2401,13 @@ bdNodeNetMsg::bdNodeNetMsg(char *msg, int len, struct sockaddr_in *in_addr)
 	:data(NULL), mSize(len), addr(*in_addr)
 {
 	data = (char *) malloc(len);
+    
+    	if(data == NULL)
+        {
+            std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": ERROR. cannot allocate memory for " << len << " bytes." << std::endl;
+            return ;
+        }
+                         
 	memcpy(data, msg, len);
 	//print(std::cerr);
 }

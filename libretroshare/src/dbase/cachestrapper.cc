@@ -1052,6 +1052,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			delete (*it);
 		}
 	}
+    	load.clear() ;
 
 	/* assemble a list of dirs to clean (union of cache dirs) */
 	std::list<std::string> cacheDirs;
@@ -1158,8 +1159,7 @@ bool CacheTransfer::RequestCache(RsCacheData &data, CacheStore *cbStore)
 			 */
 			if ((data.hash == dit->second.hash) && 
 				(data.path == dit->second.path) && 
-				(data.size == dit->second.size) && 
-				(cbStore == cbStore))
+				(data.size == dit->second.size))
 			{
 				std::cerr << "Re-request duplicate cache... let it continue";
 				std::cerr << std::endl;

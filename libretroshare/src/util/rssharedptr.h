@@ -65,7 +65,9 @@ public:
 
 	~RsSharedPtr()
 	{
+                lock();
 		DecrementAndDeleteIfLast();
+                unlock();
 	}
 private:
 

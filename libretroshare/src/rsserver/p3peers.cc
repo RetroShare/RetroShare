@@ -243,20 +243,18 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
 
 bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
-	return AuthGPG::getAuthGPG()->haveSecretKey(id) ;
+	return AuthGPG::getAuthGPG()->haveSecretKey(id);
 }
 
 /* There are too many dependancies of this function
  * to shift it immeidately
  */
 
-bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
+bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
 #endif
-
-	// NOW Only for SSL Details.
 
 	RsPeerId sOwnId = AuthSSL::getAuthSSL()->OwnId();
 	peerState ps;
@@ -271,27 +269,11 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-		return false ;
+		return false;
 	}
 
-//			bool res = getGPGDetails(id, d);
-//
-//			d.isOnlyGPGdetail = true;
-//
-//			if(id.length() == 16)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else if(id.length() == 32)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else
-//			{
-//				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
-//				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
-//			}
-//
-//			return res ;
-
 	/* get from gpg (first), to fill in the sign and trust details */
-	/* don't retrun now, we've got fill in the ssl and connection info */
+	/* don't return now, we've got fill in the ssl and connection info */
 	getGPGDetails(ps.gpg_id, d);
 	d.isOnlyGPGdetail = false;
 
@@ -299,7 +281,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	d.id 		= id;
 	d.location 	= ps.location;
 
-	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id) ;
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id);
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";
@@ -314,8 +296,17 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
 		d.hiddenType = ps.hiddenType;
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
+        
+		if(sockaddr_storage_isnull(ps.localaddr))	// that happens if the address is not initialised.
+        	{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0 ;
+        	}
+            	else
+        	{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+        	}
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
@@ -327,10 +318,28 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
-		d.extAddr	= sockaddr_storage_iptostring(ps.serveraddr);
-		d.extPort	= sockaddr_storage_port(ps.serveraddr);
+		if (sockaddr_storage_isnull(ps.localaddr))
+		{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0;
+		}
+		else
+		{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+		}
+
+		if (sockaddr_storage_isnull(ps.serveraddr))
+		{
+			d.extAddr = "INVALID_IP";
+			d.extPort = 0;
+		}
+		else
+		{
+			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
+			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+
 		d.dyndns        = ps.dyndns;
 	
 		std::list<pqiIpAddress>::iterator it;
@@ -1074,12 +1083,12 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
-	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
+	Radix64::encode(mem_block,mem_block_size,gpg_base64_string) ;
 
 	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
 
 	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
-	Radix64::encode((const char *)tmp,3,gpg_base64_checksum) ;
+	Radix64::encode(tmp,3,gpg_base64_checksum) ;
 
 	delete[] mem_block ;
 
@@ -1372,8 +1381,8 @@ RsPeerDetails::RsPeerDetails()
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
-	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0), hiddenType(RS_HIDDEN_TYPE_NONE)
+    lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),
+    hiddenType(RS_HIDDEN_TYPE_NONE), foundDHT(false), wasDeniedConnection(false), deniedTS(0)
 {
 }
 

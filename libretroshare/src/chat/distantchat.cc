@@ -124,9 +124,12 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
         std::cerr << "DistantChatService::handleRecvChatStatusItem(): received keep alive packet for inactive chat! peerId=" << cs->PeerId() << std::endl;
 }
 
-bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id)
+bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id,bool is_client_side)
 {
     bool res = true ;
+    
+    if(is_client_side)	// always accept distant chat when we're the client side.
+        return true ;
     
     if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
         res = (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
@@ -261,8 +264,11 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
     RsChatMsgItem *item = new RsChatMsgItem;
     item->message = "[Starting distant chat. Please wait for secure tunnel to be established]" ;
     item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
+    item->sendTime = time(NULL) ;
     item->PeerId(RsPeerId(tunnel_id)) ;
     handleRecvChatMsgItem(item) ;
+    
+    delete item ;	// item is replaced by NULL if partial, but this is not the case here.
     
     return true ;
 }

@@ -1818,7 +1818,7 @@ bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import
 {
     if(!misc::getSaveFileName(this,
                               RshareSettings::LASTDIR_CERT,
-                              (import ? tr("Select file for importing yoour friendlist from") :
+                              (import ? tr("Select file for importing your friendlist from") :
                                         tr("Select a file for exporting your friendlist to")),
                               tr("XML File (*.xml);;All Files (*)"),
                               fileName,

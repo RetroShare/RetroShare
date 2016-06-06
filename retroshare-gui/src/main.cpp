@@ -25,7 +25,7 @@
 #include <rshare.h>
 #include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
-#include "gui/SearchDialog.h"
+#include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "gui/SharedFilesDialog.h"
 #include "gui/NetworkDialog.h"
@@ -39,7 +39,6 @@
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
 #include "gui/common/Emoticons.h"
-#include "util/EventReceiver.h"
 #include "gui/RetroShareLink.h"
 #include "gui/SoundManager.h"
 #include "gui/NetworkView.h"
@@ -239,19 +238,9 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+	              QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
-	std::string url = RsInit::getRetroShareLink();
-	if (!url.empty()) {
-		/* start with RetroShare link */
-		EventReceiver eventReceiver;
-		if (eventReceiver.sendRetroShareLink(QString::fromStdString(url))) {
-			return 0;
-		}
-
-		/* Start RetroShare */
-	}
-
+	/* Start RetroShare */
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
 	switch (initResult) {
@@ -358,22 +347,7 @@ int main(int argc, char *argv[])
 	MainWindow *w = MainWindow::Create ();
 	splashScreen.finish(w);
 
-	EventReceiver *eventReceiver = NULL;
-	if (Settings->getRetroShareProtocol()) {
-		/* Create event receiver */
-		eventReceiver = new EventReceiver;
-		if (eventReceiver->start()) {
-			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(retroshareLinkActivated(const QUrl&)));
-		}
-	}
-
-	if (!url.empty()) {
-		/* Now use link from the command line, because no RetroShare was running */
-		RetroShareLink link(QString::fromStdString(url));
-		if (link.valid()) {
-			w->retroshareLinkActivated(link.toUrl());
-		}
-	}
+	w->processLastArgs();
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
@@ -422,13 +396,7 @@ int main(int argc, char *argv[])
 	int ti = rshare.exec();
 	delete w ;
 
-    WebuiPage::checkShutdownWebui();
-
-	if (eventReceiver) {
-		/* Destroy event receiver */
-		delete eventReceiver;
-		eventReceiver = NULL;
-	}
+	WebuiPage::checkShutdownWebui();
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

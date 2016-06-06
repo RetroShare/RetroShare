@@ -22,6 +22,8 @@
 #include <QDateTime>
 #include <QSignalMapper>
 
+#include "retroshare/rsgxscircles.h"
+
 #include "GxsChannelPostsWidget.h"
 #include "ui_GxsChannelPostsWidget.h"
 #include "gui/feeds/GxsChannelPostItem.h"
@@ -265,6 +267,36 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	} else {
 		ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
 		ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+        
+        	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
+        
+        	QString distrib_string ( "[unknown]" );
+            
+        	switch(group.mMeta.mCircleType)
+		{
+		case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+			break ;
+		case GXS_CIRCLE_TYPE_EXTERNAL: 
+		{
+			RsGxsCircleDetails det ;
+
+			// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+
+			if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det)) 
+				distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+			else
+				distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+		}
+			break ;
+		case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
+			break ;
+		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+			break ;
+		default:
+			std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+		}
+ 
+		ui->infoDistribution->setText(distrib_string);
 
 		ui->infoWidget->show();
 		ui->feedWidget->hide();
@@ -327,29 +359,32 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 
 	bool bVisible = text.isEmpty();
 
-	switch(filter)
+	if (!bVisible)
 	{
-	case FILTER_TITLE:
-		bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_MSG:
-		bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_FILE_NAME:
-	{
-		std::list<SubFileItem *> fileItems = item->getFileItems();
-		std::list<SubFileItem *>::iterator lit;
-		for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+		switch(filter)
 		{
-			SubFileItem *fi = *lit;
-			QString fileName = QString::fromUtf8(fi->FileName().c_str());
-			bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+			case FILTER_TITLE:
+				bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_MSG:
+				bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_FILE_NAME:
+			{
+				std::list<SubFileItem *> fileItems = item->getFileItems();
+				std::list<SubFileItem *>::iterator lit;
+				for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+				{
+					SubFileItem *fi = *lit;
+					QString fileName = QString::fromUtf8(fi->FileName().c_str());
+					bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+				}
+				break;
+			}
+			default:
+				bVisible = true;
+			break;
 		}
-		break;
-	}
-	default:
-		bVisible = true;
-		break;
 	}
 
 	return bVisible;
@@ -398,7 +433,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		return;
 	}
 
-	std::vector<RsGxsChannelPost>::const_iterator it;
+    std::vector<RsGxsChannelPost>::const_reverse_iterator it;
 
 	int count = posts.size();
 	int pos = 0;
@@ -407,7 +442,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		ui->feedWidget->setSortingEnabled(false);
 	}
 
-	for (it = posts.begin(); it != posts.end(); ++it)
+    for (it = posts.rbegin(); it != posts.rend(); ++it)
 	{
 		if (thread && thread->stopped()) {
 			break;

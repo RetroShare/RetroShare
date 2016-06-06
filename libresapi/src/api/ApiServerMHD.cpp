@@ -305,7 +305,7 @@ public:
 
 		// get content-type from extension
 		std::string ext = "";
-		unsigned int i = info.fname.rfind('.');
+        std::string::size_type i = info.fname.rfind('.');
 		if(i != std::string::npos)
 			ext = info.fname.substr(i+1);
 		MHD_add_response_header(resp, "Content-Type", ContentTypes::cTypeFromExt(ext).c_str());

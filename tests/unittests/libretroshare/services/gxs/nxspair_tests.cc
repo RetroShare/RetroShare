@@ -41,7 +41,7 @@ TEST(libretroshare_services, DISABLED_GxsNxsPairExchange1)
 	dropFilter.setUseSource(true);
 	dropFilter.addSource(p2);
 	{
-		RsNxsSyncGrp *syncGrp = new RsNxsSyncGrp(RS_SERVICE_GXS_TYPE_TEST);
+		RsNxsSyncGrpItem *syncGrp = new RsNxsSyncGrpItem(RS_SERVICE_GXS_TYPE_TEST);
 		dropFilter.setUseFullTypes(true);
 		dropFilter.addFullType(syncGrp->PacketId());
 	}
@@ -111,7 +111,7 @@ TEST(libretroshare_services, DISABLED_GxsNxsPairExchange2)
 	dropFilter.setUseSource(true);
 	dropFilter.addSource(p2);
 	{
-		RsNxsSyncGrp *syncGrp = new RsNxsSyncGrp(RS_SERVICE_GXS_TYPE_TEST);
+		RsNxsSyncGrpItem *syncGrp = new RsNxsSyncGrpItem(RS_SERVICE_GXS_TYPE_TEST);
 		dropFilter.setUseFullTypes(true);
 		dropFilter.addFullType(syncGrp->PacketId());
 	}

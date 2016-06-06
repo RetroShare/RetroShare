@@ -15,7 +15,8 @@ using namespace rs_nxs_test;
 
 
 
-NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation)
+NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation):
+    mServType(0)
 {
 
 	int numPeers = 2;

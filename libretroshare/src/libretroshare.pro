@@ -122,7 +122,7 @@ linux-* {
 	CONFIG += link_pkgconfig
 
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 
 	contains(CONFIG, NO_SQLCIPHER) {
 		DEFINES *= NO_SQLCIPHER
@@ -160,7 +160,7 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 	PKGCONFIG *= gnome-keyring-1
 	PKGCONFIG *= libssl libupnp
 	PKGCONFIG *= libcrypto zlib
@@ -225,7 +225,7 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
@@ -259,7 +259,7 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
@@ -361,7 +361,6 @@ HEADERS += chat/distantchat.h \
 
 HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
-			pqi/rsmemory.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
 			pgp/rsaes.h \
@@ -475,6 +474,7 @@ HEADERS +=	turtle/p3turtle.h \
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
+			util/rsmemory.h \
 			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
@@ -494,7 +494,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
-			util/rsscopetimer.h
+			util/rsscopetimer.h \
+			util/stacktrace.h
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -630,6 +631,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
+			util/rsmemory.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
 			util/rsnet_ss.cc \

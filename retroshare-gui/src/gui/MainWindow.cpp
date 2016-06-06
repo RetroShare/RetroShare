@@ -40,7 +40,7 @@
 #include "ui_MainWindow.h"
 #include "MessengerWindow.h"
 #include "NetworkDialog.h"
-#include "SearchDialog.h"
+#include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
 #include "MessagesDialog.h"
 #include "SharedFilesDialog.h"
@@ -95,9 +95,9 @@
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/Identity/IdDialog.h"
-#ifdef RS_USE_CIRCLES
-#include "gui/Circles/CirclesDialog.h"
-#endif
+//#ifdef RS_USE_CIRCLES
+//#include "gui/Circles/CirclesDialog.h"
+//#endif
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
@@ -203,6 +203,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     }
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation);
+    connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
@@ -359,7 +360,7 @@ void MainWindow::initStackedPage()
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
-#ifdef RS_USE_CIRCLES
+#ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
 #endif
@@ -367,10 +368,10 @@ void MainWindow::initStackedPage()
   IdDialog *idDialog = NULL;
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
-#ifdef RS_USE_CIRCLES
-  CirclesDialog *circlesDialog = NULL;
-  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
-#endif
+//#ifdef RS_USE_CIRCLES
+//  CirclesDialog *circlesDialog = NULL;
+//  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
+//#endif
 
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
@@ -1095,6 +1096,12 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
+void MainWindow::receiveNewArgs(QStringList args)
+{
+	Rshare::parseArguments(args, false);
+	processLastArgs();
+}
+
 void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_msg)
 {
 	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
@@ -1431,6 +1438,33 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     QList<RetroShareLink> links;
     links.append(link);
     RetroShareLink::process(links);
+}
+
+void MainWindow::openRsCollection(const QString &filename)
+{
+	QFileInfo qinfo(filename);
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath());
+		}
+	}
+}
+
+void MainWindow::processLastArgs()
+{
+	while (!Rshare::links()->isEmpty()) {
+		std::cerr << "MainWindow::processLastArgs() : " << Rshare::links()->count() << std::endl;
+		/* Now use links from the command line, because no RetroShare was running */
+		RetroShareLink link(Rshare::links()->takeFirst());
+		if (link.valid()) {
+			retroshareLinkActivated(link.toUrl());
+		}
+	}
+	while (!Rshare::files()->isEmpty()) {
+		/* Now use files from the command line, because no RetroShare was running */
+		openRsCollection(Rshare::files()->takeFirst());
+	}
 }
 
 //void MainWindow::servicePermission()

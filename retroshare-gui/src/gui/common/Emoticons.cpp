@@ -73,7 +73,7 @@ void Emoticons::load()
     int i = 0;
     QString smcode;
     QString smfile;
-    while(sm_codes[i] != '{')
+    while(i < sm_codes.length() && sm_codes[i] != '{')
     {
         ++i;
     }

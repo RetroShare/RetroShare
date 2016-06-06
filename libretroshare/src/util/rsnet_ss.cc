@@ -29,6 +29,7 @@
 #include "util/rsnet.h"
 #include "util/rsstring.h"
 #include "pqi/pqinetwork.h"
+#include "util/stacktrace.h"
 
 /***************************** Internal Helper Fns ******************************/
 
@@ -186,13 +187,12 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 	{
 		case AF_INET:
 			return sockaddr_storage_ipv4_port(addr);
-			break;
 		case AF_INET6:
 			return sockaddr_storage_ipv6_port(addr);
-			break;
 		default:
 			std::cerr << "sockaddr_storage_port() invalid addr.ss_family" << std::endl;
 			sockaddr_storage_dump(addr);
+			print_stacktrace();
 			break;
 	}
 	return 0;
@@ -508,22 +508,19 @@ bool sockaddr_storage_isnull(const struct sockaddr_storage &addr)
 bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_isValidNet()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_isValidNet()" << std::endl;
 #endif
 
 	switch(addr.ss_family)
 	{
 		case AF_INET:
 			return sockaddr_storage_ipv4_isValidNet(addr);
-			break;
 		case AF_INET6:
 			return sockaddr_storage_ipv6_isValidNet(addr);
-			break;
 		default:
 #ifdef SS_DEBUG
-            std::cerr << "sockaddr_storage_isValidNet() INVALID Family - error: " << sockaddr_storage_iptostring(addr);
-            std::cerr << std::endl;
+			std::cerr << "sockaddr_storage_isValidNet() INVALID Family" << std::endl;
+			sockaddr_storage_dump(addr);
 #endif
 			break;
 	}
@@ -954,7 +951,7 @@ bool sockaddr_storage_ipv4_isExternalNet(const struct sockaddr_storage &addr)
 }
 
 
-bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage &/*addr*/)
 {
 #ifdef SS_DEBUG
     std::cerr << "sockaddr_storage_ipv6_isnull() TODO";
@@ -964,7 +961,7 @@ bool sockaddr_storage_ipv6_isnull(const struct sockaddr_storage &addr)
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage &/*addr*/)
 {
 #ifdef SS_DEBUG
     std::cerr << "sockaddr_storage_ipv6_isValidNet() TODO";
@@ -974,7 +971,7 @@ bool sockaddr_storage_ipv6_isValidNet(const struct sockaddr_storage &addr)
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &/*addr*/)
 {
 #ifdef SS_DEBUG
     std::cerr << "sockaddr_storage_ipv6_isLoopbackNet() TODO";
@@ -984,7 +981,7 @@ bool sockaddr_storage_ipv6_isLoopbackNet(const struct sockaddr_storage &addr)
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &/*addr*/)
 {
 #ifdef SS_DEBUG
     std::cerr << "sockaddr_storage_ipv6_isPrivateNet() TODO";
@@ -994,7 +991,7 @@ bool sockaddr_storage_ipv6_isPrivateNet(const struct sockaddr_storage &addr)
 	return false;
 }
 
-bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &addr)
+bool sockaddr_storage_ipv6_isExternalNet(const struct sockaddr_storage &/*addr*/)
 {
 #ifdef SS_DEBUG
     std::cerr << "sockaddr_storage_ipv6_isExternalNet() TODO";

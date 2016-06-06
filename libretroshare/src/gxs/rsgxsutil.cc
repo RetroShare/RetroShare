@@ -28,6 +28,7 @@
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsreputations.h"
 #include "pqi/pqihash.h"
 #include "gxs/rsgixs.h"
 
@@ -53,7 +54,7 @@ RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService
 
 bool RsGxsMessageCleanUp::clean()
 {
-	int i = 1;
+	uint32_t i = 1;
 
 	time_t now = time(NULL);
 
@@ -161,7 +162,8 @@ bool RsGxsIntegrityCheck::check()
 					    std::cerr << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
 #endif
 
-					    used_gxs_ids.insert(grp->metaData->mAuthorId) ;
+					if(rsReputations!=NULL && !rsReputations->isIdentityBanned(grp->metaData->mAuthorId))
+						used_gxs_ids.insert(grp->metaData->mAuthorId) ;
 				    }
 			    }
 		    }
@@ -242,7 +244,8 @@ bool RsGxsIntegrityCheck::check()
 #ifdef GXSUTIL_DEBUG
 			    std::cerr << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
-			    used_gxs_ids.insert(msg->metaData->mAuthorId) ;
+			    if(rsReputations!=NULL && !rsReputations->isIdentityBanned(msg->metaData->mAuthorId))
+				    used_gxs_ids.insert(msg->metaData->mAuthorId) ;
 		    }
 
 		    delete msg;
@@ -278,7 +281,7 @@ bool RsGxsIntegrityCheck::check()
 	    std::cerr << "    " << *it <<  std::endl;
 #endif
     }
-    int nb_requested_not_in_cache = 0;
+    uint32_t nb_requested_not_in_cache = 0;
 
 #ifdef GXSUTIL_DEBUG
     std::cerr << "  issuing random get on friends for non existing IDs" << std::endl;
@@ -286,7 +289,7 @@ bool RsGxsIntegrityCheck::check()
 
     // now request a cache update for them, which triggers downloading from friends, if missing.
 
-    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && gxs_ids.size()>0;)
+    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && !gxs_ids.empty();)
     {
 	    uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
 #ifdef GXSUTIL_DEBUG

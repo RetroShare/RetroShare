@@ -46,6 +46,7 @@
 #include <fstream>
 
 #include "util/rsdebug.h"
+#include "util/rsmemory.h"
 #include "util/rsstring.h"
 
 // 
@@ -194,7 +195,12 @@ int	pqistore::writePkt(RsItem *pqi)
 #endif
 
 	uint32_t pktsize = rsSerialiser->size(pqi);
-	void *ptr = malloc(pktsize);
+    
+    	RsTemporaryMemory ptr(pktsize) ;
+        
+    	if(ptr == NULL)
+            return 0 ;
+        
 	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
 #ifdef PQISTORE_DEBUG
@@ -203,7 +209,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 		return 0;
@@ -218,7 +223,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqi -> print_string(out);
 		pqioutput(PQL_ALERT, pqistorezone, out);
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 		return 0;
@@ -232,7 +236,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqi -> print_string(out);
 		pqioutput(PQL_ALERT, pqistorezone, out);
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 
@@ -250,7 +253,6 @@ int	pqistore::writePkt(RsItem *pqi)
 		pqioutput(PQL_ALERT, pqistorezone, out);
 #endif
 
-		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete pqi;
 
@@ -262,7 +264,6 @@ int	pqistore::writePkt(RsItem *pqi)
 	pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 #endif
 
-	free(ptr);
 	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 		delete pqi;
 
@@ -288,7 +289,10 @@ int     pqistore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = malloc(blen);
+	void *block = rs_malloc(blen);
+    
+    	if(block == NULL)
+            return false ;
 
 	int tmplen;
 	/* we have the header */
@@ -387,25 +391,26 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	std::list<RsItem*>::const_iterator it;
 	uint32_t sizeItems = 0, sizeItem = 0;
 	uint32_t offset = 0;
-	char* data = NULL;
 
 	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
-		sizeItems += rsSerialiser->size(*it);
+        	if(*it != NULL)
+			sizeItems += rsSerialiser->size(*it);
 
-	data = new char[sizeItems];
+    	RsTemporaryMemory data(sizeItems) ;
 
 	for(it = rsItemList.begin(); it != rsItemList.end(); ++it)
-	{
-		sizeItem = rsSerialiser->size(*it);
+	    if(*it != NULL)
+	    {
+		    sizeItem = rsSerialiser->size(*it);
 
-		if(rsSerialiser->serialise(*it, (data+offset),&sizeItem))
-			offset += sizeItem;
-		else
-			std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
+		    if(rsSerialiser->serialise(*it, &data[offset],&sizeItem))
+			    offset += sizeItem;
+		    else
+			    std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
 
-		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
-			delete *it;
-	}
+		    if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			    delete *it;
+	    }
 
 	bool result = true;
 
@@ -413,9 +418,6 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 		enc_bio->senddata(data, sizeItems);
 	else
 		result = false;
-
-	if(data != NULL)
-		delete[] data;
 
 	return result;
 }
@@ -495,7 +497,10 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
-	void *block = malloc(blen);
+	void *block = rs_malloc(blen);
+    
+    	if(block == NULL)
+            return false ;
 
 	int tmplen;
 	/* we have the header */

@@ -50,6 +50,7 @@ public:
         time_t                  last_tunnel_attempt_time;
         time_t                  last_sent_time;
         bool                    receipt_available ;
+        uint32_t                duplication_factor ;
         uint32_t                data_status ;
         uint32_t                tunnel_status ;
         uint32_t                data_size ;

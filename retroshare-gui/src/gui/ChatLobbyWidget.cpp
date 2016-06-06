@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <time.h>
+#include <algorithm>
 #include "ChatLobbyWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "chat/ChatTabWidget.h"
@@ -62,7 +63,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	myChatLobbyUserNotify = NULL;
 
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
+    QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&)));
 	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
@@ -501,10 +502,7 @@ void ChatLobbyWidget::updateDisplay()
 #endif
 
 
-		bool subscribed = false;
-		if (rsMsgs->getVirtualPeerId(lobby.lobby_id, vpid)) {
-			subscribed = true;
-		}
+        bool subscribed = std::find(lobbies.begin(), lobbies.end(), lobby.lobby_id) != lobbies.end();
 
 		QTreeWidgetItem *item = NULL;
 		QTreeWidgetItem *lobby_item =NULL;
@@ -1057,10 +1055,10 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
     subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& gxs_id, const QString& str)
+void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const RsGxsId &gxs_id, const QString& str)
 {
     if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(ChatId(lobby_id)))) {
-        cld->displayLobbyEvent(event_type, RsGxsId(gxs_id.toStdString()), str);
+        cld->displayLobbyEvent(event_type, gxs_id, str);
     }
 }
 
@@ -1101,13 +1099,10 @@ void ChatLobbyWidget::readChatLobbyInvites()
             continue ;
         }
 
-        rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id);
-
-        RsPeerId vpid;
-        if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid ))
+        if(rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id))
             ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
         else
-            std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
+            std::cerr << "Can't join lobby with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 
     }
 }

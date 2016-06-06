@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>408</height>
+    <width>1468</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,8 +34,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>593</width>
-         <height>159</height>
+         <width>1450</width>
+         <height>317</height>
         </rect>
        </property>
       </widget>
@@ -83,7 +83,7 @@
         </column>
         <column>
          <property name="text">
-          <string>Data size</string>
+          <string>Stored data size</string>
          </property>
         </column>
         <column>
@@ -93,12 +93,17 @@
         </column>
         <column>
          <property name="text">
-          <string>Received</string>
+          <string>Receive time (secs ago)</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Send</string>
+          <string>Sending time (secs ago)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Branching factor</string>
          </property>
         </column>
        </widget>

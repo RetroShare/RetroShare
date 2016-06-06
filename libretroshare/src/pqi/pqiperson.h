@@ -43,7 +43,7 @@ static const int CONNECT_UNREACHABLE  = 3;
 static const int CONNECT_FIREWALLED   = 4;
 static const int CONNECT_FAILED       = 5;
 
-static const int HEARTBEAT_REPEAT_TIME = 5;
+static const time_t HEARTBEAT_REPEAT_TIME = 5;
 
 #include "pqi/pqiqosstreamer.h"
 #include "pqi/pqithreadstreamer.h"

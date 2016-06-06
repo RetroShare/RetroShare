@@ -177,7 +177,7 @@ void AvatarWidget::refreshStatus()
     }
     case STATUS_FRAME:
     {
-        uint32_t status ;
+        uint32_t status = 0;
 
     if(mId.isNotSet())
         return ;
@@ -247,13 +247,18 @@ void AvatarWidget::updateStatus(int status)
 
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
-    if(mId.isPeerId() && mId.toPeerId() == RsPeerId(peerId.toStdString()))
-	    refreshAvatarImage() ;
-    else if(mId.isDistantChatId() && mId.toDistantChatId() == DistantChatPeerId(peerId.toStdString()))
-	    refreshAvatarImage() ;
-    else
-	    std::cerr << "(EE) cannot update avatar. mId has unhandled type." << std::endl;
+	if(mId.isPeerId()){
+		if(mId.toPeerId() == RsPeerId(peerId.toStdString()))
+			refreshAvatarImage() ;
+		//else not mId so pass through
+	} else if(mId.isDistantChatId()) {
+			if (mId.toDistantChatId() == DistantChatPeerId(peerId.toStdString()))
+				refreshAvatarImage() ;
+			//else not mId so pass through
+	} else
+		std::cerr << "(EE) cannot update avatar. mId has unhandled type." << std::endl;
 }
+
 void AvatarWidget::refreshAvatarImage()
 {
     if (mGxsId.isNull()==false)

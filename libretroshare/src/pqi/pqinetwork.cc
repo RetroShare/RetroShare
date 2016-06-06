@@ -25,6 +25,7 @@
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
+#include "util/rsmemory.h"
 #include <ws2tcpip.h>
 #endif // WINDOWS_SYS
 
@@ -290,7 +291,11 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 #ifdef WINDOWS_SYS
 	// Seems strange to me but M$ documentation suggests to allocate this way...
 	DWORD bf_size = 16000;
-	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) malloc(bf_size);
+	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) rs_malloc(bf_size);
+    
+    	if(adapter_addresses == NULL)
+            return false ;
+        
 	DWORD error = GetAdaptersAddresses(AF_UNSPEC,
 									   GAA_FLAG_SKIP_MULTICAST |
 									   GAA_FLAG_SKIP_DNS_SERVER |
@@ -306,11 +311,10 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 		IP_ADAPTER_UNICAST_ADDRESS* address;
 		for ( address = adapter->FirstUnicastAddress; address; address = address->Next)
 		{
-			sockaddr_storage * tmp = new sockaddr_storage;
-			sockaddr_storage_clear(*tmp);
-			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
-				addrs.push_back(*tmp);
-			else delete tmp;
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(address->Address.lpSockaddr)))
+				addrs.push_back(tmp);
 		}
 	}
 	free(adapter_addresses);
@@ -320,11 +324,10 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
-			sockaddr_storage * tmp = new sockaddr_storage;
-			sockaddr_storage_clear(*tmp);
-			if (sockaddr_storage_copyip(* tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
-				addrs.push_back(*tmp);
-			else delete tmp;
+			sockaddr_storage tmp;
+			sockaddr_storage_clear(tmp);
+			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+				addrs.push_back(tmp);
 		}
 	freeifaddrs(ifsaddrs);
 #endif // WINDOWS_SYS

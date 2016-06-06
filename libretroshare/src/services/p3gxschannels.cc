@@ -353,7 +353,18 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 				}
 				else
 				{
-					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
+					RsGxsCommentItem* cmt = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(!cmt)
+					{
+						RsGxsMsgItem* msg = (*vit);
+						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
+						std::cerr << "Not a GxsChannelPostItem neither a RsGxsCommentItem"
+											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+											<< " , deleting!" << std::endl;
+					}
 					delete *vit;
 				}
 			}
@@ -401,7 +412,18 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 				}
 				else
 				{
-					std::cerr << "Not a GxsChannelPostItem, deleting!" << std::endl;
+					RsGxsCommentItem* cmt = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(!cmt)
+					{
+						RsGxsMsgItem* msg = (*vit);
+						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
+						std::cerr << "Not a GxsChannelPostItem neither a RsGxsCommentItem"
+											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+											<< " , deleting!" << std::endl;
+					}
 					delete *vit;
 				}
 			}
@@ -492,20 +514,20 @@ bool p3GxsChannels::setChannelDownloadDirectory(const RsGxsGroupId &groupId, con
     return true;
 }
 
-bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & id,std::string& directory)
+bool p3GxsChannels::getChannelDownloadDirectory(const RsGxsGroupId & groupId,std::string& directory)
 {
 #ifdef GXSCHANNELS_DEBUG
-    std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")" << std::endl;
+    std::cerr << "p3GxsChannels::getChannelDownloadDirectory(" << id << ")" << std::endl;
 #endif
 
     std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
 
-    it = mSubscribedGroups.find(id);
+    it = mSubscribedGroups.find(groupId);
 
     if (it == mSubscribedGroups.end())
     {
 #ifdef GXSCHANNELS_DEBUG
-        std::cerr << "p3GxsChannels::autoDownloadEnabled() No Entry" << std::endl;
+        std::cerr << "p3GxsChannels::getChannelDownloadDirectory() No Entry" << std::endl;
 #endif
 
         return false;
@@ -882,7 +904,7 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 /********************************************************************************************/
 
 
-bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
+bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &groupId,bool& enabled)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::autoDownloadEnabled(" << id << ")";
@@ -891,7 +913,7 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
 
 	std::map<RsGxsGroupId, RsGroupMetaData>::iterator it;
 
-	it = mSubscribedGroups.find(id);
+	it = mSubscribedGroups.find(groupId);
 	if (it == mSubscribedGroups.end())
 	{
 #ifdef GXSCHANNELS_DEBUG
@@ -905,17 +927,25 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id,bool& enabled)
 	/* extract from ServiceString */
 	SSGxsChannelGroup ss;
 	ss.load(it->second.mServiceString);
-            enabled = ss.mAutoDownload;
+	enabled = ss.mAutoDownload;
 
-    return true ;
+	return true;
 }
 
 bool SSGxsChannelGroup::load(const std::string &input)
 {
+    if(input.empty())
+    {
+#ifdef GXSCHANNELS_DEBUG
+        std::cerr << "SSGxsChannelGroup::load() asked to load a null string." << std::endl;
+#endif
+        return true ;
+    }
     int download_val;
     mAutoDownload = false;
     mDownloadDirectory.clear();
 
+    
     RsTemporaryMemory tmpmem(input.length());
 
     if (1 == sscanf(input.c_str(), "D:%d", &download_val))
@@ -963,7 +993,7 @@ std::string SSGxsChannelGroup::save() const
     if(!mDownloadDirectory.empty())
     {
         std::string encoded_str ;
-        Radix64::encode(mDownloadDirectory.c_str(),mDownloadDirectory.length(),encoded_str);
+        Radix64::encode((unsigned char*)mDownloadDirectory.c_str(),mDownloadDirectory.length(),encoded_str);
 
         output += " {P:" + encoded_str + "}";
     }
@@ -1554,7 +1584,7 @@ void p3GxsChannels::handle_event(uint32_t event_type, const std::string &elabel)
 
 		default:
 			/* error */
-			std::cerr << "p3GxsChannels::handle_event() Unknown Event Type: " << event_type;
+			std::cerr << "p3GxsChannels::handle_event() Unknown Event Type: " << event_type << " elabel:" << elabel;
 			std::cerr << std::endl;
 			break;
 	}

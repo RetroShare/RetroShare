@@ -127,19 +127,23 @@ class p3Msgs: public RsMsgs
 	   */
 	  virtual uint32_t getMaxMessageSecuritySize(int type);
 
-	  /*!
-	   * sends immediate status string to a specific peer, e.g. in a private chat
-       * @param chat_id chat id to send status string to
-	   * @param status_string immediate status to send
-	   */
-      virtual void    sendStatusString(const ChatId& chat_id, const std::string& status_string) ;
+    /*!
+     * sends immediate status string to a specific peer, e.g. in a private chat
+     * @param chat_id chat id to send status string to
+     * @param status_string immediate status to send
+     */
+    virtual void    sendStatusString(const ChatId& id, const std::string& status_string) ;
+
+    /**
+     * @brief clearChatLobby: Signal chat was cleared by GUI.
+     * @param id: Chat id cleared.
+     */
+    virtual void clearChatLobby(const ChatId &id);
 
 	  /****************************************/
 
       virtual bool joinVisibleChatLobby(const ChatLobbyId& id, const RsGxsId &own_id) ;
 	  virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
-	  virtual bool getVirtualPeerId(const ChatLobbyId& id,RsPeerId& vpid) ;
-	  virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) ;
       virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) ;
       virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) ;
       virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;

@@ -409,9 +409,14 @@ uint32_t p3Msgs::getMaxMessageSecuritySize(int type)
 	return mChatSrv->getMaxMessageSecuritySize(type);
 }
 
-void p3Msgs::sendStatusString(const ChatId& peer_id, const std::string& status_string)
+void p3Msgs::sendStatusString(const ChatId& id, const std::string& status_string)
 {
-    mChatSrv->sendStatusString(peer_id, status_string);
+    mChatSrv->sendStatusString(id, status_string);
+}
+
+void p3Msgs::clearChatLobby(const ChatId &id)
+{
+	mChatSrv->clearChatLobby(id);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)
@@ -442,15 +447,6 @@ std::string p3Msgs::getCustomStateString()
 void p3Msgs::setCustomStateString(const std::string& state_string)
 {
 	mChatSrv->setOwnCustomStateString(state_string) ;
-}
-
-bool p3Msgs::getVirtualPeerId(const ChatLobbyId& id,RsPeerId& peer_id)
-{
-	return mChatSrv->getVirtualPeerId(id,peer_id) ;
-}
-bool p3Msgs::isLobbyId(const RsPeerId& peer_id,ChatLobbyId& id)
-{
-	return mChatSrv->isLobbyId(peer_id,id) ;
 }
 
 bool p3Msgs::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& linfo)

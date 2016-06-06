@@ -1074,6 +1074,12 @@ int 	pqissl::Initiate_SSL_Connection()
 	  "pqissl::Initiate_SSL_Connection() SSL Connection Okay");
 #endif
 
+    	if(ssl_connection != NULL)
+	{
+		SSL_shutdown(ssl_connection);
+		SSL_free(ssl_connection) ;
+	}
+        
 	ssl_connection = ssl;
 
 	net_internal_SSL_set_fd(ssl, sockfd);
@@ -1297,7 +1303,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
-    bool res = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
+	AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
 	bool certCorrect = true; /* WE know it okay already! */
 
     uint32_t check_result ;
@@ -1433,6 +1439,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
   	 	rslog(RSL_ALERT, pqisslzone, 
 		  "pqissl::accept() closing Previous/Existing ssl_connection");
 		SSL_shutdown(ssl_connection);
+		SSL_free (ssl_connection);
 	}
 
 	if ((sockfd > -1) && (sockfd != fd))
@@ -1615,6 +1622,10 @@ int 	pqissl::readdata(void *data, int len)
 #ifdef PQISSL_DEBUG
 	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
 #endif
+    // safety check.  Apparently this avoids some SIGSEGV.
+    //
+    if(ssl_connection == NULL)
+        return -1;
 
 	// There is a do, because packets can be splitted into multiple ssl buffers
 	// when they are larger than 16384 bytes. Such packets have to be read in 
@@ -1850,7 +1861,11 @@ bool 	pqissl::moretoread(uint32_t usec)
 #endif
 		return 1;
 	}
-	else
+	else if(SSL_pending(ssl_connection) > 0)
+    {
+        return 1 ;
+    }
+    else
 	{
 #ifdef PQISSL_DEBUG 
 		rslog(RSL_DEBUG_ALL, pqisslzone, 

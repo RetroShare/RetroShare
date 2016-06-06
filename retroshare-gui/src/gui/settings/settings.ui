@@ -106,29 +106,22 @@
    </item>
    <item row="0" column="0" rowspan="3">
     <widget class="QListWidget" name="listWidget">
-     <property name="minimumSize">
-      <size>
-       <width>130</width>
-       <height>0</height>
-      </size>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>130</width>
-       <height>16777215</height>
-      </size>
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
      </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
+     <property name="defaultDropAction">
+      <enum>Qt::IgnoreAction</enum>
      </property>
      <property name="textElideMode">
-      <enum>Qt::ElideMiddle</enum>
+      <enum>Qt::ElideRight</enum>
      </property>
      <property name="movement">
       <enum>QListView::Static</enum>
@@ -147,12 +140,6 @@
      </property>
      <property name="spacing">
       <number>0</number>
-     </property>
-     <property name="gridSize">
-      <size>
-       <width>100</width>
-       <height>26</height>
-      </size>
      </property>
      <property name="viewMode">
       <enum>QListView::ListMode</enum>
@@ -191,7 +178,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>666</width>
+        <width>540</width>
         <height>517</height>
        </rect>
       </property>

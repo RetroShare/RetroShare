@@ -31,11 +31,13 @@
 #endif
 
 #include <QApplication>
+#include <QKeySequence>
+#include <QLocalServer>
 #include <QMap>
 #include <QString>
-#include <QKeySequence>
 
 #include "util/log.h"
+
 #include "retroshare/rstypes.h"
 
 /** Pointer to this RetroShare application instance. */
@@ -63,6 +65,8 @@ public:
 
   /** Return the map of command-line arguments and values. */
   static QMap<QString, QString> arguments() { return _args; }
+  /** Parse the list of command-line arguments. */
+  static void parseArguments(QStringList args, bool firstRun = true);
   /** Validates that all arguments were well-formed. */
   bool validateArguments(QString &errmsg);
   /** Prints usage information to the given text stream. */
@@ -89,8 +93,10 @@ public:
   static void getAvailableStyleSheets(QMap<QString, QString> &styleSheets);
   /** Recalculates matching stylesheet for widget **/
   static void refreshStyleSheet(QWidget *widget, bool processChildren);
-
+  /** Load certificate */
   static bool loadCertificate(const RsPeerId &accountId, bool autoLogin);
+  /** Start or Stop Local server to get new arguments depends setting */
+  static bool updateLocalServer();
 
   /**
    * Update Language, Style and StyleSheet.
@@ -107,6 +113,10 @@ public:
   static QString style() { return _style; }
   /** Returns the current GUI stylesheet. */
   static QString stylesheet() { return _stylesheet; }
+  /** Returns links passed by arguments. */
+  static QStringList* links() { return &_links; }
+  /** Returns files passed by arguments. */
+  static QStringList* files()  {return &_files; }
   /** Returns Rshare's application startup time. */
   static QDateTime startupTime();
 
@@ -131,7 +141,12 @@ public:
   * <b>sender</b>'s context, <b>receiver</b>'s <b>slot</b> will be called. */
   static void createShortcut(const QKeySequence &key, QWidget *sender,
                              QWidget *receiver, const char *slot);
-  
+
+#ifdef __APPLE__
+  /**To process event from Mac system */
+  bool event(QEvent *);
+#endif
+
 signals:
   /** Emitted when the application is running and the main event loop has
    * started. */ 
@@ -144,6 +159,8 @@ signals:
   void secondTick();
   /** Global timer every minute */
   void minuteTick();
+  /** Emitted when other process is connected */
+  void newArgsReceived(QStringList args);
 
 private slots:
   /** Called when the application's main event loop has started. This method
@@ -151,27 +168,32 @@ private slots:
    * loop is running. */
   void onEventLoopStarted();
   void blinkTimer();
+  /**
+   * @brief Called when accept new connection from new instance.
+   */
+  void slotConnectionEstablished();
 
 private:
   /** customize the date format (defaultlongformat) */
   static void customizeDateFormat();
 
-  /** Parse the list of command-line arguments. */
-  void parseArguments(QStringList args);
   /** Returns true if the specified arguments wants a value. */
-  bool argNeedsValue(QString argName);
+  static bool argNeedsValue(QString argName);
 
   static QMap<QString, QString> _args; /**< List of command-line arguments.  */
   static QString _style;               /**< The current GUI style.           */
   static QString _stylesheet;          /**< The current GUI stylesheet.      */
   static QString _language;            /**< The current language.            */
   static QString _dateformat;          /**< The format for dates in feed items etc. */
-  static Log _log; 					/**< Logs debugging messages to file or stdout. */
+  static Log _log;                     /**< Logs debugging messages to file or stdout. */
+  static QStringList _links;           /**< List of links passed by arguments. */
+  static QStringList _files;           /**< List of files passed by arguments. */
   static QDateTime mStartupTime;       // startup time
 
   static bool    useConfigDir;
   static QString configDir;
   bool mBlink;
+  static QLocalServer* localServer;
 };
 
 #endif

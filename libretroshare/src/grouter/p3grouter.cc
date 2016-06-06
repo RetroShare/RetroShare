@@ -190,6 +190,8 @@
 #include "services/p3idservice.h"
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsreputations.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -481,7 +483,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 #endif
 }
 
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef GROUTER_DEBUG
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;
@@ -611,7 +613,6 @@ RsGRouterAbstractMsgItem *GRouterDataInfo::addDataChunk(RsGRouterTransactionChun
     {
         RsItem *data_item = RsGRouterSerialiser().deserialise(incoming_data_buffer->chunk_data,&incoming_data_buffer->chunk_size) ;
 
-        incoming_data_buffer->chunk_data = NULL;
         delete incoming_data_buffer;
         incoming_data_buffer = NULL ;
 
@@ -855,6 +856,34 @@ void p3GRouter::handleTunnels()
     }
 }
 
+void p3GRouter::locked_sendToPeers(RsGRouterGenericDataItem *data_item,const std::map<RsPeerId,uint32_t>& peers_and_duplication_factors)
+{
+    // slice the data appropriately and send.
+
+    uint32_t saved_duplication_factor = data_item->duplication_factor ; // this little trick avoids copying the item for each peer before slicing it up
+
+    for(std::map<RsPeerId,uint32_t>::const_iterator itpid(peers_and_duplication_factors.begin());itpid!=peers_and_duplication_factors.end();++itpid)
+    {
+	    std::list<RsGRouterTransactionChunkItem*> chunks ;
+	    data_item->duplication_factor = itpid->second;
+
+	    sliceDataItem(data_item,chunks) ;
+
+	    for(std::list<RsGRouterTransactionChunkItem*>::const_iterator it2(chunks.begin());it2!=chunks.end();++it2)
+		    locked_sendTransactionData(itpid->first,*(*it2) ) ;
+
+#ifdef GROUTER_DEBUG
+	    std::cerr << "    sending " << chunks.size() << " slices to peer " << itpid->first << " with duplication factor = " << itpid->second << std::endl;
+#endif
+	    // delete temporary items
+
+	    for(std::list<RsGRouterTransactionChunkItem*>::const_iterator cit=chunks.begin();cit!=chunks.end();++cit)
+		    delete *cit;
+    }
+
+    data_item->duplication_factor = saved_duplication_factor ;	
+}
+
 void p3GRouter::routePendingObjects()
 {
     // Go throught he list of pending messages. For those with a peer ready, send the message to that peer.
@@ -885,17 +914,45 @@ void p3GRouter::routePendingObjects()
         {
             // Look for tunnels and friends where to send the data. Send to both.
 
-            std::list<RsPeerId> peers ;
+            std::map<RsPeerId,uint32_t> peers_and_duplication_factors ;
 
             if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS)
-                locked_collectAvailableTunnels(it->second.tunnel_hash,peers);
+                locked_collectAvailableTunnels(it->second.tunnel_hash,it->second.data_item->duplication_factor,peers_and_duplication_factors);
 
-            // For now, disable friends. We'll first check that the good old tunnel system works as before.
+            if(!peers_and_duplication_factors.empty())
+	    {
+#ifdef GROUTER_DEBUG
+		std::cerr << "  tunnels available! sending!" << std::endl;
+#endif
+		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
 
+		    // change item state in waiting list
+
+		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
+		    it->second.data_transaction_TS = now ;
+
+		    pending_messages_changed = true ;
+                    continue ;					// no need to seek for friend asynced routes since tunnels directly go to the final destination!
+	    }
+            
             if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_FRIENDS)
-                locked_collectAvailableFriends(it->second.data_item->destination_key,peers, it->second.incoming_routes.ids, it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN);
+                locked_collectAvailableFriends(it->second.data_item->destination_key,it->second.incoming_routes.ids,it->second.data_item->duplication_factor,peers_and_duplication_factors);
 
-            if(peers.empty())
+            if(!peers_and_duplication_factors.empty())
+	    {
+#ifdef GROUTER_DEBUG
+		std::cerr << "  friends available! sending!" << std::endl;
+#endif
+		    locked_sendToPeers(it->second.data_item,peers_and_duplication_factors) ;
+
+		    // change item state in waiting list
+
+		    it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
+		    it->second.data_transaction_TS = now ;
+
+		    pending_messages_changed = true ;
+	    }
+            else
             {
 #ifdef GROUTER_DEBUG
                 std::cerr << "  no direct friends available" << std::endl;
@@ -908,33 +965,8 @@ void p3GRouter::routePendingObjects()
 #endif
                     it->second.routing_flags |= GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_TUNNELS ;
                 }
-                continue ;
             }
 
-            // slice the data appropriately and send.
-
-            std::list<RsGRouterTransactionChunkItem*> chunks ;
-            sliceDataItem(it->second.data_item,chunks) ;
-
-#ifdef GROUTER_DEBUG
-            if(!peers.empty())
-                std::cerr << "  sending to peers:" << std::endl;
-#endif
-            for(std::list<RsPeerId>::const_iterator itpid(peers.begin());itpid!=peers.end();++itpid)
-                for(std::list<RsGRouterTransactionChunkItem*>::const_iterator it2(chunks.begin());it2!=chunks.end();++it2)
-                    locked_sendTransactionData(*itpid,*(*it2) ) ;
-
-            // delete temporary items
-
-            for(std::list<RsGRouterTransactionChunkItem*>::const_iterator cit=chunks.begin();cit!=chunks.end();++cit)
-                delete *cit;
-
-            // change item state in waiting list
-
-            it->second.data_status = RS_GROUTER_DATA_STATUS_ONGOING ;
-            it->second.data_transaction_TS = now ;
-
-        pending_messages_changed = true ;
         }
         else if(it->second.data_status == RS_GROUTER_DATA_STATUS_ONGOING && now > MAX_TRANSACTION_ACK_WAITING_TIME + it->second.data_transaction_TS)
         {
@@ -1014,44 +1046,141 @@ void p3GRouter::routePendingObjects()
         IndicateConfigChanged() ;
 }
 
-void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,std::list<RsPeerId>& friend_peers,const std::set<RsPeerId>& incoming_routes,bool is_origin)
+void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const std::set<RsPeerId>& incoming_routes,uint32_t duplication_factor, std::map<RsPeerId,uint32_t>& friend_peers_and_duplication_factors)
 {
-    // The strategy is the following:
+    // Old strategy was the following:
     //  	if origin
     //		send to multiple neighbors : best and random
     //	else
     //		send to a single "best" neighbor (determined by threshold over routing probability),
-
-    std::set<RsPeerId> ids ;
-    mServiceControl->getPeersConnected(getServiceInfo().mServiceType,ids) ;
-
-    std::vector<float> probas;
-    std::vector<RsPeerId> tmp_peers;
-
-    // remove previous peers
-
-    for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
-        if(incoming_routes.find(*it) == incoming_routes.end())
-            tmp_peers.push_back(*it) ;
-
-    if(tmp_peers.empty())
-        return ;
-
-    _routing_matrix.computeRoutingProbabilities(gxs_id, tmp_peers, probas) ;
+    
+    // New strategy is:
+    //
+    //  Characteristics of the distribution to look at:
+    //         * who's online, who's not
+    //         * all values quite equal   
+    //         * single value well above others
+    //         * largest value is small
+    //  Algorithm:
+    //
+    //  0 - encode duplicate factor in routed item and allow at most N duplicates
+    //         - when forwarding to N peers, split the duplication factor into N bins, each being proportional to the forwarding probability.
+    //           Example for N=3 and D=10:
+    //         
+    //                          p      Calculation     Final bin
+    //
+    //                       +-0.21--> 0.21*10=2.1 -->       2	  0.1 below
+    //                       |
+    //               10  ----+-0.45--> 0.45*10=4.5 --> 4.6-> 5          0.4 above
+    //                       |
+    //                       +-0.34--> 0.34*10=3.4 --> 3.0-> 3          0
+    //         
+    //
+    //  1 - get routing probabilities p_i for all peers as well as the maximum proba p before normalization. 
+    //
+    //        Set N = min(3,item->duplication_factor)				// max number of friends to route to
+    //
+    //        if p < threshold							// That means the routage info is too old => Fallback to random routing.
+    //            Select N random online friends and forward to them. 
+    //        else
+    //            Let p_i be the probabilities of all peers
+    //                  Select all online peers for which p_i >= 0.5*p. 
+    //                      if !empty
+    //                           Update duplication factors according to probabilities and number of peers
+    //                           Route to these peers
+    //                      else
+    //                           Keep the item
+    //
 
 #ifdef GROUTER_DEBUG
     std::cerr << "locked_getAvailableFriends()" << std::endl;
-    std::cerr << "  getting connected friends, computing routing probabilities" << std::endl;
+    std::cerr << "  looking for friends for item  to ID " << gxs_id  << " duplication factor = " << duplication_factor << std::endl;
+    std::cerr << "  retrieving online friends and all friends lists." << std::endl;
+#endif
+    std::set<RsPeerId> online_ids ;
+    std::list<RsPeerId> all_ids ;
+    
+    rsPeers->getFriendList(all_ids) ;
+    mServiceControl->getPeersConnected(getServiceInfo().mServiceType,online_ids) ;
+
+    std::vector<RsPeerId> tmp_peers;
+    
+    for(std::list<RsPeerId>::const_iterator it(all_ids.begin());it!=all_ids.end();++it)
+    	tmp_peers.push_back(*it) ;
+        
+    std::vector<float> probas;
+    float maximum = 1.0;
+    float max_probability = 0.0;
+    
+    _routing_matrix.computeRoutingProbabilities(gxs_id, tmp_peers, probas, maximum) ;
+
+#ifdef GROUTER_DEBUG
+    std::cerr << "  initial routing probabilities (maximum=" << maximum << ")" << std::endl;
+    for(uint32_t i=0;i<tmp_peers.size();++i)
+        std::cerr << "    " << tmp_peers[i] << " " << probas[i] << std::endl;
+#endif
+    if(maximum < RS_GROUTER_PROBABILITY_THRESHOLD_FOR_RANDOM_ROUTING)
+    {
+	max_probability = 0.0f ;
+#ifdef GROUTER_DEBUG
+        std::cerr << "  max proba: " << maximum << " is below random threshold => using uniform random routing." << std::endl;
+#endif
+    }
+    else
+    {
+	    for(uint32_t i=0;i<tmp_peers.size();++i)
+            	max_probability = std::max(max_probability,probas[i]) ;
+    }
+#ifdef GROUTER_DEBUG
+    std::cerr << "  maxi probability=" << max_probability << std::endl;
+#endif
+    
+    // remove incoming peers and peers for which the proba is less than half the maximum proba
+    uint32_t count=0;
+
+    for(uint32_t i=0;i<tmp_peers.size();++i)
+	    if(incoming_routes.find(tmp_peers[i]) != incoming_routes.end())
+	    {
+#ifdef GROUTER_DEBUG
+		    std::cerr << "  removing " << tmp_peers[i] << " which is an incoming route" << std::endl;
+#endif
+	    }
+    	    else if(online_ids.find(tmp_peers[i]) == online_ids.end())
+            {
+#ifdef GROUTER_DEBUG
+		    std::cerr << "  removing " << tmp_peers[i] << " because it is offline now!" << std::endl;
+#endif
+            }
+	    else if(probas[i] < RS_GROUTER_PROBABILITY_THRESHOLD_BEST_PEERS_SELECT*max_probability)
+	    {
+#ifdef GROUTER_DEBUG
+		    std::cerr << "  removing " << tmp_peers[i] << " because probability is below best peers threshold" << std::endl;
+#endif
+	    }
+	    else
+	    {
+		    tmp_peers[count] = tmp_peers[i] ;
+		    probas[count] = (max_probability==0.0)? (0.5+0.001*RSRandom::random_f32()) : probas[i] ;
+		    ++count ;
+	    }
+
+    tmp_peers.resize(count) ;
+    probas.resize(count) ;
+    
+    if(tmp_peers.empty())
+    {
+#ifdef GROUTER_DEBUG
+        std::cerr << "  online - available peers empty => giving up." << std::endl;
+#endif
+        return ;
+    }
+
+    // now select the N best peers
+#ifdef GROUTER_DEBUG
+    std::cerr << "  Remaining peers and routing probabilities:" << std::endl;
     for(uint32_t i=0;i<tmp_peers.size();++i)
         std::cerr << "    " << tmp_peers[i] << ", probability: " << probas[i] << std::endl;
 #endif
-    uint32_t max_count = is_origin?3:1 ;
-    float probability_threshold = is_origin?0.0:0.5 ;
-
-#ifdef GROUTER_DEBUG
-    std::cerr << "  position at origin: " << is_origin << " => mac_count=" << max_count << ", proba threshold=" << probability_threshold << std::endl;
-#endif
-
     std::vector<std::pair<float,RsPeerId> > mypairs ;
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
@@ -1060,24 +1189,39 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,std::l
     // now sort them up
     std::sort(mypairs.begin(),mypairs.end(),item_comparator_001()) ;
 
-    // take the max_count peers that are still above min_probability
-
-    uint32_t n=0 ;
-
-    for(std::vector<std::pair<float,RsPeerId> >::const_reverse_iterator it = mypairs.rbegin();it!=mypairs.rend() && n<max_count;++it)
-        if( (*it).first >= probability_threshold )
-    {
-            friend_peers.push_back( (*it).second ), ++n ;
+    int max_count = std::min(std::min((uint32_t)mypairs.size(),(uint32_t)GROUTER_MAX_BRANCHING_FACTOR),duplication_factor);
+    
+    // normalise the probabilities
 #ifdef GROUTER_DEBUG
-        std::cerr << "    keeping " << (*it).second << std::endl;
+    std::cerr << "  Normalising probabilities..." << std::endl;
 #endif
 
-        if(!is_origin)	// only collect one peer if we're not at origin.
-            break ;
+    float total_probas = 0.0f ;
+
+    if(mypairs.size() > 0 && max_count > 0)
+    {
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) total_probas += mypairs[i].first ;
+        for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n) mypairs[i].first /= total_probas ;
+    }
+
+    float duplication_factor_delta =0.0;
+
+    for(int i=mypairs.size()-1,n=0;i>=0 && n<max_count;--i,++n)
+    {
+        float ideal_dupl = duplication_factor*mypairs[i].first - duplication_factor_delta ;	// correct what was taken in advance
+        
+        uint32_t real_dupl = std::min( duplication_factor - max_count+1,std::max(1u,uint32_t(rint(ideal_dupl)))) ;
+        duplication_factor_delta = real_dupl - ideal_dupl ;
+        
+#ifdef GROUTER_DEBUG
+        std::cerr << "    Peer " << mypairs[i].second << " prob=" << mypairs[i].first << ", ideal_dupl=" << ideal_dupl << ", real=" << real_dupl << ". Delta = " << duplication_factor_delta << std::endl;
+#endif
+        
+	friend_peers_and_duplication_factors[ mypairs[i].second ] = real_dupl ;	// should be updated correctly
     }
 }
 
-void p3GRouter::locked_collectAvailableTunnels(const TurtleFileHash& hash,std::list<RsPeerId>& tunnel_peers)
+void p3GRouter::locked_collectAvailableTunnels(const TurtleFileHash& hash,uint32_t total_duplication,std::map<RsPeerId,uint32_t>& tunnel_peers_and_duplication_factors)
 {
     time_t now = time(NULL) ;
 
@@ -1110,7 +1254,7 @@ void p3GRouter::locked_collectAvailableTunnels(const TurtleFileHash& hash,std::l
 #endif
     TurtleVirtualPeerId vpid = *(vpit->second.virtual_peers.begin()) ;
 
-    tunnel_peers.push_back(vpid) ;
+    tunnel_peers_and_duplication_factors[vpid] = total_duplication ;
 }
 
 bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& trans_item)
@@ -1121,13 +1265,11 @@ bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTr
         std::cerr << "  sending to tunnel vpid " << pid << std::endl;
 #endif
         uint32_t turtle_data_size = trans_item.serial_size() ;
-        uint8_t *turtle_data = (uint8_t*)malloc(turtle_data_size) ;
+        uint8_t *turtle_data = (uint8_t*)rs_malloc(turtle_data_size) ;
 
         if(turtle_data == NULL)
-        {
-            std::cerr << "  ERROR: Cannot allocate turtle data memory for size " << turtle_data_size << std::endl;
             return false ;
-        }
+        
         if(!trans_item.serialise(turtle_data,turtle_data_size))
         {
             std::cerr << "  ERROR: cannot serialise RsGRouterTransactionChunkItem." << std::endl;
@@ -1167,33 +1309,46 @@ void p3GRouter::autoWash()
     bool items_deleted = false ;
     time_t now = time(NULL) ;
 
-    std::map<GRouterMsgPropagationId,GRouterClientService *> failed_msgs ;
+    std::map<GRouterMsgPropagationId,std::pair<GRouterClientService *,RsGxsId> > failed_msgs ;
 
     {
         RS_STACK_MUTEX(grMtx) ;
 
         for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();)
-            if( (it->second.data_status == RS_GROUTER_DATA_STATUS_DONE &&
-                (!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-                    || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now))
-            || ((it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
-                                && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN)
-                    && !(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION)
-            ))	// is the item too old for cache
+        {
+            bool delete_entry = false ;
+            
+            if(it->second.data_status == RS_GROUTER_DATA_STATUS_DONE )
+            {
+                if(!(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_DESTINATION) || it->second.received_time_TS + MAX_DESTINATION_KEEP_TIME < now)	// is the item too old for cache
+			delete_entry = true ;
+            }
+            else if(it->second.data_status == RS_GROUTER_DATA_STATUS_RECEIPT_OK )
+            {
+                if(it->second.received_time_TS + MAX_RECEIPT_KEEP_TIME < now)	// is the item too old for cache
+                    delete_entry = true ;
+            }
+            else
+                if(it->second.received_time_TS + GROUTER_ITEM_MAX_CACHE_KEEP_TIME < now)
+                    delete_entry = true ;
+                    
+            if(delete_entry)
             {
 #ifdef GROUTER_DEBUG
                 grouter_debug() << "  Removing cached item " << std::hex << it->first << std::dec << std::endl;
 #endif
-                GRouterClientService *client = NULL ;
-                GRouterServiceId service_id = 0;
+                //GRouterClientService *client = NULL ;
+                //GRouterServiceId service_id = 0;
 
                 if( it->second.data_status != RS_GROUTER_DATA_STATUS_DONE )
-                {
-                    if(!locked_getClientAndServiceId(it->second.tunnel_hash,it->second.data_item->destination_key,client,service_id))
-                        std::cerr << "  ERROR: cannot find client for cancelled message " << it->first << std::endl;
-                    else
-                        failed_msgs[it->first] = client;
-                }
+		{
+                    GRouterClientService *client = NULL;
+                    
+			if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client))
+				failed_msgs[it->first] = std::make_pair(client,it->second.data_item->signature.keyId) ;
+			else
+				std::cerr << "  ERROR: client id " << it->second.client_id << " not registered. Consistency error." << std::endl;
+		}
 
                 delete it->second.data_item ;
 
@@ -1209,6 +1364,7 @@ void p3GRouter::autoWash()
             }
             else
                 ++it ;
+        }
 
         // also check all existing tunnels
 
@@ -1248,12 +1404,12 @@ void p3GRouter::autoWash()
     }
     // Look into pending items.
 
-    for(std::map<GRouterMsgPropagationId,GRouterClientService*>::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
+    for(std::map<GRouterMsgPropagationId,std::pair<GRouterClientService*,RsGxsId> >::const_iterator it(failed_msgs.begin());it!=failed_msgs.end();++it)
     {
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client for message id " << std::hex << it->first << " state = FAILED" << std::endl;
 #endif
-        it->second->notifyDataStatus(it->first ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
+        it->second.first->notifyDataStatus(it->first,it->second.second ,GROUTER_CLIENT_SERVICE_DATA_STATUS_FAILED) ;
     }
 
     if(items_deleted)
@@ -1302,14 +1458,13 @@ bool p3GRouter::sliceDataItem(RsGRouterAbstractMsgItem *item,std::list<RsGRouter
             chunk_item->total_size = size;
             chunk_item->chunk_start= offset;
             chunk_item->chunk_size = chunk_size ;
-            chunk_item->chunk_data = (uint8_t*)malloc(chunk_size) ;
+            chunk_item->chunk_data = (uint8_t*)rs_malloc(chunk_size) ;
 #ifdef GROUTER_DEBUG
             std::cerr << "  preparing to send a chunk [" << offset << " -> " << offset + chunk_size << " / " << size << "]" << std::endl;
 #endif
 
             if(chunk_item->chunk_data == NULL)
             {
-                std::cerr << "  ERROR: Cannot allocate memory for size " << chunk_size << std::endl;
                 delete chunk_item;
                 throw ;
             }
@@ -1362,13 +1517,13 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
     std::cerr << "Item content:" << std::endl;
     receipt_item->print(std::cerr,2) ;
 #endif
+    RsGxsId signer_id ;
 
     // Because we don't do proxy-transmission yet, the client needs to be notified. Otherwise, we will need to
     // first check if we're a proxy or not. We also remove the message from the global router sending list.
     // in the proxy case, we should only store the receipt.
 
     GRouterClientService *client_service = NULL;
-    GRouterServiceId service_id ;
     GRouterMsgPropagationId mid = 0 ;
 
     {
@@ -1380,6 +1535,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
             std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
             return ;
         }
+        signer_id = it->second.data_item->signature.keyId ;
 
         // check hash.
 
@@ -1392,13 +1548,20 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
         else
             std::cerr << "  checking receipt hash : OK" << std::endl;
 #endif
-        // check signature.
+        // check signature. The policy if the following:
+        // 	if we're the destination: 
+        //		signature should check and signing key should be available	// always ensures the receipt is valid
+        //	else
+        //		if key is available, signature should check 			// early protects against frodulent receipts that we can check
+        
+        uint32_t error_status ;
 
-        if(! verifySignedDataItem(receipt_item))
-        {
-            std::cerr << "  checking receipt signature : FAILED. Receipt is dropped." << std::endl;
-            return ;
-        }
+        if(! verifySignedDataItem(receipt_item,error_status))
+            if( (it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN) || (error_status !=  RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE))
+	    {
+		    std::cerr << "  checking receipt signature : FAILED. Receipt is dropped. Error status=" << error_status << std::endl;
+		    return ;
+	    }
 #ifdef GROUTER_DEBUG
         std::cerr << "  checking receipt signature : OK. " << std::endl;
         std::cerr << "  removing messsage from cache." << std::endl;
@@ -1411,7 +1574,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
 #endif
             it->second.data_status  = RS_GROUTER_DATA_STATUS_DONE;
 
-            if(locked_getClientAndServiceId(it->second.tunnel_hash,it->second.data_item->destination_key,client_service,service_id))
+            if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client_service))
                 mid = it->first ;
             else
             {
@@ -1436,7 +1599,7 @@ void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_it
 #ifdef GROUTER_DEBUG
         std::cerr << "  notifying client " << (void*)client_service << " that msg " << std::hex << mid << std::dec << " was received." << std::endl;
 #endif
-        client_service->notifyDataStatus(mid, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
+        client_service->notifyDataStatus(mid, signer_id, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
     }
 
     // also note the incoming route in the routing matrix
@@ -1547,7 +1710,9 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 #ifdef GROUTER_DEBUG
         std::cerr << "  step B: item is for us and is new, so make sure it's authentic and create a receipt" << std::endl;
 #endif
-        if(!verifySignedDataItem(data_item))	// we should get proper flags out of this
+        uint32_t error_status ;
+        
+        if(!verifySignedDataItem(data_item,error_status))	// we should get proper flags out of this
         {
             std::cerr << "    verifying item signature: FAILED! Droping that item" ;
             std::cerr << "    You probably received a message from a person you don't have key." << std::endl;
@@ -1604,6 +1769,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
             info.receipt_item = receipt_item ;	// inited before, or NULL.
             info.tunnel_status = RS_GROUTER_TUNNEL_STATUS_UNMANAGED ;
             info.last_sent_TS = 0 ;
+            info.client_id = data_item->service_id ;
             info.item_hash = item_hash ;
             info.last_tunnel_request_TS = 0 ;
             info.sending_attempts = 0 ;
@@ -1680,26 +1846,10 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
         IndicateConfigChanged() ;
 }
 
-bool p3GRouter::locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id)
+bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client)
 {
     client = NULL ;
-    service_id = 0;
-    RsGxsId gxs_id ;
     
-    if(!locked_getGxsIdAndClientId(hash,gxs_id,service_id))
-    {
-        std::cerr << "  p3GRouter::ERROR: locked_getGxsIdAndClientId(): no key registered for hash " << hash << std::endl;
-        return false ;
-    }
-    
-    if(gxs_id != destination_key)
-    {
-        std::cerr << "  ERROR: verification (destination) GXS key " << destination_key << " does not match key from hash " << gxs_id << std::endl;
-        return false;
-    }
-
-    // now find the client given its id.
-
     std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(service_id) ;
 
     if(its == _registered_services.end())
@@ -1842,11 +1992,15 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
         return false ;
     }
 }
-bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
+bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,uint32_t& error_status)
 {
     try
     {
-        RsTlvSecurityKey signature_key ;
+        if(rsReputations->isIdentityBanned(item->signature.keyId))
+        {
+            std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
+            return false ;
+        }
 
         uint32_t data_size = item->signed_data_size() ;
           RsTemporaryMemory data(data_size) ;
@@ -1857,14 +2011,19 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item)
         if(!item->serialise_signed_data(data,data_size))
             throw std::runtime_error("Cannot serialise signed data.") ;
 
-
-        uint32_t error_status ;
-
         if(!mGixs->validateData(data,data_size,item->signature,true,error_status))
         {
             switch(error_status)
             {
-                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify." << std::endl;
+                case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE: 
+                		{
+                			std::list<RsPeerId> peer_ids ;
+                            		peer_ids.push_back(item->PeerId()) ;
+                                    	
+                			std::cerr << "(EE) Key for GXS Id " << item->signature.keyId << " is not available. Cannot verify. Asking key to peer " << item->PeerId() << std::endl;
+                                    
+                			mGixs->requestKey(item->signature.keyId,peer_ids) ;   // request the key around
+            			}
                                         break ;
                 case RsGixs::RS_GIXS_ERROR_SIGNATURE_MISMATCH: std::cerr << "(EE) Signature mismatch. Spoofing/Corrupted/MITM?." << std::endl;
                                         break ;
@@ -1934,12 +2093,16 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
 
     RsGRouterGenericDataItem *data_item = new RsGRouterGenericDataItem ;
 
-    data_item->data_bytes = (uint8_t*)malloc(data_size) ;
+    data_item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
+    
+    if(data_item->data_bytes == NULL)
+        return false ;
+    
     memcpy(data_item->data_bytes,data,data_size) ;
 
     data_item->data_size = data_size ;
     data_item->routing_id = propagation_id  ;
-    data_item->randomized_distance = 0 ;
+    data_item->duplication_factor = GROUTER_MAX_DUPLICATION_FACTOR ;
     data_item->service_id = client_id ;
     data_item->destination_key = destination  ;
     data_item->flags = 0 ;	// this is unused for now.
@@ -1963,8 +2126,9 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     }
 
     // Verify the signature. If that fails, there's a bug somewhere!!
-
-    if(!verifySignedDataItem(data_item))
+	uint32_t error_status;
+            
+    if(!verifySignedDataItem(data_item,error_status))
     {
         std::cerr << "Cannot verify data item that was just signed. Some error occured!" << std::endl;
 	delete data_item;
@@ -1981,6 +2145,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     info.data_status = RS_GROUTER_DATA_STATUS_PENDING ;
     info.tunnel_status = RS_GROUTER_TUNNEL_STATUS_UNMANAGED ;
     info.last_sent_TS = 0 ;
+    info.client_id = client_id ;
     info.last_tunnel_request_TS = 0 ;
     info.item_hash = computeDataItemHash(data_item) ;
     info.sending_attempts = 0 ;
@@ -1998,7 +2163,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     grouter_debug() << "  data status    = " << info.data_status << std::endl;
     grouter_debug() << "  tunnel status  = " << info.tunnel_status << std::endl;
     grouter_debug() << "  sending attempt= " << info.sending_attempts << std::endl;
-    grouter_debug() << "  distance       = " << info.data_item->randomized_distance << std::endl;
+    grouter_debug() << "  duplicate fact = " << info.data_item->duplication_factor << std::endl;
     grouter_debug() << "  recv time      = " << info.received_time_TS << std::endl;
     grouter_debug() << "  client id      = " << std::hex << data_item->service_id << std::dec << std::endl;
     grouter_debug() << "  tunnel hash    = " << info.tunnel_hash << std::endl;
@@ -2029,7 +2194,8 @@ Sha1CheckSum p3GRouter::makeTunnelHash(const RsGxsId& destination,const GRouterS
 
     return RsDirUtil::sha1sum(bytes,20) ;
 }
-bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
+#ifdef TO_REMOVE
+bool p3GRouter::locked_getGxsOwnIdAndClientIdFromHash(const TurtleFileHash& sum,RsGxsId& gxs_id,GRouterServiceId& client_id)
 {
     assert(       gxs_id.SIZE_IN_BYTES == 16) ;
     assert(Sha1CheckSum::SIZE_IN_BYTES == 20) ;
@@ -2047,6 +2213,7 @@ bool p3GRouter::locked_getGxsIdAndClientId(const TurtleFileHash& sum,RsGxsId& gx
     
     return true ;
 }
+#endif
 bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
     {
@@ -2095,6 +2262,7 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 #ifdef GROUTER_DEBUG
     debugDump();
 #endif
+    items.clear() ;
     return true ;
 }
 bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items) 
@@ -2142,21 +2310,23 @@ bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
 	info.friend_ids.clear() ;
 	info.published_keys.clear() ;
 
-	std::set<RsPeerId> ids ;
-	mServiceControl->getPeersConnected(getServiceInfo().mServiceType,ids) ;
+	std::list<RsPeerId> ids ;
+	//mServiceControl->getPeersConnected(getServiceInfo().mServiceType,ids) ;
+    rsPeers->getFriendList(ids) ;
 
     info.published_keys = _owned_key_ids ;
 
-	for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+	for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 		info.friend_ids.push_back(*it) ;
 
 	std::vector<GRouterKeyId> known_keys ;
 	std::vector<float> probas ;
+    float maximum= 0.0f;
 	_routing_matrix.getListOfKnownKeys(known_keys) ;
 
 	for(uint32_t i=0;i<known_keys.size();++i)
 	{
-		_routing_matrix.computeRoutingProbabilities(known_keys[i],info.friend_ids,probas) ;
+		_routing_matrix.computeRoutingProbabilities(known_keys[i],info.friend_ids,probas,maximum) ;
 		info.per_friend_probabilities[known_keys[i]] = probas ;
 	}
 
@@ -2175,6 +2345,7 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
         cinfo.mid = it->first ;
         cinfo.local_origin = it->second.incoming_routes.ids ;
         cinfo.destination = it->second.data_item->destination_key ;
+        cinfo.duplication_factor = it->second.data_item->duplication_factor ;
         cinfo.routing_time = it->second.received_time_TS ;
         cinfo.last_tunnel_attempt_time = it->second.last_tunnel_request_TS ;
         cinfo.last_sent_time = it->second.last_sent_TS ;
@@ -2209,7 +2380,8 @@ void p3GRouter::debugDump()
 
     for(std::map<Sha1CheckSum, GRouterPublishedKeyInfo>::const_iterator it(_owned_key_ids.begin());it!=_owned_key_ids.end();++it)
 	{
-        grouter_debug() << "    Hash            : " << it->first << std::endl;
+	    grouter_debug() << "    Hash            : " << it->first << std::endl;
+	    grouter_debug() << "    Key             : " << it->second.authentication_key << std::endl;
 		grouter_debug() << "      Service id    : " << std::hex << it->second.service_id << std::dec << std::endl;
 		grouter_debug() << "      Description   : " << it->second.description_string << std::endl;
 	}
@@ -2225,15 +2397,18 @@ void p3GRouter::debugDump()
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
     {
-        grouter_debug() << "    Msg id          : " << std::hex << it->first << std::dec ;
-        grouter_debug() << "    data hash       : " << it->second.item_hash ;
-        grouter_debug() << "    Destination     : " << it->second.data_item->destination_key ;
-        grouter_debug() << "    Received        : " << now - it->second.received_time_TS << " secs ago.";
-        grouter_debug() << "    Last sent       : " << now - it->second.last_sent_TS << " secs ago.";
-        grouter_debug() << "    Transaction TS  : " << now - it->second.data_transaction_TS << " secs ago.";
-        grouter_debug() << "    Data Status     : " << statusString[it->second.data_status] << std::endl;
-        grouter_debug() << "    Tunl Status     : " << statusString[it->second.tunnel_status] << std::endl;
-    grouter_debug() << "    Receipt ok      : " << (it->second.receipt_item != NULL) << std::endl;
+        grouter_debug() << " Msg id: " << std::hex << it->first << std::dec ;
+        grouter_debug() << " data hash: " << it->second.item_hash ;
+        grouter_debug() << " client: " << std::hex << it->second.client_id << std::dec;
+        grouter_debug() << " Flags: " << std::hex << it->second.routing_flags << std::dec;
+        grouter_debug() << " Dest: " << it->second.data_item->destination_key ;
+        grouter_debug() << " Recd: " << now - it->second.received_time_TS << " secs ago.";
+        grouter_debug() << " Sent: " << now - it->second.last_sent_TS << " secs ago.";
+        grouter_debug() << " Trans. TS: " << now - it->second.data_transaction_TS << " secs ago." ;
+        grouter_debug() << " Data Status: " << statusString[it->second.data_status] ;
+        grouter_debug() << " Tunl Status: " << statusString[it->second.tunnel_status] ;
+	grouter_debug() << " Receipt ok: " << (it->second.receipt_item != NULL) ;
+	grouter_debug() << " Dup: " << it->second.data_item->duplication_factor << std::endl;
     }
 
     grouter_debug() << "  Tunnels: " << std::endl;
@@ -2256,8 +2431,8 @@ void p3GRouter::debugDump()
 
     grouter_debug() << "  Routing matrix: " << std::endl;
 
-   if(_debug_enabled)
-       _routing_matrix.debugDump() ;
+  // if(_debug_enabled)
+   //    _routing_matrix.debugDump() ;
 }
 
 

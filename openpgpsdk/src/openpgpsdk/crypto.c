@@ -309,11 +309,6 @@ ops_boolean_t ops_decrypt_memory(const unsigned char *encrypted_memory,int em_le
 										 const ops_boolean_t use_armour,
 										 ops_parse_cb_t* cb_get_passphrase)
 {
-    int fd_in=0;
-    int fd_out=0;
-    char* myfilename=NULL;
-
-    //
     ops_parse_info_t *pinfo=NULL;
 
     // setup for reading from given input file
@@ -368,7 +363,6 @@ ops_boolean_t ops_decrypt_memory(const unsigned char *encrypted_memory,int em_le
  	 *decrypted_memory = ops_mallocz(*out_length) ;
 	 memcpy(*decrypted_memory,ops_memory_get_data(output_mem),*out_length) ;
 
-ops_decrypt_memory_ABORT: 
     ops_teardown_memory_write(pinfo->cbinfo.cinfo, output_mem);
     ops_teardown_memory_read(pinfo, input_mem);
 

@@ -104,6 +104,7 @@ NotifyQt::NotifyQt() : cDialog(NULL)
     qRegisterMetaType<ChatId>("ChatId");
     qRegisterMetaType<ChatMessage>("ChatMessage");
     qRegisterMetaType<RsGxsChanges>("RsGxsChanges");
+    qRegisterMetaType<RsGxsId>("RsGxsId");
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -151,11 +152,25 @@ class SignatureEventData
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
-			sign = (unsigned char *)malloc(_signlen) ;
+			sign = (unsigned char *)rs_malloc(_signlen) ;
+            
+            		if(!sign)
+		    {
+			    signlen = NULL ;
+			    signature_result = SELF_SIGNATURE_RESULT_FAILED ;
+			    return ;
+		    }
+                    
 			signlen = new unsigned int ;
 			*signlen = _signlen ;
             signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-			data = malloc(_len) ;
+			data = rs_malloc(_len) ;
+            
+            		if(!data)
+                    {
+                        len = 0 ;
+                        return ;
+                    }
 			len = _len ;
 			memcpy(data,_data,len) ;
 		}
@@ -406,29 +421,6 @@ void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
     emit gxsChange(changes);
 }
 
-#ifdef REMOVE
-void NotifyQt::notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	emit forumMsgReadSatusChanged(QString::fromStdString(forumId), QString::fromStdString(msgId), status);
-}
-
-void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	emit channelMsgReadSatusChanged(QString::fromStdString(channelId), QString::fromStdString(msgId), status);
-}
-#endif
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
 	{
@@ -499,7 +491,7 @@ void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 	}
 }
 
-void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const std::string& nickname,const std::string& str) 
+void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -510,7 +502,7 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat lobby event message: lobby #" << std::hex << lobby_id  << std::dec << ", event=" << event_type << ", str=\"" << str << "\"" << std::endl ;
 #endif
-	emit chatLobbyEvent(lobby_id,event_type,QString::fromUtf8(nickname.c_str()),QString::fromUtf8(str.c_str())) ;
+    emit chatLobbyEvent(lobby_id,event_type,nickname,QString::fromUtf8(str.c_str())) ;
 }
 
 void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_string)
@@ -527,7 +519,21 @@ void NotifyQt::notifyChatStatus(const ChatId& chat_id,const std::string& status_
     emit chatStatusChanged(chat_id, QString::fromUtf8(status_string.c_str()));
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
+void NotifyQt::notifyChatCleared(const ChatId& chat_id)
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received chat cleared." << std::endl ;
+#endif
+	emit chatCleared(chat_id);
+}
+
+void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -863,11 +869,9 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-						ChatLobbyId lobby_id;
-						if(!rsMsgs->isLobbyId(RsPeerId(id), lobby_id))
-							break;
+                        ChatId chat_id(id);
 
-						ChatDialog *chatDialog = ChatDialog::getChat(ChatId(lobby_id));
+                        ChatDialog *chatDialog = ChatDialog::getChat(chat_id);
 						ChatWidget *chatWidget;
                         if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
                             // do not show when active
@@ -879,7 +883,7 @@ void NotifyQt::UpdateGUI()
 						if (!chatLobbyDialog || chatLobbyDialog->isParticipantMuted(sender))
                             break; // participant is muted
 
-						toaster = new ToasterItem(new ChatLobbyToaster(lobby_id, sender, QString::fromUtf8(msg.c_str())));
+                        toaster = new ToasterItem(new ChatLobbyToaster(chat_id.toLobbyId(), sender, QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:

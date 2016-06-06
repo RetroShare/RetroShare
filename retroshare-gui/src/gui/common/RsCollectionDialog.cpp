@@ -31,11 +31,12 @@
 #include "RsCollectionDialog.h"
 #include "RsCollectionFile.h"
 #include "util/misc.h"
-#define COLUMN_FILE    0
-#define COLUMN_SIZE    1
-#define COLUMN_HASH    2
-#define COLUMN_FILEC  3
-#define COLUMN_COUNT   4
+#define COLUMN_FILE     0
+#define COLUMN_FILEPATH 1
+#define COLUMN_SIZE     2
+#define COLUMN_HASH     3
+#define COLUMN_FILEC    4
+#define COLUMN_COUNT    5
 // In COLUMN_HASH (COLUMN_FILE reserved for CheckState)
 #define ROLE_NAME Qt::UserRole + 1
 #define ROLE_PATH Qt::UserRole + 2
@@ -145,6 +146,7 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 
 	QTreeWidgetItem *headerItem = ui._fileEntriesTW->headerItem();
 	headerItem->setText(COLUMN_FILE, tr("File"));
+	headerItem->setText(COLUMN_FILEPATH, tr("File Path"));
 	headerItem->setText(COLUMN_SIZE, tr("Size"));
 	headerItem->setText(COLUMN_HASH, tr("Hash"));
 	headerItem->setText(COLUMN_FILEC, tr("File Count"));
@@ -342,6 +344,7 @@ QTreeWidgetItem* RsCollectionDialog::getRootItem()
 		root->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
 		root->setText(COLUMN_FILE, "/");
 		root->setToolTip(COLUMN_FILE,tr("This is the root directory."));
+		root->setText(COLUMN_FILEPATH, "/");
 		root->setText(COLUMN_HASH, "");
 		root->setData(COLUMN_HASH, ROLE_NAME, "");
 		root->setData(COLUMN_HASH, ROLE_PATH, "");
@@ -401,9 +404,9 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 
 		QList<QTreeWidgetItem*> founds;
 		QList<QTreeWidgetItem*> parentsFounds;
-		parentsFounds = ui._fileEntriesTW->findItems(colFileInfo.path , Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILE);
+		parentsFounds = ui._fileEntriesTW->findItems(colFileInfo.path , Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILEPATH);
 		if (colFileInfo.type == DIR_TYPE_DIR){
-			founds = ui._fileEntriesTW->findItems(colFileInfo.path + "/" +colFileInfo.name, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILE);
+			founds = ui._fileEntriesTW->findItems(colFileInfo.path + "/" +colFileInfo.name, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_FILEPATH);
 		} else {
 			founds = ui._fileEntriesTW->findItems(colFileInfo.hash, Qt::MatchExactly | Qt::MatchRecursive, COLUMN_HASH);
 		}
@@ -413,7 +416,8 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 			//item->setFlags(Qt::ItemIsUserCheckable | item->flags());
 			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
 			item->setCheckState(COLUMN_FILE, Qt::Checked);
-			item->setText(COLUMN_FILE, colFileInfo.path + "/" + colFileInfo.name);
+			item->setText(COLUMN_FILE, colFileInfo.name);
+			item->setText(COLUMN_FILEPATH, colFileInfo.path + "/" + colFileInfo.name);
 			item->setText(COLUMN_HASH, colFileInfo.hash);
 			item->setData(COLUMN_HASH, ROLE_NAME, colFileInfo.name);
 			item->setData(COLUMN_HASH, ROLE_PATH, colFileInfo.path);
@@ -704,7 +708,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 		ColFileInfo root;
 		if (item && (item != getRootItem())) {
 			root.name = "";
-			root.path = item->text(COLUMN_FILE);
+			root.path = item->text(COLUMN_FILEPATH);
 		} else {
 			root.name = "";
 			root.path = "";
@@ -725,7 +729,7 @@ void RsCollectionDialog::addRecursive(bool recursive)
 			it.value() = dirToAdd.value(path);
 		} else if(item) {
 			if (item->data(COLUMN_HASH, ROLE_NAME) != "") {
-				it.value() = item->text(COLUMN_FILE);
+				it.value() = item->text(COLUMN_FILEPATH);
 			}//if (item->data(COLUMN_HASH, ROLE_NAME) != "")
 		}//if (dirToAdd.contains(path))
 	}//for (QHash<QString,QString>::Iterator it

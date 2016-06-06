@@ -132,8 +132,6 @@ private slots:
 	void deleteChatHistory();
 	void messageHistory();
 	void resetStatusBar() ;
-	void searchHistory();
-
 
 signals:
 	void infoChanged(ChatWidget*);
@@ -186,6 +184,7 @@ private slots:
 	bool fileSaveAs();
 
 	void quote();
+	void dropPlacemark();
 	void saveImage();
 
 private:

@@ -71,9 +71,9 @@ void    RsServer::ConfigFinalSave()
 	mConfigMgr->completeConfiguration();
 }
 
-void RsServer::startServiceThread(RsTickingThread *t)
+void RsServer::startServiceThread(RsTickingThread *t, const std::string &threadName)
 {
-    t->start() ;
+    t->start(threadName) ;
     mRegisteredServiceThreads.push_back(t) ;
 }
 

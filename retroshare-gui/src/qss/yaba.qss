@@ -205,3 +205,4 @@ QToolBar#chattoolBar{
         border-image: url(qss/yaba/yaba.png);
 
 }
+

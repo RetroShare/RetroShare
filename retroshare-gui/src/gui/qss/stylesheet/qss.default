@@ -198,6 +198,11 @@ QLabel#headerTextLabel
 	qproperty-fontSizeFactor: 225;
 }
 
+QLabel#headerTextLabel_Circles
+{
+	qproperty-fontSizeFactor: 225;
+}
+
 IdEditDialog QLabel#info_label
 {
 	qproperty-fontSizeFactor: 125;

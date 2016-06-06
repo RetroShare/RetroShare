@@ -225,20 +225,13 @@ private:
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
     static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
-#ifdef __APPLE__
-public:
-#endif
-    class nullstream: public std::ostream {};
 
     std::ostream& grouter_debug() const
     {
-        static nullstream null ;
-
+        static std::ostream null(0);
         return _debug_enabled?(std::cerr):null;
     }
-#ifdef __APPLE__
-private:
-#endif
+
     void routePendingObjects() ;
     void handleTunnels() ;
     void autoWash() ;
@@ -252,8 +245,7 @@ private:
     void handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_item) ;
     void handleIncomingDataItem(RsGRouterGenericDataItem *data_item) ;
 
-    bool locked_getClientAndServiceId(const TurtleFileHash& hash, const RsGxsId& destination_key, GRouterClientService *& client, GRouterServiceId& service_id);
-
+    bool locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client);
 
     // utility functions
     //
@@ -264,17 +256,18 @@ private:
 
     // signs an item with the given key.
     bool signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& id) ;
-    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item) ;
+    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item, uint32_t &error_status) ;
     bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
 
     static Sha1CheckSum makeTunnelHash(const RsGxsId& destination,const GRouterServiceId& client);
 
-    bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
+    //bool locked_getGxsIdAndClientId(const TurtleFileHash &sum,RsGxsId& gxs_id,GRouterServiceId& client_id);
     bool locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTransactionItem& item);
 
-    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id,std::list<RsPeerId>& friend_peers, const std::set<RsPeerId>& incoming_routes,bool is_origin);
-    void locked_collectAvailableTunnels(const TurtleFileHash& hash,std::list<RsPeerId>& tunnel_peers);
+    void locked_collectAvailableFriends(const GRouterKeyId &gxs_id, const std::set<RsPeerId>& incoming_routes,uint32_t duplication_factor, std::map<RsPeerId, uint32_t> &friend_peers_and_duplication_factors);
+    void locked_collectAvailableTunnels(const TurtleFileHash& hash, uint32_t total_duplication, std::map<RsPeerId, uint32_t> &tunnel_peers_and_duplication_factors);
+    void locked_sendToPeers(RsGRouterGenericDataItem *data_item, const std::map<RsPeerId, uint32_t> &peers_and_duplication_factors);
 
     //===================================================//
     //                  p3Config methods                 //
@@ -364,5 +357,3 @@ private:
 
     uint64_t _random_salt ;
 };
-
-template<typename T> p3GRouter::nullstream& operator<<(p3GRouter::nullstream& ns,const T&) { return ns ; }

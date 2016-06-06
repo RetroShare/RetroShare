@@ -57,7 +57,7 @@ class GRouterMatrix
 		// the computation accounts for the time at which the info was received and the
 		// weight of each routing hit record.
 		//
-		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const ;
+		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::vector<RsPeerId>& friends, std::vector<float>& probas, float &maximum) const ;
 
 		// Update routing probabilities for each key, accounting for all received events, but without
 		// activity information 

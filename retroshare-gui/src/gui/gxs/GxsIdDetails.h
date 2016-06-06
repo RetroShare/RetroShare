@@ -132,7 +132,8 @@ protected:
 	static GxsIdDetails *mInstance;
 
 	/* Pending data */
-	QList<CallbackData> mPendingData;
+	QMap<QObject*,CallbackData> mPendingData;
+	QMap<QObject*,CallbackData>::iterator mPendingDataIterator;
     int mCheckTimerId;
 	int mProcessDisableCount;
 

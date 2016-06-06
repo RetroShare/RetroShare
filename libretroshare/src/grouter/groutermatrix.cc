@@ -103,7 +103,9 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
     for(std::list<RoutingMatrixHitEntry>::const_iterator mit(lst.begin());mit!=lst.end();++mit)
         if((*mit).friend_id == fid && (*mit).time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
         {
+#ifdef ROUTING_MATRIX_DEBUG
             std::cerr << "GRouterMatrix::addRoutingClue(): too many clues for key " << key_id.toStdString() << " from friend " << source_friend << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
+#endif
             return false ;
         }
 
@@ -203,7 +205,7 @@ void GRouterMatrix::debugDump() const
         	std::cerr << "        " << it->first << ": from " << it->second.friend_id << " " << now - it->second.time_stamp << " secs ago." << std::endl;
 }
 
-bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const
+bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas, float& maximum) const
 {
 	// Routing probabilities are computed according to routing clues
 	//
@@ -239,6 +241,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		return  false ;
 	}
 	const std::vector<float>& w(it2->second) ;
+    	maximum = 0.0f ;
 	
 	for(uint32_t i=0;i<friends.size();++i)
 	{
@@ -250,6 +253,9 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		{
 			probas[i] = w[findex] ;
 			total += w[findex] ;
+            
+            		if(maximum < w[findex])
+                        	maximum = w[findex] ;
 		}
 	}
 

@@ -533,6 +533,20 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	{
 		if(details->min_age > ageIndicator)
 			return QVariant(QColor(Qt::gray)) ;
+        else if(RemoteMode)
+        {
+            FileInfo info;
+            QVariant local_file_color = QVariant(QColor(Qt::red));
+            if(rsFiles->alreadyHaveFile(details->hash, info))
+                return local_file_color;
+
+            std::list<RsFileHash> downloads;
+            rsFiles->FileDownloads(downloads);
+            if(std::find(downloads.begin(), downloads.end(), details->hash) != downloads.end())
+                return local_file_color;
+            else
+                return QVariant();
+        }
 		else
 			return QVariant() ; // standard
 	} /* end of TextColorRole */

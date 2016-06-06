@@ -1212,7 +1212,7 @@ bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 	bool changed = false;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if (sockaddr_storage_same(mExtAddr, addr))
+		if (!sockaddr_storage_same(mExtAddr, addr))
 		{
 			changed = true;
 		}
@@ -1640,7 +1640,7 @@ void	p3NetMgrIMPL::getNetStatus(pqiNetStatus &status)
 	/* must extract data... then update mNetFlags */
 
 	bool dhtOk = netAssistConnectActive();
-	uint32_t netsize, rsnetsize;
+	uint32_t netsize = 0, rsnetsize = 0;
 	netAssistConnectStats(netsize, rsnetsize);
 
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/

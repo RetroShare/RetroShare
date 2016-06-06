@@ -60,7 +60,6 @@ class DistributedChatService
 		// Interface part to communicate with
 		//
 		bool getVirtualPeerId(const ChatLobbyId& lobby_id, RsPeerId& virtual_peer_id) ;
-		bool isLobbyId(const RsPeerId& virtual_peer_id, ChatLobbyId& lobby_id) ;
         void getChatLobbyList(std::list<ChatLobbyId>& clids) ;
         bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& clinfo) ;
         bool acceptLobbyInvite(const ChatLobbyId& id,const RsGxsId& identity) ;
@@ -91,7 +90,6 @@ class DistributedChatService
 		void addToSaveList(std::list<RsItem*>& list) const ;
         bool processLoadListItem(const RsItem *item) ;
 
-        bool locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *) ;
         void checkSizeAndSendLobbyMessage(RsChatItem *) ;
 
         bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;
@@ -149,7 +147,6 @@ class DistributedChatService
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
 		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
-		std::map<ChatLobbyVirtualPeerId,ChatLobbyId> _lobby_ids ;
 		std::map<ChatLobbyId,ChatLobbyFlags> _known_lobbies_flags ;	// flags for all lobbies, including the ones that are not known. So we can't
         std::map<ChatLobbyId,std::vector<RsChatLobbyMsgItem*> > _pendingPartialLobbyMessages ;																	// store them in _chat_lobbies (subscribed lobbies) nor _visible_lobbies.
 																				// Known flags:

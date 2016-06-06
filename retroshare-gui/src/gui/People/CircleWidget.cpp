@@ -38,6 +38,17 @@ CircleWidget::~CircleWidget()
 	delete ui;
 }
 
+static bool same_RsGxsCircleDetails(const RsGxsCircleDetails& d1,const RsGxsCircleDetails& d2)
+{
+		return (  d1.mCircleId     == d2.mCircleId
+		       && d1.mCircleName   == d2.mCircleName
+		       && d1.mCircleType   == d2.mCircleType
+		       && d1.mSubscriptionFlags   == d2.mSubscriptionFlags
+		       && d1.mAllowedGxsIds== d2.mAllowedGxsIds
+		       && d1.mAllowedNodes == d2.mAllowedNodes
+		      );
+}
+
 void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
                             , const RsGxsCircleDetails& details)
 {
@@ -49,41 +60,40 @@ void CircleWidget::updateData(const RsGroupMetaData& gxs_group_info
 		ui->label->setText(m_myName);
 		ui->label->setToolTip(m_myName);
 		update();
-	//}//if (_group_info != gxs_group_info)
+	//}
 
-	if (_circle_details != details) {
+	if(!same_RsGxsCircleDetails(_circle_details , details)) 
+    {
 		_circle_details=details;
 		typedef std::set<RsGxsId>::iterator itUnknownPeers;
-		for (itUnknownPeers it = _circle_details.mUnknownPeers.begin()
-		     ; it != _circle_details.mUnknownPeers.end()
+		for (itUnknownPeers it = _circle_details.mAllowedGxsIds.begin()
+		     ; it != _circle_details.mAllowedGxsIds.end()
 		     ; ++it) {
 			RsGxsId gxs_id = *it;
 			if(!gxs_id.isNull()) {
 				emit askForGXSIdentityWidget(gxs_id);
-			}//if(!gxs_id.isNull())
-		}//for (itUnknownPeers it = _circle_details.mUnknownPeers.begin()
+			}
+		}
 
-		typedef std::map<RsPgpId, std::list<RsGxsId> >::const_iterator itAllowedPeers;
-		for (itAllowedPeers it = _circle_details.mAllowedPeers.begin()
-		     ; it != _circle_details.mAllowedPeers.end()
-		     ; ++it ) {
-			RsPgpId pgp_id = it->first;
+		typedef std::set<RsPgpId>::const_iterator itAllowedPeers;
+		for (itAllowedPeers it = _circle_details.mAllowedNodes.begin() ; it != _circle_details.mAllowedNodes.end() ; ++it ) 
+        {
+			RsPgpId pgp_id = *it;
 			emit askForPGPIdentityWidget(pgp_id);
 
-			std::list<RsGxsId> gxs_id_list = it->second;
-			typedef std::list<RsGxsId>::const_iterator itGxsId;
-			for (itGxsId curs=gxs_id_list.begin()
-			     ; curs != gxs_id_list.end()
-			     ; ++curs) {
-				RsGxsId gxs_id = *curs;
-				if(!gxs_id.isNull()) {
-					emit askForGXSIdentityWidget(gxs_id);
-				}//if(!gxs_id.isNull())
-			}//for (itGxsId curs=gxs_id_list.begin()
-		}//for (itAllowedPeers it = _circle_details.mAllowedPeers.begin()
+//			std::set<RsGxsId> gxs_id_list = it->second;
+//			typedef std::set<RsGxsId>::const_iterator itGxsId;
+//			for (itGxsId curs=gxs_id_list.begin(); curs != gxs_id_list.end(); ++curs) 
+//            		{
+//				RsGxsId gxs_id = *curs;
+//				if(!gxs_id.isNull()) 
+//					emit askForGXSIdentityWidget(gxs_id);
+//				}
+//			}
+		}
 
 		update();
-	}//if (details!=_circle_details)
+	}
 }
 
 QSize CircleWidget::sizeHint()

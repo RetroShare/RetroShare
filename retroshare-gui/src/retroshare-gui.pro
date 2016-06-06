@@ -5,6 +5,7 @@ QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
 CONFIG += link_prl
 TARGET = RetroShare06
+DEFINES += TARGET=\\\"$TARGET\\\"
 
 # Plz never commit the .pro with these flags enabled.
 # Use this flag when developping new features only.
@@ -31,6 +32,7 @@ CONFIG += gxsforums
 CONFIG += gxschannels
 CONFIG += posted
 CONFIG += gxsgui
+CONFIG += gxscircles
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
@@ -68,7 +70,7 @@ linux-* {
 
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 }
 
 unix {
@@ -157,6 +159,14 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
@@ -205,9 +215,13 @@ win32 {
 ##################################### MacOS ######################################
 
 macx {
-    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	#CONFIG += ppc x86
+	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
+	#CONFIG += ppc x86
 	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	QMAKE_INFO_PLIST = Info.plist
+	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
+	mac_icon.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += mac_icon
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
@@ -320,7 +334,6 @@ HEADERS +=  rshare.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
-            gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
             gui/ShareDialog.h \
@@ -329,6 +342,7 @@ HEADERS +=  rshare.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
             gui/common/AvatarDialog.h \
+            gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/xprogressbar.h \
             gui/FileTransfer/DetailsDialog.h \
             gui/FileTransfer/FileTransferInfoWidget.h \
@@ -368,7 +382,6 @@ HEADERS +=  rshare.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
-            util/EventReceiver.h \
             util/Widget.h \
             util/RsAction.h \
             util/RsUserdata.h \
@@ -410,6 +423,7 @@ HEADERS +=  rshare.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
             gui/settings/GeneralPage.h \
+            gui/settings/PeoplePage.h \
             gui/settings/DirectoriesPage.h \
             gui/settings/ServerPage.h \
             gui/settings/NetworkPage.h \
@@ -558,11 +572,11 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/AvatarDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
+            gui/FileTransfer/SearchDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
-            gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
             gui/ShareDialog.ui \
@@ -593,6 +607,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ServerPage.ui \
             gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
+            gui/settings/PeoplePage.ui \
             gui/settings/CryptoPage.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
@@ -682,7 +697,6 @@ SOURCES +=  main.cpp \
             gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLink.cpp \
             gui/SearchTreeWidget.cpp \
-            gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/ShareDialog.cpp \
@@ -694,6 +708,7 @@ SOURCES +=  main.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
+            gui/FileTransfer/SearchDialog.cpp \
             gui/FileTransfer/TransfersDialog.cpp \
             gui/FileTransfer/FileTransferInfoWidget.cpp \
             gui/FileTransfer/DLListDelegate.cpp \
@@ -716,7 +731,6 @@ SOURCES +=  main.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
-            util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
             util/printpreview.cpp \
@@ -813,6 +827,7 @@ SOURCES +=  main.cpp \
             gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
+            gui/settings/PeoplePage.cpp \
             gui/settings/MessagePage.cpp \
             gui/settings/NewTag.cpp \
             gui/settings/ForumPage.cpp \
@@ -1167,6 +1182,7 @@ identities {
 	
 gxscircles {
 	DEFINES += RS_USE_CIRCLES
+#	DEFINES += RS_USE_NEW_PEOPLE_DIALOG
 
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \

@@ -138,6 +138,12 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << std::endl;
         return false ;
     }
+    
+    if(rsReputations->isIdentityBanned(cli->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
+        return false ;
+    }
     if(!checkSignature(cli,cli->PeerId()))	// check the object's signature and possibly request missing keys
     {
         std::cerr << "Signature mismatched for this lobby event item. Item will be dropped: " << std::endl;
@@ -145,6 +151,10 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         std::cerr << std::endl;
         return false;
     }
+    
+    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+    
+    rsGRouter->addRoutingClue(GRouterKeyId(cli->signature.keyId),cli->PeerId()) ;
     
     ChatLobbyFlags fl ;
     
@@ -184,11 +194,6 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
 		    return false ;
 	    }
     }
-    if(rsReputations->isIdentityBanned(cli->signature.keyId))
-    {
-        std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
-        return false ;
-    }
     
     if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
         return false;
@@ -202,7 +207,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     //name = cli->nick;
     //popupChatFlag = RS_POPUP_CHATLOBBY;
 
-	RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, virtual_peer_id.toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
+    RsServer::notify()->AddPopupMessage(RS_POPUP_CHATLOBBY, ChatId(cli->lobby_id).toStdString(), cli->signature.keyId.toStdString(), cli->message); /* notify private chat message */
 
     return true ;
 }
@@ -319,11 +324,6 @@ void DistributedChatService::locked_printDebugInfo() const
 
 	}
 
-	std::cerr << "Recorded lobby names: " << std::endl;
-
-	for( std::map<RsPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.begin()) ;it!=_lobby_ids.end();++it)
-		std::cerr << "   \"" << it->first << "\" id = " << std::hex << it->second << std::dec << std::endl;
-
 	std::cerr << "Visible public lobbies: " << std::endl;
 
 	for( std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it(_visible_lobbies.begin()) ;it!=_visible_lobbies.end();++it)
@@ -339,21 +339,6 @@ void DistributedChatService::locked_printDebugInfo() const
         std::cerr << "   \"" << std::hex << it->first << "\" flags = " << it->second << std::dec << std::endl;
 }
 
-bool DistributedChatService::isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id)
-{
-	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::const_iterator it(_lobby_ids.find(virtual_peer_id)) ;
-
-	if(it != _lobby_ids.end())
-	{
-		lobby_id = it->second ;
-		return true ;
-	}
-
-	lobby_id = 0;
-	return false ;
-}
 bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id,uint32_t lobby_count)
 {
 	static std::map<std::string, std::list<time_t> > message_counts ;
@@ -437,11 +422,6 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     return ;
     }
     sendChatItem(msg) ;
-}
-
-bool DistributedChatService::locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *ci)
-{
-    return true ;
 }
 
 bool DistributedChatService::handleRecvItem(RsChatItem *item)
@@ -668,6 +648,11 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 	time_t now = time(NULL) ;
 
+    if(rsReputations->isIdentityBanned(item->signature.keyId))
+    {
+        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
+        return ;
+    }
     if(!checkSignature(item,item->PeerId()))	// check the object's signature and possibly request missing keys
     {
         std::cerr << "Signature mismatched for this lobby event item: " << std::endl;
@@ -695,11 +680,6 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		    return ;
 	    }
     }
-    if(rsReputations->isIdentityBanned(item->signature.keyId))
-    {
-        std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
-        return ;
-    }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
 	if(now+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
@@ -718,6 +698,9 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << std::endl;
 		return ;
 	}
+    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+    rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
+    
     if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 
@@ -788,7 +771,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 		}
 	}
-    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId.toStdString(),item->string1) ;
+    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1) ;
 }
 void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {
@@ -1368,7 +1351,6 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 
 		_lobby_invites_queue.erase(it) ;		// remove the invite from cache.
@@ -1487,8 +1469,6 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		entry.last_connexion_challenge_time = now ; 
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
-
 		for(std::set<RsPeerId>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 		{
 			invited_friends.push_back(*it2) ;
@@ -1537,7 +1517,6 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 		entry.last_connexion_challenge_time = now ;
 		entry.last_keep_alive_packet_time = now ;
 
-		_lobby_ids[entry.virtual_peer_id] = lobby_id ;
 		_chat_lobbys[lobby_id] = entry ;
 	}
 
@@ -1619,13 +1598,6 @@ void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 		// remove lobby information
 
 		_chat_lobbys.erase(it) ;
-
-		for(std::map<ChatLobbyVirtualPeerId,ChatLobbyId>::iterator it2(_lobby_ids.begin());it2!=_lobby_ids.end();++it2)
-			if(it2->second == id)
-			{
-				_lobby_ids.erase(it2) ;
-				break ;
-			}
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
@@ -1865,7 +1837,7 @@ void DistributedChatService::cleanLobbyCaches()
 
 	// update the gui
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
-        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"","") ;
+        RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,RsGxsId(),"") ;
 
 	// send connection challenges
 	//

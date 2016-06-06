@@ -121,13 +121,13 @@ std::string PGPKeyParser::extractRadixPartFromArmouredKey(const std::string& pgp
 std::string PGPKeyManagement::makeArmouredKey(const unsigned char *keydata,size_t key_size,const std::string& version_string)
 {
 	std::string outstring ;
-	Radix64::encode((const char *)keydata,key_size,outstring) ;
+	Radix64::encode(keydata,key_size,outstring) ;
 
 	uint32_t crc = compute24bitsCRC((unsigned char *)keydata,key_size) ;
 
 	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
 	std::string crc_string ;
-	Radix64::encode((const char *)tmp,3,crc_string) ;
+	Radix64::encode(tmp,3,crc_string) ;
 
 #ifdef DEBUG_PGPUTIL
 	std::cerr << "After signature pruning: " << std::endl;
@@ -157,7 +157,77 @@ uint32_t PGPKeyManagement::compute24bitsCRC(unsigned char *octets, size_t len)
 				crc ^= PGP_CRC24_POLY;
 		}
 	}
-	return crc & 0xFFFFFFL;
+    return crc & 0xFFFFFFL;
+}
+
+bool PGPKeyManagement::parseSignature(const unsigned char *signature, size_t sign_len, uint64_t& issuer)
+{
+    unsigned char *data = (unsigned char *)signature ;
+
+#ifdef DEBUG_PGPUTIL
+    std::cerr << "Total size: " << len << std::endl;
+#endif
+
+    uint8_t packet_tag;
+    uint32_t packet_length ;
+
+    PGPKeyParser::read_packetHeader(data,packet_tag,packet_length) ;
+    
+#ifdef DEBUG_PGPUTIL
+    std::cerr << "Packet tag : " << (int)packet_tag << ", length=" << packet_length << std::endl;
+#endif
+    
+    // 2 - parse key data, only keep public key data, user id and self-signature.
+
+    bool issuer_found=false ;
+    
+    if(sign_len < 12)	// conservative check to allow the explicit reads below, until header of first sub-packet
+        return false ;
+    
+    unsigned char signature_type = data[0] ;
+    
+    if(signature_type != 4)
+        return false ;
+    
+    data += 1 ;	// skip version number 
+    data += 1 ;	// skip signature type
+    data += 1 ;	// skip public key algorithm
+    data += 1 ;	// skip hash algorithm
+
+    uint32_t hashed_size = 256u*data[0] + data[1] ;
+    data += 2 ;
+    
+    // now read hashed sub-packets
+    
+    uint8_t *start_hashed_data = data ;
+   
+    while(true) 
+    {
+	    int subpacket_size = PGPKeyParser::read_125Size(data) ; // following RFC4880
+	    uint8_t subpacket_type = data[0] ; data+=1 ;
+
+#ifdef DEBUG_PGPUTIL
+	    std::cerr << "  SubPacket tag: " << (int)subpacket_type << std::endl;
+	    std::cerr << "  SubPacket length: " << subpacket_size << std::endl;
+#endif
+
+	    if(subpacket_type == PGPKeyParser::PGP_PACKET_TAG_ISSUER && subpacket_size == 9)
+	    {
+		    issuer_found = true ;
+		    issuer = PGPKeyParser::read_KeyID(data) ;
+	    }
+	    else
+		    data += subpacket_size-1 ;	// we remove the size of subpacket type
+
+	    if(issuer_found)
+		    break ;
+
+	    if( (uint64_t)data - (uint64_t)start_hashed_data >= hashed_size )
+		    break ;
+    }
+    // non hashed sub-packets are ignored for now. 
+    
+    return issuer_found ;
 }
 
 uint64_t PGPKeyParser::read_KeyID(unsigned char *& data)

@@ -27,6 +27,7 @@
 #include "pqi/authssl.h"
 #include "util/rsnet.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 
 // #define DEBUG_PQIBIN
 
@@ -169,7 +170,7 @@ uint64_t BinFileInterface::bytecount()
 	return 0;
 }
 
-int BinFileInterface::getFileSize()
+uint64_t BinFileInterface::getFileSize()
 {
 	return size;
 }
@@ -228,7 +229,14 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 	if(!haveData) // read whole data for first call, or first call after close()
 	{
 
-		encrypDataLen = BinFileInterface::getFileSize();
+                uint64_t encrypDataLen64 = BinFileInterface::getFileSize();
+                
+                if(encrypDataLen64 > uint64_t(~(int)0))
+                {
+                    std::cerr << __PRETTY_FUNCTION__ << ": cannot decrypt files of size > " << ~(int)0 << std::endl;
+                    return -1 ;
+                }
+		encrypDataLen = (int)encrypDataLen64 ;
 		encryptedData = new char[encrypDataLen];
 
 		// make sure assign was successful
@@ -244,12 +252,15 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 
 		if((encrypDataLen > 0) && (encryptedData != NULL))
 		{
-				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeData, encryptedData, encrypDataLen))
+            			int sizeDataInt = 0 ;
+                        
+				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeDataInt, encryptedData, encrypDataLen))
 				{
 					delete[] encryptedData;
 					return -1;
 				}
-
+                
+                		sizeData = sizeDataInt ;
 				haveData = true;
 				delete[] encryptedData;
 		}
@@ -269,7 +280,7 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 	else
 	{
 
-		if((cpyCount + len) <= sizeData)
+		if((cpyCount + len) <= (uint64_t)sizeData)
 		{
 			memcpy(data, (void *) ((this->data) + cpyCount), len);
 			cpyCount += len;
@@ -305,16 +316,22 @@ uint64_t BinEncryptedFileInterface::bytecount()
 bool BinEncryptedFileInterface::moretoread(uint32_t /* usec */)
 {
 	if(haveData)
-		return (cpyCount < sizeData);
+		return (cpyCount < (uint64_t)sizeData);
 	else
-		return cpyCount < getFileSize();
+		return cpyCount < (uint64_t)getFileSize();
 }
 
 BinMemInterface::BinMemInterface(int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = malloc(defsize);
+		buf = rs_malloc(defsize);
+        
+        	if(buf == NULL)
+            {
+                close() ;
+                return ;
+            }
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{
 			hash = new pqihash();
@@ -326,7 +343,13 @@ BinMemInterface::BinMemInterface(const void *data, const int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 
 	recvsize(0), readloc(0), hash(NULL), bcount(0)
 	{
-		buf = malloc(defsize);
+		buf = rs_malloc(defsize);
+        
+        	if(buf == NULL)
+            {
+                close() ;
+                return ;
+            }
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{
 			hash = new pqihash();

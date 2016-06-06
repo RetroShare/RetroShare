@@ -28,6 +28,14 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
 	# solve linker warnings because of the order of the libraries
 	QMAKE_LFLAGS += -Wl,--start-group
 
@@ -68,7 +76,11 @@ win32 {
 }
 
 macx {
-
+	#You can found some information here:
+	#https://developer.apple.com/library/mac/documentation/Porting/Conceptual/PortingUnix/compiling/compiling.html
+	QMAKE_LFLAGS_PLUGIN -= -dynamiclib
+	QMAKE_LFLAGS_PLUGIN += -bundle
+	QMAKE_LFLAGS_PLUGIN += -bundle_loader "../../retroshare-gui/src/RetroShare06.app/Contents/MacOS/RetroShare06"
 
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc

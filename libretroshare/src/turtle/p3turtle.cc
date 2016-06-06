@@ -726,8 +726,9 @@ bool p3turtle::loadList(std::list<RsItem*>& load)
 				}
 			}
 
-		delete vitem ;
+		delete *it ;
 	}
+    load.clear() ;
 	return true ;
 }
 int p3turtle::getMaxTRForwardRate() const
@@ -844,13 +845,24 @@ int p3turtle::handleIncoming()
 void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-	// take a look at the item:
+    
+	// take a look at the item and test against inconsistent values
 	// 	- If the item destimation is
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "Received search request from peer " << item->PeerId() << ": " << std::endl ;
 	item->print(std::cerr,0) ;
 #endif
+    
+	if(item->serial_size() > TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE)
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "  Dropping, because the serial size exceeds the accepted limit." << std::endl ;
+#endif
+		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item->serial_size() << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
+		return ;
+	}
+    
 	if(_search_requests_origins.size() > MAX_ALLOWED_SR_IN_CACHE)
 	{
 #ifdef P3TURTLE_DEBUG
@@ -1005,8 +1017,6 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 
 	// Is this result's target actually ours ?
 
-	++(item->depth) ;			// increase depth
-
 	if(it->second.origin == _own_id)
 		returnSearchResult(item) ;		// Yes, so send upward.
 	else
@@ -1020,7 +1030,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 		// of the files found can be further reached by a tunnel.
 
 		fwd_item->PeerId(it->second.origin) ;
-		fwd_item->depth = 2 + (rand() % 256) ; // obfuscate the depth for non immediate friends.
+		fwd_item->depth = 0 ; // obfuscate the depth for non immediate friends. Result will always be 0. This effectively removes the information.
 
 		sendItem(fwd_item) ;
 	}
@@ -1182,7 +1192,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 
 		if(it == _incoming_file_hashes.end())
 		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << std::hex << it2->first << std::dec << " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for client side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
 			return false;
 		}
 
@@ -1194,7 +1204,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 
 		if(it == _outgoing_file_hashes.end())
 		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for tunnel " << std::hex << it2->first  << std::dec<< " has no attached service! Dropping the item. This is a serious consistency error." << std::endl;
+			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for server side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
 			return false;
 		}
 
@@ -1871,6 +1881,7 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 		// No tunnels at start, but this triggers digging new tunnels.
 		//
 		_incoming_file_hashes[hash].tunnels.clear();
+        _incoming_file_hashes[hash].use_aggressive_mode = allow_multi_tunnels ;
 
 		// also should send associated request to the file transfer module.
 		_incoming_file_hashes[hash].last_digg_time = RSRandom::random_u32()%10 ;

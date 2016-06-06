@@ -128,8 +128,6 @@ class RsInitConfig
 		std::string load_trustedpeer_file;
 
 		bool udpListenerOnly;
-
-		std::string RetroShareLink;
 };
 
 static RsInitConfig *rsInitConfig = NULL;
@@ -363,15 +361,12 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			   >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
-			   >> parameter('r',"link"          ,rsInitConfig->RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+			// by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
+			// by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
-#ifdef __APPLE__
  				>> help('h',"help","Display this Help") ;
-#else
-				>> help() ;
-#endif
 
 			as.defaultErrorHandling(true) ;
 
@@ -772,11 +767,6 @@ bool RsInit::isWindowsXP()
 bool RsInit::getStartMinimised()
 {
 	return rsInitConfig->startMinimised;
-}
-
-std::string RsInit::getRetroShareLink()
-{
-	return rsInitConfig->RetroShareLink;
 }
 
 int RsInit::getSslPwdLen(){
@@ -1258,6 +1248,9 @@ int RsServer::StartupRetroShare()
 
 	std::vector<std::string> plugins_directories ;
 
+#ifdef __APPLE__
+	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
+#endif
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
@@ -1331,24 +1324,33 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
             false,false); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
 
+        // Normally we wouldn't need this (we do in other service):
+        //	mGxsIdService->setNetworkExchangeService(gxsid_ns) ;
+        // ...since GxsIds are propagated manually. But that requires the gen exchange of GXSids to
+        // constantly test that mNetService is not null. The call below is to make the service aware of the
+        // netService so that it can request the missing ids. We'll need to fix this.
+
         mGxsIdService->setNes(gxsid_ns);
+
         /**** GxsCircle service ****/
 
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
-			pgpAuxUtils);
+			mGxsIdService, mGxsCircles,mGxsIdService,
+			pgpAuxUtils,
+	            	true,	// synchronise group automatic 
+                    	true); 	// sync messages automatic, since they contain subscription requests.
 
+	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
+    
         /**** Posted GXS service ****/
-
-
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                         RS_SERVICE_GXS_TYPE_POSTED, 
@@ -1360,7 +1362,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* posted_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_POSTED, posted_ds, nxsMgr, 
 			mPosted, mPosted->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mPosted->setNetworkExchangeService(posted_ns) ;
@@ -1372,12 +1374,11 @@ int RsServer::StartupRetroShare()
         
         /**** Wiki GXS service ****/
 
-
+#ifdef RS_USE_WIKI
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
-#ifdef RS_USE_WIKI
         p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
         // create GXS wiki service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
@@ -1401,7 +1402,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
@@ -1417,7 +1418,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
                         mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
@@ -1434,7 +1435,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* photo_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_PHOTO, photo_ds, nxsMgr, 
 			mPhoto, mPhoto->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
 
@@ -1450,7 +1451,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wire_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIRE, wire_ds, nxsMgr, 
 			mWire, mWire->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
         // now add to p3service
@@ -1767,27 +1768,27 @@ int RsServer::StartupRetroShare()
     //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
-    startServiceThread(mGxsIdService);
-    startServiceThread(mGxsCircles);
-    startServiceThread(mPosted);
+	startServiceThread(mGxsIdService, "gxs id");
+	startServiceThread(mGxsCircles, "gxs circle");
+	startServiceThread(mPosted, "gxs posted");
 #if RS_USE_WIKI
-    startServiceThread(mWiki);
+	startServiceThread(mWiki, "gxs wiki");
 #endif
-    startServiceThread(mGxsForums);
-    startServiceThread(mGxsChannels);
+	startServiceThread(mGxsForums, "gxs forums");
+	startServiceThread(mGxsChannels, "gxs channels");
 
 	//createThread(*mPhoto);
 	//createThread(*mWire);
 
 	// cores ready start up GXS net servers
-    startServiceThread(gxsid_ns);
-    startServiceThread(gxscircles_ns);
-    startServiceThread(posted_ns);
+	startServiceThread(gxsid_ns, "gxs id ns");
+	startServiceThread(gxscircles_ns, "gxs circle ns");
+	startServiceThread(posted_ns, "gxs posted ns");
 #if RS_USE_WIKI
-    startServiceThread(wiki_ns);
+	startServiceThread(wiki_ns, "gxs wiki ns");
 #endif
-    startServiceThread(gxsforums_ns);
-    startServiceThread(gxschannels_ns);
+	startServiceThread(gxsforums_ns, "gxs forums ns");
+	startServiceThread(gxschannels_ns, "gxs channels ns");
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
@@ -1833,7 +1834,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* Startup this thread! */
-    start() ;
+	start("rs main") ;
 
 	return 1;
 }

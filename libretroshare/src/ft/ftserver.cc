@@ -188,19 +188,18 @@ void    ftServer::StartupThreads()
 
 	/* self contained threads */
 	/* startup ExtraList Thread */
-	mFtExtra->start();
+	mFtExtra->start("ft extra lst");
 
 	/* startup Monitor Thread */
 	/* startup the FileMonitor (after cache load) */
 	/* start it up */
-	
-	mFiMon->start();
+	mFiMon->start("ft monitor");
 
 	/* Controller thread */
-	mFtController->start();
+	mFtController->start("ft ctrl");
 
 	/* Dataplex */
-	mFtDataplex->start();
+	mFtDataplex->start("ft dataplex");
 }
 
 void ftServer::StopThreads()
@@ -257,7 +256,7 @@ bool	ftServer::ResumeTransfers()
 	return true;
 }
 
-bool ftServer::checkHash(const RsFileHash& hash,std::string& error_string)
+bool ftServer::checkHash(const RsFileHash& /*hash*/, std::string& /*error_string*/)
 {
     return true ;
 }
@@ -465,6 +464,8 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 		return NULL; /* wrong type */
 	}
 
+    try
+    {
 	switch(getRsItemSubType(rstype))
 	{
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST 			:	return new RsTurtleFileRequestItem(data,size) ;
@@ -477,6 +478,13 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 		default:
 																		return NULL ;
 	}
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
+        
+        return NULL ;
+    }
 }
 
 void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) 
@@ -1093,11 +1101,10 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 
 			item->chunk_offset = offset+baseoffset ;
 			item->chunk_size = chunk;
-			item->chunk_data = malloc(chunk) ;
+			item->chunk_data = rs_malloc(chunk) ;
 
 			if(item->chunk_data == NULL)
 			{
-				std::cerr << "p3turtle: Warning: failed malloc of " << chunk << " bytes for sending data packet." << std::endl ;
 				delete item;
 				return false;
 			}

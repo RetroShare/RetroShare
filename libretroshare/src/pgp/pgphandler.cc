@@ -26,6 +26,7 @@ extern "C" {
 #include "retroshare/rspeers.h"		// For rsicontrol.
 #include "util/rsdir.h"		
 #include "util/rsdiscspace.h"		
+#include "util/rsmemory.h"		
 #include "pgp/pgpkeyutil.h"
 
 static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE   = 64 ;
@@ -39,7 +40,11 @@ PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
 ops_keyring_t *PGPHandler::allocateOPSKeyring() 
 {
-	ops_keyring_t *kr = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
+	ops_keyring_t *kr = (ops_keyring_t*)rs_malloc(sizeof(ops_keyring_t)) ;
+    
+    	if(kr == NULL)
+            return NULL ;
+        
 	kr->nkeys = 0 ;
 	kr->nkeys_allocated = 0 ;
 	kr->keys = 0 ;
@@ -1687,6 +1692,24 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 	return to_add.size() > 0 ;
 }
 
+bool PGPHandler::parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) 
+{
+    uint64_t issuer ;
+    
+    if(!PGPKeyManagement::parseSignature(sign,signlen,issuer))
+        return false ;
+    
+    unsigned char bytes[8] ;
+    for(int i=0;i<8;++i)
+    {
+        bytes[7-i] = issuer & 0xff ;
+        issuer >>= 8 ;
+    }
+    issuer_id = RsPgpId(bytes) ;
+    
+    return true ;     
+}
+
 bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
 {
 	if(trustlvl < 0 || trustlvl >= 6 || trustlvl == 1)
@@ -1955,12 +1978,20 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remov
 	char template_name[_pubring_path.length()+8] ;
 	sprintf(template_name,"%s.XXXXXX",_pubring_path.c_str()) ;
 	
+#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K8
+	int fd_keyring_backup(mkstemp(template_name));
+	if (fd_keyring_backup == -1)
+#else
 	if(mktemp(template_name) == NULL)
+#endif
 	{
 		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
 		return false ;
 	}
+#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K8
+	close(fd_keyring_backup);	// TODO: keep the file open and use the fd
+#endif
 
 	if(!ops_write_keyring_to_file(_pubring,ops_false,template_name,ops_true)) 
 	{

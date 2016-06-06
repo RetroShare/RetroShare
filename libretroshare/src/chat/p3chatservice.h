@@ -95,7 +95,13 @@ public:
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
 		 * e.g currently used to update user when a peer 'is typing' during a chat
 		 */
-	void  sendStatusString(const ChatId& peer_id,const std::string& status_str) ;
+	void  sendStatusString(const ChatId& id,const std::string& status_str) ;
+
+	/**
+	 * @brief clearChatLobby: Signal chat was cleared by GUI.
+	 * @param id: Chat id cleared.
+	 */
+	virtual void clearChatLobby(const ChatId& id);
 
 	/*!
 		 * send to all peers online
@@ -199,7 +205,8 @@ private:
 	void receiveStateString(const RsPeerId& id,const std::string& s) ;
 
 	/// methods for handling various Chat items.
-	bool handleRecvChatMsgItem(RsChatMsgItem *item) ;			// returns false if the item should be deleted.
+	virtual bool handleRecvChatMsgItem(RsChatMsgItem *&item) ;			// NULL-ifies the item if memory ownership is taken
+    
 	void handleRecvChatStatusItem(RsChatStatusItem *item) ;
 	void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 
@@ -214,7 +221,8 @@ private:
 	void checkSizeAndSendMessage(RsChatMsgItem *item) ;	// keep for compatibility for a few weeks.
 
 	/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
-	bool locked_checkAndRebuildPartialMessage(RsChatMsgItem *) ;
+        /// if so, the chat item will be turned to NULL
+	bool locked_checkAndRebuildPartialMessage(RsChatMsgItem *&) ;
 
 	RsChatAvatarItem *makeOwnAvatarItem() ;
 	RsChatStatusItem *makeOwnCustomStateStringItem() ;

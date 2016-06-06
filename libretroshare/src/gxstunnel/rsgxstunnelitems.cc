@@ -29,6 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 
 #include "gxstunnel/rsgxstunnelitems.h"
 
@@ -343,6 +344,13 @@ RsGxsTunnelDHPublicKeyItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDHPubl
     /* get mandatory parts first */
     ok &= getRawUInt32(data, rssize, &offset, &s);
 
+    if(s > rssize || rssize - s < offset)
+    {
+	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+            delete item ;
+	    return NULL ;
+    }
+    
     item->public_key = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
     offset += s ;
 
@@ -370,6 +378,12 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
     bool ok = true ;
+    
+    if(rssize > size)
+    {
+        std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
+        return NULL ;
+    }
 
     RsGxsTunnelDataItem *item = new RsGxsTunnelDataItem();
 
@@ -380,21 +394,22 @@ RsGxsTunnelDataItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataItem(void
     ok &= getRawUInt32(dat, rssize, &offset, &item->service_id);
     ok &= getRawUInt32(dat, rssize, &offset, &item->data_size);
 
-    if(offset + item->data_size <= size)
+    if(item->data_size > rssize || rssize < offset + item->data_size) 
     {
-	    item->data = (unsigned char*)malloc(item->data_size) ;
-
-	    if(dat == NULL)
-	{
-		delete item ;
-		return NULL ;
-	}
-
-	    memcpy(item->data,&((uint8_t*)dat)[offset],item->data_size) ;
-	    offset += item->data_size ;
+	    std::cerr << "RsGxsTunnelDataItem::() Size error while deserializing." << std::endl ;
+	    delete item ;
+	    return NULL ;
     }
-    else
-	    ok = false ;
+    item->data = (unsigned char*)rs_malloc(item->data_size) ;
+
+    if(item->data == NULL)
+    {
+	    delete item ;
+	    return NULL ;
+    }
+
+    memcpy(item->data,&((uint8_t*)dat)[offset],item->data_size) ;
+    offset += item->data_size ;
 
 
     if (offset != rssize)
@@ -441,11 +456,17 @@ RsGxsTunnelDataAckItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelDataAckIte
     return item ;
 }
 
-RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat,uint32_t size)
+RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(void *dat, uint32_t size)
 {
     uint32_t offset = 8; // skip the header 
     uint32_t rssize = getRsItemSize(dat);
     bool ok = true ;
+
+    if(rssize > size)
+    {
+        std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
+        return NULL ;
+    }
 
     RsGxsTunnelStatusItem *item = new RsGxsTunnelStatusItem();
 
@@ -455,13 +476,13 @@ RsGxsTunnelStatusItem *RsGxsTunnelSerialiser::deserialise_RsGxsTunnelStatusItem(
 
     if (offset != rssize)
     {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+	    std::cerr << "RsGxsTunnelStatusItem::() Size error while deserializing." << std::endl ;
 	    delete item ;
 	    return NULL ;
     }
     if (!ok)
     {
-	    std::cerr << "RsGxsTunnelDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
+	    std::cerr << "RsGxsTunnelStatusItem::() Unknown error while deserializing." << std::endl ;
 	    delete item ;
 	    return NULL ;
     }

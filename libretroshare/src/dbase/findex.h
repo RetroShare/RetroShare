@@ -27,7 +27,7 @@
 #include <string>
 #include <map>
 #include <set>
-#if __MAC_10_10
+#if __MACH__
 #include <unordered_set>
 #else
 #include <tr1/unordered_set>
@@ -250,7 +250,7 @@ class FileIndex
 
 		PersonEntry *root;
 
-#ifdef __MAC_10_10
+#ifdef __MACH__
 		static std::unordered_set<void*> _pointers ;
 #else
 		static std::tr1::unordered_set<void*> _pointers ;

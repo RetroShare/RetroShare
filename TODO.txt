@@ -6,31 +6,34 @@ Legend:
    [ ] pending
    [/] half-done, someone's on it
    [-] cancelled
+   [?] needs discussion. Not sure we need this.
    [X] done
 
 PS: no tabs in this file,thx ;-)
 
+----------------------------------------  TODO for RC ---------------------------------------------
+
+    E  [ ] Implement creation of a default (signed) gxs id in startup wizard. Needs to show to the user a proper separation between nodes (network layer) and GXS ids (service layer).
+    E  [ ] add tooltips in in permission matrix when hovering over the top most button/service name explain what the service does and the dependencies
+    E  [ ] finish pass of GXS network service
+
 -----------------------------------------  TODO list ----------------------------------------------
 
 GUI
-	E  [ ] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
-    E  [ ] Implement creation of a default (signed) gxs id in startup wizard. Needs to show to the 
-           user a proper separation between nodes (network layer) and GXS ids (service layer).
+    E  [X] add a "Contact" list to help selecting peers in People/FriendChooser/messages/etc.
     E  [ ] fix posted GUI. Needs to be more handy and more appealing.
     E  [ ] add RS links for GXS identities, so that they can be transferred easily between nodes in forums, etc
     E  [ ] enable people dialog
     M  [ ] Personal Page (Profile Page for GXS ID Users,view latest Posts, public forum/channels,posted posts, comments in all areas, Reputation Infos, Popularity and more)
     E  [ ] fix RSButtonOnText::eventFilter, and fix all places where RSButtonOnText gets deleted
-    E  [ ] find all places where the deprecated(in Qt5) Q_WS_WIN and other Q_WS* macros are 
-           used, and replace with something else
-    E  [ ] add tooltips in in permission matrix when hovering over the top most button/service name
-           explain what the service does and the dependencies
+    E  [ ] find all places where the deprecated(in Qt5) Q_WS_WIN and other Q_WS* macros are used, and replace with something else
     E  [ ] Make RS fully compatible with High DPI screens.
     M  [ ] improve comments in channels. Comments should be more available, more visible, and easier to handle.
+    E  [ ] make GRouter statistics less CPU greedy
     M  [ ] Merge the various help systems. there's 3 of them now. Lots of duplicate code, etc.
     M  [ ] New and consistent icon set (Purplehaze420 said he would provide a consistent set of icons. Is that still alive?)
     M  [ ] add in options->Network a way to select which network interface is used to talk (choice between "auto" or selected from a list)
-    M  [ ] add a RS link for encrypted messages (encrypt for multiple GXS ids at once). Messages will appear as a link when encrypted and 
+    M  [?] add a RS link for encrypted messages (encrypt for multiple GXS ids at once). Messages will appear as a link when encrypted and 
            be automatically decrypted when a suitable GXS id is available for it. Could be a way to securely post something in a public place.
 
 File transfer (all 3 tasks are related)
@@ -38,19 +41,23 @@ File transfer (all 3 tasks are related)
     H  [ ] implement a new file list management, with new info such as access time,total upload, popularity, etc
     H  [ ] implement a new file list sharing service based on auto-sync system
     M  [ ] get rid of the old cache system (remove CacheStrapper, CacheSource,etc)
+    M  [ ] implement end-to-end encryption using chacha20 and H(F), requesting file on H(H(F)). Make this optional and backward compatible.
 
 DHT
-    H  [ ] improve DHT lookups to find masquerading peers using fake peers. First experiments (by cyril) do not prove very efficient.
+    H  [-] improve DHT lookups to find masquerading peers using fake peers. First experiments (by cyril) do not prove very efficient.
 
 GXS
     M  [X] create a tunnel service from distant chat code to make it (1) more generic (2) resistant to packet loss. 
-    M  [ ] optimise GXS sync BW. For the moment too much is sent between nodes.
+    M  [X] optimise GXS sync BW. For the moment too much is sent between nodes.
     H  [/] add the ability to use anonymous identities into circles. Needs new distribution model using items encrypted for multiple GXS keys.
     H  [ ] use different and incompatible classes for public and private keys in GxsSecurity
 
 VOIP
      H  [ ] use proper video encoding. What we have now is decent for video, but sound should be prioritized. Experiments 
             with QtAV seem to work nicely. Finish and integrate!
+     M  [ ] Deactivate Voip Buttons, when Friend has no Voip plugin enabled.    
+     M  [ ] Implement Voice for Video Chat
+     M  [ ] Improve Voice and Video Quality    
      M  [ ] Video Quality/Resolution Settings (High, Medium, Low) HD, HQ, SD )
      M  [ ] Video Device: WebCam(s) or Desktop Selection
      M  [ ] Audio Input Device Selection (Microphone)
@@ -58,20 +65,21 @@ VOIP
      M  [ ] Video Snapshots https://support.skype.com/en/faq/FA1222/what-is-video-snapshot
      M  [ ] Voice Messaging (record and send a voice message)
      M  [ ] Video Messages (send a video greeting to multiple friends/coworkers/developers at once.)
+     M  [ ] Add Call status (when im on the phone changes my status with phone icon)
      H  [ ] Audio Conference
      H  [ ] Video Conference
- 
 
 Messages
-    H  [ ] make the mail system re-send failed emails notified by the global router. This is hard because it needs a proper
-           management of duplicate messages
-    E  [ ] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
+    H  [X] make the mail system re-send failed emails notified by the global router. This is hard because it needs a proper management of duplicate messages
+    E  [X] add flags to allow distant messaging from contact list only / everyone / noone / only signed ids.
+    M  [ ] add Signature feature to messages
+    M  [ ] add vacation responser for messages (automatic replies) 
 
 Chat
-    E  [ ] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
+    E  [X] add flags to allow distant chat from contact list only / everyone / noone / only signed ids.
 
 Libretroshare
-	E  [ ] groups small packets in pqistreamer::handleoutgoing_locked(), and see if that removes some padding overhead
+    E  [X] groups small packets in pqistreamer::handleoutgoing_locked(), and see if that removes some padding overhead
     E  [ ] make sure at least one location is kept when removing old locations as it avoids lots of connection problems.
     M  [ ] improve serialisation system. Lots of serialisation tasks (header, verifications, serialiser=>template, can be factored)
     M  [ ] separate chat stuff from rsmsgs.h into rschat.h
@@ -106,10 +114,10 @@ Forums
 
 Bugs
     E  [ ] find the bug that shows some peers online in Network although they are not.
-    M  [ ] Selecting different options in messages composer -> contact list then come back, 
+    M  [X] Selecting different options in messages composer -> contact list then come back, 
            shows disappearing / re-appearing people. What causes this???
 
-Settings 
+Sounds 
     E  [ ] add default sounds for Friend go online, New Chat Message, Message arrived, Download complete
     M  [ ] make sure sound is working for users on linux. We also need a "test sound" button in config->sound. 
 

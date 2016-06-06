@@ -69,8 +69,10 @@ PluginManager::defaultLoad(  )
 
   //=== get current available plugins =====
     QStringList currAvailable = workDir.entryList(QDir::Files);
-#if defined(Q_OS_WIN)    
+#if defined(Q_OS_WIN)
     QRegExp trx("*.dll") ;
+#elif defined(__MACH__)
+    QRegExp trx("*.dylib");
 #else
     QRegExp trx("*.so");
 #endif

@@ -69,6 +69,7 @@ GxsIdDetails::GxsIdDetails()
 {
 	mCheckTimerId = 0;
 	mProcessDisableCount = 0;
+    mPendingDataIterator = mPendingData.end() ;
 
 	connect(this, SIGNAL(startTimerFromThread()), this, SLOT(doStartTimer()));
 }
@@ -106,16 +107,16 @@ void GxsIdDetails::objectDestroyed(QObject *object)
 
 	/* Object is about to be destroyed, remove it from pending list */
 	QList<CallbackData>::iterator dataIt;
-	for (dataIt = mPendingData.begin(); dataIt != mPendingData.end(); ) {
-		CallbackData &pendingData = *dataIt;
-
-		if (pendingData.mObject == object) {
-			dataIt = mPendingData.erase(dataIt);
-			continue;
-		}
-
-		++dataIt;
-	}
+    
+    	QMap<QObject*,CallbackData>::iterator it = mPendingData.find(object) ;
+        
+        if(it != mPendingData.end())
+        {
+            if(it == mPendingDataIterator)
+                mPendingDataIterator = mPendingData.erase(it) ;
+            else
+                mPendingData.erase(it) ;
+        }
 }
 
 void GxsIdDetails::connectObject_locked(QObject *object, bool doConnect)
@@ -125,13 +126,9 @@ void GxsIdDetails::connectObject_locked(QObject *object, bool doConnect)
 	}
 
 	/* Search Object in pending list */
-	QList<CallbackData>::iterator dataIt;
-	for (dataIt = mPendingData.begin(); dataIt != mPendingData.end(); ++dataIt) {
-		if (dataIt->mObject == object) {
-			/* Object still/already in pending list */
-			return;
-		}
-	}
+    
+	if(mPendingData.find(object) == mPendingData.end())	// force disconnect when not in the list
+	   doConnect = false ;
 
 	if (doConnect) {
 		connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(objectDestroyed(QObject*)));
@@ -155,12 +152,16 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 					if (!mPendingData.empty()) {
 						/* Check pending id's */
 						int processed = qMin(MAX_PROCESS_COUNT_PER_TIMER, mPendingData.size());
+                        
 						while (!mPendingData.isEmpty()) {
 							if (processed-- <= 0) {
 								break;
 							}
+                            
+                            				if(mPendingDataIterator == mPendingData.end())
+                                                		mPendingDataIterator = mPendingData.begin() ;
 
-							CallbackData &pendingData = mPendingData.front();
+							CallbackData &pendingData = *mPendingDataIterator;
 
 							RsIdentityDetails details;
 							if (rsIdentity->getIdDetails(pendingData.mId, details)) {
@@ -168,8 +169,9 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 								pendingData.mCallback(GXS_ID_DETAILS_TYPE_DONE, details, pendingData.mObject, pendingData.mData);
 
 								QObject *object = pendingData.mObject;
-								mPendingData.pop_front();
 								connectObject_locked(object, false);
+
+								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
 
 								continue;
 							}
@@ -180,13 +182,16 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 								pendingData.mCallback(GXS_ID_DETAILS_TYPE_FAILED, details, pendingData.mObject, pendingData.mData);
 
 								QObject *object = pendingData.mObject;
-								mPendingData.pop_front();
 								connectObject_locked(object, false);
+
+								mPendingDataIterator = mPendingData.erase(mPendingDataIterator);
 
 								continue;
 							}
-
-							mPendingData.move(0, mPendingData.size() - 1);
+                            
+                            				++mPendingDataIterator ;
+                            
+							//mPendingData.move(0, mPendingData.size() - 1);
 						}
 					}
 				}
@@ -246,6 +251,26 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 		return true;
 	}
 
+    	// remove any existing call for this object. This is needed for when the same widget is used to display IDs that vary in time.
+	{
+		QMutexLocker lock(&mInstance->mMutex);
+
+        	// check if a pending request is not already on its way. If so, replace it.
+        
+        	QMap<QObject*,CallbackData>::iterator it = mInstance->mPendingData.find(object) ;
+            
+            	if(it != mInstance->mPendingData.end())
+                {
+			mInstance->connectObject_locked(object, false);
+            
+            		if(mInstance->mPendingDataIterator == it)
+				mInstance->mPendingDataIterator = mInstance->mPendingData.erase(it) ;
+                        else
+				mInstance->mPendingData.erase(it) ;
+                }
+               
+		/* Connect signal "destroy" */
+	}
 	/* Try to get the information */
 	// the idea behind this was, to call the callback directly when the identity is already loaded in librs
 	// without one timer tick, but it causes the use of Pixmap in avatars within a threat that is different than
@@ -277,10 +302,12 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	{
 		QMutexLocker lock(&mInstance->mMutex);
 
+        	// check if a pending request is not already on its way. If so, replace it.
+        
+		mInstance->mPendingData[object] = pendingData;
+               
 		/* Connect signal "destroy" */
 		mInstance->connectObject_locked(object, true);
-
-		mInstance->mPendingData.push_back(pendingData);
 	}
 
 	/* Start timer */

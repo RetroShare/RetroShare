@@ -18,6 +18,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
+ *
+ *  ccr . 2016 Jan 26
+ *
+ *  Play sound on incoming messages.
+ *
  ****************************************************************/
 
 #include <unistd.h>
@@ -42,6 +47,7 @@
 #include "gui/gxs/GxsIdChooser.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
+#include "gui/SoundManager.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -79,6 +85,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
+    banAct = new QAction(QIcon(":/icons/yellow_biohazard64.png"), tr("Ban this person (Sets negative opinion)"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
     
@@ -97,6 +104,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
+    connect(banAct, SIGNAL(triggered()), this, SLOT(banParticipant()));
     
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
@@ -195,15 +203,16 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(distantChatAct);
     contextMnu.addAction(sendMessageAct);
     contextMnu.addSeparator();
-    contextMnu.addAction(muteAct);
-    contextMnu.addSeparator();
     contextMnu.addAction(actionSortByActivity);
     contextMnu.addAction(actionSortByName);
-
+    contextMnu.addSeparator();
+    contextMnu.addAction(muteAct);
+    contextMnu.addAction(banAct);
 
 	muteAct->setCheckable(true);
 	muteAct->setEnabled(false);
 	muteAct->setChecked(false);
+	banAct->setEnabled(false);
 
     if (selectedItems.size())
     {
@@ -213,6 +222,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
         if(selectedItems.count()>1 || (RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName))
         {
             muteAct->setEnabled(true);
+	    banAct->setEnabled(true);
 
             QList<QTreeWidgetItem*>::iterator item;
             for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
@@ -230,6 +240,40 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 
 	contextMnu.exec(QCursor::pos());
 }
+
+/**
+ * @brief Called when the "ban" menu is selected. Sets a negative reputation on the selected user.
+ */
+void ChatLobbyDialog::banParticipant()
+{
+    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+
+    if (selectedItems.isEmpty()) {
+	    return;
+    }
+
+    QList<QTreeWidgetItem*>::iterator item;
+    for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+
+	    RsGxsId nickname;
+	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(nickname) ;
+
+	    RsGxsId gxs_id;
+	    rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+
+	    // This test avoids to mute/ban your own identity
+
+	    if (gxs_id!=nickname)
+        {
+            std::cerr << "Giving negative opinion to GXS id " << nickname << std::endl;
+		    rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_NEGATIVE);
+            
+	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
+           
+        }
+    }
+}
+
 
 void ChatLobbyDialog::init()
 {
@@ -400,7 +444,8 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
             name = QString::fromUtf8(msg.peer_alternate_nickname.c_str()) + " (" + QString::fromStdString(gxs_id.toStdString()) + ")" ;
 
         ui.chatWidget->addChatMsg(msg.incoming, name, gxs_id, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-		emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
+        emit messageReceived(msg.incoming, id(), sendTime, name, message) ;
+        SoundManager::play(SOUND_NEW_LOBBY_MESSAGE);
 
         // This is a trick to translate HTML into text.
         QTextEdit editor;
@@ -495,6 +540,8 @@ void ChatLobbyDialog::updateParticipantsList()
 
             if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, QIcon(":/icons/bullet_yellow_128.png"));
 
+	    widgetitem->updateBannedState();
+        
             QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
             widgetitem->setToolTip(COLUMN_ICON,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
                                    +tr("This participant is not active since:")

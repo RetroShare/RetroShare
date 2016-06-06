@@ -98,8 +98,7 @@ class RsInit
 		 * Post Login Options
 		 */
 
-		static bool         getStartMinimised() ;
-		static std::string  getRetroShareLink();
+		static bool getStartMinimised();
 
 		static int getSslPwdLen();
 		static bool getAutoLogin();

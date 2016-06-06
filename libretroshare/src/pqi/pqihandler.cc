@@ -495,7 +495,7 @@ int     pqihandler::UpdateRates()
 
 	// loop through modules to get the used bandwith and the number of modules that are affectively transfering
 #ifdef PQI_HDL_DEBUG_UR
-	std::cerr << " Looping through modules" << std::endl;
+	std::cerr << "Looping through modules" << std::endl;
 #endif
 
 	int index = 0;
@@ -504,6 +504,12 @@ int     pqihandler::UpdateRates()
 	{
 		SearchModule *mod = (it -> second);
 		float crate_in = mod -> pqi -> getRate(true);
+        
+#ifdef PQI_HDL_DEBUG_UR
+        if(crate_in > 0.0)
+        std::cerr << "  got in rate for peer " << it->first << " : " << crate_in << std::endl;
+#endif
+        
 		if ((crate_in > 0.01 * avail_in) || (crate_in > 0.1))
 		{
 			++effectiveDownloadsSm;

@@ -66,6 +66,12 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
     uint32_t rssize = getRsItemSize(data);
     bool ok = true ;
 
+    if(tlvsize < rssize)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": wrong encoding of item size. Serialisation error!" << std::endl;
+        return NULL ;
+    }
+        
     RsGRouterTransactionChunkItem *item = new RsGRouterTransactionChunkItem() ;
 
     /* add mandatory parts first */
@@ -74,15 +80,14 @@ RsGRouterTransactionChunkItem *RsGRouterSerialiser::deserialise_RsGRouterTransac
     ok &= getRawUInt32(data, tlvsize, &offset, &item->chunk_size);
     ok &= getRawUInt32(data, tlvsize, &offset, &item->total_size);
 
-    if( NULL == (item->chunk_data = (uint8_t*)malloc(item->chunk_size)))
+    if(item->chunk_size > rssize || offset > rssize - item->chunk_size) // better than if(item->chunk_size + offset > rssize)
     {
-        std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->chunk_size << std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
 	delete item;
         return NULL ;
     }
-    if(item->chunk_size + offset > rssize)
+    if( NULL == (item->chunk_data = (uint8_t*)rs_malloc(item->chunk_size)))
     {
-        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
 	delete item;
         return NULL ;
     }
@@ -125,36 +130,59 @@ RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataI
 	uint32_t rssize = getRsItemSize(data);
 	bool ok = true ;
 
+	if(pktsize < rssize)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": wrong encoding of item size. Serialisation error!" << std::endl;
+		return NULL ;
+	}
 	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem() ;
 
 	ok &= getRawUInt64(data, pktsize, &offset, &item->routing_id); 	
 	ok &= item->destination_key.deserialise(data, pktsize, offset) ;
-    ok &= getRawUInt32(data, pktsize, &offset, &item->service_id);
-    ok &= getRawUInt32(data, pktsize, &offset, &item->data_size);
+	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id);
+	ok &= getRawUInt32(data, pktsize, &offset, &item->data_size);
 
-    if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
+    	if(item->data_size > 0)	// This happens when the item data has been deleted from the cache
 	{
-		std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory for chunk " << item->data_size << std::endl;
-		delete item;
-		return NULL ;
+		if(item->data_size > rssize || offset > rssize - item->data_size) // better than if(item->data_size + offset > rssize)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
+			delete item;
+			return NULL ;
+		}
+
+		if( NULL == (item->data_bytes = (uint8_t*)rs_malloc(item->data_size)))
+		{
+			delete item;
+			return NULL ;
+		}
+
+		memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
+		offset += item->data_size ;
 	}
+        else
+            item->data_bytes = NULL ;
 
-    if(item->data_size + offset > rssize)
-    {
-        std::cerr << __PRETTY_FUNCTION__ << ": Cannot read beyond item size. Serialisation error!" << std::endl;
-	delete item;
-        return NULL ;
-    }
+	ok &= item->signature.GetTlv(data, pktsize, &offset) ;
 
-    memcpy(item->data_bytes,&((uint8_t*)data)[offset],item->data_size) ;
-	offset += item->data_size ;
+	ok &= getRawUInt32(data, pktsize, &offset, &item->duplication_factor);
+    
+    	// make sure the duplication factor is not altered by friends. In the worst case, the item will duplicate a bit more.
+    
+    	if(item->duplication_factor < 1) 
+        {
+            item->duplication_factor = 1 ;
+            std::cerr << "(II) correcting GRouter item duplication factor from 0 to 1, to ensure backward compat." << std::endl;
+        }
+    	if(item->duplication_factor > GROUTER_MAX_DUPLICATION_FACTOR) 
+        {
+            std::cerr << "(WW) correcting GRouter item duplication factor of " << item->duplication_factor << ". This is very unexpected." << std::endl;
+            item->duplication_factor = GROUTER_MAX_DUPLICATION_FACTOR ;
+        }
+        
+	ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
 
-    ok &= item->signature.GetTlv(data, pktsize, &offset) ;
-
-    ok &= getRawUInt32(data, pktsize, &offset, &item->randomized_distance);
-    ok &= getRawUInt32(data, pktsize, &offset, &item->flags);
-
-    if (offset != rssize || !ok)
+	if (offset != rssize || !ok)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
 		delete item;
@@ -337,8 +365,19 @@ RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 
     // then duplicate the memory chunk
 
-    item->data_bytes = (uint8_t*)malloc(data_size) ;
-    memcpy(item->data_bytes,data_bytes,data_size) ;
+    if(data_size > 0)
+    {
+	    item->data_bytes = (uint8_t*)rs_malloc(data_size) ;
+
+        if(item->data_bytes == NULL)
+            {
+                delete item ;
+                return NULL ;
+            }
+	    memcpy(item->data_bytes,data_bytes,data_size) ;
+    }
+    else
+	    item->data_bytes = NULL ;
 
     return item ;
 }
@@ -362,7 +401,7 @@ uint32_t RsGRouterGenericDataItem::serial_size() const
     s += 4 ;                       		 	 // service id
     s += data_size ;                        // data
     s += signature.TlvSize() ;		// signature
-    s += 4 ;                                // randomized distance
+    s += 4 ;                                // duplication_factor
     s += 4 ; 				// flags
 
     return s ;
@@ -463,7 +502,7 @@ bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 
     ok &= signature.SetTlv(data, tlvsize, &offset) ;
 
-    ok &= setRawUInt32(data, tlvsize, &offset, randomized_distance) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, duplication_factor) ;
     ok &= setRawUInt32(data, tlvsize, &offset, flags) ;
 
     if (offset != tlvsize)
@@ -493,12 +532,18 @@ bool RsGRouterTransactionAcknItem::serialise(void *data,uint32_t& size) const
 
     return ok;
 }
-bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterGenericDataItem::serialise_signed_data(void *data,uint32_t size) const
 {
     bool ok = true;
 
     uint32_t offset = 0;
     uint32_t tlvsize = signed_data_size() ;
+    
+    if(tlvsize > size)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! Not enough size in supplied container." << std::endl;
+    }
 
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
@@ -541,12 +586,18 @@ bool RsGRouterSignedReceiptItem::serialise(void *data,uint32_t& size) const
 
 	return ok;
 }
-bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t& size) const
+bool RsGRouterSignedReceiptItem::serialise_signed_data(void *data,uint32_t size) const
 {
     bool ok = true;
 
     uint32_t offset=0;
     uint32_t tlvsize = signed_data_size() ;
+    
+    if(tlvsize > size)
+    {
+        ok = false;
+        std::cerr << "RsGRouterReceiptItem::serialisedata() size error! Not enough size in supplied container." << std::endl;
+    }
 
     /* add mandatory parts first */
     ok &= setRawUInt64(data, tlvsize, &offset, routing_id);
@@ -776,7 +827,7 @@ std::ostream& RsGRouterGenericDataItem::print(std::ostream& o, uint16_t)
     o << "  Data size:      " << data_size << std::endl ;
     o << "  Data hash:      " << RsDirUtil::sha1sum(data_bytes,data_size)  << std::endl ;
     o << "  signature key:  " << signature.keyId << std::endl;
-    o << "  randomized dist:" << randomized_distance << std::endl;
+    o << "  duplication fac:" << duplication_factor << std::endl;
     o << "  flags:          " << flags << std::endl;
 
     return o ;
