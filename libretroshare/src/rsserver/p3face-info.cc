@@ -35,6 +35,14 @@
 #include <sqlcipher/sqlite3.h>
 #endif
 
+#ifndef RS_ENABLE_ZCNATASSIST
+#ifdef RS_USE_LIBUPNP
+#include "upnp/upnpconfig.h"
+#else
+#include "miniupnpc/miniupnpc.h"
+#endif // RS_USE_LIBUPNP
+#endif // RS_ENABLE_ZCNATASSIST
+
 std::string RsServer::getSQLCipherVersion()
 {
 	sqlite3* mDb;
@@ -84,5 +92,12 @@ void RsServer::getLibraries(std::list<RsLibraryInfo> &libraries)
 #ifndef NO_SQLCIPHER
 	libraries.push_back(RsLibraryInfo("SQLCipher", getSQLCipherVersion()));
 #endif
+#ifndef RS_ENABLE_ZCNATASSIST
+#ifdef RS_USE_LIBUPNP
+	libraries.push_back(RsLibraryInfo("UPnP (libupnp)", UPNP_VERSION_STRING));
+#else
+	libraries.push_back(RsLibraryInfo("UPnP (MiniUPnP)", MINIUPNPC_VERSION));
+#endif // RS_USE_LIBUPNP
+#endif // RS_ENABLE_ZCNATASSIST
 	libraries.push_back(RsLibraryInfo("Zlib", ZLIB_VERSION));
 }
