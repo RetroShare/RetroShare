@@ -120,6 +120,8 @@ void RetroDb::closeDb(){
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::closeDb(): Error code on close: " << rc << std::endl;
+#else
+    (void)rc;
 #endif
 
 }

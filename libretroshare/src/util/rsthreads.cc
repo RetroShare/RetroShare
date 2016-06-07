@@ -24,12 +24,13 @@
  *
  */
 
-
 #include "rsthreads.h"
 #include <unistd.h>    // for usleep()
 #include <errno.h>    // for errno
 #include <iostream>
 #include <time.h>
+
+int __attribute__((weak)) pthread_setname_np(pthread_t __target_thread, const char *__buf) ;
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
@@ -164,7 +165,10 @@ void RsThread::start(const std::string &threadName)
         mTid = tid;
 
         // set name
-		if(!threadName.empty()) {
+
+        if(pthread_setname_np)
+		if(!threadName.empty()) 
+		{
 			// thread names are restricted to 16 characters including the terminating null byte
 			if(threadName.length() > 15)
 			{

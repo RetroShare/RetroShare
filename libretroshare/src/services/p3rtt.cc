@@ -261,12 +261,12 @@ int p3rtt::handlePing(RsItem *item)
 	// add our timestamp.
 	pong->mPongTS = convertTsTo64bits(ts);
 
-    static double mLastResponseToPong = 0.0 ;// bad stuff
 #ifdef DEBUG_RTT
+	static double mLastResponseToPong = 0.0 ;// bad stuff
     std::cerr << "Delay since last response to PONG: " << ts - mLastResponseToPong << std::endl;
+	mLastResponseToPong = ts ;
 #endif
-    
-    mLastResponseToPong = ts ;
+
 	sendItem(pong);
 	return true ;
 }

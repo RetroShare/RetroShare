@@ -605,7 +605,7 @@ int	pqistreamer::handleoutgoing_locked()
 #endif
             		int ss=0;
 
-		    if (mPkt_wpending_size != (ss = mBio->senddata(mPkt_wpending, mPkt_wpending_size)))
+		    if (mPkt_wpending_size != (uint32_t)(ss = mBio->senddata(mPkt_wpending, mPkt_wpending_size)))
 		    {
 #ifdef DEBUG_PQISTREAMER
 			    std::string out;
@@ -846,7 +846,7 @@ continue_packet:
 		    // so, don't do that:
 		    //		memset( extradata,0,extralen ) ;	
 
-		    if (extralen != (tmplen = mBio->readdata(extradata, extralen)))
+		    if (extralen != (uint32_t)(tmplen = mBio->readdata(extradata, extralen)))
 		    {
 #ifdef DEBUG_PQISTREAMER
 			    if(tmplen > 0)
@@ -1288,7 +1288,7 @@ int pqistreamer::locked_gatherStatistics(std::list<RSTrafficClue>& out_lst,std::
     return 1 ;
 }
 
-void *pqistreamer::locked_pop_out_data(uint32_t max_slice_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id)
+void *pqistreamer::locked_pop_out_data(uint32_t /*max_slice_size*/, uint32_t &size, bool &starts, bool &ends, uint32_t &packet_id)
 {
     size = 0 ;
     starts = true ;

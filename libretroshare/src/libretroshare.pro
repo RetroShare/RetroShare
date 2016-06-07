@@ -160,7 +160,7 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 	PKGCONFIG *= gnome-keyring-1
 	PKGCONFIG *= libssl libupnp
 	PKGCONFIG *= libcrypto zlib

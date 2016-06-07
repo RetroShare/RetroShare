@@ -41,11 +41,10 @@ namespace rs_nxs_test
 
 		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-
-	        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) ;
-	        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) ;
-        virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
+		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) ;
+		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) ;
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	};
 
 	/*!
@@ -71,10 +70,9 @@ namespace rs_nxs_test
 
 		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-
-	        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) { return true ;}
-	        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) { return allowed(circleId) ; }
+		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) { return true ;}
+		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) { return allowed(circleId) ; }
 		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	private:
 

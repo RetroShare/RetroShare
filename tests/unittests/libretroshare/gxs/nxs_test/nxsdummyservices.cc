@@ -33,7 +33,7 @@ int rs_nxs_test::RsNxsSimpleDummyCircles::canReceive(
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) 
+bool rs_nxs_test::RsNxsSimpleDummyCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId &destination_group, const RsGxsId& id)
 {
 	return true ;
 }
@@ -43,8 +43,7 @@ bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(
-		const RsGxsCircleId& circleId, std::list<RsGxsId>& friendlist) {
+bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId &destination_group, std::list<RsGxsId>& friendlist) {
 	return true;
 }
 rs_nxs_test::RsNxsSimpleDummyReputation::RsNxsSimpleDummyReputation(

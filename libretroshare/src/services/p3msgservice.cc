@@ -1945,7 +1945,7 @@ uint32_t p3MsgService::getDistantMessagingPermissionFlags()
     return mDistantMessagePermissions ;
 }
             
-void p3MsgService::receiveGRouterData(const RsGxsId& destination_key, const RsGxsId& signing_key,GRouterServiceId& client_id,uint8_t *data,uint32_t data_size)
+void p3MsgService::receiveGRouterData(const RsGxsId &destination_key, const RsGxsId &signing_key, GRouterServiceId &/*client_id*/, uint8_t *data, uint32_t data_size)
 {
     std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << data_size << ", for key " << destination_key << std::endl;
 

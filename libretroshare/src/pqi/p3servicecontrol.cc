@@ -125,7 +125,7 @@ public:
         return ok;
     }
 
-    static RsServicePermissionItem *deserialise(uint8_t *data,uint32_t size)
+    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t size)
     {
         RsServicePermissionItem *item = new RsServicePermissionItem ;
 
@@ -133,6 +133,12 @@ public:
         uint32_t rssize = getRsItemSize(data);
         bool ok = true ;
 
+        if(rssize > size)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+            return NULL ;
+        }
+            
         /* add mandatory parts first */
         ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);
@@ -1247,6 +1253,8 @@ void    p3ServiceControl::updatePeerConnect(const RsPeerId &peerId)
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerConnect(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#else
+	(void)peerId;
 #endif
 	return;
 }

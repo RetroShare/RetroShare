@@ -283,6 +283,7 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 		    details.mCircleName = data.mCircleName;
 
 		    details.mCircleType = data.mCircleType;
+		    details.mRestrictedCircleId = data.mRestrictedCircleId;
 
 		    details.mAllowedNodes = data.mAllowedNodes;
 		    details.mSubscriptionFlags.clear();
@@ -588,6 +589,7 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mOriginator = circle.mMeta.mOriginator ;
         
         mAllowedNodes = circle.mLocalFriends ;
+        mRestrictedCircleId = circle.mMeta.mCircleId ;
         
         mMembershipStatus.clear() ;
         
@@ -1043,7 +1045,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 
 bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 {
-	bool isUnprocessedPeers = false;
+	//bool isUnprocessedPeers = false;
 
 	if (cache.mIsExternal)
 	{
@@ -1086,7 +1088,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 			}
 
 			mIdentities->requestKey(pit->first, peers);
-			isUnprocessedPeers = true;
+			//isUnprocessedPeers = true;
 		}
 #ifdef DEBUG_CIRCLES
 	    		else
