@@ -117,18 +117,11 @@ ConfCertDialog::~ConfCertDialog()
     if (it != instances_ssl.end())
 	    instances_ssl.erase(it);
 
-    QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
-    if (it != instances_pgp.end())
-	    instances_pgp.erase(it);
+    QMap<RsPgpId, ConfCertDialog*>::iterator it2 = instances_pgp.find(pgpId);
+    if (it2 != instances_pgp.end())
+	    instances_pgp.erase(it2);
 }
 
-void ConfCertDialog::setTransferSpeeds()
-{
-    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
-    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
-    
-    rsPeers->setPeerMaxTransferRates(peerId,max_download_speed,max_upload_speed);
-}
 
 void ConfCertDialog::setServiceFlags()
 {
@@ -164,13 +157,8 @@ void ConfCertDialog::load()
     ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
     ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
-    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
-    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
-    
-    rsPeers->getPeerMaxTransferRates(peerId,max_download_speed,max_upload_speed);
-    
-    ui.maxUploadSpeed_SB->setValue(max_upload_speed) ;
-    ui.maxDownloadSpeed_SB->setValue(max_downupload_speed) ;
+    ui.maxUploadSpeed_SB->setValue(detail.maxRateUp) ;
+    ui.maxDownloadSpeed_SB->setValue(detail.maxRateDn) ;
     
     //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
@@ -356,55 +344,60 @@ void ConfCertDialog::applyDialog()
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(peerId, detail))
     {
-        if (!rsPeers->getGPGDetails(pgpId, detail)) {
-            QMessageBox::information(this,
-                                     tr("RetroShare"),
-                                     tr("Error : cannot get peer details."));
-            close();
-            return;
-        }
+	    if (!rsPeers->getGPGDetails(pgpId, detail)) {
+		    QMessageBox::information(this,
+		                             tr("RetroShare"),
+		                             tr("Error : cannot get peer details."));
+		    close();
+		    return;
+	    }
     }
 
-        if(!detail.isHiddenNode)
-        {
-			/* check if the data is the same */
-			bool localChanged = false;
-			bool extChanged = false;
-			bool dnsChanged = false;
+    if(!detail.isHiddenNode)
+    {
+	    /* check if the data is the same */
+	    bool localChanged = false;
+	    bool extChanged = false;
+	    bool dnsChanged = false;
 
-			/* set local address */
-			if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
-				localChanged = true;
+	    /* set local address */
+	    if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
+		    localChanged = true;
 
-			if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
-				extChanged = true;
+	    if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
+		    extChanged = true;
 
-			if ((detail.dyndns != ui.dynDNS->text().toStdString()))
-				dnsChanged = true;
+	    if ((detail.dyndns != ui.dynDNS->text().toStdString()))
+		    dnsChanged = true;
 
-			/* now we can action the changes */
-			if (localChanged)
-				rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
+	    /* now we can action the changes */
+	    if (localChanged)
+		    rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
-			if (extChanged)
-				rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
+	    if (extChanged)
+		    rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-			if (dnsChanged)
-				rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
+	    if (dnsChanged)
+		    rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
 
-			if(localChanged || extChanged || dnsChanged)
-				emit configChanged();
-        }
-        else
-        {
-            if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value()))
-            {
-				rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
-				emit configChanged();
-			}
-		}
+	    if(localChanged || extChanged || dnsChanged)
+		    emit configChanged();
+    }
+    else
+    {
+	    if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value()))
+	    {
+		    rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
+		    emit configChanged();
+	    }
+    }
 
-	 setServiceFlags() ;
+    setServiceFlags() ;
+
+    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
+    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
+
+    rsPeers->setPeerMaximumRates(peerId,max_upload_speed,max_download_speed);
 
     loadAll();
     close();

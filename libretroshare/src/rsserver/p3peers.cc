@@ -243,7 +243,7 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
 
 bool p3Peers::setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
 {
-    mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+    return mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
 }
 
 bool p3Peers::haveSecretKey(const RsPgpId& id)
