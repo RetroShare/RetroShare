@@ -1999,6 +1999,9 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		item->domain_addr = (it->second).hiddenDomain;
 		item->domain_port = (it->second).hiddenPort;
+        
+        	item->maxUploadRate = it->second.maxUpRate ;
+        	item->maxDownloadRate = it->second.maxDnRate ;
 
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
@@ -2016,7 +2019,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		sitem->pgp_ids.push_back(it->first) ;
 		sitem->service_flags.push_back(it->second) ;
 	}
-
+    
 	saveData.push_back(sitem) ;
 	saveCleanupList.push_back(sitem);
 
@@ -2072,6 +2075,29 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
+bool p3PeerMgrIMPL::setMaxRates(const RsPeerId& pid,uint32_t maxUp,uint32_t maxDn) 
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+        /* check if it is a friend */
+        std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
+        
+        if(mFriendList.end() == it)
+            return false ;
+            
+        if(maxUp == it->second.maxUpRate && maxDn == it->second.maxDnRate)
+            return true ;
+        
+        std::cerr << "Updating max rates for peer " << pid << " to " << maxUp << " kB/s (up), " << maxDn << " kB/s (dn)" << std::endl;
+        
+        it->second.maxUpRate = maxUp ;
+        it->second.maxDnRate = maxDn ;
+        
+        IndicateConfigChanged();
+        
+        return true ;
+}
+        
 void    p3PeerMgrIMPL::saveDone()
 {
 	/* clean up the save List */
@@ -2144,6 +2170,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
                 addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
 				setLocation(pitem->peerId, pitem->location);
 			}
+            
+            		setMaxRates(pitem->peerId,pitem->maxUploadRate,pitem->maxDownloadRate) ;
 
 			if (pitem->netMode == RS_NET_MODE_HIDDEN)
 			{

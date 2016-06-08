@@ -879,6 +879,9 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += GetTlvStringSize(i->domain_addr);
 	s += 2; /* domain_port */
 
+    	s += 4 ; // max upload rate
+    	s += 4 ; // max dl rate
+        
 	return s;
 
 }
@@ -938,6 +941,9 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->domain_port); /* Mandatory */
 
+	ok &= setRawUInt32(data, tlvsize, &offset, item->maxUploadRate); /* Mandatory */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->maxDownloadRate); /* Mandatory */
+    
 	if(offset != tlvsize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
@@ -1015,6 +1021,12 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
 	ok &= getRawUInt16(data, rssize, &offset, &(item->domain_port)); /* Mandatory */
 
+    	if(offset == rssize)	// this allows to load the peer list when max bandwidth rates are missing.
+            return item ;
+            
+	ok &= getRawUInt32(data, rssize, &offset, &(item->maxUploadRate)); /* Mandatory */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->maxDownloadRate)); /* Mandatory */
+    
         if (offset != rssize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG

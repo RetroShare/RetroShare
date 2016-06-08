@@ -241,6 +241,11 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
+bool p3Peers::setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
+{
+    mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+
 bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->haveSecretKey(id);
@@ -272,6 +277,9 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		return false;
 	}
 
+        d.maxRateUp = ps.maxUpRate ;
+        d.maxRateDn = ps.maxDnRate ;
+
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't return now, we've got fill in the ssl and connection info */
 	getGPGDetails(ps.gpg_id, d);
@@ -296,17 +304,17 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
 		d.hiddenType = ps.hiddenType;
-        
+
 		if(sockaddr_storage_isnull(ps.localaddr))	// that happens if the address is not initialised.
-        	{
+		{
 			d.localAddr	= "INVALID_IP";
 			d.localPort	= 0 ;
-        	}
-            	else
-        	{
+		}
+		else
+		{
 			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 			d.localPort	= sockaddr_storage_port(ps.localaddr);
-        	}
+		}
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
@@ -341,10 +349,10 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		}
 
 		d.dyndns        = ps.dyndns;
-	
+
 		std::list<pqiIpAddress>::iterator it;
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-				it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
+		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "L:";
@@ -352,8 +360,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
-		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-				it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
+		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "E:";
@@ -362,32 +369,31 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			d.ipAddressList.push_back(toto);
 		}
 	}
-	
+
 
 	switch(ps.netMode & RS_NET_MODE_ACTUAL)
 	{
-		case RS_NET_MODE_EXT:
-			d.netMode	= RS_NETMODE_EXT;
-			break;
-		case RS_NET_MODE_UPNP:
-			d.netMode	= RS_NETMODE_UPNP;
-			break;
-		case RS_NET_MODE_UDP:
-			d.netMode	= RS_NETMODE_UDP;
-			break;
-		case RS_NET_MODE_HIDDEN:
-			d.netMode	= RS_NETMODE_HIDDEN;
-			break;
-		case RS_NET_MODE_UNREACHABLE:
-		case RS_NET_MODE_UNKNOWN:
-		default:
-			d.netMode	= RS_NETMODE_UNREACHABLE;
-			break;
+	case RS_NET_MODE_EXT:
+		d.netMode	= RS_NETMODE_EXT;
+		break;
+	case RS_NET_MODE_UPNP:
+		d.netMode	= RS_NETMODE_UPNP;
+		break;
+	case RS_NET_MODE_UDP:
+		d.netMode	= RS_NETMODE_UDP;
+		break;
+	case RS_NET_MODE_HIDDEN:
+		d.netMode	= RS_NETMODE_HIDDEN;
+		break;
+	case RS_NET_MODE_UNREACHABLE:
+	case RS_NET_MODE_UNKNOWN:
+	default:
+		d.netMode	= RS_NETMODE_UNREACHABLE;
+		break;
 	}
 
 	d.vs_disc = ps.vs_disc;
 	d.vs_dht = ps.vs_dht;
-
 
 	/* Translate */
 	peerConnectState pcs;
@@ -414,14 +420,10 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 
 	d.state		= 0;
-	if (pcs.state & RS_PEER_S_FRIEND)
-		d.state |= RS_PEER_STATE_FRIEND;
-	if (pcs.state & RS_PEER_S_ONLINE)
-		d.state |= RS_PEER_STATE_ONLINE;
-	if (pcs.state & RS_PEER_S_CONNECTED)
-		d.state |= RS_PEER_STATE_CONNECTED;
-	if (pcs.state & RS_PEER_S_UNREACHABLE)
-		d.state |= RS_PEER_STATE_UNREACHABLE;
+	if (pcs.state & RS_PEER_S_FRIEND)      d.state |= RS_PEER_STATE_FRIEND;
+	if (pcs.state & RS_PEER_S_ONLINE)      d.state |= RS_PEER_STATE_ONLINE;
+	if (pcs.state & RS_PEER_S_CONNECTED)   d.state |= RS_PEER_STATE_CONNECTED;
+	if (pcs.state & RS_PEER_S_UNREACHABLE) d.state |= RS_PEER_STATE_UNREACHABLE;
 
 	d.actAsServer = pcs.actAsServer;
 
@@ -432,7 +434,6 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	d.connectState = RS_PEER_CONNECTSTATE_OFFLINE;
 	d.connectStateString.clear();
-
 
 	if (pcs.inConnAttempt)
 	{
@@ -445,7 +446,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
-    {
+	{
 		/* peer is connected - determine how and set proper connectState */
 		if(mPeerMgr->isHidden())
 		{
@@ -519,8 +520,8 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
 			}
 		}
-    }
-
+	}
+        
 	d.wasDeniedConnection = pcs.wasDeniedConnection;
 	d.deniedTS = pcs.deniedTS;
 

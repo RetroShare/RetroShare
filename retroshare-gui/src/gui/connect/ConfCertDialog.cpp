@@ -103,9 +103,6 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
-    //connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
-    //connect(ui._shouldAddSignatures_CB_2, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
     MainWindow *w = MainWindow::getInstance();
@@ -116,20 +113,22 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
-//    if(peerId.isNull())
-    {
-        QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
-        if (it != instances_ssl.end())
-            instances_ssl.erase(it);
-    }
-//    else
-    {
-        QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
-        if (it != instances_pgp.end())
-            instances_pgp.erase(it);
-    }
+    QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
+    if (it != instances_ssl.end())
+	    instances_ssl.erase(it);
+
+    QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
+    if (it != instances_pgp.end())
+	    instances_pgp.erase(it);
 }
 
+void ConfCertDialog::setTransferSpeeds()
+{
+    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
+    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
+    
+    rsPeers->setPeerMaxTransferRates(peerId,max_download_speed,max_upload_speed);
+}
 
 void ConfCertDialog::setServiceFlags()
 {
@@ -165,6 +164,14 @@ void ConfCertDialog::load()
     ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
     ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
+    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
+    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
+    
+    rsPeers->getPeerMaxTransferRates(peerId,max_download_speed,max_upload_speed);
+    
+    ui.maxUploadSpeed_SB->setValue(max_upload_speed) ;
+    ui.maxDownloadSpeed_SB->setValue(max_downupload_speed) ;
+    
     //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
 

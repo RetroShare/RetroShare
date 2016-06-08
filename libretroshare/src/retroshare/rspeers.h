@@ -276,6 +276,9 @@ class RsPeerDetails
 
 	/* linkType */
 	uint32_t linkType;
+    
+    	uint32_t maxRateUp;
+    	uint32_t maxRateDn;
 };
 
 // This class is used to get info about crytographic algorithms used with a
@@ -428,6 +431,8 @@ public:
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) = 0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
 	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) = 0;
+    
+    	virtual bool setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate) =0;
 };
 
 #endif

@@ -129,7 +129,6 @@ class peerConnectState
         time_t deniedTS;
 	bool deniedInConnAttempt; /* is below valid */
 	peerConnectAddress deniedConnectionAttempt;
-
 };
 
 class p3tunnel; 

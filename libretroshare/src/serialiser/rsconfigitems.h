@@ -95,6 +95,9 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	// for proxy connection.
 	std::string domain_addr;
 	uint16_t    domain_port;  
+    
+    	uint32_t maxUploadRate ;
+    	uint32_t maxDownloadRate ;
 };
 
 class RsPeerServicePermissionItem : public RsItem
