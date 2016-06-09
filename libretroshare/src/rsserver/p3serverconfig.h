@@ -95,6 +95,7 @@ virtual bool     setOperatingMode(uint32_t opMode);
 virtual int SetMaxDataRates( int downKb, int upKb );
 virtual int GetMaxDataRates( int &downKb, int &upKb );
 virtual int GetCurrentDataRates( float &inKb, float &outKb );
+virtual int SetMaxDataRates(const RsPeerId& pid, int  downKb, int  upKb );
 
 /********************* ABOVE is RsConfig Interface *******/
 

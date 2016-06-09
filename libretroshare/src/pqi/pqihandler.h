@@ -39,8 +39,12 @@
 class SearchModule
 {
 	public:
-	RsPeerId peerid;
-	PQInterface *pqi;
+        	SearchModule() { mMaxUpRate=0;mMaxDnRate=0;}
+            
+		RsPeerId peerid	;
+		PQInterface *pqi;
+        	uint32_t mMaxUpRate ;	// max allowed speeds in kB/s
+        	uint32_t mMaxDnRate ;
 };
 
 // Presents a P3 Face to the world!
@@ -71,14 +75,18 @@ class pqihandler: public P3Interface, public pqiPublisher
 #endif
 
 		// rate control.
+		void	setMaxRate(const RsPeerId& pid,bool in, uint32_t val_kBs);
 		void	setMaxRate(bool in, float val);
 		float	getMaxRate(bool in);
+                
+                void   setMaxRates(const RsPeerId& pid,bool in,float val) ;
+                float  getMaxRates(const RsPeerId& pid,bool in) ;
 
 		void	getCurrentRates(float &in, float &out);
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
-        int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
+		int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
 
 protected:
 		/* check to be overloaded by those that can
@@ -117,6 +125,24 @@ protected:
 		time_t last_m ;
 		float ticks_per_sec ;
 };
+
+inline void pqihandler::setMaxRate(const RsPeerId& pid,bool in,uint32_t val_kBs)
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	std::map<RsPeerId, SearchModule *>::iterator it = mods.find(pid);
+
+	if(it == mods.end())
+	{
+		std::cerr << "(EE) no search module for pid " << pid << ": cannot set max rate" << std::endl;
+		return ;
+	}
+
+	if(in)
+		it->second->mMaxDnRate = val_kBs ;
+	else
+		it->second->mMaxUpRate = val_kBs ;
+}
 
 inline void pqihandler::setMaxRate(bool in, float val)
 {

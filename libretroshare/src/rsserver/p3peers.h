@@ -140,6 +140,7 @@ public:
 	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags);
 
     	virtual bool setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate);
+    	virtual bool getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate);
 private:
 
 	p3LinkMgr *mLinkMgr;

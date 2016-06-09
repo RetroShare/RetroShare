@@ -210,6 +210,7 @@ virtual uint32_t getHiddenType(const RsPeerId &ssl_id) = 0;
 
 virtual int 	getFriendCount(bool ssl, bool online) = 0;
 virtual bool 	setMaxRates(const RsPeerId& pid,uint32_t maxR,uint32_t minR)=0;
+virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxR,uint32_t& minR)=0;
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -325,6 +326,7 @@ virtual int 	getFriendCount(bool ssl, bool online);
 virtual bool 	haveOnceConnected();
 
 virtual bool 	setMaxRates(const RsPeerId& pid,uint32_t maxR,uint32_t minR);
+virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxR,uint32_t& minR);
 
 /************************************************************************************************/
 /* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */

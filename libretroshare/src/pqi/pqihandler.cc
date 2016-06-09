@@ -27,6 +27,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "retroshare/rspeers.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -113,27 +114,30 @@ int	pqihandler::tick()
 			moreToTick = 1;
 		}
 #endif
-    }
+	}
 
-//     static time_t last_print_time = 0 ;
-//     time_t now = time(NULL) ;
-//     if(now > last_print_time + 3)
-//     {
-//         std::map<uint16_t,uint32_t> per_service_count ;
-//         std::vector<uint32_t> per_priority_count ;
-//
-//         ExtractOutQueueStatistics(per_service_count,per_priority_count) ;
-//
-//         std::cerr << "PQIHandler outqueues: " << std::endl;
-//
-//         for(std::map<uint16_t,uint32_t>::const_iterator it=per_service_count.begin();it!=per_service_count.end();++it)
-//             std::cerr << "  " << std::hex << it->first << std::dec << "  " << it->second << std::endl;
-//
-//         for(int i=0;i<per_priority_count.size();++i)
-//             std::cerr << "  " << i << " : " << per_priority_count[i] << std::endl;
-//
-//         last_print_time = now ;
-//     }
+	static time_t last_print_time = 0 ;
+	time_t now = time(NULL) ;
+	if(now > last_print_time + 5)
+	{
+                // every 5 secs, update the max rates for all modules
+        
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+		for(std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
+            	{
+            		// This is rather inelegant, but pqihandler has searchModules that are dynamically allocated, so the max rates
+            		// need to be updated from inside.
+	    		uint32_t maxUp,maxDn ;
+            		rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn);
+                    
+                    std::cerr << "Updating searchModule " << it->first << " max rates to " << maxUp << " - " << maxDn << std::endl;
+                    
+                    	it->second->mMaxDnRate = maxDn ;
+                    	it->second->mMaxUpRate = maxUp ;
+		}
+        
+        	last_print_time = now ;
+	}
 
 	UpdateRates();
 	return moreToTick;
@@ -502,6 +506,7 @@ int     pqihandler::UpdateRates()
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
+        
 		mod -> pqi -> setMaxRate(true,   in_max_bw);
 		mod -> pqi -> setMaxRate(false, out_max_bw);
 	}
@@ -511,18 +516,15 @@ int     pqihandler::UpdateRates()
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
-		if (mod -> pqi -> getMaxRate(false) < max_out_effective) {
-			mod -> pqi -> setMaxRate(false, max_out_effective);
-		}
-		if (mod -> pqi -> getMaxRate(false) > avail_out) {
-			mod -> pqi -> setMaxRate(false, avail_out);
-		}
-		if (mod -> pqi -> getMaxRate(true) < max_in_effective) {
-			mod -> pqi -> setMaxRate(true, max_in_effective);
-		}
-		if (mod -> pqi -> getMaxRate(true) > avail_in) {
-			mod -> pqi -> setMaxRate(true, avail_in);
-		}
+		if (mod -> pqi -> getMaxRate(false) < max_out_effective)  mod -> pqi -> setMaxRate(false, max_out_effective);
+		if (mod -> pqi -> getMaxRate(false) > avail_out)          mod -> pqi -> setMaxRate(false, avail_out);
+		if (mod -> pqi -> getMaxRate(true)  < max_in_effective)   mod -> pqi -> setMaxRate(true,  max_in_effective);
+		if (mod -> pqi -> getMaxRate(true)  > avail_in)           mod -> pqi -> setMaxRate(true,  avail_in);
+        
+        	// Caps the allowed max speeds to the user defined values, leaving more space for other peers.
+        
+        	if(mod->mMaxUpRate > 0 && mod->pqi->getMaxRate(false) > mod->mMaxUpRate) mod->pqi->setMaxRate(false, mod->mMaxUpRate) ;
+        	if(mod->mMaxDnRate > 0 && mod->pqi->getMaxRate(true ) > mod->mMaxDnRate) mod->pqi->setMaxRate(true , mod->mMaxDnRate) ;
 	}
 
 	return 1;

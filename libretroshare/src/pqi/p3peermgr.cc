@@ -2075,6 +2075,20 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
+bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn) 
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+        /* check if it is a friend */
+        std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
+        
+        if(mFriendList.end() == it)
+            return false ;
+            
+        maxUp = it->second.maxUpRate ;
+        maxDn = it->second.maxDnRate ;
+	return true ;
+}
 bool p3PeerMgrIMPL::setMaxRates(const RsPeerId& pid,uint32_t maxUp,uint32_t maxDn) 
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -2171,7 +2185,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				setLocation(pitem->peerId, pitem->location);
 			}
             
-            		setMaxRates(pitem->peerId,pitem->maxUploadRate,pitem->maxDownloadRate) ;
+            	#warning needs to talk to pqihandler from here
+            		//setMaxRates(pitem->peerId,pitem->maxUploadRate,pitem->maxDownloadRate) ;
 
 			if (pitem->netMode == RS_NET_MODE_HIDDEN)
 			{
