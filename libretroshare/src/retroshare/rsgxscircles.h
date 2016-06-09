@@ -124,32 +124,29 @@ class RsGxsCircleDetails
 
 class RsGxsCircles: public RsGxsIfaceHelper
 {
-	public:
+public:
 
-	RsGxsCircles(RsGxsIface *gxs)
-	:RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsGxsCircles() { return; }
-
+	RsGxsCircles(RsGxsIface *gxs) :RsGxsIfaceHelper(gxs)  { return; }
+	virtual ~RsGxsCircles() { return; }
 
 	/* External Interface (Cached stuff) */
-virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
-virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
-virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
+	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+	virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
 
-    	/* membership management for external circles */
-    
-    	virtual bool requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
-    	virtual bool cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
-    
+	/* membership management for external circles */
+
+	virtual bool requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
+	virtual bool cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
+
 	/* standard load */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
 
-    /* make new group */
-virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
+	/* make new group */
+	virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
 
-    /* update an existing group */
-virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
-
+	/* update an existing group */
+	virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
 };
 
 

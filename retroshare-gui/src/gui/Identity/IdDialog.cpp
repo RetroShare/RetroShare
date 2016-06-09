@@ -71,8 +71,9 @@
 #define RED_BACKGROUND   3
 #define GRAY_BACKGROUND  4
 
-#define CIRCLESDIALOG_GROUPMETA  1
-#define CIRCLESDIALOG_GROUPDATA  2
+#define CIRCLESDIALOG_GROUPMETA    1
+#define CIRCLESDIALOG_GROUPDATA    2
+#define CIRCLESDIALOG_GROUPUPDATE  3
 
 /****************************************************************
  */
@@ -342,6 +343,8 @@ void IdDialog::requestCircleGroupMeta()
 	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
 
+// should update this code to be called and modify the tree widget accordingly
+#ifdef SUSPENDED
 void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, true);
@@ -362,6 +365,7 @@ void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 	uint32_t token;
 	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPDATA);
 }
+#endif
 
 void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 {
@@ -758,6 +762,58 @@ void IdDialog::loadCircleGroupData(const uint32_t& token)
     mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, false);
 }
 
+void IdDialog::updateCircleGroup(const uint32_t& token)
+{
+#ifdef ID_DEBUG
+    std::cerr << "Loading circle info" << std::endl;
+#endif
+    
+    std::vector<RsGxsCircleGroup> circle_grp_v ;
+    rsGxsCircles->getGroupData(token, circle_grp_v);
+
+    if (circle_grp_v.empty())
+    {
+        std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
+        return ;
+    }
+        
+    if (circle_grp_v.size() != 1)
+    {
+        std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
+        return ;
+    }
+    
+    RsGxsCircleGroup cg = circle_grp_v.front();
+    
+    /* now mark all the members */
+
+    std::set<RsGxsId> members = cg.mInvitedMembers;
+
+    std::map<uint32_t,CircleUpdateOrder>::iterator it = mCircleUpdates.find(token) ;
+    
+    if(it == mCircleUpdates.end())
+    {
+        std::cerr << "(EE) Cannot find token " << token << " to perform group update!" << std::endl;
+        return ;
+    }
+    
+    if(it->second.action == CircleUpdateOrder::GRANT_MEMBERSHIP)
+        cg.mInvitedMembers.insert(it->second.gxs_id) ;
+    else if(it->second.action == CircleUpdateOrder::REVOKE_MEMBERSHIP)
+        cg.mInvitedMembers.erase(it->second.gxs_id) ;
+    else
+    {
+        std::cerr << "(EE) unrecognised membership action to perform: " << it->second.action << "!" << std::endl;
+	return ;
+    }
+    
+    uint32_t token2 ;
+    rsGxsCircles->updateGroup(token2,cg) ;
+    
+    mCircleUpdates.erase(it) ;
+    requestCircleGroupMeta();
+}
+
 bool IdDialog::getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id)
 {
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES    
@@ -801,6 +857,58 @@ void IdDialog::showEditExistingCircle()
     requestCircleGroupMeta();	// update GUI
 }
 
+void IdDialog::grantCircleMembership() 
+{
+    RsGxsCircleId circle_id ;
+
+    if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
+	    return;
+
+    RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+    std::list<RsGxsGroupId> grps ;
+    grps.push_back(RsGxsGroupId(circle_id));
+
+    uint32_t token;
+    mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
+
+    CircleUpdateOrder c ;
+    c.token = token ;
+    c.gxs_id = gxs_id_to_revoke ;
+    c.action = CircleUpdateOrder::GRANT_MEMBERSHIP ;
+
+    mCircleUpdates[token] = c ;
+}
+
+void IdDialog::revokeCircleMembership() 
+{
+    RsGxsCircleId circle_id ;
+
+    if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
+	    return;
+
+    RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+    std::list<RsGxsGroupId> grps ;
+    grps.push_back(RsGxsGroupId(circle_id));
+
+    uint32_t token;
+    mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
+
+    CircleUpdateOrder c ;
+    c.token = token ;
+    c.gxs_id = gxs_id_to_revoke ;
+    c.action = CircleUpdateOrder::REVOKE_MEMBERSHIP ;
+
+    mCircleUpdates[token] = c ;
+}
+
 void IdDialog::acceptCircleSubscription() 
 {
     RsGxsCircleId circle_id ;
@@ -838,6 +946,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     RsGxsId current_gxs_id ;
     RsGxsId item_id(item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString());
     bool is_circle ;
+    bool am_I_circle_admin = false ;
     
     if(item_id == RsGxsId(circle_id))	// is it a circle?
     {
@@ -848,11 +957,14 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 	    {
 #endif
 		    if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		    {
 			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
+			    am_I_circle_admin = true ;
+		    }
 		    else
 			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
-	    }
+	}
 #endif
         
 	    std::cerr << "  Item is a circle item. Adding Edit/Details menu entry." << std::endl;
@@ -860,10 +972,16 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 
 	    contextMnu.addSeparator() ;
     }
-    else if(rsIdentity->isOwnId(item_id))	// is it one of our GXS ids?
+    else 
     {
 	    current_gxs_id = RsGxsId(item_id);
-            is_circle =false ;
+	    is_circle =false ;
+
+	    if(item->parent() != NULL)
+	    {
+		    uint32_t group_flags = item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+		    am_I_circle_admin = bool(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
+	    }
 
 	    std::cerr << "  Item is a GxsId item. Requesting flags/group id from parent: " << circle_id << std::endl;
     }
@@ -966,6 +1084,32 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 
 		    contextMnu.addMenu(menu) ;
 	    }
+    }
+    
+    if(!is_circle && am_I_circle_admin)	// I am circle admin. I can therefore revoke/accept membership
+    {
+	std::map<RsGxsId,uint32_t>::const_iterator it = details.mSubscriptionFlags.find(current_gxs_id) ;
+    
+        if(!current_gxs_id.isNull() && it != details.mSubscriptionFlags.end())
+        {
+	    contextMnu.addSeparator() ;
+
+	    if(it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST)
+	    { 
+		    QAction *action = new QAction(tr("Revoke this member"),this) ;
+		    action->setData(QString::fromStdString(current_gxs_id.toStdString()));
+		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(revokeCircleMembership()));
+		    contextMnu.addAction(action) ;
+	    }
+	    else
+	    {
+		    QAction *action = new QAction(tr("Grant membership"),this) ;
+		    action->setData(QString::fromStdString(current_gxs_id.toStdString()));
+		    QObject::connect(action,SIGNAL(triggered()), this, SLOT(grantCircleMembership()));
+		    contextMnu.addAction(action) ;
+	    }
+
+        }
     }
 
     contextMnu.exec(QCursor::pos());
@@ -1806,6 +1950,10 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 		    loadCircleGroupData(req.mToken);
 		    break;
 
+	    case CIRCLESDIALOG_GROUPUPDATE:
+		    updateCircleGroup(req.mToken);
+		    break;
+            
 	    default:
 		    std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
 		    std::cerr << std::endl;

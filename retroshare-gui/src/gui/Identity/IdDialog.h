@@ -39,6 +39,15 @@ class IdDialog;
 class UIStateHelper;
 class QTreeWidgetItem;
 
+struct CircleUpdateOrder
+{
+    enum { UNKNOWN_ACTION=0x00, GRANT_MEMBERSHIP=0x01, REVOKE_MEMBERSHIP=0x02 };
+         
+    uint32_t token ;
+    RsGxsId  gxs_id ;
+    uint32_t action ;
+};
+
 class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
 	Q_OBJECT
@@ -55,21 +64,24 @@ public:
 
 protected:
 	virtual void updateDisplay(bool complete);
-    
-    void loadCircleGroupMeta(const uint32_t &token);
-    void loadCircleGroupData(const uint32_t &token);
-    
-    void requestCircleGroupMeta();
-    void requestCircleGroupData(const RsGxsCircleId& circle_id);
-    bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
-    
+
+	void loadCircleGroupMeta(const uint32_t &token);
+	void loadCircleGroupData(const uint32_t &token);
+	void updateCircleGroup(const uint32_t& token);
+
+	void requestCircleGroupMeta();
+	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
+	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
+
 private slots:
-    void createExternalCircle();
-    void showEditExistingCircle();
+	void createExternalCircle();
+	void showEditExistingCircle();
 	void updateCirclesDisplay();
-    
-    void acceptCircleSubscription() ;
-    void cancelCircleSubscription() ;
+
+	void acceptCircleSubscription() ;
+	void cancelCircleSubscription() ;
+	void grantCircleMembership() ;
+	void revokeCircleMembership() ;
 
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
@@ -94,12 +106,12 @@ private slots:
 #endif
 
 	void  addtoContacts();
-  void  removefromContacts();
+	void  removefromContacts();
 
 	void negativePerson();
 	void positivePerson();
 	void neutralPerson();
-	
+
 	static QString inviteMessage();
 	void sendInvite();
 
@@ -132,7 +144,9 @@ private:
 	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
-    	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+
+	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;
 
