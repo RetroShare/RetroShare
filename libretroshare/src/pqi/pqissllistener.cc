@@ -374,11 +374,15 @@ int	pqissllistenbase::acceptconnection()
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+    std::cerr << "(II) Checking incoming connection address: " << sockaddr_storage_iptostring(remote_addr) ;
         if(rsBanList != NULL && !rsBanList->isAddressAccepted(remote_addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
         {
-            std::cerr << "(II) pqissllistenner::acceptConnection(): early denying connection attempt from blacklisted IP " << sockaddr_storage_iptostring(remote_addr) << std::endl;
+            std::cerr << " => early rejected at this point, because of blacklist." << std::endl;
             return false ;
         }
+        else
+            std::cerr << " => Accepted (i.e. whitelisted, or not blacklisted)." << std::endl;
+        
     {
       std::string out;
       out += "Accepted Connection from ";
