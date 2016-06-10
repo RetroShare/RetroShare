@@ -240,6 +240,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	/* Set initial section sizes */
   QHeaderView * circlesheader = ui->treeWidget_membership->header () ;
   circlesheader->resizeSection (CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QFontMetricsF(ui->idTreeWidget->font()).width("Circle name")*1.5) ;
+  ui->treeWidget_membership->setColumnWidth(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 270);
 
 	ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RSID_COL_KEYID, tr("Search ID"));
 
