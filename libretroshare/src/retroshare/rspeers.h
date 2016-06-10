@@ -276,9 +276,6 @@ class RsPeerDetails
 
 	/* linkType */
 	uint32_t linkType;
-    
-    	uint32_t maxRateUp;
-    	uint32_t maxRateDn;
 };
 
 // This class is used to get info about crytographic algorithms used with a

@@ -286,9 +286,6 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		return false;
 	}
 
-        d.maxRateUp = ps.maxUpRate ;
-        d.maxRateDn = ps.maxDnRate ;
-
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't return now, we've got fill in the ssl and connection info */
 	getGPGDetails(ps.gpg_id, d);

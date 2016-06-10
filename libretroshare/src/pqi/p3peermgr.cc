@@ -2116,18 +2116,15 @@ bool p3PeerMgrIMPL::setMaxRates(const RsPgpId& pid,uint32_t maxUp,uint32_t maxDn
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<RsPgpId, PeerBandwidthLimits>::iterator it  = mPeerBandwidthLimits.find(pid) ;
+        PeerBandwidthLimits& p(mPeerBandwidthLimits[pid]) ;
         
-        if(mPeerBandwidthLimits.end() == it)
-            return false ;
-            
-        if(maxUp == it->second.max_up_rate_kbs && maxDn == it->second.max_dl_rate_kbs)
+        if(maxUp == p.max_up_rate_kbs && maxDn == p.max_dl_rate_kbs)
             return true ;
         
         std::cerr << "Updating max rates for peer " << pid << " to " << maxUp << " kB/s (up), " << maxDn << " kB/s (dn)" << std::endl;
         
-        it->second.max_up_rate_kbs = maxUp ;
-        it->second.max_dl_rate_kbs = maxDn ;
+        p.max_up_rate_kbs = maxUp ;
+        p.max_dl_rate_kbs = maxDn ;
         
         IndicateConfigChanged();
         
