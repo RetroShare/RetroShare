@@ -2000,9 +2000,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item->domain_addr = (it->second).hiddenDomain;
 		item->domain_port = (it->second).hiddenPort;
         
-        	item->maxUploadRate = it->second.maxUpRate ;
-        	item->maxDownloadRate = it->second.maxDnRate ;
-
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
 #ifdef PEER_DEBUG
@@ -2012,6 +2009,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 	}
 
+	RsPeerBandwidthLimitsItem *pblitem = new RsPeerBandwidthLimitsItem ;
+    	pblitem->peers = mPeerBandwidthLimits ;
+	saveData.push_back(pblitem) ;
+    
 	RsPeerServicePermissionItem *sitem = new RsPeerServicePermissionItem ;
 
 	for(std::map<RsPgpId,ServicePermissionFlags>::const_iterator it(mFriendsPermissionFlags.begin());it!=mFriendsPermissionFlags.end();++it)
@@ -2077,18 +2078,28 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn) 
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-        /* check if it is a friend */
-        std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
-        
-        if(mFriendList.end() == it)
-            return false ;
-            
-        maxUp = it->second.maxUpRate ;
-        maxDn = it->second.maxDnRate ;
-        
-	return true ;
+    /* check if it is a friend */
+    std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
+
+    if(mFriendList.end() == it)
+	    return false ;
+
+    std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it2 = mPeerBandwidthLimits.find(it->second.gpg_id) ;
+
+    if(it2 != mPeerBandwidthLimits.end())
+    {
+	    maxUp = it2->second.max_up_rate_kbs ;
+	    maxDn = it2->second.max_dl_rate_kbs ;
+	    return true ;
+    }
+    else
+    {
+	    maxUp = 0;
+	    maxDn = 0;
+	    return false ;
+    }
 }
 bool p3PeerMgrIMPL::setMaxRates(const RsPeerId& pid,uint32_t maxUp,uint32_t maxDn) 
 {
@@ -2185,9 +2196,6 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
 			    setLocation(pitem->peerId, pitem->location);
 		    }
-
-		    // this is the external interface, but the 
-		    setMaxRates(pitem->peerId,pitem->maxUploadRate,pitem->maxDownloadRate) ;
 
 		    if (pitem->netMode == RS_NET_MODE_HIDDEN)
 		    {
@@ -2299,6 +2307,18 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		    }
 
 		    continue;
+	    }
+        
+	    RsPeerBandwidthLimitsItem *pblitem = dynamic_cast<RsPeerBandwidthLimitsItem*>(*it) ;
+
+	    if(pblitem)
+	    {
+		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef PEER_DEBUG
+		    std::cerr << "Loaded service permission item: " << std::endl;
+#endif
+	    		mPeerBandwidthLimits = pblitem->peers ;
 	    }
 	    RsPeerServicePermissionItem *sitem = dynamic_cast<RsPeerServicePermissionItem*>(*it) ;
 

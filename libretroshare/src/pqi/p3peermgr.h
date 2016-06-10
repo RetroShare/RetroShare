@@ -398,6 +398,7 @@ private:
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
 	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+	std::map<RsPgpId, PeerBandwidthLimits> mPeerBandwidthLimits ; // bandwidth limits for each gpg key
 
 	struct sockaddr_storage mProxyServerAddressTor;
 	struct sockaddr_storage mProxyServerAddressI2P;

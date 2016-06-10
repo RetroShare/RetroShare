@@ -879,11 +879,7 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += GetTlvStringSize(i->domain_addr);
 	s += 2; /* domain_port */
 
-    	s += 4 ; // max upload rate
-    	s += 4 ; // max dl rate
-        
 	return s;
-
 }
 
 bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint32_t *size)
@@ -941,9 +937,6 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->domain_port); /* Mandatory */
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->maxUploadRate); /* Mandatory */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->maxDownloadRate); /* Mandatory */
-    
 	if(offset != tlvsize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
@@ -1021,12 +1014,6 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
 	ok &= getRawUInt16(data, rssize, &offset, &(item->domain_port)); /* Mandatory */
 
-    	if(offset == rssize)	// this allows to load the peer list when max bandwidth rates are missing.
-            return item ;
-            
-	ok &= getRawUInt32(data, rssize, &offset, &(item->maxUploadRate)); /* Mandatory */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->maxDownloadRate)); /* Mandatory */
-    
         if (offset != rssize)
 	{
 #ifdef RSSERIAL_ERROR_DEBUG
@@ -1039,6 +1026,160 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 
 	return item;
 }
+
+/****************************************************************************/
+
+uint32_t RsPeerConfigSerialiser::sizePeerBandwidthLimits(RsPeerBandwidthLimitsItem *i)
+{	
+	uint32_t s = 8; /* header */
+        s += 4; // number of elements
+        s += i->peers.size() * (4 + 4 + RsPgpId::SIZE_IN_BYTES) ;
+
+	return s;
+}
+
+bool RsPeerConfigSerialiser::serialisePeerBandwidthLimits(RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size)
+{
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizePeerBandwidthLimits(item);
+	uint32_t offset = 0;
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() tlvsize: " << tlvsize << std::endl;
+#endif
+
+	if(*size < tlvsize)
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialiseNet() ERROR not enough space" << std::endl;
+#endif
+		return false; /* not enough space */
+	}
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	// serialise header
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header test: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->peers.size()); /* Mandatory */
+    
+    	for(std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it(item->peers.begin());it!=item->peers.end();++it)
+        {
+            ok &= it->first.serialise(data,tlvsize,offset);
+                    
+	    ok &= setRawUInt32(data, tlvsize, &offset, it->second.max_up_rate_kbs); /* Mandatory */
+	    ok &= setRawUInt32(data, tlvsize, &offset, it->second.max_dl_rate_kbs); /* Mandatory */
+        }
+
+	if(offset != tlvsize)
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialiseNet() Size Error! " << std::endl;
+#endif
+		ok = false;
+	}
+
+	return ok;
+
+}
+
+RsPeerBandwidthLimitsItem *RsPeerConfigSerialiser::deserialisePeerBandwidthLimits(void *data, uint32_t *size)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::deserialiseNet() rssize: " << rssize << std::endl;
+#endif
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_PEER_BANDLIMITS != getRsItemSubType(rstype)))
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR Type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR not enough data" << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+
+	RsPeerBandwidthLimitsItem *item = new RsPeerBandwidthLimitsItem();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+    	uint32_t n ;
+	ok &= getRawUInt32(data, rssize, &offset, &n) ;
+    
+    	for(uint32_t i=0;i<n;++i)
+	{
+		RsPgpId pgpid ;
+		ok &= pgpid.deserialise(data,rssize,offset) ;
+
+		PeerBandwidthLimits p ;
+		ok &= getRawUInt32(data, rssize, &offset, &(p.max_up_rate_kbs)); /* Mandatory */
+		ok &= getRawUInt32(data, rssize, &offset, &(p.max_dl_rate_kbs)); /* Mandatory */
+
+		item->peers[pgpid] = p ;
+	}
+        
+        if (offset != rssize)
+	{
+#ifdef RSSERIAL_ERROR_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() ERROR size mismatch" << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+std::ostream &RsPeerBandwidthLimitsItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerBandwidthLimitsItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+    	for(std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it(peers.begin());it!=peers.end();++it)
+        {
+		printIndent(out, int_Indent);
+        	out << it->first << " : " << it->second.max_up_rate_kbs << " (up) " << it->second.max_dl_rate_kbs << " (dn)" << std::endl;
+        }
+
+        printRsItemEnd(out, "RsPeerStunItem", indent);
+	return out;
+}
+
+
 
 /****************************************************************************/
 
