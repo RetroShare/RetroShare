@@ -432,8 +432,8 @@ public:
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
 	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) = 0;
     
-    	virtual bool setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate) =0;
-    	virtual bool getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate) =0;
+    	virtual bool setPeerMaximumRates(const RsPgpId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate) =0;
+    	virtual bool getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate) =0;
 };
 
 #endif

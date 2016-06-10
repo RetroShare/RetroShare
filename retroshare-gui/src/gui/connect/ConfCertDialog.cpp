@@ -397,7 +397,7 @@ void ConfCertDialog::applyDialog()
     uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
     uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
 
-    rsPeers->setPeerMaximumRates(peerId,max_upload_speed,max_download_speed);
+    rsPeers->setPeerMaximumRates(pgpId,max_upload_speed,max_download_speed);
 
     loadAll();
     close();

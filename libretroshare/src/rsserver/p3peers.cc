@@ -241,12 +241,12 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
-bool p3Peers::getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
+bool p3Peers::getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
 {
     return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
 }
 
-bool p3Peers::setPeerMaximumRates(const RsPeerId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
+bool p3Peers::setPeerMaximumRates(const RsPgpId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
 {
     return mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
 }

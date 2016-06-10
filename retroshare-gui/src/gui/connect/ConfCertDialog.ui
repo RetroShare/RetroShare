@@ -18,22 +18,13 @@
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -454,6 +445,13 @@
           <string>Options</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>These options apply to all locations of the same node:</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCheckBox" name="_direct_transfer_CB">
             <property name="toolTip">

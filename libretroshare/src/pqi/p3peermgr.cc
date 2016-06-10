@@ -2076,17 +2076,11 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
-bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn) 
+bool p3PeerMgrIMPL::getMaxRates(const RsPgpId& pid,uint32_t& maxUp,uint32_t& maxDn) 
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-    /* check if it is a friend */
-    std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
-
-    if(mFriendList.end() == it)
-	    return false ;
-
-    std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it2 = mPeerBandwidthLimits.find(it->second.gpg_id) ;
+    std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it2 = mPeerBandwidthLimits.find(pid) ;
 
     if(it2 != mPeerBandwidthLimits.end())
     {
@@ -2101,23 +2095,22 @@ bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& ma
 	    return false ;
     }
 }
-bool p3PeerMgrIMPL::setMaxRates(const RsPeerId& pid,uint32_t maxUp,uint32_t maxDn) 
+bool p3PeerMgrIMPL::setMaxRates(const RsPgpId& pid,uint32_t maxUp,uint32_t maxDn) 
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-        /* check if it is a friend */
-        std::map<RsPeerId, peerState>::iterator it  = mFriendList.find(pid) ;
+        std::map<RsPgpId, PeerBandwidthLimits>::iterator it  = mPeerBandwidthLimits.find(pid) ;
         
-        if(mFriendList.end() == it)
+        if(mPeerBandwidthLimits.end() == it)
             return false ;
             
-        if(maxUp == it->second.maxUpRate && maxDn == it->second.maxDnRate)
+        if(maxUp == it->second.max_up_rate_kbs && maxDn == it->second.max_dl_rate_kbs)
             return true ;
         
         std::cerr << "Updating max rates for peer " << pid << " to " << maxUp << " kB/s (up), " << maxDn << " kB/s (dn)" << std::endl;
         
-        it->second.maxUpRate = maxUp ;
-        it->second.maxDnRate = maxDn ;
+        it->second.max_up_rate_kbs = maxUp ;
+        it->second.max_dl_rate_kbs = maxDn ;
         
         IndicateConfigChanged();
         
