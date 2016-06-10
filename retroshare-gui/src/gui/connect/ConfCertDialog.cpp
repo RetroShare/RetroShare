@@ -123,17 +123,6 @@ ConfCertDialog::~ConfCertDialog()
 }
 
 
-void ConfCertDialog::setServiceFlags()
-{
-    ServicePermissionFlags flags(0) ;
-
-    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_NODE_PERM_DIRECT_DL ;
-    if(  ui._allow_push_CB->isChecked()) flags = flags | RS_NODE_PERM_ALLOW_PUSH ;
-    if(  ui._require_WL_CB->isChecked()) flags = flags | RS_NODE_PERM_REQUIRE_WL ;
-
-    rsPeers->setServicePermissionFlags(pgpId,flags) ;
-}
-
 void ConfCertDialog::loadAll()
 {
     for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); ++it)  it.value()->load();
@@ -153,13 +142,6 @@ void ConfCertDialog::load()
         return;
     }
 
-    ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
-    ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
-    ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
-
-    ui.maxUploadSpeed_SB->setValue(detail.maxRateUp) ;
-    ui.maxDownloadSpeed_SB->setValue(detail.maxRateDn) ;
-    
     //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
 
@@ -391,13 +373,6 @@ void ConfCertDialog::applyDialog()
 		    emit configChanged();
 	    }
     }
-
-    setServiceFlags() ;
-
-    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
-    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
-
-    rsPeers->setPeerMaximumRates(pgpId,max_upload_speed,max_download_speed);
 
     loadAll();
     close();

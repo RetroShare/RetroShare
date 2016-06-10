@@ -2076,6 +2076,23 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
+bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn) 
+{
+    RsPgpId pgp_id ;
+    
+    {
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    
+   	std::map<RsPeerId, peerState>::const_iterator it = mFriendList.find(pid) ;
+    
+    	if(it == mFriendList.end())
+            return false ;
+        
+        pgp_id = it->second.gpg_id ;
+    }
+    return getMaxRates(pgp_id,maxUp,maxDn) ;
+}
+
 bool p3PeerMgrIMPL::getMaxRates(const RsPgpId& pid,uint32_t& maxUp,uint32_t& maxDn) 
 {
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

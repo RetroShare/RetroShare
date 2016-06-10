@@ -169,6 +169,13 @@ void PGPKeyDialog::load()
     ui.pgpfingerprint->show();
     ui.pgpfingerprint_label->show();
 
+    ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
+    ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
+    ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
+
+    ui.maxUploadSpeed_SB->setValue(detail.maxRateUp) ;
+    ui.maxDownloadSpeed_SB->setValue(detail.maxRateDn) ;
+    
     // ui.loc->hide();
     // ui.label_loc->hide();
     // ui.statusline->hide();
@@ -323,7 +330,6 @@ void PGPKeyDialog::loadKeyPage()
     ui.userCertificateText_2->setToolTip(helptext) ;
 }
 
-
 void PGPKeyDialog::applyDialog()
 {
     std::cerr << "PGPKeyDialog::applyDialog() called" << std::endl ;
@@ -343,6 +349,19 @@ void PGPKeyDialog::applyDialog()
     if(ui.trustlevel_CB->currentIndex() != detail.trustLvl)
         rsPeers->trustGPGCertificate(pgpId, ui.trustlevel_CB->currentIndex());
 
+    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
+    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
+
+    rsPeers->setPeerMaximumRates(pgpId,max_upload_speed,max_download_speed);
+
+    ServicePermissionFlags flags(0) ;
+
+    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_NODE_PERM_DIRECT_DL ;
+    if(  ui._allow_push_CB->isChecked()) flags = flags | RS_NODE_PERM_ALLOW_PUSH ;
+    if(  ui._require_WL_CB->isChecked()) flags = flags | RS_NODE_PERM_REQUIRE_WL ;
+
+    rsPeers->setServicePermissionFlags(pgpId,flags) ;
+    
      //setServiceFlags() ;
 
     loadAll();
