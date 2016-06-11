@@ -118,6 +118,15 @@ class Condition
 	std::string name;
 };
 
+class PeerBandwidthLimits
+{
+public:
+    PeerBandwidthLimits() : max_up_rate_kbs(0), max_dl_rate_kbs(0) {}
+    
+    uint32_t max_up_rate_kbs ;
+    uint32_t max_dl_rate_kbs ;
+};
+
 //class SearchRequest // unused stuff.
 //{
 //	public:

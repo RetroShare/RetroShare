@@ -39,8 +39,10 @@
 class SearchModule
 {
 	public:
-	RsPeerId peerid;
-	PQInterface *pqi;
+        	SearchModule() : pqi(NULL) {}
+            
+		RsPeerId peerid	;
+		PQInterface *pqi;
 };
 
 // Presents a P3 Face to the world!
@@ -71,14 +73,18 @@ class pqihandler: public P3Interface, public pqiPublisher
 #endif
 
 		// rate control.
+		//void	setMaxRate(const RsPeerId& pid,bool in, uint32_t val_kBs);
 		void	setMaxRate(bool in, float val);
 		float	getMaxRate(bool in);
+                
+                void   setMaxRates(const RsPeerId& pid,bool in,float val) ;
+                float  getMaxRates(const RsPeerId& pid,bool in) ;
 
 		void	getCurrentRates(float &in, float &out);
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
-        int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
+		int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
 
 protected:
 		/* check to be overloaded by those that can

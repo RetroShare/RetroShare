@@ -293,8 +293,8 @@ public:
     /* Data Rate Control - to be moved here */
     virtual int SetMaxDataRates( int downKb, int upKb ) = 0;
     virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
+    
     virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
-
 };
 
 #endif

@@ -145,45 +145,24 @@ void PGPKeyDialog::load()
         ui.make_friend_button->setToolTip("") ;
     }
 
-
-    //ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
-    //ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
-
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
-    //ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
-
-    //RetroShareLink link;
-    //link.createPerson(detail.gpg_id);
-
-    //ui.rsid->setText(QString::fromStdString(detail.gpg_id.toStdString())) ;
     ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
-    //ui.rsid->setToolTip(link.title());
-
-    //ui.avatar->setId(pgpId.toStdString(), true);
-
-    // ui.rsid->show();
-    // ui.peerid->hide();
-    // ui.label_id->hide();
-    // ui.label_rsid->show();
 
     ui.pgpfingerprint->show();
     ui.pgpfingerprint_label->show();
 
-    // ui.loc->hide();
-    // ui.label_loc->hide();
-    // ui.statusline->hide();
-    // ui.label_status->hide();
-    // ui.lastcontact->hide();
-    // ui.label_last_contact->hide();
-    // ui.version->hide();
-    // ui.label_version->hide();
-    // ui.groupBox_4->hide();
-    // ui.crypto_info->hide();
-    // ui.crypto_label->hide();
+    ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
+    ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
+    ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
-    // ui.groupBox->hide();
-    // ui.tabWidget->hide();
-
+    uint32_t max_upload_speed = 0 ;
+    uint32_t max_download_speed = 0 ;
+    
+    rsPeers->getPeerMaximumRates(pgpId,max_upload_speed,max_download_speed);
+    
+    ui.maxUploadSpeed_SB->setValue(max_upload_speed) ;
+    ui.maxDownloadSpeed_SB->setValue(max_download_speed) ;
+    
     if (detail.gpg_id == rsPeers->getGPGOwnId())
     {
         ui.make_friend_button->hide();
@@ -323,7 +302,6 @@ void PGPKeyDialog::loadKeyPage()
     ui.userCertificateText_2->setToolTip(helptext) ;
 }
 
-
 void PGPKeyDialog::applyDialog()
 {
     std::cerr << "PGPKeyDialog::applyDialog() called" << std::endl ;
@@ -343,6 +321,19 @@ void PGPKeyDialog::applyDialog()
     if(ui.trustlevel_CB->currentIndex() != detail.trustLvl)
         rsPeers->trustGPGCertificate(pgpId, ui.trustlevel_CB->currentIndex());
 
+    uint32_t max_upload_speed = ui.maxUploadSpeed_SB->value() ;
+    uint32_t max_download_speed = ui.maxDownloadSpeed_SB->value();
+
+    rsPeers->setPeerMaximumRates(pgpId,max_upload_speed,max_download_speed);
+
+    ServicePermissionFlags flags(0) ;
+
+    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_NODE_PERM_DIRECT_DL ;
+    if(  ui._allow_push_CB->isChecked()) flags = flags | RS_NODE_PERM_ALLOW_PUSH ;
+    if(  ui._require_WL_CB->isChecked()) flags = flags | RS_NODE_PERM_REQUIRE_WL ;
+
+    rsPeers->setServicePermissionFlags(pgpId,flags) ;
+    
      //setServiceFlags() ;
 
     loadAll();

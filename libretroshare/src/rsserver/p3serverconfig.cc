@@ -503,7 +503,6 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 	return true;
 }
 
-
 /* handle data rates.
  * Mutex must be handled at the lower levels: TODO */
 
