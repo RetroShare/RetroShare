@@ -62,7 +62,7 @@ const uint8_t RS_PKT_SUBTYPE_FILE_ITEM     = 0x02;
 
 /**************************************************************************/
 
-#warning should make these items use a clean serialise code, and all derive from the same item type.
+// We should make these items use a clean serialise code, and all derive from the same item type.
 
 class RsPeerNetItem: public RsItem
 {
