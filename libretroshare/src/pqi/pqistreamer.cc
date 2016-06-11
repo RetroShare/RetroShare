@@ -217,6 +217,7 @@ void pqistreamer::updateRates()
     // now update rates both ways.
 
     time_t t = time(NULL); // get current timestep.
+    int64_t diff ;
 
     {
 	    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
