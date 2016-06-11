@@ -154,8 +154,8 @@ class pqistreamer: public PQInterface
 		time_t mCurrSentTS;
 
 		time_t mAvgLastUpdate; // TS from which these are measured.
-		float mAvgReadCount;
-		float mAvgSentCount;
+		uint32_t mAvgReadCount;
+		uint32_t mAvgSentCount;
 
 		time_t mLastIncomingTs;
 	
