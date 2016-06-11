@@ -762,8 +762,10 @@ void RsGxsNetService::syncWithPeers()
                     
 		    if(encryptSingleNxsItem(msg, encrypt_to_this_circle_id, grpId, encrypted_item, status))
 			    sendItem(encrypted_item) ;
+#ifdef NXS_NET_DEBUG_7
 		    else
-			    std::cerr << "(WW) could not encrypt for circle ID " << encrypt_to_this_circle_id << ". Not yet in cache?" << std::endl;
+			    GXSNETDEBUG_PG(*sit,grpId) << "(WW) could not encrypt for circle ID " << encrypt_to_this_circle_id << ". Not yet in cache?" << std::endl;
+#endif
                     
                     delete msg ;
 	    }
@@ -3685,7 +3687,9 @@ bool RsGxsNetService::encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId&
     
     	if(recipients.empty())
         {
-            std::cerr << "  (EE) No recipients found for circle " << destination_circle << ". Circle not in cache, or empty circle?" << std::endl;
+#ifdef NXS_NET_DEBUG_7
+            GXSNETDEBUG_P_(item->PeerId()) << "  (EE) No recipients found for circle " << destination_circle << ". Circle not in cache, or empty circle?" << std::endl;
+#endif
             return false ;
         }
 
