@@ -218,12 +218,16 @@ void pqistreamer::updateRates()
 
     time_t t = time(NULL); // get current timestep.
 
-    if (t > mAvgLastUpdate + PQISTREAM_AVG_PERIOD)
     {
-        int64_t diff = int64_t(t) - int64_t(mAvgLastUpdate) ;
+	    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-        float avgReadpSec = getRate(true ) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * float(diff));
-        float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * float(diff));
+	    diff = int64_t(t) - int64_t(mAvgLastUpdate) ;
+    }
+
+    if (diff > PQISTREAM_AVG_PERIOD)
+    {
+	    float avgReadpSec = getRate(true ) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * float(diff));
+	    float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * float(diff));
 
 #ifdef DEBUG_PQISTREAMER
 	    std::cerr << "Peer " << PeerId() << ": Current speed estimates: " << avgReadpSec << " / " << avgSentpSec << std::endl;
@@ -243,9 +247,12 @@ void pqistreamer::updateRates()
 		    setRate(false, 0);
 	    }
 
-	    mAvgLastUpdate = t;
-	    mAvgReadCount = 0;
-	    mAvgSentCount = 0;
+	    {
+		    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+		    mAvgLastUpdate = t;
+		    mAvgReadCount = 0;
+		    mAvgSentCount = 0;
+	    }
     }
 }
  
