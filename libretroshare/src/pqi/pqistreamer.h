@@ -67,6 +67,12 @@ class pqistreamer: public PQInterface
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
+        
+            	// mutex protected versions of RateInterface calls.
+            	virtual void setRate(bool b,float f) ;
+            	virtual void setMaxRate(bool b,float f) ;
+            	virtual float getRate(bool b) ;
+
     protected:
 
 		int tick_bio();
@@ -85,7 +91,7 @@ class pqistreamer: public PQInterface
 		virtual int   locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
 
         	void updateRates() ;
-
+            	
 	protected:
 		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
 
