@@ -46,6 +46,10 @@
 #include "util/RsGxsUpdateBroadcast.h"
 #include "gui/settings/WebuiPage.h"
 
+#ifdef SIGFPE_DEBUG
+#include <fenv.h>
+#endif
+
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 #ifdef WINDOWS_SYS
 #include <QFileDialog>
@@ -155,6 +159,9 @@ int main(int argc, char *argv[])
 		QApplication app(argc, argv);
 		QDir::setCurrent(QCoreApplication::applicationDirPath());
 	}
+#endif
+#ifdef SIGFPE_DEBUG
+feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #endif
 
 	QStringList args = char_array_to_stringlist(argv+1, argc-1);
