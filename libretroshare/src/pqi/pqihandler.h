@@ -121,6 +121,7 @@ protected:
 
 		uint32_t nb_ticks ;
 		time_t last_m ;
+        	time_t mLastRateCapUpdate ;
 		float ticks_per_sec ;
 };
 

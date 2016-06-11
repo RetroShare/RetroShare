@@ -70,18 +70,19 @@ static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
 
 pqihandler::pqihandler() : coreMtx("pqihandler")
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// setup minimal total+individual rates.
-	rateIndiv_out = 0.01;
-	rateIndiv_in = 0.01;
-	rateMax_out = 0.01;
+    // setup minimal total+individual rates.
+    rateIndiv_out = 0.01;
+    rateIndiv_in = 0.01;
+    rateMax_out = 0.01;
     rateMax_in = 0.01;
     rateTotal_in = 0.0 ;
     rateTotal_out = 0.0 ;
     last_m = time(NULL) ;
-	nb_ticks = 0 ;
-	ticks_per_sec = 5 ; // initial guess
+    nb_ticks = 0 ;
+    mLastRateCapUpdate = 0 ;
+    ticks_per_sec = 5 ; // initial guess
     return;
 }
 
@@ -116,9 +117,9 @@ int	pqihandler::tick()
 #endif
 	}
 
-	static time_t last_print_time = 0 ;
 	time_t now = time(NULL) ;
-	if(now > last_print_time + 5)
+    
+	if(now > mLastRateCapUpdate + 5)
 	{
                 // every 5 secs, update the max rates for all modules
         
@@ -133,7 +134,7 @@ int	pqihandler::tick()
                     	it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up. 
 		}
         
-        	last_print_time = now ;
+        	mLastRateCapUpdate = now ;
 	}
 
 	UpdateRates();
