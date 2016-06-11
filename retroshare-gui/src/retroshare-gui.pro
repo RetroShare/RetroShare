@@ -12,6 +12,7 @@ DEFINES += TARGET=\\\"$TARGET\\\"
 #
 #CONFIG += unfinished
 #CONFIG += debug
+#DEFINES *= SIGFPE_DEBUG
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
