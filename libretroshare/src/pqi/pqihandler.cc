@@ -130,10 +130,7 @@ int	pqihandler::tick()
 	    		uint32_t maxUp,maxDn ;
             		rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn);
                     
-                    std::cerr << "Updating searchModule " << it->first << " max rates to " << maxUp << " - " << maxDn << std::endl;
-                    
-                    	it->second->mMaxDnRate = maxDn ;
-                    	it->second->mMaxUpRate = maxUp ;
+                    	it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up. 
 		}
         
         	last_print_time = now ;
@@ -520,11 +517,6 @@ int     pqihandler::UpdateRates()
 		if (mod -> pqi -> getMaxRate(false) > avail_out)          mod -> pqi -> setMaxRate(false, avail_out);
 		if (mod -> pqi -> getMaxRate(true)  < max_in_effective)   mod -> pqi -> setMaxRate(true,  max_in_effective);
 		if (mod -> pqi -> getMaxRate(true)  > avail_in)           mod -> pqi -> setMaxRate(true,  avail_in);
-        
-        	// Caps the allowed max speeds to the user defined values, leaving more space for other peers.
-        
-        	if(mod->mMaxUpRate > 0 && mod->pqi->getMaxRate(false) > mod->mMaxUpRate) mod->pqi->setMaxRate(false, mod->mMaxUpRate) ;
-        	if(mod->mMaxDnRate > 0 && mod->pqi->getMaxRate(true ) > mod->mMaxDnRate) mod->pqi->setMaxRate(true , mod->mMaxDnRate) ;
 	}
 
 	return 1;

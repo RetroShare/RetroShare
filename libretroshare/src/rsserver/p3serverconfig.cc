@@ -503,14 +503,6 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 	return true;
 }
 
-int p3ServerConfig::SetMaxDataRates(const RsPeerId& pid, int downKb, int upKb ) /* in kbrates */
-{
-    mPqiHandler->setMaxRate(pid,true,downKb) ;
-    mPqiHandler->setMaxRate(pid,false,upKb) ;
-    
-    return true ;
-}
-
 /* handle data rates.
  * Mutex must be handled at the lower levels: TODO */
 
