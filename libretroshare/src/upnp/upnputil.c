@@ -298,7 +298,7 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 		//                    const char * remoteHost,
 		//                    const char * leaseDuration);
 		r = UPNP_AddPortMapping(urls->controlURL, servicetype,
-		                        eport, iport, iaddr, NULL, proto, NULL, NULL);
+		                        eport, iport, iaddr, description, proto, NULL, NULL);
 #else
 #if MINIUPNPC_API_VERSION >= -3 //1.0 2009/04/17
 		/* $Id: upnpcommands.h,v 1.18 2010/06/09 10:59:09 nanard Exp $ */
@@ -311,7 +311,7 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 		//                    const char * proto,
 		//                    const char * remoteHost);
 		r = UPNP_AddPortMapping(urls->controlURL, servicetype,
-		                        eport, iport, iaddr, NULL, proto, NULL);
+		                        eport, iport, iaddr, description, proto, NULL);
 #else
 #if MINIUPNPC_API_VERSION >= -7//Before 1.0
 		/* $Id: upnpcommands.h,v 1.14 2008/09/25 18:02:50 nanard Exp $ */
@@ -323,7 +323,7 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 		//                    const char * desc,
 		//                    const char * proto);
 		r = UPNP_AddPortMapping(urls->controlURL, servicetype,
-		                        eport, iport, iaddr, NULL, proto);
+		                        eport, iport, iaddr, description, proto);
 #else
 #error MINIUPNPC_API_VERSION is not defined. You may define one follow miniupnpc library version
 #endif//>=-7

@@ -381,14 +381,14 @@ bool upnphandler::start_upnp()
 
 	if (!SetRedirectAndTest(&(config -> urls), &(config->data),
 	                        in_addr, in_port1, eport1, eprot1,
-	                        NULL /*leaseDuration*/, NULL /*description*/,
+	                        NULL /*leaseDuration*/, "RetroShare_TCP" /*description*/,
 	                        0))
 	{
 		upnpState = RS_UPNP_S_TCP_FAILED;
 	}
 	else if (!SetRedirectAndTest(&(config -> urls), &(config->data),
 	                             in_addr, in_port2, eport2, eprot2,
-	                             NULL /*leaseDuration*/, NULL /*description*/,
+	                             NULL /*leaseDuration*/, "RetroShare_UDP" /*description*/,
 		                         0))
 	{
 		upnpState = RS_UPNP_S_UDP_FAILED;
