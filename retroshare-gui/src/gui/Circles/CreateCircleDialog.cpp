@@ -138,6 +138,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     else
     {
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
 	    ui.idChooser->setVisible(true) ;
     }
     
@@ -634,6 +635,7 @@ void CreateCircleDialog::updateCircleGUI()
 	    //ui.idChooser->setIdConstraintSet(ids) ;
 	    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE) ;
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
     }
 }
 

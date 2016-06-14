@@ -13,8 +13,10 @@ const uint8_t RsNxsSyncGrpItem::FLAG_RESPONSE  = 0x002;
 const uint8_t RsNxsSyncMsgItem::FLAG_REQUEST   = 0x001;
 const uint8_t RsNxsSyncMsgItem::FLAG_RESPONSE  = 0x002;
 
-const uint8_t RsNxsSyncGrpItem::FLAG_USE_SYNC_HASH = 0x001;
-const uint8_t RsNxsSyncMsgItem::FLAG_USE_SYNC_HASH = 0x001;
+const uint8_t RsNxsSyncGrpItem::FLAG_USE_SYNC_HASH       = 0x0001;
+const uint8_t RsNxsSyncMsgItem::FLAG_USE_SYNC_HASH       = 0x0001;
+
+const uint8_t RsNxsSyncMsgReqItem::FLAG_USE_HASHED_GROUP_ID = 0x02;
 
 /** transaction state **/
 const uint16_t RsNxsTransacItem::FLAG_BEGIN_P1         = 0x0001;
