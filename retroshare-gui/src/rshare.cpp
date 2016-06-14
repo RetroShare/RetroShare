@@ -167,6 +167,9 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
         std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
         localSocket.waitForDisconnected(1000);
         newArgs.detach();
+        std::cerr << "Rshare::Rshare Arguments was sended." << std::endl
+                  << " To disable it, in Options - General - Misc," << std::endl
+                  << " uncheck \"Use Local Server to get new Arguments\"." << std::endl;
         ::exit(EXIT_SUCCESS); // Terminate the program using STDLib's exit function
       }
       newArgs.detach();
