@@ -100,6 +100,8 @@
 #define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
 #define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
 #define IMAGE_UNKNOWN              ":/icons/bullet_grey_128.png"
+#define IMAGE_ADMIN                ":/icons/bullet_blue_128.png"
+#define IMAGE_INFO                 ":/images/info16.png"
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
@@ -399,7 +401,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	if(!mExternalOtherCircleItem)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
-		mExternalOtherCircleItem->setText(0, tr("Other visible external circles"));
+		mExternalOtherCircleItem->setText(0, tr("Other circles"));
 
 		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
 	}
@@ -407,7 +409,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	if(!mExternalBelongingCircleItem )
 	{
 		mExternalBelongingCircleItem = new QTreeWidgetItem();
-		mExternalBelongingCircleItem->setText(0, tr("External circles my identities belong to"));
+		mExternalBelongingCircleItem->setText(0, tr("Circles I belong to"));
 		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
 	}
 #endif
@@ -698,6 +700,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 		if(am_I_in_circle)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
+		else if(am_I_admin)
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMIN)) ;	
 		else if(am_I_invited || am_I_pending)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
 		else
@@ -963,7 +967,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 			    am_I_circle_admin = true ;
 		    }
 		    else
-			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("See details"), this, SLOT(showEditExistingCircle()));
+			    contextMnu.addAction(QIcon(IMAGE_INFO), tr("See details"), this, SLOT(showEditExistingCircle()));
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	}
 #endif
@@ -1001,7 +1005,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     static const int CANCEL = 3 ; // Admin list: no          Subscription request:  yes
 
     const QString menu_titles[4] = { tr("Request subscription"), tr("Accept circle invitation"), tr("Quit this circle"),tr("Cancel subscribe request")} ;
-    const QString image_names[4] = { ":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png",":/images/edit_16.png" } ;
+    const QString image_names[4] = { ":/images/edit_add24.png",":/images/accepted16.png",":/images/door_in.png",":/images/cancel.png" } ;
 
     std::vector< std::vector<RsGxsId> > ids(4) ;
 
@@ -1040,7 +1044,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    RsIdentityDetails det ;
 		    QString id_name ;
 		    if(rsIdentity->getIdDetails(ids[i][0],det))
-			    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][0].toStdString()) + ")" ;
+			    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + " (ID=" + QString::fromStdString(ids[i][0].toStdString()) + ")" ;
 		    else
 			    id_name = tr("for identity ")+QString::fromStdString(ids[i][0].toStdString()) ;
 
@@ -1068,7 +1072,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 			    RsIdentityDetails det ;
 			    QString id_name ;
 			    if(rsIdentity->getIdDetails(ids[i][j],det))
-				    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + "(ID=" + QString::fromStdString(ids[i][j].toStdString()) + ")" ;
+				    id_name = tr("for identity ")+QString::fromUtf8(det.mNickname.c_str()) + " (ID=" + QString::fromStdString(ids[i][j].toStdString()) + ")" ;
 			    else
 				    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
 
@@ -2073,13 +2077,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	    contextMnu.addSeparator();
 
 	    if(n_positive_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(), tr("Set positive opinion"), this, SLOT(positivePerson()));
+		    contextMnu.addAction(QIcon(":/images/vote_up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
 
 	    if(n_neutral_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+		    contextMnu.addAction(QIcon(":/images/vote_neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
         
 	    if(n_negative_reputations == 0)
-		    contextMnu.addAction(QIcon(":/images/denied16.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+		    contextMnu.addAction(QIcon(":/images/vote_down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
     }
 
     if(one_item_owned_by_you && n_selected_items==1)
