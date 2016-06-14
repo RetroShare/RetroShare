@@ -384,7 +384,7 @@ private:
 #endif
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
-    bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known, bool &item_was_encrypted);
+    bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
 
     static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
     

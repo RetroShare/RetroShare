@@ -4340,7 +4340,7 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
 	return true;
 }
 
-bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& grp_is_known,bool& item_was_encrypted)
+bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& grp_is_known)
 {
     // Do we have new updates for this peer?
     // Here we compare times in the same clock: the friend's clock, so it should be fine.
@@ -4351,9 +4351,6 @@ bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& gr
     {
 	    // Item contains the hashed group ID in order to protect is from friends who don't know it. So we de-hash it using bruteforce over known group IDs for this peer.
 	    // We could save the de-hash result. But the cost is quite light, since the number of encrypted groups per service is usually low.
-            //
-	    // /!\ item_was_encrypted should only be changed to true when appropriate, but never set to false here, since it can be true already for 
-	    // backward compatibility (truly encrypted item, instead of hashed grp id)
 
 	    for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
 		    if(item->grpId == hashGrpId(it->first,item->PeerId()))
@@ -4364,7 +4361,6 @@ bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& gr
 			    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "(II) de-hashed group ID " << it->first << " from hash " << item->grpId << " and peer id " << item->PeerId() << std::endl;
 #endif
 			    grp_is_known = true ;
-			    item_was_encrypted = true ;
 
 			    return item->updateTS < it->second->msgUpdateTS ;
 		    }
@@ -4400,9 +4396,13 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     const RsPeerId& peer = item->PeerId();
     bool grp_is_known = false;
+    bool was_circle_protected = item_was_encrypted || bool(item->flag & RsNxsSyncMsgReqItem::FLAG_USE_HASHED_GROUP_ID);
     
-    bool peer_can_receive_update = locked_CanReceiveUpdate(item, grp_is_known,item_was_encrypted);
+    bool peer_can_receive_update = locked_CanReceiveUpdate(item, grp_is_known);
 
+    if(item_was_encrypted)
+        std::cerr << "(WW) received an encrypted msg sync request from peer " << item->PeerId() << ". This is outdated, but still supported (Tell your friend to upgrade his RS!)" << std::endl;
+                     
     // Insert the PeerId in suppliers list for this grpId
 #ifdef NXS_NET_DEBUG_6
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "RsGxsNetService::handleRecvSyncMessage(): Inserting PeerId " << item->PeerId() << " in suppliers list for group " << item->grpId << std::endl;
@@ -4445,10 +4445,10 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 	    return ;
     }
     
-    if( (grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL) != item_was_encrypted ) 
+    if( (grpMeta->mCircleType == GXS_CIRCLE_TYPE_EXTERNAL) != was_circle_protected ) 
     {
         std::cerr << "(EE) received a sync Msg request for group " << item->grpId << " from peer " << item->PeerId() ;
-        if(!item_was_encrypted)
+        if(!was_circle_protected)
             std::cerr << ". The group is tied to an external circle (ID=" << grpMeta->mCircleId << ") but the request wasn't encrypted." << std::endl;
         else
             std::cerr << ". The group is not tied to an external circle (ID=" << grpMeta->mCircleId << ") but the request was encrypted." << std::endl;
