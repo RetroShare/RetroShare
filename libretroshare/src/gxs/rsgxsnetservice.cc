@@ -4401,7 +4401,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     bool peer_can_receive_update = locked_CanReceiveUpdate(item, grp_is_known);
 
     if(item_was_encrypted)
-        std::cerr << "(WW) received an encrypted msg sync request from peer " << item->PeerId() << ". This is outdated, but still supported (Tell your friend to upgrade his RS!)" << std::endl;
+        std::cerr << "(WW) got an encrypted msg sync req. from " << item->PeerId() << ". This will not send messages updates for group " << item->grpId << std::endl;
                      
     // Insert the PeerId in suppliers list for this grpId
 #ifdef NXS_NET_DEBUG_6
