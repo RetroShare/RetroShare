@@ -615,6 +615,9 @@ bool 	pqissludp::moretoread(uint32_t usec)
 		reset_locked();
 		return 0;
 	}
+    
+	if(SSL_pending(ssl_connection) > 0)
+        	return 1 ;
 
 	/* otherwise - not error - strange! */
 	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
