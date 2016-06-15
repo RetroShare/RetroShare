@@ -123,14 +123,14 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/edit_add24.png")) ;
+	icon.addPixmap(QPixmap(":/images/user/add_user24.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
     inviteFriendsButton->setIconSize(QSize(2*S,2*S)) ;
 	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
 
-    getChatWidget()->addChatBarWidget(inviteFriendsButton) ;
+    getChatWidget()->addTitleBarWidget(inviteFriendsButton) ;
 
     RsGxsId current_id;
     rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
@@ -159,7 +159,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	QIcon icon ;
 	icon.addPixmap(QPixmap(":/images/door_in.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-    unsubscribeButton->setIconSize(QSize(1.5*S,1.5*S)) ;
+    unsubscribeButton->setIconSize(QSize(2*S,2*S)) ;
 	}
 
 	/* Initialize splitter */
@@ -168,7 +168,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	connect(unsubscribeButton, SIGNAL(clicked()), this , SLOT(leaveLobby()));
 
-	getChatWidget()->addChatBarWidget(unsubscribeButton) ;
+	getChatWidget()->addTitleBarWidget(unsubscribeButton) ;
 }
 
 void ChatLobbyDialog::leaveLobby()

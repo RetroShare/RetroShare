@@ -99,10 +99,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->addFileButton->setIconSize(iconSize);
 	ui->pushtoolsButton->setFixedSize(buttonSize);
 	ui->pushtoolsButton->setIconSize(iconSize);
-	ui->sendAsPlainTextButton->setFixedSize(buttonSize);
-	ui->sendAsPlainTextButton->setIconSize(iconSize);
-	ui->noEmbedButton->setFixedSize(buttonSize);
-	ui->noEmbedButton->setIconSize(iconSize);
 	ui->notifyButton->setFixedSize(buttonSize);
 	ui->notifyButton->setIconSize(iconSize);
 	ui->markButton->setFixedSize(buttonSize);
@@ -125,6 +121,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
+  	ui->markButton->setVisible(false);
 	ui->leSearch->setVisible(false);
 	ui->searchBefore->setVisible(false);
 	ui->searchBefore->setToolTip(tr("<b>Find Previous </b><br/><i>Ctrl+Shift+G</i>"));
@@ -187,6 +184,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionChooseFont);
 	menu->addAction(ui->actionChooseColor);
 	menu->addAction(ui->actionResetFont);
+	menu->addAction(ui->actionNoEmbed);
+	menu->addAction(ui->actionSendAsPlainText);
 	ui->fontButton->setMenu(menu);
 
 	menu = new QMenu();
@@ -195,8 +194,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
-	ui->sendAsPlainTextButton->setChecked(Settings->getChatSendAsPlainTextByDef());
-
+  	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+  
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);
@@ -1140,11 +1139,11 @@ void ChatWidget::sendChat()
 	}
 
 	QString text;
-	if (ui->sendAsPlainTextButton->isChecked()){
+	if (ui->actionSendAsPlainText->isChecked()){
 		text = chatWidget->toPlainText();
 		text.replace(QChar(-4),"");//Char used when image on text.
 	} else {
-		RsHtml::optimizeHtml(chatWidget, text, (ui->noEmbedButton->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+		RsHtml::optimizeHtml(chatWidget, text, (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
 	}
 	std::string msg = text.toUtf8().constData();
 
@@ -1199,7 +1198,7 @@ void ChatWidget::on_searchButton_clicked(bool bValue)
 		qtcCurrent=QTextCursor(qtdDocument);
 	}
 	ui->leSearch->setVisible(bValue);
-
+  	ui->markButton->setVisible(bValue);
 }
 void ChatWidget::on_searchBefore_clicked()
 {
