@@ -197,7 +197,7 @@ win32 {
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
 	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 

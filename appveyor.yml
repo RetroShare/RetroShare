@@ -1,0 +1,210 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+# from example:
+# https://github.com/Phonations/Joker/blob/master/appveyor.yml
+# https://github.com/unicorn-engine/autobuild/blob/master/.appveyor.yml
+      
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: RetroShare 6.0.{build}-{branch}
+
+# you can use {branch} name in version format too
+# version: 1.0.{build}-{branch}
+
+# branches to build
+branches:
+  # whitelist
+  #only:
+  #  - master
+
+  # blacklist
+  except:
+    - /^skipthisbranch$/
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+# Skipping commits with particular message or from user
+skip_commits:
+  message: /Created.*\.(png|jpg|jpeg|bmp|gif)/       # Regex for matching commit message
+  #author: Anonymous        # Commit author's username, name, email or regexp maching one of these.
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Operating system (build VM template)
+#os: Windows Server 2012
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+  #To get RDP while compiling
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_finish:
+  #To get RDP running after compiling
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+# clone directory
+clone_folder: c:\projects\RetroShare
+
+# fetch repository as zip archive
+#shallow_clone: true                 # default is "false"
+
+# set clone depth
+clone_depth: 1                       # clone entire repository history if not defined
+
+environment:
+  global:
+    #Qt: https://www.appveyor.com/docs/installed-software#qt
+    QTDIR: C:\Qt\5.4\mingw491_32
+    MSYS2_ARCH: i686
+    TARGET: i686_32-pc-msys
+
+
+# build cache to preserve files/folders between builds
+cache:
+  - c:\projects\libs
+#  - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
+#  - projectA\libs
+#  - node_modules                    # local npm modules
+#  - %APPDATA%\npm-cache             # npm cache
+
+# scripts that run after cloning repository
+#install:
+#  # by default, all script lines are interpreted as batch
+#  - echo This is batch
+#  # to run script as a PowerShell command prepend it with ps:
+#  - ps: Write-Host 'This is PowerShell'
+#  # batch commands start from cmd:
+#  - cmd: echo This is batch again
+#  - cmd: set MY_VAR=12345
+install:
+  # Configuring MSys2
+  - set PATH=C:\msys64\usr\bin;%PATH%
+  - set PATH=C:\msys64\mingw32\bin;%PATH%
+  # Configuring Qt
+  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
+  # Install all default programms
+  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy base-devel git mercurial cvs wget p7zip gcc perl ruby python2" #Already installed
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy openssl-devel"
+  # Install toolchain
+  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain" #Already installed
+  # Install other binutils
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
+
+  # Hack for new MSys2
+  - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
+  - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ranlib.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ranlib.exe
+  - copy C:\msys64\mingw32\bin\windres.exe C:\msys64\mingw32\bin\i686-w64-mingw32-windres.exe
+  - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ar.exe
+  - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
+  - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
+  # Build missing Libs
+  - C:\msys64\mingw32_shell.bat -lc "cd /c/projects/RetroShare/msys2_build_libs/ && make"
+  # Clone RetroShare
+  #- git clone -q --branch={branch} https://github.com/RetroShare/RetroShare.git C:\projects\RetroShare
+
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: x86
+
+# to add several platforms to build matrix:
+#platform:
+#  - x86
+#  - Any CPU
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
+# to add several configurations to build matrix:
+#configuration:
+#  - Debug
+#  - Release
+
+# scripts to run before build
+before_build:
+
+# scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
+before_package:
+
+# scripts to run after build
+after_build:
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+  - cd C:\projects\RetroShare
+  - qmake 
+  - make
+
+# to disable automatic builds
+#build: off
+
+#---------------------------------#
+#      artifacts configuration    #
+#---------------------------------#
+
+#artifacts:
+#
+#  # pushing a single file
+#  - path: test.zip
+#
+#  # pushing a single file with environment variable in path and "Deployment name" specified
+#  - path: MyProject\bin\$(configuration)
+#    name: myapp
+#
+#  # pushing entire folder as a zip archive
+#  - path: logs
+
+
+#---------------------------------#
+#     deployment configuration    #
+#---------------------------------#
+#No deployment under unknown  computer!!!
+
+#---------------------------------#
+#        global handlers          #
+#---------------------------------#
+
+# on successful build
+#on_success:
+#  - do something
+
+# on build failure
+#on_failure:
+#  - do something
+
+# after build failure or success
+#on_finish:
+#  - do something
+
+  
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+  
+notifications:
+
+  # Email
+  - provider: Email
+    to:
+      - retrosharephenom@gmail.com
+    subject: 'Build {{status}}'                  # optional
+    message: "{{message}}, {{commitId}}, ..."    # optional
+    on_build_status_changed: true
