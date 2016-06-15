@@ -99,6 +99,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->addFileButton->setIconSize(iconSize);
 	ui->pushtoolsButton->setFixedSize(buttonSize);
 	ui->pushtoolsButton->setIconSize(iconSize);
+	ui->sendAsPlainTextButton->setFixedSize(buttonSize);
+	ui->sendAsPlainTextButton->setIconSize(iconSize);
+	ui->noEmbedButton->setFixedSize(buttonSize);
+	ui->noEmbedButton->setIconSize(iconSize);
 	ui->notifyButton->setFixedSize(buttonSize);
 	ui->notifyButton->setIconSize(iconSize);
 	ui->markButton->setFixedSize(buttonSize);
@@ -191,6 +195,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
+	ui->sendAsPlainTextButton->setChecked(Settings->getChatSendAsPlainTextByDef());
 
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
@@ -899,7 +904,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
-		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
+		if (!message.contains("NoEmbed=\"true\""))
+			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
 	// Always fix colors
@@ -1134,7 +1140,12 @@ void ChatWidget::sendChat()
 	}
 
 	QString text;
-	RsHtml::optimizeHtml(chatWidget, text);
+	if (ui->sendAsPlainTextButton->isChecked()){
+		text = chatWidget->toPlainText();
+		text.replace(QChar(-4),"");//Char used when image on text.
+	} else {
+		RsHtml::optimizeHtml(chatWidget, text, (ui->noEmbedButton->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+	}
 	std::string msg = text.toUtf8().constData();
 
 	if (msg.empty()) {

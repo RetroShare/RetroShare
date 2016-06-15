@@ -6,11 +6,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>517</height>
+    <width>635</width>
+    <height>600</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout">
    <item row="3" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -20,15 +20,15 @@
       <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_5">
+      <layout class="QGridLayout" name="generalGLayout">
        <item row="0" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="distantGBox">
          <property name="title">
           <string>Distant Chat</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_4">
+         <layout class="QGridLayout" name="distantGBoxGLayout">
           <item row="0" column="2">
-           <widget class="QComboBox" name="distantChatcomboBox">
+           <widget class="QComboBox" name="distantChatComboBox">
             <item>
              <property name="text">
               <string>Everyone</string>
@@ -47,7 +47,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="distantchatlabel">
+           <widget class="QLabel" name="distantChatLabel">
             <property name="text">
              <string>Accept encrypted distant chat from</string>
             </property>
@@ -57,9 +57,9 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="leftVLayout">
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="chatSettingsGBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -69,7 +69,7 @@
            <property name="title">
             <string>Chat Settings</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="chatSettingsGBoxVLayout">
             <item>
              <widget class="QCheckBox" name="checkBox_emoteprivchat">
               <property name="text">
@@ -111,7 +111,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="hl_minimumFontSize">
+             <layout class="QHBoxLayout" name="minimumFontSizeHLayout">
               <property name="topMargin">
                <number>0</number>
               </property>
@@ -123,7 +123,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="hs_minimumFontSize">
+               <spacer name="minimumFontSizeHSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -168,7 +168,7 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_40">
+             <layout class="QHBoxLayout" name="minimumContrastHLayout">
               <item>
                <widget class="QLabel" name="minimumContrastLabel">
                 <property name="text">
@@ -177,7 +177,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_2">
+               <spacer name="minimumContrastHSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -211,15 +211,22 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="sendAsPlainTextByDef">
+              <property name="text">
+               <string>Send as plain text by default</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="chatLobbyGroupBox">
+          <widget class="QGroupBox" name="chatLobbyGBox">
            <property name="title">
             <string>Chat Lobby</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="chatLobbyGBoxVLayout">
             <item>
              <widget class="QCheckBox" name="chatLobby_Blink">
               <property name="text">
@@ -228,7 +235,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label">
+             <widget class="QLabel" name="defIDLabel">
               <property name="text">
                <string>Default identity for chat lobbies:</string>
               </property>
@@ -237,7 +244,7 @@
             <item>
              <layout class="QHBoxLayout" name="nickNameLayout">
               <item>
-               <spacer name="horizontalSpacer">
+               <spacer name="chatLobbyIdentity_HSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
@@ -261,7 +268,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer_2">
+          <spacer name="leftVSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -276,13 +283,13 @@
         </layout>
        </item>
        <item row="1" column="1">
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="rightVLayout">
          <item>
-          <widget class="QGroupBox" name="groupBox_2">
+          <widget class="QGroupBox" name="privateChatGBox">
            <property name="title">
             <string>Private Chat</string>
            </property>
-           <layout class="QVBoxLayout" name="_2">
+           <layout class="QVBoxLayout" name="privateChatGBoxVLayout">
             <item>
              <widget class="QCheckBox" name="chat_NewWindow">
               <property name="text">
@@ -315,11 +322,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBoxIRCColors">
+          <widget class="QGroupBox" name="chatFontGBox">
            <property name="title">
             <string>Chat Font</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <layout class="QVBoxLayout" name="chatFontGBoxVLayout">
             <property name="spacing">
              <number>2</number>
             </property>
@@ -366,7 +373,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBoxSearch">
+          <widget class="QGroupBox" name="searchGBox">
            <property name="title">
             <string>Search by default</string>
            </property>
@@ -530,7 +537,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer">
+          <spacer name="rightVSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
@@ -550,9 +557,9 @@
       <attribute name="title">
        <string>History</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="historyVLayout">
        <item>
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="histHeaderLabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
            <horstretch>0</horstretch>
@@ -574,11 +581,11 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <layout class="QHBoxLayout" name="histSetupVLayout">
          <item>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="histSetupGLayout">
            <item row="0" column="1">
-            <widget class="QLabel" name="label_4">
+            <widget class="QLabel" name="publicHeaderLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -591,7 +598,7 @@
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLabel" name="label_5">
+            <widget class="QLabel" name="privateHeaderLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -604,7 +611,7 @@
             </widget>
            </item>
            <item row="0" column="3">
-            <widget class="QLabel" name="label_6">
+            <widget class="QLabel" name="lobbyHeaderLabel">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -617,7 +624,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QLabel" name="label_7">
+            <widget class="QLabel" name="labelChatEnable">
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
              </property>
@@ -651,7 +658,7 @@
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QLabel" name="label1">
+            <widget class="QLabel" name="labelChatSaveCount">
              <property name="text">
               <string>Saved messages (0 = unlimited):</string>
              </property>
@@ -718,7 +725,7 @@
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QLabel" name="label2">
+            <widget class="QLabel" name="labelChatLoadCount">
              <property name="text">
               <string>Number of messages restored  (0 = off):</string>
              </property>
@@ -769,7 +776,7 @@
           </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_4">
+          <spacer name="histSetupHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -784,15 +791,15 @@
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_5">
+        <widget class="QGroupBox" name="histGenGBox">
          <property name="title">
           <string>General</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QVBoxLayout" name="histGenGBoxVLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <layout class="QHBoxLayout" name="max_storage_period_HLayout">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QLabel" name="max_storage_period_Label">
               <property name="text">
                <string>Maximum storage period, in days (0=keep all):</string>
               </property>
@@ -802,7 +809,7 @@
              <widget class="QSpinBox" name="max_storage_period"/>
             </item>
             <item>
-             <spacer name="horizontalSpacer_3">
+             <spacer name="max_storage_period_HSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -820,7 +827,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_4">
+        <spacer name="histVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -838,7 +845,7 @@
       <attribute name="title">
        <string>Style</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="styleHLayout">
        <item>
         <widget class="QTabWidget" name="styleTabWidget">
          <property name="tabPosition">
@@ -851,11 +858,11 @@
           <attribute name="title">
            <string>Group chat</string>
           </attribute>
-          <layout class="QVBoxLayout" name="publicLayout_1">
+          <layout class="QVBoxLayout" name="publicTabVLayout">
            <item>
-            <layout class="QHBoxLayout" name="publiclLayout_2">
+            <layout class="QHBoxLayout" name="publicStyleHLayout">
              <item>
-              <layout class="QVBoxLayout" name="publicLayout_3">
+              <layout class="QVBoxLayout" name="publicStyleListVLayout">
                <item>
                 <widget class="QListWidget" name="publicList">
                  <property name="sizePolicy">
@@ -873,7 +880,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="publicLayout_4">
+                <layout class="QHBoxLayout" name="publicStyleVarHLayout">
                  <item>
                   <widget class="QLabel" name="publicLabelVariant">
                    <property name="sizePolicy">
@@ -921,7 +928,7 @@
                 <enum>QLayout::SetFixedSize</enum>
                </property>
                <item>
-                <widget class="QLabel" name="labelPublicAuthor">
+                <widget class="QLabel" name="publicLabelAuthor">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -934,7 +941,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="labelPublicDescription">
+                <widget class="QLabel" name="publicLabelDescription">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -986,11 +993,11 @@
           <attribute name="title">
            <string>Private chat</string>
           </attribute>
-          <layout class="QVBoxLayout" name="privateLayout_1">
+          <layout class="QVBoxLayout" name="privateTabVLayout">
            <item>
-            <layout class="QHBoxLayout" name="privatelLayout_2">
+            <layout class="QHBoxLayout" name="privateStyleHLayout">
              <item>
-              <layout class="QVBoxLayout" name="privateLayout_3">
+              <layout class="QVBoxLayout" name="privateStyleListVLayout">
                <item>
                 <widget class="QListWidget" name="privateList">
                  <property name="sizePolicy">
@@ -1008,7 +1015,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="privateLayout_4">
+                <layout class="QHBoxLayout" name="privateStyleVarHLayout">
                  <item>
                   <widget class="QLabel" name="privateLabelVariant">
                    <property name="sizePolicy">
@@ -1056,7 +1063,7 @@
                 <enum>QLayout::SetFixedSize</enum>
                </property>
                <item>
-                <widget class="QLabel" name="labelPrivateAuthor">
+                <widget class="QLabel" name="privateLabelAuthor">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1069,7 +1076,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="labelPrivateDescription">
+                <widget class="QLabel" name="privateLabelDescription">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1121,11 +1128,11 @@
           <attribute name="title">
            <string>History</string>
           </attribute>
-          <layout class="QVBoxLayout" name="historyLayout_1">
+          <layout class="QVBoxLayout" name="historyTabVLayout">
            <item>
-            <layout class="QHBoxLayout" name="historylLayout_2">
+            <layout class="QHBoxLayout" name="historyStyleHLayout">
              <item>
-              <layout class="QVBoxLayout" name="historyLayout_3">
+              <layout class="QVBoxLayout" name="historyStyleListVLayout">
                <item>
                 <widget class="QListWidget" name="historyList">
                  <property name="sizePolicy">
@@ -1143,7 +1150,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="historyLayout_4">
+                <layout class="QHBoxLayout" name="historyStyleVarHLayout">
                  <item>
                   <widget class="QLabel" name="historyLabelVariant">
                    <property name="sizePolicy">
@@ -1191,7 +1198,7 @@
                 <enum>QLayout::SetFixedSize</enum>
                </property>
                <item>
-                <widget class="QLabel" name="labelHistoryAuthor">
+                <widget class="QLabel" name="historyLabelAuthor">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1204,7 +1211,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="labelHistoryDescription">
+                <widget class="QLabel" name="historyLabelDescription">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>

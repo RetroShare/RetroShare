@@ -874,6 +874,12 @@ static void styleCreate(QDomDocument& doc
 		optAttr = doc.createAttribute("RSOptimized");
 		optAttr.setValue("v2");
 		styleElem.attributes().setNamedItem(optAttr);
+		if (flag & RSHTML_FORMATTEXT_NO_EMBED) {
+			QDomAttr noEmbedAttr;
+			noEmbedAttr = doc.createAttribute("NoEmbed");
+			noEmbedAttr.setValue("true");
+			styleElem.attributes().setNamedItem(noEmbedAttr);
+		}
 	}
 
 	while(styleElem.childNodes().count()>0) {
