@@ -684,6 +684,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	RsPeerNetItem *pni;
 	RsPeerGroupItem *pgi;
 	RsPeerServicePermissionItem *pri;
+	RsPeerBandwidthLimitsItem *pblitem;
 
 	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
 	{
@@ -701,6 +702,10 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	{
 		return sizePermissions(pri);
 	}
+	else if (NULL != (pblitem = dynamic_cast<RsPeerBandwidthLimitsItem *>(i)))
+	{
+		return sizePeerBandwidthLimits(pblitem);
+	}
 
 	return 0;
 }
@@ -712,6 +717,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	RsPeerStunItem *psi;
 	RsPeerGroupItem *pgi;
 	RsPeerServicePermissionItem *pri;
+	RsPeerBandwidthLimitsItem *pblitem;
 
 	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
 	{
@@ -728,6 +734,10 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	else if (NULL != (pri = dynamic_cast<RsPeerServicePermissionItem *>(i)))
 	{
 		return serialisePermissions(pri, data, pktsize);
+	}
+	else if (NULL != (pblitem = dynamic_cast<RsPeerBandwidthLimitsItem *>(i)))
+	{
+		return serialisePeerBandwidthLimits(pblitem, data, pktsize);
 	}
 
 	return false;
@@ -758,6 +768,8 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 			return deserialiseGroup(data, pktsize);
 		case RS_PKT_SUBTYPE_PEER_PERMISSIONS:
 			return deserialisePermissions(data, pktsize);
+		case RS_PKT_SUBTYPE_PEER_BANDLIMITS:
+			return deserialisePeerBandwidthLimits(data, pktsize);
 		default:
 			return NULL;
 	}
