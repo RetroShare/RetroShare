@@ -112,6 +112,7 @@ int setDebugCrashMode(const char *cfile)
 }
 
 
+#ifdef deadcode // this code is not used by RS
 /* this is called when we exit normally */
 int clearDebugCrashLog()
 {
@@ -135,7 +136,7 @@ int clearDebugCrashLog()
 
 	return 1;
 }
-
+#endif
 
 
 int setDebugFile(const char *fname)
@@ -168,13 +169,14 @@ int setOutputLevel(int lvl)
 	return defaultLevel = lvl;
 }
 
+#ifdef deadcode // this code is not used by RS
 int setZoneLevel(int lvl, int zone)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	zoneLevel[zone] = lvl;
 	return zone;
 }
-
+#endif
 
 int getZoneLevel(int zone)
 {
@@ -182,14 +184,17 @@ int getZoneLevel(int zone)
 	return locked_getZoneLevel(zone);
 }
 
-int locked_getZoneLevel(int zone)
+int locked_getZoneLevel(int /*zone*/)
 {
+#ifdef deadcode // this code is not used by RS
 	std::map<int, int>::iterator it = zoneLevel.find(zone);
 	if (it == zoneLevel.end())
 	{
 		return defaultLevel;
 	}
 	return it -> second;
+#endif
+	return defaultLevel;
 }
 
 int rslog(unsigned int lvl, int zone, const std::string &msg)
