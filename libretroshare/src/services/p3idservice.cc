@@ -58,9 +58,14 @@
 
 #define GXSID_MAX_CACHE_SIZE 5000
 
-static const uint32_t MAX_KEEP_UNUSED_KEYS      = 30*86400 ; // remove unused keys after 30 days
-static const uint32_t MAX_KEEP_BANNED_KEYS      = 30*86400 ; // remove banned keys after 5 days
-static const uint32_t MAX_DELAY_BEFORE_CLEANING =      601 ; // clean old keys every 10 mins
+// unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
+
+static const time_t MAX_KEEP_KEYS_BANNED       =     2 * 86400 ; // get rid of banned ids after 2 days. That gives a chance to un-ban someone before he gets kicked out
+static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
+static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
+static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
+
+static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys every 30 mins
 
 RsIdentity *rsIdentity = NULL;
 
@@ -154,7 +159,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 {
 	mBgSchedule_Mode = 0;
     mBgSchedule_Active = false;
-    mLastKeyCleaningTime = 0 ;
+    mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
     mLastConfigUpdate = 0 ;
     mOwnIdsLoaded = false ;
 
@@ -263,11 +268,16 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 }
 void p3IdService::timeStampKey(const RsGxsId& gxs_id)
 {
-    RS_STACK_MUTEX(mIdMtx) ;
+    if(rsReputations->isIdentityBanned(gxs_id))
+    {
+	    std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
+	    return;
+    }
 
+    RS_STACK_MUTEX(mIdMtx) ;
     mKeysTS[gxs_id] = time(NULL) ;
 
-        slowIndicateConfigChanged() ;
+    slowIndicateConfigChanged() ;
 }
 
 bool p3IdService::loadList(std::list<RsItem*>& items)
@@ -307,49 +317,114 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
     items.push_back(item) ;
     return true ;
 }
+
+class IdCacheEntryCleaner
+{
+public:
+    IdCacheEntryCleaner(const std::map<RsGxsId,time_t>& last_usage_TSs) : mLastUsageTS(last_usage_TSs) {}
+    
+    bool processEntry(RsGxsIdCache& entry)
+    { 
+	    time_t now = time(NULL);
+	    const RsGxsId& gxs_id = entry.details.mId ;
+
+	    bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
+	    bool is_own_id    = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID) ;
+	    bool is_known_id  = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) ;
+	    bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
+	    bool is_a_contact = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) ;
+
+	    std::cerr << "Identity: " << gxs_id << ": banned: " << is_id_banned << ", own: " << is_own_id << ", contact: " << is_a_contact << ", signed: " << is_signed_id << ", known: " << is_known_id;
+
+	    if(is_own_id || is_a_contact)
+	    {
+		    std::cerr << " => kept" << std::endl;
+		    return true ;
+	    }
+
+	    std::map<RsGxsId,time_t>::const_iterator it = mLastUsageTS.find(gxs_id) ;
+
+	    if(it == mLastUsageTS.end())
+	    {
+		    std::cerr << "No Ts for this ID" << std::endl;
+		    return true ;
+	    }
+
+	    time_t last_usage_ts = it->second;
+	    time_t max_keep_time ;
+
+	    if(is_id_banned)
+		    max_keep_time = MAX_KEEP_KEYS_BANNED ;
+	    else if(is_known_id)
+		    max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
+	    else if(is_signed_id)
+		    max_keep_time = MAX_KEEP_KEYS_SIGNED ;
+		else
+		    max_keep_time = MAX_KEEP_KEYS_DEFAULT ;
+
+	    std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
+
+	    if(now > last_usage_ts + max_keep_time)
+	    {
+		    std::cerr << " => delete " << std::endl;
+		    ids_to_delete.push_back(gxs_id) ;
+	    }
+	    else
+		    std::cerr << " => keep " << std::endl;
+        
+	return true;
+    }
+    
+    std::list<RsGxsId> ids_to_delete ;
+    const std::map<RsGxsId,time_t>& mLastUsageTS;
+};
+
 void p3IdService::cleanUnusedKeys()
 {
-    std::list<RsGxsId> ids_to_delete ;
+	std::list<RsGxsId> ids_to_delete ;
 
-    // we need to stash all ids to delete into an off-mutex structure since deleteIdentity() will trigger the lock
-    {
-	    RS_STACK_MUTEX(mIdMtx) ;
+    	std::cerr << "Cleaning unused keys:" << std::endl;
+        
+	// we need to stash all ids to delete into an off-mutex structure since deleteIdentity() will trigger the lock
+	{
+		RS_STACK_MUTEX(mIdMtx) ;
 
-	    if(!mOwnIdsLoaded)
-	    {
-		    std::cerr << "(EE) Own ids not loaded. Cannot clean unused keys." << std::endl;
-		    return ;
-	    }
+		if(!mOwnIdsLoaded)
+		{
+			std::cerr << "(EE) Own ids not loaded. Cannot clean unused keys." << std::endl;
+			return ;
+		}
 
-	    // grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
-	    time_t now = time(NULL) ;
-	    int n=0 ;
+		// grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
+        
+		time_t now = time(NULL) ;
+		int n=0 ;
+		IdCacheEntryCleaner idcec(mKeysTS) ;
 
-	    for(std::map<RsGxsId,time_t>::iterator it(mKeysTS.begin());it!=mKeysTS.end() && n < 10;++it)
-	    {
-		    if(it->second + MAX_KEEP_UNUSED_KEYS < now && std::find(mOwnIds.begin(),mOwnIds.end(),it->first) == mOwnIds.end())
-			    ids_to_delete.push_back(it->first),++n ;
-		    else if(it->second + MAX_KEEP_BANNED_KEYS < now && rsReputations->isIdentityBanned(it->first)) 
-			    ids_to_delete.push_back(it->first),++n ;
-	    }
-    }
+		mPublicKeyCache.applyToAllCachedEntries(idcec,&IdCacheEntryCleaner::processEntry);
+        
+        	ids_to_delete = idcec.ids_to_delete ;
+	}
+        std::cerr << "Collected " << ids_to_delete.size() << " keys to delete among " << mPublicKeyCache.size() << std::endl;
+        
+	for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
+	{
+		std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
+		uint32_t token ;
+		RsGxsIdGroup group;
+		group.mMeta.mGroupId=RsGxsGroupId(*it);
+		rsIdentity->deleteIdentity(token, group);
 
-    for(std::list<RsGxsId>::const_iterator it(ids_to_delete.begin());it!=ids_to_delete.end();++it)
-    {
-        std::cerr << "Deleting identity " << *it << " which is too old." << std::endl;
-        uint32_t token ;
-        RsGxsIdGroup group;
-        group.mMeta.mGroupId=RsGxsGroupId(*it);
-        rsIdentity->deleteIdentity(token, group);
+		{
+			RS_STACK_MUTEX(mIdMtx) ;
+			std::map<RsGxsId,time_t>::iterator tmp = mKeysTS.find(*it) ;
 
-        {
-            RS_STACK_MUTEX(mIdMtx) ;
-            std::map<RsGxsId,time_t>::iterator tmp = mKeysTS.find(*it) ;
-
-            if(mKeysTS.end() != tmp)
-                mKeysTS.erase(tmp) ;
-        }
-    }
+			if(mKeysTS.end() != tmp)
+				mKeysTS.erase(tmp) ;
+            
+            		// mPublicKeyCache.erase(*it) ; no need to do it now. It's done in p3IdService::deleteGroup()
+		}
+	}
 }
 
 void	p3IdService::service_tick()
@@ -453,9 +528,6 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
             
-            if(mContacts.find(id) != mContacts.end())
-		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
-
         // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
         if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
             details.mNickname = "[too long a name]" ;
@@ -471,9 +543,6 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
             
-            if(mContacts.find(id) != mContacts.end())
-		    details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT ;
-
         rsReputations->getReputationInfo(id,details.mReputation) ;
         
             return true;
@@ -1962,12 +2031,20 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 	// Create Cache Data.
 	RsGxsIdCache pubcache(item, pubkey, tagList);
+    
+    	if(mContacts.find(id) != mContacts.end())
+            pubcache.details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT;
+                
 	mPublicKeyCache.store(id, pubcache);
 	mPublicKeyCache.resize();
 
 	if (full_key_ok)
 	{
 		RsGxsIdCache fullcache(item, fullkey, tagList);
+        
+	if(mContacts.find(id) != mContacts.end())
+            pubcache.details.mFlags |= RS_IDENTITY_FLAGS_IS_A_CONTACT;
+                
 		mPrivateKeyCache.store(id, fullcache);
 		mPrivateKeyCache.resize();
 	}
