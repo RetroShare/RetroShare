@@ -33,15 +33,15 @@
 
 #include <algorithm>
 
-AvatarWidget::AvatarWidget(QWidget *parent) :
-	QLabel(parent), ui(new Ui::AvatarWidget)
+//#define DEBUG_AVATAR_GUI 1
+
+AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarWidget)
 {
 	ui->setupUi(this);
 
 	mFlag.isOwnId = false;
-//	mFlag.isGpg = false;
-    defaultAvatar = ":/images/no_avatar_background.png";
-    mPeerState = RS_STATUS_OFFLINE ;
+	defaultAvatar = ":/images/no_avatar_background.png";
+	mPeerState = RS_STATUS_OFFLINE ;
 
 	setFrameType(NO_FRAME);
 
@@ -255,8 +255,11 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 			if (mId.toDistantChatId() == DistantChatPeerId(peerId.toStdString()))
 				refreshAvatarImage() ;
 			//else not mId so pass through
-	} else
+	} 
+#ifdef DEBUG_AVATAR_GUI
+    else
 		std::cerr << "(EE) cannot update avatar. mId has unhandled type." << std::endl;
+#endif
 }
 
 void AvatarWidget::refreshAvatarImage()
