@@ -1169,8 +1169,10 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
 
     if(mNetService != NULL)
         mNetService->subscribeStatusChanged(grpId,subscribe) ;
+#ifdef GEN_EXCH_DEBUG
     else
         std::cerr << "(EE) No mNetService in RsGenExchange for service 0x" << std::hex << mServType << std::dec << std::endl;
+#endif
 
     return true;
 }
