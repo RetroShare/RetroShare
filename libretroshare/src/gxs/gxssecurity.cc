@@ -110,9 +110,9 @@ static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_priv)
 }
 bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 {
-//#ifdef GXS_SECURITY_DEBUG
+#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking private key " << key.keyId << " ..." << std::endl;
-//#endif
+#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_FULL)
     {
@@ -147,9 +147,9 @@ bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 }
 bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
 {
-//#ifdef GXS_SECURITY_DEBUG
+#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking public key " << key.keyId << " ..." << std::endl;
-//#endif
+#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_PUBLIC_ONLY)
     {
