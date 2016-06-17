@@ -698,10 +698,11 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			}
 		}    
 
+        	// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
+        	// Admin/non admin is shows using Bold font.
+        
 		if(am_I_in_circle)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
-		else if(am_I_admin)
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMIN)) ;	
 		else if(am_I_invited || am_I_pending)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
 		else
