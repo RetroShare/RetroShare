@@ -286,7 +286,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
 	if (shareKeyType()) {
-        action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share admin permissions"), this, SLOT(shareKey()));
+        action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
         action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 
@@ -429,7 +429,7 @@ void GxsGroupFrameDialog::markMsgAsUnread()
 	}
 }
 
-void GxsGroupFrameDialog::shareKey()
+void GxsGroupFrameDialog::sharePublishKey()
 {
 	if (mGroupId.isNull()) {
 		return;
@@ -673,7 +673,8 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	groupItemInfo.popularity = groupInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
-	groupItemInfo.privatekey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
+	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
+	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
 	groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
 
 #if TOGXS
