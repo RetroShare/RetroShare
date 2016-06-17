@@ -96,14 +96,15 @@ static void setRSAPublicKeyData(RsTlvPublicRSAKey& key, RSA *rsa_pub)
 	free(data) ;
 }
 
-static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_pub)
+static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_priv)
 {
     assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+    
         unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
-        int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
+        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
 
         key.keyData.setBinData(data, reqspace);
-        key.keyId = getRsaKeyFingerprint(rsa_pub);
+        key.keyId = getRsaKeyFingerprint(rsa_priv);
 
 	free(data) ;
 }
@@ -179,17 +180,18 @@ bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAK
 	// admin keys
     RSA *rsa     = RSA_generate_key(2048, 65537, NULL, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
+    
+    public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
+    private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
     setRSAPublicKeyData(public_key, rsa_pub);
     setRSAPrivateKeyData(private_key, rsa);
 
     public_key.startTS  = time(NULL);
     public_key.endTS    = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
-    public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
 
     private_key.startTS  = public_key.startTS;
     private_key.endTS    = 0; /* no end */
-    private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
     // clean up
     RSA_free(rsa);
@@ -250,28 +252,28 @@ bool GxsSecurity::extractPublicKey(const RsTlvPrivateRSAKey &private_key, RsTlvP
 
 bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvPrivateRSAKey &privKey, RsTlvKeySignature& sign)
 {
-	RSA* rsa_pub = extractPrivateKey(privKey);
+	RSA* rsa_priv = extractPrivateKey(privKey);
 
-	if(!rsa_pub)
+	if(!rsa_priv)
 	{
 		std::cerr << "GxsSecurity::getSignature(): Cannot create signature. Keydata is incomplete." << std::endl;
 		return false ;
 	}
-	EVP_PKEY *key_pub = EVP_PKEY_new();
-	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
+	EVP_PKEY *key_priv = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(key_priv, rsa_priv);
 
 	/* calc and check signature */
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	bool ok = EVP_SignInit(mdctx, EVP_sha1()) == 1;
 	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
 
-	unsigned int siglen = EVP_PKEY_size(key_pub);
+	unsigned int siglen = EVP_PKEY_size(key_priv);
 	unsigned char sigbuf[siglen];
-	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
+	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_priv) == 1;
 
 	// clean up
 	EVP_MD_CTX_destroy(mdctx);
-	EVP_PKEY_free(key_pub);
+	EVP_PKEY_free(key_priv);
 
 	sign.signData.setBinData(sigbuf, siglen);
 	sign.keyId = RsGxsId(privKey.keyId);
