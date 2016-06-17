@@ -53,7 +53,7 @@ class RsTlvRSAKey: public RsTlvItem
 {
 public:
 	RsTlvRSAKey();
-    virtual bool     checkFlags(uint32_t flags) const = 0 ;	// this pure virtual forces people to explicitly declare if they use a public or a private key.
+    virtual bool     checkKey() const = 0 ;	// this pure virtual forces people to explicitly declare if they use a public or a private key.
 
     virtual uint32_t TlvSize() const;
     virtual void 	TlvClear();
@@ -64,8 +64,6 @@ public:
     /* clears KeyData - but doesn't delete - to transfer ownership */
     void ShallowClear(); 
     
-    bool check() const { return checkFlags(keyFlags) && (!keyId.isNull()) ; }
-
     RsGxsId keyId;		// Mandatory :
     uint32_t keyFlags;		// Mandatory ;
     uint32_t startTS;		// Mandatory : 
@@ -80,14 +78,14 @@ class RsTlvPrivateRSAKey: public RsTlvRSAKey
 	public:
 		virtual ~RsTlvPrivateRSAKey() {}
 
-        	virtual bool checkFlags(uint32_t flags) const  { return bool(flags & RSTLV_KEY_TYPE_FULL) && !bool(flags & RSTLV_KEY_TYPE_PUBLIC_ONLY) ; }
+        	virtual bool checkKey() const  ;
 };
 class RsTlvPublicRSAKey: public RsTlvRSAKey
 {
 	public:
 		virtual ~RsTlvPublicRSAKey() {}
 
-        	virtual bool checkFlags(uint32_t flags) const  { return bool(flags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && !bool(flags & RSTLV_KEY_TYPE_FULL) ; }
+        	virtual bool checkKey() const  ;
 };
 
 class RsTlvSecurityKeySet: public RsTlvItem

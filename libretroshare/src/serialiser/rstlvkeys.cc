@@ -28,6 +28,7 @@
 #include "rstlvbase.h"
 #include "rsbaseserial.h"
 #include "util/stacktrace.h"
+#include "gxs/gxssecurity.h"
 
 #include <iostream>
 
@@ -96,7 +97,7 @@ bool  RsTlvRSAKey::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 		return false; /* not enough space */
 	}
 
-	bool ok = checkFlags(keyFlags);	// check before serialise, just in case
+	bool ok = checkKey();	// check before serialise, just in case
 
 	/* start at data[offset] */
         /* add mandatory parts first */
@@ -184,7 +185,7 @@ bool  RsTlvRSAKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 		std::cerr << std::endl;
 #endif
 	}
-	return ok && checkFlags(keyFlags) ;
+	return ok && checkKey() ;
 }
 
 std::ostream& RsTlvRSAKey::print(std::ostream &out, uint16_t indent) const
@@ -217,7 +218,15 @@ std::ostream& RsTlvRSAKey::print(std::ostream &out, uint16_t indent) const
 }
 
 
+bool RsTlvPrivateRSAKey::checkKey() const
+{ 
+    return bool(keyFlags & RSTLV_KEY_TYPE_FULL) && !bool(keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && GxsSecurity::checkPrivateKey(*this) ;
+}
 
+bool RsTlvPublicRSAKey::checkKey() const
+{ 
+    return bool(keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && !bool(keyFlags & RSTLV_KEY_TYPE_FULL) && GxsSecurity::checkPublicKey(*this) ;
+}
 
 /************************************* RsTlvSecurityKeySet ************************************/
 

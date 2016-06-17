@@ -1699,10 +1699,10 @@ void RsGxsIdCache::init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& i
     	// do some tests
     	if(details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
         {
-            if(!priv_key.check())
+            if(!priv_key.checkKey())
                 std::cerr << "(EE) Private key missing for own identity " << pub_key.keyId << std::endl;
         }
-	if(!pub_key.check())
+	if(!pub_key.checkKey())
 		std::cerr << "(EE) Public key missing for identity " << pub_key.keyId << std::endl;
                     
 	/* rest must be retrived from ServiceString */

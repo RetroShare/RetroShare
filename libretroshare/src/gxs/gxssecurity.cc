@@ -110,9 +110,9 @@ static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_priv)
 }
 bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 {
-#ifdef GXS_SECURITY_DEBUG
+//#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking private key " << key.keyId << " ..." << std::endl;
-#endif
+//#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_FULL)
     {
@@ -147,15 +147,28 @@ bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 }
 bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
 {
-#ifdef GXS_SECURITY_DEBUG
+//#ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking public key " << key.keyId << " ..." << std::endl;
-#endif
+//#endif
 
     if( (key.keyFlags & RSTLV_KEY_TYPE_MASK) != RSTLV_KEY_TYPE_PUBLIC_ONLY)
     {
         std::cerr << "(WW) GxsSecurity::checkPublicKey(): public key has wrong flags " << std::hex << (key.keyFlags & RSTLV_KEY_TYPE_MASK) << std::dec << ". This is unexpected." << std::endl;
         return false ;
     }
+    
+    // try to extract private key
+    const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+    long keylen = key.keyData.bin_len;
+    RSA *rsa_prv = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+    
+    if(rsa_prv != NULL)
+    {
+        std::cerr << "(SS) GxsSecurity::checkPublicKey(): public key with ID " << key.keyId << " actually is a Private key!!!" << std::endl;
+	RSA_free(rsa_prv) ;
+    	return false ;
+    }
+    
     RSA *rsa_pub = ::extractPublicKey(key) ;
 
     if(rsa_pub == NULL)
@@ -197,7 +210,7 @@ bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAK
     RSA_free(rsa);
     RSA_free(rsa_pub);
 
-    if(!(private_key.check() && public_key.check()))
+    if(!(private_key.checkKey() && public_key.checkKey()))
     {
         std::cerr << "(EE) ERROR while generating keys. Something inconsistent in flags. This is probably a bad sign!" << std::endl;
 	return false ;
