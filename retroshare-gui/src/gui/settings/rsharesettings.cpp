@@ -512,6 +512,26 @@ void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
 	setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
+bool RshareSettings::getChatSendAsPlainTextByDef()
+{
+	return valueFromGroup("Chat", "SendAsPlainTextByDef", false).toBool();
+}
+
+void RshareSettings::setChatSendAsPlainTextByDef(bool bValue)
+{
+	setValueToGroup("Chat", "SendAsPlainTextByDef", bValue);
+}
+
+bool RshareSettings::getChatSearchShowBarByDefault()
+{
+	return valueFromGroup("Chat", "SearchShowBarByDefault", false).toBool();
+}
+
+void RshareSettings::setChatSearchShowBarByDefault(bool bValue)
+{
+	setValueToGroup("Chat", "SearchShowBarByDefault", bValue);
+}
+
 void RshareSettings::setChatSearchCharToStartSearch(int iValue)
 {
 	setValueToGroup("Chat", "SearchCharToStartSearch", iValue);

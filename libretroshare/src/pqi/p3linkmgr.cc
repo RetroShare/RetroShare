@@ -110,10 +110,6 @@ peerConnectState::peerConnectState()
 	 inConnAttempt(0), 
 	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
 {
-	//sockaddr_clear(&currentlocaladdr);
-	//sockaddr_clear(&currentserveraddr);
-
-	return;
 }
 
 std::string textPeerConnectState(peerConnectState &state)

@@ -73,6 +73,7 @@ public:
     
 	template<class ClientClass> bool applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(Value&));
     
+    	uint32_t size() const { return mDataMap.size() ; }
 private:
 
 	bool update_lrumap(const Key &key, time_t old_ts, time_t new_ts);

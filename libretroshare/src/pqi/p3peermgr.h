@@ -102,6 +102,8 @@ class peerState
 	std::string location;
 	std::string name;
 
+    	uint32_t maxUpRate ;
+    	uint32_t maxDnRate ;
 };
 
 class RsPeerGroupItem;
@@ -207,6 +209,9 @@ virtual uint32_t getHiddenType(const RsPeerId &ssl_id) = 0;
 
 
 virtual int 	getFriendCount(bool ssl, bool online) = 0;
+virtual bool 	setMaxRates(const RsPgpId&  pid,uint32_t  maxUp,uint32_t  maxDn)=0;
+virtual bool 	getMaxRates(const RsPgpId&  pid,uint32_t& maxUp,uint32_t& maxDn)=0;
+virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn)=0;
 
         /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -321,6 +326,9 @@ virtual int 	getFriendCount(bool ssl, bool online);
 		// Single Use Function... shouldn't be here. used by p3serverconfig.cc
 virtual bool 	haveOnceConnected();
 
+virtual bool 	setMaxRates(const RsPgpId&  pid,uint32_t  maxUp,uint32_t  maxDn);
+virtual bool 	getMaxRates(const RsPgpId&  pid,uint32_t& maxUp,uint32_t& maxDn);
+virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn);
 
 /************************************************************************************************/
 /* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
@@ -392,6 +400,7 @@ private:
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
 	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+	std::map<RsPgpId, PeerBandwidthLimits> mPeerBandwidthLimits ; // bandwidth limits for each gpg key
 
 	struct sockaddr_storage mProxyServerAddressTor;
 	struct sockaddr_storage mProxyServerAddressI2P;

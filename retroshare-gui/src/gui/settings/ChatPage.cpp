@@ -100,7 +100,7 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-       connect(ui.distantChatcomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+       connect(ui.distantChatComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
 
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
@@ -123,12 +123,13 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
     // state of distant Chat combobox
-    Settings->setValue("DistantChat", ui.distantChatcomboBox->currentIndex());
+    Settings->setValue("DistantChat", ui.distantChatComboBox->currentIndex());
 
     Settings->setChatScreenFont(fontTempChat.toString());
     NotifyQt::getInstance()->notifyChatFontChanged();
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
+    Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
 
     Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
     Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
@@ -231,11 +232,12 @@ ChatPage::load()
 
 	     // state of distant Chat combobox
     int index = Settings->value("DistantChat", 0).toInt();
-    ui.distantChatcomboBox->setCurrentIndex(index);
+    ui.distantChatComboBox->setCurrentIndex(index);
 
     fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+    ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
 
     ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
     ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());

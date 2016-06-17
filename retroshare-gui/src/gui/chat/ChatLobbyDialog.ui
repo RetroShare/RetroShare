@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="ChatLobbyDialogHLayout">
    <property name="margin">
     <number>0</number>
    </property>
@@ -52,7 +52,7 @@
         <height>0</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="participantsFrameVLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>

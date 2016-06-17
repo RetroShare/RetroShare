@@ -27,6 +27,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "retroshare/rspeers.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -69,18 +70,19 @@ static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
 
 pqihandler::pqihandler() : coreMtx("pqihandler")
 {
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+    RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	// setup minimal total+individual rates.
-	rateIndiv_out = 0.01;
-	rateIndiv_in = 0.01;
-	rateMax_out = 0.01;
+    // setup minimal total+individual rates.
+    rateIndiv_out = 0.01;
+    rateIndiv_in = 0.01;
+    rateMax_out = 0.01;
     rateMax_in = 0.01;
     rateTotal_in = 0.0 ;
     rateTotal_out = 0.0 ;
     last_m = time(NULL) ;
-	nb_ticks = 0 ;
-	ticks_per_sec = 5 ; // initial guess
+    nb_ticks = 0 ;
+    mLastRateCapUpdate = 0 ;
+    ticks_per_sec = 5 ; // initial guess
     return;
 }
 
@@ -113,27 +115,27 @@ int	pqihandler::tick()
 			moreToTick = 1;
 		}
 #endif
-    }
+	}
 
-//     static time_t last_print_time = 0 ;
-//     time_t now = time(NULL) ;
-//     if(now > last_print_time + 3)
-//     {
-//         std::map<uint16_t,uint32_t> per_service_count ;
-//         std::vector<uint32_t> per_priority_count ;
-//
-//         ExtractOutQueueStatistics(per_service_count,per_priority_count) ;
-//
-//         std::cerr << "PQIHandler outqueues: " << std::endl;
-//
-//         for(std::map<uint16_t,uint32_t>::const_iterator it=per_service_count.begin();it!=per_service_count.end();++it)
-//             std::cerr << "  " << std::hex << it->first << std::dec << "  " << it->second << std::endl;
-//
-//         for(int i=0;i<per_priority_count.size();++i)
-//             std::cerr << "  " << i << " : " << per_priority_count[i] << std::endl;
-//
-//         last_print_time = now ;
-//     }
+	time_t now = time(NULL) ;
+    
+	if(now > mLastRateCapUpdate + 5)
+	{
+                // every 5 secs, update the max rates for all modules
+        
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+		for(std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
+            	{
+            		// This is rather inelegant, but pqihandler has searchModules that are dynamically allocated, so the max rates
+            		// need to be updated from inside.
+	    		uint32_t maxUp,maxDn ;
+            		rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn);
+                    
+                    	it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up. 
+		}
+        
+        	mLastRateCapUpdate = now ;
+	}
 
 	UpdateRates();
 	return moreToTick;
@@ -276,144 +278,6 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 
 	return queueOutRsItem(ns) ;
 }
-
-#ifdef TO_BE_REMOVED
-
-// inputs. This is a very basic
-// system that is completely biased and slow...
-// someone please fix.
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// THIS CODE SHOULD BE ABLE TO BE REMOVED!
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-
-int pqihandler::locked_GetItems()
-{
-	std::map<RsPeerId, SearchModule *>::iterator it;
-
-	RsItem *item;
-	int count = 0;
-
-	// loop through modules....
-	for(it = mods.begin(); it != mods.end(); ++it)
-	{
-		SearchModule *mod = (it -> second);
-
-		// check security... is output allowed.
-		if(0 < secpolicy_check((it -> second) -> sp,
-					0, PQI_INCOMING)) // PQI_ITEM_TYPE_ITEM, PQI_INCOMING))
-		{
-			// if yes... attempt to read.
-			while((item = (mod -> pqi) -> GetItem()) != NULL)
-			{
-
-				static int ntimes =0 ;
-//				if(++ntimes < 20)
-				{
-		std::cerr << "pqihandler::locked_GetItems() pqi->GetItem()";
-        std::cerr << " should never happen anymore!";
-        std::cerr << std::endl;
-				}
-
-#ifdef RSITEM_DEBUG
-				std::string out;
-				rs_sprintf(out, "pqihandler::GetItems() Incoming Item from: %p\n", mod -> pqi);
-				item -> print_string(out);
-
-				pqioutput(PQL_DEBUG_BASIC,
-						pqihandlerzone, out);
-#endif
-
-				if (item->PeerId() != (mod->pqi)->PeerId())
-				{
-					/* ERROR */
-					pqioutput(PQL_ALERT,
-						pqihandlerzone, "ERROR PeerIds dont match!");
-					item->PeerId(mod->pqi->PeerId());
-				}
-
-				locked_SortnStoreItem(item);
-				count++;
-			}
-		}
-		else
-		{
-			// not allowed to recieve from here....
-			while((item = (mod -> pqi) -> GetItem()) != NULL)
-			{
-				std::string out;
-				rs_sprintf(out, "pqihandler::GetItems() Incoming Item from: %p\n", mod -> pqi);
-				item -> print_string(out);
-				out += "\nItem Not Allowed (Sec Pol). deleting!";
-
-				pqioutput(PQL_DEBUG_BASIC,
-						pqihandlerzone, out);
-
-				delete item;
-			}
-		}
-	}
-	return count;
-}
-
-void pqihandler::locked_SortnStoreItem(RsItem *item)
-{
-	/* get class type / subtype out of the item */
-	uint8_t vers    = item -> PacketVersion();
-
-	/* whole Version reserved for SERVICES/CACHES */
-	if (vers == RS_PKT_VERSION_SERVICE)
-	{
-	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
-	      "SortnStore -> Service");
-	    in_service.push_back(item);
-	    item = NULL;
-	    return;
-	}
-	std::cerr << "pqihandler::locked_SortnStoreItem() : unhandled item! Will be deleted. This is certainly a bug." << std::endl;
-
-	if (vers != RS_PKT_VERSION1)
-	{
-		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> Invalid VERSION! Deleting!");
-		delete item;
-		item = NULL;
-		return;
-	}
-
-	if (item)
-	{
-	    pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> Deleting Unsorted Item");
-	    delete item;
-	}
-
-	return;
-}
-
-RsRawItem *pqihandler::GetRsRawItem()
-{
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
-	if (in_service.size() != 0)
-	{
-		RsRawItem *fi = dynamic_cast<RsRawItem *>(in_service.front());
-		if (!fi) { delete in_service.front(); }
-		in_service.pop_front();
-		return fi;
-	}
-	return NULL;
-}
-
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-// ABOVE CODE SHOULD BE ABLE TO BE REMOVED!
-/////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
-
-#endif
-
-static const float MIN_RATE = 0.01; // 10 B/s
 
 int     pqihandler::ExtractTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
 {
@@ -640,6 +504,7 @@ int     pqihandler::UpdateRates()
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
+        
 		mod -> pqi -> setMaxRate(true,   in_max_bw);
 		mod -> pqi -> setMaxRate(false, out_max_bw);
 	}
@@ -649,18 +514,10 @@ int     pqihandler::UpdateRates()
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		SearchModule *mod = (it -> second);
-		if (mod -> pqi -> getMaxRate(false) < max_out_effective) {
-			mod -> pqi -> setMaxRate(false, max_out_effective);
-		}
-		if (mod -> pqi -> getMaxRate(false) > avail_out) {
-			mod -> pqi -> setMaxRate(false, avail_out);
-		}
-		if (mod -> pqi -> getMaxRate(true) < max_in_effective) {
-			mod -> pqi -> setMaxRate(true, max_in_effective);
-		}
-		if (mod -> pqi -> getMaxRate(true) > avail_in) {
-			mod -> pqi -> setMaxRate(true, avail_in);
-		}
+		if (mod -> pqi -> getMaxRate(false) < max_out_effective)  mod -> pqi -> setMaxRate(false, max_out_effective);
+		if (mod -> pqi -> getMaxRate(false) > avail_out)          mod -> pqi -> setMaxRate(false, avail_out);
+		if (mod -> pqi -> getMaxRate(true)  < max_in_effective)   mod -> pqi -> setMaxRate(true,  max_in_effective);
+		if (mod -> pqi -> getMaxRate(true)  > avail_in)           mod -> pqi -> setMaxRate(true,  avail_in);
 	}
 
 	return 1;

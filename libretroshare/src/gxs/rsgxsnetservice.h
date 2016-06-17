@@ -384,8 +384,10 @@ private:
 #endif
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
-    bool locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem* item);
+    bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
 
+    static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
+    
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;

@@ -211,6 +211,26 @@ function lobby(lobbyid){
                 }
             )
         ]
+    } else {
+        if (lobdt.subscribed != undefined
+            && lobdt.subscribed
+            && lobdt.is_broadcast
+            ) {
+            //set participants
+            particips = [
+                m("div.btn", {
+                    style: {
+                        "text-align":"center"
+                    },
+                    onclick: function (){
+                        rs.request("chat/clear_lobby",{
+                            lobbyid,
+                        });
+                        m.route("/chat?lobby=" + lobbyid);
+                    }
+                },"clear"),
+            ]
+        }
     }
     return [
         intro,

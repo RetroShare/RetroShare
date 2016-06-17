@@ -129,7 +129,6 @@ class peerConnectState
         time_t deniedTS;
 	bool deniedInConnAttempt; /* is below valid */
 	peerConnectAddress deniedConnectionAttempt;
-
 };
 
 class p3tunnel; 
@@ -312,7 +311,7 @@ bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAdd
 
 
 private:
-	// These should have there own Mutex Protection,
+	// These should have their own Mutex Protection,
 	//p3tunnel *mP3tunnel;
 	DNSResolver *mDNSResolver ;
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
-    <height>727</height>
+    <width>742</width>
+    <height>915</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,7 @@
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
+     <zorder>stabWidget</zorder>
     </widget>
    </item>
    <item row="1" column="0">
@@ -60,7 +61,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="icon">
@@ -408,6 +409,13 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Use this certificate to make friends:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QTextEdit" name="userCertificateText"/>
           </item>
           <item>
@@ -433,60 +441,6 @@
              </spacer>
             </item>
            </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_4">
-         <attribute name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/admin-16.png</normaloff>:/images/admin-16.png</iconset>
-         </attribute>
-         <attribute name="title">
-          <string>Options</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="3" column="0" colspan="2">
-           <spacer name="verticalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>196</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="_direct_transfer_CB">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Use as direct source, when available</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="_allow_push_CB">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Auto-download recommended files from this node</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="_require_WL_CB">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Require white list clearance</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>

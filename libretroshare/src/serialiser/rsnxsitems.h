@@ -351,12 +351,12 @@ public:
 #ifdef UNUSED_CODE
     static const uint8_t FLAG_USE_SYNC_HASH;
 #endif
+    static const uint8_t FLAG_USE_HASHED_GROUP_ID;
 
     RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); return; }
 
-	virtual bool serialise(void *data,uint32_t& size) const;	
-	virtual uint32_t serial_size() const; 			
-        
+    virtual bool serialise(void *data,uint32_t& size) const;	
+    virtual uint32_t serial_size() const; 			
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);

@@ -1034,6 +1034,36 @@ border-image: url(:/images/closepressed.png)
     <string>Save image</string>
    </property>
   </action>
+  <action name="actionSendAsPlainText">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/SimpleText.png</normaloff>:/images/SimpleText.png</iconset>
+   </property>
+   <property name="text">
+    <string>Send as PlainText</string>
+   </property>
+   <property name="toolTip">
+    <string>Send as plain text without font.</string>
+   </property>
+  </action>
+  <action name="actionNoEmbed">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/SmileyText.png</normaloff>:/images/SmileyText.png</iconset>
+   </property>
+   <property name="text">
+    <string>Don't replace tag with Emote Icon.</string>
+   </property>
+   <property name="toolTip">
+    <string>Don't replace tag with Emote Icon.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

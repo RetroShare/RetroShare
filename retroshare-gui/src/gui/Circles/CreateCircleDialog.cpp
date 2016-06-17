@@ -138,6 +138,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     else
     {
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
 	    ui.idChooser->setVisible(true) ;
     }
     
@@ -297,6 +298,8 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	//member->setIcon(RSCIRCLEID_COL_NICKNAME, pixmap);
 
 	tree->addTopLevelItem(member);
+	
+	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
 }
 
 /** Maybe we can use RsGxsCircleGroup instead of RsGxsCircleDetails ??? (TODO)**/
@@ -634,6 +637,7 @@ void CreateCircleDialog::updateCircleGUI()
 	    //ui.idChooser->setIdConstraintSet(ids) ;
 	    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE) ;
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
     }
 }
 

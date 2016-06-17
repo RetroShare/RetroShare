@@ -54,12 +54,15 @@ const uint8_t RS_PKT_SUBTYPE_PEER_STUN        = 0x02;
 const uint8_t RS_PKT_SUBTYPE_PEER_NET         = 0x03;  
 const uint8_t RS_PKT_SUBTYPE_PEER_GROUP       = 0x04;
 const uint8_t RS_PKT_SUBTYPE_PEER_PERMISSIONS = 0x05;
+const uint8_t RS_PKT_SUBTYPE_PEER_BANDLIMITS  = 0x06;
 
 	/* FILE CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
 const uint8_t RS_PKT_SUBTYPE_FILE_ITEM     = 0x02;
 
 /**************************************************************************/
+
+// We should make these items use a clean serialise code, and all derive from the same item type.
 
 class RsPeerNetItem: public RsItem
 {
@@ -97,6 +100,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint16_t    domain_port;  
 };
 
+// This item should be merged with the next item, but that is not backward compatible.
 class RsPeerServicePermissionItem : public RsItem
 {
 	public:
@@ -114,7 +118,21 @@ class RsPeerServicePermissionItem : public RsItem
 		std::vector<RsPgpId> pgp_ids ;
 		std::vector<ServicePermissionFlags> service_flags ;
 };
+class RsPeerBandwidthLimitsItem : public RsItem
+{
+	public:
+		RsPeerBandwidthLimitsItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_PEER_BANDLIMITS) {}
+		virtual ~RsPeerBandwidthLimitsItem() {}
 
+		virtual void clear()
+		{
+			peers.clear() ;
+		}
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+		/* Mandatory */
+		std::map<RsPgpId,PeerBandwidthLimits> peers ;
+};
 
 class RsPeerGroupItem : public RsItem
 {
@@ -182,6 +200,10 @@ virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
 virtual	uint32_t    sizeGroup(RsPeerGroupItem *);
 virtual	bool        serialiseGroup  (RsPeerGroupItem *item, void *data, uint32_t *size);
 virtual	RsPeerGroupItem *    deserialiseGroup(void *data, uint32_t *size);
+
+virtual	uint32_t    sizePeerBandwidthLimits(RsPeerBandwidthLimitsItem *);
+virtual	bool        serialisePeerBandwidthLimits  (RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size);
+virtual	RsPeerBandwidthLimitsItem *deserialisePeerBandwidthLimits(void *data, uint32_t *size);
 
 virtual	uint32_t    sizePermissions(RsPeerServicePermissionItem *);
 virtual	bool        serialisePermissions  (RsPeerServicePermissionItem *item, void *data, uint32_t *size);

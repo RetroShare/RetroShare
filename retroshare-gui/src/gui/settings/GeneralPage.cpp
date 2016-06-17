@@ -48,6 +48,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags)
     ui.chkRunRetroshareAtSystemStartup->setEnabled(false);
     ui.chkRunRetroshareAtSystemStartupMinimized->setEnabled(false);
 #endif
+    ui.desktopFileMissingLabel->setVisible(false);
 
 #else
     ui.chkRunRetroshareAtSystemStartup->setVisible(false);

@@ -77,37 +77,38 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 	mCurrRead(0), mCurrSent(0),
 	mAvgReadCount(0), mAvgSentCount(0)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+    // 100 B/s (minimal)
+    setMaxRate(true, 0.1);
+    setMaxRate(false, 0.1);
+    setRate(true, 0);		// needs to be off-mutex
+    setRate(false, 0);
+
+    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
     mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
     mLastSentPacketSlicingProbe = 0 ;
-    
+
     mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
     mIncomingSize = 0 ;
 
     mStatisticsTimeStamp = 0 ;
-	/* allocated once */
+    /* allocated once */
     mPkt_rpend_size = 0;
     mPkt_rpending = 0;
-	mReading_state = reading_state_initial ;
+    mReading_state = reading_state_initial ;
 
-	// 100 B/s (minimal)
-	setMaxRate(true, 0.1);
-	setMaxRate(false, 0.1);
-	setRate(true, 0);
-	setRate(false, 0);
+    pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
 
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::pqistreamer() Initialisation!");
+    if (!bio_in)
+    {
+	    pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
+	    exit(1);
+    }
 
-	if (!bio_in)
-	{
-		pqioutput(PQL_ALERT, pqistreamerzone, "pqistreamer::pqistreamer() NULL bio, FATAL ERROR!");
-		exit(1);
-	}
+    mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
 
-	mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
-
-	return;
+    return;
 }
 
 pqistreamer::~pqistreamer()
@@ -195,18 +196,39 @@ RsItem *pqistreamer::GetItem()
 	return osr;
 }
 
+float pqistreamer::getRate(bool b)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    	return RateInterface::getRate(b) ;
+}
+void pqistreamer::setMaxRate(bool b,float f)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    	RateInterface::setMaxRate(b,f) ;
+}
+void pqistreamer::setRate(bool b,float f)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    	RateInterface::setRate(b,f) ;
+}
+
 void pqistreamer::updateRates()
 {
     // now update rates both ways.
 
     time_t t = time(NULL); // get current timestep.
+    int64_t diff ;
 
-    if (t > mAvgLastUpdate + PQISTREAM_AVG_PERIOD)
     {
-        int64_t diff = int64_t(t) - int64_t(mAvgLastUpdate) ;
+	    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-        float avgReadpSec = getRate(true ) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1000.0 * float(diff));
-        float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1000.0 * float(diff));
+	    diff = int64_t(t) - int64_t(mAvgLastUpdate) ;
+    }
+
+    if (diff > PQISTREAM_AVG_PERIOD)
+    {
+	    float avgReadpSec = getRate(true ) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgReadCount/(1024.0 * float(diff));
+	    float avgSentpSec = getRate(false) * PQISTREAM_AVG_FRAC + (1.0 - PQISTREAM_AVG_FRAC) * mAvgSentCount/(1024.0 * float(diff));
 
 #ifdef DEBUG_PQISTREAMER
 	    std::cerr << "Peer " << PeerId() << ": Current speed estimates: " << avgReadpSec << " / " << avgSentpSec << std::endl;
@@ -226,9 +248,12 @@ void pqistreamer::updateRates()
 		    setRate(false, 0);
 	    }
 
-	    mAvgLastUpdate = t;
-	    mAvgReadCount = 0;
-	    mAvgSentCount = 0;
+	    {
+		    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+		    mAvgLastUpdate = t;
+		    mAvgReadCount = 0;
+		    mAvgSentCount = 0;
+	    }
     }
 }
  
