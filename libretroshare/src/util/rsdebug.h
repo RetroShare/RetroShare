@@ -30,8 +30,6 @@
 #ifndef RS_LOG_DEBUG_H
 #define RS_LOG_DEBUG_H
 
-
-
 #define RSL_NONE     	-1
 #define RSL_ALERT     	 1
 #define RSL_ERROR	 3
@@ -40,17 +38,37 @@
 #define RSL_DEBUG_BASIC	 8
 #define RSL_DEBUG_ALL	10
 
-
 #include <string>
 
+namespace RsLog {
+	enum logLvl {
+		None	= -1,
+		Default	=  0,
+		Alert	=  1,
+		Error	=  3,
+		Warning	=  5,
+		Debug_Alert	=  6,
+		Debug_Basic	=  8,
+		Debug_All	= 10
+	};
+
+	// this struct must be provided by the caller (to rslog())
+	struct logInfo {
+		// module name
+		const std::string name;
+		// module specific log lvl
+		logLvl lvl;
+	};
+}
+
 int setDebugCrashMode(const char *cfile);
-int clearDebugCrashLog();
+//int clearDebugCrashLog();
 
 int setDebugFile(const char *fname);
-int setOutputLevel(int lvl);
-int setZoneLevel(int lvl, int zone);
-int getZoneLevel(int zone);
-int rslog(unsigned int lvl, int zone, const std::string &msg);
+int setOutputLevel(RsLog::logLvl lvl);
+//int setZoneLevel(int lvl, int zone);
+//int getZoneLevel(int zone);
+void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::string &msg);
 
 
 

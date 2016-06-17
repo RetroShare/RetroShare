@@ -37,8 +37,8 @@ const int RS_DEBUG_LOGCRASH 	= 3;  /* minimal logfile stored after crashes */
 const int RS_DEBUG_LOGC_MAX 	= 100000;  /* max length of crashfile log */
 const int RS_DEBUG_LOGC_MIN_SAVE = 100;    /* min length of crashfile log */
 
-static std::map<int, int> zoneLevel;
-static int defaultLevel = RSL_WARNING;
+//static std::map<int, int> zoneLevel;
+static RsLog::logLvl defaultLevel = RsLog::Warning;
 static FILE *ofd = stderr;
 
 static int debugMode = RS_DEBUG_STDERR;
@@ -49,7 +49,6 @@ static int debugTS = 0;
 static RsMutex logMtx("logMtx");
 
 int locked_setDebugFile(const char *fname);
-int locked_getZoneLevel(int zone);
 
 int setDebugCrashMode(const char *cfile)
 {
@@ -138,7 +137,6 @@ int clearDebugCrashLog()
 }
 #endif
 
-
 int setDebugFile(const char *fname)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
@@ -162,45 +160,51 @@ int locked_setDebugFile(const char *fname)
 	}
 }
 
+//int setOutputLevel(RsLog::logLvl lvl)
+//{
+//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+//	return defaultLevel = lvl;
+//}
 
-int setOutputLevel(int lvl)
+//#ifdef deadcode // this code is not used by RS
+//int setZoneLevel(int lvl, int zone)
+//{
+//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+//	zoneLevel[zone] = lvl;
+//	return zone;
+//}
+//#endif
+
+//int getZoneLevel(int zone)
+//{
+//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+//	return locked_getZoneLevel(zone);
+//}
+
+//int locked_getZoneLevel(int /*zone*/)
+//{
+//#ifdef deadcode // this code is not used by RS
+//	std::map<int, int>::iterator it = zoneLevel.find(zone);
+//	if (it == zoneLevel.end())
+//	{
+//		return defaultLevel;
+//	}
+//	return it -> second;
+//#endif
+//	return defaultLevel;
+//}
+
+void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::string &msg)
 {
+	// skipp when log level is set to 'None'
+	// NB: when default is set to 'None' the later check will always fail -> no need to check it here
+	if(info->lvl == RsLog::None)
+		return;
+
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	return defaultLevel = lvl;
-}
 
-#ifdef deadcode // this code is not used by RS
-int setZoneLevel(int lvl, int zone)
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	zoneLevel[zone] = lvl;
-	return zone;
-}
-#endif
-
-int getZoneLevel(int zone)
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	return locked_getZoneLevel(zone);
-}
-
-int locked_getZoneLevel(int /*zone*/)
-{
-#ifdef deadcode // this code is not used by RS
-	std::map<int, int>::iterator it = zoneLevel.find(zone);
-	if (it == zoneLevel.end())
-	{
-		return defaultLevel;
-	}
-	return it -> second;
-#endif
-	return defaultLevel;
-}
-
-int rslog(unsigned int lvl, int zone, const std::string &msg)
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	if ((signed) lvl <= locked_getZoneLevel(zone))
+	bool process = info-lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
+	if(process)
 	{
 		time_t t = time(NULL);
 
@@ -232,11 +236,10 @@ int rslog(unsigned int lvl, int zone, const std::string &msg)
 		std::string timestr2 = timestr.substr(0,timestr.length()-1);
 		/* remove the endl */
 		fprintf(ofd, "(%s Z: %d, lvl:%u): %s \n", 
-				timestr2.c_str(), zone, lvl, msg.c_str());
+				timestr2.c_str(), zone, (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
 		lineCount++;
 	}
-	return 1;
 }
 
 
