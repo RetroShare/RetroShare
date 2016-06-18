@@ -26,6 +26,7 @@ private:
 private:
 	bool mSubscribed;
 	QList<QAction*> mSubscribedActions;
+    	QMenu *mMenu ;
 };
 
 #endif // SUBSCRIBETOOLBUTTON_H

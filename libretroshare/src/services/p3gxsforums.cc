@@ -255,8 +255,8 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	return ok;
 }
 
-
-bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
+//Not currently used
+/*bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
@@ -291,7 +291,7 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	}
 			
 	return ok;
-}
+}*/
 
 /********************************************************************************************/
 
@@ -563,7 +563,7 @@ bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
 
 
         // Overloaded from RsTickEvent for Event callbacks.
-void p3GxsForums::handle_event(uint32_t event_type, const std::string &elabel)
+void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*/)
 {
 	std::cerr << "p3GxsForums::handle_event(" << event_type << ")";
 	std::cerr << std::endl;

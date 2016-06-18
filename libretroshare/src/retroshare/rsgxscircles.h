@@ -48,18 +48,25 @@ class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
 
 typedef RsPgpId RsPgpId;
-//typedef RsGxsCircleId RsCircleInternalId;
 
-#define GXS_CIRCLE_TYPE_PUBLIC            0x0001
-#define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
-#define GXS_CIRCLE_TYPE_YOUREYESONLY      0x0003
-#define GXS_CIRCLE_TYPE_LOCAL		  0x0004
+// The meaning of the different circle types is:
+//
+//	
+static const uint32_t GXS_CIRCLE_TYPE_PUBLIC            = 0x0001 ;	// not restricted to a circle
+static const uint32_t GXS_CIRCLE_TYPE_EXTERNAL          = 0x0002 ;	// restricted to an external circle, made of RsGxsId
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY = 0x0003 ;	// restricted to a subset of friend nodes of a given RS node given by a RsPgpId list
+static const uint32_t GXS_CIRCLE_TYPE_LOCAL             = 0x0004 ;	// not distributed at all
+static const uint32_t GXS_CIRCLE_TYPE_EXT_SELF          = 0x0005 ;	// self-restricted. Not used, except at creation time when the circle ID isn't known yet. Set to EXTERNAL afterwards.
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006 ;	// distributed to nodes signed by your own PGP key only.
 
-// A special one - used only by Circles themselves - meaning Circle ID == Group ID.
-#define GXS_CIRCLE_TYPE_EXT_SELF	  0x0005	
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST = 0x0001 ;// user is validated by circle admin
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED    = 0x0002 ;// user has subscribed the group
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE = 0x0004 ;// key is available, so we can encrypt for this circle
+static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0007 ;// user is allowed. Combines all flags above.
 
-/* Permissions is part of GroupMetaData 
- */
+static const uint32_t GXS_CIRCLE_FLAGS_IS_EXTERNAL   = 0x0008 ;// user is allowed
+
+/* Permissions is part of GroupMetaData  */
 
 class GxsPermissions
 {
@@ -71,7 +78,6 @@ public:
 	RsPeerId mOriginator;
 	RsGxsCircleId mInternalCircle; // if Originator == ownId, otherwise blank.
 };
-
 
 class RsGxsCircleGroup
 {
@@ -100,59 +106,47 @@ class RsGxsCircleMsg
 class RsGxsCircleDetails
 {
         public:
+    		RsGxsCircleDetails() : mCircleType(GXS_CIRCLE_TYPE_EXTERNAL), mAmIAllowed(false) {}
+            
         RsGxsCircleId mCircleId;
         std::string mCircleName;
 
 	uint32_t    mCircleType;
-	bool 	    mIsExternal;
+        RsGxsCircleId mRestrictedCircleId;
+        
+        bool mAmIAllowed ;			// true when one of load GXS ids belong to the circle allowed list (admin list & subscribed list).
 
-	bool operator ==(const RsGxsCircleDetails& rGxsDetails) {
-		return ( mCircleId == rGxsDetails.mCircleId
-		      && mCircleName == rGxsDetails.mCircleName
-		      && mCircleType == rGxsDetails.mCircleType
-		      && mIsExternal == rGxsDetails.mIsExternal
-		      && mAllowedAnonPeers == rGxsDetails.mAllowedAnonPeers
-		      && mAllowedSignedPeers == rGxsDetails.mAllowedSignedPeers
-		      );
-	}
-
-	bool operator !=(const RsGxsCircleDetails& rGxsDetails) {
-		return ( mCircleId != rGxsDetails.mCircleId
-		      || mCircleName != rGxsDetails.mCircleName
-		      || mCircleType != rGxsDetails.mCircleType
-		      || mIsExternal != rGxsDetails.mIsExternal
-		      || mAllowedAnonPeers != rGxsDetails.mAllowedAnonPeers
-		      || mAllowedSignedPeers != rGxsDetails.mAllowedSignedPeers
-		      );
-	}
-
-        std::set<RsGxsId> mAllowedAnonPeers;
-        std::map<RsPgpId, std::set<RsGxsId> > mAllowedSignedPeers;
+        std::set<RsGxsId> mAllowedGxsIds;	// This crosses admin list and subscribed list
+        std::set<RsPgpId> mAllowedNodes;
+        
+        std::map<RsGxsId,uint32_t> mSubscriptionFlags ;	// subscription flags for all ids
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper
 {
-	public:
+public:
 
-	RsGxsCircles(RsGxsIface *gxs)
-	:RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsGxsCircles() { return; }
-
+	RsGxsCircles(RsGxsIface *gxs) :RsGxsIfaceHelper(gxs)  { return; }
+	virtual ~RsGxsCircles() { return; }
 
 	/* External Interface (Cached stuff) */
-virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
-virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
-virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details) = 0;
+	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+	virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds) = 0;
+
+	/* membership management for external circles */
+
+	virtual bool requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
+	virtual bool cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id)=0 ;
 
 	/* standard load */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups) = 0;
 
-    /* make new group */
-virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
+	/* make new group */
+	virtual void createGroup(uint32_t& token, RsGxsCircleGroup &group) = 0;
 
-    /* update an existing group */
-virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
-
+	/* update an existing group */
+	virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
 };
 
 

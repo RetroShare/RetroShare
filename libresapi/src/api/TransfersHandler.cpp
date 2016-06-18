@@ -42,7 +42,7 @@ void TransfersHandler::tick()
     }
 }
 
-void TransfersHandler::handleWildcard(Request &req, Response &resp)
+void TransfersHandler::handleWildcard(Request & /*req*/, Response & /*resp*/)
 {
 
 }
@@ -108,7 +108,7 @@ void TransfersHandler::handleControlDownload(Request &req, Response &resp)
     resp.setFail("error: action not handled");
 }
 
-void TransfersHandler::handleDownloads(Request &req, Response &resp)
+void TransfersHandler::handleDownloads(Request & /* req */, Response &resp)
 {
     tick();
     resp.mStateToken = mStateToken;

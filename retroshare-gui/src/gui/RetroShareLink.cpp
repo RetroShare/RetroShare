@@ -38,6 +38,7 @@
 #include "MainWindow.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
+#include "gui/Posted/PostedDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
@@ -61,11 +62,12 @@
 #define HOST_PERSON      "person"
 #define HOST_FORUM       "forum"
 #define HOST_CHANNEL     "channel"
+#define HOST_POSTED      "posted"
 #define HOST_MESSAGE     "message"
 #define HOST_SEARCH      "search"
 #define HOST_CERTIFICATE "certificate"
 #define HOST_PUBLIC_MSG  "public_msg"
-#define HOST_REGEXP      "file|extra|person|forum|channel|search|message|certificate|private_chat|public_msg"
+#define HOST_REGEXP      "file|extra|person|forum|channel|posted|search|message|certificate|private_chat|public_msg"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -82,6 +84,11 @@
 #define CHANNEL_NAME    "name"
 #define CHANNEL_ID      "id"
 #define CHANNEL_MSGID   "msgid"
+
+#define POSTED_NAME    "name"
+#define POSTED_ID      "id"
+#define POSTED_MSGID   "msgid"
+
 
 #define MESSAGE_ID      "id"
 #define MESSAGE_SUBJECT "subject"
@@ -279,6 +286,15 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		check();
 		return;
 	}
+
+    if (url.host() == HOST_POSTED) {
+        _type = TYPE_POSTED;
+        _name = decodedQueryItemValue(urlQuery, POSTED_NAME);
+        _hash = urlQuery.queryItemValue(POSTED_ID);
+        _msgId = urlQuery.queryItemValue(POSTED_MSGID);
+        check();
+        return;
+    }
 
 	if (url.host() == HOST_SEARCH) {
 		_type = TYPE_SEARCH;
@@ -579,6 +595,16 @@ void RetroShareLink::check()
 			if(_hash.isEmpty())
 				_valid = false;
 			break;
+    case TYPE_POSTED:
+        if(_size != 0)
+            _valid = false;
+
+        if(_name.isEmpty())
+            _valid = false;
+
+        if(_hash.isEmpty())
+            _valid = false;
+        break;
 		case TYPE_SEARCH:
 			if(_size != 0)
 				_valid = false;
@@ -629,6 +655,7 @@ QString RetroShareLink::title() const
 			return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 		case TYPE_FORUM:
 		case TYPE_CHANNEL:
+        case TYPE_POSTED:
 		case TYPE_SEARCH:
 			break;
 		case TYPE_MESSAGE:
@@ -723,6 +750,17 @@ QString RetroShareLink::toString() const
 			}
 
 			break;
+
+    case TYPE_POSTED:
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_POSTED);
+        urlQuery.addQueryItem(POSTED_NAME, encodeItem(_name));
+        urlQuery.addQueryItem(POSTED_ID, _hash);
+        if (!_msgId.isEmpty()) {
+            urlQuery.addQueryItem(POSTED_MSGID, _msgId);
+        }
+
+        break;
 
 		case TYPE_SEARCH:
 			url.setScheme(RSLINK_SCHEME);
@@ -969,6 +1007,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				case TYPE_UNKNOWN:
 				case TYPE_FORUM:
 				case TYPE_CHANNEL:
+                case TYPE_POSTED:
 				case TYPE_SEARCH:
 				case TYPE_MESSAGE:
 				case TYPE_CERTIFICATE:
@@ -1040,6 +1079,12 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QStringList channelUnknown;
 	QStringList channelMsgUnknown;
 
+    // forum
+    QStringList postedFound;
+    QStringList postedMsgFound;
+    QStringList postedUnknown;
+    QStringList postedMsgUnknown;
+
 	// search
 	QStringList searchStarted;
 
@@ -1056,8 +1101,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QList<QStringList*> processedList;
 	QList<QStringList*> errorList;
 
-	processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &searchStarted << &messageStarted;
-	errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown;
+    processedList << &fileAdded << &personAdded << &forumFound << &channelFound << &postedFound << &searchStarted << &messageStarted;
+    errorList << &fileExist << &personExist << &personFailed << &personNotFound << &forumUnknown << &forumMsgUnknown << &channelUnknown << &channelMsgUnknown << &postedUnknown << &postedMsgUnknown << &messageReceipientNotAccepted << &messageReceipientUnknown;
 	// not needed: forumFound, channelFound, messageStarted
 
 	for (linkIt = links.begin(); linkIt != links.end(); ++linkIt) {
@@ -1167,10 +1212,11 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						qinfo.setFile(QString::fromUtf8(path.c_str()));
 						if (qinfo.exists() && qinfo.isFile()) {
 							QString question = "<html><body>";
-							question += QObject::tr("This file already exists. Do you want to open it ?");
+							question += QObject::tr("Warning: Retroshare is about to ask your system to open this file. ");
+							question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
 							question += "<br><br>" + cleanname + "</body></html>";
 
-							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
+							QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes,QMessageBox::No, 0);
 							if (mb.exec() == QMessageBox::Yes) {
 								++countFileOpened;
 								bFileOpened = true;
@@ -1288,6 +1334,36 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 				}
 			break;
+
+
+        case TYPE_POSTED:
+            {
+#ifdef DEBUG_RSLINK
+                std::cerr << " RetroShareLink::process PostedRequest : name : " << link.name().toStdString() << ". id : " << link.hash().toStdString() << ". msgId : " << link.msgId().toStdString() << std::endl;
+#endif
+
+                MainWindow::showWindow(MainWindow::Posted);
+                PostedDialog *postedDialog = dynamic_cast<PostedDialog*>(MainWindow::getPage(MainWindow::Posted));
+
+                if (!postedDialog) {
+                    return false;
+                }
+
+                if (postedDialog->navigate(RsGxsGroupId(link.id().toStdString()), RsGxsMessageId(link.msgId().toStdString()))) {
+                    if (link.msgId().isEmpty()) {
+                        postedFound.append(link.name());
+                    } else {
+                        postedMsgFound.append(link.name());
+                    }
+                } else {
+                    if (link.msgId().isEmpty()) {
+                        postedUnknown.append(link.name());
+                    } else {
+                        postedMsgUnknown.append(link.name());
+                    }
+                }
+            }
+        break;
 
 			case TYPE_SEARCH:
 				{
@@ -1437,6 +1513,16 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			processList(channelMsgUnknown, QObject::tr("Channel message not found"), QObject::tr("Channel messages not found"), result);
 		}
 	}
+
+    // posted
+    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+        if (!postedUnknown.isEmpty()) {
+            processList(postedUnknown, QObject::tr("Posted not found"), QObject::tr("Posted not found"), result);
+        }
+        if (!postedMsgUnknown.isEmpty()) {
+            processList(postedMsgUnknown, QObject::tr("Posted message not found"), QObject::tr("Posted messages not found"), result);
+        }
+    }
 
 	// message
 	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {

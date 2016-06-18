@@ -675,7 +675,7 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int type, int /*reason*/, int time_stamp)
+void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int time_stamp)
 {
     RsPeerId ownId = mServiceCtrl->getOwnId();
 

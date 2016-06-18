@@ -35,9 +35,11 @@
 
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "retroshare/rsbanlist.h"
 #include <unistd.h>
 
-const int pqissllistenzone = 49787;
+static struct RsLog::logInfo pqissllistenzoneInfo = {RsLog::Default, "p3peermgr"};
+#define pqissllistenzone &pqissllistenzoneInfo
 
 /* NB: This #define makes the listener open 0.0.0.0:X port instead
  * of a specific port - this might help retroshare work on PCs with
@@ -57,7 +59,7 @@ const int pqissllistenzone = 49787;
 
 
 pqissllistenbase::pqissllistenbase(const sockaddr_storage &addr, p3PeerMgr *pm)
-	: laddr(addr), active(false), mPeerMgr(pm)
+	: laddr(addr), mPeerMgr(pm), active(false)
 {
 	if (!(AuthSSL::getAuthSSL()-> active()))
 	{
@@ -322,11 +324,12 @@ int	pqissllistenbase::acceptconnection()
 	// can't be arsed making them all the time.
 	struct sockaddr_storage remote_addr;
 	socklen_t addrlen = sizeof(remote_addr);
-	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
-	int err = 0;
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
+	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
+	int err = 0;
+    
         if (fd < 0)
         {
 		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
@@ -347,7 +350,10 @@ int	pqissllistenbase::acceptconnection()
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else //WINDOWS_SYS 
-        if ((unsigned) fd == INVALID_SOCKET)
+	SOCKET fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
+	int err = 0;
+    
+        if (fd == INVALID_SOCKET)
         {
 		pqioutput(PQL_DEBUG_ALL, pqissllistenzone, 
 		 "pqissllistenbase::acceptconnnection() Nothing to Accept!");
@@ -369,12 +375,21 @@ int	pqissllistenbase::acceptconnection()
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	{
-	  std::string out;
-	  out += "Accepted Connection from ";
-	  out += sockaddr_storage_tostring(remote_addr);
-	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-	}
+    std::cerr << "(II) Checking incoming connection address: " << sockaddr_storage_iptostring(remote_addr) ;
+        if(rsBanList != NULL && !rsBanList->isAddressAccepted(remote_addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+        {
+            std::cerr << " => early rejected at this point, because of blacklist." << std::endl;
+            return false ;
+        }
+        else
+            std::cerr << " => Accepted (i.e. whitelisted, or not blacklisted)." << std::endl;
+        
+    {
+      std::string out;
+      out += "Accepted Connection from ";
+      out += sockaddr_storage_tostring(remote_addr);
+      pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
+    }
 
 	// Negotiate certificates. SSL stylee.
 	// Allow negotiations for secure transaction.

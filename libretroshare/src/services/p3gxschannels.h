@@ -79,9 +79,10 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	public:
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups);
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
-
-virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts);
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
+//Not currently used
+//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 
         //////////////////////////////////////////////////////////////////////////////
 

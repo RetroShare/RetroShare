@@ -6,6 +6,8 @@
 
 #include "pqiqos.h"
 
+const uint32_t pqiQoS::MAX_PACKET_COUNTER_VALUE = (1 << 24) ;
+
 pqiQoS::pqiQoS(uint32_t nb_levels,float alpha)
 	: _item_queues(nb_levels),_alpha(alpha)
 {
@@ -14,6 +16,7 @@ pqiQoS::pqiQoS(uint32_t nb_levels,float alpha)
 	float c = 1.0f ;
 	float inc = alpha ;
 	_nb_items = 0 ;
+    	_id_counter = 0 ;
 
 for(int i=((int)nb_levels)-1;i>=0;--i,c *= alpha)
 	{
@@ -44,7 +47,7 @@ void pqiQoS::print() const
 	std::cerr << std::endl;
 }
 
-void pqiQoS::in_rsItem(void *ptr,int priority)
+void pqiQoS::in_rsItem(void *ptr,int size,int priority)
 {
 	if(uint32_t(priority) >= _item_queues.size())
 	{
@@ -52,8 +55,11 @@ void pqiQoS::in_rsItem(void *ptr,int priority)
 		priority = _item_queues.size()-1 ;
 	}
 
-	_item_queues[priority].push(ptr) ;
+	_item_queues[priority].push(ptr,size,_id_counter++) ;
 	++_nb_items ;
+    
+    	if(_id_counter >= MAX_PACKET_COUNTER_VALUE)
+            _id_counter = 0 ;
 }
 
 // int pqiQoS::gatherStatistics(std::vector<uint32_t>& per_service_count,std::vector<uint32_t>& per_priority_count) const
@@ -80,7 +86,7 @@ void pqiQoS::in_rsItem(void *ptr,int priority)
 // }
 
 
-void *pqiQoS::out_rsItem()
+void *pqiQoS::out_rsItem(uint32_t max_slice_size, uint32_t& size, bool& starts, bool& ends, uint32_t& packet_id) 
 {
 	// Go through the queues. Increment counters.
 
@@ -105,11 +111,21 @@ void *pqiQoS::out_rsItem()
 	if(last >= 0)
 	{
 		assert(_nb_items > 0) ;
-		--_nb_items ;
-		return _item_queues[last].pop();
+        
+        	// now chop a slice of this item
+        
+        	void *res = _item_queues[last].slice(max_slice_size,size,starts,ends,packet_id) ;
+            
+            	if(ends)
+			--_nb_items ;
+                
+		return res ;
 	}
 	else
 		return NULL ;
 }
 
 
+
+    
+    

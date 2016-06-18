@@ -31,6 +31,7 @@
 
 #include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvbinary.h"
+#include "serialiser/rstlvbase.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 #include <map>
@@ -46,41 +47,66 @@ const uint32_t RSTLV_KEY_DISTRIB_ADMIN          = 0x0040;
 const uint32_t RSTLV_KEY_DISTRIB_IDENTITY       = 0x0080;
 const uint32_t RSTLV_KEY_DISTRIB_MASK           = 0x00f0;
 
-class RsTlvSecurityKey: public RsTlvItem
+// Old class for RsTlvSecurityKey. Is kept for backward compatibility, but should not be serialised anymore
+
+class RsTlvRSAKey: public RsTlvItem
+{
+public:
+	RsTlvRSAKey();
+    virtual bool     checkKey() const = 0 ;	// this pure virtual forces people to explicitly declare if they use a public or a private key.
+
+    virtual uint32_t TlvSize() const;
+    virtual void 	TlvClear();
+    virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+    virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+    virtual std::ostream& print(std::ostream &out, uint16_t indent) const;
+
+    /* clears KeyData - but doesn't delete - to transfer ownership */
+    void ShallowClear(); 
+    
+    RsGxsId keyId;		// Mandatory :
+    uint32_t keyFlags;		// Mandatory ;
+    uint32_t startTS;		// Mandatory : 
+    uint32_t endTS;		// Mandatory : 
+    RsTlvBinaryData keyData; 	// Mandatory : 
+};
+
+// The two classes below are by design incompatible, making it impossible to pass a private key as a public key
+
+class RsTlvPrivateRSAKey: public RsTlvRSAKey
+{    
+	public:
+		virtual ~RsTlvPrivateRSAKey() {}
+
+        	virtual bool checkKey() const  ;
+};
+class RsTlvPublicRSAKey: public RsTlvRSAKey
 {
 	public:
-		RsTlvSecurityKey();
-		virtual ~RsTlvSecurityKey() {}
+		virtual ~RsTlvPublicRSAKey() {}
 
-		virtual uint32_t TlvSize() const;
-		virtual void	 TlvClear();
-		virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-		virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-		virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
-
-		/* clears KeyData - but doesn't delete - to transfer ownership */
-		void ShallowClear(); 
-
-		RsGxsId keyId;		// Mandatory :
-		uint32_t keyFlags;		// Mandatory ;
-		uint32_t startTS;		// Mandatory : 
-		uint32_t endTS;			// Mandatory : 
-		RsTlvBinaryData keyData; 	// Mandatory : 
+        	virtual bool checkKey() const  ;
 };
 
 class RsTlvSecurityKeySet: public RsTlvItem
 {
-	public:
-	 RsTlvSecurityKeySet() { return; }
-virtual ~RsTlvSecurityKeySet() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+public:
+	RsTlvSecurityKeySet() { return; }
+	virtual ~RsTlvSecurityKeySet() { return; }
+        
+    	// creates the public keys that are possible missing although the private keys are present.
+    
+        void createPublicFromPrivateKeys(); 
+        
+	virtual uint32_t TlvSize() const;
+	virtual void	 TlvClear();
+	virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+	virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	std::string groupId;				// Mandatory :
-	std::map<RsGxsId, RsTlvSecurityKey> keys;	// Mandatory :
+	std::string groupId;					// Mandatory :
+	std::map<RsGxsId, RsTlvPublicRSAKey> public_keys;	// Mandatory :
+	std::map<RsGxsId, RsTlvPrivateRSAKey> private_keys;	// Mandatory :
 };
 
 

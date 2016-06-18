@@ -43,8 +43,8 @@
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
 
-const int rstcpstreamzone = 28455;
-
+static struct RsLog::logInfo rstcpstreamzoneInfo = {RsLog::Default, "rstcpstream"};
+#define rstcpstreamzone &rstcpstreamzoneInfo
 
 /*
  * #define DEBUG_TCP_STREAM		1
@@ -1880,7 +1880,8 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 		std::cerr << "TcpStream::toSend() peerUnknown ERROR!!!";
 		std::cerr << std::endl;
 #endif
-                return 0;
+		delete pkt;
+		return 0;
 	}
 
 	/* get accurate timestamp */

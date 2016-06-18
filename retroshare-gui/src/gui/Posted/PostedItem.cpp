@@ -295,9 +295,9 @@ void PostedItem::fill()
 		ui->voteDownButton->setEnabled(false);
 	}
 
-	uint32_t up, down, nComments;
-
 #if 0
+	uint32_t up, down, nComments;
+    
 	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
 	if(ok)

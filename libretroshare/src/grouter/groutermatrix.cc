@@ -103,7 +103,9 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
     for(std::list<RoutingMatrixHitEntry>::const_iterator mit(lst.begin());mit!=lst.end();++mit)
         if((*mit).friend_id == fid && (*mit).time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
         {
+#ifdef ROUTING_MATRIX_DEBUG
             std::cerr << "GRouterMatrix::addRoutingClue(): too many clues for key " << key_id.toStdString() << " from friend " << source_friend << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
+#endif
             return false ;
         }
 

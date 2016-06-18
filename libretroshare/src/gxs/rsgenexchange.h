@@ -79,8 +79,7 @@ public:
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
 	bool mIsUpdate;
-	RsTlvSecurityKeySet mPrivateKeys;
-	RsTlvSecurityKeySet mPublicKeys;
+	RsTlvSecurityKeySet mKeys;
 };
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
@@ -535,6 +534,14 @@ public:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+    /*!
+     * Deletes the messages \n
+     * This will induce a related change message \n
+     * @param token
+     * @param msgs
+     */
+    void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
+    
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -657,6 +664,7 @@ private:
     void processGroupUpdatePublish();
 
     void processGroupDelete();
+    void processMessageDelete();
     void processRoutingClues();
 
     void publishMsgs();
@@ -685,7 +693,7 @@ private:
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
-    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -733,16 +741,7 @@ private:
      * @param publickeySet contains public generated keys (counterpart of private)
      * @param genPublicKeys should publish key pair also be generated
      */
-    void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
-
-    /*!
-     * Generate public set of keys from their private counterparts
-     * No keys will be generated if one fails
-     * @param privatekeySet contains private generated keys
-     * @param publickeySet contains public generated keys (counterpart of private)
-     * @return false if key gen failed for a key set
-     */
-    void generatePublicFromPrivateKeys(const RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet);
+    void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
 
     /*!
      * Attempts to validate msg signatures
@@ -869,6 +868,7 @@ private:
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
     std::vector<GroupDeletePublish> mGroupDeletePublish;
+    std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
     std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
     std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;

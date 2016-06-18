@@ -41,8 +41,6 @@
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
-const int p3connectzone = 3431;
-
 #include "serialiser/rsconfigitems.h"
 
 #include "retroshare/rsiface.h"
@@ -52,6 +50,8 @@ const int p3connectzone = 3431;
 
 /* Network setup States */
 
+static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
+#define p3connectzone &p3connectzoneInfo
 
 /****
  * #define LINKMGR_DEBUG 1
@@ -110,10 +110,6 @@ peerConnectState::peerConnectState()
 	 inConnAttempt(0), 
 	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
 {
-	//sockaddr_clear(&currentlocaladdr);
-	//sockaddr_clear(&currentserveraddr);
-
-	return;
 }
 
 std::string textPeerConnectState(peerConnectState &state)
@@ -1036,7 +1032,7 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
  */
 
 // from pqissl, when a connection failed due to security
-void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming)
+void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &/*addr*/, bool incoming)
 {
 	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
 	std::cerr << " pgpid: " << gpgid;

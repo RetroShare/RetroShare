@@ -305,7 +305,7 @@ public:
 
 		// get content-type from extension
 		std::string ext = "";
-		unsigned int i = info.fname.rfind('.');
+        std::string::size_type i = info.fname.rfind('.');
 		if(i != std::string::npos)
 			ext = info.fname.substr(i+1);
 		MHD_add_response_header(resp, "Content-Type", ContentTypes::cTypeFromExt(ext).c_str());
@@ -424,7 +424,7 @@ static void sendMessage(MHD_Connection *connection, unsigned int status, std::st
 static std::string escape_html(std::string in)
 {
     std::string out;
-    for(int i = 0; i < in.size(); i++)
+    for(uint32_t i = 0; i < in.size(); i++)
     {
         char a = (in[i]&0xF0)>>4;
         a = a < 10? a+'0': a-10+'A';

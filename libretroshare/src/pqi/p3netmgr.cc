@@ -39,7 +39,8 @@
 
 //#include "util/rsprint.h"
 //#include "util/rsdebug.h"
-const int p3netmgrzone = 7563;
+struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
+#define p3netmgrzone &p3netmgrzoneInfo
 
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsiface.h"
@@ -1640,7 +1641,7 @@ void	p3NetMgrIMPL::getNetStatus(pqiNetStatus &status)
 	/* must extract data... then update mNetFlags */
 
 	bool dhtOk = netAssistConnectActive();
-	uint32_t netsize, rsnetsize;
+	uint32_t netsize = 0, rsnetsize = 0;
 	netAssistConnectStats(netsize, rsnetsize);
 
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/

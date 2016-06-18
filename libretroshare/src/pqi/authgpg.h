@@ -210,6 +210,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		 ****/
 		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
 		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
+		virtual bool parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id);
 
 		virtual bool encryptDataBin(const RsPgpId& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
 		virtual bool decryptDataBin(const void *data, const uint32_t len, unsigned char *decr, unsigned int *decrlen);

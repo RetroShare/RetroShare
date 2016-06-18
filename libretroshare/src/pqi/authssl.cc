@@ -991,6 +991,11 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #endif
 
 	/* copy data into signature */
+        if(sigoutl < signature->length)
+        {
+        diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
+        goto err;
+        }
 	sigoutl = signature->length;
 	memmove(buf_sigout, signature->data, sigoutl);
 

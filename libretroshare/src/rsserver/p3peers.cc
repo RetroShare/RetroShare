@@ -241,6 +241,20 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
+bool p3Peers::getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
+{
+    return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+bool p3Peers::getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
+{
+    return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+
+bool p3Peers::setPeerMaximumRates(const RsPgpId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
+{
+    return mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+
 bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->haveSecretKey(id);
@@ -296,17 +310,17 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
 		d.hiddenType = ps.hiddenType;
-        
+
 		if(sockaddr_storage_isnull(ps.localaddr))	// that happens if the address is not initialised.
-        	{
+		{
 			d.localAddr	= "INVALID_IP";
 			d.localPort	= 0 ;
-        	}
-            	else
-        	{
+		}
+		else
+		{
 			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 			d.localPort	= sockaddr_storage_port(ps.localaddr);
-        	}
+		}
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
@@ -341,10 +355,10 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		}
 
 		d.dyndns        = ps.dyndns;
-	
+
 		std::list<pqiIpAddress>::iterator it;
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-				it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
+		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "L:";
@@ -352,8 +366,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
-		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-				it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
+		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "E:";
@@ -362,32 +375,31 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			d.ipAddressList.push_back(toto);
 		}
 	}
-	
+
 
 	switch(ps.netMode & RS_NET_MODE_ACTUAL)
 	{
-		case RS_NET_MODE_EXT:
-			d.netMode	= RS_NETMODE_EXT;
-			break;
-		case RS_NET_MODE_UPNP:
-			d.netMode	= RS_NETMODE_UPNP;
-			break;
-		case RS_NET_MODE_UDP:
-			d.netMode	= RS_NETMODE_UDP;
-			break;
-		case RS_NET_MODE_HIDDEN:
-			d.netMode	= RS_NETMODE_HIDDEN;
-			break;
-		case RS_NET_MODE_UNREACHABLE:
-		case RS_NET_MODE_UNKNOWN:
-		default:
-			d.netMode	= RS_NETMODE_UNREACHABLE;
-			break;
+	case RS_NET_MODE_EXT:
+		d.netMode	= RS_NETMODE_EXT;
+		break;
+	case RS_NET_MODE_UPNP:
+		d.netMode	= RS_NETMODE_UPNP;
+		break;
+	case RS_NET_MODE_UDP:
+		d.netMode	= RS_NETMODE_UDP;
+		break;
+	case RS_NET_MODE_HIDDEN:
+		d.netMode	= RS_NETMODE_HIDDEN;
+		break;
+	case RS_NET_MODE_UNREACHABLE:
+	case RS_NET_MODE_UNKNOWN:
+	default:
+		d.netMode	= RS_NETMODE_UNREACHABLE;
+		break;
 	}
 
 	d.vs_disc = ps.vs_disc;
 	d.vs_dht = ps.vs_dht;
-
 
 	/* Translate */
 	peerConnectState pcs;
@@ -414,14 +426,10 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 
 	d.state		= 0;
-	if (pcs.state & RS_PEER_S_FRIEND)
-		d.state |= RS_PEER_STATE_FRIEND;
-	if (pcs.state & RS_PEER_S_ONLINE)
-		d.state |= RS_PEER_STATE_ONLINE;
-	if (pcs.state & RS_PEER_S_CONNECTED)
-		d.state |= RS_PEER_STATE_CONNECTED;
-	if (pcs.state & RS_PEER_S_UNREACHABLE)
-		d.state |= RS_PEER_STATE_UNREACHABLE;
+	if (pcs.state & RS_PEER_S_FRIEND)      d.state |= RS_PEER_STATE_FRIEND;
+	if (pcs.state & RS_PEER_S_ONLINE)      d.state |= RS_PEER_STATE_ONLINE;
+	if (pcs.state & RS_PEER_S_CONNECTED)   d.state |= RS_PEER_STATE_CONNECTED;
+	if (pcs.state & RS_PEER_S_UNREACHABLE) d.state |= RS_PEER_STATE_UNREACHABLE;
 
 	d.actAsServer = pcs.actAsServer;
 
@@ -432,7 +440,6 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	d.connectState = RS_PEER_CONNECTSTATE_OFFLINE;
 	d.connectStateString.clear();
-
 
 	if (pcs.inConnAttempt)
 	{
@@ -445,7 +452,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
-    {
+	{
 		/* peer is connected - determine how and set proper connectState */
 		if(mPeerMgr->isHidden())
 		{
@@ -519,8 +526,8 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
 			}
 		}
-    }
-
+	}
+        
 	d.wasDeniedConnection = pcs.wasDeniedConnection;
 	d.deniedTS = pcs.deniedTS;
 
@@ -1083,12 +1090,12 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
-	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
+	Radix64::encode(mem_block,mem_block_size,gpg_base64_string) ;
 
 	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
 
 	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
-	Radix64::encode((const char *)tmp,3,gpg_base64_checksum) ;
+	Radix64::encode(tmp,3,gpg_base64_checksum) ;
 
 	delete[] mem_block ;
 
@@ -1376,13 +1383,20 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
-	 name(""),email(""),location(""),
-	org(""),authcode(""),
-		  trustLvl(0), validLvl(0),ownsign(false), 
-	hasSignedMe(false),accept_connection(false),
-	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
-	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0), hiddenType(RS_HIDDEN_TYPE_NONE)
+          name(""),email(""),location(""),
+          org(""),authcode(""),
+          trustLvl(0), validLvl(0),ownsign(false), 
+          hasSignedMe(false),accept_connection(false),
+          state(0),actAsServer(false),
+          connectPort(0),
+          isHiddenNode(false),
+          hiddenNodePort(0),
+          hiddenType(RS_HIDDEN_TYPE_NONE),
+          localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
+          lastConnect(0),lastUsed(0),connectState(0),connectStateString(""),
+          connectPeriod(0),
+          foundDHT(false), wasDeniedConnection(false), deniedTS(0),
+          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN)
 {
 }
 

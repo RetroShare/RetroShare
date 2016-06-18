@@ -32,6 +32,7 @@
 #include "gxs/rsgixs.h"			// Internal Interfaces.
 
 #include "gxs/gxstokenqueue.h"		
+#include "serialiser/rsgxsiditems.h"		
 
 #include <map>
 #include <string>
@@ -100,12 +101,12 @@ class SSGxsIdPgp: public SSBit
 {
 	public:
 	SSGxsIdPgp()
-	:idKnown(false), lastCheckTs(0), checkAttempts(0) { return; }
+	:validatedSignature(false), lastCheckTs(0), checkAttempts(0) { return; }
 
 virtual	bool load(const std::string &input);
 virtual	std::string save() const;
 
-	bool idKnown;
+	bool validatedSignature;
 	time_t lastCheckTs;
 	uint32_t checkAttempts;
 	RsPgpId pgpId;
@@ -191,18 +192,24 @@ class RsGxsIdGroupItem;
 
 class RsGxsIdCache
 {
-	public:
-	RsGxsIdCache();
-	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, 
-		const std::list<RsRecognTag> &tagList);
+public:
+    RsGxsIdCache();
 
-void	updateServiceString(std::string serviceString);
+    RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const RsTlvPrivateRSAKey& privkey, const std::list<RsRecognTag> &tagList);
+    RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pkey, const std::list<RsRecognTag> &tagList);
+    
+    void updateServiceString(std::string serviceString);
 
-	time_t mPublishTs;
-	std::list<RsRecognTag> mRecognTags; // Only partially validated.
+    time_t mPublishTs;
+    std::list<RsRecognTag> mRecognTags; // Only partially validated.
 
-	RsIdentityDetails details;
-	RsTlvSecurityKey pubkey;
+    RsIdentityDetails details;
+
+    RsTlvPublicRSAKey pub_key;
+    RsTlvPrivateRSAKey priv_key;
+    
+private:
+    void init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pub_key, const RsTlvPrivateRSAKey& in_priv_key,const std::list<RsRecognTag> &tagList);
 };
 
 
@@ -286,8 +293,8 @@ virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
     virtual bool haveKey(const RsGxsId &id);
     virtual bool havePrivateKey(const RsGxsId &id);
 
-    virtual bool getKey(const RsGxsId &id, RsTlvSecurityKey &key);
-    virtual bool getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
+    virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
+    virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
     virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
     virtual bool requestPrivateKey(const RsGxsId &id);
@@ -350,8 +357,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	std::map<RsGxsId, std::list<RsPeerId> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
-	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
-	RsMemCache<RsGxsId, RsGxsIdCache> mPrivateKeyCache;
+	RsMemCache<RsGxsId, RsGxsIdCache> mKeyCache;
 
 /************************************************************************
  * Refreshing own Ids.

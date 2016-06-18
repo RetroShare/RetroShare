@@ -58,7 +58,10 @@ bool    RsServiceSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 		return false; /* not enough space */
 
 	if (tlvsize > getRsPktMaxSize())
-		return false; /* packet too big */
+    	{
+	    std::cerr << "(EE) Serialised packet is too big. Maximum allowed size is " << getRsPktMaxSize() << ". Serialised size is " << tlvsize << ". Please tune your service to correctly split packets" << std::endl;
+	    return false; /* packet too big */
+    	}
 
 	*pktsize = tlvsize;
 

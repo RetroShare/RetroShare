@@ -53,7 +53,8 @@
 // #define PQISTORE_DEBUG
 // 
 
-const int pqistorezone = 9511;
+static struct RsLog::logInfo pqistorezoneInfo = {RsLog::Default, "pqistore"};
+#define pqistorezone &pqistorezoneInfo
 
 pqistore::pqistore(RsSerialiser *rss, const RsPeerId& srcId, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(RsPeerId()), rsSerialiser(rss), bio_flags(bio_flags_in),
@@ -406,7 +407,11 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 		    if(rsSerialiser->serialise(*it, &data[offset],&sizeItem))
 			    offset += sizeItem;
 		    else
-			    std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
+	    	{
+		    std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
+		    std::cerr << "Item content: " << std::endl;
+		    (*it)->print(std::cerr) ;
+	    	}
 
 		    if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			    delete *it;

@@ -70,7 +70,7 @@ linux-* {
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
@@ -100,7 +100,7 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
 }
@@ -143,7 +143,7 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
@@ -188,7 +188,7 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW

@@ -188,19 +188,18 @@ void    ftServer::StartupThreads()
 
 	/* self contained threads */
 	/* startup ExtraList Thread */
-	mFtExtra->start();
+	mFtExtra->start("ft extra lst");
 
 	/* startup Monitor Thread */
 	/* startup the FileMonitor (after cache load) */
 	/* start it up */
-	
-	mFiMon->start();
+	mFiMon->start("ft monitor");
 
 	/* Controller thread */
-	mFtController->start();
+	mFtController->start("ft ctrl");
 
 	/* Dataplex */
-	mFtDataplex->start();
+	mFtDataplex->start("ft dataplex");
 }
 
 void ftServer::StopThreads()
@@ -257,7 +256,7 @@ bool	ftServer::ResumeTransfers()
 	return true;
 }
 
-bool ftServer::checkHash(const RsFileHash& hash,std::string& error_string)
+bool ftServer::checkHash(const RsFileHash& /*hash*/, std::string& /*error_string*/)
 {
     return true ;
 }

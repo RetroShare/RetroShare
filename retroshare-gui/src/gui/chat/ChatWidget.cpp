@@ -62,6 +62,8 @@
 
 #include <time.h>
 
+#define FMM 2//fontMetricsMultiplicator
+
 /*****
  * #define CHAT_DEBUG 1
  *****/
@@ -70,6 +72,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
     QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
+
+	int iconHeight = FMM*QFontMetricsF(font()).height() ;
+	QSize iconSize = QSize(iconHeight,iconHeight);
+	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
 
 	newMessages = false;
 	typing = false;
@@ -82,6 +88,29 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	lastStatusSendTime = 0 ;
 
+	//Resize Tool buttons
+	ui->emoteiconButton->setFixedSize(buttonSize);
+	ui->emoteiconButton->setIconSize(iconSize);
+	ui->fontButton->setFixedSize(buttonSize);
+	ui->fontButton->setIconSize(iconSize);
+	ui->attachPictureButton->setFixedSize(buttonSize);
+	ui->attachPictureButton->setIconSize(iconSize);
+	ui->addFileButton->setFixedSize(buttonSize);
+	ui->addFileButton->setIconSize(iconSize);
+	ui->pushtoolsButton->setFixedSize(buttonSize);
+	ui->pushtoolsButton->setIconSize(iconSize);
+	ui->notifyButton->setFixedSize(buttonSize);
+	ui->notifyButton->setIconSize(iconSize);
+	ui->markButton->setFixedSize(buttonSize);
+	ui->markButton->setIconSize(iconSize);
+	ui->leSearch->setFixedHeight(iconHeight);
+	ui->searchBefore->setFixedHeight(iconHeight);
+	ui->searchAfter->setFixedHeight(iconHeight);
+	ui->searchButton->setFixedSize(buttonSize);
+	ui->searchButton->setIconSize(iconSize);
+	ui->sendButton->setFixedHeight(iconHeight);
+
+	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
 	bFindWholeWords=Settings->getChatSearchWholeWords();
@@ -90,9 +119,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	uiMaxSearchLimitColor=Settings->getChatSearchMaxSearchLimitColor();
 	cFoundColor=Settings->getChatSearchFoundColor();
 
-
 	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
+  	ui->markButton->setVisible(false);
 	ui->leSearch->setVisible(false);
 	ui->searchBefore->setVisible(false);
 	ui->searchBefore->setToolTip(tr("<b>Find Previous </b><br/><i>Ctrl+Shift+G</i>"));
@@ -102,23 +131,23 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setChecked(false);
 	ui->searchButton->setToolTip(tr("<b>Find </b><br/><i>Ctrl+F</i>"));
 	ui->leSearch->installEventFilter(this);
+
 	connect(ui->actionFindCaseSensitively, SIGNAL(triggered()), this, SLOT(toogle_FindCaseSensitively()));
 	connect(ui->actionFindWholeWords, SIGNAL(triggered()), this, SLOT(toogle_FindWholeWords()));
 	connect(ui->actionMoveToCursor, SIGNAL(triggered()), this, SLOT(toogle_MoveToCursor()));
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
-	connect(ui->actionSearch_History, SIGNAL(triggered()), this, SLOT(searchHistory()));
 
 	notify=NULL;
 	ui->notifyButton->setVisible(false);
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
-	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
-	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
-
-	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
+	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
+	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
+	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
+
 	connect(ui->actionSaveChatHistory, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 	connect(ui->actionClearChatHistory, SIGNAL(triggered()), this, SLOT(clearChatHistory()));
 	connect(ui->actionDeleteChatHistory, SIGNAL(triggered()), this, SLOT(deleteChatHistory()));
@@ -146,9 +175,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->infoFrame->setVisible(false);
 	ui->statusMessageLabel->hide();
 	
-	ui->actionSearch_History->setChecked(Settings->getChatSearchShowBarByDefault());
-	searchHistory();
-
 	setAcceptDrops(true);
 	ui->chatTextEdit->setAcceptDrops(false);
 	ui->hashBox->setDropWidget(this);
@@ -158,6 +184,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionChooseFont);
 	menu->addAction(ui->actionChooseColor);
 	menu->addAction(ui->actionResetFont);
+	menu->addAction(ui->actionNoEmbed);
+	menu->addAction(ui->actionSendAsPlainText);
 	ui->fontButton->setMenu(menu);
 
 	menu = new QMenu();
@@ -165,9 +193,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	menu->addAction(ui->actionDeleteChatHistory);
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
-	menu->addAction(ui->actionSearch_History);
 	ui->pushtoolsButton->setMenu(menu);
-
+  	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+  
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);
@@ -218,12 +246,16 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatHorizontalWidget(QWidget *w)
 {
-	ui->vl_Plugins->addWidget(w) ;
+	ui->pluginsVLayout->addWidget(w) ;
 	update() ;
 }
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
+	int iconHeight = FMM*QFontMetricsF(font()).height() ;
+	QSize iconSize = QSize(iconHeight,iconHeight);
+	QSize buttonSize = QSize(iconSize + QSize(FMM,FMM));
+	w->setFixedSize(buttonSize);
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
@@ -234,8 +266,7 @@ void ChatWidget::addTitleBarWidget(QWidget *w)
 
 void ChatWidget::hideChatText(bool hidden)
 {
-	ui->frame_ChatText->setHidden(hidden); ;
-	ui->searchframe->setVisible(ui->actionSearch_History->isChecked() && !hidden); ;
+	ui->chatTextFrame->setHidden(hidden); ;
 }
 
 RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser()
@@ -316,7 +347,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         messageCount = Settings->getPublicChatHistoryCount();
 
         ui->titleBarFrame->setVisible(false);
-        ui->actionSearch_History->setVisible(false);
     }
 
 	if (rsHistory->getEnable(hist_chat_type)) 
@@ -400,12 +430,12 @@ void ChatWidget::processSettings(bool load)
 		// load settings
 
 		// state of splitter
-		ui->chatsplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
+		ui->chatVSplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
 	} else {
 		// save settings
 
 		// state of splitter
-		Settings->setValue("ChatSplitter", ui->chatsplitter->saveState());
+		Settings->setValue("ChatSplitter", ui->chatVSplitter->saveState());
 	}
 
 	Settings->endGroup();
@@ -835,7 +865,7 @@ void ChatWidget::on_notifyButton_clicked()
 	QIcon icoLobby=(ui->notifyButton->icon());
 
 	notify->makeSubMenu(menu, icoLobby, title, chatId.toLobbyId());
-	menu->exec(ui->notifyButton->mapToGlobal(ui->notifyButton->geometry().bottomLeft()));
+	menu->exec(ui->notifyButton->mapToGlobal(QPoint(0,ui->notifyButton->geometry().height())));
 
 }
 
@@ -873,7 +903,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
-		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
+		if (!message.contains("NoEmbed=\"true\""))
+			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
 
 	// Always fix colors
@@ -1031,7 +1062,7 @@ void ChatWidget::chatCharFormatChanged()
 void ChatWidget::resetStatusBar()
 {
 	ui->typingLabel->clear();
-	ui->typingpixmapLabel->clear();
+	ui->typingPixmapLabel->clear();
 
 	typing = false;
 
@@ -1076,15 +1107,21 @@ void ChatWidget::updateLenOfChatTextEdit()
 		break;
 	}
 
-	bool msgToLarge = false;
+	int charRemains = 0;
 	if (maxMessageSize > 0) {
-		msgToLarge = (msg.length() >= maxMessageSize);
+		charRemains = maxMessageSize - msg.length();
 	}
 
-	ui->sendButton->setEnabled(!msgToLarge);
-	text = tr("%1This message consists of %2 characters.").arg(msgToLarge ? tr("Warning:")+" " : "").arg(msg.length());
+	ui->sendButton->setEnabled(charRemains>=0);
+	if (charRemains>0)
+		text = tr("It remains %1 characters\nafter HTML conversion.").arg(charRemains);
+	else if(charRemains<0)
+		text = tr("Warning: This message is too big of %1 characters\nafter HTML conversion.").arg((0-charRemains));
+	else
+		text = "";
+
 	ui->sendButton->setToolTip(text);
-	ui->chatTextEdit->setToolTip(msgToLarge?text:"");
+	ui->chatTextEdit->setToolTip(text);
 }
 
 void ChatWidget::sendChat()
@@ -1102,7 +1139,12 @@ void ChatWidget::sendChat()
 	}
 
 	QString text;
-	RsHtml::optimizeHtml(chatWidget, text);
+	if (ui->actionSendAsPlainText->isChecked()){
+		text = chatWidget->toPlainText();
+		text.replace(QChar(-4),"");//Char used when image on text.
+	} else {
+		RsHtml::optimizeHtml(chatWidget, text, (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+	}
 	std::string msg = text.toUtf8().constData();
 
 	if (msg.empty()) {
@@ -1156,7 +1198,7 @@ void ChatWidget::on_searchButton_clicked(bool bValue)
 		qtcCurrent=QTextCursor(qtdDocument);
 	}
 	ui->leSearch->setVisible(bValue);
-
+  	ui->markButton->setVisible(bValue);
 }
 void ChatWidget::on_searchBefore_clicked()
 {
@@ -1410,6 +1452,7 @@ void ChatWidget::clearChatHistory()
 	if (chatType() == CHATTYPE_LOBBY) {
 		if (notify) notify->chatLobbyCleared(chatId.toLobbyId(),"");
 	}
+	rsMsgs->clearChatLobby(chatId);
 }
 
 void ChatWidget::deleteChatHistory()
@@ -1424,16 +1467,6 @@ void ChatWidget::messageHistory()
 {
     ImHistoryBrowser imBrowser(chatId, ui->chatTextEdit, window());
 	imBrowser.exec();
-}
-
-void ChatWidget::searchHistory()
-{
-	if(ui->actionSearch_History->isChecked()){
-      ui->searchframe->show();
-  }else {
-      ui->searchframe->hide();
-  }
-  
 }
 
 void ChatWidget::addExtraFile()
@@ -1659,8 +1692,8 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
-    ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+	ui->typingLabel->setText(QString(statusMask).arg(tr(statusString.toUtf8()))); // displays info for 5 secs.
+	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;
@@ -1702,7 +1735,11 @@ void ChatWidget::quote()
 
 void ChatWidget::dropPlacemark()
 {
-	ui->textBrowser->append("----------");        
+    ui->textBrowser->moveCursor(QTextCursor::End);       // *append* inserts text at end but with formatting in effect at
+    ui->textBrowser->append("----------");               // current cursor position, such as in the middle of a hotlink,
+                                                         // which would be strange.  This OTOH inserts text with
+                                                         // formatting in effect on the last line, which may be strange
+                                                         // or not.
 }
 
 void ChatWidget::saveImage()

@@ -409,9 +409,14 @@ uint32_t p3Msgs::getMaxMessageSecuritySize(int type)
 	return mChatSrv->getMaxMessageSecuritySize(type);
 }
 
-void p3Msgs::sendStatusString(const ChatId& peer_id, const std::string& status_string)
+void p3Msgs::sendStatusString(const ChatId& id, const std::string& status_string)
 {
-    mChatSrv->sendStatusString(peer_id, status_string);
+    mChatSrv->sendStatusString(id, status_string);
+}
+
+void p3Msgs::clearChatLobby(const ChatId &id)
+{
+	mChatSrv->clearChatLobby(id);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)

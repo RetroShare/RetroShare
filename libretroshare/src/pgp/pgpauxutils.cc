@@ -66,6 +66,11 @@ bool PgpAuxUtilsImpl::getGPGAllList(std::list<RsPgpId> &ids)
 	return AuthGPG::getAuthGPG()->getGPGAllList(ids);
 }
 
+bool PgpAuxUtilsImpl::parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const 
+{
+	return AuthGPG::getAuthGPG()->parseSignature(sign,signlen,issuer);
+}
+
 bool PgpAuxUtilsImpl::askForDeferredSelfSignature(const void *data, 
 		const uint32_t len, 
 		unsigned char *sign, 

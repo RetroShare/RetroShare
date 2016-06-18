@@ -120,8 +120,8 @@ class RsServer: public RsControl, public RsTickingThread
 	public:
 		/* Config */
 
-        virtual void    ConfigFinalSave( );
-        virtual void	startServiceThread(RsTickingThread *t) ;
+		virtual void    ConfigFinalSave( );
+		virtual void	startServiceThread(RsTickingThread *t, const std::string &threadName) ;
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
@@ -138,6 +138,8 @@ class RsServer: public RsControl, public RsTickingThread
 		virtual void getLibraries(std::list<RsLibraryInfo> &libraries);
 
 	private: 
+
+		std::string getSQLCipherVersion();
 
 		// The real Server Parts.
 
@@ -194,9 +196,9 @@ class RsServer: public RsControl, public RsTickingThread
     double mAvgTickRate ;
     double mTimeDelta ;
 
-    static const double minTimeDelta = 0.1; // 25;
-    static const double maxTimeDelta = 0.5;
-    static const double kickLimit = 0.15;
+    static const double minTimeDelta; // 25;
+    static const double maxTimeDelta;
+    static const double kickLimit;
 };
 
 /* Helper function to convert windows paths

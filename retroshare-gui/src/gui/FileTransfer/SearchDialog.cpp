@@ -535,15 +535,15 @@ void SearchDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
-						}//if (collection.load(this))
-					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-				}//if (qinfo.exists())
-			}//if (!rsFiles->FileDetails(
-		}//if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool())
-	}//if (selectedItems.size() != 1)
+						}
+					}
+				}
+			}
+		}
+	}
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {
@@ -1454,8 +1454,8 @@ void SearchDialog::sendLinkTo( )
 
 void SearchDialog::selectFileType(int index)
 {
-    if (!FileTypeExtensionMap->contains(index) && index != FILETYPE_IDX_DIRECTORY)
-        return;
+	if (!FileTypeExtensionMap->contains(index) && index != FILETYPE_IDX_DIRECTORY)
+		return;
 
 	QString searchId;
 	QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();

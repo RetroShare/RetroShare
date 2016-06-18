@@ -19,8 +19,11 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_6">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -56,7 +59,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">:/images/user/friends24.png</pixmap>
+         <pixmap resource="../images.qrc">:/images/user/friends24.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -96,7 +99,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -110,7 +113,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -127,7 +130,7 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="margin">
-           <number>2</number>
+           <number>1</number>
           </property>
           <item>
            <widget class="LineEditClear" name="filterLineEdit"/>
@@ -153,8 +156,40 @@
              <string>New ID</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+             <iconset resource="../images.qrc">
               <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NewCircle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Create new circle</string>
+            </property>
+            <property name="text">
+             <string>New ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/circles_new_128.png</normaloff>:/icons/circles_new_128.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -231,9 +266,13 @@
      </widget>
      <widget class="QTabWidget" name="tabWidget1">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_2">
+       <attribute name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/no_avatar_background.png</normaloff>:/images/no_avatar_background.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Person</string>
        </attribute>
@@ -517,7 +556,7 @@ p, li { white-space: pre-wrap; }
                   </property>
                   <property name="icon">
                    <iconset>
-                    <normaloff>../../../../../trunk/retroshare-gui/src/gui/icons/yellow_biohazard64.png</normaloff>../../../../../trunk/retroshare-gui/src/gui/icons/yellow_biohazard64.png</iconset>
+                    <normaloff>../icons/yellow_biohazard64.png</normaloff>../icons/yellow_biohazard64.png</iconset>
                   </property>
                  </item>
                  <item>
@@ -581,42 +620,62 @@ p, li { white-space: pre-wrap; }
        </layout>
       </widget>
       <widget class="QWidget" name="tab">
+       <attribute name="icon">
+        <iconset resource="../images.qrc">
+         <normaloff>:/images/circles/circles_64.png</normaloff>:/images/circles/circles_64.png</iconset>
+       </attribute>
        <attribute name="title">
         <string>Circles</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QPushButton" name="pushButton_extCircle">
-            <property name="text">
-             <string>Create Circle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_editCircle">
-            <property name="text">
-             <string>Edit Circle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QFrame" name="headerFrame_2">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <property name="horizontalSpacing">
+            <number>12</number>
+           </property>
+           <item row="0" column="0" rowspan="2">
+            <widget class="QLabel" name="avlabel_Circles">
+             <property name="minimumSize">
+              <size>
+               <width>64</width>
+               <height>64</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>64</width>
+               <height>64</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" rowspan="2" colspan="2">
+            <widget class="StyledElidedLabel" name="headerTextLabel_Circles">
+             <property name="text">
+              <string>Circles</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
-        <item row="1" column="0">
+        <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
@@ -626,12 +685,12 @@ p, li { white-space: pre-wrap; }
           </property>
           <column>
            <property name="text">
-            <string>Name</string>
+            <string>Circle name</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>IDs</string>
+            <string>Membership</string>
            </property>
           </column>
           <item>
@@ -654,7 +713,7 @@ p, li { white-space: pre-wrap; }
   </layout>
   <action name="editIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
    </property>
    <property name="text">
@@ -666,7 +725,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="removeIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
    </property>
    <property name="text">
@@ -675,7 +734,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="chatIdentity">
    <property name="icon">
-    <iconset resource="../../../../../trunk/retroshare-gui/src/gui/images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/toaster/chat.png</normaloff>:/images/toaster/chat.png</iconset>
    </property>
    <property name="text">
@@ -712,7 +771,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../../../../../trunk/retroshare-gui/src/gui/images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

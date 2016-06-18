@@ -155,8 +155,13 @@ public:
 	bool canSetRetroShareProtocol();
 	/** Returns true if retroshare:// is registered as protocol */
 	bool getRetroShareProtocol();
-	/** Register retroshare:// as protocl */
-	bool setRetroShareProtocol(bool value);
+	/** Register retroshare:// as protocol */
+	bool setRetroShareProtocol(bool value, QString &error);
+
+	/** Returns true if this instance have to run Local Server*/
+	bool getUseLocalServer();
+	/** Sets whether to run Local Server */
+	void setUseLocalServer(bool value);
 
 	/* Get the destination log file. */
 	QString getLogFile();
@@ -203,6 +208,9 @@ public:
 
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
+
+	bool getChatSendAsPlainTextByDef();
+	void setChatSendAsPlainTextByDef(bool bValue);
 
 	bool getChatSearchShowBarByDefault();
 	void setChatSearchShowBarByDefault(bool bValue);

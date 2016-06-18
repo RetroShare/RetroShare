@@ -130,7 +130,7 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
 {
 	_force_sync_database = false ;
     mCount = 0;
-	start();
+    start("AuthGPG");
 }
 
 /* This function is called when retroshare is first started
@@ -306,6 +306,11 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint)
 {
 	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,withfingerprint) ;
+}
+
+bool AuthGPG::parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id)
+{
+    return PGPHandler::parseSignature((unsigned char*)sig,siglen,issuer_id) ;
 }
 
 bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id) 

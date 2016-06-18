@@ -334,112 +334,114 @@ QString GroupTreeWidget::itemIdAt(QPoint &point)
 
 void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList)
 {
-	if (categoryItem == NULL) {
-		return;
-	}
-
-	QString filterText = ui->filterLineEdit->text();
-
-	/* Iterate all items */
-	QList<GroupItemInfo>::const_iterator it;
-	for (it = itemList.begin(); it != itemList.end(); ++it) {
-		const GroupItemInfo &itemInfo = *it;
-
-		QTreeWidgetItem *item = NULL;
-
-		/* Search exisiting item */
-		int childCount = categoryItem->childCount();
-		for (int child = 0; child < childCount; ++child) {
-			QTreeWidgetItem *childItem = categoryItem->child(child);
-			if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
-				/* Found child */
-				item = childItem;
-				break;
-			}
-		}
-
-		if (item == NULL) {
-			item = new RSTreeWidgetItem(compareRole);
-			item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
-			categoryItem->addChild(item);
-		}
-
-		item->setText(COLUMN_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
-
-		/* Set last post */
-		qlonglong lastPost = itemInfo.lastpost.toTime_t();
-		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
-		
-		/* Set visible posts */
-		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
-
-		/* Set icon */
-		if (ui->treeWidget->itemWidget(item, COLUMN_NAME)) {
-			/* Item is waiting, save icon in role */
-			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, itemInfo.icon);
-		} else {
-			item->setIcon(COLUMN_NAME, itemInfo.icon);
-		}
-
-		/* Set popularity */
-        QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
-
-        item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
-        item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
-
-		/* Set tooltip */
-		if (itemInfo.privatekey) {
-            tooltip += "\n" + tr("You have admin rights");
-        }
-        if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
-    {
-            tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
-        tooltip += "\n" + tr("Subscribe to download and read messages") ;
+    if (categoryItem == NULL) {
+	    return;
     }
 
-		item->setToolTip(COLUMN_NAME, tooltip);
-		item->setToolTip(COLUMN_POPULARITY, tooltip);
+    QString filterText = ui->filterLineEdit->text();
 
-        item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+    /* Iterate all items */
+    QList<GroupItemInfo>::const_iterator it;
+    for (it = itemList.begin(); it != itemList.end(); ++it) {
+	    const GroupItemInfo &itemInfo = *it;
 
-		/* Set color */
-		QBrush brush;
-		if (itemInfo.privatekey) {
-			brush = QBrush(textColorPrivateKey());
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
-		} else {
-			brush = ui->treeWidget->palette().color(QPalette::Text);
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
-		}
-		item->setForeground(COLUMN_NAME, brush);
+	    QTreeWidgetItem *item = NULL;
 
-		/* Calculate score */
-		calculateScore(item, filterText);
-	}
+	    /* Search exisiting item */
+	    int childCount = categoryItem->childCount();
+	    for (int child = 0; child < childCount; ++child) {
+		    QTreeWidgetItem *childItem = categoryItem->child(child);
+		    if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
+			    /* Found child */
+			    item = childItem;
+			    break;
+		    }
+	    }
 
-	/* Remove all items not in list */
-	int child = 0;
-	int childCount = categoryItem->childCount();
-	while (child < childCount) {
-		QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
+	    if (item == NULL) {
+		    item = new RSTreeWidgetItem(compareRole);
+		    item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
+		    categoryItem->addChild(item);
+	    }
 
-		for (it = itemList.begin(); it != itemList.end(); ++it) {
-			if (it->id == id) {
-				break;
-			}
-		}
+	    item->setText(COLUMN_NAME, itemInfo.name);
+	    item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
+	    item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
-		if (it == itemList.end()) {
-			delete(categoryItem->takeChild(child));
-			childCount = categoryItem->childCount();
-		} else {
-			++child;
-		}
-	}
+	    /* Set last post */
+	    qlonglong lastPost = itemInfo.lastpost.toTime_t();
+	    item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
 
-	resort(categoryItem);
+	    /* Set visible posts */
+	    item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
+
+	    /* Set icon */
+	    if (ui->treeWidget->itemWidget(item, COLUMN_NAME)) {
+		    /* Item is waiting, save icon in role */
+		    item->setData(COLUMN_DATA, ROLE_SAVED_ICON, itemInfo.icon);
+	    } else {
+		    item->setIcon(COLUMN_NAME, itemInfo.icon);
+	    }
+
+	    /* Set popularity */
+	    QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
+
+	    item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
+	    item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
+
+	    /* Set tooltip */
+	    if (itemInfo.adminKey) 
+		    tooltip += "\n" + tr("You are admin (modify names and description using Edit menu)");
+	    else if (itemInfo.publishKey) 
+		    tooltip += "\n" + tr("You have been granted as publisher (you can post here!)");
+
+	    if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
+	    {
+		    tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
+		    tooltip += "\n" + tr("Subscribe to download and read messages") ;
+	    }
+
+	    item->setToolTip(COLUMN_NAME, tooltip);
+	    item->setToolTip(COLUMN_POPULARITY, tooltip);
+
+	    item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+
+	    /* Set color */
+	    QBrush brush;
+	    if (itemInfo.publishKey) {
+		    brush = QBrush(textColorPrivateKey());
+		    item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+	    } else {
+		    brush = ui->treeWidget->palette().color(QPalette::Text);
+		    item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
+	    }
+	    item->setForeground(COLUMN_NAME, brush);
+
+	    /* Calculate score */
+	    calculateScore(item, filterText);
+    }
+
+    /* Remove all items not in list */
+    int child = 0;
+    int childCount = categoryItem->childCount();
+    while (child < childCount) {
+	    QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
+
+	    for (it = itemList.begin(); it != itemList.end(); ++it) {
+		    if (it->id == id) {
+			    break;
+		    }
+	    }
+
+	    if (it == itemList.end()) {
+		    delete(categoryItem->takeChild(child));
+		    childCount = categoryItem->childCount();
+	    } else {
+		    ++child;
+	    }
+    }
+
+    resort(categoryItem);
 }
 
 void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)

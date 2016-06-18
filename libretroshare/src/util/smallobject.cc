@@ -279,15 +279,22 @@ void *SmallObject::operator new(size_t size)
 #endif
 
 	RsStackMutex m(_mtx) ;
-
-	if(!_allocator._active)
-		return (void*)NULL;
-
-	void *p = _allocator.allocate(size) ;
+    
+    	// This should normally not happen. But that prevents a crash when quitting, since we cannot prevent the constructor
+    	// of an object to call operator new(), nor to handle the case where it returns NULL.
+    	// The memory will therefore not be deleted if that happens. We thus print a warning.
+    
+    	if(_allocator._active)
+		return _allocator.allocate(size) ;
+	else
+        {
+            std::cerr << "(EE) allocating " << size << " bytes of memory that cannot be deleted. This is a bug, except if it happens when closing Retroshare" << std::endl;
+	    return malloc(size) ;	
+        }
+        
 #ifdef DEBUG_MEMORY
 	std::cerr << "new RsItem: " << p << ", size=" << size << std::endl;
 #endif
-	return p ;
 }
 
 void SmallObject::operator delete(void *p,size_t size)

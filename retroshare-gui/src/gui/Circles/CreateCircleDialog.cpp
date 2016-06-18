@@ -98,7 +98,10 @@ CreateCircleDialog::CreateCircleDialog()
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 	mClearList = true;
-
+#if QT_VERSION >= 0x040700
+        ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
+#endif
+        
     //ui.idChooser->loadIds(0,RsGxsId());
     ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 }
@@ -135,6 +138,7 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     else
     {
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
 	    ui.idChooser->setVisible(true) ;
     }
     
@@ -294,14 +298,16 @@ void CreateCircleDialog::addMember(const QString& keyId, const QString& idtype, 
 	//member->setIcon(RSCIRCLEID_COL_NICKNAME, pixmap);
 
 	tree->addTopLevelItem(member);
+	
+	ui.members_groupBox->setTitle( tr("Invited Members") + " (" + QString::number(ui.treeWidget_membership->topLevelItemCount()) + ")" );
 }
 
 /** Maybe we can use RsGxsCircleGroup instead of RsGxsCircleDetails ??? (TODO)**/
 void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 {
 	typedef std::set<RsGxsId>::iterator itUnknownPeers;
-	for (itUnknownPeers it = cirDetails.mAllowedAnonPeers.begin()
-	     ; it != cirDetails.mAllowedAnonPeers.end()
+	for (itUnknownPeers it = cirDetails.mAllowedGxsIds.begin()
+	     ; it != cirDetails.mAllowedGxsIds.end()
 	     ; ++it) {
 		RsGxsId gxs_id = *it;
 		RsIdentityDetails gxs_details ;
@@ -316,10 +322,10 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 		}//if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
 	}//for (itUnknownPeers it = cirDetails.mUnknownPeers.begin()
 
-	typedef std::map<RsPgpId, std::set<RsGxsId> >::const_iterator itAllowedPeers;
-	for (itAllowedPeers it = cirDetails.mAllowedSignedPeers.begin() ; it != cirDetails.mAllowedSignedPeers.end() ; ++it ) 
+	typedef std::set<RsPgpId>::const_iterator itAllowedPeers;
+	for (itAllowedPeers it = cirDetails.mAllowedNodes.begin() ; it != cirDetails.mAllowedNodes.end() ; ++it ) 
     {
-		RsPgpId gpg_id = it->first;
+		RsPgpId gpg_id = *it;
 		RsPeerDetails details ;
 		if(!gpg_id.isNull() && rsPeers->getGPGDetails(gpg_id,details)) {
 
@@ -624,13 +630,14 @@ void CreateCircleDialog::updateCircleGUI()
     }
     else
     {
-	    std::set<RsGxsId> ids ;
-	    ids.insert(mCircleGroup.mMeta.mAuthorId) ;
+	    //std::set<RsGxsId> ids ;
+	    //ids.insert(mCircleGroup.mMeta.mAuthorId) ;
 	    ui.idChooser->setDefaultId(mCircleGroup.mMeta.mAuthorId) ;
 	    ui.idChooser->setChosenId(mCircleGroup.mMeta.mAuthorId) ;
-	    ui.idChooser->setIdConstraintSet(ids) ;
-	    ui.idChooser->setFlags(IDCHOOSER_ID_REQUIRED | IDCHOOSER_NO_CREATE) ;
+	    //ui.idChooser->setIdConstraintSet(ids) ;
+	    ui.idChooser->setFlags(IDCHOOSER_NO_CREATE) ;
 	    ui.circleAdminLabel->setVisible(false) ;
+	    ui.circleAdminLabel->hide();
     }
 }
 

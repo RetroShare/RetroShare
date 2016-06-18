@@ -43,8 +43,14 @@ macx {
 	INC_DIR += "/opt/local/include"
 	LIB_DIR += "/usr/local/lib"
 	LIB_DIR += "/opt/local/lib"
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
-	QMAKE_MAC_SDK = macosx10.10
+	!QMAKE_MACOSX_DEPLOYMENT_TARGET {
+		message(***retroshare.pri: No Target, set it to MacOS 10.10 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.10
+	}
+	!QMAKE_MAC_SDK {
+		message(***retroshare.pri: No SDK, set it to MacOS 10.10 )
+		QMAKE_MAC_SDK = macosx10.10
+	}
 	CONFIG += c+11
 }
 

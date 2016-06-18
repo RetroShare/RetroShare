@@ -109,7 +109,7 @@ std::string RsCertificate::toStdString() const
 
 	std::string out_string ;
 
-	Radix64::encode((char *)buf, p, out_string) ;
+	Radix64::encode(buf, p, out_string) ;
 
 	// Now slice up to 64 chars.
 	//

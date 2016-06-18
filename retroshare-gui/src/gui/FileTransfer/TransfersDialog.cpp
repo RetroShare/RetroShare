@@ -219,8 +219,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
-    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
-    connect(Shortcut, SIGNAL(activated()), this, SLOT( cancel ()));
+    mShortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
+    connect(mShortcut, SIGNAL(activated()), this, SLOT( cancel ()));
 
   	//Selection Setup
     selection = ui.downloadList->selectionModel();
@@ -942,7 +942,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
-	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
+
+	qlonglong downloadtime = (fileInfo.tfRate > 0)?( (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0) ) : 0 ;
 	qint64 qi64LastDL = fileInfo.lastTS ; //std::numeric_limits<qint64>::max();
 
 	if (qi64LastDL == 0)	// file is complete, or any raison why the time has not been set properly
@@ -1355,7 +1356,7 @@ void TransfersDialog::insertTransfers()
 			qlonglong fileSize 	= info.size;
 			qlonglong completed 	= pit->transfered;
 //			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
-			qlonglong remaining   = (info.size - pit->transfered) / (pit->tfRate * 1024.0);
+			qlonglong remaining   = (pit->tfRate>0)?((info.size - pit->transfered) / (pit->tfRate * 1024.0)):0;
 
 			// Estimate the completion. We need something more accurate, meaning that we need to
 			// transmit the completion info.
@@ -2169,15 +2170,15 @@ void TransfersDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
-						}//if (collection.load(this))
-					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-				}//if (qinfo.exists())
-			}//if (info.downloadStatus == FT_STATE_COMPLETE)
-		}//if (rsFiles->FileDetails(
-	}//if (items.size() == 1)
+						}
+					}
+				}
+			}
+		}
+	}
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {

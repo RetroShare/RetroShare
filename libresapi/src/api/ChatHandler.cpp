@@ -6,8 +6,10 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
-#include <sstream>
 #include <algorithm>
+#include <limits>
+#include <sstream>
+#include <time.h>
 
 namespace resource_api
 {
@@ -97,6 +99,39 @@ StreamBase& operator << (StreamBase& left, ChatHandler::ChatInfo& info)
     return left;
 }
 
+class SendLobbyParticipantsTask: public GxsResponseTask
+{
+public:
+    SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
+        GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
+    {
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            requestGxsId(mit->first);
+        }
+    }
+private:
+    ChatHandler::LobbyParticipantsInfo mParticipantsInfo;
+protected:
+    virtual void gxsDoWork(Request &/*req*/, Response &resp)
+    {
+        resp.mDataStream.getStreamToMember();
+        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
+        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            StreamBase& stream = resp.mDataStream.getStreamToMember();
+            double last_active = mit->second;
+            stream << makeKeyValueReference("last_active", last_active);
+            streamGxsId(mit->first, stream.getStreamToMember("identity"));
+        }
+        resp.mStateToken = mParticipantsInfo.state_token;
+        resp.setOk();
+        done();
+    }
+
+};
+
 ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, RsPeers* peers, RsIdentity* identity, UnreadMsgNotify* unread):
     mStateTokenServer(sts), mNotify(notify), mRsMsgs(msgs), mRsPeers(peers), mRsIdentity(identity), mUnreadMsgNotify(unread), mMtx("ChatHandler::mMtx")
 {
@@ -111,11 +146,13 @@ ChatHandler::ChatHandler(StateTokenServer *sts, RsNotify *notify, RsMsgs *msgs, 
     addResourceHandler("lobbies", this, &ChatHandler::handleLobbies);
     addResourceHandler("subscribe_lobby", this, &ChatHandler::handleSubscribeLobby);
     addResourceHandler("unsubscribe_lobby", this, &ChatHandler::handleUnsubscribeLobby);
+    addResourceHandler("clear_lobby", this, &ChatHandler::handleClearLobby);
+    addResourceHandler("lobby_participants", this, &ChatHandler::handleLobbyParticipants);
     addResourceHandler("messages", this, &ChatHandler::handleMessages);
     addResourceHandler("send_message", this, &ChatHandler::handleSendMessage);
     addResourceHandler("mark_chat_as_read", this, &ChatHandler::handleMarkChatAsRead);
     addResourceHandler("info", this, &ChatHandler::handleInfo);
-    addResourceHandler("typing_label", this, &ChatHandler::handleTypingLabel);
+    addResourceHandler("receive_status", this, &ChatHandler::handleReceiveStatus);
     addResourceHandler("send_status", this, &ChatHandler::handleSendStatus);
     addResourceHandler("unread_msgs", this, &ChatHandler::handleUnreadMsgs);
 }
@@ -132,20 +169,40 @@ void ChatHandler::notifyChatMessage(const ChatMessage &msg)
     mRawMsgs.push_back(msg);
 }
 
-// to be removed
-/*
-ChatHandler::Lobby ChatHandler::getLobbyInfo(ChatLobbyId id)
+void ChatHandler::notifyChatCleared(const ChatId &chat_id)
 {
-    tick();
-
-    RS_STACK_MUTEX(mMtx); // ********* LOCKED **********
-    for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
-        if(vit->id == id)
-            return *vit;
-    std::cerr << "ChatHandler::getLobbyInfo Error: Lobby not found" << std::endl;
-    return Lobby();
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    //Remove processed messages
+    std::list<Msg>& msgs = mMsgs[chat_id];
+    msgs.clear();
+    //Remove unprocessed messages
+    for(std::list<ChatMessage>::iterator lit = mRawMsgs.begin(); lit != mRawMsgs.end();)
+    {
+        ChatMessage& msg = *lit;
+        if (msg.chat_id == chat_id)
+       {
+            lit = mRawMsgs.erase(lit);
+        } else {
+            ++lit;
+        }
+    }
 }
-*/
+
+void ChatHandler::notifyChatStatus(const ChatId &chat_id, const std::string &status)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    locked_storeTypingInfo(chat_id, status);
+}
+
+void ChatHandler::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,
+                                       const RsGxsId &nickname, const std::string& any_string)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    if(event_type == RS_CHAT_LOBBY_EVENT_PEER_STATUS)
+    {
+        locked_storeTypingInfo(ChatId(lobby_id), any_string, nickname);
+    }
+}
 
 void ChatHandler::tick()
 {
@@ -170,7 +227,44 @@ void ChatHandler::tick()
             l.is_broadcast = false;
             l.gxs_id = info.gxs_id;
             lobbies.push_back(l);
+
+            // update the lobby participants list
+            // maybe it causes to much traffic to do this in every tick,
+            // because the client would get the whole list every time a message was received
+            // we could reduce the checking frequency
+            std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.find(*lit);
+            if(mit == mLobbyParticipantsInfos.end())
+            {
+                mLobbyParticipantsInfos[*lit].participants = info.gxs_ids;
+                mLobbyParticipantsInfos[*lit].state_token = mStateTokenServer->getNewToken();
+            }
+            else
+            {
+                LobbyParticipantsInfo& pi = mit->second;
+                if(!std::equal(pi.participants.begin(), pi.participants.end(), info.gxs_ids.begin()))
+                {
+                    pi.participants = info.gxs_ids;
+                    mStateTokenServer->replaceToken(pi.state_token);
+                }
+            }
         }
+    }
+
+    // remove participants info of old lobbies
+    std::vector<ChatLobbyId> participants_info_to_delete;
+    for(std::map<ChatLobbyId, LobbyParticipantsInfo>::iterator mit = mLobbyParticipantsInfos.begin();
+        mit != mLobbyParticipantsInfos.end(); ++mit)
+    {
+        if(std::find(subscribed_ids.begin(), subscribed_ids.end(), mit->first) == subscribed_ids.end())
+        {
+            participants_info_to_delete.push_back(mit->first);
+        }
+    }
+    for(std::vector<ChatLobbyId>::iterator vit = participants_info_to_delete.begin(); vit != participants_info_to_delete.end(); ++vit)
+    {
+        LobbyParticipantsInfo& pi = mLobbyParticipantsInfos[*vit];
+        mStateTokenServer->discardToken(pi.state_token);
+        mLobbyParticipantsInfos.erase(*vit);
     }
 
     {
@@ -369,6 +463,46 @@ void ChatHandler::tick()
     }
 }
 
+static void writeUTF8 ( std::ostream & Out, unsigned int Ch )
+/* writes Ch in UTF-8 encoding to Out. Note this version only deals
+   with characters up to 16 bits.
+   From: http://www.codecodex.com/wiki/Unescape_HTML_special_characters_from_a_String*/
+{
+    if (Ch >= 0x800)
+    {
+        Out.put(0xE0 | ((Ch >> 12) & 0x0F));
+        Out.put(0x80 | ((Ch >>  6) & 0x3F));
+        Out.put(0x80 | ((Ch      ) & 0x3F));
+    }
+    else if (Ch >= 0x80)
+    {
+        Out.put(0xC0 | ((Ch >>  6) & 0x1F));
+        Out.put(0x80 | ((Ch      ) & 0x3F));
+    }
+    else
+    {
+        Out.put(Ch);
+    }
+}
+
+static unsigned int stringToDecUInt ( std::string str)
+{
+    unsigned int out = 0;
+    unsigned int max = std::numeric_limits<int>::max() / 10;
+    int lenght = str.length();
+    for (int curs = 0; curs < lenght; ++curs) {
+        char c = str[curs];
+        if ( (c >= '0')
+             && (c <= '9')
+             && (out < max)
+             ) {
+            out *= 10;
+            out += (int)( c - '0');
+        } else return 0;
+    }
+    return out;
+}
+
 void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links)
 {
     if (in.size() == 0)
@@ -386,6 +520,9 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
     std::string last_six_chars;
     unsigned int tag_start_index = 0;
     Triple current_link;
+    bool onEscapeChar = false;
+    unsigned int escapeCharIndexStart = -1;
+
     for(unsigned int i = 0; i < in.size(); ++i)
     {
         if(keep_link && in[i] == '"')
@@ -408,10 +545,12 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
         if(!ignore || keep_link)
             out += in[i];
         // "falling edge" resets mode to keep
-        if(in[i] == '>') {
+        if(in[i] == '>' && ignore) {
             // leave ignore mode on, if it's a style tag
-            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style")
+            if (tag_start_index == 0 || tag_start_index + 6 > i || in.substr(tag_start_index, 6) != "<style") {
                 ignore = false;
+                tag_start_index = 0;
+            }
         }
 
         last_six_chars += in[i];
@@ -436,7 +575,248 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
             }
             current_link = Triple();
         }
+        std::string br = "<br/>";
+        if(last_six_chars.size() >= br.size()
+           && last_six_chars.substr(last_six_chars.size()-br.size()) == br)
+        {
+            out += "\n";
+        }
+        if (in[i] == '&') {
+            onEscapeChar = true;
+            escapeCharIndexStart = out.length();
+        }
+        if (ignore || keep_link) {
+            onEscapeChar = false;
+            escapeCharIndexStart = -1;
+        }
+        if ((in[i] == ';') && onEscapeChar) {
+            onEscapeChar = false;
+            bool escapeFound = true;
+            std::string escapeReplace = "";
+            //Keep only escape value to replace it
+            std::string escapeCharValue = out.substr(escapeCharIndexStart,
+                                                     out.length() - escapeCharIndexStart - 1);
+            if (escapeCharValue[0] == '#') {
+                int escapedCharUTF8 = stringToDecUInt(escapeCharValue.substr(1));
+                std::ostringstream escapedSStream;
+                writeUTF8( escapedSStream, escapedCharUTF8);
+                escapeReplace = escapedSStream.str();
+            } else if (escapeCharValue == "euro") {
+                escapeReplace = "€";
+            } else if (escapeCharValue == "nbsp") {
+                escapeReplace = " ";
+            } else if (escapeCharValue == "quot") {
+                escapeReplace = "\"";
+            } else if (escapeCharValue == "amp") {
+                escapeReplace = "&";
+            } else if (escapeCharValue == "lt") {
+                escapeReplace = "<";
+            } else if (escapeCharValue == "gt") {
+                escapeReplace = ">";
+            } else if (escapeCharValue == "iexcl") {
+                escapeReplace = "¡";
+            } else if (escapeCharValue == "cent") {
+                escapeReplace = "¢";
+            } else if (escapeCharValue == "pound") {
+                escapeReplace = "£";
+            } else if (escapeCharValue == "curren") {
+                escapeReplace = "¤";
+            } else if (escapeCharValue == "yen") {
+                escapeReplace = "¥";
+            } else if (escapeCharValue == "brvbar") {
+                escapeReplace = "¦";
+            } else if (escapeCharValue == "sect") {
+                escapeReplace = "§";
+            } else if (escapeCharValue == "uml") {
+                escapeReplace = "¨";
+            } else if (escapeCharValue == "copy") {
+                escapeReplace = "©";
+            } else if (escapeCharValue == "ordf") {
+                escapeReplace = "ª";
+            } else if (escapeCharValue == "not") {
+                escapeReplace = "¬";
+            } else if (escapeCharValue == "shy") {
+                escapeReplace = " ";//?
+            } else if (escapeCharValue == "reg") {
+                escapeReplace = "®";
+            } else if (escapeCharValue == "macr") {
+                escapeReplace = "¯";
+            } else if (escapeCharValue == "deg") {
+                escapeReplace = "°";
+            } else if (escapeCharValue == "plusmn") {
+                escapeReplace = "±";
+            } else if (escapeCharValue == "sup2") {
+                escapeReplace = "²";
+            } else if (escapeCharValue == "sup3") {
+                escapeReplace = "³";
+            } else if (escapeCharValue == "acute") {
+                escapeReplace = "´";
+            } else if (escapeCharValue == "micro") {
+                escapeReplace = "µ";
+            } else if (escapeCharValue == "para") {
+                escapeReplace = "¶";
+            } else if (escapeCharValue == "middot") {
+                escapeReplace = "·";
+            } else if (escapeCharValue == "cedil") {
+                escapeReplace = "¸";
+            } else if (escapeCharValue == "sup1") {
+                escapeReplace = "¹";
+            } else if (escapeCharValue == "ordm") {
+                escapeReplace = "º";
+            } else if (escapeCharValue == "raquo") {
+                escapeReplace = "»";
+            } else if (escapeCharValue == "frac14") {
+                escapeReplace = "¼";
+            } else if (escapeCharValue == "frac12") {
+                escapeReplace = "½";
+            } else if (escapeCharValue == "frac34") {
+                escapeReplace = "¾";
+            } else if (escapeCharValue == "iquest") {
+                escapeReplace = "¿";
+            } else if (escapeCharValue == "Agrave") {
+                escapeReplace = "À";
+            } else if (escapeCharValue == "Aacute") {
+                escapeReplace = "Á";
+            } else if (escapeCharValue == "Acirc") {
+                escapeReplace = "Â";
+            } else if (escapeCharValue == "Atilde") {
+                escapeReplace = "Ã";
+            } else if (escapeCharValue == "Auml") {
+                escapeReplace = "Ä";
+            } else if (escapeCharValue == "Aring") {
+                escapeReplace = "Å";
+            } else if (escapeCharValue == "AElig") {
+                escapeReplace = "Æ";
+            } else if (escapeCharValue == "Ccedil") {
+                escapeReplace = "Ç";
+            } else if (escapeCharValue == "Egrave") {
+                escapeReplace = "È";
+            } else if (escapeCharValue == "Eacute") {
+                escapeReplace = "É";
+            } else if (escapeCharValue == "Ecirc") {
+                escapeReplace = "Ê";
+            } else if (escapeCharValue == "Euml") {
+                escapeReplace = "Ë";
+            } else if (escapeCharValue == "Igrave") {
+                escapeReplace = "Ì";
+            } else if (escapeCharValue == "Iacute") {
+                escapeReplace = "Í";
+            } else if (escapeCharValue == "Icirc") {
+                escapeReplace = "Î";
+            } else if (escapeCharValue == "Iuml") {
+                escapeReplace = "Ï";
+            } else if (escapeCharValue == "ETH") {
+                escapeReplace = "Ð";
+            } else if (escapeCharValue == "Ntilde") {
+                escapeReplace = "Ñ";
+            } else if (escapeCharValue == "Ograve") {
+                escapeReplace = "Ò";
+            } else if (escapeCharValue == "Oacute") {
+                escapeReplace = "Ó";
+            } else if (escapeCharValue == "Ocirc") {
+                escapeReplace = "Ô";
+            } else if (escapeCharValue == "Otilde") {
+                escapeReplace = "Õ";
+            } else if (escapeCharValue == "Ouml") {
+                escapeReplace = "Ö";
+            } else if (escapeCharValue == "times") {
+                escapeReplace = "×";
+            } else if (escapeCharValue == "Oslash") {
+                escapeReplace = "Ø";
+            } else if (escapeCharValue == "Ugrave") {
+                escapeReplace = "Ù";
+            } else if (escapeCharValue == "Uacute") {
+                escapeReplace = "Ú";
+            } else if (escapeCharValue == "Ucirc") {
+                escapeReplace = "Û";
+            } else if (escapeCharValue == "Uuml") {
+                escapeReplace = "Ü";
+            } else if (escapeCharValue == "Yacute") {
+                escapeReplace = "Ý";
+            } else if (escapeCharValue == "THORN") {
+                escapeReplace = "Þ";
+            } else if (escapeCharValue == "szlig") {
+                escapeReplace = "ß";
+            } else if (escapeCharValue == "agrave") {
+                escapeReplace = "à";
+            } else if (escapeCharValue == "aacute") {
+                escapeReplace = "á";
+            } else if (escapeCharValue == "acirc") {
+                escapeReplace = "â";
+            } else if (escapeCharValue == "atilde") {
+                escapeReplace = "ã";
+            } else if (escapeCharValue == "auml") {
+                escapeReplace = "ä";
+            } else if (escapeCharValue == "aring") {
+                escapeReplace = "å";
+            } else if (escapeCharValue == "aelig") {
+                escapeReplace = "æ";
+            } else if (escapeCharValue == "ccedil") {
+                escapeReplace = "ç";
+            } else if (escapeCharValue == "egrave") {
+                escapeReplace = "è";
+            } else if (escapeCharValue == "eacute") {
+                escapeReplace = "é";
+            } else if (escapeCharValue == "ecirc") {
+                escapeReplace = "ê";
+            } else if (escapeCharValue == "euml") {
+                escapeReplace = "ë";
+            } else if (escapeCharValue == "igrave") {
+                escapeReplace = "ì";
+            } else if (escapeCharValue == "iacute") {
+                escapeReplace = "í";
+            } else if (escapeCharValue == "icirc") {
+                escapeReplace = "î";
+            } else if (escapeCharValue == "iuml") {
+                escapeReplace = "ï";
+            } else if (escapeCharValue == "eth") {
+                escapeReplace = "ð";
+            } else if (escapeCharValue == "ntilde") {
+                escapeReplace = "ñ";
+            } else if (escapeCharValue == "ograve") {
+                escapeReplace = "ò";
+            } else if (escapeCharValue == "oacute") {
+                escapeReplace = "ó";
+            } else if (escapeCharValue == "ocirc") {
+                escapeReplace = "ô";
+            } else if (escapeCharValue == "otilde") {
+                escapeReplace = "õ";
+            } else if (escapeCharValue == "ouml") {
+                escapeReplace = "ö";
+            } else if (escapeCharValue == "divide") {
+                escapeReplace = "÷";
+            } else if (escapeCharValue == "oslash") {
+                escapeReplace = "ø";
+            } else if (escapeCharValue == "ugrave") {
+                escapeReplace = "ù";
+            } else if (escapeCharValue == "uacute") {
+                escapeReplace = "ú";
+            } else if (escapeCharValue == "ucirc") {
+                escapeReplace = "û";
+            } else if (escapeCharValue == "uuml") {
+                escapeReplace = "ü";
+            } else if (escapeCharValue == "yacute") {
+                escapeReplace = "ý";
+            } else if (escapeCharValue == "thorn") {
+                escapeReplace = "þ";
+            } else {
+                escapeFound = false;
+            }
+            if (escapeFound) {
+                out = out.substr(0, escapeCharIndexStart-1);
+                out += escapeReplace;
+            }
+        }
     }
+}
+
+void ChatHandler::locked_storeTypingInfo(const ChatId &chat_id, std::string status, RsGxsId lobby_gxs_id)
+{
+    TypingLabelInfo& info = mTypingLabelInfo[chat_id];
+    info.timestamp = time(0);
+    info.status = status;
+    mStateTokenServer->replaceToken(info.state_token);
+    info.author_id = lobby_gxs_id;
 }
 
 void ChatHandler::handleWildcard(Request &/*req*/, Response &resp)
@@ -496,11 +876,44 @@ void ChatHandler::handleSubscribeLobby(Request &req, Response &resp)
         resp.setFail("lobby join failed. (See console for more info)");
 }
 
-void ChatHandler::handleUnsubscribeLobby(Request &req, Response &/*resp*/)
+void ChatHandler::handleUnsubscribeLobby(Request &req, Response &resp)
 {
     ChatLobbyId id = 0;
     req.mStream << makeKeyValueReference("id", id);
     mRsMsgs->unsubscribeChatLobby(id);
+    resp.setOk();
+}
+
+void ChatHandler::handleClearLobby(Request &req, Response &resp)
+{
+    ChatLobbyId id = 0;
+    req.mStream << makeKeyValueReference("id", id);
+    if (id !=0) {
+        notifyChatCleared(ChatId(id));
+    } else {
+        //Is BroadCast
+        notifyChatCleared(ChatId("B"));
+    }
+    resp.setOk();
+}
+
+ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+
+    ChatId id(req.mPath.top());
+    if(!id.isLobbyId())
+    {
+        resp.setFail("Path element \""+req.mPath.top()+"\" is not a ChatLobbyId.");
+        return 0;
+    }
+    std::map<ChatLobbyId, LobbyParticipantsInfo>::const_iterator mit = mLobbyParticipantsInfos.find(id.toLobbyId());
+    if(mit == mLobbyParticipantsInfos.end())
+    {
+        resp.setFail("lobby not found");
+        return 0;
+    }
+    return new SendLobbyParticipantsTask(mRsIdentity, mit->second);
 }
 
 void ChatHandler::handleMessages(Request &req, Response &resp)
@@ -573,89 +986,6 @@ void ChatHandler::handleMarkChatAsRead(Request &req, Response &resp)
     mStateTokenServer->replaceToken(mUnreadMsgsStateToken);
 }
 
-// to be removed
-// we do now cache chat info, to be able to include it in new message notify easily
-/*
-class InfoResponseTask: public GxsResponseTask
-{
-public:
-    InfoResponseTask(ChatHandler* ch, RsPeers* peers, RsIdentity* identity): GxsResponseTask(identity, 0), mChatHandler(ch), mRsPeers(peers), mState(BEGIN){}
-
-    enum State {BEGIN, WAITING};
-    ChatHandler* mChatHandler;
-    RsPeers* mRsPeers;
-    State mState;
-    bool is_broadcast;
-    bool is_gxs_id;
-    bool is_lobby;
-    bool is_peer;
-    std::string remote_author_id;
-    std::string remote_author_name;
-    virtual void gxsDoWork(Request& req, Response& resp)
-    {
-        ChatId id(req.mPath.top());
-        if(id.isNotSet())
-        {
-            resp.setFail("not a valid chat id");
-            done();
-            return;
-        }
-        if(mState == BEGIN)
-        {
-            is_broadcast = false;
-            is_gxs_id = false;
-            is_lobby = false;
-            is_peer = false;
-            if(id.isBroadcast())
-            {
-                is_broadcast = true;
-            }
-            else if(id.isGxsId())
-            {
-                is_gxs_id = true;
-                remote_author_id = id.toGxsId().toStdString();
-                requestGxsId(id.toGxsId());
-            }
-            else if(id.isLobbyId())
-            {
-                is_lobby = true;
-                remote_author_id = "";
-                remote_author_name = mChatHandler->getLobbyInfo(id.toLobbyId()).name;
-            }
-            else if(id.isPeerId())
-            {
-                is_peer = true;
-                remote_author_id = id.toPeerId().toStdString();
-                remote_author_name = mRsPeers->getPeerName(id.toPeerId());
-            }
-            else
-            {
-                std::cerr << "Error in InfoResponseTask::gxsDoWork(): unhandled chat_id=" << id.toStdString() << std::endl;
-            }
-            mState = WAITING;
-        }
-        else
-        {
-            if(is_gxs_id)
-                remote_author_name = getName(id.toGxsId());
-            resp.mDataStream << makeKeyValueReference("remote_author_id", remote_author_id)
-                             << makeKeyValueReference("remote_author_name", remote_author_name)
-                             << makeKeyValueReference("is_broadcast", is_broadcast)
-                             << makeKeyValueReference("is_gxs_id", is_gxs_id)
-                             << makeKeyValueReference("is_lobby", is_lobby)
-                             << makeKeyValueReference("is_peer", is_peer);
-            resp.setOk();
-            done();
-        }
-    }
-};
-
-ResponseTask *ChatHandler::handleInfo(Request &req, Response &resp)
-{
-    return new InfoResponseTask(this, mRsPeers, mRsIdentity);
-}
-*/
-
 void ChatHandler::handleInfo(Request &req, Response &resp)
 {
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
@@ -675,14 +1005,99 @@ void ChatHandler::handleInfo(Request &req, Response &resp)
     resp.setOk();
 }
 
-void ChatHandler::handleTypingLabel(Request &/*req*/, Response &/*resp*/)
+class SendTypingLabelInfo: public GxsResponseTask
 {
+public:
+    SendTypingLabelInfo(RsIdentity* identity, RsPeers* peers, ChatId id, const ChatHandler::TypingLabelInfo& info):
+        GxsResponseTask(identity), mState(BEGIN), mPeers(peers),mId(id), mInfo(info) {}
+private:
+    enum State {BEGIN, WAITING_ID};
+    State mState;
+    RsPeers* mPeers;
+    ChatId mId;
+    ChatHandler::TypingLabelInfo mInfo;
+protected:
+    void gxsDoWork(Request& /*req*/, Response& resp)
+    {
+        if(mState == BEGIN)
+        {
+            // lobby and distant require to fetch a gxs_id
+            if(mId.isLobbyId())
+            {
+                requestGxsId(mInfo.author_id);
+            }
+            else if(mId.isDistantChatId())
+            {
+                DistantChatPeerInfo dcpinfo ;
+                rsMsgs->getDistantChatStatus(mId.toDistantChatId(), dcpinfo);
+                requestGxsId(dcpinfo.to_id);
+            }
+            mState = WAITING_ID;
+        }
+        else
+        {
+            std::string name = "BUG: case not handled in SendTypingLabelInfo";
+            if(mId.isPeerId())
+            {
+                name = mPeers->getPeerName(mId.toPeerId());
+            }
+            else if(mId.isDistantChatId())
+            {
+                DistantChatPeerInfo dcpinfo ;
+                rsMsgs->getDistantChatStatus(mId.toDistantChatId(), dcpinfo);
+                name = getName(dcpinfo.to_id);
+            }
+            else if(mId.isLobbyId())
+            {
+                name = getName(mInfo.author_id);
+            }
+            else if(mId.isBroadcast())
+            {
+                name = mPeers->getPeerName(mId.broadcast_status_peer_id);
+            }
+            uint32_t ts = mInfo.timestamp;
+            resp.mDataStream << makeKeyValueReference("author_name", name)
+                             << makeKeyValueReference("timestamp", ts)
+                             << makeKeyValueReference("status_string", mInfo.status);
+            resp.mStateToken = mInfo.state_token;
+            resp.setOk();
+            done();
+        }
+    }
+};
 
+ResponseTask* ChatHandler::handleReceiveStatus(Request &req, Response &resp)
+{
+    RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
+    ChatId id(req.mPath.top());
+    if(id.isNotSet())
+    {
+        resp.setFail("\""+req.mPath.top()+"\" is not a valid chat id");
+        return 0;
+    }
+    std::map<ChatId, TypingLabelInfo>::iterator mit = mTypingLabelInfo.find(id);
+    if(mit == mTypingLabelInfo.end())
+    {
+        locked_storeTypingInfo(id, "");
+        mit = mTypingLabelInfo.find(id);
+    }
+    return new SendTypingLabelInfo(mRsIdentity, mRsPeers, id, mit->second);
 }
 
-void ChatHandler::handleSendStatus(Request &/*req*/, Response &/*resp*/)
+void ChatHandler::handleSendStatus(Request &req, Response &resp)
 {
-
+    std::string chat_id;
+    std::string status;
+    req.mStream << makeKeyValueReference("chat_id", chat_id)
+                << makeKeyValueReference("status", status);
+    ChatId id(chat_id);
+    if(id.isNotSet())
+    {
+        resp.setFail("chat_id is invalid");
+        return;
+    }
+    mRsMsgs->sendStatusString(id, status);
+    resp.setOk();
 }
 
 void ChatHandler::handleUnreadMsgs(Request &/*req*/, Response &resp)

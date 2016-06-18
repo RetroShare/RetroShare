@@ -118,6 +118,15 @@ class Condition
 	std::string name;
 };
 
+class PeerBandwidthLimits
+{
+public:
+    PeerBandwidthLimits() : max_up_rate_kbs(0), max_dl_rate_kbs(0) {}
+    
+    uint32_t max_up_rate_kbs ;
+    uint32_t max_dl_rate_kbs ;
+};
+
 //class SearchRequest // unused stuff.
 //{
 //	public:
@@ -324,9 +333,9 @@ class CompressedChunkMap
 			uint32_t residue = total_size%chunk_size ;
 
 			if(residue && operator[](nbchks-1))
-				return (filledChunks(nbchks)-1)*chunk_size + (total_size%chunk_size) ;
+				return (filledChunks(nbchks)-1)*(uint64_t)chunk_size + (total_size%chunk_size) ;
 			else
-				return filledChunks(nbchks)*chunk_size ;
+				return filledChunks(nbchks)*(uint64_t)chunk_size ;
 		}
 		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
 

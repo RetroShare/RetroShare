@@ -332,7 +332,7 @@ private:
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
-    void handleRecvSyncMessage(RsNxsSyncMsgReqItem* item);
+    void handleRecvSyncMessage(RsNxsSyncMsgReqItem* item,bool item_was_encrypted);
 
     /*!
      * Handles an nxs item for group publish key
@@ -354,7 +354,7 @@ private:
     bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
     bool canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
-    bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta);
+    bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta, RsGxsCircleId& should_encrypt_id);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
@@ -384,8 +384,10 @@ private:
 #endif
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
-    bool locked_CanReceiveUpdate(const RsNxsSyncMsgReqItem* item);
+    bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
 
+    static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
+    
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
@@ -454,7 +456,8 @@ private:
     /*!
     * encrypts/decrypts the transaction for the destination circle id.
     */
-    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, const RsGxsGroupId &destination_group, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypted_item, RsNxsItem *&nxsitem, std::vector<RsTlvPrivateRSAKey> *private_keys=NULL);
     bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
 
     void cleanRejectedMessages();

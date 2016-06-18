@@ -54,7 +54,7 @@ RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService
 
 bool RsGxsMessageCleanUp::clean()
 {
-	int i = 1;
+	uint32_t i = 1;
 
 	time_t now = time(NULL);
 
@@ -89,11 +89,14 @@ bool RsGxsMessageCleanUp::clean()
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
 
 				// if not subscribed remove messages (can optimise this really)
-				remove = remove || (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+				remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
 				if( remove )
 				{
 					req[grpId].push_back(meta->mMsgId);
+                    
+                    			std::cerr << "Scheduling msg id " << meta->mMsgId << " in grp " << grpId << " for removal." << std::endl;
 				}
 
 				delete meta;
@@ -281,7 +284,7 @@ bool RsGxsIntegrityCheck::check()
 	    std::cerr << "    " << *it <<  std::endl;
 #endif
     }
-    int nb_requested_not_in_cache = 0;
+    uint32_t nb_requested_not_in_cache = 0;
 
 #ifdef GXSUTIL_DEBUG
     std::cerr << "  issuing random get on friends for non existing IDs" << std::endl;
@@ -289,7 +292,7 @@ bool RsGxsIntegrityCheck::check()
 
     // now request a cache update for them, which triggers downloading from friends, if missing.
 
-    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && gxs_ids.size()>0;)
+    for(;nb_requested_not_in_cache<MAX_GXS_IDS_REQUESTS_NET && !gxs_ids.empty();)
     {
 	    uint32_t n = RSRandom::random_u32() % gxs_ids.size() ;
 #ifdef GXSUTIL_DEBUG

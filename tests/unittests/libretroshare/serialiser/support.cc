@@ -70,7 +70,7 @@ void init_item(RsTlvSecurityKeySet& ks)
         RsGxsId a_str;
         a_str = RsGxsId::random();
 
-		RsTlvSecurityKey& a_key = ks.keys[a_str];
+		RsTlvSecurityKey_deprecated& a_key = ks.keys[a_str];
 		init_item(a_key);
 		a_key.keyId = a_str;
 	}
@@ -81,7 +81,7 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 	if(l.groupId != r.groupId) return false;
 
-    std::map<RsGxsId, RsTlvSecurityKey>::const_iterator l_cit = l.keys.begin(),
+    std::map<RsGxsId, RsTlvSecurityKey_deprecated>::const_iterator l_cit = l.keys.begin(),
 	r_cit = r.keys.begin();
 
 	for(; l_cit != l.keys.end(); l_cit++, r_cit++){
@@ -94,7 +94,7 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 
 
-bool operator==(const RsTlvSecurityKey& sk1, const RsTlvSecurityKey& sk2)
+bool operator==(const RsTlvSecurityKey_deprecated& sk1, const RsTlvSecurityKey_deprecated& sk2)
 {
 
 	if(sk1.startTS != sk2.startTS) return false;
@@ -183,7 +183,7 @@ bool operator==(const RsTlvBinaryData& bd1, const RsTlvBinaryData& bd2)
 }
 
 
-void init_item(RsTlvSecurityKey& sk)
+void init_item(RsTlvSecurityKey_deprecated& sk)
 {
 	int randnum = rand()%313131;
 

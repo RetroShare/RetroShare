@@ -65,7 +65,7 @@ void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
 }
 void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
-    int size = 0;
+    //int size = 0;
 
     /* get avatar */
     RsIdentityDetails details ;

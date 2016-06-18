@@ -6,21 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>928</width>
-    <height>769</height>
+    <width>828</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Create New</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
-    <number>0</number>
-   </property>
-   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -35,7 +44,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="gridLayout">
@@ -48,7 +57,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
            <number>4</number>
           </property>
           <item>
@@ -112,7 +130,16 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
                <number>3</number>
               </property>
               <item>
@@ -169,7 +196,29 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="1" rowspan="7">
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Description</string>
+         </property>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="MimeTextEdit" name="groupDesc"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QFrame" name="extraFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" rowspan="8">
         <widget class="QDockWidget" name="contactsdockWidget">
          <property name="enabled">
           <bool>true</bool>
@@ -212,7 +261,16 @@
          </property>
          <widget class="QWidget" name="dockWidgetContents">
           <layout class="QGridLayout" name="_2">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <property name="spacing">
@@ -257,18 +315,6 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Description</string>
-         </property>
-         <layout class="QVBoxLayout">
-          <item>
-           <widget class="MimeTextEdit" name="groupDesc"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="2" column="0">
         <widget class="QGroupBox" name="distribGroupBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -317,11 +363,11 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Restricted to Group</string>
+               <string>Restricted to Circle</string>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">
-                <normaloff>:/images/user/agt_forum24.png</normaloff>:/images/user/agt_forum24.png</iconset>
+                <normaloff>:/images/circles/circles_32.png</normaloff>:/images/circles/circles_32.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -583,16 +629,6 @@
            </spacer>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2">
-        <widget class="QFrame" name="extraFrame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
         </widget>
        </item>
       </layout>

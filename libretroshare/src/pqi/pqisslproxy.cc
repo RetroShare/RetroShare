@@ -38,7 +38,8 @@
 
 #include "pqi/p3linkmgr.h"
 
-const int pqisslproxyzone = 3517;
+static struct RsLog::logInfo pqisslproxyzoneInfo = {RsLog::Default, "pqisslproxy"};
+#define pqisslproxyzone &pqisslproxyzoneInfo
 
 // #define PROXY_DEBUG	1
 

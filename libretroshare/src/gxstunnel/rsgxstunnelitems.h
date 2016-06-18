@@ -146,7 +146,7 @@ class RsGxsTunnelDHPublicKeyItem: public RsGxsTunnelItem
 		BIGNUM *public_key ;
 
 		RsTlvKeySignature signature ;	// signs the public key in a row.
-		RsTlvSecurityKey  gxs_key ;	// public key of the signer
+		RsTlvPublicRSAKey gxs_key ;	// public key of the signer
 
 	private:
 		// make the object non copy-able

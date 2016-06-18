@@ -441,7 +441,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 
 	switch(mGrpMeta.mCircleType)
 	{
-		case GXS_CIRCLE_TYPE_YOUREYESONLY:
+		case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			ui.typeLocal->setChecked(true);
 			distribution_string = tr("Your friends only") ;
 			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
@@ -468,6 +468,9 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     ui.distributionValueLabel->setText(distribution_string) ;
 
 	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
+    
+    	if(!mGrpMeta.mAuthorId.isNull())
+		ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
 
 	updateCircleOptions();
 }
@@ -552,7 +555,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << " Invalid GroupName";
 		std::cerr << std::endl;
 		return false;
-	}//if(name.isEmpty())
+	}
 
 	// Fill in the MetaData as best we can.
 	meta.mGroupName = std::string(name.toUtf8());
@@ -565,7 +568,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << " Invalid Circles";
 		std::cerr << std::endl;
 		return false;
-	}//if (!setCircleParameters(meta))
+	}
 
 	std::cerr << "void GxsGroupDialog::prepareGroupMetaData() meta.mCircleType: ";
 	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
@@ -737,7 +740,7 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 	}
 	else if (ui.typeLocal->isChecked())
 	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
+		meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
 		meta.mCircleId.clear();
 		meta.mOriginator.clear();
 		meta.mInternalCircle.clear() ;

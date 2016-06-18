@@ -301,7 +301,7 @@ void p3GxsTunnelService::handleIncomingItem(const RsGxsTunnelId& tunnel_id,RsGxs
     delete item ;
 }
 
-void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId& id,RsGxsTunnelDataAckItem *item) 
+void p3GxsTunnelService::handleRecvTunnelDataAckItem(const RsGxsTunnelId &/*id*/,RsGxsTunnelDataAckItem *item)
 {
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
     
@@ -349,6 +349,7 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
     
     RsGxsTunnelClientService *service = NULL ;
     RsGxsId peer_from ;
+    bool is_client_side = false ;
     
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
@@ -367,6 +368,7 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
 	    {
 		    it2->second.client_services.insert(item->service_id) ;
 		    peer_from = it2->second.to_gxs_id ;
+		    is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_CLIENT);
 	    }
             
             // Check if the item has already been received. This is necessary because we actually re-send items until an ACK is received. If the ACK gets lost (connection interrupted) the
@@ -380,7 +382,7 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             it2->second.received_data_prints[item->unique_item_counter] = time(NULL) ;
     }
     
-    if(service->acceptDataFromPeer(peer_from,tunnel_id))
+    if(service->acceptDataFromPeer(peer_from,tunnel_id,is_client_side))
 	    service->receiveData(tunnel_id,item->data,item->data_size) ;
     
     item->data = NULL ;		// avoids deletion, since the client has the memory now
@@ -888,7 +890,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     RsTemporaryMemory data(pubkey_size) ;
     BN_bn2bin(item->public_key, data) ;
 
-    RsTlvSecurityKey signature_key ;
+    RsTlvPublicRSAKey signature_key ;
 
     // We need to get the key of the sender, but if the key is not cached, we
     // need to get it first. So we let the system work for 2-3 seconds before
@@ -1057,9 +1059,9 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 
 	// we should also sign the data and check the signature on the other end.
 	//
-	RsTlvKeySignature signature ;
-	RsTlvSecurityKey  signature_key ;
-	RsTlvSecurityKey  signature_key_public ;
+	RsTlvKeySignature  signature ;
+	RsTlvPrivateRSAKey signature_key ;
+	RsTlvPublicRSAKey  signature_key_public ;
 
 	uint32_t error_status ;
 
@@ -1224,7 +1226,9 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 
     if(it == _gxs_tunnel_contacts.end())
     {
-        std::cerr << "(EE) Cannot find contact key info for tunnel id " << tunnel_id << ". Cannot send message!" << std::endl;
+#ifdef DEBUG_GXS_TUNNEL
+        std::cerr << "  Cannot find contact key info for tunnel id " << tunnel_id << ". Cannot send message!" << std::endl;
+#endif
         return false;
     }
     if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
@@ -1472,6 +1476,7 @@ bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelI
     info.tunnel_status      = it->second.status;	          
     info.total_size_sent    = it->second.total_sent;	         
     info.total_size_received= it->second.total_received;	  
+    info.is_client_side     = (it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT);
 
     // Data packets
 

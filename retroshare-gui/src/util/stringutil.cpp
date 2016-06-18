@@ -28,6 +28,11 @@
 
 #include "stringutil.h"
 
+//#define CHAR_ARRAY_TO_STRINGLIST_DEBUG
+#ifdef CHAR_ARRAY_TO_STRINGLIST_DEBUG
+#include <iostream>
+#include <QFile>
+#endif
 
 /** Create a QStringList from the array of C-style strings. */
 QStringList
@@ -35,7 +40,20 @@ char_array_to_stringlist(char **arr, int len)
 {
   QStringList list;
   for (int i = 0; i < len; i++) {
-    list << QString(arr[i]);
+#ifdef WINDOWS_SYS
+    list << QString::fromLatin1(arr[i]);
+#else
+    list << QString::fromUtf8(arr[i]);
+#endif
+
+#ifdef CHAR_ARRAY_TO_STRINGLIST_DEBUG
+    std::cerr << "arr[" << i << "]==" << arr[i] << std::endl;
+    if (QFile(arr[i]).exists()) std::cerr << "arr[i] File exists" << std::endl;
+    std::cerr << "QString UTF8==" << QString::fromUtf8(arr[i]).toStdString() << std::endl;
+    if (QFile(QString::fromUtf8(arr[i])).exists()) std::cerr << "QString UTF8 File exists" << std::endl;
+    std::cerr << "QString Latin1==" << QString::fromLatin1(arr[i]).toStdString() << std::endl;
+    if (QFile(QString::fromLatin1(arr[i])).exists()) std::cerr << "QString Latin1 File exists" << std::endl;
+#endif
   }
   return list;
 }

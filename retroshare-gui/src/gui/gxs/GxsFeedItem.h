@@ -36,6 +36,8 @@ public:
 	virtual ~GxsFeedItem();
 
 	RsGxsMessageId messageId() { return mMessageId; }
+	//To be able to update with thread message when comment is received.
+	void setMessageId( RsGxsMessageId id) {mMessageId = id;}
 
 protected:
 	/* load message data */

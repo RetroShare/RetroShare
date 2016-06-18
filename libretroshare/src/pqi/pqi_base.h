@@ -80,103 +80,103 @@ class RateInterface
 public:
 
 	RateInterface()
-	:bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
-	bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
+	        :bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
+	          bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
 
-virtual	~RateInterface() { return; }
+	virtual	~RateInterface() { return; }
 
-virtual void    getRates(RsBwRates &rates)
-{
-	rates.mRateIn = bw_in;
-	rates.mRateOut = bw_out;
-	rates.mMaxRateIn = bwMax_in;
-	rates.mMaxRateOut = bwMax_out;
-	return;
-}
-
-    virtual int gatherStatistics(std::list<RSTrafficClue>& /* outqueue_lst */,std::list<RSTrafficClue>& /* inqueue_lst */) { return 0;}
-
-virtual int     getQueueSize(bool /* in */) { return 0;}
-virtual float	getRate(bool in)
+	virtual void    getRates(RsBwRates &rates)
 	{
-	if (in)
-		return bw_in;
-	return bw_out;
+		rates.mRateIn = bw_in;
+		rates.mRateOut = bw_out;
+		rates.mMaxRateIn = bwMax_in;
+		rates.mMaxRateOut = bwMax_out;
+		return;
 	}
 
-virtual float	getMaxRate(bool in)
+	virtual int gatherStatistics(std::list<RSTrafficClue>& /* outqueue_lst */,std::list<RSTrafficClue>& /* inqueue_lst */) { return 0;}
+
+	virtual int     getQueueSize(bool /* in */) { return 0;}
+	virtual float	getRate(bool in)
 	{
-	if (in)
-		return bwMax_in;
-	return bwMax_out;
+		if (in)
+			return bw_in;
+		return bw_out;
 	}
 
-virtual void	setMaxRate(bool in, float val)
+	virtual float	getMaxRate(bool in)
 	{
-	if (in)
+		if (in)
+			return bwMax_in;
+		return bwMax_out;
+	}
+
+	virtual void	setMaxRate(bool in, float val)
 	{
-		bwMax_in = val;
-		if (bwCapEnabled)
+		if (in)
 		{
-			if (bwMax_in > bwCap_in)
+			bwMax_in = val;
+			if (bwCapEnabled)
 			{
-				bwMax_in = bwCap_in;
+				if (bwMax_in > bwCap_in)
+				{
+					bwMax_in = bwCap_in;
+				}
 			}
 		}
-	}
-	else
-	{
-		bwMax_out = val;
-		if (bwCapEnabled)
+		else
 		{
-			if (bwMax_out > bwCap_out)
+			bwMax_out = val;
+			if (bwCapEnabled)
 			{
-				bwMax_out = bwCap_out;
+				if (bwMax_out > bwCap_out)
+				{
+					bwMax_out = bwCap_out;
+				}
 			}
 		}
+
+		return;
 	}
 
-	return;
-	}
 
-
-virtual void	setRateCap(float val_in, float val_out)
-{
-	if ((val_in == 0) && (val_out == 0))
+	virtual void	setRateCap(float val_in, float val_out)
 	{
+		if ((val_in == 0) && (val_out == 0))
+		{
 #ifdef DEBUG_RATECAP
-        	std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
+			std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
 #endif
-		bwCapEnabled = false;
-	}
-	else
-	{
+			bwCapEnabled = false;
+		}
+		else
+		{
 #ifdef DEBUG_RATECAP
-        	std::cerr << "RateInterface::setRateCap() Enabled ";
-        	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
+			std::cerr << "RateInterface::setRateCap() Enabled ";
+			std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
 #endif
-		bwCapEnabled = true;
-		bwCap_in = val_in;
-		bwCap_out = val_out;
+			bwCapEnabled = true;
+			bwCap_in = val_in;
+			bwCap_out = val_out;
+		}
+		return;
 	}
-	return;
-}
 
 protected:
 
-void	setRate(bool in, float val)
+	virtual void	setRate(bool in, float val)
 	{
-	if (in)
-		bw_in = val;
-	else
-		bw_out = val;
-	return;
+		if (in)
+			bw_in = val;
+		else
+			bw_out = val;
+		return;
 	}
 
-	private:
-float	bw_in, bw_out, bwMax_in, bwMax_out;
-bool    bwCapEnabled;
-float   bwCap_in, bwCap_out;
+private:
+	float	bw_in, bw_out, bwMax_in, bwMax_out;
+	bool    bwCapEnabled;
+	float   bwCap_in, bwCap_out;
 
 };
 

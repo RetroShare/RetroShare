@@ -327,6 +327,7 @@ bool rsa_sanity_check(RSA *rsa)
 }
 
 		
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 {
@@ -373,6 +374,8 @@ bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 
 	return true;
 }
+
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 {
@@ -429,6 +432,7 @@ bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 	return true;
 }
 
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTagRequest(EVP_PKEY *signKey, RsGxsRecognReqItem *item)
 {
@@ -486,7 +490,9 @@ bool	RsRecogn::itemToRadix64(RsItem *item, std::string &radstr)
 
 	/* write out the item for signing */
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    
+    	RsTemporaryMemory buf(len) ;
+        
 	if (!serialiser.serialise(item, buf, &len))
 	{
 		return false;
@@ -558,7 +564,7 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 }
 
 
-bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
+bool RsRecogn::createTagRequest(const RsTlvPrivateRSAKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
 {
 	EVP_PKEY *signKey = EVP_PKEY_new();
 	RSA *rsakey = d2i_RSAPrivateKey(NULL, (const unsigned char **)&key.keyData.bin_data, key.keyData.bin_len);
@@ -609,15 +615,13 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 	/* write out the item for signing */
 	RsGxsRecognSerialiser serialiser;
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    RsTemporaryMemory buf(len) ;
 	bool serOk = serialiser.serialise(item, buf, &len);
 
 	if (serOk)
 	{
 		Radix64::encode(buf, len, tag);
 	}
-
-	delete []buf;
 
 	if (!serOk)
 	{

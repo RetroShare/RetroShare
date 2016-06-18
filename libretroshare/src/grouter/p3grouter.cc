@@ -483,7 +483,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 #endif
 }
 
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef GROUTER_DEBUG
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;
@@ -613,7 +613,6 @@ RsGRouterAbstractMsgItem *GRouterDataInfo::addDataChunk(RsGRouterTransactionChun
     {
         RsItem *data_item = RsGRouterSerialiser().deserialise(incoming_data_buffer->chunk_data,&incoming_data_buffer->chunk_size) ;
 
-        incoming_data_buffer->chunk_data = NULL;
         delete incoming_data_buffer;
         incoming_data_buffer = NULL ;
 
@@ -1141,24 +1140,30 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 
     for(uint32_t i=0;i<tmp_peers.size();++i)
 	    if(incoming_routes.find(tmp_peers[i]) != incoming_routes.end())
-		 {
+	    {
 #ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " which is an incoming route" << std::endl;
 #endif
-		 }
+	    }
+    	    else if(online_ids.find(tmp_peers[i]) == online_ids.end())
+            {
+#ifdef GROUTER_DEBUG
+		    std::cerr << "  removing " << tmp_peers[i] << " because it is offline now!" << std::endl;
+#endif
+            }
 	    else if(probas[i] < RS_GROUTER_PROBABILITY_THRESHOLD_BEST_PEERS_SELECT*max_probability)
-		 {
+	    {
 #ifdef GROUTER_DEBUG
 		    std::cerr << "  removing " << tmp_peers[i] << " because probability is below best peers threshold" << std::endl;
 #endif
-		 }
+	    }
 	    else
-            {
+	    {
 		    tmp_peers[count] = tmp_peers[i] ;
 		    probas[count] = (max_probability==0.0)? (0.5+0.001*RSRandom::random_f32()) : probas[i] ;
-            		++count ;
-            }
-    
+		    ++count ;
+	    }
+
     tmp_peers.resize(count) ;
     probas.resize(count) ;
     
@@ -1953,8 +1958,6 @@ bool p3GRouter::signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& signi
 {
     try
     {
-        RsTlvSecurityKey signature_key ;
-
 #ifdef GROUTER_DEBUG
         std::cerr << "p3GRouter::signDataItem()" << std::endl;
         std::cerr << "     Key ID = " << signing_id << std::endl;

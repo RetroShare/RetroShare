@@ -41,7 +41,6 @@
 #include "util/rsprint.h"
 #include "util/rsstring.h"
 #include "util/rsdebug.h"
-const int p3peermgrzone = 9531;
 
 #include "serialiser/rsconfigitems.h"
 
@@ -63,6 +62,9 @@ const uint32_t RS_NET_DOWN =    	0x0007;
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
+
+static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
+#define p3peermgrzone &p3peermgrzoneInfo
 
 /****
  * #define PEER_DEBUG 1
@@ -1567,7 +1569,7 @@ bool p3PeerMgrIMPL::locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_sto
     return true ;
 }
  
-bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& isstable)
+bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8_t& /*isstable*/)
 {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
         
@@ -1999,7 +2001,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		item->domain_addr = (it->second).hiddenDomain;
 		item->domain_port = (it->second).hiddenPort;
-
+        
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
 #ifdef PEER_DEBUG
@@ -2009,6 +2011,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 	}
 
+	RsPeerBandwidthLimitsItem *pblitem = new RsPeerBandwidthLimitsItem ;
+    	pblitem->peers = mPeerBandwidthLimits ;
+	saveData.push_back(pblitem) ;
+    
 	RsPeerServicePermissionItem *sitem = new RsPeerServicePermissionItem ;
 
 	for(std::map<RsPgpId,ServicePermissionFlags>::const_iterator it(mFriendsPermissionFlags.begin());it!=mFriendsPermissionFlags.end();++it)
@@ -2016,7 +2022,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		sitem->pgp_ids.push_back(it->first) ;
 		sitem->service_flags.push_back(it->second) ;
 	}
-
+    
 	saveData.push_back(sitem) ;
 	saveCleanupList.push_back(sitem);
 
@@ -2072,6 +2078,61 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	return true;
 }
 
+bool p3PeerMgrIMPL::getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn) 
+{
+    RsPgpId pgp_id ;
+    
+    {
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    
+   	std::map<RsPeerId, peerState>::const_iterator it = mFriendList.find(pid) ;
+    
+    	if(it == mFriendList.end())
+            return false ;
+        
+        pgp_id = it->second.gpg_id ;
+    }
+    return getMaxRates(pgp_id,maxUp,maxDn) ;
+}
+
+bool p3PeerMgrIMPL::getMaxRates(const RsPgpId& pid,uint32_t& maxUp,uint32_t& maxDn) 
+{
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+    std::map<RsPgpId,PeerBandwidthLimits>::const_iterator it2 = mPeerBandwidthLimits.find(pid) ;
+
+    if(it2 != mPeerBandwidthLimits.end())
+    {
+	    maxUp = it2->second.max_up_rate_kbs ;
+	    maxDn = it2->second.max_dl_rate_kbs ;
+	    return true ;
+    }
+    else
+    {
+	    maxUp = 0;
+	    maxDn = 0;
+	    return false ;
+    }
+}
+bool p3PeerMgrIMPL::setMaxRates(const RsPgpId& pid,uint32_t maxUp,uint32_t maxDn) 
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+        PeerBandwidthLimits& p(mPeerBandwidthLimits[pid]) ;
+        
+        if(maxUp == p.max_up_rate_kbs && maxDn == p.max_dl_rate_kbs)
+            return true ;
+        
+        std::cerr << "Updating max rates for peer " << pid << " to " << maxUp << " kB/s (up), " << maxDn << " kB/s (dn)" << std::endl;
+        
+        p.max_up_rate_kbs = maxUp ;
+        p.max_dl_rate_kbs = maxDn ;
+        
+        IndicateConfigChanged();
+        
+        return true ;
+}
+        
 void    p3PeerMgrIMPL::saveDone()
 {
 	/* clean up the save List */
@@ -2090,276 +2151,288 @@ void    p3PeerMgrIMPL::saveDone()
 bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 {
 
-	// DEFAULTS.
-	bool useExtAddrFinder = true;
-	std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPortTor = kConfigDefaultProxyServerPortTor;
-	std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
-	uint16_t    proxyPortI2P = kConfigDefaultProxyServerPortI2P;
+    // DEFAULTS.
+    bool useExtAddrFinder = true;
+    std::string proxyIpAddressTor = kConfigDefaultProxyServerIpAddr;
+    uint16_t    proxyPortTor = kConfigDefaultProxyServerPortTor;
+    std::string proxyIpAddressI2P = kConfigDefaultProxyServerIpAddr;
+    uint16_t    proxyPortI2P = kConfigDefaultProxyServerPortI2P;
 
-        if (load.empty()) {
-            std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
-            return false;
-        }
-
-#ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgrIMPL::loadList() Item Count: " << load.size() << std::endl;
-#endif
-
-	RsPeerId ownId = getOwnId();
-
-	/* load the list of peers */
-	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); ++it)
-	{
-		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
-		if (pitem)
-		{
-			RsPeerId peer_id = pitem->peerId ;
-			RsPgpId peer_pgp_id = pitem->pgpId ;
-
-			if (peer_id == ownId)
-			{
-#ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgrIMPL::loadList() Own Config Item:" << std::endl;
-				pitem->print(std::cerr, 10);
-				std::cerr << std::endl;
-#endif
-				/* add ownConfig */
-				setOwnNetworkMode(pitem->netMode);
-                setOwnVisState(pitem->vs_disc, pitem->vs_dht);
-
-				mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
-				mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
-			}
-			else
-			{
-#ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgrIMPL::loadList() Peer Config Item:" << std::endl;
-				pitem->print(std::cerr, 10);
-				std::cerr << std::endl;
-#endif
-                /* ************* */
-                // permission flags is used as a mask for the existing perms, so we set it to 0xffff
-                addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
-				setLocation(pitem->peerId, pitem->location);
-			}
-
-			if (pitem->netMode == RS_NET_MODE_HIDDEN)
-			{
-				/* set only the hidden stuff & localAddress */
-				setLocalAddress(peer_id, pitem->localAddrV4.addr);
-				setHiddenDomainPort(peer_id, pitem->domain_addr, pitem->domain_port);
-
-			}
-			else
-			{
-				setLocalAddress(peer_id, pitem->localAddrV4.addr);
-                setExtAddress(peer_id, pitem->extAddrV4.addr);
-				setDynDNS (peer_id, pitem->dyndns);
-
-				/* convert addresses */
-				pqiIpAddrSet addrs;
-				addrs.mLocal.extractFromTlv(pitem->localAddrList);
-				addrs.mExt.extractFromTlv(pitem->extAddrList);
-			
-				updateAddressList(peer_id, addrs);
-			}
-
-			delete(*it);
-
-			continue;
-		}
-
-		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
-		if (vitem)
-		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    if (load.empty()) {
+	    std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
+	    return false;
+    }
 
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::loadList() General Variable Config Item:" << std::endl;
-			vitem->print(std::cerr, 10);
-			std::cerr << std::endl;
+    std::cerr << "p3PeerMgrIMPL::loadList() Item Count: " << load.size() << std::endl;
 #endif
-			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
-			{
-				if (kit->key == kConfigKeyExtIpFinder)
-				{
-					useExtAddrFinder = (kit->value == "TRUE");
+
+    RsPeerId ownId = getOwnId();
+
+    /* load the list of peers */
+    std::list<RsItem *>::iterator it;
+    for(it = load.begin(); it != load.end(); ++it)
+    {
+	    RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
+	    if (pitem)
+	    {
+		    RsPeerId peer_id = pitem->peerId ;
+		    RsPgpId peer_pgp_id = pitem->pgpId ;
+
+		    if (peer_id == ownId)
+		    {
 #ifdef PEER_DEBUG
-					std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
+			    std::cerr << "p3PeerMgrIMPL::loadList() Own Config Item:" << std::endl;
+			    pitem->print(std::cerr, 10);
+			    std::cerr << std::endl;
 #endif
-				} 
-				// Tor
-				else if (kit->key == kConfigKeyProxyServerIpAddrTor)
-				{
-					proxyIpAddressTor = kit->value;
+			    /* add ownConfig */
+			    setOwnNetworkMode(pitem->netMode);
+			    setOwnVisState(pitem->vs_disc, pitem->vs_dht);
+
+			    mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+			    mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
+		    }
+		    else
+		    {
 #ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyIpAddress for Tor: " << proxyIpAddressTor;
-					std::cerr << std::endl ;
+			    std::cerr << "p3PeerMgrIMPL::loadList() Peer Config Item:" << std::endl;
+			    pitem->print(std::cerr, 10);
+			    std::cerr << std::endl;
 #endif
-					
-				}
-				else if (kit->key == kConfigKeyProxyServerPortTor)
-				{
-					proxyPortTor = atoi(kit->value.c_str());
-#ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
-					std::cerr << std::endl ;
-#endif
-				}
-				// I2p
-				else if (kit->key == kConfigKeyProxyServerIpAddrI2P)
-				{
-					proxyIpAddressI2P = kit->value;
-#ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyIpAddress for I2P: " << proxyIpAddressI2P;
-					std::cerr << std::endl ;
-#endif
-				}
-				else if (kit->key == kConfigKeyProxyServerPortI2P)
-				{
-					proxyPortI2P = atoi(kit->value.c_str());
-#ifdef PEER_DEBUG
-					std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
-					std::cerr << std::endl ;
-#endif
-				}
-			}
+			    /* ************* */
+			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
+			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
+			    setLocation(pitem->peerId, pitem->location);
+		    }
 
-			delete(*it);
+		    if (pitem->netMode == RS_NET_MODE_HIDDEN)
+		    {
+			    /* set only the hidden stuff & localAddress */
+			    setLocalAddress(peer_id, pitem->localAddrV4.addr);
+			    setHiddenDomainPort(peer_id, pitem->domain_addr, pitem->domain_port);
 
-			continue;
-		}
+		    }
+		    else
+		    {
+			    setLocalAddress(peer_id, pitem->localAddrV4.addr);
+			    setExtAddress(peer_id, pitem->extAddrV4.addr);
+			    setDynDNS (peer_id, pitem->dyndns);
 
-		RsPeerGroupItem *gitem = dynamic_cast<RsPeerGroupItem *>(*it) ;
-		if (gitem)
-		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+			    /* convert addresses */
+			    pqiIpAddrSet addrs;
+			    addrs.mLocal.extractFromTlv(pitem->localAddrList);
+			    addrs.mExt.extractFromTlv(pitem->extAddrList);
 
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::loadList() Peer group item:" << std::endl;
-			gitem->print(std::cerr, 10);
-			std::cerr << std::endl;
-#endif
+			    updateAddressList(peer_id, addrs);
+		    }
 
-			groupList.push_back(gitem); // don't delete
+		    delete(*it);
 
-			if ((gitem->flag & RS_GROUP_FLAG_STANDARD) == 0) {
-				/* calculate group id */
-				uint32_t groupId = atoi(gitem->id.c_str());
-				if (groupId > lastGroupId) {
-					lastGroupId = groupId;
-				}
-			}
+		    continue;
+	    }
 
-			continue;
-		}
-		RsPeerServicePermissionItem *sitem = dynamic_cast<RsPeerServicePermissionItem*>(*it) ;
-
-		if(sitem)
-		{
-			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	    RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
+	    if (vitem)
+	    {
+		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
-			std::cerr << "Loaded service permission item: " << std::endl;
+		    std::cerr << "p3PeerMgrIMPL::loadList() General Variable Config Item:" << std::endl;
+		    vitem->print(std::cerr, 10);
+		    std::cerr << std::endl;
 #endif
-
-			for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
-				if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthGPG::getAuthGPG()->getGPGOwnId())
-				{
-					mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
+		    std::list<RsTlvKeyValue>::iterator kit;
+		    for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
+		    {
+			    if (kit->key == kConfigKeyExtIpFinder)
+			    {
+				    useExtAddrFinder = (kit->value == "TRUE");
 #ifdef PEER_DEBUG
-					std::cerr << "   " << sitem->pgp_ids[i] << " - " << sitem->service_flags[i] << std::endl;
+				    std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
 #endif
-				}
+			    } 
+			    // Tor
+			    else if (kit->key == kConfigKeyProxyServerIpAddrTor)
+			    {
+				    proxyIpAddressTor = kit->value;
 #ifdef PEER_DEBUG
-				else
-					std::cerr << "   " << sitem->pgp_ids[i] << " - Not a friend!" << std::endl;
+				    std::cerr << "Loaded proxyIpAddress for Tor: " << proxyIpAddressTor;
+				    std::cerr << std::endl ;
 #endif
-		}
 
-		delete (*it);
-	}
+			    }
+			    else if (kit->key == kConfigKeyProxyServerPortTor)
+			    {
+				    proxyPortTor = atoi(kit->value.c_str());
+#ifdef PEER_DEBUG
+				    std::cerr << "Loaded proxyPort for Tor: " << proxyPortTor;
+				    std::cerr << std::endl ;
+#endif
+			    }
+			    // I2p
+			    else if (kit->key == kConfigKeyProxyServerIpAddrI2P)
+			    {
+				    proxyIpAddressI2P = kit->value;
+#ifdef PEER_DEBUG
+				    std::cerr << "Loaded proxyIpAddress for I2P: " << proxyIpAddressI2P;
+				    std::cerr << std::endl ;
+#endif
+			    }
+			    else if (kit->key == kConfigKeyProxyServerPortI2P)
+			    {
+				    proxyPortI2P = atoi(kit->value.c_str());
+#ifdef PEER_DEBUG
+				    std::cerr << "Loaded proxyPort for I2P: " << proxyPortI2P;
+				    std::cerr << std::endl ;
+#endif
+			    }
+		    }
 
-	{
-		/* set missing groupIds */
+		    delete(*it);
 
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		    continue;
+	    }
 
-		/* Standard groups */
-		const int standardGroupCount = 5;
-		const char *standardGroup[standardGroupCount] = { RS_GROUP_ID_FRIENDS, RS_GROUP_ID_FAMILY, RS_GROUP_ID_COWORKERS, RS_GROUP_ID_OTHERS, RS_GROUP_ID_FAVORITES };
-		bool foundStandardGroup[standardGroupCount] = { false, false, false, false, false };
+	    RsPeerGroupItem *gitem = dynamic_cast<RsPeerGroupItem *>(*it) ;
+	    if (gitem)
+	    {
+		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::list<RsPeerGroupItem *>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
-				int i;
-				for (i = 0; i < standardGroupCount; ++i) {
-					if ((*groupIt)->id == standardGroup[i]) {
-						foundStandardGroup[i] = true;
-						break;
-					}
-				}
-				
-				if (i >= standardGroupCount) {
-					/* No more a standard group, remove the flag standard */
-					(*groupIt)->flag &= ~RS_GROUP_FLAG_STANDARD;
-				}
-			} else {
-				uint32_t groupId = atoi((*groupIt)->id.c_str());
-				if (groupId == 0) {
-					rs_sprintf((*groupIt)->id, "%lu", lastGroupId++);
-				}
-			}
-		}
-		
-		/* Initialize standard groups */
-		for (int i = 0; i < standardGroupCount; ++i) {
-			if (foundStandardGroup[i] == false) {
-				RsPeerGroupItem *gitem = new RsPeerGroupItem;
-				gitem->id = standardGroup[i];
-				gitem->name = standardGroup[i];
-				gitem->flag |= RS_GROUP_FLAG_STANDARD;
-				groupList.push_back(gitem);
-			}
-		}
-	}
+#ifdef PEER_DEBUG
+		    std::cerr << "p3PeerMgrIMPL::loadList() Peer group item:" << std::endl;
+		    gitem->print(std::cerr, 10);
+		    std::cerr << std::endl;
+#endif
 
-	// If we are hidden - don't want ExtAddrFinder - ever!
-	if (isHidden())
-	{
-		useExtAddrFinder = false;
-	}
+		    groupList.push_back(gitem); // don't delete
 
-	mNetMgr->setIPServersEnabled(useExtAddrFinder);
+		    if ((gitem->flag & RS_GROUP_FLAG_STANDARD) == 0) {
+			    /* calculate group id */
+			    uint32_t groupId = atoi(gitem->id.c_str());
+			    if (groupId > lastGroupId) {
+				    lastGroupId = groupId;
+			    }
+		    }
 
-	// Configure Proxy Server.
-	struct sockaddr_storage proxy_addr;
-	// Tor
-	sockaddr_storage_clear(proxy_addr);
-	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressTor.c_str());
-	sockaddr_storage_ipv4_setport(proxy_addr, proxyPortTor);
+		    continue;
+	    }
+        
+	    RsPeerBandwidthLimitsItem *pblitem = dynamic_cast<RsPeerBandwidthLimitsItem*>(*it) ;
 
-	if (sockaddr_storage_isValidNet(proxy_addr))
-	{
-		setProxyServerAddress(RS_HIDDEN_TYPE_TOR, proxy_addr);
-	}
+	    if(pblitem)
+	    {
+		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	// I2P
-	sockaddr_storage_clear(proxy_addr);
-	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressI2P.c_str());
-	sockaddr_storage_ipv4_setport(proxy_addr, proxyPortI2P);
+#ifdef PEER_DEBUG
+		    std::cerr << "Loaded service permission item: " << std::endl;
+#endif
+	    		mPeerBandwidthLimits = pblitem->peers ;
+	    }
+	    RsPeerServicePermissionItem *sitem = dynamic_cast<RsPeerServicePermissionItem*>(*it) ;
 
-	if (sockaddr_storage_isValidNet(proxy_addr))
-	{
-		setProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr);
-	}
+	    if(sitem)
+	    {
+		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-    	load.clear() ;
-	return true;
+#ifdef PEER_DEBUG
+		    std::cerr << "Loaded service permission item: " << std::endl;
+#endif
+
+		    for(uint32_t i=0;i<sitem->pgp_ids.size();++i)
+			    if(AuthGPG::getAuthGPG()->isGPGAccepted(sitem->pgp_ids[i]) || sitem->pgp_ids[i] == AuthGPG::getAuthGPG()->getGPGOwnId())
+			    {
+				    mFriendsPermissionFlags[sitem->pgp_ids[i]] = sitem->service_flags[i] ;
+#ifdef PEER_DEBUG
+				    std::cerr << "   " << sitem->pgp_ids[i] << " - " << sitem->service_flags[i] << std::endl;
+#endif
+			    }
+#ifdef PEER_DEBUG
+			    else
+				    std::cerr << "   " << sitem->pgp_ids[i] << " - Not a friend!" << std::endl;
+#endif
+	    }
+
+	    delete (*it);
+    }
+
+    {
+	    /* set missing groupIds */
+
+	    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	    /* Standard groups */
+	    const int standardGroupCount = 5;
+	    const char *standardGroup[standardGroupCount] = { RS_GROUP_ID_FRIENDS, RS_GROUP_ID_FAMILY, RS_GROUP_ID_COWORKERS, RS_GROUP_ID_OTHERS, RS_GROUP_ID_FAVORITES };
+	    bool foundStandardGroup[standardGroupCount] = { false, false, false, false, false };
+
+	    std::list<RsPeerGroupItem *>::iterator groupIt;
+	    for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
+		    if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
+			    int i;
+			    for (i = 0; i < standardGroupCount; ++i) {
+				    if ((*groupIt)->id == standardGroup[i]) {
+					    foundStandardGroup[i] = true;
+					    break;
+				    }
+			    }
+
+			    if (i >= standardGroupCount) {
+				    /* No more a standard group, remove the flag standard */
+				    (*groupIt)->flag &= ~RS_GROUP_FLAG_STANDARD;
+			    }
+		    } else {
+			    uint32_t groupId = atoi((*groupIt)->id.c_str());
+			    if (groupId == 0) {
+				    rs_sprintf((*groupIt)->id, "%lu", lastGroupId++);
+			    }
+		    }
+	    }
+
+	    /* Initialize standard groups */
+	    for (int i = 0; i < standardGroupCount; ++i) {
+		    if (foundStandardGroup[i] == false) {
+			    RsPeerGroupItem *gitem = new RsPeerGroupItem;
+			    gitem->id = standardGroup[i];
+			    gitem->name = standardGroup[i];
+			    gitem->flag |= RS_GROUP_FLAG_STANDARD;
+			    groupList.push_back(gitem);
+		    }
+	    }
+    }
+
+    // If we are hidden - don't want ExtAddrFinder - ever!
+    if (isHidden())
+    {
+	    useExtAddrFinder = false;
+    }
+
+    mNetMgr->setIPServersEnabled(useExtAddrFinder);
+
+    // Configure Proxy Server.
+    struct sockaddr_storage proxy_addr;
+    // Tor
+    sockaddr_storage_clear(proxy_addr);
+    sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressTor.c_str());
+    sockaddr_storage_ipv4_setport(proxy_addr, proxyPortTor);
+
+    if (sockaddr_storage_isValidNet(proxy_addr))
+    {
+	    setProxyServerAddress(RS_HIDDEN_TYPE_TOR, proxy_addr);
+    }
+
+    // I2P
+    sockaddr_storage_clear(proxy_addr);
+    sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddressI2P.c_str());
+    sockaddr_storage_ipv4_setport(proxy_addr, proxyPortI2P);
+
+    if (sockaddr_storage_isValidNet(proxy_addr))
+    {
+	    setProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy_addr);
+    }
+
+    load.clear() ;
+    return true;
 }
 
 

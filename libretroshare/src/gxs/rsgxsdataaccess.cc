@@ -1468,7 +1468,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 /* first guess is potentially better than Orig (can't be worse!) */
                 time_t latestTs = 0;
                 RsGxsMessageId latestMsgId;
-                RsGxsMsgMetaData* latestMeta;
+                RsGxsMsgMetaData* latestMeta=NULL;
 
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {

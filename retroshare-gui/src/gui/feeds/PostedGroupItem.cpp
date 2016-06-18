@@ -71,7 +71,7 @@ void PostedGroupItem::setup()
 	connect(ui->subscribeButton, SIGNAL(clicked()), this, SLOT(subscribePosted()));
 	connect(ui->copyLinkButton, SIGNAL(clicked()), this, SLOT(copyGroupLink()));
 
-	ui->copyLinkButton->hide(); // No link type at this moment
+    //ui->copyLinkButton->hide(); // No link type at this moment
 
 	ui->expandFrame->hide();
 }
@@ -130,10 +130,10 @@ void PostedGroupItem::fill()
 #endif
 
 	// No link type at this moment
-//	RetroShareLink link;
-//	link.createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
-//	ui->nameLabel->setText(link.toHtml());
-	ui->nameLabel->setText(groupName());
+    RetroShareLink link;
+    link.createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
+    ui->nameLabel->setText(link.toHtml());
+//	ui->nameLabel->setText(groupName());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
 

@@ -103,9 +103,6 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
-    //connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
-    //connect(ui._shouldAddSignatures_CB_2, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
     MainWindow *w = MainWindow::getInstance();
@@ -116,31 +113,15 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
-//    if(peerId.isNull())
-    {
-        QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
-        if (it != instances_ssl.end())
-            instances_ssl.erase(it);
-    }
-//    else
-    {
-        QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
-        if (it != instances_pgp.end())
-            instances_pgp.erase(it);
-    }
+    QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
+    if (it != instances_ssl.end())
+	    instances_ssl.erase(it);
+
+    QMap<RsPgpId, ConfCertDialog*>::iterator it2 = instances_pgp.find(pgpId);
+    if (it2 != instances_pgp.end())
+	    instances_pgp.erase(it2);
 }
 
-
-void ConfCertDialog::setServiceFlags()
-{
-    ServicePermissionFlags flags(0) ;
-
-    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_NODE_PERM_DIRECT_DL ;
-    if(  ui._allow_push_CB->isChecked()) flags = flags | RS_NODE_PERM_ALLOW_PUSH ;
-    if(  ui._require_WL_CB->isChecked()) flags = flags | RS_NODE_PERM_REQUIRE_WL ;
-
-    rsPeers->setServicePermissionFlags(pgpId,flags) ;
-}
 
 void ConfCertDialog::loadAll()
 {
@@ -160,10 +141,6 @@ void ConfCertDialog::load()
         close();
         return;
     }
-
-    ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_DIRECT_DL ) ;
-    ui._allow_push_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
-    ui._require_WL_CB->setChecked(  detail.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
     //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
@@ -349,55 +326,53 @@ void ConfCertDialog::applyDialog()
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(peerId, detail))
     {
-        if (!rsPeers->getGPGDetails(pgpId, detail)) {
-            QMessageBox::information(this,
-                                     tr("RetroShare"),
-                                     tr("Error : cannot get peer details."));
-            close();
-            return;
-        }
+	    if (!rsPeers->getGPGDetails(pgpId, detail)) {
+		    QMessageBox::information(this,
+		                             tr("RetroShare"),
+		                             tr("Error : cannot get peer details."));
+		    close();
+		    return;
+	    }
     }
 
-        if(!detail.isHiddenNode)
-        {
-			/* check if the data is the same */
-			bool localChanged = false;
-			bool extChanged = false;
-			bool dnsChanged = false;
+    if(!detail.isHiddenNode)
+    {
+	    /* check if the data is the same */
+	    bool localChanged = false;
+	    bool extChanged = false;
+	    bool dnsChanged = false;
 
-			/* set local address */
-			if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
-				localChanged = true;
+	    /* set local address */
+	    if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
+		    localChanged = true;
 
-			if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
-				extChanged = true;
+	    if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
+		    extChanged = true;
 
-			if ((detail.dyndns != ui.dynDNS->text().toStdString()))
-				dnsChanged = true;
+	    if ((detail.dyndns != ui.dynDNS->text().toStdString()))
+		    dnsChanged = true;
 
-			/* now we can action the changes */
-			if (localChanged)
-				rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
+	    /* now we can action the changes */
+	    if (localChanged)
+		    rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
-			if (extChanged)
-				rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
+	    if (extChanged)
+		    rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-			if (dnsChanged)
-				rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
+	    if (dnsChanged)
+		    rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
 
-			if(localChanged || extChanged || dnsChanged)
-				emit configChanged();
-        }
-        else
-        {
-            if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value()))
-            {
-				rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
-				emit configChanged();
-			}
-		}
-
-	 setServiceFlags() ;
+	    if(localChanged || extChanged || dnsChanged)
+		    emit configChanged();
+    }
+    else
+    {
+	    if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value()))
+	    {
+		    rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
+		    emit configChanged();
+	    }
+    }
 
     loadAll();
     close();

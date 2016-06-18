@@ -157,7 +157,7 @@ public:
 	virtual uint32_t serial_size() const; 			
         
     RsGxsGroupId grpId ;
-    RsTlvSecurityKey key ;
+    RsTlvPrivateRSAKey private_key ;
 };
 
 
@@ -330,9 +330,12 @@ public:
      * This should contains all data
      * which is not specific to the Gxs service data
      */
+    // This is the binary data for the group meta that is sent to friends. It *should not* contain any private
+    // key parts. This is ensured in RsGenExchange
+    
     RsTlvBinaryData meta;
 
-    // deserialised metaData, this is not serialised
+    // Deserialised metaData, this is not serialised by the serialize() method. So it may contain private key parts in some cases.
     RsGxsGrpMetaData* metaData;
 };
 
@@ -348,12 +351,12 @@ public:
 #ifdef UNUSED_CODE
     static const uint8_t FLAG_USE_SYNC_HASH;
 #endif
+    static const uint8_t FLAG_USE_HASHED_GROUP_ID;
 
     RsNxsSyncMsgReqItem(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_SYNC_MSG_REQ_ITEM) { clear(); return; }
 
-	virtual bool serialise(void *data,uint32_t& size) const;	
-	virtual uint32_t serial_size() const; 			
-        
+    virtual bool serialise(void *data,uint32_t& size) const;	
+    virtual uint32_t serial_size() const; 			
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);

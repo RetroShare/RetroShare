@@ -521,6 +521,7 @@ SubFileItem QProgressBar#progressBar::chunk {
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
 	border: 1px solid black;
+	width: 15px;
 }
 
 PluginItem QLabel#infoLabel {
@@ -637,7 +638,17 @@ IdDialog QFrame#headerFrame {
 	border-radius: 4px;
 }
 
+IdDialog QFrame#headerFrame_2 {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 1px;
+	border-radius: 4px;
+}
+
 IdDialog QLabel#headerTextLabel {
+	color: rgb(255, 255, 255);
+}
+
+IdDialog QLabel#headerTextLabel_Circles {
 	color: rgb(255, 255, 255);
 }
 

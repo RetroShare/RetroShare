@@ -291,7 +291,7 @@ bool MsgCircleIdsRequestVetting::cleared()
     }
     
     for(uint32_t i=0;i<mMsgs.size();)
-        if(!mCircles->isRecipient(mCircleId,mMsgs[i].mAuthorId))
+        if(!mCircles->isRecipient(mCircleId,mGrpId,mMsgs[i].mAuthorId))
         {
             std::cerr << "(WW) MsgCircleIdsRequestVetting::cleared() filtering out message " << mMsgs[i].mMsgId << " because it's signed by author " << mMsgs[i].mAuthorId << " which is not in circle " << mCircleId << std::endl;
             

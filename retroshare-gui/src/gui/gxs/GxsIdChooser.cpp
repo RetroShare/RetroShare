@@ -113,6 +113,9 @@ void GxsIdChooser::loadIds(uint32_t chooserFlags, const RsGxsId &defId)
 	mDefaultId = defId;
 	clear();
 	mFirstLoad = true;
+    
+	updateDisplay(true);
+	update(); // Qt flush
 }
 
 void GxsIdChooser::setDefaultId(const RsGxsId &defId)

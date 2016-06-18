@@ -128,8 +128,6 @@ class RsInitConfig
 		std::string load_trustedpeer_file;
 
 		bool udpListenerOnly;
-
-		std::string RetroShareLink;
 };
 
 static RsInitConfig *rsInitConfig = NULL;
@@ -223,7 +221,7 @@ void RsInit::InitRsConfig()
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
-	setOutputLevel(PQL_WARNING); // default to Warnings.
+	setOutputLevel(RsLog::Warning); // default to Warnings.
 
 	// For Testing purposes.
 	// We can adjust everything under Linux.
@@ -363,15 +361,12 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			   >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
-			   >> parameter('r',"link"          ,rsInitConfig->RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+			// by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
+			// by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
-#ifdef __APPLE__
  				>> help('h',"help","Display this Help") ;
-#else
-				>> help() ;
-#endif
 
 			as.defaultErrorHandling(true) ;
 
@@ -423,7 +418,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          }
 #endif
 
-			setOutputLevel(rsInitConfig->debugLevel);
+			setOutputLevel((RsLog::logLvl)rsInitConfig->debugLevel);
 
 //	// set the default Debug Level...
 //	if (rsInitConfig->haveDebugLevel)
@@ -772,11 +767,6 @@ bool RsInit::isWindowsXP()
 bool RsInit::getStartMinimised()
 {
 	return rsInitConfig->startMinimised;
-}
-
-std::string RsInit::getRetroShareLink()
-{
-	return rsInitConfig->RetroShareLink;
 }
 
 int RsInit::getSslPwdLen(){
@@ -1355,14 +1345,12 @@ int RsServer::StartupRetroShare()
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
-	            true,false); // synchronise group automatic 
-			// don't sync messages at all.
+	            	true,	// synchronise group automatic 
+                    	true); 	// sync messages automatic, since they contain subscription requests.
 
 	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
     
         /**** Posted GXS service ****/
-
-
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                         RS_SERVICE_GXS_TYPE_POSTED, 
@@ -1780,27 +1768,27 @@ int RsServer::StartupRetroShare()
     //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
-    startServiceThread(mGxsIdService);
-    startServiceThread(mGxsCircles);
-    startServiceThread(mPosted);
+	startServiceThread(mGxsIdService, "gxs id");
+	startServiceThread(mGxsCircles, "gxs circle");
+	startServiceThread(mPosted, "gxs posted");
 #if RS_USE_WIKI
-    startServiceThread(mWiki);
+	startServiceThread(mWiki, "gxs wiki");
 #endif
-    startServiceThread(mGxsForums);
-    startServiceThread(mGxsChannels);
+	startServiceThread(mGxsForums, "gxs forums");
+	startServiceThread(mGxsChannels, "gxs channels");
 
 	//createThread(*mPhoto);
 	//createThread(*mWire);
 
 	// cores ready start up GXS net servers
-    startServiceThread(gxsid_ns);
-    startServiceThread(gxscircles_ns);
-    startServiceThread(posted_ns);
+	startServiceThread(gxsid_ns, "gxs id ns");
+	startServiceThread(gxscircles_ns, "gxs circle ns");
+	startServiceThread(posted_ns, "gxs posted ns");
 #if RS_USE_WIKI
-    startServiceThread(wiki_ns);
+	startServiceThread(wiki_ns, "gxs wiki ns");
 #endif
-    startServiceThread(gxsforums_ns);
-    startServiceThread(gxschannels_ns);
+	startServiceThread(gxsforums_ns, "gxs forums ns");
+	startServiceThread(gxschannels_ns, "gxs channels ns");
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
@@ -1846,7 +1834,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* Startup this thread! */
-    start() ;
+	start("rs main") ;
 
 	return 1;
 }

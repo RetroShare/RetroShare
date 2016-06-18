@@ -88,7 +88,7 @@ namespace resource_api {
 TerminalApiClient::TerminalApiClient(ApiServer *api):
     mApiServer(api)
 {
-    start();
+    start("resapi terminal");
 }
 
 TerminalApiClient::~TerminalApiClient()

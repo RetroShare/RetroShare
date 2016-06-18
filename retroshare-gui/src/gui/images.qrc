@@ -554,6 +554,7 @@
         <file>images/view_split_top_bottom.png</file>
         <file>images/vote_up.png</file>
         <file>images/vote_down.png</file>
+        <file>images/vote_neutral.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>images/identity/identities_32.png</file>
@@ -657,5 +658,8 @@
         <file>images/rsmessenger16.png</file>
         <file>images/rsmessenger32.png</file>
         <file>images/rsmessenger48.png</file>
+        <file>images/SmileyText.png</file>
+        <file>images/SimpleText.png</file>
+        <file>images/ColoredText.png</file>
     </qresource>
 </RCC>

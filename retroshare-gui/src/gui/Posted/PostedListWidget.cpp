@@ -464,7 +464,7 @@ void PostedListWidget::clearPosts()
 	mPosts.clear();
 }
 
-bool PostedListWidget::navigatePostItem(const RsGxsMessageId &msgId)
+bool PostedListWidget::navigatePostItem(const RsGxsMessageId & /*msgId*/)
 {
 	//TODO
 	return false;

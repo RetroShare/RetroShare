@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <time.h>
+#include <algorithm>
 #include "ChatLobbyWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "chat/ChatTabWidget.h"
@@ -71,7 +72,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
 	QObject::connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
 	QObject::connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
-	QObject::connect( ui.createlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
+	QObject::connect( ui.createLobbyToolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);

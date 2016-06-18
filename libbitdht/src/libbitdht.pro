@@ -29,7 +29,7 @@ debug {
 
 ################################# Linux ##########################################
 linux-* {
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 }
 
 linux-g++ {
@@ -64,7 +64,7 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
@@ -89,7 +89,7 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 }

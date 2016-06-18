@@ -127,14 +127,16 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		ui->labelKeyId->setText(_keyId);
 		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
 
-		QPixmap avatar;
-		/*AvatarDefs::getAvatarFromGpgId(_details.gpg_id, avatar);
-		if (_avatar != avatar.toImage()) {
-			_avatar = avatar.toImage();
-			_scene->clear();
-			_scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
-			emit imageUpdated();
-		}*///if (_avatar != avatar.toImage())
+		if (!_haveGXSId) {
+			QPixmap avatar;
+			AvatarDefs::getAvatarFromGpgId(_details.gpg_id, avatar);
+			if (_avatar != avatar.toImage()) {
+				_avatar = avatar.toImage();
+				_scene->clear();
+				_scene->addPixmap(avatar.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
+				emit imageUpdated();
+			}
+		}
 		
 
 	//}//if (_details != gpg_details)

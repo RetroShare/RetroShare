@@ -152,6 +152,10 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         return false;
     }
     
+    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+    
+    rsGRouter->addRoutingClue(GRouterKeyId(cli->signature.keyId),cli->PeerId()) ;
+    
     ChatLobbyFlags fl ;
     
     // delete items that are not for us, as early as possible.
@@ -418,11 +422,6 @@ void DistributedChatService::checkSizeAndSendLobbyMessage(RsChatItem *msg)
     return ;
     }
     sendChatItem(msg) ;
-}
-
-bool DistributedChatService::locked_checkAndRebuildPartialLobbyMessage(RsChatLobbyMsgItem *ci)
-{
-    return true ;
 }
 
 bool DistributedChatService::handleRecvItem(RsChatItem *item)
@@ -699,6 +698,9 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << std::endl;
 		return ;
 	}
+    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+    rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
+    
     if(! bounceLobbyObject(item,item->PeerId()))
 		return ;
 

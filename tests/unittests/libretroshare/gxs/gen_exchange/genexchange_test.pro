@@ -61,7 +61,7 @@ linux-* {
 	LIBS += /home/crispy/Development/retroshare/sqlcipher/sqlcipher/.libs/libsqlite3.a
 	LIBS *= -rdynamic -frtti
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 }
 
 linux-g++ {

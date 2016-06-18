@@ -10,8 +10,17 @@
     <height>517</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
-   <property name="margin">
+  <layout class="QVBoxLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -28,8 +37,17 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
+     <layout class="QHBoxLayout" name="titleBarFrameLayout">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -53,7 +71,7 @@
        </widget>
       </item>
       <item>
-       <spacer>
+       <spacer name="titleBarVSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -91,7 +109,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="lobbyTreeVLayout">
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="styleSheet">
@@ -103,7 +121,7 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="toolBarFrameGLayout">
           <property name="leftMargin">
            <number>2</number>
           </property>
@@ -130,7 +148,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QToolButton" name="createlobbytoolButton">
+           <widget class="QToolButton" name="createLobbyToolButton">
             <property name="toolTip">
              <string>Create chat lobby</string>
             </property>
@@ -183,8 +201,17 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="_lobby_blank_page">
-       <layout class="QGridLayout" name="gridLayout_4">
-        <property name="margin">
+       <layout class="QGridLayout" name="_lobby_blank_pageGLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <property name="spacing">
@@ -195,13 +222,13 @@
           <property name="title">
            <string>Selected lobby info</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="lobbyinfo_groupBoxVLayout">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="lobbyInfoHLayout">
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout">
+              <layout class="QVBoxLayout" name="lobbyInfoNameVLayout">
                <item>
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="lobbyname_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -214,7 +241,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="lobbyid_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -227,7 +254,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_3">
+                <widget class="QLabel" name="lobbytopic_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -240,7 +267,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel" name="lobbytype_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -253,7 +280,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_6">
+                <widget class="QLabel" name="lobbysec_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -266,7 +293,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_5">
+                <widget class="QLabel" name="lobbypeers_label">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -281,7 +308,7 @@
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <layout class="QVBoxLayout" name="lobbyInfoValueVLayout">
                <item>
                 <widget class="QLabel" name="lobbyname_lineEdit">
                  <property name="sizePolicy">
@@ -372,7 +399,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer">
+            <spacer name="lobbyInfoVSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>

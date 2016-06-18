@@ -10,6 +10,7 @@
 		<file>icons/blank_green_128.png</file>
 		<file>icons/browsable_blue_128.png</file>
 		<file>icons/browsable_green_128.png</file>
+		<file>icons/bullet_blue_128.png</file>
 		<file>icons/bullet_green_128.png</file>
 		<file>icons/bullet_grey_128.png</file>
 		<file>icons/bullet_red_128.png</file>
@@ -19,6 +20,7 @@
 		<file>icons/chat_128.png</file>
 		<file>icons/chat_red_128.png</file>
 		<file>icons/circles_128.png</file>
+		<file>icons/circles_new_128.png</file>
 		<file>icons/friends_128.png</file>
 		<file>icons/global_switch_off_128.png</file>
 		<file>icons/global_switch_on_128.png</file>

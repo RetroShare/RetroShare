@@ -118,10 +118,10 @@ private:
 	 RsPeerId _ssl_id ;
 	 RsPgpId _gpg_id ;
 
-	 static const float MASS_FACTOR = 10 ;
-	 static const float FRICTION_FACTOR = 10.8 ;
-	 static const float REPULSION_FACTOR = 4 ;
-	 static const float NODE_DISTANCE = 130.0 ;
+     static const float MASS_FACTOR;
+     static const float FRICTION_FACTOR;
+     static const float REPULSION_FACTOR;
+     static const float NODE_DISTANCE;
 };
 
 #endif

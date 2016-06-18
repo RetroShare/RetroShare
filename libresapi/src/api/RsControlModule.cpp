@@ -30,7 +30,7 @@ RsControlModule::RsControlModule(int argc, char **argv, StateTokenServer* sts, A
     this->argv = argv;
     // start worker thread
     if(full_control)
-        start();
+        start("resapi ctrl mod");
     else
         mRunState = RUNNING_OK_NO_FULL_CONTROL;
 
@@ -55,7 +55,7 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &key_details, bool prev_is_bad, std::string &password, bool& cancelled)
+bool RsControlModule::askForPassword(const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
 {
 	cancelled = false ;
     {

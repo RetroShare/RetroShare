@@ -160,8 +160,8 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    virtual bool  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
-    virtual bool  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
+    virtual bool  getKey(const RsGxsId &id, RsTlvPublicRSAKey& key) = 0;
+    virtual bool  getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey& key) = 0;	// For signing outgoing messages.
     virtual bool  getIdDetails(const RsGxsId& id, RsIdentityDetails& details) = 0 ;  // Proxy function so that we get p3Identity info from Gxs
 };
 
@@ -213,9 +213,11 @@ class RsGcxs
 
         virtual int  canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt) = 0;
         virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+    
         virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
-        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsGxsId>& idlist) = 0;
-        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsId& id) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) = 0;
+    
+        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) = 0;
         
 	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };

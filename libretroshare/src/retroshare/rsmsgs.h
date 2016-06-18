@@ -307,7 +307,6 @@ public:
     bool isBroadcast() const;
 
     RsPeerId    toPeerId()  const;
-    RsGxsId     toGxsId()   const;
     ChatLobbyId toLobbyId() const;
     DistantChatPeerId toDistantChatId() const;
 
@@ -444,12 +443,13 @@ virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags) = 0;
 // sendChat for broadcast, private, lobby and private distant chat
 // note: for lobby chat, you first have to subscribe to a lobby
 //       for private distant chat, it is reqired to have an active distant chat session
-virtual	bool     sendChat(ChatId id, std::string msg) = 0;
+virtual bool sendChat(ChatId id, std::string msg) = 0;
 virtual uint32_t getMaxMessageSecuritySize(int type)  = 0;
 
-virtual void   sendStatusString(const ChatId& id,const std::string& status_string) = 0 ;
+virtual void sendStatusString(const ChatId& id,const std::string& status_string) = 0;
+virtual void clearChatLobby(const ChatId& id) = 0;
 
-virtual void   setCustomStateString(const std::string&  status_string) = 0 ;
+virtual void setCustomStateString(const std::string&  status_string) = 0 ;
 virtual std::string getCustomStateString() = 0 ;
 virtual std::string getCustomStateString(const RsPeerId& peer_id) = 0 ;
 
@@ -479,8 +479,8 @@ virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId& 
 virtual bool getIdentityForChatLobby(const ChatLobbyId& lobby_id,RsGxsId& nick) = 0 ;
 virtual bool setDefaultIdentityForChatLobby(const RsGxsId& nick) = 0;
 virtual void getDefaultIdentityForChatLobby(RsGxsId& id) = 0 ;
-    virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
-    virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
+virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
+virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
 virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags lobby_privacy_type) = 0 ;
 
 /****************************************/

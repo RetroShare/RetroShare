@@ -279,7 +279,7 @@ void DhtWindow::updateNetStatus()
 
 void DhtWindow::updateNetPeers()
 {
-	QTreeWidget *peerTreeWidget = ui.peerTreeWidget;
+	//QTreeWidget *peerTreeWidget = ui.peerTreeWidget;
 
 	std::list<RsPeerId> peerIds;
 	std::list<RsPeerId>::iterator it;
@@ -654,7 +654,7 @@ void DhtWindow::updateDhtPeers()
 		}
 	}
 
-	QTreeWidget *dhtTreeWidget = ui.dhtTreeWidget;
+	//QTreeWidget *dhtTreeWidget = ui.dhtTreeWidget;
 
 	ui.dhtTreeWidget->clear();
 

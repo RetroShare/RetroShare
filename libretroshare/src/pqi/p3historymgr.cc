@@ -105,7 +105,6 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 
         if(cm.chat_id.isDistantChatId())
 	{
-		uint32_t status;
 		DistantChatPeerInfo dcpinfo;
 		if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
 			peerName = cm.chat_id.toPeerId().toStdString();

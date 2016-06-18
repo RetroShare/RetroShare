@@ -64,8 +64,10 @@ public:
     static QString recommendMessage();
     static void recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
     static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
+#ifdef UNUSED_CODE
     static void sendChannelPublishKey(RsGxsChannelGroup &group);
     static void sendForumPublishKey(RsGxsForumGroup &group);
+#endif
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);

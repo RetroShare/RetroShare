@@ -63,7 +63,11 @@ void BWGraphSource::update()
     // now, convert data to current curve points.
 
     std::map<std::string,float> vals ;
-    convertTrafficClueToValues(thc.out_rstcl,vals) ;
+    
+    if(_current_direction == BWGraphSource::DIRECTION_UP)
+	    convertTrafficClueToValues(thc.out_rstcl,vals) ;
+    else
+	    convertTrafficClueToValues(thc.in_rstcl,vals) ;
 
     qint64 ms = getTime() ;
 
@@ -407,7 +411,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
     {
 	    if(graph_type ==  GRAPH_TYPE_SINGLE)
 	    {
-		    bool ok = false ;
+		    //bool ok = false ;
 		    int tmp = QString::fromStdString(selector_client_string).toInt() ;
 
 		    if(tmp > 0 && tmp < 0x10000)
