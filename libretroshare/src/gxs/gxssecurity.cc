@@ -39,6 +39,20 @@ static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE         = 2 ;
 static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE = 2 ;
 static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE  = 256 ;
         
+static RsGxsId getRsaKeyFingerprint_old_insecure_method(RSA *pubkey)
+{
+        int lenn = BN_num_bytes(pubkey -> n);
+
+        RsTemporaryMemory tmp(lenn) ;
+        BN_bn2bin(pubkey -> n, tmp);
+
+        // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
+	// We should not be using strings here, but a real ID. To be done later.
+
+	assert(lenn >= CERTSIGNLEN) ;
+
+        return RsGxsId((unsigned char*)tmp) ;
+}
 static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 {
         int lenn = BN_num_bytes(pubkey -> n);
@@ -135,14 +149,23 @@ bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
         return false ;
     }
     RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
-    RSA_free(rsa_pub) ;
 
     if(recomputed_key_id != key.keyId)
     {
-        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
+        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << std::endl;
+        
+        if(key.keyId == getRsaKeyFingerprint_old_insecure_method(rsa_pub))
+        {
+        	std::cerr << "(WW) fingerprint was derived using old---insecure---format. It can be faked easily. You should get rid of it!" << std::endl;
+		RSA_free(rsa_pub) ;
+		return true ;
+        }
+            
+	RSA_free(rsa_pub) ;
         return false ;
     }
 
+    RSA_free(rsa_pub) ;
     return true ;
 }
 bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
@@ -177,14 +200,25 @@ bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
         return false ;
     }
     RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
-    RSA_free(rsa_pub) ;
 
     if(recomputed_key_id != key.keyId)
     {
-        std::cerr << "(WW) GxsSecurity::checkPublicKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
+        if(key.keyId == getRsaKeyFingerprint_old_insecure_method(rsa_pub))
+        {
+#ifdef GXS_SECURITY_DEBUG
+        	std::cerr << "(WW) fingerprint was derived using old---insecure---format. It can be faked easily." << std::endl;
+#endif
+	    RSA_free(rsa_pub) ;
+	    return true ;
+        }
+        else
+		std::cerr << "(WW) GxsSecurity::checkPublicKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! Key will be discarded." << std::endl;
+            
+	RSA_free(rsa_pub) ;
         return false ;
     }
 
+    RSA_free(rsa_pub) ;
     return true ;
 }
 
