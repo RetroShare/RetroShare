@@ -89,11 +89,14 @@ bool RsGxsMessageCleanUp::clean()
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
 
 				// if not subscribed remove messages (can optimise this really)
-				remove = remove || (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+				remove = remove ||  (grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED);
+				remove = remove || !(grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
 				if( remove )
 				{
 					req[grpId].push_back(meta->mMsgId);
+                    
+                    			std::cerr << "Scheduling msg id " << meta->mMsgId << " in grp " << grpId << " for removal." << std::endl;
 				}
 
 				delete meta;
