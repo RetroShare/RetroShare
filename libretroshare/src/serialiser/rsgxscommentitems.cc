@@ -147,6 +147,7 @@ uint32_t RsGxsCommentSerialiser::sizeGxsCommentItem(RsGxsCommentItem *item)
 
 #ifdef GXSCOMMENT_DEBUG
 	std::cerr << "RsGxsCommentSerialiser::sizeGxsCommentItem() is: " << s << std::endl;
+	msg.print(std::cerr);
 #endif
 
 	return s;

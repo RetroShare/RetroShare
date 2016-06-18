@@ -83,9 +83,10 @@ virtual ~RsGxsChannels() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
-
-virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
+//Not currently used
+//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
 	/* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;

@@ -62,7 +62,8 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
 virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
-virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+//Not currently used
+//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);

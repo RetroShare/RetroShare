@@ -64,7 +64,8 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	// Posted Specific DataTypes.
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts);
-virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts);
+//Not currently used
+//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts);
 
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group);
 virtual bool createPost(uint32_t &token, RsPostedPost &post);

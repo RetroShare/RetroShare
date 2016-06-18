@@ -255,8 +255,8 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	return ok;
 }
 
-
-bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
+//Not currently used
+/*bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
@@ -291,7 +291,7 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	}
 			
 	return ok;
-}
+}*/
 
 /********************************************************************************************/
 

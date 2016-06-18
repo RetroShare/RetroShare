@@ -108,6 +108,8 @@ void GxsChannelPostItem::setup()
 	ui->subjectLabel->clear();
 	ui->datetimelabel->clear();
 	ui->filelabel->clear();
+	ui->newCommentLabel->hide();
+	ui->commLabel->hide();
 
 	/* general ones */
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(toggle()));
@@ -143,10 +145,10 @@ void GxsChannelPostItem::setup()
 	ui->subjectLabel->setMinimumWidth(100);
 	ui->warning_label->setMinimumWidth(100);
 
-	ui->frame->setProperty("state", "");
-	QPalette palette = ui->frame->palette();
-	palette.setColor(ui->frame->backgroundRole(), COLOR_NORMAL);
-	ui->frame->setPalette(palette);
+	ui->mainFrame->setProperty("state", "");
+	QPalette palette = ui->mainFrame->palette();
+	palette.setColor(ui->mainFrame->backgroundRole(), COLOR_NORMAL);
+	ui->mainFrame->setPalette(palette);
 
 	ui->expandFrame->hide();
 }
@@ -241,21 +243,36 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 #endif
 
 	std::vector<RsGxsChannelPost> posts;
-	if (!rsGxsChannels->getPostData(token, posts))
+	std::vector<RsGxsComment> cmts;
+	if (!rsGxsChannels->getPostData(token, posts, cmts))
 	{
 		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
-	
-	if (posts.size() != 1)	
+
+	if (posts.size() == 1)
+	{
+		setPost(posts[0]);
+	}
+	else if (cmts.size() == 1)
+	{
+		RsGxsComment cmt = cmts[0];
+
+		ui->newCommentLabel->show();
+		ui->commLabel->show();
+		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+
+		//Change this item to be uploaded with thread element.
+		setMessageId(cmt.mMeta.mThreadId);
+		requestMessage();
+	}
+	else
 	{
 		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
 		std::cerr << std::endl;
 		return;
 	}
-
-	setPost(posts[0]);
 }
 
 void GxsChannelPostItem::fill()
@@ -347,7 +364,8 @@ void GxsChannelPostItem::fill()
 	{
 		if (mIsHome) {
 			ui->commentButton->show();
-		} else {
+		} else if (ui->commentButton->icon().isNull()){
+			//Icon is seted if a comment received.
 			ui->commentButton->hide();
 		}
 
@@ -458,15 +476,15 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	ui->newLabel->setVisible(isNew);
 
 	/* unpolish widget to clear the stylesheet's palette cache */
-	ui->frame->style()->unpolish(ui->frame);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
 
-	QPalette palette = ui->frame->palette();
-	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
+	QPalette palette = ui->mainFrame->palette();
+	palette.setColor(ui->mainFrame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
 	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
-	ui->frame->setPalette(palette);
+	ui->mainFrame->setPalette(palette);
 
-	ui->frame->setProperty("new", isNew);
-	Rshare::refreshStyleSheet(ui->frame, false);
+	ui->mainFrame->setProperty("new", isNew);
+	Rshare::refreshStyleSheet(ui->mainFrame, false);
 }
 
 void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
