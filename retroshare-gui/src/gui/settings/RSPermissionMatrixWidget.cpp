@@ -450,7 +450,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   // now display some info about current node.
 
-  if(n_row_selected < (int)peer_ids.size() && n_col_selected < (int)service_ids.size())
+  if(n_row_selected >= 0 && n_col_selected >= 0 && n_row_selected < (int)peer_ids.size() && n_col_selected < (int)service_ids.size())
   {
       QRect position = computeNodePosition(n_row_selected,n_col_selected,false) ;
 
