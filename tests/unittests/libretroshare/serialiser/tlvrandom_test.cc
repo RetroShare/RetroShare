@@ -65,10 +65,10 @@ bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, 
 
 int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 {
-	uint32_t tmpoffset = 0;
+	//uint32_t tmpoffset = 0;
 
 	/* List of all the TLV types it could be! */
-	RsTlvSecurityKey_deprecated skey;
+	RsTlvPublicRSAKey skey;
 	RsTlvSecurityKeySet skeyset;
 	RsTlvKeySignature   keysign;
 
@@ -114,7 +114,7 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 	EXPECT_TRUE(test_SetTlvItem(&kv, TLV_TYPE_KEYVALUE, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&kvset, TLV_TYPE_KEYVALUESET, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys (TYPESET)" << std::endl;
-	EXPECT_TRUE(test_SetTlvItem(&skey, TLV_TYPE_SECURITYKEY_deprecated, data, len, offset));
+	EXPECT_TRUE(test_SetTlvItem(&skey, TLV_TYPE_SECURITY_KEY, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&skeyset, TLV_TYPE_SECURITYKEYSET, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&keysign, TLV_TYPE_KEYSIGNATURE, data, len, offset));
 
