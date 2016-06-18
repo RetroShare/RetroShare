@@ -37,7 +37,6 @@ const int RS_DEBUG_LOGCRASH 	= 3;  /* minimal logfile stored after crashes */
 const int RS_DEBUG_LOGC_MAX 	= 100000;  /* max length of crashfile log */
 const int RS_DEBUG_LOGC_MIN_SAVE = 100;    /* min length of crashfile log */
 
-//static std::map<int, int> zoneLevel;
 static RsLog::logLvl defaultLevel = RsLog::Warning;
 static FILE *ofd = stderr;
 
@@ -110,33 +109,6 @@ int setDebugCrashMode(const char *cfile)
 	return 1;
 }
 
-
-#ifdef deadcode // this code is not used by RS
-/* this is called when we exit normally */
-int clearDebugCrashLog()
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	/* check we are in crashLog Mode */
-	if (debugMode != RS_DEBUG_LOGCRASH)
-	{
-		fprintf(stderr, "Not in CrashLog Mode - nothing to clear!\n");
-		return 1;
-	}
-
-	fprintf(stderr, "clearDebugCrashLog() Cleaning up\n");
-	/* shutdown crashLog Mode */
-	fclose(ofd);
-	ofd = stderr;
-	debugMode = RS_DEBUG_STDERR;
-
-	/* just open the file, and then close */
-	FILE *tmpin = RsDirUtil::rs_fopen(crashfile.c_str(), "w");
-	fclose(tmpin);
-
-	return 1;
-}
-#endif
-
 int setDebugFile(const char *fname)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
@@ -165,34 +137,6 @@ int setOutputLevel(RsLog::logLvl lvl)
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	return defaultLevel = lvl;
 }
-
-//#ifdef deadcode // this code is not used by RS
-//int setZoneLevel(int lvl, int zone)
-//{
-//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-//	zoneLevel[zone] = lvl;
-//	return zone;
-//}
-//#endif
-
-//int getZoneLevel(int zone)
-//{
-//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-//	return locked_getZoneLevel(zone);
-//}
-
-//int locked_getZoneLevel(int /*zone*/)
-//{
-//#ifdef deadcode // this code is not used by RS
-//	std::map<int, int>::iterator it = zoneLevel.find(zone);
-//	if (it == zoneLevel.end())
-//	{
-//		return defaultLevel;
-//	}
-//	return it -> second;
-//#endif
-//	return defaultLevel;
-//}
 
 void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg)
 {
