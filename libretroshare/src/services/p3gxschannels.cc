@@ -321,7 +321,7 @@ bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerI
  * at the moment - fix it up later
  */
 
-bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
+bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs, std::vector<RsGxsComment> &cmts)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::getPostData()";
@@ -342,19 +342,32 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 
 			for(; vit != msgItems.end(); ++vit)
 			{
-				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
+				RsGxsChannelPostItem* postItem = dynamic_cast<RsGxsChannelPostItem*>(*vit);
 
-				if(item)
+				if(postItem)
 				{
 					RsGxsChannelPost msg;
-					item->toChannelPost(msg, true);
+					postItem->toChannelPost(msg, true);
 					msgs.push_back(msg);
-					delete item;
+					delete postItem;
 				}
 				else
 				{
-					RsGxsCommentItem* cmt = dynamic_cast<RsGxsCommentItem*>(*vit);
-					if(!cmt)
+					RsGxsCommentItem* cmtItem = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(cmtItem)
+					{
+						RsGxsComment cmt;
+						RsGxsMsgItem *mi = (*vit);
+						cmt = cmtItem->mMsg;
+						cmt.mMeta = mi->meta;
+#ifdef GXSCOMMENT_DEBUG
+						std::cerr << "p3GxsChannels::getPostData Found Comment:" << std::endl;
+						cmt.print(std::cerr,"  ", "cmt");
+#endif
+						cmts.push_back(cmt);
+						delete cmtItem;
+					}
+					else
 					{
 						RsGxsMsgItem* msg = (*vit);
 						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
@@ -364,8 +377,8 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
 											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
 											<< " , deleting!" << std::endl;
+						delete *vit;
 					}
-					delete *vit;
 				}
 			}
 		}
@@ -379,8 +392,8 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 	return ok;
 }
 
-
-bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
+//Not currently used
+/*bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &msgs)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::getRelatedPosts()";
@@ -436,7 +449,7 @@ bool p3GxsChannels::getRelatedPosts(const uint32_t &token, std::vector<RsGxsChan
 	}
 			
 	return ok;
-}
+}*/
 
 
 /********************************************************************************************/

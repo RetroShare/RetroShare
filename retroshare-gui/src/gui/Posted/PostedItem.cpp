@@ -295,7 +295,6 @@ void PostedItem::fill()
 		ui->voteDownButton->setEnabled(false);
 	}
 
-
 #if 0
 	uint32_t up, down, nComments;
     

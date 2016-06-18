@@ -139,8 +139,8 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 	return ok;
 }
 
-
-bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &msgs)
+//Not currently used
+/*bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &msgs)
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
@@ -178,7 +178,7 @@ bool p3Posted::getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> 
 	}
 			
 	return ok;
-}
+}*/
 
 
 /********************************************************************************************/
