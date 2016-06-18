@@ -125,6 +125,7 @@ class GxsSecurity
 
         static bool checkPublicKey(const RsTlvPublicRSAKey &key);
         static bool checkPrivateKey(const RsTlvPrivateRSAKey &key);
+	static bool checkFingerprint(const RsTlvPublicRSAKey& key);	// helper function to only check the fingerprint
         
         /*!
          * Adds possibly missing public keys when private keys are present.

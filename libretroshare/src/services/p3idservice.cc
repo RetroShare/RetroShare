@@ -1701,9 +1701,13 @@ void RsGxsIdCache::init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& i
         {
             if(!priv_key.checkKey())
                 std::cerr << "(EE) Private key missing for own identity " << pub_key.keyId << std::endl;
+            
         }
 	if(!pub_key.checkKey())
 		std::cerr << "(EE) Public key missing for identity " << pub_key.keyId << std::endl;
+    
+	    if(!GxsSecurity::checkFingerprint(pub_key))
+		    details.mFlags |= RS_IDENTITY_FLAGS_IS_DEPRECATED;
                     
 	/* rest must be retrived from ServiceString */
 	updateServiceString(item->meta.mServiceString);

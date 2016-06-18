@@ -122,6 +122,14 @@ static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_priv)
 
 	free(data) ;
 }
+bool GxsSecurity::checkFingerprint(const RsTlvPublicRSAKey& key)
+{
+    RSA *rsa_pub = ::extractPublicKey(key) ;
+    bool res = (key.keyId == getRsaKeyFingerprint(rsa_pub)) ;
+    RSA_free(rsa_pub) ;
+    return res ;
+}
+
 bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 {
 #ifdef GXS_SECURITY_DEBUG
@@ -152,22 +160,29 @@ bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 
     if(recomputed_key_id != key.keyId)
     {
-        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << std::endl;
-        
         if(key.keyId == getRsaKeyFingerprint_old_insecure_method(rsa_pub))
         {
-        	std::cerr << "(WW) fingerprint was derived using old---insecure---format. It can be faked easily. You should get rid of it!" << std::endl;
+#ifdef GXS_SECURITY_DEBUG
+        	std::cerr << "(WW) fingerprint of key " << key.keyId << " was derived using old---insecure---format. It can be faked easily. You should get rid of this key!" << std::endl;
+#endif
 		RSA_free(rsa_pub) ;
+        
+		// The policy is to *accept* these private keys, but the public key that corresponds will be rejected anyway, as it can easily be faked.
 		return true ;
         }
-            
-	RSA_free(rsa_pub) ;
-        return false ;
+        else
+	{
+		std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << std::endl;
+
+		RSA_free(rsa_pub) ;
+		return false ;
+	}
     }
 
     RSA_free(rsa_pub) ;
     return true ;
 }
+
 bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
 {
 #ifdef GXS_SECURITY_DEBUG
@@ -209,6 +224,9 @@ bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
         	std::cerr << "(WW) fingerprint was derived using old---insecure---format. It can be faked easily." << std::endl;
 #endif
 	    RSA_free(rsa_pub) ;
+        
+	    // The policy is to accept these public keys, but warn the owner, since they might be fake keys. They will be soon rejected here, by replacing
+            // the return value by false.
 	    return true ;
         }
         else
