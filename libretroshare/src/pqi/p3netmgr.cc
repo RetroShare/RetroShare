@@ -39,7 +39,8 @@
 
 //#include "util/rsprint.h"
 //#include "util/rsdebug.h"
-const int p3netmgrzone = 7563;
+struct RsLog::logInfo p3netmgrzoneInfo = {RsLog::Default, "p3netmgr"};
+#define p3netmgrzone &p3netmgrzoneInfo
 
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsiface.h"

@@ -43,8 +43,8 @@
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
 
-const int rstcpstreamzone = 28455;
-
+static struct RsLog::logInfo rstcpstreamzoneInfo = {RsLog::Default, "rstcpstream"};
+#define rstcpstreamzone &rstcpstreamzoneInfo
 
 /*
  * #define DEBUG_TCP_STREAM		1

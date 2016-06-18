@@ -44,7 +44,8 @@
 
 #include "rsserver/p3face.h"
 
-const int pqisslzone = 37714;
+static struct RsLog::logInfo pqisslzoneInfo = {RsLog::Default, "pqisslzone"};
+#define pqisslzone &pqisslzoneInfo
 
 /*********
 #define WAITING_NOT            0

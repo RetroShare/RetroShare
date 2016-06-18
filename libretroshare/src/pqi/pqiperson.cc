@@ -27,12 +27,12 @@
 #include "pqi/pqiperson.h"
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqissl.h"
-
-
-const int pqipersonzone = 82371;
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "retroshare/rspeers.h"
+
+static struct RsLog::logInfo pqipersonzoneInfo = {RsLog::Default, "pqiperson"};
+#define pqipersonzone &pqipersonzoneInfo
 
 /****
  * #define PERSON_DEBUG 1
@@ -67,7 +67,7 @@ int pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 		// check if debug output is wanted, to avoid unecessary work
 		// getZoneLevel() locks a global mutex and does a lookup in a map or returns a default value
 		// (not sure if this is a performance problem)
-		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
+		if (PQL_DEBUG_BASIC <= pqipersonzoneInfo.lvl)
 		{
 			std::string out = "pqiperson::SendItem() Active: Sending On\n";
 			i->print_string(out, 5); // this can be very expensive
@@ -80,7 +80,7 @@ int pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 	}
 	else
 	{
-		if (PQL_DEBUG_BASIC <= getZoneLevel(pqipersonzone))
+		if (PQL_DEBUG_BASIC <= pqipersonzoneInfo.lvl)
 		{
 			std::string out = "pqiperson::SendItem()";
 			out += " Not Active: Used to put in ToGo Store\n";

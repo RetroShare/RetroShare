@@ -37,7 +37,8 @@
 
 #include "serialiser/rsserial.h" 
 
-const int pqistreamerzone = 8221;
+static struct RsLog::logInfo pqistreamerzoneInfo = {RsLog::Default, "pqistreamer"};
+#define pqistreamerzone &pqistreamerzoneInfo
 
 static const int   PQISTREAM_ABS_MAX    			= 100000000; /* 100 MB/sec (actually per loop) */
 static const int   PQISTREAM_AVG_PERIOD 			= 5; 		// update speed estimate every 5 seconds

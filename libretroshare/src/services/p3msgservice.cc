@@ -67,7 +67,8 @@
 
 using namespace Rs::Msgs;
 
-const int msgservicezone = 54319;
+static struct RsLog::logInfo msgservicezoneInfo = {RsLog::Default, "msgservice"};
+#define msgservicezone &msgservicezoneInfo
 
 static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // keep msg hashes for 2 months to avoid re-sent msgs
 

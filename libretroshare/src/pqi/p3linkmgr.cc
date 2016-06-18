@@ -41,8 +41,6 @@
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
-const int p3connectzone = 3431;
-
 #include "serialiser/rsconfigitems.h"
 
 #include "retroshare/rsiface.h"
@@ -52,6 +50,8 @@ const int p3connectzone = 3431;
 
 /* Network setup States */
 
+static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
+#define p3connectzone &p3connectzoneInfo
 
 /****
  * #define LINKMGR_DEBUG 1

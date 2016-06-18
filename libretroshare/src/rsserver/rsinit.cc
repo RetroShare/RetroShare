@@ -221,7 +221,7 @@ void RsInit::InitRsConfig()
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
-	setOutputLevel(PQL_WARNING); // default to Warnings.
+	setOutputLevel(RsLog::Warning); // default to Warnings.
 
 	// For Testing purposes.
 	// We can adjust everything under Linux.
@@ -418,7 +418,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          }
 #endif
 
-			setOutputLevel(rsInitConfig->debugLevel);
+			setOutputLevel((RsLog::logLvl)rsInitConfig->debugLevel);
 
 //	// set the default Debug Level...
 //	if (rsInitConfig->haveDebugLevel)
