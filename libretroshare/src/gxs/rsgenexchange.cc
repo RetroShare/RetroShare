@@ -63,8 +63,8 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 //#define GEN_EXCH_DEBUG	1
 
-#define MSG_CLEANUP_PERIOD     60*5  //  5 minutes
-#define INTEGRITY_CHECK_PERIOD 60*30 // 30 minutes
+#define MSG_CLEANUP_PERIOD     60*59 // 59 minutes
+#define INTEGRITY_CHECK_PERIOD 60*31 // 31 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -107,41 +107,6 @@ void RsGenExchange::setNetworkExchangeService(RsNetworkExchangeService *ns)
     else
         mNetService = ns ;
 }
-
-#ifdef TO_BE_DELETED_IF_NOT_USEFUL
-// This class has been tested so as to see where the database gets modified.
-class RsDataBaseTester
-{
-public:
-    RsDataBaseTester(RsGeneralDataService *store,const RsGxsGroupId& grpId,const std::string& info)
-            :_grpId(grpId),_store(store),_info(info)
-    {
-        //std::cerr << "RsDataBaseTester: (" << _info << ") retrieving messages for group " << grpId << std::endl;
-        _store->retrieveMsgIds(_grpId, _msgIds1) ;
-    }
-
-    ~RsDataBaseTester()
-    {
-        //std::cerr << "RsDataBaseTester: (" << _info << ") testing messages for group " << _grpId << std::endl;
-        _store->retrieveMsgIds(_grpId, _msgIds2) ;
-
-        bool all_idendical = true ;
-    std::cerr << std::dec ;
-
-        if(_msgIds1.size() != _msgIds2.size())
-            std::cerr << "  " << _info << " (EE) The two arrays are different (size1=" << _msgIds1.size() << ", size2=" << _msgIds2.size() << ") !!" << std::endl;
-        else
-            for(uint32_t i=0;i<_msgIds1.size();++i)
-                if(_msgIds1[i] != _msgIds2[i])
-                    std::cerr << "  " << _info << " (EE) The two arrays are different for i=" << i << " !!" << std::endl;
-    }
-    RsGxsGroupId _grpId ;
-    RsGeneralDataService *_store ;
-    std::vector<RsGxsMessageId> _msgIds1 ;
-    std::vector<RsGxsMessageId> _msgIds2 ;
-    std::string _info ;
-};
-#endif
 
 RsGenExchange::~RsGenExchange()
 {
