@@ -41,7 +41,6 @@
 #include "util/rsprint.h"
 #include "util/rsstring.h"
 #include "util/rsdebug.h"
-const int p3peermgrzone = 9531;
 
 #include "serialiser/rsconfigitems.h"
 
@@ -63,6 +62,9 @@ const uint32_t RS_NET_DOWN =    	0x0007;
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
 const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
+
+static struct RsLog::logInfo p3peermgrzoneInfo = {RsLog::Default, "p3peermgr"};
+#define p3peermgrzone &p3peermgrzoneInfo
 
 /****
  * #define PEER_DEBUG 1

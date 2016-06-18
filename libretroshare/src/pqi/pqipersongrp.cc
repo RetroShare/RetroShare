@@ -31,7 +31,8 @@
 
 #include <stdio.h>
 
-const int pqipersongrpzone = 354;
+static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersongrp"};
+#define pqipersongrpzone &pqipersongrpzoneInfo
 
 #ifdef WINDOWS_SYS
 ///////////////////////////////////////////////////////////

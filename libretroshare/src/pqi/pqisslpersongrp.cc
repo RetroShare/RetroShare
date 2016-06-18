@@ -29,8 +29,8 @@
 #include "pqi/pqisslpersongrp.h"
 #include "pqi/authssl.h"
 
-
-const int pqipersongrpzone = 354;
+static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersongrp"};
+#define pqipersongrpzone &pqipersongrpzoneInfo
 
 /****
  * #define PQI_DISABLE_UDP 1

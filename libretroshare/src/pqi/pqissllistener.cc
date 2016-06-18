@@ -38,7 +38,8 @@
 #include "retroshare/rsbanlist.h"
 #include <unistd.h>
 
-const int pqissllistenzone = 49787;
+static struct RsLog::logInfo pqissllistenzoneInfo = {RsLog::Default, "p3peermgr"};
+#define pqissllistenzone &pqissllistenzoneInfo
 
 /* NB: This #define makes the listener open 0.0.0.0:X port instead
  * of a specific port - this might help retroshare work on PCs with

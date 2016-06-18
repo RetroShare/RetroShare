@@ -160,11 +160,11 @@ int locked_setDebugFile(const char *fname)
 	}
 }
 
-//int setOutputLevel(RsLog::logLvl lvl)
-//{
-//	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-//	return defaultLevel = lvl;
-//}
+int setOutputLevel(RsLog::logLvl lvl)
+{
+	RsStackMutex stack(logMtx); /******** LOCKED ****************/
+	return defaultLevel = lvl;
+}
 
 //#ifdef deadcode // this code is not used by RS
 //int setZoneLevel(int lvl, int zone)
@@ -194,7 +194,7 @@ int locked_setDebugFile(const char *fname)
 //	return defaultLevel;
 //}
 
-void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::string &msg)
+void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg)
 {
 	// skipp when log level is set to 'None'
 	// NB: when default is set to 'None' the later check will always fail -> no need to check it here
@@ -203,7 +203,7 @@ void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::strin
 
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 
-	bool process = info-lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
+	bool process = info->lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
 	if(process)
 	{
 		time_t t = time(NULL);
@@ -235,8 +235,8 @@ void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::strin
 		std::string timestr = ctime(&t);
 		std::string timestr2 = timestr.substr(0,timestr.length()-1);
 		/* remove the endl */
-		fprintf(ofd, "(%s Z: %d, lvl:%u): %s \n", 
-				timestr2.c_str(), zone, (unsigned int)info->lvl, msg.c_str());
+		fprintf(ofd, "(%s Z: %s, lvl: %u): %s \n",
+				timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
 		lineCount++;
 	}

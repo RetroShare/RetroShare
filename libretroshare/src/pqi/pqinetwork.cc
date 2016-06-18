@@ -41,7 +41,8 @@
 #include "util/rsstring.h"
 #include "util/rsnet.h"
 
-static const int pqinetzone = 96184;
+static struct RsLog::logInfo pqinetzoneInfo = {RsLog::Default, "pqinet"};
+#define pqinetzone &pqinetzoneInfo
 
 /*****
  * #define NET_DEBUG 1

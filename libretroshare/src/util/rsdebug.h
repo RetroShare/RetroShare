@@ -30,14 +30,6 @@
 #ifndef RS_LOG_DEBUG_H
 #define RS_LOG_DEBUG_H
 
-#define RSL_NONE     	-1
-#define RSL_ALERT     	 1
-#define RSL_ERROR	 3
-#define RSL_WARNING	 5
-#define RSL_DEBUG_ALERT  6
-#define RSL_DEBUG_BASIC	 8
-#define RSL_DEBUG_ALL	10
-
 #include <string>
 
 namespace RsLog {
@@ -54,12 +46,21 @@ namespace RsLog {
 
 	// this struct must be provided by the caller (to rslog())
 	struct logInfo {
-		// module name
-		const std::string name;
 		// module specific log lvl
 		logLvl lvl;
+		// module name
+		const std::string name;
 	};
 }
+
+// current RS code uses these (deprecated) defines
+#define RSL_NONE     	RsLog::None
+#define RSL_ALERT     	RsLog::Alert
+#define RSL_ERROR	RsLog::Error
+#define RSL_WARNING	RsLog::Warning
+#define RSL_DEBUG_ALERT RsLog::Debug_Alert
+#define RSL_DEBUG_BASIC	RsLog::Debug_Basic
+#define RSL_DEBUG_ALL	RsLog::Debug_Basic
 
 int setDebugCrashMode(const char *cfile);
 //int clearDebugCrashLog();
@@ -68,7 +69,7 @@ int setDebugFile(const char *fname);
 int setOutputLevel(RsLog::logLvl lvl);
 //int setZoneLevel(int lvl, int zone);
 //int getZoneLevel(int zone);
-void rslog(const RsLog::logLvl lvl, const RsLog::logInfo *info, const std::string &msg);
+void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg);
 
 
 

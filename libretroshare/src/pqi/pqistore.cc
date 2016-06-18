@@ -53,7 +53,8 @@
 // #define PQISTORE_DEBUG
 // 
 
-const int pqistorezone = 9511;
+static struct RsLog::logInfo pqistorezoneInfo = {RsLog::Default, "pqistore"};
+#define pqistorezone &pqistorezoneInfo
 
 pqistore::pqistore(RsSerialiser *rss, const RsPeerId& srcId, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(RsPeerId()), rsSerialiser(rss), bio_flags(bio_flags_in),

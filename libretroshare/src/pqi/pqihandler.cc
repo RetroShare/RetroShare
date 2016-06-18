@@ -58,7 +58,8 @@ static double getCurrentTS()
 }
 #endif
 
-const int pqihandlerzone = 34283;
+struct RsLog::logInfo pqihandlerzoneInfo = {RsLog::Default, "pqihandler"};
+#define pqihandlerzone &pqihandlerzoneInfo
 
 static const int PQI_HANDLER_NB_PRIORITY_LEVELS = 10 ;
 static const float PQI_HANDLER_NB_PRIORITY_RATIO = 2 ;
