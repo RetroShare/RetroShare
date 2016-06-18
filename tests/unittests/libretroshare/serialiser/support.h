@@ -58,7 +58,7 @@ void randString(const uint32_t, std::wstring&);
 
 /* for testing compound tlv items */
 
-void init_item(RsTlvSecurityKey_deprecated&);
+void init_item(RsTlvPublicRSAKey&);
 void init_item(RsTlvSecurityKeySet&);
 void init_item(RsTlvKeySignature&);
 void init_item(RsTlvKeySignatureSet&);
@@ -70,7 +70,7 @@ void init_item(RsTlvPeerIdSet&);
 void init_item(RsTlvImage&);
 void init_item(RsTlvPeerIdSet&);
 
-bool operator==(const RsTlvSecurityKey_deprecated&, const RsTlvSecurityKey_deprecated& );
+bool operator==(const RsTlvPublicRSAKey&, const RsTlvPublicRSAKey& );
 bool operator==(const RsTlvSecurityKeySet&, const RsTlvSecurityKeySet& );
 bool operator==(const RsTlvKeySignature&, const RsTlvKeySignature& );
 bool operator==(const RsTlvBinaryData&, const RsTlvBinaryData&);
