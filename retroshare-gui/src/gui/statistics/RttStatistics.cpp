@@ -34,7 +34,7 @@
 #include "gui/settings/rsharesettings.h"
 
 
-RttStatistics::RttStatistics(QWidget *parent)
+RttStatistics::RttStatistics(QWidget * /*parent*/)
 {
 	setupUi(this) ;
 	

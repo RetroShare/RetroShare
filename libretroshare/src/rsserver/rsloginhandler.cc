@@ -7,12 +7,15 @@
 #if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <gnome-keyring-1/gnome-keyring.h>
 
-	GnomeKeyringPasswordSchema my_schema = {
-      GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
-      {
-           { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
-           { NULL, (GnomeKeyringAttributeType)0 }
-      }
+GnomeKeyringPasswordSchema my_schema = {
+        GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
+        {
+                { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+                { NULL, (GnomeKeyringAttributeType)0 }
+        },
+        NULL,
+        NULL,
+        NULL
   };
 #endif
 

@@ -293,7 +293,7 @@ PictureFlowState::PictureFlowState():
 
 PictureFlowState::~PictureFlowState()
 {
-    for(uint i=0;i<slideImages.size();++i)
+    for(int i=0;i<slideImages.size();++i)
         delete slideImages[i] ;
     slideImages.clear() ;
 }
@@ -1104,7 +1104,7 @@ void PictureFlow::setCenterIndex(int index)
 
 void PictureFlow::clear()
 {
-    for(uint i=0;i<d->state->slideImages.size();++i)
+    for(int i=0;i<d->state->slideImages.size();++i)
         delete d->state->slideImages[i] ;
     d->state->slideImages.clear() ;
     

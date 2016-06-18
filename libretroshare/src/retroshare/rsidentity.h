@@ -69,6 +69,7 @@ static const uint32_t RS_IDENTITY_FLAGS_IS_A_CONTACT = 0x0001;
 static const uint32_t RS_IDENTITY_FLAGS_PGP_LINKED   = 0x0002;
 static const uint32_t RS_IDENTITY_FLAGS_PGP_KNOWN    = 0x0004;
 static const uint32_t RS_IDENTITY_FLAGS_IS_OWN_ID    = 0x0008;
+static const uint32_t RS_IDENTITY_FLAGS_IS_DEPRECATED= 0x0010;	// used to denote keys with deprecated fingerprint format.
 
 class GxsReputation
 {

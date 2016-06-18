@@ -157,7 +157,7 @@ public:
 	virtual uint32_t serial_size() const; 			
         
     RsGxsGroupId grpId ;
-    RsTlvSecurityKey key ;
+    RsTlvPrivateRSAKey private_key ;
 };
 
 
@@ -330,9 +330,12 @@ public:
      * This should contains all data
      * which is not specific to the Gxs service data
      */
+    // This is the binary data for the group meta that is sent to friends. It *should not* contain any private
+    // key parts. This is ensured in RsGenExchange
+    
     RsTlvBinaryData meta;
 
-    // deserialised metaData, this is not serialised
+    // Deserialised metaData, this is not serialised by the serialize() method. So it may contain private key parts in some cases.
     RsGxsGrpMetaData* metaData;
 };
 

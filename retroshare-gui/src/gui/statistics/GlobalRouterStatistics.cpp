@@ -167,7 +167,7 @@ void GlobalRouterStatistics::updateContent()
     
     groupBox->setTitle(tr("Pending packets")+": " + QString::number(cache_infos.size()) );
 
-    for(int i=0;i<cache_infos.size();++i)
+    for(uint32_t i=0;i<cache_infos.size();++i)
     {
         QTreeWidgetItem *item = new QTreeWidgetItem();
         treeWidget->addTopLevelItem(item);
@@ -324,7 +324,7 @@ void GlobalRouterStatisticsWidget::updateContent()
 //	oy += celly ;
 //	oy += celly ;
 
-    static const int MaxKeySize = 20*fact ;
+    //static const int MaxKeySize = 20*fact ;
     painter.setFont(monospace_f) ;
 
     int n=0;

@@ -47,7 +47,7 @@ public:
 	GroupItemInfo()
 	{
 		popularity = 0;
-		privatekey = false;
+		publishKey = false;
         subscribeFlags = 0;
         max_visible_posts =0;
 	}
@@ -59,7 +59,8 @@ public:
 	int       popularity;
 	QDateTime lastpost;
 	QIcon     icon;
-	bool      privatekey;
+	bool      publishKey;
+	bool      adminKey;
     quint32  subscribeFlags;
     quint32  max_visible_posts ;
 };

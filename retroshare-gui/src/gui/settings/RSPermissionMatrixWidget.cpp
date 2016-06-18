@@ -304,7 +304,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   _painter->setPen(pen) ;
   int i=0;
-  int x=5/14.0*S ;
+  //int x=5/14.0*S ;
   int y=S*fMATRIX_START_Y ;
 
   for(std::list<RsPeerId>::const_iterator it(ssllist.begin());it!=ssllist.end();++it,++i)
@@ -383,7 +383,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   static const std::string global_switch[2] = { ":/icons/global_switch_off_128.png",
                                                 ":/icons/global_switch_on_128.png" } ;
 
-  for(int i=0;i<service_ids.size();++i)
+  for(uint32_t i=0;i<service_ids.size();++i)
   {
       RsServicePermissions serv_perm ;
       rsServiceControl->getServicePermissions(service_ids[i],serv_perm) ;
@@ -450,7 +450,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   // now display some info about current node.
 
-  if(n_row_selected < peer_ids.size() && n_col_selected < service_ids.size())
+  if(n_row_selected < (int)peer_ids.size() && n_col_selected < (int)service_ids.size())
   {
       QRect position = computeNodePosition(n_row_selected,n_col_selected,false) ;
 
@@ -592,36 +592,14 @@ bool RSPermissionMatrixWidget::computeServiceGlobalSwitch(int x,int y,uint32_t& 
     return true ;
 }
 
-void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t ServiceId,bool b)
+void RSPermissionMatrixWidget::defaultPermissionSwitched(uint32_t /* ServiceId */,bool /* b */)
 {
     NOT_IMPLEMENTED ;
 }
 
-void RSPermissionMatrixWidget::userPermissionSwitched(uint32_t ServiceId,const RsPeerId& friend_id,bool b)
+void RSPermissionMatrixWidget::userPermissionSwitched(uint32_t /* ServiceId */,const RsPeerId& /* friend_id */,bool /* b */)
 {
     NOT_IMPLEMENTED ;
 }
 
-// void RSGraphWidget::paintLegend()
-// {
-//   int bottom = _rec.height();
-//
-//   std::vector<float> vals ;
-//   _source->getCurrentValues(vals) ;
-//
-//     for(uint i=0;i<vals.size();++i)
-//     {
-//         qreal paintStep = 4+FONT_SIZE;
-//         qreal pos = 20+i*paintStep;
-//         QString text = _source->legend(i,vals[i]) ;
-//
-//         QPen oldPen = _painter->pen();
-//         _painter->setPen(QPen(getColor(i), Qt::SolidLine));
-//         _painter->drawLine(QPointF(SCALE_WIDTH+10.0, pos),  QPointF(SCALE_WIDTH+30.0, pos));
-//         _painter->setPen(oldPen);
-//
-//     _painter->setPen(SCALE_COLOR);
-//         _painter->drawText(QPointF(SCALE_WIDTH + 40,pos + 0.5*FONT_SIZE), text) ;
-//     }
-// }
 

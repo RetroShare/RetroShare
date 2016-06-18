@@ -171,7 +171,7 @@ void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & option/*option*/, const QModelIndex & index) const
 {
     float FS = QFontMetricsF(option.font).height();
-    float fact = FS/14.0 ;
+    //float fact = FS/14.0 ;
 
     float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
 
@@ -187,8 +187,8 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent)
     BWDelegate = new BWListDelegate();
     bwTreeWidget->setItemDelegate(BWDelegate);
     
-    float FS = QFontMetricsF(font()).height();
-    float fact = FS/14.0 ;
+    //float FS = QFontMetricsF(font()).height();
+    //float fact = FS/14.0 ;
 
     /* Set header resize modes and initial section sizes Peer TreeView*/
     QHeaderView * _header = bwTreeWidget->header () ;

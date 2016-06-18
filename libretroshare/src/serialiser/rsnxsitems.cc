@@ -403,7 +403,7 @@ bool RsNxsGroupPublishKeyItem::serialise(void *data, uint32_t& size) const
         return false ;
 
     ok &= grpId.serialise(data, size, offset) ;
-    ok &= key.SetTlv(data, size, &offset) ;
+    ok &= private_key.SetTlv(data, size, &offset) ;
 
     if(offset != tlvsize)
     {
@@ -813,7 +813,7 @@ RsNxsGroupPublishKeyItem* RsNxsSerialiser::deserialNxsGroupPublishKeyItem(void *
     RsNxsGroupPublishKeyItem* item = new RsNxsGroupPublishKeyItem(SERVICE_TYPE);
 
     ok &= item->grpId.deserialise(data, *size, offset);
-    ok &= item->key.GetTlv(data, *size, &offset) ;
+    ok &= item->private_key.GetTlv(data, *size, &offset) ;
 
     if (offset != *size)
     {
@@ -959,7 +959,7 @@ uint32_t RsNxsGroupPublishKeyItem::serial_size() const
     uint32_t s = 8; // header size
 
     s += grpId.serial_size() ;
-    s += key.TlvSize();
+    s += private_key.TlvSize();
 
     return s;
 }
@@ -1093,7 +1093,7 @@ void RsNxsSyncGrpReqItem::clear()
 }
 void RsNxsGroupPublishKeyItem::clear()
 {
-    key.TlvClear();
+    private_key.TlvClear();
 }
 void RsNxsSyncMsgReqItem::clear()
 {
@@ -1165,7 +1165,7 @@ std::ostream& RsNxsGroupPublishKeyItem::print(std::ostream &out, uint16_t indent
     printIndent(out , int_Indent);
     out << "GroupId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    out << "keyId: " << key.keyId << std::endl;
+    out << "keyId: " << private_key.keyId << std::endl;
 
     printRsItemEnd(out ,"RsNxsGroupPublishKeyItem", indent);
 
@@ -1239,7 +1239,7 @@ RsNxsGrp* RsNxsGrp::clone() const {
 	if(this->metaData)
 	{
 		grp->metaData = new RsGxsGrpMetaData();
-		*(grp->metaData) = *(this->metaData);
+//		*(grp->metaData) = *(this->metaData);
 	}
 
 	return grp;

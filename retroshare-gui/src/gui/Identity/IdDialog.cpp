@@ -577,7 +577,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 		// remove any identity that has an item, but no subscription flag entry
 		std::vector<QTreeWidgetItem*> to_delete ;
-
+        
 		for(uint32_t k=0;k<item->childCount();++k)
 			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
 				to_delete.push_back(item->child(k));
@@ -1374,19 +1374,33 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
     item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore - 1.0f,'f',3));
 
-	 if(isOwnId)
-	 {
-        QFont font = item->font(RSID_COL_NICKNAME) ;
-		font.setBold(true) ;
-		item->setFont(RSID_COL_NICKNAME,font) ;
-		item->setFont(RSID_COL_IDTYPE,font) ;
-		item->setFont(RSID_COL_KEYID,font) ;
+    if(isOwnId)
+    {
+	    RsIdentityDetails idd ;
+	    rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
-		QString tooltip = tr("This identity is owned by you");
-		item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
-		item->setToolTip(RSID_COL_KEYID, tooltip) ;
-		item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
-	 }
+	    QFont font = item->font(RSID_COL_NICKNAME) ;
+
+	    font.setBold(true) ;
+	    item->setFont(RSID_COL_NICKNAME,font) ;
+	    item->setFont(RSID_COL_IDTYPE,font) ;
+	    item->setFont(RSID_COL_KEYID,font) ;
+
+	    QString tooltip = tr("This identity is owned by you");
+
+	    if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+	    {
+		    item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
+		    item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
+		    item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+
+		    tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
+	    }
+
+	    item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
+	    item->setToolTip(RSID_COL_KEYID, tooltip) ;
+	    item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
+    }
 
     QPixmap pixmap ;
 

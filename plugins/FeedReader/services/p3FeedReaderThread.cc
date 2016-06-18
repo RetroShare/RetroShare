@@ -1007,7 +1007,7 @@ std::string p3FeedReaderThread::getProxyForFeed(const RsFeedReaderFeed &feed)
 
 RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString)
 {
-	long todo_fill_errorString;
+	//long todo_fill_errorString;
 
 	if (!msg) {
 		return RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
@@ -1073,7 +1073,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	if (isRunning()) {
 		/* process description */
-		long todo; // encoding
+		//long todo; // encoding
 		HTMLWrapper html;
 		if (html.readHTML(msg->description.c_str(), url.c_str())) {
 			xmlNodePtr root = html.getRootElement();
@@ -1527,7 +1527,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processXslt(const std::string &xslt, 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
 	/* process description */
-	long todo; // encoding
+	//long todo; // encoding
 	HTMLWrapper html;
 	if (html.readHTML(description.c_str(), "")) {
 		xmlNodePtr root = html.getRootElement();

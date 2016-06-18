@@ -45,6 +45,7 @@ static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &de
 	case GXS_ID_DETAILS_TYPE_EMPTY:
 	case GXS_ID_DETAILS_TYPE_LOADING:
 	case GXS_ID_DETAILS_TYPE_FAILED:
+	case GXS_ID_DETAILS_TYPE_BANNED:
 		break;
 
 	case GXS_ID_DETAILS_TYPE_DONE:

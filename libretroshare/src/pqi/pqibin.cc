@@ -266,7 +266,7 @@ int BinEncryptedFileInterface::readdata(void* data, int len)
 		}
 
 
-		if(len <= sizeData)
+		if((uint64_t)len <= sizeData)
 		{
 			memcpy(data, this->data, len);
 			cpyCount += len;

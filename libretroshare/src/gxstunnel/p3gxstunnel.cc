@@ -890,7 +890,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
     RsTemporaryMemory data(pubkey_size) ;
     BN_bn2bin(item->public_key, data) ;
 
-    RsTlvSecurityKey signature_key ;
+    RsTlvPublicRSAKey signature_key ;
 
     // We need to get the key of the sender, but if the key is not cached, we
     // need to get it first. So we let the system work for 2-3 seconds before
@@ -1059,9 +1059,9 @@ bool p3GxsTunnelService::locked_sendDHPublicKey(const DH *dh,const RsGxsId& own_
 
 	// we should also sign the data and check the signature on the other end.
 	//
-	RsTlvKeySignature signature ;
-	RsTlvSecurityKey  signature_key ;
-	RsTlvSecurityKey  signature_key_public ;
+	RsTlvKeySignature  signature ;
+	RsTlvPrivateRSAKey signature_key ;
+	RsTlvPublicRSAKey  signature_key_public ;
 
 	uint32_t error_status ;
 

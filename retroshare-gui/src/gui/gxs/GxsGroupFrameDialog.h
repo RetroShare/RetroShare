@@ -122,7 +122,7 @@ private slots:
 	void markMsgAsRead();
 	void markMsgAsUnread();
 
-	void shareKey();
+	void sharePublishKey();
 
 	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 

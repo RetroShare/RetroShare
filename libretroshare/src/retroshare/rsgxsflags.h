@@ -102,6 +102,7 @@ namespace GXS_SERV {
 // GENERIC GXS MACROS
 #define IS_MSG_NEW(status)                      (status & GXS_SERV::GXS_MSG_STATUS_GUI_NEW)
 #define IS_MSG_UNREAD(status)                   (status & GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
+#define IS_MSG_UNPROCESSED(status)              (status & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
 
 #define IS_GROUP_PGP_AUTHED(signFlags)          (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
 #define IS_GROUP_MESSAGE_TRACKING(signFlags)    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
@@ -110,8 +111,5 @@ namespace GXS_SERV {
 #define IS_GROUP_PUBLISHER(subscribeFlags)      (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 #define IS_GROUP_SUBSCRIBED(subscribeFlags)     (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 #define IS_GROUP_NOT_SUBSCRIBED(subscribeFlags) (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED)
-
-#define IS_MSG_UNPROCESSED(status)              (status & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
-
 
 #endif // RSGXSFLAGS_H

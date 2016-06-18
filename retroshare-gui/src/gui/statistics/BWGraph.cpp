@@ -411,7 +411,7 @@ void BWGraphSource::setSelector(int selector_type,int graph_type,const std::stri
     {
 	    if(graph_type ==  GRAPH_TYPE_SINGLE)
 	    {
-		    bool ok = false ;
+		    //bool ok = false ;
 		    int tmp = QString::fromStdString(selector_client_string).toInt() ;
 
 		    if(tmp > 0 && tmp < 0x10000)

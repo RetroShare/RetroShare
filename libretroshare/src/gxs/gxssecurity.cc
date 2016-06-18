@@ -39,6 +39,20 @@ static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_HEADER_SIZE         = 2 ;
 static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_NUMBER_OF_KEYS_SIZE = 2 ;
 static const uint32_t MULTI_ENCRYPTION_FORMAT_v001_ENCRYPTED_KEY_SIZE  = 256 ;
         
+static RsGxsId getRsaKeyFingerprint_old_insecure_method(RSA *pubkey)
+{
+        int lenn = BN_num_bytes(pubkey -> n);
+
+        RsTemporaryMemory tmp(lenn) ;
+        BN_bn2bin(pubkey -> n, tmp);
+
+        // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
+	// We should not be using strings here, but a real ID. To be done later.
+
+	assert(lenn >= CERTSIGNLEN) ;
+
+        return RsGxsId((unsigned char*)tmp) ;
+}
 static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 {
         int lenn = BN_num_bytes(pubkey -> n);
@@ -59,7 +73,7 @@ static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
         return RsGxsId(s.toStdString().substr(0,2*CERTSIGNLEN));
 }
 
-static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
+static RSA *extractPrivateKey(const RsTlvPrivateRSAKey& key)
 {
     assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
@@ -72,7 +86,7 @@ static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
         return rsakey;
 }
 
-static RSA *extractPublicKey(const RsTlvSecurityKey& key)
+static RSA *extractPublicKey(const RsTlvPublicRSAKey& key)
 {
     assert(!(key.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
 
@@ -84,18 +98,39 @@ static RSA *extractPublicKey(const RsTlvSecurityKey& key)
 
         return rsakey;
 }
-static void setRSAPublicKeyData(RsTlvSecurityKey & key, RSA *rsa_pub)
+static void setRSAPublicKeyData(RsTlvPublicRSAKey& key, RSA *rsa_pub)
 {
+    assert(!(key.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
         unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
         int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
 
         key.keyData.setBinData(data, reqspace);
         key.keyId = getRsaKeyFingerprint(rsa_pub);
 
-		  free(data) ;
+	free(data) ;
 }
 
-bool GxsSecurity::checkPrivateKey(const RsTlvSecurityKey& key)
+static void setRSAPrivateKeyData(RsTlvPrivateRSAKey& key, RSA *rsa_priv)
+{
+    assert(key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
+    
+        unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
+        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
+
+        key.keyData.setBinData(data, reqspace);
+        key.keyId = getRsaKeyFingerprint(rsa_priv);
+
+	free(data) ;
+}
+bool GxsSecurity::checkFingerprint(const RsTlvPublicRSAKey& key)
+{
+    RSA *rsa_pub = ::extractPublicKey(key) ;
+    bool res = (key.keyId == getRsaKeyFingerprint(rsa_pub)) ;
+    RSA_free(rsa_pub) ;
+    return res ;
+}
+
+bool GxsSecurity::checkPrivateKey(const RsTlvPrivateRSAKey& key)
 {
 #ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking private key " << key.keyId << " ..." << std::endl;
@@ -122,17 +157,33 @@ bool GxsSecurity::checkPrivateKey(const RsTlvSecurityKey& key)
         return false ;
     }
     RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
-    RSA_free(rsa_pub) ;
 
     if(recomputed_key_id != key.keyId)
     {
-        std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
-        return false ;
+        if(key.keyId == getRsaKeyFingerprint_old_insecure_method(rsa_pub))
+        {
+#ifdef GXS_SECURITY_DEBUG
+        	std::cerr << "(WW) fingerprint of key " << key.keyId << " was derived using old---insecure---format. It can be faked easily. You should get rid of this key!" << std::endl;
+#endif
+		RSA_free(rsa_pub) ;
+        
+		// The policy is to *accept* these private keys, but the public key that corresponds will be rejected anyway, as it can easily be faked.
+		return true ;
+        }
+        else
+	{
+		std::cerr << "(WW) GxsSecurity::checkPrivateKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << std::endl;
+
+		RSA_free(rsa_pub) ;
+		return false ;
+	}
     }
 
+    RSA_free(rsa_pub) ;
     return true ;
 }
-bool GxsSecurity::checkPublicKey(const RsTlvSecurityKey& key)
+
+bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
 {
 #ifdef GXS_SECURITY_DEBUG
     std::cerr << "Checking public key " << key.keyId << " ..." << std::endl;
@@ -143,6 +194,19 @@ bool GxsSecurity::checkPublicKey(const RsTlvSecurityKey& key)
         std::cerr << "(WW) GxsSecurity::checkPublicKey(): public key has wrong flags " << std::hex << (key.keyFlags & RSTLV_KEY_TYPE_MASK) << std::dec << ". This is unexpected." << std::endl;
         return false ;
     }
+    
+    // try to extract private key
+    const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+    long keylen = key.keyData.bin_len;
+    RSA *rsa_prv = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+    
+    if(rsa_prv != NULL)
+    {
+        std::cerr << "(SS) GxsSecurity::checkPublicKey(): public key with ID " << key.keyId << " actually is a Private key!!!" << std::endl;
+	RSA_free(rsa_prv) ;
+    	return false ;
+    }
+    
     RSA *rsa_pub = ::extractPublicKey(key) ;
 
     if(rsa_pub == NULL)
@@ -151,53 +215,63 @@ bool GxsSecurity::checkPublicKey(const RsTlvSecurityKey& key)
         return false ;
     }
     RsGxsId recomputed_key_id = getRsaKeyFingerprint(rsa_pub) ;
-    RSA_free(rsa_pub) ;
 
     if(recomputed_key_id != key.keyId)
     {
-        std::cerr << "(WW) GxsSecurity::checkPublicKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! This is unexpected." << std::endl;
+        if(key.keyId == getRsaKeyFingerprint_old_insecure_method(rsa_pub))
+        {
+#ifdef GXS_SECURITY_DEBUG
+        	std::cerr << "(WW) fingerprint was derived using old---insecure---format. It can be faked easily." << std::endl;
+#endif
+	    RSA_free(rsa_pub) ;
+        
+	    // The policy is to accept these public keys, but warn the owner, since they might be fake keys. They will be soon rejected here, by replacing
+            // the return value by false.
+	    return true ;
+        }
+        else
+		std::cerr << "(WW) GxsSecurity::checkPublicKey(): key " << key.keyId << " has wrong fingerprint " << recomputed_key_id << "! Key will be discarded." << std::endl;
+            
+	RSA_free(rsa_pub) ;
         return false ;
     }
 
+    RSA_free(rsa_pub) ;
     return true ;
 }
 
-static void setRSAPrivateKeyData(RsTlvSecurityKey & key, RSA *rsa_priv)
-{
-        unsigned char *data = NULL ;
-        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
-
-        key.keyData.setBinData(data, reqspace);
-        key.keyId = getRsaKeyFingerprint(rsa_priv);
-
-		  free(data) ;
-}
-
-bool GxsSecurity::generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey& private_key)
+bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAKey& private_key)
 {
 	// admin keys
     RSA *rsa     = RSA_generate_key(2048, 65537, NULL, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
+    
+    public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
+    private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
     setRSAPublicKeyData(public_key, rsa_pub);
     setRSAPrivateKeyData(private_key, rsa);
 
     public_key.startTS  = time(NULL);
     public_key.endTS    = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
-    public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;
 
     private_key.startTS  = public_key.startTS;
     private_key.endTS    = 0; /* no end */
-    private_key.keyFlags = RSTLV_KEY_TYPE_FULL ;
 
     // clean up
     RSA_free(rsa);
     RSA_free(rsa_pub);
 
-	 return true ;
+    if(!(private_key.checkKey() && public_key.checkKey()))
+    {
+        std::cerr << "(EE) ERROR while generating keys. Something inconsistent in flags. This is probably a bad sign!" << std::endl;
+	return false ;
+    }
+                     
+    return true ;
 }
 
-bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecurityKey& public_key)
+bool GxsSecurity::extractPublicKey(const RsTlvPrivateRSAKey &private_key, RsTlvPublicRSAKey &public_key)
 {
     public_key.TlvClear() ;
 
@@ -241,30 +315,30 @@ bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecu
     return true ;
 }
 
-bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)
+bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvPrivateRSAKey &privKey, RsTlvKeySignature& sign)
 {
-	RSA* rsa_pub = extractPrivateKey(privKey);
+	RSA* rsa_priv = extractPrivateKey(privKey);
 
-	if(!rsa_pub)
+	if(!rsa_priv)
 	{
 		std::cerr << "GxsSecurity::getSignature(): Cannot create signature. Keydata is incomplete." << std::endl;
 		return false ;
 	}
-	EVP_PKEY *key_pub = EVP_PKEY_new();
-	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
+	EVP_PKEY *key_priv = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(key_priv, rsa_priv);
 
 	/* calc and check signature */
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	bool ok = EVP_SignInit(mdctx, EVP_sha1()) == 1;
 	ok &= EVP_SignUpdate(mdctx, data, data_len) == 1;
 
-	unsigned int siglen = EVP_PKEY_size(key_pub);
+	unsigned int siglen = EVP_PKEY_size(key_priv);
 	unsigned char sigbuf[siglen];
-	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_pub) == 1;
+	ok &= EVP_SignFinal(mdctx, sigbuf, &siglen, key_priv) == 1;
 
 	// clean up
 	EVP_MD_CTX_destroy(mdctx);
-	EVP_PKEY_free(key_pub);
+	EVP_PKEY_free(key_priv);
 
 	sign.signData.setBinData(sigbuf, siglen);
 	sign.keyId = RsGxsId(privKey.keyId);
@@ -272,12 +346,11 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 	return ok;
 }
 
-bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
+bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvPublicRSAKey &key, const RsTlvKeySignature& signature)
 {
-    RSA *tmpkey = (key.keyFlags & RSTLV_KEY_TYPE_FULL)?(::extractPrivateKey(key)):(::extractPublicKey(key)) ;
-
-    RSA *rsakey = RSAPublicKey_dup(tmpkey) ;	// always extract public key
-    RSA_free(tmpkey) ;
+    assert(!(key.keyFlags & RSTLV_KEY_TYPE_FULL)) ;
+        
+	RSA *rsakey = ::extractPublicKey(key) ;
 
 	if(!rsakey)
 	{
@@ -303,7 +376,7 @@ bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const R
 	return signOk;
 }
 
-bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
+bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& sign, const RsTlvPublicRSAKey& key)
 {
     #ifdef GXS_SECURITY_DEBUG
             std::cerr << "GxsSecurity::validateNxsMsg()";
@@ -417,7 +490,7 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
 	return false;
 }
 
-bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const RsTlvPublicRSAKey& key)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
@@ -532,7 +605,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
 	return true;
 }
 
-bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys)
+bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvPublicRSAKey> &keys)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
@@ -685,7 +758,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, uint32_t &outlen, const uint8_t *in, u
     }
 }
 
-bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const RsTlvPrivateRSAKey &key)
 {
 	// Decrypts (in,inlen) into (out,outlen) using the given RSA public key.
 	// The format of the encrypted data (in) is:
@@ -791,7 +864,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	 return true;
 }
 
-bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvSecurityKey>& keys)
+bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, uint32_t inlen, const std::vector<RsTlvPrivateRSAKey> &keys)
 {
         // Decrypts (in,inlen) into (out,outlen) using one of the given RSA public keys, trying them all in a row.
         // The format of the encrypted data is:
@@ -936,7 +1009,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
         return false;
     }
 }
-bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvSecurityKey& key)
+bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& sign, const RsTlvPublicRSAKey &key)
 {
 #ifdef GXS_SECURITY_DEBUG
 	std::cerr << "GxsSecurity::validateNxsGrp()";
@@ -974,7 +1047,7 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 #endif
 
 	/* extract admin key */
-	RSA *rsakey =  (key.keyFlags & RSTLV_KEY_TYPE_FULL)? d2i_RSAPrivateKey(NULL, &(keyptr), keylen): d2i_RSAPublicKey(NULL, &(keyptr), keylen);
+	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
 	if (!rsakey)
 	{
@@ -1049,4 +1122,21 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 	return false;
 }
 
-
+void GxsSecurity::createPublicKeysFromPrivateKeys(RsTlvSecurityKeySet& keyset)
+{
+    for( std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it = keyset.private_keys.begin(); it != keyset.private_keys.end() ; ++it)
+        if(keyset.public_keys.find(it->second.keyId) == keyset.public_keys.end())
+        {
+            RsTlvPublicRSAKey pub_key ;
+            
+            if(!extractPublicKey(it->second,pub_key))
+            {
+                std::cerr << "(EE) ERROR when trying to generate public key from private key for ID " << it->second.keyId << ". This is probably a bug with security implications." << std::endl;
+                continue ;
+            }
+            
+            keyset.public_keys[it->second.keyId] = pub_key ;
+            
+            std::cerr << "(II) Generated missing public key for ID " << it->second.keyId << " from private key." << std::endl;
+        }
+}

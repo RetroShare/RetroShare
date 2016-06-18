@@ -207,12 +207,16 @@ const uint16_t TLV_TYPE_GXSCIRCLEIDSET= 0x1026;
 
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
-const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
-const uint16_t TLV_TYPE_SECURITYKEYSET= 0x1041;
+// *_deprectate should not be used anymore!! 
+// We use 1040 for both public and private keys, so that transmitting them still works (backward compatibility), and so that
+// signatures are kept. But the two different classes will check that the flags are correct when deserialising.
 
-const uint16_t TLV_TYPE_KEYSIGNATURE  = 0x1050;
+const uint16_t TLV_TYPE_SECURITY_KEY   = 0x1040;
+const uint16_t TLV_TYPE_SECURITYKEYSET = 0x1041;
+
+const uint16_t TLV_TYPE_KEYSIGNATURE     = 0x1050;
 const uint16_t TLV_TYPE_KEYSIGNATURESET  = 0x1051;
-const uint16_t TLV_TYPE_KEYSIGNATURETYPE  = 0x1052;
+const uint16_t TLV_TYPE_KEYSIGNATURETYPE = 0x1052;
 
 const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 

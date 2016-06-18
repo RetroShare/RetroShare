@@ -624,8 +624,9 @@ void NewsFeed::loadChannelPublishKey(const uint32_t &token)
 		std::cerr << std::endl;
 		return;
 	}
-
+#ifdef UNUSED_CODE
 	MessageComposer::sendChannelPublishKey(groups[0]);
+#endif
 }
 
 void NewsFeed::loadForumGroup(const uint32_t &token)
@@ -717,8 +718,9 @@ void NewsFeed::loadForumPublishKey(const uint32_t &token)
 		std::cerr << std::endl;
 		return;
 	}
-
+#ifdef UNUSED_CODE
 	MessageComposer::sendForumPublishKey(groups[0]);
+#endif
 }
 
 void NewsFeed::loadPostedGroup(const uint32_t &token)
