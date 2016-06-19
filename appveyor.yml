@@ -12,7 +12,7 @@
 #---------------------------------#
 
 # version format
-version: RetroShare 6.0.{build}-{branch}
+version: RetroShare 0.6.0.{build}-{branch}
 
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}

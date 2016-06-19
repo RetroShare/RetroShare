@@ -8,7 +8,7 @@ Build Status
 | Platform  | Build Status |
 | :------------- | :------------- |
 | GNU/Linux, MacOS, (via travis-ci)  | [![Build Status](https://travis-ci.org/RetroShare/RetroShare.svg?branch=master)](https://travis-ci.org/RetroShare/RetroShare)  |
-| Windows, `MSys2` (via appveyor)  | [![Build status](https://ci.appveyor.com/api/projects/status/axkopdqj9fc48kwe?svg=true)](https://ci.appveyor.com/project/PhenomRetroShare/retroshare)  |
+| Windows, `MSys2` (via appveyor)  | [![Build status](https://ci.appveyor.com/api/projects/status/fu7q0ye6pge53579?svg=true)](https://ci.appveyor.com/project/PhenomRetroShare/retroshare-59qxh)  |
 
 Compilation on Windows
 ----------------------------
