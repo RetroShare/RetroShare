@@ -1,5 +1,118 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  ddce43b csoler Sat, 18 Jun 2016 20:43:42 -0400 Merge pull request #422 from PhenomRetroShare/Fix_ReadMe.md
+  24eb88a csoler Sat, 18 Jun 2016 20:38:48 -0400 added explicit comparisons for tests on RsGxsGrpMetaData and RsGxsMsgMetaData
+  0388162 Phenom Sun, 19 Jun 2016 01:37:50 +0200 Change Build AppVeyor State to RetroShare/RetroShare.
+  bc04f3c csoler Sat, 18 Jun 2016 17:43:50 -0400 Merge pull request #421 from PhenomRetroShare/Fix_UnitTestCompilation
+  43f618f Phenom Sat, 18 Jun 2016 23:10:12 +0200 Fix UnitTest Compilation
+  07bda26 csoler Sat, 18 Jun 2016 16:27:15 -0400 fixed permission matrix widget crash
+  35da9cb csoler Sat, 18 Jun 2016 15:36:03 -0400 Merge pull request #419 from PhenomRetroShare/Fix_ChannelNewsFeedWhenComment
+  90a27f4 csoler Sat, 18 Jun 2016 15:33:10 -0400 Merge pull request #418 from sehraf/pr-improve-debug
+  d84fdff Phenom Sat, 18 Jun 2016 20:03:55 +0200 Fix GxsChannelPostItem when received comment.
+  3cf1968 sehraf Sat, 18 Jun 2016 18:04:18 +0200 fixed p3msgservice.cc
+  d8235c6 sehraf Sat, 18 Jun 2016 13:08:14 +0200 removed dead code and cleanup
+  09afbbe sehraf Sat, 18 Jun 2016 13:00:15 +0200 switched to new rslog method
+  7627bd9 csoler Fri, 17 Jun 2016 22:53:05 -0400 Merge pull request #417 from csoler/v0.6-SecurityKeys
+  f57f620 csoler Fri, 17 Jun 2016 22:27:00 -0400 reduced database testing/cleaning frequency to 31/59 mins.
+  eb05922 csoler Fri, 17 Jun 2016 22:21:06 -0400 added a tooltip and read color for unsecure GXS identities. These are still supported for a few weeks at most. So get rid of them
+  4df4bb6 csoler Fri, 17 Jun 2016 20:46:58 -0400 fixed removal of messages in unsubscribed groups
+  886d896 csoler Fri, 17 Jun 2016 20:46:24 -0400 fixed warning about old fingerprint for own keys.
+  f6c5a05 sehraf Fri, 17 Jun 2016 11:09:59 +0200 switched to caller providing all needed information instead of saving those on callee side
+  cc6ae74 csoler Thu, 16 Jun 2016 23:17:40 -0400 fixed color of admin circles (we cannot use a bullet, since bullets are kept for Membership property)
+  4d452bf csoler Thu, 16 Jun 2016 18:34:33 -0400 removed annoying warning in avatar widget
+  c25b650 csoler Thu, 16 Jun 2016 23:10:13 -0400 removed check key debug info
+  25c0c9d csoler Thu, 16 Jun 2016 23:06:07 -0400 added systematic consistency checking of public/private RSA keys at deserialisation time
+  b9ba51f csoler Thu, 16 Jun 2016 22:23:27 -0400 improved naming of publish/admin rights in GroupTreeWidget
+  8d54603 csoler Thu, 16 Jun 2016 21:27:28 -0400 fixed bug in private key extraction
+  dbd78d2 csoler Thu, 16 Jun 2016 20:19:03 -0400 merged with upstream/master
+  e28e972 sehraf Thu, 16 Jun 2016 21:26:02 +0200 removed dead code
+  70662cf defnax Thu, 16 Jun 2016 18:41:56 +0200 Fixed some layout spacing
+  656e7eb csoler Wed, 15 Jun 2016 23:27:30 -0400 Merge pull request #415 from PhenomRetroShare/Add_BuildStatusInReadme.md
+  c7da734 csoler Wed, 15 Jun 2016 21:38:14 -0400 Merge pull request #416 from csoler/v0.6-ContactList
+  e63f936 csoler Wed, 15 Jun 2016 21:33:27 -0400 improved strategy for removal of unused GXS ids with proper constants for unknown/signed/known ids. Forbid the stamping of banned keys.
+  da11995 defnax Wed, 15 Jun 2016 23:32:01 +0200 Clean up the Chat Toolbar Buttons Fixed display of Info Text on PGg details
+  631a29c Phenom Wed, 15 Jun 2016 20:53:56 +0200 Add Build Status in ReadMe.md file. And add AppVeyor File.
+  6b74a8a csoler Tue, 14 Jun 2016 21:54:09 -0400 added missing call to ssl_pendign in pqissludp.
+  c3eba4a csoler Tue, 14 Jun 2016 21:53:48 -0400 added missing serialisation call for peer bandwidth limits
+  8c44e69 csoler Tue, 14 Jun 2016 21:53:06 -0400 added output of items which doesnot serialise correctly in pqisslstore
+  ceecdb2 csoler Tue, 14 Jun 2016 20:31:38 -0400 Merge pull request #414 from PhenomRetroShare/Add_MessageWhenSendingArgToOtherInstance
+  cedce2e csoler Tue, 14 Jun 2016 20:30:06 -0400 Merge pull request #260 from PhenomRetroShare/Add_SendAsPlainText_And_NoEmoteIcon_Button
+  69e98b8 defnax Wed, 15 Jun 2016 00:08:45 +0200 Added count Invited Members to Create Circles Dialog. Changed some context menu icons for People list and Circles tree. Added icon when im Cir
+  ddbcd21 Phenom Wed, 27 Jan 2016 20:27:44 +0100 Add buttons to send message in plain text and without EmoteIcon.
+  9b09187 Phenom Tue, 14 Jun 2016 15:10:15 +0200 Add message, when sending arguments to other instance, to disable this option.
+  56e0797 csoler Mon, 13 Jun 2016 23:06:10 -0400 Merge pull request #413 from csoler/v0.6-Circles
+  e03c5df csoler Mon, 13 Jun 2016 22:38:51 -0400 improved GUI layout in circle creation box. Added tooltips
+  600607d csoler Mon, 13 Jun 2016 22:14:09 -0400 added warning for old peers in circles
+  8b954a2 csoler Mon, 13 Jun 2016 18:08:05 -0400 added names to upnp redirects to avoid router confusion (patch from ET)
+  fa29dd7 csoler Sun, 12 Jun 2016 21:41:09 -0400 changed the way RsGxsSyncMsgReqItem are sent for circle-restricted groups, using a hash of the group ID instead of encrypting the whole item, 
+  972de42 csoler Sat, 11 Jun 2016 18:07:57 -0400 converted static variable to class member in pqihandler
+  34f49d4 csoler Sat, 11 Jun 2016 18:07:07 -0400 removed compilation warning
+  248d0c4 csoler Sat, 11 Jun 2016 17:58:08 -0400 Merge pull request #412 from csoler/v0.6-MaxUpRate
+  ef4455a csoler Sat, 11 Jun 2016 17:54:11 -0400 cleaned the MaxUpRate branch from unused code
+  8e75185 csoler Sat, 11 Jun 2016 17:21:04 -0400 made avgReadCount and avgSendCound to be uint32_t instead of floats, since they count bytes. Changes kb to 1024 instead of 1000
+  eb9025d csoler Sat, 11 Jun 2016 17:20:22 -0400 removed annoying warning when a circle is empty
+  373d41b csoler Sat, 11 Jun 2016 14:11:21 -0400 added missing variable def after previous commit
+  23e8e93 csoler Sat, 11 Jun 2016 09:50:22 -0400 added mutex proteciton around mAvgLastUpdate to avoid it being changed by the constructor
+  0d1d31a csoler Sat, 11 Jun 2016 09:33:11 -0400 added mutex protection around pqistreamer::getRates, since float r/w are not necessarily atomic
+  eba90a8 csoler Sat, 11 Jun 2016 09:24:33 -0400 Merge pull request #411 from PhenomRetroShare/Add_SIGFPE_Debug_DEFINES
+  afe23e7 csoler Sat, 11 Jun 2016 09:22:53 -0400 Merge pull request #410 from PhenomRetroShare/Fix_SIGFPE_InQProgressBar_PrintEvent
+  d649659 Phenom Sat, 11 Jun 2016 14:38:31 +0200 Add SIGFPE debug DEFINES.
+  08258ca Phenom Sat, 11 Jun 2016 14:23:26 +0200 Fix SIGFPE in QProgressBar::paintEvent
+  d1be3f3 defnax Fri, 10 Jun 2016 13:40:24 +0200 Set a minimum column width
+  83a1434 csoler Thu,  9 Jun 2016 23:23:51 -0400 fixed bug in setting MaxRate values
+  f5ad8b4 csoler Thu,  9 Jun 2016 23:13:07 -0400 moved node-wide options to node details
+  a4931ed csoler Thu,  9 Jun 2016 20:51:09 -0400 fixed setting/getting maxrates using pgp id
+  a07805b csoler Thu,  9 Jun 2016 20:41:27 -0400 moved bandwidth limits to the pgp level
+  38b86c3 csoler Thu,  9 Jun 2016 18:12:04 -0400 improved debug output for early address rejection
+  6b78275 csoler Wed,  8 Jun 2016 22:54:40 -0400 fixed bug in loading config file to set max rates
+  5a0fa66 csoler Wed,  8 Jun 2016 22:44:28 -0400 added proper talking between pqihandler and GUI for maxrates fixing
+  226e85c csoler Wed,  8 Jun 2016 21:00:26 -0400 added dropmenu entry in circles to allow admin to grant/deny membership
+  509266a csoler Tue,  7 Jun 2016 22:38:24 -0400 removed some dead code
+  a1bbcd8 csoler Tue,  7 Jun 2016 22:06:32 -0400 fixed a few small issues in new peer rates
+  20b6745 csoler Tue,  7 Jun 2016 21:48:22 -0400 added GUI and storage for max up/dn rates per peer
+  0e85709 csoler Tue,  7 Jun 2016 11:00:34 -0400 Merge pull request #409 from sehraf/pr-upnp-version
+  2d5883c sehraf Tue,  7 Jun 2016 16:30:39 +0200 add UPnP lib version
+  1c1b7ac csoler Mon,  6 Jun 2016 22:55:23 -0400 attempt at fixing the crash when quitting RS (due to operator new not being able to allocate memory from deleted allocator
+  54a0ca4 csoler Sun,  5 Jun 2016 15:49:33 -0400 added line in circle tooltip for visibility. Re-worked tooltip text a little bit
+  ee25596 csoler Sun,  5 Jun 2016 15:20:48 -0400 updated tooltip and names for self-restricted circles to "private"
+  195ad4e csoler Sun,  5 Jun 2016 15:15:40 -0400 use grey bullet as a placeholder for circles without pending operations
+  456b57b csoler Sun,  5 Jun 2016 13:17:30 -0400 Merge pull request #205 from pztrn/master
+  9f2d6bd csoler Sun,  5 Jun 2016 13:02:13 -0400 Merge pull request #259 from heini/rhel_fedora_qt5
+  e2e9ede csoler Sun,  5 Jun 2016 11:51:47 -0400 fixed initialization of memebrs in peerDetails
+  f1d69ad csoler Sun,  5 Jun 2016 11:26:29 -0400 Merge pull request #351 from PhenomRetroShare/Add_WebUI_ClearButtonOnBradCast
+  f55b283 csoler Sun,  5 Jun 2016 11:05:52 -0400 second pass over compilation warnings
+  927f782 csoler Sun,  5 Jun 2016 10:43:57 -0400 pass over compiler warnings
+  c2ae4fc csoler Sun,  5 Jun 2016 10:06:11 -0400 merged upstream/master
+  2567feb csoler Sun,  5 Jun 2016 09:54:26 -0400 fixed compilation broken by using deprecated Qt method
+  a2ca038 csoler Sat,  4 Jun 2016 21:39:40 -0400 fixed compilation and several problems following separation of public/private keys
+  0eb4e9e defnax Sat,  4 Jun 2016 21:27:20 +0200 - renamed label "restricted to group" to "restricted to circle" - changed icon
+  b2497cc csoler Sat,  4 Jun 2016 09:45:17 -0400 Merge pull request #406 from sehraf/pr-fixes-#2
+  24f619d csoler Sat,  4 Jun 2016 03:20:45 +0200 added missing include for debian squeeze
+  d8189d0 csoler Fri,  3 Jun 2016 21:11:12 -0400 moved placeholder text from .ui to .cpp to allow compilation with old Qt
+  99f54a2 defnax Fri,  3 Jun 2016 19:16:59 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  4300d87 defnax Fri,  3 Jun 2016 19:15:24 +0200 Set default Header Stylesheet for Circles
+  814db7e csoler Fri,  3 Jun 2016 19:15:16 +0200 fixed possible uninitialised memory read
+  4c986cd csoler Fri,  3 Jun 2016 19:03:10 +0200 attempt to fix the pthread_setname_np symbol issue. To be tested
+  0d10603 sehraf Fri,  3 Jun 2016 09:02:19 +0200 fix build errors (return typ is a pointer and not boolean)
+  590be09 csoler Thu,  2 Jun 2016 23:47:57 -0400 separated RsTlvSecurityKey into two incompatible classes to enforce the correct usage of private vs. public keys
+  53eb4df csoler Thu,  2 Jun 2016 21:21:18 -0400 fixed compilation errors due to last merge operation
+  e2b5785 csoler Thu,  2 Jun 2016 21:15:51 -0400 merged PR403 with trunk
+  10e0254 csoler Thu,  2 Jun 2016 20:23:22 -0400 fixed a few things to correct PR403
+  699b3cf csoler Thu,  2 Jun 2016 20:38:28 -0400 Merge pull request #402 from PhenomRetroShare/Fix_WindowsCompilationWithMksTemp
+  5362fd3 csoler Thu,  2 Jun 2016 20:36:51 -0400 Merge pull request #401 from PhenomRetroShare/Fix_WindowsCompilationWithThreadName
+  6f5693d csoler Thu,  2 Jun 2016 18:26:43 -0400 Merge pull request #405 from PhenomRetroShare/Fix_UnitTestsCompilation
+  2c8d047 Phenom Thu,  2 Jun 2016 19:34:58 +0200 Fix UnitTests Compilation
+  2f4f44e csoler Thu,  2 Jun 2016 09:36:50 -0400 added early discarding of incoming connection attempt (before SSL handshake) for blacklisted IPs
+  6e38554 sehraf Thu,  2 Jun 2016 13:22:24 +0200 rename define UBUNTU to HAS_GNOME_KEYRING The name UBUNTU is misleading since it is only used to select the keyring backend (which is gnome key
+  4f60c8c sehraf Thu,  2 Jun 2016 14:53:15 +0200 libretroshare: fix comparison between signed and unsigned integer
+  8b788b2 sehraf Thu,  2 Jun 2016 14:44:33 +0200 libretroshare: fix member initialisation order
+  cfc0e70 sehraf Thu,  2 Jun 2016 14:42:32 +0200 libretroshare: remove unused variables
+  005af47 Phenom Wed,  1 Jun 2016 22:37:05 +0200 Fix Compilation when mkstemp is not defined.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 20 Jun 2016 14:00:00 -0500
+
+retroshare06 (0.6.0-1.20160601.1f8a6ee2~trusty) trusty; urgency=low
+
   cbef014 csoler        Sun, 29 May 2016 16:09:56 -0400 added regular test of circle auto-subscribe from cache, and auto-subscribe w
   2bde81f csoler        Sat, 28 May 2016 21:09:44 -0400 removed more debug info, improved tooltips
   ccd72cb csoler        Sat, 28 May 2016 20:58:28 -0400 removed some debug info. Added information tooltips on circles and ids in ci
