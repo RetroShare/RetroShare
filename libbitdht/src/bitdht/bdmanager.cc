@@ -69,7 +69,7 @@
 
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, const std::string& filterfile,bdDhtFunctions *fns)
-    :bdNode(id, dhtVersion, bootfile, filterfile, fns)
+    :bdNode(id, dhtVersion, bootfile, filterfile, fns, this)
 {
 	mMode = BITDHT_MGR_STATE_OFF;
 	mFns = fns;
@@ -1179,10 +1179,9 @@ void bdNodeManager::doPeerCallback(const bdId *id, uint32_t status)
 
 void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
+#ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doValueCallback()";
 	std::cerr << std::endl;
-
-#ifdef DEBUG_MGR
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
@@ -1196,10 +1195,9 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
 
 void bdNodeManager::doInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info)
 {
+#ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doInfoCallback()";
 	std::cerr << std::endl;
-
-#ifdef DEBUG_MGR
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
@@ -1208,6 +1206,28 @@ void bdNodeManager::doInfoCallback(const bdId *id, uint32_t type, uint32_t flags
                 (*it)->dhtInfoCallback(id, type, flags, info);
         }
         return;
+}
+
+void bdNodeManager::doIsBannedCallback(const sockaddr_in *addr, bool *isAvailable, bool *isBanned)
+{
+#ifdef DEBUG_MGR
+	std::cerr << "bdNodeManager::doIsBannedCallback()";
+	std::cerr << std::endl;
+#endif
+	/* search list */
+	std::list<BitDhtCallback *>::iterator it;
+	*isBanned = false;
+	*isAvailable = false;
+	for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
+	{
+		// set isBanned to true as soon as one callback answers with true
+		bool banned;
+		if((*it)->dhtIsBannedCallback(addr, &banned))
+		{
+			*isBanned = *isBanned || banned;
+			*isAvailable = true;
+		}
+	}
 }
 
 

@@ -32,6 +32,8 @@
 #include "tcponudp/udprelay.h"
 #include "tcponudp/udpstunner.h"
 
+#include "retroshare/rsbanlist.h"
+
 #include <openssl/sha.h>
 
 
@@ -75,6 +77,27 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 { 
 	return mParent->InfoCallback(id, type, flags, info);
 }  
+
+	virtual int dhtIsBannedCallback(const sockaddr_in *addr, bool *isBanned)
+	{
+		// check whether ip filtering is enabled
+		// if not return 0 to signal that no filter is available
+		if(!rsBanList->ipFilteringEnabled())
+			return 0;
+
+		// now check the filter
+		if(rsBanList->isAddressAccepted(*(const sockaddr_storage*)addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, NULL)) {
+			*isBanned = false;
+		} else {
+#ifdef DEBUG_BITDHT
+			std::cerr << "p3BitDht dhtIsBannedCallback: peer is banned " << sockaddr_storage_tostring(*(const sockaddr_storage*)addr) << std::endl;
+#endif
+			*isBanned = true;
+		}
+
+		// return 1 to signal that a filter is available
+		return 1;
+	}
 
 	private:
 
