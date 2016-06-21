@@ -70,10 +70,10 @@
 
 #define HISTORY_PERIOD  60
 
-bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile, bdDhtFunctions *fns)
+bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile, bdDhtFunctions *fns, bdNodeManager *manager)
     :mNodeSpace(ownId, fns),
-         mFilterPeers(filterfile,ownId, BITDHT_FILTER_REASON_OWNID, fns),
-      mQueryMgr(NULL),
+          mFilterPeers(filterfile,ownId, BITDHT_FILTER_REASON_OWNID, fns, manager),
+          mQueryMgr(NULL),
           mConnMgr(NULL),
           mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns),
           mFriendList(ownId), mHistory(HISTORY_PERIOD)

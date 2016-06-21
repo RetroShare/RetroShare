@@ -47,10 +47,12 @@ class bdFilteredPeer
     time_t mLastSeen;
 };
 
+class bdNodeManager;
+
 class bdFilter
 {
 	public:
-    bdFilter(const std::string& fname,const bdNodeId *ownid, uint32_t filterFlags, bdDhtFunctions *fns);
+    bdFilter(const std::string& fname, const bdNodeId *ownid, uint32_t filterFlags, bdDhtFunctions *fns, bdNodeManager *manager);
 
 	// get the answer.
 //bool	filtered(std::list<bdFilteredPeer> &answer);
@@ -77,9 +79,12 @@ bool	isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags);
 	bdNodeId mOwnId;
 	uint32_t mFilterFlags;
 
-    std::map<uint32_t,bdFilteredPeer> mFiltered;
-    bdDhtFunctions *mFns;
-    std::string mFilename ;
+	std::map<uint32_t,bdFilteredPeer> mFiltered;
+	bdDhtFunctions *mFns;
+	std::string mFilename ;
+
+	// have access to the manager for isBanned callback
+	bdNodeManager* mNodeManager;
 };
 
 
