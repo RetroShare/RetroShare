@@ -209,7 +209,9 @@ virtual bool	getDHTEnabled();
 /************************************************************************************************/
 
 void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+#ifdef RS_USE_DHT_STUNNER
 void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
+#endif // RS_USE_DHT_STUNNER
 
 void 	tick();
 
@@ -319,8 +321,10 @@ private:
 	p3LinkMgr *mLinkMgr; 
 
 	//p3BitDht   *mBitDht;
+#ifdef RS_USE_DHT_STUNNER
 	pqiAddrAssist *mDhtStunner;
 	pqiAddrAssist *mProxyStunner;
+#endif // RS_USE_DHT_STUNNER
 
 	RsMutex mNetMtx; /* protects below */
 

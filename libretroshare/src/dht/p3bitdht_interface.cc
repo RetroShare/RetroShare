@@ -152,7 +152,7 @@ std::string p3BitDht::getUdpAddressString()
 		
 	struct sockaddr_in extAddr;
 	uint8_t extStable;
-
+#ifdef RS_USE_DHT_STUNNER
 	if (mDhtStunner->externalAddr(extAddr, extStable))
 	{
 		rs_sprintf_append(out, " DhtExtAddr: %s:%u", rs_inet_ntoa(extAddr.sin_addr).c_str(), ntohs(extAddr.sin_port));
@@ -187,7 +187,10 @@ std::string p3BitDht::getUdpAddressString()
 	{
 		out += " ProxyExtAddr: Unknown ";
 	}
-		
+#else // RS_USE_DHT_STUNNER
+	// whitespaces taken from above
+	out = " DhtExtAddr: Unknown  ProxyExtAddr: Unknown ";
+#endif // RS_USE_DHT_STUNNER
 	return out;
 }
 

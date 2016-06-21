@@ -30,7 +30,9 @@
 #include "bitdht/bdstddht.h"
 
 #include "tcponudp/udprelay.h"
+#ifdef RS_USE_DHT_STUNNER
 #include "tcponudp/udpstunner.h"
+#endif // RS_USE_DHT_STUNNER
 
 #include <openssl/sha.h>
 
@@ -86,8 +88,10 @@ p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
             UdpStack *udpstack, std::string bootstrapfile,const std::string& filteredipfile)
 	:p3Config(), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
+#ifdef RS_USE_DHT_STUNNER
 	mDhtStunner = NULL;
 	mProxyStunner = NULL;
+#endif
 	mRelay = NULL;
 
         mPeerSharer = NULL;
@@ -168,13 +172,19 @@ bool 	p3BitDht::getOwnDhtId(std::string &ownDhtId)
 	return true;
 }
 
-
+#ifdef RS_USE_DHT_STUNNER
 void    p3BitDht::setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay)
 {
 	mDhtStunner = dhtStunner;
 	mProxyStunner = proxyStunner;
 	mRelay = relay;
 }
+#else // RS_USE_DHT_STUNNER
+void    p3BitDht::setupConnectBits(UdpRelayReceiver  *relay)
+{
+	mRelay = relay;
+}
+#endif //RS_USE_DHT_STUNNER
 
 void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 {
