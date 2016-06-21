@@ -395,9 +395,6 @@ void p3IdService::cleanUnusedKeys()
 		}
 
 		// grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
-        
-		time_t now = time(NULL) ;
-		int n=0 ;
 		IdCacheEntryCleaner idcec(mKeysTS) ;
 
 		mKeyCache.applyToAllCachedEntries(idcec,&IdCacheEntryCleaner::processEntry);

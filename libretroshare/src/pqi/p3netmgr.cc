@@ -1736,12 +1736,12 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 	std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() ";
 	std::cerr << std::endl;
 #endif
-
-	uint8_t isstable = 0;
 	struct sockaddr_storage tmpaddr;
 	sockaddr_storage_clear(tmpaddr);
 
 #ifdef RS_USE_DHT_STUNNER
+	uint8_t isstable = 0;
+
 	if (mDhtStunner)
 	{
 

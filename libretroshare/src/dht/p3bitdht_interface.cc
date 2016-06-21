@@ -149,10 +149,10 @@ int      p3BitDht::getNetFailedPeer(std::string peerId, PeerStatus &status)
 std::string p3BitDht::getUdpAddressString()
 {
 	std::string out;
-		
+#ifdef RS_USE_DHT_STUNNER
 	struct sockaddr_in extAddr;
 	uint8_t extStable;
-#ifdef RS_USE_DHT_STUNNER
+
 	if (mDhtStunner->externalAddr(extAddr, extStable))
 	{
 		rs_sprintf_append(out, " DhtExtAddr: %s:%u", rs_inet_ntoa(extAddr.sin_addr).c_str(), ntohs(extAddr.sin_port));

@@ -686,7 +686,6 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 #endif
 
 				struct sockaddr_in extaddr;
-				uint8_t extStable = 0;
 				sockaddr_clear(&extaddr);
 
 				bool connectOk = false;
@@ -735,6 +734,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				}
 
 #ifdef RS_USE_DHT_STUNNER
+				uint8_t extStable = 0;
+
 				UdpStunner *stunner = mProxyStunner;
 				if (!proxyPort)
 				{
@@ -855,6 +856,8 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				}
 #else // RS_USE_DHT_STUNNER
 				connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
+				(void) connectOk;
+				(void) exclusivePort;
 #endif // RS_USE_DHT_STUNNER
 			}
 
@@ -1195,7 +1198,6 @@ int p3BitDht::doActions()
 				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
 				{
 					struct sockaddr_in extaddr;
-					uint8_t extStable = 0;
 					sockaddr_clear(&extaddr);
 					bool proxyPort = true;
 					bool exclusivePort = false;
@@ -1242,6 +1244,8 @@ int p3BitDht::doActions()
 						}
 					}
 #ifdef RS_USE_DHT_STUNNER
+					uint8_t extStable = 0;
+
 					UdpStunner *stunner = mProxyStunner;
 					if (!proxyPort)
 					{
@@ -1344,6 +1348,7 @@ int p3BitDht::doActions()
 #else // RS_USE_DHT_STUNNER
 					connectionReqFailed = true;
 					failReason = CSB_UPDATE_RETRY_ATTEMPT;
+					(void) connectOk;
 #endif //RS_USE_DHT_STUNNER
 				}
 
@@ -2404,6 +2409,8 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 #endif
 		}
 		else 
+#else // RS_USE_DHT_STUNNER
+		(void)addrChgLikely;
 #endif // RS_USE_DHT_STUNNER
 		{
 			dpd->mExclusiveProxyLock = false;
