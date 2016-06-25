@@ -135,17 +135,7 @@ pqistreamer::~pqistreamer()
 	if (mRsSerialiser)
 		delete mRsSerialiser;
 
-	// clean up outgoing. (cntrl packets)
-	locked_clear_out_queue() ;
-
-	if (mPkt_wpending)
-	{
-		free(mPkt_wpending);
-		mPkt_wpending = NULL;
-        	mPkt_wpending_size = 0 ;
-	}
-
-    free_rpend_locked();
+    free_pend_locked();
 
 	// clean up incoming.
     while(!mIncoming.empty())
@@ -156,6 +146,7 @@ pqistreamer::~pqistreamer()
 		delete i;
     }
 
+  
     if(mIncomingSize != 0)
         std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl;
 	return;
@@ -282,7 +273,7 @@ int 	pqistreamer::tick_recv(uint32_t timeout)
 	}
     if(!(mBio->isactive()))
     {
-        free_rpend_locked();
+        free_pend_locked();
     }
 	return 1;
 }
@@ -295,6 +286,7 @@ int 	pqistreamer::tick_send(uint32_t timeout)
 	/* short circuit everything is bio isn't active */
 	if (!(mBio->isactive()))
 	{
+        		free_pend_locked();
 		return 0;
 	}
 
@@ -690,7 +682,7 @@ int pqistreamer::handleincoming_locked()
     if(!(mBio->isactive()))
     {
 	    mReading_state = reading_state_initial ;
-	    free_rpend_locked();
+	    free_pend_locked();
 	    return 0;
     }
     else
@@ -762,7 +754,7 @@ start_packet_read:
 		    }
 	    }
 #ifdef DEBUG_PQISTREAMER
-	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << RsUtil::BinToHex(block,8) << std::endl;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 0 : " << RsUtil::BinToHex((unsigned char*)block,8) << std::endl;
 #endif
 
 	    readbytes += blen;
@@ -806,12 +798,12 @@ continue_packet:
 	    else
 		    extralen = getRsItemSize(block) - blen;	// old style packet type
 
-#ifdef DEBUG_PQISTREAMER
+#ifdef DEBUG_PACKET_SLICING
 	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
 	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
 
 	    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
-	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << RsUtil::BinToHex(block,8) << std::endl;
+	    std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << RsUtil::BinToHex((unsigned char*)block,8) << std::endl;
 #endif
 	    if (extralen + (uint32_t)blen > maxlen)
 	    {
@@ -874,7 +866,7 @@ continue_packet:
 
 		    if (extralen != (uint32_t)(tmplen = mBio->readdata(extradata, extralen)))
 		    {
-#ifdef DEBUG_PQISTREAMER
+#ifdef DEBUG_PACKET_SLICING
 			    if(tmplen > 0)
 				    std::cerr << "[" << (void*)pthread_self() << "] " << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
 #endif
@@ -921,9 +913,9 @@ continue_packet:
 				    // we assume readdata() returned either -1 or the complete read size.
 			    }
 		    }
-#ifdef DEBUG_PQISTREAMER
+#ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
-		    std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << RsUtil::BinToHex(extradata,8) << std::endl;
+		    std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << RsUtil::BinToHex((unsigned char*)extradata,8) << std::endl;
 #endif
 
 		    mFailed_read_attempts = 0 ;
@@ -952,7 +944,7 @@ continue_packet:
 		    std::cerr << "Inputing partial packet " << RsUtil::BinToHex((char*)block,8) << std::endl;
 #endif
             		uint32_t packet_length = 0 ;
-		    pkt = addPartialPacket(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending,packet_length) ;
+		    pkt = addPartialPacket_locked(block,pktlen,slice_packet_id,is_packet_starting,is_packet_ending,packet_length) ;
             
             		pktlen = packet_length ;
 	    }
@@ -997,7 +989,7 @@ continue_packet:
     return 0;
 }
 
-RsItem *pqistreamer::addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id, bool is_packet_starting, bool is_packet_ending, uint32_t &total_len) 
+RsItem *pqistreamer::addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id, bool is_packet_starting, bool is_packet_ending, uint32_t &total_len) 
 {
 #ifdef DEBUG_PACKET_SLICING
     std::cerr << "Receiving partial packet. size=" << len << ", ID=" << std::hex << slice_packet_id << std::dec << ", starting:" << is_packet_starting << ", ending:" << is_packet_ending ;
@@ -1180,7 +1172,7 @@ void    pqistreamer::outSentBytes_locked(uint32_t outb)
 #ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
-		rs_sprintf(out, "pqistreamer::outSentBytes(): %d@%gkB/s", outb, getRate(false));
+		rs_sprintf(out, "pqistreamer::outSentBytes(): %d@%gkB/s", outb, RateInterface::getRate(false));
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
@@ -1210,7 +1202,7 @@ void    pqistreamer::inReadBytes_locked(uint32_t inb)
 #ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
-		rs_sprintf(out, "pqistreamer::inReadBytes(): %d@%gkB/s", inb, getRate(true));
+		rs_sprintf(out, "pqistreamer::inReadBytes(): %d@%gkB/s", inb, RateInterface::getRate(true));
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
@@ -1237,14 +1229,53 @@ void pqistreamer::allocate_rpend_locked()
     memset(mPkt_rpending,0,mPkt_rpend_size) ;
 }
 
-void pqistreamer::free_rpend_locked()
-{
-    if(!mPkt_rpending)
-        return;
+// clean everything that is half-finished, to avoid causing issues when re-connecting later on.
 
-    free(mPkt_rpending);
-    mPkt_rpending = 0;
-    mPkt_rpend_size = 0;
+int pqistreamer::reset()
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+#ifdef DEBUG_PQISTREAMER
+	std::cerr << "pqistreamer::reset()" << std::endl;
+#endif
+	free_pend_locked();
+    
+    return 1 ;
+}
+
+void pqistreamer::free_pend_locked()
+{
+	if(mPkt_rpending)
+	{
+#ifdef DEBUG_PQISTREAMER
+        		std::cerr << "pqistreamer::free_pend_locked(): pending input packet buffer" << std::endl;
+#endif
+		free(mPkt_rpending);
+		mPkt_rpending = 0;
+	}
+	mPkt_rpend_size = 0;
+
+	if (mPkt_wpending)
+	{
+#ifdef DEBUG_PQISTREAMER
+        		std::cerr << "pqistreamer::free_pend_locked(): pending output packet buffer" << std::endl;
+#endif
+		free(mPkt_wpending);
+		mPkt_wpending = NULL;
+	}
+	mPkt_wpending_size = 0 ;
+
+#ifdef DEBUG_PQISTREAMER
+    if(!mPartialPackets.empty())
+        		std::cerr << "pqistreamer::free_pend_locked(): " << mPartialPackets.size() << " pending input partial packets" << std::endl;
+#endif
+	// also delete any incoming partial packet
+	for(std::map<uint32_t,PartialPacketRecord>::iterator it(mPartialPackets.begin());it!=mPartialPackets.end();++it)
+		free(it->second.mem) ;
+
+	mPartialPackets.clear() ;
+    
+	// clean up outgoing. (cntrl packets)
+	locked_clear_out_queue() ;
 }
 
 int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std::list<RSTrafficClue>& inqueue_lst)

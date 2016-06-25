@@ -74,6 +74,7 @@ class pqistreamer: public PQInterface
             	virtual float getRate(bool b) ;
 
     protected:
+        		virtual int reset() ;
 
 		int tick_bio();
 		int tick_send(uint32_t timeout);
@@ -117,7 +118,8 @@ class pqistreamer: public PQInterface
 		int	inAllowedBytes_locked();
 		void	inReadBytes_locked(uint32_t );
 
-
+        		// cleans up everything that's pending / half finished.
+		void free_pend_locked();
 
 		// RsSerialiser - determines which packets can be serialised.
 		RsSerialiser *mRsSerialiser;
@@ -126,7 +128,7 @@ class pqistreamer: public PQInterface
         	uint32_t mPkt_wpending_size; // ... and its size.
 
         void allocate_rpend_locked(); // use these two functions to allocate/free the buffer below
-        void free_rpend_locked();
+        
 		int   mPkt_rpend_size; // size of pkt_rpending.
 		void *mPkt_rpending; // storage for read in pending packets.
 
@@ -170,7 +172,7 @@ class pqistreamer: public PQInterface
         bool mAcceptsPacketSlicing ;
         time_t mLastSentPacketSlicingProbe ;
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
-        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
+        RsItem *addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         
         std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
 };
