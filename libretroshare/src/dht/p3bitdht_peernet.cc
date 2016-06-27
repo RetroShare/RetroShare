@@ -81,6 +81,7 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 		mPeerSharer->updatePeer(rsid, tmpaddr, outtype, outreason, outage);
 	}
 
+#ifdef RS_USE_DHT_STUNNER
 	/* call to the Stunners to drop the address as well */
 	/* IDEALLY these addresses should all be filtered at UdpLayer level instead! */
 	if (mDhtStunner)
@@ -91,6 +92,7 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 	{
 		mProxyStunner->dropStunPeer(addr);
 	}
+#endif // RS_USE_DHT_STUNNER
 
 	return 1;
 }
@@ -135,7 +137,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			}
 		}
 
-
+#ifdef RS_USE_DHT_STUNNER
 		if ((mProxyStunner) && (mProxyStunner->needStunPeers()))
 		{
 #ifdef DEBUG_BITDHT_COMMON
@@ -156,6 +158,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 #endif
 			mDhtStunner->addStunPeer(id->addr, NULL);
 		}
+#endif // RS_USE_DHT_STUNNER
 	}
 	return 1;
 }
@@ -683,7 +686,6 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 #endif
 
 				struct sockaddr_in extaddr;
-				uint8_t extStable = 0;
 				sockaddr_clear(&extaddr);
 
 				bool connectOk = false;
@@ -730,6 +732,9 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << "PeerAction: Connect Proxy: ERROR Cannot find PeerStatus";
 					std::cerr << std::endl;
 				}
+
+#ifdef RS_USE_DHT_STUNNER
+				uint8_t extStable = 0;
 
 				UdpStunner *stunner = mProxyStunner;
 				if (!proxyPort)
@@ -849,6 +854,11 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 					std::cerr << std::endl;
 #endif
 				}
+#else // RS_USE_DHT_STUNNER
+				connectionAllowed = BITDHT_CONNECT_ERROR_TEMPUNAVAIL;
+				(void) connectOk;
+				(void) exclusivePort;
+#endif // RS_USE_DHT_STUNNER
 			}
 
 			ca.mMode = mode;
@@ -1188,7 +1198,6 @@ int p3BitDht::doActions()
 				else if (action.mMode == BITDHT_CONNECT_MODE_PROXY)
 				{
 					struct sockaddr_in extaddr;
-					uint8_t extStable = 0;
 					sockaddr_clear(&extaddr);
 					bool proxyPort = true;
 					bool exclusivePort = false;
@@ -1234,6 +1243,9 @@ int p3BitDht::doActions()
 							std::cerr << std::endl;
 						}
 					}
+#ifdef RS_USE_DHT_STUNNER
+					uint8_t extStable = 0;
+
 					UdpStunner *stunner = mProxyStunner;
 					if (!proxyPort)
 					{
@@ -1333,6 +1345,11 @@ int p3BitDht::doActions()
 						connectionReqFailed = true;
 						failReason = CSB_UPDATE_RETRY_ATTEMPT;
 					}
+#else // RS_USE_DHT_STUNNER
+					connectionReqFailed = true;
+					failReason = CSB_UPDATE_RETRY_ATTEMPT;
+					(void) connectOk;
+#endif //RS_USE_DHT_STUNNER
 				}
 
 				if (doConnectionRequest)
@@ -1416,7 +1433,9 @@ int p3BitDht::doActions()
 						{
 							std::cerr << "PeerAction: ERROR ERROR, we grabd Exclusive Port to do this, trying emergency release";
 							std::cerr << std::endl;
+#ifdef RS_USE_DHT_STUNNER
 							mProxyStunner->releaseExclusiveMode(pid,false);
+#endif // RS_USE_DHT_STUNNER
 						}
 					}
 				}
@@ -2378,6 +2397,7 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 	
 	if (dpd->mExclusiveProxyLock)
 	{
+#ifdef RS_USE_DHT_STUNNER
 		if (mProxyStunner->releaseExclusiveMode(pid, addrChgLikely))
 		{
 			dpd->mExclusiveProxyLock = false;
@@ -2389,6 +2409,9 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 #endif
 		}
 		else 
+#else // RS_USE_DHT_STUNNER
+		(void)addrChgLikely;
+#endif // RS_USE_DHT_STUNNER
 		{
 			dpd->mExclusiveProxyLock = false;
 

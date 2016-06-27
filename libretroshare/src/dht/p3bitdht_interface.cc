@@ -149,7 +149,7 @@ int      p3BitDht::getNetFailedPeer(std::string peerId, PeerStatus &status)
 std::string p3BitDht::getUdpAddressString()
 {
 	std::string out;
-		
+#ifdef RS_USE_DHT_STUNNER
 	struct sockaddr_in extAddr;
 	uint8_t extStable;
 
@@ -187,7 +187,10 @@ std::string p3BitDht::getUdpAddressString()
 	{
 		out += " ProxyExtAddr: Unknown ";
 	}
-		
+#else // RS_USE_DHT_STUNNER
+	// whitespaces taken from above
+	out = " DhtExtAddr: Unknown  ProxyExtAddr: Unknown ";
+#endif // RS_USE_DHT_STUNNER
 	return out;
 }
 
