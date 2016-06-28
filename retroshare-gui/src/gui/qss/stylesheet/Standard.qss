@@ -513,15 +513,15 @@ SubFileItem QProgressBar#progressBar {
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
 	background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fff, stop: 0.4999 #eee, stop: 0.5 #ddd, stop: 1 #eee);
-	width: 15px;
+	min-width: 15px;
 }
 
 SubFileItem QProgressBar#progressBar::chunk {
-	background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #78d, stop: 0.4999 #46a, stop: 0.5 #45a, stop: 1 #238);
+	background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #78d, stop: 0.4999 #46a, stop: 0.5 #45a, stop: 1 #238);
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
 	border: 1px solid black;
-	width: 15px;
+	min-width: 15px;
 }
 
 PluginItem QLabel#infoLabel {
