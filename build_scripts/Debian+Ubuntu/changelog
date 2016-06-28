@@ -1,5 +1,14 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  c15c979 csoler Mon, 27 Jun 2016 17:17:28 +0100 Merge pull request #426 from sehraf/pr-disable-dht-stunner
+  ff86678 csoler Sun, 26 Jun 2016 23:14:01 -0400 clear error queue before calling SSL_read()/SSL_write(), to avoid remaining errors to corrupt the next connection attempts and cause disconnections
+  31089d7 csoler Sat, 25 Jun 2016 19:12:35 +0100 added auto-clean of pending data in pqistreamer after connection is closed, to avoid confusing the peer after re-connecting (probably not the cause of the SSL error)
+  043c5b1 csoler Sat, 25 Jun 2016 13:01:36 -0400 Merge pull request #427 from PhenomRetroShare/Fix_TheRetroSharesDeskTopFileIsMissing
+  e6347d7 Phenom Sat, 25 Jun 2016 11:09:28 +0200 Fix "!!!The RetroShare's desktop file is missing or wrong!!!" message for Linux.
+  5d96268 sehraf Tue, 21 Jun 2016 14:02:52 +0200 removed unused variable warnings
+  4d2d825 sehraf Tue, 21 Jun 2016 13:55:23 +0200 add new option to qmake to enable dht stunner removed dht stunner code when option is not set
+  37ae8bc csoler Tue, 21 Jun 2016 07:22:13 -0400 Merge pull request #424 from sehraf/pr-dht-banlist
+  3bb03ff sehraf Mon, 20 Jun 2016 22:30:51 +0200 Added new (optional) callback to libbitdht to ask upper layer if an IP is banned. In case this callback is implemented it will be used in favour of the built-in... 
   ddce43b csoler Sat, 18 Jun 2016 20:43:42 -0400 Merge pull request #422 from PhenomRetroShare/Fix_ReadMe.md
   24eb88a csoler Sat, 18 Jun 2016 20:38:48 -0400 added explicit comparisons for tests on RsGxsGrpMetaData and RsGxsMsgMetaData
   0388162 Phenom Sun, 19 Jun 2016 01:37:50 +0200 Change Build AppVeyor State to RetroShare/RetroShare.
