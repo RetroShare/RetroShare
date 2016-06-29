@@ -1,5 +1,11 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  9f7ef8b csoler Tue, 28 Jun 2016 20:59:56 -0400 fixed possible cross deadlocks between RsGxsGenExchange and RsGxsNetService
+  00bdc50 csoler Tue, 28 Jun 2016 17:56:37 -0400 updated changelog
+  bb82b6e csoler Tue, 28 Jun 2016 14:35:59 -0400 Merge pull request #429 from PhenomRetroShare/Fix_StandardQSS
+  456751a Phenom Tue, 28 Jun 2016 20:23:32 +0200 Fix ProgressBar Chunk with Standard.qss
+  019ed12 csoler Tue, 28 Jun 2016 12:37:04 -0400 Merge pull request #428 from sehraf/pr-fix-udp
+  ea07a13 sehraf Tue, 28 Jun 2016 17:37:22 +0200 fix TcpPacket::readPacket
   c15c979 csoler Mon, 27 Jun 2016 17:17:28 +0100 Merge pull request #426 from sehraf/pr-disable-dht-stunner
   ff86678 csoler Sun, 26 Jun 2016 23:14:01 -0400 clear error queue before calling SSL_read()/SSL_write(), to avoid remaining errors to corrupt the next connection attempts and cause disconnections
   31089d7 csoler Sat, 25 Jun 2016 19:12:35 +0100 added auto-clean of pending data in pqistreamer after connection is closed, to avoid confusing the peer after re-connecting (probably not the cause of the SSL error)
