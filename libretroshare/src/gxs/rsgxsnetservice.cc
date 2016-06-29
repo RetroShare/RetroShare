@@ -928,17 +928,22 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "Received Grp update stats item from peer " << grs->PeerId() << " for group " << grs->grpId << ", reporting " << grs->number_of_posts << " posts." << std::endl;
 #endif
-	    RS_STACK_MUTEX(mNxsMutex) ;
-	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[grs->grpId]) ;
+	    bool should_notify = false ;
+	    {
+		    RS_STACK_MUTEX(mNxsMutex) ;
+		    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[grs->grpId]) ;
 
-	    uint32_t old_count = rec.max_visible_count ;
-	    uint32_t old_suppliers_count = rec.suppliers.size() ;
-        
-	    rec.suppliers.insert(grs->PeerId()) ;
-	    rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
-	    rec.update_TS = time(NULL) ;
-        
-	    if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.size())
+		    uint32_t old_count = rec.max_visible_count ;
+		    uint32_t old_suppliers_count = rec.suppliers.size() ;
+
+		    rec.suppliers.insert(grs->PeerId()) ;
+		    rec.max_visible_count = std::max(rec.max_visible_count,grs->number_of_posts) ;
+		    rec.update_TS = time(NULL) ;
+
+		    if (old_count != rec.max_visible_count || old_suppliers_count != rec.suppliers.size())
+			    should_notify = true ;
+	    }
+	    if(should_notify)
 		    mObserver->notifyChangedGroupStats(grs->grpId);
     }
     else
