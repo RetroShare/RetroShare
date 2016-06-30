@@ -881,8 +881,15 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			{
 
 				// now check reputation of the message author
-				float reputation_threshold =  ( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)) ? (RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM): (RsReputations::REPUTATION_THRESHOLD_DEFAULT) ;
-
+				float reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
+                
+                			if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
+                			else if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
+                            	else
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
+                            
 				if(details.mReputation.mOverallReputationScore < reputation_threshold)
 				{
 #ifdef GEN_EXCH_DEBUG	
