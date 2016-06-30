@@ -791,7 +791,8 @@ void GxsForumThreadWidget::insertGroupData()
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     QString anti_spam_features1 ;
-    if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
+    if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown node IDs reputation threshold set to 0.4");
+    else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
             
     QString anti_spam_features2 ;
     if(IS_GROUP_MESSAGE_TRACKING(tw->mSignFlags)) anti_spam_features2 = tr("Message routing info kept for 10 days");
