@@ -682,6 +682,7 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
         QString antispam_string ;
         if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
 	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)      antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature from known ID required") ;
+    	else
 	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)            antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
     
     	ui.antiSpamValueLabel->setText(antispam_string) ;
