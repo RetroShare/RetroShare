@@ -41,7 +41,6 @@
 #include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsreputations.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
 #include <iostream>
@@ -1360,8 +1359,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	if (!item)
         item = new TreeWidgetItem();
         
-        RsReputations::ReputationInfo info ;
-        rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
+	    RsIdentityDetails idd ;
+	    rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
@@ -1372,13 +1371,10 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
  
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore - 1.0f,'f',3));
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
 
     if(isOwnId)
     {
-	    RsIdentityDetails idd ;
-	    rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
-
 	    QFont font = item->font(RSID_COL_NICKNAME) ;
 
 	    font.setBold(true) ;
@@ -1740,7 +1736,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 #endif
 
     RsReputations::ReputationInfo info ;
-    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
 	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
 
@@ -2021,10 +2017,10 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 #endif
 	    RsGxsId keyId((*it)->text(RSID_COL_KEYID).toStdString());
 
-	    RsReputations::ReputationInfo info ;
-	    rsReputations->getReputationInfo(keyId,info) ;
+        		RsIdentityDetails det ;
+                rsIdentity->getIdDetails(keyId,det) ;
 
-        	switch(info.mOwnOpinion)
+        	switch(det.mReputation.mOwnOpinion)
             {
             case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
 		    break ;

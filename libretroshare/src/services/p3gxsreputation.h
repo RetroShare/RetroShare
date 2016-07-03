@@ -97,8 +97,8 @@ class p3GxsReputation: public p3Service, public p3Config, public RsReputations /
 
 		/***** Interface for RsReputations *****/
 		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-		virtual bool getReputationInfo(const RsGxsId& id,ReputationInfo& info) ;
-		virtual bool isIdentityBanned(const RsGxsId& id) ;
+		virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &owner_id, ReputationInfo& info) ;
+		virtual bool isIdentityBanned(const RsGxsId& id, const RsPgpId &owner_node) ;
         
         	virtual void setNodeAutoBanThreshold(uint32_t n) ;
         	virtual uint32_t nodeAutoBanThreshold() ;

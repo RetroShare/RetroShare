@@ -117,14 +117,14 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenF
 
 void GxsIdRSTreeWidgetItem::updateBannedState()
 {
-    if(mBannedState != rsReputations->isIdentityBanned(mId))
+    if(mBannedState != rsIdentity->isBanned(mId))
         forceUpdate() ;
 }
 
 void GxsIdRSTreeWidgetItem::forceUpdate()
 {
 	mIdFound = false;
-	mBannedState = rsReputations->isIdentityBanned(mId) ;
+	mBannedState = rsIdentity->isBanned(mId) ;
 
 	startProcess();
 }
@@ -170,7 +170,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 
 		    if(mId.isNull())
 			    return RSTreeWidgetItem::data(column, role);
-		    else if(rsReputations->isIdentityBanned(mId))
+		    else if(rsIdentity->isBanned(mId))
 			    pix = QImage(BANNED_IMAGE) ;
 		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
 			    pix = GxsIdDetails::makeDefaultIcon(mId);

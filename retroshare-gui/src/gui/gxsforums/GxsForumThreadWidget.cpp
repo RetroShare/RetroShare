@@ -985,7 +985,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     // is flagged with a bad reputation
     
     
-    bool redacted =  rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
                 
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1408,7 +1408,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    bool redacted = rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 

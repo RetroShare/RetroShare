@@ -264,7 +264,7 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 }
 void p3IdService::timeStampKey(const RsGxsId& gxs_id)
 {
-    if(rsReputations->isIdentityBanned(gxs_id))
+    if(isBanned(gxs_id))
     {
 	    std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
 	    return;
@@ -324,7 +324,7 @@ public:
 	    time_t now = time(NULL);
 	    const RsGxsId& gxs_id = entry.details.mId ;
 
-	    bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
+	    bool is_id_banned = rsReputations->isIdentityBanned(gxs_id,entry.details.mPgpId) ;
 	    bool is_own_id    = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID) ;
 	    bool is_known_id  = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) ;
 	    bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
@@ -503,7 +503,7 @@ bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 }
 #endif
 
-bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
+bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::getIdDetails(" << id << ")";
@@ -524,7 +524,7 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 			if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
 				details.mNickname = "[too long a name]" ;
 
-			rsReputations->getReputationInfo(id,details.mReputation) ;
+			rsReputations->getReputationInfo(id,details.mPgpId,details.mReputation) ;
 
 			return true;
 		}
@@ -536,6 +536,16 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 	return false;
 }
 
+bool p3IdService::isBanned(const RsGxsId &id)
+{
+    RsIdentityDetails det ;
+    getIdDetails(id,det) ;
+    
+#ifdef DEBUG_REPUTATION
+    std::cerr << "isIdentityBanned(): returning " << (det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
+#endif
+    return det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD ;
+}
 
 bool p3IdService::isOwnId(const RsGxsId& id)
 {

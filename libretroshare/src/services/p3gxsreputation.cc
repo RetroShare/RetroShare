@@ -39,6 +39,7 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
+#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -333,11 +334,35 @@ void p3GxsReputation::updateIdentityFlags()
 void p3GxsReputation::cleanup()
 {
     // remove opinions from friends that havn't been seen online for more than the specified delay
-    
+
 #ifdef DEBUG_REPUTATION
-    std::cerr << "p3GxsReputation::cleanup() " << std::endl;
 #endif
-    std::cerr << __PRETTY_FUNCTION__ << ": not implemented. TODO!" << std::endl;
+    std::cerr << "p3GxsReputation::cleanup() " << std::endl;
+
+    // remove optionions about identities that do not exist anymore. That will in particular avoid asking p3idservice about deleted
+    // identities, which would cause an excess of hits to the database.
+
+    bool updated = false ;
+
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
+	    if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+	    {
+		    std::map<RsGxsId,Reputation>::iterator tmp(it) ;
+		    ++tmp ;
+		    mReputations.erase(it) ;
+		    it = tmp ;
+#ifdef DEBUG_REPUTATION
+		    std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
+#endif
+		    updated = true ;
+	    }
+	    else 
+		    ++it ;
+
+    if(updated)
+	    IndicateConfigChanged() ;
 }
 
 void p3GxsReputation::updateActiveFriends()
@@ -668,7 +693,7 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
  * Opinion
  ****/
 
-bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::ReputationInfo& info)
+bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& owner_id, RsReputations::ReputationInfo& info)
 {
     if(gxsid.isNull())
         return false ;
@@ -678,25 +703,34 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
 #ifdef DEBUG_REPUTATION
     std::cerr << "getReputationInfo() for " << gxsid << std::endl;
 #endif
-    Reputation& rep(mReputations[gxsid]) ;
+    std::map<RsGxsId,Reputation>::const_iterator it = mReputations.find(gxsid) ;
 
-    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
-    info.mOverallReputationScore = rep.mReputation ;
-    info.mFriendAverage = rep.mFriendAverage ;
-
-    if( (rep.mIdentityFlags & REPUTATION_IDENTITY_FLAG_PGP_LINKED) && (mBannedPgpIds.find(rep.mOwnerNode) != mBannedPgpIds.end()))
+    if(it == mReputations.end())
     {
-	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
-#ifdef DEBUG_REPUTATION
-        std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << rep.mOwnerNode << " is banned." << std::endl;
-#endif
-        return true;
+        info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
+        info.mOverallReputationScore = RsReputations::REPUTATION_THRESHOLD_DEFAULT ;
+	info.mFriendAverage = REPUTATION_THRESHOLD_DEFAULT ;
     }
-                          
-    if(info.mOverallReputationScore > REPUTATION_ASSESSMENT_THRESHOLD_X1)
-	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
     else
+    {
+	    const Reputation& rep(it->second) ;
+
+	    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+	    info.mOverallReputationScore = rep.mReputation ;
+	    info.mFriendAverage = rep.mFriendAverage ;
+    }
+    
+    if(!owner_id.isNull() && (mBannedPgpIds.find(owner_id) != mBannedPgpIds.end()))
+    {
+#ifdef DEBUG_REPUTATION
+	    std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned." << std::endl;
+#endif
 	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+    }
+    else if(info.mOverallReputationScore <= REPUTATION_ASSESSMENT_THRESHOLD_X1)
+	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+    else
+	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
 
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
@@ -705,11 +739,12 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, RsReputations::Rep
     return true ;
 }
 
-bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
+bool p3GxsReputation::isIdentityBanned(const RsGxsId &id,const RsPgpId& owner_node)
 {
     RsReputations::ReputationInfo info ;
     
-    getReputationInfo(id,info) ;
+    if(!getReputationInfo(id,owner_node,info))
+        return false ;
     
 #ifdef DEBUG_REPUTATION
     std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;

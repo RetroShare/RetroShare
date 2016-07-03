@@ -274,6 +274,7 @@ virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
 
 virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
     virtual bool isARegularContact(const RsGxsId& id) ;
+    virtual bool isBanned(const RsGxsId& id) ;
         
     /**************** RsGixs Implementation ***************/
 
