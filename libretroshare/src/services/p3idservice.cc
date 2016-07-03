@@ -258,10 +258,7 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
     std::map<RsGxsId,time_t>::const_iterator it = mKeysTS.find(gxs_id) ;
 
     if(it == mKeysTS.end())
-    {
-        slowIndicateConfigChanged() ;
-        return mKeysTS[gxs_id] = time(NULL) ;
-    }
+        return 0 ;
     else
         return it->second ;
 }
@@ -345,7 +342,7 @@ public:
 
 	    if(it == mLastUsageTS.end())
 	    {
-		    std::cerr << "No Ts for this ID" << std::endl;
+		    std::cerr << "No Ts for this ID => kept" << std::endl;
 		    return true ;
 	    }
 
@@ -413,10 +410,7 @@ void p3IdService::cleanUnusedKeys()
 
 		{
 			RS_STACK_MUTEX(mIdMtx) ;
-			std::map<RsGxsId,time_t>::iterator tmp = mKeysTS.find(*it) ;
-
-			if(mKeysTS.end() != tmp)
-				mKeysTS.erase(tmp) ;
+			mKeysTS.erase(*it) ;
             
             		// mPublicKeyCache.erase(*it) ; no need to do it now. It's done in p3IdService::deleteGroup()
 		}
