@@ -503,6 +503,12 @@ bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 }
 #endif
 
+time_t p3IdService::getLastUsageTS(const RsGxsId &id)
+{
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+    return locked_getLastUsageTS(id) ;
+}
+
 bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 {
 #ifdef DEBUG_IDS

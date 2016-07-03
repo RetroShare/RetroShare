@@ -117,13 +117,13 @@
  *            10        |  1.0                |  0       |  0.25      | 1.0            
  * 
  * 	To check:
- *	[ ]  Opinions are saved/loaded accross restart
- *	[ ]  Opinions are transmitted to friends
- *	[ ]  Opinions are transmitted to friends when updated
+ *	[X]  Opinions are saved/loaded accross restart
+ *	[X]  Opinions are transmitted to friends
+ *	[X]  Opinions are transmitted to friends when updated
  * 
  * 	To do:
- * 	[ ]  Add debug info
- * 	[ ]  Test the whole thing
+ * 	[X]  Add debug info
+ * 	[X]  Test the whole thing
  * 	[X]  Implement a system to allow not storing info when we don't have it
  */
 
@@ -139,6 +139,7 @@ static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputat
 static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
 static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
+static const uint32_t REPUTATION_INFO_KEEP_DELAY          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
@@ -343,26 +344,38 @@ void p3GxsReputation::cleanup()
     // identities, which would cause an excess of hits to the database.
 
     bool updated = false ;
+    time_t now = time(NULL) ;
 
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
     for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
-	    if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-	    {
-		    std::map<RsGxsId,Reputation>::iterator tmp(it) ;
-		    ++tmp ;
-		    mReputations.erase(it) ;
-		    it = tmp ;
+        if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+        {
+            std::map<RsGxsId,Reputation>::iterator tmp(it) ;
+            ++tmp ;
+            mReputations.erase(it) ;
+            it = tmp ;
 #ifdef DEBUG_REPUTATION
-		    std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
+            std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
 #endif
-		    updated = true ;
-	    }
-	    else 
-		    ++it ;
+            updated = true ;
+        }
+        else if(rsIdentity->getLastUsageTS(it->first) + REPUTATION_INFO_KEEP_DELAY < now)
+        {
+#ifdef DEBUG_REPUTATION
+            std::cerr << "  Identity " << it->first << " has a last usage TS of " << now - rsIdentity->getLastUsageTS(it->first) << " secs ago: deleting it." << std::endl;
+#endif
+            std::map<RsGxsId,Reputation>::iterator tmp(it) ;
+            ++tmp ;
+            mReputations.erase(it) ;
+            it = tmp ;
+            updated = true ;
+        }
+        else
+            ++it ;
 
     if(updated)
-	    IndicateConfigChanged() ;
+        IndicateConfigChanged() ;
 }
 
 void p3GxsReputation::updateActiveFriends()
@@ -709,28 +722,28 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     {
         info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
         info.mOverallReputationScore = RsReputations::REPUTATION_THRESHOLD_DEFAULT ;
-	info.mFriendAverage = REPUTATION_THRESHOLD_DEFAULT ;
+    info.mFriendAverage = REPUTATION_THRESHOLD_DEFAULT ;
     }
     else
     {
-	    const Reputation& rep(it->second) ;
+        const Reputation& rep(it->second) ;
 
-	    info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
-	    info.mOverallReputationScore = rep.mReputation ;
-	    info.mFriendAverage = rep.mFriendAverage ;
+        info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+        info.mOverallReputationScore = rep.mReputation ;
+        info.mFriendAverage = rep.mFriendAverage ;
     }
-    
+
     if(!owner_id.isNull() && (mBannedPgpIds.find(owner_id) != mBannedPgpIds.end()))
     {
 #ifdef DEBUG_REPUTATION
-	    std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned." << std::endl;
+        std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned." << std::endl;
 #endif
-	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+        info.mAssessment = RsReputations::ASSESSMENT_BAD ;
     }
     else if(info.mOverallReputationScore <= REPUTATION_ASSESSMENT_THRESHOLD_X1)
-	    info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+        info.mAssessment = RsReputations::ASSESSMENT_BAD ;
     else
-	    info.mAssessment = RsReputations::ASSESSMENT_OK ;
+        info.mAssessment = RsReputations::ASSESSMENT_OK ;
 
 #ifdef DEBUG_REPUTATION
 	    std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", overall score=" << info.mAssessment << std::endl;
@@ -745,7 +758,7 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id,const RsPgpId& owner_no
     
     if(!getReputationInfo(id,owner_node,info))
         return false ;
-    
+
 #ifdef DEBUG_REPUTATION
     std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
 #endif

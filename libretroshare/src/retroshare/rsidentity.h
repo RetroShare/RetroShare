@@ -221,47 +221,48 @@ public:
     RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
     virtual ~RsIdentity() { return; }
 
-/********************************************************************************************/
-/********************************************************************************************/
-    
-	// For Other Services....
-	// It should be impossible for them to get a message which we don't have the identity.
-	// Its a major error if we don't have the identity.
+    /********************************************************************************************/
+    /********************************************************************************************/
 
-	// We cache all identities, and provide alternative (instantaneous) 
-	// functions to extract info, rather than the standard Token system.
+    // For Other Services....
+    // It should be impossible for them to get a message which we don't have the identity.
+    // Its a major error if we don't have the identity.
 
-//virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
-virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
+    // We cache all identities, and provide alternative (instantaneous)
+    // functions to extract info, rather than the standard Token system.
 
-// Fills up list of all own ids. Returns false if ids are not yet loaded.
-virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
-virtual bool  isOwnId(const RsGxsId& id) = 0;
+    //virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
+    virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 
-	// 
-virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
-				bool absOpinion, int score) = 0;
-virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
+    // Fills up list of all own ids. Returns false if ids are not yet loaded.
+    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+    virtual bool  isOwnId(const RsGxsId& id) = 0;
 
-virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
-virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+    //
+    virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
+                               bool absOpinion, int score) = 0;
+    virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
-virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
-                        const std::string &tag, RsRecognTagDetails &details) = 0;
-virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
-                        uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
+    virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+    virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+
+    virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
+                                const std::string &tag, RsRecognTagDetails &details) = 0;
+    virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
+                                     uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
 
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
     virtual bool isARegularContact(const RsGxsId& id) = 0 ;
     virtual bool isBanned(const RsGxsId& id) =0;
-    
-	// Specific RsIdentity Functions....
-        /* Specific Service Data */
-	/* We expose these initially for testing / GUI purposes.
+    virtual time_t getLastUsageTS(const RsGxsId &id) =0;
+
+    // Specific RsIdentity Functions....
+    /* Specific Service Data */
+    /* We expose these initially for testing / GUI purposes.
          */
 
-virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
-//virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
+    virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
+    //virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };
 
