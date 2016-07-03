@@ -44,7 +44,6 @@
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgrouter.h>
-#include <retroshare/rsreputations.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"

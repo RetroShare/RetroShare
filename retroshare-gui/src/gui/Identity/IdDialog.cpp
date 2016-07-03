@@ -1368,6 +1368,13 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     //time_t now = time(NULL) ;
     //item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
 
+                
+    if(idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD)
+    {
+	    item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
+	    item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
+	    item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+    }
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
  
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);

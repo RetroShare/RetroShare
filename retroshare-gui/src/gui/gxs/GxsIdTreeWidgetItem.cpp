@@ -25,7 +25,6 @@
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
 #include "util/HandleRichText.h"
-#include "retroshare/rsreputations.h"
 
 #define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
