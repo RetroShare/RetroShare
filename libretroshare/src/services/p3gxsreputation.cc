@@ -151,7 +151,7 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mRequestTime = 0;
     mStoreTime = 0;
     mReputationsUpdated = false;
-    mLastActiveFriendsUpdate = 0 ;
+    mLastActiveFriendsUpdate = time(NULL) - 0.5*ACTIVE_FRIENDS_UPDATE_PERIOD;	// avoids doing it too soon since the TS from rsIdentity needs to be loaded already
     mAverageActiveFriends = 0 ;
     mLastBannedNodesUpdate = 0 ;
 }

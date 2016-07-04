@@ -1359,8 +1359,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	if (!item)
         item = new TreeWidgetItem();
         
-	    RsIdentityDetails idd ;
-	    rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
+        RsIdentityDetails idd ;
+        rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
@@ -1368,13 +1368,21 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     //time_t now = time(NULL) ;
     //item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
 
-                
+
     if(idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD)
     {
-	    item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
-	    item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
-	    item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+        std::cerr << "BAD: Identity " << data.mMeta.mGroupId << ": BAD" << std::endl;
+        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
+        item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
+        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
     }
+    else
+    {
+        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
+        item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
+        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
+    }
+
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
  
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
@@ -1744,11 +1752,11 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
-    
-	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
 
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
-	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+
+    ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
+     ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
     
     switch(info.mOwnOpinion)
 	{
@@ -2024,10 +2032,10 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 #endif
 	    RsGxsId keyId((*it)->text(RSID_COL_KEYID).toStdString());
 
-        		RsIdentityDetails det ;
+                RsIdentityDetails det ;
                 rsIdentity->getIdDetails(keyId,det) ;
 
-        	switch(det.mReputation.mOwnOpinion)
+            switch(det.mReputation.mOwnOpinion)
             {
             case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
 		    break ;
