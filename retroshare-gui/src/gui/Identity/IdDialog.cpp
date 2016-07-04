@@ -1365,13 +1365,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
     
-    //time_t now = time(NULL) ;
-    //item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
-
-
     if(idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD)
     {
-        std::cerr << "BAD: Identity " << data.mMeta.mGroupId << ": BAD" << std::endl;
         item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
         item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
         item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
@@ -1384,7 +1379,6 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     }
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
- 
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
     item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
 
