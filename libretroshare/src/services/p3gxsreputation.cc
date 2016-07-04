@@ -39,7 +39,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
