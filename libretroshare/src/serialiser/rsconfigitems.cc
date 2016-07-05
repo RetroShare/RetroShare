@@ -682,7 +682,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 {
 	RsPeerStunItem *psi;
 	RsPeerNetItem *pni;
-	RsPeerGroupItem *pgi;
+    RsPeerGroupItem_deprecated *pgi;
 	RsPeerServicePermissionItem *pri;
 	RsPeerBandwidthLimitsItem *pblitem;
 
@@ -694,7 +694,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	{
 		return sizeStun(psi);
 	}
-	else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem *>(i)))
+    else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem_deprecated *>(i)))
 	{
 		return sizeGroup(pgi);
 	}
@@ -715,7 +715,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 {
 	RsPeerNetItem *pni;
 	RsPeerStunItem *psi;
-	RsPeerGroupItem *pgi;
+    RsPeerGroupItem_deprecated *pgi;
 	RsPeerServicePermissionItem *pri;
 	RsPeerBandwidthLimitsItem *pblitem;
 
@@ -727,7 +727,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	{
 		return serialiseStun(psi, data, pktsize);
 	}
-	else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem *>(i)))
+    else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem_deprecated *>(i)))
 	{
 		return serialiseGroup(pgi, data, pktsize);
 	}
@@ -764,7 +764,7 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 			return deserialiseNet(data, pktsize);
 		case RS_PKT_SUBTYPE_PEER_STUN:
 			return deserialiseStun(data, pktsize);
-		case RS_PKT_SUBTYPE_PEER_GROUP:
+        case RS_PKT_SUBTYPE_PEER_GROUP_deprecated:
 			return deserialiseGroup(data, pktsize);
 		case RS_PKT_SUBTYPE_PEER_PERMISSIONS:
 			return deserialisePermissions(data, pktsize);
@@ -1312,16 +1312,72 @@ RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *si
 }
 
 /*************************************************************************/
-
-RsPeerGroupItem::RsPeerGroupItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_PEER_GROUP)
+RsNodeGroupItem::RsNodeGroupItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
 {
 }
 
-RsPeerGroupItem::~RsPeerGroupItem()
+void RsNodeGroupItem::clear()
+{
+    id.clear();
+    name.clear();
+    flag = 0;
+    pgpList.ids.clear();
+}
+
+std::ostream &RsNodeGroupItem::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsNodeGroupItem", indent);
+    uint16_t int_Indent = indent + 2;
+
+    printIndent(out, int_Indent);
+    out << "groupId: " << id << std::endl;
+
+    printIndent(out, int_Indent);
+    out << "groupName: " << name << std::endl;
+
+    printIndent(out, int_Indent);
+    out << "groupFlag: " << flag << std::endl;
+
+    std::set<RsPgpId>::iterator it;
+    for (it = pgpList.ids.begin(); it != pgpList.ids.end(); ++it) {
+        printIndent(out, int_Indent);
+        out << "peerId: " << it->toStdString() << std::endl;
+    }
+
+    printRsItemEnd(out, "RsNodeGroupItem", indent);
+    return out;
+}
+
+/* set data from RsGroupInfo to RsPeerGroupItem */
+void RsNodeGroupItem::set(RsGroupInfo &groupInfo)
+{
+    id = groupInfo.id;
+    name = groupInfo.name;
+    flag = groupInfo.flag;
+    pgpList.ids = groupInfo.peerIds;
+}
+
+/* get data from RsGroupInfo to RsPeerGroupItem */
+void RsNodeGroupItem::get(RsGroupInfo &groupInfo)
+{
+    groupInfo.id = id;
+    groupInfo.name = name;
+    groupInfo.flag = flag;
+    groupInfo.peerIds = pgpList.ids;
+}
+/*************************************************************************/
+/* DEPRECATED CODE. SHOULD BE REMOVED WHEN EVERYONE USES THE NEW CLASS   */
+/*************************************************************************/
+
+RsPeerGroupItem_deprecated::RsPeerGroupItem_deprecated() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_PEER_GROUP_deprecated)
 {
 }
 
-void RsPeerGroupItem::clear()
+RsPeerGroupItem_deprecated::~RsPeerGroupItem_deprecated()
+{
+}
+
+void RsPeerGroupItem_deprecated::clear()
 {
 	id.clear();
 	name.clear();
@@ -1329,7 +1385,7 @@ void RsPeerGroupItem::clear()
 	pgpList.ids.clear();
 }
 
-std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
+std::ostream &RsPeerGroupItem_deprecated::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsPeerGroupItem", indent);
 	uint16_t int_Indent = indent + 2;
@@ -1354,7 +1410,7 @@ std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
 }
 
 /* set data from RsGroupInfo to RsPeerGroupItem */
-void RsPeerGroupItem::set(RsGroupInfo &groupInfo)
+void RsPeerGroupItem_deprecated::set(RsGroupInfo &groupInfo)
 {
 	id = groupInfo.id;
 	name = groupInfo.name;
@@ -1363,7 +1419,7 @@ void RsPeerGroupItem::set(RsGroupInfo &groupInfo)
 }
 
 /* get data from RsGroupInfo to RsPeerGroupItem */
-void RsPeerGroupItem::get(RsGroupInfo &groupInfo)
+void RsPeerGroupItem_deprecated::get(RsGroupInfo &groupInfo)
 {
 	groupInfo.id = id;
 	groupInfo.name = name;
@@ -1373,7 +1429,7 @@ void RsPeerGroupItem::get(RsGroupInfo &groupInfo)
 
 /*************************************************************************/
 
-uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
+uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem_deprecated *i)
 {	
 	uint32_t s = 8; /* header */
 	s += 4; /* version */
@@ -1384,7 +1440,7 @@ uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
 	return s;
 }
 
-bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, uint32_t *size)
+bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem_deprecated *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeGroup(item);
 	uint32_t offset = 0;
@@ -1426,7 +1482,7 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, u
 	return ok;
 }
 
-RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *size)
+RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *size)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -1437,7 +1493,7 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
-		(RS_PKT_SUBTYPE_PEER_GROUP != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_PEER_GROUP_deprecated != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -1450,7 +1506,7 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 
 	bool ok = true;
 
-	RsPeerGroupItem *item = new RsPeerGroupItem();
+    RsPeerGroupItem_deprecated *item = new RsPeerGroupItem_deprecated();
 	item->clear();
 
 	/* skip the header */

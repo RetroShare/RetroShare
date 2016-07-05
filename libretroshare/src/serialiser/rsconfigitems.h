@@ -50,11 +50,12 @@ const uint8_t RS_PKT_TYPE_HISTORY_CONFIG = 0x06;
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
 	/* PEER CONFIG SUBTYPES */
-const uint8_t RS_PKT_SUBTYPE_PEER_STUN        = 0x02;
-const uint8_t RS_PKT_SUBTYPE_PEER_NET         = 0x03;  
-const uint8_t RS_PKT_SUBTYPE_PEER_GROUP       = 0x04;
-const uint8_t RS_PKT_SUBTYPE_PEER_PERMISSIONS = 0x05;
-const uint8_t RS_PKT_SUBTYPE_PEER_BANDLIMITS  = 0x06;
+const uint8_t RS_PKT_SUBTYPE_PEER_STUN             = 0x02;
+const uint8_t RS_PKT_SUBTYPE_PEER_NET              = 0x03;
+const uint8_t RS_PKT_SUBTYPE_PEER_GROUP_deprecated = 0x04;
+const uint8_t RS_PKT_SUBTYPE_PEER_PERMISSIONS      = 0x05;
+const uint8_t RS_PKT_SUBTYPE_PEER_BANDLIMITS       = 0x06;
+const uint8_t RS_PKT_SUBTYPE_NODE_GROUP            = 0x07;
 
 	/* FILE CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
@@ -134,11 +135,11 @@ class RsPeerBandwidthLimitsItem : public RsItem
 		std::map<RsPgpId,PeerBandwidthLimits> peers ;
 };
 
-class RsPeerGroupItem : public RsItem
+class RsPeerGroupItem_deprecated : public RsItem
 {
 public:
-	RsPeerGroupItem();
-	virtual ~RsPeerGroupItem();
+    RsPeerGroupItem_deprecated();
+    virtual ~RsPeerGroupItem_deprecated();
 
 	virtual void clear();
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
@@ -156,6 +157,29 @@ public:
 	RsTlvPgpIdSet pgpList;
 };
 
+class RsNodeGroupItem: public RsItem
+{
+public:
+    RsNodeGroupItem();
+    virtual ~RsNodeGroupItem() {}
+
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    explicit RsNodeGroupItem(const RsGroupInfo&) ;
+
+   // /* set data from RsGroupInfo to RsPeerGroupItem */
+   // void set(RsGroupInfo &groupInfo);
+   // /* get data from RsGroupInfo to RsPeerGroupItem */
+   // void get(RsGroupInfo &groupInfo);
+
+    /* Mandatory */
+    RsNodeGroupId id;
+    std::string name;
+    uint32_t    flag;
+
+    RsTlvPgpIdSet pgpList;
+};
 
 class RsPeerStunItem: public RsItem
 {
@@ -197,9 +221,9 @@ virtual	uint32_t    sizeStun(RsPeerStunItem *);
 virtual	bool        serialiseStun  (RsPeerStunItem *item, void *data, uint32_t *size);
 virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeGroup(RsPeerGroupItem *);
-virtual	bool        serialiseGroup  (RsPeerGroupItem *item, void *data, uint32_t *size);
-virtual	RsPeerGroupItem *    deserialiseGroup(void *data, uint32_t *size);
+virtual	uint32_t    sizeGroup(RsPeerGroupItem_deprecated *);
+virtual	bool        serialiseGroup  (RsPeerGroupItem_deprecated *item, void *data, uint32_t *size);
+virtual	RsPeerGroupItem_deprecated *    deserialiseGroup(void *data, uint32_t *size);
 
 virtual	uint32_t    sizePeerBandwidthLimits(RsPeerBandwidthLimitsItem *);
 virtual	bool        serialisePeerBandwidthLimits  (RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size);

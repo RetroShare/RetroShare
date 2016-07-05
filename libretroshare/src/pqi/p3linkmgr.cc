@@ -138,8 +138,6 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 		mDNSResolver = new DNSResolver();
 		mRetryPeriod = MIN_RETRY_PERIOD;
 	
-		lastGroupId = 1;
-
 		/* setup Banned Ip Address - static for now 
 		 */
 

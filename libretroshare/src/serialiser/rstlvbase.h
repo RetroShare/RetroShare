@@ -204,6 +204,7 @@ const uint16_t TLV_TYPE_PGPIDSET      = 0x1023;
 const uint16_t TLV_TYPE_RECOGNSET     = 0x1024;
 const uint16_t TLV_TYPE_GXSIDSET      = 0x1025;
 const uint16_t TLV_TYPE_GXSCIRCLEIDSET= 0x1026;
+const uint16_t TLV_TYPE_GXSGROUPIDSET = 0x1027;
 
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
