@@ -7,6 +7,7 @@
 
 #include "api/ApiServer.h"
 #include "api/ApiServerMHD.h"
+#include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
 #include "api/GetPluginInterfaces.h"
 
@@ -14,6 +15,7 @@
 
 resource_api::ApiServer* WebuiPage::apiServer = 0;
 resource_api::ApiServerMHD* WebuiPage::apiServerMHD = 0;
+resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
@@ -92,6 +94,9 @@ QString WebuiPage::helpText() const
                                       "",
                                       Settings->getWebinterfaceAllowAllIps());
     apiServerMHD->start();
+
+	apiServerLocal = new resource_api::ApiServerLocal(apiServer);
+
     return ok;
 }
 
@@ -102,6 +107,8 @@ QString WebuiPage::helpText() const
         apiServerMHD->stop();
         delete apiServerMHD;
         apiServerMHD = 0;
+		delete apiServerLocal;
+		apiServerLocal = 0;
         delete apiServer;
         apiServer = 0;
         delete controlModule;

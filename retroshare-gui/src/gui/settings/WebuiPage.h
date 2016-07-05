@@ -6,6 +6,7 @@
 namespace resource_api{
     class ApiServer;
     class ApiServerMHD;
+	class ApiServerLocal;
     class RsControlModule;
 }
 
@@ -48,5 +49,6 @@ private:
 
   static resource_api::ApiServer* apiServer;
   static resource_api::ApiServerMHD* apiServerMHD;
+  static resource_api::ApiServerLocal* apiServerLocal;
   static resource_api::RsControlModule* controlModule;
 };

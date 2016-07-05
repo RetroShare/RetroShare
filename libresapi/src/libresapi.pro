@@ -3,7 +3,8 @@
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += create_prl
-CONFIG -= qt
+CONFIG += qt
+QT += network
 TARGET = resapi
 TARGET_PRL = libresapi
 DESTDIR = lib
@@ -146,7 +147,8 @@ SOURCES += \
     api/TmpBlobStore.cpp \
     util/ContentTypes.cpp \
     api/ApiPluginHandler.cpp \
-    api/ChannelsHandler.cpp
+    api/ChannelsHandler.cpp \
+    api/ApiServerLocal.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -172,4 +174,5 @@ HEADERS += \
     api/TmpBlobStore.h \
     util/ContentTypes.h \
     api/ApiPluginHandler.h \
-    api/ChannelsHandler.h
+    api/ChannelsHandler.h \
+    api/ApiServerLocal.h
