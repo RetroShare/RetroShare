@@ -191,7 +191,6 @@
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
 #include "retroshare/rspeers.h"
-#include "retroshare/rsreputations.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -1994,7 +1993,7 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,uint32_t& er
 {
     try
     {
-        if(rsReputations->isIdentityBanned(item->signature.keyId))
+        if(rsIdentity->isBanned(item->signature.keyId))
         {
             std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
             return false ;

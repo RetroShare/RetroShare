@@ -26,7 +26,6 @@
 #include "gui/common/UIStateHelper.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsreputations.h>
 
 // Data Requests.
 #define IDDETAILSDIALOG_IDDETAILS  1
@@ -261,7 +260,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 #endif
 
     RsReputations::ReputationInfo info ;
-    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
 	ui->neighborNodesOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f));
 
