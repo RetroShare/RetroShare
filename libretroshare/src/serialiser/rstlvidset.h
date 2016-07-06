@@ -120,7 +120,7 @@ typedef t_RsTlvIdSet<RsPgpId,      TLV_TYPE_PGPIDSET>	        RsTlvPgpIdSet ;
 typedef t_RsTlvIdSet<Sha1CheckSum, TLV_TYPE_HASHSET> 	        RsTlvHashSet ;
 typedef t_RsTlvIdSet<RsGxsId,      TLV_TYPE_GXSIDSET>        RsTlvGxsIdSet ;
 typedef t_RsTlvIdSet<RsGxsCircleId,TLV_TYPE_GXSCIRCLEIDSET>  RsTlvGxsCircleIdSet ;
-typedef t_RsTlvIdSet<RsGxsGroupId, TLV_TYPE_GXSGROUPIDSET>   RsTlvGxsGroupIdSet ;
+typedef t_RsTlvIdSet<RsNodeGroupId,TLV_TYPE_NODEGROUPIDSET>  RsTlvNodeGroupIdSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem
 {

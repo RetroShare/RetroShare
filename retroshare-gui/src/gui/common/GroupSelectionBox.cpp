@@ -20,7 +20,7 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 
 void GroupSelectionBox::fillGroups()
 {
-	std::list<std::string> selectedIds;
+    std::list<RsNodeGroupId> selectedIds;
 	selectedGroupIds(selectedIds);
 
 	clear();
@@ -30,7 +30,7 @@ void GroupSelectionBox::fillGroups()
 
 	for (std::list<RsGroupInfo>::const_iterator it(groupIds.begin()); it != groupIds.end(); ++it) {
 		QListWidgetItem *item = new QListWidgetItem(GroupDefs::name(*it));
-		item->setData(ROLE_ID, QString::fromStdString(it->id));
+        item->setData(ROLE_ID, QString::fromStdString(it->id.toStdString()));
 		item->setBackgroundColor(QColor(183,236,181));
 		addItem(item);
 	}
@@ -38,27 +38,27 @@ void GroupSelectionBox::fillGroups()
 	setSelectedGroupIds(selectedIds);
 }
 
-void GroupSelectionBox::selectedGroupIds(std::list<std::string> &groupIds) const
+void GroupSelectionBox::selectedGroupIds(std::list<RsNodeGroupId> &groupIds) const
 {
 	int itemCount = count();
 
 	for (int i = 0; i < itemCount; ++i) {
 		QListWidgetItem *listItem = item(i);
 		if (listItem->checkState() == Qt::Checked) {
-			groupIds.push_back(item(i)->data(ROLE_ID).toString().toStdString());
+            groupIds.push_back(RsNodeGroupId(item(i)->data(ROLE_ID).toString().toStdString()));
 			std::cerr << "Adding selected item " << groupIds.back() << std::endl;
 		}
 	}
 }
 
-void GroupSelectionBox::setSelectedGroupIds(const std::list<std::string>& groupIds)
+void GroupSelectionBox::setSelectedGroupIds(const std::list<RsNodeGroupId>& groupIds)
 {
 	int itemCount = count();
 
 	for (int i = 0; i < itemCount; ++i) {
 		QListWidgetItem *listItem = item(i);
 
-		if (std::find(groupIds.begin(), groupIds.end(), listItem->data(ROLE_ID).toString().toStdString()) != groupIds.end()) {
+        if (std::find(groupIds.begin(), groupIds.end(), RsNodeGroupId(listItem->data(ROLE_ID).toString().toStdString())) != groupIds.end()) {
 			listItem->setCheckState(Qt::Checked);
 		} else {
 			listItem->setCheckState(Qt::Unchecked);

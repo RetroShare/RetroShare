@@ -297,7 +297,7 @@ static void fillGroups(ConnectFriendWizard *wizard, QComboBox *comboBox, const Q
 	GroupDefs::sortByName(groupInfoList);
 	comboBox->addItem("", ""); // empty value
 	for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
-		comboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id));
+        comboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id.toStdString()));
 	}
 
 	if (groupId.isEmpty() == false) {
@@ -853,7 +853,7 @@ void ConnectFriendWizard::accept()
 		} 
 
 		if (!groupId.isEmpty()) 
-			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
+            rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
 	}
 
 	if ((accept_connection) && (!peerDetails.id.isNull()))

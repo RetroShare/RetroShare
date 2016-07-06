@@ -249,7 +249,7 @@ void ShareManager::updateGroups()
 
         QString group_string;
         int n = 0;
-        for (std::list<std::string>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
+        for (std::list<RsNodeGroupId>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
         {
             if (n>0)
                 group_string += ", " ;

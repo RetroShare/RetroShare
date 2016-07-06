@@ -66,6 +66,9 @@ private:
 
     /** Qt Designer generated object */
     Ui::MessengerWindow ui;
+
+    static std::set<std::string> expandedPeers ;
+    static std::set<RsNodeGroupId> expandedGroups ;
 };
 
 #endif

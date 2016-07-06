@@ -58,8 +58,9 @@ const uint8_t RS_PKT_SUBTYPE_PEER_BANDLIMITS       = 0x06;
 const uint8_t RS_PKT_SUBTYPE_NODE_GROUP            = 0x07;
 
 	/* FILE CONFIG SUBTYPES */
-const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FILE_ITEM     = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER            = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FILE_ITEM_deprecated     = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILE_ITEM                = 0x03;
 
 /**************************************************************************/
 
@@ -327,23 +328,39 @@ class RsFileTransfer: public RsItem
 const uint32_t RS_FILE_CONFIG_CLEANUP_DELETE = 0x0001;
 
 /* Used by ft / extralist / configdirs / anyone who wants a basic file */ 
-class RsFileConfigItem: public RsItem
+class RsFileConfigItem_deprecated: public RsItem
 {
-	public:
-	RsFileConfigItem() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, 
-		RS_PKT_TYPE_FILE_CONFIG,
-		RS_PKT_SUBTYPE_FILE_ITEM)
-	{ return; }
-virtual ~RsFileConfigItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+public:
+    RsFileConfigItem_deprecated()
+        :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+                RS_PKT_TYPE_FILE_CONFIG,
+                RS_PKT_SUBTYPE_FILE_ITEM_deprecated)
+    {}
+    virtual ~RsFileConfigItem_deprecated() {}
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	RsTlvFileItem file;
-	uint32_t flags;
-	std::list<std::string> parent_groups ;
+    RsTlvFileItem file;
+    uint32_t flags;
+    std::list<std::string> parent_groups ;
 };
 
+class RsFileConfigItem: public RsItem
+{
+public:
+    RsFileConfigItem()
+        :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
+                RS_PKT_TYPE_FILE_CONFIG,
+                RS_PKT_SUBTYPE_FILE_ITEM)
+    {}
+    virtual ~RsFileConfigItem() {}
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    RsTlvFileItem file;
+    uint32_t flags;
+    RsTlvNodeGroupIdSet parent_groups ;
+};
 /**************************************************************************/
 
 class RsFileConfigSerialiser: public RsSerialType
@@ -365,9 +382,11 @@ virtual	uint32_t    sizeTransfer(RsFileTransfer *);
 virtual	bool        serialiseTransfer(RsFileTransfer *item, void *data, uint32_t *size);
 virtual	RsFileTransfer *  deserialiseTransfer(void *data, uint32_t *size);
 
+virtual	RsFileConfigItem_deprecated *  deserialiseFileItem_deprecated(void *data, uint32_t *size);
+
 virtual	uint32_t    sizeFileItem(RsFileConfigItem *);
 virtual	bool        serialiseFileItem(RsFileConfigItem *item, void *data, uint32_t *size);
-virtual	RsFileConfigItem *  deserialiseFileItem(void *data, uint32_t *size);
+virtual	RsFileConfigItem *deserialiseFileItem(void *data, uint32_t *size);
 
 };
 

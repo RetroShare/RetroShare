@@ -142,6 +142,7 @@ virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
 virtual bool    editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo) = 0;
 virtual bool    removeGroup(const RsNodeGroupId &groupId) = 0;
 virtual bool    getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo) = 0;
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
@@ -256,6 +257,7 @@ public:
     virtual bool    editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
     virtual bool    removeGroup(const RsNodeGroupId &groupId);
     virtual bool    getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
+    virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo) ;
     virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
     virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign);
 

@@ -409,6 +409,7 @@ public:
     virtual bool editGroup(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
     virtual bool removeGroup(const RsNodeGroupId& groupId) = 0;
     virtual bool getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
+    virtual bool getGroupInfoByName(const std::string& groupId, RsGroupInfo& groupInfo) = 0;
     virtual bool getGroupInfoList(std::list<RsGroupInfo>& groupInfoList) = 0;
 	// groupId == "" && assign == false -> remove from all groups
     virtual bool assignPeerToGroup(const RsNodeGroupId& groupId, const RsPgpId& peerId, bool assign) = 0;
@@ -427,7 +428,7 @@ public:
 	//
 	virtual FileSearchFlags computePeerPermissionFlags(
 			const RsPeerId& peer_id, FileStorageFlags file_sharing_flags,
-			const std::list<std::string>& file_parent_groups) = 0;
+            const std::list<RsNodeGroupId>& file_parent_groups) = 0;
 
 	/* Service permission flags */
 

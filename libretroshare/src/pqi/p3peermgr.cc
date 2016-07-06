@@ -2575,6 +2575,19 @@ bool p3PeerMgrIMPL::removeGroup(const RsNodeGroupId& groupId)
 	return changed;
 }
 
+bool p3PeerMgrIMPL::getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo)
+{
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+    for(std::map<RsNodeGroupId,RsGroupInfo>::iterator it = groupList.begin();it!=groupList.end();++it)
+        if(it->second.name == groupName)
+        {
+            groupInfo = it->second ;
+            return true ;
+        }
+
+    return false ;
+}
 bool p3PeerMgrIMPL::getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo &groupInfo)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

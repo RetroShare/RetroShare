@@ -43,34 +43,34 @@
 uint32_t    RsFileConfigSerialiser::size(RsItem *i)
 {
 	RsFileTransfer *rft;
-	RsFileConfigItem *rfi;
+    RsFileConfigItem *rfj;
 
 	if (NULL != (rft = dynamic_cast<RsFileTransfer *>(i)))
 	{
 		return sizeTransfer(rft);
 	}
-	if (NULL != (rfi = dynamic_cast<RsFileConfigItem *>(i)))
-	{
-		return sizeFileItem(rfi);
-	}
-	return 0;
+    if (NULL != (rfj = dynamic_cast<RsFileConfigItem *>(i)))
+    {
+        return sizeFileItem(rfj);
+    }
+    return 0;
 }
 
 /* serialise the data to the buffer */
 bool    RsFileConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
 	RsFileTransfer *rft;
-	RsFileConfigItem *rfi;
+    RsFileConfigItem *rfj;
 
 	if (NULL != (rft = dynamic_cast<RsFileTransfer *>(i)))
 	{
 		return serialiseTransfer(rft, data, pktsize);
 	}
-	if (NULL != (rfi = dynamic_cast<RsFileConfigItem *>(i)))
-	{
-		return serialiseFileItem(rfi, data, pktsize);
-	}
-	return false;
+    if (NULL != (rfj = dynamic_cast<RsFileConfigItem*>(i)))
+    {
+        return serialiseFileItem(rfj, data, pktsize);
+    }
+    return false;
 }
 
 RsItem *RsFileConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
@@ -90,10 +90,13 @@ RsItem *RsFileConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_FILE_TRANSFER:
 			return deserialiseTransfer(data, pktsize);
 			break;
-		case RS_PKT_SUBTYPE_FILE_ITEM:
-			return deserialiseFileItem(data, pktsize);
+        case RS_PKT_SUBTYPE_FILE_ITEM_deprecated:
+            return deserialiseFileItem_deprecated(data, pktsize);
 			break;
-		default:
+        case RS_PKT_SUBTYPE_FILE_ITEM:
+            return deserialiseFileItem(data, pktsize);
+            break;
+        default:
 			return NULL;
 			break;
 	}
@@ -158,20 +161,20 @@ std::ostream &RsFileTransfer::print(std::ostream &out, uint16_t indent)
 /*************************************************************************/
 /*************************************************************************/
 
-RsFileConfigItem::~RsFileConfigItem()
+void 	RsFileConfigItem_deprecated::clear()
 {
-	return;
-}
-
-void 	RsFileConfigItem::clear()
-{
-
 	file.TlvClear();
 	flags = 0;
 	parent_groups.clear() ;
 }
 
-std::ostream &RsFileConfigItem::print(std::ostream &out, uint16_t indent)
+void 	RsFileConfigItem::clear()
+{
+    file.TlvClear();
+    flags = 0;
+    parent_groups.TlvClear() ;
+}
+std::ostream &RsFileConfigItem_deprecated::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsFileConfigItem", indent);
 	uint16_t int_Indent = indent + 2;
@@ -188,6 +191,22 @@ std::ostream &RsFileConfigItem::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
+std::ostream &RsFileConfigItem::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsFileConfigItem", indent);
+    uint16_t int_Indent = indent + 2;
+    file.print(out, int_Indent);
+
+    printIndent(out, int_Indent); out << "flags: " << flags << std::endl;
+    printIndent(out, int_Indent); out << "groups:" ;
+
+    for(std::set<RsNodeGroupId>::const_iterator it(parent_groups.ids.begin());it!=parent_groups.ids.end();++it)
+        out << (*it) << " " ;
+    out << std::endl;
+
+    printRsItemEnd(out, "RsFileConfigItem", indent);
+    return out;
+}
 /*************************************************************************/
 /*************************************************************************/
 
@@ -351,8 +370,7 @@ uint32_t    RsFileConfigSerialiser::sizeFileItem(RsFileConfigItem *item)
 	s += item->file.TlvSize();
 	s += 4;	// flags
 
-	for(std::list<std::string>::const_iterator it(item->parent_groups.begin());it!=item->parent_groups.end();++it)	// parent groups
-		s += GetTlvStringSize(*it); 	
+    s += item->parent_groups.TlvSize() ;
 
 	return s;
 }
@@ -382,9 +400,7 @@ bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void 
 	/* add mandatory parts first */
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flags);
-
-	for(std::list<std::string>::const_iterator it(item->parent_groups.begin());ok && it!=item->parent_groups.end();++it)	// parent groups
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, *it);
+    ok &= item->parent_groups.SetTlv(data, tlvsize, &offset);
 
 	if (offset != tlvsize)
 	{
@@ -397,6 +413,66 @@ bool     RsFileConfigSerialiser::serialiseFileItem(RsFileConfigItem *item, void 
 	return ok;
 }
 
+RsFileConfigItem_deprecated *RsFileConfigSerialiser::deserialiseFileItem_deprecated(void *data, uint32_t *pktsize)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+        (RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+        (RS_PKT_TYPE_FILE_CONFIG  != getRsItemType(rstype)) ||
+        (RS_PKT_SUBTYPE_FILE_ITEM_deprecated != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
+
+    if (*pktsize < rssize)    /* check size */
+        return NULL; /* not enough data */
+
+    /* set the packet length */
+    *pktsize = rssize;
+
+    bool ok = true;
+
+    /* ready to load */
+    RsFileConfigItem_deprecated *item = new RsFileConfigItem_deprecated();
+    item->clear();
+
+    /* skip the header */
+    offset += 8;
+
+    /* get mandatory parts first */
+    ok &= item->file.GetTlv(data, rssize, &offset);
+    ok &= getRawUInt32(data, rssize, &offset, &(item->flags));
+
+    while(offset < rssize)
+    {
+        std::string tmp ;
+        if(GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, tmp))
+            item->parent_groups.push_back(tmp) ;
+        else
+            break ;
+    }
+
+    if (offset != rssize)
+    {
+        /* error */
+        delete item;
+        return NULL;
+    }
+
+    if (!ok)
+    {
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
 RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
@@ -409,7 +485,7 @@ RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_FILE_CONFIG  != getRsItemType(rstype)) ||
-		(RS_PKT_SUBTYPE_FILE_ITEM != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_FILE_ITEM_deprecated != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -423,7 +499,7 @@ RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32
 	bool ok = true;
 
 	/* ready to load */
-	RsFileConfigItem *item = new RsFileConfigItem();
+    RsFileConfigItem *item = new RsFileConfigItem();
 	item->clear();
 
 	/* skip the header */
@@ -432,15 +508,7 @@ RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32
 	/* get mandatory parts first */
 	ok &= item->file.GetTlv(data, rssize, &offset);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flags));
-
-	while(offset < rssize)
-	{
-		std::string tmp ;
-		if(GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, tmp))
-			item->parent_groups.push_back(tmp) ;
-		else
-			break ;
-	}
+    ok &= item->parent_groups.GetTlv(data, rssize, &offset) ;
 
 	if (offset != rssize)
 	{
@@ -1316,6 +1384,15 @@ RsNodeGroupItem::RsNodeGroupItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG
 {
 }
 
+RsNodeGroupItem::RsNodeGroupItem(const RsGroupInfo& g)
+    :RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_NODE_GROUP)
+{
+    id = g.id ;
+    name = g.name ;
+    flag = g.flag ;
+    pgpList.ids = g.peerIds;
+}
+
 void RsNodeGroupItem::clear()
 {
     id.clear();
@@ -1348,23 +1425,6 @@ std::ostream &RsNodeGroupItem::print(std::ostream &out, uint16_t indent)
     return out;
 }
 
-/* set data from RsGroupInfo to RsPeerGroupItem */
-void RsNodeGroupItem::set(RsGroupInfo &groupInfo)
-{
-    id = groupInfo.id;
-    name = groupInfo.name;
-    flag = groupInfo.flag;
-    pgpList.ids = groupInfo.peerIds;
-}
-
-/* get data from RsGroupInfo to RsPeerGroupItem */
-void RsNodeGroupItem::get(RsGroupInfo &groupInfo)
-{
-    groupInfo.id = id;
-    groupInfo.name = name;
-    groupInfo.flag = flag;
-    groupInfo.peerIds = pgpList.ids;
-}
 /*************************************************************************/
 /* DEPRECATED CODE. SHOULD BE REMOVED WHEN EVERYONE USES THE NEW CLASS   */
 /*************************************************************************/
@@ -1407,24 +1467,6 @@ std::ostream &RsPeerGroupItem_deprecated::print(std::ostream &out, uint16_t inde
 
 	printRsItemEnd(out, "RsPeerGroupItem", indent);
 	return out;
-}
-
-/* set data from RsGroupInfo to RsPeerGroupItem */
-void RsPeerGroupItem_deprecated::set(RsGroupInfo &groupInfo)
-{
-	id = groupInfo.id;
-	name = groupInfo.name;
-	flag = groupInfo.flag;
-	pgpList.ids = groupInfo.peerIds;
-}
-
-/* get data from RsGroupInfo to RsPeerGroupItem */
-void RsPeerGroupItem_deprecated::get(RsGroupInfo &groupInfo)
-{
-	groupInfo.id = id;
-	groupInfo.name = name;
-	groupInfo.flag = flag;
-	groupInfo.peerIds = pgpList.ids;
 }
 
 /*************************************************************************/

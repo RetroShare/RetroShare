@@ -127,11 +127,12 @@ public:
     virtual bool editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
     virtual bool removeGroup(const RsNodeGroupId &groupId);
     virtual bool getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
-	virtual bool getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
+    virtual bool getGroupInfoByName(const std::string& groupName, RsGroupInfo& groupInfo);
+    virtual bool getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
     virtual bool assignPeerToGroup(const RsNodeGroupId &groupId, const RsPgpId &peerId, bool assign);
     virtual bool assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId>& peerIds, bool assign);
 
-	virtual FileSearchFlags computePeerPermissionFlags(const RsPeerId& peer_id,FileStorageFlags share_flags,const std::list<std::string>& parent_groups);
+    virtual FileSearchFlags computePeerPermissionFlags(const RsPeerId& peer_id, FileStorageFlags share_flags, const std::list<RsNodeGroupId> &parent_groups);
 
 	// service permission stuff
 

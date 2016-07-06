@@ -271,9 +271,9 @@ void FriendSelectionWidget::secured_fillList()
         selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
-    std::set<std::string> groupIdsSelected;
+    std::set<RsNodeGroupId> groupIdsSelected;
 	if (mShowTypes & SHOW_GROUP) {
-        selectedIds<std::string,IDTYPE_GROUP>(groupIdsSelected,true);
+        selectedIds<RsNodeGroupId,IDTYPE_GROUP>(groupIdsSelected,true);
 	}
 
     std::set<RsPgpId> gpgIdsSelected;
@@ -347,7 +347,7 @@ void FriendSelectionWidget::secured_fillList()
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 			groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP16));
 
-			groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
+            groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
 			groupItem->setExpanded(true);
 
@@ -363,7 +363,7 @@ void FriendSelectionWidget::secured_fillList()
 				groupItem->setCheckState(0, Qt::Unchecked);
 			}
 
-			emit itemAdded(IDTYPE_GROUP, QString::fromStdString(groupInfo->id), groupItem);
+            emit itemAdded(IDTYPE_GROUP, QString::fromStdString(groupInfo->id.toStdString()), groupItem);
 
 			if (std::find(groupIdsSelected.begin(), groupIdsSelected.end(), groupInfo->id) != groupIdsSelected.end()) {
 				setSelected(mListModus, groupItem, true);

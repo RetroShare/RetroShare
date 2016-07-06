@@ -63,8 +63,8 @@ public:
     // Add a tool button to the tool area
     void addToolButton(QToolButton *toolButton);
     void processSettings(bool load);
-    void addGroupToExpand(const std::string &groupId);
-    bool getExpandedGroups(std::set<std::string> &groups) const;
+    void addGroupToExpand(const RsNodeGroupId &groupId);
+    bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
     void addPeerToExpand(const std::string &gpgId);
     bool getExpandedPeers(std::set<std::string> &peers) const;
 
@@ -119,8 +119,9 @@ private:
     QString mFilterText;
 
     bool groupsHasChanged;
-    std::set<std::string> *openGroups;
-    std::set<std::string> *openPeers;
+    std::set<RsNodeGroupId> openGroups;
+#warning this would needs an ID, not a std::string.
+    std::set<std::string>   openPeers;
 
     /* Color definitions (for standard see qss.default) */
     QColor mTextColorGroup;
@@ -129,8 +130,8 @@ private:
     QTreeWidgetItem *getCurrentPeer() const;
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
 
-    bool getOrCreateGroup(const std::string &name, const uint &flag, std::string &id);
-    bool getGroupIdByName(const std::string &name, std::string &id);
+    bool getOrCreateGroup(const std::string &name, const uint &flag, RsNodeGroupId &id);
+    bool getGroupIdByName(const std::string &name, RsNodeGroupId &id);
 
     bool importExportFriendlistFileDialog(QString &fileName, bool import);
     bool exportFriendlist(QString &fileName);
