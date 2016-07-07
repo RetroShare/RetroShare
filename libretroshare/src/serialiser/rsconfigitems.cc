@@ -485,7 +485,7 @@ RsFileConfigItem *RsFileConfigSerialiser::deserialiseFileItem(void *data, uint32
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_FILE_CONFIG  != getRsItemType(rstype)) ||
-        (RS_PKT_SUBTYPE_FILE_ITEM_deprecated != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_FILE_ITEM != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
