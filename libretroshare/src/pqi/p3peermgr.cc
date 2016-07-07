@@ -2304,7 +2304,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
             ginfo.flag = gitem->flag ;
             ginfo.name = gitem->name ;
             ginfo.peerIds = gitem->pgpList.ids ;
-            ginfo.id   = RsNodeGroupId::random() ;
+
+            do { ginfo.id = RsNodeGroupId::random(); } while(groupList.find(ginfo.id) != groupList.end()) ;
 
             // Ensure backward compatibility when loading the group in old format. The id must matchthe standard default id.
 
@@ -2484,7 +2485,8 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-        groupInfo.id = RsNodeGroupId::random() ;//groupItem->id; // at creation time, we generate a random id.
+        do { groupInfo.id = RsNodeGroupId::random(); } while(groupList.find(groupInfo.id) != groupList.end()) ;
+
         RsGroupInfo groupItem(groupInfo) ;
 
 		// remove standard flag

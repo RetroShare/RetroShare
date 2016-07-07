@@ -305,6 +305,9 @@ void FriendSelectionWidget::secured_fillList()
 	else
 		rsPeers->getGPGAcceptedList(gpgIds);
 
+    // add own pgp id to the list
+    gpgIds.push_back(rsPeers->getGPGOwnId()) ;
+
     std::list<RsPeerId> sslIds;
     std::list<RsPeerId>::iterator sslIt;
 
