@@ -217,7 +217,17 @@ void FriendList::processSettings(bool load)
         int arrayIndex = Settings->beginReadArray("Groups");
         for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
-            addGroupToExpand(RsNodeGroupId(Settings->value("open").toString().toStdString()));
+
+            std::string gids = Settings->value("open").toString().toStdString();
+
+            RsGroupInfo ginfo ;
+
+            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else
+                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
     } else {

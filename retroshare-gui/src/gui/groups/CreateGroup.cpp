@@ -45,6 +45,11 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mGroupId = groupId;
 
+    if(!mGroupId.isNull())
+        ui.groupId_LE->setText(QString::fromStdString(mGroupId.toStdString())) ;
+    else
+        ui.groupId_LE->setText(tr("To be defined")) ;
+
 	/* Initialize friends list */
 	ui.friendList->setHeaderText(tr("Friends"));
 	ui.friendList->setModus(FriendSelectionWidget::MODUS_CHECK);
@@ -104,9 +109,9 @@ CreateGroup::~CreateGroup()
 void CreateGroup::groupNameChanged(QString text)
 {
 	if (text.isEmpty() || mUsedGroupNames.contains(misc::removeNewLine(text))) {
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	} else {
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	}
 }
 

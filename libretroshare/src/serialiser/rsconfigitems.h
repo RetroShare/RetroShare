@@ -222,9 +222,10 @@ virtual	uint32_t    sizeStun(RsPeerStunItem *);
 virtual	bool        serialiseStun  (RsPeerStunItem *item, void *data, uint32_t *size);
 virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeGroup(RsPeerGroupItem_deprecated *);
-virtual	bool        serialiseGroup  (RsPeerGroupItem_deprecated *item, void *data, uint32_t *size);
-virtual	RsPeerGroupItem_deprecated *    deserialiseGroup(void *data, uint32_t *size);
+virtual	uint32_t    sizeGroup(RsNodeGroupItem *);
+virtual	bool        serialiseGroup  (RsNodeGroupItem *item, void *data, uint32_t *size);
+virtual	RsNodeGroupItem *deserialiseGroup(void *data, uint32_t *size);
+virtual	RsPeerGroupItem_deprecated *    deserialiseGroup_deprecated(void *data, uint32_t *size);
 
 virtual	uint32_t    sizePeerBandwidthLimits(RsPeerBandwidthLimitsItem *);
 virtual	bool        serialisePeerBandwidthLimits  (RsPeerBandwidthLimitsItem *item, void *data, uint32_t *size);

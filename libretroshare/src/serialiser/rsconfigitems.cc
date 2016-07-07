@@ -750,7 +750,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 {
 	RsPeerStunItem *psi;
 	RsPeerNetItem *pni;
-    RsPeerGroupItem_deprecated *pgi;
+    RsNodeGroupItem *pgi;
 	RsPeerServicePermissionItem *pri;
 	RsPeerBandwidthLimitsItem *pblitem;
 
@@ -762,7 +762,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	{
 		return sizeStun(psi);
 	}
-    else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem_deprecated *>(i)))
+    else if (NULL != (pgi = dynamic_cast<RsNodeGroupItem*>(i)))
 	{
 		return sizeGroup(pgi);
 	}
@@ -783,7 +783,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 {
 	RsPeerNetItem *pni;
 	RsPeerStunItem *psi;
-    RsPeerGroupItem_deprecated *pgi;
+    RsNodeGroupItem *pgi;
 	RsPeerServicePermissionItem *pri;
 	RsPeerBandwidthLimitsItem *pblitem;
 
@@ -795,7 +795,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	{
 		return serialiseStun(psi, data, pktsize);
 	}
-    else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem_deprecated *>(i)))
+    else if (NULL != (pgi = dynamic_cast<RsNodeGroupItem*>(i)))
 	{
 		return serialiseGroup(pgi, data, pktsize);
 	}
@@ -833,8 +833,10 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_PEER_STUN:
 			return deserialiseStun(data, pktsize);
         case RS_PKT_SUBTYPE_PEER_GROUP_deprecated:
-			return deserialiseGroup(data, pktsize);
-		case RS_PKT_SUBTYPE_PEER_PERMISSIONS:
+            return deserialiseGroup_deprecated(data, pktsize);
+        case RS_PKT_SUBTYPE_NODE_GROUP:
+            return deserialiseGroup(data, pktsize);
+        case RS_PKT_SUBTYPE_PEER_PERMISSIONS:
 			return deserialisePermissions(data, pktsize);
 		case RS_PKT_SUBTYPE_PEER_BANDLIMITS:
 			return deserialisePeerBandwidthLimits(data, pktsize);
@@ -1469,20 +1471,67 @@ std::ostream &RsPeerGroupItem_deprecated::print(std::ostream &out, uint16_t inde
 	return out;
 }
 
+RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup_deprecated(void *data, uint32_t *size)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+    if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+        (RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+        (RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+        (RS_PKT_SUBTYPE_PEER_GROUP_deprecated != getRsItemSubType(rstype)))
+    {
+        return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+        return NULL; /* not enough data */
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsPeerGroupItem_deprecated *item = new RsPeerGroupItem_deprecated();
+    item->clear();
+
+    /* skip the header */
+    offset += 8;
+
+    /* get mandatory parts first */
+    uint32_t version;
+    ok &= getRawUInt32(data, rssize, &offset, &version);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->id);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
+    ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
+    ok &= item->pgpList.GetTlv(data, rssize, &offset);
+
+    if (offset != rssize)
+    {
+        /* error */
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
 /*************************************************************************/
 
-uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem_deprecated *i)
+uint32_t RsPeerConfigSerialiser::sizeGroup(RsNodeGroupItem *i)
 {	
 	uint32_t s = 8; /* header */
 	s += 4; /* version */
-	s += GetTlvStringSize(i->id);
+    s += RsNodeGroupId::serial_size();
 	s += GetTlvStringSize(i->name);
 	s += 4; /* flag */
 	s += i->pgpList.TlvSize();
 	return s;
 }
 
-bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem_deprecated *item, void *data, uint32_t *size)
+bool RsPeerConfigSerialiser::serialiseGroup(RsNodeGroupItem *item, void *data, uint32_t *size)
 {
 	uint32_t tlvsize = RsPeerConfigSerialiser::sizeGroup(item);
 	uint32_t offset = 0;
@@ -1508,7 +1557,7 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem_deprecated *item, vo
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, 0);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, item->id);
+    ok &= item->id.serialise(data, tlvsize, offset);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 	ok &= item->pgpList.SetTlv(data, tlvsize, &offset);
@@ -1524,7 +1573,7 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem_deprecated *item, vo
 	return ok;
 }
 
-RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *size)
+RsNodeGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *size)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -1535,7 +1584,7 @@ RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup(void *data,
 	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
 		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
 		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
-        (RS_PKT_SUBTYPE_PEER_GROUP_deprecated != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_NODE_GROUP != getRsItemSubType(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -1548,7 +1597,7 @@ RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup(void *data,
 
 	bool ok = true;
 
-    RsPeerGroupItem_deprecated *item = new RsPeerGroupItem_deprecated();
+    RsNodeGroupItem *item = new RsNodeGroupItem();
 	item->clear();
 
 	/* skip the header */
@@ -1557,7 +1606,7 @@ RsPeerGroupItem_deprecated *RsPeerConfigSerialiser::deserialiseGroup(void *data,
 	/* get mandatory parts first */
 	uint32_t version;
 	ok &= getRawUInt32(data, rssize, &offset, &version);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->id);
+    ok &= item->id.deserialise(data, rssize, offset);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 	ok &= item->pgpList.GetTlv(data, rssize, &offset);

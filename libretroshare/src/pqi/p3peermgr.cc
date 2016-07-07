@@ -2065,7 +2065,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	/* save groups */
 
     for ( std::map<RsNodeGroupId,RsGroupInfo>::iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
-        saveData.push_back(new RsNodeGroupItem(groupIt->second)); // no delete
+    {
+        RsNodeGroupItem *itm = new RsNodeGroupItem(groupIt->second);
+        saveData.push_back(itm) ;
+    }
 
 	return true;
 }
@@ -2311,9 +2314,13 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
             if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FAVORITES)) ginfo.id = RS_GROUP_ID_FAVORITES ;
             if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_OTHERS   )) ginfo.id = RS_GROUP_ID_OTHERS    ;
 
-            groupList[ginfo.id] = ginfo ;
-
-            std::cerr << "(II) Creating new group for old format local group \"" << gitem->name << "\". Id=" << ginfo.id << std::endl;
+            if(!ginfo.id.isNull())
+            {
+                groupList[ginfo.id] = ginfo ;
+                std::cerr << "(II) Creating new group for old format local group \"" << gitem->name << "\". Id=" << ginfo.id << std::endl;
+            }
+            else
+                std::cerr << "(EE) no group corresponding to old format group with ID=\"" << gitem->id << "\"" << std::endl;
 
             continue;
 	    }
@@ -2335,6 +2342,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
             info.name    = gitem2->name ;
             info.flag    = gitem2->flag ;
 
+            std::cerr << "(II) Loaded group in new format. ID = " << info.id << std::endl;
             groupList[info.id] = info ;
 
             continue;
@@ -2483,6 +2491,8 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 
         groupItem.flag &= ~RS_GROUP_FLAG_STANDARD;
         groupList[groupInfo.id] = groupItem;
+
+        std::cerr << "(II) Added new group with ID " << groupInfo.id << ", name=\"" << groupInfo.name << "\"" << std::endl;
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);
@@ -2586,6 +2596,7 @@ bool p3PeerMgrIMPL::getGroupInfoByName(const std::string& groupName, RsGroupInfo
             return true ;
         }
 
+    std::cerr << "(EE) getGroupInfoByName: no known group for name " << groupName << std::endl;
     return false ;
 }
 bool p3PeerMgrIMPL::getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo &groupInfo)
