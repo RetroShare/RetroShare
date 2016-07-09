@@ -125,7 +125,7 @@ void GxsGroupDialog::init()
 
 	ui.idChooser->loadIds(0,RsGxsId());
 	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
-	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
+    ui.localComboBox->loadGroups(0, RsNodeGroupId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
@@ -444,19 +444,21 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 		case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			ui.typeLocal->setChecked(true);
 			distribution_string = tr("Your friends only") ;
-			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
-			ui.distributionCircleComboBox->setVisible(true) ;
-			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
-			break;
+            ui.localComboBox->loadGroups(0, RsNodeGroupId(mGrpMeta.mInternalCircle));
+            ui.distributionCircleComboBox->setVisible(false) ;
+            ui.localComboBox->setVisible(true) ;
+            break;
 		case GXS_CIRCLE_TYPE_PUBLIC:
 			ui.typePublic->setChecked(true);
 			distribution_string = tr("Public") ;
 			ui.distributionCircleComboBox->setVisible(false) ;
-			break;
+            ui.localComboBox->setVisible(false) ;
+            break;
 		case GXS_CIRCLE_TYPE_EXTERNAL:
 			ui.typeGroup->setChecked(true);
 			distribution_string = tr("Restricted to circle:") ;
-			ui.distributionCircleComboBox->setVisible(true) ;
+            ui.localComboBox->setVisible(false) ;
+            ui.distributionCircleComboBox->setVisible(true) ;
 			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
 			break;
@@ -720,41 +722,42 @@ void GxsGroupDialog::updateCircleOptions()
 
 bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 {
-	meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
-	meta.mCircleId.clear();
-	meta.mOriginator.clear();
-	meta.mInternalCircle.clear();
+    meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+    meta.mCircleId.clear();
+    meta.mOriginator.clear();
+    meta.mInternalCircle.clear();
 
-	if (ui.typePublic->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
-		meta.mCircleId.clear();
-	}
-	else if (ui.typeGroup->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
-		if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
-		{
-			return false;
-		}
-	}
-	else if (ui.typeLocal->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
-		meta.mCircleId.clear();
-		meta.mOriginator.clear();
-		meta.mInternalCircle.clear() ;
-	
-		if (!ui.localComboBox->getChosenCircle(meta.mInternalCircle))
-		{
-			return false;
-		}
-	}
-	else
-	{
-		return false;
-	}
-	return true;
+    if (ui.typePublic->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+        meta.mCircleId.clear();
+    }
+    else if (ui.typeGroup->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+        if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
+        {
+            return false;
+        }
+    }
+    else if (ui.typeLocal->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
+        meta.mCircleId.clear();
+        meta.mOriginator.clear();
+        meta.mInternalCircle.clear() ;
+
+        RsNodeGroupId ngi ;
+
+        if (!ui.localComboBox->getChosenGroup(ngi))
+            return false;
+
+        meta.mInternalCircle = RsGxsCircleId(ngi) ;
+    }
+    else
+        return false;
+
+    return true;
 }
 
 void GxsGroupDialog::cancelDialog()
