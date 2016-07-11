@@ -333,48 +333,57 @@ void p3GxsReputation::updateIdentityFlags()
 
 void p3GxsReputation::cleanup()
 {
-    // remove opinions from friends that havn't been seen online for more than the specified delay
+	// remove opinions from friends that havn't been seen online for more than the specified delay
 
 #ifdef DEBUG_REPUTATION
 #endif
-    std::cerr << "p3GxsReputation::cleanup() " << std::endl;
+	std::cerr << "p3GxsReputation::cleanup() " << std::endl;
 
-    // remove optionions about identities that do not exist anymore. That will in particular avoid asking p3idservice about deleted
-    // identities, which would cause an excess of hits to the database.
+	// remove optionions about identities that do not exist anymore. That will in particular avoid asking p3idservice about deleted
+	// identities, which would cause an excess of hits to the database.
+	// We do it in two steps to avoid a deadlock when calling rsIdentity from here.
 
-    bool updated = false ;
-    time_t now = time(NULL) ;
+	bool updated = false ;
+	time_t now = time(NULL) ;
 
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	std::list<RsGxsId> ids_to_check_for_last_usage_ts;
 
-    for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
-        if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-        {
-            std::map<RsGxsId,Reputation>::iterator tmp(it) ;
-            ++tmp ;
-            mReputations.erase(it) ;
-            it = tmp ;
+	{
+		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+		for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
+			if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+			{
+				std::map<RsGxsId,Reputation>::iterator tmp(it) ;
+				++tmp ;
+				mReputations.erase(it) ;
+				it = tmp ;
 #ifdef DEBUG_REPUTATION
-            std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
+				std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
 #endif
-            updated = true ;
-        }
-        else if(rsIdentity->getLastUsageTS(it->first) + REPUTATION_INFO_KEEP_DELAY < now)
-        {
-#ifdef DEBUG_REPUTATION
-            std::cerr << "  Identity " << it->first << " has a last usage TS of " << now - rsIdentity->getLastUsageTS(it->first) << " secs ago: deleting it." << std::endl;
-#endif
-            std::map<RsGxsId,Reputation>::iterator tmp(it) ;
-            ++tmp ;
-            mReputations.erase(it) ;
-            it = tmp ;
-            updated = true ;
-        }
-        else
-            ++it ;
+				updated = true ;
+			}
+			else
+			{
+				ids_to_check_for_last_usage_ts.push_back(it->first) ;
+				++it;
+			}
+	}
 
-    if(updated)
-        IndicateConfigChanged() ;
+	for(std::list<RsGxsId>::const_iterator it(ids_to_check_for_last_usage_ts.begin());it!=ids_to_check_for_last_usage_ts.end();++it)
+		if(rsIdentity->getLastUsageTS(*it) + REPUTATION_INFO_KEEP_DELAY < now)
+		{
+#ifdef DEBUG_REPUTATION
+			std::cerr << "  Identity " << *it << " has a last usage TS of " << now - rsIdentity->getLastUsageTS(*it) << " secs ago: deleting it." << std::endl;
+#endif
+
+			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+			mReputations.erase(*it) ;
+			updated = true ;
+		}
+
+	if(updated)
+		IndicateConfigChanged() ;
 }
 
 void p3GxsReputation::updateActiveFriends()
