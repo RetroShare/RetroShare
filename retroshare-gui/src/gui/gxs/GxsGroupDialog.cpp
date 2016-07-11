@@ -124,7 +124,7 @@ void GxsGroupDialog::init()
 	/* Setup Reasonable Defaults */
 
 	ui.idChooser->loadIds(0,RsGxsId());
-	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
+    ui.circleComboBox->loadCircles(RsGxsCircleId());
     ui.localComboBox->loadGroups(0, RsNodeGroupId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
@@ -315,8 +315,6 @@ void GxsGroupDialog::setupDefaults()
     ui.typeGroup_3->setEnabled(false);
     ui.typeLocal_3->setEnabled(false);
 #endif
-    ui.typeLocal->setEnabled(false);	// for now, since local circles not fully tested.
-    ui.typeLocal->setToolTip(tr("This feature is not yet available, but it will be available very soon!"));	// for now, since local circles not fully tested.
 }
 
 void GxsGroupDialog::setupVisibility()
@@ -459,8 +457,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 			distribution_string = tr("Restricted to circle:") ;
             ui.localComboBox->setVisible(false) ;
             ui.distributionCircleComboBox->setVisible(true) ;
-			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
-			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
+            ui.distributionCircleComboBox->loadCircles(mGrpMeta.mCircleId);
+            ui.circleComboBox->loadCircles(mGrpMeta.mCircleId);
 			break;
 		default:
 			std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
