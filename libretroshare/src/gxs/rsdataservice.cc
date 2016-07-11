@@ -1377,10 +1377,10 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
               {
                   bool valid = c->moveToFirst();
 
-//#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-                        if(!valid)
-                                    std::cerr << " Empty query! GrpId " << grpId << " is not in database" << std::endl;
-//#endif
+#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+                      if(!valid)
+                                  std::cerr << " Empty query! GrpId " << grpId << " is not in database" << std::endl;
+#endif
                   while(valid)
                   {
                       RsGxsGrpMetaData* g = locked_getGrpMeta(*c, 0);
