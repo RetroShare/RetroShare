@@ -340,17 +340,15 @@ public:
 
 	    std::map<RsGxsId,time_t>::const_iterator it = mLastUsageTS.find(gxs_id) ;
 
-	    if(it == mLastUsageTS.end())
-	    {
-		    std::cerr << "No Ts for this ID => kept" << std::endl;
-		    return true ;
-	    }
+        bool no_ts = (it == mLastUsageTS.end()) ;
 
-	    time_t last_usage_ts = it->second;
+        time_t last_usage_ts = no_ts?0:(it->second);
 	    time_t max_keep_time ;
 
-	    if(is_id_banned)
-		    max_keep_time = MAX_KEEP_KEYS_BANNED ;
+        if(no_ts)
+            max_keep_time = 0 ;
+        else if(is_id_banned)
+            max_keep_time = MAX_KEEP_KEYS_BANNED ;
 	    else if(is_known_id)
 		    max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
 	    else if(is_signed_id)
