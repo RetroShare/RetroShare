@@ -25,7 +25,7 @@
 #pragma once
 
 #include <QComboBox>
-#include <retroshare/rsgxscircles.h>
+#include <retroshare/rspeers.h>
 
 class GroupChooser : public QComboBox
 {
@@ -35,6 +35,7 @@ public:
     void loadGroups(uint32_t chooserFlags, const RsNodeGroupId& defaultId);
     bool getChosenGroup(RsNodeGroupId& id);
 
+    static bool makeNodeGroupDesc(const RsGroupInfo& info, QString &desc);
 private:
     void loadGroups();
     uint32_t mFlags;

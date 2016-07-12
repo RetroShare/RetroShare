@@ -44,14 +44,20 @@ void GroupChooser::loadGroups(uint32_t chooserFlags, const RsNodeGroupId& defaul
 }
 
 
-static bool MakeNodeGroupDesc(const RsGroupInfo& info, QString &desc)
+bool GroupChooser::makeNodeGroupDesc(const RsGroupInfo& info, QString &desc)
 {
     desc.clear();
-    desc = QString::fromUtf8(info.name.c_str());
 
-    desc += " (Node group) [";
-    desc += QString::fromStdString(info.id.toStdString().substr(0,5));
-	desc += "...]";
+    if(info.name.empty())
+        desc = tr("[Unknown]") ;
+    else
+        desc = "\"" + QString::fromUtf8(info.name.c_str()) + "\"";
+
+    desc += " [" ;
+    desc += QString::fromStdString(info.id.toStdString().substr(0,3));
+    desc += "...";
+    desc += QString::fromStdString(info.id.toStdString().substr(info.id.toStdString().length()-2,2));
+    desc += "]";
 
 	return true;
 }
@@ -76,7 +82,7 @@ void GroupChooser::loadGroups()
 	{
 		/* add to Chooser */
 		QString str;
-        if (!MakeNodeGroupDesc(*it, str))
+        if (!makeNodeGroupDesc(*it, str))
 		{
             std::cerr << "GroupChooser::loadGroups() ERROR Desc for Id: " << it->id;
 			std::cerr << std::endl;

@@ -392,87 +392,97 @@ void GxsGroupDialog::newGroup()
 
 void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 {
-	std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
-	std::cerr << std::endl;
+    std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
+    std::cerr << std::endl;
 
-	std::cerr << "void GxsGroupDialog::updateFromExistingMeta() mGrpMeta.mCircleType: ";
-	std::cerr << mGrpMeta.mCircleType << " Internal: " << mGrpMeta.mInternalCircle;
-	std::cerr << " External: " << mGrpMeta.mCircleId;
-	std::cerr << std::endl;
+    std::cerr << "void GxsGroupDialog::updateFromExistingMeta() mGrpMeta.mCircleType: ";
+    std::cerr << mGrpMeta.mCircleType << " Internal: " << mGrpMeta.mInternalCircle;
+    std::cerr << " External: " << mGrpMeta.mCircleId;
+    std::cerr << std::endl;
 
-	setupDefaults();
-	setupVisibility();
-	setupReadonly();
-	clearForm();
-    	setGroupSignFlags(mGrpMeta.mSignFlags) ;
+    setupDefaults();
+    setupVisibility();
+    setupReadonly();
+    clearForm();
+    setGroupSignFlags(mGrpMeta.mSignFlags) ;
 
-	/* setup name */
-	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	
-	/* Show Mode */
-	ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
-	ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
-	ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+    /* setup name */
+    ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+
+    /* Show Mode */
+    ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+    ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
+    ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
+    ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
-	ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
-	ui.descriptiontextEdit->setPlainText(description);
-	
-		switch (mode())
-  {
-		case MODE_CREATE:{
-		}
-		break;
-		case MODE_SHOW:{
-			ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-			if (!mPicture.isNull())
-				ui.headerFrame->setHeaderImage(mPicture);
-		}
-		break;
-		case MODE_EDIT:{
-		}
-		break;
-  }
-	/* set description */
-	ui.groupDesc->setPlainText(description);
-    	QString distribution_string = "[Unknown]";
+    ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
+    ui.descriptiontextEdit->setPlainText(description);
 
-	switch(mGrpMeta.mCircleType)
-	{
-		case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
-			ui.typeLocal->setChecked(true);
-			distribution_string = tr("Your friends only") ;
-            ui.localComboBox->loadGroups(0, RsNodeGroupId(mGrpMeta.mInternalCircle));
-            ui.distributionCircleComboBox->setVisible(false) ;
-            ui.localComboBox->setVisible(true) ;
-            break;
-		case GXS_CIRCLE_TYPE_PUBLIC:
-			ui.typePublic->setChecked(true);
-			distribution_string = tr("Public") ;
-			ui.distributionCircleComboBox->setVisible(false) ;
-            ui.localComboBox->setVisible(false) ;
-            break;
-		case GXS_CIRCLE_TYPE_EXTERNAL:
-			ui.typeGroup->setChecked(true);
-			distribution_string = tr("Restricted to circle:") ;
-            ui.localComboBox->setVisible(false) ;
-            ui.distributionCircleComboBox->setVisible(true) ;
-            ui.distributionCircleComboBox->loadCircles(mGrpMeta.mCircleId);
-            ui.circleComboBox->loadCircles(mGrpMeta.mCircleId);
-			break;
-		default:
-			std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
-			std::cerr << std::endl;
-			break;
-	}
+    switch (mode())
+    {
+    case MODE_CREATE:{
+    }
+        break;
+    case MODE_SHOW:{
+        ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+        if (!mPicture.isNull())
+            ui.headerFrame->setHeaderImage(mPicture);
+    }
+        break;
+    case MODE_EDIT:{
+    }
+        break;
+    }
+    /* set description */
+    ui.groupDesc->setPlainText(description);
+    QString distribution_string = "[Unknown]";
+
+    switch(mGrpMeta.mCircleType)
+    {
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        ui.typeLocal->setChecked(true);
+        distribution_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(mGrpMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distribution_string += desc ;
+
+        ui.localComboBox->loadGroups(0, RsNodeGroupId(mGrpMeta.mInternalCircle));
+        ui.distributionCircleComboBox->setVisible(false) ;
+        ui.localComboBox->setVisible(true) ;
+    }
+        break;
+    case GXS_CIRCLE_TYPE_PUBLIC:
+        ui.typePublic->setChecked(true);
+        distribution_string = tr("Public") ;
+        ui.distributionCircleComboBox->setVisible(false) ;
+        ui.localComboBox->setVisible(false) ;
+        break;
+    case GXS_CIRCLE_TYPE_EXTERNAL:
+        ui.typeGroup->setChecked(true);
+        distribution_string = tr("Restricted to circle:") ;
+        ui.localComboBox->setVisible(false) ;
+        ui.distributionCircleComboBox->setVisible(true) ;
+        ui.distributionCircleComboBox->loadCircles(mGrpMeta.mCircleId);
+        ui.circleComboBox->loadCircles(mGrpMeta.mCircleId);
+        break;
+    default:
+        std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
+        std::cerr << std::endl;
+        break;
+    }
     ui.distributionValueLabel->setText(distribution_string) ;
 
-	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
-    
-    	if(!mGrpMeta.mAuthorId.isNull())
-		ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
+    ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
 
-	updateCircleOptions();
+    if(!mGrpMeta.mAuthorId.isNull())
+        ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
+
+    updateCircleOptions();
 }
 
 void GxsGroupDialog::submitGroup()
