@@ -302,7 +302,13 @@ void GxsGroupDialog::setupDefaults()
 		}
 	}
 	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+        
+        if( (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP) && (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN))
+		ui.antiSpam_perms_CB->setCurrentIndex(2) ;
+        else if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP)
+		ui.antiSpam_perms_CB->setCurrentIndex(1) ;
+        else
+		ui.antiSpam_perms_CB->setCurrentIndex(0) ;
         
         QString antispam_string ;
         if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK) antispam_string += tr("Message tracking") ;
@@ -623,32 +629,37 @@ void GxsGroupDialog::createGroup()
 	
 uint32_t GxsGroupDialog::getGroupSignFlags()
 {
-	/* grab from the ui options -> */
-	uint32_t signFlags = 0;
-	if (ui.publish_encrypt->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED;
-	} else if (ui.publish_required->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED;
-	} else if (ui.publish_threads->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD;
-	} else {  // publish_open (default).
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
-	}
+    /* grab from the ui options -> */
+    uint32_t signFlags = 0;
+    if (ui.publish_encrypt->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED;
+    } else if (ui.publish_required->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED;
+    } else if (ui.publish_threads->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD;
+    } else {  // publish_open (default).
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
+    }
 
-	if (ui.personal_required->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
-    
-	if (ui.personal_ifnopub->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
-    
-	// Author Signature.
-	if (ui.antiSpam_signedIds->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
-    
-	if (ui.antiSpam_trackMessages->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
-    
-	return signFlags;
+    if (ui.personal_required->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+
+    if (ui.personal_ifnopub->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
+
+    // Author Signature.
+    switch(ui.antiSpam_perms_CB->currentIndex()) 
+    {
+    case 0: break ;
+    case 2: signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN;	// no break below, since we want *both* flags in this case.
+    case 1:  signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
+	    break ;
+    }
+
+    if (ui.antiSpam_trackMessages->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
+
+    return signFlags;
 }
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
@@ -670,11 +681,19 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 		ui.personal_ifnopub->setChecked(true);
     
 		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
         
+        		if( (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+                    ui.antiSpam_perms_CB->setCurrentIndex(2) ;
+                else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+                    ui.antiSpam_perms_CB->setCurrentIndex(1) ;
+		else
+                    ui.antiSpam_perms_CB->setCurrentIndex(0) ;
+                
         QString antispam_string ;
         if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
-	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
+	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)      antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature from known ID required") ;
+    	else
+	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)            antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
     
     	ui.antiSpamValueLabel->setText(antispam_string) ;
 		//ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );

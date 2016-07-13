@@ -258,16 +258,13 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
     std::map<RsGxsId,time_t>::const_iterator it = mKeysTS.find(gxs_id) ;
 
     if(it == mKeysTS.end())
-    {
-        slowIndicateConfigChanged() ;
-        return mKeysTS[gxs_id] = time(NULL) ;
-    }
+        return 0 ;
     else
         return it->second ;
 }
 void p3IdService::timeStampKey(const RsGxsId& gxs_id)
 {
-    if(rsReputations->isIdentityBanned(gxs_id))
+    if(isBanned(gxs_id))
     {
 	    std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
 	    return;
@@ -327,7 +324,7 @@ public:
 	    time_t now = time(NULL);
 	    const RsGxsId& gxs_id = entry.details.mId ;
 
-	    bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
+	    bool is_id_banned = rsReputations->isIdentityBanned(gxs_id,entry.details.mPgpId) ;
 	    bool is_own_id    = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID) ;
 	    bool is_known_id  = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) ;
 	    bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
@@ -343,17 +340,15 @@ public:
 
 	    std::map<RsGxsId,time_t>::const_iterator it = mLastUsageTS.find(gxs_id) ;
 
-	    if(it == mLastUsageTS.end())
-	    {
-		    std::cerr << "No Ts for this ID" << std::endl;
-		    return true ;
-	    }
+        bool no_ts = (it == mLastUsageTS.end()) ;
 
-	    time_t last_usage_ts = it->second;
+        time_t last_usage_ts = no_ts?0:(it->second);
 	    time_t max_keep_time ;
 
-	    if(is_id_banned)
-		    max_keep_time = MAX_KEEP_KEYS_BANNED ;
+        if(no_ts)
+            max_keep_time = 0 ;
+        else if(is_id_banned)
+            max_keep_time = MAX_KEEP_KEYS_BANNED ;
 	    else if(is_known_id)
 		    max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
 	    else if(is_signed_id)
@@ -413,10 +408,7 @@ void p3IdService::cleanUnusedKeys()
 
 		{
 			RS_STACK_MUTEX(mIdMtx) ;
-			std::map<RsGxsId,time_t>::iterator tmp = mKeysTS.find(*it) ;
-
-			if(mKeysTS.end() != tmp)
-				mKeysTS.erase(tmp) ;
+			mKeysTS.erase(*it) ;
             
             		// mPublicKeyCache.erase(*it) ; no need to do it now. It's done in p3IdService::deleteGroup()
 		}
@@ -509,7 +501,13 @@ bool p3IdService:: getNickname(const RsGxsId &id, std::string &nickname)
 }
 #endif
 
-bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
+time_t p3IdService::getLastUsageTS(const RsGxsId &id)
+{
+    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+    return locked_getLastUsageTS(id) ;
+}
+
+bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::getIdDetails(" << id << ")";
@@ -530,7 +528,7 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 			if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
 				details.mNickname = "[too long a name]" ;
 
-			rsReputations->getReputationInfo(id,details.mReputation) ;
+			rsReputations->getReputationInfo(id,details.mPgpId,details.mReputation) ;
 
 			return true;
 		}
@@ -542,6 +540,16 @@ bool p3IdService:: getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 	return false;
 }
 
+bool p3IdService::isBanned(const RsGxsId &id)
+{
+    RsIdentityDetails det ;
+    getIdDetails(id,det) ;
+    
+#ifdef DEBUG_REPUTATION
+    std::cerr << "isIdentityBanned(): returning " << (det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
+#endif
+    return det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD ;
+}
 
 bool p3IdService::isOwnId(const RsGxsId& id)
 {

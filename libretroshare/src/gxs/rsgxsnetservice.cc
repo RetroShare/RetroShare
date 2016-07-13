@@ -204,7 +204,6 @@
 #include "rsgxsnetservice.h"
 #include "gxssecurity.h"
 #include "retroshare/rsconfig.h"
-#include "retroshare/rsreputations.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rspeers.h"
@@ -2929,9 +2928,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
                 continue;
             }
-            // FIXTESTS global variable rsReputations not available in unittests!
-            if(rsReputations == 0){ std::cerr << "rsReputations==0, accepting all messages!" << std::endl; }
-            if(rsReputations && rsReputations->isIdentityBanned(syncItem->authorId))
+            
+            if(rsIdentity && rsIdentity->isBanned(syncItem->authorId))
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -3175,8 +3173,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
             latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
         }
         // FIXTESTS global variable rsReputations not available in unittests!
-        if(rsReputations == 0){ std::cerr << "rsReputations==0, accepting all groups!" << std::endl; }
-    if(!grpSyncItem->authorId.isNull() && rsReputations && rsReputations->isIdentityBanned(grpSyncItem->authorId))
+    
+    if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->isBanned(grpSyncItem->authorId))
 	{
 #ifdef NXS_NET_DEBUG_0
                 GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
