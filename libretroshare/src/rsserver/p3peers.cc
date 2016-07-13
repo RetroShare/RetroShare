@@ -1280,7 +1280,7 @@ bool p3Peers::addGroup(RsGroupInfo &groupInfo)
 		  return res ;
 }
 
-bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3Peers::editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::editGroup()" << std::endl;
@@ -1292,7 +1292,7 @@ bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
 	return res ;
 }
 
-bool p3Peers::removeGroup(const std::string &groupId)
+bool p3Peers::removeGroup(const RsNodeGroupId &groupId)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::removeGroup()" << std::endl;
@@ -1303,7 +1303,15 @@ bool p3Peers::removeGroup(const std::string &groupId)
 		  return res ;
 }
 
-bool p3Peers::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3Peers::getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getGroupInfo()" << std::endl;
+#endif
+
+    return mPeerMgr->getGroupInfoByName(groupName, groupInfo);
+}
+bool p3Peers::getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getGroupInfo()" << std::endl;
@@ -1321,7 +1329,7 @@ bool p3Peers::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 	return mPeerMgr->getGroupInfoList(groupInfoList);
 }
 
-bool p3Peers::assignPeerToGroup(const std::string &groupId, const RsPgpId& peerId, bool assign)
+bool p3Peers::assignPeerToGroup(const RsNodeGroupId &groupId, const RsPgpId& peerId, bool assign)
 {
 	std::list<RsPgpId> peerIds;
 	peerIds.push_back(peerId);
@@ -1329,7 +1337,7 @@ bool p3Peers::assignPeerToGroup(const std::string &groupId, const RsPgpId& peerI
 	return assignPeersToGroup(groupId, peerIds, assign);
 }
 
-bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign)
+bool p3Peers::assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::assignPeersToGroup()" << std::endl;
@@ -1343,7 +1351,7 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<RsP
 
 FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 																		FileStorageFlags share_flags,
-																		const std::list<std::string>& directory_parent_groups)
+                                                                        const std::list<RsNodeGroupId>& directory_parent_groups)
 {
 	// We should be able to do that in O(1), using groups based on packs of bits.
 	//
@@ -1354,7 +1362,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 	bool found = false ;
 	RsPgpId pgp_id = getGPGId(peer_ssl_id) ;
 
-	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
+    for(std::list<RsNodeGroupId>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
 	{
 		RsGroupInfo info ;
 		if(!getGroupInfo(*it,info))

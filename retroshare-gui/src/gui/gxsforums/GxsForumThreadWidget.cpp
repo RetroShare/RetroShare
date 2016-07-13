@@ -817,9 +817,20 @@ void GxsForumThreadWidget::insertGroupData()
 		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
     }
 	    break ;
-    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY: distrib_string = tr("Your eyes only");
-	    break ;
-    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        distrib_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(group.mMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distrib_string += desc ;
+    }
+        break ;
+
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
 	    break ;
     default:
 	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;

@@ -431,7 +431,7 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(const RsFileHash& hash,FileSearchFlags hint_flags, const RsPeerId& peer_id,std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
+bool FileIndexMonitor::findLocalFile(const RsFileHash& hash,FileSearchFlags hint_flags, const RsPeerId& peer_id,std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<RsNodeGroupId>& parent_groups) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -1668,7 +1668,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, FileSear
 	return true ;
 }
 
-void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,FileStorageFlags& flags,std::list<std::string>& parent_groups) const
+void FileIndexMonitor::locked_findShareFlagsAndParentGroups(FileEntry *file,FileStorageFlags& flags,std::list<RsNodeGroupId>& parent_groups) const
 {
 	flags.clear() ;
 	static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;

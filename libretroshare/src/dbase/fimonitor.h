@@ -110,7 +110,7 @@ class FileIndexMonitor: public CacheSource, public RsTickingThread
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
-        bool findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
+        bool findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<RsNodeGroupId>& parent_groups) const;
 
         int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) ;
         int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
@@ -176,7 +176,7 @@ class FileIndexMonitor: public CacheSource, public RsTickingThread
 		time_t locked_saveFileIndexes(bool update_cache) ;
 
 		// Finds the share flags associated with this file entry.
-		void locked_findShareFlagsAndParentGroups(FileEntry *fe,FileStorageFlags& shareflags,std::list<std::string>& parent_groups) const ;
+        void locked_findShareFlagsAndParentGroups(FileEntry *fe, FileStorageFlags& shareflags, std::list<RsNodeGroupId> &parent_groups) const ;
 
 		std::string locked_findRealRoot(std::string base) const;
 

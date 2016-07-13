@@ -130,8 +130,6 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_
 		mOwnState.vs_disc = RS_VS_DISC_FULL;
 		mOwnState.vs_dht = RS_VS_DHT_FULL;
 	
-		lastGroupId = 1;
-
 		// setup default ProxyServerAddress.
 		// Tor
 		sockaddr_storage_clear(mProxyServerAddressTor);
@@ -1071,7 +1069,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 
 	std::list<RsPgpId> ids ;
 	ids.push_back(id) ;
-	assignPeersToGroup("", ids, false);
+    assignPeersToGroup(RsNodeGroupId(), ids, false);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -1145,7 +1143,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 
 	/* remove id from all groups */
 
-	assignPeersToGroup("", pgpid_toRemove, false);
+    assignPeersToGroup(RsNodeGroupId(), pgpid_toRemove, false);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -1915,7 +1913,7 @@ RsSerialiser *p3PeerMgrIMPL::setupSerialiser()
 bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
 	/* create a list of current peers */
-	cleanup = false;
+    cleanup = true;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
 
 	/* gather these information before mPeerMtx is locked! */
@@ -1971,7 +1969,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 
 	saveData.push_back(item);
-	saveCleanupList.push_back(item);
 
 	/* iterate through all friends and save */
         std::map<RsPeerId, peerState>::iterator it;
@@ -2003,7 +2000,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item->domain_port = (it->second).hiddenPort;
         
 		saveData.push_back(item);
-		saveCleanupList.push_back(item);
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::saveList() Peer Config Item:" << std::endl;
 		item->print(std::cerr, 10);
@@ -2024,7 +2020,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	}
     
 	saveData.push_back(sitem) ;
-	saveCleanupList.push_back(sitem);
 
 	// Now save config for network digging strategies
 	
@@ -2066,14 +2061,14 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	vitem->tlvkvs.pairs.push_back(kv) ;
 	
 	saveData.push_back(vitem);
-	saveCleanupList.push_back(vitem);
 
 	/* save groups */
 
-	std::list<RsPeerGroupItem *>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-		saveData.push_back(*groupIt); // no delete
-	}
+    for ( std::map<RsNodeGroupId,RsGroupInfo>::iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
+    {
+        RsNodeGroupItem *itm = new RsNodeGroupItem(groupIt->second);
+        saveData.push_back(itm) ;
+    }
 
 	return true;
 }
@@ -2294,7 +2289,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		    continue;
 	    }
 
-	    RsPeerGroupItem *gitem = dynamic_cast<RsPeerGroupItem *>(*it) ;
+        RsPeerGroupItem_deprecated *gitem = dynamic_cast<RsPeerGroupItem_deprecated *>(*it) ;
+
 	    if (gitem)
 	    {
 		    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -2304,20 +2300,54 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		    gitem->print(std::cerr, 10);
 		    std::cerr << std::endl;
 #endif
+            RsGroupInfo ginfo ;
+            ginfo.flag = gitem->flag ;
+            ginfo.name = gitem->name ;
+            ginfo.peerIds = gitem->pgpList.ids ;
 
-		    groupList.push_back(gitem); // don't delete
+            do { ginfo.id = RsNodeGroupId::random(); } while(groupList.find(ginfo.id) != groupList.end()) ;
 
-		    if ((gitem->flag & RS_GROUP_FLAG_STANDARD) == 0) {
-			    /* calculate group id */
-			    uint32_t groupId = atoi(gitem->id.c_str());
-			    if (groupId > lastGroupId) {
-				    lastGroupId = groupId;
-			    }
-		    }
+            // Ensure backward compatibility when loading the group in old format. The id must matchthe standard default id.
 
-		    continue;
+            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FRIENDS  )) ginfo.id = RS_GROUP_ID_FRIENDS ;
+            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_COWORKERS)) ginfo.id = RS_GROUP_ID_COWORKERS ;
+            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FAMILY   )) ginfo.id = RS_GROUP_ID_FAMILY ;
+            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_FAVORITES)) ginfo.id = RS_GROUP_ID_FAVORITES ;
+            if(gitem->id == std::string(RS_GROUP_DEFAULT_NAME_OTHERS   )) ginfo.id = RS_GROUP_ID_OTHERS    ;
+
+            if(!ginfo.id.isNull())
+            {
+                groupList[ginfo.id] = ginfo ;
+                std::cerr << "(II) Creating new group for old format local group \"" << gitem->name << "\". Id=" << ginfo.id << std::endl;
+            }
+            else
+                std::cerr << "(EE) no group corresponding to old format group with ID=\"" << gitem->id << "\"" << std::endl;
+
+            continue;
 	    }
-        
+
+        RsNodeGroupItem *gitem2 = dynamic_cast<RsNodeGroupItem*>(*it) ;
+
+        if (gitem2)
+        {
+            RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef PEER_DEBUG
+            std::cerr << "p3PeerMgrIMPL::loadList() Peer group item:" << std::endl;
+            gitem->print(std::cerr, 10);
+            std::cerr << std::endl;
+#endif
+            RsGroupInfo info ;
+            info.peerIds = gitem2->pgpList.ids ;
+            info.id      = gitem2->id ;
+            info.name    = gitem2->name ;
+            info.flag    = gitem2->flag ;
+
+            std::cerr << "(II) Loaded group in new format. ID = " << info.id << std::endl;
+            groupList[info.id] = info ;
+
+            continue;
+        }
 	    RsPeerBandwidthLimitsItem *pblitem = dynamic_cast<RsPeerBandwidthLimitsItem*>(*it) ;
 
 	    if(pblitem)
@@ -2363,42 +2393,19 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	    /* Standard groups */
 	    const int standardGroupCount = 5;
-	    const char *standardGroup[standardGroupCount] = { RS_GROUP_ID_FRIENDS, RS_GROUP_ID_FAMILY, RS_GROUP_ID_COWORKERS, RS_GROUP_ID_OTHERS, RS_GROUP_ID_FAVORITES };
-	    bool foundStandardGroup[standardGroupCount] = { false, false, false, false, false };
+        const RsNodeGroupId   standardGroupIds  [standardGroupCount] = { RS_GROUP_ID_FRIENDS,           RS_GROUP_ID_FAMILY,           RS_GROUP_ID_COWORKERS,           RS_GROUP_ID_OTHERS,           RS_GROUP_ID_FAVORITES };
+        const char           *standardGroupNames[standardGroupCount] = { RS_GROUP_DEFAULT_NAME_FRIENDS, RS_GROUP_DEFAULT_NAME_FAMILY, RS_GROUP_DEFAULT_NAME_COWORKERS, RS_GROUP_DEFAULT_NAME_OTHERS, RS_GROUP_DEFAULT_NAME_FAVORITES };
 
-	    std::list<RsPeerGroupItem *>::iterator groupIt;
-	    for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-		    if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
-			    int i;
-			    for (i = 0; i < standardGroupCount; ++i) {
-				    if ((*groupIt)->id == standardGroup[i]) {
-					    foundStandardGroup[i] = true;
-					    break;
-				    }
-			    }
+        for(uint32_t k=0;k<standardGroupCount;++k)
+            if(groupList.find(standardGroupIds[k]) == groupList.end())
+            {
+                RsGroupInfo info ;
+                info.id = standardGroupIds[k];
+                info.name = standardGroupNames[k];
+                info.flag |= RS_GROUP_FLAG_STANDARD;
 
-			    if (i >= standardGroupCount) {
-				    /* No more a standard group, remove the flag standard */
-				    (*groupIt)->flag &= ~RS_GROUP_FLAG_STANDARD;
-			    }
-		    } else {
-			    uint32_t groupId = atoi((*groupIt)->id.c_str());
-			    if (groupId == 0) {
-				    rs_sprintf((*groupIt)->id, "%lu", lastGroupId++);
-			    }
+                groupList[info.id] = info;
 		    }
-	    }
-
-	    /* Initialize standard groups */
-	    for (int i = 0; i < standardGroupCount; ++i) {
-		    if (foundStandardGroup[i] == false) {
-			    RsPeerGroupItem *gitem = new RsPeerGroupItem;
-			    gitem->id = standardGroup[i];
-			    gitem->name = standardGroup[i];
-			    gitem->flag |= RS_GROUP_FLAG_STANDARD;
-			    groupList.push_back(gitem);
-		    }
-	    }
     }
 
     // If we are hidden - don't want ExtAddrFinder - ever!
@@ -2478,19 +2485,16 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		RsPeerGroupItem *groupItem = new RsPeerGroupItem;
-		groupItem->set(groupInfo);
+        do { groupInfo.id = RsNodeGroupId::random(); } while(groupList.find(groupInfo.id) != groupList.end()) ;
 
-		rs_sprintf(groupItem->id, "%lu", ++lastGroupId);
+        RsGroupInfo groupItem(groupInfo) ;
 
 		// remove standard flag
-		groupItem->flag &= ~RS_GROUP_FLAG_STANDARD;
 
-		groupItem->PeerId(getOwnId());
+        groupItem.flag &= ~RS_GROUP_FLAG_STANDARD;
+        groupList[groupInfo.id] = groupItem;
 
-		groupList.push_back(groupItem);
-
-		groupInfo.id = groupItem->id;
+        std::cerr << "(II) Added new group with ID " << groupInfo.id << ", name=\"" << groupInfo.name << "\"" << std::endl;
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);
@@ -2500,35 +2504,39 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 	return true;
 }
 
-bool p3PeerMgrIMPL::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3PeerMgrIMPL::editGroup(const RsNodeGroupId& groupId, RsGroupInfo &groupInfo)
 {
-	if (groupId.empty()) {
+    if (groupId.isNull())
 		return false;
-	}
 
 	bool changed = false;
 
-	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+    {
+        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-			if ((*groupIt)->id == groupId) {
-				break;
-			}
-		}
+        std::map<RsNodeGroupId,RsGroupInfo>::iterator it = groupList.find(groupId) ;
 
-		if (groupIt != groupList.end()) {
-			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
-				// can't edit standard groups
-			} else {
-				changed = true;
-				(*groupIt)->set(groupInfo);
-			}
-		}
-	}
+        if(it == groupList.end())
+        {
+            std::cerr << "(EE) cannot find local node group with ID " << groupId << std::endl;
+            return false ;
+        }
 
-	if (changed) {
+        if (it->second.flag & RS_GROUP_FLAG_STANDARD)
+        {
+            // can't edit standard groups
+            std::cerr << "(EE) cannot edit standard group with ID " << groupId << std::endl;
+            return false ;
+        }
+        else
+        {
+            changed = true;
+            it->second = groupInfo;
+        }
+    }
+
+    if (changed)
+    {
 		RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
 
 		IndicateConfigChanged();
@@ -2537,31 +2545,35 @@ bool p3PeerMgrIMPL::editGroup(const std::string &groupId, RsGroupInfo &groupInfo
 	return changed;
 }
 
-bool p3PeerMgrIMPL::removeGroup(const std::string &groupId)
+bool p3PeerMgrIMPL::removeGroup(const RsNodeGroupId& groupId)
 {
-	if (groupId.empty()) {
-		return false;
-	}
-
 	bool changed = false;
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-			if ((*groupIt)->id == groupId) {
-				break;
-			}
-		}
+        std::map<RsNodeGroupId,RsGroupInfo>::iterator it = groupList.find(groupId) ;
 
-		if (groupIt != groupList.end()) {
-			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
+        if (it != groupList.end()) {
+            if (it->second.flag & RS_GROUP_FLAG_STANDARD)
+            {
 				// can't remove standard groups
-			} else {
+                std::cerr << "(EE) cannot remove standard group with ID " << groupId << std::endl;
+                return false ;
+            }
+#warning we need to check that the local group is not used. Otherwise deleting it is going to cause problems!
+//            else if(!it->second.used_gxs_groups.empty())
+//            {
+//                std::cerr << "(EE) cannot remove standard group with ID " << groupId << " because it is used in the following groups: " << std::endl;
+//                for(std::set<RsGxsGroupId>::const_iterator it2(it->second.used_gxs_groups.begin());it2!=it->second.used_gxs_groups.end();++it2)
+//                    std::cerr << "  " << *it2 << std::endl;
+//
+//                return false ;
+//            }
+            else
+            {
 				changed = true;
-				delete(*groupIt);
-				groupList.erase(groupIt);
+                groupList.erase(it);
 			}
 		}
 	}
@@ -2575,82 +2587,83 @@ bool p3PeerMgrIMPL::removeGroup(const std::string &groupId)
 	return changed;
 }
 
-bool p3PeerMgrIMPL::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3PeerMgrIMPL::getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo)
 {
-	if (groupId.empty()) {
-		return false;
-	}
+    RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+    for(std::map<RsNodeGroupId,RsGroupInfo>::iterator it = groupList.begin();it!=groupList.end();++it)
+        if(it->second.name == groupName)
+        {
+            groupInfo = it->second ;
+            return true ;
+        }
+
+    std::cerr << "(EE) getGroupInfoByName: no known group for name " << groupName << std::endl;
+    return false ;
+}
+bool p3PeerMgrIMPL::getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo &groupInfo)
+{
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	std::list<RsPeerGroupItem*>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-		if ((*groupIt)->id == groupId) {
-			(*groupIt)->get(groupInfo);
+    std::map<RsNodeGroupId,RsGroupInfo>::iterator it = groupList.find(groupId) ;
 
-			return true;
-		}
-	}
+    if(it == groupList.end())
+        return false ;
 
-	return false;
+    groupInfo =  it->second;
+
+    return true;
 }
 
-bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
+bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo>& groupInfoList)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	std::list<RsPeerGroupItem*>::iterator groupIt;
-	for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-		RsGroupInfo groupInfo;
-		(*groupIt)->get(groupInfo);
-		groupInfoList.push_back(groupInfo);
-	}
+    for (std::map<RsNodeGroupId,RsGroupInfo> ::const_iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
+        groupInfoList.push_back(groupIt->second);
 
 	return true;
 }
 
-// groupId == "" && assign == false -> remove from all groups
-bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign)
-{
-	if (groupId.empty() && assign == true) {
-		return false;
-	}
+// groupId.isNull() && assign == false -> remove from all groups
 
-	if (peerIds.empty()) {
+bool p3PeerMgrIMPL::assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign)
+{
+    if (groupId.isNull() && assign == true)
 		return false;
-	}
+
+    if (peerIds.empty())
+		return false;
 
 	bool changed = false;
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::list<RsPeerGroupItem*>::iterator groupIt;
-		for (groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt) {
-			if (groupId.empty() || (*groupIt)->id == groupId) {
-				RsPeerGroupItem *groupItem = *groupIt;
+        for (std::map<RsNodeGroupId,RsGroupInfo>::iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
+            if (groupId.isNull() || groupIt->first == groupId)
+            {
+                RsGroupInfo& groupItem = groupIt->second;
 
-				std::list<RsPgpId>::const_iterator peerIt;
-				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt) {
-                    std::set<RsPgpId>::iterator peerIt1 = std::find(groupItem->pgpList.ids.begin(), groupItem->pgpList.ids.end(), *peerIt);
-					if (assign) {
-						if (peerIt1 == groupItem->pgpList.ids.end()) {
-                            groupItem->pgpList.ids.insert(*peerIt);
-							changed = true;
-						}
-					} else {
-						if (peerIt1 != groupItem->pgpList.ids.end()) {
-							groupItem->pgpList.ids.erase(peerIt1);
-							changed = true;
-						}
+                for (std::list<RsPgpId>::const_iterator peerIt = peerIds.begin(); peerIt != peerIds.end(); ++peerIt)
+                {
+                    std::set<RsPgpId>::iterator peerIt1 = groupItem.peerIds.find(*peerIt);
+
+                    if (assign)
+                    {
+                        groupItem.peerIds.insert(*peerIt);
+                        changed = true;
+                    }
+                    else
+                    {
+                        groupItem.peerIds.erase(*peerIt);
+                        changed = true;
 					}
 				}
 
-				if (groupId.empty() == false) {
+                if (!groupId.isNull())
 					break;
-				}
 			}
-		}
 	}
 
 	if (changed) {

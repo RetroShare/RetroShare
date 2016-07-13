@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>935</width>
-    <height>785</height>
+    <width>860</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -301,6 +301,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messsages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Public</string>
             </property>
@@ -325,6 +328,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Restricted to Circle</string>
@@ -356,6 +362,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will only be distributed to the selected subset of your friend nodes. They will not forward messages with each other, but only use your own node as a central hub to distribute them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Only For Your Friends</string>
               </property>
@@ -372,7 +381,7 @@
              </widget>
             </item>
             <item>
-             <widget class="GxsCircleChooser" name="localComboBox"/>
+             <widget class="GroupChooser" name="localComboBox"/>
             </item>
            </layout>
           </item>
@@ -841,6 +850,11 @@
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GroupChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/GroupChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

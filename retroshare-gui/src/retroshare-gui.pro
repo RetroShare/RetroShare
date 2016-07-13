@@ -473,6 +473,7 @@ HEADERS +=  rshare.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
+            gui/common/GroupChooser.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
@@ -782,6 +783,7 @@ SOURCES +=  main.cpp \
             gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
+            gui/common/GroupChooser.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \

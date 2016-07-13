@@ -211,7 +211,7 @@ class FileInfo
 		DwlSpeed priority ;
 		time_t lastTS;
 		
-		std::list<std::string> parent_groups ;
+        std::list<RsNodeGroupId> parent_groups ;
 };
 
 std::ostream &operator<<(std::ostream &out, const FileInfo &info);
@@ -243,7 +243,7 @@ class DirDetails
 	uint32_t min_age ;	// minimum age of files in this subtree
 
 	std::list<DirStub> children;
-	std::list<std::string> parent_groups;	// parent groups for the shared directory
+    std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory
 };
 
 class FileDetail

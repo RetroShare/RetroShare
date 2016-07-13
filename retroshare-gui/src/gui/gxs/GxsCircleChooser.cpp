@@ -31,14 +31,13 @@
 
 /** Constructor */
 GxsCircleChooser::GxsCircleChooser(QWidget *parent)
-: QComboBox(parent), mFlags(0)
+: QComboBox(parent)
 {
 	return;
 }
 
-void GxsCircleChooser::loadCircles(uint32_t chooserFlags, const RsGxsCircleId &defaultId)
+void GxsCircleChooser::loadCircles(const RsGxsCircleId &defaultId)
 {
-	mFlags = chooserFlags;
 	mDefaultCircleId = defaultId;
 	loadGxsCircles();
 }
@@ -68,14 +67,7 @@ bool MakeGxsCircleDesc(const RsGxsCircleId &id, QString &desc)
 void GxsCircleChooser::loadGxsCircles()
 {
 	std::list<RsGxsCircleId> ids;
-	if (mFlags & GXS_CIRCLE_CHOOSER_EXTERNAL)
-	{
-		rsGxsCircles->getCircleExternalIdList(ids);
-	}
-	if (mFlags & GXS_CIRCLE_CHOOSER_PERSONAL)
-	{
-		rsGxsCircles->getCirclePersonalIdList(ids);
-	}
+    rsGxsCircles->getCircleExternalIdList(ids);
 
 	if (ids.empty())
 	{

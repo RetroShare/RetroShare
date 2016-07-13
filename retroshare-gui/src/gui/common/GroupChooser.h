@@ -22,27 +22,24 @@
  */
 
 
-#ifndef _GXS_CIRCLES_CHOOSER_H
-#define _GXS_CIRCLES_CHOOSER_H
+#pragma once
 
 #include <QComboBox>
-#include <retroshare/rsgxscircles.h>
+#include <retroshare/rspeers.h>
 
-class GxsCircleChooser : public QComboBox
+class GroupChooser : public QComboBox
 {
-        Q_OBJECT
-
 public:
-	GxsCircleChooser(QWidget *parent = NULL);
+    GroupChooser(QWidget *parent = NULL);
 
-    void loadCircles(const RsGxsCircleId &defaultId);
-	bool getChosenCircle(RsGxsCircleId &id);
+    void loadGroups(uint32_t chooserFlags, const RsNodeGroupId& defaultId);
+    bool getChosenGroup(RsNodeGroupId& id);
 
+    static bool makeNodeGroupDesc(const RsGroupInfo& info, QString &desc);
 private:
-	void loadGxsCircles();
+    void loadGroups();
+    uint32_t mFlags;
 
-	RsGxsCircleId mDefaultCircleId;
+    RsNodeGroupId mDefaultGroupId;
 };
-
-#endif
 

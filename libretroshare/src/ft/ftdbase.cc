@@ -25,6 +25,7 @@
 
 #include "ft/ftdbase.h"
 #include "util/rsdir.h"
+#include "retroshare/rspeers.h"
 
 #include "serialiser/rsconfigitems.h"
 
@@ -237,11 +238,13 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 
 	for(it = dirList.begin(); it != dirList.end(); ++it)
 	{
-		RsFileConfigItem *fi = new RsFileConfigItem();
+        RsFileConfigItem *fi = new RsFileConfigItem();
 		fi->file.path = (*it).filename ;
 		fi->file.name = (*it).virtualname ;
 		fi->flags = (*it).shareflags.toUInt32() ;
-		fi->parent_groups = (*it).parent_groups ;
+
+        for(std::list<RsNodeGroupId>::const_iterator it2( (*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2)
+            fi->parent_groups.ids.insert(*it2) ;
 
 		sList.push_back(fi);
 	}
@@ -332,25 +335,53 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
             		continue ;
 		}
 
-		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
-		if (!fi)
-		{
-			delete (*it);
-			continue;
-		}
+        // 07/05/2016 - This ensures backward compatibility. Can be removed in a few weeks.
+        RsFileConfigItem_deprecated *fib = dynamic_cast<RsFileConfigItem_deprecated *>(*it);
+        if (fib)
+        {
+            /* ensure that it exists? */
 
-		/* ensure that it exists? */
+            SharedDirInfo info ;
+            info.filename = RsDirUtil::convertPathToUnix(fib->file.path);
+            info.virtualname = fib->file.name;
+            info.shareflags = FileStorageFlags(fib->flags) ;
+            info.shareflags &= PERMISSION_MASK ;
+            info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
-		SharedDirInfo info ;
-		info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
-		info.virtualname = fi->file.name;
-		info.parent_groups = fi->parent_groups;
-		info.shareflags = FileStorageFlags(fi->flags) ;
-		info.shareflags &= PERMISSION_MASK ;
-		info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
+            for(std::list<std::string>::const_iterator itt(fib->parent_groups.begin());itt!=fib->parent_groups.end();++itt)
+            {
+                RsGroupInfo ginfo;
 
-		dirList.push_back(info) ;
-        
+                if(rsPeers->getGroupInfoByName(*itt,ginfo) )
+                {
+                    info.parent_groups.push_back(ginfo.id) ;
+                    std::cerr << "(II) converted old group ID \"" << *itt << "\" into corresponding new group id " << ginfo.id << std::endl;
+                }
+                else
+                    std::cerr << "(EE) cannot convert old group ID \"" << *itt << "\" into corresponding new group id: no candidate found. " << std::endl;
+            }
+
+            dirList.push_back(info) ;
+        }
+
+        RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+        if (fi)
+        {
+            /* ensure that it exists? */
+
+            SharedDirInfo info ;
+            info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
+            info.virtualname = fi->file.name;
+            info.shareflags = FileStorageFlags(fi->flags) ;
+            info.shareflags &= PERMISSION_MASK ;
+            info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
+
+            for(std::set<RsNodeGroupId>::const_iterator itt(fi->parent_groups.ids.begin());itt!=fi->parent_groups.ids.end();++itt)
+                info.parent_groups.push_back(*itt) ;
+
+            dirList.push_back(info) ;
+        }
+
         	delete *it ;
 	}
 

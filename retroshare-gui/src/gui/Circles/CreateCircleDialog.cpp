@@ -103,7 +103,7 @@ CreateCircleDialog::CreateCircleDialog()
 #endif
         
     //ui.idChooser->loadIds(0,RsGxsId());
-    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
+    ui.circleComboBox->loadCircles(RsGxsCircleId());
 }
 
 CreateCircleDialog::~CreateCircleDialog()
@@ -604,7 +604,7 @@ void CreateCircleDialog::updateCircleGUI()
             else
 				ui.radioButton_Restricted->setChecked(true);
 
-			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mCircleGroup.mMeta.mCircleId);
+            ui.circleComboBox->loadCircles(mCircleGroup.mMeta.mCircleId);
 			
 			break;
 

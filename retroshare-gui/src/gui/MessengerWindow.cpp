@@ -56,8 +56,9 @@
  *****/
 
 MessengerWindow* MessengerWindow::_instance = NULL;
-static std::set<std::string> *expandedPeers = NULL;
-static std::set<std::string> *expandedGroups = NULL;
+
+std::set<std::string> MessengerWindow::expandedPeers ;
+std::set<RsNodeGroupId> MessengerWindow::expandedGroups ;
 
 /*static*/ void MessengerWindow::showYourself ()
 {
@@ -79,16 +80,6 @@ void MessengerWindow::releaseInstance()
     if (_instance) {
         delete _instance;
     }
-    if (expandedPeers) {
-        /* delete saved expanded peers */
-        delete(expandedPeers);
-        expandedPeers = NULL;
-    }
-    if (expandedGroups) {
-        /* delete saved expanded groups */
-        delete(expandedGroups);
-        expandedGroups = NULL;
-    }
 }
 
 /** Constructor */
@@ -108,21 +99,15 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
-    if (expandedPeers != NULL) {
-        for (std::set<std::string>::iterator peerIt = expandedPeers->begin(); peerIt != expandedPeers->end(); ++peerIt) {
+        for (std::set<std::string>::iterator peerIt = expandedPeers.begin(); peerIt != expandedPeers.end(); ++peerIt) {
             ui.friendList->addPeerToExpand(*peerIt);
         }
-        delete expandedPeers;
-        expandedPeers = NULL;
-    }
+        expandedPeers.clear();
 
-    if (expandedGroups != NULL) {
-        for (std::set<std::string>::iterator groupIt = expandedGroups->begin(); groupIt != expandedGroups->end(); ++groupIt) {
+        for (std::set<RsNodeGroupId>::iterator groupIt = expandedGroups.begin(); groupIt != expandedGroups.end(); ++groupIt) {
             ui.friendList->addGroupToExpand(*groupIt);
         }
-        delete expandedGroups;
-        expandedGroups = NULL;
-    }
+        expandedGroups.clear();
 
     ui.messagelineEdit->setMinimumWidth(20);
 
@@ -203,22 +188,12 @@ void MessengerWindow::addFriend()
 void MessengerWindow::closeEvent (QCloseEvent * /*event*/)
 {
     /* save the expanded peers */
-    if (expandedPeers == NULL) {
-        expandedPeers = new std::set<std::string>;
-    } else {
-        expandedPeers->clear();
-    }
-
-    ui.friendList->getExpandedPeers(*expandedPeers);
+        expandedPeers.clear();
+    ui.friendList->getExpandedPeers(expandedPeers);
 
     /* save the expanded groups */
-    if (expandedGroups == NULL) {
-        expandedGroups = new std::set<std::string>;
-    } else {
-        expandedGroups->clear();
-    }
-
-    ui.friendList->getExpandedGroups(*expandedGroups);
+        expandedGroups.clear();
+    ui.friendList->getExpandedGroups(expandedGroups);
 }
 
 /** Shows Share Manager */

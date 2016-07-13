@@ -185,11 +185,17 @@ const uint32_t RS_NET_PROXY_STATUS_OK  	    = 0x0001 ;
 
 
 /* Groups */
-#define RS_GROUP_ID_FRIENDS    "Friends"
-#define RS_GROUP_ID_FAMILY     "Family"
-#define RS_GROUP_ID_COWORKERS  "Co-Workers"
-#define RS_GROUP_ID_OTHERS     "Other Contacts"
-#define RS_GROUP_ID_FAVORITES  "Favorites"
+static const RsNodeGroupId RS_GROUP_ID_FRIENDS   ("00000000000000000000000000000001");
+static const RsNodeGroupId RS_GROUP_ID_FAMILY    ("00000000000000000000000000000002");
+static const RsNodeGroupId RS_GROUP_ID_COWORKERS ("00000000000000000000000000000003");
+static const RsNodeGroupId RS_GROUP_ID_OTHERS    ("00000000000000000000000000000004");
+static const RsNodeGroupId RS_GROUP_ID_FAVORITES ("00000000000000000000000000000005");
+
+#define RS_GROUP_DEFAULT_NAME_FRIENDS    "Friends"
+#define RS_GROUP_DEFAULT_NAME_FAMILY     "Family"
+#define RS_GROUP_DEFAULT_NAME_COWORKERS  "Co-Workers"
+#define RS_GROUP_DEFAULT_NAME_OTHERS     "Other Contacts"
+#define RS_GROUP_DEFAULT_NAME_FAVORITES  "Favorites"
 
 const uint32_t RS_GROUP_FLAG_STANDARD = 0x0001;
 
@@ -295,7 +301,7 @@ class RsGroupInfo
 public:
 	RsGroupInfo();
 
-	std::string id;
+    RsNodeGroupId id;
 	std::string name;
 	uint32_t flag;
 
@@ -399,14 +405,15 @@ public:
 	virtual	bool trustGPGCertificate(const RsPgpId &gpg_id, uint32_t trustlvl) = 0;
 
 	/* Group Stuff */
-	virtual bool addGroup(RsGroupInfo &groupInfo) = 0;
-	virtual bool editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
-	virtual bool removeGroup(const std::string &groupId) = 0;
-	virtual bool getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
-	virtual bool getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
+    virtual bool addGroup(RsGroupInfo& groupInfo) = 0;
+    virtual bool editGroup(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
+    virtual bool removeGroup(const RsNodeGroupId& groupId) = 0;
+    virtual bool getGroupInfo(const RsNodeGroupId& groupId, RsGroupInfo& groupInfo) = 0;
+    virtual bool getGroupInfoByName(const std::string& groupId, RsGroupInfo& groupInfo) = 0;
+    virtual bool getGroupInfoList(std::list<RsGroupInfo>& groupInfoList) = 0;
 	// groupId == "" && assign == false -> remove from all groups
-	virtual bool assignPeerToGroup(const std::string &groupId, const RsPgpId& peerId, bool assign) = 0;
-	virtual bool assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
+    virtual bool assignPeerToGroup(const RsNodeGroupId& groupId, const RsPgpId& peerId, bool assign) = 0;
+    virtual bool assignPeersToGroup(const RsNodeGroupId& groupId, const std::list<RsPgpId>& peerIds, bool assign) = 0;
 
 	/* Group sharing permission */
 
@@ -421,7 +428,7 @@ public:
 	//
 	virtual FileSearchFlags computePeerPermissionFlags(
 			const RsPeerId& peer_id, FileStorageFlags file_sharing_flags,
-			const std::list<std::string>& file_parent_groups) = 0;
+            const std::list<RsNodeGroupId>& file_parent_groups) = 0;
 
 	/* Service permission flags */
 
