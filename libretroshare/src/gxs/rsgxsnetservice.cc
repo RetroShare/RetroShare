@@ -225,12 +225,12 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
-#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_4 	1
+//#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 
