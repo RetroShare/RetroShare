@@ -15,7 +15,10 @@
 
 resource_api::ApiServer* WebuiPage::apiServer = 0;
 resource_api::ApiServerMHD* WebuiPage::apiServerMHD = 0;
+// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
+#ifdef LIBRESAPI_LOCAL_SERVER
 resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
+#endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
@@ -95,8 +98,10 @@ QString WebuiPage::helpText() const
                                       Settings->getWebinterfaceAllowAllIps());
     apiServerMHD->start();
 
+// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
+#ifdef LIBRESAPI_LOCAL_SERVER
 	apiServerLocal = new resource_api::ApiServerLocal(apiServer);
-
+#endif
     return ok;
 }
 
@@ -107,8 +112,11 @@ QString WebuiPage::helpText() const
         apiServerMHD->stop();
         delete apiServerMHD;
         apiServerMHD = 0;
+// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
+#ifdef LIBRESAPI_LOCAL_SERVER
 		delete apiServerLocal;
 		apiServerLocal = 0;
+#endif
         delete apiServer;
         apiServer = 0;
         delete controlModule;

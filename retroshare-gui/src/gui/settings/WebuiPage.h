@@ -49,6 +49,8 @@ private:
 
   static resource_api::ApiServer* apiServer;
   static resource_api::ApiServerMHD* apiServerMHD;
+ #ifdef LIBRESAPI_LOCAL_SERVER
   static resource_api::ApiServerLocal* apiServerLocal;
+ #endif
   static resource_api::RsControlModule* controlModule;
 };

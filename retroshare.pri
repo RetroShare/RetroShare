@@ -1,3 +1,7 @@
+# To {dis,en}able libresapi via local socket (unix domain socket or windows named pipes)
+# {,un}comment the following line
+CONFIG *= libresapilocalserver
+
 # Gxs is always enabled now.
 DEFINES *= RS_ENABLE_GXS
 
@@ -62,3 +66,5 @@ unfinished {
 }
 
 wikipoos:DEFINES *= RS_USE_WIKI
+
+libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
