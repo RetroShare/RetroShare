@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 QT     += network xml script
 CONFIG += bitdht
 
@@ -114,6 +116,9 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
 	QMAKE_CXXFLAGS_RELEASE += -O0
@@ -132,31 +137,35 @@ win32 {
 	PRE_TARGETDEPS *= ../librssimulator/lib/librssimulator.a
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$PWD/../../../lib"
 
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlcipher
-	}
-
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lole32 -lwinmm
-	RC_FILE = gui/images/retroshare_win.rc
-
-	# export symbols for the plugins
-	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
-
-	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	LIBS += -lwinmm
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-	INCLUDEPATH += .
+	# create lib directory
+	message(CHK_DIR_EXISTS=$(CHK_DIR_EXISTS))
+	message(MKDIR=$(MKDIR))
+	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	greaterThan(QT_MAJOR_VERSION, 4) {
+		# Qt 5
+		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
+	} else {
+		# Qt 4
+		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
+	}
 }
 
 ##################################### MacOS ######################################

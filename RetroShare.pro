@@ -1,6 +1,7 @@
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs
+CONFIG += tests
 
 SUBDIRS += \
         openpgpsdk \
@@ -46,4 +47,5 @@ tests {
     SUBDIRS += unittests
     unittests.file = tests/unittests/unittests.pro
     unittests.depends = libretroshare librssimulator
+    unittests.target = unittests
 }

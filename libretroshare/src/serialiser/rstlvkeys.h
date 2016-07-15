@@ -63,7 +63,9 @@ public:
 
     /* clears KeyData - but doesn't delete - to transfer ownership */
     void ShallowClear(); 
-    
+
+    uint32_t getKeyTypeTlv(void *data, uint32_t size, uint32_t *offset) const;
+
     RsGxsId keyId;		// Mandatory :
     uint32_t keyFlags;		// Mandatory ;
     uint32_t startTS;		// Mandatory : 
@@ -75,17 +77,19 @@ public:
 
 class RsTlvPrivateRSAKey: public RsTlvRSAKey
 {    
-	public:
-		virtual ~RsTlvPrivateRSAKey() {}
+public:
+	RsTlvPrivateRSAKey():RsTlvRSAKey() {}
+	virtual ~RsTlvPrivateRSAKey() {}
 
-        	virtual bool checkKey() const  ;
+	virtual bool checkKey() const  ;
 };
 class RsTlvPublicRSAKey: public RsTlvRSAKey
 {
-	public:
-		virtual ~RsTlvPublicRSAKey() {}
+public:
+	RsTlvPublicRSAKey():RsTlvRSAKey() {}
+	virtual ~RsTlvPublicRSAKey() {}
 
-        	virtual bool checkKey() const  ;
+	virtual bool checkKey() const  ;
 };
 
 class RsTlvSecurityKeySet: public RsTlvItem
