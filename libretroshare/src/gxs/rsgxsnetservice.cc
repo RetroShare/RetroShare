@@ -224,16 +224,15 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 
-#define GIXS_CUT_OFF 0
 //#define NXS_FRAG
 
 // The constant below have a direct influence on how fast forums/channels/posted/identity groups propagate and on the overloading of queues:
@@ -244,6 +243,7 @@
 // A small value for MAX_REQLIST_SIZE is likely to help messages to propagate in a chaotic network, but will also slow them down.
 // A small SYNC_PERIOD fasten message propagation, but is likely to overload the server side of transactions (e.g. overload outqueues).
 //
+#define GIXS_CUT_OFF                                         0
 #define SYNC_PERIOD                                         60
 #define MAX_REQLIST_SIZE                                    20  // No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
 #define TRANSAC_TIMEOUT                                   2000  // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
