@@ -31,7 +31,7 @@
 #include <algorithm>
 
 /** Default constructor */
-CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
+CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
@@ -45,13 +45,18 @@ CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
 
 	mGroupId = groupId;
 
+    if(!mGroupId.isNull())
+        ui.groupId_LE->setText(QString::fromStdString(mGroupId.toStdString())) ;
+    else
+        ui.groupId_LE->setText(tr("To be defined")) ;
+
 	/* Initialize friends list */
 	ui.friendList->setHeaderText(tr("Friends"));
 	ui.friendList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui.friendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_GPG);
 	ui.friendList->start();
 
-	if (mGroupId.empty() == false) {
+    if (!mGroupId.isNull()) {
 		/* edit exisiting group */
 		RsGroupInfo groupInfo;
 		if (rsPeers->getGroupInfo(mGroupId, groupInfo)) {
@@ -83,7 +88,7 @@ CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
 
 	std::list<RsGroupInfo>::iterator groupIt;
 	for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
-		if (mGroupId.empty() || groupIt->id != mGroupId) {
+        if (mGroupId.isNull() || groupIt->id != mGroupId) {
 			mUsedGroupNames.append(GroupDefs::name(*groupIt));
 		}
 	}
@@ -104,9 +109,9 @@ CreateGroup::~CreateGroup()
 void CreateGroup::groupNameChanged(QString text)
 {
 	if (text.isEmpty() || mUsedGroupNames.contains(misc::removeNewLine(text))) {
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	} else {
-		ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 	}
 }
 
@@ -114,14 +119,19 @@ void CreateGroup::changeGroup()
 {
 	RsGroupInfo groupInfo;
 
-	if (mGroupId.empty()) {
+    if (mGroupId.isNull())
+    {
 		// add new group
 		groupInfo.name = misc::removeNewLine(ui.groupName->text()).toUtf8().constData();
-		if (!rsPeers->addGroup(groupInfo)) {
+
+        if (!rsPeers->addGroup(groupInfo))
 			return;
-		}
-	} else {
-		if (rsPeers->getGroupInfo(mGroupId, groupInfo) == true) {
+
+    }
+    else
+    {
+        if (rsPeers->getGroupInfo(mGroupId, groupInfo))
+        {
 			if (!mIsStandard) {
 				groupInfo.name = misc::removeNewLine(ui.groupName->text()).toUtf8().constData();
 				if (!rsPeers->editGroup(mGroupId, groupInfo)) {

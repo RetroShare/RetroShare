@@ -395,7 +395,7 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
     std::map<RsFileHash, FileDetails>::const_iterator it;
 	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
-		RsFileConfigItem *fi = new RsFileConfigItem();
+		RsFileConfigItem_deprecated *fi = new RsFileConfigItem_deprecated();
 		fi->file.path        = (it->second).info.path;
 		fi->file.name        = (it->second).info.fname;
 		fi->file.hash        = (it->second).info.hash;
@@ -428,7 +428,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 	for(it = load.begin(); it != load.end(); ++it)
 	{
 
-		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+		RsFileConfigItem_deprecated *fi = dynamic_cast<RsFileConfigItem_deprecated *>(*it);
 		if (!fi)
 		{
 			delete (*it);

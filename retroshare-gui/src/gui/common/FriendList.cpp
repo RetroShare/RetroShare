@@ -116,9 +116,7 @@ FriendList::FriendList(QWidget *parent) :
     mShowGroups(true),
     mShowState(false),
     mHideUnconnected(false),
-    groupsHasChanged(false),
-    openGroups(NULL),
-    openPeers(NULL)
+    groupsHasChanged(false)
 {
     ui->setupUi(this);
 
@@ -219,7 +217,17 @@ void FriendList::processSettings(bool load)
         int arrayIndex = Settings->beginReadArray("Groups");
         for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
-            addGroupToExpand(Settings->value("open").toString().toStdString());
+
+            std::string gids = Settings->value("open").toString().toStdString();
+
+            RsGroupInfo ginfo ;
+
+            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else
+                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
     } else {
@@ -236,11 +244,11 @@ void FriendList::processSettings(bool load)
         // open groups
         Settings->beginWriteArray("Groups");
         int arrayIndex = 0;
-        std::set<std::string> expandedPeers;
+        std::set<RsNodeGroupId> expandedPeers;
         getExpandedGroups(expandedPeers);
-        foreach (std::string groupId, expandedPeers) {
+        foreach (RsNodeGroupId groupId, expandedPeers) {
             Settings->setArrayIndex(arrayIndex++);
-            Settings->setValue("open", QString::fromStdString(groupId));
+            Settings->setValue("open", QString::fromStdString(groupId.toStdString()));
         }
         Settings->endArray();
     }
@@ -369,7 +377,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                                  addToGroupMenu = new QMenu(tr("Add to group"), &contextMnu);
                              }
                              QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
-                             addToGroupAction->setData(QString::fromStdString(groupIt->id));
+                             addToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
                              connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
                              addToGroupMenu->addAction(addToGroupAction);
                          }
@@ -378,7 +386,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                              moveToGroupMenu = new QMenu(tr("Move to group"), &contextMnu);
                          }
                          QAction* moveToGroupAction = new QAction(GroupDefs::name(*groupIt), moveToGroupMenu);
-                         moveToGroupAction->setData(QString::fromStdString(groupIt->id));
+                         moveToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
                          connect(moveToGroupAction, SIGNAL(triggered()), this, SLOT(moveToGroup()));
                          moveToGroupMenu->addAction(moveToGroupAction);
                      } else {
@@ -456,7 +464,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
 void FriendList::createNewGroup()
 {
-    CreateGroup createGrpDialog ("", this);
+    CreateGroup createGrpDialog (RsNodeGroupId(), this);
     createGrpDialog.exec();
 }
 
@@ -596,7 +604,7 @@ void FriendList::insertPeers()
                 if (mShowGroups && groupsHasChanged) {
                     if (parent) {
                         if (parent->type() == TYPE_GROUP) {
-                            std::string groupId = getRsId(parent);
+                            RsNodeGroupId groupId(getRsId(parent));
 
                             // the parent is a group, check if the gpg id is assigned to the group
                             for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
@@ -630,7 +638,7 @@ void FriendList::insertPeers()
                     }
                 } else if (groupsHasChanged) {
                     // remove deleted groups
-                    std::string groupId = getRsId(item);
+                    RsNodeGroupId groupId ( getRsId(item));
                     for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
                         if (groupIt->id == groupId) {
                             break;
@@ -671,7 +679,7 @@ void FriendList::insertPeers()
             int itemCount = peerTreeWidget->topLevelItemCount();
             for (int index = 0; index < itemCount; ++index) {
                 QTreeWidgetItem *groupItemLoop = peerTreeWidget->topLevelItem(index);
-                if (groupItemLoop->type() == TYPE_GROUP && getRsId(groupItemLoop) == groupInfo->id) {
+                if (groupItemLoop->type() == TYPE_GROUP && RsNodeGroupId(getRsId(groupItemLoop)) == groupInfo->id) {
                     groupItem = groupItemLoop;
                     break;
                 }
@@ -690,7 +698,7 @@ void FriendList::insertPeers()
                 groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
 
                 /* used to find back the item */
-                groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
+                groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
                 groupItem->setData(COLUMN_DATA, ROLE_STANDARD, (groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? true : false);
 
                 /* Sort data */
@@ -716,7 +724,7 @@ void FriendList::insertPeers()
                 }
             }
 
-            if (openGroups != NULL && openGroups->find(groupInfo->id) != openGroups->end()) {
+            if (openGroups.find(groupInfo->id) != openGroups.end()) {
                 groupItem->setExpanded(true);
             }
 
@@ -1182,7 +1190,7 @@ void FriendList::insertPeers()
                 gpgItem->setFont(i, gpgFont);
             }
 
-            if (openPeers != NULL && openPeers->find(gpgId.toStdString()) != openPeers->end()) {
+            if (openPeers.find(gpgId.toStdString()) != openPeers.end()) {
                 gpgItem->setExpanded(true);
             }
         }
@@ -1217,14 +1225,6 @@ void FriendList::insertPeers()
     }
 
     groupsHasChanged = false;
-    if (openGroups != NULL) {
-        delete(openGroups);
-        openGroups = NULL;
-    }
-    if (openPeers != NULL) {
-        delete(openPeers);
-        openPeers = NULL;
-    }
 
     ui->peerTreeWidget->resort();
 }
@@ -1232,13 +1232,13 @@ void FriendList::insertPeers()
 /**
  * Returns a list with all groupIds that are expanded
  */
-bool FriendList::getExpandedGroups(std::set<std::string> &groups) const
+bool FriendList::getExpandedGroups(std::set<RsNodeGroupId> &groups) const
 {
     int itemCount = ui->peerTreeWidget->topLevelItemCount();
     for (int index = 0; index < itemCount; ++index) {
         QTreeWidgetItem *item = ui->peerTreeWidget->topLevelItem(index);
         if (item->type() == TYPE_GROUP && item->isExpanded()) {
-            groups.insert(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
+            groups.insert(RsNodeGroupId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()));
         }
     }
     return true;
@@ -1626,7 +1626,7 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &s
     case TYPE_GROUP:
         {
             RsGroupInfo groupInfo;
-            if (rsPeers->getGroupInfo(peerId, groupInfo)) {
+            if (rsPeers->getGroupInfo(RsNodeGroupId(peerId), groupInfo)) {
                 std::set<RsPgpId>::iterator gpgIt;
                 for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); ++gpgIt) {
                     rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
@@ -1649,10 +1649,10 @@ void FriendList::addToGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.isNull() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.isNull()) {
         return;
     }
 
@@ -1675,15 +1675,15 @@ void FriendList::moveToGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.isNull() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.isNull()) {
         return;
     }
 
     // remove from all groups
-    rsPeers->assignPeerToGroup("", gpgId, false);
+    rsPeers->assignPeerToGroup(RsNodeGroupId(), gpgId, false);
 
     // automatically expand the group, the peer is added to
     addGroupToExpand(groupId);
@@ -1704,7 +1704,7 @@ void FriendList::removeFromGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
     if (gpgId.isNull()) {
@@ -1727,14 +1727,13 @@ void FriendList::editGroup()
         return;
     }
 
-    std::string groupId = getRsId(c);
+    RsNodeGroupId groupId ( getRsId(c));
 
-    if (groupId.empty()) {
-        return;
+    if (!groupId.isNull())
+    {
+        CreateGroup editGrpDialog(groupId, this);
+        editGrpDialog.exec();
     }
-
-    CreateGroup editGrpDialog(groupId, this);
-    editGrpDialog.exec();
 }
 
 void FriendList::removeGroup()
@@ -1749,13 +1748,10 @@ void FriendList::removeGroup()
         return;
     }
 
-    std::string groupId = getRsId(c);
+    RsNodeGroupId groupId ( getRsId(c));
 
-    if (groupId.empty()) {
-        return;
-    }
-
-    rsPeers->removeGroup(groupId);
+    if (!groupId.isNull())
+        rsPeers->removeGroup(groupId);
 }
 
 void FriendList::exportFriendlistClicked()
@@ -2089,7 +2085,7 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
         // get name and flags and try to get the group ID
         std::string groupName = group.attribute("name").toStdString();
         uint32_t flag = group.attribute("flag").toInt();
-        std::string groupId;
+        RsNodeGroupId groupId;
         if(getOrCreateGroup(groupName, flag, groupId)) {
             // group id found!
             QDomElement pgpID = group.firstChildElement("pgpID");
@@ -2123,7 +2119,7 @@ bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &err
  * @param id groupd id for the given name
  * @return success or fail
  */
-bool FriendList::getGroupIdByName(const std::string &name, std::string &id)
+bool FriendList::getGroupIdByName(const std::string &name, RsNodeGroupId &id)
 {
     std::list<RsGroupInfo> grpList;
     if(!rsPeers->getGroupInfoList(grpList))
@@ -2146,14 +2142,14 @@ bool FriendList::getGroupIdByName(const std::string &name, std::string &id)
  * @param id groupd id
  * @return success or failure
  */
-bool FriendList::getOrCreateGroup(const std::string &name, const uint &flag, std::string &id)
+bool FriendList::getOrCreateGroup(const std::string &name, const uint &flag, RsNodeGroupId &id)
 {
     if(getGroupIdByName(name, id))
         return true;
 
     // -> create one
     RsGroupInfo grp;
-    grp.id = "0"; // RS will generate an ID
+    grp.id.clear(); // RS will generate an ID
     grp.name = name;
     grp.flag = flag;
 
@@ -2271,12 +2267,9 @@ void FriendList::filterItems(const QString &text)
  * Add a groupId to the openGroups list. These groups
  * will be expanded, when they're added to the QTreeWidget
  */
-void FriendList::addGroupToExpand(const std::string &groupId)
+void FriendList::addGroupToExpand(const RsNodeGroupId &groupId)
 {
-    if (openGroups == NULL) {
-        openGroups = new std::set<std::string>;
-    }
-    openGroups->insert(groupId);
+    openGroups.insert(groupId);
 }
 
 /**
@@ -2285,10 +2278,7 @@ void FriendList::addGroupToExpand(const std::string &groupId)
  */
 void FriendList::addPeerToExpand(const std::string &gpgId)
 {
-    if (openPeers == NULL) {
-        openPeers = new std::set<std::string>;
-    }
-    openPeers->insert(gpgId);
+    openPeers.insert(gpgId);
 }
 
 void FriendList::createDisplayMenu()

@@ -1,4 +1,5 @@
 #include <QListWidget>
+#include <retroshare/rsids.h>
 
 class GroupSelectionBox: public QListWidget
 {
@@ -7,10 +8,10 @@ class GroupSelectionBox: public QListWidget
 public:
 	GroupSelectionBox(QWidget *parent);
 
-	void selectedGroupIds(std::list<std::string> &groupIds) const;
+    void selectedGroupIds(std::list<RsNodeGroupId> &groupIds) const;
 	void selectedGroupNames(QList<QString> &groupNames) const;
 
-	void setSelectedGroupIds(const std::list<std::string> &groupIds);
+    void setSelectedGroupIds(const std::list<RsNodeGroupId> &groupIds);
 
 private slots:
 	void fillGroups();

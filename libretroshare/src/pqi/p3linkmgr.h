@@ -132,7 +132,7 @@ class peerConnectState
 };
 
 class p3tunnel; 
-class RsPeerGroupItem;
+class RsPeerGroupItem_deprecated;
 class RsGroupInfo;
 
 class p3PeerMgr;
@@ -338,9 +338,6 @@ private:
 
 	std::map<RsPeerId, peerConnectState> mFriendList;
 	std::map<RsPeerId, peerConnectState> mOthersList;
-
-	std::list<RsPeerGroupItem *> groupList;
-	uint32_t lastGroupId;
 
 	/* relatively static list of banned ip addresses */
 	std::list<struct sockaddr_storage> mBannedIpList;

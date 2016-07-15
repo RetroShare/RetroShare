@@ -354,6 +354,15 @@ private:
     bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
     bool canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
+    /*!
+     * \brief checkPermissionsForFriendGroup
+     * 			Checks that we can send/recv from that node, given that the grpMeta has a distribution limited to a local circle.
+     * \param sslId		Candidate peer to send to or to receive from.
+     * \param grpMeta	Contains info about the group id, internal circle id, etc.
+     * \return 			true only when the internal exists and validates as a friend node group, and contains the owner of sslId.
+     */
+    bool checkPermissionsForFriendGroup(const RsPeerId& sslId,const RsGxsGrpMetaData& grpMeta) ;
+
     bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta, RsGxsCircleId& should_encrypt_id);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);

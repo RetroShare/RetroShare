@@ -6,30 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>828</width>
-    <height>612</height>
+    <width>860</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Create New</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -57,16 +48,7 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="leftMargin">
-           <number>4</number>
-          </property>
-          <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>4</number>
-          </property>
-          <property name="bottomMargin">
+          <property name="margin">
            <number>4</number>
           </property>
           <item>
@@ -130,16 +112,7 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <property name="leftMargin">
-               <number>3</number>
-              </property>
-              <property name="topMargin">
-               <number>3</number>
-              </property>
-              <property name="rightMargin">
-               <number>3</number>
-              </property>
-              <property name="bottomMargin">
+              <property name="margin">
                <number>3</number>
               </property>
               <item>
@@ -261,16 +234,7 @@
          </property>
          <widget class="QWidget" name="dockWidgetContents">
           <layout class="QGridLayout" name="_2">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <property name="spacing">
@@ -337,6 +301,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messsages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="text">
              <string>Public</string>
             </property>
@@ -361,6 +328,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will spread among Retroshare nodes that host one of the identities listed as member of the circle and who also subscribe the media. Only these nodes will be able to see that this forum/channel/posted media exists. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
                <string>Restricted to Circle</string>
@@ -392,6 +362,9 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messages will only be distributed to the selected subset of your friend nodes. They will not forward messages with each other, but only use your own node as a central hub to distribute them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>Only For Your Friends</string>
               </property>
@@ -408,7 +381,7 @@
              </widget>
             </item>
             <item>
-             <widget class="GxsCircleChooser" name="localComboBox"/>
+             <widget class="GroupChooser" name="localComboBox"/>
             </item>
            </layout>
           </item>
@@ -580,35 +553,39 @@
           <string>Spam-protection</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <property name="leftMargin">
-           <number>9</number>
-          </property>
-          <property name="topMargin">
-           <number>4</number>
-          </property>
-          <property name="rightMargin">
-           <number>9</number>
-          </property>
-          <property name="bottomMargin">
-           <number>4</number>
-          </property>
           <item>
-           <widget class="QCheckBox" name="antiSpam_signedIds">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This makes the media increase the reputation threshold to 0.4 for anonymous ids, while keeping it to 0.0 for PGP-linked ids. Therefore, anonymous ids can still post, if their local reputation score is above that threshold.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
+           <widget class="QLabel" name="label_5">
             <property name="text">
-             <string>Favor PGP-signed ids</string>
+             <string>Posts permissions:</string>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="antiSpam_perms_CB">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This combo box allows you to choose how posts are handled depending on the node the poster belongs to.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;All allowed&lt;/span&gt;: all posts are treated equally.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs&lt;/span&gt;: anonymous IDs will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Defavor posts from unsigned IDs and IDs from unknown nodes&lt;/span&gt;: anonymous IDs and IDs signed by unknown Retroshare nodes will require a reputation of 0.4 to be received/forwarded.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>All allowed</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Defavor unsigned IDs</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Defavor unsigned IDs and IDs from unknown nodes</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="antiSpam_trackMessages">
             <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who forwarded each message to you, for the last 10 days. Although useless if alone (and already available whatsoever) this information can be used by a group of collaborative friends to easily locate the source of spams. To be used with care, since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who forwarded each message to you, for the last 10 days. Although useless if alone (and already available whatsoever) this information can be used by a group of teamed-up friends to easily locate a source of spams. To be used with care, since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Keep track of posts</string>
@@ -873,6 +850,11 @@
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GroupChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/common/GroupChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

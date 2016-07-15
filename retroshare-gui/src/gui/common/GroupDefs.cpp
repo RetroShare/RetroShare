@@ -51,7 +51,7 @@ const QString GroupDefs::name(const RsGroupInfo &groupInfo)
         return qApp->translate("GroupDefs", "Favorites");
     }
 
-    std::cerr << "GroupDefs::name: Unknown group id requested " << groupInfo.id;
+    std::cerr << "GroupDefs::name: Unknown group id requested " << groupInfo.id << std::endl;
     return "";
 }
 

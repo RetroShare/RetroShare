@@ -124,8 +124,8 @@ void GxsGroupDialog::init()
 	/* Setup Reasonable Defaults */
 
 	ui.idChooser->loadIds(0,RsGxsId());
-	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
-	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, RsGxsCircleId());
+    ui.circleComboBox->loadCircles(RsGxsCircleId());
+    ui.localComboBox->loadGroups(0, RsNodeGroupId());
 	
 	ui.groupDesc->setPlaceholderText(tr("Set a descriptive description here"));
 
@@ -302,7 +302,13 @@ void GxsGroupDialog::setupDefaults()
 		}
 	}
 	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-	    ui.antiSpam_signedIds->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP));
+        
+        if( (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP) && (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN))
+		ui.antiSpam_perms_CB->setCurrentIndex(2) ;
+        else if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP)
+		ui.antiSpam_perms_CB->setCurrentIndex(1) ;
+        else
+		ui.antiSpam_perms_CB->setCurrentIndex(0) ;
         
         QString antispam_string ;
         if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK) antispam_string += tr("Message tracking") ;
@@ -315,8 +321,6 @@ void GxsGroupDialog::setupDefaults()
     ui.typeGroup_3->setEnabled(false);
     ui.typeLocal_3->setEnabled(false);
 #endif
-    ui.typeLocal->setEnabled(false);	// for now, since local circles not fully tested.
-    ui.typeLocal->setToolTip(tr("This feature is not yet available, but it will be available very soon!"));	// for now, since local circles not fully tested.
 }
 
 void GxsGroupDialog::setupVisibility()
@@ -394,85 +398,97 @@ void GxsGroupDialog::newGroup()
 
 void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 {
-	std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
-	std::cerr << std::endl;
+    std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
+    std::cerr << std::endl;
 
-	std::cerr << "void GxsGroupDialog::updateFromExistingMeta() mGrpMeta.mCircleType: ";
-	std::cerr << mGrpMeta.mCircleType << " Internal: " << mGrpMeta.mInternalCircle;
-	std::cerr << " External: " << mGrpMeta.mCircleId;
-	std::cerr << std::endl;
+    std::cerr << "void GxsGroupDialog::updateFromExistingMeta() mGrpMeta.mCircleType: ";
+    std::cerr << mGrpMeta.mCircleType << " Internal: " << mGrpMeta.mInternalCircle;
+    std::cerr << " External: " << mGrpMeta.mCircleId;
+    std::cerr << std::endl;
 
-	setupDefaults();
-	setupVisibility();
-	setupReadonly();
-	clearForm();
-    	setGroupSignFlags(mGrpMeta.mSignFlags) ;
+    setupDefaults();
+    setupVisibility();
+    setupReadonly();
+    clearForm();
+    setGroupSignFlags(mGrpMeta.mSignFlags) ;
 
-	/* setup name */
-	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	
-	/* Show Mode */
-	ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-	ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
-	ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
-	ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+    /* setup name */
+    ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+
+    /* Show Mode */
+    ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+    ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
+    ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
+    ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
-	ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
-	ui.descriptiontextEdit->setPlainText(description);
-	
-		switch (mode())
-  {
-		case MODE_CREATE:{
-		}
-		break;
-		case MODE_SHOW:{
-			ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-			if (!mPicture.isNull())
-				ui.headerFrame->setHeaderImage(mPicture);
-		}
-		break;
-		case MODE_EDIT:{
-		}
-		break;
-  }
-	/* set description */
-	ui.groupDesc->setPlainText(description);
-    	QString distribution_string = "[Unknown]";
+    ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
+    ui.descriptiontextEdit->setPlainText(description);
 
-	switch(mGrpMeta.mCircleType)
-	{
-		case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
-			ui.typeLocal->setChecked(true);
-			distribution_string = tr("Your friends only") ;
-			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
-			ui.distributionCircleComboBox->setVisible(true) ;
-			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
-			break;
-		case GXS_CIRCLE_TYPE_PUBLIC:
-			ui.typePublic->setChecked(true);
-			distribution_string = tr("Public") ;
-			ui.distributionCircleComboBox->setVisible(false) ;
-			break;
-		case GXS_CIRCLE_TYPE_EXTERNAL:
-			ui.typeGroup->setChecked(true);
-			distribution_string = tr("Restricted to circle:") ;
-			ui.distributionCircleComboBox->setVisible(true) ;
-			ui.distributionCircleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
-			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
-			break;
-		default:
-			std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
-			std::cerr << std::endl;
-			break;
-	}
+    switch (mode())
+    {
+    case MODE_CREATE:{
+    }
+        break;
+    case MODE_SHOW:{
+        ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+        if (!mPicture.isNull())
+            ui.headerFrame->setHeaderImage(mPicture);
+    }
+        break;
+    case MODE_EDIT:{
+    }
+        break;
+    }
+    /* set description */
+    ui.groupDesc->setPlainText(description);
+    QString distribution_string = "[Unknown]";
+
+    switch(mGrpMeta.mCircleType)
+    {
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        ui.typeLocal->setChecked(true);
+        distribution_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(mGrpMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distribution_string += desc ;
+
+        ui.localComboBox->loadGroups(0, RsNodeGroupId(mGrpMeta.mInternalCircle));
+        ui.distributionCircleComboBox->setVisible(false) ;
+        ui.localComboBox->setVisible(true) ;
+    }
+        break;
+    case GXS_CIRCLE_TYPE_PUBLIC:
+        ui.typePublic->setChecked(true);
+        distribution_string = tr("Public") ;
+        ui.distributionCircleComboBox->setVisible(false) ;
+        ui.localComboBox->setVisible(false) ;
+        break;
+    case GXS_CIRCLE_TYPE_EXTERNAL:
+        ui.typeGroup->setChecked(true);
+        distribution_string = tr("Restricted to circle:") ;
+        ui.localComboBox->setVisible(false) ;
+        ui.distributionCircleComboBox->setVisible(true) ;
+        ui.distributionCircleComboBox->loadCircles(mGrpMeta.mCircleId);
+        ui.circleComboBox->loadCircles(mGrpMeta.mCircleId);
+        break;
+    default:
+        std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
+        std::cerr << std::endl;
+        break;
+    }
     ui.distributionValueLabel->setText(distribution_string) ;
 
-	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
-    
-    	if(!mGrpMeta.mAuthorId.isNull())
-		ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
+    ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
 
-	updateCircleOptions();
+    if(!mGrpMeta.mAuthorId.isNull())
+        ui.idChooser->setChosenId(mGrpMeta.mAuthorId) ;
+
+    updateCircleOptions();
 }
 
 void GxsGroupDialog::submitGroup()
@@ -613,32 +629,37 @@ void GxsGroupDialog::createGroup()
 	
 uint32_t GxsGroupDialog::getGroupSignFlags()
 {
-	/* grab from the ui options -> */
-	uint32_t signFlags = 0;
-	if (ui.publish_encrypt->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED;
-	} else if (ui.publish_required->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED;
-	} else if (ui.publish_threads->isChecked()) {
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD;
-	} else {  // publish_open (default).
-		signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
-	}
+    /* grab from the ui options -> */
+    uint32_t signFlags = 0;
+    if (ui.publish_encrypt->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED;
+    } else if (ui.publish_required->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED;
+    } else if (ui.publish_threads->isChecked()) {
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_THREADHEAD;
+    } else {  // publish_open (default).
+	    signFlags |= GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ;
+    }
 
-	if (ui.personal_required->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
-    
-	if (ui.personal_ifnopub->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
-    
-	// Author Signature.
-	if (ui.antiSpam_signedIds->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
-    
-	if (ui.antiSpam_trackMessages->isChecked()) 
-		signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
-    
-	return signFlags;
+    if (ui.personal_required->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+
+    if (ui.personal_ifnopub->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN;
+
+    // Author Signature.
+    switch(ui.antiSpam_perms_CB->currentIndex()) 
+    {
+    case 0: break ;
+    case 2: signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN;	// no break below, since we want *both* flags in this case.
+    case 1:  signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG;
+	    break ;
+    }
+
+    if (ui.antiSpam_trackMessages->isChecked()) 
+	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
+
+    return signFlags;
 }
 
 void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
@@ -660,11 +681,19 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 		ui.personal_ifnopub->setChecked(true);
     
 		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-		ui.antiSpam_signedIds      ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) );
         
+        		if( (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+                    ui.antiSpam_perms_CB->setCurrentIndex(2) ;
+                else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+                    ui.antiSpam_perms_CB->setCurrentIndex(1) ;
+		else
+                    ui.antiSpam_perms_CB->setCurrentIndex(0) ;
+                
         QString antispam_string ;
         if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) antispam_string += tr("Message tracking") ;
-	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
+	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)      antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature from known ID required") ;
+    	else
+	if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)            antispam_string += (antispam_string.isNull()?"":" and ")+tr("PGP signature required") ;
     
     	ui.antiSpamValueLabel->setText(antispam_string) ;
 		//ui.antiSpam_trackMessages_2->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
@@ -720,41 +749,42 @@ void GxsGroupDialog::updateCircleOptions()
 
 bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 {
-	meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
-	meta.mCircleId.clear();
-	meta.mOriginator.clear();
-	meta.mInternalCircle.clear();
+    meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+    meta.mCircleId.clear();
+    meta.mOriginator.clear();
+    meta.mInternalCircle.clear();
 
-	if (ui.typePublic->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
-		meta.mCircleId.clear();
-	}
-	else if (ui.typeGroup->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
-		if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
-		{
-			return false;
-		}
-	}
-	else if (ui.typeLocal->isChecked())
-	{
-		meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
-		meta.mCircleId.clear();
-		meta.mOriginator.clear();
-		meta.mInternalCircle.clear() ;
-	
-		if (!ui.localComboBox->getChosenCircle(meta.mInternalCircle))
-		{
-			return false;
-		}
-	}
-	else
-	{
-		return false;
-	}
-	return true;
+    if (ui.typePublic->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
+        meta.mCircleId.clear();
+    }
+    else if (ui.typeGroup->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+        if (!ui.circleComboBox->getChosenCircle(meta.mCircleId))
+        {
+            return false;
+        }
+    }
+    else if (ui.typeLocal->isChecked())
+    {
+        meta.mCircleType = GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY;
+        meta.mCircleId.clear();
+        meta.mOriginator.clear();
+        meta.mInternalCircle.clear() ;
+
+        RsNodeGroupId ngi ;
+
+        if (!ui.localComboBox->getChosenGroup(ngi))
+            return false;
+
+        meta.mInternalCircle = RsGxsCircleId(ngi) ;
+    }
+    else
+        return false;
+
+    return true;
 }
 
 void GxsGroupDialog::cancelDialog()

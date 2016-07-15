@@ -14,6 +14,13 @@ DEFINES += TARGET=\\\"$TARGET\\\"
 #CONFIG += debug
 #DEFINES *= SIGFPE_DEBUG
 
+profiling {
+	QMAKE_CXXFLAGS -= -fomit-frame-pointer
+	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
+	QMAKE_LFLAGS *= -pg 
+}
+
+
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
 
@@ -69,7 +76,7 @@ linux-* {
 
 	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS *= -rdynamic
+	LIBS *= -rdynamic 
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= HAS_GNOME_KEYRING
 }
@@ -466,6 +473,7 @@ HEADERS +=  rshare.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
+            gui/common/GroupChooser.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
@@ -775,6 +783,7 @@ SOURCES +=  main.cpp \
             gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
+            gui/common/GroupChooser.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \

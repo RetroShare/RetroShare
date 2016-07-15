@@ -73,14 +73,13 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			memcpy(bytes,id.toByteArray(),ID_SIZE_IN_BYTES) ;
 		}
 
-		// Random initialization. Can be useful for testing.
+        // Random initialization. Can be useful for testing and to generate new ids.
 		//
 		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> random() 
 		{
 			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> id ;
 
-			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
-				id.bytes[i] = RSRandom::random_u32() & 0xff ;
+            RSRandom::random_bytes(id.bytes,ID_SIZE_IN_BYTES) ;
 
 			return id ;
 		}
@@ -220,6 +219,7 @@ static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE       = 0x0008 ;
 static const uint32_t RS_GENERIC_ID_GROUTER_ID_TYPE          = 0x0009 ;
 static const uint32_t RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE       = 0x0010 ;
 static const uint32_t RS_GENERIC_ID_GXS_DISTANT_CHAT_ID_TYPE = 0x0011 ;
+static const uint32_t RS_GENERIC_ID_NODE_GROUP_ID_TYPE       = 0x0012 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
 typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType ;
@@ -231,4 +231,5 @@ typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_I
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE  > GXSCircleId ;
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE  > GXSTunnelId ;
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GXS_DISTANT_CHAT_ID_TYPE  > DistantChatPeerId ;
+typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_NODE_GROUP_ID_TYPE  > RsNodeGroupId ;
 

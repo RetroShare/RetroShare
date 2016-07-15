@@ -44,7 +44,6 @@
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgrouter.h>
-#include <retroshare/rsreputations.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"
@@ -791,7 +790,8 @@ void GxsForumThreadWidget::insertGroupData()
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     QString anti_spam_features1 ;
-    if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
+    if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown node IDs reputation threshold set to 0.4");
+    else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
             
     QString anti_spam_features2 ;
     if(IS_GROUP_MESSAGE_TRACKING(tw->mSignFlags)) anti_spam_features2 = tr("Message routing info kept for 10 days");
@@ -817,9 +817,20 @@ void GxsForumThreadWidget::insertGroupData()
 		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
     }
 	    break ;
-    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY: distrib_string = tr("Your eyes only");
-	    break ;
-    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        distrib_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(group.mMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distrib_string += desc ;
+    }
+        break ;
+
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
 	    break ;
     default:
 	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
@@ -985,7 +996,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     // is flagged with a bad reputation
     
     
-    bool redacted =  rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
                 
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1408,7 +1419,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    bool redacted = rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 
