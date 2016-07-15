@@ -1073,7 +1073,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				}
 				else
 				{
-					std::list<PeerId> peers;
+                    std::list<RsPeerId> peers;
 
 					if(!cache.mOriginator.isNull())
 					{

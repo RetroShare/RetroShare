@@ -220,16 +220,16 @@
  	NXS_NET_DEBUG_3		publish key exchange
  	NXS_NET_DEBUG_4		vetting
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
- 	NXS_NET_DEBUG_6		
+    NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-//#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-//#define NXS_NET_DEBUG_5 	1
+#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 
@@ -266,8 +266,8 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("87c769d3ffeafdc4433f557d50cdf2e8" )) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("30501fac090b65f5b9def169598b53ed" )) ;	// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  = 0x211 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -4610,7 +4610,13 @@ void RsGxsNetService::setSyncAge(uint32_t /* age */)
 int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
-	mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
+#ifdef NXS_NET_DEBUG_0
+    GXSNETDEBUG_P_(peerId) << "RsGxsNetService::requestGrp(): adding explicit group requests to peer " << peerId << std::endl;
+
+    for(std::list<RsGxsGroupId>::const_iterator it(grpId.begin());it!=grpId.end();++it)
+        GXSNETDEBUG_PG(peerId,*it) << "   Group ID: " << *it << std::endl;
+#endif
+    mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
 	return 1;
 }
 
@@ -4622,7 +4628,10 @@ void RsGxsNetService::processExplicitGroupRequests()
 
 	for(; cit != mExplicitRequest.end(); ++cit)
 	{
-		const RsPeerId& peerId = cit->first;
+#ifdef NXS_NET_DEBUG_0
+        GXSNETDEBUG_P_(cit->first) << "RsGxsNetService::sending pending explicit group requests to peer " << cit->first << std::endl;
+#endif
+        const RsPeerId& peerId = cit->first;
 		const std::list<RsGxsGroupId>& groupIdList = cit->second;
 
 		std::list<RsNxsItem*> grpSyncItems;
@@ -4630,7 +4639,10 @@ void RsGxsNetService::processExplicitGroupRequests()
 		uint32_t transN = locked_getTransactionId();
 		for(; git != groupIdList.end(); ++git)
 		{
-			RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
+#ifdef NXS_NET_DEBUG_0
+            GXSNETDEBUG_PG(peerId,*git) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
+#endif
+            RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
 			item->grpId = *git;
 			item->PeerId(peerId);
 			item->flag = RsNxsSyncGrpItem::FLAG_REQUEST;

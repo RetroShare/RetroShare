@@ -298,7 +298,7 @@ public:
 	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
 	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
-	virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers);
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
 
@@ -343,7 +343,7 @@ private:
  */
 	int  cache_tick();
 
-	bool cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers = std::list<PeerId>());
+    bool cache_request_load(const RsGxsId &id, const std::list<RsPeerId>& peers = std::list<RsPeerId>());
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
 
@@ -351,7 +351,8 @@ private:
 	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
 	bool isPendingNetworkRequest(const RsGxsId& gxsId);
-	void requestIdsFromNet();
+    void locked_mergeIdsToRequestFromNet(const RsGxsId& id,const std::list<RsPeerId>& peers);
+    void requestIdsFromNet();
 
 	// Mutex protected.
 

@@ -2832,12 +2832,15 @@ void RsGenExchange::processRecvdMessages()
 
 void RsGenExchange::processRecvdGroups()
 {
-	RS_STACK_MUTEX(mGenMtx) ;
+    RS_STACK_MUTEX(mGenMtx) ;
 
 	if(mReceivedGrps.empty())
 		return;
 
-	NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
+#ifdef GEN_EXCH_DEBUG
+    std::cerr << "RsGenExchange::Processing received groups" << std::endl;
+#endif
+    NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
 	std::vector<RsGxsGroupId> existingGrpIds;
 	std::list<RsGxsGroupId> grpIds;
 

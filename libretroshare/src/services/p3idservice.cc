@@ -50,6 +50,7 @@
  * #define DEBUG_OPINION 1
  * #define GXSID_GEN_DUMMY_DATA	1
  ****/
+#define DEBUG_IDS	1
 
 #define ID_REQUEST_LIST		0x0001
 #define ID_REQUEST_IDENTITY	0x0002
@@ -700,16 +701,25 @@ bool p3IdService::havePrivateKey(const RsGxsId &id)
 	return mKeyCache.is_cached(id) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers)
 {
 	if (haveKey(id))
 		return true;
 	else
-	{
-		if(isPendingNetworkRequest(id))
-			return true;
-	}
+    {
+        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
+        std::map<RsGxsId,std::list<RsPeerId> >::iterator rit = mIdsNotPresent.find(id) ;
+
+        if(rit != mIdsNotPresent.end())
+        {
+            locked_mergeIdsToRequestFromNet(id,peers) ;
+            return true ;
+        }
+    }
+
+    if(peers.empty())
+        std::cerr << "(EE) empty peer list in ID request from net. This is bound to fail!" << std::endl;
 
     return cache_request_load(id, peers);
 }
@@ -723,6 +733,27 @@ bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId)
 		return true;
 
 	return false;
+}
+
+void p3IdService::locked_mergeIdsToRequestFromNet(const RsGxsId& id,const std::list<RsPeerId>& peers)
+{
+    // merge the two lists (I use a std::set to make it more efficient)
+
+    std::cerr << "p3IdService::requestKey(): merging list with existing pending request." << std::endl;
+
+    std::list<RsPeerId>& old_peers(mIdsNotPresent[id]) ;	// create if necessary
+    std::set<RsPeerId> new_peers ;
+
+    for(std::list<RsPeerId>::const_iterator it(peers.begin());it!=peers.end();++it)
+        new_peers.insert(*it) ;
+
+    for(std::list<RsPeerId>::iterator it(old_peers.begin());it!=old_peers.end();++it)
+        new_peers.insert(*it) ;
+
+    old_peers.clear();
+
+    for(std::set<RsPeerId>::iterator it(new_peers.begin());it!=new_peers.end();++it)
+        old_peers.push_back(*it) ;
 }
 
 bool p3IdService::getKey(const RsGxsId &id, RsTlvPublicRSAKey &key)
@@ -918,7 +949,7 @@ bool p3IdService::haveReputation(const RsGxsId &id)
 	return haveKey(id);
 }
 
-bool p3IdService::loadReputation(const RsGxsId &id, const std::list<PeerId>& peers)
+bool p3IdService::loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers)
 {
 	if (haveKey(id))
 		return true;
@@ -2010,11 +2041,10 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 #define MIN_CYCLE_GAP	2
 
-bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers)
+bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<RsPeerId> &peers)
 {
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::cache_request_load(" << id << ")";
-	std::cerr << std::endl;
+    std::cerr << "p3IdService::cache_request_load(" << id << ")" << std::endl;
 #endif // DEBUG_IDS
 
 	{
@@ -2130,11 +2160,14 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			// now store identities that aren't present
 
 			RsStackMutex stack(mIdMtx);
-			mIdsNotPresent.insert(mPendingCache.begin(), mPendingCache.end());
+
+            for(std::map<RsGxsId,std::list<RsPeerId> >::const_iterator itt(mPendingCache.begin());itt!=mPendingCache.end();++itt)
+                locked_mergeIdsToRequestFromNet(itt->first,itt->second) ;
+
 			mPendingCache.clear();
 
-                        if(!mIdsNotPresent.empty())
-                            schedule_now(GXSID_EVENT_REQUEST_IDS);
+            if(!mIdsNotPresent.empty())
+                schedule_now(GXSID_EVENT_REQUEST_IDS);
 		}
 
 	}
@@ -2150,46 +2183,69 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 void p3IdService::requestIdsFromNet()
 {
-	RsStackMutex stack(mIdMtx);
+    RsStackMutex stack(mIdMtx);
 
-	std::map<RsGxsId, std::list<RsPeerId> >::const_iterator cit;
-	std::map<RsPeerId, std::list<RsGxsId> > requests;
+    if(!mNes)
+    {
+        std::cerr << "(WW) cannot request missing GXS IDs because network service is not present." << std::endl;
+        return ;
+    }
 
-	// transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes
-	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); ++cit)
-	{
-		{
+    std::map<RsGxsId, std::list<RsPeerId> >::iterator cit;
+    std::map<RsPeerId, std::list<RsGxsId> > requests;
+
+    // Transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes per peer ID
+    // Only delete entries in mIdsNotPresent that can actually be performed.
+
+    for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
+    {
 #ifdef DEBUG_IDS
-				std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: ";
-							std::cerr << cit->first;
-							std::cerr << std::endl;
-#endif // DEBUG_IDS
+        std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: " << cit->first << std::endl;
+#endif
 
-		}
+        const std::list<RsPeerId>& peers = cit->second;
+        std::list<RsPeerId>::const_iterator cit2;
 
-		const std::list<RsPeerId>& peers = cit->second;
-		std::list<RsPeerId>::const_iterator cit2;
-		for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-			requests[*cit2].push_back(cit->first);
-	}
+        bool request_can_proceed = false ;
 
-	std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2;
-
-	for(cit2 = requests.begin(); cit2 != requests.end(); ++cit2)
-        {
-
-            if(mNes)
+        for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
+            if(rsPeers->isOnline(*cit2)) 		// make sure that the peer in online, so that we know that the request has some chance to succeed.
             {
-        		std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
-        		std::list<RsGxsGroupId> grpIds;
-        		for(; gxs_id_it != cit2->second.end(); ++gxs_id_it)
-        			grpIds.push_back(RsGxsGroupId(gxs_id_it->toStdString()));
-
-            	mNes->requestGrp(grpIds, cit2->first);
+                requests[*cit2].push_back(cit->first);
+                request_can_proceed = true ;
+#ifdef DEBUG_IDS
+                std::cerr << "       will ask ID " << cit->first << " to peer ID " << *cit2 << std::endl;
+#endif
             }
+
+        if(request_can_proceed)
+        {
+            std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
+            ++tmp ;
+            mIdsNotPresent.erase(cit) ;
+            cit = tmp ;
+        }
+        else
+        {
+            std::cerr << "(EE) empty online peers list in ID request for groupId " << cit->first << ". This is not going to work! Keeping it until peers show up."<< std::endl;
+            ++cit ;
+        }
+    }
+
+    for(std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2(requests.begin()); cit2 != requests.end(); ++cit2)
+    {
+        std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
+        std::list<RsGxsGroupId> grpIds;
+        for(; gxs_id_it != cit2->second.end(); ++gxs_id_it)
+        {
+#ifdef DEBUG_IDS
+            std::cerr << "  asking ID " << *gxs_id_it << " to peer ID " << cit2->first << std::endl;
+#endif
+            grpIds.push_back(RsGxsGroupId(*gxs_id_it));
         }
 
-	mIdsNotPresent.clear();
+        mNes->requestGrp(grpIds, cit2->first);
+    }
 }
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
@@ -2373,7 +2429,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				/* try the cache! */
 				if (!haveKey(*vit))
 				{
-					std::list<PeerId> nullpeers;
+                    std::list<RsPeerId> nullpeers;
 					requestKey(*vit, nullpeers);
 
 #ifdef DEBUG_IDS
@@ -2606,7 +2662,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
     //	}
 
 #ifdef DEBUG_IDS
-    std::cerr << "p3IdService::service_CreateGroup() for : " << item->mMeta.mGroupId;
+    std::cerr << "p3IdService::service_CreateGroup() for : " << item->meta.mGroupId;
     std::cerr << std::endl;
     std::cerr << "p3IdService::service_CreateGroup() Alt GroupId : " << item->meta.mGroupId;
     std::cerr << std::endl;
@@ -2653,7 +2709,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 #ifdef DEBUG_IDS
 
-        std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->group.mPgpIdHash;
+        std::cerr << "p3IdService::service_CreateGroup() Calculated PgpIdHash : " << item->mPgpIdHash;
         std::cerr << std::endl;
 #endif // DEBUG_IDS
 
@@ -3015,7 +3071,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId,bool& error)
     
 #ifdef DEBUG_IDS
     std::string esign ;
-    Radix64::encode((char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),esign) ;
+    Radix64::encode((unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(),esign) ;
     std::cerr << "Checking group signature " << esign << std::endl;
 #endif
     RsPgpId issuer_id ;

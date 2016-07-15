@@ -168,7 +168,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         if(it == _chat_lobbys.end())
         {
 #ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+            std::cerr << "Chatlobby for id " << std::hex << cli->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
 #endif
             return false;
         }
