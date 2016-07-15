@@ -27,6 +27,7 @@
 
 #include "support.h"
 #include "serialiser/rstlvbase.h"
+#include "gxs/gxssecurity.h"
 
 void randString(const uint32_t length, std::string& outStr)
 {
@@ -67,12 +68,14 @@ void init_item(RsTlvSecurityKeySet& ks)
 	randString(SHORT_STR, ks.groupId);
 	for(int i=1; i<n; i++)
 	{
-		RsGxsId a_str;
-		a_str = RsGxsId::random();
+		RsGxsId pub_str;
+		RsGxsId pri_str;
+		pub_str = RsGxsId::random();
+		pri_str = RsGxsId::random();
 
-		RsTlvPublicRSAKey& a_key = ks.public_keys[a_str];
-		init_item(a_key);
-		a_key.keyId = a_str;
+		RsTlvPublicRSAKey& pub_key = ks.public_keys[pub_str];
+		RsTlvPrivateRSAKey& pri_key = ks.private_keys[pri_str];
+		GxsSecurity::generateKeyPair(pub_key, pri_key);
 	}
 }
 
@@ -180,24 +183,6 @@ bool operator==(const RsTlvBinaryData& bd1, const RsTlvBinaryData& bd2)
 	}
 
 	return true;
-}
-
-
-void init_item(RsTlvPublicRSAKey& sk)
-{
-	int randnum = rand()%313131;
-
-	sk.endTS = randnum;
-	sk.keyFlags = randnum;
-	sk.startTS = randnum;
-	sk.keyId = RsGxsId::random();
-
-	std::string randomStr;
-	randString(LARGE_STR, randomStr);
-
-	sk.keyData.setBinData(randomStr.c_str(), randomStr.size());
-
-	return;
 }
 
 void init_item(RsTlvKeySignature& ks)

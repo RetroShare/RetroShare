@@ -39,20 +39,20 @@ uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version)
 
     s += mGroupId.serial_size();
     s += mOrigGrpId.serial_size();
+    s += mParentGrpId.serial_size();
     s += GetTlvStringSize(mGroupName);
-    s += 4;
-    s += 4;
+    s += 4;          // mGroupFlags
+    s += 4;          // mPublishTs
+    s += 4;          // mCircleType
+    s += 4;          // mAuthenFlag
     s += mAuthorId.serial_size();
     s += GetTlvStringSize(mServiceString);
+    s += mCircleId.serial_size();
     s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += 4;                                  // for mCircleType
-    s += mCircleId.serial_size();
-    s += 4;                                  // mAuthenFlag
-    s += mParentGrpId.serial_size();         // mParentGroupId
     
     if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
-	    s += 4;                                  // mSignFlag
+        s += 4;      // mSignFlag
     else if(api_version != RS_GXS_GRP_META_DATA_VERSION_ID_0001)
         std::cerr << "(EE) wrong/unknown API version " << api_version << " requested in RsGxsGrpMetaData::serial_size()" << std::endl;
 
@@ -227,8 +227,8 @@ uint32_t RsGxsMsgMetaData::serial_size()
 
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
-    s += 4;					// mPublishTS
-    s += 4;					// mMsgFlags
+    s += 4;          // mPublishTS
+    s += 4;          // mMsgFlags
 
     return s;
 }
@@ -311,7 +311,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
     ok &= signSet.GetTlv(data, *size, &offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgName);
-    uint32_t t;
+    uint32_t t=0;
     ok &= getRawUInt32(data, *size, &offset, &t);
     mPublishTs = t;
     ok &= getRawUInt32(data, *size, &offset, &mMsgFlags);

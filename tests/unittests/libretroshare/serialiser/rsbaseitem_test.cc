@@ -45,7 +45,7 @@ TEST(libretroshare_serialiser, RsTlvFileItem)
 
 	/* initialise */
 	i1.filesize = 101010;
-	i1.hash = RsFileHash("ABCDEFEGHE");
+	i1.hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
 	i1.name = "TestFile.txt";
 	i1.pop  = 12;
 	i1.age  = 456;
@@ -103,7 +103,7 @@ TEST(libretroshare_serialiser, RsTlvFileSet)
 	{
 		RsTlvFileItem fi;
 		fi.filesize = 16 + i * i;
-		fi.hash = RsFileHash("ABCDEF");
+		fi.hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
 		std::ostringstream out;
 		out << "File" << i << "_inSet.txt";
 		fi.name = out.str();
@@ -130,7 +130,7 @@ TEST(libretroshare_serialiser, RsTlvFileData)
 
 	/* initialise */
 	d1.file.filesize = 101010;
-	d1.file.hash = RsFileHash("ABCDEFEGHE");
+	d1.file.hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
 	d1.file.name = "";
 	d1.file.age = 0;
 	d1.file.pop = 0;

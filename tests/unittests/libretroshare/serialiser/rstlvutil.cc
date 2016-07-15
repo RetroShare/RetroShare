@@ -101,6 +101,7 @@ int test_SerialiseTlvItem(std::ostream &str, RsTlvItem *in, RsTlvItem *out)
 	in->print(str, 0);
 	displayRawPacket(str, serbuffer, serialOffset);
 	out->print(str, 0);
+	str << std::endl;
 	return 1;
 }
 

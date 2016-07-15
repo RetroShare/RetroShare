@@ -40,7 +40,11 @@ TEST(libretroshare_gxs, GxsSecurity)
 
 	EXPECT_TRUE(GxsSecurity::generateKeyPair(pub_key,priv_key)) ;
 
+#ifdef WIN32
+	srand(getpid()) ;
+#else
 	srand48(getpid()) ;
+#endif
 
 	EXPECT_TRUE( pub_key.keyId   == priv_key.keyId   );
 	EXPECT_TRUE( pub_key.startTS == priv_key.startTS );

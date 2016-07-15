@@ -56,24 +56,22 @@ public:
     void clear();
     void operator =(const RsGroupMetaData& rMeta);
 
+    //Sort data in same order than serialiser and deserializer
     RsGxsGroupId mGroupId;
     RsGxsGroupId mOrigGrpId;
+    RsGxsGroupId mParentGrpId;
     std::string mGroupName;
     uint32_t    mGroupFlags;	// GXS_SERV::FLAG_PRIVACY_RESTRICTED | GXS_SERV::FLAG_PRIVACY_PRIVATE | GXS_SERV::FLAG_PRIVACY_PUBLIC
     uint32_t    mPublishTs;
-    uint32_t    mSignFlags;
-    RsGxsId mAuthorId;
-
-    RsGxsCircleId mCircleId;
     uint32_t mCircleType;
-
-
+    uint32_t mAuthenFlags;
+    RsGxsId mAuthorId;
+    std::string mServiceString;
+    RsGxsCircleId mCircleId;
     RsTlvKeySignatureSet signSet;
     RsTlvSecurityKeySet keys;
 
-    std::string mServiceString;
-    uint32_t mAuthenFlags;
-    RsGxsGroupId mParentGrpId;
+    uint32_t    mSignFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -105,18 +103,17 @@ public:
     void clear();
     void operator =(const RsMsgMetaData& rMeta);
 
+    static int refcount;
+
+    //Sort data in same order than serialiser and deserializer
     RsGxsGroupId mGroupId;
     RsGxsMessageId mMsgId;
-    static int refcount;
     RsGxsMessageId mThreadId;
     RsGxsMessageId mParentId;
     RsGxsMessageId mOrigMsgId;
     RsGxsId mAuthorId;
 
     RsTlvKeySignatureSet signSet;
-
-    std::string mServiceString;
-
     std::string mMsgName;
     time_t      mPublishTs;
     uint32_t    mMsgFlags; // Whats this for?
@@ -124,6 +121,7 @@ public:
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
 
+    std::string mServiceString;
     uint32_t    mMsgStatus;
     uint32_t    mMsgSize;
     time_t      mChildTs;

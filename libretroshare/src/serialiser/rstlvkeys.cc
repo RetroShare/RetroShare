@@ -188,6 +188,76 @@ bool  RsTlvRSAKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	return ok && checkKey() ;
 }
 
+/**
+ * @brief RsTlvRSAKey::getKeyTypeTlv: Deserialize data in temp value to get type of key.
+ * @param data: Serialized data
+ * @param size: Size of the data
+ * @param constoffset: Offset where find first data. Not updated by this function.
+ * @return The keyFlag filtered by RSTLV_KEY_TYPE_MASK. 0 if failed
+ */
+uint32_t RsTlvRSAKey::getKeyTypeTlv(void *data, uint32_t size, uint32_t *constoffset) const
+{
+	//Temporay Value. The same name than class to get same code than RsTlvRSAKey::GetTlv
+	uint32_t offValue = *constoffset;
+	uint32_t *offset = &offValue;
+	RsGxsId keyId;		// Mandatory :
+	uint32_t keyFlags;		// Mandatory ;
+	//The Code below have to be same as RsTlvRSAKey::GetTlv excepted last lines until flag is desserialized.
+	//Just comment TlvClear(); and unused values
+
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;
+
+	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+	if (size < tlvend)    /* check size */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, not enough space";
+		std::cerr << std::endl;
+#endif
+		return false; /* not enough space */
+	}
+
+	if (tlvtype != TLV_TYPE_SECURITY_KEY) /* check type */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, wrong type";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+
+	/* ready to load */
+	//TlvClear();//RsTlvRSAKey::getKeyTypeTlv
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	std::string s ;
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, s);
+	keyId = RsGxsId(s) ;
+#else
+	ok &= keyId.deserialise(data, tlvend, *offset) ;
+#endif
+	ok &= getRawUInt32(data, tlvend, offset, &(keyFlags));
+	//Stop here no need more data
+	//RsTlvRSAKey::getKeyTypeTlv specific lines
+	uint32_t ret = keyFlags & RSTLV_KEY_TYPE_MASK;
+	if (!ok)
+	{
+		ret = 0;
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvRSAKey::getKeyTypeTlv() Failed somewhere ok == false" << std::endl;
+#endif
+	}
+	return ret ;
+}
+
 std::ostream& RsTlvRSAKey::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvSecurityKey", indent);
@@ -220,12 +290,36 @@ std::ostream& RsTlvRSAKey::print(std::ostream &out, uint16_t indent) const
 
 bool RsTlvPrivateRSAKey::checkKey() const
 { 
-    return bool(keyFlags & RSTLV_KEY_TYPE_FULL) && !bool(keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && GxsSecurity::checkPrivateKey(*this) ;
+	bool keyFlags_TYPE_FULL = (keyFlags & RSTLV_KEY_TYPE_FULL);
+	if (!keyFlags_TYPE_FULL) {std::cout << "RsTlvPrivateRSAKey::checkKey() keyFlags not Type Full " << std::hex << keyFlags << " & " << RSTLV_KEY_TYPE_FULL << std::dec << std::endl;}
+	bool keyFlags_not_PUBLIC_ONLY = !(keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY);
+	if (!keyFlags_not_PUBLIC_ONLY) {std::cout << "RsTlvPrivateRSAKey::checkKey() keyFlags is Public Only " << std::hex << keyFlags << " & " << RSTLV_KEY_TYPE_PUBLIC_ONLY << std::dec << std::endl;}
+	bool security_OK = false;
+	if (keyFlags_TYPE_FULL && keyFlags_not_PUBLIC_ONLY)
+	{
+		//Don't trigg error if flags already wrong
+		security_OK = GxsSecurity::checkPrivateKey(*this);
+		if (!security_OK) {std::cout << "RsTlvPublicRSAKey::checkKey() key is not secure."<< std::endl;}
+	}
+
+	return keyFlags_TYPE_FULL && keyFlags_not_PUBLIC_ONLY && security_OK ;
 }
 
 bool RsTlvPublicRSAKey::checkKey() const
-{ 
-    return bool(keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY) && !bool(keyFlags & RSTLV_KEY_TYPE_FULL) && GxsSecurity::checkPublicKey(*this) ;
+{
+	bool keyFlags_PUBLIC_ONLY = (keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY);
+	if (!keyFlags_PUBLIC_ONLY) {std::cout << "RsTlvPublicRSAKey::checkKey() keyFlags not Public Only " << std::hex << keyFlags << " & " << RSTLV_KEY_TYPE_PUBLIC_ONLY << std::dec << std::endl;}
+	bool keyFlags_not_TYPE_FULL = !(keyFlags & RSTLV_KEY_TYPE_FULL);
+	if (!keyFlags_not_TYPE_FULL) {std::cout << "RsTlvPublicRSAKey::checkKey() keyFlags is Type Full " << std::hex << keyFlags << " & " << RSTLV_KEY_TYPE_FULL << std::dec << std::endl;}
+	bool security_OK = false;
+	if (keyFlags_PUBLIC_ONLY && keyFlags_not_TYPE_FULL)
+	{
+		//Don't trigg error if flags already wrong
+		security_OK = GxsSecurity::checkPublicKey(*this);
+		if (!security_OK) {std::cout << "RsTlvPublicRSAKey::checkKey() key is not secure."<< std::endl;}
+	}
+
+	return keyFlags_PUBLIC_ONLY && keyFlags_not_TYPE_FULL && security_OK ;
 }
 
 /************************************* RsTlvSecurityKeySet ************************************/
@@ -320,21 +414,23 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 		/* get the next type */
 		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
 
-                // Security key set can be composed of public or private keys. We sort them into the correct bins after deserialisation
-                
+		// Security key set can be composed of public or private keys. We first ask type to desserialize in good one to not trigg errors.
 		switch(tlvsubtype)
 		{
 		case TLV_TYPE_SECURITY_KEY:
 		{
-			uint32_t offset_save = *offset ;
-
-			RsTlvPublicRSAKey public_key;
-
-			if(public_key.GetTlv(data, tlvend, offset))
-				public_keys[public_key.keyId] = public_key;
-			else
+			RsTlvPublicRSAKey gen_key;
+			uint32_t keyType = gen_key.getKeyTypeTlv(data, tlvend, offset);
+			if(keyType == RSTLV_KEY_TYPE_PUBLIC_ONLY)
 			{
-				*offset = offset_save ;
+
+				RsTlvPublicRSAKey public_key;
+
+				if(public_key.GetTlv(data, tlvend, offset))
+					public_keys[public_key.keyId] = public_key;
+			}
+			else if(keyType == RSTLV_KEY_TYPE_FULL)
+			{
 
 				RsTlvPrivateRSAKey private_key;
 
@@ -342,7 +438,7 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 					private_keys[private_key.keyId] = private_key;
 			}
 		}
-			break ;
+		break ;
 
 		default:
 			ok &= SkipUnknownTlv(data, tlvend, offset);
