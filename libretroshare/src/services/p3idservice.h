@@ -351,7 +351,6 @@ private:
 	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
 	bool isPendingNetworkRequest(const RsGxsId& gxsId);
-    void locked_mergeIdsToRequestFromNet(const RsGxsId& id,const std::list<RsPeerId>& peers);
     void requestIdsFromNet();
 
 	// Mutex protected.
