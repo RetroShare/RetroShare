@@ -171,34 +171,35 @@ win32 {
 ##################################### MacOS ######################################
 
 macx {
-    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	CONFIG += ppc x86
-	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
+	#CONFIG += ppc x86
+	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-        LIBS += -lssl -lcrypto -lz 
-        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += -lssl -lcrypto -lz
+	#LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		LIBS += ../../../lib/libsqlcipher.a
-                #LIBS += -lsqlite3
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-        }
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
+	#LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-    	INCLUDEPATH += .
+	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	LIBS += /usr/local/lib/libsqlcipher.a
+	#LIBS += -lsqlite3
+
 	#DEFINES* = MAC_IDLE # for idle feature
 	CONFIG -= uitools
-
-
 }
 
 ##################################### FreeBSD ######################################
@@ -320,9 +321,9 @@ SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
 	libretroshare/gxs/nxs_test/nxstesthub.cc \
 	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc \
 	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
-	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \ 
+	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
 	libretroshare/gxs/nxs_test/nxsgrpsyncdelayed.cc
-	
+
 HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.h \
 	libretroshare/gxs/gen_exchange/genexchangetestservice.h \
@@ -347,18 +348,7 @@ SOURCES += libretroshare/gxs/security/gxssecurity_test.cc
 HEADERS += libretroshare/gxs/data_service/rsdataservice_test.h \
 
 SOURCES += libretroshare/gxs/data_service/rsdataservice_test.cc \
-	libretroshare/gxs/data_service/rsgxsdata_test.cc \
-
-
-################################ dbase #####################################
-
-
-#SOURCES += libretroshare/dbase/fisavetest.cc \
-#	libretroshare/dbase/fitest2.cc \
-#	libretroshare/dbase/searchtest.cc \
-
-#	libretroshare/dbase/ficachetest.cc \
-#	libretroshare/dbase/fimontest.cc \
+    libretroshare/gxs/data_service/rsgxsdata_test.cc \
 
 
 ############################### services ###################################

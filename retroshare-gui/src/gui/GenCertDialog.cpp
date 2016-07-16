@@ -584,10 +584,13 @@ void GenCertDialog::genPerson()
 
 		QCoreApplication::processEvents();
 		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
+		std::cout << "Waiting ed->processEvents()" << std::endl;
+		time_t now = time(NULL) + 10000;
 		if (ed->hasPendingEvents())
-			while(ed->processEvents(QEventLoop::AllEvents));
+			while(ed->processEvents(QEventLoop::AllEvents) && (time(NULL) < now));
 
 		std::string email_str = "" ;
+		std::cout << "RsAccounts::GeneratePGPCertificate" << std::endl;
 		RsAccounts::GeneratePGPCertificate(
 					ui.name_input->text().toUtf8().constData(),
 					email_str.c_str(),
@@ -609,6 +612,7 @@ void GenCertDialog::genPerson()
 	std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
+	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
 
 	if (okGen)

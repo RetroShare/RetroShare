@@ -182,33 +182,40 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = $${QMAKE_CXX}
-		OBJECTS_DIR = temp/obj
-		MOC_DIR = temp/moc
-		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-                #DEFINES *= MINIUPNPC_VERSION=13
-		DESTDIR = lib
+	QMAKE_CC = $${QMAKE_CXX}
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
+	#DEFINES *= MINIUPNPC_VERSION=13
+	DESTDIR = lib
 
-		CONFIG += upnp_miniupnpc
+	CONFIG += upnp_miniupnpc
 
-		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		CONFIG += zeroconf
-		CONFIG += zcnatassist
+	# zeroconf disabled at the end of libretroshare.pro (but need the code)
+	#CONFIG += zeroconf
+	#CONFIG += zcnatassist
 
-		# Beautiful Hack to fix 64bit file access.
-                QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
+	# Beautiful Hack to fix 64bit file access.
+	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
-                UPNPC_DIR = ../../../miniupnpc-1.0
-		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		#GPGME_DIR  = ../../../../gpgme-1.1.8
+	#UPNPC_DIR = ../../../miniupnpc-1.0
+	#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+	#GPGME_DIR  = ../../../../gpgme-1.1.8
+	#OPENPGPSDK_DIR = ../../openpgpsdk/src
+	#INCLUDEPATH += . $${UPNPC_DIR}
+	#INCLUDEPATH += $${OPENPGPSDK_DIR}
 
-		OPENPGPSDK_DIR = ../../openpgpsdk/src
+	#for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-		INCLUDEPATH += . $${UPNPC_DIR} 
-		INCLUDEPATH += $${OPENPGPSDK_DIR} 
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+	INCLUDEPATH += ../../../.
 
-		#../openpgpsdk
-		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	LIBS += /usr/local/lib/libsqlcipher.a
+	#LIBS += -lsqlite3
 }
 
 ################################# FreeBSD ##########################################
