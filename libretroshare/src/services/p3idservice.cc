@@ -483,6 +483,10 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 uint32_t token;
                 RsGenExchange::subscribeToGroup(token, *git, true);
 
+                // also time_stamp the key that this group represents
+
+                std::cerr << "(II) time-stamping new received GXS ID " << *git << std::endl;
+                timeStampKey(RsGxsId(*git)) ;
             }
         }
     }

@@ -1054,6 +1054,11 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 		std::cerr << "Processing External Circle " << cache.mCircleId << std::endl;
 #endif
 
+        // Do we actually need to retrieve the missing keys for all members of a circle???
+        // These keys are needed for subscribtion request signature checking. But this is only
+        // when a subscription msg is posted, which would trigger retrieval of the key anyway
+        // Maybe this can be made an option of p3GxsCircles, or of rsIdentity.
+
 		// need to trigger the searches.
 		for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::iterator pit = cache.mMembershipStatus.begin(); pit != cache.mMembershipStatus.end(); ++pit)
 		{
