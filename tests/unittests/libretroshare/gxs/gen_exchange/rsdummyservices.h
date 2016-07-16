@@ -145,7 +145,7 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers){ return false ;}
+    bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers){ return false ;}
     bool requestPrivateKey(const RsGxsId &id){ return false;}
 
 
