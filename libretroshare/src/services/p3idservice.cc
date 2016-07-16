@@ -2230,7 +2230,7 @@ void p3IdService::requestIdsFromNet()
 #endif
             }
 
-        if(request_can_proceed)
+        if(request_can_proceed || peers.empty())
         {
             std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
             ++tmp ;
@@ -2239,7 +2239,7 @@ void p3IdService::requestIdsFromNet()
         }
         else
         {
-            std::cerr << "(EE) empty online peers list in ID request for groupId " << cit->first << ". This is not going to work! Keeping it until peers show up."<< std::endl;
+            std::cerr << "(EE) no online peers among supply list in ID request for groupId " << cit->first << ". Keeping it until peers show up."<< std::endl;
             ++cit ;
         }
     }
