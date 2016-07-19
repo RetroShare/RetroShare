@@ -45,7 +45,7 @@ retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 18 Jul 2016 22:00:00 -0500
 
-retroshare06 (0.6.0-1.20160628~18eb34) trusty; urgency=low
+retroshare06 (0.6.0-1.20160628~18eb34b8) trusty; urgency=low
 
   9f7ef8b csoler Tue, 28 Jun 2016 20:59:56 -0400 fixed possible cross deadlocks between RsGxsGenExchange and RsGxsNetService
   00bdc50 csoler Tue, 28 Jun 2016 17:56:37 -0400 updated changelog
