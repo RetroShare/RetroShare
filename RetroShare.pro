@@ -1,7 +1,7 @@
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs
-CONFIG += tests
+#CONFIG += tests
 
 SUBDIRS += \
         openpgpsdk \
