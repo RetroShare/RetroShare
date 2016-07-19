@@ -1,5 +1,52 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  713deac csoler Sat, 16 Jul 2016 18:39:36 -0400 time-stamping newly received GXS ids
+  95202d6 csoler Sat, 16 Jul 2016 18:26:04 -0400 removed possible double free() of buf in parse_headers (suggestion by GuessWho)
+  71168c7 csoler Fri, 15 Jul 2016 22:47:35 -0400 drop net ID request when peer list is empty
+  8fdd255 csoler Fri, 15 Jul 2016 22:28:36 -0400 improved strategy for merging pending ID load requests, fixing bug in previous commit
+  59d0859 csoler Fri, 15 Jul 2016 22:25:15 -0400 fixed compilation in tests
+  9fd44a5 csoler Fri, 15 Jul 2016 19:28:54 -0400 Merge pull request #437 from PhenomRetroShare/Fix_UnitTests
+  9126076 csoler Fri, 15 Jul 2016 17:09:22 -0400 removed debug info in p3IdService and RsGxsNetService
+  90dfc6e csoler Fri, 15 Jul 2016 16:59:57 -0400 improved explicit requests of missing GXS ids, also fixing situations where empty peers lists would wipe out pe
+  3152eca Phenom Fri, 15 Jul 2016 15:03:41 +0200 Fix UnitTests and run it in windows too.
+  8ccfee2 csoler Tue, 12 Jul 2016 22:49:21 -0400 Merge pull request #434 from csoler/v0.6-LocalCircles
+  c555300 csoler Tue, 12 Jul 2016 22:45:23 -0400 fixed merging with upstream
+  c7e60d0 csoler Tue, 12 Jul 2016 22:42:19 -0400 removed debug info in rsgxsnetservice
+  ed523e8 csoler Mon, 11 Jul 2016 22:44:15 -0400 fixed backend for locl circles
+  931c3df csoler Mon, 11 Jul 2016 21:33:09 -0400 fixed display of group node restriction in GxsGroupDialog and info
+  a7d82cf csoler Mon, 11 Jul 2016 18:44:52 -0400 delete GXS IDs with no TS
+  45b189c csoler Mon, 11 Jul 2016 18:30:12 -0400 removed EXTERNAL/PERSONNAL options from GxsCircleChooser
+  951f29f csoler Sun, 10 Jul 2016 23:00:47 -0400 removed debug info in rsDataService
+  95915fa csoler Sun, 10 Jul 2016 22:46:37 -0400 removed cross deadlock between p3GxsReputation and p3IdService
+  d089e2e csoler Sat,  9 Jul 2016 18:06:59 -0400 added a GroupChooser class to choose groups of friend nodes
+  0125f91 csoler Wed,  6 Jul 2016 22:36:59 -0400 fixed deserialise bug in FileItem
+  a69629c csoler Wed,  6 Jul 2016 22:16:05 -0400 added missing own id from group list, and removed possible duplicates in random group ids
+  269f945 csoler Wed,  6 Jul 2016 22:02:56 -0400 fixed load/save of new group ids and backward compatibility with FriendList
+  01c0d2f csoler Tue,  5 Jul 2016 23:49:43 -0400 finished conversion to RsNodeGroupId for file transfer and GUI
+  1c277ab csoler Tue,  5 Jul 2016 23:47:55 -0400 Merge pull request #433 from csoler/v0.6-SqlCache
+  4ee9eff csoler Mon,  4 Jul 2016 23:55:48 -0400 changed internal storage of groups of friend nodes so as to use an abstract ID instead of a string (phase 1 of l
+  42f2210 csoler Sun,  3 Jul 2016 23:15:05 -0400 removed debug info in IdDialog
+  218ca45 csoler Sun,  3 Jul 2016 23:12:56 -0400 removed some debug info in rsdataservice
+  09ad539 csoler Sun,  3 Jul 2016 22:02:23 -0400 fixed red color in IdDialog
+  9f9f021 csoler Sun,  3 Jul 2016 22:02:04 -0400 remved debug output in udlstck
+  c98416d csoler Sun,  3 Jul 2016 18:59:30 -0400 added auto-cleaning of reputation info for outdated/removed identities
+  bf28ea7 csoler Sun,  3 Jul 2016 18:49:02 -0400 removed debug info in udpstack.cc
+  692293e csoler Sun,  3 Jul 2016 18:12:50 -0400 added red color to banned identities in IdDialog
+  e611b2b csoler Sun,  3 Jul 2016 18:06:01 -0400 moved isIdentitybanned from p3GxsReputations to p3IdService, so as to avoid calling back p3IdService from p3GxsR
+  720c6fd csoler Sat,  2 Jul 2016 22:41:12 -0400 fixed bug causing TS update of some unused identities
+  86d8f01 csoler Fri,  1 Jul 2016 23:38:10 -0400 added a local cache in rsdataservice to avoid calling sqlcipher on GrpMetaData
+  cdd2c1f csoler Thu, 30 Jun 2016 16:50:35 -0400 Merge pull request #432 from G10h4ck/master
+  da4c563 Gio    Thu, 30 Jun 2016 22:03:22 +0200 Fix typo in libresapi documentation
+  0206c65 csoler Thu, 30 Jun 2016 15:06:41 -0400 added missing else in display of forum anti-spam message
+  2dfe116 csoler Thu, 30 Jun 2016 14:21:54 -0400 added compilation flag for profiling in GUI
+  ef95451 csoler Tue, 28 Jun 2016 21:16:31 -0400 updated changelog
+  440390e csoler Thu, 30 Jun 2016 14:21:11 -0400 Merge pull request #431 from csoler/v0.6-SignedForums3
+  ba50028 csoler Thu, 30 Jun 2016 14:16:45 -0400 added GXS distribution flag to defavor posts signed by key form unknown RS nodes, and updated UI in forums to u
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 18 Jul 2016 22:00:00 -0500
+
+retroshare06 (0.6.0-1.20160628~18eb34) trusty; urgency=low
+
   9f7ef8b csoler Tue, 28 Jun 2016 20:59:56 -0400 fixed possible cross deadlocks between RsGxsGenExchange and RsGxsNetService
   00bdc50 csoler Tue, 28 Jun 2016 17:56:37 -0400 updated changelog
   bb82b6e csoler Tue, 28 Jun 2016 14:35:59 -0400 Merge pull request #429 from PhenomRetroShare/Fix_StandardQSS
