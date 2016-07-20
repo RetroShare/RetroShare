@@ -19,10 +19,12 @@
 // The file lists are not directry updated. A FileListWatcher class is responsible for this
 // in every case. 
 //
+#pragma once
+
 #include <services/p3service.h>
 #include <pqi/p3cfgmgr.h>
 
-class p3FileLists: public p3Service, public p3Config, public RsSharedFileService 
+class p3FileLists: public p3Service, public p3Config, public RsSharedFileService
 {
 	public:
 		typedef uint64_t EntryIndex ;	// this should probably be defined elsewhere

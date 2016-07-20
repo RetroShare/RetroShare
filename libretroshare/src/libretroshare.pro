@@ -33,6 +33,20 @@ debug {
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
+CONFIG += file_lists
+
+file_lists {
+	HEADERS *= file_sharing/p3filelists.h \
+				file_sharing/hash_cache.h \
+				file_sharing/directory_storage.h \
+				file_sharing/directory_updater.h
+
+	SOURCES *= file_sharing/p3filelists.cc \
+				file_sharing/hash_cache.cc \
+				file_sharing/directory_storage.cc \
+				file_sharing/directory_updater.cc
+}
+
 dsdv {
 DEFINES *= SERVICES_DSDV
 HEADERS += services/p3dsdv.h \

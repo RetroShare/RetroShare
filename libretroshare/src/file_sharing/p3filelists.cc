@@ -1,5 +1,5 @@
-#include <p3filelists.h>
-#include <retroshare/rsids.h>
+#include "file_sharing/p3filelists.h"
+#include "retroshare/rsids.h"
 
 #define P3FILELISTS_DEBUG() std::cerr << "p3FileLists: " ;
 
