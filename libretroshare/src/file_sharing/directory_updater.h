@@ -11,15 +11,19 @@ class DirectoryUpdater
 		// Does some updating job. Crawls the existing directories and checks wether it has been updated
 		// recently enough. If not, calls the directry source.
 		//
-		void tick() ;
+        virtual void tick() =0;
 
 		// 
 };
 
 class LocalDirectoryUpdater: public DirectoryUpdater
 {
+    public:
+        virtual void tick() ;
 };
 
 class RemoteDirectoryUpdater: public DirectoryUpdater
 {
+    public:
+        virtual void tick() ;
 };

@@ -21,15 +21,32 @@
 //
 #pragma once
 
-#include <services/p3service.h>
-#include <pqi/p3cfgmgr.h>
+#include "retroshare/rsfiles.h"
+#include "services/p3service.h"
 
-class p3FileLists: public p3Service, public p3Config, public RsSharedFileService
+#include "pqi/p3cfgmgr.h"
+#include "pqi/p3linkmgr.h"
+
+class RemoteDirectoryStorage ;
+class RemoteSharedDirectoryWatcher ;
+class LocalSharedDirectoryWatcher ;
+class LocalSharedDirectoryMap ;
+class HashCache ;
+
+class p3FileLists: public p3Service, public p3Config //, public RsSharedFileService
 {
 	public:
 		typedef uint64_t EntryIndex ;	// this should probably be defined elsewhere
 
-		p3FileLists(mPeerMgr *mpeers) ;
+        struct RsFileListSyncRequest
+        {
+            RsPeerId peerId ;
+            EntryIndex index ;
+            // [...] more to add here
+        };
+
+        p3FileLists(p3LinkMgr *mpeers) ;
+        ~p3FileLists();
 
 		/*   
 		 */
@@ -61,8 +78,16 @@ class p3FileLists: public p3Service, public p3Config, public RsSharedFileService
 
 		// Derived from p3Config
 		//
-	private:
-		p3PeerMgr *mPeers ;
+    protected:
+        virtual bool loadList(std::list<RsItem *>& items);
+        virtual bool saveList(const std::list<RsItem *>& items);
+        void cleanup();
+        void tickRecv();
+        void tickSend();
+        void tickWatchers();
+
+    private:
+        p3LinkMgr *mLinkMgr ;
 
 		// File sync request queues. The fast one is used for online browsing when friends are connected.
 		// The slow one is used for background update of file lists.
@@ -83,6 +108,9 @@ class p3FileLists: public p3Service, public p3Config, public RsSharedFileService
 		//
 		HashCache *mHashCache ;
 
+        // Local flags and mutexes
+
 		RsMutex mFLSMtx ;
+        uint32_t mUpdateFlags ;
 };
 

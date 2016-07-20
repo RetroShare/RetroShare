@@ -1,8 +1,12 @@
 #include <string>
+#include <stdint.h>
+#include <list>
+
+#include "retroshare/rsids.h"
+#include "retroshare/rsfiles.h"
 
 static const uint8_t DIRECTORY_STORAGE_VERSION               =  0x01 ;
 
-static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_FILE_NAME         =  0x02 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_FILE_SIZE         =  0x03 ;
@@ -14,6 +18,9 @@ class DirectoryStorage
 {
 	public:
 		DirectoryStorage(const std::string& local_file_name) ;
+        virtual ~DirectoryStorage() {}
+
+        typedef uint32_t EntryIndex ;
 
 		void save() const ;
 
@@ -57,9 +64,15 @@ class DirectoryStorage
 
 class RemoteDirectoryStorage: public DirectoryStorage
 {
+public:
+    RemoteDirectoryStorage(const RsPeerId& pid) ;
+    virtual ~RemoteDirectoryStorage() {}
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
 {
+public:
+    LocalDirectoryStorage() ;
+    virtual ~LocalDirectoryStorage() {}
 };
 

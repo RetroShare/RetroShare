@@ -1,15 +1,16 @@
 #include "file_sharing/p3filelists.h"
+#include "file_sharing/directory_storage.h"
 #include "retroshare/rsids.h"
 
-#define P3FILELISTS_DEBUG() std::cerr << "p3FileLists: " ;
+#define P3FILELISTS_DEBUG() std::cerr << "p3FileLists: "
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED  = 0x0002 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED = 0x0004 ;
 
-p3FileLists::p3FileLists(mPeerPgr *mpeers)
-	: mPeers(mpeers)
+p3FileLists::p3FileLists(p3LinkMgr *mpeers)
+    : mLinkMgr(mpeers), mFLSMtx("p3FileLists")
 {
 	// loads existing indexes for friends. Some might be already present here.
 	// 
@@ -20,12 +21,19 @@ p3FileLists::p3FileLists(mPeerPgr *mpeers)
 	//
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
 }
-void p3FileLists::~p3FileLists()
+p3FileLists::~p3FileLists()
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    for(std::map<RsPeerId,RemoteDirectoryStorage*>::const_iterator it(mRemoteDirectories.begin());it!=mRemoteDirectories.end();++it)
+        delete it->second ;
+
+    mRemoteDirectories.clear(); // just a precaution, not to leave deleted pointers around.
+
 	// delete all pointers
 }
 
-void p3FileLists::tick()
+int p3FileLists::tick()
 {
 	// tick the watchers, possibly create new ones if additional friends do connect.
 	//
@@ -41,6 +49,8 @@ void p3FileLists::tick()
 	// 	- 
 
 	cleanup();
+
+    return 0;
 }
 
 void p3FileLists::tickRecv()
@@ -51,20 +61,25 @@ void p3FileLists::tickSend()
 	// go through the list of out requests and send them to the corresponding friends, if they are online.
 }
 
-void p3FileLists::loadList(std::list<RsItem *>& items)
+bool p3FileLists::loadList(std::list<RsItem *>& items)
 {
 	// This loads
 	//
 	// 	- list of locally shared directories, and the permissions that go with them
+
+    return true ;
 }
 
-void p3FileLists::saveList(const std::list<RsItem *>& items)
+bool p3FileLists::saveList(const std::list<RsItem *>& items)
 {
+    return true ;
 }
 
 void p3FileLists::cleanup()
 {
-	// look through the list of friend directories. Remove those who are not our friends anymore.
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    // look through the list of friend directories. Remove those who are not our friends anymore.
 	//
 	P3FILELISTS_DEBUG() << "Cleanup pass." << std::endl;
 
@@ -72,13 +87,13 @@ void p3FileLists::cleanup()
 	{
 #warning we should use a std::set in the first place. Modify rsPeers?
 		std::list<RsPeerId> friend_list ;
-		mPeers->getFriendList(friend_list) ;
+        mLinkMgr->getFriendList(friend_list) ;
 
 		for(std::list<RsPeerId>::const_iterator it(friend_list.begin());it!=friend_list.end();++it)
 			friend_set.insert(*it) ;
 	}
 
-	for(std::map<RsPeerId,RemoteDirectoryStorage*>::const_iterator it(mRemoteDirectories.begin());it!=mRemoteDirectories.end();)
+    for(std::map<RsPeerId,RemoteDirectoryStorage*>::iterator it(mRemoteDirectories.begin());it!=mRemoteDirectories.end();)
 		if(friend_set.find(it->first) == friend_set.end())
 		{
 			P3FILELISTS_DEBUG() << "  removing file list of non friend " << it->first << std::endl;
