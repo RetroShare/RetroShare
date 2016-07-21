@@ -14,6 +14,8 @@ static const uint8_t DIRECTORY_STORAGE_TAG_DIR_NAME          =  0x04 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_MODIF_TS          =  0x05 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_RECURS_MODIF_TS   =  0x06 ;
 
+class InternalFileHierarchyStorage ;
+
 class DirectoryStorage
 {
 	public:
@@ -36,30 +38,37 @@ class DirectoryStorage
 		class DirIterator
 		{
 			public:
-				DirIterator(const DirectoryStorage& d) ;
+                DirIterator(const DirIterator& d) ;
 
 				DirIterator& operator++() ;
 				EntryIndex operator*() const ;		// current directory entry
 
-				bool operator()() const ;				// used in for loops. Returns true when the iterator is valid.
+                bool operator()() const ;			// used in for loops. Returns true when the iterator is valid.
 		};
 		class FileIterator
 		{
 			public:
-				FileIterator(const DirectoryStorage& d) ;
+                FileIterator(DirIterator& d);		// crawls all files in specified directory
 
+                uint32_t size() const ;				// number of files in this directory
 				FileIterator& operator++() ;
 				EntryIndex operator*() const ;		// current file entry
 
-				bool operator()() const ;				// used in for loops. Returns true when the iterator is valid.
+                bool operator()() const ;			// used in for loops. Returns true when the iterator is valid.
 		};
+
+        virtual DirIterator root() ;					// returns the index of the root directory entry.
 
 	private:
 		void load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
 
-		void loadNextTag(const void *data,uint32_t& offset,uint8_t& entry_tag,uint32_t& entry_size) ;
-		void saveNextTag(void *data,uint32_t& offset,uint8_t entry_tag,uint32_t entry_size) ;
+        void loadNextTag(const unsigned char *data, uint32_t& offset, uint8_t& entry_tag, uint32_t& entry_size) ;
+        void saveNextTag(unsigned char *data,uint32_t& offset,uint8_t entry_tag,uint32_t entry_size) ;
+
+        // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
+
+        InternalFileHierarchyStorage *mFileHierarchy ;
 };
 
 class RemoteDirectoryStorage: public DirectoryStorage
@@ -74,5 +83,32 @@ class LocalDirectoryStorage: public DirectoryStorage
 public:
     LocalDirectoryStorage() ;
     virtual ~LocalDirectoryStorage() {}
+
+    void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
+    void getSharedDirectoryList(std::list<SharedDirInfo>& lst) ;
+
+        /*!
+         * \brief addFile
+         * \param dir
+         * \param hash
+         * \param modf_time
+         */
+        void updateFile(const EntryIndex& parent_dir,const RsFileHash& hash, const std::string& fname, const uint32_t modf_time) ;
+        void updateDirectory(const EntryIndex& parent_dir,const std::string& dname) ;
+
+private:
+    std::list<SharedDirInfo> mLocalDirs ;
+
+    std::map<RsFileHash,EntryIndex> mHashes ;		// used for fast search access
 };
+
+
+
+
+
+
+
+
+
+
 

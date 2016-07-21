@@ -3,6 +3,9 @@
 // 	- local: directories are crawled n disk and files are hashed / requested from a cache
 // 	- remote: directories are requested remotely to a providing client
 //
+class HashCache ;
+class LocalDirectoryStorage ;
+
 class DirectoryUpdater
 {
 	public:
@@ -18,8 +21,13 @@ class DirectoryUpdater
 
 class LocalDirectoryUpdater: public DirectoryUpdater
 {
-    public:
-        virtual void tick() ;
+public:
+    LocalDirectoryUpdater(HashCache *hash_cache) ;
+    virtual void tick() ;
+
+private:
+    HashCache *mHashCache ;
+    LocalDirectoryStorage *mSharedDirectories ;
 };
 
 class RemoteDirectoryUpdater: public DirectoryUpdater

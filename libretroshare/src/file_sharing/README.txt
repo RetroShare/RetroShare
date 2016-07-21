@@ -160,14 +160,14 @@ Generating sync events
 Roadmap
 -------
 
-- complete this file until a proper description of the whole thing is achieved.
-- create a new directory and implement the .h for the basic functionality
-- look into existing code in ftServer for the integration, but don't change anything yet
-- setup class hierarchy
-- merge hash cache into file lists.
-
-- optionally
-   - change the saving system of FileIndex to make it locally encrypted and compact
+[X] complete this file until a proper description of the whole thing is achieved.
+[X] create a new directory and implement the .h for the basic functionality
+[ ] look into existing code in ftServer for the integration, but don't change anything yet
+[X] setup class hierarchy
+[ ] merge hash cache into file lists.
+[ ] new format for saving of FileIndex to make it locally encrypted, compact and extensible
+[ ] create basic directory functionality with own files: re-hash, and store
+[ ] display own files in GUI, with proper update and working sort
 
 TODO
 ====
