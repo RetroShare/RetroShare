@@ -345,6 +345,8 @@ private:
     // The boolean variable below is also used to force re-reading when 
     // the entre list of grp metadata is requested (which happens quite often)
     
+    void locked_clearGrpMetaCache(const RsGxsGroupId& gid);
+
     std::map<RsGxsGroupId,RsGxsGrpMetaData> mGrpMetaDataCache ;
     bool mGrpMetaDataCache_ContainsAllDatabase ;
 };

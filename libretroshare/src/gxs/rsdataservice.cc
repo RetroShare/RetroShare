@@ -883,6 +883,8 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
         cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
+        locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
+
         if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
 	{
 		std::cerr << "RsDataService::storeGroup() sqlInsert Failed";
@@ -904,6 +906,12 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
     }
 
     return ret;
+}
+
+void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
+{
+    mGrpMetaDataCache.erase(gid) ;	// cleans existing cache entry
+    mGrpMetaDataCache_ContainsAllDatabase = false;
 }
 
 int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
@@ -973,6 +981,8 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
 
         mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpPtr->grpId.toStdString() + "'", cv);
+
+        locked_clearGrpMetaCache(grpMetaPtr->mGroupId);
     }
     // finish transaction
     bool ret = mDb->commitTransaction();
@@ -1453,8 +1463,7 @@ int RsDataService::updateGroupMetaData(GrpLocMetaData &meta)
     std::cerr << (void*)this << ": erasing old entry from cache." << std::endl;
 #endif
 
-    mGrpMetaDataCache_ContainsAllDatabase = false ;
-    mGrpMetaDataCache.erase(meta.grpId) ;
+    locked_clearGrpMetaCache(meta.grpId);
 
     return mDb->sqlUpdate(GRP_TABLE_NAME,  KEY_GRP_ID+ "='" + grpId.toStdString() + "'", meta.val) ? 1 : 0;
 }
