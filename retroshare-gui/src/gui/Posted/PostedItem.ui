@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string notr="true"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="PostedItemVLayout">
    <item>
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="mainFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -31,7 +31,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="mainFrameVLayout">
       <item>
        <widget class="StyledLabel" name="titleLabel">
         <property name="sizePolicy">
@@ -60,8 +60,32 @@
         </property>
        </widget>
       </item>
+			<item>
+       <layout class="QHBoxLayout" name="newCommHLayout">
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="newCommentLabel">
+          <property name="text">
+           <string>New Comment:</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ElidedLabel" name="commLabel">
+          <property name="text">
+           <string>Comment Value</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="buttonHLayout">
         <item>
          <widget class="StyledLabel" name="scoreLabel">
           <property name="text">
@@ -207,7 +231,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="fromBoldLabel_2">
+         <widget class="QLabel" name="siteBoldLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -297,21 +321,7 @@
        </layout>
       </item>
      </layout>
-     <zorder>readAndClearButton</zorder>
-     <zorder>dateBoldLabel</zorder>
-     <zorder>dateLabel</zorder>
-     <zorder>fromBoldLabel</zorder>
-     <zorder>commentButton</zorder>
-     <zorder>newLabel</zorder>
-     <zorder>siteLabel</zorder>
-     <zorder>fromLabel</zorder>
-     <zorder>readButton</zorder>
-     <zorder>fromBoldLabel_2</zorder>
-     <zorder>clearButton</zorder>
      <zorder>titleLabel</zorder>
-     <zorder>voteDownButton</zorder>
-     <zorder>voteUpButton</zorder>
-     <zorder>scoreLabel</zorder>
      <zorder></zorder>
     </widget>
    </item>
@@ -356,6 +366,12 @@
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -98,8 +98,13 @@ bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &g
 	return ok;
 }
 
-bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msgs)
+bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msgs, std::vector<RsGxsComment> &cmts)
 {
+#ifdef POSTED_DEBUG
+	std::cerr << "p3Posted::getPostData()";
+	std::cerr << std::endl;
+#endif
+
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
 	time_t now = time(NULL);
@@ -110,32 +115,60 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 		
 		for(; mit != msgData.end(); ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 		
 			for(; vit != msgItems.end(); ++vit)
 			{
-				RsGxsPostedPostItem* item = dynamic_cast<RsGxsPostedPostItem*>(*vit);
+				RsGxsPostedPostItem* postItem = dynamic_cast<RsGxsPostedPostItem*>(*vit);
 
-				if(item)
+				if(postItem)
 				{
-					RsPostedPost msg = item->mPost;
-					msg.mMeta = item->meta;
+					RsPostedPost msg = postItem->mPost;
+					msg.mMeta = postItem->meta;
 					msg.calculateScores(now);
 
 					msgs.push_back(msg);
-					delete item;
+					delete postItem;
 				}
 				else
 				{
-					std::cerr << "Not a PostedPostItem, deleting!" << std::endl;
-					delete *vit;
+					RsGxsCommentItem* cmtItem = dynamic_cast<RsGxsCommentItem*>(*vit);
+					if(cmtItem)
+					{
+						RsGxsComment cmt;
+						RsGxsMsgItem *mi = (*vit);
+						cmt = cmtItem->mMsg;
+						cmt.mMeta = mi->meta;
+#ifdef GXSCOMMENT_DEBUG
+						std::cerr << "p3Posted::getPostData Found Comment:" << std::endl;
+						cmt.print(std::cerr,"  ", "cmt");
+#endif
+						cmts.push_back(cmt);
+						delete cmtItem;
+					}
+					else
+					{
+						RsGxsMsgItem* msg = (*vit);
+						//const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM = 0x03;
+						//const uint8_t RS_PKT_SUBTYPE_GXSCOMMENT_COMMENT_ITEM = 0xf1;
+						std::cerr << "Not a PostedPostItem neither a RsGxsCommentItem"
+											<< " PacketService=" << std::hex << (int)msg->PacketService() << std::dec
+											<< " PacketSubType=" << std::hex << (int)msg->PacketSubType() << std::dec
+											<< " , deleting!" << std::endl;
+						delete *vit;
+					}
 				}
 			}
 		}
 	}
-		
+	else
+	{
+		std::cerr << "p3GxsChannels::getPostData() ERROR in request";
+		std::cerr << std::endl;
+	}
+
 	return ok;
 }
 
