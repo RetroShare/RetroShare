@@ -1,5 +1,7 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  daf54df csoler Fri, 22 Jul 2016 17:49:07 -0400 fixed missing RsGxsGrpMeta cache update when updating grp meta, which caused unstable group flags/name/perms update
+  95edc5b csoler Fri, 22 Jul 2016 10:06:24 -0400 fixed variable name problem in ServerPage (with no consequences)
   713deac csoler Sat, 16 Jul 2016 18:39:36 -0400 time-stamping newly received GXS ids
   95202d6 csoler Sat, 16 Jul 2016 18:26:04 -0400 removed possible double free() of buf in parse_headers (suggestion by GuessWho)
   71168c7 csoler Fri, 15 Jul 2016 22:47:35 -0400 drop net ID request when peer list is empty
