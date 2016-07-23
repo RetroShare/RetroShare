@@ -84,6 +84,8 @@ void PostedItem::setup()
 	ui->dateLabel->clear();
 	ui->fromLabel->clear();
 	ui->siteLabel->clear();
+	ui->newCommentLabel->hide();
+	ui->commLabel->hide();
 
 	/* general ones */
 	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
@@ -160,21 +162,37 @@ void PostedItem::loadGroup(const uint32_t &token)
 void PostedItem::loadMessage(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
-	if (!rsPosted->getPostData(token, posts))
+	std::vector<RsGxsComment> cmts;
+	if (!rsPosted->getPostData(token, posts, cmts))
 	{
 		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
 
-	if (posts.size() != 1)
+	if (posts.size() == 1)
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+		setPost(posts[0]);
+	}
+	else if (cmts.size() == 1)
+	{
+		RsGxsComment cmt = cmts[0];
+
+		ui->newCommentLabel->show();
+		ui->commLabel->show();
+		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+
+		//Change this item to be uploaded with thread element.
+		setMessageId(cmt.mMeta.mThreadId);
+		requestMessage();
+	}
+	else
+	{
+		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
 		std::cerr << std::endl;
+		removeItem();
 		return;
 	}
-
-	setPost(posts[0]);
 }
 
 void PostedItem::fill()
@@ -390,15 +408,15 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 	ui->newLabel->setVisible(isNew);
 
 	/* unpolish widget to clear the stylesheet's palette cache */
-	ui->frame->style()->unpolish(ui->frame);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
 
-	QPalette palette = ui->frame->palette();
-	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
+	QPalette palette = ui->mainFrame->palette();
+	palette.setColor(ui->mainFrame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
 	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
-	ui->frame->setPalette(palette);
+	ui->mainFrame->setPalette(palette);
 
-	ui->frame->setProperty("new", isNew);
-	Rshare::refreshStyleSheet(ui->frame, false);
+	ui->mainFrame->setProperty("new", isNew);
+	Rshare::refreshStyleSheet(ui->mainFrame, false);
 }
 
 void PostedItem::readToggled(bool checked)

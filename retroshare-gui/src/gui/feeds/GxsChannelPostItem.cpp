@@ -269,8 +269,9 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 	}
 	else
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
 		std::cerr << std::endl;
+		removeItem();
 		return;
 	}
 }
