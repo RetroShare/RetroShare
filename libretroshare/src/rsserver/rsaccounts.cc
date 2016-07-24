@@ -533,7 +533,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 
 	struct stat64 buf;
 
-	while (dirIt.readdir())
+    for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
 		std::string fname;

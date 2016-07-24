@@ -39,27 +39,44 @@ class DirectoryStorage
 		{
 			public:
                 DirIterator(const DirIterator& d) ;
+                DirIterator(const EntryIndex& d) ;
 
 				DirIterator& operator++() ;
 				EntryIndex operator*() const ;		// current directory entry
 
-                bool operator()() const ;			// used in for loops. Returns true when the iterator is valid.
-		};
+                operator bool() const ;			// used in for loops. Returns true when the iterator is valid.
+
+                // info about the directory that is pointed by the iterator
+
+                const std::string& name() const ;
+        };
 		class FileIterator
 		{
 			public:
                 FileIterator(DirIterator& d);		// crawls all files in specified directory
+                FileIterator(EntryIndex& e);		// crawls all files in specified directory
 
-                uint32_t size() const ;				// number of files in this directory
 				FileIterator& operator++() ;
 				EntryIndex operator*() const ;		// current file entry
 
-                bool operator()() const ;			// used in for loops. Returns true when the iterator is valid.
-		};
+                operator bool() const ;			// used in for loops. Returns true when the iterator is valid.
+
+                // info about the file that is pointed by the iterator
+
+                std::string name() const ;
+                std::string fullpath() const ;
+                uint64_t size() const ;
+                RsFileHash hash() const ;
+                time_t modtime() const ;
+        };
 
         virtual DirIterator root() ;					// returns the index of the root directory entry.
 
-	private:
+        void updateSubDirectoryList(const EntryIndex& indx,const std::list<std::string>& subdirs) ;
+        void updateSubFilesList(const EntryIndex& indx,const std::list<std::string>& subfiles) ;
+        void removeDirectory(const EntryIndex& indx) ;
+
+    private:
 		void load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
 

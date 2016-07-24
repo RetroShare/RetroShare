@@ -3,7 +3,8 @@
 // 	- local: directories are crawled n disk and files are hashed / requested from a cache
 // 	- remote: directories are requested remotely to a providing client
 //
-class HashCache ;
+#include "file_sharing/hash_cache.h"
+
 class LocalDirectoryStorage ;
 
 class DirectoryUpdater
@@ -19,11 +20,15 @@ class DirectoryUpdater
 		// 
 };
 
-class LocalDirectoryUpdater: public DirectoryUpdater
+class LocalDirectoryUpdater: public DirectoryUpdater, public HashCacheClient
 {
 public:
     LocalDirectoryUpdater(HashCache *hash_cache) ;
     virtual void tick() ;
+
+protected:
+    virtual void hash_callback(const std::string& full_name,const RsFileHash& hash) ;
+    void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
 
 private:
     HashCache *mHashCache ;

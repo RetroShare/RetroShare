@@ -2,6 +2,7 @@
 #define FOLDERITERATOR_H
 
 
+#include <stdint.h>
 #include <iostream>
 #include <cstdio>
 
@@ -24,13 +25,23 @@ public:
     FolderIterator(const std::string& folderName);
     ~FolderIterator();
 
-    bool isValid() const    { return validity; }
+    enum { TYPE_UNKNOWN = 0x00,
+           TYPE_FILE    = 0x01,
+           TYPE_DIR     = 0x02
+         };
 
+    bool isValid() const    { return validity; }
     bool readdir();
+    void next();
 
     bool d_name(std::string& dest);
-
     bool closedir();
+
+    const std::string& file_name() ;
+    const std::string& file_fullpath() ;
+    uint64_t file_size() ;
+    uint64_t file_type() ;
+    time_t   file_modtime() ;
 
 private:
     bool validity;
@@ -43,7 +54,15 @@ private:
     DIR* handle;
     struct dirent* ent;
 #endif
+    void updateStatsInfo() ;
 
+    bool mStatInfoOk ;
+    time_t mFileModTime ;
+    uint64_t mFileSize ;
+    uint8_t mType ;
+    std::string mFileName ;
+    std::string mFullPath ;
+    std::string mFolderName ;
 };
 
 

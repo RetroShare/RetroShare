@@ -789,7 +789,7 @@ void 	FileIndexMonitor::updateCycle()
 		to_hash.back().realpath = realpath ;
 		to_hash.back().dirpath = dirpath ;
 
-		while(isRunning() && dirIt.readdir())
+        for(;dirIt.isValid() && isRunning();dirIt.next())
 		{
 			/* check entry type */
 			std::string fname;

@@ -146,7 +146,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 			continue ;
 		}
 
-		while(dirIt.readdir())
+        for(;dirIt.isValid();dirIt.next())
 		{
 			std::string fname;
 			dirIt.d_name(fname);

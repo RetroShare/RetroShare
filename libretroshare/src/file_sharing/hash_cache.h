@@ -2,14 +2,28 @@
 
 #include <map>
 #include "util/rsthreads.h"
+#include "retroshare/rsfiles.h"
+
+class HashCacheClient
+{
+public:
+    virtual void hash_callback(const std::string& full_path,const RsFileHash& hash) ;
+};
+
+class FileHashingThread: public RsTickingThread
+{
+public:
+    FileHashingThread() {}
+
+    virtual void data_tick() ;
+};
 
 class HashCache
 {
 public:
     HashCache(const std::string& save_file_name) ;
 
-    void insert(const std::string& full_path,uint64_t size,time_t time_stamp,const RsFileHash& hash) ;
-    bool find(const  std::string& full_path,uint64_t size,time_t time_stamp,RsFileHash& hash) ;
+    bool requestHash(const  std::string& full_path,uint64_t size,time_t mod_time,const RsFileHash& known_hash,HashCacheClient *c) ;
 
     struct HashCacheInfo
     {
@@ -21,10 +35,10 @@ public:
     } ;
 
     // interaction with GUI, called from p3FileLists
-    void setRememberHashFilesDuration(uint32_t days) { _max_cache_duration_days = days ; }
-    uint32_t rememberHashFilesDuration() const { return _max_cache_duration_days ; }
-    void clear() { _files.clear(); }
-    bool empty() const { return _files.empty() ; }
+    void setRememberHashFilesDuration(uint32_t days) { mMaxCacheDurationDays = days ; }
+    uint32_t rememberHashFilesDuration() const { return mMaxCacheDurationDays ; }
+    void clear() { mFiles.clear(); }
+    bool empty() const { return mFiles.empty() ; }
 
 private:
     void clean() ;
@@ -33,7 +47,7 @@ private:
     void load() ;
 
     // threaded stuff
-    RsTickingThread mHashingThread ;
+    FileHashingThread mHashingThread ;
     RsMutex mHashMtx ;
 
     // Local configuration and storage
@@ -45,6 +59,6 @@ private:
 
     // current work
 
-    std::map<std::string> mFilesToHash ;
+    std::map<std::string,HashCacheClient *> mFilesToHash ;
 };
 

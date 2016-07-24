@@ -5,6 +5,9 @@ class InternalFileHierarchyStorage
     class FileStorageNode
     {
     public:
+        static const uint32_t TYPE_FILE = 0x0001 ;
+        static const uint32_t TYPE_DIR  = 0x0002 ;
+
         virtual uint32_t type() const =0;
     };
     class FileEntry: public FileStorageNode
@@ -19,12 +22,12 @@ class InternalFileHierarchyStorage
     public:
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
 
-        std::set<EntryIndex> subdirs ;
-        std::set<EntryIndex> subfiles ;
+        std::set<DirectoryStorage::EntryIndex> subdirs ;
+        std::set<DirectoryStorage::EntryIndex> subfiles ;
     };
 
     // file/dir access and modification
-    bool findSubDirectory(EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
+    bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
 
     uint32_t root ;
 
