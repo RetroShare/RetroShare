@@ -4,13 +4,13 @@
 // 	- remote: directories are requested remotely to a providing client
 //
 #include "file_sharing/hash_cache.h"
-
-class LocalDirectoryStorage ;
+#include "file_sharing/directory_storage.h"
 
 class DirectoryUpdater
 {
 	public:
-		DirectoryUpdater() ;
+        DirectoryUpdater() {}
+        virtual ~DirectoryUpdater(){}
 
 		// Does some updating job. Crawls the existing directories and checks wether it has been updated
 		// recently enough. If not, calls the directry source.
@@ -24,6 +24,8 @@ class LocalDirectoryUpdater: public DirectoryUpdater, public HashCacheClient
 {
 public:
     LocalDirectoryUpdater(HashCache *hash_cache) ;
+    virtual ~LocalDirectoryUpdater() {}
+
     virtual void tick() ;
 
 protected:
@@ -38,5 +40,8 @@ private:
 class RemoteDirectoryUpdater: public DirectoryUpdater
 {
     public:
+            RemoteDirectoryUpdater() {}
+        virtual ~RemoteDirectoryUpdater() {}
+
         virtual void tick() ;
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <stdint.h>
 #include <list>
@@ -23,12 +25,13 @@ class DirectoryStorage
         virtual ~DirectoryStorage() {}
 
         typedef uint32_t EntryIndex ;
+        static const EntryIndex NO_INDEX = 0xffffffff;
 
 		void save() const ;
 
-		virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const;
-		virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const;
-		virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const;
+        virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const { return 0;}
+        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const { return 0;}
+        virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { return 0; }
 
 		void getFileDetails(EntryIndex i) ;
 
@@ -39,25 +42,31 @@ class DirectoryStorage
 		{
 			public:
                 DirIterator(const DirIterator& d) ;
-                DirIterator(const EntryIndex& d) ;
+                DirIterator(DirectoryStorage *d,EntryIndex i) ;
 
 				DirIterator& operator++() ;
-				EntryIndex operator*() const ;		// current directory entry
+                EntryIndex operator*() const ;
 
                 operator bool() const ;			// used in for loops. Returns true when the iterator is valid.
 
                 // info about the directory that is pointed by the iterator
 
                 const std::string& name() const ;
+            private:
+                EntryIndex mParentIndex ;		// index of the parent dir.
+                uint32_t mDirTabIndex ;				// index in the vector of subdirs.
+                InternalFileHierarchyStorage *mStorage ;
+
+                friend class DirectoryStorage ;
         };
 		class FileIterator
 		{
 			public:
-                FileIterator(DirIterator& d);		// crawls all files in specified directory
-                FileIterator(EntryIndex& e);		// crawls all files in specified directory
+                FileIterator(DirIterator& d);	// crawls all files in specified directory
+                FileIterator(DirectoryStorage *d,EntryIndex e);		// crawls all files in specified directory
 
 				FileIterator& operator++() ;
-				EntryIndex operator*() const ;		// current file entry
+                EntryIndex operator*() const ;	// current file entry
 
                 operator bool() const ;			// used in for loops. Returns true when the iterator is valid.
 
@@ -68,13 +77,23 @@ class DirectoryStorage
                 uint64_t size() const ;
                 RsFileHash hash() const ;
                 time_t modtime() const ;
+
+            private:
+                EntryIndex mParentIndex ;		// index of the parent dir.
+                uint32_t   mFileTabIndex ;		// index in the vector of subdirs.
+                InternalFileHierarchyStorage *mStorage ;
         };
 
         virtual DirIterator root() ;					// returns the index of the root directory entry.
 
-        void updateSubDirectoryList(const EntryIndex& indx,const std::list<std::string>& subdirs) ;
-        void updateSubFilesList(const EntryIndex& indx,const std::list<std::string>& subfiles) ;
+        void updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
+        void updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files) ;
         void removeDirectory(const EntryIndex& indx) ;
+
+        void updateFile(const EntryIndex& parent_dir,const RsFileHash& hash, const std::string& fname, const uint32_t modf_time) ;
+        void updateDirectory(const EntryIndex& parent_dir,const std::string& dname) ;
+
+        void cleanup();
 
     private:
 		void load(const std::string& local_file_name) ;
@@ -86,6 +105,8 @@ class DirectoryStorage
         // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
 
         InternalFileHierarchyStorage *mFileHierarchy ;
+
+        RsMutex mDirStorageMtx ;
 };
 
 class RemoteDirectoryStorage: public DirectoryStorage
@@ -103,15 +124,6 @@ public:
 
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
     void getSharedDirectoryList(std::list<SharedDirInfo>& lst) ;
-
-        /*!
-         * \brief addFile
-         * \param dir
-         * \param hash
-         * \param modf_time
-         */
-        void updateFile(const EntryIndex& parent_dir,const RsFileHash& hash, const std::string& fname, const uint32_t modf_time) ;
-        void updateDirectory(const EntryIndex& parent_dir,const std::string& dname) ;
 
 private:
     std::list<SharedDirInfo> mLocalDirs ;

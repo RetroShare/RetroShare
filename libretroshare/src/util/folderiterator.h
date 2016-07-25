@@ -40,7 +40,7 @@ public:
     const std::string& file_name() ;
     const std::string& file_fullpath() ;
     uint64_t file_size() ;
-    uint64_t file_type() ;
+    uint8_t file_type() ;
     time_t   file_modtime() ;
 
 private:

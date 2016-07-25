@@ -124,9 +124,10 @@ bool FolderIterator::d_name(std::string& dest)
 }
 
 const std::string& FolderIterator::file_fullpath() { return mFullPath ; }
-const std::string& FolderIterator::file_name() { return mFileName ; }
-uint64_t     FolderIterator::file_size()       { return mFileSize ; }
-time_t       FolderIterator::file_modtime()    { return mFileModTime ; }
+const std::string& FolderIterator::file_name()     { return mFileName ; }
+uint64_t           FolderIterator::file_size()     { return mFileSize ; }
+time_t             FolderIterator::file_modtime()  { return mFileModTime ; }
+uint8_t            FolderIterator::file_type()     { return mType ; }
 
 bool FolderIterator::closedir()
 {

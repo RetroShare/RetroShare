@@ -26,10 +26,12 @@ void LocalDirectoryUpdater::tick()
 	// 	- doing so, changing directory names or moving files between directories does not cause a re-hash of the content. 
 	//
     std::list<SharedDirInfo> shared_directory_list ;
-    std::list<std::string> sub_dir_list ;
+
+
+    std::set<std::string> sub_dir_list ;
 
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it)
-        sub_dir_list.push_back( (*real_dir_it).filename ) ;
+        sub_dir_list.insert( (*real_dir_it).filename ) ;
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
@@ -61,18 +63,18 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // collect subdirs and subfiles
 
-    std::list<std::string> subfiles ;
-    std::list<std::string> subdirs ;
+    std::set<std::string> subfiles ;
+    std::set<std::string> subdirs ;
 
     while(dirIt.readdir())
     {
         switch(dirIt.file_type())
         {
-                case librs::util::FolderIterator::TYPE_FILE:	subfiles.push_back(dirIt.file_name()) ;
+                case librs::util::FolderIterator::TYPE_FILE:	subfiles.insert(dirIt.file_name()) ;
                                                                 std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
                                                             break;
 
-                case librs::util::FolderIterator::TYPE_DIR:	subdirs.push_back(dirIt.file_name()) ;
+                case librs::util::FolderIterator::TYPE_DIR:	subdirs.insert(dirIt.file_name()) ;
                                                                 std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
                                                             break;
 
@@ -83,7 +85,9 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     // update file and dir lists for current directory.
 
     mSharedDirectories->updateSubDirectoryList(indx,subdirs) ;
-    mSharedDirectories->updateSubFilesList(indx,subfiles) ;
+
+    std::set<std::string> new_files ;
+    mSharedDirectories->updateSubFilesList(indx,subfiles,new_files) ;
 
     // now go through list of subfiles and request the hash to hashcache
 
@@ -98,7 +102,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     DirectoryStorage::DirIterator stored_dir_it(indx) ;
 
-    for(std::list<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
+    for(std::set<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
         recursUpdateSharedDir(*real_dir_it, *stored_dir_it) ;
 }
 
