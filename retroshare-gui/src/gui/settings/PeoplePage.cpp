@@ -42,7 +42,7 @@ bool PeoplePage::save(QString &/*errmsg*/)
     else
         rsReputations->setNodeAutoBanThreshold(ui.identityBanThreshold_SB->value()) ;
 
-    if(!ui.autoPositiveOpinion_CB->isChecked())
+    if(ui.autoPositiveOpinion_CB->isChecked())
         rsReputations->setNodeAutoPositiveOpinionForContacts(true) ;
     else
         rsReputations->setNodeAutoPositiveOpinionForContacts(false) ;

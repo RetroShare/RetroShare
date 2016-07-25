@@ -149,6 +149,7 @@ private:
     time_t mRequestTime;
     time_t mStoreTime;
     time_t mLastBannedNodesUpdate ;
+        time_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
     uint32_t mAverageActiveFriends ;
 

@@ -151,6 +151,7 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mStoreTime = 0;
     mReputationsUpdated = false;
     mLastActiveFriendsUpdate = time(NULL) - 0.5*ACTIVE_FRIENDS_UPDATE_PERIOD;	// avoids doing it too soon since the TS from rsIdentity needs to be loaded already
+        mLastIdentityFlagsUpdate = time(NULL) - 3;
     mAverageActiveFriends = 0 ;
     mLastBannedNodesUpdate = 0 ;
 
@@ -189,22 +190,18 @@ int	p3GxsReputation::tick()
 		mLastActiveFriendsUpdate = now ;
 	}
 
-    	static time_t last_identity_flags_update = 0 ;
-        
         // no more than once per 5 second chunk.
         
-        if(now > IDENTITY_FLAGS_UPDATE_DELAY+last_identity_flags_update)
+        if(now > IDENTITY_FLAGS_UPDATE_DELAY+mLastIdentityFlagsUpdate)
         {
-            last_identity_flags_update = now ;
-            
             updateIdentityFlags() ;
+            mLastIdentityFlagsUpdate = now ;
         }
         if(now > BANNED_NODES_UPDATE_DELAY+mLastBannedNodesUpdate)	// 613 is not a multiple of 100, to avoid piling up work
         {
-            mLastBannedNodesUpdate = now ;
-            
             updateIdentityFlags() ;	// needed before updateBannedNodesList!
             updateBannedNodesList();
+            mLastBannedNodesUpdate = now ;
         }
         
 #ifdef DEBUG_REPUTATION
@@ -241,7 +238,7 @@ void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
 
     if(b != mAutoSetPositiveOptionToContacts)
     {
-        mLastBannedNodesUpdate = 0 ;
+        mLastIdentityFlagsUpdate = 0 ;
         mAutoSetPositiveOptionToContacts = b ;
         IndicateConfigChanged() ;
     }
@@ -953,7 +950,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
     kv.key = "AUTO_BAN_IDENTITIES_THRESHOLD" ;
-    rs_sprintf(kv.value, "%d", mAutoBanIdentitiesLimit);
+    rs_sprintf(kv.value, "%f", mAutoBanIdentitiesLimit);
     vitem->tlvkvs.pairs.push_back(kv) ;
 
     kv.key = "AUTO_POSITIVE_CONTACTS" ;
@@ -1017,6 +1014,7 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
                 if(kit->key == "AUTO_BAN_IDENTITIES_THRESHOLD")
                 {
                     float val ;
+
                     if (sscanf(kit->value.c_str(), "%f", &val) == 1)
                     {
                         mAutoBanIdentitiesLimit = val ;

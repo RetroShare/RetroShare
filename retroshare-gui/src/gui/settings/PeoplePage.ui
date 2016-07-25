@@ -64,10 +64,10 @@
       <item>
        <widget class="QCheckBox" name="autoPositiveOpinion_CB">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anyone in your contact list will automatically have a positive opinion. This allows to automatically raise reputations of used nodes. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anyone in your contact list will automatically have a positive opinion if not set. This allows to automatically raise reputations of used nodes. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>automatically give &quot;Positive&quot; option to my contacts</string>
+         <string>automatically give &quot;Positive&quot; opinion to my contacts</string>
         </property>
         <property name="checked">
          <bool>true</bool>
