@@ -91,76 +91,84 @@ public:
 
 class p3GxsReputation: public p3Service, public p3Config, public RsReputations /* , public pqiMonitor */
 {
-	public:
-		p3GxsReputation(p3LinkMgr *lm);
-		virtual RsServiceInfo getServiceInfo();
+public:
+    p3GxsReputation(p3LinkMgr *lm);
+    virtual RsServiceInfo getServiceInfo();
 
-		/***** Interface for RsReputations *****/
-		virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-		virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &owner_id, ReputationInfo& info) ;
-		virtual bool isIdentityBanned(const RsGxsId& id, const RsPgpId &owner_node) ;
-        
-        	virtual void setNodeAutoBanThreshold(uint32_t n) ;
-        	virtual uint32_t nodeAutoBanThreshold() ;
-                
-		/***** overloaded from p3Service *****/
-		virtual int   tick();
-		virtual int   status();
+    /***** Interface for RsReputations *****/
+    virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
+    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &owner_id, ReputationInfo& info) ;
+    virtual bool isIdentityBanned(const RsGxsId& id, const RsPgpId &owner_node) ;
 
-		/*!
-		 * Interface stuff.
-		 */
+    virtual void setNodeAutoBanThreshold(uint32_t n) ;
+    virtual uint32_t nodeAutoBanThreshold() ;
+    virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
+    virtual bool nodeAutoPositiveOpinionForContacts() ;
+    virtual float nodeAutoBanIdentitiesLimit() ;
+    virtual void setNodeAutoBanIdentitiesLimit(float f) ;
 
-		/************* from p3Config *******************/
-		virtual RsSerialiser *setupSerialiser() ;
-		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-		virtual void saveDone();
-		virtual bool loadList(std::list<RsItem*>& load) ;
-        
+    /***** overloaded from p3Service *****/
+    virtual int   tick();
+    virtual int   status();
+
+    /*!
+         * Interface stuff.
+         */
+
+    /************* from p3Config *******************/
+    virtual RsSerialiser *setupSerialiser() ;
+    virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+    virtual void saveDone();
+    virtual bool loadList(std::list<RsItem*>& load) ;
+
 private:
 
-		bool 	processIncoming();
+    bool 	processIncoming();
 
-		bool SendReputations(RsGxsReputationRequestItem *request);
-		bool RecvReputations(RsGxsReputationUpdateItem *item);
-		bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
-        	void updateActiveFriends() ;
-		void updateBannedNodesList();
-        
-        	// internal update of data. Takes care of cleaning empty boxes.
-        	void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
-		bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
+    bool SendReputations(RsGxsReputationRequestItem *request);
+    bool RecvReputations(RsGxsReputationUpdateItem *item);
+    bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
+    void updateActiveFriends() ;
+    void updateBannedNodesList();
 
-		int  sendPackets();
-        	void cleanup();
-		void sendReputationRequests();
-		int  sendReputationRequest(RsPeerId peerid);
-        	void debug_print() ;
-        	void updateIdentityFlags();
+    // internal update of data. Takes care of cleaning empty boxes.
+    void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
+    bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
 
-	private:
-		RsMutex mReputationMtx;
+    int  sendPackets();
+    void cleanup();
+    void sendReputationRequests();
+    int  sendReputationRequest(RsPeerId peerid);
+    void debug_print() ;
+    void updateIdentityFlags();
 
-		time_t mLastActiveFriendsUpdate;
-		time_t mRequestTime;
-		time_t mStoreTime;
-            	time_t mLastBannedNodesUpdate ;
-		bool   mReputationsUpdated;
-        	uint32_t mAverageActiveFriends ;
+private:
+    RsMutex mReputationMtx;
 
-		p3LinkMgr *mLinkMgr;
+    time_t mLastActiveFriendsUpdate;
+    time_t mRequestTime;
+    time_t mStoreTime;
+    time_t mLastBannedNodesUpdate ;
+        time_t mLastIdentityFlagsUpdate ;
+    bool   mReputationsUpdated;
+    uint32_t mAverageActiveFriends ;
 
-		// Data for Reputation.
-		std::map<RsPeerId, ReputationConfig> mConfig;
-		std::map<RsGxsId, Reputation> mReputations;
-		std::multimap<time_t, RsGxsId> mUpdated;
+    float mAutoBanIdentitiesLimit ;
+    bool mAutoSetPositiveOptionToContacts;
 
-		// set of Reputations to send to p3IdService.
-		std::set<RsGxsId> mUpdatedReputations;
-        
-        	// PGP Ids auto-banned. This is updated regularly.
-        	std::set<RsPgpId> mBannedPgpIds ; 
-            	uint32_t mPgpAutoBanThreshold ;
+    p3LinkMgr *mLinkMgr;
+
+    // Data for Reputation.
+    std::map<RsPeerId, ReputationConfig> mConfig;
+    std::map<RsGxsId, Reputation> mReputations;
+    std::multimap<time_t, RsGxsId> mUpdated;
+
+    // set of Reputations to send to p3IdService.
+    std::set<RsGxsId> mUpdatedReputations;
+
+    // PGP Ids auto-banned. This is updated regularly.
+    std::set<RsPgpId> mBannedPgpIds ;
+    uint32_t mPgpAutoBanThreshold ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

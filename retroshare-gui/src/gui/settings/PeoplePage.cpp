@@ -37,19 +37,30 @@ PeoplePage::~PeoplePage()
 /** Saves the changes on this page */
 bool PeoplePage::save(QString &/*errmsg*/)
 {
-    	if(!ui.identityBan_CB->isChecked())
-		rsReputations->setNodeAutoBanThreshold(0) ;
-        else
-		rsReputations->setNodeAutoBanThreshold(ui.identityBanThreshold_SB->value()) ;
+    if(!ui.identityBan_CB->isChecked())
+        rsReputations->setNodeAutoBanThreshold(0) ;
+    else
+        rsReputations->setNodeAutoBanThreshold(ui.identityBanThreshold_SB->value()) ;
 
-	return true;
+    if(ui.autoPositiveOpinion_CB->isChecked())
+        rsReputations->setNodeAutoPositiveOpinionForContacts(true) ;
+    else
+        rsReputations->setNodeAutoPositiveOpinionForContacts(false) ;
+
+    rsReputations->setNodeAutoBanIdentitiesLimit(ui.autoBanIdentitiesLimit_SB->value());
+
+    return true;
 }
 
 /** Loads the settings for this page */
 void PeoplePage::load()
 {
     uint32_t ban_limit = rsReputations->nodeAutoBanThreshold() ;
+    bool auto_positive_contacts = rsReputations->nodeAutoPositiveOpinionForContacts() ;
+    float node_auto_ban_identities_limit = rsReputations->nodeAutoBanIdentitiesLimit();
 
     ui.identityBan_CB->setChecked(ban_limit > 0) ;
     ui.identityBanThreshold_SB->setValue(ban_limit) ;
+    ui.autoPositiveOpinion_CB->setChecked(auto_positive_contacts);
+    ui.autoBanIdentitiesLimit_SB->setValue(node_auto_ban_identities_limit);
 }

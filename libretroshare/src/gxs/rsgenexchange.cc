@@ -2011,10 +2011,7 @@ void RsGenExchange::publishMsgs()
                 
                 // FIXTESTS global variable rsPeers not available in unittests!
                 if(rsPeers)
-                {
                     mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
-                    mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
-                }
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
@@ -2159,11 +2156,6 @@ void RsGenExchange::processRoutingClues()
             rsGRouter->addRoutingClue(GRouterKeyId(it->first),(*it2) ) ;
 
     mRoutingClues.clear() ;
-    
-    for(std::list<std::pair<RsGxsMessageId,RsPeerId> >::const_iterator it = mTrackingClues.begin();it!=mTrackingClues.end();++it)
-	    rsGRouter->addTrackingInfo((*it).first,(*it).second) ;
-    
-    mTrackingClues.clear() ;
 }
 
 void RsGenExchange::processGroupDelete()
@@ -2732,9 +2724,6 @@ void RsGenExchange::processRecvdMessages()
 
 				    if(!msg->metaData->mAuthorId.isNull())
 					    mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
-
-				    if(grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
-					    mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
 			    }
 
 			    if(validateReturn == VALIDATE_FAIL)
