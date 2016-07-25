@@ -79,7 +79,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Friend options below which identities are banned:</string>
+           <string>Friend average opinion below which identities are banned:</string>
           </property>
          </widget>
         </item>
