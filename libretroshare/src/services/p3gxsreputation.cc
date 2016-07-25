@@ -134,7 +134,7 @@ static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minu
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
-static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed
+static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputation under which the peer gets killed. Warning there's a 1 shift with what's shown in GUI. Be careful.
 static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
 static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
@@ -153,6 +153,9 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mLastActiveFriendsUpdate = time(NULL) - 0.5*ACTIVE_FRIENDS_UPDATE_PERIOD;	// avoids doing it too soon since the TS from rsIdentity needs to be loaded already
     mAverageActiveFriends = 0 ;
     mLastBannedNodesUpdate = 0 ;
+
+    mAutoBanIdentitiesLimit = REPUTATION_ASSESSMENT_THRESHOLD_X1;
+    mAutoSetPositiveOptionToContacts = true;	// default
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -232,6 +235,44 @@ uint32_t p3GxsReputation::nodeAutoBanThreshold()
     return mPgpAutoBanThreshold ;
 }
 
+void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    if(b != mAutoSetPositiveOptionToContacts)
+    {
+        mLastBannedNodesUpdate = 0 ;
+        mAutoSetPositiveOptionToContacts = b ;
+        IndicateConfigChanged() ;
+    }
+}
+bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    return mAutoSetPositiveOptionToContacts ;
+}
+float p3GxsReputation::nodeAutoBanIdentitiesLimit()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    return mAutoBanIdentitiesLimit - 1.0f;
+}
+void p3GxsReputation::setNodeAutoBanIdentitiesLimit(float f)
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    if(f < -1.0 || f >= 0.0)
+    {
+        std::cerr << "(EE) Unexpected value for auto ban identities limit: " << f << std::endl;
+        return ;
+    }
+    if(f != mAutoBanIdentitiesLimit)
+    {
+        mLastBannedNodesUpdate = 0 ;
+        mAutoBanIdentitiesLimit = f+1.0 ;
+        IndicateConfigChanged() ;
+    }
+}
+
 int	p3GxsReputation::status()
 {
 	return 1;
@@ -292,6 +333,8 @@ void p3GxsReputation::updateIdentityFlags()
 			    to_update.push_back(rit->first) ;
     }
 
+    std::list<RsGxsId> should_set_to_positive ;
+
     for(std::list<RsGxsId>::const_iterator rit(to_update.begin());rit!=to_update.end();++rit)
     {
 	    RsIdentityDetails details;
@@ -303,32 +346,40 @@ void p3GxsReputation::updateIdentityFlags()
 #endif
 		    continue ;
 	    }
+        bool is_a_contact = rsIdentity->isARegularContact(*rit) ;
 
-	    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+        {
+            RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+            std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
 
-	    std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
+            if(it == mReputations.end())
+            {
+                std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
+                continue ;
+            }
+            it->second.mIdentityFlags = 0 ;
 
-	    if(it == mReputations.end())
-	    {
-		    std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
-		    continue ;
-	    }
-	    it->second.mIdentityFlags = 0 ;
+            if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
+            {
+                it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
+                it->second.mOwnerNode = details.mPgpId ;
+            }
+            if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
 
-	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) 
-	    {
-		    it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_LINKED ;
-		    it->second.mOwnerNode = details.mPgpId ;
-	    }
-	    if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
+            if(mAutoSetPositiveOptionToContacts && is_a_contact && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+                should_set_to_positive.push_back(*rit) ;
 
 #ifdef DEBUG_REPUTATION
-	    std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
+            std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
 #endif
 
-	    it->second.updateReputation() ;
-	    IndicateConfigChanged();		
+            it->second.updateReputation() ;
+            IndicateConfigChanged();
+        }
     }
+
+    for(std::list<RsGxsId>::const_iterator it(should_set_to_positive.begin());it!=should_set_to_positive.end();++it)
+        setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
 }
 
 void p3GxsReputation::cleanup()
@@ -748,7 +799,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 #endif
         info.mAssessment = RsReputations::ASSESSMENT_BAD ;
     }
-    else if(info.mOverallReputationScore <= REPUTATION_ASSESSMENT_THRESHOLD_X1)
+    else if(info.mOverallReputationScore <= mAutoBanIdentitiesLimit)
         info.mAssessment = RsReputations::ASSESSMENT_BAD ;
     else
         info.mAssessment = RsReputations::ASSESSMENT_OK ;
@@ -901,7 +952,15 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	rs_sprintf(kv.value, "%d", mPgpAutoBanThreshold);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-	savelist.push_back(vitem) ;
+    kv.key = "AUTO_BAN_IDENTITIES_THRESHOLD" ;
+    rs_sprintf(kv.value, "%d", mAutoBanIdentitiesLimit);
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    kv.key = "AUTO_POSITIVE_CONTACTS" ;
+    kv.value = mAutoSetPositiveOptionToContacts?"YES":"NO";
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    savelist.push_back(vitem) ;
 
 	return true;
 }
@@ -955,7 +1014,23 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 					    mLastBannedNodesUpdate = 0 ;	// force update
 				    }
 			    };
-		    }
+                if(kit->key == "AUTO_BAN_IDENTITIES_THRESHOLD")
+                {
+                    float val ;
+                    if (sscanf(kit->value.c_str(), "%f", &val) == 1)
+                    {
+                        mAutoBanIdentitiesLimit = val ;
+                        std::cerr << "Setting AutoBanIdentity threshold to " << val << std::endl ;
+                        mLastBannedNodesUpdate = 0 ;	// force update
+                    }
+                };
+                if(kit->key == "AUTO_POSITIVE_CONTACTS")
+                {
+                    mAutoSetPositiveOptionToContacts = (kit->value == "YES");
+                    std::cerr << "Setting AutoPositiveContacts to " << kit->value << std::endl ;
+                    mLastBannedNodesUpdate = 0 ;	// force update
+                }
+            }
 
 	    delete (*it);
     }
