@@ -301,8 +301,6 @@ void GxsGroupDialog::setupDefaults()
 			ui.commentsValueLabel->setText(tr("Allowed"));
 		}
 	}
-	    ui.antiSpam_trackMessages->setChecked((bool)(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_TRACK));
-        
         if( (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP) && (mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN))
 		ui.antiSpam_perms_CB->setCurrentIndex(2) ;
         else if(mDefaultsFlags & GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP)
@@ -656,9 +654,6 @@ uint32_t GxsGroupDialog::getGroupSignFlags()
 	    break ;
     }
 
-    if (ui.antiSpam_trackMessages->isChecked()) 
-	    signFlags |= GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES;
-
     return signFlags;
 }
 
@@ -680,8 +675,6 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	if (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN) 
 		ui.personal_ifnopub->setChecked(true);
     
-		ui.antiSpam_trackMessages  ->setChecked((bool)(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) );
-        
         		if( (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
                     ui.antiSpam_perms_CB->setCurrentIndex(2) ;
                 else if(signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)

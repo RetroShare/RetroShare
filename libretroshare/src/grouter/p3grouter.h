@@ -130,7 +130,6 @@ public:
     //===================================================//
 
     virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
-    virtual void addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id) ;
 
     //===================================================//
     //         Client/server request services            //
@@ -168,7 +167,6 @@ public:
     // 	- Cache state (memory size, etc)
     //
     virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
-    virtual bool getTrackingInfo(const RsGxsMessageId& mid, RsPeerId& provider_id) ;
 
     //===================================================//
     //         Derived from p3Service                    //

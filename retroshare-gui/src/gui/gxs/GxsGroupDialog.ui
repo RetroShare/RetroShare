@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
-    <height>775</height>
+    <width>1237</width>
+    <height>790</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -580,16 +580,6 @@
               <string>Defavor unsigned IDs and IDs from unknown nodes</string>
              </property>
             </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="antiSpam_trackMessages">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This feature allows Retroshare to locally keep a record of who forwarded each message to you, for the last 10 days. Although useless if alone (and already available whatsoever) this information can be used by a group of teamed-up friends to easily locate a source of spams. To be used with care, since it significantly decreases the anonymity of message posts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Keep track of posts</string>
-            </property>
            </widget>
           </item>
           <item>

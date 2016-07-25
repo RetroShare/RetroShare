@@ -1862,15 +1862,6 @@ bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(const GRouterServ
     return true ;
 }
 
-void p3GRouter::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id)
-{
-    RS_STACK_MUTEX(grMtx) ;
-#ifdef GROUTER_DEBUG
-    grouter_debug() << "Received new routing clue for key " << mid << " from peer " << peer_id << std::endl;
-#endif
-    _routing_matrix.addTrackingInfo(mid,peer_id) ;
-    _changed = true ;
-}
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(grMtx) ;
@@ -2355,13 +2346,6 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
         infos.push_back(cinfo) ;
     }
     return true ;
-}
-
-bool p3GRouter::getTrackingInfo(const RsGxsMessageId &mid, RsPeerId &provider_id)
-{
-        RS_STACK_MUTEX(grMtx) ;
-        
-        return _routing_matrix.getTrackingInfo(mid,provider_id) ;
 }
 
 // Dump everything
