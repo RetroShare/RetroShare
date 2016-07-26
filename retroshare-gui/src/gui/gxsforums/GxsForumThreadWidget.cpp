@@ -782,9 +782,6 @@ void GxsForumThreadWidget::insertGroupData()
     if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown node IDs reputation threshold set to 0.4");
     else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
             
-    QString anti_spam_features2 ;
-    if(IS_GROUP_MESSAGE_TRACKING(tw->mSignFlags)) anti_spam_features2 = tr("Message routing info kept for 10 days");
-    
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
@@ -830,9 +827,6 @@ void GxsForumThreadWidget::insertGroupData()
        
        if(!anti_spam_features1.isNull())
     		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
-       
-       if(!anti_spam_features2.isNull())
-    		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features2);
        
     tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
