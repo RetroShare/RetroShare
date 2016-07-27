@@ -6,13 +6,14 @@
 HashStorage::HashStorage(const std::string& save_file_name)
     : mFilePath(save_file_name), mHashMtx("Hash Storage mutex")
 {
+    mRunning = false ;
 }
 
 void HashStorage::data_tick()
 {
-    std::cerr << "Ticking hash thread." << std::endl;
-
     FileHashJob job;
+    RsFileHash hash;
+    uint64_t size ;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -21,33 +22,29 @@ void HashStorage::data_tick()
             return ;
 
         job = mFilesToHash.begin()->second ;
+
+        std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
+
+
+        if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
+            std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+        else
+            std::cerr << "done."<< std::endl;
+
+        mFilesToHash.erase(mFilesToHash.begin()) ;
+
+        if(mFilesToHash.empty())
+        {
+            std::cerr << "Stopping hashing thread." << std::endl;
+            shutdown();
+            mRunning = false ;
+            std::cerr << "done." << std::endl;
+        }
     }
-
-    std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
-
-    RsFileHash hash;
-    uint64_t size ;
-
-    if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
-    {
-        std::cerr << "ERROR" << std::endl;
-        return;
-    }
-    // update the hash storage
-
-
     // call the client
 
-    job.client->hash_callback(job.client_param, job.full_path, hash, size);
-
-    std::cerr << "done."<< std::endl;
-
-    if(mFilesToHash.empty())
-    {
-        std::cerr << "Starting hashing thread." << std::endl;
-        fullstop();
-        std::cerr << "done." << std::endl;
-    }
+    if(!hash.isNull())
+        job.client->hash_callback(job.client_param, job.full_path, hash, size);
 }
 
 bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
@@ -81,8 +78,9 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
     mFilesToHash[full_path] = job;
 
-    if(!isRunning())
+    if(!mRunning)
     {
+        mRunning = true ;
         std::cerr << "Starting hashing thread." << std::endl;
         start() ;
     }

@@ -10,10 +10,9 @@ void RemoteDirectoryUpdater::tick()
 	// use the stored iterator
 }
 
-LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc)
-    : mHashCache(hc)
+LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
+    : mHashCache(hc),mSharedDirectories(lds)
 {
-    mSharedDirectories = new LocalDirectoryStorage("local_storage.txt");
 }
 
 void LocalDirectoryUpdater::tick()
@@ -27,7 +26,7 @@ void LocalDirectoryUpdater::tick()
 	// 	- doing so, changing directory names or moving files between directories does not cause a re-hash of the content. 
 	//
     std::list<SharedDirInfo> shared_directory_list ;
-
+    mSharedDirectories->getSharedDirectoryList(shared_directory_list);
 
     std::set<std::string> sub_dir_list ;
 
@@ -43,7 +42,10 @@ void LocalDirectoryUpdater::tick()
     DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ;
 
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it, ++stored_dir_it)
+    {
+        std::cerr << "  recursing into " << real_dir_it->filename << std::endl;
         recursUpdateSharedDir(real_dir_it->filename, *stored_dir_it) ;
+    }
 }
 
 void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx)
@@ -98,7 +100,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
         RsFileHash hash ;
 
-        if(mHashCache->requestHash(dit.fullpath(),dit.size(),dit.modtime(),hash,this,*dit) && dit.hash() != hash)
+        if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit) && dit.hash() != hash)
                 mSharedDirectories->updateHash(*dit,hash);
     }
 
@@ -107,7 +109,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ;
 
     for(std::set<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
-        recursUpdateSharedDir(*real_dir_it, *stored_dir_it) ;
+        recursUpdateSharedDir(cumulated_path + "/" + *real_dir_it, *stored_dir_it) ;
 }
 
 void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)

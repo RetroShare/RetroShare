@@ -73,7 +73,6 @@ class DirectoryStorage
                 // info about the file that is pointed by the iterator
 
                 std::string name() const ;
-                std::string fullpath() const ;
                 uint64_t size() const ;
                 RsFileHash hash() const ;
                 time_t modtime() const ;
@@ -93,6 +92,7 @@ class DirectoryStorage
         bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;
         bool updateHash(const EntryIndex& index,const RsFileHash& hash);
 
+        void print();
         void cleanup();
 
     private:

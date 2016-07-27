@@ -46,7 +46,7 @@ class InternalFileHierarchyStorage
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name,DirectoryStorage::EntryIndex parent) : dir_name(name),parent_index(DirectoryStorage::NO_INDEX) {}
+        DirEntry(const std::string& name,DirectoryStorage::EntryIndex parent) : dir_name(name),parent_index(parent) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -226,7 +226,7 @@ class InternalFileHierarchyStorage
         if(static_cast<DirEntry*>(mNodes[parent_index])->subdirs.size() <= dir_tab_index)
             return DirectoryStorage::NO_INDEX;
 
-        return static_cast<DirEntry*>(mNodes[parent_index])->subfiles[dir_tab_index];
+        return static_cast<DirEntry*>(mNodes[parent_index])->subdirs[dir_tab_index];
     }
 
     bool check()	// checks consistency of storage.
@@ -234,10 +234,57 @@ class InternalFileHierarchyStorage
         return true;
     }
 
-    void print()
+    void print() const
     {
+        int nfiles = 0 ;
+        int ndirs = 0 ;
+        int nempty = 0 ;
+        int nunknown = 0;
+
+        for(uint32_t i=0;i<mNodes.size();++i)
+            if(mNodes[i] == NULL)
+            {
+                std::cerr << "  Node " << i << ": empty " << std::endl;
+                ++nempty ;
+            }
+            else if(mNodes[i]->type() == FileStorageNode::TYPE_DIR)
+            {
+                std::cerr << "  Node " << i << ": type=" << mNodes[i]->type() << std::endl;
+                ++ndirs;
+            }
+            else if(mNodes[i]->type() == FileStorageNode::TYPE_FILE)
+            {
+                std::cerr << "  Node " << i << ": type=" << mNodes[i]->type() << std::endl;
+                ++nfiles;
+            }
+            else
+            {
+                ++nunknown;
+                std::cerr << "(EE) Error: unknown type node found!" << std::endl;
+            }
+
+        std::cerr << "Total nodes: " << mNodes.size() << " (" << nfiles << " files, " << ndirs << " dirs, " << nempty << " empty slots)" << std::endl;
+
+        recursPrint(0,DirectoryStorage::EntryIndex(0));
     }
 private:
+    void recursPrint(int depth,DirectoryStorage::EntryIndex node) const
+    {
+        std::string indent(2*depth,' ');
+        DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
+
+        std::cerr << indent << d.dir_name << std::endl;
+
+        for(int i=0;i<d.subdirs.size();++i)
+            recursPrint(depth+1,d.subdirs[i]) ;
+
+        for(int i=0;i<d.subfiles.size();++i)
+        {
+            FileEntry& f(*static_cast<FileEntry*>(mNodes[i]));
+            std::cerr << indent << "  " << f.file_hash << " " << f.file_modtime << " " << f.file_name << std::endl;
+        }
+    }
+
     static bool nodeAccessError(const std::string& s)
     {
         std::cerr << "(EE) InternalDirectoryStructure: ERROR: " << s << std::endl;
@@ -300,7 +347,6 @@ DirectoryStorage::DirIterator ::operator bool() const { return **this != Directo
 RsFileHash  DirectoryStorage::FileIterator::hash()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_hash):RsFileHash(); }
 uint64_t    DirectoryStorage::FileIterator::size()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_size):0; }
 std::string DirectoryStorage::FileIterator::name()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
-std::string DirectoryStorage::FileIterator::fullpath() const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
 time_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
 
 /******************************************************************************************************************/
@@ -368,7 +414,12 @@ void DirectoryStorage::save(const std::string& local_file_name)
 {
     // first write the header, than all fields.
 }
-
+void DirectoryStorage::print()
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    std::cerr << "LocalDirectoryStorage:" << std::endl;
+    mFileHierarchy->print();
+}
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/

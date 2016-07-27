@@ -77,5 +77,6 @@ private:
     // thread/mutex stuff
 
     RsMutex mHashMtx ;
+    bool mRunning;
 };
 

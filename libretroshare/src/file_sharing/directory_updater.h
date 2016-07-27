@@ -23,7 +23,7 @@ class DirectoryUpdater
 class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient
 {
 public:
-    LocalDirectoryUpdater(HashStorage *hash_cache) ;
+    LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;
     virtual ~LocalDirectoryUpdater() {}
 
     virtual void tick() ;
