@@ -22,8 +22,9 @@ class InternalFileHierarchyStorage
     class FileStorageNode
     {
     public:
-        static const uint32_t TYPE_FILE = 0x0001 ;
-        static const uint32_t TYPE_DIR  = 0x0002 ;
+        static const uint32_t TYPE_UNKNOWN = 0x0000 ;
+        static const uint32_t TYPE_FILE    = 0x0001 ;
+        static const uint32_t TYPE_DIR     = 0x0002 ;
 
         virtual ~FileStorageNode() {}
         virtual uint32_t type() const =0;
@@ -45,7 +46,7 @@ class InternalFileHierarchyStorage
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name,DirectoryStorage::EntryIndex parent) : dir_name(name),parent_index(parent) {}
+        DirEntry(const std::string& name,DirectoryStorage::EntryIndex parent) : dir_name(name),parent_index(DirectoryStorage::NO_INDEX) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -66,18 +67,15 @@ class InternalFileHierarchyStorage
 
     // high level modification routines
 
-    bool isIndexValid(DirectoryStorage::EntryIndex e)
+    bool isIndexValid(DirectoryStorage::EntryIndex e) const
     {
         return e < mNodes.size() && mNodes[e] != NULL ;
     }
 
     bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::set<std::string>& subdirs)
     {
-        if(indx >= mNodes.size() || mNodes[indx] == NULL)
-            return nodeAccessError("updateSubDirectoryList(): Node does not exist") ;
-
-        if(mNodes[indx]->type() != FileStorageNode::TYPE_DIR)
-            return nodeAccessError("updateSubDirectoryList(): Node is not a directory") ;
+        if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+            return false;
 
         DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
@@ -104,14 +102,11 @@ class InternalFileHierarchyStorage
     {
         // check that it's a directory
 
-        if(indx >= mNodes.size() || mNodes[indx] == NULL)
-            return nodeAccessError("removeDirectory(): Node does not exist") ;
-
-        if(mNodes[indx]->type() != FileStorageNode::TYPE_DIR)
-            return nodeAccessError("removeDirectory(): Node is not a directory") ;
+        if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+            return false;
 
         if(indx == 0)
-            return nodeAccessError("removeDirectory(): Cannot remove top level directory") ;
+            return nodeAccessError("checkIndex(): Cannot remove top level directory") ;
 
         // remove from parent
 
@@ -125,13 +120,21 @@ class InternalFileHierarchyStorage
         return nodeAccessError("removeDirectory(): inconsistency!!") ;
     }
 
+    bool checkIndex(DirectoryStorage::EntryIndex indx,uint8_t type) const
+    {
+        if(mNodes.empty() || indx==DirectoryStorage::NO_INDEX || indx >= mNodes.size() || mNodes[indx] == NULL)
+            return nodeAccessError("checkIndex(): Node does not exist") ;
+
+        if(mNodes[indx]->type() != type)
+            return nodeAccessError("checkIndex(): Node is of wrong type") ;
+
+        return true;
+    }
+
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files)
     {
-        if(indx >= mNodes.size() || mNodes[indx] == NULL)
-            return nodeAccessError("updateSubFilesList(): Node does not exist") ;
-
-        if(mNodes[indx]->type() != FileStorageNode::TYPE_DIR)
-            return nodeAccessError("updateSubFilesList(): Node is not a directory") ;
+        if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+            return false;
 
         DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
         new_files = subfiles ;
@@ -155,14 +158,32 @@ class InternalFileHierarchyStorage
         }
         return true;
     }
-    void updateFile(const DirectoryStorage::EntryIndex& parent_dir,const RsFileHash& hash, const std::string& fname, const uint32_t modf_time) ;
-    void updateDirectory(const DirectoryStorage::EntryIndex& parent_dir,const std::string& dname) ;
+    bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash)
+    {
+        if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
+            return false;
+
+        static_cast<FileEntry*>(mNodes[file_index])->file_hash = hash ;
+        return true;
+    }
+    bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const uint32_t modf_time)
+    {
+        if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
+            return false;
+
+        FileEntry& fe(*static_cast<FileEntry*>(mNodes[file_index])) ;
+
+        fe.file_hash = hash;
+        fe.file_size = size;
+        fe.file_modtime = modf_time;
+
+        return true;
+    }
 
     // file/dir access and modification
     bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
 
     uint32_t mRoot ;
-
     std::vector<FileStorageNode*> mNodes;// uses pointers to keep information about valid/invalid objects.
 
     void compress() ;					// use empty space in the vector, mostly due to deleted entries. This is a complicated operation, mostly due to
@@ -171,11 +192,25 @@ class InternalFileHierarchyStorage
 
     friend class DirectoryStorage ;		// only class that can use this.
 
-    // low level stuff. Should normally not be used externally.
+    // Low level stuff. Should normally not be used externally.
 
+    const DirEntry *getDirEntry(DirectoryStorage::EntryIndex indx) const
+    {
+        if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+            return NULL ;
+
+        return static_cast<DirEntry*>(mNodes[indx]) ;
+    }
+    const FileEntry *getFileEntry(DirectoryStorage::EntryIndex indx) const
+    {
+        if(!checkIndex(indx,FileStorageNode::TYPE_FILE))
+            return NULL ;
+
+        return static_cast<FileEntry*>(mNodes[indx]) ;
+    }
     DirectoryStorage::EntryIndex getSubFileIndex(DirectoryStorage::EntryIndex parent_index,uint32_t file_tab_index)
     {
-        if(parent_index >= mNodes.size() || mNodes[parent_index] == NULL || mNodes[parent_index]->type() != FileStorageNode::TYPE_DIR)
+        if(!checkIndex(parent_index,FileStorageNode::TYPE_DIR))
             return DirectoryStorage::NO_INDEX;
 
         if(static_cast<DirEntry*>(mNodes[parent_index])->subfiles.size() <= file_tab_index)
@@ -185,7 +220,7 @@ class InternalFileHierarchyStorage
     }
     DirectoryStorage::EntryIndex getSubDirIndex(DirectoryStorage::EntryIndex parent_index,uint32_t dir_tab_index)
     {
-        if(parent_index >= mNodes.size() || mNodes[parent_index] == NULL || mNodes[parent_index]->type() != FileStorageNode::TYPE_DIR)
+        if(!checkIndex(parent_index,FileStorageNode::TYPE_DIR))
             return DirectoryStorage::NO_INDEX;
 
         if(static_cast<DirEntry*>(mNodes[parent_index])->subdirs.size() <= dir_tab_index)
@@ -203,7 +238,7 @@ class InternalFileHierarchyStorage
     {
     }
 private:
-    bool nodeAccessError(const std::string& s)
+    static bool nodeAccessError(const std::string& s)
     {
         std::cerr << "(EE) InternalDirectoryStructure: ERROR: " << s << std::endl;
         return false ;
@@ -256,46 +291,58 @@ DirectoryStorage::FileIterator& DirectoryStorage::FileIterator::operator++()
 
     return *this;
 }
-DirectoryStorage::EntryIndex DirectoryStorage::DirIterator::operator*() const
-{
-    return mStorage->getSubDirIndex(mParentIndex,mDirTabIndex) ;
-}
-DirectoryStorage::EntryIndex DirectoryStorage::FileIterator::operator*() const
-{
-    return mStorage->getSubFileIndex(mParentIndex,mFileTabIndex) ;
-}
-DirectoryStorage::DirIterator::operator bool() const
-{
-    return **this != DirectoryStorage::NO_INDEX;
-}
-DirectoryStorage::FileIterator::operator bool() const
-{
-    return **this != DirectoryStorage::NO_INDEX;
-}
+DirectoryStorage::EntryIndex DirectoryStorage::FileIterator::operator*() const { return mStorage->getSubFileIndex(mParentIndex,mFileTabIndex) ; }
+DirectoryStorage::EntryIndex DirectoryStorage::DirIterator ::operator*() const { return mStorage->getSubDirIndex(mParentIndex,mDirTabIndex) ; }
+
+DirectoryStorage::FileIterator::operator bool() const { return **this != DirectoryStorage::NO_INDEX; }
+DirectoryStorage::DirIterator ::operator bool() const { return **this != DirectoryStorage::NO_INDEX; }
+
+RsFileHash  DirectoryStorage::FileIterator::hash()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_hash):RsFileHash(); }
+uint64_t    DirectoryStorage::FileIterator::size()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_size):0; }
+std::string DirectoryStorage::FileIterator::name()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
+std::string DirectoryStorage::FileIterator::fullpath() const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
+time_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
 
 /******************************************************************************************************************/
 /*                                                 Directory Storage                                              */
 /******************************************************************************************************************/
 
-DirectoryStorage::DirIterator DirectoryStorage::root()
+DirectoryStorage::DirectoryStorage(const std::string& local_file_name)
+    : mFileName(local_file_name), mDirStorageMtx("Directory storage "+local_file_name)
 {
-    return DirIterator(this,EntryIndex(0)) ;
+    mFileHierarchy = new InternalFileHierarchyStorage();
 }
 
-void DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs)
+DirectoryStorage::EntryIndex DirectoryStorage::root() const
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
+    return EntryIndex(0) ;
 }
-void DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files)
+
+bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
+    return mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
 }
-void DirectoryStorage::removeDirectory(const EntryIndex& indx)
+bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy->removeDirectory(indx);
+    return mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
+}
+bool DirectoryStorage::removeDirectory(const EntryIndex& indx)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->removeDirectory(indx);
+}
+
+bool DirectoryStorage::updateFile(const EntryIndex& index,const RsFileHash& hash,const std::string& fname, uint64_t size,time_t modf_time)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->updateFile(index,hash,fname,size,modf_time);
+}
+bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->updateHash(index,hash);
 }
 
 // static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;
@@ -320,4 +367,19 @@ void DirectoryStorage::load(const std::string& local_file_name)
 void DirectoryStorage::save(const std::string& local_file_name)
 {
     // first write the header, than all fields.
+}
+
+/******************************************************************************************************************/
+/*                                           Local Directory Storage                                              */
+/******************************************************************************************************************/
+
+void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    mLocalDirs = lst ;
+}
+void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    lst = mLocalDirs ;
 }

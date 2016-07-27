@@ -10,9 +10,10 @@ void RemoteDirectoryUpdater::tick()
 	// use the stored iterator
 }
 
-LocalDirectoryUpdater::LocalDirectoryUpdater(HashCache *hc)
+LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc)
     : mHashCache(hc)
 {
+    mSharedDirectories = new LocalDirectoryStorage("local_storage.txt");
 }
 
 void LocalDirectoryUpdater::tick()
@@ -35,11 +36,11 @@ void LocalDirectoryUpdater::tick()
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
-    mSharedDirectories->updateSubDirectoryList(*mSharedDirectories->root(),sub_dir_list) ;
+    mSharedDirectories->updateSubDirectoryList(mSharedDirectories->root(),sub_dir_list) ;
 
     // now for each of them, go recursively and match both files and dirs
 
-    DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories->root()) ;
+    DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ;
 
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it, ++stored_dir_it)
         recursUpdateSharedDir(real_dir_it->filename, *stored_dir_it) ;
@@ -66,7 +67,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     std::set<std::string> subfiles ;
     std::set<std::string> subdirs ;
 
-    while(dirIt.readdir())
+    for(;dirIt.isValid();dirIt.next())
     {
         switch(dirIt.file_type())
         {
@@ -91,18 +92,27 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // now go through list of subfiles and request the hash to hashcache
 
-    for(DirectoryStorage::FileIterator dit(indx);dit;++dit)
+    for(DirectoryStorage::FileIterator dit(mSharedDirectories,indx);dit;++dit)
     {
         // ask about the hash. If not present, ask HashCache. If not present, or different, the callback will update it.
 
-        mHashCache->requestHash(dit.fullpath(),dit.size(),dit.modtime(),dit.hash(),this) ;
+        RsFileHash hash ;
+
+        if(mHashCache->requestHash(dit.fullpath(),dit.size(),dit.modtime(),hash,this,*dit) && dit.hash() != hash)
+                mSharedDirectories->updateHash(*dit,hash);
     }
 
     // go through the list of sub-dirs and recursively update
 
-    DirectoryStorage::DirIterator stored_dir_it(indx) ;
+    DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ;
 
     for(std::set<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
         recursUpdateSharedDir(*real_dir_it, *stored_dir_it) ;
+}
+
+void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)
+{
+    if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
+        std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;
 }
 

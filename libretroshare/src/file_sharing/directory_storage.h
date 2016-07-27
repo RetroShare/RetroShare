@@ -84,14 +84,14 @@ class DirectoryStorage
                 InternalFileHierarchyStorage *mStorage ;
         };
 
-        virtual DirIterator root() ;					// returns the index of the root directory entry.
+        EntryIndex root() const ;					// returns the index of the root directory entry.
 
-        void updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
-        void updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files) ;
-        void removeDirectory(const EntryIndex& indx) ;
+        bool updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
+        bool updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files) ;
+        bool removeDirectory(const EntryIndex& indx) ;
 
-        void updateFile(const EntryIndex& parent_dir,const RsFileHash& hash, const std::string& fname, const uint32_t modf_time) ;
-        void updateDirectory(const EntryIndex& parent_dir,const std::string& dname) ;
+        bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;
+        bool updateHash(const EntryIndex& index,const RsFileHash& hash);
 
         void cleanup();
 
@@ -105,7 +105,9 @@ class DirectoryStorage
         // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
 
         InternalFileHierarchyStorage *mFileHierarchy ;
+        std::string mFileName;
 
+    protected:
         RsMutex mDirStorageMtx ;
 };
 
@@ -119,7 +121,7 @@ public:
 class LocalDirectoryStorage: public DirectoryStorage
 {
 public:
-    LocalDirectoryStorage() ;
+    LocalDirectoryStorage(const std::string& fname) : DirectoryStorage(fname) {}
     virtual ~LocalDirectoryStorage() {}
 
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;

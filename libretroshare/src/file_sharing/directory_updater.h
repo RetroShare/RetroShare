@@ -20,20 +20,20 @@ class DirectoryUpdater
 		// 
 };
 
-class LocalDirectoryUpdater: public DirectoryUpdater, public HashCacheClient
+class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient
 {
 public:
-    LocalDirectoryUpdater(HashCache *hash_cache) ;
+    LocalDirectoryUpdater(HashStorage *hash_cache) ;
     virtual ~LocalDirectoryUpdater() {}
 
     virtual void tick() ;
 
 protected:
-    virtual void hash_callback(const std::string& full_name,const RsFileHash& hash) ;
+    virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
 
 private:
-    HashCache *mHashCache ;
+    HashStorage *mHashCache ;
     LocalDirectoryStorage *mSharedDirectories ;
 };
 
