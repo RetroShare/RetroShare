@@ -68,6 +68,7 @@ private:
         std::string full_path;
         HashStorageClient *client;
         uint32_t client_param ;
+        time_t ts;
     };
 
     // current work

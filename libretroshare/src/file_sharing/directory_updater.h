@@ -11,30 +11,26 @@ class DirectoryUpdater
 	public:
         DirectoryUpdater() {}
         virtual ~DirectoryUpdater(){}
-
-		// Does some updating job. Crawls the existing directories and checks wether it has been updated
-		// recently enough. If not, calls the directry source.
-		//
-        virtual void tick() =0;
-
-		// 
 };
 
-class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient
+class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient, public RsTickingThread
 {
 public:
     LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;
     virtual ~LocalDirectoryUpdater() {}
 
-    virtual void tick() ;
+    virtual void data_tick() ;
 
 protected:
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
+    void sweepSharedDirectories();
 
 private:
     HashStorage *mHashCache ;
     LocalDirectoryStorage *mSharedDirectories ;
+
+    time_t mLastSweepTime;
 };
 
 class RemoteDirectoryUpdater: public DirectoryUpdater

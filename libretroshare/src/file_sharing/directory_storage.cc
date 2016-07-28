@@ -155,7 +155,11 @@ class InternalFileHierarchyStorage
             }
 
             if(it->second.modtime != f.file_modtime || it->second.size != f.file_size)	// file is newer and/or has different size
+            {
                 f.file_hash.clear();																// hash needs recomputing
+                f.file_modtime = it->second.modtime;
+                f.file_size = it->second.size;
+            }
             else
                 new_files.erase(f.file_name) ;
 
@@ -292,7 +296,7 @@ private:
         for(int i=0;i<d.subfiles.size();++i)
         {
             FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]]));
-            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << std::fill(8) << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << std::endl;
+            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << std::endl;
         }
     }
 

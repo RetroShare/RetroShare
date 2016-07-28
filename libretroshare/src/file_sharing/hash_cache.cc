@@ -40,6 +40,16 @@ void HashStorage::data_tick()
             mRunning = false ;
             std::cerr << "done." << std::endl;
         }
+
+        // store the result
+
+        HashStorageInfo& info(mFiles[job.full_path]);
+
+        info.filename = job.full_path ;
+        info.size = size ;
+        info.modf_stamp = job.ts ;
+        info.time_stamp = time(NULL);
+        info.hash = hash;
     }
     // call the client
 
@@ -51,6 +61,9 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 {
     // check if the hash is up to date w.r.t. cache.
 
+#ifdef HASHSTORAGE_DEBUG
+    std::cerr << "HASH Requested for file " << full_path << ": ";
+#endif
     RS_STACK_MUTEX(mHashMtx) ;
 
     time_t now = time(NULL) ;
@@ -59,11 +72,15 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     if(it != mFiles.end() && (uint64_t)mod_time == it->second.modf_stamp && size == it->second.size)
     {
         it->second.time_stamp = now ;
-#ifdef HASHCACHE_DEBUG
+        known_hash = it->second.hash;
+#ifdef HASHSTORAGE_DEBUG
         std::cerr << "Found in cache." << std::endl ;
 #endif
         return true ;
     }
+#ifdef HASHSTORAGE_DEBUG
+    std::cerr << "Not in cache. Sceduling for re-hash." << std::endl ;
+#endif
 
     // we need to schedule a re-hashing
 
@@ -75,6 +92,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     job.client = c ;
     job.client_param = client_param ;
     job.full_path = full_path ;
+    job.ts = mod_time ;
 
     mFilesToHash[full_path] = job;
 

@@ -5,6 +5,8 @@
 
 #define DEBUG_LOCAL_DIR_UPDATER 1
 
+static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES = 10 ; // 10 seconds for testing. Should be much more!!
+
 void RemoteDirectoryUpdater::tick()
 {
 	// use the stored iterator
@@ -13,11 +15,23 @@ void RemoteDirectoryUpdater::tick()
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
     : mHashCache(hc),mSharedDirectories(lds)
 {
+    mLastSweepTime = 0;
 }
 
-void LocalDirectoryUpdater::tick()
+void LocalDirectoryUpdater::data_tick()
 {
-    std::cerr << "LocalDirectoryUpdater::tick()" << std::endl;
+    time_t now = time(NULL) ;
+
+    if(now > DELAY_BETWEEN_DIRECTORY_UPDATES + mLastSweepTime)
+    {
+        sweepSharedDirectories() ;
+        mLastSweepTime = now;
+    }
+}
+
+void LocalDirectoryUpdater::sweepSharedDirectories()
+{
+    std::cerr << "LocalDirectoryUpdater::sweep()" << std::endl;
 
 	// recursive update algorithm works that way:
 	// 	- the external loop starts on the shared directory list and goes through sub-directories
