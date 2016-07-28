@@ -83,10 +83,16 @@ class DirectoryStorage
                 InternalFileHierarchyStorage *mStorage ;
         };
 
+        struct FileTS
+        {
+            uint64_t size ;
+            time_t modtime;
+        };
+
         EntryIndex root() const ;					// returns the index of the root directory entry.
 
         bool updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
-        bool updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files) ;
+        bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
         bool removeDirectory(const EntryIndex& indx) ;
 
         bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;

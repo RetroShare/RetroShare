@@ -32,7 +32,7 @@ class InternalFileHierarchyStorage
     class FileEntry: public FileStorageNode
     {
     public:
-        FileEntry(const std::string& name) : file_name(name) {}
+        FileEntry(const std::string& name,uint64_t size,time_t modtime) : file_name(name),file_size(size),file_modtime(modtime) {}
         virtual uint32_t type() const { return FileStorageNode::TYPE_FILE ; }
         virtual ~FileEntry() {}
 
@@ -131,7 +131,7 @@ class InternalFileHierarchyStorage
         return true;
     }
 
-    bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files)
+    bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files)
     {
         if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
             return false;
@@ -139,22 +139,33 @@ class InternalFileHierarchyStorage
         DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
         new_files = subfiles ;
 
+        // remove from new_files the ones that already exist and have a modf time that is not older.
+
         for(uint32_t i=0;i<d.subfiles.size();)
-            if(subfiles.find(static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_name) == subfiles.end())
+        {
+            FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]])) ;
+            std::map<std::string,DirectoryStorage::FileTS>::const_iterator it = subfiles.find(f.file_name) ;
+
+            if(it == subfiles.end())				// file does not exist anymore => delete
             {
                 d.subfiles[i] = d.subfiles[d.subfiles.size()-1] ;
                 d.subfiles.pop_back();
-            }
-            else
-            {
-                new_files.erase(static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_name) ;
-                ++i;
+
+                continue;
             }
 
-        for(std::set<std::string>::const_iterator it(new_files.begin());it!=new_files.end();++it)
+            if(it->second.modtime != f.file_modtime || it->second.size != f.file_size)	// file is newer and/or has different size
+                f.file_hash.clear();																// hash needs recomputing
+            else
+                new_files.erase(f.file_name) ;
+
+            ++i;
+        }
+
+        for(std::map<std::string,DirectoryStorage::FileTS>::const_iterator it(new_files.begin());it!=new_files.end();++it)
         {
             d.subfiles.push_back(mNodes.size()) ;
-            mNodes.push_back(new FileEntry(*it));
+            mNodes.push_back(new FileEntry(it->first,it->second.size,it->second.modtime));
         }
         return true;
     }
@@ -166,7 +177,7 @@ class InternalFileHierarchyStorage
         static_cast<FileEntry*>(mNodes[file_index])->file_hash = hash ;
         return true;
     }
-    bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const uint32_t modf_time)
+    bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time)
     {
         if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
             return false;
@@ -273,15 +284,15 @@ private:
         std::string indent(2*depth,' ');
         DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
-        std::cerr << indent << d.dir_name << std::endl;
+        std::cerr << indent << "dir:" << d.dir_name << std::endl;
 
         for(int i=0;i<d.subdirs.size();++i)
             recursPrint(depth+1,d.subdirs[i]) ;
 
         for(int i=0;i<d.subfiles.size();++i)
         {
-            FileEntry& f(*static_cast<FileEntry*>(mNodes[i]));
-            std::cerr << indent << "  " << f.file_hash << " " << f.file_modtime << " " << f.file_name << std::endl;
+            FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]]));
+            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << std::fill(8) << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << std::endl;
         }
     }
 
@@ -369,7 +380,7 @@ bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
 }
-bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::set<std::string>& subfiles,std::set<std::string>& new_files)
+bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::map<std::string,FileTS>& subfiles,std::map<std::string,FileTS>& new_files)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;

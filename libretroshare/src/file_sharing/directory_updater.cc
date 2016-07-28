@@ -66,21 +66,21 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     // collect subdirs and subfiles
 
-    std::set<std::string> subfiles ;
+    std::map<std::string,DirectoryStorage::FileTS> subfiles ;
     std::set<std::string> subdirs ;
 
     for(;dirIt.isValid();dirIt.next())
     {
         switch(dirIt.file_type())
         {
-                case librs::util::FolderIterator::TYPE_FILE:	subfiles.insert(dirIt.file_name()) ;
-                                                                std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
-                                                            break;
+                case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
+                                                            subfiles[dirIt.file_name()].size = dirIt.file_size();
+                                                            std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+                                                                break;
 
-                case librs::util::FolderIterator::TYPE_DIR:	subdirs.insert(dirIt.file_name()) ;
-                                                                std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+                case librs::util::FolderIterator::TYPE_DIR:  subdirs.insert(dirIt.file_name()) ;
+                                                             std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
                                                             break;
-
         default:
             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
         }
@@ -89,7 +89,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     mSharedDirectories->updateSubDirectoryList(indx,subdirs) ;
 
-    std::set<std::string> new_files ;
+    std::map<std::string,DirectoryStorage::FileTS> new_files ;
     mSharedDirectories->updateSubFilesList(indx,subfiles,new_files) ;
 
     // now go through list of subfiles and request the hash to hashcache
