@@ -43,7 +43,6 @@ class ApiLocalConnectionHandler : public QThread
 public:
 	ApiLocalConnectionHandler(ApiServer* apiServer, QLocalSocket* sock);
 	~ApiLocalConnectionHandler();
-	enum State {WAITING_PATH, WAITING_DATA};
 
 public slots:
 	void handleRequest();
@@ -51,8 +50,8 @@ public slots:
 private:
 	ApiServer* mApiServer;
 	QLocalSocket* mLocalSocket;
-	State mState;
 	std::string reqPath;
+	void _die();
 };
 
 } // namespace resource_api

@@ -27,48 +27,50 @@ void ApiServerLocal::handleConnection()
 }
 
 ApiLocalConnectionHandler::ApiLocalConnectionHandler(ApiServer* apiServer, QLocalSocket* sock) :
-    QThread(), mApiServer(apiServer), mLocalSocket(sock), mState(WAITING_PATH)
+    QThread(), mApiServer(apiServer), mLocalSocket(sock)
 {
 	sock->moveToThread(this);
-	connect(mLocalSocket, SIGNAL(disconnected()), this, SLOT(quit()));
 	connect(this, SIGNAL(finished()), this, SLOT(deleteLater()));
+	connect(mLocalSocket, SIGNAL(disconnected()), this, SLOT(quit()));
 	connect(sock, SIGNAL(readyRead()), this, SLOT(handleRequest()));
 	start();
 }
 
 void ApiLocalConnectionHandler::handleRequest()
 {
-	switch(mState)
+	char path[1024];
+	if(mLocalSocket->readLine(path, 1023) > 0)
 	{
-	case WAITING_PATH:
-	{
-		char path[1024];
-		mLocalSocket->readLine(path, 1023);
 		reqPath = path;
-		mState = WAITING_DATA;
-		break;
+		char jsonData[20480];
+		if(mLocalSocket->read(jsonData, 20479) > 0)
+		{
+			resource_api::JsonStream reqJson;
+			reqJson.setJsonString(std::string(jsonData));
+			resource_api::Request req(reqJson);
+			req.setPath(reqPath);
+			std::string resultString = mApiServer->handleRequest(req);
+			mLocalSocket->write(resultString.c_str(), resultString.length());
+			mLocalSocket->write("\n\0");
+		}
+		else
+		{
+			mLocalSocket->write("\"{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for path.\\n\",\"returncode\":\"fail\"}\"\n\0");
+			quit();
+		}
 	}
-	case WAITING_DATA:
+	else
 	{
-		char jsonData[1024];
-		mLocalSocket->read(jsonData, 1023);
-		resource_api::JsonStream reqJson;
-		reqJson.setJsonString(std::string(jsonData));
-		resource_api::Request req(reqJson);
-		req.setPath(reqPath);
-		std::string resultString = mApiServer->handleRequest(req);
-		mLocalSocket->write(resultString.data(), resultString.length());
-		mState = WAITING_PATH;
-		break;
-	}
+		mLocalSocket->write("{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for JSON data.\\n\",\"returncode\":\"fail\"}\"\n\0");
+		quit();
 	}
 }
 
 ApiLocalConnectionHandler::~ApiLocalConnectionHandler()
 {
+	mLocalSocket->flush();
 	mLocalSocket->close();
-	delete mLocalSocket;
+	mLocalSocket->deleteLater();
 }
-
 
 } // namespace resource_api
