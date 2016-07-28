@@ -152,8 +152,9 @@ RSettingsWin::initStackedWidget()
     addPage(new AppearancePage());
     addPage(new SoundPage() );
     addPage(new ServicePermissionsPage() );
+#ifdef ENABLE_WEBUI
     addPage(new WebuiPage() );
-
+#endif // ENABLE_WEBUI
 	 // add widgets from plugins
 
 	for(int i=0;i<rsPlugins->nbPlugins();++i)

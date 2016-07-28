@@ -15,7 +15,7 @@
 
 resource_api::ApiServer* WebuiPage::apiServer = 0;
 resource_api::ApiServerMHD* WebuiPage::apiServerMHD = 0;
-// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
+// TODO: LIBRESAPI_LOCAL_SERVER Put indipendent option for libresapilocalserver in appropriate place
 #ifdef LIBRESAPI_LOCAL_SERVER
 resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif

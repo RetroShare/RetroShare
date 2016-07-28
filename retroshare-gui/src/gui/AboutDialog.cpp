@@ -29,7 +29,10 @@
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
+
+#ifdef ENABLE_WEBUI
 #include <microhttpd.h>
+#endif
 
 #include <QClipboard>
 #include <QSysInfo>
@@ -781,11 +784,13 @@ void AboutDialog::on_copy_button_clicked()
     RsControl::instance()->getLibraries(libraries);
     verInfo+=addLibraries("libretroshare", libraries);
 
+#ifdef ENABLE_WEBUI
     /* Add version numbers of RetroShare */
     // Add versions here. Find a better place.
     libraries.clear();
     libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
     verInfo+=addLibraries("RetroShare", libraries);
+#endif // ENABLE_WEBUI
 
     /* Add version numbers of plugins */
     if (rsPlugins) {

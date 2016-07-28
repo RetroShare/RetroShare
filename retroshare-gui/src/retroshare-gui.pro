@@ -551,8 +551,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
-    gui/settings/WebuiPage.h \
-    gui/statistics/BWGraph.h \
+        gui/statistics/BWGraph.h \
     util/RsSyntaxHighlighter.h \
     util/imageutil.h
 
@@ -671,7 +670,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
-    gui/settings/WebuiPage.ui
+
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -854,7 +853,6 @@ SOURCES +=  main.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
-                gui/settings/WebuiPage.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \
@@ -1389,4 +1387,10 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+libresapihttpserver {
+    HEADERS *= gui/settings/WebuiPage.h
+    SOURCES *= gui/settings/WebuiPage.cpp
+    FORMS *= gui/settings/WebuiPage.ui
 }
