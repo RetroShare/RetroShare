@@ -47,6 +47,8 @@ public:
 
 	// Add QAction to context menu (action won't be deleted)
 	void addHeaderContextMenuAction(QAction *action);
+	// Add QMenu to context menu (menu won't be deleted)
+	void addHeaderContextMenuMenu(QMenu *menu);
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
@@ -69,6 +71,7 @@ private:
 	quint32 mSettingsVersion;
 	QMap<int, bool> mColumnCustomizable;
 	QList<QAction*> mHeaderContextMenuActions;
+	QList<QMenu*> mHeaderContextMenuMenus;
 };
 
 #endif
