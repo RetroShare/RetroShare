@@ -83,8 +83,8 @@ private slots:
 	void grantCircleMembership() ;
 	void revokeCircleMembership() ;
 
-	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
+	void filterToggled(const bool &value);
 
 	void addIdentity();
 	void removeIdentity();
@@ -149,6 +149,7 @@ private:
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;
+	int filter;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

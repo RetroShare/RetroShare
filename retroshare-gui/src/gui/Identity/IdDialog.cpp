@@ -202,22 +202,21 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
 	connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
-	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 
-	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
+	ui->avLabel_Person->setPixmap(QPixmap(":/images/user/friends64.png"));
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
 
-	ui->headerTextLabel->setText(tr("People"));
+	ui->headerTextLabel_Person->setText(tr("People"));
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
 	/* Initialize splitter */
-	ui->splitter->setStretchFactor(0, 0);
-	ui->splitter->setStretchFactor(1, 1);
+	ui->mainSplitter->setStretchFactor(0, 0);
+	ui->mainSplitter->setStretchFactor(1, 1);
 	
   /*remove
 	QList<int> sizes;
@@ -225,13 +224,54 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->splitter->setSizes(sizes);*/
 
 	/* Add filter types */
-    ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
-    ui->filterComboBox->addItem(tr("Owned by myself"), RSID_FILTER_OWNED_BY_YOU);
-    ui->filterComboBox->addItem(tr("Linked to my node"), RSID_FILTER_YOURSELF);
-    ui->filterComboBox->addItem(tr("Linked to neighbor nodes"), RSID_FILTER_FRIENDS);
-    ui->filterComboBox->addItem(tr("Linked to distant nodes"), RSID_FILTER_OTHERS);
-    ui->filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
-	ui->filterComboBox->setCurrentIndex(0);
+	QMenu *idTWHMenu = new QMenu(tr("Show"), this);
+	idTWHMenu->setVisible(true);
+	ui->idTreeWidget->addHeaderContextMenuMenu(idTWHMenu);
+
+	QActionGroup *idTWHActionGroup = new QActionGroup(this);
+	QAction *idTWHAction = new QAction(QIcon(),tr("All"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setChecked(true);
+	filter = RSID_FILTER_ALL;
+	idTWHAction->setData(RSID_FILTER_ALL);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Owned by myself"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_OWNED_BY_YOU);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to my node"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_YOURSELF);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to neighbor nodes"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_FRIENDS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to distant nodes"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_OTHERS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Anonymous"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_PSEUDONYMS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
 
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
@@ -576,8 +616,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 		// remove any identity that has an item, but no subscription flag entry
 		std::vector<QTreeWidgetItem*> to_delete ;
-        
-		for(uint32_t k=0;k<item->childCount();++k)
+
+		for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
 				to_delete.push_back(item->child(k));
 
@@ -599,7 +639,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			QTreeWidgetItem *subitem = NULL ;
 
 			// see if the item already exists
-			for(uint32_t k=0;k<item->childCount();++k)
+			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
 				{
 					subitem = item->child(k);
@@ -1247,7 +1287,7 @@ void IdDialog::processSettings(bool load)
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
 
 		// state of splitter
-		ui->splitter->restoreState(Settings->value("splitter").toByteArray());
+		ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
 	} else {
 		// save settings
 
@@ -1255,7 +1295,7 @@ void IdDialog::processSettings(bool load)
 		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
 
 		// state of splitter
-		Settings->setValue("splitter", ui->splitter->saveState());
+		Settings->setValue("splitter", ui->mainSplitter->saveState());
 		
 		//save expanding
 		Settings->setValue("ExpandAll", allItem->isExpanded());
@@ -1266,14 +1306,20 @@ void IdDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void IdDialog::filterComboBoxChanged()
-{
-	requestIdList();
-}
-
 void IdDialog::filterChanged(const QString& /*text*/)
 {
 	filterIds();
+}
+
+void IdDialog::filterToggled(const bool &value)
+{
+	if (value) {
+		QAction *source = qobject_cast<QAction *>(QObject::sender());
+		if (source) {
+			filter = source->data().toInt();
+			requestIdList();
+		}
+	}
 }
 
 void IdDialog::updateSelection()
@@ -1460,7 +1506,7 @@ void IdDialog::insertIdList(uint32_t token)
 {
 	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
 
-	int accept = ui->filterComboBox->itemData(ui->filterComboBox->currentIndex()).toInt();
+	int accept = filter;
 		
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
@@ -1633,7 +1679,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     time_t now = time(NULL) ;
     ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
-    ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+    ui->headerTextLabel_Person->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 
     QPixmap pixmap ;
 
@@ -1644,7 +1690,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
-    ui->avlabel->setPixmap(pixmap);
+    ui->avLabel_Person->setPixmap(pixmap);
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)
@@ -1664,23 +1710,23 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if(data.mPgpId.isNull())
 	{
 		ui->lineEdit_GpgId->hide() ;
-		ui->PgpId_LB->hide() ;
+		ui->label_GpgId->hide() ;
 	}
 	else
 	{
 		ui->lineEdit_GpgId->show() ;
-		ui->PgpId_LB->show() ;
+		ui->label_GpgId->show() ;
 	}
     
     if(data.mPgpKnown)
     {
 		ui->lineEdit_GpgName->show() ;
-		ui->PgpName_LB->show() ;
+		ui->label_GpgName->show() ;
     }
     else
     {
 		ui->lineEdit_GpgName->hide() ;
-		ui->PgpName_LB->hide() ;
+		ui->label_GpgName->hide() ;
     }
 
     bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
@@ -1702,7 +1748,9 @@ void IdDialog::insertIdDetails(uint32_t token)
             ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
     }
     else
+    {
         ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
+    }
 
 	if (isOwnId)
 	{
@@ -2054,7 +2102,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
     if(!one_item_owned_by_you)
     {
-	    if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item 
+		if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item
+		{
 		    if(own_identities.size() <= 1)
 		    {
 			    QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
@@ -2082,6 +2131,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				    action->setData(QString::fromStdString((*it).toStdString())) ;
 			    }
 		    }
+		}
 
 	    // always allow to send messages
 	    contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));

@@ -169,6 +169,11 @@ void RSTreeWidget::addHeaderContextMenuAction(QAction *action)
 	mHeaderContextMenuActions.push_back(action);
 }
 
+void RSTreeWidget::addHeaderContextMenuMenu(QMenu *menu)
+{
+	mHeaderContextMenuMenus.push_back(menu);
+}
+
 void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 {
 	QMenu contextMenu(this);
@@ -205,6 +210,13 @@ void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 		}
 
 		contextMenu.addActions(mHeaderContextMenuActions);
+	}
+
+	if (!mHeaderContextMenuMenus.isEmpty()) {
+		foreach(QMenu *menu, mHeaderContextMenuMenus) {
+			contextMenu.addSeparator();
+			contextMenu.addMenu(menu);
+		}
 	}
 
 	if (contextMenu.isEmpty()) {
