@@ -65,26 +65,26 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 
 // Flags used when requesting info about transfers, mostly to filter out the result.
 //
-const FileSearchFlags RS_FILE_HINTS_CACHE	 		       	 ( 0x00000001 );
-const FileSearchFlags RS_FILE_HINTS_EXTRA	 		       	 ( 0x00000002 );
-const FileSearchFlags RS_FILE_HINTS_LOCAL	 		       	 ( 0x00000004 );
-const FileSearchFlags RS_FILE_HINTS_REMOTE	 		       ( 0x00000008 );
+const FileSearchFlags RS_FILE_HINTS_CACHE_deprecated	    	 ( 0x00000001 );
+const FileSearchFlags RS_FILE_HINTS_EXTRA	 		    	 ( 0x00000002 );
+const FileSearchFlags RS_FILE_HINTS_LOCAL	 		    	 ( 0x00000004 );
+const FileSearchFlags RS_FILE_HINTS_REMOTE	 		     ( 0x00000008 );
 const FileSearchFlags RS_FILE_HINTS_DOWNLOAD		       	 ( 0x00000010 );
-const FileSearchFlags RS_FILE_HINTS_UPLOAD	 		       ( 0x00000020 );
-const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY	          ( 0x01000000 );
+const FileSearchFlags RS_FILE_HINTS_UPLOAD	 		     ( 0x00000020 );
+const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY	         ( 0x01000000 );
 
-const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE           ( 0x00000080 );// anonymously shared over network
-const FileSearchFlags RS_FILE_HINTS_BROWSABLE              ( 0x00000100 );// browsable by friends
-const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000180 );// OR of the last two flags. Used to filter out.
+const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE          ( 0x00000080 );// anonymously shared over network
+const FileSearchFlags RS_FILE_HINTS_BROWSABLE             ( 0x00000100 );// browsable by friends
+const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK       ( 0x00000180 );// OR of the last two flags. Used to filter out.
 
 // Flags used when requesting a transfer
 //
 const TransferRequestFlags RS_FILE_REQ_ANONYMOUS_ROUTING   ( 0x00000040 ); // Use to ask turtle router to download the file.
 const TransferRequestFlags RS_FILE_REQ_ASSUME_AVAILABILITY ( 0x00000200 ); // Assume full source availability. Used for cache files.
-const TransferRequestFlags RS_FILE_REQ_CACHE               ( 0x00000400 ); // Assume full source availability. Used for cache files.
+const TransferRequestFlags RS_FILE_REQ_CACHE_deprecated    ( 0x00000400 ); // Assume full source availability. Used for cache files.
 const TransferRequestFlags RS_FILE_REQ_EXTRA               ( 0x00000800 );
 const TransferRequestFlags RS_FILE_REQ_MEDIA	              ( 0x00001000 );
-const TransferRequestFlags RS_FILE_REQ_BACKGROUND	        ( 0x00002000 ); // To download slowly.
+const TransferRequestFlags RS_FILE_REQ_BACKGROUND	          ( 0x00002000 ); // To download slowly.
 const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// disable searching for potential direct sources.
 
 // const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS 
@@ -221,9 +221,6 @@ class RsFiles
 		virtual void setRememberHashFiles(bool) =0;
 				virtual void setWatchPeriod(int minutes) =0;
 		virtual int watchPeriod() const =0;
-
-		virtual CacheStrapper *getCacheStrapper() =0;
-		virtual CacheTransfer *getCacheTransfer() =0;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;

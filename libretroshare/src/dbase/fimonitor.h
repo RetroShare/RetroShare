@@ -137,7 +137,7 @@ class FileIndexMonitor: public CacheSource, public RsTickingThread
 		// Interface for browsing dir hirarchy
 		int RequestDirDetails(void*, DirDetails&, FileSearchFlags) const ;
 		uint32_t getType(void*) const ;
-		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
+        int RequestDirDetails(const std::string& path, DirDetails &details) const ;
 
 		// set/update shared directories
 		virtual void    setSharedDirectories(const std::list<SharedDirInfo>& dirs);
@@ -146,7 +146,7 @@ class FileIndexMonitor: public CacheSource, public RsTickingThread
 
 		void    forceDirectoryCheck();				// Force re-sweep the directories and see what's changed
 		void    forceDirListsRebuildAndSend() ; 	// Force re-build dir lists because groups have changed. Does not re-check files.
-		bool	inDirectoryCheck();
+        bool		inDirectoryCheck();
 
 		/* util fns */
 

@@ -410,12 +410,13 @@ void RsPluginManager::slowTickPlugins(time_t seconds)
 
 void RsPluginManager::registerCacheServices()
 {
+#warning this code should go
 	std::cerr << "  Registering cache services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
 		{
-			rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
+            //rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
 			std::cerr << "     adding new cache pair for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
 		}
 }

@@ -21,22 +21,29 @@
 //
 #pragma once
 
+#include "ft/ftsearch.h"
 #include "retroshare/rsfiles.h"
 #include "services/p3service.h"
+
+#include "file_sharing/hash_cache.h"
 
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3linkmgr.h"
 
-class RemoteDirectoryStorage ;
-class RemoteSharedDirectoryWatcher ;
-class LocalSharedDirectoryWatcher ;
-class LocalSharedDirectoryMap ;
-class HashCache ;
+class RemoteDirectoryUpdater ;
+class LocalDirectoryUpdater ;
 
-class p3FileLists: public p3Service, public p3Config //, public RsSharedFileService
+class RemoteDirectoryStorage ;
+class LocalDirectoryStorage ;
+
+class HashStorage ;
+
+class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
 {
 	public:
 		typedef uint64_t EntryIndex ;	// this should probably be defined elsewhere
+
+        virtual RsServiceInfo getServiceInfo();
 
         struct RsFileListSyncRequest
         {
@@ -45,12 +52,17 @@ class p3FileLists: public p3Service, public p3Config //, public RsSharedFileServ
             // [...] more to add here
         };
 
-        p3FileLists(p3LinkMgr *mpeers) ;
-        ~p3FileLists();
+        p3FileDatabase(p3ServiceControl *mpeers) ;
+        ~p3FileDatabase();
 
-		/*   
-		 */
-		 
+        /*!
+        * \brief forceSyncWithPeers
+        *
+        * Forces the synchronisation of the database with connected peers. This is triggered when e.g. a new gorup of friend is created, or when
+        * a friend was added/removed from a group.
+        */
+            void forceSyncWithPeers();
+
 		// derived from p3Service
 		//
 		virtual int tick() ;
@@ -62,32 +74,61 @@ class p3FileLists: public p3Service, public p3Config //, public RsSharedFileServ
 		virtual int SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) ;
 		virtual int SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
+        // ftSearch
+        virtual bool search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
+
 		// Interface for browsing dir hierarchy
 		//
-		int RequestDirDetails(EntryIndex, DirDetails&, FileSearchFlags) const ;
-		uint32_t getType(const EntryIndex&) const ;
+
+        void stopThreads() ;
+        void startThreads() ;
+
+        int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
 		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
 
-      // set/update shared directories
-		void setSharedDirectories(const std::list<SharedDirInfo>& dirs);
-		void getSharedDirectories(std::list<SharedDirInfo>& dirs);
-		void updateShareFlags(const SharedDirInfo& info) ;
+        // void * here is the type expected by the abstract model index from Qt. It gets turned into a DirectoryStorage::EntryIndex internally.
+
+        int RequestDirDetails(void *, DirDetails&, FileSearchFlags) const ;
+        uint32_t getType(void *) const ;
+
+        // set/update shared directories
+        void setSharedDirectories(const std::list<SharedDirInfo>& dirs);
+        void getSharedDirectories(std::list<SharedDirInfo>& dirs);
+        void updateShareFlags(const SharedDirInfo& info) ;
+        bool convertSharedFilePath(const std::string& path,std::string& fullpath);
+
+        // interface for hash caching
+
+        void setWatchPeriod(uint32_t seconds);
+        uint32_t watchPeriod() ;
+        void setRememberHashCacheDuration(uint32_t days) ;
+        uint32_t rememberHashCacheDuration() ;
+        void clearHashCache() ;
+        bool rememberHashCache() ;
+        void setRememberHashCache(bool) ;
+
+        // interfact for directory parsing
 
 		void forceDirectoryCheck();              // Force re-sweep the directories and see what's changed
 		bool inDirectoryCheck();
 
-		// Derived from p3Config
-		//
+        // debug
+        void full_print();
+
     protected:
+        // Derived from p3Config
+        //
         virtual bool loadList(std::list<RsItem *>& items);
-        virtual bool saveList(const std::list<RsItem *>& items);
+        virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+        virtual RsSerialiser *setupSerialiser() ;
+
         void cleanup();
         void tickRecv();
         void tickSend();
         void tickWatchers();
 
     private:
-        p3LinkMgr *mLinkMgr ;
+        p3ServiceControl *mServCtrl ;
 
 		// File sync request queues. The fast one is used for online browsing when friends are connected.
 		// The slow one is used for background update of file lists.
@@ -98,15 +139,14 @@ class p3FileLists: public p3Service, public p3Config //, public RsSharedFileServ
 		// Directory storage hierarchies
 		//
 		std::map<RsPeerId,RemoteDirectoryStorage *> mRemoteDirectories ;
-		
-		LocalSharedDirectoryMap *mLocalSharedDirs ;
+        LocalDirectoryStorage *mLocalSharedDirs ;
 
-		RemoteSharedDirectoryWatcher *mRemoteDirWatcher ;
-		LocalSharedDirectoryWatcher *mLocalDirWatcher ;
+        RemoteDirectoryUpdater *mRemoteDirWatcher ;
+        LocalDirectoryUpdater *mLocalDirWatcher ;
 
 		// We use a shared file cache as well, to avoid re-hashing files with known modification TS and equal name.
 		//
-		HashCache *mHashCache ;
+        HashStorage *mHashCache ;
 
         // Local flags and mutexes
 

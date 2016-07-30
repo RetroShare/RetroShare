@@ -1594,9 +1594,9 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 
 int FileIndexMonitor::RequestDirDetails(const std::string& path, DirDetails& details) const
 {
-	/* lock it up */
-	RsStackMutex mutex(fiMutex) ;
-	return fi.extractData(path,details) ;
+    /* lock it up */
+    RsStackMutex mutex(fiMutex) ;
+    return fi.extractData(path,details) ;
 }
 
 uint32_t FileIndexMonitor::getType(void *ref) const

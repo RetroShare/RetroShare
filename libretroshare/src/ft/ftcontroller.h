@@ -113,12 +113,12 @@ class ftPendingRequest
 };
 
 
-class ftController: public CacheTransfer, public RsTickingThread, public pqiServiceMonitor, public p3Config
+class ftController: public RsTickingThread, public pqiServiceMonitor, public p3Config
 {
 	public:
 
 		/* Setup */
-		ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
+        ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
 
 		void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 		void	setTurtleRouter(p3turtle *) ;
@@ -195,10 +195,6 @@ class ftController: public CacheTransfer, public RsTickingThread, public pqiServ
 
 	protected:
 
-    virtual bool RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
-        virtual bool CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
-
-		void cleanCacheDownloads() ;
 		void searchForDirectSources() ;
 		void tickTransfers() ;
 
