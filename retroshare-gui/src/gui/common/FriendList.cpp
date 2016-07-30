@@ -187,8 +187,9 @@ void FriendList::addToolButton(QToolButton *toolButton)
 
     /* Initialize button */
     toolButton->setAutoRaise(true);
-    toolButton->setIconSize(ui->displayButton->iconSize());
-    toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
+    float S = QFontMetricsF(ui->filterLineEdit->font()).height() ;
+    toolButton->setIconSize(QSize(S*1.5,S*1.5));
+    toolButton->setFocusPolicy(Qt::NoFocus);
 
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
@@ -2283,16 +2284,16 @@ void FriendList::addPeerToExpand(const std::string &gpgId)
 
 void FriendList::createDisplayMenu()
 {
-    QMenu *displayMenu = new QMenu(this);
+    QMenu *displayMenu = new QMenu(tr("Show"), this);
     connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
 
     displayMenu->addAction(ui->actionHideOfflineFriends);
     displayMenu->addAction(ui->actionShowState);
     displayMenu->addAction(ui->actionShowGroups);
-    displayMenu->addAction(ui->actionExportFriendlist);
-    displayMenu->addAction(ui->actionImportFriendlist);
 
-    ui->displayButton->setMenu(displayMenu);
+    ui->peerTreeWidget->addHeaderContextMenuMenu(displayMenu);
+    ui->peerTreeWidget->addHeaderContextMenuAction(ui->actionExportFriendlist);
+    ui->peerTreeWidget->addHeaderContextMenuAction(ui->actionImportFriendlist);
 }
 
 void FriendList::updateMenu()
