@@ -1176,9 +1176,9 @@ void FriendList::insertPeers()
             gpgItem->setData(COLUMN_NAME, ROLE_FILTER, gpgName);
 
             gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
-            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
+            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(bestLastContact));
             gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
-            gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, showInfoAtGpgItem ? bestIP : "");
+            gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, bestIP);
 
             /* Sort data */
             gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, gpgName);
