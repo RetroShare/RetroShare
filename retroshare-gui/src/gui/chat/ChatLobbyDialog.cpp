@@ -135,8 +135,15 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     RsGxsId current_id;
     rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
 
+    uint32_t idChooserFlag = IDCHOOSER_ID_REQUIRED;
+    ChatLobbyInfo lobbyInfo ;
+    if(rsMsgs->getChatLobbyInfo(lobbyId,lobbyInfo)) {
+        if (lobbyInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) {
+            idChooserFlag |= IDCHOOSER_NON_ANONYMOUS;
+        }
+    }
     ownIdChooser = new GxsIdChooser() ;
-    ownIdChooser->loadIds(IDCHOOSER_ID_REQUIRED,current_id) ;
+    ownIdChooser->loadIds(idChooserFlag, current_id) ;
     
     QWidgetAction *checkableAction = new QWidgetAction(this);
     checkableAction->setDefaultWidget(ownIdChooser);
@@ -280,8 +287,6 @@ void ChatLobbyDialog::init()
     ChatLobbyInfo linfo ;
 
     QString title;
-
-    std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 
     if(rsMsgs->getChatLobbyInfo(lobbyId,linfo))
     {
