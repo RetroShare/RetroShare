@@ -24,7 +24,9 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include "ProfileManager.h"
+#include "util/misc.h"
 #include "gui/GenCertDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/common/RSTreeWidgetItem.h"
 
 #include <QAbstractEventDispatcher>
@@ -145,7 +147,10 @@ void ProfileManager::exportIdentity()
 
 void ProfileManager::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Import Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+    QString fname ;
+
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import Identity"), tr("RetroShare Identity files (*.asc)"),fname))
+            return ;
 
 	if(fname.isNull())
 		return ;

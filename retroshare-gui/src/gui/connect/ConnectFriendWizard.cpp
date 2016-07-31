@@ -31,6 +31,8 @@
 #include <QUrlQuery>
 #endif
 
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
 #include "ConnectFriendWizard.h"
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
@@ -1040,7 +1042,9 @@ void ConnectFriendWizard::saveCert()
 
 void ConnectFriendWizard::loadFriendCert()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString fileName ;
+    if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+            return ;
 
 	if (!fileName.isNull()) {
 		ui->friendFileNameEdit->setText(fileName);

@@ -75,8 +75,9 @@ public:
 		LASTDIR_IMAGES,
 		LASTDIR_MESSAGES,
 		LASTDIR_BLOGS,
-		LASTDIR_SOUNDS
-	};
+        LASTDIR_SOUNDS,
+        LASTDIR_PLUGIN
+    };
 
 	enum enumToasterPosition
 	{
