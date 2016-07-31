@@ -402,8 +402,8 @@ void GenCertDialog::exportIdentity()
 {
 	QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("RetroShare profile files (*.asc)")) ;
 
-	if(fname.isNull())
-		return ;
+	if(fname.isNull()) return ;
+	if(fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
 	RsPgpId gpg_id (data.toString().toStdString()) ;
@@ -416,7 +416,7 @@ void GenCertDialog::exportIdentity()
 
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Import profile"), "",tr("RetroShare profile files (*.asc)")) ;
+	QString fname = QFileDialog::getOpenFileName(this,tr("Import profile"), "",tr("RetroShare profile files (*.asc);;All Files (*)")) ;
 
 	if(fname.isNull())
 		return ;
