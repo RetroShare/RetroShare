@@ -135,9 +135,7 @@ void ProfileManager::exportIdentity()
 	if (fname.isNull())
 		return;
 
-	if (QFileInfo(fname).suffix().isEmpty()) {
-		fname += ".asc";
-	}
+	if (fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
 		QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
