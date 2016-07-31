@@ -225,7 +225,6 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	/* Add filter types */
 	QMenu *idTWHMenu = new QMenu(tr("Show"), this);
-	idTWHMenu->setVisible(true);
 	ui->idTreeWidget->addHeaderContextMenuMenu(idTWHMenu);
 
 	QActionGroup *idTWHActionGroup = new QActionGroup(this);
