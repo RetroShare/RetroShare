@@ -56,6 +56,7 @@ private slots:
 	void makeDir() ;
 	void fileHashingFinished(QList<HashedFile> hashedFiles) ;
 	void itemChanged(QTreeWidgetItem* item,int col) ;
+	void updateRemoveDuplicate(bool checked);
 	void cancel() ;
 	void download() ;
 	void save() ;
