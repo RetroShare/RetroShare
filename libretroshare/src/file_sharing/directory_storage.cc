@@ -1,4 +1,5 @@
 #include <set>
+#include "util/rsdir.h"
 #include "directory_storage.h"
 
 /******************************************************************************************************************/
@@ -321,6 +322,8 @@ private:
 
         return true ;
     }
+
+    std::map<RsFileHash,DirectoryStorage::EntryIndex> mHashes ; // used for fast search access
 };
 
 /******************************************************************************************************************/
@@ -442,10 +445,71 @@ void DirectoryStorage::print()
 void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    mLocalDirs = lst ;
+
+    for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!= lst.end();++it)
+            mLocalDirs[(*it).filename] = *it ;
 }
 void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    lst = mLocalDirs ;
+
+    lst.clear();
+
+    for(std::map<std::string,SharedDirInfo>::iterator it(mLocalDirs.begin());it!=mLocalDirs.end();++it)
+        lst.push_back(it->second) ;
 }
+
+void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    std::map<std::string,SharedDirInfo>::iterator it = mLocalDirs.find(info.virtualname) ;
+
+    if(it == mLocalDirs.end())
+    {
+        std::cerr << "(EE) LocalDirectoryStorage::updateShareFlags: directory \"" << info.filename << "\" not found" << std::endl;
+        return ;
+    }
+    it->second = info;
+}
+
+bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::string& fullpath)
+{
+    std::string shpath  = RsDirUtil::removeRootDir(path);
+    std::string basedir = RsDirUtil::getRootDir(path);
+    std::string realroot ;
+    {
+        RS_STACK_MUTEX(mDirStorageMtx) ;
+        realroot = locked_findRealRootFromVirtualFilename(basedir);
+    }
+
+    if (realroot.empty())
+        return false;
+
+    /* construct full name */
+    fullpath = realroot + "/";
+    fullpath += shpath;
+
+    return true;
+}
+
+std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
+{
+    /**** MUST ALREADY BE LOCKED ****/
+
+    std::map<std::string, SharedDirInfo>::const_iterator cit = mLocalDirs.find(virtual_rootdir) ;
+
+    if (cit == mLocalDirs.end())
+    {
+        std::cerr << "FileIndexMonitor::locked_findRealRoot() Invalid RootDir: " << virtual_rootdir << std::endl;
+        return std::string();
+    }
+    return cit->second.filename;
+}
+
+bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info)
+{
+    NOT_IMPLEMENTED() ;
+    return false;
+}
+

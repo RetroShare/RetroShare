@@ -551,10 +551,9 @@ uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
     return mFileDatabase->getType(ref) ;
 }
-	/***************************************************************/
-	/******************** Search Interface *************************/
-	/***************************************************************/
-
+/***************************************************************/
+/******************** Search Interface *************************/
+/***************************************************************/
 
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags)
 {

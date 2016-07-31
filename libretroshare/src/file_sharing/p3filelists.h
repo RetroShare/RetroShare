@@ -26,6 +26,7 @@
 #include "services/p3service.h"
 
 #include "file_sharing/hash_cache.h"
+#include "file_sharing/directory_storage.h"
 
 #include "pqi/p3cfgmgr.h"
 #include "pqi/p3linkmgr.h"
@@ -41,7 +42,7 @@ class HashStorage ;
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
 {
 	public:
-		typedef uint64_t EntryIndex ;	// this should probably be defined elsewhere
+        typedef DirectoryStorage::EntryIndex EntryIndex;	// this should probably be defined elsewhere
 
         virtual RsServiceInfo getServiceInfo();
 
@@ -58,10 +59,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         /*!
         * \brief forceSyncWithPeers
         *
-        * Forces the synchronisation of the database with connected peers. This is triggered when e.g. a new gorup of friend is created, or when
+        * Forces the synchronisation of the database with connected peers. This is triggered when e.g. a new group of friend is created, or when
         * a friend was added/removed from a group.
         */
-            void forceSyncWithPeers();
+        void forceSyncWithPeers() { NOT_IMPLEMENTED() ; }
 
 		// derived from p3Service
 		//
@@ -92,6 +93,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         uint32_t getType(void *) const ;
 
         // set/update shared directories
+
         void setSharedDirectories(const std::list<SharedDirInfo>& dirs);
         void getSharedDirectories(std::list<SharedDirInfo>& dirs);
         void updateShareFlags(const SharedDirInfo& info) ;
@@ -116,11 +118,15 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void full_print();
 
     protected:
+
+        int filterResults(const std::list<EntryIndex>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;
+        std::string makeRemoteFileName(const RsPeerId& pid) const;
+
         // Derived from p3Config
         //
         virtual bool loadList(std::list<RsItem *>& items);
         virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-        virtual RsSerialiser *setupSerialiser() ;
+        virtual RsSerialiser *setupSerialiser() { return NULL;}
 
         void cleanup();
         void tickRecv();

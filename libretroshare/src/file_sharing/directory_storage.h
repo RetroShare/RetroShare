@@ -16,6 +16,8 @@ static const uint8_t DIRECTORY_STORAGE_TAG_DIR_NAME          =  0x04 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_MODIF_TS          =  0x05 ;
 static const uint8_t DIRECTORY_STORAGE_TAG_RECURS_MODIF_TS   =  0x06 ;
 
+#define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
+
 class InternalFileHierarchyStorage ;
 
 class DirectoryStorage
@@ -29,9 +31,9 @@ class DirectoryStorage
 
 		void save() const ;
 
-        virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const { return 0;}
-        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const { return 0;}
-        virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { return 0; }
+        virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0;}
+        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
+        virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
 		void getFileDetails(EntryIndex i) ;
 
@@ -112,7 +114,6 @@ class DirectoryStorage
 
         InternalFileHierarchyStorage *mFileHierarchy ;
         std::string mFileName;
-
     protected:
         RsMutex mDirStorageMtx ;
 };
@@ -120,7 +121,7 @@ class DirectoryStorage
 class RemoteDirectoryStorage: public DirectoryStorage
 {
 public:
-    RemoteDirectoryStorage(const RsPeerId& pid) ;
+    RemoteDirectoryStorage(const std::string& fname) : DirectoryStorage(fname) {}
     virtual ~RemoteDirectoryStorage() {}
 };
 
@@ -133,10 +134,20 @@ public:
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
     void getSharedDirectoryList(std::list<SharedDirInfo>& lst) ;
 
-private:
-    std::list<SharedDirInfo> mLocalDirs ;
+    void updateShareFlags(const SharedDirInfo& info) ;
+    bool convertSharedFilePath(const std::string& path_with_virtual_name,std::string& fullpath) ;
 
-    std::map<RsFileHash,EntryIndex> mHashes ;		// used for fast search access
+    /*!
+     * \brief getFileInfo Converts an index info a full file info structure.
+     * \param i index in the directory structure
+     * \param info structure to be filled in
+     * \return false if the file does not exist, or is a directory,...
+     */
+    bool getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info) ;
+private:
+    std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
+
+    std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
 };
 
 
