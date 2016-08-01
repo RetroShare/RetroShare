@@ -230,6 +230,13 @@ private:
     void locked_completeTransaction(NxsTransaction* trans);
 
     /*!
+     * \brief locked_stampMsgServerUpdateTS
+     * 		updates the server msg time stamp. This function is the locked method for the one above with similar name
+     * \param gid group id to stamp.
+     * \return
+     */
+    bool locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid);
+    /*!
      * This retrieves a unique transaction id that
      * can be used in an outgoing transaction
      */

@@ -2096,14 +2096,16 @@ void RsGxsNetService::updateServerSyncTS()
 	else
 			msui = mapIT->second;
 
-        if(grpMeta->mLastPost > msui->msgUpdateTS )
-        {
-            change = true;
-            msui->msgUpdateTS = grpMeta->mLastPost;
+        // (cyril) I'm removing this, becuse mLastPost is *never* updated. So this code it not useful at all.
+        //
+        // if(grpMeta->mLastPost > msui->msgUpdateTS )
+        // {
+        // 	change = true;
+        // 	msui->msgUpdateTS = grpMeta->mLastPost;
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
+        // 	GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
 #endif
-        }
+        // }
 
 		// This is needed for group metadata updates to actually propagate: only a new grpUpdateTS will trigger the exchange of groups mPublishTs which
         	// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
@@ -2596,6 +2598,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             // for the grp id
             locked_doMsgUpdateWork(tr->mTransaction, grpId);
 
+            // also update server sync TS, since we need to send the new message list to friends for comparison
+            locked_stampMsgServerUpdateTS(grpId);
         }
     }
     else if(tr->mFlag == NxsTransaction::FLAG_STATE_FAILED)
@@ -4897,6 +4901,11 @@ bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
+    locked_stampMsgServerUpdateTS(gid) ;
+}
+
+bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
+{
     std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::iterator it = mServerMsgUpdateMap.find(gid) ;
 
     if(mServerMsgUpdateMap.end() == it)
@@ -4910,4 +4919,3 @@ bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
     return true;
 }
-
