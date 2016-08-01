@@ -144,6 +144,15 @@ public:
      * \return 		false if the group is not found, true otherwise
      */
     virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+
+    /*!
+     * \brief stampMsgServerUpdateTS
+     * 		Updates the msgServerUpdateMap structure to time(NULL), so as to trigger sending msg lists to friends.
+     * 		This is needed when e.g. posting a new message to a group.
+     * \param gid the group to stamp in msgServerUpdateMap
+     * \return
+     */
+    virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
 };
 
 #endif // RSGNP_H

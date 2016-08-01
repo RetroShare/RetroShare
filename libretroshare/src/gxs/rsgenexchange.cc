@@ -2019,6 +2019,9 @@ void RsGenExchange::publishMsgs()
 
 				delete[] metaDataBuff;
 
+                if(mNetService != NULL)
+                    mNetService->stampMsgServerUpdateTS(grpId) ;
+
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
 				mDataAccess->updatePublicRequestStatus(mit->first, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
