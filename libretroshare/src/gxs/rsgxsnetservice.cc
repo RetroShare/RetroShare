@@ -2096,16 +2096,14 @@ void RsGxsNetService::updateServerSyncTS()
 	else
 			msui = mapIT->second;
 
-        // (cyril) I'm removing this, becuse mLastPost is *never* updated. So this code it not useful at all.
-        //
-        // if(grpMeta->mLastPost > msui->msgUpdateTS )
-        // {
-        // 	change = true;
-        // 	msui->msgUpdateTS = grpMeta->mLastPost;
+        if(grpMeta->mLastPost > msui->msgUpdateTS )
+        {
+            change = true;
+            msui->msgUpdateTS = grpMeta->mLastPost;
 #ifdef NXS_NET_DEBUG_0
-        // 	GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
+            GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
 #endif
-        // }
+        }
 
 		// This is needed for group metadata updates to actually propagate: only a new grpUpdateTS will trigger the exchange of groups mPublishTs which
         	// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
