@@ -712,25 +712,25 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
     // start a transaction
     mDb->beginTransaction();
 
-    for(; mit != msg.end(); ++mit){
-
+    for(; mit != msg.end(); ++mit)
+    {
         RsNxsMsg* msgPtr = mit->first;
         RsGxsMsgMetaData* msgMetaPtr = mit->second;
 
 #ifdef RS_DATA_SERVICE_DEBUG 
-	std::cerr << "RsDataService::storeMessage() ";
-	std::cerr << " GroupId: " << msgMetaPtr->mGroupId.toStdString();
-	std::cerr << " MessageId: " << msgMetaPtr->mMsgId.toStdString();
-	std::cerr << std::endl;
+        std::cerr << "RsDataService::storeMessage() ";
+        std::cerr << " GroupId: " << msgMetaPtr->mGroupId.toStdString();
+        std::cerr << " MessageId: " << msgMetaPtr->mMsgId.toStdString();
+        std::cerr << std::endl;
 #endif
 
         // skip msg item if size if greater than
         if(!validSize(msgPtr))
-	{
-		std::cerr << "RsDataService::storeMessage() ERROR invalid size";
-		std::cerr << std::endl;
-		continue;
-	}
+        {
+            std::cerr << "RsDataService::storeMessage() ERROR invalid size";
+            std::cerr << std::endl;
+            continue;
+        }
 
         ContentValue cv;
 
@@ -773,14 +773,18 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_CHILD_TS, (int32_t)msgMetaPtr->mChildTs);
 
         if (!mDb->sqlInsert(MSG_TABLE_NAME, "", cv))
-	{
-		std::cerr << "RsDataService::storeMessage() sqlInsert Failed";
-		std::cerr << std::endl;
-		std::cerr << "\t For GroupId: " << msgMetaPtr->mGroupId.toStdString();
-		std::cerr << std::endl;
-		std::cerr << "\t & MessageId: " << msgMetaPtr->mMsgId.toStdString();
-		std::cerr << std::endl;
-	}
+        {
+            std::cerr << "RsDataService::storeMessage() sqlInsert Failed";
+            std::cerr << std::endl;
+            std::cerr << "\t For GroupId: " << msgMetaPtr->mGroupId.toStdString();
+            std::cerr << std::endl;
+            std::cerr << "\t & MessageId: " << msgMetaPtr->mMsgId.toStdString();
+            std::cerr << std::endl;
+        }
+
+        // This is needed so that mLastPost is correctly updated in the group meta when it is re-loaded.
+
+        locked_clearGrpMetaCache(msgMetaPtr->mGroupId);
     }
 
     // finish transaction
