@@ -52,6 +52,7 @@ void ApiLocalConnectionHandler::handleRequest()
 			std::string resultString = mApiServer->handleRequest(req);
 			mLocalSocket->write(resultString.c_str(), resultString.length());
 			mLocalSocket->write("\n\0");
+			quit();
 		}
 		else
 		{
