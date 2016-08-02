@@ -59,7 +59,7 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 {
 	cancelled = false ;
     {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
         if(mFixedPassword != "")
         {
             password = mFixedPassword;
@@ -78,7 +78,7 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
     {
         usleep(5*1000);
 
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+		RS_STACK_MUTEX(mDataMtx); // ********** LOCKED **********
         wait = mWantPassword;
         if(!wait && mPassword != "")
         {

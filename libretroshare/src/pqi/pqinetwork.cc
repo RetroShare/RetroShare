@@ -275,7 +275,11 @@ int inet_aton(const char *name, struct in_addr *addr)
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 #else // WINDOWS_SYS
+#ifdef __ANDROID__
+#include "util/ifaddrs.h"
+#else // __ANDROID__
 #include <ifaddrs.h>
+#endif //__ANDROID__
 #include <net/if.h>
 #endif // WINDOWS_SYS
 

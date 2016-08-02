@@ -134,8 +134,7 @@ linux-* {
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = $${QMAKE_CXX}
 
-	contains(CONFIG, NO_SQLCIPHER) {
-		DEFINES *= NO_SQLCIPHER
+    no_sqlcipher {
 		PKGCONFIG *= sqlite3
 	} else {
 		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
@@ -146,7 +145,7 @@ linux-* {
 				DEPENDPATH += ../../../lib/
 				INCLUDEPATH += ../../../lib/
 			} else {
-				error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=NO_SQLCIPHER")
+                error("libsqlcipher is not installed and libsqlcipher.a not found. SQLCIPHER is necessary for encrypted database, to build with unencrypted database, run: qmake CONFIG+=no_sqlcipher")
 			}
 		} else {
 			# Workaround for broken sqlcipher packages, e.g. Ubuntu 14.04
@@ -160,7 +159,7 @@ linux-* {
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
-	CONFIG += upnp_libupnp
+    CONFIG += upnp_libupnp
 
 	# Check if the systems libupnp has been Debian-patched
 	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
@@ -309,7 +308,7 @@ freebsd-* {
 
 	# linux/bsd can use either - libupnp is more complete and packaged.
 	#CONFIG += upnp_miniupnpc 
-	CONFIG += upnp_libupnp
+    CONFIG += upnp_libupnp
 }
 
 ################################# OpenBSD ##########################################
@@ -334,6 +333,15 @@ haiku-* {
 	CONFIG += release
 	CONFIG += upnp_libupnp
 	DESTDIR = lib
+}
+
+################################# Android #####################################
+
+android-g++ {
+    ## ifaddrs is missing on Android add them
+    ## taken from https://github.com/morristech/android-ifaddrs
+    HEADERS *= util/ifaddrs.h
+    SOURCES *= util/ifaddrs.c
 }
 
 ################################### COMMON stuff ##################################

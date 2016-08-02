@@ -3,36 +3,47 @@
 TEMPLATE = subdirs
 #CONFIG += tests
 
-SUBDIRS += \
-        openpgpsdk \
-        libbitdht \
-        libretroshare \
-        libresapi \
-        retroshare_gui \
-        retroshare_nogui \
-        plugins
-
+SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
+SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
 
+SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
 libretroshare.depends = openpgpsdk libbitdht
 
+SUBDIRS += libresapi
 libresapi.file = libresapi/src/libresapi.pro
 libresapi.depends = libretroshare
 
-retroshare_gui.file = retroshare-gui/src/retroshare-gui.pro
-retroshare_gui.depends = libretroshare libresapi
-retroshare_gui.target = retroshare-gui
+retroshare_gui {
+    SUBDIRS += retroshare_gui
+    retroshare_gui.file = retroshare-gui/src/retroshare-gui.pro
+    retroshare_gui.depends = libretroshare libresapi
+    retroshare_gui.target = retroshare_gui
+}
 
-retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
-retroshare_nogui.depends = libretroshare libresapi
-retroshare_nogui.target = retroshare-nogui
+retroshare_nogui {
+    SUBDIRS += retroshare_nogui
+    retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
+    retroshare_nogui.depends = libretroshare libresapi
+    retroshare_nogui.target = retroshare_nogui
+}
 
-plugins.file = plugins/plugins.pro
-plugins.depends = retroshare_gui
-plugins.target = plugins
+retroshare_android_service {
+    SUBDIRS += retroshare_android_service
+    retroshare_android_service.file = retroshare-android-service/src/retroshare-android-service.pro
+    retroshare_android_service.depends = libretroshare libresapi
+    retroshare_android_service.target = retroshare_android_service
+}
+
+retroshare_plugins {
+    SUBDIRS += plugins
+    plugins.file = plugins/plugins.pro
+    plugins.depends = retroshare_gui
+    plugins.target = plugins
+}
 
 wikipoos {
     SUBDIRS += pegmarkdown

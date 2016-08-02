@@ -200,6 +200,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	/******************** OSX KeyChain stuff *****************************/
 #else /* UNIX, but not HAS_GNOME_KEYRING or APPLE */
 
+#ifdef TODO_CODE_ROTTEN
 	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName(ssl_id).c_str(), "r");
 
 	if(helpFile == NULL){
@@ -248,6 +249,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 		delete key;
 
 	return true;
+#endif //TODO_CODE_ROTTEN
 #endif // APPLE
 #endif	// HAS_GNOME_KEYRING
 	/******* WINDOWS BELOW *****/
@@ -419,6 +421,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 	/***************** OSX KEYCHAIN ****************/
 #else
+#ifdef TODO_CODE_ROTTEN
 
 	/* WARNING: Autologin is inherently unsafe */
 	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName.c_str(), "w");
@@ -450,6 +453,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 
 	return true;
+#endif // TODO_CODE_ROTTEN
 #endif // __APPLE__
 #endif // HAS_GNOME_KEYRING.
 #else  /* windows */
