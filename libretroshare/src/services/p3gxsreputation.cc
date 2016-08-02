@@ -493,8 +493,8 @@ bool p3GxsReputation::processIncoming()
 		switch(item->PacketSubType())
 		{
 			default:
-			case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM:
-			case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM:
+            case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM:
+            case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM:
 				std::cerr << "p3GxsReputation::processingIncoming() Unknown Item";
 				std::cerr << std::endl;
 				itemOk = false;
@@ -931,6 +931,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mOwnOpinion = rit->second.mOwnOpinion;
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
 		item->mIdentityFlags = rit->second.mIdentityFlags;
+        item->mOwnerNodeId = rit->second.mOwnerNode;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -1069,6 +1070,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 	reputation.mOwnOpinion = item->mOwnOpinion;
 	reputation.mOwnOpinionTs = item->mOwnOpinionTS;
+    reputation.mOwnerNode = item->mOwnerNodeId;
 
 	// if dropping entries has changed the score -> must update.
     
