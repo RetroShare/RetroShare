@@ -24,7 +24,10 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
+
+#ifdef ENABLE_WEBUI
 #include <microhttpd.h>
+#endif // ENABLE_WEBUI
 
 #include <QFile>
 #include <QTextStream>
@@ -94,11 +97,13 @@ HelpDialog::HelpDialog(QWidget *parent) :
 	RsControl::instance()->getLibraries(libraries);
 	addLibraries(ui->libraryLayout, "libretroshare", libraries);
 
+#ifdef ENABLE_WEBUI
 	/* Add version numbers of RetroShare */
 	// Add versions here. Find a better place.
 	libraries.clear();
 	libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
 	addLibraries(ui->libraryLayout, "RetroShare", libraries);
+#endif // ENABLE_WEBUI
 
 	/* Add version numbers of plugins */
 	if (rsPlugins) {

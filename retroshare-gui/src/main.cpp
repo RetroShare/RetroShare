@@ -397,13 +397,17 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
+#ifdef ENABLE_WEBUI
     WebuiPage::checkStartWebui();
+#endif // ENABLE_WEBUI
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
 
+#ifdef ENABLE_WEBUI
 	WebuiPage::checkShutdownWebui();
+#endif // ENABLE_WEBUI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

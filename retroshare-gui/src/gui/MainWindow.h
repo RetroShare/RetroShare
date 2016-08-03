@@ -211,7 +211,9 @@ private slots:
     void newRsCollection();
     void showMessengerWindow();
     void showStatisticsWindow();
+#ifdef ENABLE_WEBUI
     void showWebinterface();
+#endif
     //void servicePermission();
 
 #ifdef UNFINISHED    

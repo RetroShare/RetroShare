@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 
-#ifndef WINDOWS_SYS
+#if !defined(WINDOWS_SYS) && !defined(__ANDROID__)
 
 #include <stdlib.h>
 #include <execinfo.h>
@@ -110,13 +110,13 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 	free(symbollist);
 }
 
-#else // WINDOWS_SYS
+#else // !defined(WINDOWS_SYS) && !defined(__ANDROID__)
 static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames = 63)
 {
 	(void) max_frames;
 
-	fprintf(out, "TODO: 2016/01/01 print_stacktrace not implemented yet for WINDOWS_SYS\n");
+	fprintf(out, "TODO: 2016/01/01 print_stacktrace not implemented yet for WINDOWS_SYS and ANDROID\n");
 }
-#endif // WINDOWS_SYS
+#endif // !defined(WINDOWS_SYS) && !defined(__ANDROID__)
 
 #endif // _STACKTRACE_H_
