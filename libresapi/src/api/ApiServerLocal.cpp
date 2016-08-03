@@ -52,19 +52,12 @@ void ApiLocalConnectionHandler::handleRequest()
 			std::string resultString = mApiServer->handleRequest(req);
 			mLocalSocket->write(resultString.c_str(), resultString.length());
 			mLocalSocket->write("\n\0");
-			quit();
 		}
-		else
-		{
-			mLocalSocket->write("\"{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for path.\\n\",\"returncode\":\"fail\"}\"\n\0");
-			quit();
-		}
+		else mLocalSocket->write("\"{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for path.\\n\",\"returncode\":\"fail\"}\"\n\0");
 	}
-	else
-	{
-		mLocalSocket->write("{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for JSON data.\\n\",\"returncode\":\"fail\"}\"\n\0");
-		quit();
-	}
+	else mLocalSocket->write("{\"data\":null,\"debug_msg\":\"ApiLocalConnectionHandler::handleRequest() Error: timeout waiting for JSON data.\\n\",\"returncode\":\"fail\"}\"\n\0");
+
+	quit();
 }
 
 ApiLocalConnectionHandler::~ApiLocalConnectionHandler()
