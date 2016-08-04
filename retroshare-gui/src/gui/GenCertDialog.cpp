@@ -23,6 +23,8 @@
 #include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
 #include <rsserver/rsaccounts.h>
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
 #include "GenCertDialog.h"
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
@@ -402,8 +404,8 @@ void GenCertDialog::exportIdentity()
 {
 	QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("RetroShare profile files (*.asc)")) ;
 
-	if(fname.isNull())
-		return ;
+	if(fname.isNull()) return ;
+	if(fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
 	RsPgpId gpg_id (data.toString().toStdString()) ;
@@ -416,7 +418,9 @@ void GenCertDialog::exportIdentity()
 
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Import profile"), "",tr("RetroShare profile files (*.asc)")) ;
+    QString fname ;
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
+        return ;
 
 	if(fname.isNull())
 		return ;

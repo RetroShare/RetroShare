@@ -24,7 +24,9 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include "ProfileManager.h"
+#include "util/misc.h"
 #include "gui/GenCertDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/common/RSTreeWidgetItem.h"
 
 #include <QAbstractEventDispatcher>
@@ -135,9 +137,7 @@ void ProfileManager::exportIdentity()
 	if (fname.isNull())
 		return;
 
-	if (QFileInfo(fname).suffix().isEmpty()) {
-		fname += ".asc";
-	}
+	if (fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
 		QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
@@ -147,7 +147,10 @@ void ProfileManager::exportIdentity()
 
 void ProfileManager::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Import Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+    QString fname ;
+
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import Identity"), tr("RetroShare Identity files (*.asc)"),fname))
+            return ;
 
 	if(fname.isNull())
 		return ;

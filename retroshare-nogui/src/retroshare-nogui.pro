@@ -5,8 +5,6 @@ TARGET = RetroShare06-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
-# webinterface, requires libmicrohttpd
-CONFIG += webui
 CONFIG -= qt xml gui
 CONFIG += link_prl
 
@@ -184,7 +182,7 @@ introserver {
 	DEFINES *= RS_INTRO_SERVER
 }
 
-webui {
+libresapihttpserver {
 	DEFINES *= ENABLE_WEBUI
         PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
 	LIBS += ../../libresapi/src/lib/libresapi.a

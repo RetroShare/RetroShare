@@ -761,11 +761,11 @@ void RsGxsNetService::syncWithPeers()
             msg->updateTS = updateTS;
             
             if(encrypt_to_this_circle_id.isNull()) 
-		    msg->grpId = grpId;
+                msg->grpId = grpId;
             else
             {
-		msg->grpId = hashGrpId(grpId,mNetMgr->getOwnId()) ;
-		msg->flag |= RsNxsSyncMsgReqItem::FLAG_USE_HASHED_GROUP_ID ;
+                msg->grpId = hashGrpId(grpId,mNetMgr->getOwnId()) ;
+                msg->flag |= RsNxsSyncMsgReqItem::FLAG_USE_HASHED_GROUP_ID ;
             }
             
 #ifdef NXS_NET_DEBUG_7
@@ -2096,14 +2096,19 @@ void RsGxsNetService::updateServerSyncTS()
 	else
 			msui = mapIT->second;
 
-		if(grpMeta->mLastPost > msui->msgUpdateTS )
-		{
-			change = true;
-			msui->msgUpdateTS = grpMeta->mLastPost;
+        // (cyril) I'm removing this, because the msgUpdateTS is updated when new messages are received by calling locked_stampMsgServerUpdateTS().
+        //       mLastPost is actually updated somewhere when loading group meta data. It's not clear yet whether it is set to the latest publish time (wrong)
+        //		 or the latest receive time (right). The former would cause problems because it would need to compare times coming from different (potentially async-ed)
+        //		 machines.
+        //
+        // if(grpMeta->mLastPost > msui->msgUpdateTS )
+        // {
+        // 	change = true;
+        // 	msui->msgUpdateTS = grpMeta->mLastPost;
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
+        // 	GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last post = " << time(NULL) - grpMeta->mLastPost << " secs ago for group "<< grpId << std::endl;
 #endif
-		}
+        // }
 
 		// This is needed for group metadata updates to actually propagate: only a new grpUpdateTS will trigger the exchange of groups mPublishTs which
         	// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
@@ -2123,6 +2128,7 @@ void RsGxsNetService::updateServerSyncTS()
 	if(change)
 		IndicateConfigChanged();
 }
+
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
    return tr->mTimeOut < ((uint32_t) time(NULL));
@@ -2595,6 +2601,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             // for the grp id
             locked_doMsgUpdateWork(tr->mTransaction, grpId);
 
+            // also update server sync TS, since we need to send the new message list to friends for comparison
+            locked_stampMsgServerUpdateTS(grpId);
         }
     }
     else if(tr->mFlag == NxsTransaction::FLAG_STATE_FAILED)
@@ -4890,4 +4898,27 @@ bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& gro
 	    msg_server_update_TS = it->second->msgUpdateTS ;
 
     return true ;
+}
+
+bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    return locked_stampMsgServerUpdateTS(gid) ;
+}
+
+bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
+{
+    std::map<RsGxsGroupId,RsGxsServerMsgUpdateItem*>::iterator it = mServerMsgUpdateMap.find(gid) ;
+
+    if(mServerMsgUpdateMap.end() == it)
+    {
+        RsGxsServerMsgUpdateItem *item = new RsGxsServerMsgUpdateItem(mServType);
+        item->grpId = gid ;
+        item->msgUpdateTS = time(NULL) ;
+    }
+    else
+        it->second->msgUpdateTS = time(NULL) ;
+
+    return true;
 }

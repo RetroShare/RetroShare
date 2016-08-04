@@ -187,8 +187,9 @@ void FriendList::addToolButton(QToolButton *toolButton)
 
     /* Initialize button */
     toolButton->setAutoRaise(true);
-    toolButton->setIconSize(ui->displayButton->iconSize());
-    toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
+    float S = QFontMetricsF(ui->filterLineEdit->font()).height() ;
+    toolButton->setIconSize(QSize(S*1.5,S*1.5));
+    toolButton->setFocusPolicy(Qt::NoFocus);
 
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
@@ -1176,9 +1177,9 @@ void FriendList::insertPeers()
             gpgItem->setData(COLUMN_NAME, ROLE_FILTER, gpgName);
 
             gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
-            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
+            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(bestLastContact));
             gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
-            gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, showInfoAtGpgItem ? bestIP : "");
+            gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, bestIP);
 
             /* Sort data */
             gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, gpgName);
@@ -2283,16 +2284,16 @@ void FriendList::addPeerToExpand(const std::string &gpgId)
 
 void FriendList::createDisplayMenu()
 {
-    QMenu *displayMenu = new QMenu(this);
+    QMenu *displayMenu = new QMenu(tr("Show"), this);
     connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
 
     displayMenu->addAction(ui->actionHideOfflineFriends);
     displayMenu->addAction(ui->actionShowState);
     displayMenu->addAction(ui->actionShowGroups);
-    displayMenu->addAction(ui->actionExportFriendlist);
-    displayMenu->addAction(ui->actionImportFriendlist);
 
-    ui->displayButton->setMenu(displayMenu);
+    ui->peerTreeWidget->addHeaderContextMenuMenu(displayMenu);
+    ui->peerTreeWidget->addHeaderContextMenuAction(ui->actionExportFriendlist);
+    ui->peerTreeWidget->addHeaderContextMenuAction(ui->actionImportFriendlist);
 }
 
 void FriendList::updateMenu()

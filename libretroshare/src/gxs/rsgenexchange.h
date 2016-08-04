@@ -596,6 +596,14 @@ public:
     void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
 
     /*!
+     *
+     * @param token value set to be redeemed with acknowledgement
+     * @param grpId group id of the group to update
+     * @param CutOff The cut off value to set
+     */
+    void updateGroupLastMsgTimeStamp(uint32_t& token, const RsGxsGroupId& grpId);
+
+    /*!
      * @return storage time of messages in months
      */
     int getStoragePeriod(){ return MESSAGE_STORE_PERIOD/(60*60*24*31);}
