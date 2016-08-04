@@ -333,6 +333,7 @@ IdDialog::IdDialog(QWidget *parent) :
     
     //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
+    connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
 
     
     /* Setup TokenQueue */
@@ -348,6 +349,17 @@ IdDialog::IdDialog(QWidget *parent) :
     
     tmer->start(10000) ;	// update every 10 secs. 
 }	
+
+void IdDialog::toggleAutoBanIdentities(bool b)
+{
+    RsPgpId id(ui->lineEdit_GpgId->text().left(16).toStdString());
+
+    if(!id.isNull())
+    {
+        rsReputations->banNode(id,b) ;
+        requestIdList();
+    }
+}
 
 void IdDialog::updateCirclesDisplay()
 {
@@ -1676,6 +1688,8 @@ void IdDialog::insertIdDetails(uint32_t token)
     else
 	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
 
+    ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
+
     time_t now = time(NULL) ;
     ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
     ui->headerTextLabel_Person->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
@@ -1768,6 +1782,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->chatIdentity->setEnabled(true);
 		ui->inviteButton->setEnabled(true);
 	}
+
+    ui->autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
 
 	/* now fill in the reputation information */
 

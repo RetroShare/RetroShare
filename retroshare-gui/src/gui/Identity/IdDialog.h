@@ -77,6 +77,7 @@ private slots:
 	void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
+    void toggleAutoBanIdentities(bool b);
 
 	void acceptCircleSubscription() ;
 	void cancelCircleSubscription() ;
