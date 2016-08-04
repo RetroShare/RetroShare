@@ -74,6 +74,11 @@ void RsGxsReputationUpdateItem::clear()
 	mOpinions.clear() ;
 }
 
+void RsGxsReputationBannedNodeSetItem::clear()
+{
+    mKnownIdentities.TlvClear();
+}
+
 /*************************************************************************/
 /*************************************************************************/
 /*************************************************************************/
@@ -128,6 +133,17 @@ std::ostream& RsGxsReputationRequestItem::print(std::ostream &out, uint16_t inde
         printRsItemEnd(out, "RsReputationRequestItem", indent);
         return out;
 }
+std::ostream& RsGxsReputationBannedNodeSetItem::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsReputationBannedNodeSetItem", indent);
+
+        out << "last update: " << time(NULL) - mLastActivityTS << " secs ago." << std::endl;
+        out << "PGP id: " << mPgpId << std::endl;
+        out << "Known ids: " << mKnownIdentities.ids.size() << std::endl;
+
+        printRsItemEnd(out, "RsReputationRequestItem", indent);
+        return out;
+}
 /*************************************************************************/
 
 uint32_t    RsGxsReputationConfigItem::serial_size() const
@@ -135,8 +151,8 @@ uint32_t    RsGxsReputationConfigItem::serial_size() const
     uint32_t s = 8; /* header */
 
     s += mPeerId.serial_size() ;	// PeerId
-    s += 4 ;				// mLatestUpdate
-    s += 4 ;				// mLastQuery
+    s += 4 ;						// mLatestUpdate
+    s += 4 ;						// mLastQuery
     
     return s ;
 }
@@ -154,6 +170,17 @@ uint32_t    RsGxsReputationSetItem::serial_size() const
         s += 4 ; 			// mOpinions.size()
 
         s += (4+RsPeerId::serial_size()) * mOpinions.size() ;
+
+    return s ;
+}
+
+uint32_t    RsGxsReputationBannedNodeSetItem::serial_size() const
+{
+    uint32_t s = 8; /* header */
+
+    s += RsPgpId::serial_size() ;	// mPgpId
+    s += 4 ;							// mLastActivityTS;
+    s += mKnownIdentities.TlvSize(); // mKnownIdentities
 
     return s ;
 }
@@ -236,6 +263,29 @@ bool RsGxsReputationSetItem::serialise(void *data, uint32_t& pktsize) const
 
 	return ok;
 }
+
+bool RsGxsReputationBannedNodeSetItem::serialise(void *data, uint32_t& pktsize) const
+{
+    uint32_t tlvsize ;
+        uint32_t offset=0;
+
+    if(!serialise_header(data,pktsize,tlvsize,offset))
+        return false ;
+
+    bool ok = true;
+
+    ok &= mPgpId.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, mLastActivityTS);
+    ok &= mKnownIdentities.SetTlv(data, tlvsize, &offset) ;
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "RsGxsReputationSetItem::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
+}
 bool RsGxsReputationUpdateItem::serialise(void *data, uint32_t& pktsize) const
 {
 	uint32_t tlvsize ;
@@ -308,7 +358,28 @@ RsGxsReputationConfigItem *RsGxsReputationSerialiser::deserialiseReputationConfi
 
     return item;
 }
+RsGxsReputationBannedNodeSetItem *RsGxsReputationSerialiser::deserialiseReputationBannedNodeSetItem(void *data,uint32_t size)
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
 
+    RsGxsReputationBannedNodeSetItem *item = new RsGxsReputationBannedNodeSetItem() ;
+
+    /* add mandatory parts first */
+    ok &= item->mPgpId.deserialise(data, size, offset) ;
+    ok &= getRawUInt32(data, size, &offset, &item->mLastActivityTS);
+    ok &= item->mKnownIdentities.GetTlv(data,size,&offset) ;
+
+    if (offset != rssize || !ok)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+    delete item;
+        return NULL ;
+    }
+
+    return item;
+}
 RsGxsReputationSetItem *RsGxsReputationSerialiser::deserialiseReputationSetItem_deprecated(void *data,uint32_t tlvsize)
 {
     uint32_t offset = 8; // skip the header
@@ -462,11 +533,12 @@ RsItem *RsGxsReputationSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-        case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM           : return deserialiseReputationSetItem           (data, *pktsize);
-        case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated: return deserialiseReputationSetItem_deprecated(data, *pktsize);
-        case RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM        : return deserialiseReputationUpdateItem        (data, *pktsize);
-        case RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM       : return deserialiseReputationRequestItem       (data, *pktsize);
-        case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM        : return deserialiseReputationConfigItem        (data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM            : return deserialiseReputationSetItem           (data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated : return deserialiseReputationSetItem_deprecated(data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM: return deserialiseReputationBannedNodeSetItem(data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM         : return deserialiseReputationUpdateItem        (data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM        : return deserialiseReputationRequestItem       (data, *pktsize);
+        case RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM         : return deserialiseReputationConfigItem        (data, *pktsize);
 
 		default:
         		std::cerr << "RsGxsReputationSerialiser::deserialise(): unknown item subtype " << std::hex<< rstype << std::dec << std::endl;

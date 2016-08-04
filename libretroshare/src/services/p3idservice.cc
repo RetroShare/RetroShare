@@ -51,16 +51,16 @@
  * #define GXSID_GEN_DUMMY_DATA	1
  ****/
 
-#define ID_REQUEST_LIST		0x0001
-#define ID_REQUEST_IDENTITY	0x0002
+#define ID_REQUEST_LIST		    0x0001
+#define ID_REQUEST_IDENTITY	    0x0002
 #define ID_REQUEST_REPUTATION	0x0003
-#define ID_REQUEST_OPINION	0x0004
+#define ID_REQUEST_OPINION	    0x0004
 
 #define GXSID_MAX_CACHE_SIZE 5000
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
-static const time_t MAX_KEEP_KEYS_BANNED       =     2 * 86400 ; // get rid of banned ids after 2 days. That gives a chance to un-ban someone before he gets kicked out
+static const time_t MAX_KEEP_KEYS_BANNED       =     1 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
 static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
 static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
 static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
@@ -324,7 +324,7 @@ public:
         time_t now = time(NULL);
         const RsGxsId& gxs_id = entry.details.mId ;
 
-        bool is_id_banned = rsReputations->isIdentityBanned(gxs_id,entry.details.mPgpId) ;
+        bool is_id_banned = rsReputations->isIdentityBanned(gxs_id) ;
         bool is_own_id    = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID) ;
         bool is_known_id  = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) ;
         bool is_signed_id = (bool)(entry.details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) ;
@@ -739,6 +739,18 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         return true;
     else
     {
+        // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
+        // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
+
+        RsReputations::ReputationInfo info ;
+        rsReputations->getReputationInfo(id,RsPgpId(),info) ;
+
+        if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
+        {
+            std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
+            return true;
+        }
+
         RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
         std::map<RsGxsId,std::list<RsPeerId> >::iterator rit = mIdsNotPresent.find(id) ;
