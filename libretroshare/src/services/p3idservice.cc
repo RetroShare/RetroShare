@@ -60,7 +60,7 @@
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
-static const time_t MAX_KEEP_KEYS_BANNED       =     1 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
+static const time_t MAX_KEEP_KEYS_BANNED       =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
 static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
 static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
 static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
@@ -264,10 +264,10 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 }
 void p3IdService::timeStampKey(const RsGxsId& gxs_id)
 {
-    if(isBanned(gxs_id))
+    if(rsReputations->isIdentityBanned(gxs_id) )
     {
         std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
-        return;
+        return ;
     }
 
     RS_STACK_MUTEX(mIdMtx) ;
@@ -430,6 +430,15 @@ void	p3IdService::service_tick()
     return;
 }
 
+bool p3IdService::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
+{
+    bool res = !rsReputations->isIdentityBanned(RsGxsId(grpMeta->mGroupId)) ;
+
+    std::cerr << "p3IdService::acceptNewGroup: ID=" << grpMeta->mGroupId << ": " << (res?"ACCEPTED":"DENIED") << std::endl;
+
+    return res ;
+}
+
 void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 #ifdef DEBUG_IDS
@@ -479,14 +488,23 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
                 std::cerr << std::endl;
 #endif
+                if(!rsReputations->isIdentityBanned(RsGxsId(*git)))
+                {
+                    uint32_t token;
+                    RsGenExchange::subscribeToGroup(token, *git, true);
 
-                uint32_t token;
-                RsGenExchange::subscribeToGroup(token, *git, true);
+                    // also time_stamp the key that this group represents
 
-                // also time_stamp the key that this group represents
-
-                std::cerr << "(II) time-stamping new received GXS ID " << *git << std::endl;
-                timeStampKey(RsGxsId(*git)) ;
+                    timeStampKey(RsGxsId(*git)) ;
+                }
+                else
+                {
+                    std::cerr << "(EE) Received banned identity " << *git << ": this should not happen. Deleting it!" << std::endl;
+                    uint32_t token ;
+                    RsGxsIdGroup group;
+                    group.mMeta.mGroupId=RsGxsGroupId(*git);
+                    deleteIdentity(token, group);
+                }
             }
         }
     }
@@ -742,12 +760,19 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
         // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
 
+        std::cerr << "p3IdService::requesting key " << id <<std::endl;
+
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
 
         if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
         {
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
+
+            {
+                RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+                mIdsNotPresent.erase(id) ;
+            }
             return true;
         }
 
