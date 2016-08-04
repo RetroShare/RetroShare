@@ -449,11 +449,11 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
     /* iterate through and grab any new messages */
     std::list<RsGxsGroupId> unprocessedGroups;
 
-    std::vector<RsGxsNotify *>::iterator it;
-    for(it = changes.begin(); it != changes.end(); ++it)
+    for(uint32_t i = 0;i<changes.size();++i)
     {
-        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
-        RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
+        RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
+
         if (msgChange && !msgChange->metaChange())
         {
 #ifdef DEBUG_IDS
@@ -479,10 +479,10 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
             std::cerr << std::endl;
 #endif
-
             std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
             std::list<RsGxsGroupId>::iterator git;
-            for(git = groupList.begin(); git != groupList.end(); ++git)
+
+            for(git = groupList.begin(); git != groupList.end();)
             {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
@@ -496,15 +496,17 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     // also time_stamp the key that this group represents
 
                     timeStampKey(RsGxsId(*git)) ;
+
+                    ++git;
                 }
                 else
-                {
-                    std::cerr << "(EE) Received banned identity " << *git << ": this should not happen. Deleting it!" << std::endl;
-                    uint32_t token ;
-                    RsGxsIdGroup group;
-                    group.mMeta.mGroupId=RsGxsGroupId(*git);
-                    deleteIdentity(token, group);
-                }
+                    git = groupList.erase(git) ;
+            }
+
+            if(groupList.empty())
+            {
+                delete changes[i] ;
+                changes[i] = NULL ;
             }
         }
     }
@@ -543,6 +545,12 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
         if (mKeyCache.fetch(id, data))
         {
+            // This step is needed, because p3GxsReputation does not know all identities, and might not have any data for
+            // the ones in the contact list. So we change them on demand.
+
+            if((details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) && rsReputations->nodeAutoPositiveOpinionForContacts())
+                rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
+
             details = data.details;
             details.mLastUsageTS = locked_getLastUsageTS(id) ;
 
