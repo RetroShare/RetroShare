@@ -4904,7 +4904,7 @@ bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
-    locked_stampMsgServerUpdateTS(gid) ;
+    return locked_stampMsgServerUpdateTS(gid) ;
 }
 
 bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
