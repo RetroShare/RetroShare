@@ -326,7 +326,7 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
-    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | options);
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
 
     if (files.isEmpty())
         return false;
