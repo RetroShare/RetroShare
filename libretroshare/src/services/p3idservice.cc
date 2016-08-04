@@ -548,7 +548,7 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             // This step is needed, because p3GxsReputation does not know all identities, and might not have any data for
             // the ones in the contact list. So we change them on demand.
 
-            if((details.mFlags & RS_IDENTITY_FLAGS_IS_A_CONTACT) && rsReputations->nodeAutoPositiveOpinionForContacts())
+            if(mContacts.find(id) != mContacts.end() && rsReputations->nodeAutoPositiveOpinionForContacts())
                 rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
 
             details = data.details;
