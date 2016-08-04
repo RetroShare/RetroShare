@@ -50,12 +50,13 @@ public:
 	};
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
-	virtual bool getReputationInfo(const RsGxsId& id,const RsPgpId& owner_id,ReputationInfo& info) =0 ;
+    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info) =0;
 
     // parameters
 
-	virtual void setNodeAutoBanThreshold(uint32_t n) =0;
-	virtual uint32_t nodeAutoBanThreshold() =0;
+    // virtual void setNodeAutoBanThreshold(uint32_t n) =0;
+    // virtual uint32_t nodeAutoBanThreshold() =0;
+
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) =0;
     virtual bool nodeAutoPositiveOpinionForContacts() =0;
     virtual float nodeAutoBanIdentitiesLimit() =0;
@@ -64,7 +65,10 @@ public:
         // This one is a proxy designed to allow fast checking of a GXS id.
         // it basically returns true if assessment is not ASSESSMENT_OK
         
-	virtual bool isIdentityBanned(const RsGxsId& id,const RsPgpId& owner_node) =0;
+    virtual bool isIdentityBanned(const RsGxsId& id) =0;
+
+    virtual bool isNodeBanned(const RsPgpId& id) =0;
+    virtual void banNode(const RsPgpId& id,bool b) =0;
 };
 
 // To access reputations from anywhere

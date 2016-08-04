@@ -317,7 +317,10 @@ protected:
 	/** Overloaded to add PgpIdHash to Group Definition **/
 	virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
-	// Overloaded from GxsTokenQueue for Request callbacks.
+    // Overloads RsGxsGenExchange
+    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
+
+    // Overloaded from GxsTokenQueue for Request callbacks.
 	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
 	// Overloaded from RsTickEvent.

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>872</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -117,7 +117,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -278,7 +278,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeading|AlignVCenter</set>
+           <set>AlignLeft|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -534,6 +534,13 @@
            <string>Reputation</string>
           </property>
           <layout class="QVBoxLayout" name="reputationGroupBoxVLayout">
+           <item>
+            <widget class="QCheckBox" name="autoBanIdentities_CB">
+             <property name="text">
+              <string>Auto-Ban all identities from this node</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <layout class="QGridLayout" name="reputationGLayout">
              <property name="leftMargin">
@@ -806,8 +813,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

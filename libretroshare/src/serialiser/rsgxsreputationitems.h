@@ -30,13 +30,16 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM         0x01
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated 0x02
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM         0x03
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM        0x04
-#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM            0x05
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_CONFIG_ITEM          0x01
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated2 0x02
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_UPDATE_ITEM          0x03
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_REQUEST_ITEM         0x04
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated  0x05
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM             0x06
+#define RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM 0x07
 
 /**************************************************************************/
 class RsReputationItem: public RsItem
@@ -68,31 +71,71 @@ public:
 	virtual void clear() {}
 	std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	virtual bool serialise(void *data,uint32_t& size) const ;	
+    virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ; 						
     	
 	RsPeerId mPeerId;
 	uint32_t mLatestUpdate; // timestamp they returned.
-	uint32_t mLastQuery;	// when we sent out.
+    uint32_t mLastQuery;	// when we sent out.
 };
+
+// This class should disappear. Deprecated since Aug 1, 2016. The class definition is actually not needed,
+// that is why it's commented out. Kept here in order to explains how the deserialisation works.
+//
+// class RsGxsReputationSetItem_deprecated: public RsReputationItem
+// {
+// public:
+//     RsGxsReputationSetItem_deprecated()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM_deprecated) {}
+//
+//     virtual ~RsGxsReputationSetItem_deprecated() {}
+//     virtual void clear() {}
+//     std::ostream &print(std::ostream &out, uint16_t indent = 0) { return out;}
+//
+//     virtual bool serialise(void *data,uint32_t& size) const { std::cerr << "(EE) serialise attempt for a deprecated reputation item. This should not happen" << std::endl; return false ; }
+// 	virtual uint32_t serial_size() const ;
+//
+//     RsGxsId  mGxsId;
+// 	uint32_t mOwnOpinion;
+// 	uint32_t mOwnOpinionTS;
+//         uint32_t mIdentityFlags;
+// 	std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
+// };
 
 class RsGxsReputationSetItem: public RsReputationItem
 {
 public:
-	RsGxsReputationSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM) {}
+    RsGxsReputationSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM) {}
 
     virtual ~RsGxsReputationSetItem() {}
-	virtual void clear();  
-	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	virtual bool serialise(void *data,uint32_t& size) const ;	
-	virtual uint32_t serial_size() const ; 						
-    	
-	RsGxsId mGxsId;
-	uint32_t mOwnOpinion;
-	uint32_t mOwnOpinionTS;
-    	uint32_t mIdentityFlags ;
-	std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
+    virtual bool serialise(void *data,uint32_t& size) const ;
+    virtual uint32_t serial_size() const ;
+
+    RsGxsId mGxsId;
+    uint32_t mOwnOpinion;
+    uint32_t mOwnOpinionTS;
+        uint32_t mIdentityFlags ;
+    RsPgpId  mOwnerNodeId;
+    std::map<RsPeerId, uint32_t> mOpinions; // RsPeerId -> Opinion.
+};
+
+class RsGxsReputationBannedNodeSetItem: public RsReputationItem
+{
+public:
+    RsGxsReputationBannedNodeSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_BANNED_NODE_SET_ITEM) {}
+
+    virtual ~RsGxsReputationBannedNodeSetItem() {}
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    virtual bool serialise(void *data,uint32_t& size) const ;
+    virtual uint32_t serial_size() const ;
+
+    RsPgpId mPgpId ;
+    uint32_t mLastActivityTS ;
+    RsTlvGxsIdSet mKnownIdentities ;
 };
 
 class RsGxsReputationUpdateItem: public RsReputationItem
@@ -145,11 +188,12 @@ public:
     virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 private:
-    static	RsGxsReputationConfigItem  *deserialiseReputationConfigItem            (void *data, uint32_t size);
-    static	RsGxsReputationSetItem     *deserialiseReputationSetItem               (void *data, uint32_t size);
-    static	RsGxsReputationSetItem     *deserialiseReputationSetItem_deprecated    (void *data, uint32_t size);
-    static	RsGxsReputationUpdateItem  *deserialiseReputationUpdateItem            (void *data, uint32_t size);
-    static	RsGxsReputationRequestItem *deserialiseReputationRequestItem           (void *data, uint32_t size);
+    static	RsGxsReputationConfigItem         *deserialiseReputationConfigItem            (void *data, uint32_t size);
+    static	RsGxsReputationSetItem            *deserialiseReputationSetItem               (void *data, uint32_t size);
+    static	RsGxsReputationSetItem            *deserialiseReputationSetItem_deprecated    (void *data, uint32_t size);
+    static	RsGxsReputationUpdateItem         *deserialiseReputationUpdateItem            (void *data, uint32_t size);
+    static	RsGxsReputationRequestItem        *deserialiseReputationRequestItem           (void *data, uint32_t size);
+    static	RsGxsReputationBannedNodeSetItem  *deserialiseReputationBannedNodeSetItem     (void *data, uint32_t size);
 };
 
 /**************************************************************************/

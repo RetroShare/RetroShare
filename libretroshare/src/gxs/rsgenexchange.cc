@@ -2822,6 +2822,11 @@ void RsGenExchange::processRecvdMessages()
 		    mNetService->rejectMessage(*it) ;
 }
 
+bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
+{
+    return true;
+}
+
 void RsGenExchange::processRecvdGroups()
 {
     RS_STACK_MUTEX(mGenMtx) ;
@@ -2847,12 +2852,12 @@ void RsGenExchange::processRecvdGroups()
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
 		bool deserialOk = false;
 
-		if(grp->meta.bin_len != 0)
+        if(grp->meta.bin_len != 0)
 			deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
 
 		bool erase = true;
 
-        if(deserialOk)
+        if(deserialOk && acceptNewGroup(meta))
         {
 #ifdef GEN_EXCH_DEBUG
             	std::cerr << "  processing validation for group " << meta->mGroupId << ", attempts number " << gpsi.mAttempts << std::endl;
@@ -2932,8 +2937,10 @@ void RsGenExchange::processRecvdGroups()
         }
         else
         {
-            std::cerr << "(EE) deserialise error in group meta data" << std::endl;
-        	delete grp;
+            if(!deserialOk)
+                std::cerr << "(EE) deserialise error in group meta data" << std::endl;
+
+            delete grp;
 			delete meta;
 			erase = true;
 		}

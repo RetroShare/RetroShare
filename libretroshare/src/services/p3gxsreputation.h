@@ -59,6 +59,12 @@ public:
 	time_t mLastQuery;
 };
 
+struct BannedNodeInfo
+{
+    time_t last_activity_TS ;			// updated everytime a node or one of its former identities is required
+    std::set<RsGxsId> known_identities ;	// list of known identities from this node. This is kept for a while, and useful in order to avoid re-asking these keys.
+};
+
 class Reputation
 {
 public:
@@ -77,7 +83,7 @@ public:
     	float mFriendAverage ;
 	float mReputation;
         
-        RsPgpId mOwnerNode;
+    RsPgpId mOwnerNode;
     
     	uint32_t mIdentityFlags;
 };
@@ -97,11 +103,15 @@ public:
 
     /***** Interface for RsReputations *****/
     virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &owner_id, ReputationInfo& info) ;
-    virtual bool isIdentityBanned(const RsGxsId& id, const RsPgpId &owner_node) ;
+    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info) ;
+    virtual bool isIdentityBanned(const RsGxsId& id) ;
 
-    virtual void setNodeAutoBanThreshold(uint32_t n) ;
-    virtual uint32_t nodeAutoBanThreshold() ;
+    virtual bool isNodeBanned(const RsPgpId& id);
+    virtual void banNode(const RsPgpId& id,bool b) ;
+
+    //virtual void setNodeAutoBanThreshold(uint32_t n) ;
+    //virtual uint32_t nodeAutoBanThreshold() ;
+
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
     virtual float nodeAutoBanIdentitiesLimit() ;
@@ -129,7 +139,8 @@ private:
     bool RecvReputations(RsGxsReputationUpdateItem *item);
     bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
     void updateActiveFriends() ;
-    void updateBannedNodesList();
+
+    void updateBannedNodesProxy();
 
     // internal update of data. Takes care of cleaning empty boxes.
     void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
@@ -167,8 +178,10 @@ private:
     std::set<RsGxsId> mUpdatedReputations;
 
     // PGP Ids auto-banned. This is updated regularly.
-    std::set<RsPgpId> mBannedPgpIds ;
-    uint32_t mPgpAutoBanThreshold ;
+    std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
+    std::set<RsGxsId> mPerNodeBannedIdsProxy ;
+    //uint32_t mPgpAutoBanThreshold ;
+    bool mBannedNodesProxyNeedsUpdate ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER
