@@ -62,7 +62,7 @@
 
 #include <time.h>
 
-#define FMM 2//fontMetricsMultiplicator
+#define FMM 2.8//fontMetricsMultiplicator
 
 /*****
  * #define CHAT_DEBUG 1
@@ -109,7 +109,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
-
+  ui->sendButton->setIconSize(iconSize);
+  
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();

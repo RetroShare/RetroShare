@@ -213,7 +213,7 @@ CreateLobbyDialog QLabel#lobbyInfoLabel {
 }
 
 ChatWidget QTextEdit#chatTextEdit, ChatWidget QTextBrowser#textBrowser {
-	border: 1px solid #B8B6B1;
+	border: 1px solid #0099cc;
 	border-radius: 6px;
 	background: white;
 }

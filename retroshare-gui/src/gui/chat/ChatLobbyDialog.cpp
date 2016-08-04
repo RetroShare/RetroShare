@@ -112,8 +112,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	// Add a button to invite friends.
 	//
 	inviteFriendsButton = new QToolButton ;
-  inviteFriendsButton->setMinimumSize(QSize(2*S,2*S)) ;
-  inviteFriendsButton->setMaximumSize(QSize(2*S,2*S)) ;
+  inviteFriendsButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
+  inviteFriendsButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
@@ -123,9 +123,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/user/add_user24.png")) ;
+	icon.addPixmap(QPixmap(":/icons/png/invite.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
-    inviteFriendsButton->setIconSize(QSize(2*S,2*S)) ;
+    inviteFriendsButton->setIconSize(QSize(2.4*S,2.4*S)) ;
 	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
@@ -156,17 +156,17 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
 
     unsubscribeButton = new QToolButton ;
-    unsubscribeButton->setMinimumSize(QSize(2*S,2*S)) ;
-    unsubscribeButton->setMaximumSize(QSize(2*S,2*S)) ;
+    unsubscribeButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
+    unsubscribeButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
 	unsubscribeButton->setText(QString()) ;
 	unsubscribeButton->setAutoRaise(true) ;
 	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/door_in.png")) ;
+	icon.addPixmap(QPixmap(":/icons/png/leave.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-    unsubscribeButton->setIconSize(QSize(2*S,2*S)) ;
+    unsubscribeButton->setIconSize(QSize(2.4*S,2.4*S)) ;
 	}
 
 	/* Initialize splitter */

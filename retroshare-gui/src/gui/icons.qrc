@@ -75,5 +75,15 @@
 		<file>icons/yahoo.png</file>
 		<file>icons/yandex.png</file>
 		<file>icons/yellow_biohazard64.png</file>
+    	<file>icons/png/attach.png</file>
+    	<file>icons/png/attach-image.png</file>
+    	<file>icons/png/highlight.png</file>
+    	<file>icons/png/invite.png</file>
+    	<file>icons/png/leave.png</file>
+    	<file>icons/png/search.png</file>
+    	<file>icons/png/send-message.png</file>
+    	<file>icons/png/settings.png</file>
+    	<file>icons/png/smiley.png</file>
+    	<file>icons/png/font.png</file>
 	</qresource>
 </RCC>
