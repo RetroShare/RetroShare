@@ -85,5 +85,7 @@
     	<file>icons/png/settings.png</file>
     	<file>icons/png/smiley.png</file>
     	<file>icons/png/font.png</file>
+    	<file>icons/png/send-message-blocked.png</file>
+    	<file>icons/png/chat-bubble-notify.png</file>
 	</qresource>
 </RCC>
