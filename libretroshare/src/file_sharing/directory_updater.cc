@@ -5,7 +5,7 @@
 
 #define DEBUG_LOCAL_DIR_UPDATER 1
 
-static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES = 10 ; // 10 seconds for testing. Should be much more!!
+static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES = 100 ; // 10 seconds for testing. Should be much more!!
 
 void RemoteDirectoryUpdater::tick()
 {
@@ -27,6 +27,8 @@ void LocalDirectoryUpdater::data_tick()
         sweepSharedDirectories() ;
         mLastSweepTime = now;
     }
+    else
+        usleep(10*1000*1000);
 }
 
 void LocalDirectoryUpdater::sweepSharedDirectories()

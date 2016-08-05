@@ -19,7 +19,15 @@ void HashStorage::data_tick()
         RS_STACK_MUTEX(mHashMtx) ;
 
         if(mFilesToHash.empty())
+        {
+            std::cerr << "Stopping hashing thread." << std::endl;
+            shutdown();
+            mRunning = false ;
+            std::cerr << "done." << std::endl;
+
+            usleep(2*1000*1000);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
             return ;
+        }
 
         job = mFilesToHash.begin()->second ;
 
@@ -32,14 +40,6 @@ void HashStorage::data_tick()
             std::cerr << "done."<< std::endl;
 
         mFilesToHash.erase(mFilesToHash.begin()) ;
-
-        if(mFilesToHash.empty())
-        {
-            std::cerr << "Stopping hashing thread." << std::endl;
-            shutdown();
-            mRunning = false ;
-            std::cerr << "done." << std::endl;
-        }
 
         // store the result
 

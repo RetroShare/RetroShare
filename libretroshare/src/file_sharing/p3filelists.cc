@@ -31,8 +31,6 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
     mRemoteDirWatcher = NULL;	// not used yet
 
-    mLocalDirWatcher->start();
-
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
 }
 
@@ -101,15 +99,21 @@ int p3FileDatabase::tick()
 void p3FileDatabase::startThreads()
 {
     std::cerr << "Starting hash cache thread..." ;
-
     mHashCache->start();
+    std::cerr << "Done." << std::endl;
+
+    std::cerr << "Starting directory watcher thread..." ;
+    mLocalDirWatcher->start();
+    std::cerr << "Done." << std::endl;
 }
 void p3FileDatabase::stopThreads()
 {
     std::cerr << "Stopping hash cache thread..." ; std::cerr.flush() ;
-
     mHashCache->fullstop();
+    std::cerr << "Done." << std::endl;
 
+    std::cerr << "Stopping directory watcher thread..." ; std::cerr.flush() ;
+    mLocalDirWatcher->fullstop();
     std::cerr << "Done." << std::endl;
 }
 
