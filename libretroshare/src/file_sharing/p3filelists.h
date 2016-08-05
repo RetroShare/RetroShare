@@ -84,7 +84,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void stopThreads() ;
         void startThreads() ;
 
-        int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
+        int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)const;
 		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
 
         // void * here is the type expected by the abstract model index from Qt. It gets turned into a DirectoryStorage::EntryIndex internally.
@@ -144,13 +144,26 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
 		// Directory storage hierarchies
 		//
-		std::map<RsPeerId,RemoteDirectoryStorage *> mRemoteDirectories ;
+        // The remote one is the reference for the PeerId index below:
+        //     RemoteDirectories[ getFriendIndex(pid) - 1] = RemoteDirectoryStorage(pid)
+
+        std::vector<RemoteDirectoryStorage *> mRemoteDirectories ;
         LocalDirectoryStorage *mLocalSharedDirs ;
 
         RemoteDirectoryUpdater *mRemoteDirWatcher ;
         LocalDirectoryUpdater *mLocalDirWatcher ;
 
-		// We use a shared file cache as well, to avoid re-hashing files with known modification TS and equal name.
+        // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
+
+        static bool convertEntryIndexToPointer(EntryIndex& e,uint32_t friend_index,void *& p);
+        static bool convertPointerToEntryIndex(void *p, EntryIndex& e, uint32_t& friend_index) ;
+        uint32_t getFriendIndex(const RsPeerId& pid);
+        const RsPeerId& getFriendFromIndex(uint32_t indx) const;
+
+        std::map<RsPeerId,uint32_t> mFriendIndexMap ;
+        std::vector<RsPeerId> mFriendIndexTab;
+
+        // We use a shared file cache as well, to avoid re-hashing files with known modification TS and equal name.
 		//
         HashStorage *mHashCache ;
 

@@ -121,8 +121,13 @@ class DirectoryStorage
 class RemoteDirectoryStorage: public DirectoryStorage
 {
 public:
-    RemoteDirectoryStorage(const std::string& fname) : DirectoryStorage(fname) {}
+    RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname),mPeerId(pid) {}
     virtual ~RemoteDirectoryStorage() {}
+
+    const RsPeerId& peerId() const { return mPeerId ; }
+
+private:
+    RsPeerId mPeerId;
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
