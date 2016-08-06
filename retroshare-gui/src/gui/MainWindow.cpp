@@ -1410,7 +1410,14 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
-		mb.layout()->addWidget(checkbox) ;
+		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
+		if (layout)
+		{
+			layout->addWidget(checkbox,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+		} else {
+			//Not QGridLayout so add at end
+			mb.layout()->addWidget(checkbox) ;
+		}
 
 		int res = mb.exec() ;
 
