@@ -218,8 +218,7 @@ void GxsForumsFillThread::run()
 				std::cerr << "GxsForumsFillThread::run() adding " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-				threadPair.second->addChild(item);
+				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, threadPair.second);
 
 				calculateExpand(msg, item);
 
