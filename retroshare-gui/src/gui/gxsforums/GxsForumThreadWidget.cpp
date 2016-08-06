@@ -973,44 +973,54 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
-QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
+QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent)
 {
-    // Early check for a message that should be hidden because its author 
-    // is flagged with a bad reputation
-    
-    
-    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
-                
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
+	// Early check for a message that should be hidden because its author
+	// is flagged with a bad reputation
+
+
+	bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
+
+	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
 
-	QString text;
 
-    	if(redacted)
+	if(redacted)
 		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
+
+	//msg.mMeta.mChildTs Was not updated when received new child
+	// so do it here.
 	QDateTime qtime;
-	QString sort;
+	qtime.setTime_t(msg.mMeta.mPublishTs);
 
-	if (useChildTS)
-		qtime.setTime_t(msg.mMeta.mChildTs);
-	else
-		qtime.setTime_t(msg.mMeta.mPublishTs);
-
-	text = DateTime::formatDateTime(qtime);
-	sort = qtime.toString("yyyyMMdd_hhmmss");
+	QString itemText = DateTime::formatDateTime(qtime);
+	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
 	if (useChildTS)
 	{
-		qtime.setTime_t(msg.mMeta.mPublishTs);
-		text += " / ";
-		text += DateTime::formatDateTime(qtime);
-		sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
+		for(QTreeWidgetItem *grandParent = parent; grandParent!=NULL; grandParent = grandParent->parent())
+		{
+			//Update Parent Child TimeStamp
+			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
+			QString oldTSSort = grandParent->data(COLUMN_THREAD_DATE, ROLE_THREAD_SORT).toString();
+
+			QString oldCTSText = oldTSText.split("|").at(0);
+			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
+			QString oldCTSSort = oldTSSort.split("|").at(0);
+			QString oldPTSSort = oldTSSort.contains("|") ? oldTSSort.split(" | ").at(1) : oldCTSSort;
+			if (oldCTSSort.toDouble() < itemSort.toDouble())
+			{
+				grandParent->setText(COLUMN_THREAD_DATE, DateTime::formatDateTime(qtime) + " | " + oldPTSText);
+				grandParent->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort + " | " + oldPTSSort);
+			}
+		}
 	}
-	item->setText(COLUMN_THREAD_DATE, text);
-	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
+
+	item->setText(COLUMN_THREAD_DATE, itemText);
+	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
@@ -1061,7 +1071,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 #endif
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
-        
+
+	if (parent) parent->addChild(item);
 	return item;
 }
 
