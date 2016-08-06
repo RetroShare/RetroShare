@@ -221,7 +221,7 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 	dialog->getChatWidget()->setNotify(myChatLobbyUserNotify);
 	if (count>0){
 		notifyButton->setVisible(true);
-		notifyButton->setIcon(_lobby_infos[id].default_icon);
+		//notifyButton->setIcon(_lobby_infos[id].default_icon);
 		notifyButton->setToolTip(QString("(%1)").arg(count));
 	} else {
 		notifyButton->setVisible(false);
