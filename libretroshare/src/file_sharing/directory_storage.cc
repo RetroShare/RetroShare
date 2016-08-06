@@ -1,5 +1,6 @@
 #include <set>
 #include "util/rsdir.h"
+#include "util/rsstring.h"
 #include "directory_storage.h"
 
 /******************************************************************************************************************/
@@ -374,6 +375,7 @@ time_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFil
 DirectoryStorage::DirectoryStorage(const std::string& local_file_name)
     : mFileName(local_file_name), mDirStorageMtx("Directory storage "+local_file_name)
 {
+    RS_STACK_MUTEX(mDirStorageMtx) ;
     mFileHierarchy = new InternalFileHierarchyStorage();
 }
 
@@ -446,8 +448,33 @@ void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
+    // Chose virtual name if not supplied, and remove duplicates.
+
+    std::set<std::string> virtual_names ;	// maps virtual to real name
+    std::list<SharedDirInfo> processed_list ;
+
     for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!= lst.end();++it)
-            mLocalDirs[(*it).filename] = *it ;
+    {
+        int i=0;
+        std::string candidate_virtual_name = it->virtualname ;
+
+        if(candidate_virtual_name.empty())
+            candidate_virtual_name = RsDirUtil::getTopDir(it->filename);
+
+        while(virtual_names.find(candidate_virtual_name) != virtual_names.end())
+            rs_sprintf_append(candidate_virtual_name, "-%d", ++i);
+
+        SharedDirInfo d(*it);
+        d.virtualname = candidate_virtual_name ;
+        processed_list.push_back(d) ;
+
+        virtual_names.insert(candidate_virtual_name) ;
+    }
+
+    mLocalDirs.clear();
+
+    for(std::list<SharedDirInfo>::const_iterator it(processed_list.begin());it!=processed_list.end();++it)
+        mLocalDirs[it->filename] = *it;
 }
 void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
 {
@@ -509,6 +536,7 @@ std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const 
 
 bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info)
 {
+    RS_STACK_MUTEX(mDirStorageMtx) ;
     NOT_IMPLEMENTED() ;
     return false;
 }

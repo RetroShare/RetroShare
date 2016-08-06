@@ -7,6 +7,8 @@
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
 
+#include "rsserver/p3face.h"
+
 #define P3FILELISTS_DEBUG() std::cerr << "p3FileLists: "
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
@@ -36,14 +38,19 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 
 void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared_dirs)
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     mLocalSharedDirs->setSharedDirectoryList(shared_dirs) ;
+    mLocalDirWatcher->forceUpdate();
 }
 void p3FileDatabase::getSharedDirectories(std::list<SharedDirInfo>& shared_dirs)
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
     mLocalSharedDirs->getSharedDirectoryList(shared_dirs) ;
 }
 void p3FileDatabase::updateShareFlags(const SharedDirInfo& info)
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
     mLocalSharedDirs->updateShareFlags(info) ;
 }
 

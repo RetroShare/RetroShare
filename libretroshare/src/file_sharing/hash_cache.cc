@@ -1,4 +1,5 @@
 #include "util/rsdir.h"
+#include "rsserver/p3face.h"
 #include "hash_cache.h"
 
 #define HASHSTORAGE_DEBUG 1
@@ -25,6 +26,8 @@ void HashStorage::data_tick()
             mRunning = false ;
             std::cerr << "done." << std::endl;
 
+            RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+
             usleep(2*1000*1000);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
             return ;
         }
@@ -33,6 +36,10 @@ void HashStorage::data_tick()
 
         std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
 
+        std::string tmpout;
+        //rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", cnt+1, n_files, friendlyUnit(size).c_str(), int(size/double(total_size)*100.0), fe.name.c_str()) ;
+
+        RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, job.full_path) ;
 
         if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
             std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;

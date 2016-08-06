@@ -1,4 +1,5 @@
 #include "util/folderiterator.h"
+#include "rsserver/p3face.h"
 
 #include "directory_storage.h"
 #include "directory_updater.h"
@@ -31,8 +32,15 @@ void LocalDirectoryUpdater::data_tick()
         usleep(10*1000*1000);
 }
 
+void LocalDirectoryUpdater::forceUpdate()
+{
+    mLastSweepTime = 0;
+}
+
 void LocalDirectoryUpdater::sweepSharedDirectories()
 {
+    RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+
     std::cerr << "LocalDirectoryUpdater::sweep()" << std::endl;
 
 	// recursive update algorithm works that way:
@@ -62,6 +70,7 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
         std::cerr << "  recursing into " << real_dir_it->filename << std::endl;
         recursUpdateSharedDir(real_dir_it->filename, *stored_dir_it) ;
     }
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx)

@@ -19,9 +19,11 @@ public:
     LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;
     virtual ~LocalDirectoryUpdater() {}
 
-    virtual void data_tick() ;
+    virtual void forceUpdate();
 
 protected:
+    virtual void data_tick() ;
+
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
     void sweepSharedDirectories();
