@@ -19,21 +19,26 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <rshare.h>
-#include <util/rsrandom.h>
-#include <retroshare/rsinit.h>
-#include <rsserver/rsaccounts.h>
-#include "gui/settings/rsharesettings.h"
-#include "util/misc.h"
 #include "GenCertDialog.h"
+
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QGraphicsOpacityEffect>
-#include <QTimer>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QTextBrowser>
+#include <QTimer>
 #include <QProgressBar>
+
+#include <rshare.h>
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+
+#include <retroshare/rsidentity.h>
+#include <retroshare/rsinit.h>
+#include <rsserver/rsaccounts.h>
+#include <util/rsrandom.h>
+
 #include <time.h>
 #include <math.h>
 #include <iostream>
@@ -99,18 +104,18 @@ void GenCertDialog::grabMouse()
 
 	ui.entropy_bar->setValue(count*100/2048) ;
 
-    if(ui.entropy_bar->value() < 20)
-    {
-        ui.genButton2->setEnabled(false) ;
-        ui.genButton2->setIcon(QIcon(":/images/delete.png")) ;
-    ui.genButton2->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
-    }
-    else
-    {
-        ui.genButton2->setEnabled(true) ;
-        ui.genButton2->setIcon(QIcon(":/images/resume.png")) ;
-    ui.genButton2->setToolTip(tr("Click to create your node and/or profile")) ;
-    }
+	if(ui.entropy_bar->value() < 20)
+	{
+		ui.genButton->setEnabled(false) ;
+		ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
+		ui.genButton->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
+	}
+	else
+	{
+		ui.genButton->setEnabled(true) ;
+		ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
+		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+	}
 
 	RsInit::collectEntropy(E+(F << 16)) ;
 }
@@ -121,7 +126,9 @@ void GenCertDialog::grabMouse()
 //}
 /** Default constructor */
 GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mOnlyGenerateIdentity(onlyGenerateIdentity)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+  , mOnlyGenerateIdentity(onlyGenerateIdentity)
+  ,	mGXSNickname("")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -130,10 +137,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
-    connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
-    connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
+	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
+	connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
 
-    connect(ui.genButton2, SIGNAL(clicked()), this, SLOT(genPerson()));
+	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
@@ -162,16 +169,19 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	// make sure that QVariant always takes an 'int' otherwise the program will crash!
 	ui.keylength_comboBox->addItem("default (2048 bits, recommended)", QVariant(2048));
 	ui.keylength_comboBox->addItem("high (3072 bits)", QVariant(3072));
-    ui.keylength_comboBox->addItem("insane (4096 bits)", QVariant(4096));
+	ui.keylength_comboBox->addItem("insane (4096 bits)", QVariant(4096));
 
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
 	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
 	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
 	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
+	ui.nickname_input->setPlaceholderText(tr("[Optional] Used when you write in chat lobbies, forums and channel comments."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your private PGP key."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
+
+	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
 	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same profile (PGP key pair).")) ;
 
@@ -223,7 +233,7 @@ void GenCertDialog::init()
 		ui.header_label->show();
 		ui.new_gpg_key_checkbox->setChecked(false);
 		setWindowTitle(tr("Create new node"));
-        ui.genButton2->setText(tr("Generate new node"));
+		ui.genButton->setText(tr("Generate new node"));
 		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		genNewGPGKey = false;
 	} else {
@@ -232,7 +242,7 @@ void GenCertDialog::init()
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->setEnabled(true);
 		setWindowTitle(tr("Create new profile"));
-        ui.genButton2->setText(tr("Generate new profile and node"));
+		ui.genButton->setText(tr("Generate new profile and node"));
 		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
 		genNewGPGKey = true;
 	}
@@ -271,35 +281,45 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 
 	if (ui.new_gpg_key_checkbox->isChecked()) {
 		genNewGPGKey = true;
+		setWindowTitle(tr("Create new profile"));
+		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
+		if (!mOnlyGenerateIdentity) {
+			ui.header_label->setVisible(haveGPGKeys);
+		}
+		ui.genprofileinfo_label->setVisible(false);
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
+
+		ui.importIdentity_PB->hide() ;
+		ui.exportIdentity_PB->hide();
+		ui.adv_checkbox->setVisible(true);
+
+		ui.genPGPuserlabel->hide();
+		ui.genPGPuser->hide();
 		ui.name_label->show();
 		ui.name_input->show();
+		ui.nickname_label->setVisible(!mOnlyGenerateIdentity);
+		ui.nickname_input->setVisible(!mOnlyGenerateIdentity);
+		ui.node_label->setVisible(true);
+		ui.node_input->setVisible(true);
 //		ui.email_label->show();
 //		ui.email_input->show();
 		ui.password_label->show();
 		ui.password_label_2->show();
 		ui.password_input->show();
 		ui.password_input_2->show();
-		ui.genPGPuserlabel->hide();
-		ui.genPGPuser->hide();
-		ui.importIdentity_PB->hide() ;
-		ui.exportIdentity_PB->hide();
-		setWindowTitle(tr("Create new profile"));
-        ui.genButton2->setText(tr("Generate new profile and node"));
-		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
-		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
-		ui.genButton2->setVisible(true);
-		ui.adv_checkbox->setVisible(true);
-		ui.node_label->setVisible(true);
-		ui.node_input->setVisible(true);
-		ui.entropy_label->setVisible(true);
-		ui.entropy_bar->setVisible(true);
-		ui.genprofileinfo_label->setVisible(false);
-		if (!mOnlyGenerateIdentity) {
-			ui.header_label->setVisible(haveGPGKeys);
-		}
 		//ui.keylength_label->show();
 		//ui.keylength_comboBox->show();
+
+		ui.entropy_label->setVisible(true);
+		ui.entropy_bar->setVisible(true);
+
+		ui.genButton->setVisible(true);
+		ui.genButton->setText(tr("Generate new profile and node"));
 	} else {
+		genNewGPGKey = false;
+		setWindowTitle(tr("Create new node"));
+		ui.headerFrame->setHeaderText(tr("Create a new node"));
+		ui.header_label->setVisible(false);
 		//haveGPGKeys = (ui.genPGPuser->count() != 0)?true:false;
 		if (haveGPGKeys) {
 			QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
@@ -310,37 +330,39 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 				ui.genprofileinfo_label->show();
 			}
 		}
-		genNewGPGKey = false;
-		ui.name_label->hide();
-		ui.name_input->hide();
-//		ui.email_label->hide();
-//		ui.email_input->hide();
-		ui.password_label->hide();
-		ui.password_label_2->hide();
-		ui.password_input->hide();
-		ui.password_input_2->hide();
-		ui.genPGPuserlabel->show();
-		ui.genPGPuser->show();
+		//ui.genprofileinfo_label->show();
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it."));
+
 		ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
 		ui.exportIdentity_PB->setVisible(haveGPGKeys);
 		ui.exportIdentity_PB->setEnabled(haveGPGKeys);
-		setWindowTitle(tr("Create new node"));
-        ui.genButton2->setText(tr("Generate new node"));
-		ui.headerFrame->setHeaderText(tr("Create a new node"));
-		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it."));
-		ui.genButton2->setVisible(haveGPGKeys);
 		ui.adv_checkbox->setVisible(haveGPGKeys);
 		ui.adv_checkbox->setChecked(haveGPGKeys && adv_state);
-		ui.genPGPuser->setVisible(haveGPGKeys);
+
+		//ui.genPGPuserlabel->show();
+		//ui.genPGPuser->show();
 		ui.genPGPuserlabel->setVisible(haveGPGKeys);
+		ui.genPGPuser->setVisible(haveGPGKeys);
+		ui.name_label->hide();
+		ui.name_input->hide();
+		ui.nickname_label->setVisible(!mOnlyGenerateIdentity && haveGPGKeys);
+		ui.nickname_input->setVisible(!mOnlyGenerateIdentity && haveGPGKeys);
 		ui.node_label->setVisible(haveGPGKeys);
 		ui.node_input->setVisible(haveGPGKeys);
-		ui.entropy_label->setVisible(haveGPGKeys);
-		ui.entropy_bar->setVisible(haveGPGKeys);
-		//ui.genprofileinfo_label->show();
-		ui.header_label->setVisible(false);
+//		ui.email_label->hide();
+//		ui.email_input->hide();
+		ui.password_label->hide();
+		ui.password_input->hide();
+		ui.password_label_2->hide();
+		ui.password_input_2->hide();
 		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
+
+		ui.entropy_label->setVisible(haveGPGKeys);
+		ui.entropy_bar->setVisible(haveGPGKeys);
+
+		ui.genButton->setText(tr("Generate new node"));
+		ui.genButton->setVisible(haveGPGKeys);
 	}
 	updateUiSetup();
 	ui.adv_checkbox->setChecked(adv_state);
@@ -349,10 +371,10 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 
 void GenCertDialog::updateUiSetup()
 {
-    if (ui.adv_checkbox->isChecked())
-    {
-        ui.hidden_checkbox->show();
-        
+	if (ui.adv_checkbox->isChecked())
+	{
+		ui.hidden_checkbox->show();
+
 		if (ui.new_gpg_key_checkbox->isChecked())
 		{
 			// key length is only for pgp key creation
@@ -364,39 +386,39 @@ void GenCertDialog::updateUiSetup()
 			ui.keylength_label->hide();
 			ui.keylength_comboBox->hide();
 		}
- 
-        if(ui.hidden_checkbox->isChecked())
-        {
-            ui.hiddenaddr_input->show();
-            ui.hiddenaddr_label->show();
-            ui.label_hiddenaddr2->show();
-            ui.hiddenport_label->show();
-            ui.hiddenport_spinBox->show();
-        }
-        else
-        {
-            ui.hiddenaddr_input->hide();
-            ui.hiddenaddr_label->hide();
-            ui.label_hiddenaddr2->hide();
-            ui.hiddenport_label->hide();
-            ui.hiddenport_spinBox->hide();
-        }
-    }
-    else
-    {
-            ui.hiddenaddr_input->hide();
-            ui.hiddenaddr_label->hide();
-            ui.label_hiddenaddr2->hide();
-            ui.hiddenport_label->hide();
-            ui.hiddenport_spinBox->hide();
 
-        ui.hidden_checkbox->hide();
-        ui.keylength_label->hide();
-        ui.keylength_comboBox->hide();
+		if(ui.hidden_checkbox->isChecked())
+		{
+			ui.hiddenaddr_input->show();
+			ui.hiddenaddr_label->show();
+			ui.label_hiddenaddr->show();
+			ui.hiddenport_label->show();
+			ui.hiddenport_spinBox->show();
+		}
+		else
+		{
+			ui.hiddenaddr_input->hide();
+			ui.hiddenaddr_label->hide();
+			ui.label_hiddenaddr->hide();
+			ui.hiddenport_label->hide();
+			ui.hiddenport_spinBox->hide();
+		}
+	}
+	else
+	{
+		ui.hiddenaddr_input->hide();
+		ui.hiddenaddr_label->hide();
+		ui.label_hiddenaddr->hide();
+		ui.hiddenport_label->hide();
+		ui.hiddenport_spinBox->hide();
 
-        if(ui.hidden_checkbox->isChecked())
-            ui.hidden_checkbox->setChecked(false) ;
-    }
+		ui.hidden_checkbox->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
+
+		if(ui.hidden_checkbox->isChecked())
+			ui.hidden_checkbox->setChecked(false) ;
+	}
 
 }
 
@@ -418,9 +440,9 @@ void GenCertDialog::exportIdentity()
 
 void GenCertDialog::importIdentity()
 {
-    QString fname ;
-    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
-        return ;
+	QString fname ;
+	if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
+		return ;
 
 	if(fname.isNull())
 		return ;
@@ -453,7 +475,30 @@ void GenCertDialog::genPerson()
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
-    if (ui.hidden_checkbox->isChecked())
+	mGXSNickname = ui.nickname_input->text();
+	if (!mGXSNickname.isEmpty())
+	{
+		if (mGXSNickname.size() < RSID_MINIMUM_NICKNAME_SIZE)
+		{
+			std::cerr << "GenCertDialog::genPerson() GXS Nickname too short (min " << RSID_MINIMUM_NICKNAME_SIZE<< " chars)";
+			std::cerr << std::endl;
+
+			QMessageBox::warning(this, "", tr("The GXS nickname is too short. Please input at least %1 characters.").arg(RSID_MINIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
+			mGXSNickname = "";
+			return;
+		}
+		if (mGXSNickname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
+		{
+			std::cerr << "GenCertDialog::genPerson() GXS Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE<< " chars)";
+			std::cerr << std::endl;
+
+			QMessageBox::warning(this, "", tr("The GXS nickname is too long. Please reduce the length to %1 characters.").arg(RSID_MAXIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
+			mGXSNickname = "";
+			return;
+		}
+	}
+
+	if (ui.hidden_checkbox->isChecked())
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
@@ -515,6 +560,8 @@ void GenCertDialog::genPerson()
 		ui.new_gpg_key_checkbox->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
+		ui.nickname_label->hide();
+		ui.nickname_input->hide();
 //		ui.email_label->hide();
 //		ui.email_input->hide();
 		ui.password_label_2->hide();
@@ -525,12 +572,12 @@ void GenCertDialog::genPerson()
 		ui.genPGPuser->hide();
 		ui.node_label->hide();
 		ui.node_input->hide();
-        ui.genButton2->hide();
+		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
-        ui.hidden_checkbox->hide();
-        ui.adv_checkbox->hide();
-        ui.keylength_label->hide();
+		ui.hidden_checkbox->hide();
+		ui.adv_checkbox->hide();
+		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();
 
 		setCursor(Qt::WaitCursor) ;
@@ -569,6 +616,7 @@ void GenCertDialog::genPerson()
 		/* complete the process */
 		RsInit::LoadPassword(sslPasswd);
 		if (Rshare::loadCertificate(sslId, false)) {
+
 			accept();
 		}
 	}

@@ -505,17 +505,17 @@ void IdEditDialog::createId()
 {
     QString groupname = ui->lineEdit_Nickname->text();
 
-	if (groupname.size() < 2)
+	if (groupname.size() < RSID_MINIMUM_NICKNAME_SIZE)
 	{
-		std::cerr << "IdEditDialog::createId() Nickname too short";
+		std::cerr << "IdEditDialog::createId() Nickname too short (min " << RSID_MINIMUM_NICKNAME_SIZE << " chars)";
 		std::cerr << std::endl;
 
-		QMessageBox::warning(this, "", tr("The nickname is too short. Please input at least %1 characters.").arg(2), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "", tr("The nickname is too short. Please input at least %1 characters.").arg(RSID_MINIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
     if (groupname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
     {
-        std::cerr << "IdEditDialog::createId() Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE<< " chars)";
+        std::cerr << "IdEditDialog::createId() Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE << " chars)";
         std::cerr << std::endl;
 
         QMessageBox::warning(this, "", tr("The nickname is too long. Please reduce the length to %1 characters.").arg(RSID_MAXIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);

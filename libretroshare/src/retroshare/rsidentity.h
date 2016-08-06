@@ -62,6 +62,7 @@ extern RsIdentity *rsIdentity;
 
 // Unicode symbols. NOT utf-8 bytes, because of multi byte characters
 #define RSID_MAXIMUM_NICKNAME_SIZE 30
+#define RSID_MINIMUM_NICKNAME_SIZE 2
 
 std::string rsIdTypeToString(uint32_t idtype);
 
