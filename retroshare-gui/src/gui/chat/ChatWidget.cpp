@@ -91,8 +91,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	//Resize Tool buttons
 	ui->emoteiconButton->setFixedSize(buttonSize);
 	ui->emoteiconButton->setIconSize(iconSize);
-	ui->fontButton->setFixedSize(buttonSize);
-	ui->fontButton->setIconSize(iconSize);
 	ui->attachPictureButton->setFixedSize(buttonSize);
 	ui->attachPictureButton->setIconSize(iconSize);
 	ui->addFileButton->setFixedSize(buttonSize);
@@ -181,21 +179,22 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
-	QMenu *menu = new QMenu();
-	menu->addAction(ui->actionChooseFont);
-	menu->addAction(ui->actionChooseColor);
-	menu->addAction(ui->actionResetFont);
-	menu->addAction(ui->actionNoEmbed);
-	menu->addAction(ui->actionSendAsPlainText);
-	ui->fontButton->setMenu(menu);
+	QMenu *fontmenu = new QMenu(tr("Set text font & color"));
+	fontmenu->addAction(ui->actionChooseFont);
+	fontmenu->addAction(ui->actionChooseColor);
+	fontmenu->addAction(ui->actionResetFont);
+	fontmenu->addAction(ui->actionNoEmbed);
+	fontmenu->addAction(ui->actionSendAsPlainText);
 
-	menu = new QMenu();
+	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
-  	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+	menu->addMenu(fontmenu);
+	
+  ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
   
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
