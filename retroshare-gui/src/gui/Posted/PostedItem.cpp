@@ -44,6 +44,7 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroup
 
 	requestGroup();
 	requestMessage();
+	requestComment();
 }
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
@@ -53,6 +54,7 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGr
 
 	setGroup(group, false);
 	setPost(post);
+	requestComment();
 }
 
 PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
@@ -62,6 +64,7 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPo
 
 	requestGroup();
 	setPost(post);
+	requestComment();
 }
 
 PostedItem::~PostedItem()
@@ -193,6 +196,26 @@ void PostedItem::loadMessage(const uint32_t &token)
 		removeItem();
 		return;
 	}
+}
+
+void PostedItem::loadComment(const uint32_t &token)
+{
+	std::vector<RsGxsComment> cmts;
+	if (!rsPosted->getRelatedComments(token, cmts))
+	{
+		std::cerr << "GxsChannelPostItem::loadComment() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	size_t comNb = cmts.size();
+	QString sComButText = tr("Comment");
+	if (comNb == 1) {
+		sComButText = sComButText.append("(1)");
+	} else if (comNb > 1) {
+		sComButText = tr("Comments").append("(%1)").arg(comNb);
+	}
+	ui->commentButton->setText(sComButText);
 }
 
 void PostedItem::fill()

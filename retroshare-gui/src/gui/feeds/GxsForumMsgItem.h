@@ -63,8 +63,9 @@ protected:
 	virtual bool isLoading();
 
 	/* GxsFeedItem */
-	virtual void loadMessage(const uint32_t &token);
 	virtual QString messageName();
+	virtual void loadMessage(const uint32_t &token);
+	virtual void loadComment(const uint32_t &/*token*/){ return;}
 
 private slots:
 	/* default stuff */
