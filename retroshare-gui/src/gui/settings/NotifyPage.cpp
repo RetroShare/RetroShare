@@ -44,7 +44,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.testToasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
   connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
   connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
-    connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool))) ;
+  connect(ui.chatLobbies_CountFollowingText,SIGNAL(toggled(bool)),ui.chatLobbies_TextToNotify,SLOT(setEnabled(bool)));
 
   ui.notify_Blogs->hide();
 
@@ -257,6 +257,7 @@ NotifyPage::save(QString &/*errmsg*/)
         mChatLobbyUserNotify->setCheckForNickName(ui.chatLobbies_CheckNickName->isChecked()) ;
         mChatLobbyUserNotify->setCountSpecificText(ui.chatLobbies_CountFollowingText->isChecked()) ;
         mChatLobbyUserNotify->setTextToNotify(ui.chatLobbies_TextToNotify->document()->toPlainText());
+        mChatLobbyUserNotify->setTextCaseSensitive(ui.chatLobbies_TextCaseSensitive->isChecked());
     }
     load();
     return true;
@@ -348,11 +349,12 @@ void NotifyPage::load()
     notifyToggled();
 
     if (mChatLobbyUserNotify){
-        ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
-        ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
         ui.chatLobbies_CountUnRead->setChecked(mChatLobbyUserNotify->isCountUnRead());
         ui.chatLobbies_CheckNickName->setChecked(mChatLobbyUserNotify->isCheckForNickName());
+        ui.chatLobbies_CountFollowingText->setChecked(mChatLobbyUserNotify->isCountSpecificText()) ;
+        ui.chatLobbies_TextToNotify->setEnabled(mChatLobbyUserNotify->isCountSpecificText()) ;
         ui.chatLobbies_TextToNotify->setPlainText(mChatLobbyUserNotify->textToNotify());
+        ui.chatLobbies_TextCaseSensitive->setChecked(mChatLobbyUserNotify->isTextCaseSensitive());
     }
 }
 
