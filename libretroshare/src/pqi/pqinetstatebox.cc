@@ -243,6 +243,7 @@ int pqiNetStateBox::updateNetState()
 
 void pqiNetStateBox::clearOldNetworkData()
 {
+#ifdef RS_USE_DHT_STUNNER
 	/* check if any measurements are too old to consider */
 	time_t now = time(NULL);
 	if (now - mStunProxyTS > NETSTATE_PARAM_TIMEOUT)
@@ -254,6 +255,14 @@ void pqiNetStateBox::clearOldNetworkData()
 	{
 		mStunDhtSet = false;
 	}
+#else
+	//Set values, as they are not updated.
+	mStunProxySet = true;
+	mStunDhtSet = true;
+	mStunProxyStable = true;
+	mStunDhtStable = true;
+#endif
+
 }
 
 
