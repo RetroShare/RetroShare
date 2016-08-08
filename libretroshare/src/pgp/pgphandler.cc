@@ -61,25 +61,25 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 	{
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-																				{
-																					std::string passwd;
-																					std::string uid_hint ;
-																					
-																					if(cbinfo->cryptinfo.keydata->nuids > 0)
-																						uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
-																					uid_hint += "(" + RsPgpId(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+		{
+			std::string passwd;
+			std::string uid_hint ;
 
-                                                                                    bool cancelled = false ;
-                                                                                    passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad,&cancelled) ;
+			if(cbinfo->cryptinfo.keydata->nuids > 0)
+				uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
+			uid_hint += "(" + RsPgpId(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
 
-                                                                                    if(cancelled)
-                                                                                        *(unsigned char *)cbinfo->arg = 1;
+			bool cancelled = false ;
+			passwd = PGPHandler::passphraseCallback()(NULL,"",uid_hint.c_str(),NULL,prev_was_bad,&cancelled) ;
 
-                                                                                    *(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
-																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
-																					return OPS_KEEP_MEMORY;
-																				}
-																				break;
+			if(cancelled)
+				*(unsigned char *)cbinfo->arg = 1;
+
+			*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+			memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
+			return OPS_KEEP_MEMORY;
+		}
+		break;
 
 		default:
 			break;
@@ -1326,7 +1326,7 @@ bool PGPHandler::decryptTextFromFile(const RsPgpId&,std::string& text,const std:
 	return (bool)res ;
 }
 
-bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature)
+bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature, std::string reason /* = "" */)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	// need to find the key and to decrypt it.
@@ -1357,7 +1357,7 @@ ops_secret_key_t *secret_key = NULL ;
     for(int i=0;i<3;++i)
     {
         bool cancelled =false;
-        std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;
+        std::string passphrase = _passphrase_callback(NULL,reason.c_str(),uid_hint.c_str(),"Please enter passwd for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;//TODO reason
 
         secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
 
@@ -1448,8 +1448,8 @@ bool PGPHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpId& id_o
 		return false ;
 	}
 
-    bool cancelled = false;
-    std::string passphrase = _passphrase_callback(NULL,RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
+	bool cancelled = false;
+	std::string passphrase = _passphrase_callback(NULL,"",RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(skey,passphrase.c_str()) ;
 

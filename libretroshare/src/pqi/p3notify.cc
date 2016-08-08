@@ -245,10 +245,10 @@ void p3Notify::notifyDownloadComplete           (const std::string& fileHash )  
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }
 
-bool p3Notify::askForPassword                   (const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
+bool p3Notify::askForPassword                   (const std::string& title    , const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-        if( (*it)->askForPassword(key_details,prev_is_bad,password,*cancelled))
+        if( (*it)->askForPassword(title,key_details,prev_is_bad,password,*cancelled))
 			return true ;
 
 	return false ;
@@ -261,10 +261,10 @@ bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filen
 
 	return false ;
 }
-bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result ) 
+bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result)) 
+		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result, reason))
 			return true ;
 
 	return false ;

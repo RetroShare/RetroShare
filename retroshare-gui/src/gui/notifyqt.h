@@ -67,7 +67,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyDiscInfoChanged() ;
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
-        virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
+		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash);
 
 		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
@@ -82,7 +82,7 @@ class NotifyQt: public QObject, public NotifyClient
 		// 					1: signature success
 		// 					2: signature failed. Wrong passwd, user pressed cancel, etc.
 		//
-		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result) ;
+		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result, std::string reason = "") ;
 
 		/* Notify from GUI */
 		void notifyChatFontChanged();

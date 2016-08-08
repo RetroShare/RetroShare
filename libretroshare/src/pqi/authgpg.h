@@ -208,7 +208,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		 * There should also be Encryption Functions... (do later).
 		 *
 		 ****/
-		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
+		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "");
 		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
 		virtual bool parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id);
 
@@ -254,7 +254,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		//void createDummyFriends(void); //NYI
 
 		/* Internal functions */
-		bool DoOwnSignature(const void *, unsigned int, void *, unsigned int *);
+		bool DoOwnSignature(const void *, unsigned int, void *, unsigned int *, std::string reason);
 		bool VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint);
 
 		/* Sign/Trust stuff */

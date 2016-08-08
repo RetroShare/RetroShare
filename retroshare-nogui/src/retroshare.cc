@@ -442,7 +442,7 @@ void generatePasswordHash()
 	std::string passwd1,passwd2 ;
 	bool cancel ;
 
-	if(!NotifyTxt().askForPassword("Type your password (at least 8 chars) : ",false,passwd1,cancel)) exit(1) ;
+	if(!NotifyTxt().askForPassword("","Type your password (at least 8 chars) : ",false,passwd1,cancel)) exit(1) ;
 
 	if(passwd1.length() < 8)
 	{
@@ -450,7 +450,7 @@ void generatePasswordHash()
 		exit(1);
 	}
 
-	if(!NotifyTxt().askForPassword("Type your password (checking)         : ",false,passwd2,cancel)) exit(1) ;
+	if(!NotifyTxt().askForPassword("","Type your password (checking)         : ",false,passwd2,cancel)) exit(1) ;
 
 	if(passwd1 != passwd2)
 	{

@@ -850,7 +850,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
 
         /* NOW Sign via GPG Functions */
-        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
+        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
         {
                 sigoutl = 0;
                 goto err;
