@@ -4827,6 +4827,10 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	// update the publish keys in this group meta info
 
 	RsGxsGrpMetaData *grpMeta = grpMetaMap[item->grpId] ;
+	if (!grpMeta) {
+		std::cerr << "(EE) RsGxsNetService::handleRecvPublishKeys() grpMeta not found." << std::endl;
+		return ;
+	}
 
 	// Check that the keys correspond, and that FULL keys are supplied, etc.
 
