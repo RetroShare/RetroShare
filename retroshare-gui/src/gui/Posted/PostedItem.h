@@ -72,8 +72,9 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
 	/* GxsFeedItem */
-	virtual void loadMessage(const uint32_t &token);
 	virtual QString messageName();
+	virtual void loadMessage(const uint32_t &token);
+	virtual void loadComment(const uint32_t &token);
 
 private:
 	void setup();

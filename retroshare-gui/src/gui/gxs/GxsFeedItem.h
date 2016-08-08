@@ -42,9 +42,11 @@ public:
 protected:
 	/* load message data */
 	void requestMessage();
+	void requestComment();
 
-	virtual void loadMessage(const uint32_t &token) = 0;
 	virtual QString messageName() = 0;
+	virtual void loadMessage(const uint32_t &token) = 0;
+	virtual void loadComment(const uint32_t &token) = 0;
 
 	/* GxsGroupFeedItem */
 	virtual bool isLoading();
@@ -60,6 +62,7 @@ protected slots:
 private:
 	RsGxsMessageId mMessageId;
 	uint32_t mTokenTypeMessage;
+	uint32_t mTokenTypeComment;
 };
 
 Q_DECLARE_METATYPE(RsGxsMessageId)
