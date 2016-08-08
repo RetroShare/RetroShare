@@ -92,7 +92,12 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
     if (mImageBlockWidget) 
 	    mImageBlockWidget->show();
 
+    //https://git.merproject.org/lbt/qtbase/commit/6d13e9f29597e0d557857e3f80173faba5368424
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+    return QPixmap(":/qt-project.org/styles/commonstyle/images/file-16.png");
+#else
     return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
+#endif
 }
 
 void RSTextBrowser::setImageBlockWidget(RSImageBlockWidget *widget)
