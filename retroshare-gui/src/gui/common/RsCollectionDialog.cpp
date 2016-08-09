@@ -805,7 +805,7 @@ bool RsCollectionDialog::addAllChild(QFileInfo &fileInfoParent
  */
 void RsCollectionDialog::remove()
 {
-    bool removeOnlyFile=false;
+	bool removeOnlyFile=false;
 	QString listDir;
 	// First, check if selection contains directories
 	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)
@@ -880,20 +880,49 @@ void RsCollectionDialog::remove()
 	}//if (!listDir.isEmpty())
 
 	//Remove wanted items
-	for (int curs = 0; curs < ui._fileEntriesTW->selectedItems().count(); ++curs)
-	{// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected change
-		QTreeWidgetItem *item = NULL;
-		item= ui._fileEntriesTW->selectedItems().at(curs);
+	int leftItem = 0;
+	// Have to call ui._fileEntriesTW->selectedItems().count() each time as selected change
+	while (ui._fileEntriesTW->selectedItems().count() > leftItem) {
+		QTreeWidgetItem *item = ui._fileEntriesTW->selectedItems().at(leftItem);
 
 		if (item != getRootItem()){
-			if ((item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) || !removeOnlyFile) {
+			if (!removeItem(item, removeOnlyFile)) {
+				++leftItem;
+			}
+		} else {
+			//Get Root change index
+			++leftItem;
+		}
+	}
+
+	updateSizes() ;
+
+}
+
+bool RsCollectionDialog::removeItem(QTreeWidgetItem *item, bool &removeOnlyFile)
+{
+	if (item){
+		if ((item->data(COLUMN_HASH, ROLE_TYPE).toUInt() != DIR_TYPE_DIR) || !removeOnlyFile) {
+			int leftItem = 0;
+			while (item->childCount() > leftItem) {
+				if (!removeItem(item->child(0), removeOnlyFile)) {
+					++leftItem;
+				}
+			}
+			if (leftItem == 0) {
+				//First uncheck item to update parent informations
+				item->setCheckState(COLUMN_FILE,Qt::Unchecked);
 				QTreeWidgetItem *parent = item->parent();
 				parent->removeChild(item);
-				curs = 0;//Cause we don't know how many child of this item was selected (and don't want iterate them ;) )
+				return true;
+			} else {
+				if (!removeOnlyFile) {
+					std::cerr << "(EE) RsCollectionDialog::removeItem This could never happen." << std::endl;
+				}
 			}
-		}//if (item != getRootItem())*
-	}//for (int curs = 0; curs < count; ++curs)
-
+		}
+	}
+	return false;
 }
 
 /** Process each item to make a new RsCollection item */
@@ -1096,6 +1125,7 @@ void RsCollectionDialog::itemChanged(QTreeWidgetItem *item, int col)
 void RsCollectionDialog::updateRemoveDuplicate(bool checked)
 {
 	if (checked) {
+		bool bRemoveAll = false;
 		QTreeWidgetItemIterator it(ui._fileEntriesTW);
 		QTreeWidgetItem *item;
 		while ((item = *it) != NULL) {
@@ -1104,57 +1134,71 @@ void RsCollectionDialog::updateRemoveDuplicate(bool checked)
 				QList<QTreeWidgetItem*> founds;
 				founds << ui._fileEntriesTW->findItems(item->text(COLUMN_HASH), Qt::MatchExactly | Qt::MatchRecursive, COLUMN_HASH);
 				if (founds.count() > 1) {
-					QMessageBox* msgBox = new QMessageBox(QMessageBox::Information, "", "");
-					msgBox->setText("Warning, duplicate file found.");
-					//msgBox->setInformativeText(); If text too long, no scroll, so I add an text edit
-					msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-					msgBox->setDefaultButton(QMessageBox::Yes);
+					bool bRemove = false;
+					if (!bRemoveAll) {
+						QMessageBox* msgBox = new QMessageBox(QMessageBox::Information, "", "");
+						msgBox->setText("Warning, duplicate file found.");
+						//msgBox->setInformativeText(); If text too long, no scroll, so I add an text edit
+						msgBox->setStandardButtons(QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+						msgBox->setDefaultButton(QMessageBox::Yes);
 
-					QGridLayout* layout = qobject_cast<QGridLayout*>(msgBox->layout());
-					if (layout) {
-						int newRow = 1;
-						for (int row = layout->count()-1; row >= 0; --row) {
-							for (int col = layout->columnCount()-1; col >= 0; --col) {
-								QLayoutItem *item = layout->itemAtPosition(row, col);
-								if (item) {
-									int index = layout->indexOf(item->widget());
-									int r=0, c=0, rSpan=0, cSpan=0;
-									layout->getItemPosition(index, &r, &c, &rSpan, &cSpan);
-									if (r>0) {
-										layout->removeItem(item);
-										layout->addItem(item, r+3, c, rSpan, cSpan);
-									} else if (rSpan>1) {
-										newRow = rSpan + 1;
+						QGridLayout* layout = qobject_cast<QGridLayout*>(msgBox->layout());
+						if (layout) {
+							int newRow = 1;
+							for (int row = layout->count()-1; row >= 0; --row) {
+								for (int col = layout->columnCount()-1; col >= 0; --col) {
+									QLayoutItem *item = layout->itemAtPosition(row, col);
+									if (item) {
+										int index = layout->indexOf(item->widget());
+										int r=0, c=0, rSpan=0, cSpan=0;
+										layout->getItemPosition(index, &r, &c, &rSpan, &cSpan);
+										if (r>0) {
+											layout->removeItem(item);
+											layout->addItem(item, r+3, c, rSpan, cSpan);
+										} else if (rSpan>1) {
+											newRow = rSpan + 1;
+										}
 									}
 								}
 							}
+							QLabel *label = new QLabel(tr("Do you want to remove this file from the list?"));
+							layout->addWidget(label,newRow, 0, 1, layout->columnCount(), Qt::AlignHCenter );
+							QTextEdit *edit = new QTextEdit(item->text(COLUMN_FILEPATH));
+							edit->setReadOnly(true);
+							edit->setWordWrapMode(QTextOption::NoWrap);
+							layout->addWidget(edit,newRow+1, 0, 1, layout->columnCount(), Qt::AlignHCenter );
 						}
-						QLabel *label = new QLabel(tr("Do you want to remove this file from the list?"));
-						layout->addWidget(label,newRow, 0, 1, layout->columnCount(), Qt::AlignHCenter );
-						QTextEdit *edit = new QTextEdit(item->text(COLUMN_FILEPATH));
-						edit->setReadOnly(true);
-						edit->setWordWrapMode(QTextOption::NoWrap);
-						layout->addWidget(edit,newRow+1, 0, 1, layout->columnCount(), Qt::AlignHCenter );
+
+						int ret = msgBox->exec();
+						switch (ret) {
+							case QMessageBox::YesToAll: {
+								bRemoveAll = true;
+							}
+							break;
+							case QMessageBox::Yes: {
+								bRemove = true;
+							}
+							break;
+							case QMessageBox::No:
+							break;
+							case QMessageBox::Cancel: {
+								delete msgBox;
+								ui._removeDuplicate_CB->setChecked(false);
+								return;
+							}
+							break;
+							default:
+								// should never be reached
+							break;
+						}
+						delete msgBox;
 					}
 
-					int ret = msgBox->exec();
-					switch (ret) {
-						case QMessageBox::Yes:
+					if (bRemove || bRemoveAll) {
+							//First uncheck item to update parent informations
+							item->setCheckState(COLUMN_FILE,Qt::Unchecked);
 							item->parent()->removeChild(item);
-						break;
-						case QMessageBox::No:
-						break;
-						case QMessageBox::Cancel: {
-							delete msgBox;
-							ui._removeDuplicate_CB->setChecked(true);
-							return;
-						}
-						break;
-						default:
-							// should never be reached
-						break;
 					}
-					delete msgBox;
 
 				}
 			}

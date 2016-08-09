@@ -69,6 +69,7 @@ private:
 	QTreeWidgetItem*  getRootItem();
 	bool updateList();
 	bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
+	bool removeItem(QTreeWidgetItem *item, bool &removeOnlyFile) ;
 	void addRecursive(bool recursive) ;
 	bool addAllChild(QFileInfo &fileInfoParent
 	                 , QMap<QString, QString > &dirToAdd
