@@ -28,7 +28,7 @@ GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_l
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-GenCertDialog QLabel#label_hiddenaddr2 {
+GenCertDialog QLabel#label_hiddenaddr {
 	border: 1px solid #50FF5B;
 	border-radius: 6px;
 	background: #CCFFCC;
@@ -50,19 +50,6 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 GenCertDialog > QFrame#frame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
-}
-
-GenCertDialog QPushButton#genButton { 
-	border-image: url(:/images/btn_blue.png) 4;
-	border-width: 4;
-	padding: 0px 6px;
-	font-size: 14px;
-	font: bold;
-	color: white;
-}
-
-GenCertDialog QPushButton#genButton:hover {
-	border-image: url(:/images/btn_blue_hover.png) 4;
 }
 
 /* ConnectFriendWizard */

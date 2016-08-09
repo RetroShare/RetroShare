@@ -32,7 +32,7 @@ public:
     bool processShouldExit();
 
     // from NotifyClient
-    virtual bool askForPassword(const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled);
+    virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled);
 
 protected:
     // from RsThread
@@ -76,6 +76,7 @@ private:
     // to notify that a password callback is waiting
     // to answer the request, clear the flag and set the password
     bool mWantPassword;
+    std::string mTitle;
     std::string mKeyName;
     std::string mPassword;
     // for ssl cert generation:

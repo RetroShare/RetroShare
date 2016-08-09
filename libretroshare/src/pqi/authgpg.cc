@@ -86,14 +86,14 @@ bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfi
 // 	return PGPHandler::encryptTextToString(RsPgpId(pgp_id),text,outstr) ;
 // }
 
-std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad,bool *cancelled)
+std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad,bool *cancelled)
 {
 #define GPG_DEBUG2
 #ifdef GPG_DEBUG2
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
 	std::string password;
-    RsServer::notify()->askForPassword(uid_hint, prev_was_bad, password,cancelled) ;
+	RsServer::notify()->askForPassword(uid_title, uid_hint, prev_was_bad, password,cancelled) ;
 
 	return password ;
 }
@@ -296,9 +296,9 @@ void AuthGPG::processServices()
     delete operation;
 }
 
-bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl)
+bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_sigout, unsigned int *outl, std::string reason /* = "" */)
 {
-	return PGPHandler::SignDataBin(mOwnGpgId,data,datalen,(unsigned char *)buf_sigout,outl) ;
+	return PGPHandler::SignDataBin(mOwnGpgId,data,datalen,(unsigned char *)buf_sigout,outl,false,reason) ;
 }
 
 
@@ -605,9 +605,9 @@ bool AuthGPG::decryptDataBin(const void *data, unsigned int datalen, unsigned ch
 {
 	return PGPHandler::decryptDataBin(mOwnGpgId,data,datalen,sign,signlen) ;
 }
-bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen)
+bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen, std::string reason /*= ""*/)
 {
-	return DoOwnSignature(data, datalen, sign, signlen);
+	return DoOwnSignature(data, datalen, sign, signlen, reason);
 }
 
 bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint) 

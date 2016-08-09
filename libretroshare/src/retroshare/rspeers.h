@@ -352,7 +352,7 @@ public:
 	virtual bool getGPGValidList(std::list<RsPgpId> &gpg_ids) = 0;
 	virtual bool getGPGAllList(std::list<RsPgpId> &gpg_ids) = 0;
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
-	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
+	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 
 	/* Add/Remove Friends */
 	virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT) = 0;

@@ -2784,7 +2784,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-        mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result) ;
+        mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result, "p3IdService::service_CreateGroup()") ;
 
     /* error */
     switch(result)
