@@ -38,12 +38,14 @@ CONFIG += file_lists
 file_lists {
 	HEADERS *= file_sharing/p3filelists.h \
 				file_sharing/hash_cache.h \
-				file_sharing/directory_storage.h \
+                                file_sharing/filelist_io.h \
+                                file_sharing/directory_storage.h \
 				file_sharing/directory_updater.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
 				file_sharing/hash_cache.cc \
-				file_sharing/directory_storage.cc \
+                                file_sharing/filelist_io.cc \
+                                file_sharing/directory_storage.cc \
 				file_sharing/directory_updater.cc
 }
 

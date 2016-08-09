@@ -7,15 +7,6 @@
 #include "retroshare/rsids.h"
 #include "retroshare/rsfiles.h"
 
-static const uint8_t DIRECTORY_STORAGE_VERSION               =  0x01 ;
-
-static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;
-static const uint8_t DIRECTORY_STORAGE_TAG_FILE_NAME         =  0x02 ;
-static const uint8_t DIRECTORY_STORAGE_TAG_FILE_SIZE         =  0x03 ;
-static const uint8_t DIRECTORY_STORAGE_TAG_DIR_NAME          =  0x04 ;
-static const uint8_t DIRECTORY_STORAGE_TAG_MODIF_TS          =  0x05 ;
-static const uint8_t DIRECTORY_STORAGE_TAG_RECURS_MODIF_TS   =  0x06 ;
-
 #define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 
 class InternalFileHierarchyStorage ;

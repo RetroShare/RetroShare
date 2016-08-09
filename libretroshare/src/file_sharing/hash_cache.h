@@ -34,7 +34,7 @@ public:
 
     struct HashStorageInfo
     {
-        std::string filename ;
+        std::string filename ;		// full path of the file
         uint64_t size ;
         uint32_t time_stamp ;		// last time the hash was tested/requested
         uint32_t modf_stamp ;
@@ -50,11 +50,16 @@ public:
     // Functions called by the thread
 
     virtual void data_tick() ;
+
+    friend std::ostream& operator<<(std::ostream& o,const HashStorageInfo& info) ;
 private:
     void clean() ;
 
     void save() ;
     void load() ;
+
+    bool readHashStorageInfo(const unsigned char *data,uint32_t total_size,uint32_t& offset,HashStorageInfo& info) const;
+    bool writeHashStorageInfo(unsigned char *& data,uint32_t&  total_size,uint32_t& offset,const HashStorageInfo& info) const;
 
     // Local configuration and storage
 
@@ -79,5 +84,6 @@ private:
 
     RsMutex mHashMtx ;
     bool mRunning;
+    uint32_t mInactivitySleepTime = 50*1000 ;
 };
 
