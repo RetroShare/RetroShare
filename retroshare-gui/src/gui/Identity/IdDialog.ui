@@ -278,7 +278,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeft|AlignVCenter</set>
+           <set>AlignLeading|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -535,13 +535,6 @@
           </property>
           <layout class="QVBoxLayout" name="reputationGroupBoxVLayout">
            <item>
-            <widget class="QCheckBox" name="autoBanIdentities_CB">
-             <property name="text">
-              <string>Auto-Ban all identities from this node</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <layout class="QGridLayout" name="reputationGLayout">
              <property name="leftMargin">
               <number>6</number>
@@ -635,6 +628,13 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="text">
                 <string>Overall:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="autoBanIdentities_CB">
+               <property name="text">
+                <string>Auto-Ban all identities from this node</string>
                </property>
               </widget>
              </item>
