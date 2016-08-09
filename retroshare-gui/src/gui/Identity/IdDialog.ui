@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>872</height>
+    <height>590</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -587,23 +587,37 @@ p, li { white-space: pre-wrap; }
                <property name="currentIndex">
                 <number>0</number>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
                <item>
                 <property name="text">
                  <string>Negative</string>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normaloff>../icons/yellow_biohazard64.png</normaloff>../icons/yellow_biohazard64.png</iconset>
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
                 </property>
                </item>
                <item>
                 <property name="text">
                  <string>Neutral</string>
                 </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/vote_neutral.png</normaloff>:/images/vote_neutral.png</iconset>
+                </property>
                </item>
                <item>
                 <property name="text">
                  <string>Positive</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
                 </property>
                </item>
               </widget>
@@ -637,6 +651,19 @@ p, li { white-space: pre-wrap; }
                 <string>Auto-Ban all identities from this node</string>
                </property>
               </widget>
+             </item>
+             <item row="0" column="2" rowspan="4">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>128</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
