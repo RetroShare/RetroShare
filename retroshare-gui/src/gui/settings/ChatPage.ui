@@ -218,6 +218,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QCheckBox" name="loadEmbeddedImages">
+              <property name="text">
+               <string>Load embedded images</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>

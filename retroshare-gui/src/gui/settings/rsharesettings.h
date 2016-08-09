@@ -237,6 +237,9 @@ public:
 	void setChatSearchFoundColor(QRgb rgbValue);
 	QRgb getChatSearchFoundColor();
 
+	bool getChatLoadEmbeddedImages();
+	void setChatLoadEmbeddedImages(bool value);
+
 	enumToasterPosition getToasterPosition();
 	void setToasterPosition(enumToasterPosition position);
 
