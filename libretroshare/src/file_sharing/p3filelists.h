@@ -147,16 +147,16 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         // The remote one is the reference for the PeerId index below:
         //     RemoteDirectories[ getFriendIndex(pid) - 1] = RemoteDirectoryStorage(pid)
 
-        std::vector<RemoteDirectoryStorage *> mRemoteDirectories ;
+        std::vector<DirectoryStorage *> mDirectories ;	// mDirectories[0]=mLocalSharedDirs
         LocalDirectoryStorage *mLocalSharedDirs ;
 
-        RemoteDirectoryUpdater *mRemoteDirWatcher ;
+        RemoteDirectoryUpdater *mRemoteDirWatcher ;	// not used yet.
         LocalDirectoryUpdater *mLocalDirWatcher ;
 
         // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
 
-        static bool convertEntryIndexToPointer(EntryIndex& e,uint32_t friend_index,void *& p);
-        static bool convertPointerToEntryIndex(void *p, EntryIndex& e, uint32_t& friend_index) ;
+        static bool convertEntryIndexToPointer(const EntryIndex &e, uint32_t friend_index, void *& p);
+        static bool convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index) ;
         uint32_t getFriendIndex(const RsPeerId& pid);
         const RsPeerId& getFriendFromIndex(uint32_t indx) const;
 

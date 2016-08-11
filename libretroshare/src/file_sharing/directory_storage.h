@@ -14,10 +14,10 @@ class InternalFileHierarchyStorage ;
 class DirectoryStorage
 {
 	public:
-		DirectoryStorage(const std::string& local_file_name) ;
+        DirectoryStorage(const std::string& local_file_name,const RsPeerId& pid) ;
         virtual ~DirectoryStorage() {}
 
-        typedef uint32_t EntryIndex ;
+        typedef int32_t EntryIndex ;
         static const EntryIndex NO_INDEX = 0xffffffff;
 
 		void save() const ;
@@ -27,6 +27,8 @@ class DirectoryStorage
         virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
 		void getFileDetails(EntryIndex i) ;
+        uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
+        virtual bool extractData(const EntryIndex& indx,DirDetails& d) =0;
 
 		// This class allows to abstractly browse the stored directory hierarchy in a depth-first manner.
 		// It gives access to sub-files and sub-directories below.
@@ -44,7 +46,7 @@ class DirectoryStorage
 
                 // info about the directory that is pointed by the iterator
 
-                const std::string& name() const ;
+                std::string name() const ;
             private:
                 EntryIndex mParentIndex ;		// index of the parent dir.
                 uint32_t mDirTabIndex ;				// index in the vector of subdirs.
@@ -83,6 +85,8 @@ class DirectoryStorage
         };
 
         EntryIndex root() const ;					// returns the index of the root directory entry.
+        const RsPeerId& peerId() const { return mPeerId ; }
+        int parentRow(EntryIndex e) const ;
 
         bool updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
@@ -103,28 +107,31 @@ class DirectoryStorage
 
         // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
 
-        InternalFileHierarchyStorage *mFileHierarchy ;
         std::string mFileName;
+        RsPeerId mPeerId;
+
     protected:
-        RsMutex mDirStorageMtx ;
+        mutable RsMutex mDirStorageMtx ;
+
+        InternalFileHierarchyStorage *mFileHierarchy ;
 };
 
 class RemoteDirectoryStorage: public DirectoryStorage
 {
 public:
-    RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname),mPeerId(pid) {}
+    RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname,pid) {}
     virtual ~RemoteDirectoryStorage() {}
 
-    const RsPeerId& peerId() const { return mPeerId ; }
-
-private:
-    RsPeerId mPeerId;
+    virtual bool extractData(const EntryIndex& indx,DirDetails& d)
+    {
+        NOT_IMPLEMENTED();
+    }
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
 {
 public:
-    LocalDirectoryStorage(const std::string& fname) : DirectoryStorage(fname) {}
+    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(fname,own_id) {}
     virtual ~LocalDirectoryStorage() {}
 
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
@@ -140,6 +147,9 @@ public:
      * \return false if the file does not exist, or is a directory,...
      */
     bool getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info) ;
+
+    virtual bool extractData(const EntryIndex& indx,DirDetails& d) ;
+
 private:
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 

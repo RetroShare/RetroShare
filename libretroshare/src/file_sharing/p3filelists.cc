@@ -25,9 +25,11 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 {
 	// loads existing indexes for friends. Some might be already present here.
 	// 
-    mRemoteDirectories.clear() ;	// we should load them!
+    mDirectories.clear() ;	// we should load them!
 
-    mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin") ;
+    mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin",mpeers->getOwnId()) ;
+    mDirectories.push_back(mLocalSharedDirs) ;
+
     mHashCache = new HashStorage("hash_cache.bin") ;
 
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
@@ -58,10 +60,10 @@ p3FileDatabase::~p3FileDatabase()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
-    for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-        delete mRemoteDirectories[i];
+    for(uint32_t i=0;i<mDirectories.size();++i)
+        delete mDirectories[i];
 
-    mRemoteDirectories.clear(); // just a precaution, not to leave deleted pointers around.
+    mDirectories.clear(); // just a precaution, not to leave deleted pointers around.
 
     delete mLocalSharedDirs ;
     delete mLocalDirWatcher ;
@@ -172,19 +174,19 @@ void p3FileDatabase::cleanup()
             friend_set.insert(*it) ;
     }
 
-    for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-        if(friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
+    for(uint32_t i=1;i<mDirectories.size();++i)	// start at 1, so that we don't cleanup our own.
+        if(friend_set.find(mDirectories[i]->peerId()) == friend_set.end())
 		{
-            P3FILELISTS_DEBUG() << "  removing file list of non friend " << mRemoteDirectories[i]->peerId() << std::endl;
+            P3FILELISTS_DEBUG() << "  removing file list of non friend " << mDirectories[i]->peerId() << std::endl;
 
-            delete mRemoteDirectories[i];
-            mRemoteDirectories[i] = NULL ;
+            delete mDirectories[i];
+            mDirectories[i] = NULL ;
 
 			mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
-            friend_set.erase(mRemoteDirectories[i]->peerId());
+            friend_set.erase(mDirectories[i]->peerId());
 
-            mFriendIndexMap.erase(mRemoteDirectories[i]->peerId());
+            mFriendIndexMap.erase(mDirectories[i]->peerId());
             mFriendIndexTab[i].clear();
         }
 
@@ -195,12 +197,12 @@ void p3FileDatabase::cleanup()
         P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << std::endl;
 
         uint32_t i;
-        for(i=0;i<mRemoteDirectories.size() && mRemoteDirectories[i] != NULL;++i);
+        for(i=0;i<mDirectories.size() && mDirectories[i] != NULL;++i);
 
-        if(i == mRemoteDirectories.size())
-            mRemoteDirectories.push_back(NULL) ;
+        if(i == mDirectories.size())
+            mDirectories.push_back(NULL) ;
 
-        mRemoteDirectories[i] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+        mDirectories[i] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
         mFriendIndexTab[i] = *it ;
         mFriendIndexMap[*it] = i;
 
@@ -264,7 +266,7 @@ const RsPeerId& p3FileDatabase::getFriendFromIndex(uint32_t indx) const
 
     return mFriendIndexTab[indx];
 }
-bool p3FileDatabase::convertPointerToEntryIndex(void *p, EntryIndex& e, uint32_t& friend_index)
+bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index)
 {
     // trust me, I can do this ;-)
 
@@ -273,7 +275,7 @@ bool p3FileDatabase::convertPointerToEntryIndex(void *p, EntryIndex& e, uint32_t
 
     return true;
 }
-bool p3FileDatabase::convertEntryIndexToPointer(EntryIndex& e, uint32_t fi, void *& p)
+bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi, void *& p)
 {
     // the pointer is formed the following way:
     //
@@ -295,16 +297,64 @@ bool p3FileDatabase::convertEntryIndexToPointer(EntryIndex& e, uint32_t fi, void
 
     return true;
 }
-int p3FileDatabase::RequestDirDetails(void *ref, DirDetails&, FileSearchFlags) const
+
+// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
+
+int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
+    // Case where the pointer is NULL, which means we're at the top of the list of shared directories for all friends (including us)
+
+    if (ref == NULL)
+    {
+        for(uint32_t i=0;i<mDirectories.size();++i)
+        {
+            void *p;
+            convertEntryIndexToPointer(mDirectories[i]->root(),i,p);
+
+            DirStub stub;
+            stub.type = DIR_TYPE_PERSON;
+            stub.name = mDirectories[i]->peerId().toStdString();
+            stub.ref  = p;
+            d.children.push_back(stub);
+        }
+        d.count = mDirectories.size();
+
+        d.parent = NULL;
+        d.prow = -1;
+        d.ref = NULL;
+        d.type = DIR_TYPE_ROOT;
+        d.name = "root";
+        d.hash.clear() ;
+        d.path = "root";
+        d.age = 0;
+        d.flags.clear() ;
+        d.min_age = 0 ;
+
+        return true ;
+    }
+
     uint32_t fi;
     EntryIndex e ;
 
-    convertPointerToEntryIndex(ref,e,fi) ;
-#warning code needed here
+    convertPointerToEntryIndex(ref,e,fi);
 
-    return 0;
+    // Case where the index is the top of a single person. Can be us, or a friend.
+
+    bool res = mDirectories[fi]->extractData(e,d) ;
+
+    // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
+    // a pointer into an int.
+
+    convertEntryIndexToPointer((intptr_t)d.ref,fi,d.ref) ;
+    convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
+
+    for(std::list<DirStub>::iterator it(d.children.begin());it!=d.children.end();++it)
+        convertEntryIndexToPointer((intptr_t)it->ref,fi,it->ref);
+
+    d.prow = mDirectories[fi]->parentRow(e) ;
+    d.id   = mDirectories[fi]->peerId();
 }
+
 int p3FileDatabase::RequestDirDetails(const RsPeerId& uid,const std::string& path, DirDetails &details) const
 {
     NOT_IMPLEMENTED();
@@ -317,9 +367,20 @@ int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &detai
 }
 uint32_t p3FileDatabase::getType(void *ref) const
 {
-    NOT_IMPLEMENTED();
-    return 0;
+    EntryIndex e ;
+    uint32_t fi;
+
+    if(ref == NULL)
+        return DIR_TYPE_ROOT ;
+
+    convertPointerToEntryIndex(ref,e,fi);
+
+    if(e == 0)
+        return DIR_TYPE_PERSON ;
+
+    return mDirectories[fi]->getEntryType(e) ;
 }
+
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
     NOT_IMPLEMENTED();
