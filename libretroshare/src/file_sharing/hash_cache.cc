@@ -23,22 +23,41 @@ void HashStorage::data_tick()
     uint64_t size ;
 
     {
-        RS_STACK_MUTEX(mHashMtx) ;
+        bool empty ;
+        uint32_t st ;
 
-        if(mFilesToHash.empty())
         {
-            std::cerr << "Stopping hashing thread." << std::endl;
-            shutdown();
-            mRunning = false ;
-            std::cerr << "done." << std::endl;
+            RS_STACK_MUTEX(mHashMtx) ;
 
-            RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+            empty = mFilesToHash.empty();
+            st = mInactivitySleepTime ;
+        }
 
-            usleep(mInactivitySleepTime);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
-            mInactivitySleepTime *= 2;
+        // sleep off mutex!
+        if(empty)
+        {
+            std::cerr << "nothing to hash. Sleeping for " << st << " us" << std::endl;
 
-            if(mInactivitySleepTime > MAX_INACTIVITY_SLEEP_TIME)
-               mInactivitySleepTime = MAX_INACTIVITY_SLEEP_TIME;
+            usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
+
+            if(st > MAX_INACTIVITY_SLEEP_TIME)
+            {
+                RS_STACK_MUTEX(mHashMtx) ;
+
+                mInactivitySleepTime = MAX_INACTIVITY_SLEEP_TIME;
+
+                std::cerr << "Stopping hashing thread." << std::endl;
+                shutdown();
+                mRunning = false ;
+                std::cerr << "done." << std::endl;
+
+                RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+            }
+            else
+            {
+                RS_STACK_MUTEX(mHashMtx) ;
+                mInactivitySleepTime = 2*st ;
+            }
 
             return ;
         }
@@ -278,6 +297,9 @@ bool HashStorage::readHashStorageInfo(const unsigned char *data,uint32_t total_s
     unsigned char *section_data = NULL ;
     uint32_t section_size = 0;
     uint32_t section_offset = 0;
+
+    // This way, the entire section is either read or skipped. That avoids the risk of being stuck somewhere in the middle
+    // of a section because of some unknown field, etc.
 
     if(!FileListIO::readField(data,total_size,offset,FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY,section_data,section_size))
        return false;

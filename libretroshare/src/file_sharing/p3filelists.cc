@@ -102,6 +102,15 @@ int p3FileDatabase::tick()
 	// 	- 
 	cleanup();
 
+    static time_t last_print_time = 0;
+    time_t now = time(NULL) ;
+
+    if(last_print_time + 60 < now)
+    {
+        mLocalSharedDirs->print();
+        last_print_time = now ;
+    }
+
     return 0;
 }
 
@@ -353,6 +362,8 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     d.prow = mDirectories[fi]->parentRow(e) ;
     d.id   = mDirectories[fi]->peerId();
+
+    return true;
 }
 
 int p3FileDatabase::RequestDirDetails(const RsPeerId& uid,const std::string& path, DirDetails &details) const
