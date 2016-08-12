@@ -237,7 +237,7 @@ void HashStorage::save()
     uint32_t total_size = 0;
 
     for(std::map<std::string,HashStorageInfo>::const_iterator it(mFiles.begin());it!=mFiles.end();++it)
-        writeHashStorageInfo(it->second,data,total_size,offset) ;
+        writeHashStorageInfo(data,total_size,offset,it->second) ;
 
     void *encryptedData = NULL ;
     int encDataLen = 0 ;
@@ -277,6 +277,7 @@ bool HashStorage::readHashStorageInfo(const unsigned char *data,uint32_t total_s
 {
     unsigned char *section_data = NULL ;
     uint32_t section_size = 0;
+    uint32_t section_offset = 0;
 
     if(!FileListIO::readField(data,total_size,offset,FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY,section_data,section_size))
        return false;
@@ -316,5 +317,3 @@ std::ostream& operator<<(std::ostream& o,const HashStorage::HashStorageInfo& inf
 {
     return o << info.hash << " " << info.size << " " << info.filename ;
 }
-
-

@@ -1,6 +1,10 @@
 #pragma once
 
+#include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
+
+#include "util/rsmemory.h"
 
 // This file implements load/save of various fields used for file lists and directory content.
 // WARNING: the encoding is system-dependent, so this should *not* be used to exchange data between computers.
@@ -15,6 +19,7 @@ static const uint8_t FILE_LIST_IO_TAG_MODIF_TS           =  0x05 ;
 static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS    =  0x06 ;
 static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY =  0x07 ;
 static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS          =  0x08 ;
+static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA        =  0x09 ;
 
 class FileListIO
 {
@@ -34,7 +39,30 @@ public:
        return true;
     }
 
+    template<typename T>
+    static bool readField(const unsigned char *buff,uint32_t buff_size,uint32_t& offset,uint8_t check_section_tag,T& val)
+    {
+        uint32_t section_size ;
+
+       if(!readSectionHeader(buff,buff_size,offset,check_section_tag,section_size))
+          return false;
+
+       if(section_size != sizeof(T))
+           return false ;
+
+       memcpy(reinterpret_cast<uint8_t*>(&val),&buff[offset],sizeof(T)) ;
+       offset += sizeof(T) ;
+
+       return true;
+    }
+
+    static bool writeField(      unsigned char*&buff,uint32_t& buff_size,uint32_t& offset,uint8_t       section_tag,const unsigned char *  val,uint32_t  size) ;
+    static bool readField (const unsigned char *buff,uint32_t  buff_size,uint32_t& offset,uint8_t check_section_tag,      unsigned char *& val,uint32_t& size) ;
+
 private:
+    static bool write125Size(unsigned char *data,uint32_t total_size,uint32_t& offset,uint32_t size) ;
+    static bool read125Size (const unsigned char *data,uint32_t total_size,uint32_t& offset,uint32_t& size) ;
+
     static bool checkSectionSize(unsigned char *& buff,uint32_t& buff_size,uint32_t offset,uint32_t S)
     {
         if(offset + S > buff_size)
@@ -48,11 +76,24 @@ private:
         return true ;
     }
 
-    static bool writeSectionHeader(unsigned char *& buff,uint32_t& buff_size,uint32_t offset,uint8_t section_tag,uint32_t S)
+    static bool writeSectionHeader(unsigned char *& buff,uint32_t& buff_size,uint32_t& offset,uint8_t section_tag,uint32_t S)
     {
         buff[offset++] = section_tag ;
-        if(!write125Size(buff,offset,buff_size,S)) return false ;
+        if(!write125Size(buff,buff_size,offset,S)) return false ;
 
         return true;
+    }
+
+    static bool readSectionHeader(const unsigned char *& buff,uint32_t buff_size,uint32_t& offset,uint8_t check_section_tag,uint32_t& S)
+    {
+        if(offset + 1 > buff_size)
+            return false ;
+
+        uint8_t section_tag = buff[offset++] ;
+
+        if(section_tag != check_section_tag)
+            return false;
+
+        return read125Size(buff,buff_size,offset,S) ;
     }
 };
