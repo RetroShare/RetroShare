@@ -76,6 +76,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
+	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+
             int S = QFontMetricsF(font()).height() ;
     ui.participantsList->setIconSize(QSize(1.3*S,1.3*S));
 
@@ -108,6 +110,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
+    
+    	/* Add filter actions */
+	QTreeWidgetItem *headerItem = ui.participantsList->headerItem();
+	QString headerText = headerItem->text(COLUMN_NAME );
+	ui.filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME , QString("%1 %2").arg(tr("Search"), headerText));
 
 	// Add a button to invite friends.
 	//
@@ -557,6 +564,7 @@ void ChatLobbyDialog::updateParticipantsList()
     }
     ui.participantsList->setSortingEnabled(true);
     sortParcipants();
+    filterIds();
 }
 
 /**
@@ -856,4 +864,17 @@ void ChatLobbyDialog::sortParcipants()
         ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 	}
   
+}
+
+void ChatLobbyDialog::filterChanged(const QString& /*text*/)
+{
+	filterIds();
+}
+
+void ChatLobbyDialog::filterIds()
+{
+	int filterColumn = ui.filterLineEdit->currentFilter();
+	QString text = ui.filterLineEdit->text();
+
+	ui.participantsList->filterItems(filterColumn, text);
 }

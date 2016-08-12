@@ -53,6 +53,7 @@ private slots:
 	void participantsTreeWidgetCustomPopupMenu( QPoint point );
 	void inviteFriends() ;
 	void leaveLobby() ;
+	void filterChanged(const QString &text);
 
 signals:
 	void lobbyLeave(ChatLobbyId) ;
@@ -83,6 +84,8 @@ protected slots:
 
 private:
 	void updateParticipantsList();
+	
+	void filterIds();
 
     QString getParticipantName(const RsGxsId& id) const;
     void muteParticipant(const RsGxsId& id);
