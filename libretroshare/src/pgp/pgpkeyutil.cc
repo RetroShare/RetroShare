@@ -258,6 +258,8 @@ uint32_t PGPKeyParser::write_125Size(unsigned char *data,uint32_t size)
 	{
 		data[0] = (size >> 8) + 192 ;
 		data[1] = (size & 255) - 192 ;
+
+        return 2 ;
 	}
 
 	data[0] = 0xff ;
