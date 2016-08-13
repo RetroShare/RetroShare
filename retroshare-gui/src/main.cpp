@@ -189,6 +189,17 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     Q_INIT_RESOURCE(images);
     Q_INIT_RESOURCE(icons);
 
+	// Loop through all command-line args/values to get help wanted before RsInit exit.
+	for (int i = 0; i < args.size(); ++i) {
+		QString arg;
+		/* Get the argument name and set a blank value */
+		arg = args.at(i);
+		if ((arg.toLower() == "-h") || (arg.toLower() == "--help")) {
+			QApplication dummyApp (argc, argv); // needed for QMessageBox
+			Rshare::showUsageMessageBox();
+		}
+	}
+
 	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
 	//
 	RsControl::earlyInitNotificationSystem() ;
