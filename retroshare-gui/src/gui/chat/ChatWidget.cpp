@@ -62,7 +62,7 @@
 
 #include <time.h>
 
-#define FMM 2.8//fontMetricsMultiplicator
+#define FMM 2.5//fontMetricsMultiplicator
 
 /*****
  * #define CHAT_DEBUG 1
