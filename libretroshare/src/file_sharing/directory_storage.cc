@@ -100,7 +100,10 @@ class InternalFileHierarchyStorage
 
         for(uint32_t i=0;i<d.subdirs.size();)
             if(subdirs.find(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) == subdirs.end())
-                removeDirectory(d.subdirs[i]) ;
+            {
+                if( !removeDirectory(d.subdirs[i]))
+                    i++ ;
+            }
             else
             {
                 should_create.erase(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) ;

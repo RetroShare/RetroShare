@@ -105,7 +105,7 @@ int p3FileDatabase::tick()
     static time_t last_print_time = 0;
     time_t now = time(NULL) ;
 
-    if(last_print_time + 60 < now)
+    if(last_print_time + 20 < now)
     {
         mLocalSharedDirs->print();
         last_print_time = now ;
@@ -212,6 +212,10 @@ void p3FileDatabase::cleanup()
             mDirectories.push_back(NULL) ;
 
         mDirectories[i] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+
+        if(mFriendIndexTab.size() <= i)
+            mFriendIndexTab.resize(i+1) ;
+
         mFriendIndexTab[i] = *it ;
         mFriendIndexMap[*it] = i;
 

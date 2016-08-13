@@ -148,19 +148,19 @@ void ftServer::SetupFtServer()
 	mFtController->setPartialsDirectory(tmppath);
 	mFtController->setDownloadDirectory(tmppath);
 
-
-	/* Make Cache Source/Store */
-    mFileDatabase = new p3FileDatabase(mServiceCtrl) ;
-
 	/* complete search setup */
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
-    mFtSearch->addSearchMode(mFileDatabase, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_REMOTE);
 
 	mServiceCtrl->registerServiceMonitor(mFtController, getServiceInfo().mServiceType);
 
 	return;
 }
 
+void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
+{
+    mFileDatabase = fdb ;
+    mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_REMOTE);
+}
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
 	mTurtleRouter = fts ;

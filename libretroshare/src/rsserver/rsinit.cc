@@ -56,7 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
-#include <gxstunnel/p3gxstunnel.h>
+#include "gxstunnel/p3gxstunnel.h"
+#include "file_sharing/p3filelists.h"
 
 #define ENABLE_GROUTER
 
@@ -1481,22 +1482,25 @@ int RsServer::StartupRetroShare()
 	pqih->addService(gr,true) ;
 #endif
 
-	p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
+    p3FileDatabase *fdb = new p3FileDatabase(serviceCtrl) ;
+    p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr,true);
-	pqih -> addService(ftserver,true);
+    pqih -> addService(fdb,true);
+    pqih -> addService(ftserver,true);
 
         mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
         mGxsTunnels->connectToTurtleRouter(tr) ;
         rsGxsTunnel = mGxsTunnels;
-        
+
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
+    ftserver->connectToFileDatabase(fdb) ;
+    chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;

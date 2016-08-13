@@ -125,6 +125,7 @@ public:
     virtual bool extractData(const EntryIndex& indx,DirDetails& d)
     {
         NOT_IMPLEMENTED();
+        return false;
     }
 };
 

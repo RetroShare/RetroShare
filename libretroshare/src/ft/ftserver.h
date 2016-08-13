@@ -53,6 +53,7 @@
 #include "pqi/p3cfgmgr.h"
 
 class p3ConnectMgr;
+class p3FileDatabase;
 
 class CacheStrapper;
 class CacheTransfer;
@@ -94,7 +95,8 @@ public:
 
     /* Final Setup (once everything is assigned) */
     void    SetupFtServer() ;
-    virtual void    connectToTurtleRouter(p3turtle *p) ;
+    virtual void connectToTurtleRouter(p3turtle *p) ;
+    virtual void connectToFileDatabase(p3FileDatabase *b);
 
     // Implements RsTurtleClientService
     //
