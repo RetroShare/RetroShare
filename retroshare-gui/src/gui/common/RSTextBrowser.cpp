@@ -6,6 +6,8 @@
 #include "RSTextBrowser.h"
 #include "RSImageBlockWidget.h"
 
+#include <retroshare/rsinit.h> //To get RsAccounts
+
 RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	QTextBrowser(parent)
 {
@@ -74,29 +76,37 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 {
-    // case 1: always trust the image if it comes from an internal resource
-    
-    if(name.scheme().compare("qrc",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) 
-	    return QTextBrowser::loadResource(type, name);
-        
-    // case 2: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
-    //         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
-    
-    if(name.scheme().compare("data",Qt::CaseInsensitive)==0 && mShowImages)
-	    return QTextBrowser::loadResource(type, name);
-        
-    // case 3: otherwise, do not display
-    
-    std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
-    
-    if (mImageBlockWidget) 
-	    mImageBlockWidget->show();
+	// case 1: always trust the image if it comes from an internal resource.
 
-    //https://git.merproject.org/lbt/qtbase/commit/6d13e9f29597e0d557857e3f80173faba5368424
+	if(name.scheme().compare("qrc",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource)
+		return QTextBrowser::loadResource(type, name);
+
+	// case 2: always trust the image if it comes from local Config or Data directories.
+
+	if(name.scheme().compare("file",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) {
+		if (name.path().startsWith(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()).prepend("/"),Qt::CaseInsensitive)
+		    || name.path().startsWith(QString::fromUtf8(RsAccounts::DataDirectory().c_str()).prepend("/"),Qt::CaseInsensitive))
+			return QTextBrowser::loadResource(type, name);
+	}
+
+	// case 3: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
+	//         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
+
+	if(name.scheme().compare("data",Qt::CaseInsensitive)==0 && mShowImages)
+		return QTextBrowser::loadResource(type, name);
+
+	// case 4: otherwise, do not display
+
+	std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
+
+	if (mImageBlockWidget)
+		mImageBlockWidget->show();
+
+	//https://git.merproject.org/lbt/qtbase/commit/6d13e9f29597e0d557857e3f80173faba5368424
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
-    return QPixmap(":/qt-project.org/styles/commonstyle/images/file-16.png");
+	return QPixmap(":/qt-project.org/styles/commonstyle/images/file-16.png");
 #else
-    return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
+	return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
 #endif
 }
 
