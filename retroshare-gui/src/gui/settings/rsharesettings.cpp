@@ -345,6 +345,8 @@ static QString getKeyForLastDir(RshareSettings::enumLastDir type)
 		return "Messages";
 	case RshareSettings::LASTDIR_SOUNDS:
 		return "SOUNDS";
+	case RshareSettings::LASTDIR_PLUGIN:
+		return "PLUGIN";
 	}
 	return "";
 }
@@ -599,6 +601,16 @@ void RshareSettings::setChatSearchFoundColor(QRgb rgbValue)
 QRgb RshareSettings::getChatSearchFoundColor()
 {
 	return valueFromGroup("Chat", "SearchMaxSearchFoundColor", QString::number(QColor(255,255,150).rgba())).toUInt();
+}
+
+bool RshareSettings::getChatLoadEmbeddedImages()
+{
+	return valueFromGroup("Chat", "LoadEmbeddedImages", true).toBool();
+}
+
+void RshareSettings::setChatLoadEmbeddedImages(bool value)
+{
+	setValueToGroup("Chat", "LoadEmbeddedImages", value);
 }
 
 RshareSettings::enumToasterPosition RshareSettings::getToasterPosition()

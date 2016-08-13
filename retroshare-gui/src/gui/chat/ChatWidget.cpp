@@ -120,7 +120,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
-  	ui->markButton->setVisible(false);
+	ui->markButton->setVisible(false);
 	ui->leSearch->setVisible(false);
 	ui->searchBefore->setVisible(false);
 	ui->searchBefore->setToolTip(tr("<b>Find Previous </b><br/><i>Ctrl+Shift+G</i>"));
@@ -194,8 +194,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->pushtoolsButton->setMenu(menu);
 	menu->addMenu(fontmenu);
 	
-  ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
-  
+	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+
+	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
+	ui->textBrowser->setImageBlockWidget(ui->imageBlockWidget);
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);

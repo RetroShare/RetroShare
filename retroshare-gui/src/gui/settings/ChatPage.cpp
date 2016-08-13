@@ -130,6 +130,7 @@ ChatPage::save(QString &/*errmsg*/)
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
     Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
+    Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
 
     Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
     Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
@@ -238,6 +239,7 @@ ChatPage::load()
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
     ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
+    ui.loadEmbeddedImages->setChecked(Settings->getChatLoadEmbeddedImages());
 
     ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
     ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
