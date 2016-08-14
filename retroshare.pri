@@ -45,16 +45,11 @@ win32 {
 		isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
 		isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
 	}
-	exists(C:/msys32/mingw32/include) {
-		message(msys2 32b is installed.)
-		PREFIX_MSYS2   = "C:/msys32/mingw32"
-		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
-		INC_DIR  += "$${PREFIX_MSYS2}/include"
-		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
-	}
-	exists(C:/msys64/mingw32/include) {
-		message(msys2 64b is installed.)
-		PREFIX_MSYS2   = "C:/msys64/mingw32"
+
+	# Check for msys2
+	PREFIX_MSYS2 = $$(MINGW_PREFIX)
+	!isEmpty(PREFIX_MSYS2) {
+		message(msys2 is installed.)
 		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
 		INC_DIR  += "$${PREFIX_MSYS2}/include"
 		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
