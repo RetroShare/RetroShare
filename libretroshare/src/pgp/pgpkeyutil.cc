@@ -248,25 +248,25 @@ uint64_t PGPKeyParser::read_KeyID(unsigned char *& data)
 
 uint32_t PGPKeyParser::write_125Size(unsigned char *data,uint32_t size)
 {
-	if(size < 192)
+	if(size < 0xC0)//192 To know if size is coded with One Char < 0xC0
 	{
 		data[0] = size ;
 		return 1;
 	}
 
-	if(size < 8384)
+	if(size < 0x20C0)//8384 To know if size is coded with Two Chars < 0xE0
 	{
-		data[0] = (size >> 8) + 192 ;
-		data[1] = (size & 255) - 192 ;
+		data[0] = (size >> 8) + 0xC0 ;
+		data[1] = (size & 0xFF) - 0xC0 ;//Warning data[1] could be "negative", recode it using 8bits type
 
-        return 2 ;
+		return 2 ;
 	}
 
-	data[0] = 0xff ;
-	data[1] = (size >> 24) & 255 ;
-	data[2] = (size >> 16) & 255 ;
-	data[3] = (size >>  8) & 255 ;
-	data[4] = (size      ) & 255 ;
+	data[0] = 0xFF ; //Else size is coded with 4 Chars + 1 at 0xFF
+	data[1] = (size >> 24) & 0xFF ;
+	data[2] = (size >> 16) & 0xFF ;
+	data[3] = (size >>  8) & 0xFF ;
+	data[4] = (size      ) & 0xFF ;
 
 	return 5 ;
 }
@@ -276,16 +276,16 @@ uint32_t PGPKeyParser::read_125Size(unsigned char *& data)
 	uint8_t b1 = *data ;
 	++data ;
 
-	if(b1 < 192)
+	if(b1 < 0xC0)//192 Size is coded with One Char
 		return b1 ;
 
 	uint8_t b2 = *data ;
 	++data ;
 
-	if(b1 < 224)
-		return ((b1-192) << 8) + b2 + 192 ;
+	if(b1 < 0xE0)//224 = 0xC0+0x20 Size is coded with Two Chars
+		return ((b1-0xC0) << 8) + uint8_t(b2 + 0xC0) ; //Use uint8_t because b2 could be "negative" as 0xC0 was added to it.
 
-	if(b1 != 0xff) 
+	if(b1 != 0xFF)// Else Coded with 4 Chars but first == 0xFF
 		throw std::runtime_error("GPG parsing error") ;
 
 	uint8_t b3 = *data ; ++data ;
