@@ -47,7 +47,19 @@ win32 {
 	}
 
 	# Check for msys2
-	PREFIX_MSYS2 = $$(MINGW_PREFIX)
+	isEmpty(MINGW_PREFIX) {
+		exists(C:/msys32/mingw32/include) {
+			message(MINGW_PREFIX is empty. Set it in your environment variables.)
+			message(Found it here:C:\msys32\mingw32)
+			MINGW_PREFIX = "C:\msys32\mingw32"
+		}
+		exists(C:/msys64/mingw32/include) {
+			message(MINGW_PREFIX is empty. Set it in your environment variables.)
+			message(Found it here:C:\msys64\mingw32)
+			MINGW_PREFIX = "C:\msys64\mingw32"
+		}
+	}
+	PREFIX_MSYS2 = $${MINGW_PREFIX}
 	!isEmpty(PREFIX_MSYS2) {
 		message(msys2 is installed.)
 		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
