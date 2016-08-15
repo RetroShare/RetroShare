@@ -198,6 +198,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->setImageBlockWidget(ui->imageBlockWidget);
+	ui->imageBlockWidget->setAutoHide(true);
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);
