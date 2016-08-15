@@ -92,6 +92,7 @@
 #define RSID_FILTER_OTHERS       0x0004
 #define RSID_FILTER_PSEUDONYMS   0x0008
 #define RSID_FILTER_YOURSELF     0x0010
+#define RSID_FILTER_BANNED       0x0020
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
@@ -269,6 +270,13 @@ IdDialog::IdDialog(QWidget *parent) :
 	idTWHAction->setActionGroup(idTWHActionGroup);
 	idTWHAction->setCheckable(true);
 	idTWHAction->setData(RSID_FILTER_PSEUDONYMS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Banned"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_BANNED);
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
 
@@ -1372,9 +1380,12 @@ void IdDialog::requestIdList()
 
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
 {
-    bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
-    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-    uint32_t item_flags = 0 ;
+	bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+	bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+	RsIdentityDetails idd ;
+	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
+	bool isBanned = idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD;
+	uint32_t item_flags = 0 ;
 
 	/* do filtering */
 	bool ok = false;
@@ -1410,33 +1421,39 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
             item_flags |= RSID_FILTER_OWNED_BY_YOU ;
     }
 
+	if (isBanned && (accept & RSID_FILTER_BANNED))
+	{
+		ok = true;
+		item_flags |= RSID_FILTER_BANNED ;
+	}
+
 	if (!ok)
 		return false;
 
 	if (!item)
         item = new TreeWidgetItem();
         
-        RsIdentityDetails idd ;
-        rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
     
-    if(idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD)
+    if(isBanned)
     {
         item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
         item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
         item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+        item->setForeground(RSID_COL_VOTES,QBrush(Qt::red));
     }
     else
     {
         item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
         item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
         item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
+        item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
     }
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
-    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
+    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
     item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
 
     if(isOwnId)
