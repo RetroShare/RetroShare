@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <QDir>
 #include <QDesktopServices>
 #include <QPainter>
 
@@ -84,8 +85,8 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 	// case 2: always trust the image if it comes from local Config or Data directories.
 
 	if(name.scheme().compare("file",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) {
-		if (name.path().startsWith(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()).prepend("/"),Qt::CaseInsensitive)
-		    || name.path().startsWith(QString::fromUtf8(RsAccounts::DataDirectory().c_str()).prepend("/"),Qt::CaseInsensitive))
+		if (name.path().startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).absolutePath().prepend("/"),Qt::CaseInsensitive)
+		    || name.path().startsWith(QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str())).absolutePath().prepend("/"),Qt::CaseInsensitive))
 			return QTextBrowser::loadResource(type, name);
 	}
 
