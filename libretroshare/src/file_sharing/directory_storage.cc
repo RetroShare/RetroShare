@@ -3,6 +3,8 @@
 #include "util/rsstring.h"
 #include "directory_storage.h"
 
+#define DEBUG_DIRECTORY_STORAGE 1
+
 /******************************************************************************************************************/
 /*                                              Internal File Hierarchy Storage                                   */
 /******************************************************************************************************************/
@@ -71,7 +73,7 @@ class InternalFileHierarchyStorage
     {
         mNodes.push_back(new DirEntry("")) ;
         mNodes.back()->row=0;
-        mNodes.back()->parent_index=-1;
+        mNodes.back()->parent_index=0;
     }
 
     int parentRow(DirectoryStorage::EntryIndex e)
@@ -153,7 +155,7 @@ class InternalFileHierarchyStorage
         if(mNodes.empty() || indx==DirectoryStorage::NO_INDEX || indx >= mNodes.size() || mNodes[indx] == NULL)
             return nodeAccessError("checkIndex(): Node does not exist") ;
 
-        if(! mNodes[indx]->type() & type)
+        if(! (mNodes[indx]->type() & type))
             return nodeAccessError("checkIndex(): Node is of wrong type") ;
 
         return true;
@@ -351,7 +353,10 @@ private:
         }
         DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
-        std::cerr << indent << "dir:" << d.dir_name << std::endl;
+        std::cerr << indent << "dir:" << d.dir_name << ", subdirs: " ;
+        for(int i=0;i<d.subdirs.size();++i)
+            std::cerr << d.subdirs[i] << " " ;
+        std::cerr << std::endl;
 
         for(int i=0;i<d.subdirs.size();++i)
             recursPrint(depth+1,d.subdirs[i]) ;
@@ -531,6 +536,82 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
     return true;
 }
 
+bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
+{
+    d.children.clear() ;
+    time_t now = time(NULL) ;
+
+    std::cerr << "LocalDirectoryStorage::extractData(). Index=" << indx << std::endl;
+
+    const InternalFileHierarchyStorage::DirEntry *dir_entry = mFileHierarchy->getDirEntry(indx) ;
+
+    if (dir_entry != NULL) /* has children --- fill */
+    {
+#ifdef DEBUG_DIRECTORY_STORAGE
+        std::cerr << "FileIndex::extractData() ref=dir" << std::endl;
+#endif
+        /* extract all the entries */
+
+        for(DirectoryStorage::DirIterator it(this,indx);it;++it)
+        {
+            DirStub stub;
+            stub.type = DIR_TYPE_DIR;
+            stub.name = it.name();
+            stub.ref  = (void*)(intptr_t)*it; // this is updated by the caller, who knows which friend we're dealing with
+
+            d.children.push_back(stub);
+        }
+
+        for(DirectoryStorage::FileIterator it(this,indx);it;++it)
+        {
+            DirStub stub;
+            stub.type = DIR_TYPE_FILE;
+            stub.name = it.name();
+            stub.ref  = (void*)(intptr_t)*it;
+
+            d.children.push_back(stub);
+        }
+
+        d.type = DIR_TYPE_DIR;
+        d.hash.clear() ;
+        d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
+        d.min_age = now - dir_entry->most_recent_time ;
+        d.name    = dir_entry->dir_name;
+        d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
+        d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
+
+        if(indx == 0)
+        {
+            d.type = DIR_TYPE_PERSON ;
+            d.name = mPeerId.toStdString();
+        }
+    }
+    else
+    {
+        const InternalFileHierarchyStorage::FileEntry *file_entry = mFileHierarchy->getFileEntry(indx) ;
+#ifdef DEBUG_DIRECTORY_STORAGE
+        std::cerr << "FileIndexStore::extractData() ref=file" << std::endl;
+#endif
+        d.type    = DIR_TYPE_FILE;
+        d.count   = file_entry->file_size;
+        d.min_age = now - file_entry->file_modtime ;
+        d.name    = file_entry->file_name;
+        d.hash    = file_entry->file_hash;
+        d.age     = now - file_entry->file_modtime;
+        d.parent  = (void*)(intptr_t)file_entry->parent_index ;
+
+        const InternalFileHierarchyStorage::DirEntry *parent_dir_entry = mFileHierarchy->getDirEntry(file_entry->parent_index);
+
+        if(parent_dir_entry != NULL)
+            d.path = parent_dir_entry->dir_parent_path + "/" + parent_dir_entry->dir_name + "/" ;
+        else
+            d.path = "" ;
+    }
+
+    d.flags.clear() ;
+
+    return true;
+}
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
@@ -627,78 +708,19 @@ std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const 
 
 bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 {
-    d.children.clear() ;
-    time_t now = time(NULL) ;
+    bool res = DirectoryStorage::extractData(indx,d) ;
 
-    const InternalFileHierarchyStorage::DirEntry *dir_entry = mFileHierarchy->getDirEntry(indx) ;
+    if(!res)
+        return false;
 
-    if (dir_entry != NULL) /* has children --- fill */
-    {
-#ifdef FI_DEBUG
-        std::cerr << "FileIndex::extractData() ref=dir" << std::endl;
-#endif
-        /* extract all the entries */
+    // here we should update the file sharing flags
 
-        for(DirectoryStorage::DirIterator it(this,indx);it;++it)
-        {
-            DirStub stub;
-            stub.type = DIR_TYPE_DIR;
-            stub.name = it.name();
-            stub.ref  = (void*)(intptr_t)*it; // this is updated by the caller, who knows which friend we're dealing with
-
-            d.children.push_back(stub);
-        }
-
-        for(DirectoryStorage::FileIterator it(this,indx);it;++it)
-        {
-            DirStub stub;
-            stub.type = DIR_TYPE_FILE;
-            stub.name = it.name();
-            stub.ref  = (void*)(intptr_t)*it;
-
-            d.children.push_back(stub);
-        }
-
-        if(dir_entry->parent_index == 0)
-            d.type = DIR_TYPE_PERSON ;
-        else
-            d.type = DIR_TYPE_DIR;
-
-        d.hash.clear() ;
-        d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
-        d.min_age = now - dir_entry->most_recent_time ;
-        d.name    = dir_entry->dir_name;
-        d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
-        d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
-    }
-    else
-    {
-        const InternalFileHierarchyStorage::FileEntry *file_entry = mFileHierarchy->getFileEntry(indx) ;
-#ifdef FI_DEBUG
-        std::cerr << "FileIndexStore::extractData() ref=file" << std::endl;
-#endif
-        d.type    = DIR_TYPE_FILE;
-        d.count   = file_entry->file_size;
-        d.min_age = now - file_entry->file_modtime ;
-        d.name    = file_entry->file_name;
-        d.hash    = file_entry->file_hash;
-        d.age     = now - file_entry->file_modtime;
-        d.parent  = (void*)(intptr_t)file_entry->parent_index ;
-
-        const InternalFileHierarchyStorage::DirEntry *parent_dir_entry = mFileHierarchy->getDirEntry(file_entry->parent_index);
-
-        if(parent_dir_entry != NULL)
-            d.path = parent_dir_entry->dir_parent_path + "/" + parent_dir_entry->dir_name + "/" ;
-        else
-            d.path = "" ;
-    }
-
-#ifdef FI_DEBUG
-    std::cerr << "FileIndexStore::extractData() name: " << file->name << std::endl;
-#endif
     d.flags.clear() ;
 
     /* find parent pointer, and row */
+
+    std::cerr << "LocalDirectoryStorage::extractData(): Returning this:" << std::endl;
+    std::cerr << d << std::endl;
 
     return true;
 }

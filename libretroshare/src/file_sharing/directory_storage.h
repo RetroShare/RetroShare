@@ -28,7 +28,7 @@ class DirectoryStorage
 
 		void getFileDetails(EntryIndex i) ;
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
-        virtual bool extractData(const EntryIndex& indx,DirDetails& d) =0;
+        virtual bool extractData(const EntryIndex& indx,DirDetails& d);
 
 		// This class allows to abstractly browse the stored directory hierarchy in a depth-first manner.
 		// It gives access to sub-files and sub-directories below.
@@ -121,12 +121,6 @@ class RemoteDirectoryStorage: public DirectoryStorage
 public:
     RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname,pid) {}
     virtual ~RemoteDirectoryStorage() {}
-
-    virtual bool extractData(const EntryIndex& indx,DirDetails& d)
-    {
-        NOT_IMPLEMENTED();
-        return false;
-    }
 };
 
 class LocalDirectoryStorage: public DirectoryStorage

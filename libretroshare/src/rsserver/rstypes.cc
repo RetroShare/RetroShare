@@ -44,7 +44,26 @@
  *
 **********************************************************************/
 
-
+std::ostream &operator<<(std::ostream &out, const DirDetails& d)
+{
+    std::cerr << "====DIR DETAILS====" << std::endl;
+    std::cerr << "  parent pointer: " << (intptr_t)d.parent << std::endl;
+    std::cerr << "  current pointer: " << (intptr_t)d.ref << std::endl;
+    std::cerr << "  parent row    : " << d.prow << std::endl;
+    std::cerr << "  type          : " << (int)d.type << std::endl;
+    std::cerr << "  PeerId        : " << d.id << std::endl;
+    std::cerr << "  Name          : " << d.name << std::endl;
+    std::cerr << "  Hash          : " << d.hash << std::endl;
+    std::cerr << "  Path          : " << d.path << std::endl;
+    std::cerr << "  Count         : " << d.count << std::endl;
+    std::cerr << "  Age           : " << d.age << std::endl;
+    std::cerr << "  Min age       : " << d.min_age << std::endl;
+    std::cerr << "  Flags         : " << d.flags << std::endl;
+    std::cerr << "  Parent groups : " ; for(std::list<std::string>::const_iterator it(d.parent_groups.begin());it!=d.parent_groups.end();++it) std::cerr << (*it) << " "; std::cerr << std::endl;
+    std::cerr << "  Children      : " ; for(std::list<DirStub>::const_iterator it(d.children.begin());it!=d.children.end();++it) std::cerr << (intptr_t)(*it).ref << " "; std::cerr << std::endl;
+    std::cerr << "===================" << std::endl;
+    return out;
+}
 std::ostream &operator<<(std::ostream &out, const FileInfo &info)
 {
 	out << "FileInfo: path: " << info.path;

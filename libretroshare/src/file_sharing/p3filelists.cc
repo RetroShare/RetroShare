@@ -137,7 +137,6 @@ void p3FileDatabase::stopThreads()
 
 void p3FileDatabase::tickWatchers()
 {
-    NOT_IMPLEMENTED();
 }
 
 void p3FileDatabase::tickRecv()
@@ -146,7 +145,6 @@ void p3FileDatabase::tickRecv()
 void p3FileDatabase::tickSend()
 {
 	// go through the list of out requests and send them to the corresponding friends, if they are online.
-    NOT_IMPLEMENTED();
 }
 
 bool p3FileDatabase::loadList(std::list<RsItem *>& items)
@@ -295,6 +293,13 @@ bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, ui
     e   = EntryIndex(  *reinterpret_cast<uint32_t*>(&p) & ENTRY_INDEX_BIT_MASK ) ;
     friend_index = (*reinterpret_cast<uint32_t*>(&p)) >> NB_ENTRY_INDEX_BITS ;
 
+    if(friend_index == 0)
+    {
+        std::cerr << "(EE) Cannot find friend index in pointer. Encoded value is zero!" << std::endl;
+        return false;
+    }
+    friend_index--;
+
     return true;
 }
 bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi, void *& p)
@@ -309,13 +314,13 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
 
     uint32_t fe = (uint32_t)e ;
 
-    if(fi >= (1<<NB_FRIEND_INDEX_BITS) || fe >= (1<< NB_ENTRY_INDEX_BITS))
+    if(fi+1 >= (1<<NB_FRIEND_INDEX_BITS) || fe >= (1<< NB_ENTRY_INDEX_BITS))
     {
         std::cerr << "(EE) cannot convert entry index " << e << " of friend with index " << fi << " to pointer." << std::endl;
         return false ;
     }
 
-    p = reinterpret_cast<void*>( (fi << NB_ENTRY_INDEX_BITS ) + (fe & ENTRY_INDEX_BIT_MASK)) ;
+    p = reinterpret_cast<void*>( ( (1+fi) << NB_ENTRY_INDEX_BITS ) + (fe & ENTRY_INDEX_BIT_MASK)) ;
 
     return true;
 }
@@ -325,10 +330,36 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
     // Case where the pointer is NULL, which means we're at the top of the list of shared directories for all friends (including us)
+    // or at the top of our own list of shred directories, depending on the flags.
 
     if (ref == NULL)
     {
-        for(uint32_t i=0;i<mDirectories.size();++i)
+        d.ref = NULL ;
+        d.type = DIR_TYPE_ROOT;
+        d.count = 1;
+        d.parent = NULL;
+        d.prow = -1;
+        d.ref = NULL;
+        d.name = "root";
+        d.hash.clear() ;
+        d.path = "";
+        d.age = 0;
+        d.flags.clear() ;
+        d.min_age = 0 ;
+        d.children.clear();
+
+        if(flags & RS_FILE_HINTS_LOCAL)
+        {
+            void *p;
+            convertEntryIndexToPointer(0,0,p);
+
+            DirStub stub;
+            stub.type = DIR_TYPE_PERSON;
+            stub.name = mServCtrl->getOwnId().toStdString();
+            stub.ref  = p;
+            d.children.push_back(stub);
+        }
+        else for(uint32_t i=1;i<mDirectories.size();++i)
         {
             void *p;
             convertEntryIndexToPointer(mDirectories[i]->root(),i,p);
@@ -339,24 +370,14 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             stub.ref  = p;
             d.children.push_back(stub);
         }
-        d.count = mDirectories.size();
 
-        d.parent = NULL;
-        d.prow = -1;
-        d.ref = NULL;
-        d.type = DIR_TYPE_ROOT;
-        d.name = "root";
-        d.hash.clear() ;
-        d.path = "root";
-        d.age = 0;
-        d.flags.clear() ;
-        d.min_age = 0 ;
+        d.count = d.children.size();
 
         return true ;
     }
 
     uint32_t fi;
-    EntryIndex e ;
+    DirectoryStorage::EntryIndex e ;
 
     convertPointerToEntryIndex(ref,e,fi);
 
@@ -505,7 +526,7 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
     for(std::list<EntryIndex>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
     {
         DirDetails cdetails ;
-        RequestDirDetails ((void*)*rit,cdetails,FileSearchFlags(0u));
+        RequestDirDetails ((void*)(intptr_t)*rit,cdetails,FileSearchFlags(0u));
 #ifdef P3FILELISTS_DEBUG
         std::cerr << "Filtering candidate " << (*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif

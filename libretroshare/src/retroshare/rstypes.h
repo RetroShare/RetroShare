@@ -215,8 +215,7 @@ class FileInfo
 		std::list<std::string> parent_groups ;
 };
 
-std::ostream &operator<<(std::ostream &out, const FileInfo &info);
-
+std::ostream &operator<<(std::ostream &out, const FileInfo& info);
 
 class DirStub
 {
@@ -246,6 +245,8 @@ public:
     std::list<DirStub> children;
     std::list<std::string> parent_groups;	// parent groups for the shared directory
 };
+
+std::ostream &operator<<(std::ostream &out, const DirDetails& details);
 
 class FileDetail
 {
