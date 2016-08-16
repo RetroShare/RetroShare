@@ -59,7 +59,7 @@ win32 {
 			MINGW_PREFIX = "C:\msys64\mingw32"
 		}
 	}
-	PREFIX_MSYS2 = $${MINGW_PREFIX}
+	PREFIX_MSYS2 = $$(MINGW_PREFIX)
 	!isEmpty(PREFIX_MSYS2) {
 		message(msys2 is installed.)
 		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
