@@ -30,7 +30,7 @@
 
 #include "util/TokenQueue.h"
 
-#define IMAGE_IDDIALOG          ":/icons/friends_128.png"
+#define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
 namespace Ui {
 class IdDialog;

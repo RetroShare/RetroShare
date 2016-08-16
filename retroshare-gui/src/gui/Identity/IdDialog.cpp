@@ -209,7 +209,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 
-	ui->avLabel_Person->setPixmap(QPixmap(":/images/user/friends64.png"));
+	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
 
 	ui->headerTextLabel_Person->setText(tr("People"));

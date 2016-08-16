@@ -27,7 +27,7 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
-#define IMAGE_MESSAGES          ":/images/evolution.png"
+#define IMAGE_MESSAGES          ":/icons/png/messages.png"
 
 class RSTreeWidgetItemCompareRole;
 class MessageWidget;

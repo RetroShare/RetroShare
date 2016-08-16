@@ -41,12 +41,12 @@ bool MessageUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon MessageUserNotify::getIcon()
 {
-    return QIcon(":/icons/mail_128.png");
+    return QIcon(":/icons/png/messages.png");
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/mail_red_128.png") : QIcon(":/icons/mail_128.png");
+    return hasNew ? QIcon(":/icons/png/messages-notify.png") : QIcon(":/icons/png/messages.png");
 }
 
 unsigned int MessageUserNotify::getNewCount()

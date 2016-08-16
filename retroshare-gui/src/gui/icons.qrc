@@ -75,17 +75,38 @@
 		<file>icons/yahoo.png</file>
 		<file>icons/yandex.png</file>
 		<file>icons/yellow_biohazard64.png</file>
-    	<file>icons/png/attach.png</file>
-    	<file>icons/png/attach-image.png</file>
-    	<file>icons/png/highlight.png</file>
-    	<file>icons/png/invite.png</file>
-    	<file>icons/png/leave.png</file>
-    	<file>icons/png/search.png</file>
-    	<file>icons/png/send-message.png</file>
-    	<file>icons/png/settings.png</file>
-    	<file>icons/png/smiley.png</file>
-    	<file>icons/png/font.png</file>
-    	<file>icons/png/send-message-blocked.png</file>
-    	<file>icons/png/chat-bubble-notify.png</file>
+    <file>icons/png/attach.png</file>
+    <file>icons/png/attach-image.png</file>
+    <file>icons/png/highlight.png</file>
+    <file>icons/png/invite.png</file>
+    <file>icons/png/leave.png</file>
+    <file>icons/png/search.png</file>
+    <file>icons/png/send-message.png</file>
+    <file>icons/png/settings.png</file>
+    <file>icons/png/smiley.png</file>
+    <file>icons/png/font.png</file>
+    <file>icons/png/send-message-blocked.png</file>
+    <file>icons/png/chat-bubble-notify.png</file>
+    <file>icons/png/channels.png</file>
+    <file>icons/png/chat-lobbies.png</file>
+    <file>icons/png/forums.png</file>
+    <file>icons/png/info.png</file>
+    <file>icons/png/messages.png</file>
+    <file>icons/png/network.png</file>
+    <file>icons/png/newsfeed.png</file>
+    <file>icons/png/people.png</file>
+    <file>icons/png/posted.png</file>
+    <file>icons/png/exit.png</file>
+    <file>icons/png/options.png</file>
+    <file>icons/png/filesharing.png</file>
+    <file>icons/png/channels-notify.png</file>
+    <file>icons/png/chat-lobbies-notify.png</file>
+    <file>icons/png/forums-notify.png</file>
+    <file>icons/png/messages-notify.png</file>
+    <file>icons/png/network-notify.png</file>
+    <file>icons/png/newsfeed-notify.png</file>
+    <file>icons/png/people-notify.png</file>
+    <file>icons/png/posted-notify.png</file>
+    <file>icons/png/filesharing-notify.png</file>
 	</qresource>
 </RCC>

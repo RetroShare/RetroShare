@@ -99,12 +99,12 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-	return QIcon(":/images/chat_32.png");
+	return QIcon(":/icons/png/chat-lobbies.png");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/chat_red_128.png") : QIcon(":/icons/chat_128.png");
+    return hasNew ? QIcon(":/icons/png/chat-lobbies-notify.png") : QIcon(":/icons/png/chat-lobbies.png");
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()

@@ -38,7 +38,7 @@ void NewsFeedUserNotify::newsFeedChanged(int count)
 
 QIcon NewsFeedUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/knews_red_128.png") : QIcon(":/icons/knews_128.png");
+    return hasNew ? QIcon(":/icons/png/newsfeed-notify.png") : QIcon(":/icons/png/newsfeed.png");
 }
 
 unsigned int NewsFeedUserNotify::getNewCount()
