@@ -83,12 +83,6 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     librs::util::FolderIterator dirIt(cumulated_path);
 
-    if(!dirIt.isValid())
-    {
-        mSharedDirectories->removeDirectory(indx) ;	// this is a complex operation since it needs to *update* it so that it is kept consistent.
-        return ;
-    }
-
     // collect subdirs and subfiles
 
     std::map<std::string,DirectoryStorage::FileTS> subfiles ;

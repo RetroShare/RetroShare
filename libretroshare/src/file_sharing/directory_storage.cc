@@ -101,17 +101,23 @@ class InternalFileHierarchyStorage
         for(uint32_t i=0;i<d.subdirs.size();)
             if(subdirs.find(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) == subdirs.end())
             {
+                std::cerr << "[directory storage] Removing subdirectory " << static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name << " with index " << d.subdirs[i] << std::endl;
+
                 if( !removeDirectory(d.subdirs[i]))
                     i++ ;
             }
             else
             {
+                std::cerr << "[directory storage] Keeping existing subdirectory " << static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name << " with index " << d.subdirs[i] << std::endl;
+
                 should_create.erase(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) ;
                 ++i;
             }
 
         for(std::set<std::string>::const_iterator it(should_create.begin());it!=should_create.end();++it)
         {
+            std::cerr << "[directory storage] adding new subdirectory " << *it << " at index " << mNodes.size() << std::endl;
+
             d.subdirs.push_back(mNodes.size()) ;
             mNodes.push_back(new DirEntry(*it));
             mNodes.back()->row = mNodes.size()-1;
@@ -170,9 +176,13 @@ class InternalFileHierarchyStorage
 
             if(it == subfiles.end())				// file does not exist anymore => delete
             {
+                std::cerr << "[directory storage] removing non existing file " << f.file_name << " at index " << d.subfiles[i] << std::endl;
+
+                delete mNodes[d.subfiles[i]] ;
+                mNodes[d.subfiles[i]] = NULL ;
+
                 d.subfiles[i] = d.subfiles[d.subfiles.size()-1] ;
                 d.subfiles.pop_back();
-
                 continue;
             }
 
@@ -190,6 +200,8 @@ class InternalFileHierarchyStorage
 
         for(std::map<std::string,DirectoryStorage::FileTS>::const_iterator it(new_files.begin());it!=new_files.end();++it)
         {
+            std::cerr << "[directory storage] adding new file " << it->first << " at index " << mNodes.size() << std::endl;
+
             d.subfiles.push_back(mNodes.size()) ;
             mNodes.push_back(new FileEntry(it->first,it->second.size,it->second.modtime));
             mNodes.back()->row = mNodes.size()-1;
@@ -200,7 +212,12 @@ class InternalFileHierarchyStorage
     bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash)
     {
         if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
+        {
+            std::cerr << "[directory storage] (EE) cannot update file at index " << file_index << ". Not a valid index, or not a file." << std::endl;
             return false;
+        }
+
+        std::cerr << "[directory storage] updating hash at index " << file_index << ", hash=" << hash << std::endl;
 
         static_cast<FileEntry*>(mNodes[file_index])->file_hash = hash ;
         return true;
@@ -208,9 +225,14 @@ class InternalFileHierarchyStorage
     bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time)
     {
         if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
+        {
+            std::cerr << "[directory storage] (EE) cannot update file at index " << file_index << ". Not a valid index, or not a file." << std::endl;
             return false;
+        }
 
         FileEntry& fe(*static_cast<FileEntry*>(mNodes[file_index])) ;
+
+        std::cerr << "[directory storage] updating file entry at index " << file_index << ", name=" << fe.file_name << " size=" << fe.file_size << ", hash=" << fe.file_hash << std::endl;
 
         fe.file_hash = hash;
         fe.file_size = size;
@@ -321,6 +343,12 @@ private:
     void recursPrint(int depth,DirectoryStorage::EntryIndex node) const
     {
         std::string indent(2*depth,' ');
+
+        if(mNodes[node] == NULL)
+        {
+            std::cerr << "EMPTY NODE !!" << std::endl;
+            return ;
+        }
         DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
         std::cerr << indent << "dir:" << d.dir_name << std::endl;

@@ -12,7 +12,9 @@ static const uint32_t     MAX_INACTIVITY_SLEEP_TIME = 2*1000*1000;
 HashStorage::HashStorage(const std::string& save_file_name)
     : mFilePath(save_file_name), mHashMtx("Hash Storage mutex")
 {
+    mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
     mRunning = false ;
+
     load() ;
 }
 
@@ -63,7 +65,11 @@ void HashStorage::data_tick()
         }
         mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
 
-        job = mFilesToHash.begin()->second ;
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
+            job = mFilesToHash.begin()->second ;
+            mFilesToHash.erase(mFilesToHash.begin()) ;
+        }
 
         std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
 
@@ -76,8 +82,6 @@ void HashStorage::data_tick()
             std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
         else
             std::cerr << "done."<< std::endl;
-
-        mFilesToHash.erase(mFilesToHash.begin()) ;
 
         // store the result
 

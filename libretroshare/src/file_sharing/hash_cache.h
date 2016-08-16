@@ -84,6 +84,6 @@ private:
 
     RsMutex mHashMtx ;
     bool mRunning;
-    uint32_t mInactivitySleepTime = 50*1000 ;
+    uint32_t mInactivitySleepTime ;
 };
 

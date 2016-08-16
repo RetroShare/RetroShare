@@ -203,21 +203,16 @@ void p3FileDatabase::cleanup()
 	//
 	for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
     {
-        P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << std::endl;
+        // Check if a remote directory exists for that friend, possibly creating the index.
 
-        uint32_t i;
-        for(i=0;i<mDirectories.size() && mDirectories[i] != NULL;++i);
+        uint32_t friend_index = getFriendIndex(*it) ;
 
-        if(i == mDirectories.size())
-            mDirectories.push_back(NULL) ;
+        if(mDirectories.size() > friend_index && mDirectories[friend_index] != NULL)
+            continue ;
 
-        mDirectories[i] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+        P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
 
-        if(mFriendIndexTab.size() <= i)
-            mFriendIndexTab.resize(i+1) ;
-
-        mFriendIndexTab[i] = *it ;
-        mFriendIndexMap[*it] = i;
+        mDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
 
         mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
     }
@@ -249,19 +244,33 @@ uint32_t p3FileDatabase::getFriendIndex(const RsPeerId& pid)
 
         if(!found)
         {
-            std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than 1024 friends??" << std::endl;
-            return 1024 ;
+            found = mFriendIndexTab.size();
+            mFriendIndexTab.push_back(pid);
+        }
+
+        if(mFriendIndexTab.size() >= (1 << NB_FRIEND_INDEX_BITS) )
+        {
+            std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than " << (1<<NB_FRIEND_INDEX_BITS) << " friends??" << std::endl;
+            return 1 << NB_FRIEND_INDEX_BITS ;
         }
 
         mFriendIndexTab[found] = pid ;
         mFriendIndexMap[pid] = found;
+
+        if(mDirectories.size() <= found)
+            mDirectories.resize(found+1,NULL) ;
 
         IndicateConfigChanged();
 
         return found ;
     }
     else
+    {
+        if(mDirectories.size() <= it->second)
+            mDirectories.resize(it->second+1,NULL) ;
+
         return it->second;
+    }
 }
 
 const RsPeerId& p3FileDatabase::getFriendFromIndex(uint32_t indx) const
