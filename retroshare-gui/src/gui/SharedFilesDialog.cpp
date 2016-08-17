@@ -825,7 +825,7 @@ void  SharedFilesDialog::preModDirectories(bool local)
 
 void  SharedFilesDialog::postModDirectories(bool local)
 {
-	if (isRemote() == local) {
+    if (isRemote() == local) {
 		return;
 	}
 

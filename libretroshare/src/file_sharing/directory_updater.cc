@@ -63,12 +63,12 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
     // now for each of them, go recursively and match both files and dirs
 
-    DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ;
-
-    for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it, ++stored_dir_it)
+    for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ; stored_dir_it;++stored_dir_it)
     {
-        std::cerr << "  recursing into " << real_dir_it->filename << std::endl;
-        recursUpdateSharedDir(real_dir_it->filename, *stored_dir_it) ;
+        std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+                                                                            // are not necessarily in the same order.
     }
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
@@ -128,7 +128,10 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ;
 
     for(std::set<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
-        recursUpdateSharedDir(cumulated_path + "/" + *real_dir_it, *stored_dir_it) ;
+    {
+        std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+        recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it) ;
+    }
 }
 
 void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)

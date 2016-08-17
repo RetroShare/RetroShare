@@ -719,7 +719,7 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
     /* find parent pointer, and row */
 
-    std::cerr << "LocalDirectoryStorage::extractData(): Returning this:" << std::endl;
+    std::cerr << "LocalDirectoryStorage::extractData(): indx=" << indx << " Returning this:" << std::endl;
     std::cerr << d << std::endl;
 
     return true;

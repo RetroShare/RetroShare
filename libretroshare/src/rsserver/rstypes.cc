@@ -47,8 +47,8 @@
 std::ostream &operator<<(std::ostream &out, const DirDetails& d)
 {
     std::cerr << "====DIR DETAILS====" << std::endl;
-    std::cerr << "  parent pointer: " << (intptr_t)d.parent << std::endl;
-    std::cerr << "  current pointer: " << (intptr_t)d.ref << std::endl;
+    std::cerr << "  parent pointer: " << d.parent << std::endl;
+    std::cerr << "  current pointer: " << d.ref << std::endl;
     std::cerr << "  parent row    : " << d.prow << std::endl;
     std::cerr << "  type          : " << (int)d.type << std::endl;
     std::cerr << "  PeerId        : " << d.id << std::endl;

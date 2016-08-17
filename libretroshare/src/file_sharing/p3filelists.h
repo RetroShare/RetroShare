@@ -157,8 +157,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         static bool convertEntryIndexToPointer(const EntryIndex &e, uint32_t friend_index, void *& p);
         static bool convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index) ;
-        uint32_t getFriendIndex(const RsPeerId& pid);
-        const RsPeerId& getFriendFromIndex(uint32_t indx) const;
+        uint32_t locked_getFriendIndex(const RsPeerId& pid);
+        const RsPeerId& locked_getFriendFromIndex(uint32_t indx) const;
 
         std::map<RsPeerId,uint32_t> mFriendIndexMap ;
         std::vector<RsPeerId> mFriendIndexTab;
@@ -169,7 +169,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         // Local flags and mutexes
 
-		RsMutex mFLSMtx ;
+        mutable RsMutex mFLSMtx ;
         uint32_t mUpdateFlags ;
 };
 

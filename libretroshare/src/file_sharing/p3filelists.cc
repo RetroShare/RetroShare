@@ -107,25 +107,39 @@ int p3FileDatabase::tick()
 
     if(last_print_time + 20 < now)
     {
+        RS_STACK_MUTEX(mFLSMtx) ;
         mLocalSharedDirs->print();
         last_print_time = now ;
+
+#warning this should be removed, but it's necessary atm for updating the GUI
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
     }
 
+    if(mUpdateFlags)
+    {
+        IndicateConfigChanged();
+
+        if(mUpdateFlags & P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED)
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+
+        if(mUpdateFlags & P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED)
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+
+        mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
+    }
     return 0;
 }
 
 void p3FileDatabase::startThreads()
 {
-    std::cerr << "Starting hash cache thread..." ;
-    mHashCache->start();
-    std::cerr << "Done." << std::endl;
-
+    RS_STACK_MUTEX(mFLSMtx) ;
     std::cerr << "Starting directory watcher thread..." ;
     mLocalDirWatcher->start();
     std::cerr << "Done." << std::endl;
 }
 void p3FileDatabase::stopThreads()
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
     std::cerr << "Stopping hash cache thread..." ; std::cerr.flush() ;
     mHashCache->fullstop();
     std::cerr << "Done." << std::endl;
@@ -138,7 +152,6 @@ void p3FileDatabase::stopThreads()
 void p3FileDatabase::tickWatchers()
 {
 }
-
 void p3FileDatabase::tickRecv()
 {
 }
@@ -165,58 +178,55 @@ bool p3FileDatabase::saveList(bool &cleanup, std::list<RsItem *>&)
 
 void p3FileDatabase::cleanup()
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
-
-    // look through the list of friend directories. Remove those who are not our friends anymore.
-	//
-	P3FILELISTS_DEBUG() << "Cleanup pass." << std::endl;
-
-    std::set<RsPeerId> friend_set ;
     {
-        std::list<RsPeerId> friend_lst ;
+        RS_STACK_MUTEX(mFLSMtx) ;
 
-        rsPeers->getFriendList(friend_lst);
+        // look through the list of friend directories. Remove those who are not our friends anymore.
+        //
+        std::set<RsPeerId> friend_set ;
+        {
+            std::list<RsPeerId> friend_lst ;
 
-        for(std::list<RsPeerId>::const_iterator it(friend_lst.begin());it!=friend_lst.end();++it)
-            friend_set.insert(*it) ;
-    }
+            rsPeers->getFriendList(friend_lst);
 
-    for(uint32_t i=1;i<mDirectories.size();++i)	// start at 1, so that we don't cleanup our own.
-        if(friend_set.find(mDirectories[i]->peerId()) == friend_set.end())
-		{
-            P3FILELISTS_DEBUG() << "  removing file list of non friend " << mDirectories[i]->peerId() << std::endl;
-
-            delete mDirectories[i];
-            mDirectories[i] = NULL ;
-
-			mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
-
-            friend_set.erase(mDirectories[i]->peerId());
-
-            mFriendIndexMap.erase(mDirectories[i]->peerId());
-            mFriendIndexTab[i].clear();
+            for(std::list<RsPeerId>::const_iterator it(friend_lst.begin());it!=friend_lst.end();++it)
+                friend_set.insert(*it) ;
         }
 
-    // look through the remaining list of friends, which are the ones for which no remoteDirectoryStorage class has been allocated.
-	//
-	for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
-    {
-        // Check if a remote directory exists for that friend, possibly creating the index.
+        for(uint32_t i=1;i<mDirectories.size();++i)	// start at 1, so that we don't cleanup our own.
+            if(friend_set.find(mDirectories[i]->peerId()) == friend_set.end())
+            {
+                P3FILELISTS_DEBUG() << "  removing file list of non friend " << mDirectories[i]->peerId() << std::endl;
 
-        uint32_t friend_index = getFriendIndex(*it) ;
+                delete mDirectories[i];
+                mDirectories[i] = NULL ;
 
-        if(mDirectories.size() > friend_index && mDirectories[friend_index] != NULL)
-            continue ;
+                mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
-        P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+                friend_set.erase(mDirectories[i]->peerId());
 
-        mDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+                mFriendIndexMap.erase(mDirectories[i]->peerId());
+                mFriendIndexTab[i].clear();
+            }
 
-        mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
+        // look through the remaining list of friends, which are the ones for which no remoteDirectoryStorage class has been allocated.
+        //
+        for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
+        {
+            // Check if a remote directory exists for that friend, possibly creating the index.
+
+            uint32_t friend_index = locked_getFriendIndex(*it) ;
+
+            if(mDirectories.size() > friend_index && mDirectories[friend_index] != NULL)
+                continue ;
+
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+
+            mDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
+        }
     }
-
-	if(mUpdateFlags)
-		IndicateConfigChanged();
 }
 
 std::string p3FileDatabase::makeRemoteFileName(const RsPeerId& pid) const
@@ -225,7 +235,7 @@ std::string p3FileDatabase::makeRemoteFileName(const RsPeerId& pid) const
     return "dirlist_"+pid.toStdString()+".txt" ;
 }
 
-uint32_t p3FileDatabase::getFriendIndex(const RsPeerId& pid)
+uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
 {
     std::map<RsPeerId,uint32_t>::const_iterator it = mFriendIndexMap.find(pid) ;
 
@@ -271,7 +281,7 @@ uint32_t p3FileDatabase::getFriendIndex(const RsPeerId& pid)
     }
 }
 
-const RsPeerId& p3FileDatabase::getFriendFromIndex(uint32_t indx) const
+const RsPeerId& p3FileDatabase::locked_getFriendFromIndex(uint32_t indx) const
 {
     static const RsPeerId null_id ;
 
@@ -329,6 +339,8 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
 
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     // Case where the pointer is NULL, which means we're at the top of the list of shared directories for all friends (including us)
     // or at the top of our own list of shred directories, depending on the flags.
 
@@ -389,13 +401,25 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     // a pointer into an int.
 
     convertEntryIndexToPointer((intptr_t)d.ref,fi,d.ref) ;
-    convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
 
     for(std::list<DirStub>::iterator it(d.children.begin());it!=d.children.end();++it)
         convertEntryIndexToPointer((intptr_t)it->ref,fi,it->ref);
 
-    d.prow = mDirectories[fi]->parentRow(e) ;
+    if(e == 0)
+    {
+        d.prow = fi-1 ;
+        d.parent = NULL ;
+    }
+    else
+    {
+        d.prow = mDirectories[fi]->parentRow(e) ;
+        convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
+    }
+
     d.id   = mDirectories[fi]->peerId();
+
+    std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+    std::cerr << d << std::endl;
 
     return true;
 }
@@ -412,6 +436,8 @@ int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &detai
 }
 uint32_t p3FileDatabase::getType(void *ref) const
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     EntryIndex e ;
     uint32_t fi;
 
@@ -469,6 +495,8 @@ void p3FileDatabase::setRememberHashCache(bool)
 
 bool p3FileDatabase::findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     std::list<EntryIndex> firesults;
     mLocalSharedDirs->searchHash(hash,firesults) ;
 
@@ -478,6 +506,8 @@ bool p3FileDatabase::findLocalFile(const RsFileHash& hash,FileSearchFlags flags,
 
 int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id)
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     std::list<EntryIndex> firesults;
     mLocalSharedDirs->searchTerms(keywords,firesults) ;
 
@@ -485,6 +515,8 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
 }
 int p3FileDatabase::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id) const
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     std::list<EntryIndex> firesults;
     mLocalSharedDirs->searchBoolExp(exp,firesults) ;
 
@@ -492,6 +524,8 @@ int p3FileDatabase::SearchBoolExp(Expression *exp, std::list<DirDetails>& result
 }
 bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
     if(hintflags & RS_FILE_HINTS_LOCAL)
     {
         std::list<EntryIndex> res;
@@ -557,5 +591,6 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
 
 bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& fullpath)
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
     return mLocalSharedDirs->convertSharedFilePath(path,fullpath) ;
 }
