@@ -1,5 +1,115 @@
 retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  9780f1f Phenom   Mon, 15 Aug 2016 12:00:44 +0200 Add AutoHide to RSImageBlockWidget
+  368a429 csoler   Wed, 17 Aug 2016 09:40:16 +0200 fixed read_125Size and write_125Size according to RFC4880
+  4b11fb1 defnax   Tue, 16 Aug 2016 22:26:48 +0200 update FeedReader icons
+  6682a7a defnax   Tue, 16 Aug 2016 22:02:30 +0200 added new mainwindow icons for RetroShare.
+  4d5be7f csoler   Tue, 16 Aug 2016 10:29:21 +0200 Merge pull request #476 from PhenomRetroShare/Add_FilterBannedInIdDialog
+  4572dc6 csoler   Tue, 16 Aug 2016 10:22:00 +0200 Merge pull request #475 from PhenomRetroShare/Fix_RSTextBrowser_loadRessource_OnWindows
+  26cbb27 csoler   Tue, 16 Aug 2016 10:20:30 +0200 Merge pull request #472 from PhenomRetroShare/Fix_ChangeImageBlockedIconOnRSTextBrowser
+  bb9f158 csoler   Tue, 16 Aug 2016 10:05:38 +0200 Merge pull request #473 from PhenomRetroShare/Fix_RsCertificate_toStdString
+  81cd2e9 thunder2 Tue, 16 Aug 2016 09:09:19 +0200 Fixed MSYS2 compile (use correct bracket in pro file)
+  accd3ca Phenom   Mon, 15 Aug 2016 19:05:00 +0200 Fix RsTextBrowser::loadRessource on Windows.
+  dd2e4c3 Phenom   Mon, 15 Aug 2016 12:11:56 +0200 Change Image Blocked Icon On RSTextBrowser
+  38a9e10 Phenom   Mon, 15 Aug 2016 14:19:29 +0200 Fix RsCertificate::toStdString by fixing PGPKeyParser::read_125Size.
+  df44f50 Phenom   Mon, 15 Aug 2016 19:53:43 +0200 Add Banned Filter in IdDialog.
+  b8158a4 Thunder  Mon, 15 Aug 2016 19:54:52 +0200 Merge pull request #474 from PhenomRetroShare/Fix_MSys2WindowsCompilation
+  3200ea5 Phenom   Mon, 15 Aug 2016 16:16:46 +0200 Fix MSys2 Windows Compilation after #f1847a9 commit.
+  3640e32 thunder2 Mon, 15 Aug 2016 11:49:36 +0200 Updated build of external libraries for Windows compile
+  f1847a9 thunder2 Sun, 14 Aug 2016 14:11:01 +0200 Changed check for MSYS2 environment for Windows compile
+  b0b4320 defnax   Sat, 13 Aug 2016 16:20:58 +0200 decrease chat bar widget icon size
+  c01f5a3 defnax   Sat, 13 Aug 2016 13:16:35 +0200 Merge pull request #468 from PhenomRetroShare/Add_ChatLoadEmbeddedImagesOption
+  fcad9d9 Phenom   Sat, 13 Aug 2016 10:42:42 +0200 Fix RSTextBrowser::loadResource if image comes from stylesheet.
+  f71aad4 Phenom   Tue, 9  Aug 2016 23:32:25 +0200 Add Chat Load Embedded Images Option like forum and message.
+  0e1c0c2 defnax   Fri, 12 Aug 2016 22:19:44 +0200 Added search filter for participants list.
+  ab82c4a csoler   Fri, 12 Aug 2016 15:24:40 +0200 added missing return in PGPKeyUtil, causing corruption of keys in some--possible rare--situations
+  81d42f0 thunder2 Fri, 12 Aug 2016 14:14:09 +0200 Fixed MSYS2AUTOMAKE path in msys2_build_libs/Makefile
+  f3b8843 thunder2 Fri, 12 Aug 2016 10:03:47 +0200 Fixed QMAKE_PRE_LINK for Windows compile without MSYS2
+  1fe7dce defnax   Wed, 10 Aug 2016 00:22:23 +0200 Set icons for the voting combo box
+  d1645e9 defnax   Tue, 9  Aug 2016 19:38:56 +0200 moved auto-ban checkbox to a better position
+  aaf13eb csoler   Tue, 9  Aug 2016 10:47:08 +0200 Merge pull request #466 from PhenomRetroShare/Fix_RsCollEditorCountUpdateWhenRemove
+  32db280 csoler   Tue, 9  Aug 2016 10:35:01 +0200 Merge pull request #459 from PhenomRetroShare/Add_CreateNewGXSIDInGenCertDialog
+  275c47e Phenom   Tue, 9  Aug 2016 01:22:14 +0200 Add Title when ask for password.
+  6edd7bb Phenom   Sat, 6  Aug 2016 17:15:56 +0200 Add possibility to create GXSId directly on GenCertDialog.
+  6db747a csoler   Mon, 8  Aug 2016 22:19:38 +0200 Merge pull request #467 from PhenomRetroShare/Fix_NATStatusLED
+  c2c8893 csoler   Mon, 8  Aug 2016 22:18:32 +0200 Merge pull request #462 from PhenomRetroShare/Add_CaseSensitiveOptionForLobbyNotify
+  0b1f08a csoler   Mon, 8  Aug 2016 22:12:55 +0200 Merge pull request #461 from PhenomRetroShare/Add_CommentNumberOnButton
+  723d96b csoler   Mon, 8  Aug 2016 22:11:10 +0200 Merge pull request #460 from PhenomRetroShare/Fix_LobbyNotifyIcon
+  9c601dc csoler   Mon, 8  Aug 2016 22:10:01 +0200 Merge pull request #463 from PhenomRetroShare/Fix_ImageBlockOnRsTextBrowser
+  d59f7a0 Phenom   Mon, 8  Aug 2016 21:59:12 +0200 Fix NAT Status LED
+  ee368ef Phenom   Mon, 8  Aug 2016 20:45:35 +0200 Fix RsCollection Editor Count Update When Removing items.
+  c0c7ede csoler   Mon, 8  Aug 2016 20:14:05 +0200 Merge pull request #464 from G10h4ck/libresapilocal
+  600e2d6 csoler   Mon, 8  Aug 2016 20:11:21 +0200 Merge pull request #465 from PhenomRetroShare/Fix_RsGxsNetService_handleRecvPublishKeys_grpMeta_NULL
+  72d7435 Phenom   Mon, 8  Aug 2016 19:05:42 +0200 Fix RsGxsNetService::handleRecvPublishKeys when grpMeta is NULL
+  183ac22 Gio      Mon, 8  Aug 2016 14:02:01 +0200 ApiServerLocal run on it's own thread to avoid stopping UI ApiLocalConnectionHandler can now handle both buffered (QLocalSocket based) and unbuffered (like ncat or simple scripts) clients
+  88407e6 Phenom   Sun, 7  Aug 2016 19:41:44 +0200 Fix Image Block on RSTextBrowser.
+  d048270 Phenom   Sun, 7  Aug 2016 19:00:23 +0200 Add Case Sensitive option for Lobby Notify.
+  ea6bbac Phenom   Sun, 7  Aug 2016 14:40:04 +0200 Add Comment Number On Button.
+  dea776a defnax   Sat, 6  Aug 2016 18:35:07 +0200 Moved font menu to Settings menu
+  776e404 Phenom   Sat, 6  Aug 2016 17:52:12 +0200 Fix Lobby Notify Icon.
+  9f14103 csoler   Sat, 6  Aug 2016 15:47:23 +0200 Merge pull request #458 from PhenomRetroShare/Fix_QMessageBoxAddWidget
+  329a7e7 csoler   Sat, 6  Aug 2016 15:46:01 +0200 Merge pull request #456 from PhenomRetroShare/Fix_ForumItemSortOnLastView
+  21bd8cd Phenom   Sat, 6  Aug 2016 13:49:39 +0200 Fix QMessageBox layout addWidget.
+  beab81e Phenom   Sat, 6  Aug 2016 11:57:20 +0200 Fix Forum Item sort on LastPost View.
+  f3d1a6c defnax   Fri, 5  Aug 2016 19:13:59 +0200 Added missed notify icon
+  ac73fd9 defnax   Fri, 5  Aug 2016 01:01:56 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  e2bb477 defnax   Fri, 5  Aug 2016 01:00:53 +0200 Added new blue icon set for Chat Widget (icons by Beluga) svg ad png Format
+  96e73b3 csoler   Thu, 4  Aug 2016 22:38:59 +0200 Merge pull request #454 from csoler/v0.6-ContactList
+  cd433e8 csoler   Thu, 4  Aug 2016 22:33:45 +0200 fixed bug causing uninitialised memory read in reputation changing
+  5a55de5 csoler   Thu, 4  Aug 2016 22:01:11 +0200 added missing DontUseNativeDialog flag in misc.cpp
+  46d4863 defnax   Thu, 4  Aug 2016 19:50:00 +0200 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  e2d29f6 defnax   Thu, 4  Aug 2016 19:46:20 +0200 update icons
+  3993fbf csoler   Thu, 4  Aug 2016 16:10:00 +0200 fixed auto-positive opinions for contacts
+  c757630 csoler   Thu, 4  Aug 2016 13:12:55 +0200 added callback in RsGenExchange subclasses to autorise new groups, to be used by p3GxsIdentity
+  7545ad4 csoler   Thu, 4  Aug 2016 11:43:35 +0200 simplied/improved reputation system. Now ids can be banned based on their owner node using a single checkbox in the Person tab, with immediate effect
+  70228ee csoler   Thu, 4  Aug 2016 11:02:12 +0200 fixed missign return, probably causing crashes
+  48b2e05 csoler   Wed, 3  Aug 2016 19:56:49 +0200 Merge pull request #453 from G10h4ck/libresapilocal
+  c4ef4d7 csoler   Tue, 2  Aug 2016 23:57:11 +0200 saved owner node ID in GXS reputation item
+  353308e Gio      Wed, 3  Aug 2016 14:35:45 +0200 ApiLocalConnectionHandler class quit() at the end outside if
+  60cf299 csoler   Wed, 3  Aug 2016 08:46:15 +0200 Merge pull request #436 from G10h4ck/libresapilocal
+  e4e29c5 Gio Wed, 3 Aug 2 016 00:50:49 +0200 quit ApiLocalConnectionHandler after replying API query
+  17003f1 csoler   Tue, 2  Aug 2016 16:25:00 +0200 modified wrong comment in why mLastPost should not be used in rsgxsnetservice.cc, and added a call to clearing GrpMeta cache when new msg in that group are received
+  3cd90ae csoler   Mon, 1  Aug 2016 16:35:19 +0200 re-disabled the code to update the server TS to last post as it can severely perturbate the distribution of posts. Added a call to update msgServerUpdateMap when new messages received
+  d6be440 csoler   Mon, 1  Aug 2016 15:38:51 +0200 re-enabled some code previously disabled in last commit
+  b1288bc csoler   Mon, 1  Aug 2016 14:43:17 +0200 added missing time stamp of msgServerUpdateMap when posting a new message
+  5fac5a8 csoler   Sun, 31 Jul 2016 22:14:23 +0200 moved all getOpenFilename to use misc::getOpenFilename
+  c643d1e csoler   Sun, 31 Jul 2016 22:07:43 +0200 Merge pull request #451 from PhenomRetroShare/Fix_ImportExportCertASC
+  d000d75 Phenom   Sun, 31 Jul 2016 21:03:45 +0200 Fix Import and Export Cert file *.asc.
+  edce1e9 csoler   Sun, 31 Jul 2016 17:47:50 +0200 Merge pull request #449 from PhenomRetroShare/Add_RemoveDuplicateCBInRSCollEditor
+  6e25a30 csoler   Sun, 31 Jul 2016 17:21:12 +0200 Merge pull request #450 from PhenomRetroShare/Fix_QFileDialogDontUseNativeDialog
+  6935441 Phenom   Sun, 31 Jul 2016 16:23:41 +0200 Fix other QFileDialog call in misc adding DontUseNativeDialog option.
+  0317904 Phenom   Sun, 31 Jul 2016 16:08:15 +0200 Add Remove Duplicate checkbox in RsCollection editor.
+  64b5609 csoler   Sun, 31 Jul 2016 11:52:23 +0200 Merge pull request #448 from PhenomRetroShare/Fix_IdDialogContextMenuShownAtStartUp
+  998fede Phenom   Sun, 31 Jul 2016 11:15:47 +0200 Fix IdDialog ContextMenu shown at startup.
+  3721055 csoler   Sat, 30 Jul 2016 21:15:08 +0200 Merge pull request #447 from PhenomRetroShare/Fix_IdChooserInSignedLobby
+  bef7db4 Phenom   Sat, 30 Jul 2016 19:14:59 +0200 Fix IdChooser in Signed Lobby.
+  2921d9e csoler   Sat, 30 Jul 2016 15:26:27 +0200 Merge pull request #445 from PhenomRetroShare/Add_MergeDisplayMenuToHeaderContextMenu
+  2126234 csoler   Sat, 30 Jul 2016 15:25:30 +0200 Merge pull request #446 from PhenomRetroShare/Fix_FriendListSortGPGItem
+  46e4b3b Phenom   Sat, 30 Jul 2016 13:58:02 +0200 Fix FriendList sorting when expand PGPItem sorted by LastContact or IP
+  ae9ab64 Phenom   Sat, 30 Jul 2016 13:27:23 +0200 Move Display button's menu to Header context menu on FriendList.
+  d62f8a4 defnax   Fri, 29 Jul 2016 23:21:46 +0200 Fixed stylesheet
+  032bcf7 defnax   Fri, 29 Jul 2016 23:14:46 +0200 Fixed Stylesheets
+  b1dcd2f csoler   Fri, 29 Jul 2016 22:02:57 +0200 Merge pull request #444 from PhenomRetroShare/Add_MergeFilterIdFilterToHeaderContextMenu
+  1707c07 csoler   Fri, 29 Jul 2016 21:58:31 +0200 added DontUseNativeDialog as default flag in file dialog in order to avoid some crashed when not using it
+  d3beccf Phenom   Fri, 29 Jul 2016 20:54:26 +0200 Merge Filter ComboBox to Header Context Menu in IdDialog.
+  431dd68 defnax   Fri, 29 Jul 2016 17:29:54 +0200 Temporary solution for the Filter Combobox it takes to much space, no space more for search filter,moved under the ToolBar.
+  7c2e2bd Gio Thu, 28 Jul 2016 17:24:17 +0200 take in account that QLocalSocket is of type STREAM so it doesn't emit readyRead event for each write() on the other side
+  fe7de83 Gio Thu, 28 Jul 2016 14:08:49 +0200 WebUI is now optional but enabled by default at compile time
+  c73be93 csoler   Tue, 26 Jul 2016 16:06:03 +0200 removed anti-spam message that has become irrelevant
+  da8a520 csoler   Mon, 25 Jul 2016 16:07:53 -0400 Merge pull request #442 from csoler/v0.6-ContactList
+  ed05ec7 csoler   Mon, 25 Jul 2016 16:06:28 -0400 fixed text in People tab
+  f5e55e8 csoler   Mon, 25 Jul 2016 16:04:30 -0400 fixed a few bugs in the People tab
+  2189771 csoler   Mon, 25 Jul 2016 15:45:49 -0400 added two new options to people page for handlign reputations: change the ban limit from friend opinions, and allow to auto-set positive opinions to contacts
+  efd503e csoler   Mon, 25 Jul 2016 14:56:55 -0400 removed the possibility of GXS groups to keep track of post origin before release, as it is too intrusive as compared to the benefits
+  35c01e5 csoler   Fri, 22 Jul 2016 21:10:54 -0400 updated translation files
+  1a4d400 csoler   Fri, 22 Jul 2016 20:40:42 -0400 updated changlog
+  e5d9bd5 csoler   Fri, 22 Jul 2016 20:39:55 -0400 Merge pull request #441 from PhenomRetroShare/Fix_PostedFeedItemWithComments
+  7c7da7e Phenom   Sat, 23 Jul 2016 01:48:23 +0200  Fix Posted Feed Item when received comment.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 18 Aug 2016 16:00:00 +0100
+
+retroshare06 (0.6.0-1.20160722~daf54dff) precise; urgency=low
+
   daf54df csoler Fri, 22 Jul 2016 17:49:07 -0400 fixed missing RsGxsGrpMeta cache update when updating grp meta, which caused unstable group flags/name/perms update
   95edc5b csoler Fri, 22 Jul 2016 10:06:24 -0400 fixed variable name problem in ServerPage (with no consequences)
   713deac csoler Sat, 16 Jul 2016 18:39:36 -0400 time-stamping newly received GXS ids
