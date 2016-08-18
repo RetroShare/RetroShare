@@ -22,7 +22,10 @@
 #ifndef RSIMAGEBLOCKWIDGET_H
 #define RSIMAGEBLOCKWIDGET_H
 
+#include <QPropertyAnimation>
 #include <QWidget>
+
+#include "util/RsProtectedTimer.h"
 
 namespace Ui {
 class RSImageBlockWidget;
@@ -32,17 +35,48 @@ class RSImageBlockWidget : public QWidget
 {
 	Q_OBJECT
 
+	Q_PROPERTY(bool autoHide READ autoHide WRITE setAutoHide)
+	Q_PROPERTY(int autoHideHeight READ autoHideHeight WRITE setAutoHideHeight)
+	Q_PROPERTY(int autoHideTimeToStart READ autoHideTimeToStart WRITE setAutoHideTimeToStart)
+	Q_PROPERTY(int autoHideDuration READ autoHideDuration WRITE setAutoHideDuration)
+
 public:
 	explicit RSImageBlockWidget(QWidget *parent = 0);
 	~RSImageBlockWidget();
 
 	void addButtonAction(const QString &text, const QObject *receiver, const char *member, bool standardAction);
 
+	virtual QSize sizeHint() const;//To update parent layout.
+	virtual QSize minimumSizeHint() const { return sizeHint();}//To update parent layout.
+
+	bool autoHide() { return mAutoHide; }
+	int autoHideHeight() { return mAutoHideHeight; }
+	int autoHideTimeToStart() { return mAutoHideTimeToStart; }
+	int autoHideDuration() { return mAutoHideDuration; }
+
+	void setAutoHide(const bool value);
+	void setAutoHideHeight(const int value) { mAutoHideHeight = value; }
+	void setAutoHideTimeToStart(const int value) { mAutoHideTimeToStart = value; }
+	void setAutoHideDuration(const int value) { mAutoHideDuration = value; }
+
 signals:
 	void showImages();
 
+private slots:
+	void startAutoHide();
+
+protected:
+	bool eventFilter(QObject *obj, QEvent *event);
+
 private:
 	Ui::RSImageBlockWidget *ui;
+	QPropertyAnimation *mAnimation;
+	QRect mDefaultRect;
+	RsProtectedTimer *mTimer;
+	bool mAutoHide;
+	int mAutoHideHeight;
+	int mAutoHideTimeToStart;
+	int mAutoHideDuration;
 };
 
 #endif // RSIMAGEBLOCKWIDGET_H
