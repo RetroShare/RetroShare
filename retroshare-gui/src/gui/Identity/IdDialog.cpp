@@ -25,6 +25,7 @@
 
 #include <QMessageBox>
 #include <QMenu>
+#include <QWidgetAction>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -225,8 +226,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->splitter->setSizes(sizes);*/
 
 	/* Add filter types */
-	QMenu *idTWHMenu = new QMenu(tr("Show"), this);
-	ui->idTreeWidget->addHeaderContextMenuMenu(idTWHMenu);
+	QMenu *idTWHMenu = new QMenu(tr("Show Items"), this);
+	ui->idTreeWidget->addContextMenuMenu(idTWHMenu);
 
 	QActionGroup *idTWHActionGroup = new QActionGroup(this);
 	QAction *idTWHAction = new QAction(QIcon(),tr("All"), this);
@@ -2069,7 +2070,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
-    QMenu contextMnu( this );
+    QMenu *contextMenu = new QMenu(this);
 
 
     std::list<RsGxsId> own_identities ;
@@ -2129,77 +2130,105 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		    ++n_is_not_a_contact ;
     }
 
-    if(root_node_present)	// don't show menu if some of the root nodes are present
-	    return ;
-
-    if(!one_item_owned_by_you)
-    {
-		if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item
+		if(!root_node_present)	// don't show menu if some of the root nodes are present
 		{
-		    if(own_identities.size() <= 1)
-		    {
-			    QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
-			    if(own_identities.empty())
-				    action->setEnabled(false) ;
-			    else
-				    action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-		    }
-		    else
-		    {
-			    QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+			if(!one_item_owned_by_you)
+			{
+				QWidget *widget = new QWidget(contextMenu);
+				widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
-			    for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-			    {
-				    RsIdentityDetails idd ;
-				    rsIdentity->getIdDetails(*it,idd) ;
+				// create menu header
+				QHBoxLayout *hbox = new QHBoxLayout(widget);
+				hbox->setMargin(0);
+				hbox->setSpacing(6);
 
-				    QPixmap pixmap ;
+				QLabel *iconLabel = new QLabel(widget);
+				QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+				iconLabel->setPixmap(pix);
+				iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
+				hbox->addWidget(iconLabel);
 
-				    if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-					    pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+				QLabel *textLabel = new QLabel("<strong>" + ui->titleBarLabel->text() + "</strong>", widget);
+				hbox->addWidget(textLabel);
 
-				    QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
-				    action->setData(QString::fromStdString((*it).toStdString())) ;
-			    }
-		    }
+				QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+				hbox->addItem(spacerItem);
+
+				widget->setLayout(hbox);
+
+				QWidgetAction *widgetAction = new QWidgetAction(this);
+				widgetAction->setDefaultWidget(widget);
+				contextMenu->addAction(widgetAction);
+
+				if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item
+				{
+					if(own_identities.size() <= 1)
+					{
+						QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+
+						if(own_identities.empty())
+							action->setEnabled(false) ;
+						else
+							action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+					}
+					else
+					{
+						QMenu *mnu = contextMenu->addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+
+						for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+						{
+							RsIdentityDetails idd ;
+							rsIdentity->getIdDetails(*it,idd) ;
+
+							QPixmap pixmap ;
+
+							if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+								pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+							QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+							action->setData(QString::fromStdString((*it).toStdString())) ;
+						}
+					}
+				}
+
+				// always allow to send messages
+				contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+
+				contextMenu->addSeparator();
+
+				if(n_is_a_contact == 0)
+					contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+
+				if(n_is_not_a_contact == 0)
+					contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+
+				contextMenu->addSeparator();
+
+				if(n_positive_reputations == 0)	// only unban when all items are banned
+					contextMenu->addAction(QIcon(":/images/vote_up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+
+				if(n_neutral_reputations == 0)	// only unban when all items are banned
+					contextMenu->addAction(QIcon(":/images/vote_neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+
+				if(n_negative_reputations == 0)
+					contextMenu->addAction(QIcon(":/images/vote_down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+			}
+
+			if(one_item_owned_by_you && n_selected_items==1)
+			{
+				contextMenu->addSeparator();
+
+				contextMenu->addAction(ui->editIdentity);
+				contextMenu->addAction(ui->removeIdentity);
+			}
+
 		}
 
-	    // always allow to send messages
-	    contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+		contextMenu = ui->idTreeWidget->createStandardContextMenu(contextMenu);
 
-	    contextMnu.addSeparator();
-
-	    if(n_is_a_contact == 0)
-		    contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
-        
-	    if(n_is_not_a_contact == 0)
-		    contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
-
-	    contextMnu.addSeparator();
-
-	    if(n_positive_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(":/images/vote_up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
-
-	    if(n_neutral_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(":/images/vote_neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
-        
-	    if(n_negative_reputations == 0)
-		    contextMnu.addAction(QIcon(":/images/vote_down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
-    }
-
-    if(one_item_owned_by_you && n_selected_items==1)
-    {
-	    contextMnu.addSeparator();
-
-	    contextMnu.addAction(ui->editIdentity);
-	    contextMnu.addAction(ui->removeIdentity);
-    }
-
-
-    contextMnu.addSeparator();
-
-    contextMnu.exec(QCursor::pos());
+		contextMenu->exec(QCursor::pos());
+		delete contextMenu;
 }
 
 void IdDialog::chatIdentity()
