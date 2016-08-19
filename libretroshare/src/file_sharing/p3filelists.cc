@@ -108,11 +108,12 @@ int p3FileDatabase::tick()
     if(last_print_time + 20 < now)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
+        
         mLocalSharedDirs->print();
         last_print_time = now ;
 
-#warning this should be removed, but it's necessary atm for updating the GUI
-        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+//#warning this should be removed, but it's necessary atm for updating the GUI
+//        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
     }
 
     if(mUpdateFlags)
@@ -402,12 +403,13 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     convertEntryIndexToPointer((intptr_t)d.ref,fi,d.ref) ;
 
-    for(std::list<DirStub>::iterator it(d.children.begin());it!=d.children.end();++it)
-        convertEntryIndexToPointer((intptr_t)it->ref,fi,it->ref);
+    for(uint32_t i=0;i<d.children.size();++i)
+        convertEntryIndexToPointer((intptr_t)d.children[i].ref,fi,d.children[i].ref);
 
+#define Make sure this is right.
     if(e == 0)
     {
-        d.prow = fi-1 ;
+        d.prow = 0;//fi-1 ;
         d.parent = NULL ;
     }
     else

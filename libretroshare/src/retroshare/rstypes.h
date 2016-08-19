@@ -242,7 +242,7 @@ public:
     FileStorageFlags flags;
     uint32_t min_age ;	// minimum age of files in this subtree
 
-    std::list<DirStub> children;
+    std::vector<DirStub> children;
     std::list<std::string> parent_groups;	// parent groups for the shared directory
 };
 

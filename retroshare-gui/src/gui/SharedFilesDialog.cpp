@@ -544,9 +544,9 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
         if (details.type == DIR_TYPE_DIR)
         {
-            for (std::list<DirStub>::const_iterator cit = details.children.begin();cit != details.children.end(); ++cit)
+            for(uint32_t j=0;j<details.children.size();++j)
             {
-                const DirStub& dirStub = *cit;
+                const DirStub& dirStub = details.children[j];
 
                 DirDetails details;
                 FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;

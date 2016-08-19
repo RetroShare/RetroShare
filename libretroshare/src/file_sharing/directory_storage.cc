@@ -545,6 +545,8 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
     const InternalFileHierarchyStorage::DirEntry *dir_entry = mFileHierarchy->getDirEntry(indx) ;
 
+    d.ref = (void*)(intptr_t)indx ;
+
     if (dir_entry != NULL) /* has children --- fill */
     {
 #ifdef DEBUG_DIRECTORY_STORAGE

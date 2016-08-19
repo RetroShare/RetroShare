@@ -1042,9 +1042,10 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		}
 
 		/* go through all children directories/files for a recursive call */
-		for (std::list<DirStub>::const_iterator it(dir.children.begin()); it != dir.children.end(); ++it) {
+        for (uint32_t i=0;i<dir.children.size();++i)
+        {
 			DirDetails details;
-			rsFiles->RequestDirDetails(it->ref, details, FileSearchFlags(0u));
+            rsFiles->RequestDirDetails(dir.children[i].ref, details, FileSearchFlags(0u));
 			insertDirectory(txt, searchId, details, child);
 		}
 	}
