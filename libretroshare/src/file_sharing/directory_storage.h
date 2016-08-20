@@ -23,10 +23,10 @@ class DirectoryStorage
 		void save() const ;
 
         virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0;}
-        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
+        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
-		void getFileDetails(EntryIndex i) ;
+        bool getUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& last_update_TS) ;
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);
 
@@ -47,6 +47,8 @@ class DirectoryStorage
                 // info about the directory that is pointed by the iterator
 
                 std::string name() const ;
+                time_t last_modif_time() const ; // last time a file in this directory or in the directories below has been modified.
+                time_t last_update_time() const ; // last time this directory was updated
             private:
                 EntryIndex mParentIndex ;		// index of the parent dir.
                 uint32_t mDirTabIndex ;				// index in the vector of subdirs.

@@ -3,6 +3,7 @@
 #include "file_sharing/p3filelists.h"
 #include "file_sharing/directory_storage.h"
 #include "file_sharing/directory_updater.h"
+#include "file_sharing/rsfilelistitems.h"
 
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
@@ -25,17 +26,16 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 {
 	// loads existing indexes for friends. Some might be already present here.
 	// 
-    mDirectories.clear() ;	// we should load them!
+    mRemoteDirectories.clear() ;	// we should load them!
+    mOwnId = mpeers->getOwnId() ;
 
-    mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin",mpeers->getOwnId()) ;
-    mDirectories.push_back(mLocalSharedDirs) ;
-
+    mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin",mOwnId);
     mHashCache = new HashStorage("hash_cache.bin") ;
 
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
-    mRemoteDirWatcher = NULL;	// not used yet
 
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
+    mLastRemoteDirSweepTS = 0 ;
 }
 
 void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared_dirs)
@@ -60,14 +60,13 @@ p3FileDatabase::~p3FileDatabase()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
-    for(uint32_t i=0;i<mDirectories.size();++i)
-        delete mDirectories[i];
+    for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+        delete mRemoteDirectories[i];
 
-    mDirectories.clear(); // just a precaution, not to leave deleted pointers around.
+    mRemoteDirectories.clear(); // just a precaution, not to leave deleted pointers around.
 
     delete mLocalSharedDirs ;
     delete mLocalDirWatcher ;
-    delete mRemoteDirWatcher ;
     delete mHashCache ;
 }
 
@@ -128,6 +127,17 @@ int p3FileDatabase::tick()
 
         mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     }
+
+    if(mLastRemoteDirSweepTS + 5 < now)
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+           locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
+
+        mLastRemoteDirSweepTS = now;
+    }
+
     return 0;
 }
 
@@ -153,19 +163,12 @@ void p3FileDatabase::stopThreads()
 void p3FileDatabase::tickWatchers()
 {
 }
-void p3FileDatabase::tickRecv()
-{
-}
-void p3FileDatabase::tickSend()
-{
-	// go through the list of out requests and send them to the corresponding friends, if they are online.
-}
-
 bool p3FileDatabase::loadList(std::list<RsItem *>& items)
 {
 	// This loads
 	//
 	// 	- list of locally shared directories, and the permissions that go with them
+
     NOT_IMPLEMENTED();
 
     return true ;
@@ -194,19 +197,19 @@ void p3FileDatabase::cleanup()
                 friend_set.insert(*it) ;
         }
 
-        for(uint32_t i=1;i<mDirectories.size();++i)	// start at 1, so that we don't cleanup our own.
-            if(friend_set.find(mDirectories[i]->peerId()) == friend_set.end())
+        for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+            if(friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
             {
-                P3FILELISTS_DEBUG() << "  removing file list of non friend " << mDirectories[i]->peerId() << std::endl;
+                P3FILELISTS_DEBUG() << "  removing file list of non friend " << mRemoteDirectories[i]->peerId() << std::endl;
 
-                delete mDirectories[i];
-                mDirectories[i] = NULL ;
+                delete mRemoteDirectories[i];
+                mRemoteDirectories[i] = NULL ;
 
                 mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
-                friend_set.erase(mDirectories[i]->peerId());
+                friend_set.erase(mRemoteDirectories[i]->peerId());
 
-                mFriendIndexMap.erase(mDirectories[i]->peerId());
+                mFriendIndexMap.erase(mRemoteDirectories[i]->peerId());
                 mFriendIndexTab[i].clear();
             }
 
@@ -218,12 +221,12 @@ void p3FileDatabase::cleanup()
 
             uint32_t friend_index = locked_getFriendIndex(*it) ;
 
-            if(mDirectories.size() > friend_index && mDirectories[friend_index] != NULL)
+            if(mRemoteDirectories.size() > friend_index && mRemoteDirectories[friend_index] != NULL)
                 continue ;
 
             P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
 
-            mDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
+            mRemoteDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
 
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
         }
@@ -244,7 +247,7 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
     {
         // allocate a new index for that friend, and tell that we should save.
         uint32_t found = 0 ;
-        for(uint32_t i=1;i<mFriendIndexTab.size();++i)
+        for(uint32_t i=0;i<mFriendIndexTab.size();++i)
             if(mFriendIndexTab[i].isNull())
             {
                 found = i ;
@@ -266,8 +269,8 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
         mFriendIndexTab[found] = pid ;
         mFriendIndexMap[pid] = found;
 
-        if(mDirectories.size() <= found)
-            mDirectories.resize(found+1,NULL) ;
+        if(mRemoteDirectories.size() <= found)
+            mRemoteDirectories.resize(found,NULL) ;
 
         IndicateConfigChanged();
 
@@ -275,8 +278,8 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
     }
     else
     {
-        if(mDirectories.size() <= it->second)
-            mDirectories.resize(it->second+1,NULL) ;
+        if(mRemoteDirectories.size() <= it->second)
+            mRemoteDirectories.resize(it->second,NULL) ;
 
         return it->second;
     }
@@ -372,14 +375,14 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             stub.ref  = p;
             d.children.push_back(stub);
         }
-        else for(uint32_t i=1;i<mDirectories.size();++i)
+        else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
         {
             void *p;
-            convertEntryIndexToPointer(mDirectories[i]->root(),i,p);
+            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i,p);
 
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;
-            stub.name = mDirectories[i]->peerId().toStdString();
+            stub.name = mRemoteDirectories[i]->peerId().toStdString();
             stub.ref  = p;
             d.children.push_back(stub);
         }
@@ -396,7 +399,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
-    bool res = mDirectories[fi]->extractData(e,d) ;
+    bool res =  (flags & RS_FILE_HINTS_LOCAL)? (mLocalSharedDirs->extractData(e,d)) : (mRemoteDirectories[fi]->extractData(e,d)) ;
 
     // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
     // a pointer into an int.
@@ -414,11 +417,14 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     }
     else
     {
-        d.prow = mDirectories[fi]->parentRow(e) ;
+        d.prow = mRemoteDirectories[fi]->parentRow(e) ;
         convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
     }
 
-    d.id   = mDirectories[fi]->peerId();
+    if(flags & RS_FILE_HINTS_LOCAL)
+        d.id = mOwnId ;
+    else
+        d.id = mRemoteDirectories[fi]->peerId();
 
     std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
     std::cerr << d << std::endl;
@@ -451,7 +457,7 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    return mDirectories[fi]->getEntryType(e) ;
+    return mRemoteDirectories[fi]->getEntryType(e) ;
 }
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
@@ -536,13 +542,14 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
         if(res.empty())
             return false;
 
-        EntryIndex indx = *res.begin() ; // no need to report dupicates
+        EntryIndex indx = *res.begin() ; // no need to report duplicates
 
         mLocalSharedDirs->getFileInfo(indx,info) ;
 
         return true;
     }
-    else
+
+    if(hintflags & RS_FILE_HINTS_REMOTE)
     {
         NOT_IMPLEMENTED();
         return false;
@@ -595,4 +602,115 @@ bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& 
 {
     RS_STACK_MUTEX(mFLSMtx) ;
     return mLocalSharedDirs->convertSharedFilePath(path,fullpath) ;
+}
+
+//==============================================================================================================================//
+//                                               Update of remote directories                                                   //
+//==============================================================================================================================//
+
+void p3FileDatabase::tickRecv()
+{
+   RsItem *item ;
+
+   while( NULL != (item = recvItem()) )
+   {
+      switch(item->PacketSubType())
+      {
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncReqItem*>(item) ) ;
+         break ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM: handleDirSyncContent( dynamic_cast<RsFileListsSyncDirItem*>(item) ) ;
+         break ;
+      default:
+         std::cerr << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
+      }
+
+      delete item ;
+   }
+}
+
+void p3FileDatabase::tickSend()
+{
+    // go through the list of out requests and send them to the corresponding friends, if they are online.
+}
+
+void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncReqItem *item)
+{
+    // look at item TS. If local is newer, send the full directory content.
+
+   time_t recurs_max_modf_TS;
+
+   if(!mLocalSharedDirs->getUpdateTS(item->entry_index,recurs_max_modf_TS,last_update_TS))
+   {
+      std::cerr << "(EE) Cannot get update TS for entry " << index << " in local dir, asked by " << item->PeerId() << std::endl;
+      return ;
+   }
+
+    if(item->known_recurs_last_modf_TS < recurs_last_modf_TS)
+    {
+        // send full update of directory content
+    }
+    else
+    {
+        // send last recurs update TS.
+    }
+}
+
+void p3FileDatabase::handleDirSyncContent(RsFileListsSyncContentItem *item)
+{
+    // update the directory content for the specified friend.
+
+    // set the update TS, and the remote modif TS accordingly
+
+    // notify the GUI if the hierarchy has changed
+}
+
+void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e)
+{
+   time_t now = time(NULL) ;
+
+   // get the info for this entry
+
+   // compare TS
+
+   // if not up to date, request update, and return (content is not certified, so no need to recurs yet).
+   // if up to date, return, because TS is about the last modif TS below, so no need to recurs either.
+
+   time_t recurs_max_modf_TS,last_update_TS ;
+
+   if(!rds->getUpdateTS(e,time_t& recurs_max_modf_TS,time_t& last_update_TS))
+   {
+      std::cerr << "(EE) Cannot get update TS for entry " << index << " in remote dir from " << rds->peerId() << std::endl;
+      return ;
+   }
+
+   if(now > last_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ)
+   {
+        // check if a request already exists and is not too old either: no need to re-ask.
+
+        DirSyncRequestId sync_req_id = makeDirSyncReqId(rds->peerId(),e) ;
+
+        std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(sync_req_id) ;
+
+        if(it != mPendingSyncRequests.end())
+        {
+            std::cerr << "Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
+            return ;
+        }
+
+        std::cerr << "Asking for sync of directory " << e << " because it's " << (now - last_update_TS) << " secs old since last check." << std::endl;
+
+        DirSyncRequestData data ;
+
+        data.request_TS = now ;
+
+        mPendingSyncRequests[sync_req_id] = data ;
+
+        RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
+        item->entry_index =  e ;
+        item->known_TS =  recurs_max_modf_TS ;
+
+        sendItem(item) ;
+
+        return ;
+   }
 }

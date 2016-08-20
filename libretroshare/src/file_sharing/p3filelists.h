@@ -37,6 +37,9 @@ class LocalDirectoryUpdater ;
 class RemoteDirectoryStorage ;
 class LocalDirectoryStorage ;
 
+class RsFileListsSyncReqItem ;
+class RsFileListsSyncDirItem ;
+
 class HashStorage ;
 
 class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, public RsSharedFileService
@@ -135,22 +138,26 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
     private:
         p3ServiceControl *mServCtrl ;
+        RsPeerId mOwnId ;
+
+        typedef uint64_t DirSyncRequestId ;
+
+        static DirSyncRequestId makeDirSyncReqId(const RsPeerId& peer_id,DirectoryStorage::EntryIndex e) ;
 
 		// File sync request queues. The fast one is used for online browsing when friends are connected.
 		// The slow one is used for background update of file lists.
 		//
-		std::list<RsFileListSyncRequest> mFastRequestQueue ;
-		std::list<RsFileListSyncRequest> mSlowRequestQueue ;
+        std::map<DirSyncRequestId,RsFileListSyncRequest> mFastRequestQueue ;
+        std::map<DirSyncRequestId,RsFileListSyncRequest> mSlowRequestQueue ;
 
 		// Directory storage hierarchies
 		//
         // The remote one is the reference for the PeerId index below:
         //     RemoteDirectories[ getFriendIndex(pid) - 1] = RemoteDirectoryStorage(pid)
 
-        std::vector<DirectoryStorage *> mDirectories ;	// mDirectories[0]=mLocalSharedDirs
+        std::vector<RemoteDirectoryStorage *> mRemoteDirectories ;
         LocalDirectoryStorage *mLocalSharedDirs ;
 
-        RemoteDirectoryUpdater *mRemoteDirWatcher ;	// not used yet.
         LocalDirectoryUpdater *mLocalDirWatcher ;
 
         // utility functions to make/get a pointer out of an (EntryIndex,PeerId) pair. This is further documented in the .cc
@@ -160,8 +167,16 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         uint32_t locked_getFriendIndex(const RsPeerId& pid);
         const RsPeerId& locked_getFriendFromIndex(uint32_t indx) const;
 
+        void handleDirSyncRequest(RsFileListsSyncReqItem *) ;
+        void handleDirSyncContent(RsFileListsSyncDirItem *) ;
+
         std::map<RsPeerId,uint32_t> mFriendIndexMap ;
         std::vector<RsPeerId> mFriendIndexTab;
+
+        // TS for friend list update
+        time_t mLastRemoteDirSweepTS ;
+
+        void locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e);
 
         // We use a shared file cache as well, to avoid re-hashing files with known modification TS and equal name.
 		//

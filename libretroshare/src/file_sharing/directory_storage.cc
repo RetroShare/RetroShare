@@ -303,6 +303,20 @@ class InternalFileHierarchyStorage
         return static_cast<DirEntry*>(mNodes[parent_index])->subdirs[dir_tab_index];
     }
 
+    bool searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results)
+    {
+        std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mHashes.find(hash);
+
+        if( it != mHashes.end() )
+        {
+            results.clear();
+            results.push_back(it->second) ;
+            return true ;
+        }
+        else
+           return false;
+    }
+
     bool check()	// checks consistency of storage.
     {
         return true;
@@ -390,7 +404,7 @@ private:
         return true ;
     }
 
-    std::map<RsFileHash,DirectoryStorage::EntryIndex> mHashes ; // used for fast search access
+    std::map<RsFileHash,DirectoryStorage::EntryIndex> mHashes ; // used for fast search access. We should try something faster than std::map. hash_map??
 };
 
 /******************************************************************************************************************/
@@ -496,6 +510,12 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->updateHash(index,hash);
+}
+
+int DirectoryStorage::searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->searchHash(hash,results);
 }
 
 // static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;

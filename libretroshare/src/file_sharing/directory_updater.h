@@ -13,6 +13,8 @@ class DirectoryUpdater
         virtual ~DirectoryUpdater(){}
 };
 
+#warning: simplify, if we don't keep the remote directory updater
+
 class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient, public RsTickingThread
 {
 public:
@@ -35,11 +37,3 @@ private:
     time_t mLastSweepTime;
 };
 
-class RemoteDirectoryUpdater: public DirectoryUpdater
-{
-    public:
-            RemoteDirectoryUpdater() {}
-        virtual ~RemoteDirectoryUpdater() {}
-
-        virtual void tick() ;
-};

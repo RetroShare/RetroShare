@@ -6,12 +6,12 @@
 
 #define DEBUG_LOCAL_DIR_UPDATER 1
 
-static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES = 100 ; // 10 seconds for testing. Should be much more!!
+//=============================================================================================================//
+//                                           Local Directory Updater                                           //
+//=============================================================================================================//
 
-void RemoteDirectoryUpdater::tick()
-{
-	// use the stored iterator
-}
+static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES         = 100 ; // 10 seconds for testing. Should be much more!!
+static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ = 10 ; // 10 seconds for testing. Should be much more!!
 
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
     : mHashCache(hc),mSharedDirectories(lds)
@@ -139,4 +139,3 @@ void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::stri
     if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
         std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;
 }
-
