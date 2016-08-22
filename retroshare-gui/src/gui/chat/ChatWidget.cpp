@@ -196,8 +196,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 
-	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->setImageBlockWidget(ui->imageBlockWidget);
+	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());//Need to be called after setImageBlockWidget
 	ui->imageBlockWidget->setAutoHide(true);
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
