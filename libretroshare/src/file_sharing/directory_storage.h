@@ -137,6 +137,7 @@ public:
     void updateShareFlags(const SharedDirInfo& info) ;
     bool convertSharedFilePath(const std::string& path_with_virtual_name,std::string& fullpath) ;
 
+    void updateTimeStamps();
     /*!
      * \brief getFileInfo Converts an index info a full file info structure.
      * \param i index in the directory structure

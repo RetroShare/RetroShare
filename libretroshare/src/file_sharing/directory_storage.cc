@@ -53,7 +53,7 @@ class InternalFileHierarchyStorage
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name) : dir_name(name) {}
+        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),most_recent_time(0) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -65,7 +65,8 @@ class InternalFileHierarchyStorage
         std::vector<DirectoryStorage::EntryIndex> subdirs ;
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
 
-        time_t most_recent_time;
+        time_t dir_modtime ;		// this accounts for deleted files, etc.
+        time_t most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
     };
 
     // class stuff
@@ -221,7 +222,10 @@ class InternalFileHierarchyStorage
 
         std::cerr << "[directory storage] updating hash at index " << file_index << ", hash=" << hash << std::endl;
 
-        static_cast<FileEntry*>(mNodes[file_index])->file_hash = hash ;
+        RsFileHash& old_hash (static_cast<FileEntry*>(mNodes[file_index])->file_hash) ;
+
+        old_hash = hash ;
+
         return true;
     }
     bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time)
@@ -241,6 +245,25 @@ class InternalFileHierarchyStorage
         fe.file_modtime = modf_time;
 
         return true;
+    }
+
+    // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
+
+    time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index)
+    {
+        DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
+
+        time_t largest_modf_time = d.dir_modtime ;
+
+        for(uint32_t i=0;i<d.subfiles.size();++i)
+            largest_modf_time = std::max(largest_modf_time,static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_modtime) ;
+
+        for(uint32_t i=0;i<d.subdirs.size();++i)
+            largest_modf_time = std::max(largest_modf_time,recursUpdateLastModfTime(d.subdirs[i])) ;
+
+        d.most_recent_time = largest_modf_time ;
+
+        return largest_modf_time ;
     }
 
     // file/dir access and modification
@@ -367,7 +390,7 @@ private:
         }
         DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
-        std::cerr << indent << "dir:" << d.dir_name << ", subdirs: " ;
+        std::cerr << indent << "dir:" << d.dir_name << ", modf time: " << d.dir_modtime << ", recurs_last_modf_time: " << d.most_recent_time << ", subdirs: " ;
         for(int i=0;i<d.subdirs.size();++i)
             std::cerr << d.subdirs[i] << " " ;
         std::cerr << std::endl;
@@ -712,6 +735,15 @@ bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::
     fullpath += shpath;
 
     return true;
+}
+
+void LocalDirectoryStorage::updateTimeStamps()
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
+
+    std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
 }
 
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const

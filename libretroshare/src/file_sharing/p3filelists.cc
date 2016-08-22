@@ -17,9 +17,10 @@ static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED  = 0x0002 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED = 0x0004 ;
 
-static const uint32_t NB_FRIEND_INDEX_BITS = 10 ;
-static const uint32_t NB_ENTRY_INDEX_BITS  = 22 ;
-static const uint32_t ENTRY_INDEX_BIT_MASK = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
+static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;
+static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;
+static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
+static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ = 60 ; 			// every minute, for debugging. Should be evey 10 minutes or so.
 
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     : mServCtrl(mpeers), mFLSMtx("p3FileLists")
@@ -608,6 +609,17 @@ bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& 
 //                                               Update of remote directories                                                   //
 //==============================================================================================================================//
 
+// Algorithm:
+//
+//	Local dirs store the last modif time of the file, in local time
+//  	- the max time is computed upward until the root of the hierarchy
+//		- because the hash is performed late, the last modf time upward is updated only when the hash is obtained.
+//
+//	Remote dirs store the last modif time of the files/dir in the friend's time
+//		- local node sends the last known modf time to friends,
+//		- friends respond with either a full directory content, or an acknowledge that the time is right
+//
+
 void p3FileDatabase::tickRecv()
 {
    RsItem *item ;
@@ -637,15 +649,17 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncReqItem *item)
 {
     // look at item TS. If local is newer, send the full directory content.
 
-   time_t recurs_max_modf_TS;
+    time_t recurs_max_modf_TS, last_update_TS;
 
-   if(!mLocalSharedDirs->getUpdateTS(item->entry_index,recurs_max_modf_TS,last_update_TS))
-   {
-      std::cerr << "(EE) Cannot get update TS for entry " << index << " in local dir, asked by " << item->PeerId() << std::endl;
-      return ;
-   }
+    P3FILELISTS_DEBUG() << "Received directory sync request. index=" << item->entry_index << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
 
-    if(item->known_recurs_last_modf_TS < recurs_last_modf_TS)
+    if(!mLocalSharedDirs->getUpdateTS(item->entry_index,recurs_max_modf_TS,last_update_TS))
+    {
+        std::cerr << "(EE) Cannot get update TS for entry " << item->entry_index << " in local dir, asked by " << item->PeerId() << std::endl;
+        return ;
+    }
+
+    if(item->last_known_recurs_modf_TS < recurs_max_modf_TS)
     {
         // send full update of directory content
     }
@@ -655,7 +669,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncReqItem *item)
     }
 }
 
-void p3FileDatabase::handleDirSyncContent(RsFileListsSyncContentItem *item)
+void p3FileDatabase::handleDirSyncContent(RsFileListsSyncDirItem *item)
 {
     // update the directory content for the specified friend.
 
@@ -677,9 +691,9 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    time_t recurs_max_modf_TS,last_update_TS ;
 
-   if(!rds->getUpdateTS(e,time_t& recurs_max_modf_TS,time_t& last_update_TS))
+   if(!rds->getUpdateTS(e,recurs_max_modf_TS,last_update_TS))
    {
-      std::cerr << "(EE) Cannot get update TS for entry " << index << " in remote dir from " << rds->peerId() << std::endl;
+      std::cerr << "(EE) Cannot get update TS for entry " << e << " in remote dir from " << rds->peerId() << std::endl;
       return ;
    }
 
@@ -705,9 +719,10 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
         mPendingSyncRequests[sync_req_id] = data ;
 
-        RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
+        RsFileListsSyncReqItem *item = new RsFileListsSyncReqItem ;
         item->entry_index =  e ;
-        item->known_TS =  recurs_max_modf_TS ;
+        item->last_known_recurs_modf_TS =  recurs_max_modf_TS ;
+        item->PeerId(rds->peerId()) ;
 
         sendItem(item) ;
 

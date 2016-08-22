@@ -173,8 +173,16 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         std::map<RsPeerId,uint32_t> mFriendIndexMap ;
         std::vector<RsPeerId> mFriendIndexTab;
 
-        // TS for friend list update
-        time_t mLastRemoteDirSweepTS ;
+        // Directory synchronization
+        //
+        struct DirSyncRequestData
+        {
+            time_t request_TS ;
+            uint32_t flags ;
+        };
+
+        time_t mLastRemoteDirSweepTS ; // TS for friend list update
+        std::map<DirSyncRequestId,DirSyncRequestData> mPendingSyncRequests ; // pending requests, waiting for an answer
 
         void locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e);
 

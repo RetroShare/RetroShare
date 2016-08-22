@@ -75,7 +75,7 @@ class RsFileListsSyncReqItem : public RsFileListsItem
 {
 public:
 
-	RsFileListsSyncReqItem(uint16_t servtype) : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
+    RsFileListsSyncReqItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
 
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -93,20 +93,20 @@ class RsFileListsSyncDirItem : public RsFileListsItem
 {
 public:
 
-	RsFileListsSyncDirItem(uint16_t servtype) : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM) {}
+    RsFileListsSyncDirItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM) {}
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	virtual bool serialise(void *data,uint32_t& size) const;
-	virtual uint32_t serial_size() const ;
+    virtual bool serialise(void *data,uint32_t& size) const;
+    virtual uint32_t serial_size() const ;
 
-	uint32_t entry_index ;              // advises whether to use sync hash
-	uint32_t flags;                     // is it a partial/final item (used for large items only)
-	uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
-	uint64_t request_id;                // use to determine if changes that have occured since last hash
+    uint32_t entry_index ;              // advises whether to use sync hash
+    uint32_t flags;                     // is it a partial/final item (used for large items only)
+    uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
+    uint64_t request_id;                // use to determine if changes that have occured since last hash
 
-	RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
+    RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
 };
 
 class RsFileListsSerialiser : public RsSerialType

@@ -10,13 +10,15 @@
 //                                           Local Directory Updater                                           //
 //=============================================================================================================//
 
-static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES         = 100 ; // 10 seconds for testing. Should be much more!!
-static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ = 10 ; // 10 seconds for testing. Should be much more!!
+static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES           = 100 ; // 10 seconds for testing. Should be much more!!
+static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ   = 10 ; // 10 seconds for testing. Should be much more!!
+static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE = 10 ; // 10 seconds for testing. Should be much more!!
 
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
     : mHashCache(hc),mSharedDirectories(lds)
 {
     mLastSweepTime = 0;
+    mLastTSUpdateTime = 0;
 }
 
 void LocalDirectoryUpdater::data_tick()
@@ -28,8 +30,13 @@ void LocalDirectoryUpdater::data_tick()
         sweepSharedDirectories() ;
         mLastSweepTime = now;
     }
-    else
-        usleep(10*1000*1000);
+
+    if(now > DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE + mLastTSUpdateTime)
+    {
+        mSharedDirectories->updateTimeStamps() ;
+        mLastTSUpdateTime = now ;
+    }
+    usleep(10*1000*1000);
 }
 
 void LocalDirectoryUpdater::forceUpdate()
@@ -93,13 +100,13 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         switch(dirIt.file_type())
         {
                 case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-                                                            subfiles[dirIt.file_name()].size = dirIt.file_size();
-                                                            std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+                                                                subfiles[dirIt.file_name()].size = dirIt.file_size();
+                                                                std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
                                                                 break;
 
-                case librs::util::FolderIterator::TYPE_DIR:  subdirs.insert(dirIt.file_name()) ;
-                                                             std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
-                                                            break;
+                case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name()) ;
+                                                                std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+                                                                break;
         default:
             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
         }
@@ -139,3 +146,9 @@ void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::stri
     if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
         std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;
 }
+
+
+
+
+
+

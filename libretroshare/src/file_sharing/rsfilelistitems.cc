@@ -1,3 +1,5 @@
+#include "serialiser/rsbaseserial.h"
+
 #include "file_sharing/rsfilelistitems.h"
 
 RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
@@ -8,8 +10,8 @@ RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
         /* get the type and size */
         uint32_t rstype = getRsItemId(data);
 
-		if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (SERVICE_TYPE != RS_SERVICE_TYPE_FILE_DATABASE))
-			return NULL; /* wrong type */
+        if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (getRsItemService(rstype) != RS_SERVICE_TYPE_FILE_DATABASE))
+            return NULL; /* wrong type */
 
         switch(getRsItemSubType(rstype))
         {
@@ -28,26 +30,26 @@ RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
 
 uint32_t RsFileListsSerialiser::size(RsItem *item)
 {
-	RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
+    RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
 
-	if(flst_item != NULL)
-		return flst_item->serial_size() ;
+    if(flst_item != NULL)
+        return flst_item->serial_size() ;
 	else
 	{
-		std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
+        std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
 		return 0;
 	}
 }
 
 bool RsFileListsSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
-	RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
+    RsFileListsItem *flst_item = dynamic_cast<RsFileListsItem*>(item) ;
 
-	if(flst_item != NULL)
-		return flst_item->serialise(data,*size) ;
+    if(flst_item != NULL)
+        return flst_item->serialise(data,*size) ;
 	else
 	{
-		std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
+        std::cerr << "RsFileListsSerialiser::serialise(): Not an RsFileListsItem!"  << std::endl;
 		return 0;
 	}
 }
@@ -185,12 +187,12 @@ RsFileListsSyncReqItem* RsFileListsSerialiser::deserialFileListsSyncReqItem(void
 
     return item;
 }
-RsFileListsSyncReqItem* RsFileListsSerialiser::deserialFileListsSyncDirItem(void *data, uint32_t *size)
+RsFileListsSyncDirItem* RsFileListsSerialiser::deserialFileListsSyncDirItem(void *data, uint32_t *size)
 {
     bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM);
     uint32_t offset = 8;
 
-    RsFileListsSyncReqItem* item = new RsFileListsSyncReqItem();
+    RsFileListsSyncDirItem* item = new RsFileListsSyncDirItem();
 
     uint32_t entry_index ;              // index of the directory to sync
     uint32_t flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
@@ -234,7 +236,7 @@ bool RsFileListsSerialiser::checkItemHeader(void *data,uint32_t *size,uint8_t su
     uint32_t rstype = getRsItemId(data);
     uint32_t rssize = getRsItemSize(data);
 
-    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (SERVICE_TYPE != getRsItemService(rstype)) || (subservice_type != getRsItemSubType(rstype)))
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_FILE_DATABASE != getRsItemService(rstype)) || (subservice_type != getRsItemSubType(rstype)))
     {
 #ifdef RSSERIAL_DEBUG
             std::cerr << "RsFileListsSerialiser::checkItemHeader() FAIL wrong type" << std::endl;
@@ -265,11 +267,6 @@ uint32_t RsFileListsSyncReqItem::serial_size()const
 
     uint32_t s = 8; //header size
 
-    entry_index ;
-    flags;
-    last_known_recurs_modf_TS;
-    request_id;
-
     s += 4; // entry index
     s += 4; // flags
     s += 4; // last_known_recurs_modf_TS
@@ -278,15 +275,10 @@ uint32_t RsFileListsSyncReqItem::serial_size()const
     return s;
 }
 
-uint32_t RsFileListsSyncReqItem::serial_size()const
+uint32_t RsFileListsSyncDirItem::serial_size()const
 {
 
     uint32_t s = 8; //header size
-
-    entry_index ;
-    flags;
-    last_known_recurs_modf_TS;
-    request_id;
 
     s += 4; // entry index
     s += 4; // flags

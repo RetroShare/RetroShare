@@ -35,5 +35,6 @@ private:
     LocalDirectoryStorage *mSharedDirectories ;
 
     time_t mLastSweepTime;
+    time_t mLastTSUpdateTime;
 };
 

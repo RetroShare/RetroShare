@@ -41,14 +41,14 @@ file_lists {
 			file_sharing/filelist_io.h \
 			file_sharing/directory_storage.h \
 			file_sharing/directory_updater.h \
-			file_sharing/filelistitems.h
+			file_sharing/rsfilelistitems.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
 			file_sharing/hash_cache.cc \
 			file_sharing/filelist_io.cc \
 			file_sharing/directory_storage.cc \
 			file_sharing/directory_updater.cc \
-			file_sharing/filelistitems.cc
+			file_sharing/rsfilelistitems.cc
 }
 
 dsdv {
