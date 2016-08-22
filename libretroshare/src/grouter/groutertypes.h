@@ -39,7 +39,7 @@ static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       =        10 ; // max number of clues to store
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS =        60 ; // can be set to up to half the publish time interval. Prevents flooding routes.
-static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD       =        10 ; // at most save config every 10 seconds
+static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD       =        61 ; // at most save config every 10 seconds
 static const uint32_t RS_GROUTER_MAX_KEEP_TRACKING_CLUES      =  86400*10 ; // max time for which we keep record of tracking info: 10 days.
 
 static const float RS_GROUTER_BASE_WEIGHT_ROUTED_MSG          = 1.0f ;	// base contribution of routed message clue to routing matrix
