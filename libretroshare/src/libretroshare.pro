@@ -338,10 +338,22 @@ haiku-* {
 ################################# Android #####################################
 
 android-g++ {
-    ## ifaddrs is missing on Android add them
-    ## taken from https://github.com/morristech/android-ifaddrs
+## ifaddrs is missing on Android add them
+## taken from https://github.com/morristech/android-ifaddrs
     HEADERS *= util/ifaddrs.h
     SOURCES *= util/ifaddrs.c
+
+## Add this here and not in retroshare.pri because static library are very
+## sensible to order in command line
+    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
+
+    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 }
 
 ################################### COMMON stuff ##################################
@@ -879,18 +891,4 @@ test_bitdht {
 	DEFINES *= P3CONNMGR_NO_AUTO_CONNECTION 
 
 	# ENABLED UDP NOW.
-}
-
-android-g++ {
-## Add this here and not in retroshare.pri because static library are very
-## sensible to order in command line
-    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
-
-    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
-    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
 }
