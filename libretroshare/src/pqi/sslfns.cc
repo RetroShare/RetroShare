@@ -105,10 +105,14 @@ X509_REQ *GenerateX509Req(
 		    fprintf(stderr,"GenerateX509Req: reverting to %d\n", nbits);
 	    }
 
-	    rsa = RSA_generate_key(nbits, e, NULL, NULL);
 
+		rsa = RSA_new();
 	    if ((rsa == NULL) || !EVP_PKEY_assign_RSA(pkey, rsa))
 		    throw std::runtime_error("Couldn't generate RSA Key");
+
+		BIGNUM *ebn = BN_new();
+		BN_set_word(ebn, e);
+		RSA_generate_key_ex(rsa, nbits, ebn, NULL);
 
 	    // open the file.
 	    FILE *out;
