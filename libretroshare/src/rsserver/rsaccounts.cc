@@ -65,14 +65,8 @@ AccountDetails::AccountDetails()
 	return;
 }
 
-RsAccountsDetail::RsAccountsDetail()
-:mAccountsLocked(false), mPreferredId(""), mBaseDirectory("")
-{
-	mAccounts.clear();
-	mUnsupportedKeys.clear();
-	return;
-}
-
+RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false), mPreferredId("")
+{}
 
 bool RsAccountsDetail::loadAccounts()
 {
@@ -214,6 +208,7 @@ std::string RsAccountsDetail::PathPGPDirectory()
 
 std::string RsAccountsDetail::PathBaseDirectory()
 {
+	if(mBaseDirectory.empty()) defaultBaseDirectory();
 	return mBaseDirectory;
 }
 
@@ -326,8 +321,6 @@ bool RsAccountsDetail::setupBaseDirectory(std::string alt_basedir)
 }
 
 
-
-
 bool RsAccountsDetail::defaultBaseDirectory()
 {
 	std::string basedir;
@@ -339,8 +332,8 @@ bool RsAccountsDetail::defaultBaseDirectory()
 	char *h = getenv("HOME");
 	if (h == NULL)
 	{
-		std::cerr << "defaultBaseDirectory() Error: ";
-		std::cerr << "cannot determine $HOME dir" <<std::endl;
+		std::cerr << "defaultBaseDirectory() Error: cannot determine $HOME dir"
+		          << std::endl;
 		return false ;
 	}
 
@@ -1254,7 +1247,7 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
  ********************************************************************************/
 
         // Directories.
-std::string RsAccounts::ConfigDirectory() { return rsAccounts->PathBaseDirectory(); }
+std::string RsAccounts::ConfigDirectory() { return RsAccountsDetail::PathBaseDirectory(); }
 std::string RsAccounts::DataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
 std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
@@ -1333,3 +1326,4 @@ bool    RsAccounts::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::str
  * END OF: PUBLIC INTERFACE FUNCTIONS 
  ********************************************************************************/
 
+std::string RsAccountsDetail::mBaseDirectory;

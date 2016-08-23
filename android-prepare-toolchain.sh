@@ -2,19 +2,28 @@
 
 ## You are supposed to provide the following variables according to your system setup
 [ -z ${ANDROID_NDK_PATH+x} ] && export ANDROID_NDK_PATH="/opt/android-ndk/"
-[ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retroshare-android/"
 [ -z ${ANDROID_NDK_ARCH+x} ] && export ANDROID_NDK_ARCH="arm"
-[ -z ${ANDROID_PLATFORM_VER+x} ] && export ANDROID_PLATFORM_VER="23"
+[ -z ${ANDROID_NDK_ABI_VER+x} ] && export ANDROID_NDK_ABI_VER="4.9"
+[ -z ${ANDROID_PLATFORM_VER+x} ] && export ANDROID_PLATFORM_VER="18"
+[ -z ${NDK_TOOLCHAIN_PATH+x} ] && export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retroshare-android-${ANDROID_PLATFORM_VER}-${ANDROID_NDK_ARCH}-abi${ANDROID_NDK_ABI_VER}/"
 [ -z ${HOST_NUM_CPU+x} ] && export HOST_NUM_CPU=4
 
+runDir="$(pwd)"
 
 ## You should not edit the following variables
+if [ "${ANDROID_NDK_ARCH}" == "x86" ]; then
+	cArch="i686"
+	eABI=""
+else
+	cArch="${ANDROID_NDK_ARCH}"
+	eABI="eabi"
+fi
 export SYSROOT="${NDK_TOOLCHAIN_PATH}/sysroot"
 export PREFIX="${SYSROOT}"
-export CC="${NDK_TOOLCHAIN_PATH}/bin/arm-linux-androideabi-gcc"
-export CXX="${NDK_TOOLCHAIN_PATH}/bin/arm-linux-androideabi-g++"
-export AR="${NDK_TOOLCHAIN_PATH}/bin/arm-linux-androideabi-ar"
-export RANLIB="${NDK_TOOLCHAIN_PATH}/bin/arm-linux-androideabi-gcc-ranlib"
+export CC="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-gcc"
+export CXX="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-g++"
+export AR="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ar"
+export RANLIB="${NDK_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-ranlib"
 export ANDROID_DEV="${ANDROID_NDK_PATH}/platforms/android-${ANDROID_PLATFORM_VER}/arch-${ANDROID_NDK_ARCH}/usr"
 
 
@@ -22,7 +31,8 @@ export ANDROID_DEV="${ANDROID_NDK_PATH}/platforms/android-${ANDROID_PLATFORM_VER
 build_toolchain()
 {
 	rm -rf ${NDK_TOOLCHAIN_PATH}
-	${ANDROID_NDK_PATH}/build/tools/make-standalone-toolchain.sh --ndk-dir=${ANDROID_NDK_PATH} --arch=${ANDROID_NDK_ARCH} --install-dir=${NDK_TOOLCHAIN_PATH} --platform=android-${ANDROID_PLATFORM_VER}
+	[ "${ANDROID_NDK_ARCH}" == "x86" ] && toolchainName="${ANDROID_NDK_ARCH}-${ANDROID_NDK_ABI_VER}" || toolchainName="${ANDROID_NDK_ARCH}-linux-androideabi-${ANDROID_NDK_ABI_VER}" 
+	${ANDROID_NDK_PATH}/build/tools/make-standalone-toolchain.sh --ndk-dir=${ANDROID_NDK_PATH} --arch=${ANDROID_NDK_ARCH} --install-dir=${NDK_TOOLCHAIN_PATH} --platform=android-${ANDROID_PLATFORM_VER} --toolchain=${toolchainName} --verbose
 }
 
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
@@ -40,9 +50,9 @@ build_bzlib()
 	sed -i "s/^all: libbz2.a bzip2 bzip2recover test/all: libbz2.a bzip2 bzip2recover/" Makefile
 	make -j${HOST_NUM_CPU}
 	make install PREFIX=${SYSROOT}/usr
-	sed -i "/^CC=.*/d" Makefile-libbz2_so
-	make -f Makefile-libbz2_so -j${HOST_NUM_CPU}
-	cp libbz2.so.1.0.6 ${SYSROOT}/usr/lib/libbz2.so
+#	sed -i "/^CC=.*/d" Makefile-libbz2_so
+#	make -f Makefile-libbz2_so -j${HOST_NUM_CPU}
+#	cp libbz2.so.1.0.6 ${SYSROOT}/usr/lib/libbz2.so
 	cd ..
 }
 
@@ -54,12 +64,23 @@ build_openssl()
 	[ -f $B_dir.tar.gz ] || wget https://www.openssl.org/source/$B_dir.tar.gz
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
-	ANDROID_NDK_ROOT="${ANDROID_NDK_PATH}" ./Configure shared android-armv7 --prefix="${SYSROOT}/usr" --openssldir="${SYSROOT}/etc/ssl"
+	if [ "${ANDROID_NDK_ARCH}" == "arm" ]; then
+		oArch="armv7"
+	else
+		oArch="${ANDROID_NDK_ARCH}"
+	fi
+#	ANDROID_NDK_ROOT="${ANDROID_NDK_PATH}" ./Configure android-${oArch} shared --prefix="${SYSROOT}/usr" --openssldir="${SYSROOT}/etc/ssl"
+## We link openssl statically to avoid android silently sneaking in his own
+## version of libssl.so (we noticed this because it had some missing symbol
+## that made RS crash), the crash in some android version is only one of the
+## possible problems the fact that android insert his own binary libssl.so pose
+## non neglegible security concerns.
+	ANDROID_NDK_ROOT="${ANDROID_NDK_PATH}" ./Configure android-${oArch} --prefix="${SYSROOT}/usr" --openssldir="${SYSROOT}/etc/ssl"
 	sed -i 's/LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \\/LIBNAME=$$i \\/g' Makefile
 	sed -i '/LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \\/d' Makefile
 	make -j${HOST_NUM_CPU}
 	make install
-	cp *.so "${SYSROOT}/usr/lib"
+#	cp *.so "${SYSROOT}/usr/lib"
 	cd ..
 }
 
@@ -72,6 +93,7 @@ build_sqlite()
 	./configure --prefix="${SYSROOT}/usr" --host=${ANDROID_NDK_ARCH}-linux
 	make -j${HOST_NUM_CPU}
 	make install
+	rm -f ${SYSROOT}/usr/lib/libsqlite3.so*
 	${CC} -shared -o libsqlite3.so -fPIC sqlite3.o -ldl
 	cp libsqlite3.so "${SYSROOT}/usr/lib"
 	cd ..

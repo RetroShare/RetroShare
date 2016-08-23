@@ -55,16 +55,15 @@ android-g++ {
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    INCLUDEPATH *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/include/
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
-    LIBS *= -lssl -lcrypto -lsqlite3 -lupnp -lixml -lthreadutil
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libbz2.so
+    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
     ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
-#    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
 #    message(LIBS: $$LIBS)
 #    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
+#    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
+#    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
+#    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
 }
 
 win32 {

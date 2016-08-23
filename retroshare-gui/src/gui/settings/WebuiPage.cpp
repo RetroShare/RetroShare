@@ -100,7 +100,7 @@ QString WebuiPage::helpText() const
 
 // TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
 #ifdef LIBRESAPI_LOCAL_SERVER
-	apiServerLocal = new resource_api::ApiServerLocal(apiServer);
+	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
 #endif
     return ok;
 }

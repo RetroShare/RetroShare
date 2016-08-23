@@ -35,6 +35,8 @@ export HOST_NUM_CPU=1
 
 Now is time for the bad news: as of today Qt assume you use the NDK precompiled toolchain and doesn't have an option to use the custom toolchain you just generated, so you need to tweak a little Qt internals to make usage of the custom toolchain. First of all you need to determine your Qt for Android installation path, in my case it is +/opt/Qt5.7.0/+ then find the +mkspecs+ directory in my case +/opt/Qt5.7.0/5.7/android_armv7/mkspecs+ and then modify qmake configuration for android target according to your toolchain, in my case I have done it with the following commands in the same shell I used before to take advantege of the variables I set before.
 
+WARNING: This may need slightly modification if you have a different Qt version.
+
 [source,bash]
 -------------------------------------------------------------------------------
 export QT_PATH="/opt/Qt5.7.0/"
@@ -44,10 +46,9 @@ cd ${QT_PATH}/${QT_MAJOR_VERSION}/android_armv7/mkspecs
 sudo --preserve-env -s
 cp -r android-g++ android-g++-backup
 cd android-g++
-sed -i "s|^ANDROID_PLATFORM =.*|ANDROID_PLATFORM = android-${ANDROID_PLATFORM_VER}|" qmake.conf
 sed -i "s|^NDK_TOOLCHAIN_PATH =.*|NDK_TOOLCHAIN_PATH = ${NDK_TOOLCHAIN_PATH}|" qmake.conf
-sed -i "s|^QMAKE_LFLAGS \+=.*|QMAKE_LFLAGS = --sysroot=${NDK_TOOLCHAIN_PATH}/sysroot/|" qmake.conf
 -------------------------------------------------------------------------------
+
 
 == Preparing Qt Creator
 
@@ -61,33 +62,16 @@ Now go to the Kits tab, select +Android for armeabi-v7a (GCC 4.9, Qt 5.7.0)+ and
 
 Your Kit is now ready to use, now you can open retroshare as Qt Creator project and in the Projects left menu add the newly created kit if not already present, so you can select it on the build type selection button down on the left.
 
-== Final tweaks
+Some of RetroShare modules like +retroshare-gui+, +WebUI+ and +sqlcipher+ are not supported yet on android so to be able to compile RetroShare without error you will have to go to +
 
-RetroShare GUI, plugins and WebUI are yet not supported on android so to be able to compile RetroShare without error you will have to open RetroShare.pro file with Qt Creator and change the following assignation
-
-[source,makefile]
--------------------------------------------------------------------------------
-SUBDIRS += \
-        openpgpsdk \
-        libbitdht \
-        libretroshare \
-        libresapi \
-        retroshare_gui \
-        retroshare_nogui \
-        plugins
--------------------------------------------------------------------------------
-
-into
+Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit -> Build Steps -> qmake -> Additional arguments, and add the following configurations
 
 [source,makefile]
 -------------------------------------------------------------------------------
-SUBDIRS += \
-        openpgpsdk \
-        libbitdht \
-        libretroshare \
-        libresapi \
-        retroshare_nogui
+CONFIG+=no_retroshare_gui CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plugins CONFIG+=retroshare_android_service CONFIG+=libresapilocalserver CONFIG+=no_libresapihttpserver CONFIG+=no_sqlcipher CONFIG+=retroshare_qml_app
 -------------------------------------------------------------------------------
+
+WARNING: SQLCipher is not supported yet on RetroShare for android this pose a mayor security concern, we are working to fix this ASAP.
 
 
 == Furter Readings

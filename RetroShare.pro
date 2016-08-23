@@ -38,6 +38,13 @@ retroshare_android_service {
     retroshare_android_service.target = retroshare_android_service
 }
 
+retroshare_qml_app {
+    SUBDIRS += retroshare_qml_app
+    retroshare_qml_app.file = retroshare-qml-app/src/retroshare-qml-app.pro
+    retroshare_qml_app.depends = libretroshare retroshare_android_service
+    retroshare_qml_app.target = retroshare_qml_app
+}
+
 retroshare_plugins {
     SUBDIRS += plugins
     plugins.file = plugins/plugins.pro

@@ -21,9 +21,9 @@
 
 namespace resource_api{
 
-ApiServerLocal::ApiServerLocal(ApiServer* server, QObject *parent) :
+ApiServerLocal::ApiServerLocal(ApiServer* server, const QString &listenPath, QObject *parent) :
     QObject(parent), serverThread(this),
-    localListener(server) // Must have no parent to be movable to other thread
+    localListener(server, listenPath) // Must have no parent to be movable to other thread
 {
 	localListener.moveToThread(&serverThread);
 	serverThread.start();
@@ -31,15 +31,17 @@ ApiServerLocal::ApiServerLocal(ApiServer* server, QObject *parent) :
 
 ApiServerLocal::~ApiServerLocal() { serverThread.quit(); }
 
-ApiLocalListener::ApiLocalListener(ApiServer *server, QObject *parent) :
+ApiLocalListener::ApiLocalListener(ApiServer *server,
+                                   const QString &listenPath,
+                                   QObject *parent) :
     QObject(parent), mApiServer(server), mLocalServer(this)
 {
-	mLocalServer.removeServer(serverName());
+	mLocalServer.removeServer(listenPath);
 #if QT_VERSION >= 0x050000
 	mLocalServer.setSocketOptions(QLocalServer::UserAccessOption);
 #endif
 	connect(&mLocalServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-	mLocalServer.listen(serverName());
+	mLocalServer.listen(listenPath);
 }
 
 void ApiLocalListener::handleConnection()

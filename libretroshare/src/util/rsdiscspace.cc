@@ -32,10 +32,19 @@
 #include "rsserver/rsaccounts.h"
 #include "rsdiscspace.h"
 #include <util/rsthreads.h>
-#ifndef WIN32
-#include <sys/statvfs.h>
+
+#ifdef __ANDROID__
+#	include <android/api-level.h>
+#endif
+
+#ifdef WIN32
+#	include <wtypes.h>
+#elif defined(__ANDROID__) && (__ANDROID_API__ < 21)
+#	include <sys/vfs.h>
+#	define statvfs64 statfs
+#	warning statvfs64 is not supported with android platform < 21 falling back to statfs that is untested (may misbehave)
 #else
-#include <wtypes.h>
+#	include <sys/statvfs.h>
 #endif
 
 #define DELAY_BETWEEN_CHECKS 2 

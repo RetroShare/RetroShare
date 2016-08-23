@@ -881,3 +881,16 @@ test_bitdht {
 	# ENABLED UDP NOW.
 }
 
+android-g++ {
+## Add this here and not in retroshare.pri because static library are very
+## sensible to order in command line
+    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
+
+    LIBS += -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
+    PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+}

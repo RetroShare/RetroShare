@@ -507,7 +507,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	AuthSSL::AuthSSLInit();
     AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
-	rsAccounts = new RsAccountsDetail() ;
+	rsAccounts = new RsAccountsDetail();
 
 	// first check config directories, and set bootstrap values.
 	if(!rsAccounts->setupBaseDirectory(opt_base_dir))
