@@ -555,6 +555,7 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
         NOT_IMPLEMENTED();
         return false;
     }
+    return false;
 }
 
 int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
@@ -628,9 +629,9 @@ void p3FileDatabase::tickRecv()
    {
       switch(item->PacketSubType())
       {
-      case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncReqItem*>(item) ) ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM: handleDirSyncRequest( dynamic_cast<RsFileListsSyncRequestItem*>(item) ) ;
          break ;
-      case RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM: handleDirSyncContent( dynamic_cast<RsFileListsSyncDirItem*>(item) ) ;
+      case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: handleDirSyncResponse( dynamic_cast<RsFileListsSyncResponseItem*>(item) ) ;
          break ;
       default:
          std::cerr << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
@@ -645,59 +646,119 @@ void p3FileDatabase::tickSend()
     // go through the list of out requests and send them to the corresponding friends, if they are online.
 }
 
-void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncReqItem *item)
+void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 {
+    RsFileListsSyncResponseItem *ritem = new RsFileListsSyncResponseItem;
+
     // look at item TS. If local is newer, send the full directory content.
-
-    time_t recurs_max_modf_TS, last_update_TS;
-
-    P3FILELISTS_DEBUG() << "Received directory sync request. index=" << item->entry_index << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
-
-    if(!mLocalSharedDirs->getUpdateTS(item->entry_index,recurs_max_modf_TS,last_update_TS))
     {
-        std::cerr << "(EE) Cannot get update TS for entry " << item->entry_index << " in local dir, asked by " << item->PeerId() << std::endl;
-        return ;
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        P3FILELISTS_DEBUG() << "Received directory sync request. index=" << item->entry_index << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
+
+        uint32_t entry_type = mLocalSharedDirs->getEntryType(item->entry_index) ;
+        ritem->PeerId(item->PeerId()) ;
+        ritem->request_id = item->request_id;
+        ritem->entry_index = item->entry_index ;
+
+        if(entry_type != DIR_TYPE_DIR)
+        {
+            P3FILELISTS_DEBUG() << "  Directory does not exist anymore, or is not a directory. Answering with proper flags." << std::endl;
+
+            ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
+        }
+        else
+        {
+            time_t local_recurs_max_time,local_update_time;
+            mLocalSharedDirs->getUpdateTS(item->entry_index,local_recurs_max_time,local_update_time);
+
+            if(item->last_known_recurs_modf_TS < local_recurs_max_time)
+            {
+                P3FILELISTS_DEBUG() << "  Directory is more recent than what the friend knows. Sending full dir content as response." << std::endl;
+
+                ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_SYNC_DIR_CONTENT;
+                ritem->last_known_recurs_modf_TS = local_recurs_max_time;
+
+                mLocalSharedDirs->serialiseDirEntry(item->entry_index,ritem->directory_content_data) ;
+            }
+            else
+            {
+                P3FILELISTS_DEBUG() << "  Directory is up to date w.r.t. what the friend knows. Sending ACK." << std::endl;
+
+                ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE ;
+                ritem->last_known_recurs_modf_TS = local_update_time ;
+            }
+        }
     }
 
-    if(item->last_known_recurs_modf_TS < recurs_max_modf_TS)
-    {
-        // send full update of directory content
-    }
-    else
-    {
-        // send last recurs update TS.
-    }
+    // sends the response.
+
+    sendItem(ritem);
 }
 
-void p3FileDatabase::handleDirSyncContent(RsFileListsSyncDirItem *item)
+void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
 {
-    // update the directory content for the specified friend.
+    // find the correct friend entry
 
-    // set the update TS, and the remote modif TS accordingly
+    uint32_t fi = 0 ;
 
-    // notify the GUI if the hierarchy has changed
+    P3FILELISTS_DEBUG() << "Handling sync response for directory with index " << item->entry_index << std::endl;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+        fi = locked_getFriendIndex(item->PeerId());
+
+        // make sure we have a remote directory for that friend.
+
+        if(mRemoteDirectories.size() <= fi)
+            mRemoteDirectories.resize(fi+1,NULL) ;
+
+        if(mRemoteDirectories[fi] == NULL)
+            mRemoteDirectories[fi] = new RemoteDirectoryStorage(item->PeerId(),makeRemoteFileName(item->PeerId()));
+    }
+
+    if(item->flags & RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED)
+    {
+        P3FILELISTS_DEBUG() << "  removing directory with index " << item->entry_index << " because it does not exist." << std::endl;
+        mRemoteDirectories[fi]->removeDirectory(item->entry_index);
+    }
+    else if(item->flags & RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE)
+    {
+        P3FILELISTS_DEBUG() << "  Directory is up to date. Setting local TS." << std::endl;
+
+        mRemoteDirectories[fi]->setUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
+    }
+    else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
+    {
+        P3FILELISTS_DEBUG() << "  Item contains directory data. Uptating." << std::endl;
+
+        mRemoteDirectories[fi]->deserialiseUpdateEntry(item->entry_index,item->directory_content_data) ;
+        mRemoteDirectories[fi]->setUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
+
+#warning should notify the GUI here
+        // notify the GUI if the hierarchy has changed
+    }
 }
 
 void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e)
 {
    time_t now = time(NULL) ;
 
-   // get the info for this entry
-
-   // compare TS
-
    // if not up to date, request update, and return (content is not certified, so no need to recurs yet).
    // if up to date, return, because TS is about the last modif TS below, so no need to recurs either.
 
-   time_t recurs_max_modf_TS,last_update_TS ;
+   // get the info for this entry
 
-   if(!rds->getUpdateTS(e,recurs_max_modf_TS,last_update_TS))
+   time_t recurs_max_modf_TS_remote_time,local_update_TS;
+
+   if(!rds->getUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
    {
-      std::cerr << "(EE) Cannot get update TS for entry " << e << " in remote dir from " << rds->peerId() << std::endl;
-      return ;
+       std::cerr << "(EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
+       return;
    }
 
-   if(now > last_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ)
+   // compare TS
+
+   if(now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ)	// we need to compare local times only. We cannot compare local (now) with remote time.
    {
         // check if a request already exists and is not too old either: no need to re-ask.
 
@@ -707,11 +768,11 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
         if(it != mPendingSyncRequests.end())
         {
-            std::cerr << "Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
+            P3FILELISTS_DEBUG() << "Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
             return ;
         }
 
-        std::cerr << "Asking for sync of directory " << e << " because it's " << (now - last_update_TS) << " secs old since last check." << std::endl;
+        P3FILELISTS_DEBUG() << "Asking for sync of directory " << e << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
 
         DirSyncRequestData data ;
 
@@ -719,13 +780,24 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
         mPendingSyncRequests[sync_req_id] = data ;
 
-        RsFileListsSyncReqItem *item = new RsFileListsSyncReqItem ;
+        RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
         item->entry_index =  e ;
-        item->last_known_recurs_modf_TS =  recurs_max_modf_TS ;
+        item->flags = RsFileListsItem::FLAGS_SYNC_REQUEST ;
+        item->request_id = sync_req_id ;
+        item->last_known_recurs_modf_TS = recurs_max_modf_TS_remote_time ;
         item->PeerId(rds->peerId()) ;
 
         sendItem(item) ;
 
+        // Dont recurs into sub-directories, since we dont know yet were to go.
+
         return ;
    }
+
+   for(DirectoryStorage::DirIterator it(rds,e);it;++it)
+       locked_recursSweepRemoteDirectory(rds,*it);
 }
+
+
+
+

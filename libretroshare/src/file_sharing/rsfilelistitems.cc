@@ -15,8 +15,8 @@ RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
 
         switch(getRsItemSubType(rstype))
         {
-        case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:   return deserialFileListsSyncReqItem(data, size);
-        case RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM:   return deserialFileListsSyncDirItem(data, size);
+        case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:   return deserialFileListsSyncRequestItem(data, size);
+        case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:   return deserialFileListsSyncResponseItem(data, size);
         case RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM:     return deserialFileListsConfigItem (data, size);
 
         default:
@@ -77,7 +77,7 @@ bool RsFileListsItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tl
 	return true ;
 }
 
-bool RsFileListsSyncReqItem::serialise(void *data, uint32_t& size) const
+bool RsFileListsSyncRequestItem::serialise(void *data, uint32_t& size) const
 {
     uint32_t tlvsize,offset=0;
     bool ok = true;
@@ -113,7 +113,7 @@ bool RsFileListsSyncReqItem::serialise(void *data, uint32_t& size) const
     return ok;
 }
 
-bool RsFileListsSyncDirItem::serialise(void *data, uint32_t& size) const
+bool RsFileListsSyncResponseItem::serialise(void *data, uint32_t& size) const
 {
     uint32_t tlvsize,offset=0;
     bool ok = true;
@@ -154,12 +154,12 @@ bool RsFileListsSyncDirItem::serialise(void *data, uint32_t& size) const
 //                                                     Deserialisation                                                        //
 //============================================================================================================================//
 
-RsFileListsSyncReqItem* RsFileListsSerialiser::deserialFileListsSyncReqItem(void *data, uint32_t *size)
+RsFileListsSyncRequestItem* RsFileListsSerialiser::deserialFileListsSyncRequestItem(void *data, uint32_t *size)
 {
     bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM);
     uint32_t offset = 8;
 
-    RsFileListsSyncReqItem* item = new RsFileListsSyncReqItem();
+    RsFileListsSyncRequestItem* item = new RsFileListsSyncRequestItem();
 
     ok &= getRawUInt32(data, *size, &offset, &item->entry_index);
     ok &= getRawUInt32(data, *size, &offset, &item->flags);
@@ -187,12 +187,12 @@ RsFileListsSyncReqItem* RsFileListsSerialiser::deserialFileListsSyncReqItem(void
 
     return item;
 }
-RsFileListsSyncDirItem* RsFileListsSerialiser::deserialFileListsSyncDirItem(void *data, uint32_t *size)
+RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncResponseItem(void *data, uint32_t *size)
 {
     bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM);
     uint32_t offset = 8;
 
-    RsFileListsSyncDirItem* item = new RsFileListsSyncDirItem();
+    RsFileListsSyncResponseItem* item = new RsFileListsSyncResponseItem();
 
     uint32_t entry_index ;              // index of the directory to sync
     uint32_t flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
@@ -262,7 +262,7 @@ bool RsFileListsSerialiser::checkItemHeader(void *data,uint32_t *size,uint8_t su
 //                                                         Sizes                                                              //
 //============================================================================================================================//
 
-uint32_t RsFileListsSyncReqItem::serial_size()const
+uint32_t RsFileListsSyncRequestItem::serial_size()const
 {
 
     uint32_t s = 8; //header size
@@ -275,7 +275,7 @@ uint32_t RsFileListsSyncReqItem::serial_size()const
     return s;
 }
 
-uint32_t RsFileListsSyncDirItem::serial_size()const
+uint32_t RsFileListsSyncResponseItem::serial_size()const
 {
 
     uint32_t s = 8; //header size
@@ -289,14 +289,14 @@ uint32_t RsFileListsSyncDirItem::serial_size()const
     return s;
 }
 
-void RsFileListsSyncReqItem::clear()
+void RsFileListsSyncRequestItem::clear()
 {
 }
-void RsFileListsSyncDirItem::clear()
+void RsFileListsSyncResponseItem::clear()
 {
     directory_content_data.TlvClear();
 }
-std::ostream& RsFileListsSyncReqItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsFileListsSyncRequestItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsFileListsSyncReqItem", indent);
     uint16_t int_Indent = indent + 2;
@@ -311,7 +311,7 @@ std::ostream& RsFileListsSyncReqItem::print(std::ostream &out, uint16_t indent)
     return out;
 }
 
-std::ostream& RsFileListsSyncDirItem::print(std::ostream &out, uint16_t indent)
+std::ostream& RsFileListsSyncResponseItem::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsFileListsSyncDirItem", indent);
     uint16_t int_Indent = indent + 2;

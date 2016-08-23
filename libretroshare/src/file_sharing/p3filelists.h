@@ -37,8 +37,8 @@ class LocalDirectoryUpdater ;
 class RemoteDirectoryStorage ;
 class LocalDirectoryStorage ;
 
-class RsFileListsSyncReqItem ;
-class RsFileListsSyncDirItem ;
+class RsFileListsSyncRequestItem ;
+class RsFileListsSyncResponseItem ;
 
 class HashStorage ;
 
@@ -167,8 +167,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         uint32_t locked_getFriendIndex(const RsPeerId& pid);
         const RsPeerId& locked_getFriendFromIndex(uint32_t indx) const;
 
-        void handleDirSyncRequest(RsFileListsSyncReqItem *) ;
-        void handleDirSyncContent(RsFileListsSyncDirItem *) ;
+        void handleDirSyncRequest (RsFileListsSyncRequestItem *) ;
+        void handleDirSyncResponse (RsFileListsSyncResponseItem *) ;
 
         std::map<RsPeerId,uint32_t> mFriendIndexMap ;
         std::vector<RsPeerId> mFriendIndexTab;

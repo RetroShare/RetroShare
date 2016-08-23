@@ -38,7 +38,7 @@
 // These items have "flag type" numbers, but this is not used.
 
 const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM    = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM    = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM    = 0x02;
 const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM      = 0x03;
 
 /*!
@@ -64,18 +64,19 @@ public:
 
     static const uint32_t FLAGS_SYNC_REQUEST      = 0x0001 ;
     static const uint32_t FLAGS_SYNC_RESPONSE     = 0x0002 ;
-    static const uint32_t FLAGS_ENTRY_UP_TO_DATE  = 0x0004 ;
-    static const uint32_t FLAGS_ENTRY_WAS_REMOVED = 0x0008 ;
+    static const uint32_t FLAGS_SYNC_DIR_CONTENT  = 0x0004 ;
+    static const uint32_t FLAGS_ENTRY_UP_TO_DATE  = 0x0008 ;
+    static const uint32_t FLAGS_ENTRY_WAS_REMOVED = 0x0010 ;
 };
 
 /*!
  * Use to request synchronization on a specific directory. Also used to respond that the directory is up to date.
  */
-class RsFileListsSyncReqItem : public RsFileListsItem
+class RsFileListsSyncRequestItem : public RsFileListsItem
 {
 public:
 
-    RsFileListsSyncReqItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
+    RsFileListsSyncRequestItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM) {}
 
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -89,11 +90,11 @@ public:
     uint64_t request_id;                // use to determine if changes that have occured since last hash
 };
 
-class RsFileListsSyncDirItem : public RsFileListsItem
+class RsFileListsSyncResponseItem : public RsFileListsItem
 {
 public:
 
-    RsFileListsSyncDirItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_DIR_ITEM) {}
+    RsFileListsSyncResponseItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM) {}
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -122,9 +123,9 @@ public:
     virtual RsItem* deserialise(void *data, uint32_t *size);
 
 private:
-    RsFileListsSyncReqItem  *deserialFileListsSyncReqItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-    RsFileListsSyncDirItem  *deserialFileListsSyncDirItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-    RsFileListsSyncDirItem  *deserialFileListsConfigItem (void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
+    RsFileListsSyncRequestItem  *deserialFileListsSyncRequestItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
+    RsFileListsSyncResponseItem  *deserialFileListsSyncResponseItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
+    RsFileListsSyncResponseItem  *deserialFileListsConfigItem (void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
 
     bool checkItemHeader(void *data, uint32_t *size, uint8_t subservice_type);
 };

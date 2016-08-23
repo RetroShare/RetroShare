@@ -26,7 +26,9 @@ class DirectoryStorage
         virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
-        bool getUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& last_update_TS) ;
+        bool getUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS) ;
+        bool setUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS) ;
+
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);
 
