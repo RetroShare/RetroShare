@@ -103,7 +103,7 @@ QString PostedDialog::icon(IconType type)
 	case ICON_NAME:
 		return ":/icons/png/posted.png";
 	case ICON_NEW:
-		return ":/images/posted_add_24.png";
+		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
 		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:

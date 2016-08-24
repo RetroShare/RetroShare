@@ -108,5 +108,9 @@
     <file>icons/png/people-notify.png</file>
     <file>icons/png/posted-notify.png</file>
     <file>icons/png/filesharing-notify.png</file>
+    <file>icons/png/thumbs-up.png</file>
+    <file>icons/png/thumbs-down.png</file>
+    <file>icons/png/thumbs-neutral.png</file>
+    <file>icons/png/add.png</file>
 	</qresource>
 </RCC>

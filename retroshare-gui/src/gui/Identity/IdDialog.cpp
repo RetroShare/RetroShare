@@ -1707,6 +1707,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
 
     ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
+    ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 
     time_t now = time(NULL) ;
     ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
@@ -2206,13 +2207,13 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addSeparator();
 
 				if(n_positive_reputations == 0)	// only unban when all items are banned
-					contextMenu->addAction(QIcon(":/images/vote_up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
 
 				if(n_neutral_reputations == 0)	// only unban when all items are banned
-					contextMenu->addAction(QIcon(":/images/vote_neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
 
 				if(n_negative_reputations == 0)
-					contextMenu->addAction(QIcon(":/images/vote_down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
 			}
 
 			if(one_item_owned_by_you && n_selected_items==1)

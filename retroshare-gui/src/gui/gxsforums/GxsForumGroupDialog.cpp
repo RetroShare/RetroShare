@@ -91,7 +91,7 @@ void GxsForumGroupDialog::initUi()
 
 QPixmap GxsForumGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/konversation64.png");
+	return QPixmap(":/icons/png/forums.png");
 }
 
 bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
