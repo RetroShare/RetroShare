@@ -220,13 +220,19 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <property name="iconSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
       <property name="tabsClosable">
        <bool>true</bool>
       </property>
       <widget class="QWidget" name="groupChatTab">
        <attribute name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/kblogger.png</normaloff>:/images/kblogger.png</iconset>
+        <iconset resource="icons.qrc">
+         <normaloff>:/icons/png/chat-lobbies.png</normaloff>:/icons/png/chat-lobbies.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Broadcast</string>

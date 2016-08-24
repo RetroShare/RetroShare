@@ -112,5 +112,6 @@
     <file>icons/png/thumbs-down.png</file>
     <file>icons/png/thumbs-neutral.png</file>
     <file>icons/png/add.png</file>
+    <file>icons/png/netgraph.png</file>
 	</qresource>
 </RCC>
