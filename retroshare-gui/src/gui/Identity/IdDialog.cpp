@@ -211,7 +211,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 
 	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
-	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
+	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Person->setText(tr("People"));
 	ui->headerTextLabel_Circles->setText(tr("Circles"));

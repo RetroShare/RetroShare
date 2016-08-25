@@ -20,7 +20,16 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="IdDialogGLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -38,7 +47,16 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="titleBarFrameHLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -129,7 +147,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="toolBarFrameHLayout">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
            <number>1</number>
           </property>
           <item>
@@ -251,7 +278,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeft|AlignVCenter</set>
+           <set>AlignLeading|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -264,8 +291,8 @@
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/no_avatar_background.png</normaloff>:/images/no_avatar_background.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/person.png</normaloff>:/icons/png/person.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Person</string>
@@ -620,8 +647,8 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QWidget" name="circleTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/circles/circles_64.png</normaloff>:/images/circles/circles_64.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Circles</string>
