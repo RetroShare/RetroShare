@@ -24,18 +24,25 @@
  */
 
 
-#include <iostream>
-#include <fstream>
-#include <time.h>
-#include "util/rsdebug.h"
-#include "util/rsstring.h"
-#include "util/rsprint.h"
-#include "util/rsscopetimer.h"
-
 #include "pqi/pqistreamer.h"
-#include "rsserver/p3face.h"
 
-#include "serialiser/rsserial.h" 
+#include <stdlib.h>               // for free, realloc, exit
+#include <string.h>               // for memcpy, memset, memcmp
+#include <time.h>                 // for NULL, time, time_t
+#include <algorithm>              // for min
+#include <iostream>               // for operator<<, ostream, basic_ostream
+#include <string>                 // for string, allocator, operator<<, oper...
+#include <utility>                // for pair
+
+#include "pqi/p3notify.h"         // for p3Notify
+#include "retroshare/rsids.h"     // for operator<<
+#include "retroshare/rsnotify.h"  // for RS_SYS_WARNING
+#include "rsserver/p3face.h"      // for RsServer
+#include "serialiser/rsserial.h"  // for RsItem, RsSerialiser, getRsItemSize
+#include "util/rsdebug.h"         // for pqioutput, PQL_ALERT, PQL_DEBUG_ALL
+#include "util/rsmemory.h"        // for rs_malloc
+#include "util/rsprint.h"         // for BinToHex
+#include "util/rsstring.h"        // for rs_sprintf_append, rs_sprintf
 
 static struct RsLog::logInfo pqistreamerzoneInfo = {RsLog::Default, "pqistreamer"};
 #define pqistreamerzone &pqistreamerzoneInfo

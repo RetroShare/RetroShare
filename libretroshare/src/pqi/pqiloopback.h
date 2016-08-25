@@ -26,12 +26,12 @@
 #ifndef MRK_PQI_LOOPBACK_HEADER
 #define MRK_PQI_LOOPBACK_HEADER
 
-// The standard data types and the search interface.
-#include "pqi/pqi.h"
+#include <list>                  // for list
 
-#include <map>
-#include <list>
-#include <iostream>
+#include "pqi/pqi_base.h"        // for NetInterface (ptr only), PQInterface
+#include "retroshare/rstypes.h"  // for RsPeerId
+
+class RsItem;
 
 class pqiloopback: public PQInterface
 {
@@ -47,8 +47,7 @@ virtual RsItem *GetItem();
 virtual int	tick();
 virtual int	status();
 
-virtual int     notifyEvent(NetInterface */*ni*/, int /*event*/) { return 0; }  /* Not used */
-	private:
+private:
 	std::list<RsItem *> objs;
 };
 
