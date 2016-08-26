@@ -17,7 +17,7 @@ RsItem* RsFileListsSerialiser::deserialise(void *data, uint32_t *size)
         {
         case RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM:   return deserialFileListsSyncRequestItem(data, size);
         case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM:   return deserialFileListsSyncResponseItem(data, size);
-        case RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM:     return deserialFileListsConfigItem (data, size);
+//        case RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM:     return deserialFileListsConfigItem (data, size);
 
         default:
             {
@@ -153,6 +153,13 @@ bool RsFileListsSyncResponseItem::serialise(void *data, uint32_t& size) const
 //============================================================================================================================//
 //                                                     Deserialisation                                                        //
 //============================================================================================================================//
+
+//RsFileListsConfigItem* RsFileListsSerialiser::deserialFileListsConfigItem(void *data, uint32_t *size)
+//{
+//    NOT_IMPLEMENTED();
+//
+//    return NULL ;
+//}
 
 RsFileListsSyncRequestItem* RsFileListsSerialiser::deserialFileListsSyncRequestItem(void *data, uint32_t *size)
 {

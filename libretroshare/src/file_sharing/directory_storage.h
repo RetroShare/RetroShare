@@ -9,7 +9,9 @@
 
 #define NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 
+class RsTlvBinaryData ;
 class InternalFileHierarchyStorage ;
+class RsTlvBinaryData ;
 
 class DirectoryStorage
 {
@@ -26,8 +28,8 @@ class DirectoryStorage
         virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
-        bool getUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS) ;
-        bool setUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS) ;
+        bool getDirUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS) ;
+        bool setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS) ;
 
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);
@@ -109,6 +111,9 @@ class DirectoryStorage
         void loadNextTag(const unsigned char *data, uint32_t& offset, uint8_t& entry_tag, uint32_t& entry_size) ;
         void saveNextTag(unsigned char *data,uint32_t& offset,uint8_t entry_tag,uint32_t entry_size) ;
 
+        // debug
+        void locked_check();
+
         // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
 
         std::string mFileName;
@@ -125,6 +130,17 @@ class RemoteDirectoryStorage: public DirectoryStorage
 public:
     RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname,pid) {}
     virtual ~RemoteDirectoryStorage() {}
+
+    /*!
+     * \brief deserialiseDirEntry
+     * 			Loads a serialised directory content coming from a friend. The directory entry needs to exist already,
+     * 			as it is created when updating the parent.
+     *
+     * \param indx		index of the directory to update
+     * \param bindata   binary data to deserialise from
+     * \return 			false when the directory cannot be found.
+     */
+    bool deserialiseDirEntry(const EntryIndex& indx,const RsTlvBinaryData& data) ;
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
@@ -149,6 +165,16 @@ public:
     bool getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info) ;
 
     virtual bool extractData(const EntryIndex& indx,DirDetails& d) ;
+
+    /*!
+     * \brief serialiseDirEntry
+     * 			Produced a serialised directory content listing suitable for export to friends.
+     *
+     * \param indx		index of the directory to serialise
+     * \param bindata   binary data created by serialisation
+     * \return 			false when the directory cannot be found.
+     */
+    bool serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata) ;
 
 private:
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;

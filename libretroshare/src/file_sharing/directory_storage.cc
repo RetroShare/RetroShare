@@ -2,6 +2,7 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "directory_storage.h"
+#include "filelist_io.h"
 
 #define DEBUG_DIRECTORY_STORAGE 1
 
@@ -53,7 +54,7 @@ class InternalFileHierarchyStorage
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),most_recent_time(0) {}
+        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),most_recent_time(0),dir_update_time(0) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -67,6 +68,8 @@ class InternalFileHierarchyStorage
 
         time_t dir_modtime ;		// this accounts for deleted files, etc.
         time_t most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
+
+        time_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
     };
 
     // class stuff
@@ -246,6 +249,36 @@ class InternalFileHierarchyStorage
 
         return true;
     }
+    bool getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
+    {
+        if(!checkIndex(index,FileStorageNode::TYPE_DIR))
+        {
+            std::cerr << "[directory storage] (EE) cannot update TS for index " << index << ". Not a valid index or not a directory." << std::endl;
+            return false;
+        }
+
+        DirEntry& d(*static_cast<DirEntry*>(mNodes[index])) ;
+
+        recurs_max_modf_TS = d.most_recent_time ;
+        local_update_TS    = d.dir_update_time ;
+
+        return true;
+    }
+    bool setDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
+    {
+        if(!checkIndex(index,FileStorageNode::TYPE_DIR))
+        {
+            std::cerr << "[directory storage] (EE) cannot update TS for index " << index << ". Not a valid index or not a directory." << std::endl;
+            return false;
+        }
+
+        DirEntry& d(*static_cast<DirEntry*>(mNodes[index])) ;
+
+        d.most_recent_time = recurs_max_modf_TS ;
+        d.dir_update_time  = local_update_TS    ;
+
+        return true;
+    }
 
     // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 
@@ -340,9 +373,58 @@ class InternalFileHierarchyStorage
            return false;
     }
 
-    bool check()	// checks consistency of storage.
+    bool check(std::string& error_string) const	// checks consistency of storage.
     {
-        return true;
+        // recurs go through all entries, check that all
+
+       std::vector<uint32_t> hits(mNodes.size(),0) ;	// count hits of children. Should be 1 for all in the end. Otherwise there's an error.
+       hits[0] = 1 ;	// because 0 is never the child of anyone
+
+       for(uint32_t i=0;i<mNodes.size();++i)
+           if(mNodes[i]->type() == FileStorageNode::TYPE_DIR)
+           {
+               // stamp the kids
+               const DirEntry& de = *static_cast<DirEntry*>(mNodes[i]) ;
+
+               for(uint32_t j=0;j<de.subdirs.size();++j)
+               {
+                   if(de.subdirs[j] >= mNodes.size())
+                   {
+                       error_string = "Node child out of tab!" ;
+                       return false ;
+                   }
+                   if(hits[de.subdirs[j]] != 0)
+                   {
+                       error_string = "Double hit on a single node" ;
+                       return false;
+                   }
+                   hits[de.subdirs[j]] = 1;
+               }
+               for(uint32_t j=0;j<de.subfiles.size();++j)
+               {
+                   if(de.subfiles[j] >= mNodes.size())
+                   {
+                       error_string = "Node child out of tab!" ;
+                       return false ;
+                   }
+                   if(hits[de.subfiles[j]] != 0)
+                   {
+                       error_string = "Double hit on a single node" ;
+                       return false;
+                   }
+                   hits[de.subfiles[j]] = 1;
+               }
+
+           }
+
+       for(uint32_t i=0;i<hits.size();++i)
+           if(hits[i] == 0)
+           {
+               error_string = "Orphean node!" ;
+               return false;
+           }
+
+       return true;
     }
 
     void print() const
@@ -507,21 +589,45 @@ uint32_t DirectoryStorage::getEntryType(const EntryIndex& indx)
         return DIR_TYPE_UNKNOWN;
     }
 }
+bool DirectoryStorage::getDirUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->getDirUpdateTS(index,recurs_max_modf_TS,local_update_TS) ;
+}
+bool DirectoryStorage::setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->setDirUpdateTS(index,recurs_max_modf_TS,local_update_TS) ;
+}
 
 bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
+    bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
+    locked_check() ;
+    return res ;
 }
 bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::map<std::string,FileTS>& subfiles,std::map<std::string,FileTS>& new_files)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
+    bool res = mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
+    locked_check() ;
+    return res ;
 }
 bool DirectoryStorage::removeDirectory(const EntryIndex& indx)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->removeDirectory(indx);
+    bool res = mFileHierarchy->removeDirectory(indx);
+
+    locked_check();
+    return res ;
+}
+
+void DirectoryStorage::locked_check()
+{
+    std::string error ;
+    if(!mFileHierarchy->check(error))
+        std::cerr << "Check error: " << error << std::endl;
 }
 
 bool DirectoryStorage::updateFile(const EntryIndex& index,const RsFileHash& hash,const std::string& fname, uint64_t size,time_t modf_time)
@@ -773,8 +879,95 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
     /* find parent pointer, and row */
 
-    std::cerr << "LocalDirectoryStorage::extractData(): indx=" << indx << " Returning this:" << std::endl;
-    std::cerr << d << std::endl;
-
     return true;
 }
+
+bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    const InternalFileHierarchyStorage::DirEntry *dir = mFileHierarchy->getDirEntry(indx);
+
+    if(dir == NULL)
+    {
+        std::cerr << "(EE) serialiseDirEntry: ERROR. Cannot find entry " << (void*)(intptr_t)indx << std::endl;
+        return false;
+    }
+
+    unsigned char *section_data = NULL;
+    uint32_t section_size = 0;
+    uint32_t section_offset = 0;
+
+    // we need to send:
+    //	- the name of the directory, its TS
+    //	- the index entry for each subdir (the updte TS are exchanged at a higher level)
+    //	- the file info for each subfile
+    //
+
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,dir->dir_name        )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,dir->most_recent_time)) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,dir->dir_modtime    )) return false ;
+
+    // serialise number of subdirs and number of subfiles
+
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,dir->subdirs.size()  )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,dir->subfiles.size() )) return false ;
+
+    // serialise subdirs entry indexes
+
+    for(uint32_t i=0;i<dir->subdirs.size();++i)
+        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,dir->subdirs[i]  )) return false ;
+
+    // serialise directory subfiles, with info for each of them
+
+    for(uint32_t i=0;i<dir->subfiles.size();++i)
+    {
+        unsigned char *file_section_data = NULL ;
+        uint32_t file_section_offset = 0 ;
+        uint32_t file_section_size = 0;
+
+        const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
+
+        if(file == NULL)
+        {
+            std::cerr << "(EE) cannot reach file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
+            continue ;
+        }
+
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,dir->subfiles[i]  )) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,file->file_name   )) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,file->file_size   )) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,file->file_hash   )) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,file->file_modtime)) return false ;
+
+        // now write the whole string into a single section in the file
+
+        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,file_section_data,file_section_offset)) return false ;
+
+        free(file_section_data) ;
+    }
+
+    std::cerr << "Serialised dir entry to send for entry index " << (void*)(intptr_t)indx << ". Data size is " << section_size << " bytes" << std::endl;
+
+    return true ;
+}
+
+/******************************************************************************************************************/
+/*                                           Remote Directory Storage                                              */
+/******************************************************************************************************************/
+
+bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const RsTlvBinaryData& bindata)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    std::cerr << "RemoteDirectoryStorage::deserialiseDirEntry(): deserialising directory content for friend " << peerId() << ", and directory " << indx << std::endl;
+
+    NOT_IMPLEMENTED();
+
+    return true ;
+}
+
+
+
+
+

@@ -113,7 +113,7 @@ int p3FileDatabase::tick()
         last_print_time = now ;
 
 //#warning this should be removed, but it's necessary atm for updating the GUI
-//        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
     }
 
     if(mUpdateFlags)
@@ -129,7 +129,7 @@ int p3FileDatabase::tick()
         mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     }
 
-    if(mLastRemoteDirSweepTS + 5 < now)
+    if(mLastRemoteDirSweepTS + 30 < now)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -226,6 +226,9 @@ void p3FileDatabase::cleanup()
                 continue ;
 
             P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+
+            if(mRemoteDirectories.size() <= friend_index)
+                mRemoteDirectories.resize(friend_index+1,NULL) ;
 
             mRemoteDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
 
@@ -324,7 +327,7 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
     //		[ 10 bits   |  22 bits ]
     //
     // This means that the whoel software has the following build-in limitation:
-    //	  * 1024 friends
+    //	  * 1023 friends
     //	  * 4M shared files.
 
     uint32_t fe = (uint32_t)e ;
@@ -346,8 +349,21 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
+    d.children.clear();
+
     // Case where the pointer is NULL, which means we're at the top of the list of shared directories for all friends (including us)
-    // or at the top of our own list of shred directories, depending on the flags.
+    // or at the top of our own list of shared directories, depending on the flags.
+
+    // Friend index is used as follows:
+    //	0		: own id
+    //  1...n	: other friends
+    //
+    // entry_index: starts at 0.
+    //
+    // The point is: we cannot use (0,0) because it encodes to NULL. No existing combination should encode to NULL.
+    // So we need to properly convert the friend index into 0 or into a friend tab index in mRemoteDirectories.
+    //
+    // We should also check the consistency between flags and the content of ref.
 
     if (ref == NULL)
     {
@@ -363,7 +379,6 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         d.age = 0;
         d.flags.clear() ;
         d.min_age = 0 ;
-        d.children.clear();
 
         if(flags & RS_FILE_HINTS_LOCAL)
         {
@@ -379,7 +394,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
         {
             void *p;
-            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i,p);
+            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,p);
 
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;
@@ -390,6 +405,9 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
         d.count = d.children.size();
 
+    std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+    std::cerr << d << std::endl;
+
         return true ;
     }
 
@@ -398,9 +416,17 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     convertPointerToEntryIndex(ref,e,fi);
 
+    // check consistency
+    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
+    {
+        std::cerr << "remote request on local index or local request on remote index. This should not happen." << std::endl;
+        return false ;
+    }
+    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+
     // Case where the index is the top of a single person. Can be us, or a friend.
 
-    bool res =  (flags & RS_FILE_HINTS_LOCAL)? (mLocalSharedDirs->extractData(e,d)) : (mRemoteDirectories[fi]->extractData(e,d)) ;
+    bool res =  storage->extractData(e,d);
 
     // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
     // a pointer into an int.
@@ -410,22 +436,18 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     for(uint32_t i=0;i<d.children.size();++i)
         convertEntryIndexToPointer((intptr_t)d.children[i].ref,fi,d.children[i].ref);
 
-#define Make sure this is right.
-    if(e == 0)
+    if(e == 0)	// root
     {
         d.prow = 0;//fi-1 ;
         d.parent = NULL ;
     }
     else
     {
-        d.prow = mRemoteDirectories[fi]->parentRow(e) ;
+        d.prow = storage->parentRow(e) ;
         convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
     }
 
-    if(flags & RS_FILE_HINTS_LOCAL)
-        d.id = mOwnId ;
-    else
-        d.id = mRemoteDirectories[fi]->peerId();
+    d.id = storage->peerId();
 
     std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
     std::cerr << d << std::endl;
@@ -670,7 +692,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         else
         {
             time_t local_recurs_max_time,local_update_time;
-            mLocalSharedDirs->getUpdateTS(item->entry_index,local_recurs_max_time,local_update_time);
+            mLocalSharedDirs->getDirUpdateTS(item->entry_index,local_recurs_max_time,local_update_time);
 
             if(item->last_known_recurs_modf_TS < local_recurs_max_time)
             {
@@ -686,7 +708,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
                 P3FILELISTS_DEBUG() << "  Directory is up to date w.r.t. what the friend knows. Sending ACK." << std::endl;
 
                 ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE ;
-                ritem->last_known_recurs_modf_TS = local_update_time ;
+                ritem->last_known_recurs_modf_TS = local_recurs_max_time ;
             }
         }
     }
@@ -725,14 +747,14 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         P3FILELISTS_DEBUG() << "  Directory is up to date. Setting local TS." << std::endl;
 
-        mRemoteDirectories[fi]->setUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
+        mRemoteDirectories[fi]->setDirUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
-        P3FILELISTS_DEBUG() << "  Item contains directory data. Uptating." << std::endl;
+        P3FILELISTS_DEBUG() << "  Item contains directory data. Updating." << std::endl;
 
-        mRemoteDirectories[fi]->deserialiseUpdateEntry(item->entry_index,item->directory_content_data) ;
-        mRemoteDirectories[fi]->setUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
+        mRemoteDirectories[fi]->deserialiseDirEntry(item->entry_index,item->directory_content_data) ;
+        mRemoteDirectories[fi]->setDirUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
 
 #warning should notify the GUI here
         // notify the GUI if the hierarchy has changed
@@ -750,7 +772,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    time_t recurs_max_modf_TS_remote_time,local_update_TS;
 
-   if(!rds->getUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
+   if(!rds->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
    {
        std::cerr << "(EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
        return;
@@ -796,6 +818,18 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
        locked_recursSweepRemoteDirectory(rds,*it);
+}
+
+p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,DirectoryStorage::EntryIndex e)
+{
+    uint64_t r = e ;
+
+    // This is kind of arbitrary. The important thing is that the same ID needs to be generated for a given (peer_id,e) pair.
+
+    for(uint32_t i=0;i<RsPeerId::SIZE_IN_BYTES;++i)
+        r += (0x3ff92892a94 * peer_id.toByteArray()[i] + r) ^ 0x39e83784378aafe3;
+
+    return r;
 }
 
 

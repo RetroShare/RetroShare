@@ -125,7 +125,7 @@ public:
 private:
     RsFileListsSyncRequestItem  *deserialFileListsSyncRequestItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
     RsFileListsSyncResponseItem  *deserialFileListsSyncResponseItem(void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
-    RsFileListsSyncResponseItem  *deserialFileListsConfigItem (void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
+//    RsFileListsSyncResponseItem  *deserialFileListsConfigItem (void *data, uint32_t *size); /* RS_PKT_SUBTYPE_SYNC_GRP */
 
     bool checkItemHeader(void *data, uint32_t *size, uint8_t subservice_type);
 };

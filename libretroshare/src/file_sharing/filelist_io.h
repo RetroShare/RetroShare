@@ -20,6 +20,9 @@ static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS    =  0x06 ;
 static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY =  0x07 ;
 static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS          =  0x08 ;
 static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA        =  0x09 ;
+static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER         =  0x0a ;
+static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX        =  0x0b ;
+static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY  =  0x0c ;
 
 class FileListIO
 {
