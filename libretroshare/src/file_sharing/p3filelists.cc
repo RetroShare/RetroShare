@@ -443,7 +443,11 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     }
     else
     {
-        d.prow = storage->parentRow(e) ;
+        if(d.parent == 0)	 // child of root node
+            d.prow = (flags & RS_FILE_HINTS_LOCAL)?0:(fi-1);
+        else
+            d.prow = storage->parentRow(e) ;
+
         convertEntryIndexToPointer((intptr_t)d.parent,fi,d.parent) ;
     }
 
@@ -480,7 +484,10 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    return mRemoteDirectories[fi]->getEntryType(e) ;
+    if(fi == 0)
+        return mLocalSharedDirs->getEntryType(e) ;
+    else
+        return mRemoteDirectories[fi-1]->getEntryType(e) ;
 }
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed

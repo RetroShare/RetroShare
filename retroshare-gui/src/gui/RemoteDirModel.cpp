@@ -862,6 +862,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 /* Callback from */
 void RetroshareDirModel::preMods()
 {
+    emit layoutAboutToBeChanged();
 #if QT_VERSION < 0x050000
 	reset();
 #else
@@ -877,7 +878,7 @@ void RetroshareDirModel::preMods()
 /* Callback from */
 void RetroshareDirModel::postMods()
 {
-	emit layoutAboutToBeChanged();
+//	emit layoutAboutToBeChanged();
 #if QT_VERSION >= 0x040600
 	beginResetModel();
 #endif
