@@ -248,6 +248,7 @@ public:
         fe.file_hash = hash;
         fe.file_size = size;
         fe.file_modtime = modf_time;
+        fe.file_name = fname;
 
         return true;
     }
@@ -264,6 +265,7 @@ public:
         d.most_recent_time = most_recent_time;
         d.dir_modtime      = dir_modtime;
         d.dir_update_time  = time(NULL);
+        d.dir_name         = dir_name;
 
         d.subfiles = subfiles_array ;
         d.subdirs  = subdirs_array ;
@@ -287,6 +289,7 @@ public:
 
             ((DirEntry*&)node)->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
             node->row = i ;
+            node->parent_index = indx ;
         }
         for(uint32_t i=0;i<subfiles_array.size();++i)
         {
@@ -305,9 +308,10 @@ public:
                 node = new FileEntry("",0,0);
 
             node->row = subdirs_array.size()+i ;
+            node->parent_index = indx ;
         }
 
-        // we should also update the row of each subfile and each subdir
+        return true;
     }
 
     bool getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
@@ -531,7 +535,8 @@ private:
         }
         DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
-        std::cerr << indent << "dir:" << d.dir_name << ", modf time: " << d.dir_modtime << ", recurs_last_modf_time: " << d.most_recent_time << ", subdirs: " ;
+        std::cerr << indent << "dir:" << d.dir_name << ", modf time: " << d.dir_modtime << ", recurs_last_modf_time: " << d.most_recent_time << ", parent: " << d.parent_index << ", row: " << d.row << ", subdirs: " ;
+
         for(int i=0;i<d.subdirs.size();++i)
             std::cerr << d.subdirs[i] << " " ;
         std::cerr << std::endl;
@@ -542,7 +547,7 @@ private:
         for(int i=0;i<d.subfiles.size();++i)
         {
             FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]]));
-            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << std::endl;
+            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << ", parent: " << f.parent_index << ", row: " << f.row << std::endl;
         }
     }
 
@@ -961,18 +966,18 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     //
 
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,dir->dir_name        )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,dir->most_recent_time)) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,dir->dir_modtime     )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)dir->most_recent_time)) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)dir->dir_modtime     )) return false ;
 
     // serialise number of subdirs and number of subfiles
 
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,dir->subdirs.size()  )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,dir->subfiles.size() )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subdirs.size()  )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subfiles.size() )) return false ;
 
     // serialise subdirs entry indexes
 
     for(uint32_t i=0;i<dir->subdirs.size();++i)
-        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,dir->subdirs[i]  )) return false ;
+        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,(uint32_t)dir->subdirs[i]  )) return false ;
 
     // serialise directory subfiles, with info for each of them
 
@@ -990,11 +995,11 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
             continue ;
         }
 
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,dir->subfiles[i]  )) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,(uint32_t)dir->subfiles[i]  )) return false ;
         if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,file->file_name   )) return false ;
         if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,file->file_size   )) return false ;
         if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,file->file_hash   )) return false ;
-        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,file->file_modtime)) return false ;
+        if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,(uint32_t)file->file_modtime)) return false ;
 
         // now write the whole string into a single section in the file
 
@@ -1004,6 +1009,9 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     }
 
     std::cerr << "Serialised dir entry to send for entry index " << (void*)(intptr_t)indx << ". Data size is " << section_size << " bytes" << std::endl;
+
+    bindata.bin_data = section_data ;
+    bindata.bin_len = section_offset ;
 
     return true ;
 }
@@ -1016,12 +1024,12 @@ bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const Rs
 {
     const unsigned char *section_data = (unsigned char*)bindata.bin_data ;
     uint32_t section_size = bindata.bin_len ;
-    uint32_t section_offset ;
+    uint32_t section_offset=0 ;
 
     std::cerr << "RemoteDirectoryStorage::deserialiseDirEntry(): deserialising directory content for friend " << peerId() << ", and directory " << indx << std::endl;
 
     std::string dir_name ;
-    time_t most_recent_time ,dir_modtime ;
+    uint32_t most_recent_time ,dir_modtime ;
 
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,dir_name        )) return false ;
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,most_recent_time)) return false ;
@@ -1068,7 +1076,7 @@ bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const Rs
         std::string entry_name ;
         uint64_t entry_size ;
         RsFileHash entry_hash ;
-        time_t entry_modtime ;
+        uint32_t entry_modtime ;
 
         if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,entry_index  )) return false ;
         if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,entry_name   )) return false ;

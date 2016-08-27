@@ -32,16 +32,15 @@ public:
     template<typename T>
     static bool writeField(unsigned char *& buff,uint32_t& buff_size,uint32_t& offset,uint8_t section_tag,const T& val)
     {
-       if(!checkSectionSize(buff,buff_size,offset,sizeof(T)))
+        uint32_t s = serial_size(val) ;
+
+       if(!checkSectionSize(buff,buff_size,offset,s))
           return false;
 
-       if(!writeSectionHeader(buff,buff_size,offset,section_tag,sizeof(T)))
+       if(!writeSectionHeader(buff,buff_size,offset,section_tag,s))
           return false;
 
-       memcpy(&buff[offset],reinterpret_cast<const uint8_t*>(&val),sizeof(T)) ;
-       offset += sizeof(T) ;
-
-       return true;
+       return serialise(buff,buff_size,offset,val) ;
     }
 
     template<typename T>
@@ -52,17 +51,15 @@ public:
        if(!readSectionHeader(buff,buff_size,offset,check_section_tag,section_size))
           return false;
 
-       if(section_size != sizeof(T))
-           return false ;
-
-       memcpy(reinterpret_cast<uint8_t*>(&val),&buff[offset],sizeof(T)) ;
-       offset += sizeof(T) ;
-
-       return true;
+       return deserialise(buff,buff_size,offset,val);
     }
 
     static bool writeField(      unsigned char*&buff,uint32_t& buff_size,uint32_t& offset,uint8_t       section_tag,const unsigned char *  val,uint32_t  size) ;
     static bool readField (const unsigned char *buff,uint32_t  buff_size,uint32_t& offset,uint8_t check_section_tag,      unsigned char *& val,uint32_t& size) ;
+
+    template<class T> static bool serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const T& val) ;
+    template<class T> static bool deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,T& val) ;
+    template<class T> static uint32_t serial_size(const T& val) ;
 
 private:
     static bool write125Size(unsigned char *data,uint32_t total_size,uint32_t& offset,uint32_t size) ;
@@ -73,7 +70,7 @@ private:
         if(offset + S + SECTION_HEADER_MAX_SIZE > buff_size)
         {
             buff = (unsigned char *)realloc(buff,offset + S + SECTION_HEADER_MAX_SIZE) ;
-            buff_size = offset + S ;
+            buff_size = offset + S + SECTION_HEADER_MAX_SIZE;
 
             if(!buff)
                return false ;

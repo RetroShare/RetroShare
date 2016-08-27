@@ -148,8 +148,8 @@ int p3FileDatabase::tick()
 
         mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     }
-
-    if(mLastRemoteDirSweepTS + 30 < now)
+#warning we need to make sure that one req per directory will not cause to keep re-asking the top level dirs.
+    if(mLastRemoteDirSweepTS + 5 < now)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -158,7 +158,12 @@ int p3FileDatabase::tick()
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+            {
+                std::cerr << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
+                mRemoteDirectories[i]->print();
+
                 locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
+            }
 
         mLastRemoteDirSweepTS = now;
     }
@@ -780,14 +785,32 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
 void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
 {
+    P3FILELISTS_DEBUG() << "Handling sync response for directory with index " << item->entry_index << std::endl;
+
+    // remove the original request from pending list
+
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(item->request_id) ;
+
+        if(it == mPendingSyncRequests.end())
+        {
+            std::cerr << "  request " << std::hex << item->request_id << std::dec << " cannot be found. ERROR!" << std::endl;
+            return ;
+        }
+        mPendingSyncRequests.erase(it) ;
+    }
+
     // find the correct friend entry
 
     uint32_t fi = 0 ;
 
-    P3FILELISTS_DEBUG() << "Handling sync response for directory with index " << item->entry_index << std::endl;
     {
         RS_STACK_MUTEX(mFLSMtx) ;
         fi = locked_getFriendIndex(item->PeerId());
+
+        std::cerr << "  friend index is " << fi ;
 
         // make sure we have a remote directory for that friend.
 
@@ -813,11 +836,18 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         P3FILELISTS_DEBUG() << "  Item contains directory data. Updating." << std::endl;
 
-        mRemoteDirectories[fi]->deserialiseDirEntry(item->entry_index,item->directory_content_data) ;
-        mRemoteDirectories[fi]->setDirUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
+        if(mRemoteDirectories[fi]->deserialiseDirEntry(item->entry_index,item->directory_content_data))
+        {
+            mRemoteDirectories[fi]->setDirUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
 
-#warning should notify the GUI here
-        // notify the GUI if the hierarchy has changed
+            // notify the GUI if the hierarchy has changed
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+        }
+        else
+            std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
+
+        std::cerr << "  new content after update: " << std::endl;
+        mRemoteDirectories[fi]->print();
     }
 }
 
