@@ -120,6 +120,12 @@
      <property name="defaultDropAction">
       <enum>Qt::IgnoreAction</enum>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
      <property name="textElideMode">
       <enum>Qt::ElideRight</enum>
      </property>

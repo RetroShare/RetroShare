@@ -37,7 +37,7 @@ class PluginsPage : public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/extension_32.png") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/plugins.svg") ; }
 		virtual QString pageName() const { return tr("Plugins") ; }
 		virtual QString helpText() const ;
 

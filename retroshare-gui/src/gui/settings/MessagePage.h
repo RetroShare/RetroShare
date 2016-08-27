@@ -42,7 +42,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/evolution.png") ; }
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/messages.svg") ; }
 	 virtual QString pageName() const { return tr("Message") ; }
 	 virtual QString helpText() const { return ""; }
 

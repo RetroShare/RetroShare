@@ -41,7 +41,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/images/posted_32.png") ; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/posted.svg") ; }
 	virtual QString pageName() const { return tr("Posted") ; }
 	virtual QString helpText() const { return ""; }
 
