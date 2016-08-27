@@ -24,6 +24,8 @@ static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER         =  0x0a ;
 static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX        =  0x0b ;
 static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY  =  0x0c ;
 
+static const uint32_t SECTION_HEADER_MAX_SIZE            =  6 ;   // section tag (1 byte) + size (max = 5 bytes)
+
 class FileListIO
 {
 public:
@@ -68,9 +70,9 @@ private:
 
     static bool checkSectionSize(unsigned char *& buff,uint32_t& buff_size,uint32_t offset,uint32_t S)
     {
-        if(offset + S > buff_size)
+        if(offset + S + SECTION_HEADER_MAX_SIZE > buff_size)
         {
-            buff = (unsigned char *)realloc(buff,offset + S) ;
+            buff = (unsigned char *)realloc(buff,offset + S + SECTION_HEADER_MAX_SIZE) ;
             buff_size = offset + S ;
 
             if(!buff)

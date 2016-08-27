@@ -114,7 +114,7 @@ class RsFileListsSerialiser : public RsSerialType
 {
 public:
 
-    RsFileListsSerialiser(uint16_t servtype) : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FILE_DATABASE) {}
+    RsFileListsSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_FILE_DATABASE) {}
 
     virtual ~RsFileListsSerialiser() {}
 

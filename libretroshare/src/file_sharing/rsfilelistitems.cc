@@ -196,7 +196,7 @@ RsFileListsSyncRequestItem* RsFileListsSerialiser::deserialFileListsSyncRequestI
 }
 RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncResponseItem(void *data, uint32_t *size)
 {
-    bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM);
+    bool ok = checkItemHeader(data,size,RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM);
     uint32_t offset = 8;
 
     RsFileListsSyncResponseItem* item = new RsFileListsSyncResponseItem();

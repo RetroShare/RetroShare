@@ -391,10 +391,8 @@ public:
     }
     uint32_t getType(DirectoryStorage::EntryIndex indx) const
     {
-        if(checkIndex(indx,FileStorageNode::TYPE_FILE))
-            return FileStorageNode::TYPE_FILE;
-        else if(checkIndex(indx,FileStorageNode::TYPE_DIR))
-            return FileStorageNode::TYPE_DIR;
+        if(checkIndex(indx,FileStorageNode::TYPE_FILE | FileStorageNode::TYPE_DIR))
+            return mNodes[indx]->type() ;
         else
             return FileStorageNode::TYPE_UNKNOWN;
     }
@@ -751,17 +749,14 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
     d.children.clear() ;
     time_t now = time(NULL) ;
 
-    std::cerr << "LocalDirectoryStorage::extractData(). Index=" << indx << std::endl;
-
-    const InternalFileHierarchyStorage::DirEntry *dir_entry = mFileHierarchy->getDirEntry(indx) ;
+    uint32_t type = mFileHierarchy->getType(indx) ;
 
     d.ref = (void*)(intptr_t)indx ;
 
-    if (dir_entry != NULL) /* has children --- fill */
+    if (type == InternalFileHierarchyStorage::FileStorageNode::TYPE_DIR) /* has children --- fill */
     {
-#ifdef DEBUG_DIRECTORY_STORAGE
-        std::cerr << "FileIndex::extractData() ref=dir" << std::endl;
-#endif
+        const InternalFileHierarchyStorage::DirEntry *dir_entry = mFileHierarchy->getDirEntry(indx) ;
+
         /* extract all the entries */
 
         for(DirectoryStorage::DirIterator it(this,indx);it;++it)
@@ -798,12 +793,10 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
             d.name = mPeerId.toStdString();
         }
     }
-    else
+    else if(type == InternalFileHierarchyStorage::FileStorageNode::TYPE_FILE)
     {
         const InternalFileHierarchyStorage::FileEntry *file_entry = mFileHierarchy->getFileEntry(indx) ;
-#ifdef DEBUG_DIRECTORY_STORAGE
-        std::cerr << "FileIndexStore::extractData() ref=file" << std::endl;
-#endif
+
         d.type    = DIR_TYPE_FILE;
         d.count   = file_entry->file_size;
         d.min_age = now - file_entry->file_modtime ;
@@ -819,6 +812,8 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         else
             d.path = "" ;
     }
+    else
+        return false;
 
     d.flags.clear() ;
 

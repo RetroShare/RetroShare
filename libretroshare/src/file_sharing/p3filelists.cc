@@ -21,6 +21,7 @@ static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;
 static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;
 static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
 static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ = 60 ; 			// every minute, for debugging. Should be evey 10 minutes or so.
+static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 55 ; 			// every 55 secs, for debugging. Should be evey 10 minutes or so.
 
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     : mServCtrl(mpeers), mFLSMtx("p3FileLists")
@@ -37,8 +38,18 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
+
+    addSerialType(new RsFileListsSerialiser()) ;
 }
 
+RsSerialiser *p3FileDatabase::setupSerialiser()
+{
+    RsSerialiser *rss = new RsSerialiser ;
+    rss->addSerialType(new RsFileListsSerialiser()) ;
+    rss->addSerialType(new RsGeneralConfigSerialiser());
+
+    return rss ;
+}
 void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared_dirs)
 {
     RS_STACK_MUTEX(mFLSMtx) ;
@@ -97,13 +108,22 @@ int p3FileDatabase::tick()
 	tickRecv() ;
 	tickSend() ;
 
-	// cleanup
+    time_t now = time(NULL) ;
+
+    // cleanup
 	// 	- remove/delete shared file lists for people who are not friend anymore
 	// 	- 
-	cleanup();
+
+    static time_t last_cleanup_time = 0;
+
+#warning we should use members here, not static
+    if(last_cleanup_time + 5 < now)
+    {
+        cleanup();
+        last_cleanup_time = now ;
+    }
 
     static time_t last_print_time = 0;
-    time_t now = time(NULL) ;
 
     if(last_print_time + 20 < now)
     {
@@ -133,8 +153,12 @@ int p3FileDatabase::tick()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
+        std::set<RsPeerId> online_peers ;
+        mServCtrl->getPeersConnected(getServiceInfo().mServiceType, online_peers) ;
+
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-           locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
+            if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+                locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
 
         mLastRemoteDirSweepTS = now;
     }
@@ -186,6 +210,8 @@ void p3FileDatabase::cleanup()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
+        std::cerr << "p3FileDatabase::cleanup()" << std::endl;
+
         // look through the list of friend directories. Remove those who are not our friends anymore.
         //
         std::set<RsPeerId> friend_set ;
@@ -234,6 +260,29 @@ void p3FileDatabase::cleanup()
 
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
         }
+
+        // cancel existing requests for which the peer is offline
+
+        std::set<RsPeerId> online_peers ;
+        mServCtrl->getPeersConnected(getServiceInfo().mServiceType, online_peers) ;
+
+        time_t now = time(NULL);
+
+        for(std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.begin();it!=mPendingSyncRequests.end();)
+            if(online_peers.find(it->second.peer_id) == online_peers.end() || it->second.request_TS + DELAY_BEFORE_DROP_REQUEST < now)
+            {
+                std::cerr << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
+
+                std::map<DirSyncRequestId,DirSyncRequestData>::iterator tmp(it);
+                ++tmp;
+                mPendingSyncRequests.erase(it) ;
+                it = tmp;
+            }
+            else
+            {
+                std::cerr << "  keeping request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << std::endl;
+                ++it ;
+            }
     }
 }
 
@@ -405,8 +454,10 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
         d.count = d.children.size();
 
-    std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
-    std::cerr << d << std::endl;
+#ifdef DEBUG_FILE_HIERARCHY
+        std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+        std::cerr << d << std::endl;
+#endif
 
         return true ;
     }
@@ -453,8 +504,10 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     d.id = storage->peerId();
 
+#ifdef DEBUG_FILE_HIERARCHY
     std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
     std::cerr << d << std::endl;
+#endif
 
     return true;
 }
@@ -801,13 +854,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
             return ;
         }
 
-        P3FILELISTS_DEBUG() << "Asking for sync of directory " << e << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
-
-        DirSyncRequestData data ;
-
-        data.request_TS = now ;
-
-        mPendingSyncRequests[sync_req_id] = data ;
+        P3FILELISTS_DEBUG() << "Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
 
         RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
         item->entry_index =  e ;
@@ -816,7 +863,17 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
         item->last_known_recurs_modf_TS = recurs_max_modf_TS_remote_time ;
         item->PeerId(rds->peerId()) ;
 
-        sendItem(item) ;
+        DirSyncRequestData data ;
+
+        data.request_TS = now ;
+        data.peer_id = item->PeerId();
+        data.flags = item->flags;
+
+        std::cerr << "Pushing req in pending list with peer id " << data.peer_id << std::endl;
+
+        mPendingSyncRequests[sync_req_id] = data ;
+
+        sendItem(item) ;	// at end! Because item is destroyed by the process.
 
         // Dont recurs into sub-directories, since we dont know yet were to go.
 

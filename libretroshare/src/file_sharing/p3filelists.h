@@ -129,7 +129,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         //
         virtual bool loadList(std::list<RsItem *>& items);
         virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-        virtual RsSerialiser *setupSerialiser() { return NULL;}
+        virtual RsSerialiser *setupSerialiser() ;
 
         void cleanup();
         void tickRecv();
@@ -177,6 +177,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         //
         struct DirSyncRequestData
         {
+            RsPeerId peer_id ;
             time_t request_TS ;
             uint32_t flags ;
         };
