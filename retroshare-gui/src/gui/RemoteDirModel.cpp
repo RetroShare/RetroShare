@@ -744,6 +744,9 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 
 	/* we can just grab the reference now */
 
+#ifdef RDM_DEBUG
+    std::cerr << "Creating index 1 row=" << row << ", column=" << column << ", ref=" << (void*)details.children[row].ref << std::endl;
+#endif
     return createIndex(row, column, details.children[row].ref);
 }
 QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent) const
@@ -761,7 +764,10 @@ QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent
 	{
 		void *ref = _ref_entries[row].first ;
 
-		return createIndex(row, column, ref);
+#ifdef RDM_DEBUG
+    std::cerr << "Creating index 2 row=" << row << ", column=" << column << ", ref=" << (void*)ref << std::endl;
+#endif
+        return createIndex(row, column, ref);
 	}
 	else
 		return QModelIndex();
@@ -810,6 +816,7 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 	std::cerr << "success index(" << details->prow << ",0," << details->parent << ")";
 	std::cerr << std::endl;
 
+    std::cerr << "Creating index 3 row=" << details.prow << ", column=" << 0 << ", ref=" << (void*)details.parent << std::endl;
 #endif
     return createIndex(details.prow, 0, details.parent);
 }
@@ -1155,11 +1162,29 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 #endif
 }
 
+void RetroshareDirModel::getFilePath(const QModelIndex& index, std::string& fullpath)
+{
+    void *ref = index.sibling(index.row(),1).internalPointer();
+
+    DirDetails details ;
+
+    if (!requestDirDetails(ref, false,details) )
+    {
+#ifdef RDM_DEBUG
+        std::cerr << "getFilePaths() Bad Request" << std::endl;
+#endif
+        return;
+    }
+
+    fullpath = details.path + "/" + details.name;
+}
+
 void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths)
 {
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::getFilePaths()" << std::endl;
 #endif
+#warning make sure we atually output something here
 	if (RemoteMode)
 	{
 #ifdef RDM_DEBUG
@@ -1168,48 +1193,18 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 		return;
 	}
 	/* translate */
-	QModelIndexList::const_iterator it;
-	for(it = list.begin(); it != list.end(); ++it)
+    for(QModelIndexList::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
-		void *ref = it -> internalPointer();
+        std::string path ;
 
-            DirDetails details ;
-
-            if (!requestDirDetails(ref, false,details) )
-            {
+        getFilePath(*it,path) ;
 #ifdef RDM_DEBUG
-			std::cerr << "getFilePaths() Bad Request" << std::endl;
+        std::cerr << "Constructed FilePath: " << path << std::endl;
 #endif
-			continue;
-     		}
-
-        if (details.type != DIR_TYPE_FILE)
-		{
-#ifdef RDM_DEBUG
-			std::cerr << "getFilePaths() Not File" << std::endl;
-#endif
-			continue; /* not file! */
-		}
-
-#ifdef RDM_DEBUG
-		std::cerr << "::::::::::::File Details:::: " << std::endl;
-        std::cerr << "Name: " << details.name << std::endl;
-        std::cerr << "Hash: " << details.hash << std::endl;
-        std::cerr << "Size: " << details.count << std::endl;
-        std::cerr << "Path: " << details.path << std::endl;
-#endif
-
-        std::string filepath = details.path + "/";
-        filepath += details.name;
-
-#ifdef RDM_DEBUG
-		std::cerr << "Constructed FilePath: " << filepath << std::endl;
-#endif
-		if (fullpaths.end() == std::find(fullpaths.begin(), fullpaths.end(), filepath))
-		{
-			fullpaths.push_back(filepath);
-		}
-	}
+#warning TERRIBLE COST here. Use a std::set!
+        if (fullpaths.end() == std::find(fullpaths.begin(), fullpaths.end(), path))
+            fullpaths.push_back(path);
+    }
 #ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done getFilePaths" << std::endl;
 #endif

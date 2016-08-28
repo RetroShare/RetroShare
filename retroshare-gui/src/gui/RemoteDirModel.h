@@ -72,7 +72,8 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 		void openSelected(const QModelIndexList &list);
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
-		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
+        void getFilePath(const QModelIndex& index, std::string& fullpath);
+        void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
         bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
 		virtual void update() {}

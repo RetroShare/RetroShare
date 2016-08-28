@@ -129,7 +129,9 @@ int p3FileDatabase::tick()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
         
+#ifdef DEBUG_FILE_HIERARCHY
         mLocalSharedDirs->print();
+#endif
         last_print_time = now ;
 
 //#warning this should be removed, but it's necessary atm for updating the GUI
@@ -160,7 +162,9 @@ int p3FileDatabase::tick()
             if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
             {
                 std::cerr << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
+#ifdef DEBUG_FILE_HIERARCHY
                 mRemoteDirectories[i]->print();
+#endif
 
                 locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
             }
@@ -842,7 +846,9 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
             std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 
         std::cerr << "  new content after update: " << std::endl;
+#ifdef DEBUG_FILE_HIERARCHY
         mRemoteDirectories[fi]->print();
+#endif
     }
 }
 
