@@ -94,7 +94,7 @@ class DirectoryStorage
         const RsPeerId& peerId() const { return mPeerId ; }
         int parentRow(EntryIndex e) const ;
 
-        bool updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs) ;
+        bool updateSubDirectoryList(const EntryIndex& indx, const std::map<std::__cxx11::string, time_t> &subdirs) ;
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
         bool removeDirectory(const EntryIndex& indx) ;
 

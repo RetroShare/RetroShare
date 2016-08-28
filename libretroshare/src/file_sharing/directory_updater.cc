@@ -59,10 +59,10 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
     std::list<SharedDirInfo> shared_directory_list ;
     mSharedDirectories->getSharedDirectoryList(shared_directory_list);
 
-    std::set<std::string> sub_dir_list ;
+    std::map<std::string,time_t> sub_dir_list ;
 
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it)
-        sub_dir_list.insert( (*real_dir_it).filename ) ;
+        sub_dir_list[(*real_dir_it).filename] = 0 ;
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
@@ -93,7 +93,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     // collect subdirs and subfiles
 
     std::map<std::string,DirectoryStorage::FileTS> subfiles ;
-    std::set<std::string> subdirs ;
+    std::map<std::string,time_t> subdirs ;
 
     for(;dirIt.isValid();dirIt.next())
     {
@@ -104,7 +104,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
                                                                 std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
                                                                 break;
 
-                case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name()) ;
+                case librs::util::FolderIterator::TYPE_DIR:  	subdirs[dirIt.file_name()] = dirIt.file_modtime();
                                                                 std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
                                                                 break;
         default:
@@ -134,7 +134,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,indx) ;
 
-    for(std::set<std::string>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
+    for(std::map<std::string,time_t>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
     {
         std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
         recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it) ;

@@ -834,15 +834,10 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
-        P3FILELISTS_DEBUG() << "  Item contains directory data. Updating." << std::endl;
+        P3FILELISTS_DEBUG() << "  Item contains directory data. Deserialising/Updating." << std::endl;
 
         if(mRemoteDirectories[fi]->deserialiseDirEntry(item->entry_index,item->directory_content_data))
-        {
-            mRemoteDirectories[fi]->setDirUpdateTS(item->entry_index,item->last_known_recurs_modf_TS,time(NULL));
-
-            // notify the GUI if the hierarchy has changed
-            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
-        }
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
         else
             std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 

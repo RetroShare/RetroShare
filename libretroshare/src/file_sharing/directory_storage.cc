@@ -47,10 +47,10 @@ public:
         virtual ~FileEntry() {}
 
         // local stuff
+        time_t      file_modtime;
         std::string file_name ;
         uint64_t    file_size ;
         RsFileHash  file_hash ;
-        time_t      file_modtime ;
     };
 
     class DirEntry: public FileStorageNode
@@ -68,18 +68,21 @@ public:
         std::vector<DirectoryStorage::EntryIndex> subdirs ;
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
 
-        time_t dir_modtime ;		// this accounts for deleted files, etc.
+        time_t dir_modtime;
         time_t most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
-
         time_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
     };
 
     // class stuff
     InternalFileHierarchyStorage() : mRoot(0)
     {
-        mNodes.push_back(new DirEntry("")) ;
-        mNodes.back()->row=0;
-        mNodes.back()->parent_index=0;
+        DirEntry *de = new DirEntry("") ;
+
+        de->row=0;
+        de->parent_index=0;
+        de->dir_modtime=0;
+
+        mNodes.push_back(de) ;
     }
 
     int parentRow(DirectoryStorage::EntryIndex e)
@@ -97,14 +100,14 @@ public:
         return e < mNodes.size() && mNodes[e] != NULL ;
     }
 
-    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::set<std::string>& subdirs)
+    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
     {
         if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
             return false;
 
         DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
-        std::set<std::string> should_create(subdirs);
+        std::map<std::string,time_t> should_create(subdirs);
 
         for(uint32_t i=0;i<d.subdirs.size();)
             if(subdirs.find(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) == subdirs.end())
@@ -122,14 +125,18 @@ public:
                 ++i;
             }
 
-        for(std::set<std::string>::const_iterator it(should_create.begin());it!=should_create.end();++it)
+        for(std::map<std::string,time_t>::const_iterator it(should_create.begin());it!=should_create.end();++it)
         {
-            std::cerr << "[directory storage] adding new subdirectory " << *it << " at index " << mNodes.size() << std::endl;
+            std::cerr << "[directory storage] adding new subdirectory " << it->first << " at index " << mNodes.size() << std::endl;
+
+            DirEntry *de = new DirEntry(it->first) ;
+
+            de->row = mNodes.size();
+            de->parent_index = indx;
+            de->dir_modtime = it->second;
 
             d.subdirs.push_back(mNodes.size()) ;
-            mNodes.push_back(new DirEntry(*it));
-            mNodes.back()->row = mNodes.size()-1;
-            mNodes.back()->parent_index = indx;
+            mNodes.push_back(de) ;
         }
 
         return true;
@@ -664,7 +671,7 @@ bool DirectoryStorage::setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_T
     return mFileHierarchy->setDirUpdateTS(index,recurs_max_modf_TS,local_update_TS) ;
 }
 
-bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::set<std::string>& subdirs)
+bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
@@ -1035,12 +1042,19 @@ bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const Rs
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,most_recent_time)) return false ;
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,dir_modtime     )) return false ;
 
+    std::cerr << "  dir name           : \"" << dir_name << "\"" << std::endl;
+    std::cerr << "  most recent time   : " << most_recent_time << std::endl;
+    std::cerr << "  modification time  : " << dir_modtime << std::endl;
+
     // serialise number of subdirs and number of subfiles
 
     uint32_t n_subdirs,n_subfiles ;
 
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,n_subdirs  )) return false ;
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,n_subfiles )) return false ;
+
+    std::cerr << "  number of subdirs  : " << n_subdirs << std::endl;
+    std::cerr << "  number of files    : " << n_subfiles << std::endl;
 
     // serialise subdirs entry indexes
 
@@ -1095,6 +1109,8 @@ bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const Rs
 
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
+    std::cerr << "  updating dir entry..." << std::endl;
+
     // first create the entries for each subdir and each subfile.
     if(!mFileHierarchy->updateDirEntry(indx,dir_name,most_recent_time,dir_modtime,subdirs_array,subfiles_array))
     {
@@ -1104,8 +1120,12 @@ bool RemoteDirectoryStorage::deserialiseDirEntry(const EntryIndex& indx,const Rs
 
     // then update the subfiles
     for(uint32_t i=0;i<subfiles_array.size();++i)
+    {
+        std::cerr << "  updating file entry " << subfiles_hash[i] << std::endl;
+
         if(!mFileHierarchy->updateFile(subfiles_array[i],subfiles_hash[i],subfiles_name[i],subfiles_size[i],subfiles_modtime[i]))
             std::cerr << "(EE) Cannot update file with index " << subfiles_array[i] << ". This is very weird. Entry should have just been created and therefore should exist. Skipping." << std::endl;
+    }
 
     return true ;
 }
