@@ -221,6 +221,6 @@ ffmpeg: download/ffmpeg-$(FFMPEG_VERSION).tar.gz
 copylibs: 
 	read -p "Do you want to copy libs to retroshare? (yes|no)" answer; \
 	if [ "$$answer" = "yes" ] ; then  \
-	  cp -r libs ../../ ; \
+	  cp -r libs ../../../../ ; \
 	fi
 
