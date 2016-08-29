@@ -207,8 +207,7 @@ public:
                 f.file_modtime = it->second.modtime;
                 f.file_size = it->second.size;
             }
-            else
-                new_files.erase(f.file_name) ;
+            new_files.erase(f.file_name) ;
 
             ++i;
         }
@@ -881,7 +880,7 @@ void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
-    std::map<std::string,SharedDirInfo>::iterator it = mLocalDirs.find(info.virtualname) ;
+    std::map<std::string,SharedDirInfo>::iterator it = mLocalDirs.find(info.filename) ;
 
     if(it == mLocalDirs.end())
     {
@@ -944,8 +943,38 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
     // here we should update the file sharing flags
 
     d.flags.clear() ;
+    d.parent_groups.clear();
 
-    /* find parent pointer, and row */
+    std::string base_dir;
+
+    for(DirectoryStorage::EntryIndex i=((d.type==DIR_TYPE_FILE)?((intptr_t)d.parent):((intptr_t)d.ref));;)
+    {
+        const InternalFileHierarchyStorage::DirEntry *e = mFileHierarchy->getDirEntry(i) ;
+
+        if(e == NULL)
+            break ;
+
+        if(e->parent_index == 0)
+        {
+            base_dir = e->dir_name ;
+            break ;
+        }
+        i = e->parent_index ;
+    }
+
+    if(!base_dir.empty())
+    {
+        std::map<std::string,SharedDirInfo>::const_iterator it = mLocalDirs.find(base_dir) ;
+
+        if(it == mLocalDirs.end())
+        {
+            std::cerr << "(EE) very weird bug: base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
+            return false ;
+        }
+#warning we should use a NodeGroupId here
+        d.flags = it->second.shareflags;
+        d.parent_groups = it->second.parent_groups;
+    }
 
     return true;
 }

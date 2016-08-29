@@ -250,9 +250,14 @@ void SharedFilesDialog::showEvent(QShowEvent *)
 {
 	if(model!=NULL)
 	{
-		model->setVisible(true) ;
+        std::set<std::string> expanded_indexes ;
+        saveExpandedPaths(expanded_indexes);
+
+        model->setVisible(true) ;
 		model->update() ;
-	}
+
+        restoreExpandedPaths(expanded_indexes);
+    }
 }
 RemoteSharedFilesDialog::~RemoteSharedFilesDialog()
 {
@@ -348,9 +353,13 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 
 	showProperColumns() ;
 
-	if(isVisible())
+    std::set<std::string> expanded_indexes ;
+    saveExpandedPaths(expanded_indexes);
+
+    if(isVisible())
 	{
-		model->setVisible(true) ;
+        model->setVisible(true) ;
+
 		model->update() ;
 	}
 
@@ -360,7 +369,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	ui.dirTreeView->setModel(proxyModel);
 	ui.dirTreeView->update();
 
-	QHeaderView * header = ui.dirTreeView->header () ;
+    restoreExpandedPaths(expanded_indexes);
+
+    QHeaderView * header = ui.dirTreeView->header () ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
 
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_DIR) ;
@@ -828,6 +839,10 @@ void  SharedFilesDialog::preModDirectories(bool local)
 
 void SharedFilesDialog::saveExpandedPaths(std::set<std::string>& expanded_indexes)
 {
+    if(ui.dirTreeView->model() == NULL)
+        return ;
+
+    std::cerr << "Saving expanded items. " << std::endl;
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
@@ -837,6 +852,9 @@ void SharedFilesDialog::saveExpandedPaths(std::set<std::string>& expanded_indexe
 
 void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expanded_indexes)
 {
+    if(ui.dirTreeView->model() == NULL)
+        return ;
+
     std::cerr << "Restoring expanded items. " << std::endl;
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
@@ -886,7 +904,7 @@ void  SharedFilesDialog::postModDirectories(bool local)
     }
     std::set<std::string> expanded_indexes;
     saveExpandedPaths(expanded_indexes) ;
-       std::cerr << "Saving expanded items. " << expanded_indexes.size() << " items found" << std::endl;
+    std::cerr << "Saving expanded items. " << expanded_indexes.size() << " items found" << std::endl;
 
     /* Notify both models, only one is visible */
 	tree_model->postMods();

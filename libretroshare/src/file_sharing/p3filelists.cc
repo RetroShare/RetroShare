@@ -64,8 +64,12 @@ void p3FileDatabase::getSharedDirectories(std::list<SharedDirInfo>& shared_dirs)
 }
 void p3FileDatabase::updateShareFlags(const SharedDirInfo& info)
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
-    mLocalSharedDirs->updateShareFlags(info) ;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+        mLocalSharedDirs->updateShareFlags(info) ;
+    }
+
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 p3FileDatabase::~p3FileDatabase()
@@ -135,7 +139,7 @@ int p3FileDatabase::tick()
         last_print_time = now ;
 
 //#warning this should be removed, but it's necessary atm for updating the GUI
-        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
     }
 
     if(mUpdateFlags)

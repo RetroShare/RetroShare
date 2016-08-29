@@ -121,7 +121,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
         return true ;
     }
 #ifdef HASHSTORAGE_DEBUG
-    std::cerr << "Not in cache. Sceduling for re-hash." << std::endl ;
+    std::cerr << "Not in cache. Scheduling for re-hash." << std::endl ;
 #endif
 
     // we need to schedule a re-hashing
