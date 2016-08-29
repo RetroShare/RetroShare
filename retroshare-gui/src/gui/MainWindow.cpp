@@ -404,6 +404,7 @@ void MainWindow::initStackedPage()
 #endif
 #endif
 
+#undef GETSTARTED_GUI
 #ifdef GETSTARTED_GUI
   MainPage *getStartedPage = NULL;
 
