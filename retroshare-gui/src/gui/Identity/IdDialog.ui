@@ -20,7 +20,16 @@
    <string/>
   </property>
   <layout class="QGridLayout" name="IdDialogGLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -38,7 +47,16 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="titleBarFrameHLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -129,16 +147,25 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="toolBarFrameHLayout">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>1</number>
+          </property>
+          <property name="topMargin">
+           <number>1</number>
+          </property>
+          <property name="rightMargin">
+           <number>1</number>
+          </property>
+          <property name="bottomMargin">
            <number>1</number>
           </property>
           <item>
            <widget class="LineEditClear" name="filterLineEdit"/>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_NewId">
+           <widget class="QToolButton" name="toolButton_New">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -147,52 +174,20 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
-             <string>Create new Identity</string>
-            </property>
-            <property name="text">
-             <string>New ID</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_NewCircle">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Create new circle</string>
-            </property>
-            <property name="text">
-             <string>New ID</string>
+             <string>Create new...</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/circles_new_128.png</normaloff>:/icons/circles_new_128.png</iconset>
+              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
             </property>
             <property name="iconSize">
              <size>
               <width>24</width>
               <height>24</height>
              </size>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -251,7 +246,7 @@
            <string>Reputation</string>
           </property>
           <property name="textAlignment">
-           <set>AlignLeft|AlignVCenter</set>
+           <set>AlignLeading|AlignVCenter</set>
           </property>
          </column>
         </widget>
@@ -264,8 +259,8 @@
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/no_avatar_background.png</normaloff>:/images/no_avatar_background.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/person.png</normaloff>:/icons/png/person.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Person</string>
@@ -620,8 +615,8 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QWidget" name="circleTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/circles/circles_64.png</normaloff>:/images/circles/circles_64.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Circles</string>
@@ -746,6 +741,16 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
@@ -754,16 +759,6 @@ p, li { white-space: pre-wrap; }
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

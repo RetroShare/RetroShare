@@ -49,7 +49,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_create_64.png"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
@@ -202,7 +202,7 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_edit_64.png"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;

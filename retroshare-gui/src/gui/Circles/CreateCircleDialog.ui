@@ -373,6 +373,16 @@
                 <property name="text">
                  <string>Public</string>
                 </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/png/network-puplic.png</normaloff>:/icons/png/network-puplic.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
                </widget>
               </item>
               <item row="0" column="1">
@@ -383,6 +393,16 @@
                 <property name="text">
                  <string>Private</string>
                 </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/png/person.png</normaloff>:/icons/png/person.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
                </widget>
               </item>
               <item row="0" column="2">
@@ -392,6 +412,16 @@
                 </property>
                 <property name="text">
                  <string>Only visible to members of:</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
                 </property>
                </widget>
               </item>
@@ -459,6 +489,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

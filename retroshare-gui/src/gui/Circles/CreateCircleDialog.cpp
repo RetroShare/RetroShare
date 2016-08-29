@@ -55,7 +55,7 @@ CreateCircleDialog::CreateCircleDialog()
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 			
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/circles/circles_64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));

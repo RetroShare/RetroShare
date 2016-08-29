@@ -194,8 +194,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	//mStateHelper->addClear(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 
 	/* Connect signals */
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui->toolButton_NewCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -211,7 +209,7 @@ IdDialog::IdDialog(QWidget *parent) :
 
 
 	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
-	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
+	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
 	ui->headerTextLabel_Person->setText(tr("People"));
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
@@ -280,7 +278,18 @@ IdDialog::IdDialog(QWidget *parent) :
 	idTWHAction->setData(RSID_FILTER_BANNED);
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
-
+	
+	QAction *CreateIDAction = new QAction(QIcon(":/icons/png/person.png"),tr("Create new Identity"), this);
+	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
+	
+	QAction *CreateCircleAction = new QAction(QIcon(":/icons/png/circles.png"),tr("Create new circle"), this);
+	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
+	
+	QMenu *menu = new QMenu();
+	menu->addAction(CreateIDAction);
+	menu->addAction(CreateCircleAction);
+	ui->toolButton_New->setMenu(menu);
+	
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
