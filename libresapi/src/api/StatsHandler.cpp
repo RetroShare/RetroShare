@@ -1,8 +1,8 @@
 #include "StatsHandler.h"
 #include "Operators.h"
 
-#include <retroshare/rspeers.h>
 #include <retroshare/rsconfig.h>
+#include <retroshare/rspeers.h>
 #include <pqi/authssl.h>
 
 namespace resource_api
@@ -33,6 +33,17 @@ void StatsHandler::handleStatsRequest(Request &/*req*/, Response &resp)
 	itemStream << makeKeyValue("bandwidth_up_kb", (double)upKb);
 	itemStream << makeKeyValue("bandwidth_down_kb", (double)downKb);
 
+	// DHT/NAT info
+	RsConfigNetStatus config;
+	rsConfig->getConfigNetStatus(config);
+	itemStream << makeKeyValue("dht_active",	config.DHTActive);
+	itemStream << makeKeyValue("dht_ok",		config.netDhtOk);
+	itemStream << makeKeyValue("dht_size_all",	config.netDhtNetSize);
+	itemStream << makeKeyValue("dht_size_rs",	config.netDhtRsNetSize);
+	uint32_t netState = rsConfig -> getNetState();
+	itemStream << makeKeyValue("nat_state", netState);
+
+	// ok
 	resp.setOk();
 }
 
