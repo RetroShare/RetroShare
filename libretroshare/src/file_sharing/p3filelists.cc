@@ -840,6 +840,8 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         P3FILELISTS_DEBUG() << "  removing directory with index " << item->entry_index << " because it does not exist." << std::endl;
         mRemoteDirectories[fi]->removeDirectory(item->entry_index);
+
+        mRemoteDirectories[fi]->print();
     }
     else if(item->flags & RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE)
     {

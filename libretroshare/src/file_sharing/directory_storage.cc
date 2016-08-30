@@ -141,7 +141,7 @@ public:
 
         return true;
     }
-    bool removeDirectory(const DirectoryStorage::EntryIndex& indx)
+    bool removeDirectory(DirectoryStorage::EntryIndex indx)	// no reference here! Very important. Otherwise, the messign we do inside can change the value of indx!!
     {
         // check that it's a directory
 
@@ -151,6 +151,10 @@ public:
         if(indx == 0)
             return nodeAccessError("checkIndex(): Cannot remove top level directory") ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
+        std::cerr << "(--) Removing directory " << indx << std::endl;
+                print();
+#endif
         // remove from parent
 
         DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
@@ -158,8 +162,19 @@ public:
 
         for(uint32_t i=0;i<parent_dir.subdirs.size();++i)
             if(parent_dir.subdirs[i] == indx)
-                    return recursRemoveDirectory(indx) ;
+            {
+                parent_dir.subdirs[i] = parent_dir.subdirs.back() ;
+                parent_dir.subdirs.pop_back();
 
+                bool res = recursRemoveDirectory(indx) ;
+#ifdef DEBUG_DIRECTORY_STORAGE
+                print();
+                std::string err ;
+                if(!check(err))
+                    std::cerr << "(EE) Error after removing subdirectory. Error string=\"" << err << "\", Hierarchy is : " << std::endl;
+#endif
+                return true ;
+            }
         return nodeAccessError("removeDirectory(): inconsistency!!") ;
     }
 
@@ -495,7 +510,7 @@ public:
            }
 
        for(uint32_t i=0;i<hits.size();++i)
-           if(hits[i] == 0)
+           if(hits[i] == 0 && mNodes[i] != NULL)
            {
                error_string = "Orphean node!" ;
                return false;
@@ -581,6 +596,11 @@ private:
         for(uint32_t i=0;i<d.subdirs.size();++i)
             recursRemoveDirectory(d.subdirs[i]);
 
+        for(uint32_t i=0;i<d.subfiles.size();++i)
+        {
+            delete mNodes[d.subfiles[i]] ;
+            mNodes[d.subfiles[i]] = NULL ;
+        }
         delete mNodes[dir] ;
         mNodes[dir] = NULL ;
 
