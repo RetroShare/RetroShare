@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/svg/download.svg</file>
+    <file>icons/svg/folders.svg</file>
+    <file>icons/svg/folders1.svg</file>
+    <file>icons/svg/magnifying-glass.svg</file>
+    <file>icons/svg/upload.svg</file>
     <file>icons/settings/appearance.svg</file>
     <file>icons/settings/channels.svg</file>
     <file>icons/settings/chat.svg</file>
