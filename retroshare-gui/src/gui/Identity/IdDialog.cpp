@@ -335,12 +335,10 @@ IdDialog::IdDialog(QWidget *parent) :
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
 			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
 			spoofed, but noone can prove who really owns a given identity.</p> \
-                	<p><b>External circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
+                    <p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
                 		used to restrict the visibility to forums, channels, etc. </p> \
-                	<p>An <b>external circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
-                		or even self-restricted, meaning that it is only visible to its members.</p> \
-                	<p>A <b>local circle</b> is a group of friend nodes (represented by their PGP Ids), and can also be used to restrict the \
-                		visibility of forums and channels. They are not shared over the network, and their list of members is only visible to you.</p>") ;
+                    <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
+                        or even self-restricted, meaning that it is only visible to invited members.</p>") ;
 
 	registerHelpButton(ui->helpButton, hlp_str) ;
 
