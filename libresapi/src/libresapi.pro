@@ -146,7 +146,8 @@ SOURCES += \
     api/TmpBlobStore.cpp \
     util/ContentTypes.cpp \
     api/ApiPluginHandler.cpp \
-    api/ChannelsHandler.cpp
+    api/ChannelsHandler.cpp \
+    api/StatsHandler.cpp
 
 HEADERS += \
 	api/ApiServer.h \
@@ -172,7 +173,8 @@ HEADERS += \
     api/TmpBlobStore.h \
     util/ContentTypes.h \
     api/ApiPluginHandler.h \
-    api/ChannelsHandler.h
+    api/ChannelsHandler.h \
+    api/StatsHandler.h
 
 libresapilocalserver {
     CONFIG *= qt
