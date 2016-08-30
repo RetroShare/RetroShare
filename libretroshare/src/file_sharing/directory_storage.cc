@@ -385,6 +385,14 @@ public:
 
     // Low level stuff. Should normally not be used externally.
 
+    const FileStorageNode *getNode(DirectoryStorage::EntryIndex indx) const
+    {
+        if(checkIndex(indx,FileStorageNode::TYPE_FILE | FileStorageNode::TYPE_DIR))
+            return mNodes[indx] ;
+        else
+            return NULL ;
+    }
+
     const DirEntry *getDirEntry(DirectoryStorage::EntryIndex indx) const
     {
         if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
@@ -450,7 +458,7 @@ public:
        hits[0] = 1 ;	// because 0 is never the child of anyone
 
        for(uint32_t i=0;i<mNodes.size();++i)
-           if(mNodes[i]->type() == FileStorageNode::TYPE_DIR)
+           if(mNodes[i] != NULL && mNodes[i]->type() == FileStorageNode::TYPE_DIR)
            {
                // stamp the kids
                const DirEntry& de = *static_cast<DirEntry*>(mNodes[i]) ;
@@ -942,12 +950,24 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
     // here we should update the file sharing flags
 
-    d.flags.clear() ;
-    d.parent_groups.clear();
+    return getFileSharingPermissions(indx,d.flags,d.parent_groups) ;
+}
+
+bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<std::string>& parent_groups)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    flags.clear() ;
+    parent_groups.clear();
 
     std::string base_dir;
 
-    for(DirectoryStorage::EntryIndex i=((d.type==DIR_TYPE_FILE)?((intptr_t)d.parent):((intptr_t)d.ref));;)
+    const InternalFileHierarchyStorage::FileStorageNode *n = mFileHierarchy->getNode(indx) ;
+
+    if(n == NULL)
+        return false ;
+
+    for(DirectoryStorage::EntryIndex i=((n->type()==InternalFileHierarchyStorage::FileStorageNode::TYPE_FILE)?((intptr_t)n->parent_index):indx);;)
     {
         const InternalFileHierarchyStorage::DirEntry *e = mFileHierarchy->getDirEntry(i) ;
 
@@ -972,8 +992,8 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
             return false ;
         }
 #warning we should use a NodeGroupId here
-        d.flags = it->second.shareflags;
-        d.parent_groups = it->second.parent_groups;
+        flags = it->second.shareflags;
+        parent_groups = it->second.parent_groups;
     }
 
     return true;

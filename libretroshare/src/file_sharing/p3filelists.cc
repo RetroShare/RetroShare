@@ -756,10 +756,17 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         ritem->request_id = item->request_id;
         ritem->entry_index = item->entry_index ;
 
+        std::list<std::string> node_groups;
+        FileStorageFlags node_flags;
+
         if(entry_type != DIR_TYPE_DIR)
         {
-            P3FILELISTS_DEBUG() << "  Directory does not exist anymore, or is not a directory. Answering with proper flags." << std::endl;
-
+            P3FILELISTS_DEBUG() << "  Directory does not exist anymore, or is not a directory, or permission denied. Answering with proper flags." << std::endl;
+            ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
+        }
+        else if(item->entry_index != 0 && (!mLocalSharedDirs->getFileSharingPermissions(item->entry_index,node_flags,node_groups) || !(rsPeers->computePeerPermissionFlags(item->PeerId(),node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
+        {
+            std::cerr << "(EE) cannot get file permissions for entry index " << (void*)(intptr_t)item->entry_index << ", or permission denied." << std::endl;
             ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
         }
         else

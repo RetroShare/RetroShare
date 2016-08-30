@@ -164,6 +164,18 @@ public:
      */
     bool getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info) ;
 
+    /*!
+     * \brief getFileSharingPermissions
+     * 			Computes the flags and parent groups for any index.
+     * \param indx    index of the entry to compute the flags for
+     * \param flags		computed flags
+     * \param parent_groups computed parent groups
+     * \return
+     * 			false if the index is not valid
+     * 			false otherwise
+     */
+    bool getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<std::string>& parent_groups);
+
     virtual bool extractData(const EntryIndex& indx,DirDetails& d) ;
 
     /*!
