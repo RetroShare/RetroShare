@@ -781,7 +781,8 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
                 ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_SYNC_DIR_CONTENT;
                 ritem->last_known_recurs_modf_TS = local_recurs_max_time;
 
-                mLocalSharedDirs->serialiseDirEntry(item->entry_index,ritem->directory_content_data) ;
+                // We supply the peer id, in order to possibly remove some subdirs, if entries are not allowed to be seen by this peer.
+                mLocalSharedDirs->serialiseDirEntry(item->entry_index,ritem->directory_content_data,item->PeerId()) ;
             }
             else
             {

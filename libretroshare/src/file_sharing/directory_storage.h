@@ -182,13 +182,15 @@ public:
      * \brief serialiseDirEntry
      * 			Produced a serialised directory content listing suitable for export to friends.
      *
-     * \param indx		index of the directory to serialise
-     * \param bindata   binary data created by serialisation
-     * \return 			false when the directory cannot be found.
+     * \param indx					index of the directory to serialise
+     * \param bindata   			binary data created by serialisation
+     * \param client_id      		Peer id to be serialised to. Depending on permissions, some subdirs can be removed.
+     * \return 						false when the directory cannot be found.
      */
-    bool serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata) ;
+    bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
+    bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<std::string>& parent_groups);
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
     std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename

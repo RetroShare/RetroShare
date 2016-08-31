@@ -1,5 +1,6 @@
 #include <set>
 #include "serialiser/rstlvbinary.h"
+#include "retroshare/rspeers.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "directory_storage.h"
@@ -98,6 +99,14 @@ public:
     bool isIndexValid(DirectoryStorage::EntryIndex e) const
     {
         return e < mNodes.size() && mNodes[e] != NULL ;
+    }
+    bool stampDirectory(const DirectoryStorage::EntryIndex& indx)
+    {
+        if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
+            return false;
+
+        static_cast<DirEntry*>(mNodes[indx])->dir_modtime = time(NULL) ;
+        return true;
     }
 
     bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
@@ -904,6 +913,18 @@ void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst
         lst.push_back(it->second) ;
 }
 
+static bool sameLists(const std::list<std::string>& l1,const std::list<std::string>& l2)
+{
+    std::list<std::string>::const_iterator it1(l1.begin()) ;
+    std::list<std::string>::const_iterator it2(l2.begin()) ;
+
+    for(; (it1!=l1.end() && it2!=l2.end());++it1,++it2)
+        if(*it1 != *it2)
+            return false ;
+
+    return it1 == l1.end() && it2 == l2.end() ;
+}
+
 void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -915,7 +936,17 @@ void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
         std::cerr << "(EE) LocalDirectoryStorage::updateShareFlags: directory \"" << info.filename << "\" not found" << std::endl;
         return ;
     }
-    it->second = info;
+
+    // we compare the new info with the old one. If the two group lists have a different order, they will be seen as different. Not a big deal. We just
+    // want to make sure that if they are different, flags get updated.
+
+    if(!sameLists(it->second.parent_groups,info.parent_groups) || it->second.filename != info.filename || it->second.shareflags != info.shareflags || it->second.virtualname != info.virtualname)
+    {
+        it->second = info;
+        mFileHierarchy->stampDirectory(0) ;
+
+        std::cerr << "Updating dir mod time because flags at level 0 have changed." << std::endl;
+    }
 }
 
 bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::string& fullpath)
@@ -976,7 +1007,11 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<std::string>& parent_groups)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
+    return locked_getFileSharingPermissions(indx,flags,parent_groups) ;
+}
 
+bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<std::string>& parent_groups)
+{
     flags.clear() ;
     parent_groups.clear();
 
@@ -1019,7 +1054,7 @@ bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,Fil
     return true;
 }
 
-bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata)
+bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata,const RsPeerId& client_id)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
@@ -1030,6 +1065,17 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
         std::cerr << "(EE) serialiseDirEntry: ERROR. Cannot find entry " << (void*)(intptr_t)indx << std::endl;
         return false;
     }
+
+    // compute list of allowed subdirs
+    std::vector<EntryIndex> allowed_subdirs ;
+    FileStorageFlags node_flags ;
+    std::list<std::string> node_groups ;
+
+    // for each subdir, compute the node flags and groups, then ask rsPeers to compute the mask that result from these flags for the particular peer supplied in parameter
+
+    for(uint32_t i=0;i<dir->subdirs.size();++i)
+        if(indx != 0 || (locked_getFileSharingPermissions(dir->subdirs[i],node_flags,node_groups) && (rsPeers->computePeerPermissionFlags(client_id,node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
+            allowed_subdirs.push_back(dir->subdirs[i]) ;
 
     unsigned char *section_data = NULL;
     uint32_t section_size = 0;
@@ -1047,13 +1093,13 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
     // serialise number of subdirs and number of subfiles
 
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subdirs.size()  )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subfiles.size() )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subdirs.size()  )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subfiles.size()    )) return false ;
 
     // serialise subdirs entry indexes
 
-    for(uint32_t i=0;i<dir->subdirs.size();++i)
-        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,(uint32_t)dir->subdirs[i]  )) return false ;
+    for(uint32_t i=0;i<allowed_subdirs.size();++i)
+        if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX ,(uint32_t)allowed_subdirs[i]  )) return false ;
 
     // serialise directory subfiles, with info for each of them
 
