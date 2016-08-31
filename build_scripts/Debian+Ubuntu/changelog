@@ -1,4 +1,13 @@
-retroshare06 (0.6.0-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  Release of version 0.6.1. 
+     * See detailed logs: https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Debian%2BUbuntu/changelog
+     * Release blog post: https://retroshareteam.wordpress.com
+     * Website: https://github.com/Retroshare/Retroshare/releases
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 31 Aug 2016 12:00:00 +0100
+
+retroshare06 (0.6.0-1.20160818.b9ac4f87) xenial; urgency=low
 
   9780f1f Phenom   Mon, 15 Aug 2016 12:00:44 +0200 Add AutoHide to RSImageBlockWidget
   368a429 csoler   Wed, 17 Aug 2016 09:40:16 +0200 fixed read_125Size and write_125Size according to RFC4880
