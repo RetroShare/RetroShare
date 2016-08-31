@@ -84,7 +84,7 @@ macx {
 		message(***retroshare.pri: No SDK, set it to MacOS 10.10 )
 		QMAKE_MAC_SDK = macosx10.10
 	}
-	CONFIG += c+11
+        CONFIG += c++11
 }
 
 unfinished {
