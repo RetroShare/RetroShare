@@ -276,7 +276,7 @@ mac {
                 DEFINES *= MINIUPNPC_VERSION=13
 
 		CONFIG += upnp_miniupnpc
-		CONFIG += c+11
+                CONFIG += c++11
 
 		# zeroconf disabled at the end of libretroshare.pro (but need the code)
 		#CONFIG += zeroconf
