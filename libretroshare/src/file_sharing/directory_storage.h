@@ -174,7 +174,7 @@ public:
      * 			false if the index is not valid
      * 			false otherwise
      */
-    bool getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<std::string>& parent_groups);
+    bool getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId> &parent_groups);
 
     virtual bool extractData(const EntryIndex& indx,DirDetails& d) ;
 
@@ -190,7 +190,7 @@ public:
     bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
-    bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<std::string>& parent_groups);
+    bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
     std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename

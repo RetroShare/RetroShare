@@ -756,7 +756,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         ritem->request_id = item->request_id;
         ritem->entry_index = item->entry_index ;
 
-        std::list<std::string> node_groups;
+        std::list<RsNodeGroupId> node_groups;
         FileStorageFlags node_flags;
 
         if(entry_type != DIR_TYPE_DIR)

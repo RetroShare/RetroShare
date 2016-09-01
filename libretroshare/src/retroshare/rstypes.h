@@ -236,13 +236,13 @@ public:
     RsPeerId id;
     std::string name;
     RsFileHash hash;
-	std::string path;
+    std::string path;
 	uint64_t count;
 	uint32_t age;
 	FileStorageFlags flags;
 	uint32_t min_age ;	// minimum age of files in this subtree
 
-	std::list<DirStub> children;
+    std::vector<DirStub> children;
     std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory
 };
 

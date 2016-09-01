@@ -913,10 +913,10 @@ void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst
         lst.push_back(it->second) ;
 }
 
-static bool sameLists(const std::list<std::string>& l1,const std::list<std::string>& l2)
+static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)
 {
-    std::list<std::string>::const_iterator it1(l1.begin()) ;
-    std::list<std::string>::const_iterator it2(l2.begin()) ;
+    std::list<RsNodeGroupId>::const_iterator it1(l1.begin()) ;
+    std::list<RsNodeGroupId>::const_iterator it2(l2.begin()) ;
 
     for(; (it1!=l1.end() && it2!=l2.end());++it1,++it2)
         if(*it1 != *it2)
@@ -1004,13 +1004,13 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
     return getFileSharingPermissions(indx,d.flags,d.parent_groups) ;
 }
 
-bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<std::string>& parent_groups)
+bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<RsNodeGroupId>& parent_groups)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return locked_getFileSharingPermissions(indx,flags,parent_groups) ;
 }
 
-bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<std::string>& parent_groups)
+bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags& flags, std::list<RsNodeGroupId> &parent_groups)
 {
     flags.clear() ;
     parent_groups.clear();
@@ -1046,7 +1046,7 @@ bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& i
             std::cerr << "(EE) very weird bug: base directory \"" << base_dir << "\" not found in shared dir list." << std::endl;
             return false ;
         }
-#warning we should use a NodeGroupId here
+
         flags = it->second.shareflags;
         parent_groups = it->second.parent_groups;
     }
@@ -1069,7 +1069,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     // compute list of allowed subdirs
     std::vector<EntryIndex> allowed_subdirs ;
     FileStorageFlags node_flags ;
-    std::list<std::string> node_groups ;
+    std::list<RsNodeGroupId> node_groups ;
 
     // for each subdir, compute the node flags and groups, then ask rsPeers to compute the mask that result from these flags for the particular peer supplied in parameter
 
