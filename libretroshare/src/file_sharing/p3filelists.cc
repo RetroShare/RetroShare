@@ -57,10 +57,14 @@ RsSerialiser *p3FileDatabase::setupSerialiser()
 }
 void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared_dirs)
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
 
-    mLocalSharedDirs->setSharedDirectoryList(shared_dirs) ;
-    mLocalDirWatcher->forceUpdate();
+        mLocalSharedDirs->setSharedDirectoryList(shared_dirs) ;
+        mLocalDirWatcher->forceUpdate();
+    }
+
+    IndicateConfigChanged();
 }
 void p3FileDatabase::getSharedDirectories(std::list<SharedDirInfo>& shared_dirs)
 {
@@ -75,6 +79,7 @@ void p3FileDatabase::updateShareFlags(const SharedDirInfo& info)
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+    IndicateConfigChanged();
 }
 
 p3FileDatabase::~p3FileDatabase()
