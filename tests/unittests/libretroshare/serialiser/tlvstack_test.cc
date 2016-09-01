@@ -63,13 +63,13 @@ TEST(libretroshare_serialiser, test_RsTlvStack)
 
         /* initialise */
         fi1->filesize = 101010;
-        fi1->hash = RsFileHash("ABCDEFEGHE");
+        fi1->hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
         fi1->name = "TestFile.txt";
         fi1->pop  = 12;
         fi1->age  = 456;
 
         fi2->filesize = 101010;
-        fi2->hash = RsFileHash("ABCDEFEGHE");
+        fi2->hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
         fi2->name = "TestFile.txt";
         fi2->pop  = 0;
         fi2->age  = 0;;

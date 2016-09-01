@@ -28,7 +28,7 @@ GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_l
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-GenCertDialog QLabel#label_hiddenaddr2 {
+GenCertDialog QLabel#label_hiddenaddr {
 	border: 1px solid #50FF5B;
 	border-radius: 6px;
 	background: #CCFFCC;
@@ -50,19 +50,6 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 GenCertDialog > QFrame#frame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
-}
-
-GenCertDialog QPushButton#genButton { 
-	border-image: url(:/images/btn_blue.png) 4;
-	border-width: 4;
-	padding: 0px 6px;
-	font-size: 14px;
-	font: bold;
-	color: white;
-}
-
-GenCertDialog QPushButton#genButton:hover {
-	border-image: url(:/images/btn_blue_hover.png) 4;
 }
 
 /* ConnectFriendWizard */
@@ -213,7 +200,7 @@ CreateLobbyDialog QLabel#lobbyInfoLabel {
 }
 
 ChatWidget QTextEdit#chatTextEdit, ChatWidget QTextBrowser#textBrowser {
-	border: 1px solid #B8B6B1;
+	border: 1px solid #0099cc;
 	border-radius: 6px;
 	background: white;
 }
@@ -223,27 +210,6 @@ ChatWidget QFrame#infoFrame {
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
-}
-
-ChatWidget QPushButton#sendButton {
-	border-image: url(:/images/btn_green.png) 4;
-	border-width: 4;
-	padding: 0px 6px;
-	font-size: 14px;
-	font: bold;
-	color: white;
-}
-
-ChatWidget QPushButton#sendButton:hover {
-	border-image: url(:/images/btn_green_hover.png) 4;
-}
-
-ChatWidget QPushButton#sendButton:pressed {
-	border-image: url(:/images/btn_green_pressed.png) 4;
-}
-
-ChatWidget QPushButton#sendButton:disabled {
-	border-image: url(:/images/btn_red.png) 4;
 }
 
 PopupChatWindow QToolBar#chattoolBar{
@@ -513,15 +479,15 @@ SubFileItem QProgressBar#progressBar {
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
 	background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fff, stop: 0.4999 #eee, stop: 0.5 #ddd, stop: 1 #eee);
-	width: 15px;
+	min-width: 15px;
 }
 
 SubFileItem QProgressBar#progressBar::chunk {
-	background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #78d, stop: 0.4999 #46a, stop: 0.5 #45a, stop: 1 #238);
+	background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #78d, stop: 0.4999 #46a, stop: 0.5 #45a, stop: 1 #238);
 	border-top-left-radius: 7px;
 	border-bottom-left-radius: 7px;
 	border: 1px solid black;
-	width: 15px;
+	min-width: 15px;
 }
 
 PluginItem QLabel#infoLabel {
@@ -632,13 +598,13 @@ QLabel#avatarLabel{
  border-radius: 4px;
 }
 
-IdDialog QFrame#headerFrame {
+IdDialog QFrame#headerFramePerson {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 1px;
 	border-radius: 4px;
 }
 
-IdDialog QFrame#headerFrame_2 {
+IdDialog QFrame#headerFrameCircle {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 1px;
 	border-radius: 4px;

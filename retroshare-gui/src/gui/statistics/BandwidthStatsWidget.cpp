@@ -3,7 +3,6 @@
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsservicecontrol.h"
-#include "util/RsProtectedTimer.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "BandwidthStatsWidget.h"
 

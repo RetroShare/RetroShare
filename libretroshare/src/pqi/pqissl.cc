@@ -1548,6 +1548,7 @@ int 	pqissl::senddata(void *data, int len)
 #ifdef PQISSL_DEBUG
 	std::cout << "Sending data thread=" << pthread_self() << ", ssl=" << (void*)this << ", size=" << len << std::endl ;
 #endif
+    	ERR_clear_error();
 	tmppktlen = SSL_write(ssl_connection, data, len) ;
 
 	if (len != tmppktlen)
@@ -1638,6 +1639,8 @@ int 	pqissl::readdata(void *data, int len)
 #ifdef PQISSL_DEBUG
 		std::cerr << "calling SSL_read. len=" << len << ", total_len=" << total_len << std::endl ;
 #endif
+        		ERR_clear_error() ;
+                
 		tmppktlen = SSL_read(ssl_connection, (void*)( &(((uint8_t*)data)[total_len])), len-total_len) ;
 #ifdef PQISSL_DEBUG
 		std::cerr << "have read " << tmppktlen << " bytes" << std::endl ;
@@ -1660,8 +1663,6 @@ int 	pqissl::readdata(void *data, int len)
 
 			int error = SSL_get_error(ssl_connection, tmppktlen);
 			unsigned long err2 =  ERR_get_error();
-
-			//printSSLError(ssl_connection, tmppktlen, error, err2, out);
 
 			if ((error == SSL_ERROR_ZERO_RETURN) && (err2 == 0))
 			{
@@ -1761,7 +1762,10 @@ int 	pqissl::readdata(void *data, int len)
 				rs_sprintf_append(out, "SSL_read() UNKNOWN ERROR: %d Resetting!", error);
 				rslog(RSL_ALERT, pqisslzone, out);
 				std::cerr << out << std::endl ;
+				std::cerr << ", SSL_read() output is " << tmppktlen << std::endl ;
 
+			printSSLError(ssl_connection, tmppktlen, error, err2, out);
+            
 				rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
 				reset_locked();
 				return -1;

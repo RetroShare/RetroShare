@@ -106,7 +106,7 @@ class peerState
     	uint32_t maxDnRate ;
 };
 
-class RsPeerGroupItem;
+class RsNodeGroupItem;
 class RsGroupInfo;
 
 std::string textPeerState(peerState &state);
@@ -139,11 +139,12 @@ virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
 	/* This is solely used by p3peers - makes sense   */
 
 virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
-virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
-virtual bool    removeGroup(const std::string &groupId) = 0;
-virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    removeGroup(const RsNodeGroupId &groupId) = 0;
+virtual bool    getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo) = 0;
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
+virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
     virtual bool resetOwnExternalAddressList() = 0 ;
 
@@ -231,181 +232,182 @@ virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage 
 
 class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
 {
-	public:
+public:
 
-/************************************************************************************************/
-/* EXTERNAL INTERFACE */
-/************************************************************************************************/
+    /************************************************************************************************/
+    /* EXTERNAL INTERFACE */
+    /************************************************************************************************/
 
-virtual bool 	addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-							uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
-                            time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
-virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
-virtual bool	removeFriend(const RsPgpId &pgp_id);
+    virtual bool addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+                              uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL,
+                              time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
+    virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
+    virtual bool	removeFriend(const RsPgpId &pgp_id);
 
-virtual bool	isFriend(const RsPeerId &ssl_id);
+    virtual bool	isFriend(const RsPeerId &ssl_id);
 
-virtual bool    getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids);
-virtual bool    removeAllFriendLocations(const RsPgpId &gpgid);
+    virtual bool    getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids);
+    virtual bool    removeAllFriendLocations(const RsPgpId &gpgid);
 
 
-	/******************** Groups **********************/
-	/* This is solely used by p3peers - makes sense   */
+    /******************** Groups **********************/
+    /* This is solely used by p3peers - makes sense   */
 
-virtual bool    addGroup(RsGroupInfo &groupInfo);
-virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
-virtual bool    removeGroup(const std::string &groupId);
-virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
-virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign);
+    virtual bool    addGroup(RsGroupInfo &groupInfo);
+    virtual bool    editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
+    virtual bool    removeGroup(const RsNodeGroupId &groupId);
+    virtual bool    getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo);
+    virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo) ;
+    virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
+    virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign);
 
     virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) ;
-	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) ;
-	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) ;
+    virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) ;
+    virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) ;
 
-	/**************** Set Net Info ****************/
-	/*
-	 * These functions are used by:
-	 * 1) p3linkmgr 
-	 * 2) p3peers - reasonable
-	 * 3) p3disc  - reasonable
-	 */
+    /**************** Set Net Info ****************/
+    /*
+     * These functions are used by:
+     * 1) p3linkmgr
+     * 2) p3peers - reasonable
+     * 3) p3disc  - reasonable
+     */
 
-virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
-virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
-virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);
-virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) ;
-virtual bool 	getExtAddressReportedByFriends(struct sockaddr_storage& addr, uint8_t &isstable) ;
+    virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
+    virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
+    virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);
+    virtual bool 	addCandidateForOwnExternalAddress(const RsPeerId& from, const struct sockaddr_storage &addr) ;
+    virtual bool 	getExtAddressReportedByFriends(struct sockaddr_storage& addr, uint8_t &isstable) ;
 
-virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode);
-virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht);
+    virtual bool 	setNetworkMode(const RsPeerId &id, uint32_t netMode);
+    virtual bool 	setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht);
 
-virtual bool    setLocation(const RsPeerId &pid, const std::string &location);
-virtual bool    setHiddenDomainPort(const RsPeerId &id, const std::string &domain_addr, const uint16_t domain_port);
-	
-virtual bool    updateCurrentAddress(const RsPeerId& id, const pqiIpAddress &addr);
-virtual bool    updateLastContact(const RsPeerId& id);
-virtual bool    updateAddressList(const RsPeerId& id, const pqiIpAddrSet &addrs);
+    virtual bool    setLocation(const RsPeerId &pid, const std::string &location);
+    virtual bool    setHiddenDomainPort(const RsPeerId &id, const std::string &domain_addr, const uint16_t domain_port);
+
+    virtual bool    updateCurrentAddress(const RsPeerId& id, const pqiIpAddress &addr);
+    virtual bool    updateLastContact(const RsPeerId& id);
+    virtual bool    updateAddressList(const RsPeerId& id, const pqiIpAddrSet &addrs);
 
     virtual bool resetOwnExternalAddressList() ;
 
-		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
-virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, const struct sockaddr_storage &ext_addr);
-	/**************** Net Status Info ****************/
-	/*
-	 * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
-	 * These functions are used by:
-	 * 1) p3face-config ... to remove!
-	 * 2) p3peers - reasonable
-	 * 3) p3disc  - reasonable
-	 */
+    // THIS MUST ONLY BE CALLED BY NETMGR!!!!
+    virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, const struct sockaddr_storage &ext_addr);
+    /**************** Net Status Info ****************/
+    /*
+     * MUST RATIONALISE THE DATA FROM THESE FUNCTIONS
+     * These functions are used by:
+     * 1) p3face-config ... to remove!
+     * 2) p3peers - reasonable
+     * 3) p3disc  - reasonable
+     */
 
-virtual bool	getOwnNetStatus(peerState &state);
-virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state);
-virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state);
+    virtual bool	getOwnNetStatus(peerState &state);
+    virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state);
+    virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state);
 
-virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
-virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
-virtual uint32_t getConnectionType(const RsPeerId& sslId);
+    virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
+    virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
+    virtual uint32_t getConnectionType(const RsPeerId& sslId);
 
-virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr);
-virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr);
-virtual bool    getProxyServerStatus(const uint32_t type, uint32_t &proxy_status);
-virtual bool    isHidden();
-virtual bool    isHidden(const uint32_t type);
-virtual bool    isHiddenPeer(const RsPeerId &ssl_id);
-virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type);
-virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
-virtual uint32_t hiddenDomainToHiddenType(const std::string &domain);
-virtual uint32_t getHiddenType(const RsPeerId &ssl_id);
+    virtual bool    setProxyServerAddress(const uint32_t type, const struct sockaddr_storage &proxy_addr);
+    virtual bool    getProxyServerAddress(const uint32_t type, struct sockaddr_storage &proxy_addr);
+    virtual bool    getProxyServerStatus(const uint32_t type, uint32_t &proxy_status);
+    virtual bool    isHidden();
+    virtual bool    isHidden(const uint32_t type);
+    virtual bool    isHiddenPeer(const RsPeerId &ssl_id);
+    virtual bool    isHiddenPeer(const RsPeerId &ssl_id, const uint32_t type);
+    virtual bool    getProxyAddress(const RsPeerId& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
+    virtual uint32_t hiddenDomainToHiddenType(const std::string &domain);
+    virtual uint32_t getHiddenType(const RsPeerId &ssl_id);
 
-virtual int 	getFriendCount(bool ssl, bool online);
+    virtual int 	getFriendCount(bool ssl, bool online);
 
-        /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+    /************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
-		// Single Use Function... shouldn't be here. used by p3serverconfig.cc
-virtual bool 	haveOnceConnected();
+    // Single Use Function... shouldn't be here. used by p3serverconfig.cc
+    virtual bool 	haveOnceConnected();
 
-virtual bool 	setMaxRates(const RsPgpId&  pid,uint32_t  maxUp,uint32_t  maxDn);
-virtual bool 	getMaxRates(const RsPgpId&  pid,uint32_t& maxUp,uint32_t& maxDn);
-virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn);
+    virtual bool 	setMaxRates(const RsPgpId&  pid,uint32_t  maxUp,uint32_t  maxDn);
+    virtual bool 	getMaxRates(const RsPgpId&  pid,uint32_t& maxUp,uint32_t& maxDn);
+    virtual bool 	getMaxRates(const RsPeerId& pid,uint32_t& maxUp,uint32_t& maxDn);
 
-/************************************************************************************************/
-/* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
-/************************************************************************************************/
+    /************************************************************************************************/
+    /* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
+    /************************************************************************************************/
 
-        p3PeerMgrIMPL(	const RsPeerId& ssl_own_id,
-				  				const RsPgpId& gpg_own_id,
-				  				const std::string& gpg_own_name,
-				  				const std::string& ssl_own_location) ;
+    p3PeerMgrIMPL(	const RsPeerId& ssl_own_id,
+                    const RsPgpId& gpg_own_id,
+                    const std::string& gpg_own_name,
+                    const std::string& ssl_own_location) ;
 
-void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
+    void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
 
-bool 	forceHiddenNode();
-bool 	setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort);
+    bool 	forceHiddenNode();
+    bool 	setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort);
 
-void 	tick();
+    void 	tick();
 
-const RsPeerId& getOwnId();
-bool 	setOwnNetworkMode(uint32_t netMode);
-bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
+    const RsPeerId& getOwnId();
+    bool 	setOwnNetworkMode(uint32_t netMode);
+    bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
 
-int 	getConnectAddresses(const RsPeerId &id, 
-				struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
-				pqiIpAddrSet &histAddrs, std::string &dyndns);
+    int 	getConnectAddresses(const RsPeerId &id,
+                                struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr,
+                                pqiIpAddrSet &histAddrs, std::string &dyndns);
 
 
 protected:
-	/* Internal Functions */
+    /* Internal Functions */
 
-bool 	removeUnusedLocations();
-bool 	removeBannedIps();
+    bool 	removeUnusedLocations();
+    bool 	removeBannedIps();
 
-void    printPeerLists(std::ostream &out);
+    void    printPeerLists(std::ostream &out);
 
-virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage &addr, uint32_t &count);
+    virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage &addr, uint32_t &count);
 
-	protected:
-/*****************************************************************/
-/***********************  p3config  ******************************/
-        /* Key Functions to be overloaded for Full Configuration */
-	virtual RsSerialiser *setupSerialiser();
-	virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-	virtual void saveDone();
-	virtual bool    loadList(std::list<RsItem *>& load);
-/*****************************************************************/
+protected:
+    /*****************************************************************/
+    /***********************  p3config  ******************************/
+    /* Key Functions to be overloaded for Full Configuration */
+    virtual RsSerialiser *setupSerialiser();
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+    virtual void saveDone();
+    virtual bool    loadList(std::list<RsItem *>& load);
+    /*****************************************************************/
 
-	/* other important managers */
+    /* other important managers */
 
-	p3LinkMgrIMPL *mLinkMgr;
-	p3NetMgrIMPL  *mNetMgr;
-    
+    p3LinkMgrIMPL *mLinkMgr;
+    p3NetMgrIMPL  *mNetMgr;
+
 private:
-	RsMutex mPeerMtx; /* protects below */
+    RsMutex mPeerMtx; /* protects below */
 
-	bool     mStatusChanged;
+    bool     mStatusChanged;
 
-	std::list<pqiMonitor *> clients;
+    std::list<pqiMonitor *> clients;
 
-	peerState mOwnState;
+    peerState mOwnState;
 
-	std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
-	std::map<RsPeerId, peerState> mOthersList;
+    std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
+    std::map<RsPeerId, peerState> mOthersList;
 
-    	std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
-        
-	std::list<RsPeerGroupItem *> groupList;
-	uint32_t lastGroupId;
+    std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
 
-	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+    std::map<RsNodeGroupId,RsGroupInfo> groupList;
+    uint32_t lastGroupId;
 
-	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
-	std::map<RsPgpId, PeerBandwidthLimits> mPeerBandwidthLimits ; // bandwidth limits for each gpg key
+    std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
-	struct sockaddr_storage mProxyServerAddressTor;
-	struct sockaddr_storage mProxyServerAddressI2P;
-	uint32_t mProxyServerStatusTor ;
-	uint32_t mProxyServerStatusI2P ;
+    std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+    std::map<RsPgpId, PeerBandwidthLimits> mPeerBandwidthLimits ; // bandwidth limits for each gpg key
+
+    struct sockaddr_storage mProxyServerAddressTor;
+    struct sockaddr_storage mProxyServerAddressI2P;
+    uint32_t mProxyServerStatusTor ;
+    uint32_t mProxyServerStatusI2P ;
 
 };
 

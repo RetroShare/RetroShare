@@ -51,10 +51,10 @@
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
-#define IMAGE_NETWORK2          ":/images/logo/logo_16.png"
-#define IMAGE_PEERS         	":/images/groupchat.png"
+#define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
+#define IMAGE_PEERS         	":/icons/png/keyring.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
+#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 /******
  * #define FRIENDS_DEBUG 1

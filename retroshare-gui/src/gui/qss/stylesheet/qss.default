@@ -193,7 +193,7 @@ RSTextBrowser, MimeTextEdit
 	qproperty-textColorQuote: rgb(120, 153, 34);
 }
 
-QLabel#headerTextLabel
+QLabel#headerTextLabel_Person
 {
 	qproperty-fontSizeFactor: 225;
 }

@@ -40,7 +40,7 @@ public:
     /** Loads the settings for this page */
     virtual void load() {}
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/images/admin-24.png") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/permissions.svg") ; }
     virtual QString pageName() const { return tr("Permissions") ; }
     virtual QString helpText() const ;
 

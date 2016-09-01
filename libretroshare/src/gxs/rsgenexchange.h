@@ -259,6 +259,16 @@ public:
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
+    /*!
+     * \brief acceptNewGroup
+     * 		Early checks if the group can be accepted. This is mainly used to check wether the group is banned for some reasons.
+     * 		Returns true unless derived in GXS services.
+     *
+     * \param grpMeta Group metadata to check
+     * \return
+     */
+    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
+
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
 	/*!
@@ -594,6 +604,14 @@ public:
 	 * @param CutOff The cut off value to set
 	 */
     void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
+
+    /*!
+     *
+     * @param token value set to be redeemed with acknowledgement
+     * @param grpId group id of the group to update
+     * @param CutOff The cut off value to set
+     */
+    void updateGroupLastMsgTimeStamp(uint32_t& token, const RsGxsGroupId& grpId);
 
     /*!
      * @return storage time of messages in months

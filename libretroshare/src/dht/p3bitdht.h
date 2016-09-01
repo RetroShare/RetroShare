@@ -136,7 +136,9 @@ class p3BitDhtRelayHandler
 
 
 class UdpRelayReceiver;
+#ifdef RS_USE_DHT_STUNNER
 class UdpStunner;
+#endif // RS_USE_DHT_STUNNER
 class p3NetMgr;
 
 class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
@@ -174,8 +176,11 @@ public:
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
-
+#ifdef RS_USE_DHT_STUNNER
     void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
+#else // RS_USE_DHT_STUNNER
+	void	setupConnectBits(UdpRelayReceiver *relay);
+#endif // RS_USE_DHT_STUNNER
     void	setupPeerSharer(pqiNetAssistPeerShare *sharer);
     void    modifyNodesPerBucket(uint16_t count);
 
@@ -359,8 +364,10 @@ private:
     int 	removeTranslation_locked(const RsPeerId& pid);
 
     UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
+#ifdef RS_USE_DHT_STUNNER
     UdpStunner *mDhtStunner;
     UdpStunner *mProxyStunner;
+#endif // RS_USE_DHT_STUNNER
     UdpRelayReceiver   *mRelay;
 
     p3NetMgr *mNetMgr;

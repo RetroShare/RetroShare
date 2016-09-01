@@ -38,8 +38,9 @@ ChatLobbyUserNotify::ChatLobbyUserNotify(QObject *parent) :
 
 	_bCheckForNickName = Settings->valueFromGroup(_group, "CheckForNickName", true).toBool();
 	_bCountUnRead = Settings->valueFromGroup(_group, "CountUnRead", true).toBool();
-    _bCountSpecificText = Settings->valueFromGroup(_group, "CountSpecificText").toBool();
-    _textToNotify = Settings->valueFromGroup(_group, "TextToNotify").toStringList();
+	_bCountSpecificText = Settings->valueFromGroup(_group, "CountSpecificText", false).toBool();
+	_textToNotify = Settings->valueFromGroup(_group, "TextToNotify").toStringList();
+	_bTextCaseSensitive = Settings->valueFromGroup(_group, "TextCaseSensitive", false).toBool();
 }
 
 bool ChatLobbyUserNotify::hasSetting(QString *name, QString *group)
@@ -88,14 +89,22 @@ void ChatLobbyUserNotify::setTextToNotify(QString value)
 	setTextToNotify(list);
 }
 
+void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
+{
+	if (_bTextCaseSensitive != value) {
+		_bTextCaseSensitive = value;
+		Settings->setValueToGroup(_group, "TextCaseSensitive", value);
+	}
+}
+
 QIcon ChatLobbyUserNotify::getIcon()
 {
-	return QIcon(":/images/chat_32.png");
+	return QIcon(":/icons/png/chat-lobbies.png");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/chat_red_128.png") : QIcon(":/icons/chat_128.png");
+    return hasNew ? QIcon(":/icons/png/chat-lobbies-notify.png") : QIcon(":/icons/png/chat-lobbies.png");
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()
@@ -249,12 +258,12 @@ void ChatLobbyUserNotify::chatLobbyNewMessage(ChatLobbyId lobby_id, QDateTime ti
 		bGetNickName = checkWord(msg, QString::fromUtf8(details.mNickname.c_str()));
 	}
 
-    bool bFoundTextToNotify = false;
+	bool bFoundTextToNotify = false;
 
-    if(_bCountSpecificText)
-        for (QStringList::Iterator it = _textToNotify.begin(); it != _textToNotify.end(); ++it) {
-            bFoundTextToNotify |= checkWord(msg, (*it));
-	}
+	if(_bCountSpecificText)
+		for (QStringList::Iterator it = _textToNotify.begin(); it != _textToNotify.end(); ++it) {
+			bFoundTextToNotify |= checkWord(msg, (*it));
+		}
 
 	if ((bGetNickName || bFoundTextToNotify || _bCountUnRead)){
 		QString strAnchor = time.toString(Qt::ISODate);
@@ -272,7 +281,7 @@ bool ChatLobbyUserNotify::checkWord(QString message, QString word)
 {
 	bool bFound = false;
 	int nFound = -1;
-	if (((nFound=message.indexOf(word)) != -1)
+	if (((nFound=message.indexOf(word,0,_bTextCaseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive)) != -1)
 	    && (!word.isEmpty())) {
 		QString eow=" ~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="; // end of word
 		bool bFirstCharEOW = (nFound==0)?true:(eow.indexOf(message.at(nFound-1)) != -1);

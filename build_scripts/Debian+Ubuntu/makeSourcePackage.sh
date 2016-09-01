@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.6.0"
+version="0.6.1"
 gitpath="https://github.com/RetroShare/RetroShare.git"
 workdir=retroshare06-${version}
 #bubba3="Y"		# comment out to compile for bubba3
@@ -47,7 +47,7 @@ while [ ${#} -gt 0 ]; do
 done
 
 if test "${dist}" = "" ; then
-	dist="precise trusty vivid wily xenial"
+	dist="precise trusty vivid wily xenial wheezy squeeze jessie stretch"
 fi
 
 echo Attempting to get revision number...

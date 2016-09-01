@@ -39,7 +39,7 @@ class CryptoPage : public ConfigPage
       virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/contact22.png") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/profile.svg") ; }
 		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
 

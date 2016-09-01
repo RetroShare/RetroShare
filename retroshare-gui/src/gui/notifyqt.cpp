@@ -148,7 +148,7 @@ void NotifyQt::notifyOwnAvatarChanged()
 class SignatureEventData
 {
 	public:
-		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen)
+		SignatureEventData(const void *_data,int32_t _len,unsigned int _signlen, std::string _reason)
 		{
 			// We need a new memory chnk because there's no guarranty _sign nor _signlen are not in the stack
 
@@ -173,6 +173,7 @@ class SignatureEventData
                     }
 			len = _len ;
 			memcpy(data,_data,len) ;
+			reason = _reason ;
 		}
 
 		~SignatureEventData()
@@ -184,7 +185,7 @@ class SignatureEventData
 
 		void performSignature()
         {
-            if(rsPeers->gpgSignData(data,len,sign,signlen))
+            if(rsPeers->gpgSignData(data,len,sign,signlen,reason))
                 signature_result = SELF_SIGNATURE_RESULT_SUCCESS ;
             else
                 signature_result = SELF_SIGNATURE_RESULT_FAILED ;
@@ -194,10 +195,11 @@ class SignatureEventData
 		uint32_t len ;
 		unsigned char *sign ;
 		unsigned int *signlen ;
-        int signature_result ;		// 0=pending, 1=done, 2=failed/cancelled.
+		int signature_result ;		// 0=pending, 1=done, 2=failed/cancelled.
+		std::string reason ;
 };
 
-bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result)
+bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
 {
 	{
 		QMutexLocker m(&_mutex) ;
@@ -234,7 +236,7 @@ bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len,
 		//
 		std::cerr << "NotifyQt:: deferred signature event requeted. Pushing into queue" << std::endl;
 
-		SignatureEventData *edta = new SignatureEventData(data,len,*signlen) ;
+		SignatureEventData *edta = new SignatureEventData(data,len,*signlen, reason) ;
 
 		_deferred_signature_queue[chksum.toStdString()] = edta ;
 	}
@@ -261,12 +263,21 @@ void NotifyQt::handleSignatureEvent()
 
 
 
-bool NotifyQt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
+bool NotifyQt::askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password,bool& cancelled)
 {
 	RsAutoUpdatePage::lockAllEvents() ;
 
 	QInputDialog dialog;
-	dialog.setWindowTitle(tr("PGP key passphrase"));
+	if (title == "") {
+		dialog.setWindowTitle(tr("PGP key passphrase"));
+	} else if (title == "AuthSSLimpl::SignX509ReqWithGPG()") {
+		dialog.setWindowTitle(tr("You need to sign your node's certificate."));
+	} else if (title == "p3IdService::service_CreateGroup()") {
+		dialog.setWindowTitle(tr("You need to sign your forum/chatrooms identity."));
+	} else {
+		dialog.setWindowTitle(QString::fromStdString(title));
+	}
+
 	dialog.setLabelText((prev_is_bad ? QString("%1\n\n").arg(tr("Wrong password !")) : QString()) + QString("%1:\n    %2").arg(tr("Please enter your PGP password for key"), QString::fromUtf8(key_details.c_str())));
 	dialog.setTextEchoMode(QLineEdit::Password);
 	dialog.setModal(true);

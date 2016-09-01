@@ -191,7 +191,6 @@
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
 #include "retroshare/rspeers.h"
-#include "retroshare/rsreputations.h"
 
 #include "p3grouter.h"
 #include "grouteritems.h"
@@ -1863,15 +1862,6 @@ bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(const GRouterServ
     return true ;
 }
 
-void p3GRouter::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& peer_id)
-{
-    RS_STACK_MUTEX(grMtx) ;
-#ifdef GROUTER_DEBUG
-    grouter_debug() << "Received new routing clue for key " << mid << " from peer " << peer_id << std::endl;
-#endif
-    _routing_matrix.addTrackingInfo(mid,peer_id) ;
-    _changed = true ;
-}
 void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(grMtx) ;
@@ -1994,7 +1984,7 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,uint32_t& er
 {
     try
     {
-        if(rsReputations->isIdentityBanned(item->signature.keyId))
+        if(rsIdentity->isBanned(item->signature.keyId))
         {
             std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
             return false ;
@@ -2356,13 +2346,6 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
         infos.push_back(cinfo) ;
     }
     return true ;
-}
-
-bool p3GRouter::getTrackingInfo(const RsGxsMessageId &mid, RsPeerId &provider_id)
-{
-        RS_STACK_MUTEX(grMtx) ;
-        
-        return _routing_matrix.getTrackingInfo(mid,provider_id) ;
 }
 
 // Dump everything

@@ -30,7 +30,7 @@
 
 #include "util/TokenQueue.h"
 
-#define IMAGE_IDDIALOG          ":/icons/friends_128.png"
+#define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
 namespace Ui {
 class IdDialog;
@@ -77,14 +77,15 @@ private slots:
 	void createExternalCircle();
 	void showEditExistingCircle();
 	void updateCirclesDisplay();
+    void toggleAutoBanIdentities(bool b);
 
 	void acceptCircleSubscription() ;
 	void cancelCircleSubscription() ;
 	void grantCircleMembership() ;
 	void revokeCircleMembership() ;
 
-	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
+	void filterToggled(const bool &value);
 
 	void addIdentity();
 	void removeIdentity();
@@ -149,6 +150,7 @@ private:
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;
+	int filter;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

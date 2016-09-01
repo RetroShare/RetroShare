@@ -10,6 +10,10 @@ DESTDIR = lib
 
 #CONFIG += dsdv
 
+# the dht stunner is used to obtain RS' external ip addr. when it is natted
+# this system is unreliable and rs supports a newer and better one (asking connected peers)
+# CONFIG += useDhtStunner
+
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
@@ -65,8 +69,7 @@ SOURCES *= serialiser/rstlvdsdv.cc \
 bitdht {
 
 HEADERS +=	dht/p3bitdht.h \
-		dht/connectstatebox.h \
-		dht/stunaddrassist.h
+		dht/connectstatebox.h
 
 SOURCES +=	dht/p3bitdht.cc  \
 		dht/p3bitdht_interface.cc \
@@ -80,7 +83,6 @@ HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/tcppacket.h \
 		tcponudp/tcpstream.h \
 		tcponudp/tou.h \
-		tcponudp/udpstunner.h \
 		tcponudp/udprelay.h \
 
 SOURCES +=	tcponudp/udppeer.cc \
@@ -88,8 +90,16 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tcpstream.cc \
 		tcponudp/tou.cc \
 		tcponudp/bss_tou.c \
-		tcponudp/udpstunner.cc \
 		tcponudp/udprelay.cc \
+
+	useDhtStunner {
+		HEADERS +=	dht/stunaddrassist.h \
+				tcponudp/udpstunner.h
+
+		SOURCES +=	tcponudp/udpstunner.cc
+
+		DEFINES += RS_USE_DHT_STUNNER
+	}
 
 	DEFINES *= RS_USE_BITDHT
 

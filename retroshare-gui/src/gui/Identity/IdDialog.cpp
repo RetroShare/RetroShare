@@ -25,6 +25,7 @@
 
 #include <QMessageBox>
 #include <QMenu>
+#include <QWidgetAction>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -41,7 +42,6 @@
 #include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
-#include <retroshare/rsreputations.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
 #include <iostream>
@@ -93,6 +93,7 @@
 #define RSID_FILTER_OTHERS       0x0004
 #define RSID_FILTER_PSEUDONYMS   0x0008
 #define RSID_FILTER_YOURSELF     0x0010
+#define RSID_FILTER_BANNED       0x0020
 #define RSID_FILTER_ALL          0xffff
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
@@ -193,8 +194,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	//mStateHelper->addClear(IDDIALOG_REPLIST, ui->treeWidget_RepList);
 
 	/* Connect signals */
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui->toolButton_NewCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
 
 	connect(ui->removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui->editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
@@ -203,22 +202,21 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->idTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
 	connect(ui->idTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
-	connect(ui->filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
 
-	ui->avlabel->setPixmap(QPixmap(":/images/user/friends64.png"));
-	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/circles_128.png"));
+	ui->avLabel_Person->setPixmap(QPixmap(":/icons/png/people.png"));
+	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
-	ui->headerTextLabel->setText(tr("People"));
+	ui->headerTextLabel_Person->setText(tr("People"));
 	ui->headerTextLabel_Circles->setText(tr("Circles"));
 
 	/* Initialize splitter */
-	ui->splitter->setStretchFactor(0, 0);
-	ui->splitter->setStretchFactor(1, 1);
+	ui->mainSplitter->setStretchFactor(0, 0);
+	ui->mainSplitter->setStretchFactor(1, 1);
 	
   /*remove
 	QList<int> sizes;
@@ -226,14 +224,72 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->splitter->setSizes(sizes);*/
 
 	/* Add filter types */
-    ui->filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
-    ui->filterComboBox->addItem(tr("Owned by myself"), RSID_FILTER_OWNED_BY_YOU);
-    ui->filterComboBox->addItem(tr("Linked to my node"), RSID_FILTER_YOURSELF);
-    ui->filterComboBox->addItem(tr("Linked to neighbor nodes"), RSID_FILTER_FRIENDS);
-    ui->filterComboBox->addItem(tr("Linked to distant nodes"), RSID_FILTER_OTHERS);
-    ui->filterComboBox->addItem(tr("Anonymous"), RSID_FILTER_PSEUDONYMS);
-	ui->filterComboBox->setCurrentIndex(0);
+	QMenu *idTWHMenu = new QMenu(tr("Show Items"), this);
+	ui->idTreeWidget->addContextMenuMenu(idTWHMenu);
 
+	QActionGroup *idTWHActionGroup = new QActionGroup(this);
+	QAction *idTWHAction = new QAction(QIcon(),tr("All"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setChecked(true);
+	filter = RSID_FILTER_ALL;
+	idTWHAction->setData(RSID_FILTER_ALL);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Owned by myself"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_OWNED_BY_YOU);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to my node"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_YOURSELF);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to neighbor nodes"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_FRIENDS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Linked to distant nodes"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_OTHERS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Anonymous"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_PSEUDONYMS);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+
+	idTWHAction = new QAction(QIcon(),tr("Banned"), this);
+	idTWHAction->setActionGroup(idTWHActionGroup);
+	idTWHAction->setCheckable(true);
+	idTWHAction->setData(RSID_FILTER_BANNED);
+	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
+	idTWHMenu->addAction(idTWHAction);
+	
+	QAction *CreateIDAction = new QAction(QIcon(":/icons/png/person.png"),tr("Create new Identity"), this);
+	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
+	
+	QAction *CreateCircleAction = new QAction(QIcon(":/icons/png/circles.png"),tr("Create new circle"), this);
+	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
+	
+	QMenu *menu = new QMenu();
+	menu->addAction(CreateIDAction);
+	menu->addAction(CreateCircleAction);
+	ui->toolButton_New->setMenu(menu);
+	
 	/* Add filter actions */
 	QTreeWidgetItem *headerItem = ui->idTreeWidget->headerItem();
 	QString headerText = headerItem->text(RSID_COL_NICKNAME);
@@ -279,12 +335,10 @@ IdDialog::IdDialog(QWidget *parent) :
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
 			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
 			spoofed, but noone can prove who really owns a given identity.</p> \
-                	<p><b>External circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
+                    <p><b>Circles</b> are groups of identities (anonymous or signed), that are shared at a distance over the network. They can be \
                 		used to restrict the visibility to forums, channels, etc. </p> \
-                	<p>An <b>external circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
-                		or even self-restricted, meaning that it is only visible to its members.</p> \
-                	<p>A <b>local circle</b> is a group of friend nodes (represented by their PGP Ids), and can also be used to restrict the \
-                		visibility of forums and channels. They are not shared over the network, and their list of members is only visible to you.</p>") ;
+                    <p>An <b>circle</b> can be restricted to another circle, thereby limiting its visibility to members of that circle \
+                        or even self-restricted, meaning that it is only visible to invited members.</p>") ;
 
 	registerHelpButton(ui->helpButton, hlp_str) ;
 
@@ -295,6 +349,7 @@ IdDialog::IdDialog(QWidget *parent) :
     
     //connect(ui->treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
+    connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
 
     
     /* Setup TokenQueue */
@@ -310,6 +365,17 @@ IdDialog::IdDialog(QWidget *parent) :
     
     tmer->start(10000) ;	// update every 10 secs. 
 }	
+
+void IdDialog::toggleAutoBanIdentities(bool b)
+{
+    RsPgpId id(ui->lineEdit_GpgId->text().left(16).toStdString());
+
+    if(!id.isNull())
+    {
+        rsReputations->banNode(id,b) ;
+        requestIdList();
+    }
+}
 
 void IdDialog::updateCirclesDisplay()
 {
@@ -577,8 +643,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 #endif
 		// remove any identity that has an item, but no subscription flag entry
 		std::vector<QTreeWidgetItem*> to_delete ;
-        
-		for(uint32_t k=0;k<item->childCount();++k)
+
+		for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
 				to_delete.push_back(item->child(k));
 
@@ -600,7 +666,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			QTreeWidgetItem *subitem = NULL ;
 
 			// see if the item already exists
-			for(uint32_t k=0;k<item->childCount();++k)
+			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
 				{
 					subitem = item->child(k);
@@ -1248,7 +1314,7 @@ void IdDialog::processSettings(bool load)
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RSID_COL_NICKNAME).toInt());
 
 		// state of splitter
-		ui->splitter->restoreState(Settings->value("splitter").toByteArray());
+		ui->mainSplitter->restoreState(Settings->value("splitter").toByteArray());
 	} else {
 		// save settings
 
@@ -1256,7 +1322,7 @@ void IdDialog::processSettings(bool load)
 		Settings->setValue("filterColumn", ui->filterLineEdit->currentFilter());
 
 		// state of splitter
-		Settings->setValue("splitter", ui->splitter->saveState());
+		Settings->setValue("splitter", ui->mainSplitter->saveState());
 		
 		//save expanding
 		Settings->setValue("ExpandAll", allItem->isExpanded());
@@ -1267,14 +1333,20 @@ void IdDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void IdDialog::filterComboBoxChanged()
-{
-	requestIdList();
-}
-
 void IdDialog::filterChanged(const QString& /*text*/)
 {
 	filterIds();
+}
+
+void IdDialog::filterToggled(const bool &value)
+{
+	if (value) {
+		QAction *source = qobject_cast<QAction *>(QObject::sender());
+		if (source) {
+			filter = source->data().toInt();
+			requestIdList();
+		}
+	}
 }
 
 void IdDialog::updateSelection()
@@ -1316,9 +1388,12 @@ void IdDialog::requestIdList()
 
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
 {
-    bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
-    bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-    uint32_t item_flags = 0 ;
+	bool isLinkedToOwnNode = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
+	bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+	RsIdentityDetails idd ;
+	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
+	bool isBanned = idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD;
+	uint32_t item_flags = 0 ;
 
 	/* do filtering */
 	bool ok = false;
@@ -1354,31 +1429,43 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
             item_flags |= RSID_FILTER_OWNED_BY_YOU ;
     }
 
+	if (isBanned && (accept & RSID_FILTER_BANNED))
+	{
+		ok = true;
+		item_flags |= RSID_FILTER_BANNED ;
+	}
+
 	if (!ok)
 		return false;
 
 	if (!item)
         item = new TreeWidgetItem();
         
-        RsReputations::ReputationInfo info ;
-        rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
     item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
     
-    //time_t now = time(NULL) ;
-    //item->setText(RSID_COL_LASTUSED, getHumanReadableDuration(now - data.mLastUsageTS)) ;
+    if(isBanned)
+    {
+        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
+        item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
+        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+        item->setForeground(RSID_COL_VOTES,QBrush(Qt::red));
+    }
+    else
+    {
+        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
+        item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
+        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
+        item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
+    }
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
- 
-    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(info.mOverallReputationScore - 1.0f,'f',3));
+    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
 
     if(isOwnId)
     {
-	    RsIdentityDetails idd ;
-	    rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
-
 	    QFont font = item->font(RSID_COL_NICKNAME) ;
 
 	    font.setBold(true) ;
@@ -1455,7 +1542,7 @@ void IdDialog::insertIdList(uint32_t token)
 {
 	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
 
-	int accept = ui->filterComboBox->itemData(ui->filterComboBox->currentIndex()).toInt();
+	int accept = filter;
 		
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
@@ -1626,9 +1713,12 @@ void IdDialog::insertIdDetails(uint32_t token)
     else
 	    ui->lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()) + tr(" [unverified]"));
 
+    ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
+    ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
+
     time_t now = time(NULL) ;
     ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
-    ui->headerTextLabel->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+    ui->headerTextLabel_Person->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 
     QPixmap pixmap ;
 
@@ -1639,7 +1729,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
 #endif
 
-    ui->avlabel->setPixmap(pixmap);
+    ui->avLabel_Person->setPixmap(pixmap);
     ui->avatarLabel->setPixmap(pixmap);
 
 	if (data.mPgpKnown)
@@ -1659,23 +1749,23 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if(data.mPgpId.isNull())
 	{
 		ui->lineEdit_GpgId->hide() ;
-		ui->PgpId_LB->hide() ;
+		ui->label_GpgId->hide() ;
 	}
 	else
 	{
 		ui->lineEdit_GpgId->show() ;
-		ui->PgpId_LB->show() ;
+		ui->label_GpgId->show() ;
 	}
     
     if(data.mPgpKnown)
     {
 		ui->lineEdit_GpgName->show() ;
-		ui->PgpName_LB->show() ;
+		ui->label_GpgName->show() ;
     }
     else
     {
 		ui->lineEdit_GpgName->hide() ;
-		ui->PgpName_LB->hide() ;
+		ui->label_GpgName->hide() ;
     }
 
     bool isLinkedToOwnPgpId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) ;
@@ -1697,7 +1787,9 @@ void IdDialog::insertIdDetails(uint32_t token)
             ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
     }
     else
+    {
         ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
+    }
 
 	if (isOwnId)
 	{
@@ -1716,6 +1808,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui->chatIdentity->setEnabled(true);
 		ui->inviteButton->setEnabled(true);
 	}
+
+    ui->autoBanIdentities_CB->setChecked(rsReputations->isNodeBanned(data.mPgpId));
 
 	/* now fill in the reputation information */
 
@@ -1740,12 +1834,12 @@ void IdDialog::insertIdDetails(uint32_t token)
 #endif
 
     RsReputations::ReputationInfo info ;
-    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),info) ;
-    
-	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+    rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
-	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+
+    ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
+     ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
     
     switch(info.mOwnOpinion)
 	{
@@ -1984,7 +2078,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
-    QMenu contextMnu( this );
+    QMenu *contextMenu = new QMenu(this);
 
 
     std::list<RsGxsId> own_identities ;
@@ -2021,10 +2115,10 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 #endif
 	    RsGxsId keyId((*it)->text(RSID_COL_KEYID).toStdString());
 
-	    RsReputations::ReputationInfo info ;
-	    rsReputations->getReputationInfo(keyId,info) ;
+                RsIdentityDetails det ;
+                rsIdentity->getIdDetails(keyId,det) ;
 
-        	switch(info.mOwnOpinion)
+            switch(det.mReputation.mOwnOpinion)
             {
             case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
 		    break ;
@@ -2044,75 +2138,105 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		    ++n_is_not_a_contact ;
     }
 
-    if(root_node_present)	// don't show menu if some of the root nodes are present
-	    return ;
+		if(!root_node_present)	// don't show menu if some of the root nodes are present
+		{
 
-    if(!one_item_owned_by_you)
-    {
-	    if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item 
-		    if(own_identities.size() <= 1)
-		    {
-			    QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+			if(!one_item_owned_by_you)
+			{
+				QWidget *widget = new QWidget(contextMenu);
+				widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
-			    if(own_identities.empty())
-				    action->setEnabled(false) ;
-			    else
-				    action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
-		    }
-		    else
-		    {
-			    QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+				// create menu header
+				QHBoxLayout *hbox = new QHBoxLayout(widget);
+				hbox->setMargin(0);
+				hbox->setSpacing(6);
 
-			    for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
-			    {
-				    RsIdentityDetails idd ;
-				    rsIdentity->getIdDetails(*it,idd) ;
+				QLabel *iconLabel = new QLabel(widget);
+				QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+				iconLabel->setPixmap(pix);
+				iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
+				hbox->addWidget(iconLabel);
 
-				    QPixmap pixmap ;
+				QLabel *textLabel = new QLabel("<strong>" + ui->titleBarLabel->text() + "</strong>", widget);
+				hbox->addWidget(textLabel);
 
-				    if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-					    pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+				QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+				hbox->addItem(spacerItem);
 
-				    QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
-				    action->setData(QString::fromStdString((*it).toStdString())) ;
-			    }
-		    }
+				widget->setLayout(hbox);
 
-	    // always allow to send messages
-	    contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+				QWidgetAction *widgetAction = new QWidgetAction(this);
+				widgetAction->setDefaultWidget(widget);
+				contextMenu->addAction(widgetAction);
 
-	    contextMnu.addSeparator();
+				if(n_selected_items == 1)		// if only one item is selected, allow to chat with this item
+				{
+					if(own_identities.size() <= 1)
+					{
+						QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
-	    if(n_is_a_contact == 0)
-		    contextMnu.addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
-        
-	    if(n_is_not_a_contact == 0)
-		    contextMnu.addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+						if(own_identities.empty())
+							action->setEnabled(false) ;
+						else
+							action->setData(QString::fromStdString((own_identities.front()).toStdString())) ;
+					}
+					else
+					{
+						QMenu *mnu = contextMenu->addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
 
-	    contextMnu.addSeparator();
+						for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+						{
+							RsIdentityDetails idd ;
+							rsIdentity->getIdDetails(*it,idd) ;
 
-	    if(n_positive_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(":/images/vote_up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+							QPixmap pixmap ;
 
-	    if(n_neutral_reputations == 0)	// only unban when all items are banned
-		    contextMnu.addAction(QIcon(":/images/vote_neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
-        
-	    if(n_negative_reputations == 0)
-		    contextMnu.addAction(QIcon(":/images/vote_down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
-    }
+							if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+								pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
 
-    if(one_item_owned_by_you && n_selected_items==1)
-    {
-	    contextMnu.addSeparator();
+							QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+							action->setData(QString::fromStdString((*it).toStdString())) ;
+						}
+					}
+				}
 
-	    contextMnu.addAction(ui->editIdentity);
-	    contextMnu.addAction(ui->removeIdentity);
-    }
+				// always allow to send messages
+				contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
 
+				contextMenu->addSeparator();
 
-    contextMnu.addSeparator();
+				if(n_is_a_contact == 0)
+					contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 
-    contextMnu.exec(QCursor::pos());
+				if(n_is_not_a_contact == 0)
+					contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+
+				contextMenu->addSeparator();
+
+				if(n_positive_reputations == 0)	// only unban when all items are banned
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+
+				if(n_neutral_reputations == 0)	// only unban when all items are banned
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+
+				if(n_negative_reputations == 0)
+					contextMenu->addAction(QIcon(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+			}
+
+			if(one_item_owned_by_you && n_selected_items==1)
+			{
+				contextMenu->addSeparator();
+
+				contextMenu->addAction(ui->editIdentity);
+				contextMenu->addAction(ui->removeIdentity);
+			}
+
+		}
+
+		contextMenu = ui->idTreeWidget->createStandardContextMenu(contextMenu);
+
+		contextMenu->exec(QCursor::pos());
+		delete contextMenu;
 }
 
 void IdDialog::chatIdentity()

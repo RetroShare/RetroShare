@@ -10,7 +10,7 @@
     <height>512</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="NotifyPageVLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -20,21 +20,30 @@
       <attribute name="title">
        <string>Feed</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
+      <layout class="QVBoxLayout" name="tabFeedVLayout">
        <item>
-        <widget class="QGroupBox" name="notify_ForumNewMsg">
+        <widget class="QGroupBox" name="newsFeedGroupBox">
          <property name="title">
           <string>News Feed</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="notify_ForumNewMsgHLayout">
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
            <number>6</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="notify_VLayout">
             <item>
              <widget class="QCheckBox" name="notify_Peers">
               <property name="text">
@@ -104,7 +113,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="testFeedVLayout">
             <item>
              <widget class="QPushButton" name="testFeedButton">
               <property name="text">
@@ -113,7 +122,7 @@
              </widget>
             </item>
             <item>
-             <spacer name="verticalSpacer_2">
+             <spacer name="testFeedVSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -135,7 +144,7 @@
          <property name="title">
           <string>Message</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="messageGroupBoxVLayout">
           <item>
            <widget class="QCheckBox" name="message_ConnectAttempt">
             <property name="text">
@@ -147,7 +156,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer name="tabFeedVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -165,7 +174,7 @@
       <attribute name="title">
        <string>Toasters</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+      <layout class="QVBoxLayout" name="tabToastersVLayout">
        <item>
         <widget class="QPushButton" name="pushButtonDisableAll">
          <property name="toolTip">
@@ -180,11 +189,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="toasterGroupBox">
          <property name="title">
           <string>Toasters</string>
          </property>
-         <layout class="QVBoxLayout">
+         <layout class="QVBoxLayout" name="toasterGroupBoxVLayout">
           <property name="leftMargin">
            <number>9</number>
           </property>
@@ -192,9 +201,9 @@
            <number>9</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="popup_HLayout">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
+             <layout class="QVBoxLayout" name="popupVLayout">
               <item>
                <widget class="QCheckBox" name="popup_Connect">
                 <property name="text">
@@ -250,7 +259,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_9">
+             <layout class="QVBoxLayout" name="testToasterVLayout">
               <item>
                <widget class="QPushButton" name="testToasterButton">
                 <property name="text">
@@ -259,7 +268,7 @@
                </widget>
               </item>
               <item>
-               <spacer name="verticalSpacer_3">
+               <spacer name="testToasterVSpacer">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -276,7 +285,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="positionGLayout">
             <item row="1" column="0">
              <widget class="QLabel" name="labelToasterPosition">
               <property name="sizePolicy">
@@ -355,7 +364,7 @@
            </layout>
           </item>
           <item>
-           <spacer name="verticalSpacer_6">
+           <spacer name="tabToastersVSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -376,7 +385,7 @@
       <attribute name="title">
        <string>Systray</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_12">
+      <layout class="QVBoxLayout" name="tabSystrayVLayout">
        <item>
         <widget class="QGroupBox" name="trayNotifyGroupBox">
          <property name="title">
@@ -390,7 +399,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="systrayMessageGroupBox">
          <property name="title">
           <string>Systray message</string>
          </property>
@@ -413,7 +422,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_4">
+        <spacer name="tabSystrayVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -431,7 +440,7 @@
       <attribute name="title">
        <string>Chat Lobbies</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_13">
+      <layout class="QVBoxLayout" name="tabChatLobbiesVLayout">
        <item>
         <widget class="QCheckBox" name="chatLobbies_CountUnRead">
          <property name="text">
@@ -457,7 +466,17 @@
         <widget class="QPlainTextEdit" name="chatLobbies_TextToNotify"/>
        </item>
        <item>
-        <spacer name="verticalSpacer_5">
+        <widget class="QCheckBox" name="chatLobbies_TextCaseSensitive">
+         <property name="toolTip">
+          <string>Checked, if the identity and the text above occurences must be in the same case to trigger count.</string>
+         </property>
+         <property name="text">
+          <string>Case sensitive</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="tabChatLobbiesVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

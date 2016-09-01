@@ -193,6 +193,33 @@ public:
     // then each handler should pop the top element
     std::stack<std::string> mPath;
     std::string mFullPath;
+	bool setPath(std::string reqPath)
+	{
+		std::string str;
+		for(std::string::reverse_iterator sit = reqPath.rbegin(); sit != reqPath.rend(); sit++)
+		{
+			if((*sit) != '/')
+			{
+				// add to front because we are traveling in reverse order
+				str = *sit + str;
+			}
+			else
+			{
+				if(str != "")
+				{
+					mPath.push(str);
+					str.clear();
+				}
+			}
+		}
+		if(str != "")
+		{
+			mPath.push(str);
+		}
+		mFullPath = reqPath;
+
+		return true;
+	}
 
     // parameters should be used to influence the result
     // for example include or exclude some information

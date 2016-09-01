@@ -38,7 +38,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/friends_128.png") ; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/people.svg") ; }
 	virtual QString pageName() const { return tr("People") ; }
 	virtual QString helpText() const { return ""; }
 

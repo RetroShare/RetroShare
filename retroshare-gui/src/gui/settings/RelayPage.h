@@ -40,7 +40,7 @@ class RelayPage: public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/server.svg") ; }
 	 virtual QString pageName() const { return tr("Relay") ; }
 		virtual QString helpText() const ;
 

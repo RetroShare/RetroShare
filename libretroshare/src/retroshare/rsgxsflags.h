@@ -33,7 +33,8 @@ namespace GXS_SERV {
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG            = 0x00000100;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN    = 0x00000400;
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES = 0x00000800;
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES = 0x00000800;	// not used anymore
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN      = 0x00001000;
 
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_MASK       = 0x000000ff;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  = 0x00000001;
@@ -105,6 +106,7 @@ namespace GXS_SERV {
 #define IS_MSG_UNPROCESSED(status)              (status & GXS_SERV::GXS_MSG_STATUS_UNPROCESSED)
 
 #define IS_GROUP_PGP_AUTHED(signFlags)          (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG)
+#define IS_GROUP_PGP_KNOWN_AUTHED(signFlags)    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)
 #define IS_GROUP_MESSAGE_TRACKING(signFlags)    (signFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
 
 #define IS_GROUP_ADMIN(subscribeFlags)          (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)

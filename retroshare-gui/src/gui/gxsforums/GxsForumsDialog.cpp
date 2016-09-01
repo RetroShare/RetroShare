@@ -104,9 +104,9 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/images/konversation.png";
+		return ":/icons/png/forums.png";
 	case ICON_NEW:
-		return ":/images/new_forum16.png";
+		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
 		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:

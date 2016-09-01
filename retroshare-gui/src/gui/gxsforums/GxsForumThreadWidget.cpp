@@ -44,7 +44,6 @@
 
 #include <retroshare/rsgxsforums.h>
 #include <retroshare/rsgrouter.h>
-#include <retroshare/rsreputations.h>
 #include <retroshare/rspeers.h>
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"
@@ -578,17 +577,6 @@ void GxsForumThreadWidget::changedThread()
 		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString());
 	}
 
-    	// Show info about who passed on this message.
-    	if(mForumGroup.mMeta.mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES) 
-        {
-            RsPeerId providerId ;
-	    std::string msgId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
-        	RsGxsMessageId mid(msgId) ;
-            
-            if(rsGRouter->getTrackingInfo(mid,providerId) && !providerId.isNull() )
-		item->setToolTip(COLUMN_THREAD_TITLE,tr("This message was obtained from %1").arg(QString::fromUtf8(rsPeers->getPeerName(providerId).c_str())));
-        }
-        
 	if (mFillThread) {
 		return;
 	}
@@ -791,11 +779,9 @@ void GxsForumThreadWidget::insertGroupData()
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     QString anti_spam_features1 ;
-    if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
+    if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown node IDs reputation threshold set to 0.4");
+    else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
             
-    QString anti_spam_features2 ;
-    if(IS_GROUP_MESSAGE_TRACKING(tw->mSignFlags)) anti_spam_features2 = tr("Message routing info kept for 10 days");
-    
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
@@ -817,9 +803,20 @@ void GxsForumThreadWidget::insertGroupData()
 		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
     }
 	    break ;
-    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY: distrib_string = tr("Your eyes only");
-	    break ;
-    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        distrib_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(group.mMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distrib_string += desc ;
+    }
+        break ;
+
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
 	    break ;
     default:
 	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
@@ -830,9 +827,6 @@ void GxsForumThreadWidget::insertGroupData()
        
        if(!anti_spam_features1.isNull())
     		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
-       
-       if(!anti_spam_features2.isNull())
-    		tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features2);
        
     tw->mForumDescription += QString("<b>%1: </b><br/><br/>%2").arg(tr("Description"), QString::fromUtf8(group.mDescription.c_str()));
 
@@ -979,44 +973,54 @@ void GxsForumThreadWidget::fillThreadStatus(QString text)
 	ui->progressText->setText(text);
 }
 
-QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
+QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent)
 {
-    // Early check for a message that should be hidden because its author 
-    // is flagged with a bad reputation
-    
-    
-    bool redacted =  rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
-                
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
+	// Early check for a message that should be hidden because its author
+	// is flagged with a bad reputation
+
+
+	bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
+
+	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
 
-	QString text;
 
-    	if(redacted)
+	if(redacted)
 		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
+
+	//msg.mMeta.mChildTs Was not updated when received new child
+	// so do it here.
 	QDateTime qtime;
-	QString sort;
+	qtime.setTime_t(msg.mMeta.mPublishTs);
 
-	if (useChildTS)
-		qtime.setTime_t(msg.mMeta.mChildTs);
-	else
-		qtime.setTime_t(msg.mMeta.mPublishTs);
-
-	text = DateTime::formatDateTime(qtime);
-	sort = qtime.toString("yyyyMMdd_hhmmss");
+	QString itemText = DateTime::formatDateTime(qtime);
+	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
 
 	if (useChildTS)
 	{
-		qtime.setTime_t(msg.mMeta.mPublishTs);
-		text += " / ";
-		text += DateTime::formatDateTime(qtime);
-		sort += "_" + qtime.toString("yyyyMMdd_hhmmss");
+		for(QTreeWidgetItem *grandParent = parent; grandParent!=NULL; grandParent = grandParent->parent())
+		{
+			//Update Parent Child TimeStamp
+			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
+			QString oldTSSort = grandParent->data(COLUMN_THREAD_DATE, ROLE_THREAD_SORT).toString();
+
+			QString oldCTSText = oldTSText.split("|").at(0);
+			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
+			QString oldCTSSort = oldTSSort.split("|").at(0);
+			QString oldPTSSort = oldTSSort.contains("|") ? oldTSSort.split(" | ").at(1) : oldCTSSort;
+			if (oldCTSSort.toDouble() < itemSort.toDouble())
+			{
+				grandParent->setText(COLUMN_THREAD_DATE, DateTime::formatDateTime(qtime) + " | " + oldPTSText);
+				grandParent->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort + " | " + oldPTSSort);
+			}
+		}
 	}
-	item->setText(COLUMN_THREAD_DATE, text);
-	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
+
+	item->setText(COLUMN_THREAD_DATE, itemText);
+	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort);
 
 	// Set later with GxsIdRSTreeWidgetItem::setId
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
@@ -1067,7 +1071,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 #endif
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, msg.mMeta.mMsgStatus);
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, false);
-        
+
+	if (parent) parent->addChild(item);
 	return item;
 }
 
@@ -1408,7 +1413,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    bool redacted = rsReputations->isIdentityBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 

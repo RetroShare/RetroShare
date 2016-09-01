@@ -559,7 +559,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
         return ((MHDHandlerBase*)(*con_cls))->handleRequest(connection, url, method, version, upload_data, upload_data_size);
     }
 
-    // these characters are not allowe in the url, raise an error if they occur
+    // these characters are not allowed in the url, raise an error if they occur
     // reason: don't want to serve files outside the current document root
     const char *double_dots = "..";
     if(strstr(url, double_dots))

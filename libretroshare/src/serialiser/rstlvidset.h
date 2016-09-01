@@ -115,11 +115,12 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
         std::set<ID_CLASS> ids ;
 };
 
-typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;
-typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
-typedef t_RsTlvIdSet<Sha1CheckSum,TLV_TYPE_HASHSET> 	RsTlvHashSet ;
-typedef t_RsTlvIdSet<RsGxsId,TLV_TYPE_GXSIDSET> 	RsTlvGxsIdSet ;
-typedef t_RsTlvIdSet<RsGxsCircleId,TLV_TYPE_GXSCIRCLEIDSET> 	RsTlvGxsCircleIdSet ;
+typedef t_RsTlvIdSet<RsPeerId,     TLV_TYPE_PEERSET>	        RsTlvPeerIdSet ;
+typedef t_RsTlvIdSet<RsPgpId,      TLV_TYPE_PGPIDSET>	        RsTlvPgpIdSet ;
+typedef t_RsTlvIdSet<Sha1CheckSum, TLV_TYPE_HASHSET> 	        RsTlvHashSet ;
+typedef t_RsTlvIdSet<RsGxsId,      TLV_TYPE_GXSIDSET>        RsTlvGxsIdSet ;
+typedef t_RsTlvIdSet<RsGxsCircleId,TLV_TYPE_GXSCIRCLEIDSET>  RsTlvGxsCircleIdSet ;
+typedef t_RsTlvIdSet<RsNodeGroupId,TLV_TYPE_NODEGROUPIDSET>  RsTlvNodeGroupIdSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem
 {

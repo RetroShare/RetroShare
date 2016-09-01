@@ -887,7 +887,7 @@ void MessageComposer::calculateTitle()
     setWindowTitle(tr("Compose") + ": " + misc::removeNewLine(ui.titleEdit->text()));
 }
 
-static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupInfos, std::list<RsPeerId> &checkSslIds, std::list<std::string> &checkGroupIds)
+static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupInfos, std::list<RsPeerId> &checkSslIds, std::list<RsNodeGroupId> &checkGroupIds)
 {
     checkGroupIds.clear();
 
@@ -1342,7 +1342,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         {
         case PEER_TYPE_GROUP: {
             RsGroupInfo groupInfo;
-            if (rsPeers->getGroupInfo(id, groupInfo) == false) {
+            if (rsPeers->getGroupInfo(RsNodeGroupId(id), groupInfo) == false) {
                 // group not found
                 continue;
             }
@@ -1587,7 +1587,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
             icon = QIcon(IMAGE_GROUP16);
 
             RsGroupInfo groupInfo;
-            if (rsPeers->getGroupInfo(id, groupInfo)) {
+            if (rsPeers->getGroupInfo(RsNodeGroupId(id), groupInfo)) {
                 name = GroupDefs::name(groupInfo);
             } else {
                 name = tr("Unknown");
@@ -1771,7 +1771,7 @@ void MessageComposer::editingRecipientFinished()
         QString groupName = GroupDefs::name(*groupIt);
         if (text.compare(groupName, Qt::CaseSensitive) == 0) {
             // found it
-            setRecipientToRow(row, type, PEER_TYPE_GROUP, groupIt->id);
+            setRecipientToRow(row, type, PEER_TYPE_GROUP, groupIt->id.toStdString());
             return;
         }
     }

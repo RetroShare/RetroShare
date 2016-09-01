@@ -46,7 +46,11 @@ public:
 	void resort();
 
 	// Add QAction to context menu (action won't be deleted)
-	void addHeaderContextMenuAction(QAction *action);
+	void addContextMenuAction(QAction *action);
+	// Add QMenu to context menu (menu won't be deleted)
+	void addContextMenuMenu(QMenu *menu);
+	// Get Default context menu (Columns choice and menus added)
+	QMenu *createStandardContextMenu(QMenu *menu);
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
@@ -68,7 +72,8 @@ private:
 	bool mEnableColumnCustomize;
 	quint32 mSettingsVersion;
 	QMap<int, bool> mColumnCustomizable;
-	QList<QAction*> mHeaderContextMenuActions;
+	QList<QAction*> mContextMenuActions;
+	QList<QMenu*> mContextMenuMenus;
 };
 
 #endif

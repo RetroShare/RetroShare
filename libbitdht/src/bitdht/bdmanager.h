@@ -153,6 +153,9 @@ virtual void callbackConnect(bdId *srcId, bdId *proxyId, bdId *destId,
 
 int 	isBitDhtPacket(char *data, int size, struct sockaddr_in &from);
 
+	// this function is used by bdFilter (must be public!)
+void	doIsBannedCallback(const sockaddr_in *addr, bool *isAvailable, bool* isBanned);
+
 private:
 
 

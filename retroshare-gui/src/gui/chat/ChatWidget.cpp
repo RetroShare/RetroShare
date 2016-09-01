@@ -62,7 +62,7 @@
 
 #include <time.h>
 
-#define FMM 2//fontMetricsMultiplicator
+#define FMM 2.5//fontMetricsMultiplicator
 
 /*****
  * #define CHAT_DEBUG 1
@@ -91,8 +91,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	//Resize Tool buttons
 	ui->emoteiconButton->setFixedSize(buttonSize);
 	ui->emoteiconButton->setIconSize(iconSize);
-	ui->fontButton->setFixedSize(buttonSize);
-	ui->fontButton->setIconSize(iconSize);
 	ui->attachPictureButton->setFixedSize(buttonSize);
 	ui->attachPictureButton->setIconSize(iconSize);
 	ui->addFileButton->setFixedSize(buttonSize);
@@ -109,7 +107,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
-
+  ui->sendButton->setIconSize(iconSize);
+  
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
 	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
@@ -121,7 +120,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after")+" "+QString::number(uiMaxSearchLimitColor)+" "+tr("items found (need more CPU)"));
 
-  	ui->markButton->setVisible(false);
+	ui->markButton->setVisible(false);
 	ui->leSearch->setVisible(false);
 	ui->searchBefore->setVisible(false);
 	ui->searchBefore->setToolTip(tr("<b>Find Previous </b><br/><i>Ctrl+Shift+G</i>"));
@@ -180,22 +179,26 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
-	QMenu *menu = new QMenu();
-	menu->addAction(ui->actionChooseFont);
-	menu->addAction(ui->actionChooseColor);
-	menu->addAction(ui->actionResetFont);
-	menu->addAction(ui->actionNoEmbed);
-	menu->addAction(ui->actionSendAsPlainText);
-	ui->fontButton->setMenu(menu);
+	QMenu *fontmenu = new QMenu(tr("Set text font & color"));
+	fontmenu->addAction(ui->actionChooseFont);
+	fontmenu->addAction(ui->actionChooseColor);
+	fontmenu->addAction(ui->actionResetFont);
+	fontmenu->addAction(ui->actionNoEmbed);
+	fontmenu->addAction(ui->actionSendAsPlainText);
 
-	menu = new QMenu();
+	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionMessageHistory);
 	ui->pushtoolsButton->setMenu(menu);
-  	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
-  
+	menu->addMenu(fontmenu);
+	
+	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
+
+	ui->textBrowser->setImageBlockWidget(ui->imageBlockWidget);
+	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());//Need to be called after setImageBlockWidget
+	ui->imageBlockWidget->setAutoHide(true);
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);

@@ -30,7 +30,7 @@ class CreateGroup : public QDialog
 
 public:
 	/** Default constructor */
-	CreateGroup(const std::string &groupId, QWidget *parent = 0);
+    CreateGroup(const RsNodeGroupId &groupId, QWidget *parent = 0);
 	/** Default destructor */
 	~CreateGroup();
 
@@ -39,7 +39,7 @@ private slots:
 	void groupNameChanged(QString);
 
 private:
-	std::string mGroupId;
+    RsNodeGroupId mGroupId;
 	QStringList mUsedGroupNames;
 	bool mIsStandard;
 

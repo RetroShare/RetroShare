@@ -202,7 +202,7 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 	addrv4.sin_addr = ap->sin_addr;
 	addrv4.sin_port = ap->sin_port;	
 	
-	
+#ifdef RS_USE_DHT_STUNNER
 	if (mDhtStunner)
 	{
 		mDhtStunner->dropStunPeer(addrv4);
@@ -211,7 +211,7 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 	{
 		mProxyStunner->dropStunPeer(addrv4);
 	}
-
+#endif // RS_USE_DHT_STUNNER
 	return 1;
 }
 

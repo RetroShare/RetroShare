@@ -50,7 +50,7 @@ QIcon FeedReaderUserNotify::getIcon()
 
 QIcon FeedReaderUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/FeedReader.png") : QIcon(":/images/FeedReader.png");
+	return hasNew ? QIcon(":/images/feedreader-notify.png") : QIcon(":/images/FeedReader.png");
 }
 
 unsigned int FeedReaderUserNotify::getNewCount()

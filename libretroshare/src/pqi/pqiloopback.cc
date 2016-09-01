@@ -23,8 +23,11 @@
  *
  */
 
-#include "pqi/pqi.h"
 #include "pqi/pqiloopback.h"
+
+#include <stddef.h>  // for NULL
+
+class RsItem;
 
 /***
 #define LOOPBACK_DEBUG 1

@@ -24,7 +24,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_GXSFORUMS         ":/images/konversation.png"
+#define IMAGE_GXSFORUMS         ":/icons/png/forums.png"
 
 class GxsForumsDialog : public GxsGroupFrameDialog
 {

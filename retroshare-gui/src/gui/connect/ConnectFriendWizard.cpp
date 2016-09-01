@@ -31,18 +31,20 @@
 #include <QUrlQuery>
 #endif
 
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
 #include "ConnectFriendWizard.h"
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/notifyqt.h"
 #include "gui/common/GroupDefs.h"
-#include "gui/GetStartedDialog.h"
 #include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsbanlist.h>
 
 #include "ConnectProgressDialog.h"
+#include "gui/GetStartedDialog.h"
 
 //#define FRIEND_WIZARD_DEBUG
 
@@ -297,7 +299,7 @@ static void fillGroups(ConnectFriendWizard *wizard, QComboBox *comboBox, const Q
 	GroupDefs::sortByName(groupInfoList);
 	comboBox->addItem("", ""); // empty value
 	for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
-		comboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id));
+        comboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id.toStdString()));
 	}
 
 	if (groupId.isEmpty() == false) {
@@ -853,7 +855,7 @@ void ConnectFriendWizard::accept()
 		} 
 
 		if (!groupId.isEmpty()) 
-			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
+            rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
 	}
 
 	if ((accept_connection) && (!peerDetails.id.isNull()))
@@ -1040,7 +1042,9 @@ void ConnectFriendWizard::saveCert()
 
 void ConnectFriendWizard::loadFriendCert()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    QString fileName ;
+    if(!misc::getOpenFileName(this, RshareSettings::LASTDIR_CERT, tr("Select Certificate"), tr("RetroShare Certificate (*.rsc );;All Files (*)"),fileName))
+            return ;
 
 	if (!fileName.isNull()) {
 		ui->friendFileNameEdit->setText(fileName);

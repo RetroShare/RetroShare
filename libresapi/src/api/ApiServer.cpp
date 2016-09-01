@@ -150,10 +150,10 @@ want generic resource caching mechanism
   - dynamic handlers contain result data, and thus get deleted after a while
 
 it is even possible to implement a resource-changed check at the highest level
-this allows to compute everything on the server side and only send chanes to the client
+this allows to compute everything on the server side and only send changes to the client
 the different resource providers don't have to implement a resource changed check then
 a top level change detector will poll them
-of course this does not wokr with a deep resource tree with millions of nodes
+of course this does not work with a deep resource tree with millions of nodes
 
 for this we have the dynamic handlers,
 they are created on demand and know how to listen for changes which affect them

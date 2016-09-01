@@ -34,7 +34,6 @@
 #include "pqi/p3historymgr.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsiface.h"
-#include "retroshare/rsreputations.h"
 #include "retroshare/rsidentity.h"
 #include "rsserver/p3face.h"
 #include "gxs/rsgixs.h"
@@ -139,7 +138,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         return false ;
     }
     
-    if(rsReputations->isIdentityBanned(cli->signature.keyId))
+    if(rsIdentity->isBanned(cli->signature.keyId))
     {
         std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
         return false ;
@@ -169,7 +168,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         if(it == _chat_lobbys.end())
         {
 #ifdef DEBUG_CHAT_LOBBIES
-            std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+            std::cerr << "Chatlobby for id " << std::hex << cli->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
 #endif
             return false;
         }
@@ -648,7 +647,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 	time_t now = time(NULL) ;
 
-    if(rsReputations->isIdentityBanned(item->signature.keyId))
+    if(rsIdentity->isBanned(item->signature.keyId))
     {
         std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
         return ;

@@ -26,15 +26,20 @@
 #ifndef MRK_PQI_HANDLER_HEADER
 #define MRK_PQI_HANDLER_HEADER
 
-#include "pqi/pqi.h"
-#include "pqi/pqiqos.h"
+#include <stdint.h>              // for uint32_t
+#include <time.h>                // for time_t, NULL
+#include <list>                  // for list
+#include <map>                   // for map
 
-#include "util/rsthreads.h"
-#include "retroshare/rstypes.h"
-#include "retroshare/rsconfig.h"
+#include "pqi/pqi.h"             // for P3Interface, pqiPublisher
+#include "retroshare/rstypes.h"  // for RsPeerId
+#include "util/rsthreads.h"      // for RsStackMutex, RsMutex
 
-#include <map>
-#include <list>
+class PQInterface;
+class RSTrafficClue;
+class RsBwRates;
+class RsItem;
+class RsRawItem;
 
 class SearchModule
 {

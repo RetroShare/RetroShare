@@ -55,7 +55,7 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
+bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
 {
 	cancelled = false ;
     {
@@ -67,6 +67,7 @@ bool RsControlModule::askForPassword(const std::string &key_details, bool /* pre
         }
 
         mWantPassword = true;
+        mTitle = title;
         mKeyName = key_details;
         mPassword = "";
         mStateTokenServer->replaceToken(mStateToken);

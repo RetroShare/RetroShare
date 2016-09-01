@@ -25,6 +25,8 @@
 
 #include "pqiqosstreamer.h"
 
+//#define DEBUG_PQIQOSSTREAMER 1
+
 const float    pqiQoSstreamer::PQI_QOS_STREAMER_ALPHA      = 2.0f ;
 
 pqiQoSstreamer::pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin)
@@ -60,6 +62,11 @@ void pqiQoSstreamer::locked_storeInOutputQueue(void *ptr,int size,int priority)
 
 void pqiQoSstreamer::locked_clear_out_queue()
 {
+#ifdef DEBUG_PQIQOSSTREAMER
+    if(qos_queue_size() > 0)
+	    std::cerr << "  pqiQoSstreamer::locked_clear_out_queue(): clearing " << qos_queue_size() << " pending outqueue elements." << std::endl;
+#endif
+    
 	pqiQoS::clear() ;
 	_total_item_size = 0 ;
 	_total_item_count = 0 ;

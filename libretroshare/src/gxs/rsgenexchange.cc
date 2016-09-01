@@ -881,8 +881,15 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			{
 
 				// now check reputation of the message author
-				float reputation_threshold =  ( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)) ? (RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM): (RsReputations::REPUTATION_THRESHOLD_DEFAULT) ;
-
+				float reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
+                
+                			if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
+                			else if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
+                            	else
+				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
+                            
 				if(details.mReputation.mOverallReputationScore < reputation_threshold)
 				{
 #ifdef GEN_EXCH_DEBUG	
@@ -2004,16 +2011,16 @@ void RsGenExchange::publishMsgs()
                 
                 // FIXTESTS global variable rsPeers not available in unittests!
                 if(rsPeers)
-                {
                     mRoutingClues[msg->metaData->mAuthorId].insert(rsPeers->getOwnId()) ;
-                    mTrackingClues.push_back(std::make_pair(msg->msgId,rsPeers->getOwnId())) ;
-                }
                 
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
 				msgChangeMap[grpId].push_back(msgId);
 
 				delete[] metaDataBuff;
+
+                if(mNetService != NULL)
+                    mNetService->stampMsgServerUpdateTS(grpId) ;
 
 				// add to published to allow acknowledgement
 				mMsgNotify.insert(std::make_pair(mit->first, std::make_pair(grpId, msgId)));
@@ -2152,11 +2159,6 @@ void RsGenExchange::processRoutingClues()
             rsGRouter->addRoutingClue(GRouterKeyId(it->first),(*it2) ) ;
 
     mRoutingClues.clear() ;
-    
-    for(std::list<std::pair<RsGxsMessageId,RsPeerId> >::const_iterator it = mTrackingClues.begin();it!=mTrackingClues.end();++it)
-	    rsGRouter->addTrackingInfo((*it).first,(*it).second) ;
-    
-    mTrackingClues.clear() ;
 }
 
 void RsGenExchange::processGroupDelete()
@@ -2285,231 +2287,240 @@ bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 
 void RsGenExchange::publishGrps()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
-    NxsGrpSignPendVect::iterator vit = mGrpsToPublish.begin();
-
-    typedef std::pair<bool, RsGxsGroupId> GrpNote;
-    std::map<uint32_t, GrpNote> toNotify;
-
-    while( vit != mGrpsToPublish.end() )
+    std::list<RsGxsGroupId> groups_to_subscribe ;
+    
     {
-    	GxsGrpPendingSign& ggps = *vit;
+	    RS_STACK_MUTEX(mGenMtx) ;
+	    NxsGrpSignPendVect::iterator vit = mGrpsToPublish.begin();
 
-    	/* do intial checks to see if this entry has expired */
-    	time_t now = time(NULL) ;
-    	uint32_t token = ggps.mToken;
+	    typedef std::pair<bool, RsGxsGroupId> GrpNote;
+	    std::map<uint32_t, GrpNote> toNotify;
+
+	    while( vit != mGrpsToPublish.end() )
+	    {
+		    GxsGrpPendingSign& ggps = *vit;
+
+		    /* do intial checks to see if this entry has expired */
+		    time_t now = time(NULL) ;
+		    uint32_t token = ggps.mToken;
 
 
-    	if(now > (ggps.mStartTS + PENDING_SIGN_TIMEOUT) )
-    	{
-    		// timed out
-    		toNotify.insert(std::make_pair(
-    				token, GrpNote(false, RsGxsGroupId())));
-    		delete ggps.mItem;
-    		vit = mGrpsToPublish.erase(vit);
+		    if(now > (ggps.mStartTS + PENDING_SIGN_TIMEOUT) )
+		    {
+			    // timed out
+			    toNotify.insert(std::make_pair(
+			                            token, GrpNote(false, RsGxsGroupId())));
+			    delete ggps.mItem;
+			    vit = mGrpsToPublish.erase(vit);
 
-    		continue;
-    	}
+			    continue;
+		    }
 
-    	RsGxsGroupId grpId;
-        RsNxsGrp* grp = new RsNxsGrp(mServType);
-        RsGxsGrpItem* grpItem = ggps.mItem;
+		    RsGxsGroupId grpId;
+		    RsNxsGrp* grp = new RsNxsGrp(mServType);
+		    RsGxsGrpItem* grpItem = ggps.mItem;
 
-        RsTlvSecurityKeySet fullKeySet;
+		    RsTlvSecurityKeySet fullKeySet;
 
-        if(!(ggps.mHaveKeys))
-        {
-        	generateGroupKeys(fullKeySet, true);
-        	ggps.mHaveKeys = true;
-        	ggps.mKeys = fullKeySet;
-        }
-        else
-        	fullKeySet = ggps.mKeys;
+		    if(!(ggps.mHaveKeys))
+		    {
+			    generateGroupKeys(fullKeySet, true);
+			    ggps.mHaveKeys = true;
+			    ggps.mKeys = fullKeySet;
+		    }
+		    else
+			    fullKeySet = ggps.mKeys;
 
-	// find private admin key
-        RsTlvPrivateRSAKey privAdminKey;
-        bool privKeyFound = false;
-        for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit_keys = fullKeySet.private_keys.begin(); mit_keys != fullKeySet.private_keys.end(); ++mit_keys)
-        {
-            RsTlvPrivateRSAKey& key = mit_keys->second;
+		    // find private admin key
+		    RsTlvPrivateRSAKey privAdminKey;
+		    bool privKeyFound = false;
+		    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit_keys = fullKeySet.private_keys.begin(); mit_keys != fullKeySet.private_keys.end(); ++mit_keys)
+		    {
+			    RsTlvPrivateRSAKey& key = mit_keys->second;
 
-            if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
-            {
-                privAdminKey = key;
-                privKeyFound = true;
-            }
-        }
+			    if(key.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+			    {
+				    privAdminKey = key;
+				    privKeyFound = true;
+			    }
+		    }
 
-        uint8_t create = CREATE_FAIL;
+		    uint8_t create = CREATE_FAIL;
 
-        if(privKeyFound)
-        {
-		    // get group id from private admin key id
-			grpItem->meta.mGroupId = grp->grpId = RsGxsGroupId(privAdminKey.keyId);
+		    if(privKeyFound)
+		    {
+			    // get group id from private admin key id
+			    grpItem->meta.mGroupId = grp->grpId = RsGxsGroupId(privAdminKey.keyId);
 
-			ServiceCreate_Return ret = service_CreateGroup(grpItem, fullKeySet);
+			    ServiceCreate_Return ret = service_CreateGroup(grpItem, fullKeySet);
 
-			bool serialOk = false, servCreateOk;
+			    bool serialOk = false, servCreateOk;
 
-			if(ret == SERVICE_CREATE_SUCCESS)
-			{
-				uint32_t size = mSerialiser->size(grpItem);
-				char *gData = new char[size];
-				serialOk = mSerialiser->serialise(grpItem, gData, &size);
-				grp->grp.setBinData(gData, size);
-				delete[] gData;
-				servCreateOk = true;
+			    if(ret == SERVICE_CREATE_SUCCESS)
+			    {
+				    uint32_t size = mSerialiser->size(grpItem);
+				    char *gData = new char[size];
+				    serialOk = mSerialiser->serialise(grpItem, gData, &size);
+				    grp->grp.setBinData(gData, size);
+				    delete[] gData;
+				    servCreateOk = true;
 
-			}else
-			{
-				servCreateOk = false;
-			}
+			    }else
+			    {
+				    servCreateOk = false;
+			    }
 
-			if(serialOk && servCreateOk)
-			{
-				grp->metaData = new RsGxsGrpMetaData();
-				grpItem->meta.mPublishTs = time(NULL);
-				*(grp->metaData) = grpItem->meta;
+			    if(serialOk && servCreateOk)
+			    {
+				    grp->metaData = new RsGxsGrpMetaData();
+				    grpItem->meta.mPublishTs = time(NULL);
+				    *(grp->metaData) = grpItem->meta;
 
-				// TODO: change when publish key optimisation added (public groups don't have publish key
-				grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED
-						| GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
+				    // TODO: change when publish key optimisation added (public groups don't have publish key
+				    grp->metaData->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN | GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED
+				                    | GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
 
-				create = createGroup(grp, fullKeySet);
+				    create = createGroup(grp, fullKeySet);
 
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "RsGenExchange::publishGrps() ";
-				std::cerr << " GrpId: " << grp->grpId;
-				std::cerr << " CircleType: " << (uint32_t) grp->metaData->mCircleType;
-				std::cerr << " CircleId: " << grp->metaData->mCircleId.toStdString();
-				std::cerr << std::endl;
+				    std::cerr << "RsGenExchange::publishGrps() ";
+				    std::cerr << " GrpId: " << grp->grpId;
+				    std::cerr << " CircleType: " << (uint32_t) grp->metaData->mCircleType;
+				    std::cerr << " CircleId: " << grp->metaData->mCircleId.toStdString();
+				    std::cerr << std::endl;
 #endif
 
-				if(create == CREATE_SUCCESS)
-				{
-                    			// Here we need to make sure that no private keys are included. This is very important since private keys
-                    			// can be used to modify the group. Normally the private key set is whiped out by createGroup, but
+				    if(create == CREATE_SUCCESS)
+				    {
+					    // Here we need to make sure that no private keys are included. This is very important since private keys
+					    // can be used to modify the group. Normally the private key set is whiped out by createGroup, but
 
-                    			grp->metaData->keys.private_keys.clear() ;
-                                
-					uint32_t mdSize = grp->metaData->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
-                    
-                    			{
-						RsTemporaryMemory metaData(mdSize);
-						serialOk = grp->metaData->serialise(metaData, mdSize,RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
+					    grp->metaData->keys.private_keys.clear() ;
+
+					    uint32_t mdSize = grp->metaData->serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
+
+					    {
+						    RsTemporaryMemory metaData(mdSize);
+						    serialOk = grp->metaData->serialise(metaData, mdSize,RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
 #warning TODO: grp->meta should be renamed grp->public_meta !
-						grp->meta.setBinData(metaData, mdSize);
-                    			}
+						    grp->meta.setBinData(metaData, mdSize);
+					    }
 
-					// Place back private keys for publisher and database storage
-					grp->metaData->keys.private_keys = fullKeySet.private_keys;
+					    // Place back private keys for publisher and database storage
+					    grp->metaData->keys.private_keys = fullKeySet.private_keys;
 
-					if(mDataStore->validSize(grp) && serialOk)
-					{
-						grpId = grp->grpId;
-						computeHash(grp->grp, grp->metaData->mHash);
-						grp->metaData->mRecvTS = time(NULL);
+					    if(mDataStore->validSize(grp) && serialOk)
+					    {
+						    grpId = grp->grpId;
+						    computeHash(grp->grp, grp->metaData->mHash);
+						    grp->metaData->mRecvTS = time(NULL);
 
-						if(ggps.mIsUpdate)
-							mDataAccess->updateGroupData(grp);
-						else
-							mDataAccess->addGroupData(grp);
+						    if(ggps.mIsUpdate)
+							    mDataAccess->updateGroupData(grp);
+						    else
+							    mDataAccess->addGroupData(grp);
 #warning this is bad: addGroupData/updateGroupData actially deletes grp. But it may be used below? grp should be a class object and not deleted manually!
-						if(mNetService!=NULL)
-							mNetService->subscribeStatusChanged(grpId,true) ;
-					}
-					else
-					{
-						create = CREATE_FAIL;
-					}
-				}
-			}
-			else if(ret == SERVICE_CREATE_FAIL_TRY_LATER)
-			{
-                // if the service is not ready yet, reset the start timestamp to give the service more time
-                // the service should have it's own timeout mechanism
-                // services should return SERVICE_CREATE_FAIL if the action timed out
-                // at the moment this is only important for the idservice:
-                //   the idservice may ask the user for a password, and the user needs time
-                ggps.mStartTS = now;
-				create = CREATE_FAIL_TRY_LATER;
-			}
-            else if(ret == SERVICE_CREATE_FAIL)
-                create = CREATE_FAIL;
-        }
-        else
-        {
-#ifdef GEN_EXCH_DEBUG
-        	std::cerr << "RsGenExchange::publishGrps() Could not find private publish keys " << std::endl;
-#endif
-        	create = CREATE_FAIL;
-        }
 
-        if(create == CREATE_FAIL)
-        {
+                                                     groups_to_subscribe.push_back(grpId) ;
+					    }
+					    else
+					    {
+						    create = CREATE_FAIL;
+					    }
+				    }
+			    }
+			    else if(ret == SERVICE_CREATE_FAIL_TRY_LATER)
+			    {
+				    // if the service is not ready yet, reset the start timestamp to give the service more time
+				    // the service should have it's own timeout mechanism
+				    // services should return SERVICE_CREATE_FAIL if the action timed out
+				    // at the moment this is only important for the idservice:
+				    //   the idservice may ask the user for a password, and the user needs time
+				    ggps.mStartTS = now;
+				    create = CREATE_FAIL_TRY_LATER;
+			    }
+			    else if(ret == SERVICE_CREATE_FAIL)
+				    create = CREATE_FAIL;
+		    }
+		    else
+		    {
 #ifdef GEN_EXCH_DEBUG
-        	std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
+			    std::cerr << "RsGenExchange::publishGrps() Could not find private publish keys " << std::endl;
 #endif
-            delete grp;
-            delete grpItem;
-            vit = mGrpsToPublish.erase(vit);
-            toNotify.insert(std::make_pair(
-            		token, GrpNote(false, grpId)));
+			    create = CREATE_FAIL;
+		    }
 
-        }
-        else if(create == CREATE_FAIL_TRY_LATER)
-        {
+		    if(create == CREATE_FAIL)
+		    {
 #ifdef GEN_EXCH_DEBUG
-        	std::cerr << "RsGenExchange::publishGrps() failed grp, trying again " << std::endl;
+			    std::cerr << "RsGenExchange::publishGrps() failed to publish grp " << std::endl;
 #endif
-        	delete grp;
-        	ggps.mLastAttemptTS = time(NULL);
-        	++vit;
-        }
-        else if(create == CREATE_SUCCESS)
-        {
-        	delete grpItem;
-        	vit = mGrpsToPublish.erase(vit);
+			    delete grp;
+			    delete grpItem;
+			    vit = mGrpsToPublish.erase(vit);
+			    toNotify.insert(std::make_pair(
+			                            token, GrpNote(false, grpId)));
+
+		    }
+		    else if(create == CREATE_FAIL_TRY_LATER)
+		    {
+#ifdef GEN_EXCH_DEBUG
+			    std::cerr << "RsGenExchange::publishGrps() failed grp, trying again " << std::endl;
+#endif
+			    delete grp;
+			    ggps.mLastAttemptTS = time(NULL);
+			    ++vit;
+		    }
+		    else if(create == CREATE_SUCCESS)
+		    {
+			    delete grpItem;
+			    vit = mGrpsToPublish.erase(vit);
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies"
-					  << std::endl;
+			    std::cerr << "RsGenExchange::publishGrps() ok -> pushing to notifies"
+			              << std::endl;
 #endif
 
-			// add to published to allow acknowledgement
-			toNotify.insert(std::make_pair(token,
-					GrpNote(true,grpId)));
-        }
+			    // add to published to allow acknowledgement
+			    toNotify.insert(std::make_pair(token,
+			                                   GrpNote(true,grpId)));
+		    }
+	    }
+
+	    std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+
+	    std::list<RsGxsGroupId> grpChanged;
+	    for(; mit != toNotify.end(); ++mit)
+	    {
+		    GrpNote& note = mit->second;
+		    uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+		                                : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+
+		    mGrpNotify.insert(std::make_pair(mit->first, note.second));
+		    mDataAccess->updatePublicRequestStatus(mit->first, status);
+
+		    if(note.first)
+			    grpChanged.push_back(note.second);
+	    }
+
+	    if(!grpChanged.empty())
+	    {
+		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
+		    gc->mGrpIdList = grpChanged;
+		    mNotifications.push_back(gc);
+#ifdef GEN_EXCH_DEBUG
+		    std::cerr << "  adding the following grp ids to notification: " << std::endl;
+		    for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
+			    std::cerr << "    " << *it << std::endl;
+#endif
+	    }
     }
 
-    std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
-
-    std::list<RsGxsGroupId> grpChanged;
-    for(; mit != toNotify.end(); ++mit)
-    {
-    	GrpNote& note = mit->second;
-    	uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-    			: RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
-
-    	mGrpNotify.insert(std::make_pair(mit->first, note.second));
-		mDataAccess->updatePublicRequestStatus(mit->first, status);
-
-		if(note.first)
-			grpChanged.push_back(note.second);
-    }
-
-    if(!grpChanged.empty())
-    {
-    	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
-    	gc->mGrpIdList = grpChanged;
-    	mNotifications.push_back(gc);
-#ifdef GEN_EXCH_DEBUG
-                    			std::cerr << "  adding the following grp ids to notification: " << std::endl;
-                                	for(std::list<RsGxsGroupId>::const_iterator it(grpChanged.begin());it!=grpChanged.end();++it)
-                                        	std::cerr << "    " << *it << std::endl;
-#endif
-    }
-
+    // This is done off-mutex to avoid possible cross deadlocks with the net service.
+    
+    if(mNetService!=NULL)
+        for(std::list<RsGxsGroupId>::const_iterator it(groups_to_subscribe.begin());it!=groups_to_subscribe.end();++it)
+	    mNetService->subscribeStatusChanged((*it),true) ;
 }
 
 
@@ -2590,228 +2601,243 @@ void RsGenExchange::computeHash(const RsTlvBinaryData& data, RsFileHash& hash)
 
 void RsGenExchange::processRecvdMessages()
 {
-	RS_STACK_MUTEX(mGenMtx) ;
+    std::list<RsGxsMessageId> messages_to_reject ;
+    
+    {
+	    RS_STACK_MUTEX(mGenMtx) ;
 
 #ifdef GEN_EXCH_DEBUG
-	if(!mMsgPendingValidate.empty())
-		std::cerr << "processing received messages" << std::endl;
+	    if(!mMsgPendingValidate.empty())
+		    std::cerr << "processing received messages" << std::endl;
 #endif
-	NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
+	    NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
 
 #ifdef GEN_EXCH_DEBUG
-	if(!mMsgPendingValidate.empty())
-		std::cerr << "  pending validation" << std::endl;
+	    if(!mMsgPendingValidate.empty())
+		    std::cerr << "  pending validation" << std::endl;
 #endif
-	for(; pend_it != mMsgPendingValidate.end();)
-	{
-		GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
+	    for(; pend_it != mMsgPendingValidate.end();)
+	    {
+		    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
 
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
+		    std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
 #endif
-		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
-		{
+		    if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+		    {
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << " = max! deleting." << std::endl;
+			    std::cerr << " = max! deleting." << std::endl;
 #endif
-			delete gpsi.mItem;
-			pend_it = mMsgPendingValidate.erase(pend_it);
-		}
-		else
-		{
+			    delete gpsi.mItem;
+			    pend_it = mMsgPendingValidate.erase(pend_it);
+		    }
+		    else
+		    {
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << " movign to recvd." << std::endl;
+			    std::cerr << " movign to recvd." << std::endl;
 #endif
-			mReceivedMsgs.push_back(gpsi.mItem);
-			++pend_it;
-		}
-	}
+			    mReceivedMsgs.push_back(gpsi.mItem);
+			    ++pend_it;
+		    }
+	    }
 
-	if(mReceivedMsgs.empty())
-		return;
+	    if(mReceivedMsgs.empty())
+		    return;
 
-	std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
-	GxsMsgReq msgIds;
-	std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
+	    std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
+	    GxsMsgReq msgIds;
+	    std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
 
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
+	    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 
-	// coalesce group meta retrieval for performance
-	for(; vit != mReceivedMsgs.end(); ++vit)
-	{
-		RsNxsMsg* msg = *vit;
-		grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
-	}
+	    // coalesce group meta retrieval for performance
+	    for(; vit != mReceivedMsgs.end(); ++vit)
+	    {
+		    RsNxsMsg* msg = *vit;
+		    grpMetas.insert(std::make_pair(msg->grpId, (RsGxsGrpMetaData*)NULL));
+	    }
 
-	mDataStore->retrieveGxsGrpMetaData(grpMetas);
-
-#ifdef GEN_EXCH_DEBUG
-	std::cerr << "  updating received messages:" << std::endl;
-#endif
-	for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); ++vit)
-	{
-		RsNxsMsg* msg = *vit;
-		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
-
-		bool ok = false;
-
-		if(msg->meta.bin_len != 0)
-			ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
-
-		msg->metaData = meta;
+	    mDataStore->retrieveGxsGrpMetaData(grpMetas);
 
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
+	    std::cerr << "  updating received messages:" << std::endl;
 #endif
-		uint8_t validateReturn = VALIDATE_FAIL;
+	    for(vit = mReceivedMsgs.begin(); vit != mReceivedMsgs.end(); ++vit)
+	    {
+		    RsNxsMsg* msg = *vit;
+		    RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
 
-		if(ok)
-		{
-			std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
+		    bool ok = false;
+
+		    if(msg->meta.bin_len != 0)
+			    ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+
+		    msg->metaData = meta;
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
+		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
 #endif
-			RsGxsGrpMetaData* grpMeta = NULL ;
+		    uint8_t validateReturn = VALIDATE_FAIL;
 
-			// validate msg
-			if(mit != grpMetas.end())
-			{
-				grpMeta = mit->second;
-				validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
+		    if(ok)
+		    {
+			    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(msg->grpId);
 
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "    grpMeta.mSignFlags: " << std::hex << grpMeta->mSignFlags << std::dec << std::endl;
-				std::cerr << "    grpMeta.mAuthFlags: " << std::hex << grpMeta->mAuthenFlags << std::dec << std::endl;
-				std::cerr << "    message validation result: " << (int)validateReturn << std::endl;
+			    std::cerr << "    msg info         : grp id=" << msg->grpId << ", msg id=" << msg->msgId << std::endl;
 #endif
-			}
+			    RsGxsGrpMetaData* grpMeta = NULL ;
 
-			if(validateReturn == VALIDATE_SUCCESS)
-			{
-				meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
-				msgs.insert(std::make_pair(msg, meta));
-
-				std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
-				if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
-				{
-					msgv.push_back(msg->msgId);
-				}
-
-				NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-				                                                        getMsgIdPair(*msg));
-
-				if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
-
-				computeHash(msg->msg, meta->mHash);
-				meta->recvTS = time(NULL);
-#ifdef GEN_EXCH_DEBUG
-				std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
-				std::cerr << "    computed hash: " << meta->mHash << std::endl;
-				std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
-#endif
-
-				if(!msg->metaData->mAuthorId.isNull())
-					mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
-
-				if(grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES)
-					mTrackingClues.push_back(std::make_pair(msg->msgId,msg->PeerId())) ;
-			}
-            
-            		if(validateReturn == VALIDATE_FAIL)
-		    	{
-                        	// In this case, we notify the network exchange service not to DL the message again, at least not yet. 
-                        
-#ifdef GEN_EXCH_DEBUG
-                        	std::cerr << "Notifying the network service to not download this message again." << std::endl;
-#endif
-                        	mNetService->rejectMessage(msg->msgId) ;
-		    	}
-		}
-		else
-		{
-#ifdef GEN_EXCH_DEBUG
-			std::cerr << " deserialisation failed!" <<std::endl;
-#endif
-			validateReturn = VALIDATE_FAIL;
-		}
-
-		if(validateReturn == VALIDATE_FAIL)
-		{
+			    // validate msg
+			    if(mit != grpMetas.end())
+			    {
+				    grpMeta = mit->second;
+				    validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "Validation failed for message id "
-			          << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+				    std::cerr << "    grpMeta.mSignFlags: " << std::hex << grpMeta->mSignFlags << std::dec << std::endl;
+				    std::cerr << "    grpMeta.mAuthFlags: " << std::hex << grpMeta->mAuthenFlags << std::dec << std::endl;
+				    std::cerr << "    message validation result: " << (int)validateReturn << std::endl;
+#endif
+			    }
+
+			    if(validateReturn == VALIDATE_SUCCESS)
+			    {
+				    meta->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+				    msgs.insert(std::make_pair(msg, meta));
+
+				    std::vector<RsGxsMessageId> &msgv = msgIds[msg->grpId];
+				    if (std::find(msgv.begin(), msgv.end(), msg->msgId) == msgv.end())
+				    {
+					    msgv.push_back(msg->msgId);
+				    }
+
+				    NxsMsgPendingVect::iterator validated_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+				                                                            getMsgIdPair(*msg));
+
+				    if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
+
+				    computeHash(msg->msg, meta->mHash);
+				    meta->recvTS = time(NULL);
+#ifdef GEN_EXCH_DEBUG
+				    std::cerr << "    new status flags: " << meta->mMsgStatus << std::endl;
+				    std::cerr << "    computed hash: " << meta->mHash << std::endl;
+				    std::cerr << "Message received. Identity=" << msg->metaData->mAuthorId << ", from peer " << msg->PeerId() << std::endl;
 #endif
 
-			NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
-			                                                     getMsgIdPair(*msg));
+				    if(!msg->metaData->mAuthorId.isNull())
+					    mRoutingClues[msg->metaData->mAuthorId].insert(msg->PeerId()) ;
+			    }
 
-			if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
-			delete msg;
-
-
-		}
-		else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
-		{
+			    if(validateReturn == VALIDATE_FAIL)
+			    {
+				    // In this case, we notify the network exchange service not to DL the message again, at least not yet. 
 
 #ifdef GEN_EXCH_DEBUG
-			std::cerr << "failed to validate msg, trying again: "
-			          << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+				    std::cerr << "Notifying the network service to not download this message again." << std::endl;
 #endif
-
-			RsGxsGrpMsgIdPair id;
-			id.first = msg->grpId;
-			id.second = msg->msgId;
-
-			// first check you haven't made too many attempts
-
-			NxsMsgPendingVect::iterator vit = std::find(
-			                        mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
-
-			if(vit == mMsgPendingValidate.end())
-			{
-				GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
-				mMsgPendingValidate.push_back(item);
-			}else
-			{
-				vit->mAttempts++;
-			}
-		}
-	}
-
-	// clean up resources from group meta retrieval
-	freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
-	                RsGxsGrpMetaData*>(grpMetas);
-
-	if(!msgIds.empty())
-	{
+				    messages_to_reject.push_back(msg->msgId) ;
+			    }
+		    }
+		    else
+		    {
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "  removing existing and old messages from incoming list." << std::endl;
+			    std::cerr << " deserialisation failed!" <<std::endl;
 #endif
-		removeDeleteExistingMessages(msgs, msgIds);
+			    validateReturn = VALIDATE_FAIL;
+		    }
+
+		    if(validateReturn == VALIDATE_FAIL)
+		    {
 
 #ifdef GEN_EXCH_DEBUG
-		std::cerr << "  storing remaining messages" << std::endl;
+			    std::cerr << "Validation failed for message id "
+			              << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
 #endif
-		mDataStore->storeMessage(msgs);
 
-		RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
-		c->msgChangeMap = msgIds;
-		mNotifications.push_back(c);
-	}
+			    NxsMsgPendingVect::iterator failed_entry = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(),
+			                                                         getMsgIdPair(*msg));
 
-	mReceivedMsgs.clear();
+			    if(failed_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(failed_entry);
+			    delete msg;
+
+
+		    }
+		    else if(validateReturn == VALIDATE_FAIL_TRY_LATER)
+		    {
+
+#ifdef GEN_EXCH_DEBUG
+			    std::cerr << "failed to validate msg, trying again: "
+			              << "msg->grpId: " << msg->grpId << ", msgId: " << msg->msgId << std::endl;
+#endif
+
+			    RsGxsGrpMsgIdPair id;
+			    id.first = msg->grpId;
+			    id.second = msg->msgId;
+
+			    // first check you haven't made too many attempts
+
+			    NxsMsgPendingVect::iterator vit = std::find(
+			                            mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
+
+			    if(vit == mMsgPendingValidate.end())
+			    {
+				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+				    mMsgPendingValidate.push_back(item);
+			    }else
+			    {
+				    vit->mAttempts++;
+			    }
+		    }
+	    }
+
+	    // clean up resources from group meta retrieval
+	    freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
+	                    RsGxsGrpMetaData*>(grpMetas);
+
+	    if(!msgIds.empty())
+	    {
+#ifdef GEN_EXCH_DEBUG
+		    std::cerr << "  removing existing and old messages from incoming list." << std::endl;
+#endif
+		    removeDeleteExistingMessages(msgs, msgIds);
+
+#ifdef GEN_EXCH_DEBUG
+		    std::cerr << "  storing remaining messages" << std::endl;
+#endif
+		    mDataStore->storeMessage(msgs);
+
+		    RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE, false);
+		    c->msgChangeMap = msgIds;
+		    mNotifications.push_back(c);
+	    }
+
+	    mReceivedMsgs.clear();
+    }
+    
+    // Done off-mutex to avoid cross deadlocks in the netservice that might call the RsGenExchange as an observer..
+    
+    if(mNetService != NULL)
+	    for(std::list<RsGxsMessageId>::const_iterator it(messages_to_reject.begin());it!=messages_to_reject.end();++it)
+		    mNetService->rejectMessage(*it) ;
+}
+
+bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
+{
+    return true;
 }
 
 void RsGenExchange::processRecvdGroups()
 {
-	RS_STACK_MUTEX(mGenMtx) ;
+    RS_STACK_MUTEX(mGenMtx) ;
 
 	if(mReceivedGrps.empty())
 		return;
 
-	NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
+#ifdef GEN_EXCH_DEBUG
+    std::cerr << "RsGenExchange::Processing received groups" << std::endl;
+#endif
+    NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
 	std::vector<RsGxsGroupId> existingGrpIds;
 	std::list<RsGxsGroupId> grpIds;
 
@@ -2826,12 +2852,12 @@ void RsGenExchange::processRecvdGroups()
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
 		bool deserialOk = false;
 
-		if(grp->meta.bin_len != 0)
+        if(grp->meta.bin_len != 0)
 			deserialOk = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
 
 		bool erase = true;
 
-        if(deserialOk)
+        if(deserialOk && acceptNewGroup(meta))
         {
 #ifdef GEN_EXCH_DEBUG
             	std::cerr << "  processing validation for group " << meta->mGroupId << ", attempts number " << gpsi.mAttempts << std::endl;
@@ -2911,8 +2937,10 @@ void RsGenExchange::processRecvdGroups()
         }
         else
         {
-            std::cerr << "(EE) deserialise error in group meta data" << std::endl;
-        	delete grp;
+            if(!deserialOk)
+                std::cerr << "(EE) deserialise error in group meta data" << std::endl;
+
+            delete grp;
 			delete meta;
 			erase = true;
 		}

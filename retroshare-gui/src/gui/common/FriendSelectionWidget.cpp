@@ -108,7 +108,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mActionSortByState = new QAction(tr("Sort by state"), this);
 	mActionSortByState->setCheckable(true);
 	connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
-	ui->friendList->addHeaderContextMenuAction(mActionSortByState);
+	ui->friendList->addContextMenuAction(mActionSortByState);
 
 	/* initialize list */
 	ui->friendList->setColumnCount(COLUMN_COUNT);
@@ -271,9 +271,9 @@ void FriendSelectionWidget::secured_fillList()
         selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
-    std::set<std::string> groupIdsSelected;
+    std::set<RsNodeGroupId> groupIdsSelected;
 	if (mShowTypes & SHOW_GROUP) {
-        selectedIds<std::string,IDTYPE_GROUP>(groupIdsSelected,true);
+        selectedIds<RsNodeGroupId,IDTYPE_GROUP>(groupIdsSelected,true);
 	}
 
     std::set<RsPgpId> gpgIdsSelected;
@@ -304,6 +304,9 @@ void FriendSelectionWidget::secured_fillList()
 		rsPeers->getGPGAllList(gpgIds);
 	else
 		rsPeers->getGPGAcceptedList(gpgIds);
+
+    // add own pgp id to the list
+    gpgIds.push_back(rsPeers->getGPGOwnId()) ;
 
     std::list<RsPeerId> sslIds;
     std::list<RsPeerId>::iterator sslIt;
@@ -347,7 +350,7 @@ void FriendSelectionWidget::secured_fillList()
 			groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 			groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP16));
 
-			groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
+            groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
 
 			groupItem->setExpanded(true);
 
@@ -363,7 +366,7 @@ void FriendSelectionWidget::secured_fillList()
 				groupItem->setCheckState(0, Qt::Unchecked);
 			}
 
-			emit itemAdded(IDTYPE_GROUP, QString::fromStdString(groupInfo->id), groupItem);
+            emit itemAdded(IDTYPE_GROUP, QString::fromStdString(groupInfo->id.toStdString()), groupItem);
 
 			if (std::find(groupIdsSelected.begin(), groupIdsSelected.end(), groupInfo->id) != groupIdsSelected.end()) {
 				setSelected(mListModus, groupItem, true);
@@ -805,16 +808,16 @@ void FriendSelectionWidget::addContextMenuAction(QAction *action)
 
 void FriendSelectionWidget::contextMenuRequested(const QPoint &/*pos*/)
 {
-	QMenu contextMenu(this);
+	QMenu *contextMenu = new QMenu(this);
 
 	if (mListModus == MODUS_CHECK) {
-		contextMenu.addAction(QIcon(), tr("Mark all"), this, SLOT(selectAll()));
-		contextMenu.addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
+		contextMenu->addAction(QIcon(), tr("Mark all"), this, SLOT(selectAll()));
+		contextMenu->addAction(QIcon(), tr("Mark none"), this, SLOT(deselectAll()));
 	}
 
 	if (!mContextMenuActions.isEmpty()) {
 		bool addSeparator = false;
-		if (!contextMenu.isEmpty()) {
+		if (!contextMenu->isEmpty()) {
 			// Check for visible action
 			foreach (QAction *action, mContextMenuActions) {
 				if (action->isVisible()) {
@@ -825,17 +828,19 @@ void FriendSelectionWidget::contextMenuRequested(const QPoint &/*pos*/)
 		}
 
 		if (addSeparator) {
-			contextMenu.addSeparator();
+			contextMenu->addSeparator();
 		}
 
-		contextMenu.addActions(mContextMenuActions);
+		contextMenu->addActions(mContextMenuActions);
 	}
 
-	if (contextMenu.isEmpty()) {
-		return;
+	contextMenu = ui->friendList->createStandardContextMenu(contextMenu);
+
+	if (!contextMenu->isEmpty()) {
+		contextMenu->exec(QCursor::pos());
 	}
 
-	contextMenu.exec(QCursor::pos());
+	delete contextMenu;
 }
 
 void FriendSelectionWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)

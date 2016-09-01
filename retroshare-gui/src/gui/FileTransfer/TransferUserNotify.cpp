@@ -41,12 +41,12 @@ bool TransferUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon TransferUserNotify::getIcon()
 {
-	return QIcon(":/images/ktorrent32.png");
+	return QIcon(":/icons/png/filesharing.png");
 }
 
 QIcon TransferUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/ktorrent_red_128.png") : QIcon(":/icons/ktorrent_128.png");
+    return hasNew ? QIcon(":/icons/png/filesharing-notify.png") : QIcon(":/icons/png/filesharing.png");
 }
 
 unsigned int TransferUserNotify::getNewCount()

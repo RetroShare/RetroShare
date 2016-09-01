@@ -35,13 +35,13 @@ win32 {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	OPENCV_VERSION = "249"
+	OPENCV_VERSION = "2413"
 	USE_PRECOMPILED_LIBS =
 	for(lib, LIB_DIR) {
 #message(Scanning $$lib)
-		exists( $$lib/opencv/libopencv_core249.a) {
+		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
 			isEmpty(USE_PRECOMPILED_LIBS) {
-				message(Get pre-compiled opencv 249 libraries here:)
+				message(Get pre-compiled opencv $$OPENCV_VERSION libraries here:)
 				message($$lib)
 				LIBS += -L"$$lib/opencv"
 				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION

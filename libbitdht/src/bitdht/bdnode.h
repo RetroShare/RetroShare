@@ -85,6 +85,7 @@ output -> call back to Udp().
  *********/
 
 class bdFilteredPeer ;
+class bdNodeManager;
 
 class bdNodeNetMsg
 {
@@ -122,7 +123,7 @@ class bdNode: public bdNodePublisher
 	public:
 
     bdNode(bdNodeId *id, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile,
-		bdDhtFunctions *fns);	
+		bdDhtFunctions *fns, bdNodeManager* manager);
 
 	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
 
@@ -243,7 +244,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	protected:
 
 	bdSpace mNodeSpace;
-    bdFilter mFilterPeers;
+	bdFilter mFilterPeers;
 
 	bdQueryManager *mQueryMgr;
 	bdConnectManager *mConnMgr;

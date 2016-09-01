@@ -29,7 +29,6 @@
 #include <math.h>
 #include "GxsIdDetails.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
-#include "retroshare/rsreputations.h"
 
 #include <retroshare/rspeers.h>
 
@@ -905,7 +904,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if(rsReputations->isIdentityBanned(details.mId)) 
+	if(rsIdentity->isBanned(details.mId)) 
 	    return tr("[Banned]") ;
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -924,7 +923,7 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-	bool banned = rsReputations->isIdentityBanned(details.mId) ;
+	bool banned = rsIdentity->isBanned(details.mId) ;
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
@@ -963,7 +962,7 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
-    if(rsReputations->isIdentityBanned(details.mId))
+    if(rsIdentity->isBanned(details.mId))
     {
         icons.clear() ;
         icons.push_back(QIcon(IMAGE_BANNED)) ;

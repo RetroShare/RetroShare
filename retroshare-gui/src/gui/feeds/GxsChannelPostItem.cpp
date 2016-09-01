@@ -52,6 +52,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	requestGroup();
 	requestMessage();
+	requestComment();
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
@@ -66,6 +67,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setGroup(group, false);
 	setPost(post);
+	requestComment();
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate) :
@@ -80,6 +82,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	requestGroup();
 	setPost(post);
+	requestComment();
 }
 
 GxsChannelPostItem::~GxsChannelPostItem()
@@ -269,10 +272,36 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 	}
 	else
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
+		std::cerr << std::endl;
+		removeItem();
+		return;
+	}
+}
+
+void GxsChannelPostItem::loadComment(const uint32_t &token)
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelPostItem::loadComment()";
+	std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsComment> cmts;
+	if (!rsGxsChannels->getRelatedComments(token, cmts))
+	{
+		std::cerr << "GxsChannelPostItem::loadComment() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
+
+	size_t comNb = cmts.size();
+	QString sComButText = tr("Comment");
+	if (comNb == 1) {
+		sComButText = sComButText.append("(1)");
+	} else if (comNb > 1) {
+		sComButText = tr("Comments").append("(%1)").arg(comNb);
+	}
+	ui->commentButton->setText(sComButText);
 }
 
 void GxsChannelPostItem::fill()

@@ -55,11 +55,13 @@ public:
 	bool isCheckForNickName() { return _bCheckForNickName;}
 	void setCountUnRead(bool value);
 	bool isCountUnRead() { return _bCountUnRead;}
-    void setCountSpecificText(bool value);
-    bool isCountSpecificText() { return _bCountSpecificText;}
-    void setTextToNotify(QStringList);
+	void setCountSpecificText(bool value);
+	bool isCountSpecificText() { return _bCountSpecificText;}
+	void setTextToNotify(QStringList);
 	void setTextToNotify(QString);
 	QString textToNotify() { return _textToNotify.join("\n");}
+	void setTextCaseSensitive(bool value);
+	bool isTextCaseSensitive() {return _bTextCaseSensitive;}
 
 signals:
 	void countChanged(ChatLobbyId id, unsigned int count);
@@ -84,10 +86,12 @@ private:
 	typedef std::map<QString, MsgData> msg_map;
 	typedef	std::map<ChatLobbyId, msg_map> lobby_map;
 	lobby_map _listMsg;
-	QStringList _textToNotify;
-	bool _bCheckForNickName;
+
 	bool _bCountUnRead;
-    bool _bCountSpecificText;
+	bool _bCheckForNickName;
+	bool _bCountSpecificText;
+	QStringList _textToNotify;
+	bool _bTextCaseSensitive;
 };
 
 #endif // CHATLOBBYUSERNOTIFY_H

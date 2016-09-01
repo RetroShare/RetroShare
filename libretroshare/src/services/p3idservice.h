@@ -218,34 +218,34 @@ private:
 
 class p3IdService: public RsGxsIdExchange, public RsIdentity,  public GxsTokenQueue, public RsTickEvent, public p3Config
 {
-	public:
+public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, PgpAuxUtils *pgpUtils);
 
-virtual RsServiceInfo getServiceInfo();
-static	uint32_t idAuthenPolicy();
+	virtual RsServiceInfo getServiceInfo();
+	static	uint32_t idAuthenPolicy();
 
 	virtual void service_tick(); // needed for background processing.
 
 
-        /*!
-         * Design hack, id service must be constructed first as it
-         * is need for construction of subsequent net services
-         */
-        void setNes(RsNetworkExchangeService* nes);
+	/*!
+	 * Design hack, id service must be constructed first as it
+	 * is need for construction of subsequent net services
+	 */
+	void setNes(RsNetworkExchangeService* nes);
 
 	/* General Interface is provided by RsIdentity / RsGxsIfaceImpl. */
 
 	/* Data Specific Interface */
 
 	// These are exposed via RsIdentity.
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
-//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
+	//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
 	// These are local - and not exposed via RsIdentity.
-virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
-virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
-virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
-//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
+	virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
+	//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
 	 * Notes:
@@ -256,100 +256,105 @@ virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
 	 * Also need to handle Cache updates / invalidation from internal changes.
 	 * 
 	 */
-//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
-virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
+	//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
+	virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
 
-        // 
-virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
-				bool absOpinion, int score);
-virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
+	// 
+	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
+	                           bool absOpinion, int score);
+	virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 
-virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
-virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
-virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
-                        const std::string &tag, RsRecognTagDetails &details);
-virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
-			uint16_t tag_class, uint16_t tag_type, std::string &tag);
+	virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
+	                            const std::string &tag, RsRecognTagDetails &details);
+	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
+	                                 uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
-virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
-    virtual bool isARegularContact(const RsGxsId& id) ;
-        
-    /**************** RsGixs Implementation ***************/
+	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
+	virtual bool isARegularContact(const RsGxsId& id) ;
+	virtual bool isBanned(const RsGxsId& id) ;
+	virtual time_t getLastUsageTS(const RsGxsId &id) ;
 
-    virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
+	/**************** RsGixs Implementation ***************/
 
-    //virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
-    //virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
+	virtual bool getOwnIds(std::list<RsGxsId> &ownIds);
 
-    virtual bool isOwnId(const RsGxsId& key_id) ;
+	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
+	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
 
-    virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) ;
-    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) ;
+	virtual bool isOwnId(const RsGxsId& key_id) ;
 
-    virtual bool encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) ;
-    virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) ;
+	virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) ;
+	virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) ;
 
-    virtual bool haveKey(const RsGxsId &id);
-    virtual bool havePrivateKey(const RsGxsId &id);
+	virtual bool encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) ;
+	virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) ;
 
-    virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
-    virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
+	virtual bool haveKey(const RsGxsId &id);
+	virtual bool havePrivateKey(const RsGxsId &id);
 
-    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers);
-    virtual bool requestPrivateKey(const RsGxsId &id);
+	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
+	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
-
-    /**************** RsGixsReputation Implementation ****************/
-
-        // get Reputation.
-virtual bool haveReputation(const RsGxsId &id);
-virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
-virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers);
+	virtual bool requestPrivateKey(const RsGxsId &id);
 
 
-    protected:
-    /** Notifications **/
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	/**************** RsGixsReputation Implementation ****************/
+
+	// get Reputation.
+	virtual bool haveReputation(const RsGxsId &id);
+	virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
+	virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
+
+
+protected:
+	/** Notifications **/
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
 	/** Overloaded to add PgpIdHash to Group Definition **/
-virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
+	virtual ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);
 
-        // Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
+    // Overloads RsGxsGenExchange
+    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
 
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+    // Overloaded from GxsTokenQueue for Request callbacks.
+	virtual void handleResponse(uint32_t token, uint32_t req_type);
 
-        //===================================================//
-        //                  p3Config methods                 //
-        //===================================================//
+	// Overloaded from RsTickEvent.
+	virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
-        // Load/save the routing info, the pending items in transit, and the config variables.
-        //
-        virtual bool loadList(std::list<RsItem*>& items) ;
-        virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
+	//===================================================//
+	//                  p3Config methods                 //
+	//===================================================//
 
-        virtual RsSerialiser *setupSerialiser() ;
+	// Load/save the routing info, the pending items in transit, and the config variables.
+	//
+	virtual bool loadList(std::list<RsItem*>& items) ;
+	virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
+
+	virtual RsSerialiser *setupSerialiser() ;
 
 
-	private:
+private:
 
-/************************************************************************
+	/************************************************************************
  * This is the Cache for minimising calls to the DataStore.
  *
  */
 	int  cache_tick();
 
-	bool cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers = std::list<PeerId>());
+    bool cache_request_load(const RsGxsId &id, const std::list<RsPeerId>& peers = std::list<RsPeerId>());
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
 
 	bool cache_store(const RsGxsIdGroupItem *item);
 	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
-    bool isPendingNetworkRequest(const RsGxsId& gxsId);
-	void requestIdsFromNet();
+	bool isPendingNetworkRequest(const RsGxsId& gxsId);
+    void requestIdsFromNet();
 
 	// Mutex protected.
 
@@ -359,7 +364,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	// Switching to RsMemCache for Key Caching.
 	RsMemCache<RsGxsId, RsGxsIdCache> mKeyCache;
 
-/************************************************************************
+	/************************************************************************
  * Refreshing own Ids.
  *
  */
@@ -368,7 +373,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	std::list<RsGxsId> mOwnIds;
 
-/************************************************************************
+	/************************************************************************
  * Test fns for Caching.
  *
  */
@@ -376,7 +381,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool cachetest_getlist();
 	bool cachetest_handlerequest(uint32_t token);
 
-/************************************************************************
+	/************************************************************************
  * for processing background tasks that use the serviceString.
  * - must be mutually exclusive to avoid clashes.
  */
@@ -386,7 +391,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool mBgSchedule_Active;
 	uint32_t mBgSchedule_Mode;
 
-/************************************************************************
+	/************************************************************************
  * pgphash processing.
  *
  */
@@ -394,7 +399,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool pgphash_handlerequest(uint32_t token);
 	bool pgphash_process();
 
-    bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id, bool &error);
+	bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id, bool &error);
 	void getPgpIdList();
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
@@ -402,7 +407,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	std::map<RsPgpId, PGPFingerprintType> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
 
-/************************************************************************
+	/************************************************************************
  * recogn processing.
  *
  */
@@ -420,7 +425,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	void loadRecognKeys();
 
 
-/************************************************************************
+	/************************************************************************
  * opinion processing.
  *
  */
@@ -448,24 +453,24 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	std::map<RsGxsId, RsGxsRecognSignerItem *> mRecognSignKeys;
 	std::map<RsGxsId, uint32_t> mRecognOldSignKeys;
 
-/************************************************************************
+	/************************************************************************
  * Below is the background task for processing opinions => reputations 
  *
  */
 
-virtual void generateDummyData();
+	virtual void generateDummyData();
 	void generateDummy_OwnIds();
 	void generateDummy_FriendPGP();
 	void generateDummy_UnknownPGP();
 	void generateDummy_UnknownPseudo();
 
-    void cleanUnusedKeys() ;
-    void slowIndicateConfigChanged() ;
+	void cleanUnusedKeys() ;
+	void slowIndicateConfigChanged() ;
 
-    virtual void timeStampKey(const RsGxsId& id) ;
-    time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
+	virtual void timeStampKey(const RsGxsId& id) ;
+	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
-std::string genRandomId(int len = 20);
+	std::string genRandomId(int len = 20);
 
 #if 0
 	bool reputation_start();
@@ -478,7 +483,7 @@ std::string genRandomId(int len = 20);
 	bool background_processNewMessages();
 	bool background_FullCalcRequest();
 	bool background_processFullCalc();
-	
+
 	bool background_cleanup();
 #endif
 
@@ -488,40 +493,40 @@ std::string genRandomId(int len = 20);
 	/***** below here is locked *****/
 	bool mLastBgCheck;
 	bool mBgProcessing;
-	
+
 	uint32_t mBgToken;
 	uint32_t mBgPhase;
-	
+
 	std::map<RsGxsGroupId, RsGroupMetaData> mBgGroupMap;
 	std::list<RsGxsGroupId> mBgFullCalcGroups;
 #endif
 
-/************************************************************************
+	/************************************************************************
  * Other Data that is protected by the Mutex.
  */
 
-	private:
+private:
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
 	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
 	std::map<RsGxsId,time_t> mKeysTS ;
-    
-    	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
-    	std::set<RsGxsId> mContacts;
+
+	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
+	std::set<RsGxsId> mContacts;
 	RsNetworkExchangeService* mNes;
 
 	/**************************
- 	 * AuxUtils provides interface to Security Function (e.g. GPGAuth(), notify etc.)
+	 * AuxUtils provides interface to Security Function (e.g. GPGAuth(), notify etc.)
 	 * without depending directly on all these classes.
 	 */
 
-    PgpAuxUtils *mPgpUtils;
+	PgpAuxUtils *mPgpUtils;
 
-    time_t mLastKeyCleaningTime ;
-    time_t mLastConfigUpdate ;
+	time_t mLastKeyCleaningTime ;
+	time_t mLastConfigUpdate ;
 
-    bool mOwnIdsLoaded ;
+	bool mOwnIdsLoaded ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

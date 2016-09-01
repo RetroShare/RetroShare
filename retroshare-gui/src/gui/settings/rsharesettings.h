@@ -75,8 +75,9 @@ public:
 		LASTDIR_IMAGES,
 		LASTDIR_MESSAGES,
 		LASTDIR_BLOGS,
-		LASTDIR_SOUNDS
-	};
+        LASTDIR_SOUNDS,
+        LASTDIR_PLUGIN
+    };
 
 	enum enumToasterPosition
 	{
@@ -235,6 +236,9 @@ public:
 
 	void setChatSearchFoundColor(QRgb rgbValue);
 	QRgb getChatSearchFoundColor();
+
+	bool getChatLoadEmbeddedImages();
+	void setChatLoadEmbeddedImages(bool value);
 
 	enumToasterPosition getToasterPosition();
 	void setToasterPosition(enumToasterPosition position);

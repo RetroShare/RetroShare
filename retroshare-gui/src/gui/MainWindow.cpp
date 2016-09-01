@@ -115,26 +115,16 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define IMAGE_QUIT              ":/icons/quit_128.png"
-#define IMAGE_PREFERENCES       ":/icons/system_128.png"
-#define IMAGE_ABOUT             ":/icons/information_128.png"
-#define IMAGE_ADDFRIEND         ":/icons/add_user_256.png"
+#define IMAGE_QUIT              ":/icons/png/exit.png"
+#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_ABOUT             ":/icons/png/info.png"
+#define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-/* Images for toolbar icons */
-//#define IMAGE_NETWORK2          ":/images/rs1.png"
-//#define IMAGE_PEERS         	":/images/groupchat.png"
-//#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
-//#define IMAGE_FILES   	        ":/images/fileshare32.png"
-//#define IMAGE_CHANNELS       	":/images/channels.png"
-//#define IMAGE_FORUMS            ":/images/konversation.png"
-//#define IMAGE_CHAT          	":/images/groupchat.png"
-//#define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
-//#define IMAGE_MESSAGES          ":/images/evolution.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
@@ -148,16 +138,10 @@
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
-//#define IMG_HELP                ":/images/help24.png"
-//#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
+
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
-//#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
-//#define IMAGE_GXSCHANNELS       ":/images/channels.png"
-//#define IMAGE_GXSFORUMS         ":/images/konversation.png"
-//#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-//#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
 
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
@@ -420,6 +404,7 @@ void MainWindow::initStackedPage()
 #endif
 #endif
 
+#undef GETSTARTED_GUI
 #ifdef GETSTARTED_GUI
   MainPage *getStartedPage = NULL;
 
@@ -562,7 +547,9 @@ void MainWindow::createTrayIcon()
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+#ifdef ENABLE_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
+#endif // ENABLE_WEBUI
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
@@ -1061,10 +1048,12 @@ void MainWindow::showStatisticsWindow()
     StatisticsWindow::showYourself();
 }
 
+#ifdef ENABLE_WEBUI
 void MainWindow::showWebinterface()
 {
     WebuiPage::showWebui();
 }
+#endif // ENABLE_WEBUI
 
 /** Shows Application window */
 #ifdef UNFINISHED
@@ -1406,7 +1395,14 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
 		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
-		mb.layout()->addWidget(checkbox) ;
+		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
+		if (layout)
+		{
+			layout->addWidget(checkbox,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+		} else {
+			//Not QGridLayout so add at end
+			mb.layout()->addWidget(checkbox) ;
+		}
 
 		int res = mb.exec() ;
 

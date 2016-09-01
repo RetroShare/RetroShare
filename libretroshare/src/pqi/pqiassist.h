@@ -115,6 +115,7 @@ virtual void 	updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr
 };
 
 
+#ifdef RS_USE_DHT_STUNNER
 /* this is for the Stunners 
  *
  *
@@ -132,7 +133,7 @@ virtual void    setRefreshPeriod(int32_t period) = 0;
 virtual int	tick() = 0; /* for internal accounting */
 
 };
-
+#endif // RS_USE_DHT_STUNNER
 
 #define NETASSIST_KNOWN_PEER_OFFLINE        0x0001
 #define NETASSIST_KNOWN_PEER_ONLINE         0x0002

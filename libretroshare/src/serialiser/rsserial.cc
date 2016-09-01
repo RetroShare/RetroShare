@@ -298,7 +298,7 @@ uint32_t    RsSerialiser::size(RsItem *item)
 			{
 
 #ifdef  RSSERIAL_ERROR_DEBUG
-				std::cerr << "RsSerialiser::size() ERROR serialiser missing!";
+				std::cerr << "RsSerialiser::size() ERROR serialiser missing!" << std::endl;
 			
 				std::string out;
 				rs_sprintf(out, "%x", item->PacketId());

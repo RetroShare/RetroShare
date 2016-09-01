@@ -22,29 +22,32 @@
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
+
 #include <rshare.h>
-#include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
+#include "gui/GenCertDialog.h"
+#include "gui/MainWindow.h"
+#include "gui/MessengerWindow.h"
+#include "gui/NetworkDialog.h"
+#include "gui/NetworkView.h"
+#include "gui/QuickStartWizard.h"
+#include "gui/RetroShareLink.h"
+#include "gui/SharedFilesDialog.h"
+#include "gui/SoundManager.h"
+#include "gui/StartDialog.h"
+#include "gui/chat/ChatDialog.h"
+#include "gui/connect/ConfCertDialog.h"
+#include "gui/common/Emoticons.h"
 #include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
-#include "gui/SharedFilesDialog.h"
-#include "gui/NetworkDialog.h"
-#include "gui/chat/ChatDialog.h"
-#include "gui/QuickStartWizard.h"
-#include "gui/MessengerWindow.h"
-#include "gui/StartDialog.h"
-#include "gui/GenCertDialog.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
-#include "gui/connect/ConfCertDialog.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/settings/WebuiPage.h"
 #include "idle/idle.h"
-#include "gui/common/Emoticons.h"
-#include "gui/RetroShareLink.h"
-#include "gui/SoundManager.h"
-#include "gui/NetworkView.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
-#include "gui/settings/WebuiPage.h"
+
+#include "retroshare/rsidentity.h"
 
 #ifdef SIGFPE_DEBUG
 #include <fenv.h>
@@ -250,6 +253,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* Start RetroShare */
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
+	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
 	case RS_INIT_OK:
 		{
@@ -278,6 +282,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 				if (gd.exec () == QDialog::Rejected) {
 					return 1;
 				}
+				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
 			splashScreen.show();
@@ -356,6 +361,15 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	w->processLastArgs();
 
+	if (!sDefaultGXSIdToCreate.isEmpty()) {
+		RsIdentityParameters params;
+		params.nickname = sDefaultGXSIdToCreate.toUtf8().constData();
+		params.isPgpLinked = true;
+		params.mImage.clear();
+		uint32_t token = 0;
+		rsIdentity->createIdentity(token, params);
+	}
+
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
 	//
@@ -397,13 +411,17 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
+#ifdef ENABLE_WEBUI
     WebuiPage::checkStartWebui();
+#endif // ENABLE_WEBUI
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
 
+#ifdef ENABLE_WEBUI
 	WebuiPage::checkShutdownWebui();
+#endif // ENABLE_WEBUI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

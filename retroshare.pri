@@ -1,3 +1,10 @@
+# To {dis,en}able libresapi via local socket (unix domain socket or windows named pipes)
+# {,un}comment the following line
+#CONFIG *= libresapilocalserver
+
+# To {dis,en}able libresapi via HTTP (libmicrohttpd) {,un}comment the following line
+CONFIG *= libresapihttpserver
+
 # Gxs is always enabled now.
 DEFINES *= RS_ENABLE_GXS
 
@@ -10,6 +17,25 @@ unix {
 	isEmpty(PLUGIN_DIR) { PLUGIN_DIR  = "$${LIB_DIR}/retroshare/extensions6" }
 }
 
+android-g++ {
+    DEFINES *= NO_SQLCIPHER
+    DEFINES *= "fopen64=fopen"
+    DEFINES *= "fseeko64=fseeko"
+    DEFINES *= "ftello64=ftello"
+    INCLUDEPATH *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/include/
+    LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
+    LIBS *= -lssl -lcrypto -lsqlite3 -lupnp -lixml
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.so
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.so
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libbz2.so
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libupnp.so
+    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libixml.so
+    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
+    message(LIBS: $$LIBS)
+    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
+}
+
 win32 {
 	message(***retroshare.pri:Win32)
 	exists($$PWD/../libs) {
@@ -19,16 +45,23 @@ win32 {
 		isEmpty(INC_DIR)  { INC_DIR  = "$${PREFIX}/include" }
 		isEmpty(LIB_DIR)  { LIB_DIR  = "$${PREFIX}/lib" }
 	}
-	exists(C:/msys32/mingw32/include) {
-		message(msys2 32b is installed.)
-		PREFIX_MSYS2   = "C:/msys32/mingw32"
-		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
-		INC_DIR  += "$${PREFIX_MSYS2}/include"
-		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
+
+	# Check for msys2
+	PREFIX_MSYS2 = $$(MINGW_PREFIX)
+	isEmpty(PREFIX_MSYS2) {
+		exists(C:/msys32/mingw32/include) {
+			message(MINGW_PREFIX is empty. Set it in your environment variables.)
+			message(Found it here:C:\msys32\mingw32)
+			PREFIX_MSYS2 = "C:\msys32\mingw32"
+		}
+		exists(C:/msys64/mingw32/include) {
+			message(MINGW_PREFIX is empty. Set it in your environment variables.)
+			message(Found it here:C:\msys64\mingw32)
+			PREFIX_MSYS2 = "C:\msys64\mingw32"
+		}
 	}
-	exists(C:/msys64/mingw32/include) {
-		message(msys2 64b is installed.)
-		PREFIX_MSYS2   = "C:/msys64/mingw32"
+	!isEmpty(PREFIX_MSYS2) {
+		message(msys2 is installed.)
 		BIN_DIR  += "$${PREFIX_MSYS2}/bin"
 		INC_DIR  += "$${PREFIX_MSYS2}/include"
 		LIB_DIR  += "$${PREFIX_MSYS2}/lib"
@@ -62,3 +95,6 @@ unfinished {
 }
 
 wikipoos:DEFINES *= RS_USE_WIKI
+
+libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
+libresapihttpserver::DEFINES *= ENABLE_WEBUI

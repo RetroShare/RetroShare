@@ -44,6 +44,7 @@ GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGro
 	mMessageId = messageId;
 
 	mTokenTypeMessage = nextTokenType();
+	mTokenTypeComment = nextTokenType();
 }
 
 GxsFeedItem::~GxsFeedItem()
@@ -132,6 +133,37 @@ void GxsFeedItem::requestMessage()
 	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessage);
 }
 
+void GxsFeedItem::requestComment()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsFeedItem::requestComment()";
+	std::cerr << std::endl;
+#endif
+
+	if (!initLoadQueue()) {
+		return;
+	}
+
+	if (mLoadQueue->activeRequestExist(mTokenTypeComment)) {
+		/* Request already running */
+		return;
+	}
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+
+	RsGxsGrpMsgIdPair msgIdPair;
+	msgIdPair.first = groupId();
+	msgIdPair.second = messageId();
+
+	std::vector<RsGxsGrpMsgIdPair> msgIds;
+	msgIds.push_back(msgIdPair);
+
+	uint32_t token;
+	mLoadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeComment);
+}
+
 void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 #ifdef DEBUG_ITEM
@@ -142,6 +174,10 @@ void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 	if (queue == mLoadQueue) {
 		if (req.mUserType == mTokenTypeMessage) {
 			loadMessage(req.mToken);
+			return;
+		}
+		if (req.mUserType == mTokenTypeComment) {
+			loadComment(req.mToken);
 			return;
 		}
 	}

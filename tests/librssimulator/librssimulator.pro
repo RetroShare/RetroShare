@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib 
 CONFIG -= qt
@@ -170,19 +172,11 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
-	UPNPC_DIR = ../../../miniupnpc-1.3
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-	ZLIB_DIR = ../../../zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1c
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
-
-	# SQLite include path is required to compile GXS.
-	gxs {
-		SQLITE_DIR = ../../../sqlcipher-2.2.0
-		INCLUDEPATH += $${SQLITE_DIR}
-	}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ################################# MacOSX ##########################################

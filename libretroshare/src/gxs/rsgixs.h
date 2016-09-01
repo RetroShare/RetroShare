@@ -96,7 +96,6 @@
  * as these will be used very frequently.
  *****/
 
-typedef RsPeerId  PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
 typedef PGPIdType RsPgpId;
 
 /* Identity Interface for GXS Message Verification.
@@ -150,7 +149,7 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers) = 0;
     virtual bool requestPrivateKey(const RsGxsId &id) = 0;
 
 

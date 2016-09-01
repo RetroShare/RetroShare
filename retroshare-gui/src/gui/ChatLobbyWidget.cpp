@@ -221,7 +221,7 @@ void ChatLobbyWidget::updateNotify(ChatLobbyId id, unsigned int count)
 	dialog->getChatWidget()->setNotify(myChatLobbyUserNotify);
 	if (count>0){
 		notifyButton->setVisible(true);
-		notifyButton->setIcon(_lobby_infos[id].default_icon);
+		//notifyButton->setIcon(_lobby_infos[id].default_icon);
 		notifyButton->setToolTip(QString("(%1)").arg(count));
 	} else {
 		notifyButton->setVisible(false);
@@ -1076,11 +1076,21 @@ void ChatLobbyWidget::readChatLobbyInvites()
                        tr("%1 invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)),
                        QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
+
+        QLabel *label = new QLabel(tr("Choose an identity for this lobby:"));
         GxsIdChooser *idchooser = new GxsIdChooser ;
         idchooser->loadIds(IDCHOOSER_ID_REQUIRED,default_id) ;
 
-        mb.layout()->addWidget(new QLabel(tr("Choose an identity for this lobby:"))) ;
-        mb.layout()->addWidget(idchooser) ;
+
+        QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
+        if (layout) {
+            layout->addWidget(label, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignHCenter ) ;
+            layout->addWidget(idchooser, layout->rowCount(), 0, 1, layout->columnCount(), Qt::AlignRight ) ;
+        } else {
+            //Not QGridLayout so add at end
+            mb.layout()->addWidget(label) ;
+            mb.layout()->addWidget(idchooser) ;
+        }
 
         int res = mb.exec() ;
 

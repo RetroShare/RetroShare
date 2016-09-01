@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "PluginManagerWidget.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -160,14 +161,10 @@ PluginManagerWidget::registerNewPlugin(QString pluginName)
 void
 PluginManagerWidget::installPluginButtonClicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, 
-	                       tr("Open Plugin to install"),
-	                       "./",
-			       tr("Plugins (*.so *.dll)"));
+    QString fileName = misc::getOpenFileName(this, RshareSettings::LASTDIR_PLUGIN, tr("Open Plugin to install"), "./", tr("Plugins (*.so *.dll)"));
+
     if (!fileName.isNull())
-    {
        emit installPluginRequested(fileName);
-    }
 }
 
 //=============================================================================

@@ -207,6 +207,16 @@ border-image: url(:/images/closepressed.png)
          </widget>
         </item>
         <item>
+         <widget class="RSImageBlockWidget" name="imageBlockWidget" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QSplitter" name="chatVSplitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -346,68 +356,21 @@ border-image: url(:/images/closepressed.png)
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
-             <property name="icon">
-              <iconset resource="../emojione.qrc">
-               <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="fontButton">
-             <property name="minimumSize">
-              <size>
-               <width>32</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>32</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::TabFocus</enum>
-             </property>
              <property name="toolTip">
-              <string>Set text font &amp; color</string>
+              <string>Insert emoticon</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/textedit/format-text-color.png</normaloff>:/images/textedit/format-text-color.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/smiley.png</normaloff>:/icons/png/smiley.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -416,18 +379,6 @@ border-image: url(:/images/closepressed.png)
            </item>
            <item>
             <widget class="QToolButton" name="attachPictureButton">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -435,13 +386,13 @@ border-image: url(:/images/closepressed.png)
               <string>Attach a Picture</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/attach-image.png</normaloff>:/icons/png/attach-image.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="autoRaise">
@@ -451,12 +402,6 @@ border-image: url(:/images/closepressed.png)
            </item>
            <item>
             <widget class="QToolButton" name="addFileButton">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -464,13 +409,13 @@ border-image: url(:/images/closepressed.png)
               <string>Attach a File</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/attach.png</normaloff>:/icons/png/attach.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="autoRaise">
@@ -480,89 +425,21 @@ border-image: url(:/images/closepressed.png)
            </item>
            <item>
             <widget class="QToolButton" name="pushtoolsButton">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/settings.png</normaloff>:/icons/png/settings.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="popupMode">
               <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="pluginButtonFrame">
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <layout class="QHBoxLayout" name="pluginButtonFrameHLayout">
-              <property name="leftMargin">
-               <number>2</number>
-              </property>
-              <property name="topMargin">
-               <number>2</number>
-              </property>
-              <property name="rightMargin">
-               <number>2</number>
-              </property>
-              <property name="bottomMargin">
-               <number>2</number>
-              </property>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="notifyButton">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/chat_red24.png</normaloff>:/images/chat_red24.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
              </property>
              <property name="autoRaise">
               <bool>true</bool>
@@ -577,29 +454,17 @@ border-image: url(:/images/closepressed.png)
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/highlight.png</normaloff>:/images/highlight.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/highlight.png</normaloff>:/icons/png/highlight.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="checkable">
@@ -673,18 +538,6 @@ border-image: url(:/images/closepressed.png)
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -692,13 +545,13 @@ border-image: url(:/images/closepressed.png)
               <enum>Qt::CustomContextMenu</enum>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/search.png</normaloff>:/icons/png/search.png</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>24</width>
-               <height>24</height>
+               <width>28</width>
+               <height>28</height>
               </size>
              </property>
              <property name="checkable">
@@ -707,6 +560,50 @@ border-image: url(:/images/closepressed.png)
              <property name="autoRaise">
               <bool>true</bool>
              </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="notifyButton">
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/chat-bubble-notify.png</normaloff>:/icons/png/chat-bubble-notify.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>28</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="pluginButtonFrame">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QHBoxLayout" name="pluginButtonFrameHLayout">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+             </layout>
             </widget>
            </item>
            <item>
@@ -723,9 +620,37 @@ border-image: url(:/images/closepressed.png)
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="sendButton">
-             <property name="text">
+            <widget class="QToolButton" name="sendButton">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
               <string>Send</string>
+             </property>
+             <property name="whatsThis">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QToolButton:disabled {&lt;/p&gt;&lt;p&gt;	image: url(:/icons/png/send-message-blocked.png) ;&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <property name="icon">
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/send-message.png</normaloff>:/icons/png/send-message.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>28</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1092,10 +1017,17 @@ border-image: url(:/images/closepressed.png)
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>RSImageBlockWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/RSImageBlockWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../emojione.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

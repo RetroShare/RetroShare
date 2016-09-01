@@ -35,17 +35,21 @@
 
 TEST(libretroshare_gxs, GxsSecurity)
 {
-	RsTlvSecurityKey_deprecated pub_key ;
-	RsTlvSecurityKey_deprecated priv_key ;
+	RsTlvPublicRSAKey pub_key ;
+	RsTlvPrivateRSAKey priv_key ;
 
 	EXPECT_TRUE(GxsSecurity::generateKeyPair(pub_key,priv_key)) ;
 
+#ifdef WIN32
+	srand(getpid()) ;
+#else
 	srand48(getpid()) ;
+#endif
 
 	EXPECT_TRUE( pub_key.keyId   == priv_key.keyId   );
 	EXPECT_TRUE( pub_key.startTS == priv_key.startTS );
 
-	RsTlvSecurityKey_deprecated pub_key2 ;
+	RsTlvPublicRSAKey pub_key2 ;
 	EXPECT_TRUE(GxsSecurity::extractPublicKey(priv_key,pub_key2)) ;
 
 	EXPECT_TRUE( pub_key.keyId    == pub_key2.keyId    );

@@ -206,6 +206,8 @@ void p3BanList::autoFigureOutBanRanges()
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
+    bool changed = false ;
+
     // clear automatic ban ranges
 
     for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanRanges.begin());it!=mBanRanges.end();)
@@ -215,6 +217,8 @@ void p3BanList::autoFigureOutBanRanges()
             ++it2 ;
             mBanRanges.erase(it) ;
             it=it2 ;
+
+            changed = true ;
         }
         else
             ++it;
@@ -968,7 +972,9 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 			updated = true;
 		}
     }
-    IndicateConfigChanged();
+
+    if(updated)
+        IndicateConfigChanged();
 
 	return updated;
 }

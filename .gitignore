@@ -1,5 +1,8 @@
 /RetroShare.pro.user
 *.o
+*.sw?
+*.so
+*.so.*
 moc_*.cpp
 qrc_*.cpp
 ui_*.h

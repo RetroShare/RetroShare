@@ -14,6 +14,13 @@ DEFINES += TARGET=\\\"$TARGET\\\"
 #CONFIG += debug
 #DEFINES *= SIGFPE_DEBUG
 
+profiling {
+	QMAKE_CXXFLAGS -= -fomit-frame-pointer
+	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
+	QMAKE_LFLAGS *= -pg 
+}
+
+
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
 
@@ -69,7 +76,7 @@ linux-* {
 
 	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS *= -rdynamic
+	LIBS *= -rdynamic 
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= HAS_GNOME_KEYRING
 }
@@ -197,7 +204,11 @@ win32 {
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
 	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+	isEmpty(QMAKE_SH) {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	} else {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+	}
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
@@ -466,6 +477,7 @@ HEADERS +=  rshare.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
+            gui/common/GroupChooser.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
@@ -543,8 +555,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
-    gui/settings/WebuiPage.h \
-    gui/statistics/BWGraph.h \
+        gui/statistics/BWGraph.h \
     util/RsSyntaxHighlighter.h \
     util/imageutil.h
 
@@ -663,7 +674,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
-    gui/settings/WebuiPage.ui
+
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -775,6 +786,7 @@ SOURCES +=  main.cpp \
             gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
+            gui/common/GroupChooser.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \
@@ -845,7 +857,6 @@ SOURCES +=  main.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
-                gui/settings/WebuiPage.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \
@@ -1380,4 +1391,10 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+libresapihttpserver {
+    HEADERS *= gui/settings/WebuiPage.h
+    SOURCES *= gui/settings/WebuiPage.cpp
+    FORMS *= gui/settings/WebuiPage.ui
 }

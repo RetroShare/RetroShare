@@ -76,6 +76,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	connect(ui.participantsList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(participantsTreeWidgetCustomPopupMenu(QPoint)));
 	connect(ui.participantsList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(participantsTreeWidgetDoubleClicked(QTreeWidgetItem*,int)));
 
+	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+
             int S = QFontMetricsF(font()).height() ;
     ui.participantsList->setIconSize(QSize(1.3*S,1.3*S));
 
@@ -108,12 +110,17 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
+    
+    	/* Add filter actions */
+	QTreeWidgetItem *headerItem = ui.participantsList->headerItem();
+	QString headerText = headerItem->text(COLUMN_NAME );
+	ui.filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME , QString("%1 %2").arg(tr("Search"), headerText));
 
 	// Add a button to invite friends.
 	//
 	inviteFriendsButton = new QToolButton ;
-  inviteFriendsButton->setMinimumSize(QSize(2*S,2*S)) ;
-  inviteFriendsButton->setMaximumSize(QSize(2*S,2*S)) ;
+  inviteFriendsButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
+  inviteFriendsButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
 	inviteFriendsButton->setText(QString()) ;
 	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
@@ -123,9 +130,9 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/user/add_user24.png")) ;
+	icon.addPixmap(QPixmap(":/icons/png/invite.png")) ;
 	inviteFriendsButton->setIcon(icon) ;
-    inviteFriendsButton->setIconSize(QSize(2*S,2*S)) ;
+    inviteFriendsButton->setIconSize(QSize(2.4*S,2.4*S)) ;
 	}
 
 	connect(inviteFriendsButton, SIGNAL(clicked()), this , SLOT(inviteFriends()));
@@ -135,8 +142,15 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     RsGxsId current_id;
     rsMsgs->getIdentityForChatLobby(lobbyId, current_id);
 
+    uint32_t idChooserFlag = IDCHOOSER_ID_REQUIRED;
+    ChatLobbyInfo lobbyInfo ;
+    if(rsMsgs->getChatLobbyInfo(lobbyId,lobbyInfo)) {
+        if (lobbyInfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) {
+            idChooserFlag |= IDCHOOSER_NON_ANONYMOUS;
+        }
+    }
     ownIdChooser = new GxsIdChooser() ;
-    ownIdChooser->loadIds(IDCHOOSER_ID_REQUIRED,current_id) ;
+    ownIdChooser->loadIds(idChooserFlag, current_id) ;
     
     QWidgetAction *checkableAction = new QWidgetAction(this);
     checkableAction->setDefaultWidget(ownIdChooser);
@@ -149,17 +163,17 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(ownIdChooser,SIGNAL(currentIndexChanged(int)),this,SLOT(changeNickname())) ;
 
     unsubscribeButton = new QToolButton ;
-    unsubscribeButton->setMinimumSize(QSize(2*S,2*S)) ;
-    unsubscribeButton->setMaximumSize(QSize(2*S,2*S)) ;
+    unsubscribeButton->setMinimumSize(QSize(2.4*S,2.4*S)) ;
+    unsubscribeButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
 	unsubscribeButton->setText(QString()) ;
 	unsubscribeButton->setAutoRaise(true) ;
 	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/door_in.png")) ;
+	icon.addPixmap(QPixmap(":/icons/png/leave.png")) ;
 	unsubscribeButton->setIcon(icon) ;
-    unsubscribeButton->setIconSize(QSize(2*S,2*S)) ;
+    unsubscribeButton->setIconSize(QSize(2.4*S,2.4*S)) ;
 	}
 
 	/* Initialize splitter */
@@ -280,8 +294,6 @@ void ChatLobbyDialog::init()
     ChatLobbyInfo linfo ;
 
     QString title;
-
-    std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 
     if(rsMsgs->getChatLobbyInfo(lobbyId,linfo))
     {
@@ -552,6 +564,7 @@ void ChatLobbyDialog::updateParticipantsList()
     }
     ui.participantsList->setSortingEnabled(true);
     sortParcipants();
+    filterIds();
 }
 
 /**
@@ -851,4 +864,17 @@ void ChatLobbyDialog::sortParcipants()
         ui.participantsList->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 	}
   
+}
+
+void ChatLobbyDialog::filterChanged(const QString& /*text*/)
+{
+	filterIds();
+}
+
+void ChatLobbyDialog::filterIds()
+{
+	int filterColumn = ui.filterLineEdit->currentFilter();
+	QString text = ui.filterLineEdit->text();
+
+	ui.participantsList->filterItems(filterColumn, text);
 }

@@ -55,7 +55,7 @@ CreateCircleDialog::CreateCircleDialog()
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 			
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/circles/circles_64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
@@ -103,7 +103,7 @@ CreateCircleDialog::CreateCircleDialog()
 #endif
         
     //ui.idChooser->loadIds(0,RsGxsId());
-    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
+    ui.circleComboBox->loadCircles(RsGxsCircleId());
 }
 
 CreateCircleDialog::~CreateCircleDialog()
@@ -604,7 +604,7 @@ void CreateCircleDialog::updateCircleGUI()
             else
 				ui.radioButton_Restricted->setChecked(true);
 
-			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mCircleGroup.mMeta.mCircleId);
+            ui.circleComboBox->loadCircles(mCircleGroup.mMeta.mCircleId);
 			
 			break;
 

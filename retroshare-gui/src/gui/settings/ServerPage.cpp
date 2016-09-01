@@ -258,7 +258,7 @@ void ServerPage::load()
 	 */
 
 	netIndex = 3; // NONE.
-	if (detail.vs_dht != RS_VS_DISC_OFF)
+    if (detail.vs_dht != RS_VS_DHT_OFF)
 	{
 		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{

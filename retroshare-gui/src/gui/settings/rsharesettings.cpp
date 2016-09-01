@@ -345,6 +345,8 @@ static QString getKeyForLastDir(RshareSettings::enumLastDir type)
 		return "Messages";
 	case RshareSettings::LASTDIR_SOUNDS:
 		return "SOUNDS";
+	case RshareSettings::LASTDIR_PLUGIN:
+		return "PLUGIN";
 	}
 	return "";
 }
@@ -601,6 +603,16 @@ QRgb RshareSettings::getChatSearchFoundColor()
 	return valueFromGroup("Chat", "SearchMaxSearchFoundColor", QString::number(QColor(255,255,150).rgba())).toUInt();
 }
 
+bool RshareSettings::getChatLoadEmbeddedImages()
+{
+	return valueFromGroup("Chat", "LoadEmbeddedImages", true).toBool();
+}
+
+void RshareSettings::setChatLoadEmbeddedImages(bool value)
+{
+	setValueToGroup("Chat", "LoadEmbeddedImages", value);
+}
+
 RshareSettings::enumToasterPosition RshareSettings::getToasterPosition()
 {
 	return (enumToasterPosition) value("ToasterPosition", TOASTERPOS_BOTTOMRIGHT).toInt();
@@ -777,7 +789,7 @@ bool RshareSettings::getRetroShareProtocol()
 		}
 	}
 #elif defined(Q_OS_LINUX)
-	QFile desktop("/usr/share/applications/retroshare06.desktop");
+	QFile desktop("/usr/share/applications/RetroShare06.desktop");
 	if (desktop.exists()) {
 		desktop.open(QIODevice::ReadOnly | QIODevice::Text);
 		QTextStream in(&desktop);

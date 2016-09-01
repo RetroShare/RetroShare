@@ -26,6 +26,7 @@
 
 
 #include "bitdht/bdfilter.h"
+#include "bitdht/bdmanager.h"
 #include "util/bdfile.h"
 
 #include <stdlib.h>
@@ -39,7 +40,7 @@
 **/
 #define BDFILTER_ENTRY_DROP_PERIOD	(7 * 24 * 3600)
 
-bdFilter::bdFilter(const std::string &fname, const bdNodeId *ownid,  uint32_t filterFlags, bdDhtFunctions *fns)
+bdFilter::bdFilter(const std::string &fname, const bdNodeId *ownid,  uint32_t filterFlags, bdDhtFunctions *fns, bdNodeManager *manager)
 {
 	/* */
     mOwnId = *ownid;
@@ -49,6 +50,7 @@ bdFilter::bdFilter(const std::string &fname, const bdNodeId *ownid,  uint32_t fi
     loadBannedIpFile() ;
 
     mFilterFlags = filterFlags;
+    mNodeManager = manager;
 }
 
 void bdFilter::writeBannedIpFile()
@@ -220,16 +222,28 @@ void bdFilter::getFilteredPeers(std::list<bdFilteredPeer>& peers)
 /* fast check if the addr is in the structure */
 int bdFilter::addrOkay(struct sockaddr_in *addr)
 {
-    std::map<uint32_t,bdFilteredPeer>::const_iterator it = mFiltered.find(addr->sin_addr.s_addr);
+	// first check upper layer
+	bool isAvailable, isBanned;
+	mNodeManager->doIsBannedCallback(addr, &isAvailable, &isBanned);
 
-    if (it == mFiltered.end())
-        return 1; // Address is Okay!
+	if(isAvailable) {
+#ifdef DEBUG_FILTER
+		std::cerr << "bdFilter::addrOkay addr: " << inet_ntoa(addr->sin_addr) << " result from upper layer: " << (isBanned ? "banned" : "ok") << std::endl;
+#endif
+		return !isBanned;
+	} else {
+		// fallback to own ban list
+
+		std::map<uint32_t,bdFilteredPeer>::const_iterator it = mFiltered.find(addr->sin_addr.s_addr);
+		if (it == mFiltered.end())
+			return 1; // Address is Okay
+	}
 
 #ifdef DEBUG_FILTER
-    std::cerr << "Detected Packet From Banned Ip Address: " << inet_ntoa(addr->sin_addr);
-    std::cerr << std::endl;
+	std::cerr << "Detected Packet From Banned Ip Address: " << inet_ntoa(addr->sin_addr);
+	std::cerr << std::endl;
 #endif
-    return 0;
+	return 0;
 }
 
 

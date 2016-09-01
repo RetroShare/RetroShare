@@ -78,7 +78,9 @@
 #include "grouter/p3grouter.h"
 #endif
 
+#ifdef RS_USE_DHT_STUNNER
 #include "tcponudp/udpstunner.h"
+#endif // RS_USE_DHT_STUNNER
 
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
@@ -902,7 +904,9 @@ RsGRouter *rsGRouter = NULL ;
 	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
+#ifdef RS_USE_DHT_STUNNER
 #include "dht/stunaddrassist.h"
+#endif // RS_USE_DHT_STUNNER
 
 #include "udp/udpstack.h"
 #include "tcponudp/udppeer.h"
@@ -1138,6 +1142,7 @@ int RsServer::StartupRetroShare()
 	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
 	int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
+#ifdef RS_USE_DHT_STUNNER
 	// FIRST DHT STUNNER.
 	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
 	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
@@ -1146,9 +1151,11 @@ int RsServer::StartupRetroShare()
 #ifdef LOCALNET_TESTING
 	mDhtStunner->SetAcceptLocalNet();
 #endif
+#endif // RS_USE_DHT_STUNNER
+
 
 	// NEXT BITDHT.
-    p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
 
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
@@ -1189,6 +1196,7 @@ int RsServer::StartupRetroShare()
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
 #endif
 
+#ifdef RS_USE_DHT_STUNNER
 	// FIRSTLY THE PROXY STUNNER.
 	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
 	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
@@ -1197,6 +1205,7 @@ int RsServer::StartupRetroShare()
 #ifdef LOCALNET_TESTING
 	mProxyStunner->SetAcceptLocalNet();
 #endif
+#endif // RS_USE_DHT_STUNNER
 
 
 	// FINALLY THE PROXY UDP CONNECTIONS
@@ -1207,9 +1216,15 @@ int RsServer::StartupRetroShare()
 	// REAL INITIALISATION - WITH THREE MODES
 	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
 
+#ifdef RS_USE_DHT_STUNNER
 	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
+#else // RS_USE_DHT_STUNNER
+	mBitDht->setupConnectBits(mRelay);
+#endif // RS_USE_DHT_STUNNER
 
+#ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
+#endif // RS_USE_DHT_STUNNER
 #else
 	/* install NULL Pointer for rsDht Interface */
 	rsDht = NULL;

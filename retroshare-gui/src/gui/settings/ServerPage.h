@@ -45,7 +45,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-    virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/png/network.png") ; }
     virtual QString pageName() const { return tr("Network") ; }
     virtual QString helpText() const { return ""; }
 

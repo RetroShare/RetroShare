@@ -577,6 +577,7 @@ static int parse_headers(dearmour_arg_t *arg,ops_error_t **errors,
 				if (nbuf == NULL)
 				{
 					free(buf);
+                    buf = NULL ;
 					rtn=-1;
 					goto end;
 				}

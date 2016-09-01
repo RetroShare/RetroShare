@@ -99,7 +99,7 @@ struct SharedDirInfo
 	std::string filename ;
 	std::string virtualname ;
 	FileStorageFlags shareflags ;		// DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | ...
-	std::list<std::string> parent_groups ;
+    std::list<RsNodeGroupId> parent_groups ;
 };
 
 class RsFiles

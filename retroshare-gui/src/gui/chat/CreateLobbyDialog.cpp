@@ -39,7 +39,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/chat_64.png"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/chat-lobbies.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Lobby"));
 
     RsGxsId default_identity ;

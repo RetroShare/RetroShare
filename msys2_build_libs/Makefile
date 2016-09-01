@@ -1,5 +1,5 @@
 SQLCIPHER_VERSION=3.3.1
-MSYS2AUTOMAKE=/c/msys64/usr/share/automake-1.15
+MSYS2AUTOMAKE=/usr/share/automake-1.15
 
 BLD=../build-libs
 DLD=../downloads

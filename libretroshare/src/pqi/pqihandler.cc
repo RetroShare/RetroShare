@@ -25,16 +25,23 @@
 
 #include "pqi/pqihandler.h"
 
-#include "util/rsdebug.h"
-#include "util/rsstring.h"
-#include "retroshare/rspeers.h"
-#include <stdlib.h>
-#include <time.h>
+#include <stdlib.h>               // for NULL
+#include <time.h>                 // for time, time_t
+#include <algorithm>              // for sort
+#include <iostream>               // for dec
+#include <string>                 // for string, char_traits, operator+, bas...
+#include <utility>                // for pair
+
+#include "pqi/pqi_base.h"         // for PQInterface, RsBwRates
+#include "retroshare/rsconfig.h"  // for RSTrafficClue
+#include "retroshare/rsids.h"     // for t_RsGenericIdType
+#include "retroshare/rspeers.h"   // for RsPeers, rsPeers
+#include "serialiser/rsserial.h"  // for RsItem, RsRawItem
+#include "util/rsdebug.h"         // for pqioutput, PQL_DEBUG_BASIC, PQL_ALERT
+#include "util/rsstring.h"        // for rs_sprintf_append
 
 using std::dec;
 
-#include <time.h>
-#include <sys/time.h>
 #ifdef WINDOWS_SYS
 #include <sys/timeb.h>
 #endif
