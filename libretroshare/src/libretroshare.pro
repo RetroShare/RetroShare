@@ -45,7 +45,8 @@ file_lists {
 			file_sharing/filelist_io.h \
 			file_sharing/directory_storage.h \
 			file_sharing/directory_updater.h \
-			file_sharing/rsfilelistitems.h
+			file_sharing/rsfilelistitems.h \
+			file_sharing/file_sharing_defaults.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
 			file_sharing/hash_cache.cc \

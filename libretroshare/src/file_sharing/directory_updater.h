@@ -23,6 +23,9 @@ public:
 
     virtual void forceUpdate();
 
+    void setFileWatchPeriod(uint32_t seconds) { mDelayBetweenDirectoryUpdates = seconds ; }
+    uint32_t fileWatchPeriod() const { return mDelayBetweenDirectoryUpdates ; }
+
 protected:
     virtual void data_tick() ;
 
@@ -36,5 +39,7 @@ private:
 
     time_t mLastSweepTime;
     time_t mLastTSUpdateTime;
+
+    uint32_t mDelayBetweenDirectoryUpdates;
 };
 

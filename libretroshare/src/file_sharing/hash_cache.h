@@ -44,7 +44,7 @@ public:
     // interaction with GUI, called from p3FileLists
     void setRememberHashFilesDuration(uint32_t days) { mMaxStorageDurationDays = days ; }
     uint32_t rememberHashFilesDuration() const { return mMaxStorageDurationDays ; }
-    void clear() { mFiles.clear(); }
+    void clear() { mFiles.clear(); mChanged=true; }
     bool empty() const { return mFiles.empty() ; }
 
     // Functions called by the thread

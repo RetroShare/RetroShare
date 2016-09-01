@@ -4,6 +4,7 @@
 #include "file_sharing/directory_storage.h"
 #include "file_sharing/directory_updater.h"
 #include "file_sharing/rsfilelistitems.h"
+#include "file_sharing/file_sharing_defaults.h"
 
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
@@ -20,7 +21,6 @@ static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED = 0x0004 ;
 static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;
 static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;
 static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
-static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ = 60 ; 			// every minute, for debugging. Should be evey 10 minutes or so.
 static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 55 ; 			// every 55 secs, for debugging. Should be evey 10 minutes or so.
 
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
@@ -39,14 +39,19 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
 
+    // This is for the transmission of data
+
     addSerialType(new RsFileListsSerialiser()) ;
 }
 
 RsSerialiser *p3FileDatabase::setupSerialiser()
 {
+    // This one is for saveList/loadList
+
     RsSerialiser *rss = new RsSerialiser ;
     rss->addSerialType(new RsFileListsSerialiser()) ;
     rss->addSerialType(new RsGeneralConfigSerialiser());
+    rss->addSerialType(new RsFileConfigSerialiser());
 
     return rss ;
 }
@@ -201,21 +206,137 @@ void p3FileDatabase::stopThreads()
 void p3FileDatabase::tickWatchers()
 {
 }
-bool p3FileDatabase::loadList(std::list<RsItem *>& items)
+
+bool p3FileDatabase::saveList(bool &cleanup, std::list<RsItem *>& sList)
 {
-	// This loads
-	//
-	// 	- list of locally shared directories, and the permissions that go with them
+cleanup = true;
 
-    NOT_IMPLEMENTED();
+#ifdef DEBUG_FILE_HIERARCHY
+    P3FILELISTS_DEBUG() << "Save list" << std::endl;
+#endif
 
-    return true ;
+    /* get list of directories */
+    std::list<SharedDirInfo> dirList;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+        mLocalSharedDirs->getSharedDirectoryList(dirList);
+    }
+
+    for(std::list<SharedDirInfo>::iterator it = dirList.begin(); it != dirList.end(); ++it)
+    {
+        RsFileConfigItem *fi = new RsFileConfigItem();
+
+        fi->file.path = (*it).filename ;
+        fi->file.name = (*it).virtualname ;
+        fi->flags = (*it).shareflags.toUInt32() ;
+
+        for(std::list<RsNodeGroupId>::const_iterator it2( (*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2)
+            fi->parent_groups.ids.insert(*it2) ;
+
+        sList.push_back(fi);
+    }
+
+    RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
+
+    /* basic control parameters */
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+        std::string s ;
+        rs_sprintf(s, "%lu", mHashCache->rememberHashFilesDuration()) ;
+
+        RsTlvKeyValue kv;
+
+        kv.key = HASH_CACHE_DURATION_SS;
+        kv.value = s ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+
+    {
+        std::string s ;
+        rs_sprintf(s, "%d", watchPeriod()) ;
+
+        RsTlvKeyValue kv;
+
+        kv.key = WATCH_FILE_DURATION_SS;
+        kv.value = s ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+
+    /* Add KeyValue to saveList */
+    sList.push_back(rskv);
+
+    return true;
 }
 
-bool p3FileDatabase::saveList(bool &cleanup, std::list<RsItem *>&)
+bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 {
-    NOT_IMPLEMENTED();
-    return true ;
+    /* for each item, check it exists ....
+     * - remove any that are dead (or flag?)
+     */
+    static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
+
+#ifdef  DEBUG_FILE_HIERARCHY
+    P3FILELISTS_DEBUG() << "Load list" << std::endl;
+#endif
+
+    std::list<SharedDirInfo> dirList;
+
+    for(std::list<RsItem *>::iterator it = load.begin(); it != load.end(); ++it)
+    {
+        RsConfigKeyValueSet *rskv ;
+
+        if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
+        {
+            /* make into map */
+            std::map<std::string, std::string> configMap;
+            std::map<std::string, std::string>::const_iterator mit ;
+
+            for(std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit)
+            if (kit->key == HASH_CACHE_DURATION_SS)
+            {
+                uint32_t t=0 ;
+                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                    mHashCache->setRememberHashFilesDuration(t);
+            }
+            else if(kit->key == WATCH_FILE_DURATION_SS)
+            {
+                int t=0 ;
+                if(sscanf(kit->value.c_str(),"%d",&t) == 1)
+                    setWatchPeriod(t);
+            }
+            delete *it ;
+            continue ;
+        }
+
+        RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+
+        if (fi)
+        {
+            /* ensure that it exists? */
+
+            SharedDirInfo info ;
+            info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
+            info.virtualname = fi->file.name;
+            info.shareflags = FileStorageFlags(fi->flags) ;
+            info.shareflags &= PERMISSION_MASK ;
+            info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
+
+            for(std::set<RsNodeGroupId>::const_iterator itt(fi->parent_groups.ids.begin());itt!=fi->parent_groups.ids.end();++itt)
+                info.parent_groups.push_back(*itt) ;
+
+            dirList.push_back(info) ;
+        }
+
+        delete *it ;
+    }
+
+    /* set directories */
+    mLocalSharedDirs->setSharedDirectoryList(dirList);
+    load.clear() ;
+
+    return true;
 }
 
 void p3FileDatabase::cleanup()
@@ -567,25 +688,30 @@ bool p3FileDatabase::inDirectoryCheck()
 }
 void p3FileDatabase::setWatchPeriod(uint32_t seconds)
 {
-    NOT_IMPLEMENTED();
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    mLocalDirWatcher->setFileWatchPeriod(seconds);
+    IndicateConfigChanged();
 }
 uint32_t p3FileDatabase::watchPeriod()
 {
-    NOT_IMPLEMENTED();
-    return 0;
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->fileWatchPeriod();
 }
 void p3FileDatabase::setRememberHashCacheDuration(uint32_t days)
 {
-    NOT_IMPLEMENTED();
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mHashCache->setRememberHashFilesDuration(days) ;
 }
 uint32_t p3FileDatabase::rememberHashCacheDuration()
 {
-    NOT_IMPLEMENTED();
-    return 0;
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mHashCache->rememberHashFilesDuration() ;
 }
 void p3FileDatabase::clearHashCache()
 {
-    NOT_IMPLEMENTED();
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mHashCache->clear() ;
 }
 bool p3FileDatabase::rememberHashCache()
 {

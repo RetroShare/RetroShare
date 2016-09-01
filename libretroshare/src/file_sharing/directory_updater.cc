@@ -3,6 +3,7 @@
 
 #include "directory_storage.h"
 #include "directory_updater.h"
+#include "file_sharing_defaults.h"
 
 #define DEBUG_LOCAL_DIR_UPDATER 1
 
@@ -10,15 +11,13 @@
 //                                           Local Directory Updater                                           //
 //=============================================================================================================//
 
-static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES           = 100 ; // 10 seconds for testing. Should be much more!!
-static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ   = 10 ; // 10 seconds for testing. Should be much more!!
-static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE = 10 ; // 10 seconds for testing. Should be much more!!
-
 LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStorage *lds)
     : mHashCache(hc),mSharedDirectories(lds)
 {
     mLastSweepTime = 0;
     mLastTSUpdateTime = 0;
+
+    mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
 }
 
 void LocalDirectoryUpdater::data_tick()
