@@ -18,15 +18,15 @@ class RsStyleSetting : public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor rsIconColor WRITE setRsIconColor DESIGNABLE true)
-	Q_PROPERTY(QColor rsIconColorOnNotify WRITE setRsIconColorOnNotify DESIGNABLE true)
+	Q_PROPERTY(QString rsIconColor WRITE setRsIconColor DESIGNABLE true)
+	Q_PROPERTY(QString rsIconColorOnNotify WRITE setRsIconColorOnNotify DESIGNABLE true)
 	Q_PROPERTY(uint rsIconMarginOnNotify WRITE setRsIconMarginOnNotify DESIGNABLE true)
 
 public:
 	explicit RsStyleSetting(QWidget *parent = 0);
 
-	void setRsIconColor(const QColor color);
-	void setRsIconColorOnNotify(const QColor color);
+	void setRsIconColor(const QString color);
+	void setRsIconColorOnNotify(const QString color);
 	void setRsIconMarginOnNotify(const uint margin);
 
 };

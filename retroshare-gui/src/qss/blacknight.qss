@@ -307,7 +307,7 @@ OpModeStatus[opMode="Minimal"] {
 }
 
 RsStyleSetting {
-	qproperty-rsIconColor: #88252525;
-	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconColor: "88252525";
+	qproperty-rsIconColorOnNotify: "FFFF990D";
 	qproperty-rsIconMarginOnNotify: 0;
 }

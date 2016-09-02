@@ -22,6 +22,10 @@
 #ifndef RSICONENGINE_H
 #define RSICONENGINE_H
 
+#ifndef Q_DECL_OVERRIDE
+# define Q_DECL_OVERRIDE
+#endif
+
 #include <QIcon>
 #include <QIconEngine>
 #include <QObject>
@@ -51,9 +55,11 @@ inline RsIconEngineEntry::RsIconEngineEntry(const QString &file, const QImage &i
   : fileName(file), size(image.size()), mode(m), state(s)
 {
 	pixmap.convertFromImage(image);
+#if QT_VERSION >= 0x050000
 	// Reset the devicePixelRatio. The pixmap may be loaded from a @2x file,
 	// but be used as a 1x pixmap by QIcon.
 	pixmap.setDevicePixelRatio(1.0);
+#endif
 }
 
 /************************************************************************************/
@@ -75,10 +81,16 @@ public:
 	QIconEngine *clone() const Q_DECL_OVERRIDE;
 	bool read(QDataStream &in) Q_DECL_OVERRIDE;
 	bool write(QDataStream &out) const Q_DECL_OVERRIDE;
+#if QT_VERSION >= 0x050000
 	void virtual_hook(int id, void *data) Q_DECL_OVERRIDE;
+#endif
 
 	bool onNotify() const {return m_OnNotify;}
 	void setOnNotify(const bool value) {m_OnNotify=value;}
+#if QT_VERSION < 0x050700
+	bool isNull() { return false; }
+#endif
+
 
 private:
 	RsIconEngineEntry *tryMatch(const QSize &size, QIcon::Mode mode, QIcon::State state);

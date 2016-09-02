@@ -28,7 +28,6 @@
 #include <QPainter>
 #include <QPixmapCache>
 #include <QStyleOption>
-#include <QWindow>
 
 #include "util/misc.h"
 #include "gui/settings/rsharesettings.h"
@@ -46,15 +45,19 @@
 	if Qt::AA_UseHighDpiPixmaps is not set this function
 	returns 1.0 to keep non-hihdpi aware code working.
 */
-static qreal qt_effective_device_pixel_ratio(QWindow *window = 0)
+static qreal qt_effective_device_pixel_ratio(int */*window*/ = 0)//Retroshare Change: Don't use QWindow
 {
+#if QT_VERSION >= 0x050000
 	if (!qApp->testAttribute(Qt::AA_UseHighDpiPixmaps))
 		return qreal(1.0);
 
-	if (window)
-		return window->devicePixelRatio();
+	//if (window)
+	//	return window->devicePixelRatio();
 
 	return qApp->devicePixelRatio(); // Don't know which window to target.
+#else
+	return qreal(1.0);
+#endif
 }
 
 RsIconEngine::RsIconEngine()
@@ -213,7 +216,7 @@ QPixmap RsIconEngine::drawPixmap(QPixmap &pixmapOrig)
 	if (m_Margin>0 && m_OnNotify) {
 		uint margin = (m_Margin * 0.01) * sqrt(pow(rect.height(),2) + pow(rect.width(),2));
 		painter.setBrush(brushON);
-		painter.drawEllipse(rect.marginsAdded(QMargins(margin,margin,margin,margin)));
+		painter.drawEllipse(rect.adjusted(-margin,-margin,margin,margin));
 		QBrush brush = painter.background();
 		brush.setColor(m_Color);
 		painter.setBrush(brush);
@@ -258,11 +261,13 @@ QPixmap RsIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State s
 	QString key = QLatin1String("qt_")
 	    % HexString<quint64>(pm.cacheKey())
 	    % HexString<uint>(pe->mode)
+#if QT_VERSION >= 0x050000
 	    % HexString<quint64>(QGuiApplication::palette().cacheKey())
+#endif
 	    % HexString<uint>(actualSize.width())
 	    % HexString<uint>(actualSize.height())
-	    % HexString<uint>(m_Color.rgba64().toArgb32()) /*RetroShare Change */
-	    % HexString<uint>(m_ColorOnNotify.rgba64().toArgb32()) /*RetroShare Change */
+	    % HexString<uint>(m_Color.rgba()) /*RetroShare Change */
+	    % HexString<uint>(m_ColorOnNotify.rgba()) /*RetroShare Change */
 	    % HexString<uint>(m_Margin) /*RetroShare Change */
 	    + (m_OnNotify ? "N" : "") ; /*RetroShare Change */
 	if (mode == QIcon::Active) {
@@ -272,6 +277,7 @@ QPixmap RsIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State s
 		if (QPixmapCache::find(key % HexString<uint>(QIcon::Normal), pm)) {
 			QPixmap active = pm;
 
+#if QT_VERSION >= 0x050000
 			if (/*QGuiApplication *guiApp = */qobject_cast<QGuiApplication *>(qApp)) {
 				//Retroshare change as QGuiApplicationPrivate is not visible from here
 				QStyleOption opt(0);
@@ -279,6 +285,7 @@ QPixmap RsIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State s
 				active = QApplication::style()->generatedIconPixmap(mode, pm, &opt);
 				//active = static_cast<QGuiApplicationPrivate*>(QObjectPrivate::get(guiApp))->applyQIconStyleHelper(QIcon::Active, pm);
 			}
+#endif
 
 			if (pm.cacheKey() == active.cacheKey())
 				return pm;
@@ -290,6 +297,7 @@ QPixmap RsIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State s
 			pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 		if (pe->mode != mode && mode != QIcon::Normal) {
 			QPixmap generated = pm;
+#if QT_VERSION >= 0x050000
 			if (/*QGuiApplication *guiApp = */qobject_cast<QGuiApplication *>(qApp)) {
 				//Retroshare change as QGuiApplicationPrivate is not visible from here
 				QStyleOption opt(0);
@@ -297,6 +305,7 @@ QPixmap RsIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State s
 				generated = QApplication::style()->generatedIconPixmap(mode, pm, &opt);
 				//generated = static_cast<QGuiApplicationPrivate*>(QObjectPrivate::get(guiApp))->applyQIconStyleHelper(mode, pm);
 			}
+#endif
 			if (!generated.isNull())
 				pm = generated;
 		}
@@ -335,7 +344,11 @@ void RsIconEngine::addPixmap(const QPixmap &pixmap, QIcon::Mode mode, QIcon::Sta
 // Read out original image depth as set by ICOReader
 static inline int origIcoDepth(const QImage &image)
 {
+#if QT_VERSION >= 0x050000
 	const QString s = image.text(QStringLiteral("_q_icoOrigDepth"));
+#else
+	const QString s = image.text(QString("_q_icoOrigDepth"));
+#endif
 	return s.isEmpty() ? 32 : s.toInt();
 }
 
@@ -415,8 +428,14 @@ void RsIconEngine::addFile(const QString &fileName, const QSize &size, QIcon::Mo
 			}
 		}
 	}
+#if QT_VERSION >= 0x050000
 	for (const QImage &i : qAsConst(icoImages))
 		pixmaps += RsIconEngineEntry(abs, i, mode, state);
+#else
+	//range-based ‘for’ loops are not allowed in C++98 mode
+	for (int i = 0; i < icoImages.size(); ++i)
+		pixmaps += RsIconEngineEntry(abs, icoImages[i], mode, state);
+#endif
 	if (icoImages.isEmpty() && !ignoreSize) // Add placeholder with the filename and empty pixmap for the size.
 		pixmaps += RsIconEngineEntry(abs, size, mode, state);
 }
@@ -479,6 +498,7 @@ bool RsIconEngine::write(QDataStream &out) const
 	return true;
 }
 
+#if QT_VERSION >= 0x050000
 void RsIconEngine::virtual_hook(int id, void *data)
 {
 	switch (id) {
@@ -501,3 +521,4 @@ void RsIconEngine::virtual_hook(int id, void *data)
 			QIconEngine::virtual_hook(id, data);
 	}
 }
+#endif

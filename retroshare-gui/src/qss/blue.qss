@@ -173,7 +173,7 @@ QSplitter#splitter{
 
 }
 RsStyleSetting {
-	qproperty-rsIconColor: #FF039BD5;
-	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconColor: "FF039BD5";
+	qproperty-rsIconColorOnNotify: "FFFF990D";
 	qproperty-rsIconMarginOnNotify: 0;
 }

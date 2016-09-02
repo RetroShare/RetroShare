@@ -115,11 +115,11 @@ public:
 	/** Gets background color for RsIcon */
 	QColor getRsIconColor() const;
 	/** Sets background color for RsIcon */
-	void setRsIconColor(const QColor color);
+	void setRsIconColor(const QString color);
 	/** Gets background color for RsIcon when on notify */
 	QColor getRsIconColorOnNotify() const;
 	/** Sets background color for RsIcon when on notify */
-	void setRsIconColorOnNotify(const QColor color);
+	void setRsIconColorOnNotify(const QString color);
 	/** Gets background margin for RsIcon when on notify */
 	uint getRsIconMarginOnNotify() const;
 	/** Sets background margin for RsIcon when on notify */

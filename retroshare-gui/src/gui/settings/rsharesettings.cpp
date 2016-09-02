@@ -195,9 +195,9 @@ QColor RshareSettings::getRsIconColor() const
 }
 
 /** Sets background color for RsIcon */
-void RshareSettings::setRsIconColor(const QColor color)
+void RshareSettings::setRsIconColor(const QString color)
 {
-	setValue(SETTING_RSICONCOLOR, QString::number(color.rgba64().toArgb32(),16));
+	setValue(SETTING_RSICONCOLOR, color);
 }
 
 /** Gets background color for RsIcon when on notify */
@@ -208,9 +208,9 @@ QColor RshareSettings::getRsIconColorOnNotify() const
 }
 
 /** Sets background color for RsIcon when on notify */
-void RshareSettings::setRsIconColorOnNotify(const QColor color)
+void RshareSettings::setRsIconColorOnNotify(const QString color)
 {
-	setValue(SETTING_RSICONCOLORONNOTIFY, QString::number(color.rgba64().toArgb32(),16));
+	setValue(SETTING_RSICONCOLORONNOTIFY, color);
 }
 
 /** Gets background margin for RsIcon when on notify */
