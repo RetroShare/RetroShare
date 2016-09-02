@@ -55,8 +55,8 @@ public:
 private:
     void clean() ;
 
-    void save() ;
-    void load() ;
+    void locked_save() ;
+    void locked_load() ;
 
     bool readHashStorageInfo(const unsigned char *data,uint32_t total_size,uint32_t& offset,HashStorageInfo& info) const;
     bool writeHashStorageInfo(unsigned char *& data,uint32_t&  total_size,uint32_t& offset,const HashStorageInfo& info) const;
@@ -85,5 +85,6 @@ private:
     RsMutex mHashMtx ;
     bool mRunning;
     uint32_t mInactivitySleepTime ;
+    time_t mLastSaveTime ;
 };
 

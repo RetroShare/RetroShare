@@ -195,5 +195,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         mutable RsMutex mFLSMtx ;
         uint32_t mUpdateFlags ;
+        std::string mFileSharingDir ;
 };
 

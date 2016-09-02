@@ -6,16 +6,7 @@
 #include "file_sharing/hash_cache.h"
 #include "file_sharing/directory_storage.h"
 
-class DirectoryUpdater
-{
-	public:
-        DirectoryUpdater() {}
-        virtual ~DirectoryUpdater(){}
-};
-
-#warning: simplify, if we don't keep the remote directory updater
-
-class LocalDirectoryUpdater: public DirectoryUpdater, public HashStorageClient, public RsTickingThread
+class LocalDirectoryUpdater: public HashStorageClient, public RsTickingThread
 {
 public:
     LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;

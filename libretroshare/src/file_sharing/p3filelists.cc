@@ -8,6 +8,7 @@
 
 #include "retroshare/rsids.h"
 #include "retroshare/rspeers.h"
+#include "rsserver/rsaccounts.h"
 
 #include "rsserver/p3face.h"
 
@@ -26,13 +27,25 @@ static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 55 ; 			// every
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     : mServCtrl(mpeers), mFLSMtx("p3FileLists")
 {
-	// loads existing indexes for friends. Some might be already present here.
+    // make sure the base directory exists
+
+    std::string base_dir = rsAccounts->PathAccountDirectory();
+
+    if(base_dir.empty())
+        throw std::runtime_error("Cannot create base directory to store/access file sharing files.") ;
+
+    mFileSharingDir = base_dir + "/" + FILE_SHARING_DIR_NAME ;
+
+    if(!RsDirUtil::checkCreateDirectory(mFileSharingDir))
+        throw std::runtime_error("Cannot create base directory to store/access file sharing files.") ;
+
+    // loads existing indexes for friends. Some might be already present here.
 	// 
     mRemoteDirectories.clear() ;	// we should load them!
     mOwnId = mpeers->getOwnId() ;
 
     mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin",mOwnId);
-    mHashCache = new HashStorage("hash_cache.bin") ;
+    mHashCache = new HashStorage(mFileSharingDir + "/" + HASH_CACHE_FILE_NAME) ;
 
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
 

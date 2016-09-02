@@ -3,6 +3,7 @@
 #include "pqi/authssl.h"
 #include "hash_cache.h"
 #include "filelist_io.h"
+#include "file_sharing_defaults.h"
 
 #define HASHSTORAGE_DEBUG 1
 
@@ -14,8 +15,12 @@ HashStorage::HashStorage(const std::string& save_file_name)
 {
     mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
     mRunning = false ;
+    mLastSaveTime = 0 ;
 
-    load() ;
+    {
+        RS_STACK_MUTEX(mHashMtx) ;
+        locked_load() ;
+    }
 }
 
 void HashStorage::data_tick()
@@ -48,10 +53,13 @@ void HashStorage::data_tick()
 
                 mInactivitySleepTime = MAX_INACTIVITY_SLEEP_TIME;
 
-                std::cerr << "Stopping hashing thread." << std::endl;
-                shutdown();
-                mRunning = false ;
-                std::cerr << "done." << std::endl;
+                if(!mChanged)	// otherwise it might prevent from saving the hash cache
+                {
+                    std::cerr << "Stopping hashing thread." << std::endl;
+                    shutdown();
+                    mRunning = false ;
+                    std::cerr << "done." << std::endl;
+                }
 
                 RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
             }
@@ -92,11 +100,23 @@ void HashStorage::data_tick()
         info.modf_stamp = job.ts ;
         info.time_stamp = time(NULL);
         info.hash = hash;
+
+        mChanged = true ;
     }
     // call the client
 
     if(!hash.isNull())
         job.client->hash_callback(job.client_param, job.full_path, hash, size);
+
+    {
+        RS_STACK_MUTEX(mHashMtx) ;
+        if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
+        {
+            locked_save();
+            mLastSaveTime = time(NULL) ;
+            mChanged = false ;
+        }
+    }
 }
 
 bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
@@ -180,7 +200,7 @@ void HashStorage::clean()
 #endif
 }
 
-void HashStorage::load()
+void HashStorage::locked_load()
 {
    uint64_t file_size ;
 
@@ -249,7 +269,7 @@ void HashStorage::load()
 #endif
 }
 
-void HashStorage::save()
+void HashStorage::locked_save()
 {
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << "Saving Hash Cache to file " << mFilePath << "..." << std::endl ;
