@@ -146,6 +146,7 @@ IdDialog::IdDialog(QWidget *parent) :
     ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
+	ui->titleBarPixmap->setIcon(iconPixmap());
 
 	mIdQueue = NULL;
     

@@ -22,6 +22,7 @@
 #include "MessageUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
+#include "util/RsIcon.h"
 
 #include "gui/msgs/MessageInterface.h"
 
@@ -41,12 +42,12 @@ bool MessageUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon MessageUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/messages.png");
+	return RsIcon(":/icons/svg/messages-trans.svg");
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/messages-notify.png") : QIcon(":/icons/png/messages.png");
+	return RsIcon(":/icons/svg/messages-trans.svg", hasNew);
 }
 
 unsigned int MessageUserNotify::getNewCount()

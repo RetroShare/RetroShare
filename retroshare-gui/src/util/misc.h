@@ -24,10 +24,12 @@
 #define MISC_H
 
 #include <stdexcept>
+#include <QChar>
+#include <QStringBuilder>
+#include <QFileDialog>
 #include <QObject>
 #include <QPair>
 #include <QThread>
-#include <QFileDialog>
 
 #include "gui/settings/rsharesettings.h"
 
@@ -199,5 +201,38 @@ private:
 };
 
 template<class T> inline SignalsBlocker<T> whileBlocking(T *blocked) { return SignalsBlocker<T>(blocked); }
+
+//From Qt Source
+//https://code.woboq.org/qt5/qtbase/src/gui/util/qhexstring_p.h.html#HexString
+// internal helper. Converts an integer value to an unique string token
+template <typename T>
+struct HexString
+{
+    inline HexString(const T t)
+      : val(t)
+    {}
+    inline void write(QChar *&dest) const
+    {
+        const ushort hexChars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+        const char *c = reinterpret_cast<const char *>(&val);
+        for (uint i = 0; i < sizeof(T); ++i) {
+            *dest++ = hexChars[*c & 0xf];
+            *dest++ = hexChars[(*c & 0xf0) >> 4];
+            ++c;
+        }
+    }
+    const T val;
+};
+
+// specialization to enable fast concatenating of our string tokens to a string
+template <typename T>
+        struct QConcatenable<HexString<T> >
+{
+    typedef HexString<T> type;
+    enum { ExactSize = true };
+    static int size(const HexString<T> &) { return sizeof(T) * 2; }
+    static inline void appendTo(const HexString<T> &str, QChar *&out) { str.write(out); }
+    typedef QString ConvertTo;
+};
 
 #endif

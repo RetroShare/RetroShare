@@ -30,11 +30,12 @@
 #include "gui/People/CircleWidget.h"
 #include "gui/People/IdentityWidget.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/RsIcon.h"
 #include "util/TokenQueue.h"
 
 #include "ui_PeopleDialog.h"
 
-#define IMAGE_IDENTITY          ":/icons/friends_128.png"
+#define IMAGE_IDENTITY ":/icons/svg/people-trans.svg"
 
 class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
 {
@@ -49,7 +50,7 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, p
 		PeopleDialog(QWidget *parent = 0);
 		~PeopleDialog();
 
-		virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDENTITY) ; } //MainPage
+		virtual QIcon iconPixmap() const { return RsIcon(IMAGE_IDENTITY) ; } //MainPage
 		virtual QString pageName() const { return tr("People") ; } //MainPage
 		virtual QString helpText() const { return ""; } //MainPage
 

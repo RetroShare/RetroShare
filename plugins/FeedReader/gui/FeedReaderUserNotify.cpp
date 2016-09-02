@@ -24,6 +24,7 @@
 #include "FeedReaderDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/MainWindow.h"
+#include "util/RsIcon.h"
 
 #include "interface/rsFeedReader.h"
 #include "retroshare/rsiface.h"
@@ -45,12 +46,12 @@ bool FeedReaderUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon FeedReaderUserNotify::getIcon()
 {
-	return QIcon(":/images/Feed.png");
+	return RsIcon(":/images/feedreader-trans.svg");
 }
 
 QIcon FeedReaderUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/feedreader-notify.png") : QIcon(":/images/FeedReader.png");
+	return RsIcon(":/images/feedreader-trans.svg", hasNew);
 }
 
 unsigned int FeedReaderUserNotify::getNewCount()

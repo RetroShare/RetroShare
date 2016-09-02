@@ -23,8 +23,9 @@
 #define _GXSFORUMSDIALOG_H
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
+#include "util/RsIcon.h"
 
-#define IMAGE_GXSFORUMS         ":/icons/png/forums.png"
+#define IMAGE_GXSFORUMS ":/icons/svg/forums-trans.svg"
 
 class GxsForumsDialog : public GxsGroupFrameDialog
 {
@@ -34,7 +35,7 @@ public:
 	GxsForumsDialog(QWidget *parent = 0);
 	~GxsForumsDialog();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSFORUMS) ; } //MainPage
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_GXSFORUMS) ; } //MainPage
 	virtual QString pageName() const { return tr("Forums") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

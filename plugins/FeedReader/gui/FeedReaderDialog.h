@@ -23,7 +23,11 @@
 #define _FEEDREADERDIALOG_H
 
 #include <retroshare-gui/mainpage.h>
+#include <util/RsIcon.h>
+
 #include "interface/rsFeedReader.h"
+
+#define IMAGE_FEEDREADER ":/images/feedreader-trans.svg"
 
 namespace Ui {
 class FeedReaderDialog;
@@ -42,6 +46,8 @@ class FeedReaderDialog : public MainPage
 public:
 	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
+
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_FEEDREADER) ; } //MainPage
 
 	virtual UserNotify *getUserNotify(QObject *parent);
 

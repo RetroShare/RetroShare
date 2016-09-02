@@ -21,6 +21,7 @@
 
 #include "NewsFeedUserNotify.h"
 #include "gui/NewsFeed.h"
+#include "util/RsIcon.h"
 
 NewsFeedUserNotify::NewsFeedUserNotify(NewsFeed *newsFeed, QObject *parent) :
 	UserNotify(parent)
@@ -38,7 +39,7 @@ void NewsFeedUserNotify::newsFeedChanged(int count)
 
 QIcon NewsFeedUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/newsfeed-notify.png") : QIcon(":/icons/png/newsfeed.png");
+	return RsIcon(":/icons/svg/newsfeed-trans.svg", hasNew);
 }
 
 unsigned int NewsFeedUserNotify::getNewCount()

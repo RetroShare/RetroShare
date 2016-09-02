@@ -58,7 +58,7 @@
            <number>2</number>
           </property>
           <item>
-           <widget class="QLabel" name="titleBarPixmap">
+           <widget class="RsIconWidget" name="titleBarPixmap">
             <property name="text">
              <string/>
             </property>
@@ -160,6 +160,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RsIconWidget</class>
+   <extends>QLabel</extends>
+   <header location="global">util/RsIconWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>

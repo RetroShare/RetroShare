@@ -31,6 +31,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/DateTime.h"
 #include <util/HandleRichText.h>
+#include <util/RsIcon.h>
 
 #include <retroshare/rsidentity.h>
 
@@ -103,12 +104,12 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-	return QIcon(":/icons/png/chat-lobbies.png");
+	return RsIcon(":/icons/svg/chat-lobbies-trans.svg");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/chat-lobbies-notify.png") : QIcon(":/icons/png/chat-lobbies.png");
+	return RsIcon(":/icons/svg/chat-lobbies-trans.svg", hasNew);
 }
 
 unsigned int ChatLobbyUserNotify::getNewCount()

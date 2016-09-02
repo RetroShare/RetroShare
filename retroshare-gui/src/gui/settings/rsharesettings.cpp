@@ -58,6 +58,10 @@
 #define SETTING_NOTIFY_FLAGS		"NotifyFlags"
 #define SETTING_CHAT_AVATAR			"ChatAvatar"
 
+#define SETTING_RSICONCOLOR           "RsIconColor"
+#define SETTING_RSICONCOLORONNOTIFY   "RsIconColorOnNotify"
+#define SETTING_RSICONMARGINONNOTIFY   "RsIconMarginOnNotify"
+
 /* Default Retroshare Settings */
 #define DEFAULT_OPACITY             100
 
@@ -142,6 +146,10 @@ void RshareSettings::initSettings()
 
 	setDefault("DisplayTrayGroupChat", true);
 	setDefault("AddFeedsAtEnd", false);
+
+	setDefault(SETTING_RSICONCOLOR, "FF039BD5");
+	setDefault(SETTING_RSICONCOLORONNOTIFY, "FFFF990D");
+	setDefault(SETTING_RSICONMARGINONNOTIFY, 0);
 }
 
 /** Gets the currently preferred language code for Rshare. */
@@ -177,6 +185,44 @@ QString RshareSettings::getSheetName()
 void RshareSettings::setSheetName(QString sheet)                                  
 { 
 	setValue(SETTING_SHEETNAME, sheet);
+}
+
+/** Gets background color for RsIcon */
+QColor RshareSettings::getRsIconColor() const
+{
+	bool ok = false;
+	return QColor(value(SETTING_RSICONCOLOR).toString().toUInt(&ok,16));
+}
+
+/** Sets background color for RsIcon */
+void RshareSettings::setRsIconColor(const QColor color)
+{
+	setValue(SETTING_RSICONCOLOR, QString::number(color.rgba64().toArgb32(),16));
+}
+
+/** Gets background color for RsIcon when on notify */
+QColor RshareSettings::getRsIconColorOnNotify() const
+{
+	bool ok = false;
+	return QColor(value(SETTING_RSICONCOLORONNOTIFY).toString().toUInt(&ok,16));
+}
+
+/** Sets background color for RsIcon when on notify */
+void RshareSettings::setRsIconColorOnNotify(const QColor color)
+{
+	setValue(SETTING_RSICONCOLORONNOTIFY, QString::number(color.rgba64().toArgb32(),16));
+}
+
+/** Gets background margin for RsIcon when on notify */
+uint RshareSettings::getRsIconMarginOnNotify() const
+{
+	return value(SETTING_RSICONMARGINONNOTIFY).toUInt();
+}
+
+/** Sets background margin for RsIcon when on notify */
+void RshareSettings::setRsIconMarginOnNotify(const uint margin)
+{
+	setValue(SETTING_RSICONMARGINONNOTIFY, margin);
 }
 
 /** Gets the page button Location.*/

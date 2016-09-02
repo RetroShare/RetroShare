@@ -112,6 +112,19 @@ public:
 	/** Gets the stylesheet */
 	QString getSheetName();
 
+	/** Gets background color for RsIcon */
+	QColor getRsIconColor() const;
+	/** Sets background color for RsIcon */
+	void setRsIconColor(const QColor color);
+	/** Gets background color for RsIcon when on notify */
+	QColor getRsIconColorOnNotify() const;
+	/** Sets background color for RsIcon when on notify */
+	void setRsIconColorOnNotify(const QColor color);
+	/** Gets background margin for RsIcon when on notify */
+	uint getRsIconMarginOnNotify() const;
+	/** Sets background margin for RsIcon when on notify */
+	void setRsIconMarginOnNotify(const uint margin);
+
 	/** Gets the page button Location.*/
 	bool getPageButtonLoc();
 	/** Sets the page button Location.*/

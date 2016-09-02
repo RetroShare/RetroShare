@@ -25,10 +25,11 @@
 #include "mainpage.h"
 
 #include "gui/feeds/FeedHolder.h"
+#include "util/RsIcon.h"
 #include "util/TokenQueue.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
-#define IMAGE_NEWSFEED ":/icons/plugins_128.png"
+#define IMAGE_NEWSFEED ":/icons/svg/newsfeed-trans.svg"
 
 const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
@@ -67,7 +68,7 @@ public:
 	/** Default Destructor */
 	virtual ~NewsFeed();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_NEWSFEED) ; } //MainPage
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_NEWSFEED) ; } //MainPage
 	virtual QString pageName() const { return tr("Log") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

@@ -1,12 +1,12 @@
 .QWidget {
-   
+
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);
-                                    
+
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
     border-image: url(qss/orangesurfer/main.png);
 }
 
@@ -53,12 +53,12 @@ QTabBar::tab {
 
 
 }
-     
+
 QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
 
 }
-     
+
 QTabBar::tab:selected, QTabBar::tab:hover {
 
          border-image: url(qss/orangesurfer/tab_hover.png);
@@ -98,7 +98,7 @@ QPushButton#applyButton {
 
 
 QStatusBar{
-       
+
    	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #67768D, stop: 0.4 #EDEEFD);
 
@@ -115,7 +115,7 @@ QMenu {
                                      stop: 0 #67768D, stop: 0.4 #EDEEFD);
      border: 1px solid black;
 }
- 
+
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
 
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -133,13 +133,13 @@ QTreeWidget { /* when user selects item using mouse or keyboard */
 
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);
-                                     
+
 
 }
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
 
 
-                                     
+
      border-image: url(qss/gofast/border.png);
 
 }
@@ -148,7 +148,7 @@ QTreeView { /* when user selects item using mouse or keyboard */
 
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);
-                                     
+
 
 }
 
@@ -156,21 +156,21 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 
      /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
-                                     
+
       border-image: url(qss/orangesurfer/border.png);
 
 }
 
 QFrame#messengerframetop{
-         
+
         border-image: url(qss/orangesurfer/main.png);
-         
+
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
 }
 
 QFrame#Chatbuttonframe{
-         
+
         border-image: url(qss/orangesurfer/main.png);
 
 }
@@ -206,3 +206,8 @@ QLabel#fromText{
 
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

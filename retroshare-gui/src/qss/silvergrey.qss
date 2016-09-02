@@ -85,7 +85,7 @@ QHeaderView::section {
      QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
      }
-     
+
 QMenu {
 	 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 lightgray, stop:1 darkgray);
@@ -102,7 +102,7 @@ QMenu::item:selected { /* when user selects item using mouse or keyboard */
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
  }
- 
+
 QListWidget::item:selected { /* when user selects item using mouse or keyboard */
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
@@ -121,13 +121,13 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QFrame#messengerframetop{
-         
+
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FEFEFE, stop:1 #E8E8E8);
 }
 
 QFrame#Chatbuttonframe{
-         
+
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
 }
@@ -163,3 +163,8 @@ QLabel#fromText{
 
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

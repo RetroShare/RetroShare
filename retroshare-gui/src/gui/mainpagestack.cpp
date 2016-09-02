@@ -41,6 +41,8 @@
  */
 
 #include <QAction>
+#include <QToolButton>
+
 #include "mainpagestack.h"
 
 /** Default constructor. */

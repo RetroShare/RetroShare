@@ -1138,3 +1138,9 @@ OpModeStatus[opMode="Minimal"] {
 [WrongValue="true"] {
 	background-color: #702020;
 }
+
+RsStyleSetting {
+	qproperty-rsIconColor: #88252525;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 10;
+}

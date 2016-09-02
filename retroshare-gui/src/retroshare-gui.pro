@@ -407,6 +407,9 @@ HEADERS +=  rshare.h \
             util/HandleRichText.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
+            util/RsIcon.h \
+            util/RsIconEngine.h \
+            util/RsIconWidget.h \
             util/RsFile.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
@@ -461,6 +464,7 @@ HEADERS +=  rshare.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
+            gui/settings/RsStyleSetting.h \
             gui/toaster/ToasterItem.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
@@ -764,6 +768,9 @@ SOURCES +=  main.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
+            util/RsIcon.cpp \
+            util/RsIconEngine.cpp \
+            util/RsIconWidget.cpp \
             util/RsFile.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
@@ -870,6 +877,7 @@ SOURCES +=  main.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/settings/GroupFrameSettingsWidget.cpp \
+            gui/settings/RsStyleSetting.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
             gui/statusbar/dhtstatus.cpp \

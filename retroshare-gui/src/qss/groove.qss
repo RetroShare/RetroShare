@@ -4,9 +4,9 @@
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
    	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0 #6799B3, stop: 0.3 #377a90,
 								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
 
     border: 1px solid #4b8598;
@@ -29,7 +29,7 @@ QWidget#chatcentralwidget{
 
 QToolBar#chattoolBar{
        	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0 #6799B3, stop: 0.3 #377a90,
 								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
 
     border: 1px solid #4b8598;
@@ -37,7 +37,7 @@ QToolBar#chattoolBar{
 
 QFrame#Chatbuttonframe{
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0 #6799B3, stop: 0.3 #377a90,
 								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
 
     border: 1px solid #4b8598;
@@ -52,7 +52,7 @@ QStatusBar{
 /* Customize the toolbar. */
 QToolBar {
    	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0 #6799B3, stop: 0.3 #377a90,
 								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
 
     border: 1px solid #4b8598;
@@ -60,8 +60,12 @@ QToolBar {
 
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
    	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #6799B3, stop: 0.3 #377a90, 
+								   stop: 0 #6799B3, stop: 0.3 #377a90,
 								   stop: 0.31 #0e5e73, stop: 1 #4b8598);
 
 }
-
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

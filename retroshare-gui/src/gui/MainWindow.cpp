@@ -118,10 +118,10 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define IMAGE_QUIT              ":/icons/png/exit.png"
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
-#define IMAGE_ABOUT             ":/icons/png/info.png"
-#define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
+#define IMAGE_QUIT              ":/icons/svg/exit-trans.svg"
+#define IMAGE_PREFERENCES       ":/icons/svg/options-trans.svg"
+#define IMAGE_ABOUT             ":/icons/svg/info-trans.svg"
+#define IMAGE_ADDFRIEND         ":/icons/svg/invite-trans.svg"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
 #define IMAGE_ONEONLINE         ":/icons/logo_1_connected_128.png"
@@ -202,6 +202,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/icons/logo_128.png")));
+
+    //Set Style Setting to get setting from StyleSheet qss file
+    styleSetting = new RsStyleSetting();
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = NULL ;
@@ -477,14 +480,14 @@ void MainWindow::initStackedPage()
 
   /** Add icon on Action bar */
   // I remove add a friend because it's in HOME ghibli
-  //addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
-  //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
-  //addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
+  //addAction(new QAction(RsIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
+  //addAction(new QAction(RsIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
+  //addAction(new QAction(RsIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
 
   // Removed About because it's now in options.
-  //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
+  //addAction(new QAction(RsIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
 
-  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
+  addAction(new QAction(RsIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
 
 }
 
@@ -534,8 +537,12 @@ void MainWindow::setNewPage(int page)
 
 	if(pagew)
 	{
+		ui->stackPages->blockSignals(true);
 		ui->stackPages->setCurrentIndex(page);
+		ui->stackPages->blockSignals(false);
+		ui->listWidget->blockSignals(true);
 		ui->listWidget->setCurrentRow(page);
+		ui->listWidget->blockSignals(false);
 	} else {
 		QString procName = ui->listWidget->item(page)->data(Qt::UserRole).toString();
 		FunctionType function = _functionList[procName];
@@ -599,7 +606,7 @@ void MainWindow::createTrayIcon()
 #ifdef UNFINISHED
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
-    trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
+    trayMenu->addAction(RsIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
     trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));

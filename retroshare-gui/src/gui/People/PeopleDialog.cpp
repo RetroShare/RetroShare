@@ -57,6 +57,7 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	: RsGxsUpdateBroadcastPage(rsIdentity, parent)
 {
 	setupUi(this);
+	titleBarPixmap->setIcon(iconPixmap());
 
 	/* Setup TokenQueue */
 	mIdentityQueue = new TokenQueue(rsIdentity->getTokenService(), this);

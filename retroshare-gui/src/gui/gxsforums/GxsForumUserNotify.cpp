@@ -21,6 +21,7 @@
 
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
+#include "util/RsIcon.h"
 
 GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
@@ -38,12 +39,12 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/forums.png");
+	return RsIcon(":/icons/svg/forums-trans.svg");
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/forums-notify.png") : QIcon(":/icons/png/forums.png");
+	return RsIcon(":/icons/svg/forums-trans.svg", hasNew);
 }
 
 void GxsForumUserNotify::iconClicked()

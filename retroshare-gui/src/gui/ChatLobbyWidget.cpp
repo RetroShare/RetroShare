@@ -56,8 +56,8 @@
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
 #define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING		      ":images/typing.png" 
-#define IMAGE_MESSAGE	      ":images/chat.png" 
+#define IMAGE_TYPING		      ":images/typing.png"
+#define IMAGE_MESSAGE	      ":images/chat.png"
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 
@@ -65,6 +65,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
 {
 	ui.setupUi(this);
+	ui.titleBarPixmap->setIcon(iconPixmap());
 
 	m_bProcessSettings = false;
 	myChatLobbyUserNotify = NULL;

@@ -9,7 +9,7 @@ QDialog{
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
        border-image: url(qss/qlive/qb.png);
 }
 
@@ -40,7 +40,7 @@ QMenu {
 
      border: 1px solid black;
  }
- 
+
 QMenu::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F6F9FA, stop: 1 #C6D3E5);
@@ -71,13 +71,13 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QFrame#messengerframetop{
-         
+
        border-image: url(qss/qlive/qb.png);
 
 }
 
 QFrame#Chatbuttonframe{
-         
+
        border-image: url(qss/qlive/qb.png);
 
 }
@@ -116,3 +116,8 @@ QStatusBar{
        border-image: url(qss/qlive/qb.png);
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

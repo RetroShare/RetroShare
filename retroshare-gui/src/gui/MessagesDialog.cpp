@@ -124,6 +124,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    ui.titleBarPixmap->setIcon(iconPixmap());
 
     inProcessSettings = false;
     inChange = false;

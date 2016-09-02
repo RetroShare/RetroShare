@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
+#include <util/RsIcon.h>
 
 static std::map<ChatId, int> waitingChats;
 static ChatUserNotify* instance = 0;
@@ -74,12 +75,12 @@ bool ChatUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon ChatUserNotify::getIcon()
 {
-	return QIcon(":/images/chat.png");
+	return RsIcon(":/icons/svg/network-trans.svg");
 }
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/network-notify.png") : QIcon(":/icons/png/network.png");
+	return RsIcon(":/icons/svg/network-trans.svg", hasNew);
 }
 
 unsigned int ChatUserNotify::getNewCount()

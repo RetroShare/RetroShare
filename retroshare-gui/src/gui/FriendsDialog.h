@@ -22,11 +22,12 @@
 #ifndef _FRIENDSDIALOG_H
 #define _FRIENDSDIALOG_H
 
+#include "util/RsIcon.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include "ui_FriendsDialog.h"
 
-#define IMAGE_NETWORK         	":/icons/png/network.png"
+#define IMAGE_NETWORK ":/icons/svg/network-trans.svg"
 
 class QAction;
 class NetworkDialog;
@@ -56,7 +57,7 @@ public:
     /** Default Destructor */
     ~FriendsDialog ();
 
-    virtual QIcon iconPixmap() const { return QIcon(IMAGE_NETWORK) ; } //MainPage
+    virtual QIcon iconPixmap() const { return RsIcon(IMAGE_NETWORK) ; } //MainPage
 	virtual QString pageName() const { return tr("Network") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 

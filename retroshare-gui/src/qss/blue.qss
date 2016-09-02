@@ -4,7 +4,7 @@
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
    	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #E3EFFF, stop: 1 #87ADE4);
                                      	border: 1px solid #87ADE4;
@@ -58,12 +58,12 @@ QTabBar::tab {
 
 
 }
-     
+
 QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
 
 }
-     
+
 QTabBar::tab:selected, QTabBar::tab:hover {
 
          border-image: url(qss/orangesurfer/tab_hover.png);
@@ -116,24 +116,24 @@ QListWidget::item:selected { /* when user selects item using mouse or keyboard *
 QTreeWidget::item:selected { /* when user selects item using mouse or keyboard */
 
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);                                     
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
 }
 
 QStatusBar{
-       
+
    	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #E3EFFF, stop: 1 #87ADE4);
 }
 
 
 QFrame#messengerframetop{
-         
+
     border-image: url(qss/blue/blue.png);
 
 }
 
 QFrame#Chatbuttonframe{
-         
+
     border-image: url(qss/blue/blue.png);
 
 }
@@ -172,4 +172,8 @@ QSplitter#splitter{
     border-image: url(qss/blue/blue.png);
 
 }
-
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

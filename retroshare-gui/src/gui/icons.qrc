@@ -242,5 +242,18 @@
     <file>icons/yahoo.png</file>
     <file>icons/yandex.png</file>
     <file>icons/png/markdown-mark.png</file>
+    <file>icons/svg/channels-trans.svg</file>
+    <file>icons/svg/chat-lobbies-trans.svg</file>
+    <file>icons/svg/exit-trans.svg</file>
+    <file>icons/svg/filesharing-trans.svg</file>
+    <file>icons/svg/forums-trans.svg</file>
+    <file>icons/svg/info-trans.svg</file>
+    <file>icons/svg/invite-trans.svg</file>
+    <file>icons/svg/messages-trans.svg</file>
+    <file>icons/svg/network-trans.svg</file>
+    <file>icons/svg/newsfeed-trans.svg</file>
+    <file>icons/svg/options-trans.svg</file>
+    <file>icons/svg/people-trans.svg</file>
+    <file>icons/svg/posted-trans.svg</file>
   </qresource>
 </RCC>

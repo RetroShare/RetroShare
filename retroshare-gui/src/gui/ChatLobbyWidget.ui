@@ -51,7 +51,7 @@
        <number>2</number>
       </property>
       <item>
-       <widget class="QLabel" name="titleBarPixmap">
+       <widget class="RsIconWidget" name="titleBarPixmap">
         <property name="maximumSize">
          <size>
           <width>24</width>
@@ -428,6 +428,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RsIconWidget</class>
+   <extends>QLabel</extends>
+   <header location="global">util/RsIconWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>

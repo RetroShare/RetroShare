@@ -118,12 +118,12 @@ CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
 
 /* MessengerWindow */
 
-MessengerWindow QFrame#logoFrame { 
+MessengerWindow QFrame#logoFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
 }
 
-MessengerWindow QFrame#messengerframetop{	
+MessengerWindow QFrame#messengerframetop{
   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 0px;
 }
@@ -149,7 +149,7 @@ ChatLobbyWidget QLabel#lobbyinfo_label
 }
 
 ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
-{ 
+{
 
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
 	stop:0 #FEFEFE, stop:1 #E8E8E8);
@@ -162,10 +162,10 @@ ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 
 }
 
-ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox 
+ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox
 {
   padding: 4 12px;
-	background: transparent; 
+	background: transparent;
 }
 
 ChatLobbyWidget QLabel#lobbyInfoLabel {
@@ -239,7 +239,7 @@ ProfileWidget QFrame#frame_1, ProfileWidget QFrame#frame_2, ProfileWidget QFrame
 /* Settings */
 
 PluginItem > QFrame#frame {
-	border: 2px solid #A8B8D1; 
+	border: 2px solid #A8B8D1;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FCFDFE, stop: 1 #E2E8EF);
 	border-radius: 0px
 }
@@ -264,7 +264,7 @@ SearchDialog QFrame#searchLineFrame[valid=true] {
 	background-color: white;
 }
 
-SearchDialog QPushButton#pushButtonSearch { 
+SearchDialog QPushButton#pushButtonSearch {
 	border-image: url(:/images/btn1.png) 4;
 	border-width: 4;
 	padding: 0px 6px;
@@ -458,7 +458,7 @@ MsgItem QWidget#avatar {
 }
 
 SecurityItem > QFrame#frame {
-	border: 2px solid #FF9412; 
+	border: 2px solid #FF9412;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
 	border-radius: 10px;
 }
@@ -468,7 +468,7 @@ SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel {
 }
 
 SecurityIpItem > QFrame#frame {
-	border: 2px solid #FF9412; 
+	border: 2px solid #FF9412;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
 	border-radius: 10px;
 }
@@ -624,7 +624,7 @@ QFrame#distantFrame{
 }
 
 QLabel#avatarLabel{
- border: 2px solid #CCCCCC; 
+ border: 2px solid #CCCCCC;
  border-radius: 4px;
 }
 
@@ -653,7 +653,7 @@ IdDialog QLabel#headerTextLabel_Circles {
 }
 
 IdDialog QLabel#avlabel {
-  border: 4px solid white; 
+  border: 4px solid white;
   border-radius: 10px;
 }
 
@@ -665,7 +665,7 @@ IdDialog QFrame#inviteFrame {
 }
 
 GxsChannelPostsWidget QFrame#infoFrame
-{ 
+{
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
 	background: #FFFFD7;
@@ -797,4 +797,10 @@ StartDialog QFrame#loginframe{
 GenCertDialog QFrame#profileframe{
   border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
   border-width: 0px;
+}
+
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
 }

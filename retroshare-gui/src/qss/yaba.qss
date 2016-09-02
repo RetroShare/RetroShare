@@ -2,10 +2,10 @@
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #6F6F6F, stop:1 #979797);
  }
- 
- 
+
+
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
     border-image: url(qss/yaba/yaba.png);
 }
 
@@ -17,7 +17,7 @@ HeaderFrame {
 QFrame#titleBarFrame, QFrame#toolBarFrame {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);
-                                       
+
 }
 
 QDialog, QMainWindow, QStatusBar{
@@ -127,7 +127,7 @@ QMenu {
      border: 1px solid black;
  }
 
-     
+
 QMenu::item {
      /* sets background of menu item. set this to something non-transparent
          if you want menu color and menu item color to be different */
@@ -138,7 +138,7 @@ QMenu::item:selected { /* when user selects item using mouse or keyboard */
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);
  }
- 
+
 QListWidget::item:selected { /* when user selects item using mouse or keyboard */
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #FBC957, stop:1 #D79704);
@@ -157,15 +157,15 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QFrame#messengerframetop{
-         
+
         border-image: url(qss/yaba/yaba.png);
-         
+
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
 }
 
 QFrame#Chatbuttonframe{
-         
+
         border-image: url(qss/yaba/yaba.png);
 
 }
@@ -206,3 +206,8 @@ QToolBar#chattoolBar{
 
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

@@ -3,9 +3,9 @@
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
-       
+
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 }
@@ -24,7 +24,7 @@ HeaderFrame {
 /* Customize the toolbar. */
 QToolBar#toolBarPage {
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
@@ -32,7 +32,7 @@ QToolBar#toolBarPage {
 
 QToolBar#toolBarAction {
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
@@ -41,7 +41,7 @@ QToolBar#toolBarAction {
 
 QToolBar#chattoolBar{
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
@@ -52,14 +52,14 @@ QToolBar#chattoolBar{
 QToolButton::hover {
          background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #FFD200, stop: 1 #FF6400);
-                            
+
 
 }
 
 QToolButton::pressed {
          background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #FFD200, stop: 1 #FF6400);
-                            
+
 
 }
 
@@ -126,10 +126,10 @@ QToolButton {
      QTabBar::tab:!selected {
          margin-top: 2px; /* make non-selected tabs look smaller */
      }
-     
+
 QStatusBar{
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
@@ -155,7 +155,7 @@ QMenu::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #FFD200, stop: 1 #FF6400);
  }
- 
+
 QListWidget::item:selected { /* when user selects item using mouse or keyboard */
      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 red, stop: 1 darkred);
@@ -174,17 +174,17 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QFrame#messengerframetop{
-         
+
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 }
 
 QFrame#Chatbuttonframe{
-         
+
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0 #F55332, stop: 0.5 #C82B18,
 								   stop: 0.51 #B71502, stop: 1 #900907);
     border: 1px solid #7A3C37;
 
@@ -288,3 +288,8 @@ QLabel#threadTitle{
     color: black;
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #FF039BD5;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

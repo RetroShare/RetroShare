@@ -5,6 +5,7 @@
 #include "RsAutoUpdatePage.h"
 #include "chat/ChatLobbyUserNotify.h"
 #include "gui/gxs/GxsIdChooser.h"
+#include "util/RsIcon.h"
 
 
 #include <retroshare/rsmsgs.h>
@@ -12,7 +13,7 @@
 #include <QAbstractButton>
 #include <QTreeWidget>
 
-#define IMAGE_CHATLOBBY			    ":/icons/png/chat-lobbies.png"
+#define IMAGE_CHATLOBBY ":/icons/svg/chat-lobbies-trans.svg"
 
 #define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
 #define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2
@@ -40,7 +41,7 @@ public:
 	/** Default destructor */
 	~ChatLobbyWidget();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CHATLOBBY) ; } //MainPage
+	virtual QIcon iconPixmap() const { return RsIcon(IMAGE_CHATLOBBY) ; } //MainPage
 	virtual QString pageName() const { return tr("Chats") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 

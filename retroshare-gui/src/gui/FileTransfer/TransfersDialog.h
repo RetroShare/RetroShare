@@ -26,13 +26,14 @@
 
 #include <retroshare/rstypes.h>
 #include "RsAutoUpdatePage.h"
+#include "util/RsIcon.h"
 
 #include "ui_TransfersDialog.h"
 
 #include <QItemSelectionModel>
 #include <QSortFilterProxyModel>
 
-#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
+#define IMAGE_TRANSFERS ":/icons/svg/filesharing-trans.svg"
 
 class QShortcut;
 class DLListDelegate;
@@ -63,7 +64,7 @@ public:
     TransfersDialog(QWidget *parent = 0);
     ~TransfersDialog();
 
-    virtual QIcon iconPixmap() const { return QIcon(IMAGE_TRANSFERS) ; } //MainPage
+    virtual QIcon iconPixmap() const { return RsIcon(IMAGE_TRANSFERS) ; } //MainPage
     virtual QString pageName() const { return tr("Files") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 

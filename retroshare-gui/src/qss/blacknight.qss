@@ -6,7 +6,7 @@ HeaderFrame {
 ForumsDialog, GxsForumThreadWidget
 {
 	qproperty-textColorRead: gray;
-	qproperty-textColorUnread: white; 
+	qproperty-textColorUnread: white;
 	qproperty-textColorUnreadChildren: gray;
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: red;
@@ -306,3 +306,8 @@ OpModeStatus[opMode="Minimal"] {
 	background-color: #702020;
 }
 
+RsStyleSetting {
+	qproperty-rsIconColor: #88252525;
+	qproperty-rsIconColorOnNotify: #FFFF990D;
+	qproperty-rsIconMarginOnNotify: 0;
+}

@@ -806,6 +806,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    ui.titleBarPixmap->setIcon(iconPixmap());
 
     m_bProcessSettings = false;
 

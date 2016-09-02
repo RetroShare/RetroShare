@@ -23,6 +23,7 @@
 #include <QIcon>
 
 #include <retroshare/rsplugin.h>
+#include <util/RsIcon.h>
 #include <QTranslator>
 
 #include "FeedReaderPlugin.h"
@@ -36,7 +37,7 @@
 #include <libxslt/xsltconfig.h>
 #include <curl/curlver.h>
 
-#define IMAGE_FEEDREADER ":/images/FeedReader.png"
+#define IMAGE_FEEDREADER ":/images/feedreader-trans.svg"
 
 static void *inited = new FeedReaderPlugin();
 
@@ -146,7 +147,7 @@ void FeedReaderPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 QIcon *FeedReaderPlugin::qt_icon() const
 {
 	if (mIcon == NULL) {
-		mIcon = new QIcon(IMAGE_FEEDREADER);
+		mIcon = new RsIcon(IMAGE_FEEDREADER);
 	}
 
 	return mIcon;

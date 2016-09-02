@@ -26,6 +26,7 @@
 #include <set>
 
 #include "gui/common/rwindow.h"
+#include "settings/RsStyleSetting.h"
 
 namespace Ui {
 class MainWindow;
@@ -295,6 +296,9 @@ private:
     ToasterDisable *toasterDisable;
     SysTrayStatus *sysTrayStatus;
     TorStatus *torstatus;
+
+    //Style Setting to get setting from StyleSheet qss file
+    RsStyleSetting *styleSetting;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

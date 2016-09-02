@@ -68,6 +68,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+    ui.titleBarPixmap->setIcon(iconPixmap());
 
     if (instance == NULL) {
         instance = this;

@@ -60,7 +60,7 @@
        <number>2</number>
       </property>
       <item>
-       <widget class="QLabel" name="titleBarPixmap">
+       <widget class="RsIconWidget" name="titleBarPixmap">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -1047,6 +1047,11 @@ p, li { white-space: pre-wrap; }
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RsIconWidget</class>
+   <extends>QLabel</extends>
+   <header location="global">util/RsIconWidget.h</header>
+  </customwidget>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
