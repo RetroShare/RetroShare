@@ -35,6 +35,16 @@ void HashStorage::data_tick()
 
         {
             RS_STACK_MUTEX(mHashMtx) ;
+            if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
+            {
+                locked_save();
+                mLastSaveTime = time(NULL) ;
+                mChanged = false ;
+            }
+        }
+
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
 
             empty = mFilesToHash.empty();
             st = mInactivitySleepTime ;
@@ -93,30 +103,24 @@ void HashStorage::data_tick()
 
         // store the result
 
-        HashStorageInfo& info(mFiles[job.full_path]);
+        {
+            RS_STACK_MUTEX(mHashMtx) ;
+            HashStorageInfo& info(mFiles[job.full_path]);
 
-        info.filename = job.full_path ;
-        info.size = size ;
-        info.modf_stamp = job.ts ;
-        info.time_stamp = time(NULL);
-        info.hash = hash;
+            info.filename = job.full_path ;
+            info.size = size ;
+            info.modf_stamp = job.ts ;
+            info.time_stamp = time(NULL);
+            info.hash = hash;
 
-        mChanged = true ;
+            mChanged = true ;
+        }
     }
     // call the client
 
     if(!hash.isNull())
         job.client->hash_callback(job.client_param, job.full_path, hash, size);
 
-    {
-        RS_STACK_MUTEX(mHashMtx) ;
-        if(mChanged && mLastSaveTime + MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE < time(NULL))
-        {
-            locked_save();
-            mLastSaveTime = time(NULL) ;
-            mChanged = false ;
-        }
-    }
 }
 
 bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
@@ -170,6 +174,8 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
 void HashStorage::clean()
 {
+    RS_STACK_MUTEX(mHashMtx) ;
+
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << "Cleaning HashStorage..." << std::endl ;
 #endif
@@ -311,6 +317,7 @@ void HashStorage::locked_save()
 #ifdef FIM_DEBUG
     std::cerr << "done." << std::endl ;
 #endif
+    std::cerr << mFiles.size() << " Entries saved." << std::endl;
 
 save_free:
     free(encryptedData);
