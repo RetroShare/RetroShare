@@ -65,7 +65,7 @@ inline RsIconEngineEntry::RsIconEngineEntry(const QString &file, const QImage &i
 /************************************************************************************/
 /* RetroShare Code                                                                  */
 /************************************************************************************/
-class Q_GUI_EXPORT RsIconEngine : public QIconEngine
+class RsIconEngine : public QIconEngine
 {
 public:
 	RsIconEngine();

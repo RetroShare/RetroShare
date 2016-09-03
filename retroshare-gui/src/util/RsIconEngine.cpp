@@ -428,14 +428,9 @@ void RsIconEngine::addFile(const QString &fileName, const QSize &size, QIcon::Mo
 			}
 		}
 	}
-#if QT_VERSION >= 0x050000
-	for (const QImage &i : qAsConst(icoImages))
-		pixmaps += RsIconEngineEntry(abs, i, mode, state);
-#else
-	//range-based ‘for’ loops are not allowed in C++98 mode
-	for (int i = 0; i < icoImages.size(); ++i)
-		pixmaps += RsIconEngineEntry(abs, icoImages[i], mode, state);
-#endif
+	//RetroShare Change: range-based ‘for’ loops are not allowed in C++98 mode
+	for (int i = 0; i < icoImages.size(); ++i) //RetroShare Change
+		pixmaps += RsIconEngineEntry(abs, icoImages[i], mode, state);//RetroShare Change
 	if (icoImages.isEmpty() && !ignoreSize) // Add placeholder with the filename and empty pixmap for the size.
 		pixmaps += RsIconEngineEntry(abs, size, mode, state);
 }
