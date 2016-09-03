@@ -51,6 +51,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 
 	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
+    mLastCleanupTime = 0 ;
 
     // This is for the transmission of data
 
@@ -141,13 +142,10 @@ int p3FileDatabase::tick()
 	// 	- remove/delete shared file lists for people who are not friend anymore
 	// 	- 
 
-    static time_t last_cleanup_time = 0;
-
-#warning we should use members here, not static
-    if(last_cleanup_time + 5 < now)
+    if(mLastCleanupTime + 5 < now)
     {
         cleanup();
-        last_cleanup_time = now ;
+        mLastCleanupTime = now ;
     }
 
     static time_t last_print_time = 0;
@@ -186,6 +184,7 @@ int p3FileDatabase::tick()
         mServCtrl->getPeersConnected(getServiceInfo().mServiceType, online_peers) ;
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+        {
             if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
             {
                 std::cerr << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
@@ -195,6 +194,9 @@ int p3FileDatabase::tick()
 
                 locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
             }
+
+            mRemoteDirectories[i]->checkSave() ;
+        }
 
         mLastRemoteDirSweepTS = now;
     }
@@ -440,8 +442,7 @@ void p3FileDatabase::cleanup()
 
 std::string p3FileDatabase::makeRemoteFileName(const RsPeerId& pid) const
 {
-#warning we should use the default paths here. Ask p3config
-    return "dirlist_"+pid.toStdString()+".txt" ;
+    return mFileSharingDir + "/" + "dirlist_"+pid.toStdString()+".bin" ;
 }
 
 uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
@@ -998,7 +999,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         P3FILELISTS_DEBUG() << "  Item contains directory data. Deserialising/Updating." << std::endl;
 
-        if(mRemoteDirectories[fi]->deserialiseDirEntry(item->entry_index,item->directory_content_data))
+        if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(item->entry_index,item->directory_content_data))
             RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
         else
             std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;

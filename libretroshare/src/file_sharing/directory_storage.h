@@ -16,10 +16,10 @@ class RsTlvBinaryData ;
 class DirectoryStorage
 {
 	public:
-        DirectoryStorage(const std::string& local_file_name,const RsPeerId& pid) ;
+        DirectoryStorage(const RsPeerId& pid) ;
         virtual ~DirectoryStorage() {}
 
-        typedef int32_t EntryIndex ;
+        typedef uint32_t EntryIndex ;
         static const EntryIndex NO_INDEX = 0xffffffff;
 
 		void save() const ;
@@ -104,9 +104,11 @@ class DirectoryStorage
         void print();
         void cleanup();
 
-    private:
+    protected:
 		void load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
+
+    private:
 
         void loadNextTag(const unsigned char *data, uint32_t& offset, uint8_t& entry_tag, uint32_t& entry_size) ;
         void saveNextTag(unsigned char *data,uint32_t& offset,uint8_t entry_tag,uint32_t entry_size) ;
@@ -116,7 +118,6 @@ class DirectoryStorage
 
         // storage of internal structure. Totally hidden from the outside. EntryIndex is simply the index of the entry in the vector.
 
-        std::string mFileName;
         RsPeerId mPeerId;
 
     protected:
@@ -128,7 +129,7 @@ class DirectoryStorage
 class RemoteDirectoryStorage: public DirectoryStorage
 {
 public:
-    RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) : DirectoryStorage(fname,pid) {}
+    RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname) ;
     virtual ~RemoteDirectoryStorage() {}
 
     /*!
@@ -140,13 +141,24 @@ public:
      * \param bindata   binary data to deserialise from
      * \return 			false when the directory cannot be found.
      */
-    bool deserialiseDirEntry(const EntryIndex& indx,const RsTlvBinaryData& data) ;
+    bool deserialiseUpdateDirEntry(const EntryIndex& indx,const RsTlvBinaryData& data) ;
+
+    /*!
+     * \brief checkSave
+     * 			Checks the time of last saving, last modification time, and saves if needed.
+     */
+    void checkSave() ;
+
+private:
+    time_t mLastSavedTime ;
+    bool mChanged ;
+    std::string mFileName;
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
 {
 public:
-    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(fname,own_id) {}
+    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(own_id),mFileName(fname) {}
     virtual ~LocalDirectoryStorage() {}
 
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
@@ -194,6 +206,7 @@ private:
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
     std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
+    std::string mFileName;
 };
 
 

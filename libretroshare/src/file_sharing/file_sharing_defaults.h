@@ -10,4 +10,5 @@ static const std::string WATCH_FILE_DURATION_SS = "WATCH_FILES_DELAY" ;		// key 
 static const std::string FILE_SHARING_DIR_NAME  = "file_sharing" ;			// hard-coded directory name to store friend file lists, hash cache, etc.
 static const std::string HASH_CACHE_FILE_NAME   = "hash_cache.bin" ;		// hard-coded directory name to store encrypted hash cache.
 
-static const uint32_t MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE      = 20 ;  // never save hash cache more often than every 60 secs.
+static const uint32_t MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE         = 20 ;  // never save hash cache more often than every 20 secs.
+static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;  // never save remote directories more often than this
