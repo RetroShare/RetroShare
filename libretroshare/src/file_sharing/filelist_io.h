@@ -61,6 +61,9 @@ public:
     template<class T> static bool deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,T& val) ;
     template<class T> static uint32_t serial_size(const T& val) ;
 
+    static bool saveEncryptedDataToFile(const std::string& fname,const unsigned char *data,uint32_t total_size);
+    static bool loadEncryptedDataFromFile(const std::string& fname,unsigned char *& data,uint32_t& total_size);
+
 private:
     static bool write125Size(unsigned char *data,uint32_t total_size,uint32_t& offset,uint32_t size) ;
     static bool read125Size (const unsigned char *data,uint32_t total_size,uint32_t& offset,uint32_t& size) ;

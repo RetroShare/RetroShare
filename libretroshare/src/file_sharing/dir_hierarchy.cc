@@ -548,9 +548,12 @@ bool InternalFileHierarchyStorage::recursRemoveDirectory(DirectoryStorage::Entry
 bool InternalFileHierarchyStorage::save(const std::string& fname)
 {
     NOT_IMPLEMENTED();
+    return true;
 }
 
 bool InternalFileHierarchyStorage::load(const std::string& fname)
 {
     NOT_IMPLEMENTED();
+    return true;
 }
+

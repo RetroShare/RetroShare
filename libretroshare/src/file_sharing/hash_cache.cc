@@ -208,59 +208,20 @@ void HashStorage::clean()
 
 void HashStorage::locked_load()
 {
-   uint64_t file_size ;
+    unsigned char *data = NULL ;
+    uint32_t data_size=0;
 
-    if(!RsDirUtil::checkFile( mFilePath,file_size,false ) )
+    if(!FileListIO::loadEncryptedDataFromFile(mFilePath,data,data_size))
     {
-        std::cerr << "Encrypted hash cache file not present." << std::endl;
+        std::cerr << "(EE) Cannot read hash cache." << std::endl;
         return ;
     }
-
-    // read the binary stream into memory.
-    //
-    void *buffer = rs_malloc(file_size) ;
-
-    if(buffer == NULL)
-       return ;
-
-    FILE *F = fopen( mFilePath.c_str(),"rb") ;
-    if (!F)
-    {
-       std::cerr << "Cannot open file for reading encrypted file cache, filename " << mFilePath << std::endl;
-       free(buffer);
-       return;
-    }
-    if(fread(buffer,1,file_size,F) != file_size)
-    {
-       std::cerr << "Cannot read from file " + mFilePath << ": something's wrong." << std::endl;
-       free(buffer) ;
-       fclose(F) ;
-       return ;
-    }
-    fclose(F) ;
-
-    // now decrypt
-    void *decrypted_data =NULL;
-    int decrypted_data_size =0;
-
-    if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
-    {
-       std::cerr << "Cannot decrypt encrypted file cache. Something's wrong." << std::endl;
-       free(buffer) ;
-       return ;
-    }
-    free(buffer) ;
-
-#ifdef HASHSTORAGE_DEBUG
-    std::cerr << "Loading HashCache from file " << mFilePath << std::endl ;
-    int n=0 ;
-#endif
-    unsigned char *data = (unsigned char*)decrypted_data ;
     uint32_t offset = 0 ;
     HashStorageInfo info ;
+    uint32_t n=0;
 
-    while(offset < decrypted_data_size)
-       if(readHashStorageInfo(data,decrypted_data_size,offset,info))
+    while(offset < data_size)
+       if(readHashStorageInfo(data,data_size,offset,info))
        {
 #ifdef HASHSTORAGE_DEBUG
           std::cerr << info << std::endl;
@@ -269,7 +230,7 @@ void HashStorage::locked_load()
           mFiles[info.filename] = info ;
        }
 
-    free(decrypted_data) ;
+    free(data) ;
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << n << " entries loaded." << std::endl ;
 #endif
@@ -288,39 +249,16 @@ void HashStorage::locked_save()
     for(std::map<std::string,HashStorageInfo>::const_iterator it(mFiles.begin());it!=mFiles.end();++it)
         writeHashStorageInfo(data,total_size,offset,it->second) ;
 
-    void *encryptedData = NULL ;
-    int encDataLen = 0 ;
-
-    if(!AuthSSL::getAuthSSL()->encrypt( encryptedData, encDataLen, data,offset, AuthSSL::getAuthSSL()->OwnId()))
+    if(!FileListIO::saveEncryptedDataToFile(mFilePath,data,offset))
     {
-        std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
-        return;
+        std::cerr << "(EE) Cannot save hash cache data." << std::endl;
+        free(data) ;
+        return ;
     }
 
-    FILE *F = fopen( (mFilePath+".tmp").c_str(),"wb" ) ;
-
-    if(!F)
-    {
-        std::cerr << "Cannot open encrypted file cache for writing: " << mFilePath+".tmp" << std::endl;
-        goto save_free;
-    }
-    if(fwrite(encryptedData,1,encDataLen,F) != (uint32_t)encDataLen)
-    {
-        std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
-        fclose(F) ;
-        goto save_free;
-    }
-
-    fclose(F) ;
-
-    RsDirUtil::renameFile(mFilePath+".tmp",mFilePath) ;
-#ifdef FIM_DEBUG
-    std::cerr << "done." << std::endl ;
-#endif
     std::cerr << mFiles.size() << " Entries saved." << std::endl;
 
-save_free:
-    free(encryptedData);
+    free(data) ;
 }
 
 bool HashStorage::readHashStorageInfo(const unsigned char *data,uint32_t total_size,uint32_t& offset,HashStorageInfo& info) const

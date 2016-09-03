@@ -1,4 +1,6 @@
 #include "retroshare/rsids.h"
+#include "pqi/authssl.h"
+#include "util/rsdir.h"
 #include "serialiser/rsbaseserial.h"
 #include "filelist_io.h"
 
@@ -116,3 +118,89 @@ bool FileListIO::read125Size(const unsigned char *data,uint32_t data_size,uint32
     return true;
 }
 
+bool FileListIO::saveEncryptedDataToFile(const std::string& fname,const unsigned char *data,uint32_t total_size)
+{
+    void *encryptedData = NULL ;
+    int encDataLen = 0 ;
+
+    if(!AuthSSL::getAuthSSL()->encrypt( encryptedData, encDataLen, data,total_size, AuthSSL::getAuthSSL()->OwnId()))
+    {
+        std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
+        return false;
+    }
+
+    FILE *F = fopen( (fname+".tmp").c_str(),"wb" ) ;
+
+    if(!F)
+    {
+        std::cerr << "Cannot open encrypted file cache for writing: " << fname+".tmp" << std::endl;
+
+        free(encryptedData);
+        return false;
+    }
+    if(fwrite(encryptedData,1,encDataLen,F) != (uint32_t)encDataLen)
+    {
+        std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
+        fclose(F) ;
+
+        free(encryptedData);
+        return false;
+    }
+
+    fclose(F) ;
+
+    RsDirUtil::renameFile(fname+".tmp",fname) ;
+#ifdef FIM_DEBUG
+    std::cerr << "done." << std::endl ;
+#endif
+
+    free(encryptedData);
+    return true;
+}
+
+bool FileListIO::loadEncryptedDataFromFile(const std::string& fname,unsigned char *& data,uint32_t& total_size)
+{
+   uint64_t file_size ;
+
+    if(!RsDirUtil::checkFile( fname,file_size,false ) )
+    {
+        std::cerr << "Encrypted hash cache file not present." << std::endl;
+        return false;
+    }
+
+    // read the binary stream into memory.
+    //
+    RsTemporaryMemory buffer(file_size) ;
+
+    if(buffer == NULL)
+       return false;
+
+    FILE *F = fopen( fname.c_str(),"rb") ;
+    if (!F)
+    {
+       std::cerr << "Cannot open file for reading encrypted file cache, filename " << fname << std::endl;
+       return false;
+    }
+    if(fread(buffer,1,file_size,F) != file_size)
+    {
+       std::cerr << "Cannot read from file " + fname << ": something's wrong." << std::endl;
+       fclose(F) ;
+       return false;
+    }
+    fclose(F) ;
+
+    // now decrypt
+    void *decrypted_data =NULL;
+    int decrypted_data_size =0;
+
+    if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
+    {
+       std::cerr << "Cannot decrypt encrypted file cache. Something's wrong." << std::endl;
+       return false;
+    }
+
+    data = (unsigned char*)decrypted_data ;
+    total_size = decrypted_data_size ;
+
+    return true;
+}
