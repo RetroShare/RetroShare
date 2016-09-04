@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>590</height>
+    <width>1269</width>
+    <height>911</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -163,9 +163,9 @@
            <widget class="LineEditClear" name="filterLineEdit"/>
           </item>
           <item>
-           <widget class="QToolButton" name="toolButton_NewId">
+           <widget class="QToolButton" name="toolButton_New">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -174,52 +174,20 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="toolTip">
-             <string>Create new Identity</string>
-            </property>
-            <property name="text">
-             <string>New ID</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QToolButton" name="toolButton_NewCircle">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Create new circle</string>
-            </property>
-            <property name="text">
-             <string>New ID</string>
+             <string>Create new...</string>
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/circles_new_128.png</normaloff>:/icons/circles_new_128.png</iconset>
+              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
             </property>
             <property name="iconSize">
              <size>
               <width>24</width>
               <height>24</height>
              </size>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::InstantPopup</enum>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -291,8 +259,8 @@
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/no_avatar_background.png</normaloff>:/images/no_avatar_background.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/person.png</normaloff>:/icons/png/person.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Person</string>
@@ -350,115 +318,25 @@
           <property name="title">
            <string>Identity info</string>
           </property>
-          <layout class="QGridLayout" name="detailsGroupBoxGLayout">
+          <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <layout class="QGridLayout" name="detailTextGLayout">
-             <property name="leftMargin">
-              <number>6</number>
+            <widget class="QLabel" name="label_Nickname">
+             <property name="text">
+              <string>Identity name :</string>
              </property>
-             <property name="topMargin">
-              <number>6</number>
-             </property>
-             <property name="rightMargin">
-              <number>6</number>
-             </property>
-             <property name="bottomMargin">
-              <number>6</number>
-             </property>
-             <property name="spacing">
-              <number>6</number>
-             </property>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_KeyId">
-               <property name="text">
-                <string>Identity ID :</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_Nickname">
-               <property name="text">
-                <string>Identity name :</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_GpgId">
-               <property name="text">
-                <string>Owner node ID :</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="lineEdit_Nickname">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="lineEdit_KeyId">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLineEdit" name="lineEdit_GpgId">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_GpgName">
-               <property name="text">
-                <string>Owner node name :</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QLineEdit" name="lineEdit_GpgName">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_Type">
-               <property name="text">
-                <string>Type:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="lineEdit_Type"/>
-             </item>
-             <item row="6" column="0">
-              <widget class="QLabel" name="label_LastUsed">
-               <property name="text">
-                <string>Last used:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QLineEdit" name="lineEdit_LastUsed"/>
-             </item>
-            </layout>
+            </widget>
            </item>
            <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_Nickname">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" rowspan="10">
             <layout class="QVBoxLayout" name="detailAvatarVLayout">
              <item>
               <widget class="QLabel" name="avatarLabel">
@@ -519,63 +397,148 @@
              </item>
             </layout>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="reputationGroupBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title">
-           <string>Reputation</string>
-          </property>
-          <layout class="QVBoxLayout" name="reputationGroupBoxVLayout">
-           <item>
-            <layout class="QGridLayout" name="reputationGLayout">
-             <property name="leftMargin">
-              <number>6</number>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_KeyId">
+             <property name="text">
+              <string>Identity ID :</string>
              </property>
-             <property name="topMargin">
-              <number>6</number>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_KeyId">
+             <property name="enabled">
+              <bool>true</bool>
              </property>
-             <property name="rightMargin">
-              <number>6</number>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
-             <property name="bottomMargin">
-              <number>6</number>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_Type">
+             <property name="text">
+              <string>Type:</string>
              </property>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="neighborNodesOpinion_TF">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="ownOpinion_LB">
-               <property name="text">
-                <string>Your opinion:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="neighborNodesOpinion_LB">
-               <property name="text">
-                <string>Neighbor nodes:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="ownOpinion_CB">
-               <property name="toolTip">
-                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_Type"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_GpgId">
+             <property name="text">
+              <string>Owner node ID :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEdit_GpgId">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_GpgName">
+             <property name="text">
+              <string>Owner node name :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEdit_GpgName">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_LastUsed">
+             <property name="text">
+              <string>Last used:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEdit_LastUsed"/>
+           </item>
+           <item row="6" column="0" colspan="2">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QLabel" name="banoption_label">
+             <property name="text">
+              <string>Ban-option:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QCheckBox" name="autoBanIdentities_CB">
+             <property name="text">
+              <string>Auto-Ban all identities from this node</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="neighborNodesOpinion_LB">
+             <property name="text">
+              <string>Neighbor nodes:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QLineEdit" name="neighborNodesOpinion_TF">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Average opinion of neighbor nodes about this identity. Negative is bad,&lt;/p&gt;&lt;p&gt;positive is good. Zero is neutral.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QLabel" name="overallOpinion_LB">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Overall:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QLineEdit" name="overallOpinion_TF">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends'.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QComboBox" name="ownOpinion_CB">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -583,89 +546,51 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The overall score is used in chat lobbies, forums and channels to decide on the actions to take for each specific identity. When the overall score is lower than -0.6, the identity is banned, which prevents all messages and forums/channels authored by this identity to be forwarded, both ways. Some forums also have special anti-spam flags that require a higher reputation level, making them more sensitive to bad opinions. Banned identities gradually lose their activity and eventually disappear (after 30 days).  &lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Negative</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Neutral</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/vote_neutral.png</normaloff>:/images/vote_neutral.png</iconset>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Positive</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-                </property>
-               </item>
-              </widget>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Negative</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/thumbs-down.png</normaloff>:/icons/png/thumbs-down.png</iconset>
+              </property>
              </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="overallOpinion_TF">
-               <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overall reputation score, accounting for yours and your friends'.&lt;/p&gt;&lt;p&gt;Negative is bad, positive is good. Zero is neutral. If the score is too low,&lt;/p&gt;&lt;p&gt;the identity is flagged as bad, and will be filtered out in forums, chat lobbies,&lt;/p&gt;&lt;p&gt;channels, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
+             <item>
+              <property name="text">
+               <string>Neutral</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/thumbs-neutral.png</normaloff>:/icons/png/thumbs-neutral.png</iconset>
+              </property>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="overallOpinion_LB">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Overall:</string>
-               </property>
-              </widget>
+             <item>
+              <property name="text">
+               <string>Positive</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/thumbs-up.png</normaloff>:/icons/png/thumbs-up.png</iconset>
+              </property>
              </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="autoBanIdentities_CB">
-               <property name="text">
-                <string>Auto-Ban all identities from this node</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2" rowspan="4">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>128</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Your opinion:</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -690,8 +615,8 @@ p, li { white-space: pre-wrap; }
       </widget>
       <widget class="QWidget" name="circleTab">
        <attribute name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/circles/circles_64.png</normaloff>:/images/circles/circles_64.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Circles</string>
@@ -816,6 +741,16 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
@@ -824,16 +759,6 @@ p, li { white-space: pre-wrap; }
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

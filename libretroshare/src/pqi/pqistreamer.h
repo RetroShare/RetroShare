@@ -27,18 +27,19 @@
 #ifndef MRK_PQI_STREAMER_HEADER
 #define MRK_PQI_STREAMER_HEADER
 
-// Only dependent on the base stuff.
-#include "pqi/pqi_base.h"
-#include "util/rsthreads.h"
-#include "retroshare/rstypes.h"
+#include <stdint.h>               // for uint32_t
+#include <time.h>                 // for time_t
+#include <iostream>               // for operator<<, basic_ostream, cerr, endl
+#include <list>                   // for list
+#include <map>                    // for map
 
-#include <list>
+#include "pqi/pqi_base.h"         // for BinInterface (ptr only), PQInterface
+#include "retroshare/rsconfig.h"  // for RSTrafficClue
+#include "retroshare/rstypes.h"   // for RsPeerId
+#include "util/rsthreads.h"       // for RsMutex
 
-// Fully implements the PQInterface.
-// and communicates with peer etc via the BinInterface.
-//
-// The interface does not handle connection, just communication.
-// possible bioflags: BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
+class RsItem;
+class RsSerialiser;
 
 struct PartialPacketRecord
 {
@@ -46,6 +47,12 @@ struct PartialPacketRecord
     uint32_t size ;
 };
 
+/**
+ * @brief Fully implements the PQInterface and communicates with peer etc via
+ *	the BinInterface.
+ * The interface does not handle connection, just communication.
+ * Possible BIN_FLAGS: BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
+ */
 class pqistreamer: public PQInterface
 {
 	public:

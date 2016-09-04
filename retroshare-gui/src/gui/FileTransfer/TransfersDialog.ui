@@ -120,13 +120,19 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
      <property name="movable">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+       <iconset resource="../icons.qrc">
+        <normaloff>:/icons/svg/download.svg</normaloff>:/icons/svg/download.svg</iconset>
       </attribute>
       <attribute name="title">
        <string>Downloads</string>
@@ -215,6 +221,12 @@
           <property name="currentIndex">
            <number>0</number>
           </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="elideMode">
            <enum>Qt::ElideNone</enum>
           </property>
@@ -232,8 +244,8 @@
           </property>
           <widget class="QWidget" name="uploadsTab">
            <attribute name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/uploads.png</normaloff>:/images/uploads.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/svg/upload.svg</normaloff>:/icons/svg/upload.svg</iconset>
            </attribute>
            <attribute name="title">
             <string>Uploads</string>

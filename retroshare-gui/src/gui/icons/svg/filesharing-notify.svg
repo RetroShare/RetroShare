@@ -16,10 +16,10 @@
    width="80"
    height="80"
    viewBox="0 0 80 80"
-   sodipodi:docname="transfers-notify.svg"><metadata
+   sodipodi:docname="filesharing-notify.svg"><metadata
      id="metadata4161"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
      id="defs4159" /><sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -34,8 +34,8 @@
      id="namedview4157"
      showgrid="true"
      inkscape:zoom="5.11875"
-     inkscape:cx="34.955968"
-     inkscape:cy="40.51764"
+     inkscape:cx="-7.7302347"
+     inkscape:cy="40.32228"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -48,10 +48,11 @@
      transform="matrix(1.25,0,0,-1.25,0,80)"><path
        inkscape:connector-curvature="0"
        id="path4167"
-       style="fill:#f3dd1d;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       style="fill:#ff990d;fill-opacity:1;fill-rule:nonzero;stroke:none"
        d="M 64,32 C 64,14.327 49.673,0 32,0 14.327,0 0,14.327 0,32 0,49.673 14.327,64 32,64 49.673,64 64,49.673 64,32"
        inkscape:export-xdpi="144"
-       inkscape:export-ydpi="144" /><g
+       inkscape:export-ydpi="144"
+       inkscape:export-filename="C:\Qt\RetroShare\RetroShare\retroshare-gui\src\gui\icons\png\filesharing-notify.png" /><g
        transform="matrix(0.08434988,0,0,-0.08434988,12.235817,52.282065)"
        id="g3"><g
          id="g5"><path

@@ -38,13 +38,13 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/notifyqt.h"
 #include "gui/common/GroupDefs.h"
-#include "gui/GetStartedDialog.h"
 #include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsbanlist.h>
 
 #include "ConnectProgressDialog.h"
+#include "gui/GetStartedDialog.h"
 
 //#define FRIEND_WIZARD_DEBUG
 

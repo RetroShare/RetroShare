@@ -7,20 +7,29 @@
     <x>0</x>
     <y>0</y>
     <width>1237</width>
-    <height>790</height>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Create New</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <property name="horizontalSpacing">
     <number>6</number>
    </property>
    <property name="verticalSpacing">
-    <number>0</number>
-   </property>
-   <property name="margin">
     <number>0</number>
    </property>
    <item row="0" column="0">
@@ -38,7 +47,7 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="createmode">
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="gridLayout_8">
        <item row="0" column="0">
         <widget class="QGroupBox" name="groupBoxLogo">
          <property name="title">
@@ -48,7 +57,16 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin">
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>4</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
            <number>4</number>
           </property>
           <item>
@@ -112,7 +130,16 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <property name="margin">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>3</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
                <number>3</number>
               </property>
               <item>
@@ -169,29 +196,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Description</string>
-         </property>
-         <layout class="QVBoxLayout">
-          <item>
-           <widget class="MimeTextEdit" name="groupDesc"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="2">
-        <widget class="QFrame" name="extraFrame">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" rowspan="8">
+       <item row="0" column="1">
         <widget class="QDockWidget" name="contactsdockWidget">
          <property name="enabled">
           <bool>true</bool>
@@ -234,7 +239,16 @@
          </property>
          <widget class="QWidget" name="dockWidgetContents">
           <layout class="QGridLayout" name="_2">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <property name="spacing">
@@ -289,39 +303,36 @@
          <property name="title">
           <string>Message Distribution</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="typePublic">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messsages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Public</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/network.png</normaloff>:/images/network.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>24</width>
-              <height>24</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0" colspan="4">
+             <widget class="QRadioButton" name="typePublic">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Messsages will spread way beyond your friend nodes, as long as people subscribe to the channel/forum/posted you're creating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Public</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/network-puplic.png</normaloff>:/icons/png/network-puplic.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
              <widget class="QRadioButton" name="typeGroup">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -336,8 +347,8 @@
                <string>Restricted to Circle</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/circles/circles_32.png</normaloff>:/images/circles/circles_32.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/circles.png</normaloff>:/icons/png/circles.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -347,14 +358,7 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="GxsCircleChooser" name="circleComboBox"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
+            <item row="2" column="0">
              <widget class="QRadioButton" name="typeLocal">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -369,8 +373,8 @@
                <string>Only For Your Friends</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/user/friends24.png</normaloff>:/images/user/friends24.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/network.png</normaloff>:/icons/png/network.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -380,10 +384,65 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="GroupChooser" name="localComboBox"/>
+            <item row="2" column="1" colspan="2">
+             <widget class="GroupChooser" name="localComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="3">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>68</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="1" colspan="2">
+             <widget class="GxsCircleChooser" name="circleComboBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Description</string>
+         </property>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="MimeTextEdit" name="groupDesc"/>
           </item>
          </layout>
         </widget>
@@ -596,6 +655,16 @@
            </spacer>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QFrame" name="extraFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
         </widget>
        </item>
       </layout>
@@ -849,6 +918,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

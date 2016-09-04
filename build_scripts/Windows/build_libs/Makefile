@@ -1,4 +1,3 @@
-CURL=curl.exe
 ZLIB_VERSION=1.2.3
 BZIP2_VERSION=1.0.6
 MINIUPNPC_VERSION=2.0
@@ -17,31 +16,32 @@ FFMPEG_VERSION=3.1.2
 all: dirs zlib bzip2 miniupnpc openssl speex speexdsp opencv libxml2 libxslt curl sqlcipher libmicrohttpd ffmpeg copylibs
 
 download: \
-	zlib-$(ZLIB_VERSION).tar.gz \
-	bzip2-$(BZIP2_VERSION).tar.gz \
-	miniupnpc-$(MINIUPNPC_VERSION).tar.gz \
-	openssl-$(OPENSSL_VERSION).tar.gz \
-	speex-$(SPEEX_VERSION).tar.gz \
-	speexdsp-$(SPEEXDSP_VERSION).tar.gz \
-	opencv-$(OPENCV_VERSION).tar.gz \
-	libxml2-$(LIBXML2_VERSION).tar.gz \
-	libxslt-$(LIBXSLT_VERSION).tar.gz \
-	curl-$(CURL_VERSION).tar.gz \
-	tcl$(TCL_VERSION)-src.tar.gz \
-	sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
-	libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
-	ffmpeg-$(FFMPEG_VERSION).tar.gz
+	download/zlib-$(ZLIB_VERSION).tar.gz \
+	download/bzip2-$(BZIP2_VERSION).tar.gz \
+	download/miniupnpc-$(MINIUPNPC_VERSION).tar.gz \
+	download/openssl-$(OPENSSL_VERSION).tar.gz \
+	download/speex-$(SPEEX_VERSION).tar.gz \
+	download/speexdsp-$(SPEEXDSP_VERSION).tar.gz \
+	download/opencv-$(OPENCV_VERSION).tar.gz \
+	download/libxml2-$(LIBXML2_VERSION).tar.gz \
+	download/libxslt-$(LIBXSLT_VERSION).tar.gz \
+	download/curl-$(CURL_VERSION).tar.gz \
+	download/tcl$(TCL_VERSION)-src.tar.gz \
+	download/sqlcipher-$(SQLCIPHER_VERSION).tar.gz \
+	download/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz \
+	download/ffmpeg-$(FFMPEG_VERSION).tar.gz
 
 dirs:
+	mkdir -p download
 	mkdir -p libs/include
 	mkdir -p libs/lib
 	mkdir -p libs/bin
 
-zlib-$(ZLIB_VERSION).tar.gz:
-	$(CURL) -L -k http://sourceforge.net/projects/libpng/files/zlib/$(ZLIB_VERSION)/zlib-$(ZLIB_VERSION).tar.gz/download -o zlib-$(ZLIB_VERSION).tar.gz
+download/zlib-$(ZLIB_VERSION).tar.gz:
+	wget --no-check-certificate http://sourceforge.net/projects/libpng/files/zlib/$(ZLIB_VERSION)/zlib-$(ZLIB_VERSION).tar.gz/download -O download/zlib-$(ZLIB_VERSION).tar.gz
 
-zlib: zlib-$(ZLIB_VERSION).tar.gz
-	tar xvf zlib-$(ZLIB_VERSION).tar.gz
+zlib: download/zlib-$(ZLIB_VERSION).tar.gz
+	tar xvf download/zlib-$(ZLIB_VERSION).tar.gz
 	cd zlib-$(ZLIB_VERSION) && ./configure
 	#cd zlib-$(ZLIB_VERSION) && make install prefix="`pwd`/../libs"
 	cd zlib-$(ZLIB_VERSION) && make
@@ -51,11 +51,11 @@ zlib: zlib-$(ZLIB_VERSION).tar.gz
 	rm -r -f zlib-$(ZLIB_VERSION)
 	touch zlib
 
-bzip2-$(BZIP2_VERSION).tar.gz:
-	$(CURL) http://bzip.org/$(BZIP2_VERSION)/bzip2-$(BZIP2_VERSION).tar.gz -o bzip2-$(BZIP2_VERSION).tar.gz
+download/bzip2-$(BZIP2_VERSION).tar.gz:
+	wget http://bzip.org/$(BZIP2_VERSION)/bzip2-$(BZIP2_VERSION).tar.gz -O download/bzip2-$(BZIP2_VERSION).tar.gz
 
-bzip2: bzip2-$(BZIP2_VERSION).tar.gz
-	tar xvf bzip2-$(BZIP2_VERSION).tar.gz
+bzip2: download/bzip2-$(BZIP2_VERSION).tar.gz
+	tar xvf download/bzip2-$(BZIP2_VERSION).tar.gz
 	#cd bzip2-$(BZIP2_VERSION) && make install PREFIX="`pwd`/../libs"
 	cd bzip2-$(BZIP2_VERSION) && make
 	cp bzip2-$(BZIP2_VERSION)/bzlib.h libs/include/
@@ -63,11 +63,11 @@ bzip2: bzip2-$(BZIP2_VERSION).tar.gz
 	rm -r -f bzip2-$(BZIP2_VERSION)
 	touch bzip2
 
-miniupnpc-$(MINIUPNPC_VERSION).tar.gz:
-	$(CURL) -L http://miniupnp.free.fr/files/download.php?file=miniupnpc-$(MINIUPNPC_VERSION).tar.gz -o miniupnpc-$(MINIUPNPC_VERSION).tar.gz
+download/miniupnpc-$(MINIUPNPC_VERSION).tar.gz:
+	wget http://miniupnp.free.fr/files/download.php?file=miniupnpc-$(MINIUPNPC_VERSION).tar.gz -O download/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 
-miniupnpc: miniupnpc-$(MINIUPNPC_VERSION).tar.gz
-	tar xvf miniupnpc-$(MINIUPNPC_VERSION).tar.gz
+miniupnpc: download/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
+	tar xvf download/miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	cd miniupnpc-$(MINIUPNPC_VERSION) && CC=gcc && export CC && make -f Makefile.mingw init libminiupnpc.a miniupnpc.dll
 	mkdir -p libs/include/miniupnpc && cp miniupnpc-$(MINIUPNPC_VERSION)/*.h libs/include/miniupnpc/
 	cp miniupnpc-$(MINIUPNPC_VERSION)/miniupnpc.lib libs/lib/
@@ -75,11 +75,11 @@ miniupnpc: miniupnpc-$(MINIUPNPC_VERSION).tar.gz
 	rm -r -f miniupnpc-$(MINIUPNPC_VERSION)
 	touch miniupnpc
 
-openssl-$(OPENSSL_VERSION).tar.gz:
-	$(CURL) -k https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -o openssl-$(OPENSSL_VERSION).tar.gz
+download/openssl-$(OPENSSL_VERSION).tar.gz:
+	wget --no-check-certificate https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz -O download/openssl-$(OPENSSL_VERSION).tar.gz
 
-openssl: openssl-$(OPENSSL_VERSION).tar.gz
-	tar xvf openssl-$(OPENSSL_VERSION).tar.gz
+openssl: download/openssl-$(OPENSSL_VERSION).tar.gz
+	tar xvf download/openssl-$(OPENSSL_VERSION).tar.gz
 	#cd openssl-$(OPENSSL_VERSION) && ./config --prefix="`pwd`/../libs"
 	#cd openssl-$(OPENSSL_VERSION) && make install
 	cd openssl-$(OPENSSL_VERSION) && ./config shared
@@ -92,11 +92,11 @@ openssl: openssl-$(OPENSSL_VERSION).tar.gz
 	rm -r -f openssl-$(OPENSSL_VERSION)
 	touch openssl
 
-speex-$(SPEEX_VERSION).tar.gz:
-	$(CURL) http://downloads.xiph.org/releases/speex/speex-$(SPEEX_VERSION).tar.gz -o speex-$(SPEEX_VERSION).tar.gz
+download/speex-$(SPEEX_VERSION).tar.gz:
+	wget http://downloads.xiph.org/releases/speex/speex-$(SPEEX_VERSION).tar.gz -O download/speex-$(SPEEX_VERSION).tar.gz
 
-speex: speex-$(SPEEX_VERSION).tar.gz
-	tar xvf speex-$(SPEEX_VERSION).tar.gz
+speex: download/speex-$(SPEEX_VERSION).tar.gz
+	tar xvf download/speex-$(SPEEX_VERSION).tar.gz
 	cd speex-$(SPEEX_VERSION) && ./configure
 	#cd speex-$(SPEEX_VERSION) && make install exec_prefix="`pwd`/../libs"
 	cd speex-$(SPEEX_VERSION) && make
@@ -105,11 +105,11 @@ speex: speex-$(SPEEX_VERSION).tar.gz
 	rm -r -f speex-$(SPEEX_VERSION)
 	touch speex
 
-speexdsp-$(SPEEXDSP_VERSION).tar.gz:
-	$(CURL) http://downloads.xiph.org/releases/speex/speexdsp-$(SPEEXDSP_VERSION).tar.gz -o speexdsp-$(SPEEXDSP_VERSION).tar.gz
+download/speexdsp-$(SPEEXDSP_VERSION).tar.gz:
+	wget http://downloads.xiph.org/releases/speex/speexdsp-$(SPEEXDSP_VERSION).tar.gz -O download/speexdsp-$(SPEEXDSP_VERSION).tar.gz
 
-speexdsp: speexdsp-$(SPEEXDSP_VERSION).tar.gz
-	tar xvf speexdsp-$(SPEEXDSP_VERSION).tar.gz
+speexdsp: download/speexdsp-$(SPEEXDSP_VERSION).tar.gz
+	tar xvf download/speexdsp-$(SPEEXDSP_VERSION).tar.gz
 	cd speexdsp-$(SPEEXDSP_VERSION) && ./configure
 	cd speexdsp-$(SPEEXDSP_VERSION) && make
 	mkdir -p libs/include/speex && cp speexdsp-$(SPEEXDSP_VERSION)/include/speex/*.h libs/include/speex/
@@ -117,11 +117,11 @@ speexdsp: speexdsp-$(SPEEXDSP_VERSION).tar.gz
 	rm -r -f speexdsp-$(SPEEXDSP_VERSION)
 	touch speexdsp
 
-opencv-$(OPENCV_VERSION).tar.gz:
-	$(CURL) -L -k https://github.com/Itseez/opencv/archive/$(OPENCV_VERSION).tar.gz -o opencv-$(OPENCV_VERSION).tar.gz
+download/opencv-$(OPENCV_VERSION).tar.gz:
+	wget --no-check-certificate https://github.com/Itseez/opencv/archive/$(OPENCV_VERSION).tar.gz -O download/opencv-$(OPENCV_VERSION).tar.gz
 
-opencv: opencv-$(OPENCV_VERSION).tar.gz
-	tar xvf opencv-$(OPENCV_VERSION).tar.gz
+opencv: download/opencv-$(OPENCV_VERSION).tar.gz
+	tar xvf download/opencv-$(OPENCV_VERSION).tar.gz
 	mkdir -p opencv-$(OPENCV_VERSION)/build
 	#cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/../../libs"
 	cd opencv-$(OPENCV_VERSION)/build && cmake .. -G"MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX="`pwd`/install"
@@ -131,11 +131,11 @@ opencv: opencv-$(OPENCV_VERSION).tar.gz
 	rm -r -f opencv-$(OPENCV_VERSION)
 	touch opencv
 
-libxml2-$(LIBXML2_VERSION).tar.gz:
-	$(CURL) ftp://xmlsoft.org/libxml2/libxml2-$(LIBXML2_VERSION).tar.gz -o libxml2-$(LIBXML2_VERSION).tar.gz
+download/libxml2-$(LIBXML2_VERSION).tar.gz:
+	wget ftp://xmlsoft.org/libxml2/libxml2-$(LIBXML2_VERSION).tar.gz -O download/libxml2-$(LIBXML2_VERSION).tar.gz
 
-libxml2: libxml2-$(LIBXML2_VERSION).tar.gz
-	tar xvf libxml2-$(LIBXML2_VERSION).tar.gz
+libxml2: download/libxml2-$(LIBXML2_VERSION).tar.gz
+	tar xvf download/libxml2-$(LIBXML2_VERSION).tar.gz
 	cd libxml2-$(LIBXML2_VERSION) && ./configure --without-iconv -enable-shared=no
 	#cd libxml2-$(LIBXML2_VERSION) && make install exec_prefix="`pwd`/../libs"
 	cd libxml2-$(LIBXML2_VERSION) && make
@@ -143,12 +143,12 @@ libxml2: libxml2-$(LIBXML2_VERSION).tar.gz
 	cp libxml2-$(LIBXML2_VERSION)/.libs/libxml2.a libs/lib/
 	touch libxml2
 
-libxslt-$(LIBXSLT_VERSION).tar.gz:
-	$(CURL) ftp://xmlsoft.org/libxml2/libxslt-$(LIBXSLT_VERSION).tar.gz -o libxslt-$(LIBXSLT_VERSION).tar.gz
+download/libxslt-$(LIBXSLT_VERSION).tar.gz:
+	wget ftp://xmlsoft.org/libxml2/libxslt-$(LIBXSLT_VERSION).tar.gz -O download/libxslt-$(LIBXSLT_VERSION).tar.gz
 
-libxslt: libxml2-$(LIBXML2_VERSION).tar.gz libxslt-$(LIBXSLT_VERSION).tar.gz
-	tar xvf libxml2-$(LIBXML2_VERSION).tar.gz
-	tar xvf libxslt-$(LIBXSLT_VERSION).tar.gz
+libxslt: download/libxml2-$(LIBXML2_VERSION).tar.gz download/libxslt-$(LIBXSLT_VERSION).tar.gz
+	tar xvf download/libxml2-$(LIBXML2_VERSION).tar.gz
+	tar xvf download/libxslt-$(LIBXSLT_VERSION).tar.gz
 	tar xvf libxslt-$(LIBXSLT_VERSION)-fix.tar.gz
 	cd libxslt-$(LIBXSLT_VERSION) && ./configure --with-libxml-src=../libxml2-$(LIBXML2_VERSION) -enable-shared=no CFLAGS=-DLIBXML_STATIC
 	cd libxslt-$(LIBXSLT_VERSION) && make
@@ -159,11 +159,11 @@ libxslt: libxml2-$(LIBXML2_VERSION).tar.gz libxslt-$(LIBXSLT_VERSION).tar.gz
 	rm -r -f libxslt-$(LIBXSLT_VERSION)
 	touch libxslt
 
-curl-$(CURL_VERSION).tar.gz:
-	$(CURL) -L -k http://curl.haxx.se/download/curl-$(CURL_VERSION).tar.gz -o curl-$(CURL_VERSION).tar.gz
+download/curl-$(CURL_VERSION).tar.gz:
+	wget --no-check-certificate http://curl.haxx.se/download/curl-$(CURL_VERSION).tar.gz -O download/curl-$(CURL_VERSION).tar.gz
 
-curl: curl-$(CURL_VERSION).tar.gz
-	tar xvf curl-$(CURL_VERSION).tar.gz
+curl: download/curl-$(CURL_VERSION).tar.gz
+	tar xvf download/curl-$(CURL_VERSION).tar.gz
 	cd curl-$(CURL_VERSION) && ./configure --disable-shared --with-ssl="`pwd`/../libs"
 	#cd curl-$(CURL_VERSION) && make install exec_prefix="`pwd`/../libs"
 	cd curl-$(CURL_VERSION) && make
@@ -172,20 +172,20 @@ curl: curl-$(CURL_VERSION).tar.gz
 	rm -r -f curl-$(CURL_VERSION)
 	touch curl
 
-tcl$(TCL_VERSION)-src.tar.gz:
-	$(CURL) -L http://prdownloads.sourceforge.net/tcl/tcl$(TCL_VERSION)-src.tar.gz -o tcl$(TCL_VERSION)-src.tar.gz
+download/tcl$(TCL_VERSION)-src.tar.gz:
+	wget http://prdownloads.sourceforge.net/tcl/tcl$(TCL_VERSION)-src.tar.gz -O download/tcl$(TCL_VERSION)-src.tar.gz
 
-sqlcipher-$(SQLCIPHER_VERSION).tar.gz:
-	$(CURL) -L -k https://github.com/sqlcipher/sqlcipher/archive/v$(SQLCIPHER_VERSION).tar.gz -o sqlcipher-$(SQLCIPHER_VERSION).tar.gz
+download/sqlcipher-$(SQLCIPHER_VERSION).tar.gz:
+	wget --no-check-certificate https://github.com/sqlcipher/sqlcipher/archive/v$(SQLCIPHER_VERSION).tar.gz -O download/sqlcipher-$(SQLCIPHER_VERSION).tar.gz
 
-sqlcipher: tcl$(TCL_VERSION)-src.tar.gz sqlcipher-$(SQLCIPHER_VERSION).tar.gz
+sqlcipher: download/tcl$(TCL_VERSION)-src.tar.gz download/sqlcipher-$(SQLCIPHER_VERSION).tar.gz
 	# tcl
-	tar xvf tcl$(TCL_VERSION)-src.tar.gz
+	tar xvf download/tcl$(TCL_VERSION)-src.tar.gz
 	mkdir -p tcl$(TCL_VERSION)/build
 	cd tcl$(TCL_VERSION)/build && ../win/configure
 	cd tcl$(TCL_VERSION)/build && make
 	#sqlcipher
-	tar xvf sqlcipher-$(SQLCIPHER_VERSION).tar.gz
+	tar xvf download/sqlcipher-$(SQLCIPHER_VERSION).tar.gz
 	cd sqlcipher-$(SQLCIPHER_VERSION) && ln -s ../tcl$(TCL_VERSION)/build/tclsh86.exe tclsh
 	mkdir -p tcl$(TCL_VERSION)/lib
 	ln -s `pwd`/tcl$(TCL_VERSION)/library `pwd`/tcl$(TCL_VERSION)/lib/tcl8.6
@@ -197,21 +197,21 @@ sqlcipher: tcl$(TCL_VERSION)-src.tar.gz sqlcipher-$(SQLCIPHER_VERSION).tar.gz
 	rm -r -f tcl$(TCL_VERSION)
 	touch sqlcipher
 
-libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz:
-	$(CURL) -L -k http://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz -o libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
+download/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz:
+	wget --no-check-certificate http://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz -O download/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
 
-libmicrohttpd: libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
-	tar xvf libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
+libmicrohttpd: download/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
+	tar xvf download/libmicrohttpd-$(LIBMICROHTTPD_VERSION).tar.gz
 	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && ./configure --disable-shared --enable-static --prefix="`pwd`/../libs"
 	cd libmicrohttpd-$(LIBMICROHTTPD_VERSION) && make install
 	rm -r -f libmicrohttpd-$(LIBMICROHTTPD_VERSION)
 	touch libmicrohttpd
 
-ffmpeg-$(FFMPEG_VERSION).tar.gz:
-	$(CURL) -L -k https://ffmpeg.org/releases/ffmpeg-$(FFMPEG_VERSION).tar.gz -o ffmpeg-$(FFMPEG_VERSION).tar.gz
+download/ffmpeg-$(FFMPEG_VERSION).tar.gz:
+	wget --no-check-certificate https://ffmpeg.org/releases/ffmpeg-$(FFMPEG_VERSION).tar.gz -O download/ffmpeg-$(FFMPEG_VERSION).tar.gz
 
-ffmpeg: ffmpeg-$(FFMPEG_VERSION).tar.gz
-	tar xvf ffmpeg-$(FFMPEG_VERSION).tar.gz
+ffmpeg: download/ffmpeg-$(FFMPEG_VERSION).tar.gz
+	tar xvf download/ffmpeg-$(FFMPEG_VERSION).tar.gz
 	cd ffmpeg-$(FFMPEG_VERSION) && ./configure --disable-shared --enable-static --disable-programs --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-doc --disable-htmlpages --disable-manpages --disable-podpages --disable-txtpages --disable-yasm --disable-everything --enable-encoder=mpeg4 --enable-decoder=mpeg4 --prefix="`pwd`/../libs"
 	cd ffmpeg-$(FFMPEG_VERSION) && make install
 	rm -r -f ffmpeg-$(FFMPEG_VERSION)
@@ -221,6 +221,6 @@ ffmpeg: ffmpeg-$(FFMPEG_VERSION).tar.gz
 copylibs: 
 	read -p "Do you want to copy libs to retroshare? (yes|no)" answer; \
 	if [ "$$answer" = "yes" ] ; then  \
-	  cp -r libs ../../ ; \
+	  cp -r libs ../../../../ ; \
 	fi
 

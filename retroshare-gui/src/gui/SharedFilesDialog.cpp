@@ -65,7 +65,7 @@
 #define IMAGE_COLLVIEW       ":/images/library_view.png"
 #define IMAGE_COLLOPEN       ":/images/library.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
-#define IMAGE_MYFILES        ":images/my_documents_22.png"
+#define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
 
 /*define dirTreeView Column */
 #define COLUMN_NAME          0
