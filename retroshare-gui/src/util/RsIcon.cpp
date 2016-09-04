@@ -24,17 +24,17 @@
 #include "RsIcon.h"
 
 RsIcon::RsIcon()
-  : QIcon()
+//  : QIcon()
 {
-	this->~QIcon();
+//	this->~QIcon();
 	m_Engine = new RsIconEngine();
 	new (this) QIcon(m_Engine);
 }
 
 RsIcon::RsIcon(const QString &fileName, const bool onNotify /*= false*/)
-  : QIcon(fileName)
+//  : QIcon(fileName)
 {
-	this->~QIcon();
+//	this->~QIcon();
 	m_Engine = new RsIconEngine();
 	m_Engine->setOnNotify(onNotify);
 	m_Engine->addFile(fileName,QSize(),QIcon::Normal, QIcon::Off);

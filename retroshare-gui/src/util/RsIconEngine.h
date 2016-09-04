@@ -22,13 +22,13 @@
 #ifndef RSICONENGINE_H
 #define RSICONENGINE_H
 
-#ifndef Q_DECL_OVERRIDE
-# define Q_DECL_OVERRIDE
-#endif
-
 #include <QIcon>
 #include <QIconEngine>
 #include <QObject>
+
+#ifndef Q_DECL_OVERRIDE
+# define Q_DECL_OVERRIDE
+#endif
 
 /************************************************************************************/
 /* Copied fromQIcon private source file:                                            */
