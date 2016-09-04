@@ -26,7 +26,7 @@
 
 #include "rsthreads.h"
 #include <unistd.h>    // for usleep()
-#include <errno.h>    // for errno
+#include <errno.h>     // for errno
 #include <iostream>
 #include <time.h>
 
@@ -76,10 +76,10 @@ void *RsThread::rsthread_init(void* p)
     std::cerr << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread is started. Calling runloop()..." << std::endl;
 #endif
     
-  thread -> runloop();
+  thread -> run();
   return NULL;
 }
-RsThread::RsThread() 
+RsThread::RsThread() : mHasStopped(true), mShouldStop(false)
 {
 #ifdef WINDOWS_SYS
     memset (&mTid, 0, sizeof(mTid));
@@ -91,23 +91,11 @@ RsThread::RsThread()
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread object created. Initing stopped=1, should_stop=0" << std::endl;
 #endif
-    mHasStoppedSemaphore.set(1) ;
-    mShouldStopSemaphore.set(0) ;
 }
 
-bool RsThread::isRunning()
-{
-    // do we need a mutex for this ?
-    int sval = mHasStoppedSemaphore.value() ;
+bool RsThread::isRunning() { return !mHasStopped; }
 
-    return !sval ;
-}
-
-bool RsThread::shouldStop()
-{
-        int sval = mShouldStopSemaphore.value() ;
-        return sval > 0;
-}
+bool RsThread::shouldStop() { return mShouldStop; }
 
 void RsTickingThread::shutdown()
 {
@@ -115,17 +103,15 @@ void RsTickingThread::shutdown()
     THREAD_DEBUG << "pqithreadstreamer::shutdown()" << std::endl;
 #endif
 
-    int sval = mHasStoppedSemaphore.value() ;
-
-    if(sval > 0)
-    {
+	if(mHasStopped)
+	{
 #ifdef DEBUG_THREADS
-        THREAD_DEBUG << "  thread not running. Quit." << std::endl;
+		THREAD_DEBUG << "  thread not running. Quit." << std::endl;
 #endif
-        return ;
-    }
+		return;
+	}
 
-    ask_for_stop() ;
+	ask_for_stop();
 }
 
 void RsThread::ask_for_stop()
@@ -133,25 +119,27 @@ void RsThread::ask_for_stop()
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  calling stop" << std::endl;
 #endif
-    mShouldStopSemaphore.set(1);
+	mShouldStop = true;
 }
 
 void RsTickingThread::fullstop()
 {
-    shutdown() ;
+	shutdown();
 
 #ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  waiting stop" << std::endl;
+	THREAD_DEBUG << "  waiting stop" << std::endl;
 #endif
-    if(pthread_equal(mTid,pthread_self()))
-    {
-        THREAD_DEBUG << "(WW) RsTickingThread::fullstop() called by same thread. This is unexpected." << std::endl;
-        return ;
-    }
-    
-    mHasStoppedSemaphore.wait_no_relock(); // Wait for semaphore value to become 1, but does not decrement it when obtained.
+	if(pthread_equal(mTid,pthread_self()))
+	{
+		THREAD_DEBUG << "(WW) RsTickingThread::fullstop() called by same "
+		             << "thread. This is unexpected." << std::endl;
+		return;
+	}
+
+	while(!mHasStopped); // Wait for the thread being stopped
+
 #ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  finished!" << std::endl;
+	THREAD_DEBUG << "  finished!" << std::endl;
 #endif
 }
 
@@ -163,40 +151,27 @@ void RsThread::start(const std::string &threadName)
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0" << std::endl;
 #endif
-    mShouldStopSemaphore.set(0) ;
+	mShouldStop = false;
 
-    int err ;
+	int err;
 
     // pthread_create is a memory barrier
-    // -> the new thread will see mIsRunning() = true
+	// -> the new thread will see isRunning() = true
 
     if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
     {
         mTid = tid;
 
-        // set name
-
-        if(pthread_setname_np)
-        {
-            if(!threadName.empty())
-            {
-                // thread names are restricted to 16 characters including the terminating null byte
-                if(threadName.length() > 15)
-                {
-#ifdef DEBUG_THREADS
-                    THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
-#endif
-                    RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
-                } else {
-                    RS_pthread_setname_np(mTid, threadName.c_str());
-                }
-            }
-        }
+		if(pthread_setname_np && !threadName.empty())
+			RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
+		    /* Thread names are restricted to 16 characters including the
+			 * terminating null byte */
     }
     else
     {
-        THREAD_DEBUG << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
-        mHasStoppedSemaphore.set(1) ;
+		THREAD_DEBUG << "Fatal error: pthread_create could not create a thread."
+		             << " Error returned: " << err << " !!!!!!!" << std::endl;
+		mHasStopped = true;
     }
 }
 
@@ -209,15 +184,9 @@ RsTickingThread::RsTickingThread()
 #endif
 }
 
-void RsSingleJobThread::runloop()
+void RsTickingThread::run()
 {
-    mHasStoppedSemaphore.set(0) ;
-    run() ;
-}
-
-void RsTickingThread::runloop()
-{
-    mHasStoppedSemaphore.set(0) ;	// first time we are 100% the thread is actually running.
+	mHasStopped = false; // First time we are 100% sure the thread is running.
 
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "RsTickingThread::runloop(). Setting stopped=0" << std::endl;
@@ -225,13 +194,15 @@ void RsTickingThread::runloop()
 
     while(1)
     {
-        if(shouldStop())
+		if(shouldStop())
         {
 #ifdef DEBUG_THREADS
-            THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. setting hasStopped=1, and returning. Thread ends." << std::endl;
+			THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. "
+			             << "setting hasStopped=1, and returning. Thread ends."
+			             << std::endl;
 #endif
-            mHasStoppedSemaphore.set(1);
-            return ;
+			mHasStopped = true;
+			return;
         }
 
         data_tick();
@@ -281,32 +252,14 @@ void RsQueueThread::data_tick()
 }
 
 void RsMutex::unlock()
-{ 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	if(--_cnt == 0)
-	{
-#endif
-		_thread_id = 0 ;
-		pthread_mutex_unlock(&realMutex); 
-
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	}
-#endif
+{
+	_thread_id = 0;
+	pthread_mutex_unlock(&realMutex);
 }
 
 void RsMutex::lock()
 {
-#ifdef RSMUTEX_DEBUG
-	pthread_t owner = _thread_id ;
-#endif
-
-	int retval = 0;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	if(!trylock())
-		if(!pthread_equal(_thread_id,pthread_self()))
-#endif
-			retval = pthread_mutex_lock(&realMutex);
-
+	int retval = pthread_mutex_lock(&realMutex);
 	switch(retval)
 	{
 		case 0:
@@ -361,10 +314,8 @@ void RsMutex::lock()
 
  
 	_thread_id = pthread_self() ;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	++_cnt ;
-#endif
 }
+
 #ifdef RSMUTEX_DEBUG
 double RsStackMutex::getCurrentTS()
 {
@@ -381,5 +332,3 @@ double RsStackMutex::getCurrentTS()
         return cts;
 }
 #endif
-
-

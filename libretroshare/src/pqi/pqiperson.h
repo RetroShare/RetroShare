@@ -23,19 +23,28 @@
  *
  */
 
+#pragma once
 
+#include <stdint.h>              // for uint32_t, uint16_t
+#include <sys/socket.h>          // for sockaddr_storage
+#include <time.h>                // for NULL, time_t
+#include <iostream>              // for operator<<, basic_ostream, cerr, endl
+#include <list>                  // for list
+#include <map>                   // for map
+#include <string>                // for string, char_traits
 
-#ifndef MRK_PQI_PERSON_HEADER
-#define MRK_PQI_PERSON_HEADER
+#include "pqi/pqi_base.h"        // for NetBinInterface, NetInterface, PQInt...
+#include "pqi/pqiqosstreamer.h"  // for pqiQoSstreamer
+#include "pqi/pqistreamer.h"     // for pqistreamer
+#include "retroshare/rstypes.h"  // for RsPeerId
+#include "util/rsnet.h"          // for sockaddr_storage_clear
+#include "util/rsthreads.h"      // for RsMutex
 
-
-#include "pqi/pqi.h"
-#include "util/rsnet.h"
-
-#include <list>
-
-class pqiperson;
-class RsPeerCryptoParams ;
+class RSTrafficClue;
+class RsItem;
+class RsPeerCryptoParams;
+class RsSerialiser;
+class pqipersongrp;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;
@@ -79,9 +88,6 @@ public:
 protected:
 	NetBinInterface *ni;
 };
-
-
-class pqipersongrp;
 
 class NotifyData
 {
@@ -175,5 +181,3 @@ private:
 	time_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };
-
-#endif

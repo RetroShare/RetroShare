@@ -155,9 +155,8 @@
 
 //#define TUNNEL_STATISTICS
 
-class ftServer ;
+class ftServer;
 class p3LinkMgr;
-class ftDataMultiplex;
 class RsSerialiser;
 
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;

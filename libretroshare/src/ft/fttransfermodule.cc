@@ -542,7 +542,7 @@ bool ftTransferModule::isCheckingHash()
 	return mFlag == FT_TM_FLAG_CHECKING || mFlag == FT_TM_FLAG_CHUNK_CRC;
 }
 
-class HashThread: public RsSingleJobThread
+class HashThread: public RsThread
 {
 	public:
 		HashThread(ftFileCreator *m) 
@@ -550,6 +550,7 @@ class HashThread: public RsSingleJobThread
 
         virtual void run()
 		{
+			mHasStopped = false;
 #ifdef FT_DEBUG
 			std::cerr << "hash thread is running for file " << std::endl;
 #endif

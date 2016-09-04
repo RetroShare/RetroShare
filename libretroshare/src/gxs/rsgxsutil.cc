@@ -120,6 +120,7 @@ RsGxsIntegrityCheck::RsGxsIntegrityCheck(RsGeneralDataService* const dataService
 
 void RsGxsIntegrityCheck::run()
 {
+	mHasStopped = false;
 	check();
 }
 

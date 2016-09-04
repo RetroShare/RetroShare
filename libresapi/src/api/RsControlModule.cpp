@@ -94,6 +94,8 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
 
 void RsControlModule::run()
 {
+	mHasStopped = false;
+
     std::cerr << "RsControlModule: initialising libretroshare..." << std::endl;
 
     RsInit::InitRsConfig();

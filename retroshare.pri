@@ -5,6 +5,9 @@
 # To {dis,en}able libresapi via HTTP (libmicrohttpd) {,un}comment the following line
 CONFIG *= libresapihttpserver
 
+equals(QT_MAJOR_VERSION, 4) : QMAKE_CXXFLAGS += -std=c++0x
+greaterThan(QT_MAJOR_VERSION, 4) : CONFIG += c++11
+
 # Gxs is always enabled now.
 DEFINES *= RS_ENABLE_GXS
 

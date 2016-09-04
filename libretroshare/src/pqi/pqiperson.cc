@@ -23,13 +23,18 @@
  *
  */
 
-#include "pqi/pqi.h"
+#include <pthread.h>              // for pthread_equal, pthread_self
+#include <cstdint>                // for uint32_t, uint16_t
+#include <utility>                // for pair
+
 #include "pqi/pqiperson.h"
-#include "pqi/pqipersongrp.h"
-#include "pqi/pqissl.h"
-#include "util/rsdebug.h"
-#include "util/rsstring.h"
-#include "retroshare/rspeers.h"
+#include "pqi/pqipersongrp.h"     // for pqipersongrp
+#include "pqi/pqissl.h"           // for pqissl
+#include "retroshare/rspeers.h"   // for RsPeerCryptoParams
+#include "serialiser/rsserial.h"  // for RsItem, RsRawItem
+#include "util/rsdebug.h"         // for PQL_DEBUG_BASIC, logInfo, logLvl::D...
+
+class RSTrafficClue;
 
 static struct RsLog::logInfo pqipersonzoneInfo = {RsLog::Default, "pqiperson"};
 #define pqipersonzone &pqipersonzoneInfo
@@ -662,22 +667,20 @@ void pqiperson::setRateCap(float val_in, float val_out)
 	// This methods might be called all the way down from pqiperson::tick() down
 	// to pqissludp while completing a UDP connexion, causing a deadlock.
 	//
-	// We need to make sure the mutex is not already locked by current thread. If so, we call the
-	// locked version directly if not, we lock, call, and unlock, possibly waiting if the
-	// lock is already acquired by another thread.
+	// Altought it should NEVER happen, and the fact that we end up locking on
+	// the same mutex again on the same thread is symptomatic of a yet not known
+	// logic flaw, here we need to make sure the mutex is not already locked by
+	// current thread. If so, we call the locked version directly if not, we
+	// lock, call, and unlock, possibly waiting if the lock is already acquired
+	// by another thread.
+	//
+	// TODO: Understand why it end up in a situation like this and fix it
+	//       properly, probably this will be a long and hard task.
 	//
 	// The lock cannot be locked by the same thread between the first test and
 	// the "else" statement, so there is no possibility for this code to fail.
-	//
-	// We could actually put that code in RsMutex::lock()?
-	// TODO: 2015/12/19 This code is already in RsMutex::lock() but is guarded
-	// by RSTHREAD_SELF_LOCKING_GUARD which is specifically unset in the header
-	// Why is that code guarded? Do it have an impact on performance?
-	// Or we should not get in the situation of trying to relock the mutex on
-	// the same thread NEVER?
 	
 	if(pthread_equal(mPersonMtx.owner(), pthread_self()))
-		// Unlocked, or already locked by same thread
 		setRateCap_locked(val_in, val_out);
 	else
 	{

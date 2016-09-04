@@ -30,63 +30,58 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
-#include <semaphore.h>
+#include <atomic>
 #include <util/rsmemory.h>
 
-/* RsIface Thread Wrappers */
 
-#undef RSTHREAD_SELF_LOCKING_GUARD
-//#define RSMUTEX_DEBUG 300 // Milliseconds for print in the stderr
-//#define RSMUTEX_DEBUG 
+//#define RSMUTEX_DEBUG
 
+/**
+ * @brief Provide mutexes that keep track of the owner. Based on pthread mutex.
+ */
 class RsMutex
 {
-	public:
+public:
 
-	RsMutex(const std::string& name)
+	RsMutex(const std::string& name) : _thread_id(0)
+#ifdef RSMUTEX_DEBUG
+	  , _name(name)
+#endif
 	{
-		/* remove unused parameter warnings */
-
 		pthread_mutex_init(&realMutex, NULL);
-		_thread_id = 0 ;
-#ifdef RSMUTEX_DEBUG
-		this->_name = name;
-#else
-		(void) name;
+
+#ifndef RSMUTEX_DEBUG
+		(void) name; // remove unused parameter warnings
 #endif
 	}
-	~RsMutex() 
-	{ 
-		pthread_mutex_destroy(&realMutex); 
-	}
 
-	inline const pthread_t& owner() const { return _thread_id ; }
-#ifdef RSMUTEX_DEBUG
-	void setName(const std::string &name)
-	{
-		this->_name = name;
-	}
-#endif
+	~RsMutex() { pthread_mutex_destroy(&realMutex); }
 
-	void	lock();
-	void	unlock();
-	bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
+	inline const pthread_t& owner() const { return _thread_id; }
+
+	void lock();
+	void unlock();
+	bool trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 
 #ifdef RSMUTEX_DEBUG
 	const std::string& name() const { return _name ; }
 #endif
 
-	private:
-		pthread_mutex_t  realMutex;
-		pthread_t _thread_id ;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-		uint32_t _cnt ;
-#endif
+private:
+	pthread_mutex_t realMutex;
+	pthread_t _thread_id;
+
 #ifdef RSMUTEX_DEBUG
-		std::string _name;
+	std::string _name;
 #endif
 };
 
+/**
+ * @brief Provide mutexes that automatically lock/unlock on creation/destruction
+ *        and have powerfull debugging facilities (if RSMUTEX_DEBUG is defined
+ *        at compiletime )
+ * @see RS_STACK_MUTEX(m)
+ */
 class RsStackMutex
 {
 	public:
@@ -113,10 +108,8 @@ class RsStackMutex
 			_time_stamp = ts ;
 			pthread_t owner = mMtx.owner() ;
 #else
-			/* remove unused parameter warnings */
-			(void) function_name;
-			(void) file_name;
-			(void) lineno;
+			// remove unused parameter warnings
+			(void) function_name; (void) file_name; (void) lineno;
 #endif
 
 			mMtx.lock(); 
@@ -159,116 +152,84 @@ class RsStackMutex
 #endif
 };
 
-// This macro allows you to trace which mutex in the code is locked for how much time.
-// se this as follows:
-//
-// {
-// 	RS_STACK_MUTEX(myMutex) ;
-//
-// 	do_something() ;
-// }
-//
+
+/**
+ * @def RS_STACK_MUTEX(m)
+ * This macro allows you to trace which mutex in the code is locked and for how
+ * much time. You can use this as follows:
+ * @code
+ * {
+ * 	RS_STACK_MUTEX(myMutex) ;
+ * 	do_something() ;
+ * }
+ * @endcode
+ */
 #define RS_STACK_MUTEX(m) RsStackMutex __local_retroshare_mutex(m,__PRETTY_FUNCTION__,__FILE__,__LINE__) 
 
-// This class handles a Mutex-based semaphore, that makes it cross plateform.
-class RsSemaphore
-{
-    class RsSemStruct
-    {
-    public:
-        RsSemStruct() : mtx("Semaphore mutex"), val(0) {}
 
-        RsMutex mtx ;
-        uint32_t val ;
-    };
-
-public:
-    RsSemaphore()
-    {
-        s = new RsSemStruct ;
-    }
-
-    ~RsSemaphore()
-    {
-        delete s ;
-    }
-
-    void set(uint32_t i)
-    {
-        RS_STACK_MUTEX(s->mtx) ;
-        s->val = i ;
-    }
-
-    void post()
-    {
-        RS_STACK_MUTEX(s->mtx) ;
-        ++(s->val) ;
-    }
-
-    uint32_t value()
-    {
-        RS_STACK_MUTEX(s->mtx) ;
-        return s->val ;
-    }
-
-    // waits but does not re-locks the semaphore
-    
-    void wait_no_relock()
-    {
-        static const uint32_t max_waiting_time_before_warning=1000 *5 ;	// 5 secs
-        uint32_t tries=0;
-
-        while(true)
-        {
-            usleep(1000) ;
-            if(++tries >= max_waiting_time_before_warning)
-                std::cerr << "(EE) Semaphore waiting for too long. Something is probably wrong in the code." << std::endl;
-
-            RS_STACK_MUTEX(s->mtx) ;
-            if(s->val > 0)
-		    return ;
-        }
-
-    }
-private:
-    RsSemStruct *s ;
-};
-
-class RsThread;
-
-/* to create a thread! */
-pthread_t  createThread(RsThread &thread);
-
+/**
+ * @brief Offer basic threading functionalities, to execute code in parallel in
+ * a thread you should inerith from this class.
+ */
 class RsThread
 {
-    public:
-    RsThread();
-    virtual ~RsThread() {}
+public:
+	RsThread();
+	virtual ~RsThread() {}
 
-    void start(const std::string &threadName = "");
+	/**
+	 * @brief start the thread and call run() on it.
+	 * @param threadName string containing the name of the thread used for
+	 *                   debugging purposes, it is truncated to 16 characters
+	 *                   including \0 at the end of the string.
+	 */
+	void start(const std::string &threadName = "");
 
-    // Returns true of the thread is still running.
+	/**
+	 * @brief Check if thread is running.
+	 * @return true if the thread is still running, false otherwise.
+	 */
+	bool isRunning();
 
-    bool isRunning();
+	/**
+	 * @brief Check if the thread should stop.
+	 * @return true if the thread received a stopping order but hasn't stopped yet.
+	 */
+	bool shouldStop();
 
-    // Returns true if the thread received a stopping order and hasn't yet stopped.
-
-    bool shouldStop();
-
-    // Can be called to set the stopping flags. The stop will not be handled
-    // by RsThread itself, but in subclasses. If you derive your own subclass,
-    // you need to call shouldStop() in order to check for a possible stopping order.
-
-    void ask_for_stop();
+	/**
+	 * @brief Ask the thread to stop.
+	 * Set the mShouldStop flag. The real stop will not be handled by RsThread
+	 * itself, but must be implemented in subclasses @see run().
+	 * If you derive your own subclass, you need to call shouldStop() in order
+	 * to check for a possible stopping order.
+	 */
+	void ask_for_stop();
 
 protected:
-    virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
 
-    RsSemaphore mHasStoppedSemaphore;
-    RsSemaphore mShouldStopSemaphore;
+	/**
+	 * This method must be implemented by sublasses, will be called once the
+	 * thread is started. Should return and properly set the stopping flags once
+	 * requested, shuold use shouldStop() to check that.
+	 */
+	virtual void run() = 0;
 
-    static void *rsthread_init(void*) ;
-    pthread_t mTid;
+	/**
+	 * @brief flag to indicate if thread is stopped or not
+	 * Subclasses must take care of setting this to true when the execution
+	 * start, and to false when execution is stopped.
+	 */
+	std::atomic<bool> mHasStopped;
+
+	/**
+	 * @brief store the id of the corresponding pthread
+	 */
+	pthread_t mTid;
+
+private:
+	std::atomic<bool> mShouldStop;
+	static void *rsthread_init(void*);
 };
 
 class RsTickingThread: public RsThread
@@ -278,29 +239,23 @@ public:
 
     void shutdown();
     void fullstop();
-    void join() { fullstop() ; }	// used for compatibility
 
-    virtual void data_tick() =0;
+	/// Provided for compatibility @see fullstop()
+	inline void join() { fullstop(); }
+
+	virtual void data_tick() = 0;
 
 private:
-    virtual void runloop() ; /* called once the thread is started. Should be overloaded by subclasses. */
+	virtual void run();
 };
 
-class RsSingleJobThread: public RsThread
-{
-public:
-    virtual void run() =0;
-
-protected:
-    virtual void runloop() ;
-};
-
+// TODO: Used just one time, is this really an useful abstraction?
 class RsQueueThread: public RsTickingThread
 {
 public:
 
-    RsQueueThread(uint32_t min, uint32_t max, double relaxFactor );
-    virtual ~RsQueueThread() { return; }
+	RsQueueThread(uint32_t min, uint32_t max, double relaxFactor);
+	virtual ~RsQueueThread() {}
 
 protected:
 
@@ -315,4 +270,3 @@ private:
     time_t   mLastWork;  /* secs */
     float    mRelaxFactor;
 };
-
