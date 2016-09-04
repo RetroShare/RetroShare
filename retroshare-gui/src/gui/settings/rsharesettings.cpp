@@ -191,7 +191,12 @@ void RshareSettings::setSheetName(QString sheet)
 QColor RshareSettings::getRsIconColor() const
 {
 	bool ok = false;
-	return QColor(value(SETTING_RSICONCOLOR).toString().toUInt(&ok,16));
+	QString strValue = value(SETTING_RSICONCOLOR).toString();
+	uint rgb = strValue.right(6).toUInt(&ok,16);
+	uint alpha = (strValue.length() > 6) ? strValue.left(strValue.length() - 6).toUInt(&ok,16) : 0;
+	QColor color = QColor(QRgb(rgb));
+	color.setAlpha(alpha);
+	return color;
 }
 
 /** Sets background color for RsIcon */
@@ -204,7 +209,12 @@ void RshareSettings::setRsIconColor(const QString color)
 QColor RshareSettings::getRsIconColorOnNotify() const
 {
 	bool ok = false;
-	return QColor(value(SETTING_RSICONCOLORONNOTIFY).toString().toUInt(&ok,16));
+	QString strValue = value(SETTING_RSICONCOLORONNOTIFY).toString();
+	uint rgb = strValue.right(6).toUInt(&ok,16);
+	uint alpha = (strValue.length() > 6) ? strValue.left(strValue.length() - 6).toUInt(&ok,16) : 0;
+	QColor color = QColor(QRgb(rgb));
+	color.setAlpha(alpha);
+	return color;
 }
 
 /** Sets background color for RsIcon when on notify */
