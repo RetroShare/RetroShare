@@ -4,7 +4,8 @@ QT += qml quick androidextras
 
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    libresapilocalclient.cpp
 
 RESOURCES += qml.qrc
 
@@ -29,3 +30,7 @@ DEPENDPATH *= ../../libretroshare/src
 INCLUDEPATH *= ../../libretroshare/src
 PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 LIBS *= ../../libretroshare/src/lib/libretroshare.a
+
+HEADERS += \
+    libresapilocalclient.h \
+    debugutils.h

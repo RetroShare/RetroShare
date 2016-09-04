@@ -8,16 +8,16 @@ Compiling an application for Android is not as easy as one would imagine, expeci
 == Preparing The Environement
 
 First of all setup your Qt for Android development environement following the guide on the link:http://doc.qt.io/qt-5/androidgs.html[Qt for android web site].
-At this point you should have Android SDK, Android NDK, and Qt for Android working fine, and you should be capable of execute on a Android emulator on on your Android phone Qt for Android examples.
+At this point you should have Android SDK, Android NDK, and Qt for Android working fine, and you should be capable of executing on an Android emulator or on your Android phone Qt for Android examples.
 
-But RetroShare is not as simple to compile as those examples, in particular Android NDK precompiled toolchain is limited and doesn't support the full C++ specification and it is missing some part that is needed to build RetroShare, the good news is that Android NDK ships all the necessary to build a custom toolchain that is suitable to build RetroShare. In order to build the toolchain with needed library RetroShare provide the +android-prepare-toolchain.sh+  script, before you execute it you should define some variable the script cannot determine in an easy and reliable manner by itself in your terminal.
+But RetroShare is not as simple to compile as those examples. In particular, the Android NDK precompiled toolchain is limited and doesn't support the full C++ specification, and it is missing some part that is needed to build RetroShare. The good news is that Android NDK ships all the necessary to build a custom toolchain that is suitable to build RetroShare. In order to build the toolchain with needed library RetroShare provides the +android-prepare-toolchain.sh+  script; before you execute it you should define some variables the script cannot determine in an easy and reliable manner by itself in your terminal.
 
 [source,bash]
 -------------------------------------------------------------------------------
 ## The path where Android NDK is installed in your system
 export ANDROID_NDK_PATH="/opt/android-ndk/"
 
-## The path where your fresh compiled toolchain will be installed, take care
+## The path where your fresh compiled toolchain will be installed, make sure
 ## the parent exists
 export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retroshare-android/"
 
@@ -25,7 +25,7 @@ export NDK_TOOLCHAIN_PATH="/home/$(whoami)/Development/android-toolchains/retros
 export ANDROID_NDK_ARCH="arm"
 
 ## The Android API level the Android device you want to target
-export ANDROID_PLATFORM_VER="23"
+export ANDROID_PLATFORM_VER="19"
 
 ## The number of core that yout host CPU have (just to speed up compilation) set it to 1 if unsure
 export HOST_NUM_CPU=1
@@ -33,9 +33,9 @@ export HOST_NUM_CPU=1
 ./android-prepare-toolchain.sh
 -------------------------------------------------------------------------------
 
-Now is time for the bad news: as of today Qt assume you use the NDK precompiled toolchain and doesn't have an option to use the custom toolchain you just generated, so you need to tweak a little Qt internals to make usage of the custom toolchain. First of all you need to determine your Qt for Android installation path, in my case it is +/opt/Qt5.7.0/+ then find the +mkspecs+ directory in my case +/opt/Qt5.7.0/5.7/android_armv7/mkspecs+ and then modify qmake configuration for android target according to your toolchain, in my case I have done it with the following commands in the same shell I used before to take advantege of the variables I set before.
+Now is time for the bad news: as of today Qt assumes you use the NDK precompiled toolchain and doesn't have an option to use the custom toolchain you just generated, so you need to tweak Qt internals a little to make usage of the custom toolchain. First of all you need to determine your Qt for Android installation path -in my case it is +/opt/Qt5.7.0/+ - then find the +mkspecs+ directory -in my case it is +/opt/Qt5.7.0/5.7/android_armv7/mkspecs+ - and then modify qmake configuration for the android target according to your toolchain, in my case I have done it with the following commands (in the same shell I used before, to take advantage of the already set variables):
 
-WARNING: This may need slightly modification if you have a different Qt version.
+WARNING: This may need a slight modification if you have a different Qt version.
 
 [source,bash]
 -------------------------------------------------------------------------------
@@ -52,27 +52,31 @@ sed -i "s|^NDK_TOOLCHAIN_PATH =.*|NDK_TOOLCHAIN_PATH = ${NDK_TOOLCHAIN_PATH}|" q
 
 == Preparing Qt Creator
 
-Now that your environement is set up you should configure Qt Creator for Android following the link:http://doc.qt.io/qtcreator/creator-developing-android.html[official guide], at the end of this step your Qt Creator should recognize Android compiler and Qt for Android kit, because we use a custom toolchain some step more is needed.
+Now that your environement is set up you should configure Qt Creator for Android following the link:http://doc.qt.io/qtcreator/creator-developing-android.html[official guide]. At the end of this step your Qt Creator should recognize the Android compiler and the Qt for Android kit. As we use a custom toolchain one more step is needed.
 
-From the top menu click Tools -> Options... -> Build &amp; Run -> Compilers -> Android GCC (arm-4.9) -> Clone
+From the top menu click 
+_Tools -> Options... -> Build &amp; Run -> Compilers -> Android GCC (arm-4.9) -> Clone_
 
-Now a new compiler usually named +Clone of Android GCC (arm-4.9)+ should have appeared on your compilers list, select that compiler and press the Browse button to look for your custom toolchain compiler you should find it at +$NDK_TOOLCHAIN_PATH/bin/arm-linux-androideabi-gcc+ then press Apply.
+Now a new compiler (usually named +Clone of Android GCC (arm-4.9)+) should have appeared on your compilers list. Select that compiler and press the Browse button to look for your custom toolchain compiler. You should find it at +$NDK_TOOLCHAIN_PATH/bin/arm-linux-androideabi-gcc+. Select it, then press Apply.
 
-Now go to the Kits tab, select +Android for armeabi-v7a (GCC 4.9, Qt 5.7.0)+ and press Clone button a new kit is created and it is usually named +Clone of Android for armeabi-v7a (GCC 4.9, Qt 5.7.0)+ now select the new kit and change the compiler to the one you have just created.
+Now go to the Kits tab, select +Android for armeabi-v7a (GCC 4.9, Qt 5.7.0)+ and press the Clone button. A new kit is created (usually named +Clone of Android for armeabi-v7a (GCC 4.9, Qt 5.7.0)+). Now select the new kit and change the compiler to the one you have just created.
 
-Your Kit is now ready to use, now you can open retroshare as Qt Creator project and in the Projects left menu add the newly created kit if not already present, so you can select it on the build type selection button down on the left.
+Your Kit is now ready to use. Now you can open RetroShare as a Qt Creator project and in the Projects left menu add the newly created kit if not already present, so you can select it on the build type selection button down on the left.
 
-Some of RetroShare modules like +retroshare-gui+, +WebUI+ and +sqlcipher+ are not supported yet on android so to be able to compile RetroShare without error you will have to go to +
+Some of RetroShare modules like +retroshare-gui+, +WebUI+ and +sqlcipher+ are not supported yet on Android so to be able to compile RetroShare without errors you will have to go to +
 
-Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit -> Build Steps -> qmake -> Additional arguments, and add the following configurations
+_Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit -> Build Steps -> qmake -> Additional arguments_
+
+and add the following configurations
 
 [source,makefile]
 -------------------------------------------------------------------------------
 CONFIG+=no_retroshare_gui CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plugins CONFIG+=retroshare_android_service CONFIG+=libresapilocalserver CONFIG+=no_libresapihttpserver CONFIG+=no_sqlcipher CONFIG+=retroshare_qml_app
 -------------------------------------------------------------------------------
 
-WARNING: SQLCipher is not supported yet on RetroShare for android this pose a mayor security concern, we are working to fix this ASAP.
+WARNING: SQLCipher is not supported yet on RetroShare for Android. This poses a major security concern, we are working to fix this ASAP.
 
+WARNING: Some versions of QtCreator try to find the Android SDK in +/opt/android/sdk+. A workaround to this is to make a symbolic link there pointing to your SDK installation path, like +mkdir -p /opt/android/sdk && ln -s /home/user/android-sdk-linux /opt/android/sdk+ 
 
 == Furter Readings
 

@@ -1,12 +1,7 @@
 <?xml version="1.0"?>
 <manifest package="org.retroshare.android.qml_app" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="1.0" android:versionCode="1" android:installLocation="auto">
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="RetroShare">
-        <activity
-                  android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
-                  android:name=".RetroShareQmlActivity"
-                  android:label="RetroShare QML"
-                  android:screenOrientation="unspecified"
-                  android:launchMode="singleTop">
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:name=".RetroShareQmlActivity" android:label="RetroShare QML" android:screenOrientation="unspecified" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -74,11 +69,7 @@
         </receiver>
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-        <service
-            android:process=":rs"
-            android:name=".RetroShareAndroidService"
-            android:label="RetroShare Service"
-            android:exported="true"> <!-- Added to be able to run the service from adb shell -->
+        <service android:process=":rs" android:name=".RetroShareAndroidService" android:label="RetroShare Service" android:exported="true"> <!-- Added to be able to run the service from adb shell -->
         <!-- android:process=":qt" is needed to force the service to run on a separate process than the Activity -->
 
 
@@ -135,5 +126,5 @@
     <!-- %%INSERT_FEATURES -->
 
     <!-- Added by G10h4ck: Needed permission for autostart at boot -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 </manifest>
