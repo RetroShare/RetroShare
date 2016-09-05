@@ -165,11 +165,11 @@ haiku-* {
 
 ############################## Common stuff ######################################
 
-DEPENDPATH += . ../../libretroshare/src
-INCLUDEPATH += . ../../libretroshare/src
+DEPENDPATH += . $$PWD/../../libretroshare/src
+INCLUDEPATH += . $$PWD/../../libretroshare/src
 
-PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-LIBS *= ../../libretroshare/src/lib/libretroshare.a
+PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 
 # Input
 HEADERS +=  notifytxt.h
@@ -184,10 +184,10 @@ introserver {
 
 libresapihttpserver {
 	DEFINES *= ENABLE_WEBUI
-        PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-	LIBS += ../../libresapi/src/lib/libresapi.a
-        DEPENDPATH += ../../libresapi/src
-	INCLUDEPATH += ../../libresapi/src
+        PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+	LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+        DEPENDPATH += $$PWD/../../libresapi/src
+	INCLUDEPATH += $$PWD/../../libresapi/src
         HEADERS += \
             TerminalApiClient.h
         SOURCES +=  \
@@ -200,8 +200,8 @@ sshserver {
 	# Please use this path below.
         # (You can modify it locally if required - but dont commit it!)
 
-	#LIBSSH_DIR = ../../../lib/libssh-0.5.2
-	LIBSSH_DIR = ../../../libssh-0.6.0rc1
+	#LIBSSH_DIR = $PWD/../../../lib/libssh-0.5.2
+	LIBSSH_DIR = $PWD/../../../libssh-0.6.0rc1
 
 	#
 	# Use the following commend to generate a Server RSA Key.
