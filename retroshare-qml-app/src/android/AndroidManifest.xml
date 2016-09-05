@@ -68,6 +68,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".AppUpdatedReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
         <service android:process=":rs" android:name=".RetroShareAndroidService" android:label="RetroShare Service" android:exported="true"> <!-- Added to be able to run the service from adb shell -->
         <!-- android:process=":qt" is needed to force the service to run on a separate process than the Activity -->

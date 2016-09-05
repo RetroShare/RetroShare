@@ -18,6 +18,36 @@
 
 package org.retroshare.android.qml_app;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+
 import org.qtproject.qt5.android.bindings.QtActivity;
 
-public class RetroShareQmlActivity extends QtActivity {}
+public class RetroShareQmlActivity extends QtActivity
+{
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		if (!isMyServiceRunning(RetroShareAndroidService.class))
+		{
+			Log.i("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService is not running, let's start it by Intent");
+			Intent rsIntent = new Intent(this, RetroShareAndroidService.class);
+			startService(rsIntent);
+		}
+		else Log.v("RetroShareQmlActivity", "onCreate(): RetroShareAndroidService already running");
+
+		super.onCreate(savedInstanceState);
+	}
+
+	private boolean isMyServiceRunning(Class<?> serviceClass)
+	{
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+			if (serviceClass.getName().equals(service.service.getClassName()))
+				return true;
+		return false;
+	}
+}
