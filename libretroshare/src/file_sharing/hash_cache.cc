@@ -1,4 +1,5 @@
 #include "util/rsdir.h"
+#include "util/rsprint.h"
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "hash_cache.h"
@@ -299,6 +300,8 @@ bool HashStorage::writeHashStorageInfo(unsigned char *& data,uint32_t&  total_si
 
     if(!FileListIO::writeField(data,total_size,offset,FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY,section_data,section_offset)) return false ;
 
+    std::cerr << "Writing hash storage section " << RsUtil::BinToHex(section_data,section_offset) << std::endl;
+    std::cerr << "Info.filename = " << info.filename << std::endl;
     free(section_data) ;
 
     return true;

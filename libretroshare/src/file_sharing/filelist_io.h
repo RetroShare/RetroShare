@@ -9,20 +9,25 @@
 // This file implements load/save of various fields used for file lists and directory content.
 // WARNING: the encoding is system-dependent, so this should *not* be used to exchange data between computers.
 
-static const uint8_t DIRECTORY_STORAGE_VERSION           =  0x01 ;
+static const uint32_t FILE_LIST_IO_LOCAL_DIRECTORY_STORAGE_VERSION_0001 =  0x00000001 ;
 
-static const uint8_t FILE_LIST_IO_TAG_FILE_SHA1_HASH     =  0x01 ;
-static const uint8_t FILE_LIST_IO_TAG_FILE_NAME          =  0x02 ;
-static const uint8_t FILE_LIST_IO_TAG_FILE_SIZE          =  0x03 ;
-static const uint8_t FILE_LIST_IO_TAG_DIR_NAME           =  0x04 ;
-static const uint8_t FILE_LIST_IO_TAG_MODIF_TS           =  0x05 ;
-static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS    =  0x06 ;
-static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY =  0x07 ;
-static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS          =  0x08 ;
-static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA        =  0x09 ;
-static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER         =  0x0a ;
-static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX        =  0x0b ;
-static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY  =  0x0c ;
+static const uint8_t FILE_LIST_IO_TAG_UNKNOWN            =  0x00 ;
+
+static const uint8_t FILE_LIST_IO_TAG_FILE_SHA1_HASH            =  0x01 ;
+static const uint8_t FILE_LIST_IO_TAG_FILE_NAME                 =  0x02 ;
+static const uint8_t FILE_LIST_IO_TAG_FILE_SIZE                 =  0x03 ;
+static const uint8_t FILE_LIST_IO_TAG_DIR_NAME                  =  0x04 ;
+static const uint8_t FILE_LIST_IO_TAG_MODIF_TS                  =  0x05 ;
+static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS           =  0x06 ;
+static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY        =  0x07 ;
+static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS                 =  0x08 ;
+static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA               =  0x09 ;
+static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER                =  0x0a ;
+static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX               =  0x0b ;
+static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY         =  0x0c ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY          =  0x0d ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY           =  0x0e ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION   =  0x0f ;
 
 static const uint32_t SECTION_HEADER_MAX_SIZE            =  6 ;   // section tag (1 byte) + size (max = 5 bytes)
 
@@ -94,10 +99,12 @@ private:
         if(offset + 1 > buff_size)
             return false ;
 
-        uint8_t section_tag = buff[offset++] ;
+        uint8_t section_tag = buff[offset] ;			// we do the offset++ after, only if the header can be read. Doing so, we can make multiple read attempts.
 
         if(section_tag != check_section_tag)
             return false;
+
+        offset++ ;
 
         return read125Size(buff,buff_size,offset,S) ;
     }

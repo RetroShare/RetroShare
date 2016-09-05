@@ -26,6 +26,8 @@ public:
     {
     public:
         FileEntry(const std::string& name,uint64_t size,time_t modtime) : file_name(name),file_size(size),file_modtime(modtime) {}
+        FileEntry(const std::string& name,uint64_t size,time_t modtime,const RsFileHash& hash) : file_name(name),file_size(size),file_modtime(modtime),file_hash(hash) {}
+
         virtual uint32_t type() const { return FileStorageNode::TYPE_FILE ; }
         virtual ~FileEntry() {}
 
@@ -39,7 +41,7 @@ public:
     class DirEntry: public FileStorageNode
     {
     public:
-        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),most_recent_time(0),dir_update_time(0) {}
+        DirEntry(const std::string& name) : dir_name(name), dir_modtime(0),dir_most_recent_time(0),dir_update_time(0) {}
         virtual ~DirEntry() {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_DIR ; }
@@ -52,7 +54,7 @@ public:
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
 
         time_t dir_modtime;
-        time_t most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
+        time_t dir_most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
         time_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
     };
 

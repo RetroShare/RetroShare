@@ -229,7 +229,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.type = DIR_TYPE_DIR;
         d.hash.clear() ;
         d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
-        d.min_age = now - dir_entry->most_recent_time ;
+        d.min_age = now - dir_entry->dir_most_recent_time ;
         d.name    = dir_entry->dir_name;
         d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
@@ -487,7 +487,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     //
 
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,dir->dir_name        )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)dir->most_recent_time)) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)dir->dir_most_recent_time)) return false ;
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)dir->dir_modtime     )) return false ;
 
     // serialise number of subdirs and number of subfiles
