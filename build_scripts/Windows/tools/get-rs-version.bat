@@ -1,33 +1,23 @@
-@:: Usage:
-@:: call GetRsVersion.bat Define Variable
+:: Usage:
+:: call get-rs-version.bat Define Variable
 
-@setlocal
-@echo off
+setlocal
 
 set Define=%~1
-if "%Define%"=="" (
-	echo.
-	echo Parameter error
-	endlocal
-	exit /B1
-)
-
 set Variable=%~2
 if "%Variable%"=="" (
 	echo.
-	echo Parameter error
-	endlocal
-	exit /B1
+	echo Parameter error.
+	exit /B 1
 )
 
 set Result=
-set VersionFile="%~dp0..\..\libretroshare\src\retroshare\rsversion.h"
+set VersionFile="%~dp0..\..\..\libretroshare\src\retroshare\rsversion.h"
 
 if not exist "%VersionFile%" (
 	echo.
 	echo Version file doesn't exist.
 	echo %VersionFile%
-	endlocal
 	exit /B1
 )
 

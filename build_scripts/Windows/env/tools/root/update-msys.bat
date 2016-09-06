@@ -1,11 +1,10 @@
-@setlocal
-
 @echo off
 
-:: Initialize environment
-call "%~dp0_env.bat"
+setlocal
 
-if not exist "%MSYSPath%\bin\mingw-get.exe" exit /B 0
+set MSYSPath=%~dp0msys
+
+if not exist "%MSYSPath%\bin\mingw-get.exe" echo MSYS is not installed& exit /B 0
 
 echo Update MSYS
 pushd "%MSYSPath%\bin"
