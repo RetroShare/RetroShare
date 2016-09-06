@@ -570,6 +570,8 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
                 uint32_t file_section_offset = 0 ;
                 uint32_t file_section_size = 0;
 
+                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX  ,(uint32_t)fe.parent_index)) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ROW           ,(uint32_t)fe.row         )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,(uint32_t)i              )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,fe.file_name             )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,fe.file_size             )) throw std::runtime_error("Write error") ;
@@ -588,6 +590,8 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
                 uint32_t dir_section_offset = 0 ;
                 uint32_t dir_section_size = 0;
 
+                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX   ,(uint32_t)de.parent_index      )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ROW            ,(uint32_t)de.row               )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,(uint32_t)i                    )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,de.dir_name                    )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,de.dir_parent_path             )) throw std::runtime_error("Write error") ;
@@ -633,7 +637,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
 
     try
     {
-        if(!FileListIO::loadEncryptedDataFromFile(fname,buffer,buffer_offset) )
+        if(!FileListIO::loadEncryptedDataFromFile(fname,buffer,buffer_size) )
             throw std::runtime_error("Read error") ;
 
         // Read some header
@@ -667,17 +671,26 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 uint64_t file_size ;
                 RsFileHash file_hash ;
                 uint32_t file_modtime ;
+                uint32_t row ;
+                uint32_t parent_index ;
 
-                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,node_index  )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,file_name   )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,file_size   )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,file_hash   )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,file_modtime)) throw std::runtime_error("Write error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX  ,parent_index)) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ROW           ,row         )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,node_index  )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,file_name   )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,file_size   )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,file_hash   )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,file_modtime)) throw std::runtime_error("Read error") ;
 
                 if(node_index >= mNodes.size())
                     mNodes.resize(node_index+1,NULL) ;
 
-                mNodes[node_index] = new FileEntry(file_name,file_size,file_modtime,file_hash);
+                FileEntry *fe = new FileEntry(file_name,file_size,file_modtime,file_hash);
+
+                fe->parent_index = parent_index ;
+                fe->row = row ;
+
+                mNodes[node_index] = fe ;
             }
             else if(FileListIO::readField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY,node_section_data,node_section_size))
             {
@@ -686,8 +699,12 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 std::string dir_parent_path ;
                 uint32_t dir_modtime ;
                 uint32_t dir_update_time ;
-                uint64_t dir_most_recent_time ;
+                uint32_t dir_most_recent_time ;
+                uint32_t row ;
+                uint32_t parent_index ;
 
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX   ,parent_index         )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ROW            ,row                  )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,node_index           )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,dir_name             )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,dir_parent_path      )) throw std::runtime_error("Read error") ;
@@ -704,6 +721,9 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 de->dir_modtime      = dir_modtime ;
                 de->dir_update_time  = dir_update_time ;
                 de->dir_most_recent_time = dir_most_recent_time ;
+
+                de->parent_index = parent_index ;
+                de->row = row ;
 
                 uint32_t n_subdirs = 0 ;
                 uint32_t n_subfiles = 0 ;
@@ -725,6 +745,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                     if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,fi)) throw std::runtime_error("Read error") ;
                     de->subfiles.push_back(fi) ;
                 }
+                mNodes[node_index] = de ;
             }
             else
                 throw std::runtime_error("Unknown node section.") ;
@@ -736,7 +757,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
     }
     catch(std::exception& e)
     {
-        std::cerr << "Error while writing: " << e.what() << std::endl;
+        std::cerr << "Error while reading: " << e.what() << std::endl;
 
         if(buffer != NULL)
             free(buffer) ;

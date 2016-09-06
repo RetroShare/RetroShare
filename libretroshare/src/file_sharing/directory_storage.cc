@@ -545,6 +545,11 @@ RemoteDirectoryStorage::RemoteDirectoryStorage(const RsPeerId& pid,const std::st
     : DirectoryStorage(pid),mLastSavedTime(0),mChanged(false),mFileName(fname)
 {
     load(fname) ;
+
+    std::cerr << "***************************************" << std::endl;
+    std::cerr << "Loaded following directory for peer " << pid << std::endl;
+    mFileHierarchy->print();
+    std::cerr << "***************************************" << std::endl;
 }
 
 void RemoteDirectoryStorage::checkSave()

@@ -28,6 +28,8 @@ static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY         =  0x0c ;
 static const uint8_t FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY          =  0x0d ;
 static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY           =  0x0e ;
 static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION   =  0x0f ;
+static const uint8_t FILE_LIST_IO_TAG_PARENT_INDEX              =  0x10 ;
+static const uint8_t FILE_LIST_IO_TAG_ROW                       =  0x11 ;
 
 static const uint32_t SECTION_HEADER_MAX_SIZE            =  6 ;   // section tag (1 byte) + size (max = 5 bytes)
 

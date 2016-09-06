@@ -199,6 +199,9 @@ int p3FileDatabase::tick()
         }
 
         mLastRemoteDirSweepTS = now;
+
+#warning hack to make loaded directories show up in the GUI, because the GUI isn't ready at the time they are actually loaded up.
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
     }
 
     return 0;
@@ -412,6 +415,7 @@ void p3FileDatabase::cleanup()
 
             mRemoteDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
 
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
         }
 
