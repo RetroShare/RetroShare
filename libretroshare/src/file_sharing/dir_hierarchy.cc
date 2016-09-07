@@ -393,9 +393,9 @@ DirectoryStorage::EntryIndex InternalFileHierarchyStorage::getSubDirIndex(Direct
 
 bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results)
 {
-    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mHashes.find(hash);
+    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(hash);
 
-    if( it != mHashes.end() )
+    if( it != mFileHashes.end() )
     {
         results.clear();
         results.push_back(it->second) ;

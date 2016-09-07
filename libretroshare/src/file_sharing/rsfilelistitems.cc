@@ -91,7 +91,7 @@ bool RsFileListsSyncRequestItem::serialise(void *data, uint32_t& size) const
 
     /* RsFileListsSyncMsgItem */
 
-    ok &= setRawUInt32(data, size, &offset, entry_index);
+    ok &= entry_hash.serialise(data, size, offset);
     ok &= setRawUInt32(data, size, &offset, flags      );
     ok &= setRawUInt32(data, size, &offset, last_known_recurs_modf_TS);
     ok &= setRawUInt64(data, size, &offset, request_id);
@@ -127,7 +127,7 @@ bool RsFileListsSyncResponseItem::serialise(void *data, uint32_t& size) const
 
     /* RsFileListsSyncMsgItem */
 
-    ok &= setRawUInt32(data, size, &offset, entry_index);
+    ok &= entry_hash.serialise(data, size, offset);
     ok &= setRawUInt32(data, size, &offset, flags      );
     ok &= setRawUInt32(data, size, &offset, last_known_recurs_modf_TS);
     ok &= setRawUInt64(data, size, &offset, request_id);
@@ -168,7 +168,7 @@ RsFileListsSyncRequestItem* RsFileListsSerialiser::deserialFileListsSyncRequestI
 
     RsFileListsSyncRequestItem* item = new RsFileListsSyncRequestItem();
 
-    ok &= getRawUInt32(data, *size, &offset, &item->entry_index);
+    ok &= item->entry_hash.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &item->flags);
     ok &= getRawUInt32(data, *size, &offset, &item->last_known_recurs_modf_TS);
     ok &= getRawUInt64(data, *size, &offset, &item->request_id);
@@ -206,7 +206,7 @@ RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncRespons
     uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
     uint64_t request_id;                // use to determine if changes that have occured since last hash
 
-    ok &= getRawUInt32(data, *size, &offset, &item->entry_index);
+    ok &= item->entry_hash.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &item->flags);
     ok &= getRawUInt32(data, *size, &offset, &item->last_known_recurs_modf_TS);
     ok &= getRawUInt64(data, *size, &offset, &item->request_id);
@@ -274,7 +274,7 @@ uint32_t RsFileListsSyncRequestItem::serial_size()const
 
     uint32_t s = 8; //header size
 
-    s += 4; // entry index
+    s += RsFileHash::serial_size(); // entry hash
     s += 4; // flags
     s += 4; // last_known_recurs_modf_TS
     s += 8; // request_id
@@ -287,7 +287,7 @@ uint32_t RsFileListsSyncResponseItem::serial_size()const
 
     uint32_t s = 8; //header size
 
-    s += 4; // entry index
+    s += RsFileHash::serial_size(); // entry hash
     s += 4; // flags
     s += 4; // last_known_recurs_modf_TS
     s += 8; // request_id
@@ -308,7 +308,7 @@ std::ostream& RsFileListsSyncRequestItem::print(std::ostream &out, uint16_t inde
     printRsItemBase(out, "RsFileListsSyncReqItem", indent);
     uint16_t int_Indent = indent + 2;
 
-    printIndent(out , int_Indent); out << "Entry index:  " << entry_index << std::endl;
+    printIndent(out , int_Indent); out << "Entry hash:   " << entry_hash << std::endl;
     printIndent(out , int_Indent); out << "Flags:        " << (uint32_t) flags << std::endl;
     printIndent(out , int_Indent); out << "Last modf TS: " << last_known_recurs_modf_TS << std::endl;
     printIndent(out , int_Indent); out << "request id:   " << std::hex << request_id  << std::dec << std::endl;
@@ -323,7 +323,7 @@ std::ostream& RsFileListsSyncResponseItem::print(std::ostream &out, uint16_t ind
     printRsItemBase(out, "RsFileListsSyncDirItem", indent);
     uint16_t int_Indent = indent + 2;
 
-    printIndent(out , int_Indent); out << "Entry index:  " << entry_index << std::endl;
+    printIndent(out , int_Indent); out << "Entry hash:   " << entry_hash << std::endl;
     printIndent(out , int_Indent); out << "Flags:        " << (uint32_t) flags << std::endl;
     printIndent(out , int_Indent); out << "Last modf TS: " << last_known_recurs_modf_TS << std::endl;
     printIndent(out , int_Indent); out << "request id:   " << std::hex << request_id  << std::dec << std::endl;

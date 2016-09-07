@@ -84,10 +84,10 @@ public:
 	virtual bool serialise(void *data,uint32_t& size) const;	
 	virtual uint32_t serial_size() const ; 			
         
-    uint32_t entry_index ;              // index of the directory to sync
-    uint32_t flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
-    uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
-    uint64_t request_id;                // use to determine if changes that have occured since last hash
+    RsFileHash entry_hash ;               // hash of the directory to sync
+    uint32_t   flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
+    uint32_t   last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
+    uint64_t   request_id;                // use to determine if changes that have occured since last hash
 };
 
 class RsFileListsSyncResponseItem : public RsFileListsItem
@@ -102,10 +102,10 @@ public:
     virtual bool serialise(void *data,uint32_t& size) const;
     virtual uint32_t serial_size() const ;
 
-    uint32_t entry_index ;              // advises whether to use sync hash
-    uint32_t flags;                     // is it a partial/final item (used for large items only)
-    uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
-    uint64_t request_id;                // use to determine if changes that have occured since last hash
+    RsFileHash entry_hash ;               // hash of the directory to sync
+    uint32_t   flags;                     // is it a partial/final item (used for large items only)
+    uint32_t   last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
+    uint64_t   request_id;                // use to determine if changes that have occured since last hash
 
     RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
 };

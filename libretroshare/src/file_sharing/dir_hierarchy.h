@@ -117,5 +117,19 @@ private:
 
     bool recursRemoveDirectory(DirectoryStorage::EntryIndex dir);
 
-    std::map<RsFileHash,DirectoryStorage::EntryIndex> mHashes ; // used for fast search access. We should try something faster than std::map. hash_map??
+    // Map of the hash of all files and all directories. The file hashes are the sha1sum of the file data.
+    // is used for fast search access for FT.
+    // Note: We should try something faster than std::map. hash_map??
+
+    std::map<RsFileHash,DirectoryStorage::EntryIndex> mFileHashes ;
+
+    // The directory hashes are the sha1sum of the
+    // full public path to the directory.
+    // The later is used by synchronisation items in order
+    // to avoid sending explicit EntryIndex values.
+    // This is kept separate from mFileHashes because the two are used
+    // in very different ways.
+    //
+    std::map<RsFileHash,DirectoryStorage::EntryIndex> mDirHashes ;
 };
+
