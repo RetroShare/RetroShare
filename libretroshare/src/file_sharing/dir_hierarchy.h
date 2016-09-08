@@ -73,7 +73,7 @@ public:
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files);
     bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash);
     bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time);
-    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<DirectoryStorage::EntryIndex>& subdirs_array,const std::vector<DirectoryStorage::EntryIndex>& subfiles_array);
+    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, time_t most_recent_time, time_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<RsFileHash> &subfiles_hash);
     bool getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
     bool setDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
 

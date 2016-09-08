@@ -227,7 +227,7 @@ bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex
     return true;
 }
 
-bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<DirectoryStorage::EntryIndex>& subdirs_array,const std::vector<DirectoryStorage::EntryIndex>& subfiles_array)
+bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<RsFileHash>& subfiles_hash)
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
     {
@@ -241,47 +241,103 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     d.dir_update_time  = time(NULL);
     d.dir_name         = dir_name;
 
-    d.subfiles = subfiles_array ;
-    d.subdirs  = subdirs_array ;
+    d.subdirs.clear();
+    d.subfiles.clear();
 
     // check that all subdirs already exist. If not, create.
-    for(uint32_t i=0;i<subdirs_array.size();++i)
+    for(uint32_t i=0;i<subdirs_hash.size();++i)
     {
-        if(subdirs_array[i] >= mNodes.size() )
-            mNodes.resize(subdirs_array[i]+1,NULL);
+        DirectoryStorage::EntryIndex dir_index = 0;
+        std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mDirHashes.find(subdirs_hash[i]) ;
 
-        FileStorageNode *& node(mNodes[subdirs_array[i]]);
-
-        if(node != NULL && node->type() != FileStorageNode::TYPE_DIR)
+        if(it == mDirHashes.end() || it->second >= mNodes.size())
         {
-            delete node ;
-            node = NULL ;
-        }
+            // find an epty slot
+            int found = -1 ;
 
-        if(node == NULL)
+            for(uint32_t j=0;j<mNodes.size();++j)
+                if(mNodes[i] == NULL)
+                {
+                    found = j;
+                    break;
+                }
+
+            if(found < 0)
+            {
+                dir_index = mNodes.size() ;
+                mNodes.push_back(NULL) ;
+            }
+            else
+                dir_index = found;
+
+            mDirHashes[subdirs_hash[i]] = dir_index ;
+        }
+        else
+        {
+            dir_index = it->second;
+
+            if(mNodes[dir_index] != NULL && mNodes[dir_index]->type() != FileStorageNode::TYPE_DIR)
+            {
+                delete mNodes[dir_index] ;
+                mNodes[dir_index] = NULL ;
+            }
+        }
+        FileStorageNode *& node(mNodes[dir_index]);
+        if(!node)
             node = new DirEntry("");
+
+        d.subdirs.push_back(dir_index) ;
 
         ((DirEntry*&)node)->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
         node->row = i ;
         node->parent_index = indx ;
     }
-    for(uint32_t i=0;i<subfiles_array.size();++i)
+    for(uint32_t i=0;i<subfiles_hash.size();++i)
     {
-        if(subfiles_array[i] >= mNodes.size() )
-            mNodes.resize(subfiles_array[i]+1,NULL);
+        DirectoryStorage::EntryIndex file_index = 0;
+        std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(subfiles_hash[i]) ;
 
-        FileStorageNode *& node(mNodes[subfiles_array[i]]);
-
-        if(node != NULL && node->type() != FileStorageNode::TYPE_FILE)
+        if(it == mFileHashes.end())
         {
-            delete node ;
-            node = NULL ;
+            // find an epty slot
+            int found = -1;
+
+            for(uint32_t j=0;j<mNodes.size();++j)
+                if(mNodes[i] == NULL)
+                {
+                    found = j;
+                    break;
+                }
+
+            if(found < 0)
+            {
+                file_index = mNodes.size() ;
+                mNodes.push_back(NULL) ;
+            }
+            else
+                file_index = found;
+
+            mFileHashes[subfiles_hash[i]] = file_index ;
         }
+        else
+        {
+            file_index = it->second ;
 
-        if(node == NULL)
-            node = new FileEntry("",0,0);
+            if(mNodes[file_index] != NULL && mNodes[file_index]->type() != FileStorageNode::TYPE_FILE)
+            {
+                delete mNodes[file_index] ;
+                mNodes[file_index] = NULL ;
+            }
 
-        node->row = subdirs_array.size()+i ;
+            file_index = it->second;
+        }
+        FileStorageNode *& node(mNodes[file_index]);
+        if(!node)
+            node = new FileEntry("",0,0,subfiles_hash[i]);
+
+        d.subfiles.push_back(file_index) ;
+
+        node->row = subdirs_hash.size()+i ;
         node->parent_index = indx ;
     }
 
