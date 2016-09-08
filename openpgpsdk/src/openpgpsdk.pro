@@ -16,7 +16,14 @@ DESTDIR = lib
 DEPENDPATH += .
 INCLUDEPATH += .
 
-#################################### Windows #####################################
+QT_CONFIG-=no-pkg-config
+QT_CONFIG+=link_pkgconfig
+PKGCONFIG+=openssl
+
+macx {
+        OPENSSL_INC = system(find /usr/local/ | grep openssl/bn.h | sed "s/\\(.*\\)openssl\\/bn\\.h/\\1/g")
+        INCLUDEPATH += "/usr/local//Cellar/openssl/1.0.2h_1/include/"
+}
 
 linux-* {
 	OBJECTS_DIR = temp/linux/obj
