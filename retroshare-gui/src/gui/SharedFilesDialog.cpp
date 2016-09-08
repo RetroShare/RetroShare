@@ -85,6 +85,8 @@
 //
 #define DONT_USE_SEARCH_IN_TREE_VIEW 1
 
+//#define DEBUG_SHARED_FILES_DIALOG 1
+
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
@@ -842,7 +844,9 @@ void SharedFilesDialog::saveExpandedPaths(std::set<std::string>& expanded_indexe
     if(ui.dirTreeView->model() == NULL)
         return ;
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Saving expanded items. " << std::endl;
+#endif
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
@@ -855,7 +859,9 @@ void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expand
     if(ui.dirTreeView->model() == NULL)
         return ;
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
+#endif
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
@@ -866,29 +872,39 @@ void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expand
 void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
+#endif
 
     if(ui.dirTreeView->isExpanded(index))
     {
+#ifdef DEBUG_SHARED_FILES_DIALOG
         std::cerr << "Index " << local_path << " is expanded." << std::endl;
+#endif
         if(index.isValid())
             exp.insert(local_path) ;
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
             recursSaveExpandedItems(index.child(row,0),local_path,exp) ;
     }
+#ifdef DEBUG_SHARED_FILES_DIALOG
     else
         std::cerr << "Index is not expanded." << std::endl;
+#endif
 }
 
 void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path, const std::set<std::string>& exp)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
+#endif
 
     if(exp.find(local_path) != exp.end())
     {
+#ifdef DEBUG_SHARED_FILES_DIALOG
         std::cerr << "re expanding index " << local_path << std::endl;
+#endif
         ui.dirTreeView->setExpanded(index,true) ;
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
@@ -904,7 +920,9 @@ void  SharedFilesDialog::postModDirectories(bool local)
     }
     std::set<std::string> expanded_indexes;
     saveExpandedPaths(expanded_indexes) ;
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Saving expanded items. " << expanded_indexes.size() << " items found" << std::endl;
+#endif
 
     /* Notify both models, only one is visible */
 	tree_model->postMods();
@@ -916,7 +934,9 @@ void  SharedFilesDialog::postModDirectories(bool local)
     if (ui.filterPatternLineEdit->text().isEmpty() == false)
 		FilterItems();
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! ******" << std::endl;
+#endif
 	QCoreApplication::flush();
 }
 

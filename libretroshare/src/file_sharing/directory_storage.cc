@@ -193,6 +193,8 @@ bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo&
 
 bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 {
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
     d.children.clear() ;
     time_t now = time(NULL) ;
 
@@ -266,6 +268,18 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
     return true;
 }
+
+bool DirectoryStorage::getDirHashFromIndex(const EntryIndex& index,RsFileHash& hash) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->getDirHashFromIndex(index,hash) ;
+}
+bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& index) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->getIndexFromDirHash(hash,index) ;
+}
+
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
@@ -477,7 +491,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
         {
             RsFileHash hash ;
 
-            if(!getHashFromIndex(dir->subdirs[i],hash))
+            if(!mFileHierarchy->getDirHashFromIndex(dir->subdirs[i],hash))
             {
                 std::cerr << "(EE) cannot get hash from index for subdir " << dir->subdirs[i] << " at position " << i << " in subdirs list. Weird." << std::endl;
                 continue ;
@@ -664,7 +678,7 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     {
         DirectoryStorage::EntryIndex file_index ;
 
-        if(!getIndexFromHash(subfiles_hash[i],file_index))
+        if(!getIndexFromDirHash(subfiles_hash[i],file_index))
         {
             std::cerr << "(EE) Cannot optain file entry index for hash " << subfiles_hash[i] << ". This is very unexpected." << std::endl;
             continue;

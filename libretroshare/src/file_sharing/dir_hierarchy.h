@@ -81,6 +81,13 @@ public:
 
     time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index);
 
+    // hash stuff
+
+    static RsFileHash computeDirHash(const std::string& dir_path);
+
+    bool getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const ;
+    bool getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
+
     // file/dir access and modification
     bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
 

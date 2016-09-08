@@ -101,8 +101,8 @@ class DirectoryStorage
         bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;
         bool updateHash(const EntryIndex& index,const RsFileHash& hash);
 
-        bool getHashFromIndex(const EntryIndex& index,RsFileHash& hash) const { NOT_IMPLEMENTED() ; return false; }
-        bool getIndexFromHash(const RsFileHash& hash,EntryIndex& index) const { NOT_IMPLEMENTED() ; return false; }
+        bool getDirHashFromIndex(const EntryIndex& index,RsFileHash& hash) const ;
+        bool getIndexFromDirHash(const RsFileHash& hash,EntryIndex& index) const ;
 
         void print();
         void cleanup();

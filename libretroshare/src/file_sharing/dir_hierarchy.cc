@@ -1,3 +1,5 @@
+#include "util/rsdir.h"
+
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
 
@@ -28,6 +30,36 @@ InternalFileHierarchyStorage::InternalFileHierarchyStorage() : mRoot(0)
     de->dir_modtime=0;
 
     mNodes.push_back(de) ;
+#warning not very elegant. We should remove the leading /
+    mDirHashes[computeDirHash("/")] = 0 ;
+}
+
+RsFileHash InternalFileHierarchyStorage::computeDirHash(const std::string& dir_path)
+{
+    return RsDirUtil::sha1sum((unsigned char*)dir_path.c_str(),dir_path.length()) ;
+}
+bool InternalFileHierarchyStorage::getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const
+{
+    if(!checkIndex(index,FileStorageNode::TYPE_DIR))
+        return false ;
+
+    DirEntry& d = *static_cast<DirEntry*>(mNodes[index]) ;
+
+    hash = computeDirHash( d.dir_parent_path + "/" + d.dir_name ) ;
+
+    std::cerr << "Computing dir hash from index " << index << ". Dir=\"" << d.dir_parent_path + "/" + d.dir_name << "\" hash=" << hash << std::endl;
+
+    return true;
+}
+bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const
+{
+    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mDirHashes.find(hash) ;
+
+    if(it == mDirHashes.end())
+        return false;
+
+    index = it->second;
+    return true;
 }
 
 int InternalFileHierarchyStorage::parentRow(DirectoryStorage::EntryIndex e)

@@ -12,7 +12,7 @@
 
 #include "rsserver/p3face.h"
 
-#define P3FILELISTS_DEBUG() std::cerr << "p3FileLists: "
+#define P3FILELISTS_DEBUG() std::cerr << time(NULL) << ": p3FileLists: "
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -187,7 +187,7 @@ int p3FileDatabase::tick()
         {
             if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
             {
-                std::cerr << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
+                P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
 #ifdef DEBUG_FILE_HIERARCHY
                 mRemoteDirectories[i]->print();
 #endif
@@ -210,20 +210,20 @@ int p3FileDatabase::tick()
 void p3FileDatabase::startThreads()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
-    std::cerr << "Starting directory watcher thread..." ;
+    P3FILELISTS_DEBUG() << "Starting directory watcher thread..." ;
     mLocalDirWatcher->start();
-    std::cerr << "Done." << std::endl;
+    P3FILELISTS_DEBUG() << "Done." << std::endl;
 }
 void p3FileDatabase::stopThreads()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
-    std::cerr << "Stopping hash cache thread..." ; std::cerr.flush() ;
+    P3FILELISTS_DEBUG() << "Stopping hash cache thread..." ; std::cerr.flush() ;
     mHashCache->fullstop();
-    std::cerr << "Done." << std::endl;
+    P3FILELISTS_DEBUG() << "Done." << std::endl;
 
-    std::cerr << "Stopping directory watcher thread..." ; std::cerr.flush() ;
+    P3FILELISTS_DEBUG() << "Stopping directory watcher thread..." ; std::cerr.flush() ;
     mLocalDirWatcher->fullstop();
-    std::cerr << "Done." << std::endl;
+    P3FILELISTS_DEBUG() << "Done." << std::endl;
 }
 
 void p3FileDatabase::tickWatchers()
@@ -367,7 +367,7 @@ void p3FileDatabase::cleanup()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
-        std::cerr << "p3FileDatabase::cleanup()" << std::endl;
+        P3FILELISTS_DEBUG() << "p3FileDatabase::cleanup()" << std::endl;
 
         // look through the list of friend directories. Remove those who are not our friends anymore.
         //
@@ -429,7 +429,7 @@ void p3FileDatabase::cleanup()
         for(std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.begin();it!=mPendingSyncRequests.end();)
             if(online_peers.find(it->second.peer_id) == online_peers.end() || it->second.request_TS + DELAY_BEFORE_DROP_REQUEST < now)
             {
-                std::cerr << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
+                P3FILELISTS_DEBUG() << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
 
                 std::map<DirSyncRequestId,DirSyncRequestData>::iterator tmp(it);
                 ++tmp;
@@ -438,7 +438,7 @@ void p3FileDatabase::cleanup()
             }
             else
             {
-                std::cerr << "  keeping request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << std::endl;
+                P3FILELISTS_DEBUG() << "  keeping request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << std::endl;
                 ++it ;
             }
     }
@@ -905,7 +905,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         EntryIndex entry_index = DirectoryStorage::NO_INDEX;
 
-        if(!mLocalSharedDirs->getIndexFromHash(item->entry_hash,entry_index))
+        if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
         {
             std::cerr << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
             return;
@@ -970,12 +970,6 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
-        if(entry_index == DirectoryStorage::NO_INDEX)
-        {
-            std::cerr << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
-            return;
-        }
-
         std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(item->request_id) ;
 
         if(it == mPendingSyncRequests.end())
@@ -1004,7 +998,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
         if(mRemoteDirectories[fi] == NULL)
             mRemoteDirectories[fi] = new RemoteDirectoryStorage(item->PeerId(),makeRemoteFileName(item->PeerId()));
 
-        if(!mRemoteDirectories[fi]->getIndexFromHash(item->entry_hash,entry_index))
+        if(!mRemoteDirectories[fi]->getIndexFromDirHash(item->entry_hash,entry_index))
         {
             std::cerr << std::endl << "  (EE) cannot find index from hash " << item->entry_hash << ". Dropping the response." << std::endl;
             return ;
@@ -1078,7 +1072,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
         RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
 
-        if(!rds->getHashFromIndex(e,item->entry_hash) )
+        if(!rds->getDirHashFromIndex(e,item->entry_hash) )
         {
             std::cerr << "(EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;
             return;
