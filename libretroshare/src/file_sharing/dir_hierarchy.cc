@@ -28,26 +28,20 @@ InternalFileHierarchyStorage::InternalFileHierarchyStorage() : mRoot(0)
     de->row=0;
     de->parent_index=0;
     de->dir_modtime=0;
+    de->dir_hash=RsFileHash() ; // null hash is root by convention.
 
     mNodes.push_back(de) ;
+
 #warning not very elegant. We should remove the leading /
-    mDirHashes[computeDirHash("/")] = 0 ;
+    mDirHashes[de->dir_hash] = 0 ;
 }
 
-RsFileHash InternalFileHierarchyStorage::computeDirHash(const std::string& dir_path)
-{
-    return RsDirUtil::sha1sum((unsigned char*)dir_path.c_str(),dir_path.length()) ;
-}
 bool InternalFileHierarchyStorage::getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
         return false ;
 
-    DirEntry& d = *static_cast<DirEntry*>(mNodes[index]) ;
-
-    hash = computeDirHash( d.dir_parent_path + "/" + d.dir_name ) ;
-
-    std::cerr << "Computing dir hash from index " << index << ". Dir=\"" << d.dir_parent_path + "/" + d.dir_name << "\" hash=" << hash << std::endl;
+    hash = static_cast<DirEntry*>(mNodes[index])->dir_hash ;
 
     return true;
 }
@@ -119,6 +113,10 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
         de->row = mNodes.size();
         de->parent_index = indx;
         de->dir_modtime = it->second;
+        de->dir_parent_path = d.dir_parent_path + "/" + d.dir_name ;
+        de->dir_hash = createDirHash(de->dir_name,de->dir_parent_path) ;
+
+        mDirHashes[de->dir_hash] = mNodes.size() ;
 
         d.subdirs.push_back(mNodes.size()) ;
         mNodes.push_back(de) ;
@@ -126,6 +124,24 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
 
     return true;
 }
+
+RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string& dir_name,const std::string& dir_parent_path)
+{
+    // What we need here: a unique identifier
+    // - that cannot be bruteforced to find the real directory name and path
+    // - that is used by friends to refer to a specific directory.
+
+    // Option 1: compute H(some_secret_salt + dir_name + dir_parent_path)
+    // and keep the same salt so that we can re-create the hash
+    //
+    // Option 2: compute H(virtual_path). That only works at the level of LocalDirectoryStorage
+    //
+    // Option 3: just compute something random, but then we need to store it so as to not
+    // confuse friends when restarting.
+
+    return RsFileHash::random();
+}
+
 bool InternalFileHierarchyStorage::removeDirectory(DirectoryStorage::EntryIndex indx)	// no reference here! Very important. Otherwise, the messign we do inside can change the value of indx!!
 {
     // check that it's a directory
@@ -268,6 +284,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     }
     DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
+    std::cerr << "Updating dir entry: name=\"" << dir_name << "\", most_recent_time=" << most_recent_time << ", modtime=" << dir_modtime << std::endl;
+
     d.dir_most_recent_time = most_recent_time;
     d.dir_modtime      = dir_modtime;
     d.dir_update_time  = time(NULL);
@@ -279,6 +297,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     // check that all subdirs already exist. If not, create.
     for(uint32_t i=0;i<subdirs_hash.size();++i)
     {
+        std::cerr << "  subdir hash " << i << ": " << subdirs_hash[i] ;
+
         DirectoryStorage::EntryIndex dir_index = 0;
         std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mDirHashes.find(subdirs_hash[i]) ;
 
@@ -303,6 +323,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
                 dir_index = found;
 
             mDirHashes[subdirs_hash[i]] = dir_index ;
+
+            std::cerr << " created, at new index " << dir_index << std::endl;
         }
         else
         {
@@ -313,6 +335,7 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
                 delete mNodes[dir_index] ;
                 mNodes[dir_index] = NULL ;
             }
+            std::cerr << " already exists, index=" << dir_index << "." << std::endl;
         }
         FileStorageNode *& node(mNodes[dir_index]);
         if(!node)
@@ -328,6 +351,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     {
         DirectoryStorage::EntryIndex file_index = 0;
         std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(subfiles_hash[i]) ;
+
+        std::cerr << "  subfile hash " << i << ": " << subfiles_hash[i] ;
 
         if(it == mFileHashes.end())
         {
@@ -350,6 +375,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
                 file_index = found;
 
             mFileHashes[subfiles_hash[i]] = file_index ;
+
+            std::cerr << " created, at new index " << file_index << std::endl;
         }
         else
         {
@@ -362,8 +389,11 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
             }
 
             file_index = it->second;
+
+            std::cerr << " already exists, index=" << file_index << "." << std::endl;
         }
         FileStorageNode *& node(mNodes[file_index]);
+
         if(!node)
             node = new FileEntry("",0,0,subfiles_hash[i]);
 
@@ -579,6 +609,14 @@ void InternalFileHierarchyStorage::print() const
     std::cerr << "Total nodes: " << mNodes.size() << " (" << nfiles << " files, " << ndirs << " dirs, " << nempty << " empty slots)" << std::endl;
 
     recursPrint(0,DirectoryStorage::EntryIndex(0));
+
+    std::cerr << "Known dir hashes: " << std::endl;
+    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator  it(mDirHashes.begin());it!=mDirHashes.end();++it)
+        std::cerr << "  " << it->first << " at index " << it->second << std::endl;
+
+    std::cerr << "Known file hashes: " << std::endl;
+    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator  it(mFileHashes.begin());it!=mFileHashes.end();++it)
+        std::cerr << "  " << it->first << " at index " << it->second << std::endl;
 }
 void InternalFileHierarchyStorage::recursPrint(int depth,DirectoryStorage::EntryIndex node) const
 {
@@ -591,7 +629,7 @@ void InternalFileHierarchyStorage::recursPrint(int depth,DirectoryStorage::Entry
     }
     DirEntry& d(*static_cast<DirEntry*>(mNodes[node]));
 
-    std::cerr << indent << "dir:" << d.dir_name << ", modf time: " << d.dir_modtime << ", recurs_last_modf_time: " << d.dir_most_recent_time << ", parent: " << d.parent_index << ", row: " << d.row << ", subdirs: " ;
+    std::cerr << indent << "dir hash=" << d.dir_hash << ". name:" << d.dir_name << ", parent_path:" << d.dir_parent_path << ", modf time: " << d.dir_modtime << ", recurs_last_modf_time: " << d.dir_most_recent_time << ", parent: " << d.parent_index << ", row: " << d.row << ", subdirs: " ;
 
     for(uint32_t i=0;i<d.subdirs.size();++i)
         std::cerr << d.subdirs[i] << " " ;
@@ -620,6 +658,8 @@ bool InternalFileHierarchyStorage::recursRemoveDirectory(DirectoryStorage::Entry
 {
     DirEntry& d(*static_cast<DirEntry*>(mNodes[dir])) ;
 
+    RsFileHash hash = d.dir_hash ;
+
     for(uint32_t i=0;i<d.subdirs.size();++i)
         recursRemoveDirectory(d.subdirs[i]);
 
@@ -630,6 +670,8 @@ bool InternalFileHierarchyStorage::recursRemoveDirectory(DirectoryStorage::Entry
     }
     delete mNodes[dir] ;
     mNodes[dir] = NULL ;
+
+    mDirHashes.erase(hash) ;
 
     return true ;
 }
@@ -682,6 +724,7 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ROW            ,(uint32_t)de.row               )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,(uint32_t)i                    )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,de.dir_name                    )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_DIR_HASH       ,de.dir_hash                    )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,de.dir_parent_path             )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)de.dir_modtime       )) throw std::runtime_error("Write error") ;
                 if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_UPDATE_TS      ,(uint32_t)de.dir_update_time   )) throw std::runtime_error("Write error") ;
@@ -779,12 +822,14 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 fe->row = row ;
 
                 mNodes[node_index] = fe ;
+                mFileHashes[fe->file_hash] = node_index ;
             }
             else if(FileListIO::readField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY,node_section_data,node_section_size))
             {
                 uint32_t node_index ;
                 std::string dir_name ;
                 std::string dir_parent_path ;
+                RsFileHash dir_hash ;
                 uint32_t dir_modtime ;
                 uint32_t dir_update_time ;
                 uint32_t dir_most_recent_time ;
@@ -795,6 +840,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ROW            ,row                  )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,node_index           )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,dir_name             )) throw std::runtime_error("Read error") ;
+                if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_DIR_HASH       ,dir_hash             )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,dir_parent_path      )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,dir_modtime          )) throw std::runtime_error("Read error") ;
                 if(!FileListIO::readField(node_section_data,node_section_size,node_section_offset,FILE_LIST_IO_TAG_UPDATE_TS      ,dir_update_time      )) throw std::runtime_error("Read error") ;
@@ -806,6 +852,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                 DirEntry *de = new DirEntry(dir_name) ;
                 de->dir_name         = dir_name ;
                 de->dir_parent_path  = dir_parent_path ;
+                de->dir_hash         = dir_hash ;
                 de->dir_modtime      = dir_modtime ;
                 de->dir_update_time  = dir_update_time ;
                 de->dir_most_recent_time = dir_most_recent_time ;
@@ -834,6 +881,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
                     de->subfiles.push_back(fi) ;
                 }
                 mNodes[node_index] = de ;
+                mDirHashes[de->dir_hash] = node_index ;
             }
             else
                 throw std::runtime_error("Unknown node section.") ;

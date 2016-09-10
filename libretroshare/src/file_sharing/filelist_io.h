@@ -11,25 +11,31 @@
 
 static const uint32_t FILE_LIST_IO_LOCAL_DIRECTORY_STORAGE_VERSION_0001 =  0x00000001 ;
 
-static const uint8_t FILE_LIST_IO_TAG_UNKNOWN            =  0x00 ;
+static const uint8_t FILE_LIST_IO_TAG_UNKNOWN                   =  0x00 ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION   =  0x01 ;
 
-static const uint8_t FILE_LIST_IO_TAG_FILE_SHA1_HASH            =  0x01 ;
-static const uint8_t FILE_LIST_IO_TAG_FILE_NAME                 =  0x02 ;
-static const uint8_t FILE_LIST_IO_TAG_FILE_SIZE                 =  0x03 ;
-static const uint8_t FILE_LIST_IO_TAG_DIR_NAME                  =  0x04 ;
-static const uint8_t FILE_LIST_IO_TAG_MODIF_TS                  =  0x05 ;
-static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS           =  0x06 ;
-static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY        =  0x07 ;
-static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS                 =  0x08 ;
-static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA               =  0x09 ;
-static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER                =  0x0a ;
-static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX               =  0x0b ;
-static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY         =  0x0c ;
-static const uint8_t FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY          =  0x0d ;
-static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY           =  0x0e ;
-static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION   =  0x0f ;
-static const uint8_t FILE_LIST_IO_TAG_PARENT_INDEX              =  0x10 ;
-static const uint8_t FILE_LIST_IO_TAG_ROW                       =  0x11 ;
+static const uint8_t FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY        =  0x10 ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY          =  0x11 ;
+static const uint8_t FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY           =  0x12 ;
+static const uint8_t FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY         =  0x13 ;
+
+static const uint8_t FILE_LIST_IO_TAG_FILE_SHA1_HASH            =  0x20 ;
+static const uint8_t FILE_LIST_IO_TAG_FILE_NAME                 =  0x21 ;
+static const uint8_t FILE_LIST_IO_TAG_FILE_SIZE                 =  0x22 ;
+
+static const uint8_t FILE_LIST_IO_TAG_MODIF_TS                  =  0x30 ;
+static const uint8_t FILE_LIST_IO_TAG_RECURS_MODIF_TS           =  0x31 ;
+static const uint8_t FILE_LIST_IO_TAG_UPDATE_TS                 =  0x32 ;
+
+static const uint8_t FILE_LIST_IO_TAG_ENTRY_INDEX               =  0x40 ;
+static const uint8_t FILE_LIST_IO_TAG_PARENT_INDEX              =  0x41 ;
+
+static const uint8_t FILE_LIST_IO_TAG_DIR_HASH                  =  0x50 ;
+static const uint8_t FILE_LIST_IO_TAG_DIR_NAME                  =  0x51 ;
+
+static const uint8_t FILE_LIST_IO_TAG_ROW                       =  0x60 ;
+static const uint8_t FILE_LIST_IO_TAG_BINARY_DATA               =  0x61 ;
+static const uint8_t FILE_LIST_IO_TAG_RAW_NUMBER                =  0x62 ;
 
 static const uint32_t SECTION_HEADER_MAX_SIZE            =  6 ;   // section tag (1 byte) + size (max = 5 bytes)
 

@@ -49,6 +49,7 @@ public:
         // local stuff
         std::string dir_name ;
         std::string dir_parent_path ;
+        RsFileHash  dir_hash ;
 
         std::vector<DirectoryStorage::EntryIndex> subdirs ;
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
@@ -83,8 +84,6 @@ public:
 
     // hash stuff
 
-    static RsFileHash computeDirHash(const std::string& dir_path);
-
     bool getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const ;
     bool getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
 
@@ -118,6 +117,7 @@ public:
 private:
     void recursPrint(int depth,DirectoryStorage::EntryIndex node) const;
     static bool nodeAccessError(const std::string& s);
+    static RsFileHash createDirHash(const std::string& dir_name,const std::string& dir_parent_path) ;
 
     // Removes the given subdirectory from the parent node and all its pendign subdirs. Files are kept, and will go during the cleaning
     // phase. That allows to keep file information when moving them around.

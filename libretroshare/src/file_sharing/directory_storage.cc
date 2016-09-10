@@ -467,6 +467,58 @@ bool LocalDirectoryStorage::locked_getFileSharingPermissions(const EntryIndex& i
     return true;
 }
 
+std::string LocalDirectoryStorage::locked_getVirtualDirName(EntryIndex indx) const
+{
+    if(indx == 0)
+        return std::string() ;
+
+    const InternalFileHierarchyStorage::DirEntry *dir = mFileHierarchy->getDirEntry(indx);
+
+    if(dir->parent_index != 0)
+        return dir->dir_name ;
+
+   std::map<std::string,SharedDirInfo>::const_iterator it = mLocalDirs.find(dir->dir_name) ;
+
+   if(it == mLocalDirs.end())
+   {
+       std::cerr << "(EE) Cannot find real name " << dir->dir_name << " at level 1 among shared dirs. Bug?" << std::endl;
+       return std::string() ;
+   }
+
+   return it->second.virtualname ;
+}
+std::string LocalDirectoryStorage::locked_getVirtualPath(EntryIndex indx) const
+{
+    if(indx == 0)
+        return std::string() ;
+
+    std::string res ;
+    const InternalFileHierarchyStorage::DirEntry *dir = mFileHierarchy->getDirEntry(indx);
+
+    while(dir->parent_index != 0)
+    {
+        dir = mFileHierarchy->getDirEntry(dir->parent_index) ;
+        res += dir->dir_name + "/"+ res ;
+    }
+
+   std::map<std::string,SharedDirInfo>::const_iterator it = mLocalDirs.find(dir->dir_name) ;
+
+   if(it == mLocalDirs.end())
+   {
+       std::cerr << "(EE) Cannot find real name " << dir->dir_name << " at level 1 among shared dirs. Bug?" << std::endl;
+       return std::string() ;
+   }
+   return it->second.virtualname + "/" + res;
+}
+RsFileHash LocalDirectoryStorage::locked_getDirHashFromIndex(EntryIndex indx) const
+{
+    // hash the full virtual path
+
+    std::string virtual_path = locked_getVirtualPath(indx) ;
+
+    return RsDirUtil::sha1sum((unsigned char*)virtual_path.c_str(),virtual_path.length()) ;
+}
+
 bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata,const RsPeerId& client_id)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -489,13 +541,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     for(uint32_t i=0;i<dir->subdirs.size();++i)
         if(indx != 0 || (locked_getFileSharingPermissions(dir->subdirs[i],node_flags,node_groups) && (rsPeers->computePeerPermissionFlags(client_id,node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
         {
-            RsFileHash hash ;
-
-            if(!mFileHierarchy->getDirHashFromIndex(dir->subdirs[i],hash))
-            {
-                std::cerr << "(EE) cannot get hash from index for subdir " << dir->subdirs[i] << " at position " << i << " in subdirs list. Weird." << std::endl;
-                continue ;
-            }
+            RsFileHash hash = locked_getDirHashFromIndex(dir->subdirs[i]) ;
             allowed_subdirs.push_back(hash) ;
         }
 
@@ -508,10 +554,11 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     //	- the index entry for each subdir (the updte TS are exchanged at a higher level)
     //	- the file info for each subfile
     //
+    std::string virtual_dir_name = locked_getVirtualDirName(indx) ;
 
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,dir->dir_name        )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_DIR_NAME       ,virtual_dir_name                   )) return false ;
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)dir->dir_most_recent_time)) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)dir->dir_modtime     )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)dir->dir_modtime         )) return false ;
 
     // serialise number of subdirs and number of subfiles
 

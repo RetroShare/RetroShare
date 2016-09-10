@@ -205,6 +205,10 @@ public:
     bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
+        RsFileHash  locked_getDirHashFromIndex(EntryIndex indx) const ;
+        std::string locked_getVirtualPath(EntryIndex indx) const ;
+        std::string locked_getVirtualDirName(EntryIndex indx) const ;
+
     bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
     std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 

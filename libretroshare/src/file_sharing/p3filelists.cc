@@ -154,9 +154,9 @@ int p3FileDatabase::tick()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
         
-#ifdef DEBUG_FILE_HIERARCHY
+//#ifdef DEBUG_FILE_HIERARCHY
         mLocalSharedDirs->print();
-#endif
+//#endif
         last_print_time = now ;
 
 //#warning this should be removed, but it's necessary atm for updating the GUI
