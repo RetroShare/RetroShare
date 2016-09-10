@@ -55,6 +55,16 @@ bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,Di
     index = it->second;
     return true;
 }
+bool InternalFileHierarchyStorage::getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const
+{
+    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(hash) ;
+
+    if(it == mFileHashes.end())
+        return false;
+
+    index = it->second;
+    return true;
+}
 
 int InternalFileHierarchyStorage::parentRow(DirectoryStorage::EntryIndex e)
 {
@@ -344,6 +354,7 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
         d.subdirs.push_back(dir_index) ;
 
         ((DirEntry*&)node)->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
+        ((DirEntry*&)node)->dir_hash        = subdirs_hash[i];
         node->row = i ;
         node->parent_index = indx ;
     }

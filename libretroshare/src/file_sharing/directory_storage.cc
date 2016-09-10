@@ -510,14 +510,6 @@ std::string LocalDirectoryStorage::locked_getVirtualPath(EntryIndex indx) const
    }
    return it->second.virtualname + "/" + res;
 }
-RsFileHash LocalDirectoryStorage::locked_getDirHashFromIndex(EntryIndex indx) const
-{
-    // hash the full virtual path
-
-    std::string virtual_path = locked_getVirtualPath(indx) ;
-
-    return RsDirUtil::sha1sum((unsigned char*)virtual_path.c_str(),virtual_path.length()) ;
-}
 
 bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinaryData& bindata,const RsPeerId& client_id)
 {
@@ -541,7 +533,12 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     for(uint32_t i=0;i<dir->subdirs.size();++i)
         if(indx != 0 || (locked_getFileSharingPermissions(dir->subdirs[i],node_flags,node_groups) && (rsPeers->computePeerPermissionFlags(client_id,node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
         {
-            RsFileHash hash = locked_getDirHashFromIndex(dir->subdirs[i]) ;
+            RsFileHash hash ;
+            if(!mFileHierarchy->getDirHashFromIndex(dir->subdirs[i],hash))
+            {
+              std::cerr << "(EE) Cannot get hash from subdir index " << dir->subdirs[i] << ". Weird bug." << std::endl ;
+              return false;
+            }
             allowed_subdirs.push_back(hash) ;
         }
 
@@ -725,9 +722,9 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     {
         DirectoryStorage::EntryIndex file_index ;
 
-        if(!getIndexFromDirHash(subfiles_hash[i],file_index))
+        if(!mFileHierarchy->getIndexFromFileHash(subfiles_hash[i],file_index))
         {
-            std::cerr << "(EE) Cannot optain file entry index for hash " << subfiles_hash[i] << ". This is very unexpected." << std::endl;
+            std::cerr << "(EE) Cannot obtain file entry index for hash " << subfiles_hash[i] << ". This is very unexpected." << std::endl;
             continue;
         }
         std::cerr << "  updating file entry " << subfiles_hash[i] << std::endl;

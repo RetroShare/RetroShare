@@ -1003,7 +1003,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
             std::cerr << std::endl << "  (EE) cannot find index from hash " << item->entry_hash << ". Dropping the response." << std::endl;
             return ;
         }
-        std::cerr << "  entry index is " << entry_index ;
+        std::cerr << "  entry index is " << entry_index << " " ;
     }
 
     if(item->flags & RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED)
@@ -1029,9 +1029,9 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
             std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 
         std::cerr << "  new content after update: " << std::endl;
-#ifdef DEBUG_FILE_HIERARCHY
+//#ifdef DEBUG_FILE_HIERARCHY
         mRemoteDirectories[fi]->print();
-#endif
+//#endif
     }
 }
 
@@ -1097,7 +1097,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
         // Dont recurs into sub-directories, since we dont know yet were to go.
 
-        return ;
+        //return ;
    }
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
@@ -1113,8 +1113,15 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
     // that cannot be brute-forced or reverse-engineered, which explains the random bias.
 
     for(uint32_t i=0;i<RsPeerId::SIZE_IN_BYTES;++i)
-        r += (0x3ff92892a94 * peer_id.toByteArray()[i] + r) ^ 0x39e83784378aafe3;
+    {
+        r ^= (0x011933ff92892a94 * e + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
+        r <<= 8 ;
+        r ^= 0xf392843890321808;
 
+        std::cerr << std::hex << "r=" << r << std::endl;
+    }
+
+    std::cerr << "making request ID: peer_id=" << peer_id << ", e=" << e << ", random_bias=" << std::hex<< random_bias << " returning " << (r^random_bias) << std::dec << std::endl;
     return r ^ random_bias;
 }
 

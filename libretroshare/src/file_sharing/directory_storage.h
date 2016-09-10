@@ -205,7 +205,6 @@ public:
     bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
-        RsFileHash  locked_getDirHashFromIndex(EntryIndex indx) const ;
         std::string locked_getVirtualPath(EntryIndex indx) const ;
         std::string locked_getVirtualDirName(EntryIndex indx) const ;
 

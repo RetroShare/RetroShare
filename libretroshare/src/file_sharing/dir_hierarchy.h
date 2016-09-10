@@ -86,6 +86,7 @@ public:
 
     bool getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const ;
     bool getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
+    bool getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
 
     // file/dir access and modification
     bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
