@@ -25,6 +25,7 @@ public:
     class FileEntry: public FileStorageNode
     {
     public:
+        FileEntry() : file_size(0), file_modtime(0) {}
         FileEntry(const std::string& name,uint64_t size,time_t modtime) : file_name(name),file_size(size),file_modtime(modtime) {}
         FileEntry(const std::string& name,uint64_t size,time_t modtime,const RsFileHash& hash) : file_name(name),file_size(size),file_modtime(modtime),file_hash(hash) {}
 
@@ -74,7 +75,7 @@ public:
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files);
     bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash);
     bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time);
-    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, time_t most_recent_time, time_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<RsFileHash> &subfiles_hash);
+    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, time_t most_recent_time, time_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<FileEntry> &subfiles_array);
     bool getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
     bool setDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
 
@@ -120,14 +121,19 @@ private:
     static bool nodeAccessError(const std::string& s);
     static RsFileHash createDirHash(const std::string& dir_name,const std::string& dir_parent_path) ;
 
+    // Allocates a new entry in mNodes, possible re-using an empty slot and returns its index.
+
+    DirectoryStorage::EntryIndex allocateNewIndex();
+
     // Removes the given subdirectory from the parent node and all its pendign subdirs. Files are kept, and will go during the cleaning
     // phase. That allows to keep file information when moving them around.
 
     bool recursRemoveDirectory(DirectoryStorage::EntryIndex dir);
 
-    // Map of the hash of all files and all directories. The file hashes are the sha1sum of the file data.
+    // Map of the hash of all files. The file hashes are the sha1sum of the file data.
     // is used for fast search access for FT.
     // Note: We should try something faster than std::map. hash_map??
+    // Unlike directories, multiple files may have the same hash. So this cannot be used for anything else than FT.
 
     std::map<RsFileHash,DirectoryStorage::EntryIndex> mFileHashes ;
 

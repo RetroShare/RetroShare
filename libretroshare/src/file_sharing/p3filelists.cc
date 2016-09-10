@@ -1106,6 +1106,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
 p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,DirectoryStorage::EntryIndex e)
 {
+#warning needs to be improved. It's quite likely that random_bias and then e can be bruteforced from the result of this function
     static uint64_t random_bias = RSRandom::random_u64();
     uint64_t r = e ;
 
@@ -1117,11 +1118,8 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
         r ^= (0x011933ff92892a94 * e + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
         r <<= 8 ;
         r ^= 0xf392843890321808;
-
-        std::cerr << std::hex << "r=" << r << std::endl;
     }
 
-    std::cerr << "making request ID: peer_id=" << peer_id << ", e=" << e << ", random_bias=" << std::hex<< random_bias << " returning " << (r^random_bias) << std::dec << std::endl;
     return r ^ random_bias;
 }
 

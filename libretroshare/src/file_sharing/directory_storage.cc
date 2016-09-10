@@ -671,11 +671,8 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     }
 
     // deserialise directory subfiles, with info for each of them
-    std::vector<EntryIndex> subfiles_array ;
-    std::vector<std::string> subfiles_name ;
-    std::vector<uint64_t> subfiles_size ;
-    std::vector<RsFileHash> subfiles_hash ;
-    std::vector<time_t> subfiles_modtime ;
+
+    std::vector<InternalFileHierarchyStorage::FileEntry> subfiles_array ;
 
     for(uint32_t i=0;i<n_subfiles;++i)
     {
@@ -688,22 +685,19 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
 
         uint32_t file_section_offset = 0 ;
 
-        std::string entry_name ;
-        uint64_t entry_size ;
-        RsFileHash entry_hash ;
-        uint32_t entry_modtime ;
+        InternalFileHierarchyStorage::FileEntry f;
+        uint32_t modtime =0;
 
-        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,entry_name   )) return false ;
-        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,entry_size   )) return false ;
-        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,entry_hash   )) return false ;
-        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,entry_modtime)) return false ;
+        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,f.file_name   )) return false ;
+        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,f.file_size   )) return false ;
+        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,f.file_hash   )) return false ;
+        if(!FileListIO::readField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,modtime       )) return false ;
+
+        f.file_modtime = modtime ;
 
         free(file_section_data) ;
 
-        subfiles_name.push_back(entry_name) ;
-        subfiles_size.push_back(entry_size) ;
-        subfiles_hash.push_back(entry_hash) ;
-        subfiles_modtime.push_back(entry_modtime) ;
+        subfiles_array.push_back(f) ;
     }
 
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -711,27 +705,12 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     std::cerr << "  updating dir entry..." << std::endl;
 
     // First create the entries for each subdir and each subfile, if needed.
-    if(!mFileHierarchy->updateDirEntry(indx,dir_name,most_recent_time,dir_modtime,subdirs_hashes,subfiles_hash))
+    if(!mFileHierarchy->updateDirEntry(indx,dir_name,most_recent_time,dir_modtime,subdirs_hashes,subfiles_array))
     {
         std::cerr << "(EE) Cannot update dir entry with index " << indx << ": entry does not exist." << std::endl;
         return false ;
     }
 
-    // Then update the subfiles
-    for(uint32_t i=0;i<subfiles_hash.size();++i)
-    {
-        DirectoryStorage::EntryIndex file_index ;
-
-        if(!mFileHierarchy->getIndexFromFileHash(subfiles_hash[i],file_index))
-        {
-            std::cerr << "(EE) Cannot obtain file entry index for hash " << subfiles_hash[i] << ". This is very unexpected." << std::endl;
-            continue;
-        }
-        std::cerr << "  updating file entry " << subfiles_hash[i] << std::endl;
-
-        if(!mFileHierarchy->updateFile(file_index,subfiles_hash[i],subfiles_name[i],subfiles_size[i],subfiles_modtime[i]))
-            std::cerr << "(EE) Cannot update file with index " << file_index <<" and hash " << subfiles_hash[i] << ". This is very weird. Entry should have just been created and therefore should exist. Skipping." << std::endl;
-    }
     mChanged = true ;
 
     return true ;

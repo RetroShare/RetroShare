@@ -285,7 +285,26 @@ bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex
     return true;
 }
 
-bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<RsFileHash>& subfiles_hash)
+DirectoryStorage::EntryIndex InternalFileHierarchyStorage::allocateNewIndex()
+{
+    int found = -1;
+    for(uint32_t j=0;j<mNodes.size();++j)
+        if(mNodes[j] == NULL)
+        {
+            found = j;
+            break;
+        }
+
+    if(found < 0)
+    {
+        mNodes.push_back(NULL) ;
+        return mNodes.size()-1 ;
+    }
+    else
+        return found ;
+}
+
+bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<FileEntry>& subfiles_array)
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
     {
@@ -301,118 +320,131 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     d.dir_update_time  = time(NULL);
     d.dir_name         = dir_name;
 
+    std::map<RsFileHash,DirectoryStorage::EntryIndex> existing_subdirs ;
+
+    for(uint32_t i=0;i<d.subdirs.size();++i)
+        existing_subdirs[static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_hash] = d.subdirs[i] ;
+
     d.subdirs.clear();
-    d.subfiles.clear();
 
     // check that all subdirs already exist. If not, create.
     for(uint32_t i=0;i<subdirs_hash.size();++i)
     {
-        std::cerr << "  subdir hash " << i << ": " << subdirs_hash[i] ;
+        std::cerr << "  subdir hash = " << subdirs_hash[i] << ": " ;
 
+        std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = existing_subdirs.find(subdirs_hash[i]) ;
         DirectoryStorage::EntryIndex dir_index = 0;
-        std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mDirHashes.find(subdirs_hash[i]) ;
 
-        if(it == mDirHashes.end() || it->second >= mNodes.size())
+        if(it != existing_subdirs.end() && mNodes[it->second] != NULL && mNodes[it->second]->type() == FileStorageNode::TYPE_DIR)
         {
-            // find an epty slot
-            int found = -1 ;
+            dir_index = it->second ;
 
-            for(uint32_t j=0;j<mNodes.size();++j)
-                if(mNodes[i] == NULL)
-                {
-                    found = j;
-                    break;
-                }
+            std::cerr << " already exists, at index  " << dir_index << std::endl;
 
-            if(found < 0)
-            {
-                dir_index = mNodes.size() ;
-                mNodes.push_back(NULL) ;
-            }
-            else
-                dir_index = found;
+            existing_subdirs.erase(it) ;
+        }
+        else
+        {
+            dir_index = allocateNewIndex() ;
+
+            DirEntry *de = new DirEntry("") ;
+
+            mNodes[dir_index] = de ;
+
+            de->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
+            de->dir_hash        = subdirs_hash[i];
 
             mDirHashes[subdirs_hash[i]] = dir_index ;
 
             std::cerr << " created, at new index " << dir_index << std::endl;
         }
-        else
-        {
-            dir_index = it->second;
-
-            if(mNodes[dir_index] != NULL && mNodes[dir_index]->type() != FileStorageNode::TYPE_DIR)
-            {
-                delete mNodes[dir_index] ;
-                mNodes[dir_index] = NULL ;
-            }
-            std::cerr << " already exists, index=" << dir_index << "." << std::endl;
-        }
-        FileStorageNode *& node(mNodes[dir_index]);
-        if(!node)
-            node = new DirEntry("");
 
         d.subdirs.push_back(dir_index) ;
-
-        ((DirEntry*&)node)->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
-        ((DirEntry*&)node)->dir_hash        = subdirs_hash[i];
-        node->row = i ;
-        node->parent_index = indx ;
+        mDirHashes[subdirs_hash[i]] = dir_index ;
     }
-    for(uint32_t i=0;i<subfiles_hash.size();++i)
+    // remove subdirs that do not exist anymore
+
+    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = existing_subdirs.begin();it!=existing_subdirs.end();++it)
     {
-        DirectoryStorage::EntryIndex file_index = 0;
-        std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(subfiles_hash[i]) ;
+        std::cerr << "  removing existing subfile that is not in the dirctory anymore: name=" << it->first << " index=" << it->second << std::endl;
 
-        std::cerr << "  subfile hash " << i << ": " << subfiles_hash[i] ;
-
-        if(it == mFileHashes.end())
+        if(!checkIndex(it->second,FileStorageNode::TYPE_DIR))
         {
-            // find an epty slot
-            int found = -1;
-
-            for(uint32_t j=0;j<mNodes.size();++j)
-                if(mNodes[i] == NULL)
-                {
-                    found = j;
-                    break;
-                }
-
-            if(found < 0)
-            {
-                file_index = mNodes.size() ;
-                mNodes.push_back(NULL) ;
-            }
-            else
-                file_index = found;
-
-            mFileHashes[subfiles_hash[i]] = file_index ;
-
-            std::cerr << " created, at new index " << file_index << std::endl;
+            std::cerr << "(EE) Cannot delete node of index " << it->second << " because it is not a file. Inconsistency error!" << std::endl;
+            continue ;
         }
-        else
+        recursRemoveDirectory(it->second) ;
+    }
+
+    // now update subfiles. This is more stricky because we need to not suppress hash duplicates
+
+    std::map<std::string,DirectoryStorage::EntryIndex> existing_subfiles ;
+
+    for(uint32_t i=0;i<d.subfiles.size();++i)
+        existing_subfiles[static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_name] = d.subfiles[i] ;
+
+    d.subfiles.clear();
+
+    for(uint32_t i=0;i<subfiles_array.size();++i)
+    {
+        std::map<std::string,DirectoryStorage::EntryIndex>::iterator it = existing_subfiles.find(subfiles_array[i].file_name) ;
+        const FileEntry& f(subfiles_array[i]) ;
+        DirectoryStorage::EntryIndex file_index ;
+
+        std::cerr << "  subfile name = " << subfiles_array[i].file_name << ": " ;
+
+        if(it != existing_subfiles.end() && mNodes[it->second] != NULL && mNodes[it->second]->type() == FileStorageNode::TYPE_FILE)
         {
             file_index = it->second ;
 
-            if(mNodes[file_index] != NULL && mNodes[file_index]->type() != FileStorageNode::TYPE_FILE)
-            {
-                delete mNodes[file_index] ;
-                mNodes[file_index] = NULL ;
-            }
+            std::cerr << " already exists, at index  " << file_index << std::endl;
 
-            file_index = it->second;
+            if(!updateFile(file_index,f.file_hash,f.file_name,f.file_size,f.file_modtime))
+                std::cerr << "(EE) Cannot update file with index " << it->second <<" and hash " << f.file_hash << ". This is very weird. Entry should have just been created and therefore should exist. Skipping." << std::endl;
 
-            std::cerr << " already exists, index=" << file_index << "." << std::endl;
+            existing_subfiles.erase(it) ;
         }
-        FileStorageNode *& node(mNodes[file_index]);
+        else
+        {
+            file_index = allocateNewIndex() ;
 
-        if(!node)
-            node = new FileEntry("",0,0,subfiles_hash[i]);
+            mNodes[file_index] = new FileEntry(f.file_name,f.file_size,f.file_modtime,f.file_hash) ;
+            mFileHashes[f.file_hash] = file_index ;
+
+            std::cerr << " created, at new index " << file_index << std::endl;
+        }
 
         d.subfiles.push_back(file_index) ;
-
-        node->row = subdirs_hash.size()+i ;
-        node->parent_index = indx ;
     }
+    // remove subfiles that do not exist anymore
+
+    for(std::map<std::string,DirectoryStorage::EntryIndex>::const_iterator it = existing_subfiles.begin();it!=existing_subfiles.end();++it)
+    {
+        std::cerr << "  removing existing subfile that is not in the dirctory anymore: name=" << it->first << " index=" << it->second << std::endl;
+
+        if(!checkIndex(it->second,FileStorageNode::TYPE_FILE))
+        {
+            std::cerr << "(EE) Cannot delete node of index " << it->second << " because it is not a file. Inconsistency error!" << std::endl;
+            continue ;
+        }
+        delete mNodes[it->second] ;
+        mNodes[it->second] = NULL ;
+    }
+
+    // now update row and parent index for all subnodes
+
+    uint32_t n=0;
+    for(uint32_t i=0;i<d.subdirs.size();++i)
+    {
+        mNodes[d.subdirs[i]]->parent_index = indx ;
+        mNodes[d.subdirs[i]]->row = n++ ;
+    }
+    for(uint32_t i=0;i<d.subfiles.size();++i)
+    {
+        mNodes[d.subfiles[i]]->parent_index = indx ;
+        mNodes[d.subfiles[i]]->row = n++ ;
+    }
+
 
     return true;
 }
