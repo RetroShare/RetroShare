@@ -196,6 +196,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 
 	private slots:
 		void downloadRemoteSelected();
+        void expanded(const QModelIndex& indx);
 };
 
 #endif

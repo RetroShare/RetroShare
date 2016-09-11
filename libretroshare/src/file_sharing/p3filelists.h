@@ -92,6 +92,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         // void * here is the type expected by the abstract model index from Qt. It gets turned into a DirectoryStorage::EntryIndex internally.
 
+        void requestDirUpdate(void *ref) ;	// triggers an update. Used when browsing.
         int RequestDirDetails(void *, DirDetails&, FileSearchFlags) const ;
         uint32_t getType(void *) const ;
 
@@ -142,7 +143,15 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         typedef uint64_t DirSyncRequestId ;
 
-        static DirSyncRequestId makeDirSyncReqId(const RsPeerId& peer_id,DirectoryStorage::EntryIndex e) ;
+        static DirSyncRequestId makeDirSyncReqId(const RsPeerId& peer_id, const RsFileHash &hash) ;
+
+        /*!
+         * \brief generateAndSendSyncRequest
+         * \param rds	Remote directory storage for the request
+         * \param e		Entry index to update
+         * \return 		true if the request is correctly sent.
+         */
+        bool generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e,time_t max_known_recurs_modf_time);
 
 		// File sync request queues. The fast one is used for online browsing when friends are connected.
 		// The slow one is used for background update of file lists.
@@ -185,7 +194,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         time_t mLastRemoteDirSweepTS ; // TS for friend list update
         std::map<DirSyncRequestId,DirSyncRequestData> mPendingSyncRequests ; // pending requests, waiting for an answer
 
-        void locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e);
+        void locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds, DirectoryStorage::EntryIndex e, int depth);
 
         // We use a shared file cache as well, to avoid re-hashing files with known modification TS and equal name.
 		//

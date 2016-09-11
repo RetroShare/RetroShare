@@ -228,6 +228,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
+    connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
 
 	// load settings
 	processSettings(true);
@@ -366,7 +367,6 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	}
 
 //    connect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), this, SLOT(  collapsed(const QModelIndex & ) ) );
-//    connect( ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
 
 	ui.dirTreeView->setModel(proxyModel);
 	ui.dirTreeView->update();
@@ -515,6 +515,13 @@ QModelIndexList SharedFilesDialog::getSelected()
 	}//for (QModelIndexList::iterator index
 
 	return proxyList ;
+}
+
+void RemoteSharedFilesDialog::expanded(const QModelIndex& indx)
+{
+    std::cerr << "Expanding at " << indx.row() << " and " << indx.column() << " ref=" << indx.internalPointer() << ", pointer at 1: " << proxyModel->mapToSource(indx).internalPointer() << std::endl;
+
+    model->updateRef(proxyModel->mapToSource(indx)) ;
 }
 
 void RemoteSharedFilesDialog::downloadRemoteSelected()

@@ -192,7 +192,7 @@ int p3FileDatabase::tick()
                 mRemoteDirectories[i]->print();
 #endif
 
-                locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root()) ;
+                locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root(),0) ;
             }
 
             mRemoteDirectories[i]->checkSave() ;
@@ -547,6 +547,30 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
     p = reinterpret_cast<void*>( ( (1+fi) << NB_ENTRY_INDEX_BITS ) + (fe & ENTRY_INDEX_BIT_MASK)) ;
 
     return true;
+}
+
+void p3FileDatabase::requestDirUpdate(void *ref)
+{
+    uint32_t fi;
+    DirectoryStorage::EntryIndex e ;
+
+    convertPointerToEntryIndex(ref,e,fi);
+
+    if(fi == 0)
+        return ;	// not updating current directory (should we?)
+
+   time_t recurs_max_modf_TS_remote_time,local_update_TS;
+
+    std::cerr << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
+
+   if(!mRemoteDirectories[fi-1]->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
+   {
+       std::cerr << "  (EE) Cannot get max known recurs modf time!" << std::endl;
+       return ;
+   }
+
+    if(generateAndSendSyncRequest(mRemoteDirectories[fi-1],e,recurs_max_modf_TS_remote_time))
+        P3FILELISTS_DEBUG() << "  Succeed." << std::endl;
 }
 
 // This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
@@ -1035,20 +1059,24 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     }
 }
 
-void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e)
+void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e,int depth)
 {
    time_t now = time(NULL) ;
+
+   std::string indent(2*depth,' ') ;
 
    // if not up to date, request update, and return (content is not certified, so no need to recurs yet).
    // if up to date, return, because TS is about the last modif TS below, so no need to recurs either.
 
    // get the info for this entry
 
+   P3FILELISTS_DEBUG() << "currently at entry index " << e << std::endl;
+
    time_t recurs_max_modf_TS_remote_time,local_update_TS;
 
    if(!rds->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
    {
-       std::cerr << "(EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
+       std::cerr << "  (EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
        return;
    }
 
@@ -1056,72 +1084,88 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    if(now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ)	// we need to compare local times only. We cannot compare local (now) with remote time.
    {
-        // check if a request already exists and is not too old either: no need to re-ask.
+       if(generateAndSendSyncRequest(rds,e,recurs_max_modf_TS_remote_time))
+           P3FILELISTS_DEBUG() << "  Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
 
-        DirSyncRequestId sync_req_id = makeDirSyncReqId(rds->peerId(),e) ;
+       // Dont recurs into sub-directories, since we dont know yet were to go.
 
-        std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(sync_req_id) ;
-
-        if(it != mPendingSyncRequests.end())
-        {
-            P3FILELISTS_DEBUG() << "Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
-            return ;
-        }
-
-        P3FILELISTS_DEBUG() << "Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
-
-        RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
-
-        if(!rds->getDirHashFromIndex(e,item->entry_hash) )
-        {
-            std::cerr << "(EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;
-            return;
-        }
-
-        item->flags = RsFileListsItem::FLAGS_SYNC_REQUEST ;
-        item->request_id = sync_req_id ;
-        item->last_known_recurs_modf_TS = recurs_max_modf_TS_remote_time ;
-        item->PeerId(rds->peerId()) ;
-
-        DirSyncRequestData data ;
-
-        data.request_TS = now ;
-        data.peer_id = item->PeerId();
-        data.flags = item->flags;
-
-        std::cerr << "Pushing req in pending list with peer id " << data.peer_id << std::endl;
-
-        mPendingSyncRequests[sync_req_id] = data ;
-
-        sendItem(item) ;	// at end! Because item is destroyed by the process.
-
-        // Dont recurs into sub-directories, since we dont know yet were to go.
-
-        //return ;
+       //return ;
    }
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
-       locked_recursSweepRemoteDirectory(rds,*it);
+       locked_recursSweepRemoteDirectory(rds,*it,depth+1);
 }
 
-p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,DirectoryStorage::EntryIndex e)
+p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,const RsFileHash& hash)
 {
-#warning needs to be improved. It's quite likely that random_bias and then e can be bruteforced from the result of this function
     static uint64_t random_bias = RSRandom::random_u64();
-    uint64_t r = e ;
+    uint64_t r = 0 ;
 
-    // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,e) pair, in a way
-    // that cannot be brute-forced or reverse-engineered, which explains the random bias.
+    // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,entry index) pair, in a way
+    // that cannot be brute-forced or reverse-engineered, which explains the random bias and the usage of the hash, that is itself random.
 
     for(uint32_t i=0;i<RsPeerId::SIZE_IN_BYTES;++i)
     {
-        r ^= (0x011933ff92892a94 * e + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
+        r ^= (0x011933ff92892a94 + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
         r <<= 8 ;
-        r ^= 0xf392843890321808;
+        r += 0xf392843890321808;
+    }
+    for(uint32_t i=0;i<RsFileHash::SIZE_IN_BYTES;++i)
+    {
+        r ^= (0x011933ff92892a94 + hash.toByteArray()[i] * 0x1001fff92ee640f9) ;
+        r <<= 8 ;
+        r += 0xf392843890321808;
     }
 
     return r ^ random_bias;
 }
+
+bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e,time_t max_known_recurs_modf_time)
+{
+    RsFileHash entry_hash ;
+    time_t now = time(NULL) ;
+
+    if(!rds->getDirHashFromIndex(e,entry_hash) )
+    {
+        std::cerr << "  (EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;
+        return false;
+    }
+
+    // check if a request already exists and is not too old either: no need to re-ask.
+
+    DirSyncRequestId sync_req_id = makeDirSyncReqId(rds->peerId(),entry_hash) ;
+
+    std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(sync_req_id) ;
+
+    if(it != mPendingSyncRequests.end())
+    {
+        P3FILELISTS_DEBUG() << "  Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
+        return false ;
+    }
+
+    RsFileListsSyncRequestItem *item = new RsFileListsSyncRequestItem ;
+
+    item->entry_hash = entry_hash ;
+    item->flags = RsFileListsItem::FLAGS_SYNC_REQUEST ;
+    item->request_id = sync_req_id ;
+    item->last_known_recurs_modf_TS = max_known_recurs_modf_time ;
+    item->PeerId(rds->peerId()) ;
+
+    DirSyncRequestData data ;
+
+    data.request_TS = now ;
+    data.peer_id = item->PeerId();
+    data.flags = item->flags;
+
+    std::cerr << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
+
+    mPendingSyncRequests[sync_req_id] = data ;
+
+    sendItem(item) ;	// at end! Because item is destroyed by the process.
+
+    return true;
+}
+
 
 
 

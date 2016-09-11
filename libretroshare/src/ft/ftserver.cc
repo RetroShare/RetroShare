@@ -345,7 +345,12 @@ bool ftServer::FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& 
 	return mFtController->getFileDownloadChunksDetails(hash,info);
 }
 
-	/* Directory Handling */
+void ftServer::requestDirUpdate(void *ref)
+{
+    mFileDatabase->requestDirUpdate(ref) ;
+}
+
+    /* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)
 {
 	mFtController->setDownloadDirectory(path);

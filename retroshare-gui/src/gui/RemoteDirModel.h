@@ -78,6 +78,8 @@ class RetroshareDirModel : public QAbstractItemModel
         bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
 		virtual void update() {}
 
+        virtual void updateRef(const QModelIndex&) const =0;
+
 	public:
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
 		virtual QStringList mimeTypes () const;
@@ -167,7 +169,9 @@ class TreeStyle_RDM: public RetroshareDirModel
 		virtual ~TreeStyle_RDM() ;
 
 	protected:
-		/* These are all overloaded Virtual Functions */
+        virtual void updateRef(const QModelIndex&) const ;
+
+        /* These are all overloaded Virtual Functions */
 		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -203,7 +207,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 		void updateRefs() ;
 
 	protected:
-		virtual void postMods();
+        virtual void updateRef(const QModelIndex&) const {}
+        virtual void postMods();
 
 		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
