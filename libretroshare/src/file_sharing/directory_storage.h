@@ -24,9 +24,9 @@ class DirectoryStorage
 
 		void save() const ;
 
-        virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0;}
+        virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const ;
+        virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const ;
         virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
-        virtual int searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const { NOT_IMPLEMENTED() ; return 0; }
 
         bool getDirUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS) ;
         bool setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS) ;

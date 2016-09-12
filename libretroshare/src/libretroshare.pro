@@ -55,6 +55,7 @@ file_lists {
 			file_sharing/directory_storage.cc \
 			file_sharing/directory_updater.cc \
 			file_sharing/dir_hierarchy.cc \
+			file_sharing/rsexpr.cc \
 			file_sharing/rsfilelistitems.cc
 }
 
@@ -366,11 +367,6 @@ INCLUDEPATH *= $${OPENPGPSDK_DIR}
 PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
 LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
 
-HEADERS +=	dbase/cachestrapper.h \
-			dbase/fimonitor.h \
-			dbase/findex.h \
-			dbase/fistore.h
-
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
 			ft/ftdata.h \
@@ -531,13 +527,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsrecogn.h \
 			util/rsscopetimer.h \
 			util/stacktrace.h
-
-SOURCES +=	dbase/cachestrapper.cc \
-			dbase/fimonitor.cc \
-			dbase/findex.cc \
-			dbase/fistore.cc \
-			dbase/rsexpr.cc
-
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \

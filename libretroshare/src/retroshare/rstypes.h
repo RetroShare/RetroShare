@@ -236,7 +236,7 @@ public:
     RsPeerId id;
     std::string name;
     RsFileHash hash;
-    std::string path;
+    std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
 	uint64_t count;
 	uint32_t age;
 	FileStorageFlags flags;

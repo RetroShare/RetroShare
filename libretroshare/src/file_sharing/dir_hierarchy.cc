@@ -2,6 +2,7 @@
 
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
+//#include "rsexpr.h"
 
 #define DEBUG_DIRECTORY_STORAGE 1
 
@@ -568,6 +569,49 @@ bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<D
     }
     else
         return false;
+}
+
+int InternalFileHierarchyStorage::searchBoolExp(Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const
+{
+#ifdef TODO
+    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)
+    {
+        const std::string &str1 = static_cast<FileEntry*>(mNodes[fit->second])->file_name;
+
+    {
+        /*Evaluate the boolean expression and add it to the results if its true*/
+        bool ret = exp->eval(fit->second);
+        if (ret == true){
+            results.push_back(fit->second);
+        }
+    }
+#endif
+}
+
+int InternalFileHierarchyStorage::searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const
+{
+    // most entries are likely to be files, so we could do a linear search over the entries tab.
+    // instead we go through the table of hashes.
+
+    for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)
+        if(mNodes[it->second] != NULL)
+        {
+            const std::string &str1 = static_cast<FileEntry*>(mNodes[it->second])->file_name;
+
+            for(std::list<std::string>::const_iterator iter(terms.begin()); iter != terms.end(); ++iter)
+            {
+                /* always ignore case */
+                const std::string &str2 = (*iter);
+#ifdef TODO
+                if(str1.end() != std::search( str1.begin(), str1.end(), str2.begin(), str2.end(), CompareCharIC() ))
+                {
+                    results.push_back(fit->second);
+                    break;
+                }
+#endif
+            }
+        }
+    return 0 ;
 }
 
 bool InternalFileHierarchyStorage::check(std::string& error_string) const	// checks consistency of storage.

@@ -110,7 +110,12 @@ public:
     uint32_t getType(DirectoryStorage::EntryIndex indx) const;
     DirectoryStorage::EntryIndex getSubFileIndex(DirectoryStorage::EntryIndex parent_index,uint32_t file_tab_index);
     DirectoryStorage::EntryIndex getSubDirIndex(DirectoryStorage::EntryIndex parent_index,uint32_t dir_tab_index);
+
+    // search. SearchHash is logarithmic. The other two are linear.
+
     bool searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results);
+    int searchBoolExp(Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const ;
+    int searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const ;
 
     bool check(std::string& error_string) const	;// checks consistency of storage.
 

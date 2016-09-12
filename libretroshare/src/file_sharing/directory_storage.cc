@@ -160,62 +160,29 @@ void DirectoryStorage::saveNextTag(unsigned char *data, uint32_t& offset, uint8_
 
 void DirectoryStorage::load(const std::string& local_file_name)
 {
-    std::cerr << "DirectoryStorage::load()" << std::endl;
-
-    // first load the header, than all fields.
-
     RS_STACK_MUTEX(mDirStorageMtx) ;
     mFileHierarchy->load(local_file_name);
 }
 void DirectoryStorage::save(const std::string& local_file_name)
 {
-    std::cerr << "DirectoryStorage::Save()" << std::endl;
-
     RS_STACK_MUTEX(mDirStorageMtx) ;
     mFileHierarchy->save(local_file_name);
-
-    // first write the header, than all fields.
 }
 void DirectoryStorage::print()
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    std::cerr << "LocalDirectoryStorage:" << std::endl;
     mFileHierarchy->print();
 }
 
-bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info)
+int DirectoryStorage::searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const
 {
-    DirDetails d;
-    extractData(i,d) ;
-
-    info.storage_permission_flags = d.flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
-    info.parent_groups            = d.parent_groups;
-    info.transfer_info_flags      = TransferRequestFlags();		// various flags from RS_FILE_HINTS_*
-    info.path                     = d.path + "/" + d.name;
-    info.fname                    = d.name;
-    info.hash                     = d.hash;
-    info.size                     = d.count;
-
-    // all this stuff below is not useful in this case.
-
-    info.mId = 0; /* (GUI) Model Id -> unique number */
-    info.ext.clear();
-    info.avail = 0; /* how much we have */
-    info.rank = 0;
-    info.age = 0;
-    info.queue_position =0;
-    info.searchId = 0;      /* 0 if none */
-
-    /* Transfer Stuff */
-    info.transfered = 0;
-    info.tfRate = 0; /* in kbytes */
-    info.downloadStatus = FT_STATE_COMPLETE ;
-    std::list<TransferInfo> peers;
-
-    info.priority  = SPEED_NORMAL;
-    info.lastTS = 0;
-
-    return true;
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->searchTerms(terms,results);
+}
+int DirectoryStorage::searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    return mFileHierarchy->searchBoolExp(exp,results);
 }
 
 bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
@@ -442,6 +409,47 @@ bool LocalDirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
     // here we should update the file sharing flags
 
     return getFileSharingPermissions(indx,d.flags,d.parent_groups) ;
+}
+
+bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info)
+{
+    DirDetails d;
+    extractData(i,d) ;
+
+    if(d.type != DIR_TYPE_FILE)
+    {
+        std::cerr << "(EE) LocalDirectoryStorage: asked for file info for index " << i << " which is not a file." << std::endl;
+        return false;
+    }
+
+    info.storage_permission_flags = d.flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
+    info.parent_groups            = d.parent_groups;
+    info.transfer_info_flags      = TransferRequestFlags();		// various flags from RS_FILE_HINTS_*
+    info.path                     = d.path + "/" + d.name;
+    info.fname                    = d.name;
+    info.hash                     = d.hash;
+    info.size                     = d.count;
+
+    // all this stuff below is not useful in this case.
+
+    info.mId = 0; /* (GUI) Model Id -> unique number */
+    info.ext.clear();
+    info.avail = 0; /* how much we have */
+    info.rank = 0;
+    info.age = 0;
+    info.queue_position =0;
+    info.searchId = 0;      /* 0 if none */
+
+    /* Transfer Stuff */
+    info.transfered = 0;
+    info.tfRate = 0; /* in kbytes */
+    info.downloadStatus = FT_STATE_COMPLETE ;
+    std::list<TransferInfo> peers;
+
+    info.priority  = SPEED_NORMAL;
+    info.lastTS = 0;
+
+    return true;
 }
 
 bool LocalDirectoryStorage::getFileSharingPermissions(const EntryIndex& indx,FileStorageFlags& flags,std::list<RsNodeGroupId>& parent_groups)
