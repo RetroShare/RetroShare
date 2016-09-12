@@ -260,6 +260,7 @@ bool InternalFileHierarchyStorage::updateHash(const DirectoryStorage::EntryIndex
     std::cerr << "[directory storage] updating hash at index " << file_index << ", hash=" << hash << std::endl;
 
     RsFileHash& old_hash (static_cast<FileEntry*>(mNodes[file_index])->file_hash) ;
+    mFileHashes[hash] = file_index ;
 
     old_hash = hash ;
 
@@ -281,6 +282,9 @@ bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex
     fe.file_size = size;
     fe.file_modtime = modf_time;
     fe.file_name = fname;
+
+    if(!hash.isNull())
+        mFileHashes[hash] = file_index ;
 
     return true;
 }

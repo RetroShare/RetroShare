@@ -185,9 +185,36 @@ void DirectoryStorage::print()
 
 bool LocalDirectoryStorage::getFileInfo(DirectoryStorage::EntryIndex i,FileInfo& info)
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
+    DirDetails d;
+    extractData(i,d) ;
 
-    NOT_IMPLEMENTED();
+    info.storage_permission_flags = d.flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
+    info.parent_groups            = d.parent_groups;
+    info.transfer_info_flags      = TransferRequestFlags();		// various flags from RS_FILE_HINTS_*
+    info.path                     = d.path + "/" + d.name;
+    info.fname                    = d.name;
+    info.hash                     = d.hash;
+    info.size                     = d.count;
+
+    // all this stuff below is not useful in this case.
+
+    info.mId = 0; /* (GUI) Model Id -> unique number */
+    info.ext.clear();
+    info.avail = 0; /* how much we have */
+    info.rank = 0;
+    info.age = 0;
+    info.queue_position =0;
+    info.searchId = 0;      /* 0 if none */
+
+    /* Transfer Stuff */
+    info.transfered = 0;
+    info.tfRate = 0; /* in kbytes */
+    info.downloadStatus = FT_STATE_COMPLETE ;
+    std::list<TransferInfo> peers;
+
+    info.priority  = SPEED_NORMAL;
+    info.lastTS = 0;
+
     return true;
 }
 
