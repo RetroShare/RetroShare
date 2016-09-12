@@ -1,11 +1,9 @@
-#pragma once
-
 /*
- * libretroshare/src/serialiser: rsnxssitems.h
+ * RetroShare File lists service items.
  *
- * RetroShare Serialiser.
+ *      file_sharing/rsfilelistitems.h
  *
- * Copyright 2012 Christopher Evi-Parker, Robert Fernie.
+ * Copyright 2016 Mr.Alice
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,9 +19,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
+ * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
+#pragma once
 
 #include <map>
 #include <openssl/ssl.h>

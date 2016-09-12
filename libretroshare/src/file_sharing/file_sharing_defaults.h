@@ -1,3 +1,29 @@
+/*
+ * RetroShare C++ File sharing default variables
+ *
+ *      file_sharing/file_sharing_defaults.h
+ *
+ * Copyright 2016 by Mr.Alice
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare.project@gmail.com".
+ *
+ */
+
+
 #pragma once
 
 static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES           = 100 ; // 10 seconds for testing. Should be much more!!
