@@ -84,71 +84,72 @@ private:
  */
 class RsStackMutex
 {
-	public:
+public:
 
-		RsStackMutex(RsMutex &mtx)
-			: mMtx(mtx) 
-		{ 
-			mMtx.lock(); 
+	RsStackMutex(RsMutex &mtx) : mMtx(mtx)
+	{
+		mMtx.lock();
 #ifdef RSMUTEX_DEBUG
-			double ts = getCurrentTS() ;
-			_time_stamp = ts ;
-			_lineno = 0 ;
-			_info = "[no info]" ;
+		double ts = getCurrentTS();
+		_time_stamp = ts;
+		_lineno = 0;
+		_info = "[no info]";
 #endif
-		}
-		RsStackMutex(RsMutex &mtx,const char *function_name,const char *file_name,int lineno)
-			: mMtx(mtx)
+	}
+
+	RsStackMutex(RsMutex &mtx, const char *function_name, const char *file_name,
+	             int lineno) : mMtx(mtx)
 #ifdef RSMUTEX_DEBUG
-			, _info(std::string(function_name)+" in file "+file_name),_lineno(lineno)
+	  , _info(std::string(function_name)+" in file "+file_name), _lineno(lineno)
 #endif
-		{ 
+	{
 #ifdef RSMUTEX_DEBUG
-			double ts = getCurrentTS() ;
-			_time_stamp = ts ;
-			pthread_t owner = mMtx.owner() ;
+		double ts = getCurrentTS();
+		_time_stamp = ts;
+		pthread_t owner = mMtx.owner();
 #else
-			// remove unused parameter warnings
-			(void) function_name; (void) file_name; (void) lineno;
+		// remove unused parameter warnings
+		(void) function_name; (void) file_name; (void) lineno;
 #endif
 
-			mMtx.lock(); 
+		mMtx.lock();
 
 #ifdef RSMUTEX_DEBUG
-			ts = getCurrentTS() ;
+		ts = getCurrentTS();
 
-			if(ts - _time_stamp > 1.0)
-				std::cerr << "Mutex " << (void*)&mMtx << " \"" << mtx.name() << "\"" 
-					<< " waited for " << ts - _time_stamp 
-					<< " seconds in thread " << pthread_self() 
-					<< " for locked thread " << owner << ". in " << _info << ":" << _lineno << std::endl;
-
-			_time_stamp = ts ;	// This is to re-init the locking time without accounting for how much we waited.
+		if(ts - _time_stamp > 1.0)
+			std::cerr << "Mutex " << (void*)&mMtx << " \"" << mtx.name() << "\""
+			          << " waited for " << ts - _time_stamp
+			          << " seconds in thread " << pthread_self()
+			          << " for locked thread " << owner << ". in " << _info
+			          << ":" << _lineno << std::endl;
+		_time_stamp = ts ;	// This is to re-init the locking time without accounting for how much we waited.
 #endif
-		}
+	}
 
-		~RsStackMutex() 
-		{ 
-			mMtx.unlock(); 
+	~RsStackMutex()
+	{
+		mMtx.unlock();
+
 #ifdef RSMUTEX_DEBUG
-			double ts = getCurrentTS() ;
+		double ts = getCurrentTS();
 
-			if(ts - _time_stamp > 1.0)
-				std::cerr << "Mutex " << (void*)&mMtx << " \"" << mMtx.name() << "\"" 
-					<< " locked for " << ts - _time_stamp 
-					<< " seconds in thread " << pthread_self() 
-					<< ". in " << _info << ":" << _lineno << std::endl;
+		    if(ts - _time_stamp > 1.0)
+				std::cerr << "Mutex " << (void*)&mMtx << " \"" << mMtx.name()
+				          << "\"" << " locked for " << ts - _time_stamp
+				          << " seconds in thread " << pthread_self()
+				          << ". in " << _info << ":" << _lineno << std::endl;
 #endif
-		}
+	}
 
-	private:
-		RsMutex &mMtx;
+private:
+	RsMutex &mMtx;
 
 #ifdef RSMUTEX_DEBUG
-		static double getCurrentTS() ;
-		double _time_stamp ;
-		std::string _info ;
-		int _lineno ;
+	static double getCurrentTS();
+	double _time_stamp;
+	std::string _info;
+	int _lineno;
 #endif
 };
 
@@ -204,7 +205,15 @@ public:
 	 * If you derive your own subclass, you need to call shouldStop() in order
 	 * to check for a possible stopping order.
 	 */
-	void ask_for_stop();
+	void askForStop();
+
+
+	/**
+	 * Ask the thread to stop, and wait it has really stopped before returning.
+	 * It must not be called in the same thread, as it would not wait for the
+	 * effective stop to occur as it would cause a deadlock.
+	 */
+	void fullstop();
 
 protected:
 
@@ -217,35 +226,45 @@ protected:
 
 	/**
 	 * @brief flag to indicate if thread is stopped or not
-	 * Subclasses must take care of setting this to true when the execution
-	 * start, and to false when execution is stopped.
+	 * Subclasses must take care of setting this to false when the execution
+	 * start, and to true when execution is stopped.
 	 */
 	std::atomic<bool> mHasStopped;
 
-	/**
-	 * @brief store the id of the corresponding pthread
-	 */
-	pthread_t mTid;
-
 private:
+	/// True if stop has been requested
 	std::atomic<bool> mShouldStop;
+
+	/// Passed as argument for pthread_create(), call start()
 	static void *rsthread_init(void*);
+
+	/// Store the id of the corresponding pthread
+	pthread_t mTid;
 };
 
+/**
+ * Provide a detached execution loop that continuously call data_tick() once the
+ * thread is started
+ */
 class RsTickingThread: public RsThread
 {
 public:
-    RsTickingThread();
+	RsTickingThread();
 
-    void shutdown();
-    void fullstop();
-
-	/// Provided for compatibility @see fullstop()
-	inline void join() { fullstop(); }
-
+	/**
+	 * Subclasses must implement this method, it will be called in a loop once
+	 * the thread is started, so repetitive work (like checking if data is
+	 * available on a socket) should be done here, at the end of this method
+	 * usleep(...) or similar function should be called or the CPU will be used
+	 * as much as possible also if there is nothing to do.
+	 */
 	virtual void data_tick() = 0;
 
+	/// Provided for compatibility @see RsThread::fullstop()
+	inline void join() { fullstop(); }
+
 private:
+	/// Implement the run loop and continuously call data_tick() in it
 	virtual void run();
 };
 

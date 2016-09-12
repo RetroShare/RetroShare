@@ -97,24 +97,7 @@ bool RsThread::isRunning() { return !mHasStopped; }
 
 bool RsThread::shouldStop() { return mShouldStop; }
 
-void RsTickingThread::shutdown()
-{
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "pqithreadstreamer::shutdown()" << std::endl;
-#endif
-
-	if(mHasStopped)
-	{
-#ifdef DEBUG_THREADS
-		THREAD_DEBUG << "  thread not running. Quit." << std::endl;
-#endif
-		return;
-	}
-
-	ask_for_stop();
-}
-
-void RsThread::ask_for_stop()
+void RsThread::askForStop()
 {
 #ifdef DEBUG_THREADS
     THREAD_DEBUG << "  calling stop" << std::endl;
@@ -122,9 +105,9 @@ void RsThread::ask_for_stop()
 	mShouldStop = true;
 }
 
-void RsTickingThread::fullstop()
+void RsThread::fullstop()
 {
-	shutdown();
+	askForStop();
 
 #ifdef DEBUG_THREADS
 	THREAD_DEBUG << "  waiting stop" << std::endl;
@@ -132,7 +115,7 @@ void RsTickingThread::fullstop()
 	if(pthread_equal(mTid,pthread_self()))
 	{
 		THREAD_DEBUG << "(WW) RsTickingThread::fullstop() called by same "
-		             << "thread. This is unexpected." << std::endl;
+		             << "thread. This should never happen." << std::endl;
 		return;
 	}
 
