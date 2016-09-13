@@ -55,7 +55,6 @@ file_lists {
 			file_sharing/directory_storage.cc \
 			file_sharing/directory_updater.cc \
 			file_sharing/dir_hierarchy.cc \
-			file_sharing/rsexpr.cc \
 			file_sharing/rsfilelistitems.cc
 }
 
@@ -653,6 +652,7 @@ SOURCES +=	turtle/p3turtle.cc \
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
+			util/rsexpr.cc \
 			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
