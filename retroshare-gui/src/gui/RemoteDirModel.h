@@ -194,7 +194,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 	public:
 		FlatStyle_RDM(bool mode)
-			: RetroshareDirModel(mode)
+            : RetroshareDirModel(mode), _ref_mutex("Flat file list")
 		{
 			_needs_update = true ;
 		}
@@ -223,7 +223,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		QString computeDirectoryPath(const DirDetails& details) const ;
 
-		std::vector<std::pair<void *,QString> > _ref_entries ;// used to store the refs to display
+        mutable RsMutex _ref_mutex ;
+        std::vector<void *> _ref_entries ;// used to store the refs to display
 		std::vector<void *> _ref_stack ;		// used to store the refs to update
 		bool _needs_update ;
 };

@@ -48,7 +48,6 @@ class ftDataMultiplex;
 class p3turtle ;
 class p3ServiceControl;
 
-#include "dbase/cachestrapper.h"
 #include "util/rsthreads.h"
 #include "pqi/pqiservicemonitor.h"
 #include "pqi/p3cfgmgr.h"

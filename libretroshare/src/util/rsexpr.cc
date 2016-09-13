@@ -24,7 +24,6 @@
  */
 
 
-#include "dbase/findex.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rstypes.h"
 #include <algorithm>

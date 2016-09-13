@@ -194,6 +194,7 @@ int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
 	std::cerr << "RetroshareDirModel::rowCount(): " << parent.internalPointer();
 	std::cerr << ": ";
 #endif
+    RS_STACK_MUTEX(_ref_mutex) ;
 
 	return _ref_entries.size() ;
 }
@@ -501,7 +502,12 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& deta
 			case 1: return (qulonglong) details.count;
 			case 2: return  details.age;
 			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
-			case 4: return _ref_entries[index.row()].second ;
+
+        case 4: {
+            RS_STACK_MUTEX(_ref_mutex) ;
+
+            return computeDirectoryPath(details);
+        }
 		}
 	}
 	return QVariant();
@@ -765,9 +771,11 @@ QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent
 	if(row < 0)
 		return QModelIndex() ;
 
-	if(row < (int) _ref_entries.size())
+    RS_STACK_MUTEX(_ref_mutex) ;
+
+    if(row < (int) _ref_entries.size())
 	{
-		void *ref = _ref_entries[row].first ;
+        void *ref = _ref_entries[row];
 
 #ifdef RDM_DEBUG
     std::cerr << "Creating index 2 row=" << row << ", column=" << column << ", ref=" << (void*)ref << std::endl;
@@ -903,7 +911,7 @@ void RetroshareDirModel::postMods()
 //	changePersistentIndexList(piList, empty);
 
 	/* Clear caches */
-	mCache.clear();
+    //mCache.clear();
 
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
@@ -1316,17 +1324,18 @@ TreeStyle_RDM::~TreeStyle_RDM()
 }
 void FlatStyle_RDM::postMods()
 {
-	if(visible())
+    if(visible())
 	{
-		_ref_entries.clear() ;
-		_ref_stack.clear() ;
+        emit layoutAboutToBeChanged();
 
-		_ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
-
-		std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
-		_needs_update = false ;
-		updateRefs() ;
-	}
+        {
+            RS_STACK_MUTEX(_ref_mutex) ;
+            _ref_stack.clear() ;
+            _ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
+            _needs_update = false ;
+        }
+        QTimer::singleShot(100,this,SLOT(updateRefs())) ;
+    }
 	else
 		_needs_update = true ;
 }
@@ -1339,47 +1348,56 @@ void FlatStyle_RDM::updateRefs()
 		return ;
 	}
 
-	RetroshareDirModel::preMods() ;
+    RetroshareDirModel::preMods() ;
 
-	static const uint32_t MAX_REFS_PER_SECOND = 2000 ;
+
+    static const uint32_t MAX_REFS_PER_SECOND = 2000 ;
 	uint32_t nb_treated_refs = 0 ;
 
-	while(!_ref_stack.empty())
-	{
-		void *ref = _ref_stack.back() ;
+    {
+        RS_STACK_MUTEX(_ref_mutex) ;
+
+        _ref_entries.clear() ;
+
+        std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
+
+        while(!_ref_stack.empty())
+        {
+            void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
-		std::cerr << "FlatStyle_RDM::postMods(): poped ref " << ref << std::endl;
+            std::cerr << "FlatStyle_RDM::postMods(): poped ref " << ref << std::endl;
 #endif
-		_ref_stack.pop_back() ;
+            _ref_stack.pop_back() ;
 
-        DirDetails details ;
+            DirDetails details ;
 
-        if (requestDirDetails(ref, RemoteMode,details))
-		{
-            if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
-                _ref_entries.push_back(std::pair<void*,QString>(ref,computeDirectoryPath(details)));
+            if (requestDirDetails(ref, RemoteMode,details))
+            {
+                if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
+                    _ref_entries.push_back(ref) ;
 #ifdef RDM_DEBUG
-			std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
+                std::cerr << "FlatStyle_RDM::postMods(): adding ref " << ref << std::endl;
 #endif
-            for(uint32_t i=0;i<details.children.size();++i)
-                _ref_stack.push_back(details.children[i].ref) ;
-		}
-		if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to 
-		{															// the user and setup a timer to finish the job later.
-			_needs_update = true ;
+                for(uint32_t i=0;i<details.children.size();++i)
+                    _ref_stack.push_back(details.children[i].ref) ;
+            }
+            if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
+            {															// the user and setup a timer to finish the job later.
+                _needs_update = true ;
 
-			if(visible())
-				QTimer::singleShot(2000,this,SLOT(updateRefs())) ;
-			else
-				std::cerr << "Not visible: suspending update"<< std::endl;
-			break ;
-		}
-	}
-	std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;
+                if(visible())
+                    QTimer::singleShot(2000,this,SLOT(updateRefs())) ;
+                else
+                    std::cerr << "Not visible: suspending update"<< std::endl;
+                break ;
+            }
+        }
+        std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;
 
-	if(_ref_stack.empty())
-		_needs_update = false ;
+        if(_ref_stack.empty())
+            _needs_update = false ;
+    }
 
-	RetroshareDirModel::postMods() ;
+    RetroshareDirModel::postMods() ;
 }
 

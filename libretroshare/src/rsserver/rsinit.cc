@@ -805,7 +805,6 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 #include <unistd.h>
 //#include <getopt.h>
 
-#include "dbase/cachestrapper.h"
 #include "ft/ftserver.h"
 #include "ft/ftcontroller.h"
 

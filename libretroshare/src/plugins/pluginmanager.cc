@@ -17,7 +17,6 @@
 #include <util/rsversioninfo.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
-#include <dbase/cachestrapper.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsfiles.h>
 #include <pqi/pqiservice.h>

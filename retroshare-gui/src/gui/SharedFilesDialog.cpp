@@ -144,14 +144,17 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
 	tree_proxyModel->sort(COLUMN_NAME);
 
-	flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
-	flat_proxyModel->setDynamicSortFilter(true);
-	flat_proxyModel->setSourceModel(flat_model);
-	flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-	flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-	flat_proxyModel->sort(COLUMN_NAME);
+    flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
+    flat_proxyModel->setSourceModel(flat_model);
+    flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
+    flat_proxyModel->sort(COLUMN_NAME);
 
-	connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+    // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
+    // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
+    //flat_proxyModel->setDynamicSortFilter(true);
+
+    connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
 	connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
 	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
@@ -346,13 +349,13 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	if(viewTypeIndex==VIEW_TYPE_TREE)
 	{
 		model = tree_model ;
-		proxyModel = tree_proxyModel ;
+        proxyModel = tree_proxyModel ;
 	}
 	else
 	{
 		model = flat_model ;
-		proxyModel = flat_proxyModel ;
-	}
+        proxyModel = flat_proxyModel ;
+    }
 
 	showProperColumns() ;
 
