@@ -595,7 +595,7 @@ bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<D
         return false;
 }
 
-int InternalFileHierarchyStorage::searchBoolExp(Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const
+int InternalFileHierarchyStorage::searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const
 {
 #ifdef TODO
     for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)

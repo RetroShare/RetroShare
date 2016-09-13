@@ -569,11 +569,11 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetai
     return mFileDatabase->SearchKeywords(keywords, results,flags,peer_id);
 }
 
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
+int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
 {
     return mFileDatabase->SearchBoolExp(exp, results,flags,RsPeerId());
 }
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
+int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
     return mFileDatabase->SearchBoolExp(exp,results,flags,peer_id) ;
 }

@@ -27,8 +27,9 @@
 #include "mainpage.h"
 
 class AdvancedSearchDialog;
-class Expression;
 class RSTreeWidgetItemCompareRole;
+
+namespace RsRegularExpression { class Expression; }
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2
@@ -99,7 +100,7 @@ private slots:
     void showAdvSearchDialog(bool=true);
 
 /** perform the advanced search */
-    void advancedSearch(Expression*);
+    void advancedSearch(RsRegularExpression::Expression*);
 
     void selectSearchResults(int index = -1);
     void hideOrShowSearchResult(QTreeWidgetItem* resultItem, QString currentSearchId = QString(), int fileTypeIndex = -1);

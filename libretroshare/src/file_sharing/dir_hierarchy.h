@@ -140,7 +140,7 @@ public:
     // search. SearchHash is logarithmic. The other two are linear.
 
     bool searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results);
-    int searchBoolExp(Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const ;
+    int searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const ;
     int searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const ;
 
     bool check(std::string& error_string) const	;// checks consistency of storage.

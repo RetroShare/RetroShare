@@ -103,7 +103,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		virtual bool findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
 
 		virtual int SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) ;
-		virtual int SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
+        virtual int SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
         // ftSearch
         virtual bool search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;

@@ -36,7 +36,7 @@
 class RsFiles;
 extern RsFiles  *rsFiles;
 
-class Expression;
+namespace RsRegularExpression { class Expression; }
 class CacheStrapper ;
 class CacheTransfer;
 
@@ -190,8 +190,8 @@ class RsFiles
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
+        virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
+        virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 
 		/***
 		 * Utility Functions.

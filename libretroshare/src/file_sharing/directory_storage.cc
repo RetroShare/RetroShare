@@ -203,7 +203,7 @@ int DirectoryStorage::searchTerms(const std::list<std::string>& terms, std::list
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->searchTerms(terms,results);
 }
-int DirectoryStorage::searchBoolExp(Expression * exp, std::list<EntryIndex> &results) const
+int DirectoryStorage::searchBoolExp(RsRegularExpression::Expression * exp, std::list<EntryIndex> &results) const
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->searchBoolExp(exp,results);

@@ -774,7 +774,7 @@ void SearchDialog::initSearchResult(const QString& txt, qulonglong searchId, int
 	ui.searchSummaryWidget->setCurrentItem(item2);
 }
 
-void SearchDialog::advancedSearch(Expression* expression)
+void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 {
 	advSearchDialog->hide();
 
@@ -782,7 +782,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 	std::list<DirDetails> results;
 
 	// send a turtle search request
-	LinearizedExpression e ;
+    RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
 	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
@@ -843,8 +843,8 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if (n < 1)
 		return;
 
-	NameExpression exprs(ContainsAllStrings,words,true) ;
-	LinearizedExpression lin_exp ;
+    RsRegularExpression::NameExpression exprs(RsRegularExpression::ContainsAllStrings,words,true) ;
+    RsRegularExpression::LinearizedExpression lin_exp ;
 	exprs.linearize(lin_exp) ;
 
 	TurtleRequestId req_id ;

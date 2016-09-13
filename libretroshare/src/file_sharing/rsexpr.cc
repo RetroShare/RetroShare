@@ -26,6 +26,7 @@
 
 #include "dbase/findex.h"
 #include "retroshare/rsexpr.h"
+#include "retroshare/rstypes.h"
 #include <algorithm>
 #include <functional>
 
@@ -34,33 +35,35 @@ eval functions of relational expressions.
 
 ******************************************************************************************/
 
+namespace RsRegularExpression
+{
 template<>
 void RelExpression<int>::linearize(LinearizedExpression& e) const
 {
-	e._ints.push_back(Op) ;
-	e._ints.push_back(LowerValue) ;
-	e._ints.push_back(HigherValue) ;
+    e._ints.push_back(Op) ;
+    e._ints.push_back(LowerValue) ;
+    e._ints.push_back(HigherValue) ;
 }
 
 
-bool DateExpression::eval(FileEntry *file)
+bool DateExpression::eval(const ExpFileEntry& file)
 {
-		return evalRel(file->modtime);	
+    return evalRel(file.file_modtime());
 }
 
-bool SizeExpressionMB::eval(FileEntry *file)
+bool SizeExpressionMB::eval(const ExpFileEntry& file)
 {
-	return evalRel((int)(file->size/(uint64_t)(1024*1024)));	
+    return evalRel((int)(file.file_size()/(uint64_t)(1024*1024)));
 }
 
-bool SizeExpression::eval(FileEntry *file)
+bool SizeExpression::eval(const ExpFileEntry& file)
 {
-	return evalRel(file->size);	
+    return evalRel(file.file_size());
 }
 
-bool PopExpression::eval(FileEntry *file)
+bool PopExpression::eval(const ExpFileEntry& file)
 {
-	return evalRel(file->pop);
+    return evalRel(file.file_popularity());
 }
 
 /******************************************************************************************
@@ -68,98 +71,93 @@ Code for evaluating string expressions
 
 ******************************************************************************************/
 
-bool NameExpression::eval(FileEntry *file) 
+bool NameExpression::eval(const ExpFileEntry& file)
 {
-	return evalStr(file->name);
+    return evalStr(file.file_name());
 }
 
-bool PathExpression::eval(FileEntry *file){
-	std::string path;
-	/*Construct the path of this file*/
-	DirEntry * curr = file->parent;
-	while ( curr != NULL ){
-		path = curr->name+"/"+ path;
-		curr = curr->parent;
-	}
-	return evalStr(path);
+bool PathExpression::eval(const ExpFileEntry& file)
+{
+    return evalStr(file.file_parent_path());
 }
 
-bool ExtExpression::eval(FileEntry *file){
-	std::string ext;
-	/*Get the part of the string after the last instance of . in the filename */
-	size_t index = file->name.find_last_of('.');
-	if (index != std::string::npos) {
-		ext = file->name.substr(index+1);
-		if (ext != "" ){
-			return evalStr(ext);	
-		}
-	}
-	return false;
+bool ExtExpression::eval(const ExpFileEntry& file)
+{
+    std::string ext;
+    /*Get the part of the string after the last instance of . in the filename */
+    size_t index = file.file_name().find_last_of('.');
+    if (index != std::string::npos) {
+        ext = file.file_name().substr(index+1);
+        if (ext != "" ){
+            return evalStr(ext);
+        }
+    }
+    return false;
 }
 
-bool HashExpression::eval(FileEntry *file){
-    return evalStr(file->hash.toStdString());
+bool HashExpression::eval(const ExpFileEntry& file){
+    return evalStr(file.file_hash().toStdString());
 }
 
 /*Check whether two strings are 'equal' to each other*/
 static bool StrEquals(const std::string & str1, const std::string & str2, 
-			   bool IgnoreCase ){
-	if ( str1.size() != str2.size() ){
-		return false;
-	} else if (IgnoreCase) {
-		std::equal( str1.begin(), str1.end(), 
-						   str2.begin(), CompareCharIC() );
-	}
-	return std::equal( str1.begin(), str1.end(), 
-						   str2.begin());
+                      bool IgnoreCase ){
+    if ( str1.size() != str2.size() ){
+        return false;
+    } else if (IgnoreCase) {
+        std::equal( str1.begin(), str1.end(),
+                    str2.begin(), CompareCharIC() );
+    }
+    return std::equal( str1.begin(), str1.end(),
+                       str2.begin());
 }
 
 /*Check whether one string contains the other*/
 static bool StrContains( const std::string & str1, const std::string & str2,
-				  bool IgnoreCase){
+                         bool IgnoreCase){
 
-	std::string::const_iterator iter ;
-	if (IgnoreCase) {
-		iter = std::search( str1.begin(), str1.end(),
-					   		str2.begin(), str2.end(), CompareCharIC() );		
-	} else {
-		iter = std::search( str1.begin(), str1.end(),
-					   		str2.begin(), str2.end());		
-	}
-	
-	return ( iter != str1.end() );
+    std::string::const_iterator iter ;
+    if (IgnoreCase) {
+        iter = std::search( str1.begin(), str1.end(),
+                            str2.begin(), str2.end(), CompareCharIC() );
+    } else {
+        iter = std::search( str1.begin(), str1.end(),
+                            str2.begin(), str2.end());
+    }
+
+    return ( iter != str1.end() );
 }
 
 
 bool StringExpression :: evalStr ( const std::string &str ){
-	std::list<std::string>::iterator iter;
-	switch (Op) {
-		case ContainsAllStrings:
-			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
-				if ( StrContains (str, *iter, IgnoreCase) == false ){
-					return false;	
-				}
-			}
-			return true;
-		break;
-		case ContainsAnyStrings:
-			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
-				if ( StrContains (str,*iter, IgnoreCase) == true ) {
-					return true;	
-				}
-			}
-		break;
-		case EqualsString:
-			for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
-				if ( StrEquals (str,*iter, IgnoreCase) == true ) {
-					return true;	
-				}
-			}
-		break;
-		default:
-			return false;
-	}
-	return false;
+    std::list<std::string>::iterator iter;
+    switch (Op) {
+    case ContainsAllStrings:
+        for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
+            if ( StrContains (str, *iter, IgnoreCase) == false ){
+                return false;
+            }
+        }
+        return true;
+        break;
+    case ContainsAnyStrings:
+        for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
+            if ( StrContains (str,*iter, IgnoreCase) == true ) {
+                return true;
+            }
+        }
+        break;
+    case EqualsString:
+        for ( iter = terms.begin(); iter != terms.end(); ++iter ) {
+            if ( StrEquals (str,*iter, IgnoreCase) == true ) {
+                return true;
+            }
+        }
+        break;
+    default:
+        return false;
+    }
+    return false;
 }
 
 /*************************************************************************
@@ -168,122 +166,123 @@ bool StringExpression :: evalStr ( const std::string &str ){
 
 void CompoundExpression::linearize(LinearizedExpression& e) const
 {
-	e._tokens.push_back(LinearizedExpression::EXPR_COMP) ;
-	e._ints.push_back(Op) ;
+    e._tokens.push_back(LinearizedExpression::EXPR_COMP) ;
+    e._ints.push_back(Op) ;
 
-	Lexp->linearize(e) ;
-	Rexp->linearize(e) ;
+    Lexp->linearize(e) ;
+    Rexp->linearize(e) ;
 }
 
 void StringExpression::linearize(LinearizedExpression& e) const
 {
-	e._ints.push_back(Op) ;
-	e._ints.push_back(IgnoreCase) ;
-	e._ints.push_back(terms.size()) ;
+    e._ints.push_back(Op) ;
+    e._ints.push_back(IgnoreCase) ;
+    e._ints.push_back(terms.size()) ;
 
-	for(std::list<std::string>::const_iterator it(terms.begin());it!=terms.end();++it)
-		e._strings.push_back(*it) ;
+    for(std::list<std::string>::const_iterator it(terms.begin());it!=terms.end();++it)
+        e._strings.push_back(*it) ;
 }
 
 Expression *LinearizedExpression::toExpr(const LinearizedExpression& e) 
 {
-	int i=0,j=0,k=0 ;
-	return toExpr(e,i,j,k) ;
+    int i=0,j=0,k=0 ;
+    return toExpr(e,i,j,k) ;
 }
 
 void LinearizedExpression::readStringExpr(const LinearizedExpression& e,int& n_ints,int& n_strings,std::list<std::string>& strings,bool& b,StringOperator& op) 
 {
-	op = static_cast<StringOperator>(e._ints[n_ints++]) ;
-	b = e._ints[n_ints++] ;
-	int n = e._ints[n_ints++] ;
+    op = static_cast<StringOperator>(e._ints[n_ints++]) ;
+    b = e._ints[n_ints++] ;
+    int n = e._ints[n_ints++] ;
 
-	strings.clear() ;
-	for(int i=0;i<n;++i)
-		strings.push_back(e._strings[n_strings++]) ;
+    strings.clear() ;
+    for(int i=0;i<n;++i)
+        strings.push_back(e._strings[n_strings++]) ;
 }
-							  
+
 Expression *LinearizedExpression::toExpr(const LinearizedExpression& e,int& n_tok,int& n_ints,int& n_strings) 
 {
-	LinearizedExpression::token tok = static_cast<LinearizedExpression::token>(e._tokens[n_tok++]) ;
+    LinearizedExpression::token tok = static_cast<LinearizedExpression::token>(e._tokens[n_tok++]) ;
 
-	switch(tok)
-	{
-		case EXPR_DATE:  {
-								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
-								  int lv = e._ints[n_ints++] ;
-								  int hv = e._ints[n_ints++] ;
+    switch(tok)
+    {
+    case EXPR_DATE:  {
+        RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+        int lv = e._ints[n_ints++] ;
+        int hv = e._ints[n_ints++] ;
 
-								  return new DateExpression(op,lv,hv) ;
-							  }
+        return new DateExpression(op,lv,hv) ;
+    }
 
-		case EXPR_POP:	  {
-								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
-								  int lv = e._ints[n_ints++] ;
-								  int hv = e._ints[n_ints++] ;
+    case EXPR_POP:	  {
+        RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+        int lv = e._ints[n_ints++] ;
+        int hv = e._ints[n_ints++] ;
 
-								  return new PopExpression(op,lv,hv) ;
-							  }
-		case EXPR_SIZE:  {
-								  RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
-								  int lv = e._ints[n_ints++] ;
-								  int hv = e._ints[n_ints++] ;
+        return new PopExpression(op,lv,hv) ;
+    }
+    case EXPR_SIZE:  {
+        RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+        int lv = e._ints[n_ints++] ;
+        int hv = e._ints[n_ints++] ;
 
-								  return new SizeExpression(op,lv,hv) ;
-							  }
-		case EXPR_HASH:	{
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
+        return new SizeExpression(op,lv,hv) ;
+    }
+    case EXPR_HASH:	{
+        std::list<std::string> strings ;
+        StringOperator op ;
+        bool b ;
 
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
-									return new HashExpression(op,strings) ;
-								}
-		case EXPR_NAME:	{
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
+        readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+        return new HashExpression(op,strings) ;
+    }
+    case EXPR_NAME:	{
+        std::list<std::string> strings ;
+        StringOperator op ;
+        bool b ;
 
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+        readStringExpr(e,n_ints,n_strings,strings,b,op) ;
 
-									return new NameExpression(op,strings,b) ;
-								}
-		case EXPR_PATH: {
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
+        return new NameExpression(op,strings,b) ;
+    }
+    case EXPR_PATH: {
+        std::list<std::string> strings ;
+        StringOperator op ;
+        bool b ;
 
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+        readStringExpr(e,n_ints,n_strings,strings,b,op) ;
 
-									return new ExtExpression(op,strings,b) ;
-								}
-		case EXPR_EXT: {
-									std::list<std::string> strings ;
-									StringOperator op ;
-									bool b ;
+        return new ExtExpression(op,strings,b) ;
+    }
+    case EXPR_EXT: {
+        std::list<std::string> strings ;
+        StringOperator op ;
+        bool b ;
 
-									readStringExpr(e,n_ints,n_strings,strings,b,op) ;
+        readStringExpr(e,n_ints,n_strings,strings,b,op) ;
 
-									return new ExtExpression(op,strings,b) ;
-								}
-		case EXPR_COMP:	{ 
-									LogicalOperator op = static_cast<LogicalOperator>(e._ints[n_ints++]) ;
+        return new ExtExpression(op,strings,b) ;
+    }
+    case EXPR_COMP:	{
+        LogicalOperator op = static_cast<LogicalOperator>(e._ints[n_ints++]) ;
 
-									Expression *e1 = toExpr(e,n_tok,n_ints,n_strings) ;
-									Expression *e2 = toExpr(e,n_tok,n_ints,n_strings) ;
+        Expression *e1 = toExpr(e,n_tok,n_ints,n_strings) ;
+        Expression *e2 = toExpr(e,n_tok,n_ints,n_strings) ;
 
-									return new CompoundExpression(op,e1,e2) ;
-								}
-		case EXPR_SIZE_MB: {
-									 RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
-									 int lv = e._ints[n_ints++] ;
-									 int hv = e._ints[n_ints++] ;
+        return new CompoundExpression(op,e1,e2) ;
+    }
+    case EXPR_SIZE_MB: {
+        RelOperator op = static_cast<RelOperator>(e._ints[n_ints++]) ;
+        int lv = e._ints[n_ints++] ;
+        int hv = e._ints[n_ints++] ;
 
-									 return new SizeExpressionMB(op,lv,hv) ;
-								 }
-		default:
-								std::cerr << "No expression match the current value " << tok << std::endl ;
-								return NULL ;
-	}
+        return new SizeExpressionMB(op,lv,hv) ;
+    }
+    default:
+        std::cerr << "No expression match the current value " << tok << std::endl ;
+        return NULL ;
+    }
 }
 
 
+}

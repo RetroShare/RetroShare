@@ -59,6 +59,7 @@ file_lists {
 			file_sharing/rsfilelistitems.cc
 }
 
+
 dsdv {
 DEFINES *= SERVICES_DSDV
 HEADERS += services/p3dsdv.h \

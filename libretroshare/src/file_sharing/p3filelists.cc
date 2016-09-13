@@ -814,7 +814,7 @@ int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::
 
     return filterResults(firesults,results,flags,client_peer_id) ;
 }
-int p3FileDatabase::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id) const
+int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
