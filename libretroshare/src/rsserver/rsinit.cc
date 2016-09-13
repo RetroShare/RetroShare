@@ -1675,11 +1675,6 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "(2) Load configuration files" << std::endl;
 
-	/* NOTE: CacheStrapper's load causes Cache Files to be
-	 * loaded into all the CacheStores/Sources. This happens
-	 * after all the other configurations have happened.
-	 */
-
 	mConfigMgr->loadConfiguration();
 
 	/**************************************************************************/

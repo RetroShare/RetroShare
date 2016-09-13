@@ -44,11 +44,6 @@ const int ftserverzone = 29539;
 #include "pqi/p3notify.h"
 #include "rsserver/p3face.h"
 
-
-// Includes CacheStrapper / FiMonitor / FiStore for us.
-
-#include "ft/ftdbase.h"
-
 #include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
 
@@ -298,14 +293,6 @@ bool ftServer::FileControl(const RsFileHash& hash, uint32_t flags)
 bool ftServer::FileClearCompleted()
 {
 	return mFtController->FileClearCompleted();
-}
-void ftServer::setMinPrioritizedTransfers(uint32_t s)
-{
-	mFtController->setMinPrioritizedTransfers(s) ;
-}
-uint32_t ftServer::getMinPrioritizedTransfers()
-{
-	return mFtController->getMinPrioritizedTransfers() ;
 }
 void ftServer::setQueueSize(uint32_t s)
 {

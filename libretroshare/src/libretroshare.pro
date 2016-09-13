@@ -371,7 +371,6 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
 			ft/ftdata.h \
 			ft/ftdatamultiplex.h \
-			ft/ftdbase.h \
 			ft/ftextralist.h \
 			ft/ftfilecreator.h \
 			ft/ftfileprovider.h \
@@ -531,7 +530,6 @@ HEADERS +=	util/folderiterator.h \
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
 			ft/ftdatamultiplex.cc \
-			ft/ftdbase.cc \
 			ft/ftextralist.cc \
 			ft/ftfilecreator.cc \
 			ft/ftfileprovider.cc \

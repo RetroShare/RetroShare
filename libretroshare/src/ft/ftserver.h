@@ -47,7 +47,6 @@
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "retroshare/rsfiles.h"
-//#include "dbase/cachestrapper.h"
 
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
@@ -55,10 +54,6 @@
 class p3ConnectMgr;
 class p3FileDatabase;
 
-class CacheStrapper;
-class CacheTransfer;
-
-class ftCacheStrapper;
 class ftFiStore;
 class ftFiMonitor;
 
@@ -145,8 +140,6 @@ public:
     /***
          * Control of Downloads Priority.
          ***/
-    virtual uint32_t getMinPrioritizedTransfers() ;
-    virtual void setMinPrioritizedTransfers(uint32_t s) ;
     virtual uint32_t getQueueSize() ;
     virtual void setQueueSize(uint32_t s) ;
     virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove queue_mv);

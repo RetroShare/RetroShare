@@ -37,8 +37,6 @@ class RsFiles;
 extern RsFiles  *rsFiles;
 
 namespace RsRegularExpression { class Expression; }
-class CacheStrapper ;
-class CacheTransfer;
 
 /* These are used mainly by ftController at the moment */
 const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
@@ -147,8 +145,6 @@ class RsFiles
 		/***
 		 * Control of Downloads Priority.
 		 ***/
-		virtual uint32_t getMinPrioritizedTransfers() = 0 ;
-		virtual void setMinPrioritizedTransfers(uint32_t s) = 0 ;
 		virtual uint32_t getQueueSize() = 0 ;
 		virtual void setQueueSize(uint32_t s) = 0 ;
 		virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove mv) = 0;
