@@ -807,19 +807,37 @@ bool p3FileDatabase::findLocalFile(const RsFileHash& hash,FileSearchFlags flags,
 
 int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id)
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
-
     std::list<EntryIndex> firesults;
-    mLocalSharedDirs->searchTerms(keywords,firesults) ;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        mLocalSharedDirs->searchTerms(keywords,firesults) ;
+
+        for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+        {
+            void *p=NULL;
+            convertEntryIndexToPointer(*it,0,p);
+            *it = (intptr_t)p ;
+        }
+    }
 
     return filterResults(firesults,results,flags,client_peer_id) ;
 }
 int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
-
     std::list<EntryIndex> firesults;
-    mLocalSharedDirs->searchBoolExp(exp,firesults) ;
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        mLocalSharedDirs->searchBoolExp(exp,firesults) ;
+
+        for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+        {
+            void *p=NULL;
+            convertEntryIndexToPointer(*it,0,p);
+            *it = (intptr_t)p ;
+        }
+    }
 
     return filterResults(firesults,results,flags,client_peer_id) ;
 }
@@ -854,18 +872,21 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
 {
     results.clear();
 
-#ifdef P3FILELISTS_DEBUG
-    if((flags & ~RS_FILE_HINTS_PERMISSION_MASK) > 0)
-        std::cerr << "(EE) ***** FileIndexMonitor:: Flags ERROR in filterResults!!" << std::endl;
-#endif
+    flags &= RS_FILE_HINTS_PERMISSION_MASK;	// remove other flags.
+
     /* translate/filter results */
 
     for(std::list<EntryIndex>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
     {
         DirDetails cdetails ;
-        RequestDirDetails ((void*)(intptr_t)*rit,cdetails,FileSearchFlags(0u));
+
+        if(!RequestDirDetails ((void*)(intptr_t)*rit,cdetails,RS_FILE_HINTS_LOCAL))
+        {
+            std::cerr << "(EE) Cannot get dir details for entry " << (void*)(intptr_t)*rit << std::endl;
+            continue ;
+        }
 #ifdef P3FILELISTS_DEBUG
-        std::cerr << "Filtering candidate " << (*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
+        std::cerr << "Filtering candidate " << (void*)(intptr_t)(*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif
 
         if(!peer_id.isNull())

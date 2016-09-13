@@ -23,6 +23,7 @@
  *
  */
 #include "util/rsdir.h"
+#include "retroshare/rsexpr.h"
 
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
@@ -595,21 +596,33 @@ bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<D
         return false;
 }
 
+class DirectoryStorageExprFileEntry: public RsRegularExpression::ExpFileEntry
+{
+public:
+    DirectoryStorageExprFileEntry(const InternalFileHierarchyStorage::FileEntry& fe,const InternalFileHierarchyStorage::DirEntry& parent) : mFe(fe),mDe(parent) {}
+
+    inline virtual const std::string& file_name()       const { return mFe.file_name ; }
+    inline virtual uint64_t           file_size()       const { return mFe.file_size ; }
+    inline virtual const RsFileHash&  file_hash()       const { return mFe.file_hash ; }
+    inline virtual time_t             file_modtime()    const { return mFe.file_modtime ; }
+    inline virtual std::string        file_parent_path()const { return mDe.dir_parent_path + "/" + mDe.dir_name ; }
+    inline virtual uint32_t           file_popularity() const { NOT_IMPLEMENTED() ; return 0; }
+
+private:
+    const InternalFileHierarchyStorage::FileEntry& mFe ;
+    const InternalFileHierarchyStorage::DirEntry& mDe ;
+};
+
 int InternalFileHierarchyStorage::searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const
 {
-#ifdef TODO
     for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it(mFileHashes.begin());it!=mFileHashes.end();++it)
-    {
-        const std::string &str1 = static_cast<FileEntry*>(mNodes[fit->second])->file_name;
+        if(mNodes[it->second] != NULL && exp->eval(
+                    DirectoryStorageExprFileEntry(*static_cast<const FileEntry*>(mNodes[it->second]),
+                                                  *static_cast<const DirEntry*>(mNodes[mNodes[it->second]->parent_index])
+                                                  )))
+            results.push_back(it->second);
 
-    {
-        /*Evaluate the boolean expression and add it to the results if its true*/
-        bool ret = exp->eval(fit->second);
-        if (ret == true){
-            results.push_back(fit->second);
-        }
-    }
-#endif
+    return 0;
 }
 
 int InternalFileHierarchyStorage::searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const
