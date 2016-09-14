@@ -88,8 +88,10 @@ bool FileListIO::write125Size(unsigned char *data,uint32_t data_size,uint32_t& o
         if(offset+2 > data_size)
             return false;
 
-        data[offset++] = (uint8_t)((S >> 8) + 192) ;
-        data[offset++] = (uint8_t)((S & 255) - 192) ;
+        data[offset+1] =  (S - 192) & 0xff ;
+        data[offset  ] = ((S - 192 - data[offset+1]) >> 8) + 192;
+
+        offset += 2 ;
 
         return true;
     }
