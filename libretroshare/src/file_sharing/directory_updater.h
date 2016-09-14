@@ -38,7 +38,8 @@ public:
     LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;
     virtual ~LocalDirectoryUpdater() {}
 
-    virtual void forceUpdate();
+    void forceUpdate();
+    bool inDirectoryCheck() const ;
 
     void setFileWatchPeriod(uint32_t seconds) { mDelayBetweenDirectoryUpdates = seconds ; }
     uint32_t fileWatchPeriod() const { return mDelayBetweenDirectoryUpdates ; }

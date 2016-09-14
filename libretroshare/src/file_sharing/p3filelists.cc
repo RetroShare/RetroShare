@@ -36,7 +36,8 @@
 
 #include "rsserver/p3face.h"
 
-#define P3FILELISTS_DEBUG() std::cerr << time(NULL) << ": p3FileLists: "
+#define P3FILELISTS_DEBUG() std::cerr << time(NULL)    << " : FILE_LISTS : " << __FUNCTION__ << " : "
+#define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -564,7 +565,7 @@ bool p3FileDatabase::convertEntryIndexToPointer(const EntryIndex& e, uint32_t fi
 
     if(fi+1 >= (1<<NB_FRIEND_INDEX_BITS) || fe >= (1<< NB_ENTRY_INDEX_BITS))
     {
-        std::cerr << "(EE) cannot convert entry index " << e << " of friend with index " << fi << " to pointer." << std::endl;
+        P3FILELISTS_ERROR() << "(EE) cannot convert entry index " << e << " of friend with index " << fi << " to pointer." << std::endl;
         return false ;
     }
 
@@ -585,11 +586,11 @@ void p3FileDatabase::requestDirUpdate(void *ref)
 
    time_t recurs_max_modf_TS_remote_time,local_update_TS;
 
-    std::cerr << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
+    P3FILELISTS_DEBUG() << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
 
    if(!mRemoteDirectories[fi-1]->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
    {
-       std::cerr << "  (EE) Cannot get max known recurs modf time!" << std::endl;
+       P3FILELISTS_ERROR() << "  (EE) Cannot get max known recurs modf time!" << std::endl;
        return ;
    }
 
@@ -660,8 +661,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         d.count = d.children.size();
 
 #ifdef DEBUG_FILE_HIERARCHY
-        std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
-        std::cerr << d << std::endl;
+        P3FILELISTS_DEBUG() << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
 #endif
 
         return true ;
@@ -675,7 +675,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     // check consistency
     if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
     {
-        std::cerr << "remote request on local index or local request on remote index. This should not happen." << std::endl;
+        P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
         return false ;
     }
     DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
@@ -710,8 +710,8 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     d.id = storage->peerId();
 
 #ifdef DEBUG_FILE_HIERARCHY
-    std::cerr << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
-    std::cerr << d << std::endl;
+    P3FILELISTS_DEBUG() << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+    P3FILELISTS_DEBUG() << d << std::endl;
 #endif
 
     return true;
@@ -751,11 +751,12 @@ uint32_t p3FileDatabase::getType(void *ref) const
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
     NOT_IMPLEMENTED();
+    mLocalDirWatcher->forceUpdate();
 }
 bool p3FileDatabase::inDirectoryCheck()
 {
     NOT_IMPLEMENTED();
-    return 0;
+    return  mLocalDirWatcher->inDirectoryCheck();
 }
 void p3FileDatabase::setWatchPeriod(uint32_t seconds)
 {
@@ -882,11 +883,11 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
 
         if(!RequestDirDetails ((void*)(intptr_t)*rit,cdetails,RS_FILE_HINTS_LOCAL))
         {
-            std::cerr << "(EE) Cannot get dir details for entry " << (void*)(intptr_t)*rit << std::endl;
+            P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << (void*)(intptr_t)*rit << std::endl;
             continue ;
         }
 #ifdef P3FILELISTS_DEBUG
-        std::cerr << "Filtering candidate " << (void*)(intptr_t)(*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
+        P3FILELISTS_DEBUG() << "Filtering candidate " << (void*)(intptr_t)(*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif
 
         if(!peer_id.isNull())
@@ -950,7 +951,7 @@ void p3FileDatabase::tickRecv()
       case RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM: handleDirSyncResponse( dynamic_cast<RsFileListsSyncResponseItem*>(item) ) ;
          break ;
       default:
-         std::cerr << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
+         P3FILELISTS_ERROR() << "(EE) unhandled packet subtype " << item->PacketSubType() << " in " << __PRETTY_FUNCTION__ << std::endl;
       }
 
       delete item ;
@@ -976,7 +977,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
         {
-            std::cerr << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+            P3FILELISTS_ERROR() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
             return;
         }
 
@@ -995,7 +996,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         }
         else if(entry_index != 0 && (!mLocalSharedDirs->getFileSharingPermissions(entry_index,node_flags,node_groups) || !(rsPeers->computePeerPermissionFlags(item->PeerId(),node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
         {
-            std::cerr << "(EE) cannot get file permissions for entry index " << (void*)(intptr_t)entry_index << ", or permission denied." << std::endl;
+            P3FILELISTS_ERROR() << "(EE) cannot get file permissions for entry index " << (void*)(intptr_t)entry_index << ", or permission denied." << std::endl;
             ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
         }
         else
@@ -1043,7 +1044,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
 
         if(it == mPendingSyncRequests.end())
         {
-            std::cerr << "  request " << std::hex << item->request_id << std::dec << " cannot be found. ERROR!" << std::endl;
+            P3FILELISTS_ERROR() << "  request " << std::hex << item->request_id << std::dec << " cannot be found. ERROR!" << std::endl;
             return ;
         }
         mPendingSyncRequests.erase(it) ;
@@ -1069,38 +1070,39 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
 
         if(!mRemoteDirectories[fi]->getIndexFromDirHash(item->entry_hash,entry_index))
         {
-            std::cerr << std::endl << "  (EE) cannot find index from hash " << item->entry_hash << ". Dropping the response." << std::endl;
+            std::cerr << std::endl;
+            P3FILELISTS_ERROR() << "  (EE) cannot find index from hash " << item->entry_hash << ". Dropping the response." << std::endl;
             return ;
         }
-        std::cerr << "  entry index is " << entry_index << " " ;
+        P3FILELISTS_DEBUG() << "  entry index is " << entry_index << " " ;
     }
 
     if(item->flags & RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED)
     {
-        P3FILELISTS_DEBUG() << "  removing directory with index " << entry_index << " because it does not exist." << std::endl;
+        std::cerr << "  removing directory with index " << entry_index << " because it does not exist." << std::endl;
         mRemoteDirectories[fi]->removeDirectory(entry_index);
 
         mRemoteDirectories[fi]->print();
     }
     else if(item->flags & RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE)
     {
-        P3FILELISTS_DEBUG() << "  Directory is up to date. Setting local TS." << std::endl;
+        std::cerr << "  Directory is up to date. Setting local TS." << std::endl;
 
         mRemoteDirectories[fi]->setDirUpdateTS(entry_index,item->last_known_recurs_modf_TS,time(NULL));
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
-        P3FILELISTS_DEBUG() << "  Item contains directory data. Deserialising/Updating." << std::endl;
+        std::cerr << "  Item contains directory data. Deserialising/Updating." << std::endl;
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
             RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
         else
-            std::cerr << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
+            P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 
-        std::cerr << "  new content after update: " << std::endl;
-//#ifdef DEBUG_FILE_HIERARCHY
+#ifdef DEBUG_FILE_HIERARCHY
+        P3FILELISTS_DEBUG() << "  new content after update: " << std::endl;
         mRemoteDirectories[fi]->print();
-//#endif
+#endif
     }
 }
 
@@ -1121,7 +1123,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    if(!rds->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
    {
-       std::cerr << "  (EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
+       P3FILELISTS_ERROR() << "  (EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
        return;
    }
 
@@ -1172,7 +1174,7 @@ bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,cons
 
     if(!rds->getDirHashFromIndex(e,entry_hash) )
     {
-        std::cerr << "  (EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;
+        P3FILELISTS_ERROR() << "  (EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;
         return false;
     }
 
@@ -1202,7 +1204,7 @@ bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,cons
     data.peer_id = item->PeerId();
     data.flags = item->flags;
 
-    std::cerr << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
+    P3FILELISTS_DEBUG() << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
 
     mPendingSyncRequests[sync_req_id] = data ;
 

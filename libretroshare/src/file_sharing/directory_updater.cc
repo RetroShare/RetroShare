@@ -164,6 +164,11 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     }
 }
 
+bool LocalDirectoryUpdater::inDirectoryCheck() const
+{
+    return mHashCache->isRunning();
+}
+
 void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)
 {
     if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
