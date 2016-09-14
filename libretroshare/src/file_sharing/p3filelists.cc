@@ -930,9 +930,23 @@ bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& 
 //  	- the max time is computed upward until the root of the hierarchy
 //		- because the hash is performed late, the last modf time upward is updated only when the hash is obtained.
 //
-//	Remote dirs store the last modif time of the files/dir in the friend's time
-//		- local node sends the last known modf time to friends,
-//		- friends respond with either a full directory content, or an acknowledge that the time is right
+//	Remote dirs store
+//		1 - recursive modif time of the files/dir in the friend's time
+//		2 - update TS in the local time
+//
+//  The update algorithm is the following:
+//
+//	[Client side]
+//		- every 30 sec, send a sync packet for the root of the hierarchy containing the remote known max recurs TS.
+//		- crawl through all directories and if the update TS is 0, ask for sync too.
+//		- when a sync respnse is received:
+//			- if response is ACK, set the update time to now. Nothing changed.
+//			- if response is an update
+//				* locally update the subfiles
+//				* for all subdirs, set the local update time to 0 (so as to force a sync)
+//
+//  [Server side]
+//		- when sync req is received, compare to local recurs TS, and send ACK or full update accordingly
 //
 //  Directories are designated by their hash, instead of their index. This allows to hide the non shared directories
 //  behind a layer of abstraction, at the cost of a logarithmic search, which is acceptable as far as dir sync-ing between
@@ -1004,7 +1018,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
             time_t local_recurs_max_time,local_update_time;
             mLocalSharedDirs->getDirUpdateTS(entry_index,local_recurs_max_time,local_update_time);
 
-            if(item->last_known_recurs_modf_TS < local_recurs_max_time)
+            if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
             {
                 P3FILELISTS_DEBUG() << "  Directory is more recent than what the friend knows. Sending full dir content as response." << std::endl;
 
@@ -1129,15 +1143,9 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    // compare TS
 
-   if(now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ)	// we need to compare local times only. We cannot compare local (now) with remote time.
-   {
+   if((e == 0 && now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ) || local_update_TS == 0)	// we need to compare local times only. We cannot compare local (now) with remote time.
        if(generateAndSendSyncRequest(rds,e,recurs_max_modf_TS_remote_time))
            P3FILELISTS_DEBUG() << "  Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
-
-       // Dont recurs into sub-directories, since we dont know yet were to go.
-
-       //return ;
-   }
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
        locked_recursSweepRemoteDirectory(rds,*it,depth+1);

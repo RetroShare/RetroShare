@@ -163,10 +163,10 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	QHeaderView * header = ui.dirTreeView->header () ;
 
 	header->resizeSection ( COLUMN_NAME, 490 );
-	header->resizeSection ( COLUMN_SIZE, 70 );
-	header->resizeSection ( COLUMN_AGE, 100 );
-	header->resizeSection ( COLUMN_FRIEND, 100 );
-	header->resizeSection ( COLUMN_DIR, 100 );
+    header->resizeSection ( COLUMN_SIZE, 70  );
+    header->resizeSection ( COLUMN_AGE, 100  );
+    header->resizeSection ( COLUMN_FRIEND,100);
+    header->resizeSection ( COLUMN_DIR, 100  );
 
 	header->setStretchLastSection(false);
 
@@ -869,6 +869,10 @@ void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expand
     if(ui.dirTreeView->model() == NULL)
         return ;
 
+    // we need to disable this, because the signal will trigger unnecessary update at the friend.
+
+    ui.dirTreeView->blockSignals(true) ;
+
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Restoring expanded items. " << std::endl;
 #endif
@@ -877,6 +881,7 @@ void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expand
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
         recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes);
     }
+    ui.dirTreeView->blockSignals(false) ;
 }
 
 void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp)

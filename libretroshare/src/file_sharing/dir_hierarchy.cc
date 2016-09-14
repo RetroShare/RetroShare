@@ -466,6 +466,8 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     uint32_t n=0;
     for(uint32_t i=0;i<d.subdirs.size();++i)
     {
+        static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_update_time = 0 ;	// force the update of the subdir.
+
         mNodes[d.subdirs[i]]->parent_index = indx ;
         mNodes[d.subdirs[i]]->row = n++ ;
     }
@@ -767,10 +769,11 @@ void InternalFileHierarchyStorage::recursPrint(int depth,DirectoryStorage::Entry
         recursPrint(depth+1,d.subdirs[i]) ;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
-    {
-        FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]]));
-        std::cerr << indent << "  hash:" << f.file_hash << " ts:" << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << ", parent: " << f.parent_index << ", row: " << f.row << std::endl;
-    }
+        if(mNodes[d.subfiles[i]] != NULL)
+        {
+            FileEntry& f(*static_cast<FileEntry*>(mNodes[d.subfiles[i]]));
+            std::cerr << indent << "  hash:" << f.file_hash << " ts:" << (uint64_t)f.file_modtime << "  " << f.file_size << "  " << f.file_name << ", parent: " << f.parent_index << ", row: " << f.row << std::endl;
+        }
 }
 
 bool InternalFileHierarchyStorage::nodeAccessError(const std::string& s)
