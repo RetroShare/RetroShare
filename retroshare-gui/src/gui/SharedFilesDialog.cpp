@@ -138,7 +138,6 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	flat_model = _flat_model ;
 
 	tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
-	tree_proxyModel->setDynamicSortFilter(true);
 	tree_proxyModel->setSourceModel(tree_model);
 	tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
@@ -152,6 +151,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
     // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
     // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
+    //tree_proxyModel->setDynamicSortFilter(true);
     //flat_proxyModel->setDynamicSortFilter(true);
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
