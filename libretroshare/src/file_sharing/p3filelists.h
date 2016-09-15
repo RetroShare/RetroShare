@@ -173,6 +173,11 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         static DirSyncRequestId makeDirSyncReqId(const RsPeerId& peer_id, const RsFileHash &hash) ;
 
+        // utility functions to send items with some maximum size.
+
+        void splitAndSendItem(RsFileListsSyncResponseItem *ritem);
+        RsFileListsSyncResponseItem *recvAndRebuildItem(RsFileListsSyncResponseItem *ritem);
+
         /*!
          * \brief generateAndSendSyncRequest
          * \param rds	Remote directory storage for the request
@@ -221,6 +226,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         time_t mLastRemoteDirSweepTS ; // TS for friend list update
         std::map<DirSyncRequestId,DirSyncRequestData> mPendingSyncRequests ; // pending requests, waiting for an answer
+        std::map<DirSyncRequestId,RsFileListsSyncResponseItem *> mPartialResponseItems;
 
         void locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds, DirectoryStorage::EntryIndex e, int depth);
 

@@ -66,6 +66,8 @@ public:
     static const uint32_t FLAGS_SYNC_DIR_CONTENT  = 0x0004 ;
     static const uint32_t FLAGS_ENTRY_UP_TO_DATE  = 0x0008 ;
     static const uint32_t FLAGS_ENTRY_WAS_REMOVED = 0x0010 ;
+    static const uint32_t FLAGS_SYNC_PARTIAL      = 0x0020 ;
+    static const uint32_t FLAGS_SYNC_PARTIAL_END  = 0x0040 ;
 };
 
 /*!
@@ -102,6 +104,7 @@ public:
     virtual uint32_t serial_size() const ;
 
     RsFileHash entry_hash ;               // hash of the directory to sync
+    RsFileHash checksum   ;               // checksum of the bindary data, for checking
     uint32_t   flags;                     // is it a partial/final item (used for large items only)
     uint32_t   last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
     uint64_t   request_id;                // use to determine if changes that have occured since last hash

@@ -38,3 +38,5 @@ static const std::string HASH_CACHE_FILE_NAME   = "hash_cache.bin" ;		// hard-co
 
 static const uint32_t MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE         = 20 ;  // never save hash cache more often than every 20 secs.
 static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;  // never save remote directories more often than this
+
+static const uint32_t MAX_DIR_SYNC_RESPONSE_DATA_SIZE              = 20000 ; // Maximum RsItem data size in bytes for serialised directory transmission

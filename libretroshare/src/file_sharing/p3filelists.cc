@@ -606,12 +606,13 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
 
             return true ;
         }
-        else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+        else if(row < mRemoteDirectories.size())
         {
-            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,result);
-
+            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
+        else
+            return false;
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -1077,11 +1078,120 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
     // sends the response.
 
-    sendItem(ritem);
+    splitAndSendItem(ritem) ;
 }
 
-void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
+void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
 {
+    ritem->checksum = RsDirUtil::sha1sum((uint8_t*)ritem->directory_content_data.bin_data,ritem->directory_content_data.bin_len);
+
+    while(ritem->directory_content_data.bin_len > MAX_DIR_SYNC_RESPONSE_DATA_SIZE)
+    {
+        P3FILELISTS_DEBUG() << "Chopping off partial chunk of size " << MAX_DIR_SYNC_RESPONSE_DATA_SIZE << " from item data of size " << ritem->directory_content_data.bin_len << std::endl;
+
+        RsFileListsSyncResponseItem *subitem = new RsFileListsSyncResponseItem() ;
+
+        subitem->entry_hash                = ritem->entry_hash;
+        subitem->flags                     = ritem->flags | RsFileListsItem::FLAGS_SYNC_PARTIAL;
+        subitem->last_known_recurs_modf_TS = ritem->last_known_recurs_modf_TS;
+        subitem->request_id                = ritem->request_id;
+        subitem->checksum                  = ritem->checksum ;
+
+        // copy a subpart of the data
+        subitem->directory_content_data.tlvtype = ritem->directory_content_data.tlvtype ;
+        subitem->directory_content_data.setBinData(ritem->directory_content_data.bin_data, MAX_DIR_SYNC_RESPONSE_DATA_SIZE) ;
+
+        // update ritem to chop off the data that was sent.
+        memmove(ritem->directory_content_data.bin_data, &((unsigned char*)ritem->directory_content_data.bin_data)[MAX_DIR_SYNC_RESPONSE_DATA_SIZE], ritem->directory_content_data.bin_len - MAX_DIR_SYNC_RESPONSE_DATA_SIZE) ;
+        ritem->directory_content_data.bin_len -= MAX_DIR_SYNC_RESPONSE_DATA_SIZE ;
+
+        // send
+        subitem->PeerId(ritem->PeerId()) ;
+
+        sendItem(subitem) ;
+
+        // fix up last chunk
+        if(ritem->directory_content_data.bin_len <= MAX_DIR_SYNC_RESPONSE_DATA_SIZE)
+            ritem->flags |= RsFileListsItem::FLAGS_SYNC_PARTIAL_END ;
+    }
+
+    sendItem(ritem) ;
+}
+
+// This function should not take memory ownership of ritem, so it makes copies.
+
+RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncResponseItem *ritem)
+{
+#warning make sure about how robust that is to disconnections, etc.
+    if(!(ritem->flags & RsFileListsItem::FLAGS_SYNC_PARTIAL ))
+        return ritem ;
+
+    // item is a partial item. Look first for a starting entry
+
+    P3FILELISTS_DEBUG() << "Item from peer " << ritem->PeerId() << " is partial. Size = " << ritem->directory_content_data.bin_len << std::endl;
+
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    bool is_ending = (ritem->flags & RsFileListsItem::FLAGS_SYNC_PARTIAL_END);
+    std::map<DirSyncRequestId,RsFileListsSyncResponseItem*>::iterator it = mPartialResponseItems.find(ritem->request_id) ;
+
+    if(it == mPartialResponseItems.end())
+    {
+        if(is_ending)
+        {
+            P3FILELISTS_ERROR() << "Impossible situation: partial item ended right away. Dropping..." << std::endl;
+            return NULL;
+        }
+        P3FILELISTS_DEBUG() << "Creating new item buffer" << std::endl;
+
+        mPartialResponseItems[ritem->request_id] = new RsFileListsSyncResponseItem(*ritem) ;
+        return NULL ;
+    }
+    else if(it->second->checksum != ritem->checksum)
+    {
+        P3FILELISTS_ERROR() << "Impossible situation: partial items with different checksums. Dropping..." << std::endl;
+        mPartialResponseItems.erase(it);
+        return NULL;
+    }
+
+    // collapse the item at the end of the existing partial item. Dont delete ritem as it will be by the caller.
+
+    it->second->directory_content_data.bin_data = realloc(it->second->directory_content_data.bin_data,it->second->directory_content_data.bin_len + ritem->directory_content_data.bin_len) ;
+    memcpy(it->second->directory_content_data.bin_data,ritem->directory_content_data.bin_data,ritem->directory_content_data.bin_len);
+
+    // if finished, return the item
+
+    if(is_ending)
+    {
+        P3FILELISTS_DEBUG() << "Item is complete. Returning it" << std::endl;
+
+        RsFileListsSyncResponseItem *ret = it->second ;
+        mPartialResponseItems.erase(it) ;
+
+        ret->flags &= ~RsFileListsItem::FLAGS_SYNC_PARTIAL_END ;
+        ret->flags &= ~RsFileListsItem::FLAGS_SYNC_PARTIAL ;
+
+        return ret ;
+    }
+    else
+        return NULL ;
+}
+
+void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
+{
+    RsFileListsSyncResponseItem *item = recvAndRebuildItem(sitem) ;
+
+    if(!item)
+        return ;
+
+    // check the hash. If anything goes wrong (in the chunking for instance) the hash will not match
+
+    if(RsDirUtil::sha1sum((uint8_t*)item->directory_content_data.bin_data,item->directory_content_data.bin_len) != item->checksum)
+    {
+        P3FILELISTS_ERROR() << "Checksum error in response item " << std::hex << item->request_id << std::dec << " . This is unexpected, and might be due to connection problems." << std::endl;
+        return ;
+    }
+
     P3FILELISTS_DEBUG() << "Handling sync response for directory with hash " << item->entry_hash << std::endl;
 
     EntryIndex entry_index = DirectoryStorage::NO_INDEX;

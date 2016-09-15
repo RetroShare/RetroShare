@@ -152,6 +152,7 @@ bool RsFileListsSyncResponseItem::serialise(void *data, uint32_t& size) const
     /* RsFileListsSyncMsgItem */
 
     ok &= entry_hash.serialise(data, size, offset);
+    ok &= checksum.serialise(data, size, offset);
     ok &= setRawUInt32(data, size, &offset, flags      );
     ok &= setRawUInt32(data, size, &offset, last_known_recurs_modf_TS);
     ok &= setRawUInt64(data, size, &offset, request_id);
@@ -231,6 +232,7 @@ RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncRespons
     uint64_t request_id;                // use to determine if changes that have occured since last hash
 
     ok &= item->entry_hash.deserialise(data, *size, offset);
+    ok &= item->checksum.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &item->flags);
     ok &= getRawUInt32(data, *size, &offset, &item->last_known_recurs_modf_TS);
     ok &= getRawUInt64(data, *size, &offset, &item->request_id);
@@ -312,6 +314,7 @@ uint32_t RsFileListsSyncResponseItem::serial_size()const
     uint32_t s = 8; //header size
 
     s += RsFileHash::serial_size(); // entry hash
+    s += RsFileHash::serial_size(); // checksum
     s += 4; // flags
     s += 4; // last_known_recurs_modf_TS
     s += 8; // request_id
@@ -348,6 +351,7 @@ std::ostream& RsFileListsSyncResponseItem::print(std::ostream &out, uint16_t ind
     uint16_t int_Indent = indent + 2;
 
     printIndent(out , int_Indent); out << "Entry hash:   " << entry_hash << std::endl;
+    printIndent(out , int_Indent); out << "Checksum  :   " << checksum << std::endl;
     printIndent(out , int_Indent); out << "Flags:        " << (uint32_t) flags << std::endl;
     printIndent(out , int_Indent); out << "Last modf TS: " << last_known_recurs_modf_TS << std::endl;
     printIndent(out , int_Indent); out << "request id:   " << std::hex << request_id  << std::dec << std::endl;
