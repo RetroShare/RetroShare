@@ -41,11 +41,32 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
     mRunning = false ;
     mLastSaveTime = 0 ;
+    mTotalSizeToHash = 0;
+    mTotalFilesToHash = 0;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
         locked_load() ;
     }
+}
+static std::string friendlyUnit(uint64_t val)
+{
+    const std::string units[5] = {"B","KB","MB","GB","TB"};
+    char buf[50] ;
+
+    double fact = 1.0 ;
+
+    for(unsigned int i=0; i<5; ++i)
+        if(double(val)/fact < 1024.0)
+        {
+            sprintf(buf,"%2.2f",double(val)/fact) ;
+            return std::string(buf) + " " + units[i];
+        }
+        else
+            fact *= 1024.0f ;
+
+    sprintf(buf,"%2.2f",double(val)/fact*1024.0f) ;
+    return  std::string(buf) + " TB";
 }
 
 void HashStorage::data_tick()
@@ -93,6 +114,8 @@ void HashStorage::data_tick()
                     std::cerr << "Stopping hashing thread." << std::endl;
                     shutdown();
                     mRunning = false ;
+                    mTotalSizeToHash = 0;
+                    mTotalFilesToHash = 0;
                     std::cerr << "done." << std::endl;
                 }
 
@@ -110,6 +133,7 @@ void HashStorage::data_tick()
 
         {
             RS_STACK_MUTEX(mHashMtx) ;
+
             job = mFilesToHash.begin()->second ;
             mFilesToHash.erase(mFilesToHash.begin()) ;
         }
@@ -117,9 +141,9 @@ void HashStorage::data_tick()
         std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
 
         std::string tmpout;
-        //rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", cnt+1, n_files, friendlyUnit(size).c_str(), int(size/double(total_size)*100.0), fe.name.c_str()) ;
+        rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", mHashCounter+1, mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-        RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, job.full_path) ;
+        RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
         if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
             std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
@@ -139,6 +163,8 @@ void HashStorage::data_tick()
             info.hash = hash;
 
             mChanged = true ;
+            ++mHashCounter ;
+            mTotalHashedSize += size ;
         }
     }
     // call the client
@@ -181,16 +207,23 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     FileHashJob job ;
 
     job.client = c ;
+    job.size = size ;
     job.client_param = client_param ;
     job.full_path = full_path ;
     job.ts = mod_time ;
 
     mFilesToHash[full_path] = job;
 
+    mTotalSizeToHash += size ;
+    ++mTotalFilesToHash;
+
     if(!mRunning)
     {
         mRunning = true ;
         std::cerr << "Starting hashing thread." << std::endl;
+        mHashCounter = 0;
+        mTotalHashedSize = 0;
+
         start() ;
     }
 

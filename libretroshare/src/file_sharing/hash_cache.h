@@ -97,6 +97,7 @@ private:
     struct FileHashJob
     {
         std::string full_path;
+        uint64_t size ;
         HashStorageClient *client;
         uint32_t client_param ;
         time_t ts;
@@ -110,7 +111,11 @@ private:
 
     RsMutex mHashMtx ;
     bool mRunning;
+    uint32_t mHashCounter;
     uint32_t mInactivitySleepTime ;
+    uint64_t mTotalSizeToHash ;
+    uint64_t mTotalHashedSize ;
+    uint64_t mTotalFilesToHash ;
     time_t mLastSaveTime ;
 };
 
