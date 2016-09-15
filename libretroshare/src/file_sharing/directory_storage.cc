@@ -96,6 +96,12 @@ int DirectoryStorage::parentRow(EntryIndex e) const
 
     return mFileHierarchy->parentRow(e) ;
 }
+bool DirectoryStorage::getChildIndex(EntryIndex e,int row,EntryIndex& c) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    return mFileHierarchy->getChildIndex(e,row,c) ;
+}
 
 uint32_t DirectoryStorage::getEntryType(const EntryIndex& indx)
 {

@@ -116,6 +116,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)const;
 		int RequestDirDetails(const std::string& path, DirDetails &details) const ;
+        bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const;
 
         // void * here is the type expected by the abstract model index from Qt. It gets turned into a DirectoryStorage::EntryIndex internally.
 

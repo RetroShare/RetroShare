@@ -182,7 +182,8 @@ class RsFiles
 		 */
 		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
 		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
-		virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
+        virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) =0;
+        virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;

@@ -118,6 +118,7 @@ class DirectoryStorage
         EntryIndex root() const ;					// returns the index of the root directory entry.
         const RsPeerId& peerId() const { return mPeerId ; }
         int parentRow(EntryIndex e) const ;
+        bool getChildIndex(EntryIndex e,int row,EntryIndex& c) const;
 
         bool updateSubDirectoryList(const EntryIndex& indx, const std::map<std::string, time_t> &subdirs) ;
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;

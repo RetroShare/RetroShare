@@ -94,6 +94,27 @@ bool InternalFileHierarchyStorage::getIndexFromFileHash(const RsFileHash& hash,D
     return true;
 }
 
+bool InternalFileHierarchyStorage::getChildIndex(DirectoryStorage::EntryIndex e,int row,DirectoryStorage::EntryIndex& c) const
+{
+    if(!checkIndex(e,FileStorageNode::TYPE_DIR))
+        return false ;
+
+    const DirEntry& d = *static_cast<DirEntry*>(mNodes[e]) ;
+
+    if((uint32_t)row < d.subdirs.size())
+    {
+       c = d.subdirs[row] ;
+       return true ;
+    }
+
+    if((uint32_t)row < d.subdirs.size() + d.subfiles.size())
+    {
+       c = d.subfiles[row - (int)d.subdirs.size()] ;
+       return true ;
+    }
+    return false;
+}
+
 int InternalFileHierarchyStorage::parentRow(DirectoryStorage::EntryIndex e)
 {
     if(!checkIndex(e,FileStorageNode::TYPE_DIR | FileStorageNode::TYPE_FILE) || e==0)

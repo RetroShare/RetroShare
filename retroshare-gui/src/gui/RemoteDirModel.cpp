@@ -710,6 +710,9 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 	std::cerr << ": row:" << row << " col:" << column << " ";
 #endif
 
+    // This function is used extensively. There's no way we can use requestDirDetails() in it, which would
+    // cause far too much overhead. So we use a dedicated function that only grabs the required information.
+
 	if(row < 0)
 		return QModelIndex() ;
 
@@ -722,44 +725,15 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 	  }
 	 ********/
 
-    DirDetails details ;
 
+    void *result ;
 
-    if (! requestDirDetails(ref, RemoteMode,details))
-	{
-#ifdef RDM_DEBUG
-		std::cerr << "lookup failed -> invalid";
-		std::cerr << std::endl;
-#endif
+    if(rsFiles->findChildPointer(ref, row, result,  ((RemoteMode) ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL)))
+        return createIndex(row, column, result) ;
+    else
 		return QModelIndex();
-	}
-
-
-	/* now iterate through the details to
-	 * get the reference number
-	 */
-
-    if (row >= (int) details.children.size())
-	{
-#ifdef RDM_DEBUG
-		std::cerr << "wrong number of children -> invalid";
-		std::cerr << std::endl;
-#endif
-		return QModelIndex();
-	}
-
-#ifdef RDM_DEBUG
-	std::cerr << "success index(" << row << "," << column << "," << details->childrenVector[row].ref << ")";
-	std::cerr << std::endl;
-#endif
-
-	/* we can just grab the reference now */
-
-#ifdef RDM_DEBUG
-    std::cerr << "Creating index 1 row=" << row << ", column=" << column << ", ref=" << (void*)details.children[row].ref << std::endl;
-#endif
-    return createIndex(row, column, details.children[row].ref);
 }
+
 QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent) const
 {
 	Q_UNUSED(parent);

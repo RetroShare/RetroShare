@@ -535,6 +535,10 @@ int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, Di
     return mFileDatabase->RequestDirDetails(uid, path, details);
 }
 
+bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags)
+{
+    return mFileDatabase->findChildPointer(ref,row,result,flags) ;
+}
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
     return mFileDatabase->RequestDirDetails(ref,details,flags) ;

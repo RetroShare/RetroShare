@@ -598,6 +598,51 @@ void p3FileDatabase::requestDirUpdate(void *ref)
         P3FILELISTS_DEBUG() << "  Succeed." << std::endl;
 }
 
+bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    result = NULL ;
+
+    if (ref == NULL)
+        if(flags & RS_FILE_HINTS_LOCAL)
+        {
+            if(row != 0)
+                return false ;
+
+            convertEntryIndexToPointer(0,0,result);
+
+            return true ;
+        }
+        else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+        {
+            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,result);
+
+            return true;
+        }
+
+    uint32_t fi;
+    DirectoryStorage::EntryIndex e ;
+
+    convertPointerToEntryIndex(ref,e,fi);
+
+    // check consistency
+    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
+    {
+        P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
+        return false ;
+    }
+    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+
+    // Case where the index is the top of a single person. Can be us, or a friend.
+
+    EntryIndex c = 0;
+    bool res = storage->getChildIndex(e,row,c);
+
+    convertEntryIndexToPointer(c,fi,result) ;
+
+    return res;
+}
 // This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const

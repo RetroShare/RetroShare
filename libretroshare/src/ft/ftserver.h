@@ -173,6 +173,7 @@ public:
          ***/
     virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
     virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
+    virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;
     virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
     virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags);
