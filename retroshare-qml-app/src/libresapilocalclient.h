@@ -1,5 +1,6 @@
 /*
  * libresapi local socket client
+ * Copyright (C) 2016  Gioacchino Mazzurco <gio@eigenlab.org>
  * Copyright (C) 2016  Manu Pineda <manu@cooperativa.cat>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,39 +27,30 @@
 
 class LibresapiLocalClient : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    public:
+public:
+	LibresapiLocalClient() : mLocalSocket(this) {}
 
-        LibresapiLocalClient() {}
-       // LibresapiLocalClient(const LibresapiLocalClient & l);
-        LibresapiLocalClient(const QString & socketPath);
-        // potser abstreure el següent amb QUrl urlPath (path) i amb QJson jsonData.
-        Q_INVOKABLE int request(const QString & path, const QString & jsonData);
-        const QJsonDocument & getJson();
-        Q_INVOKABLE void openConnection();
+	// potser abstreure el següent amb QUrl urlPath (path) i amb QJson jsonData.
+	Q_INVOKABLE int request(const QString & path, const QString & jsonData);
+	const QJsonDocument & getJson();
+	Q_INVOKABLE void openConnection(QString socketPath);
 
-    private:
+private:
+	QLocalSocket mLocalSocket;
+	QByteArray receivedBytes;
+	QJsonDocument json;
+	//QVector<QJsonDocument> responses;
 
-        QString mSocketPath;
-        QLocalSocket mLocalSocket;
-        QByteArray receivedBytes;
-        QJsonDocument json;
-        //QVector<QJsonDocument> responses;
+	bool parseResponse(); //std::string msg);
 
-        bool parseResponse(); //std::string msg);
+private slots:
+	void socketError(QLocalSocket::LocalSocketError error);
+	void read();
 
-    private slots:
-
-        void socketError(QLocalSocket::LocalSocketError error);
-        void read();
-
-    signals:
-
-        void goodResponseReceived(const QString & msg);//, int requestId);
-
-    public slots:
-
+signals:
+	void goodResponseReceived(const QString & msg);//, int requestId);
 };
 
 #endif // LIBRESAPILOCALCLIENT_H

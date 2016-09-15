@@ -18,7 +18,10 @@
 
 #include <QCoreApplication>
 #include <QDebug>
-#include <QtAndroidExtras>
+
+#ifdef __ANDROID__
+#	include <QtAndroidExtras>
+#endif
 
 #include "retroshare/rsinit.h"
 #include "api/ApiServer.h"
@@ -39,8 +42,10 @@ int main(int argc, char *argv[])
 	qDebug() << "Listening on:" << sockPath;
 	ApiServerLocal apiServerLocal(&api, sockPath); (void) apiServerLocal;
 
+#ifdef __ANDROID__
 	qDebug() << "Is service.cpp running as a service?" << QtAndroid::androidService().isValid();
 	qDebug() << "Is service.cpp running as an activity?" << QtAndroid::androidActivity().isValid();
+#endif
 
 	while (!ctrl_mod.processShouldExit())
 	{

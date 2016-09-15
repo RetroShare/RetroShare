@@ -15,6 +15,10 @@
         <file>qml/ChannelGroupDelegate.qml</file>
         <file>qml/ApplicationBar.qml</file>
         <file>qml/AppButton.qml</file>
-        <file>qml/LibresapiLocalClientComm.qml</file>
+        <file>qml/Locations.qml</file>
+        <file>qml/jsonpath.js</file>
+        <file>qml/JSONListModel.qml</file>
+        <file>qml/Contacts.qml</file>
+        <file>qml/AddTrustedNode.qml</file>
     </qresource>
 </RCC>

@@ -22,7 +22,10 @@
 #include <QQmlComponent>
 #include <QDebug>
 
-#include <QtAndroidExtras>
+#ifdef __ANDROID__
+#	include <QtAndroidExtras>
+#endif
+
 #include <QFileInfo>
 #include <QDateTime>
 
@@ -35,20 +38,28 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
+	qmlRegisterType<LibresapiLocalClient>(
+	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
+	            "LibresapiLocalClient");
 
     QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
     sockPath.append("/libresapi.sock");
-    LibresapiLocalClient llc(sockPath);
-    qmlRegisterType<LibresapiLocalClient>("LibresapiLocalClientQml", 1, 0, "LibresapiLocalClientComm");
 
-    engine.rootContext()->setContextProperty("llc", &llc);
-    engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
+#ifndef __ANDROID__
+	sockPath = "/home/gio/.retroshare/LOC06_8730499b55bb946424d537b180bee10a/libresapi.sock";
+#endif
 
-    QFileInfo fileInfo(sockPath);
+	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
+	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 
+	QFileInfo fileInfo(sockPath);
+
+#ifdef __ANDROID__
     qDebug() << "Is main.cpp running as a service?" << QtAndroid::androidService().isValid();
     qDebug() << "Is main.cpp running as an activity?" << QtAndroid::androidActivity().isValid();
-    qDebug() << "QML APP:" << sockPath << fileInfo.exists() << fileInfo.lastModified().toString();
+#endif
+
+	qDebug() << "QML APP:" << sockPath << fileInfo.exists() << fileInfo.lastModified().toString();
 
     return app.exec();
 }

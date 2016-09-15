@@ -52,6 +52,7 @@ unix {
 android-g++ {
     CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
     CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
+    QT *= androidextras
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"

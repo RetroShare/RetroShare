@@ -2,7 +2,7 @@
 
 TARGET = retroshare-android-service
 
-QT += core network androidextras
+QT += core network
 QT -= gui
 
 CONFIG += c++11

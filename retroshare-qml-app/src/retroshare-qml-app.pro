@@ -1,6 +1,6 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-QT += qml quick androidextras
+QT += qml quick
 
 CONFIG += c++11
 
