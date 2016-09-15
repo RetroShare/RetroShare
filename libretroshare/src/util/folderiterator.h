@@ -30,10 +30,16 @@ public:
            TYPE_DIR     = 0x02
          };
 
+    // info about current parent directory
+    time_t dir_modtime() const ;
+
+    // info about directory content
+
     bool isValid() const    { return validity; }
     bool readdir();
     void next();
 
+#warning this one should go, as it reports the same information than file_name()
     bool d_name(std::string& dest);
     bool closedir();
 
@@ -58,6 +64,7 @@ private:
 
     bool mStatInfoOk ;
     time_t mFileModTime ;
+    time_t mFolderModTime ;
     uint64_t mFileSize ;
     uint8_t mType ;
     std::string mFileName ;

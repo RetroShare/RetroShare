@@ -129,14 +129,6 @@ bool InternalFileHierarchyStorage::isIndexValid(DirectoryStorage::EntryIndex e) 
 {
     return e < mNodes.size() && mNodes[e] != NULL ;
 }
-bool InternalFileHierarchyStorage::stampDirectory(const DirectoryStorage::EntryIndex& indx)
-{
-    if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
-        return false;
-
-    static_cast<DirEntry*>(mNodes[indx])->dir_modtime = time(NULL) ;
-    return true;
-}
 
 bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
 {
@@ -504,33 +496,32 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     return true;
 }
 
-bool InternalFileHierarchyStorage::getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
+bool InternalFileHierarchyStorage::getTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* m) const
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
     {
-        std::cerr << "[directory storage] (EE) cannot update TS for index " << index << ". Not a valid index or not a directory." << std::endl;
+        std::cerr << "[directory storage] (EE) cannot get TS for index " << index << ". Not a valid index or not a directory." << std::endl;
         return false;
     }
 
     DirEntry& d(*static_cast<DirEntry*>(mNodes[index])) ;
 
-    recurs_max_modf_TS = d.dir_most_recent_time ;
-    local_update_TS    = d.dir_update_time ;
+    TS = d.*m ;
 
     return true;
 }
-bool InternalFileHierarchyStorage::setDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
+
+bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* m)
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
     {
-        std::cerr << "[directory storage] (EE) cannot update TS for index " << index << ". Not a valid index or not a directory." << std::endl;
+        std::cerr << "[directory storage] (EE) cannot get TS for index " << index << ". Not a valid index or not a directory." << std::endl;
         return false;
     }
 
     DirEntry& d(*static_cast<DirEntry*>(mNodes[index])) ;
 
-    d.dir_most_recent_time = recurs_max_modf_TS ;
-    d.dir_update_time  = local_update_TS    ;
+    d.*m = TS;
 
     return true;
 }

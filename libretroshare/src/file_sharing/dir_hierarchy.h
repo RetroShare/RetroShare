@@ -94,7 +94,6 @@ public:
 
     int parentRow(DirectoryStorage::EntryIndex e);
     bool isIndexValid(DirectoryStorage::EntryIndex e) const;
-    bool stampDirectory(const DirectoryStorage::EntryIndex& indx);
     bool getChildIndex(DirectoryStorage::EntryIndex e,int row,DirectoryStorage::EntryIndex& c) const;
     bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs);
     bool removeDirectory(DirectoryStorage::EntryIndex indx)	;
@@ -103,8 +102,11 @@ public:
     bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash);
     bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time);
     bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, time_t most_recent_time, time_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<FileEntry> &subfiles_array);
-    bool getDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
-    bool setDirUpdateTS(const DirectoryStorage::EntryIndex& index,time_t& recurs_max_modf_TS,time_t& local_update_TS);
+
+    // TS get/set functions. Take one of the class members as argument.
+
+    bool getTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* ) const;
+    bool setTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* ) ;
 
     // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 

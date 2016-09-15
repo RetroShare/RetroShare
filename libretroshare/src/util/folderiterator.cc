@@ -13,6 +13,23 @@ namespace librs { namespace util {
 FolderIterator::FolderIterator(const std::string& folderName)
     : mFolderName(folderName)
 {
+    // Grab the last modification time for the directory
+
+    struct stat64 buf ;
+
+#ifdef WINDOWS_SYS
+    std::wstring wfullname;
+    librs::util::ConvertUtf8ToUtf16(folderName, wfullname);
+    if ( 0 == _wstati64(wfullname.c_str(), &buf))
+#else
+    if ( 0 == stat64(folderName.c_str(), &buf))
+#endif
+    {
+        mFolderModTime = buf.st_mtime ;
+    }
+
+    // Now open directory content and read the first entry
+
 #ifdef WINDOWS_SYS
     std::wstring utf16Name;
     if(! ConvertUtf8ToUtf16(folderName, utf16Name)) {
@@ -122,6 +139,8 @@ bool FolderIterator::d_name(std::string& dest)
 
     return true;
 }
+
+time_t FolderIterator::dir_modtime() const { return mFolderModTime ; }
 
 const std::string& FolderIterator::file_fullpath() { return mFullPath ; }
 const std::string& FolderIterator::file_name()     { return mFileName ; }

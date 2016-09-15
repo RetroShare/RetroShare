@@ -584,17 +584,9 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     if(fi == 0)
         return ;	// not updating current directory (should we?)
 
-   time_t recurs_max_modf_TS_remote_time,local_update_TS;
-
     P3FILELISTS_DEBUG() << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
 
-   if(!mRemoteDirectories[fi-1]->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
-   {
-       P3FILELISTS_ERROR() << "  (EE) Cannot get max known recurs modf time!" << std::endl;
-       return ;
-   }
-
-    if(generateAndSendSyncRequest(mRemoteDirectories[fi-1],e,recurs_max_modf_TS_remote_time))
+    if(generateAndSendSyncRequest(mRemoteDirectories[fi-1],e))
         P3FILELISTS_DEBUG() << "  Succeed." << std::endl;
 }
 
@@ -1060,8 +1052,8 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         }
         else
         {
-            time_t local_recurs_max_time,local_update_time;
-            mLocalSharedDirs->getDirUpdateTS(entry_index,local_recurs_max_time,local_update_time);
+            time_t local_recurs_max_time ;
+            mLocalSharedDirs->getDirectoryRecursModTime(entry_index,local_recurs_max_time) ;
 
             if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
             {
@@ -1147,7 +1139,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *item)
     {
         std::cerr << "  Directory is up to date. Setting local TS." << std::endl;
 
-        mRemoteDirectories[fi]->setDirUpdateTS(entry_index,item->last_known_recurs_modf_TS,time(NULL));
+        mRemoteDirectories[fi]->setDirectoryUpdateTime(entry_index,time(NULL)) ;
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
@@ -1178,9 +1170,9 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    P3FILELISTS_DEBUG() << "currently at entry index " << e << std::endl;
 
-   time_t recurs_max_modf_TS_remote_time,local_update_TS;
+   time_t local_update_TS;
 
-   if(!rds->getDirUpdateTS(e,recurs_max_modf_TS_remote_time,local_update_TS))
+   if(!rds->getDirectoryUpdateTime(e,local_update_TS))
    {
        P3FILELISTS_ERROR() << "  (EE) lockec_recursSweepRemoteDirectory(): cannot get update TS for directory with index " << e << ". This is a consistency bug." << std::endl;
        return;
@@ -1189,7 +1181,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
    // compare TS
 
    if((e == 0 && now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ) || local_update_TS == 0)	// we need to compare local times only. We cannot compare local (now) with remote time.
-       if(generateAndSendSyncRequest(rds,e,recurs_max_modf_TS_remote_time))
+       if(generateAndSendSyncRequest(rds,e))
            P3FILELISTS_DEBUG() << "  Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
@@ -1220,11 +1212,18 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
     return r ^ random_bias;
 }
 
-bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e,time_t max_known_recurs_modf_time)
+bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
 {
     RsFileHash entry_hash ;
     time_t now = time(NULL) ;
 
+    time_t max_known_recurs_modf_time ;
+
+    if(!rds->getDirectoryRecursModTime(e,max_known_recurs_modf_time))
+    {
+        P3FILELISTS_ERROR() << "  (EE) cannot find recurs mod time for entry index " << e << ". This is very unexpected." << std::endl;
+        return false;
+    }
     if(!rds->getDirHashFromIndex(e,entry_hash) )
     {
         P3FILELISTS_ERROR() << "  (EE) cannot find hash for entry index " << e << ". This is very unexpected." << std::endl;

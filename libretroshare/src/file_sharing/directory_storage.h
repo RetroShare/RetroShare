@@ -53,8 +53,13 @@ class DirectoryStorage
         virtual int searchBoolExp(RsRegularExpression::Expression * exp, std::list<EntryIndex> &results) const ;
         virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
 
-        bool getDirUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS) ;
-        bool setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS) ;
+        bool getDirectoryRecursModTime(EntryIndex index,time_t& recurs_max_modf_TS) const ;
+        bool getDirectoryLocalModTime (EntryIndex index,time_t& motime_TS) const ;
+        bool getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const ;
+
+        bool setDirectoryRecursModTime(EntryIndex index,time_t  recurs_max_modf_TS) ;
+        bool setDirectoryLocalModTime (EntryIndex index,time_t  modtime_TS) ;
+        bool setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) ;
 
         uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);

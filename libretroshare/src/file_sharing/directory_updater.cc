@@ -134,6 +134,10 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
         }
     }
+    // update folder modificatoin time, which is the only way to detect e.g. removed or renamed files.
+
+    mSharedDirectories->setDirectoryLocalModTime(indx,dirIt.dir_modtime()) ;
+
     // update file and dir lists for current directory.
 
     mSharedDirectories->updateSubDirectoryList(indx,subdirs) ;

@@ -115,16 +115,14 @@ uint32_t DirectoryStorage::getEntryType(const EntryIndex& indx)
         return DIR_TYPE_UNKNOWN;
     }
 }
-bool DirectoryStorage::getDirUpdateTS(EntryIndex index,time_t& recurs_max_modf_TS,time_t& local_update_TS)
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->getDirUpdateTS(index,recurs_max_modf_TS,local_update_TS) ;
-}
-bool DirectoryStorage::setDirUpdateTS(EntryIndex index,time_t  recurs_max_modf_TS,time_t  local_update_TS)
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->setDirUpdateTS(index,recurs_max_modf_TS,local_update_TS) ;
-}
+
+bool DirectoryStorage::getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::getDirectoryRecursModTime(EntryIndex index,time_t& rec_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::getDirectoryLocalModTime (EntryIndex index,time_t& loc_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
+
+bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
 bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
 {
@@ -364,26 +362,33 @@ static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeG
 
 void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
+    bool changed = false ;
 
-    std::map<std::string,SharedDirInfo>::iterator it = mLocalDirs.find(info.filename) ;
-
-    if(it == mLocalDirs.end())
     {
-        std::cerr << "(EE) LocalDirectoryStorage::updateShareFlags: directory \"" << info.filename << "\" not found" << std::endl;
-        return ;
+        RS_STACK_MUTEX(mDirStorageMtx) ;
+
+        std::map<std::string,SharedDirInfo>::iterator it = mLocalDirs.find(info.filename) ;
+
+        if(it == mLocalDirs.end())
+        {
+            std::cerr << "(EE) LocalDirectoryStorage::updateShareFlags: directory \"" << info.filename << "\" not found" << std::endl;
+            return ;
+        }
+
+        // we compare the new info with the old one. If the two group lists have a different order, they will be seen as different. Not a big deal. We just
+        // want to make sure that if they are different, flags get updated.
+
+        if(!sameLists(it->second.parent_groups,info.parent_groups) || it->second.filename != info.filename || it->second.shareflags != info.shareflags || it->second.virtualname != info.virtualname)
+        {
+            it->second = info;
+
+            std::cerr << "Updating dir mod time because flags at level 0 have changed." << std::endl;
+            changed = true ;
+        }
     }
 
-    // we compare the new info with the old one. If the two group lists have a different order, they will be seen as different. Not a big deal. We just
-    // want to make sure that if they are different, flags get updated.
-
-    if(!sameLists(it->second.parent_groups,info.parent_groups) || it->second.filename != info.filename || it->second.shareflags != info.shareflags || it->second.virtualname != info.virtualname)
-    {
-        it->second = info;
-        mFileHierarchy->stampDirectory(0) ;
-
-        std::cerr << "Updating dir mod time because flags at level 0 have changed." << std::endl;
-    }
+    if(changed)
+        setDirectoryLocalModTime(0,time(NULL)) ;
 }
 
 bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::string& fullpath)
