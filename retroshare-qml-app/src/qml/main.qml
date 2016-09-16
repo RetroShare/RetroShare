@@ -36,17 +36,17 @@ ApplicationWindow
 			State
 			{
 				name: "waiting_account_select";
-				PropertyChanges { target: swipeView; currentIndex: 1 }
+				PropertyChanges { target: swipeView; currentIndex: locationsView.SwipeView.index }
 			},
 			State
 			{
 				name: "running_ok"
-				PropertyChanges { target: swipeView; currentIndex: 2 }
+				//PropertyChanges { target: swipeView; currentIndex: contactsView.SwipeView.index }
 			},
 			State
 			{
 				name: "running_ok_no_full_control"
-				PropertyChanges { target: swipeView; currentIndex: 2 }
+				//PropertyChanges { target: swipeView; currentIndex: contactsView.SwipeView.index }
 			}
 		    ]
 
@@ -69,12 +69,13 @@ ApplicationWindow
 			id: swipeView
 			anchors.fill: parent
 			visible: true
-			currentIndex: 1
+			currentIndex: 0
 
 			Locations
 			{
 				id: locationsView
 				visible: true
+				qParent: swipeView
 			}
 
 			AddTrustedNode
@@ -83,11 +84,34 @@ ApplicationWindow
 				visible: true
 			}
 
+			Rectangle
+			{
+				color: "red"
+				width: 100
+				height: 100
+			}
+
+			Rectangle
+			{
+				color: "green"
+				width: 100
+				height: 100
+			}
+
+			Rectangle
+			{
+				color: "blue"
+				width: 100
+				height: 100
+			}
+
+/*
+
 			Contacts
 			{
 				id: contactsView
 				visible: true
-			}
+			}*/
 		}
 	}
 

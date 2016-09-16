@@ -18,13 +18,15 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
 {
 	id: locationView
 	state: "selectLocation"
+	property var qParent
+	property bool attemptLogin: false
+	property string password
 
 	states:
 	[
@@ -32,76 +34,103 @@ Item
 		{
 			name: "selectLocation"
 			PropertyChanges { target: locationsListView; visible: true }
-			PropertyChanges { target: createLocationView; visible: false }
-			PropertyChanges
-			{
-				target: bottomButton
-				text: "Create new location"
-				onClicked: locationView.state = "createLocation"
-			}
+			PropertyChanges	{ target: bottomButton; visible: true }
+			PropertyChanges { target: loginView; visible: false }
 		},
 		State
 		{
 			name: "createLocation"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: createLocationView; visible: true }
+			PropertyChanges	{ target: bottomButton; visible: false }
 			PropertyChanges
 			{
-				target: bottomButton
-				text: "Save"
-				onClicked:
+				target: loginView
+				visible: true
+				buttonText: "Save"
+				onSubmit:
 				{
-					var jsonData = { pgp_name: nameField.text, ssl_name: nameField.text, pgp_password: passwordField.text }
+					var jsonData = { pgp_name: login, ssl_name: login, pgp_password: password }
 					rsApi.request("/control/create_location/", JSON.stringify(jsonData))
-					onClicked: locationView.state = "savingLocation"
+					locationView.state = "selectLocation"
 				}
 			}
 		},
 		State
 		{
-			name: "savingLocation"
+			name: "login"
 			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: createLocationView; color: "grey" }
+			PropertyChanges	{ target: bottomButton; visible: false }
 			PropertyChanges
 			{
-				target: bottomButton
-				text: "Saving..."
-				enabled: false
-			}
-		},
-		State
-		{
-			name: "loggingIn"
-			PropertyChanges { target: locationsListView; visible: false }
-			PropertyChanges { target: createLocationView; visible: true }
-			PropertyChanges { target: nameField; enabled: false}
-			PropertyChanges
-			{
-				target: bottomButton
-				text: "Login"
-				enabled: true
-				onClicked:
+				target: loginView
+				visible: true
+				onSubmit:
 				{
-					var jsonData = { id: nameField.sslid, autologin: false }
-					rsApi.request("/control/login/", JSON.stringify(jsonData))
-					jsonData = { password: passwordField.text }
-					rsApi.request("/control/password/", JSON.stringify(jsonData))
+					locationView.password = password
+					rsApi.request("/control/login/", JSON.stringify({id: locationsListView.currentItem.sslid}))
+					locationView.attemptLogin = true
+					busyIndicator.running = true
+					attemptTimer.start()
 				}
 			}
 		}
 	]
 
-	Component.onCompleted:
-	{
-		rsApi.openConnection(apiSocketPath)
-		rsApi.request("/control/locations/", "")
-	}
+	function requestLocationsList() { rsApi.request("/control/locations/", "") }
+
+	onFocusChanged: focus && requestLocationsList()
 
 	LibresapiLocalClient
 	{
 		id: rsApi
-		onGoodResponseReceived: locationsModel.json = msg
+		Component.onCompleted:
+		{
+			openConnection(apiSocketPath)
+			locationView.requestLocationsList()
+		}
+		onGoodResponseReceived:
+		{
+			var jsonData = JSON.parse(msg)
+
+
+			if(jsonData)
+			{
+				if(jsonData.data)
+				{
+					if(jsonData.data[0] && jsonData.data[0].pgp_id)
+					{
+						// if location list update
+						locationsModel.json = msg
+						busyIndicator.running = false
+					}
+					if (jsonData.data.key_name)
+					{
+						if(jsonData.data.want_password)
+						{
+							// if Server requested password
+							var jsonPass = { password: locationView.password }
+							rsApi.request("/control/password/", JSON.stringify(jsonPass))
+							locationView.attemptLogin = false
+							console.debug("RS core asked for password")
+						}
+						else
+						{
+							// if Already logged in
+							bottomButton.enabled = false
+							bottomButton.text = "Already logged in"
+							locationView.attemptLogin = false
+							busyIndicator.running = false
+							locationView.state = "selectLocation"
+							locationsListView.enabled = false
+							console.debug("Already logged in")
+						}
+					}
+				}
+			}
+		}
 	}
+
+	BusyIndicator { id: busyIndicator; anchors.centerIn: parent }
 
 	JSONListModel
 	{
@@ -122,31 +151,40 @@ Item
 			property string sslid: model.id
 			onClicked:
 			{
-				locationView.state = "loggingIn"
-				nameField.text = text
+				loginView.login = text
+				locationView.state = "login"
 			}
 	    }
 	    visible: false
 	}
 
-    ColumnLayout
+    Button
     {
-		id: createLocationView
-		width: parent.width
-		anchors.top: parent.top
-		anchors.bottom: bottomButton.top
-		visible: false
-
-		Row { Text {text: "Name:" } TextField { id: nameField; property string sslid } }
-		Row { Text {text: "Password:" } TextField { id: passwordField; echoMode: PasswordEchoOnEdit } }
-	}
-
-	Text { text: "Locations View"; anchors.bottom: bottomButton.top }
-
-	Button
-	{
 		id: bottomButton
 		text: "Create new location"
 		anchors.bottom: parent.bottom
+		onClicked: locationView.state = "createLocation"
+	}
+
+	RsLoginPassView
+	{
+		id: loginView
+		visible: false
+		anchors.fill: parent
+	}
+
+	Timer
+	{
+		id: attemptTimer
+		interval: 500
+		repeat: true
+		onTriggered:
+		{
+			if(locationView.focus)
+				locationView.requestLocationsList()
+
+			if (locationView.attemptLogin)
+				rsApi.request("/control/password/", "")
+		}
 	}
 }

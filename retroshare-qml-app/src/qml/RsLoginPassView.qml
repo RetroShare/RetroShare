@@ -17,39 +17,36 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
+import QtQml 2.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
 {
-	function refreshData()
-	{
-		rsApi.openConnection(apiSocketPath)
-		rsApi.request("/identity/*/", "")
-	}
+	id: loginView
+	property string buttonText: "Login"
+	property string login
+	property string password
+	signal submit(string login, string password)
 
-	onFocusChanged: focus && refreshData()
-
-	LibresapiLocalClient
+	ColumnLayout
 	{
-		id: rsApi
-		onGoodResponseReceived: locationsModel.json = msg
-	}
-
-	JSONListModel
-	{
-		id: locationsModel
-		query: "$.data[*]"
-	}
-
-	ListView
-	{
-		id: locationsListView
+		id: inputView
 		width: parent.width
-		height: 300
-		model: locationsModel.model
-		delegate: Text { text: model.name }
+		anchors.top: parent.top
+		anchors.bottom: bottomButton.top
+
+		Row { Text {text: "Name:" } TextField { id: nameField; text: loginView.login } }
+		Row { Text {text: "Password:" } TextField { id: passwordField; text: loginView.password } }
 	}
 
-	Text { text: "Contacts View"; anchors.bottom: parent.bottom }
+	Button
+	{
+		id: bottomButton
+		text: loginView.buttonText
+		anchors.bottom: parent.bottom
+		anchors.right: parent.right
+		onClicked: loginView.submit(nameField.text, passwordField.text)
+	}
 }

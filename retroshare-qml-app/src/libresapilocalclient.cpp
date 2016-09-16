@@ -51,6 +51,8 @@ void LibresapiLocalClient::read()
 {
 	receivedBytes = mLocalSocket.readLine();
 
+	qDebug() << receivedBytes;
+
 	if(parseResponse()) // pensar en fer un buffer per parsejar, per evitar errors.
 		emit goodResponseReceived(QString(receivedBytes));
 	else

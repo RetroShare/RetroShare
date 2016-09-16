@@ -45,10 +45,6 @@ int main(int argc, char *argv[])
     QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
     sockPath.append("/libresapi.sock");
 
-#ifndef __ANDROID__
-	sockPath = "/home/gio/.retroshare/LOC06_8730499b55bb946424d537b180bee10a/libresapi.sock";
-#endif
-
 	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
 	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 

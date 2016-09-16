@@ -5,16 +5,24 @@ import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
 {
+	function refreshData() { rsApi.request("/peers/self/certificate/", "") }
+
 	Component.onCompleted:
 	{
 		rsApi.openConnection(apiSocketPath)
-		rsApi.request("/peers/self/certificate/", "")
+		refreshData()
 	}
+	onFocusChanged: focus && refreshData()
 
 	LibresapiLocalClient
 	{
 		id: rsApi
-		onGoodResponseReceived:	myKeyField.text = JSON.parse(msg).data.cert_string
+		onGoodResponseReceived:
+		{
+			var jsonData = JSON.parse(msg)
+			if(jsonData && jsonData.data && jsonData.data.cert_string)
+				myKeyField.text = jsonData.data.cert_string
+		}
 	}
 
 	ColumnLayout
@@ -22,7 +30,7 @@ Item
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
 
-		TextField { id: myKeyField }
+		Text { id: myKeyField }
 		TextField { id: otherKeyField }
 	}
 

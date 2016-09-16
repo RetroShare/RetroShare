@@ -8,7 +8,8 @@ QT -= gui
 CONFIG += c++11
 CONFIG += dll
 
-TEMPLATE = lib
+android-g++:TEMPLATE = lib
+!android-g++:TEMPLATE = app
 
 SOURCES += service.cpp
 

@@ -20,5 +20,6 @@
         <file>qml/JSONListModel.qml</file>
         <file>qml/Contacts.qml</file>
         <file>qml/AddTrustedNode.qml</file>
+        <file>qml/RsLoginPassView.qml</file>
     </qresource>
 </RCC>
