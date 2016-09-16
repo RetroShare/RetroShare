@@ -1089,10 +1089,12 @@ void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
     {
         P3FILELISTS_DEBUG() << "Chopping off partial chunk of size " << MAX_DIR_SYNC_RESPONSE_DATA_SIZE << " from item data of size " << ritem->directory_content_data.bin_len << std::endl;
 
+        ritem->flags |= RsFileListsItem::FLAGS_SYNC_PARTIAL ;
+
         RsFileListsSyncResponseItem *subitem = new RsFileListsSyncResponseItem() ;
 
         subitem->entry_hash                = ritem->entry_hash;
-        subitem->flags                     = ritem->flags | RsFileListsItem::FLAGS_SYNC_PARTIAL;
+        subitem->flags                     = ritem->flags ;
         subitem->last_known_recurs_modf_TS = ritem->last_known_recurs_modf_TS;
         subitem->request_id                = ritem->request_id;
         subitem->checksum                  = ritem->checksum ;
@@ -1156,8 +1158,14 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
 
     // collapse the item at the end of the existing partial item. Dont delete ritem as it will be by the caller.
 
-    it->second->directory_content_data.bin_data = realloc(it->second->directory_content_data.bin_data,it->second->directory_content_data.bin_len + ritem->directory_content_data.bin_len) ;
-    memcpy(it->second->directory_content_data.bin_data,ritem->directory_content_data.bin_data,ritem->directory_content_data.bin_len);
+    uint32_t old_len = it->second->directory_content_data.bin_len ;
+    uint32_t added   = ritem->directory_content_data.bin_len;
+
+    it->second->directory_content_data.bin_data = realloc(it->second->directory_content_data.bin_data,old_len + added) ;
+    memcpy(&((unsigned char*)it->second->directory_content_data.bin_data)[old_len],ritem->directory_content_data.bin_data,added);
+    it->second->directory_content_data.bin_len = old_len + added ;
+
+    P3FILELISTS_DEBUG() << "Added new chunk of length " << added << ". New size is " << old_len + added << std::endl;
 
     // if finished, return the item
 
