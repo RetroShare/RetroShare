@@ -299,7 +299,10 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 	else if (details.type == DIR_TYPE_FILE) /* File */
 	{
 		// extensions predefined
-		return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
+        if(details.hash.isNull())
+            return QIcon(":/images/reset.png") ; // file is being hashed
+        else
+            return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 		return QVariant();
@@ -541,7 +544,9 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 
 	if (role == Qt::TextColorRole)
 	{
-        if(details.min_age > ageIndicator)
+        if(details.type == DIR_TYPE_FILE && details.hash.isNull())
+            return QVariant(QColor(Qt::green)) ;
+        else if(details.min_age > ageIndicator)
 			return QVariant(QColor(Qt::gray)) ;
         else if(RemoteMode)
         {
