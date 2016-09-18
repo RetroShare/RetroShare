@@ -1111,7 +1111,6 @@ void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
 
 RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncResponseItem *ritem)
 {
-#warning make sure about how robust that is to disconnections, etc.
     if(!(ritem->flags & RsFileListsItem::FLAGS_SYNC_PARTIAL ))
         return ritem ;
 
