@@ -30,7 +30,7 @@
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
 
-#define HASHSTORAGE_DEBUG 1
+//#define HASHSTORAGE_DEBUG 1
 
 static const uint32_t DEFAULT_INACTIVITY_SLEEP_TIME = 50*1000;
 static const uint32_t     MAX_INACTIVITY_SLEEP_TIME = 2*1000*1000;
@@ -100,7 +100,9 @@ void HashStorage::data_tick()
         // sleep off mutex!
         if(empty)
         {
+#ifdef HASHSTORAGE_DEBUG
             std::cerr << "nothing to hash. Sleeping for " << st << " us" << std::endl;
+#endif
 
             usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
 

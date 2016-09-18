@@ -29,7 +29,7 @@
 #include "directory_updater.h"
 #include "file_sharing_defaults.h"
 
-#define DEBUG_LOCAL_DIR_UPDATER 1
+//#define DEBUG_LOCAL_DIR_UPDATER 1
 
 //=============================================================================================================//
 //                                           Local Directory Updater                                           //
@@ -89,8 +89,9 @@ void LocalDirectoryUpdater::forceUpdate()
 void LocalDirectoryUpdater::sweepSharedDirectories()
 {
     RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
-
-    std::cerr << "LocalDirectoryUpdater::sweep()" << std::endl;
+#ifdef DEBUG_LOCAL_DIR_UPDATER
+    std::cerr << "[directory storage] LocalDirectoryUpdater::sweep()" << std::endl;
+#endif
 
 	// recursive update algorithm works that way:
 	// 	- the external loop starts on the shared directory list and goes through sub-directories
@@ -114,7 +115,9 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
     for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ; stored_dir_it;++stored_dir_it)
     {
-        std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+#ifdef DEBUG_LOCAL_DIR_UPDATER
+        std::cerr << "[directory storage]   recursing into " << stored_dir_it.name() << std::endl;
+#endif
 
         recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
                                                                             // are not necessarily in the same order.
@@ -124,7 +127,9 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
 void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx)
 {
-    std::cerr << "  parsing directory " << cumulated_path << ", index=" << indx << std::endl;
+#ifdef DEBUG_LOCAL_DIR_UPDATER
+    std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
+#endif
 
     // make sure list of subdirs is the same
     // make sure list of subfiles is the same
@@ -143,11 +148,15 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         {
                 case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
                                                                 subfiles[dirIt.file_name()].size = dirIt.file_size();
+#ifdef DEBUG_LOCAL_DIR_UPDATER
                                                                 std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+#endif
                                                                 break;
 
                 case librs::util::FolderIterator::TYPE_DIR:  	subdirs[dirIt.file_name()] = dirIt.file_modtime();
+#ifdef DEBUG_LOCAL_DIR_UPDATER
                                                                 std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
+#endif
                                                                 break;
         default:
             std::cerr << "(EE) Dir entry of unknown type with path \"" << cumulated_path << "/" << dirIt.file_name() << "\"" << std::endl;
@@ -182,7 +191,9 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     for(std::map<std::string,time_t>::const_iterator real_dir_it(subdirs.begin());real_dir_it!=subdirs.end();++real_dir_it, ++stored_dir_it)
     {
+#ifdef DEBUG_LOCAL_DIR_UPDATER
         std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
+#endif
         recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it) ;
     }
 }

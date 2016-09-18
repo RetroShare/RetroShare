@@ -139,9 +139,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 		void forceDirectoryCheck();              // Force re-sweep the directories and see what's changed
 		bool inDirectoryCheck();
 
-        // debug
-        void full_print();
-
     protected:
 
         int filterResults(const std::list<EntryIndex>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const;

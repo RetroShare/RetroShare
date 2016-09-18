@@ -32,6 +32,8 @@
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
 
+//#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
+
 /******************************************************************************************************************/
 /*                                                      Iterators                                                 */
 /******************************************************************************************************************/
@@ -384,7 +386,9 @@ void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
         {
             it->second = info;
 
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
             std::cerr << "Updating dir mod time because flags at level 0 have changed." << std::endl;
+#endif
             changed = true ;
         }
     }
@@ -427,12 +431,16 @@ void LocalDirectoryStorage::updateTimeStamps()
 
     if(mTSChanged)
     {
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         std::cerr << "Updating recursive TS for local shared dirs..." << std::endl;
+#endif
 
         time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
         mTSChanged = false ;
 
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+#endif
     }
 }
 
@@ -444,7 +452,7 @@ std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const 
 
     if (cit == mLocalDirs.end())
     {
-        std::cerr << "FileIndexMonitor::locked_findRealRoot() Invalid RootDir: " << virtual_rootdir << std::endl;
+        std::cerr << "(EE) locked_findRealRootFromVirtualFilename() Invalid RootDir: " << virtual_rootdir << std::endl;
         return std::string();
     }
     return cit->second.filename;
@@ -681,7 +689,9 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
         free(file_section_data) ;
     }
 
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
     std::cerr << "Serialised dir entry to send for entry index " << (void*)(intptr_t)indx << ". Data size is " << section_size << " bytes" << std::endl;
+#endif
 
     bindata.bin_data = section_data ;
     bindata.bin_len = section_offset ;
@@ -698,10 +708,10 @@ RemoteDirectoryStorage::RemoteDirectoryStorage(const RsPeerId& pid,const std::st
 {
     load(fname) ;
 
-    std::cerr << "***************************************" << std::endl;
-    std::cerr << "Loaded following directory for peer " << pid << std::endl;
+    std::cerr << "Loaded remote directory for peer " << pid << std::endl;
+#ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     mFileHierarchy->print();
-    std::cerr << "***************************************" << std::endl;
+#endif
 }
 
 void RemoteDirectoryStorage::checkSave()
@@ -721,7 +731,9 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     uint32_t section_size = bindata.bin_len ;
     uint32_t section_offset=0 ;
 
+#ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     std::cerr << "RemoteDirectoryStorage::deserialiseDirEntry(): deserialising directory content for friend " << peerId() << ", and directory " << indx << std::endl;
+#endif
 
     std::string dir_name ;
     uint32_t most_recent_time ,dir_modtime ;

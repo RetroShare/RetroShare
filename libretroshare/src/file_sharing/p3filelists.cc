@@ -39,6 +39,8 @@
 #define P3FILELISTS_DEBUG() std::cerr << time(NULL)    << " : FILE_LISTS : " << __FUNCTION__ << " : "
 #define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
+//#define DEBUG_P3FILELISTS 1
+
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED  = 0x0002 ;
@@ -179,9 +181,9 @@ int p3FileDatabase::tick()
     {
         RS_STACK_MUTEX(mFLSMtx) ;
         
-//#ifdef DEBUG_FILE_HIERARCHY
+#ifdef DEBUG_FILE_HIERARCHY
         mLocalSharedDirs->print();
-//#endif
+#endif
         last_print_time = now ;
 
 //#warning this should be removed, but it's necessary atm for updating the GUI
@@ -200,7 +202,7 @@ int p3FileDatabase::tick()
 
         mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     }
-#warning we need to make sure that one req per directory will not cause to keep re-asking the top level dirs.
+
     if(mLastRemoteDirSweepTS + 5 < now)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
@@ -235,20 +237,29 @@ int p3FileDatabase::tick()
 void p3FileDatabase::startThreads()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Starting directory watcher thread..." ;
+#endif
     mLocalDirWatcher->start();
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
+#endif
 }
 void p3FileDatabase::stopThreads()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Stopping hash cache thread..." ; std::cerr.flush() ;
+#endif
     mHashCache->fullstop();
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
-
     P3FILELISTS_DEBUG() << "Stopping directory watcher thread..." ; std::cerr.flush() ;
+#endif
     mLocalDirWatcher->fullstop();
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
+#endif
 }
 
 void p3FileDatabase::tickWatchers()
@@ -404,8 +415,9 @@ void p3FileDatabase::cleanup()
 {
     {
         RS_STACK_MUTEX(mFLSMtx) ;
-
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "p3FileDatabase::cleanup()" << std::endl;
+#endif
 
         // look through the list of friend directories. Remove those who are not our friends anymore.
         //
@@ -422,7 +434,10 @@ void p3FileDatabase::cleanup()
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
             {
+
+#ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing file list of non friend " << mRemoteDirectories[i]->peerId() << std::endl;
+#endif
 
                 delete mRemoteDirectories[i];
                 mRemoteDirectories[i] = NULL ;
@@ -446,7 +461,9 @@ void p3FileDatabase::cleanup()
             if(mRemoteDirectories.size() > friend_index && mRemoteDirectories[friend_index] != NULL)
                 continue ;
 
+#ifdef DEBUG_P3FILELISTS
             P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+#endif
 
             if(mRemoteDirectories.size() <= friend_index)
                 mRemoteDirectories.resize(friend_index+1,NULL) ;
@@ -467,7 +484,9 @@ void p3FileDatabase::cleanup()
         for(std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.begin();it!=mPendingSyncRequests.end();)
             if(online_peers.find(it->second.peer_id) == online_peers.end() || it->second.request_TS + DELAY_BEFORE_DROP_REQUEST < now)
             {
+#ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
+#endif
 
                 std::map<DirSyncRequestId,DirSyncRequestData>::iterator tmp(it);
                 ++tmp;
@@ -476,7 +495,9 @@ void p3FileDatabase::cleanup()
             }
             else
             {
+#ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  keeping request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << std::endl;
+#endif
                 ++it ;
             }
     }
@@ -597,10 +618,16 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     if(fi == 0)
         return ;	// not updating current directory (should we?)
 
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
+#endif
 
     if(generateAndSendSyncRequest(mRemoteDirectories[fi-1],e))
+    {
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "  Succeed." << std::endl;
+#endif
+    }
 }
 
 bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const
@@ -1010,7 +1037,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
 
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "Received directory sync request. hash=" << item->entry_hash << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
+#endif
 
         EntryIndex entry_index = DirectoryStorage::NO_INDEX;
 
@@ -1030,7 +1059,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         if(entry_type != DIR_TYPE_DIR)
         {
+#ifdef DEBUG_P3FILELISTS
             P3FILELISTS_DEBUG() << "  Directory does not exist anymore, or is not a directory, or permission denied. Answering with proper flags." << std::endl;
+#endif
             ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED ;
         }
         else if(entry_index != 0 && (!mLocalSharedDirs->getFileSharingPermissions(entry_index,node_flags,node_groups) || !(rsPeers->computePeerPermissionFlags(item->PeerId(),node_flags,node_groups) & RS_FILE_HINTS_BROWSABLE)))
@@ -1045,7 +1076,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
             if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
             {
+#ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  Directory is more recent than what the friend knows. Sending full dir content as response." << std::endl;
+#endif
 
                 ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_SYNC_DIR_CONTENT;
                 ritem->last_known_recurs_modf_TS = local_recurs_max_time;
@@ -1055,7 +1088,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
             }
             else
             {
+#ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  Directory is up to date w.r.t. what the friend knows. Sending ACK." << std::endl;
+#endif
 
                 ritem->flags = RsFileListsItem::FLAGS_SYNC_RESPONSE | RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE ;
                 ritem->last_known_recurs_modf_TS = local_recurs_max_time ;
@@ -1074,7 +1109,9 @@ void p3FileDatabase::splitAndSendItem(RsFileListsSyncResponseItem *ritem)
 
     while(ritem->directory_content_data.bin_len > MAX_DIR_SYNC_RESPONSE_DATA_SIZE)
     {
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "Chopping off partial chunk of size " << MAX_DIR_SYNC_RESPONSE_DATA_SIZE << " from item data of size " << ritem->directory_content_data.bin_len << std::endl;
+#endif
 
         ritem->flags |= RsFileListsItem::FLAGS_SYNC_PARTIAL ;
 
@@ -1116,7 +1153,9 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
 
     // item is a partial item. Look first for a starting entry
 
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Item from peer " << ritem->PeerId() << " is partial. Size = " << ritem->directory_content_data.bin_len << std::endl;
+#endif
 
     RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1130,7 +1169,9 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
             P3FILELISTS_ERROR() << "Impossible situation: partial item ended right away. Dropping..." << std::endl;
             return NULL;
         }
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "Creating new item buffer" << std::endl;
+#endif
 
         mPartialResponseItems[ritem->request_id] = new RsFileListsSyncResponseItem(*ritem) ;
         return NULL ;
@@ -1151,13 +1192,17 @@ RsFileListsSyncResponseItem *p3FileDatabase::recvAndRebuildItem(RsFileListsSyncR
     memcpy(&((unsigned char*)it->second->directory_content_data.bin_data)[old_len],ritem->directory_content_data.bin_data,added);
     it->second->directory_content_data.bin_len = old_len + added ;
 
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Added new chunk of length " << added << ". New size is " << old_len + added << std::endl;
+#endif
 
     // if finished, return the item
 
     if(is_ending)
     {
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "Item is complete. Returning it" << std::endl;
+#endif
 
         RsFileListsSyncResponseItem *ret = it->second ;
         mPartialResponseItems.erase(it) ;
@@ -1186,7 +1231,9 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         return ;
     }
 
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Handling sync response for directory with hash " << item->entry_hash << std::endl;
+#endif
 
     EntryIndex entry_index = DirectoryStorage::NO_INDEX;
 
@@ -1229,7 +1276,9 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
             P3FILELISTS_ERROR() << "  (EE) cannot find index from hash " << item->entry_hash << ". Dropping the response." << std::endl;
             return ;
         }
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "  entry index is " << entry_index << " " ;
+#endif
     }
 
     if(item->flags & RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED)
@@ -1272,7 +1321,9 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    // get the info for this entry
 
+#ifdef DEBUG_P3FILELISTS
    P3FILELISTS_DEBUG() << "currently at entry index " << e << std::endl;
+#endif
 
    time_t local_update_TS;
 
@@ -1286,7 +1337,11 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 
    if((e == 0 && now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ) || local_update_TS == 0)	// we need to compare local times only. We cannot compare local (now) with remote time.
        if(generateAndSendSyncRequest(rds,e))
+       {
+#ifdef DEBUG_P3FILELISTS
            P3FILELISTS_DEBUG() << "  Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
+#endif
+       }
 
    for(DirectoryStorage::DirIterator it(rds,e);it;++it)
        locked_recursSweepRemoteDirectory(rds,*it,depth+1);
@@ -1342,7 +1397,9 @@ bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,cons
 
     if(it != mPendingSyncRequests.end())
     {
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "  Not asking for sync of directory " << e << " to friend " << rds->peerId() << " because a recent pending request still exists." << std::endl;
+#endif
         return false ;
     }
 
@@ -1360,7 +1417,9 @@ bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,cons
     data.peer_id = item->PeerId();
     data.flags = item->flags;
 
+#ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
+#endif
 
     mPendingSyncRequests[sync_req_id] = data ;
 
