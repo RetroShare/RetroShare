@@ -43,6 +43,7 @@ HashStorage::HashStorage(const std::string& save_file_name)
     mLastSaveTime = 0 ;
     mTotalSizeToHash = 0;
     mTotalFilesToHash = 0;
+    mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
@@ -138,40 +139,42 @@ void HashStorage::data_tick()
             mFilesToHash.erase(mFilesToHash.begin()) ;
         }
 
-        std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
-
-        std::string tmpout;
-        rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", mHashCounter+1, mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
-
-        RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
-
-        if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
-            std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
-        else
-            std::cerr << "done."<< std::endl;
-
-        // store the result
-
+        if(job.client->hash_confirm(job.client_param))
         {
-            RS_STACK_MUTEX(mHashMtx) ;
-            HashStorageInfo& info(mFiles[job.full_path]);
+            std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
 
-            info.filename = job.full_path ;
-            info.size = size ;
-            info.modf_stamp = job.ts ;
-            info.time_stamp = time(NULL);
-            info.hash = hash;
+            std::string tmpout;
+            rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", mHashCounter+1, mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-            mChanged = true ;
-            ++mHashCounter ;
-            mTotalHashedSize += size ;
+            RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+
+            if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
+                std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+            else
+                std::cerr << "done."<< std::endl;
+
+            // store the result
+
+            {
+                RS_STACK_MUTEX(mHashMtx) ;
+                HashStorageInfo& info(mFiles[job.full_path]);
+
+                info.filename = job.full_path ;
+                info.size = size ;
+                info.modf_stamp = job.ts ;
+                info.time_stamp = time(NULL);
+                info.hash = hash;
+
+                mChanged = true ;
+                ++mHashCounter ;
+                mTotalHashedSize += size ;
+            }
         }
     }
     // call the client
 
     if(!hash.isNull())
         job.client->hash_callback(job.client_param, job.full_path, hash, size);
-
 }
 
 bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
@@ -234,14 +237,11 @@ void HashStorage::clean()
 {
     RS_STACK_MUTEX(mHashMtx) ;
 
-#ifdef HASHSTORAGE_DEBUG
-    std::cerr << "Cleaning HashStorage..." << std::endl ;
-#endif
     time_t now = time(NULL) ;
     time_t duration = mMaxStorageDurationDays * 24 * 3600 ; // seconds
 
 #ifdef HASHSTORAGE_DEBUG
-    std::cerr << "cleaning hash cache." << std::endl ;
+    std::cerr << "Cleaning hash cache." << std::endl ;
 #endif
 
     for(std::map<std::string,HashStorageInfo>::iterator it(mFiles.begin());it!=mFiles.end();)

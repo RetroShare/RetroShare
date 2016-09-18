@@ -36,7 +36,14 @@ public:
     HashStorageClient() {}
     virtual ~HashStorageClient() {}
 
+    // the result of the hashing info is sent to this method
+
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)=0;
+
+    // this method is used to check that the client param is still valid just before hashing. This avoids hashing files
+    // that are still in queue while removed from shared lists.
+
+    virtual bool hash_confirm(uint32_t client_param)=0 ;
 };
 
 class HashStorage: public RsTickingThread
@@ -90,7 +97,7 @@ private:
     // Local configuration and storage
 
     uint32_t mMaxStorageDurationDays ; 				// maximum duration of un-requested cache entries
-    std::map<std::string, HashStorageInfo> mFiles ;		// stored as (full_path, hash_info)
+    std::map<std::string, HashStorageInfo> mFiles ;	// stored as (full_path, hash_info)
     std::string mFilePath ;
     bool mChanged ;
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>485</width>
+    <width>895</width>
     <height>549</height>
    </rect>
   </property>
@@ -144,50 +144,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="rememberHashesCB">
-          <property name="toolTip">
-           <string>Remember file hashes even if not shared. 
-This might be useful if you're sharing an 
-external HD, to avoid re-hashing files when 
-you plug it in.</string>
-          </property>
-          <property name="text">
-           <string>Remember hashed files for </string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="rememberHashesSB">
-          <property name="suffix">
-           <string> days</string>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>365</number>
-          </property>
-          <property name="value">
-           <number>10</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="cleanHashCachePB">
-          <property name="toolTip">
-           <string>Forget any hashed file that is not anymore shared.</string>
-          </property>
-          <property name="text">
-           <string>Clean Hash Cache</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -240,9 +197,6 @@ you plug it in.</string>
  <tabstops>
   <tabstop>shareDownloadDirectoryCB</tabstop>
   <tabstop>editShareButton</tabstop>
-  <tabstop>rememberHashesCB</tabstop>
-  <tabstop>rememberHashesSB</tabstop>
-  <tabstop>cleanHashCachePB</tabstop>
   <tabstop>autoCheckDirectories_CB</tabstop>
   <tabstop>autoCheckDirectoriesDelay_SB</tabstop>
   <tabstop>incomingDir</tabstop>

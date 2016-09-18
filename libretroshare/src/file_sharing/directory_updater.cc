@@ -42,16 +42,35 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
     mLastTSUpdateTime = 0;
 
     mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
+    mIsEnabled = false ;
+}
+
+bool LocalDirectoryUpdater::isEnabled() const
+{
+    return mIsEnabled ;
+}
+void LocalDirectoryUpdater::setEnabled(bool b)
+{
+    if(mIsEnabled == b)
+        return ;
+
+    if(b)
+        start() ;
+    else
+        shutdown();
+
+    mIsEnabled = b ;
 }
 
 void LocalDirectoryUpdater::data_tick()
 {
     time_t now = time(NULL) ;
 
-    if(now > DELAY_BETWEEN_DIRECTORY_UPDATES + mLastSweepTime)
+    if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
     {
         sweepSharedDirectories() ;
         mLastSweepTime = now;
+        mSharedDirectories->notifyTSChanged() ;
     }
 
     if(now > DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE + mLastTSUpdateTime)
@@ -177,9 +196,23 @@ void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::stri
 {
     if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
         std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;
+
+    mSharedDirectories->notifyTSChanged() ;
 }
 
+bool LocalDirectoryUpdater::hash_confirm(uint32_t client_param)
+{
+    return mSharedDirectories->getEntryType(DirectoryStorage::EntryIndex(client_param)) == DIR_TYPE_FILE ;
+}
 
+void LocalDirectoryUpdater::setFileWatchPeriod(int seconds)
+{
+    mDelayBetweenDirectoryUpdates = seconds ;
+}
+uint32_t LocalDirectoryUpdater::fileWatchPeriod() const
+{
+    return mDelayBetweenDirectoryUpdates ;
+}
 
 
 

@@ -1239,8 +1239,8 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-	ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-	ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
+    ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
+    ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
 

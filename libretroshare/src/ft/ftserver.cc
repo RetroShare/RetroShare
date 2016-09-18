@@ -675,35 +675,11 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	return true;
 }
-void	ftServer::setWatchPeriod(int minutes) 
-{
-    mFileDatabase->setWatchPeriod(minutes*60) ;
-}
-int ftServer::watchPeriod() const
-{
-    return mFileDatabase->watchPeriod()/60 ;
-}
+bool     ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
+int      ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
 
-void	ftServer::setRememberHashFiles(bool b) 
-{
-    mFileDatabase->setRememberHashCache(b) ;
-}
-bool ftServer::rememberHashFiles() const
-{
-    return mFileDatabase->rememberHashCache() ;
-}
-void	ftServer::setRememberHashFilesDuration(uint32_t days) 
-{
-    mFileDatabase->setRememberHashCacheDuration(days) ;
-}
-uint32_t ftServer::rememberHashFilesDuration() const 
-{
-    return mFileDatabase->rememberHashCacheDuration() ;
-}
-void   ftServer::clearHashCache() 
-{
-    mFileDatabase->clearHashCache() ;
-}
+void ftServer::setWatchEnabled(bool b)                      { mFileDatabase->setWatchEnabled(b) ; }
+void ftServer::setWatchPeriod(int minutes)                  { mFileDatabase->setWatchPeriod(minutes*60) ; }
 
 bool ftServer::getShareDownloadDirectory()
 {

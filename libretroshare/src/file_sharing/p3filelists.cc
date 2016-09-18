@@ -312,6 +312,15 @@ cleanup = true;
         rskv->tlvkvs.pairs.push_back(kv);
     }
 
+    {
+        RsTlvKeyValue kv;
+
+        kv.key = WATCH_FILE_ENABLED_SS;
+        kv.value = watchEnabled()?"YES":"NO" ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
+
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -353,6 +362,10 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 int t=0 ;
                 if(sscanf(kit->value.c_str(),"%d",&t) == 1)
                     setWatchPeriod(t);
+            }
+            else if(kit->key == WATCH_FILE_ENABLED_SS)
+            {
+                setWatchEnabled(kit->value == "YES") ;
             }
             delete *it ;
             continue ;
@@ -788,13 +801,22 @@ uint32_t p3FileDatabase::getType(void *ref) const
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
 {
-    NOT_IMPLEMENTED();
     mLocalDirWatcher->forceUpdate();
 }
 bool p3FileDatabase::inDirectoryCheck()
 {
-    NOT_IMPLEMENTED();
     return  mLocalDirWatcher->inDirectoryCheck();
+}
+void p3FileDatabase::setWatchEnabled(bool b)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setEnabled(b) ;
+    IndicateConfigChanged();
+}
+bool p3FileDatabase::watchEnabled()
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->isEnabled() ;
 }
 void p3FileDatabase::setWatchPeriod(uint32_t seconds)
 {
@@ -808,31 +830,6 @@ uint32_t p3FileDatabase::watchPeriod()
     RS_STACK_MUTEX(mFLSMtx) ;
     return mLocalDirWatcher->fileWatchPeriod();
 }
-void p3FileDatabase::setRememberHashCacheDuration(uint32_t days)
-{
-    RS_STACK_MUTEX(mFLSMtx) ;
-    mHashCache->setRememberHashFilesDuration(days) ;
-}
-uint32_t p3FileDatabase::rememberHashCacheDuration()
-{
-    RS_STACK_MUTEX(mFLSMtx) ;
-    return mHashCache->rememberHashFilesDuration() ;
-}
-void p3FileDatabase::clearHashCache()
-{
-    RS_STACK_MUTEX(mFLSMtx) ;
-    mHashCache->clear() ;
-}
-bool p3FileDatabase::rememberHashCache()
-{
-    NOT_IMPLEMENTED();
-    return false;
-}
-void p3FileDatabase::setRememberHashCache(bool)
-{
-    NOT_IMPLEMENTED();
-}
-
 bool p3FileDatabase::findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;

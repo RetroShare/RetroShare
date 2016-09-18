@@ -135,11 +135,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         void setWatchPeriod(uint32_t seconds);
         uint32_t watchPeriod() ;
-        void setRememberHashCacheDuration(uint32_t days) ;
-        uint32_t rememberHashCacheDuration() ;
-        void clearHashCache() ;
-        bool rememberHashCache() ;
-        void setRememberHashCache(bool) ;
+        void setWatchEnabled(bool b) ;
+        bool watchEnabled() ;
 
         // interfact for directory parsing
 

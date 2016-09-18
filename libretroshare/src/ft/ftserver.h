@@ -208,13 +208,10 @@ public:
     virtual bool	getShareDownloadDirectory();
     virtual bool 	shareDownloadDirectory(bool share);
 
-    virtual void	setRememberHashFilesDuration(uint32_t days) ;
-    virtual uint32_t rememberHashFilesDuration() const ;
-    virtual bool rememberHashFiles() const ;
-    virtual void setRememberHashFiles(bool) ;
-    virtual void   clearHashCache() ;
     virtual void setWatchPeriod(int minutes) ;
     virtual int watchPeriod() const ;
+    virtual void setWatchEnabled(bool b) ;
+    virtual bool watchEnabled() ;
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/

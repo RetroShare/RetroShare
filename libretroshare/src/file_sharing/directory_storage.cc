@@ -337,6 +337,8 @@ void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo
 
     for(std::list<SharedDirInfo>::const_iterator it(processed_list.begin());it!=processed_list.end();++it)
         mLocalDirs[it->filename] = *it;
+
+    mTSChanged = true ;
 }
 void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
 {
@@ -388,7 +390,10 @@ void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
     }
 
     if(changed)
+    {
         setDirectoryLocalModTime(0,time(NULL)) ;
+        mTSChanged = true ;
+    }
 }
 
 bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::string& fullpath)
@@ -411,13 +416,24 @@ bool LocalDirectoryStorage::convertSharedFilePath(const std::string& path, std::
     return true;
 }
 
+void LocalDirectoryStorage::notifyTSChanged()
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    mTSChanged = true ;
+}
 void LocalDirectoryStorage::updateTimeStamps()
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
-    time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
+    if(mTSChanged)
+    {
+        std::cerr << "Updating recursive TS for local shared dirs..." << std::endl;
 
-    std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
+        mTSChanged = false ;
+
+        std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+    }
 }
 
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const

@@ -41,13 +41,18 @@ public:
     void forceUpdate();
     bool inDirectoryCheck() const ;
 
-    void setFileWatchPeriod(uint32_t seconds) { mDelayBetweenDirectoryUpdates = seconds ; }
-    uint32_t fileWatchPeriod() const { return mDelayBetweenDirectoryUpdates ; }
+    void setFileWatchPeriod(int seconds) ;
+    uint32_t fileWatchPeriod() const ;
+
+    void setEnabled(bool b) ;
+    bool isEnabled() const ;
 
 protected:
     virtual void data_tick() ;
 
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
+    virtual bool hash_confirm(uint32_t client_param) ;
+
     void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
     void sweepSharedDirectories();
 
@@ -59,5 +64,6 @@ private:
     time_t mLastTSUpdateTime;
 
     uint32_t mDelayBetweenDirectoryUpdates;
+    bool mIsEnabled ;
 };
 

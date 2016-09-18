@@ -201,7 +201,17 @@ public:
     void updateShareFlags(const SharedDirInfo& info) ;
     bool convertSharedFilePath(const std::string& path_with_virtual_name,std::string& fullpath) ;
 
+    /*!
+     * \brief updateTimeStamps
+     * 			Checks recursive TS and update the if needed.
+     */
     void updateTimeStamps();
+
+    /*!
+     * \brief notifyTSChanged
+     * 			Use this to force an update of the recursive TS, when calling updateTimeStamps();
+     */
+    void notifyTSChanged();
     /*!
      * \brief getFileInfo Converts an index info a full file info structure.
      * \param i index in the directory structure
@@ -239,11 +249,13 @@ private:
         std::string locked_getVirtualPath(EntryIndex indx) const ;
         std::string locked_getVirtualDirName(EntryIndex indx) const ;
 
-    bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
-    std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
+        bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
+        std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
-    std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
-    std::string mFileName;
+        std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
+        std::string mFileName;
+
+        bool mTSChanged ;
 };
 
 
