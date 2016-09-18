@@ -773,11 +773,11 @@ int p3FileDatabase::RequestDirDetails(const RsPeerId& uid,const std::string& pat
     NOT_IMPLEMENTED();
     return 0;
 }
-int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &details) const
-{
-    NOT_IMPLEMENTED();
-    return 0;
-}
+//int p3FileDatabase::RequestDirDetails(const std::string& path, DirDetails &details) const
+//{
+//    NOT_IMPLEMENTED();
+//    return 0;
+//}
 uint32_t p3FileDatabase::getType(void *ref) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
@@ -829,16 +829,6 @@ uint32_t p3FileDatabase::watchPeriod()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
     return mLocalDirWatcher->fileWatchPeriod();
-}
-bool p3FileDatabase::findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
-{
-    RS_STACK_MUTEX(mFLSMtx) ;
-
-    std::list<EntryIndex> firesults;
-    mLocalSharedDirs->searchHash(hash,firesults) ;
-
-    NOT_IMPLEMENTED();
-    return false;
 }
 
 int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id)

@@ -314,7 +314,7 @@ void HashStorage::locked_save()
         return ;
     }
 
-    std::cerr << mFiles.size() << " Entries saved." << std::endl;
+    std::cerr << mFiles.size() << " entries saved in hash cache." << std::endl;
 
     free(data) ;
 }
@@ -356,9 +356,10 @@ bool HashStorage::writeHashStorageInfo(unsigned char *& data,uint32_t&  total_si
     // now write the whole string into a single section in the file
 
     if(!FileListIO::writeField(data,total_size,offset,FILE_LIST_IO_TAG_HASH_STORAGE_ENTRY,section_data,section_offset)) return false ;
-
+#ifdef HASHSTORAGE_DEBUG
     std::cerr << "Writing hash storage section " << RsUtil::BinToHex(section_data,section_offset) << std::endl;
     std::cerr << "Info.filename = " << info.filename << std::endl;
+#endif
     free(section_data) ;
 
     return true;
