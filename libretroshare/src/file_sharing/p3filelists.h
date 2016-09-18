@@ -153,7 +153,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void cleanup();
         void tickRecv();
         void tickSend();
-        void tickWatchers();
 
     private:
         p3ServiceControl *mServCtrl ;

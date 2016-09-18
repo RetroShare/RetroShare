@@ -154,10 +154,6 @@ RsServiceInfo p3FileDatabase::getServiceInfo()
 }
 int p3FileDatabase::tick()
 {
-	// tick the watchers, possibly create new ones if additional friends do connect.
-	//
-	tickWatchers();
-	
 	// tick the input/output list of update items and process them
 	//
 	tickRecv() ;
@@ -260,10 +256,6 @@ void p3FileDatabase::stopThreads()
 #ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
 #endif
-}
-
-void p3FileDatabase::tickWatchers()
-{
 }
 
 bool p3FileDatabase::saveList(bool &cleanup, std::list<RsItem *>& sList)
