@@ -74,7 +74,7 @@ bool IdlePlatform::init()
 
 	int event_base, error_base;
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-	if(XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
+	if(QX11Info::isPlatformX11() && XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
 #else
 	if(XScreenSaverQueryExtension(QApplication::desktop()->screen()->x11Info().display(), &event_base, &error_base)) {
 #endif
@@ -89,7 +89,7 @@ int IdlePlatform::secondsIdle()
 	if(!d->ss_info)
 		return 0;
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-	if(!XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), d->ss_info))
+	if(!QX11Info::isPlatformX11() || !XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), d->ss_info))
 #else
 	if(!XScreenSaverQueryInfo(QApplication::desktop()->screen()->x11Info().display(), QX11Info::appRootWindow(), d->ss_info))
 #endif

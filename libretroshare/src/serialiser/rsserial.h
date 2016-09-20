@@ -178,32 +178,21 @@ std::ostream &printIndent(std::ostream &out, uint16_t indent);
 
 class RsRawItem: public RsItem
 {
-	public:
-		RsRawItem(uint32_t t, uint32_t size)
-			:RsItem(t), len(size)
-		{ 
-			data = rs_malloc(len);
-		}
+public:
+	RsRawItem(uint32_t t, uint32_t size) : RsItem(t), len(size)
+	{ data = rs_malloc(len); }
+	virtual ~RsRawItem() { free(data); }
 
-		virtual ~RsRawItem()
-		{
-			if (data)
-				free(data);
-			data = NULL;
-			len = 0;
-		}
+	uint32_t getRawLength() { return len; }
+	void * getRawData() { return data; }
 
-		uint32_t	getRawLength() { return len; }
-		void  *getRawData() { return data; }
+	virtual void clear() {}
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-		virtual void clear() { return; } /* what can it do? */
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-	private:
-		void *data;
-		uint32_t len;
+private:
+	void *data;
+	uint32_t len;
 };
-
 
 
 #endif /* RS_BASE_SERIALISER_H */

@@ -123,7 +123,7 @@ version_detail_bash_script {
 		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
 		QMAKE_EXTRA_TARGETS += write_version_detail
 		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = ./version_detail.sh
+		write_version_detail.commands = $$PWD/version_detail.sh
 	}
 	win32 {
 		QMAKE_EXTRA_TARGETS += write_version_detail
@@ -305,22 +305,22 @@ openbsd-* {
 
 # ###########################################
 
-DEPENDPATH += . ../../libretroshare/src/
-INCLUDEPATH += ../../libretroshare/src/
+DEPENDPATH += . $$PWD/../../libretroshare/src/
+INCLUDEPATH += $$PWD/../../libretroshare/src/
 
-PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-LIBS *= ../../libretroshare/src/lib/libretroshare.a
+PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 
 wikipoos {
-	PRE_TARGETDEPS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-	LIBS *= ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
 # webinterface
-DEPENDPATH += ../../libresapi/src
-INCLUDEPATH += ../../libresapi/src
-PRE_TARGETDEPS *= ../../libresapi/src/lib/libresapi.a
-LIBS += ../../libresapi/src/lib/libresapi.a
+DEPENDPATH += $$PWD/../../libresapi/src
+INCLUDEPATH += $$PWD/../../libresapi/src
+PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
 
 # Input
 HEADERS +=  rshare.h \

@@ -243,74 +243,66 @@ void UdpLayer::run()
 /* higher level interface */
 void UdpLayer::recv_loop()
 {
-	int maxsize = 16000;
+	size_t maxsize = 16000;
 	void *inbuf = malloc(maxsize);
 
-    	if(inbuf == NULL)
-        {
-            std::cerr << "(EE) Error in memory allocation of size " << maxsize << " in " << __PRETTY_FUNCTION__ << std::endl;
-            return ;
-        }
-        
-        int status;
-        struct timeval timeout;
+	if(inbuf == NULL)
+	{
+		std::cerr << "(EE) Error in memory allocation of size " << maxsize
+		          << " in " << __PRETTY_FUNCTION__ << std::endl;
+		return;
+	}
+
+	int status;
+	struct timeval timeout;
 
 	while(1)
 	{
-                fd_set rset;
-                for(;;) 
+		for(;;)
 		{
 			/* check if we need to stop */
 			bool toStop = false;
 			{
-				bdStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+				bdStackMutex stack(sockMtx); (void) stack;
 				toStop = stopThread;
 			}
-			
+
 			if (toStop)
 			{
 #ifdef DEBUG_UDP_LAYER
 				std::cerr << "UdpLayer::recv_loop() stopping thread" << std::endl;
 #endif
-                free(inbuf) ;
+				free(inbuf);
 				stop();
+				return; // Avoid compiler warning about usage of inbuf after free
 			}
 
-                        FD_ZERO(&rset);
-                        FD_SET(sockfd, &rset);
-                        timeout.tv_sec = 0;
-                        timeout.tv_usec = 500000;       /* 500 ms timeout */
-                        status = select(sockfd+1, &rset, NULL, NULL, &timeout);
-                        if (status > 0)
-			{
-                                break;  /* data available, go read it */
-                        } 
-			else if (status < 0) 
-			{
+			fd_set rset;
+			FD_ZERO(&rset);
+			FD_SET(sockfd, &rset);
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 500000; // 500 ms timeout
+			status = select(sockfd+1, &rset, NULL, NULL, &timeout);
+			if (status > 0) break; // data available, go read it
 #ifdef DEBUG_UDP_LAYER
-                                std::cerr << "UdpLayer::recv_loop() Error: " << bdnet_errno() << std::endl;
+			else if (status < 0) std::cerr << "UdpLayer::recv_loop() Error: "
+			                               << bdnet_errno() << std::endl;
 #endif
-                        }
-                };      
+		};
 
-		int nsize = maxsize;
+		int nsize = static_cast<int>(maxsize);
 		struct sockaddr_in from;
 		if (0 < receiveUdpPacket(inbuf, &nsize, from))
 		{
 #ifdef DEBUG_UDP_LAYER
-			std::cerr << "UdpLayer::readPkt()  from : " << from << std::endl;
-			std::cerr << printPkt(inbuf, nsize);
+			std::cerr << "UdpLayer::readPkt()  from : " << from << std::endl
+			          << printPkt(inbuf, nsize);
 #endif
-			// send to reciever.
-			recv -> recvPkt(inbuf, nsize, from);
+			recv->recvPkt(inbuf, nsize, from); // pass to reciever.
 		}
-		else
-		{
 #ifdef DEBUG_UDP_LAYER
-			std::cerr << "UdpLayer::readPkt() not ready" << from;
-			std::cerr << std::endl;
+		else std::cerr << "UdpLayer::readPkt() not ready" << from << std::endl;
 #endif
-		}
 	}
 }
 

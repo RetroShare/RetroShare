@@ -107,13 +107,13 @@ void GenCertDialog::grabMouse()
 	if(ui.entropy_bar->value() < 20)
 	{
 		ui.genButton->setEnabled(false) ;
-		ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
+		//ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
 		ui.genButton->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
 	}
 	else
 	{
 		ui.genButton->setEnabled(true) ;
-		ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
+		//ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
 		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
 	}
 
@@ -133,7 +133,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
 	ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));

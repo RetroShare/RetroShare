@@ -5,6 +5,8 @@
 #don't exit even if a command fails
 set +e
 
+pushd $(dirname "$0")
+
 OLDLANG=${LANG}
 
 export LANG=C
@@ -34,5 +36,8 @@ if (ls &> /dev/null); then
 fi
 
 export LANG=${OLDLANG}
+
+popd
+
 echo "version_detail.sh scripts finished"
 exit 0

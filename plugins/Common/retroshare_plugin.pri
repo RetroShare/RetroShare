@@ -3,8 +3,8 @@
 TEMPLATE = lib
 CONFIG *= plugin
 
-DEPENDPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
-INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
+DEPENDPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
+INCLUDEPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
 
 unix {
 	target.path = "$${PLUGIN_DIR}"
@@ -67,8 +67,8 @@ win32 {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
-	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
+	PRE_TARGETDEPS += $$OUT_PWD/../../retroshare-gui/src/lib/libretroshare-gui.a
+	LIBS += -L"$$OUT_PWD/../../retroshare-gui/src/lib" -lretroshare-gui
 
 	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	for(bin, BIN_DIR):LIBS += -L"$$bin"
