@@ -875,10 +875,11 @@ test_bitdht {
 ################################# Android #####################################
 
 android-g++ {
-## ifaddrs is missing on Android add them
-## taken from https://github.com/morristech/android-ifaddrs
-    HEADERS *= util/ifaddrs.h
-    SOURCES *= util/ifaddrs.c
+## ifaddrs is missing on Android add them don't use the one from
+## https://github.com/morristech/android-ifaddrs
+## because they crash, use QNetworkInterface from Qt instead
+    CONFIG *= qt
+    QT *= network
 
 ## Add this here and not in retroshare.pri because static library are very
 ## sensible to order in command line, has to be in the end of file for the
