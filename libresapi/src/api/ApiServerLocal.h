@@ -24,6 +24,7 @@
 #include <retroshare/rsinit.h>
 #include <string>
 
+#include "ApiTypes.h"
 #include "ApiServer.h"
 
 namespace resource_api
@@ -89,6 +90,7 @@ private:
 	QLocalSocket* mLocalSocket;
 	State mState;
 	std::string reqPath;
+	resource_api::Request::Method reqMeth;
 };
 
 } // namespace resource_api

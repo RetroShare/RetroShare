@@ -27,11 +27,39 @@ Item
 
 	ColumnLayout
 	{
+		id: colLayout
 		anchors.top: parent.top
-		anchors.bottom: bottomButton.top
+		anchors.bottom: rowLayout.top
 
-		Text { id: myKeyField }
+
+		TextField { id: myKeyField }
 		TextField { id: otherKeyField }
+	}
+
+	RowLayout
+	{
+		id: rowLayout
+		anchors.top: colLayout.bottom
+
+		Button
+		{
+			text: "Copy"
+			onClicked:
+			{
+				myKeyField.selectAll()
+				myKeyField.copy()
+			}
+		}
+
+		Button
+		{
+			text: "Paste"
+			onClicked:
+			{
+				otherKeyField.selectAll()
+				otherKeyField.paste()
+			}
+		}
 	}
 
 	Button
@@ -41,7 +69,20 @@ Item
 		anchors.bottom: parent.bottom
 		onClicked:
 		{
-			rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
+			console.log("retroshare addtrusted: ", otherKeyField.text)
+			var jsonData =
+			{
+				cert_string: otherKeyField.text,
+				flags:
+				{
+					allow_direct_download: true,
+					allow_push: false,
+					require_whitelist: false,
+				}
+			}
+			console.log("retroshare addtrusted jsonData: ", JSON.stringify(jsonData))
+			//rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
+			rsApi.request("POST /peers", JSON.stringify(jsonData))
 		}
 	}
 }

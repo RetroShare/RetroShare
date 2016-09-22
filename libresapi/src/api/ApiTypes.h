@@ -193,29 +193,21 @@ public:
     // then each handler should pop the top element
     std::stack<std::string> mPath;
     std::string mFullPath;
-	bool setPath(std::string reqPath)
+	bool setPath(const std::string &reqPath)
 	{
 		std::string str;
-		for(std::string::reverse_iterator sit = reqPath.rbegin(); sit != reqPath.rend(); sit++)
+		std::string::const_reverse_iterator sit;
+		for( sit = reqPath.rbegin(); sit != reqPath.rend(); ++sit )
 		{
-			if((*sit) != '/')
+			// add to front because we are traveling in reverse order
+			if((*sit) != '/') str = *sit + str;
+			else if(!str.empty())
 			{
-				// add to front because we are traveling in reverse order
-				str = *sit + str;
-			}
-			else
-			{
-				if(str != "")
-				{
-					mPath.push(str);
-					str.clear();
-				}
+				mPath.push(str);
+				str.clear();
 			}
 		}
-		if(str != "")
-		{
-			mPath.push(str);
-		}
+		if(!str.empty()) mPath.push(str);
 		mFullPath = reqPath;
 
 		return true;
@@ -231,8 +223,7 @@ public:
     // contains data for new resources
     StreamBase& mStream;
 
-    // use the is*() methods to query the method type
-//private:
+    // use the is*() methods to query the method type:
     enum Method { GET, PUT, DELETE_AA, EXEC};// something is wrong with DELETE, it won't compile with it
     Method mMethod;
 };
