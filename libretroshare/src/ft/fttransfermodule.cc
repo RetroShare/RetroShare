@@ -739,7 +739,7 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 #endif
 	/* update rate */
 
-	if(info.lastTransfers > 0 || ageReq > 2)
+    if( (info.lastTransfers > 0 && ageReq > 0) || ageReq > 2)
 	{
 		info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers / (float)ageReq;
 		info.lastTransfers = 0;
