@@ -82,7 +82,7 @@ Item
 			}
 			console.log("retroshare addtrusted jsonData: ", JSON.stringify(jsonData))
 			//rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
-			rsApi.request("POST /peers", JSON.stringify(jsonData))
+			rsApi.request("PUT /peers", JSON.stringify(jsonData))
 		}
 	}
 }
