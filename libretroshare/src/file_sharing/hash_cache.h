@@ -30,6 +30,11 @@
 #include "util/rsthreads.h"
 #include "retroshare/rsfiles.h"
 
+/*!
+ * \brief The HashStorageClient class
+ * 		Used by clients of the hash cache for receiving hash results when done. This is asynchrone of course since hashing
+ * 		might be quite costly.
+ */
 class HashStorageClient
 {
 public:
@@ -59,7 +64,7 @@ public:
      * \param mod_time     Actual file modification time
      * \param known_hash   Returned hash for the file.
      * \param c            Hash cache client to which the hash should be sent once calculated
-     * \param client_param Param to be passed to the client callback
+     * \param client_param Param to be passed to the client callback. Useful if the client needs a file ID.
      *
      * \return true if the supplied hash info is up to date.
      */
@@ -75,9 +80,9 @@ public:
     } ;
 
     // interaction with GUI, called from p3FileLists
-    void setRememberHashFilesDuration(uint32_t days) { mMaxStorageDurationDays = days ; }
+    void setRememberHashFilesDuration(uint32_t days) { mMaxStorageDurationDays = days ; }		// duration for which the hash is kept even if the file is not shared anymore
     uint32_t rememberHashFilesDuration() const { return mMaxStorageDurationDays ; }
-    void clear() { mFiles.clear(); mChanged=true; }
+    void clear() { mFiles.clear(); mChanged=true; }												// drop all known hashes. Not something to do, except if you want to rehash the entire database
     bool empty() const { return mFiles.empty() ; }
 
     // Functions called by the thread
@@ -86,7 +91,13 @@ public:
 
     friend std::ostream& operator<<(std::ostream& o,const HashStorageInfo& info) ;
 private:
+    /*!
+     * \brief clean
+     * 		This function is responsible for removing old hashes, etc
+     */
     void clean() ;
+
+    // loading/saving the entire hash database to a file
 
     void locked_save() ;
     void locked_load() ;
@@ -98,7 +109,7 @@ private:
 
     uint32_t mMaxStorageDurationDays ; 				// maximum duration of un-requested cache entries
     std::map<std::string, HashStorageInfo> mFiles ;	// stored as (full_path, hash_info)
-    std::string mFilePath ;
+    std::string mFilePath ;							// file where the hash database is stored
     bool mChanged ;
 
     struct FileHashJob

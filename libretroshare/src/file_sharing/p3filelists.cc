@@ -223,8 +223,10 @@ int p3FileDatabase::tick()
 
         mLastRemoteDirSweepTS = now;
 
-#warning hack to make loaded directories show up in the GUI, because the GUI isn_t ready at the time they are actually loaded up.
-            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+        // This is a hash to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
+        // so the first notify is ignored, and no other notify will happen next.
+
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
     }
 
     return 0;
@@ -614,7 +616,9 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     P3FILELISTS_DEBUG() << "Trying to force sync of entry ndex " << e << " to friend " << mRemoteDirectories[fi-1]->peerId() << std::endl;
 #endif
 
-    if(generateAndSendSyncRequest(mRemoteDirectories[fi-1],e))
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    if(locked_generateAndSendSyncRequest(mRemoteDirectories[fi-1],e))
     {
 #ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "  Succeed." << std::endl;
@@ -638,7 +642,7 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
 
             return true ;
         }
-        else if(row < mRemoteDirectories.size())
+        else if((uint32_t)row < mRemoteDirectories.size())
         {
             convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
@@ -752,7 +756,11 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
-    bool res =  storage->extractData(e,d);
+    if(!storage->extractData(e,d))
+    {
+        P3FILELISTS_ERROR() << "(EE) request on index " << e << ", for directory ID=" << storage->peerId() << " failed. This should not happen." << std::endl;
+        return false ;
+    }
 
     // update indexes. This is a bit hacky, but does the job. The cast to intptr_t is the proper way to convert
     // a pointer into an int.
@@ -824,6 +832,7 @@ void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the di
 }
 bool p3FileDatabase::inDirectoryCheck()
 {
+    RS_STACK_MUTEX(mFLSMtx) ;
     return  mLocalDirWatcher->inDirectoryCheck();
 }
 void p3FileDatabase::setWatchEnabled(bool b)
@@ -975,8 +984,9 @@ bool p3FileDatabase::convertSharedFilePath(const std::string& path,std::string& 
 //		- because the hash is performed late, the last modf time upward is updated only when the hash is obtained.
 //
 //	Remote dirs store
-//		1 - recursive modif time of the files/dir in the friend's time
-//		2 - update TS in the local time
+//		1 - recursive max modif time of the files/dir in the friend's time
+//		2 - modif time of the files/dir in the friend's time
+//		3 - update TS in the local time
 //
 //  The update algorithm is the following:
 //
@@ -1275,20 +1285,29 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
 
     if(item->flags & RsFileListsItem::FLAGS_ENTRY_WAS_REMOVED)
     {
+        RS_STACK_MUTEX(mFLSMtx) ;
+#ifdef DEBUG_P3FILELISTS
         std::cerr << "  removing directory with index " << entry_index << " because it does not exist." << std::endl;
+#endif
         mRemoteDirectories[fi]->removeDirectory(entry_index);
 
         mRemoteDirectories[fi]->print();
     }
     else if(item->flags & RsFileListsItem::FLAGS_ENTRY_UP_TO_DATE)
     {
+        RS_STACK_MUTEX(mFLSMtx) ;
+#ifdef DEBUG_P3FILELISTS
         std::cerr << "  Directory is up to date. Setting local TS." << std::endl;
+#endif
 
         mRemoteDirectories[fi]->setDirectoryUpdateTime(entry_index,time(NULL)) ;
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
+#ifdef DEBUG_P3FILELISTS
         std::cerr << "  Item contains directory data. Deserialising/Updating." << std::endl;
+#endif
+        RS_STACK_MUTEX(mFLSMtx) ;
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
             RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
@@ -1328,7 +1347,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
    // compare TS
 
    if((e == 0 && now > local_update_TS + DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ) || local_update_TS == 0)	// we need to compare local times only. We cannot compare local (now) with remote time.
-       if(generateAndSendSyncRequest(rds,e))
+       if(locked_generateAndSendSyncRequest(rds,e))
        {
 #ifdef DEBUG_P3FILELISTS
            P3FILELISTS_DEBUG() << "  Asking for sync of directory " << e << " to peer " << rds->peerId() << " because it's " << (now - local_update_TS) << " secs old since last check." << std::endl;
@@ -1363,7 +1382,7 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
     return r ^ random_bias;
 }
 
-bool p3FileDatabase::generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
+bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
 {
     RsFileHash entry_hash ;
     time_t now = time(NULL) ;

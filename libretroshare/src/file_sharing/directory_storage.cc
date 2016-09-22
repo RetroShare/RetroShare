@@ -173,21 +173,6 @@ int DirectoryStorage::searchHash(const RsFileHash& hash, std::list<EntryIndex> &
     return mFileHierarchy->searchHash(hash,results);
 }
 
-// static const uint8_t DIRECTORY_STORAGE_TAG_FILE_HASH         =  0x01 ;
-// static const uint8_t DIRECTORY_STORAGE_TAG_FILE_NAME         =  0x02 ;
-// static const uint8_t DIRECTORY_STORAGE_TAG_FILE_SIZE         =  0x03 ;
-// static const uint8_t DIRECTORY_STORAGE_TAG_DIR_NAME          =  0x04 ;
-// static const uint8_t DIRECTORY_STORAGE_TAG_MODIF_TS          =  0x05 ;
-// static const uint8_t DIRECTORY_STORAGE_TAG_RECURS_MODIF_TS   =  0x06 ;
-
-void DirectoryStorage::loadNextTag(const unsigned char *data,uint32_t& offset,uint8_t& entry_tag,uint32_t& entry_size)
-{
-    entry_tag = data[offset++] ;
-}
-void DirectoryStorage::saveNextTag(unsigned char *data, uint32_t& offset, uint8_t entry_tag, uint32_t entry_size)
-{
-}
-
 void DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;

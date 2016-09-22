@@ -522,7 +522,9 @@ QModelIndexList SharedFilesDialog::getSelected()
 
 void RemoteSharedFilesDialog::expanded(const QModelIndex& indx)
 {
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Expanding at " << indx.row() << " and " << indx.column() << " ref=" << indx.internalPointer() << ", pointer at 1: " << proxyModel->mapToSource(indx).internalPointer() << std::endl;
+#endif
 
     model->updateRef(proxyModel->mapToSource(indx)) ;
 }

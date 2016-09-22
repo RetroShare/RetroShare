@@ -117,7 +117,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         int RequestDirDetails(void *, DirDetails&, FileSearchFlags) const ;
         uint32_t getType(void *) const ;
 
-        // proxy method used by the web UI.
+        // proxy method used by the web UI. Dont't delete!
         int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)const;
 
         // set/update shared directories
@@ -173,7 +173,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
          * \param e		Entry index to update
          * \return 		true if the request is correctly sent.
          */
-        bool generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e);
+        bool locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e);
 
 		// File sync request queues. The fast one is used for online browsing when friends are connected.
 		// The slow one is used for background update of file lists.

@@ -49,23 +49,28 @@ class DirectoryStorage
 
 		void save() const ;
 
+        // These functions are to be used by file transfer and file search.
+
         virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(RsRegularExpression::Expression * exp, std::list<EntryIndex> &results) const ;
         virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
 
-        bool getDirectoryRecursModTime(EntryIndex index,time_t& recurs_max_modf_TS) const ;
-        bool getDirectoryLocalModTime (EntryIndex index,time_t& motime_TS) const ;
-        bool getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const ;
+        // gets/sets the various time stamps:
+        //
+        bool getDirectoryRecursModTime(EntryIndex index,time_t& recurs_max_modf_TS) const ;		// last modification time, computed recursively over all subfiles and directories
+        bool getDirectoryLocalModTime (EntryIndex index,time_t& motime_TS) const ;				// last modification time for that index only
+        bool getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const ;				// last time the entry was updated. This is only used on the RemoteDirectoryStorage side.
 
         bool setDirectoryRecursModTime(EntryIndex index,time_t  recurs_max_modf_TS) ;
         bool setDirectoryLocalModTime (EntryIndex index,time_t  modtime_TS) ;
         bool setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) ;
 
-        uint32_t getEntryType(const EntryIndex& indx) ;	                     // returns DIR_TYPE_*, not the internal directory storage stuff.
+        uint32_t getEntryType(const EntryIndex& indx) ;	                     // WARNING: returns DIR_TYPE_*, not the internal directory storage stuff.
         virtual bool extractData(const EntryIndex& indx,DirDetails& d);
 
 		// This class allows to abstractly browse the stored directory hierarchy in a depth-first manner.
-		// It gives access to sub-files and sub-directories below.
+        // It gives access to sub-files and sub-directories below. When using it, the client should make sure
+        // that the DirectoryStorage is properly locked, since the iterator cannot lock it.
 		//
 		class DirIterator
 		{
@@ -120,20 +125,28 @@ class DirectoryStorage
             time_t modtime;
         };
 
-        EntryIndex root() const ;					// returns the index of the root directory entry.
-        const RsPeerId& peerId() const { return mPeerId ; }
-        int parentRow(EntryIndex e) const ;
-        bool getChildIndex(EntryIndex e,int row,EntryIndex& c) const;
+        EntryIndex root() const ;								// returns the index of the root directory entry. This is generally 0.
+        const RsPeerId& peerId() const { return mPeerId ; }		// peer ID of who owns that file list.
+        int parentRow(EntryIndex e) const ;						// position of the current node, in the array of children at its parent node. Used by GUI for display.
+        bool getChildIndex(EntryIndex e,int row,EntryIndex& c) const;	// returns the index of the children node at position "row" in the children nodes. Used by GUI for display.
 
+        // Sets the subdirectory/subfiles list of entry indx the supplied one, possible adding and removing directories (resp.files). New directories are set empty with
+        // just a name and need to be updated later on. New files are returned in a list so that they can be sent to hash cache.
+        //
         bool updateSubDirectoryList(const EntryIndex& indx, const std::map<std::string, time_t> &subdirs) ;
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
         bool removeDirectory(const EntryIndex& indx) ;
 
+        // Updates relevant information for the file at the given index.
+
         bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;
         bool updateHash(const EntryIndex& index,const RsFileHash& hash);
 
-        bool getDirHashFromIndex(const EntryIndex& index,RsFileHash& hash) const ;
-        bool getIndexFromDirHash(const RsFileHash& hash,EntryIndex& index) const ;
+        // Returns the hash of the directory at the given index and reverse. This hash is set as random the first time it is used (when updating directories). It will be
+        // used by the sync system to designate the directory without referring to index (index could be used to figure out the existance of hidden directories)
+
+        bool getDirHashFromIndex(const EntryIndex& index,RsFileHash& hash) const ;	// constant cost
+        bool getIndexFromDirHash(const RsFileHash& hash,EntryIndex& index) const ;	// log cost.
 
         void print();
         void cleanup();
@@ -143,9 +156,6 @@ class DirectoryStorage
 		void save(const std::string& local_file_name) ;
 
     private:
-
-        void loadNextTag(const unsigned char *data, uint32_t& offset, uint8_t& entry_tag, uint32_t& entry_size) ;
-        void saveNextTag(unsigned char *data,uint32_t& offset,uint8_t entry_tag,uint32_t entry_size) ;
 
         // debug
         void locked_check();
@@ -195,6 +205,11 @@ public:
     LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(own_id),mFileName(fname) {}
     virtual ~LocalDirectoryStorage() {}
 
+    /*!
+     * \brief [gs]etSharedDirectoryList
+     * 			Gets/sets the list of shared directories. Each directory is supplied with a virtual name (the name the friends will see), and sharing flags/groups.
+     * \param lst
+     */
     void setSharedDirectoryList(const std::list<SharedDirInfo>& lst) ;
     void getSharedDirectoryList(std::list<SharedDirInfo>& lst) ;
 

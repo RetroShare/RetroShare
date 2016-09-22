@@ -142,14 +142,18 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
     for(uint32_t i=0;i<d.subdirs.size();)
         if(subdirs.find(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) == subdirs.end())
         {
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << "[directory storage] Removing subdirectory " << static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name << " with index " << d.subdirs[i] << std::endl;
+#endif
 
             if( !removeDirectory(d.subdirs[i]))
                 i++ ;
         }
         else
         {
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << "[directory storage] Keeping existing subdirectory " << static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name << " with index " << d.subdirs[i] << std::endl;
+#endif
 
             should_create.erase(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) ;
             ++i;
@@ -157,7 +161,9 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
 
     for(std::map<std::string,time_t>::const_iterator it(should_create.begin());it!=should_create.end();++it)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "[directory storage] adding new subdirectory " << it->first << " at index " << mNodes.size() << std::endl;
+#endif
 
         DirEntry *de = new DirEntry(it->first) ;
 
@@ -258,7 +264,9 @@ bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::En
 
         if(it == subfiles.end())				// file does not exist anymore => delete
         {
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << "[directory storage] removing non existing file " << f.file_name << " at index " << d.subfiles[i] << std::endl;
+#endif
 
             delete mNodes[d.subfiles[i]] ;
             mNodes[d.subfiles[i]] = NULL ;
@@ -281,7 +289,9 @@ bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::En
 
     for(std::map<std::string,DirectoryStorage::FileTS>::const_iterator it(new_files.begin());it!=new_files.end();++it)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "[directory storage] adding new file " << it->first << " at index " << mNodes.size() << std::endl;
+#endif
 
         d.subfiles.push_back(mNodes.size()) ;
         mNodes.push_back(new FileEntry(it->first,it->second.size,it->second.modtime));
@@ -297,8 +307,9 @@ bool InternalFileHierarchyStorage::updateHash(const DirectoryStorage::EntryIndex
         std::cerr << "[directory storage] (EE) cannot update file at index " << file_index << ". Not a valid index, or not a file." << std::endl;
         return false;
     }
-
+#ifdef DEBUG_DIRECTORY_STORAGE
     std::cerr << "[directory storage] updating hash at index " << file_index << ", hash=" << hash << std::endl;
+#endif
 
     RsFileHash& old_hash (static_cast<FileEntry*>(mNodes[file_index])->file_hash) ;
     mFileHashes[hash] = file_index ;
@@ -317,7 +328,9 @@ bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex
 
     FileEntry& fe(*static_cast<FileEntry*>(mNodes[file_index])) ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
     std::cerr << "[directory storage] updating file entry at index " << file_index << ", name=" << fe.file_name << " size=" << fe.file_size << ", hash=" << fe.file_hash << std::endl;
+#endif
 
     fe.file_hash = hash;
     fe.file_size = size;
@@ -358,7 +371,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     }
     DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
     std::cerr << "Updating dir entry: name=\"" << dir_name << "\", most_recent_time=" << most_recent_time << ", modtime=" << dir_modtime << std::endl;
+#endif
 
     d.dir_most_recent_time = most_recent_time;
     d.dir_modtime      = dir_modtime;
@@ -375,7 +390,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
     // check that all subdirs already exist. If not, create.
     for(uint32_t i=0;i<subdirs_hash.size();++i)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "  subdir hash = " << subdirs_hash[i] << ": " ;
+#endif
 
         std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = existing_subdirs.find(subdirs_hash[i]) ;
         DirectoryStorage::EntryIndex dir_index = 0;
@@ -384,7 +401,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
         {
             dir_index = it->second ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << " already exists, at index  " << dir_index << std::endl;
+#endif
 
             existing_subdirs.erase(it) ;
         }
@@ -401,7 +420,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
 
             mDirHashes[subdirs_hash[i]] = dir_index ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << " created, at new index " << dir_index << std::endl;
+#endif
         }
 
         d.subdirs.push_back(dir_index) ;
@@ -411,7 +432,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
 
     for(std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = existing_subdirs.begin();it!=existing_subdirs.end();++it)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "  removing existing subfile that is not in the dirctory anymore: name=" << it->first << " index=" << it->second << std::endl;
+#endif
 
         if(!checkIndex(it->second,FileStorageNode::TYPE_DIR))
         {
@@ -436,13 +459,17 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
         const FileEntry& f(subfiles_array[i]) ;
         DirectoryStorage::EntryIndex file_index ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "  subfile name = " << subfiles_array[i].file_name << ": " ;
+#endif
 
         if(it != existing_subfiles.end() && mNodes[it->second] != NULL && mNodes[it->second]->type() == FileStorageNode::TYPE_FILE)
         {
             file_index = it->second ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << " already exists, at index  " << file_index << std::endl;
+#endif
 
             if(!updateFile(file_index,f.file_hash,f.file_name,f.file_size,f.file_modtime))
                 std::cerr << "(EE) Cannot update file with index " << it->second <<" and hash " << f.file_hash << ". This is very weird. Entry should have just been created and therefore should exist. Skipping." << std::endl;
@@ -456,7 +483,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
             mNodes[file_index] = new FileEntry(f.file_name,f.file_size,f.file_modtime,f.file_hash) ;
             mFileHashes[f.file_hash] = file_index ;
 
+#ifdef DEBUG_DIRECTORY_STORAGE
             std::cerr << " created, at new index " << file_index << std::endl;
+#endif
         }
 
         d.subfiles.push_back(file_index) ;
@@ -465,7 +494,9 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
 
     for(std::map<std::string,DirectoryStorage::EntryIndex>::const_iterator it = existing_subfiles.begin();it!=existing_subfiles.end();++it)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "  removing existing subfile that is not in the dirctory anymore: name=" << it->first << " index=" << it->second << std::endl;
+#endif
 
         if(!checkIndex(it->second,FileStorageNode::TYPE_FILE))
         {
