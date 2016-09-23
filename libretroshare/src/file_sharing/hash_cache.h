@@ -129,7 +129,7 @@ private:
 
     RsMutex mHashMtx ;
     bool mRunning;
-    uint32_t mHashCounter;
+    uint64_t mHashCounter;
     uint32_t mInactivitySleepTime ;
     uint64_t mTotalSizeToHash ;
     uint64_t mTotalHashedSize ;
