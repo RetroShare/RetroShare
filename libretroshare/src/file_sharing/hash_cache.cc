@@ -191,9 +191,29 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
     time_t now = time(NULL) ;
     std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(full_path) ;
 
-    if(it != mFiles.end() && (uint64_t)mod_time == it->second.modf_stamp && size == it->second.size)
+    // On windows we compare the time up to +/- 3600 seconds. This avoids re-hashing files in case of daylight saving change.
+    //
+    // See:
+    //		 https://support.microsoft.com/en-us/kb/190315
+    //
+    if(it != mFiles.end()
+#ifdef WINDOWS_SYS
+            && ( (uint64_t)mod_time == it->second.modf_stamp || (uint64_t)mod_time+3600 == it->second.modf_stamp ||(uint64_t)mod_time == it->second.modf_stamp+3600)
+#else
+            && (uint64_t)mod_time == it->second.modf_stamp
+#endif
+            && size == it->second.size)
     {
         it->second.time_stamp = now ;
+
+#ifdef WINDOWS_SYS
+        if(it->second.time_stamp != (uint64_t)mod_time)
+        {
+            std::cerr << "(WW) detected a 1 hour shift in file modification time. This normally happens to many files at once, when daylight saving time shifts (file=\"" << full_path << "\")." << std::endl;
+            it->second.time_stamp = (uint64_t)mod_time;
+        }
+#endif
+
         known_hash = it->second.hash;
 #ifdef HASHSTORAGE_DEBUG
         std::cerr << "Found in cache." << std::endl ;
