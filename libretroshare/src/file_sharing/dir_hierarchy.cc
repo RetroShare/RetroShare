@@ -23,6 +23,7 @@
  *
  */
 #include <sstream>
+#include <time.h>
 #include "util/rsdir.h"
 #include "util/rsprint.h"
 #include "retroshare/rsexpr.h"

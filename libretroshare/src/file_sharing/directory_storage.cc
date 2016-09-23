@@ -23,6 +23,7 @@
  *
  */
 #include <set>
+#include <time.h>
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rspeers.h"
 #include "util/rsdir.h"
