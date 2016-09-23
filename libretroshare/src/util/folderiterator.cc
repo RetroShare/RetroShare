@@ -150,9 +150,6 @@ uint8_t            FolderIterator::file_type()     { return mType ; }
 
 bool FolderIterator::closedir()
 {
-    if(!validity)
-        return false;
-
     validity = false;
 
 #ifdef WINDOWS_SYS
