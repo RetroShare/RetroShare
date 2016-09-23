@@ -279,12 +279,6 @@ int inet_aton(const char *name, struct in_addr *addr)
 #include <net/if.h>
 #endif // WINDOWS_SYS
 
-void getLocalAddressesFailed()
-{
-	std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
-	exit(1);
-}
-
 bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 {
 	addrs.clear();
@@ -304,7 +298,11 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 									   NULL,
 									   adapter_addresses,
 									   &bf_size);
-	if (error != ERROR_SUCCESS) getLocalAddressesFailed();
+	if (error != ERROR_SUCCESS)
+	{
+	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
+	   return false ;
+	}
 
 	IP_ADAPTER_ADDRESSES* adapter(NULL);
 	for(adapter = adapter_addresses; NULL != adapter; adapter = adapter->Next)
@@ -321,7 +319,11 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 	free(adapter_addresses);
 #else // WINDOWS_SYS
 	struct ifaddrs *ifsaddrs, *ifa;
-	if(getifaddrs(&ifsaddrs) != 0) getLocalAddressesFailed();
+	if(getifaddrs(&ifsaddrs) != 0) 
+	{
+	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
+	   return false ;
+	}
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
