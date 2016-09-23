@@ -29,17 +29,17 @@
 #include "filelist_io.h"
 
 template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const uint32_t     & val)  { return setRawUInt32(buff,size,&offset,val) ; }
-template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const size_t       & val)  { return setRawUInt64(buff,size,&offset,val) ; }
+template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const uint64_t     & val)  { return setRawUInt64(buff,size,&offset,val) ; }
 template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const std::string  & val)  { return setRawString(buff,size,&offset,val) ; }
 template<> bool FileListIO::serialise(unsigned char *buff,uint32_t size,uint32_t& offset,const Sha1CheckSum & val)  { return val.serialise(buff,size,offset) ; }
 
 template<> bool FileListIO::deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,uint32_t     & val)  { return getRawUInt32(const_cast<uint8_t*>(buff),size,&offset,&val) ; }
-template<> bool FileListIO::deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,size_t       & val)  { return getRawUInt64(const_cast<uint8_t*>(buff),size,&offset,&val) ; }
+template<> bool FileListIO::deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,uint64_t     & val)  { return getRawUInt64(const_cast<uint8_t*>(buff),size,&offset,&val) ; }
 template<> bool FileListIO::deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,std::string  & val)  { return getRawString(const_cast<uint8_t*>(buff),size,&offset,val) ; }
 template<> bool FileListIO::deserialise(const unsigned char *buff,uint32_t size,uint32_t& offset,Sha1CheckSum & val)  { return val.deserialise(const_cast<uint8_t*>(buff),size,offset) ; }
 
 template<> uint32_t FileListIO::serial_size(const uint32_t     &    )  { return 4 ; }
-template<> uint32_t FileListIO::serial_size(const size_t       &    )  { return 8 ; }
+template<> uint32_t FileListIO::serial_size(const uint64_t       &    )  { return 8 ; }
 template<> uint32_t FileListIO::serial_size(const std::string  & val)  { return getRawStringSize(val) ; }
 template<> uint32_t FileListIO::serial_size(const Sha1CheckSum &    )  { return Sha1CheckSum::serial_size(); }
 
