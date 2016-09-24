@@ -21,18 +21,19 @@
  ****************************************************************/
 
 #include <QApplication>
-#include <QMenu>
-#include <QKeyEvent>
-#include <QScrollBar>
+#include <QBuffer>
 #include <QColorDialog>
 #include <QFontDialog>
+#include <QKeyEvent>
+#include <QMenu>
 #include <QMessageBox>
-#include <QTextStream>
-#include <QTextCodec>
-#include <QTimer>
-#include <QTextDocumentFragment>
-#include <QToolTip>
+#include <QScrollBar>
 #include <QStringListModel>
+#include <QTextCodec>
+#include <QTextDocumentFragment>
+#include <QTextStream>
+#include <QTimer>
+#include <QToolTip>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -157,6 +158,8 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
+	connect(ui->actionShow_Hidden_Images, SIGNAL(triggered()), ui->textBrowser, SLOT(showImages()));
+	ui->actionShow_Hidden_Images->setIcon(ui->textBrowser->getBlockedImage());
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
@@ -196,9 +199,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 
-	ui->textBrowser->setImageBlockWidget(ui->imageBlockWidget);
-	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());//Need to be called after setImageBlockWidget
-	ui->imageBlockWidget->setAutoHide(true);
+	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
 	ui->textBrowser->viewport()->installEventFilter(this);
 	ui->chatTextEdit->installEventFilter(this);
@@ -580,6 +581,12 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 				}
 				if (!anchors.isEmpty()){
 					toolTipText = anchors.at(0);
+				}
+				if (toolTipText.isEmpty() && !ui->textBrowser->getShowImages()){
+					QString imageStr;
+					if (ui->textBrowser->checkImage(helpEvent->pos(), imageStr)) {
+						toolTipText = imageStr;
+					}
 				}
 			}
 			if (!toolTipText.isEmpty()){
@@ -1016,9 +1023,11 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addAction(ui->actionQuote);
 	contextMnu->addAction(ui->actionDropPlacemark);
 
-	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
-	if(ImageUtil::checkImage(cursor))
+	if(ui->textBrowser->checkImage(point))
 	{
+		if (! ui->textBrowser->getShowImages())
+			contextMnu->addAction(ui->actionShow_Hidden_Images);
+
 		ui->actionSave_image->setData(point);
 		contextMnu->addAction(ui->actionSave_image);
 	}
