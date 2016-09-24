@@ -231,6 +231,9 @@ uint32_t getRawStringSize(const std::string &outStr)
 
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
+#warning I had to change this. It seems like a bug to not clear the string. Should make sure it's not introducing any side effect.
+    outStr.clear();
+
 	uint32_t len = 0;
 	if (!getRawUInt32(data, size, offset, &len))
 	{

@@ -37,6 +37,28 @@ debug {
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
+CONFIG += file_lists
+
+file_lists {
+	HEADERS *= file_sharing/p3filelists.h \
+			file_sharing/hash_cache.h \
+			file_sharing/filelist_io.h \
+			file_sharing/directory_storage.h \
+			file_sharing/directory_updater.h \
+			file_sharing/rsfilelistitems.h \
+			file_sharing/dir_hierarchy.h \
+			file_sharing/file_sharing_defaults.h
+
+	SOURCES *= file_sharing/p3filelists.cc \
+			file_sharing/hash_cache.cc \
+			file_sharing/filelist_io.cc \
+			file_sharing/directory_storage.cc \
+			file_sharing/directory_updater.cc \
+			file_sharing/dir_hierarchy.cc \
+			file_sharing/rsfilelistitems.cc
+}
+
+
 dsdv {
 DEFINES *= SERVICES_DSDV
 HEADERS += services/p3dsdv.h \
@@ -345,16 +367,10 @@ INCLUDEPATH *= $${OPENPGPSDK_DIR}
 PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
 LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
 
-HEADERS +=	dbase/cachestrapper.h \
-			dbase/fimonitor.h \
-			dbase/findex.h \
-			dbase/fistore.h
-
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
 			ft/ftdata.h \
 			ft/ftdatamultiplex.h \
-			ft/ftdbase.h \
 			ft/ftextralist.h \
 			ft/ftfilecreator.h \
 			ft/ftfileprovider.h \
@@ -363,6 +379,10 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftserver.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
+
+HEADERS += directory_updater.h \
+				directory_list.h \
+				p3filelists.h
 
 HEADERS += chat/distantchat.h \
 			  chat/p3chatservice.h \
@@ -507,17 +527,9 @@ HEADERS +=	util/folderiterator.h \
 			util/rsscopetimer.h \
 			util/stacktrace.h
 
-SOURCES +=	dbase/cachestrapper.cc \
-			dbase/fimonitor.cc \
-			dbase/findex.cc \
-			dbase/fistore.cc \
-			dbase/rsexpr.cc
-
-
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
 			ft/ftdatamultiplex.cc \
-			ft/ftdbase.cc \
 			ft/ftextralist.cc \
 			ft/ftfilecreator.cc \
 			ft/ftfileprovider.cc \
@@ -638,6 +650,7 @@ SOURCES +=	turtle/p3turtle.cc \
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
+			util/rsexpr.cc \
 			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \

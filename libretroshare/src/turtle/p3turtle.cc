@@ -1763,7 +1763,7 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	std::list<DirDetails> initialResults;
 
 	// to do: split search string into words.
-	Expression *exp = LinearizedExpression::toExpr(expr) ;
+    RsRegularExpression::Expression *exp = RsRegularExpression::LinearizedExpression::toExpr(expr) ;
 
 	if(exp == NULL)
 		return ;
@@ -1820,7 +1820,7 @@ TurtleRequestId p3turtle::turtleSearch(const std::string& string_to_match)
 
 	return id ;
 }
-TurtleRequestId p3turtle::turtleSearch(const LinearizedExpression& expr)
+TurtleRequestId p3turtle::turtleSearch(const RsRegularExpression::LinearizedExpression& expr)
 {
 	// generate a new search id.
 

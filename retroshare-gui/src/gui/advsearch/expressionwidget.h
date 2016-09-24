@@ -45,11 +45,11 @@ public:
     /** delivers the expression represented by this widget
      the operator to join this expression with any previous 
      expressions is provided by the getOperator method */
-    Expression* getRsExpression();
+    RsRegularExpression::Expression* getRsExpression();
 
     /** supplies the operator to be used when joining this expression
         to the whole query */
-    LogicalOperator getOperator();
+    RsRegularExpression::LogicalOperator getOperator();
     
     QString toString();
 

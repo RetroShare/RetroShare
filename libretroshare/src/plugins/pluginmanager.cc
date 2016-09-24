@@ -17,7 +17,6 @@
 #include <util/rsversioninfo.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
-#include <dbase/cachestrapper.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsfiles.h>
 #include <pqi/pqiservice.h>
@@ -146,7 +145,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 			continue ;
 		}
 
-		while(dirIt.readdir())
+        for(;dirIt.isValid();dirIt.next())
 		{
 			std::string fname;
 			dirIt.d_name(fname);
@@ -410,14 +409,17 @@ void RsPluginManager::slowTickPlugins(time_t seconds)
 
 void RsPluginManager::registerCacheServices()
 {
+    // this is removed since the old cache syste is gone, but we need to make it register new GXS group services instead.
+#ifdef REMOVED
 	std::cerr << "  Registering cache services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
 		{
-			rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
+            //rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
 			std::cerr << "     adding new cache pair for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
 		}
+#endif
 }
 
 void RsPluginManager::registerClientServices(p3ServiceServer *pqih)
@@ -545,14 +547,6 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 
 	return true;
 }
-
-// RsCacheService::RsCacheService(uint16_t service_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
-//         : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
-//           CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
-// 	  p3Config(), 
-// 	  _tick_delay_in_seconds(tick_delay)
-// {
-// }
 
 RsPQIService::RsPQIService(uint16_t /*service_type*/, uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(),p3Config()

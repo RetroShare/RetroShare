@@ -45,9 +45,6 @@ private slots:
     void editDirectories() ;
     void setIncomingDirectory();
     void setPartialsDirectory();
-	void clearHashCache();
-	void clickedRememberHashes(bool);
-	void toggleRememberHashes();
 	void toggleAutoCheckDirectories(bool);
 
 private:

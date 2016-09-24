@@ -114,9 +114,9 @@ protected:
     static QStringList relOptionsList;
 
     // provides a mapping of condition operators to RSExpr reloperators
-    static QMap<int, LogicalOperator> logicalOpIndexMap;
-    static QMap<int, StringOperator>  strConditionIndexMap;
-    static QMap<int, RelOperator>     relConditionIndexMap;
+    static QMap<int, RsRegularExpression::LogicalOperator> logicalOpIndexMap;
+    static QMap<int, RsRegularExpression::StringOperator>  strConditionIndexMap;
+    static QMap<int, RsRegularExpression::RelOperator>     relConditionIndexMap;
 
     // provides a mapping of indexes to translatable strings
     static QMap<int, QString> logicalOpStrMap;
@@ -134,7 +134,7 @@ class ExprOpElement : public GuiExprElement
     
 public:
     ExprOpElement(QWidget * parent = 0);
-    LogicalOperator getLogicalOperator();
+    RsRegularExpression::LogicalOperator getLogicalOperator();
     QString toString();
 private:
     QComboBox * cb;
@@ -148,8 +148,8 @@ class ExprTermsElement : public GuiExprElement
 public:
     ExprTermsElement(QWidget * parent = 0);
     int getTermsIndex();
-    RelOperator getRelOperator();
-    StringOperator getStringOperator();
+    RsRegularExpression::RelOperator getRelOperator();
+    RsRegularExpression::StringOperator getStringOperator();
     void set(int i) {cb->setCurrentIndex(i);}
     QString toString();
 
@@ -167,8 +167,8 @@ class ExprConditionElement : public GuiExprElement
     
 public:
     ExprConditionElement(ExprSearchType, QWidget * parent = 0);
-    RelOperator getRelOperator();
-    StringOperator getStringOperator();
+    RsRegularExpression::RelOperator getRelOperator();
+    RsRegularExpression::StringOperator getStringOperator();
     void adjustForSearchType(ExprSearchType);
     void set(int i) {cb->setCurrentIndex(i);}
     QString toString();

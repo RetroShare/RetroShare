@@ -130,7 +130,7 @@ void ExpressionWidget::deleteExpression()
    emit signalDelete(this); 
 }
 
-LogicalOperator ExpressionWidget::getOperator()
+RsRegularExpression::LogicalOperator ExpressionWidget::getOperator()
 {
     return exprOpElem->getLogicalOperator();
 }
@@ -145,9 +145,9 @@ static int checkedConversion(uint64_t s)
 	return (int)s ;
 }
 
-Expression* ExpressionWidget::getRsExpression()
+RsRegularExpression::Expression* ExpressionWidget::getRsExpression()
 {
-    Expression * expr = NULL;
+    RsRegularExpression::Expression * expr = NULL;
     
     std::list<std::string> wordList;
     uint64_t lowVal = 0;
@@ -174,54 +174,54 @@ Expression* ExpressionWidget::getRsExpression()
     switch (searchType)
     {
         case NameSearch:
-            expr = new NameExpression(exprCondElem->getStringOperator(), 
+            expr = new RsRegularExpression::NameExpression(exprCondElem->getStringOperator(),
                                       wordList,
                                       exprParamElem->ignoreCase());
             break;
         case PathSearch:
-            expr = new PathExpression(exprCondElem->getStringOperator(), 
+            expr = new RsRegularExpression::PathExpression(exprCondElem->getStringOperator(),
                                       wordList,
                                       exprParamElem->ignoreCase());
             break;
         case ExtSearch:
-            expr = new ExtExpression(exprCondElem->getStringOperator(), 
+            expr = new RsRegularExpression::ExtExpression(exprCondElem->getStringOperator(),
                                       wordList, 
                                       exprParamElem->ignoreCase());
             break;
         case HashSearch:
-            expr = new HashExpression(exprCondElem->getStringOperator(), 
+            expr = new RsRegularExpression::HashExpression(exprCondElem->getStringOperator(),
                                       wordList);
             break;
         case DateSearch:
             if (inRangedConfig) {    
-                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
             } else {
-                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
             }
             break;
         case PopSearch:
             if (inRangedConfig) {    
-                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
             } else {
-                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
+                expr = new RsRegularExpression::DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
             }
             break;
         case SizeSearch:
             if (inRangedConfig) 
 				{    
 						if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024)) 
-								 expr = new SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
+                                 expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
 						else
-			                expr = new SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
+                            expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
             } 
 				else 
 				{
 					uint64_t s = exprParamElem->getIntValue() ;
 
 					if(s >= (uint64_t)(1024*1024*1024))
-						expr = new SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
+                        expr = new RsRegularExpression::SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
 					else
-						expr = new SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
+                        expr = new RsRegularExpression::SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
             }
             break;
     };

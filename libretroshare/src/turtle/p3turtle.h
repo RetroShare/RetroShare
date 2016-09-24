@@ -239,7 +239,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		// remove the specific file search packets from the turtle router.
 		//
 		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
-		virtual TurtleSearchRequestId turtleSearch(const LinearizedExpression& expr) ;
+        virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The

@@ -349,9 +349,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
     /** Setup the actions for the context menu */
-   toggleShowCacheTransfersAct = new QAction(tr( "Show file list transfers" ), this );
-	toggleShowCacheTransfersAct->setCheckable(true) ;
-	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
 
 	// Actions. Only need to be defined once.
    pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
@@ -519,12 +516,6 @@ UserNotify *TransfersDialog::getUserNotify(QObject *parent)
     return new TransferUserNotify(parent);
 }
 
-void TransfersDialog::toggleShowCacheTransfers()
-{
-	_show_cache_transfers = !_show_cache_transfers ;
-	insertTransfers() ;
-}
-
 void TransfersDialog::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
@@ -536,9 +527,6 @@ void TransfersDialog::processSettings(bool bLoad)
 
     if (bLoad) {
         // load settings
-
-        // state of checks
-        _show_cache_transfers = Settings->value("showCacheTransfers", false).toBool();
 
         // state of the lists
         DLHeader->restoreState(Settings->value("downloadList").toByteArray());
@@ -564,9 +552,6 @@ void TransfersDialog::processSettings(bool bLoad)
         ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
     } else {
         // save settings
-
-        // state of checks
-        Settings->setValue("showCacheTransfers", _show_cache_transfers);
 
         // state of the lists
         Settings->setValue("downloadList", DLHeader->saveState());
@@ -800,9 +785,6 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	}
 
 	contextMnu.addSeparator() ;//-----------------------------------------------
-
-	contextMnu.addAction( toggleShowCacheTransfersAct ) ;
-	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
 
 	collCreateAct->setEnabled(true) ;
 	collModifAct->setEnabled(single && add_CollActions) ;
@@ -1269,13 +1251,6 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
-			// if file transfer is a cache file index file, don't show it
-			DLListModel->removeRow(row);
-			rowCount = DLListModel->rowCount();
-			continue;
-		}
-
 		hashs.erase(hashIt);
 
 		if (addItem(row, fileInfo) < 0) {
@@ -1292,11 +1267,6 @@ void TransfersDialog::insertTransfers()
 	for (hashIt = hashs.begin(); hashIt != hashs.end(); ++hashIt) {
 		FileInfo fileInfo;
 		if (!rsFiles->FileDetails(*hashIt, RS_FILE_HINTS_DOWNLOAD, fileInfo)) {
-			continue;
-		}
-
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
-			//if file transfer is a cache file index file, don't show it
 			continue;
 		}
 
@@ -1322,9 +1292,6 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.transfer_info_flags & RS_FILE_REQ_CACHE) && _show_cache_transfers)
-			continue ;
-
 		std::list<TransferInfo>::iterator pit;
 		for(pit = info.peers.begin(); pit != info.peers.end(); ++pit)
 		{

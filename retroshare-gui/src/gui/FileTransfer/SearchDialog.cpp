@@ -774,7 +774,7 @@ void SearchDialog::initSearchResult(const QString& txt, qulonglong searchId, int
 	ui.searchSummaryWidget->setCurrentItem(item2);
 }
 
-void SearchDialog::advancedSearch(Expression* expression)
+void SearchDialog::advancedSearch(RsRegularExpression::Expression* expression)
 {
 	advSearchDialog->hide();
 
@@ -782,7 +782,7 @@ void SearchDialog::advancedSearch(Expression* expression)
 	std::list<DirDetails> results;
 
 	// send a turtle search request
-	LinearizedExpression e ;
+    RsRegularExpression::LinearizedExpression e ;
 	expression->linearize(e) ;
 
 	TurtleRequestId req_id = rsTurtle->turtleSearch(e) ;
@@ -843,8 +843,8 @@ void SearchDialog::searchKeywords(const QString& keywords)
 	if (n < 1)
 		return;
 
-	NameExpression exprs(ContainsAllStrings,words,true) ;
-	LinearizedExpression lin_exp ;
+    RsRegularExpression::NameExpression exprs(RsRegularExpression::ContainsAllStrings,words,true) ;
+    RsRegularExpression::LinearizedExpression lin_exp ;
 	exprs.linearize(lin_exp) ;
 
 	TurtleRequestId req_id ;
@@ -1042,9 +1042,10 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		}
 
 		/* go through all children directories/files for a recursive call */
-		for (std::list<DirStub>::const_iterator it(dir.children.begin()); it != dir.children.end(); ++it) {
+        for (uint32_t i=0;i<dir.children.size();++i)
+        {
 			DirDetails details;
-			rsFiles->RequestDirDetails(it->ref, details, FileSearchFlags(0u));
+            rsFiles->RequestDirDetails(dir.children[i].ref, details, FileSearchFlags(0u));
 			insertDirectory(txt, searchId, details, child);
 		}
 	}

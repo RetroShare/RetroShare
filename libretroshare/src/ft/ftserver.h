@@ -47,17 +47,13 @@
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "retroshare/rsfiles.h"
-//#include "dbase/cachestrapper.h"
 
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
 
 class p3ConnectMgr;
+class p3FileDatabase;
 
-class CacheStrapper;
-class CacheTransfer;
-
-class ftCacheStrapper;
 class ftFiStore;
 class ftFiMonitor;
 
@@ -70,230 +66,201 @@ class p3turtle;
 
 class p3PeerMgr;
 class p3ServiceControl;
+class p3FileDatabase;
 
 class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService
 {
 
-	public:
+public:
 
-		/***************************************************************/
-		/******************** Setup ************************************/
-		/***************************************************************/
+    /***************************************************************/
+    /******************** Setup ************************************/
+    /***************************************************************/
 
-		ftServer(p3PeerMgr *peerMgr, p3ServiceControl *serviceCtrl);
-		virtual RsServiceInfo getServiceInfo();
+    ftServer(p3PeerMgr *peerMgr, p3ServiceControl *serviceCtrl);
+    virtual RsServiceInfo getServiceInfo();
 
-		/* Assign important variables */
-		void	setConfigDirectory(std::string path);
+    /* Assign important variables */
+    void	 setConfigDirectory(std::string path);
 
-		/* add Config Items (Extra, Controller) */
-		void	addConfigComponents(p3ConfigMgr *mgr);
+    /* add Config Items (Extra, Controller) */
+    void addConfigComponents(p3ConfigMgr *mgr);
 
-		virtual CacheStrapper *getCacheStrapper();
-		virtual CacheTransfer *getCacheTransfer();
+    const RsPeerId& OwnId();
 
-		const RsPeerId& OwnId();
+    /* Final Setup (once everything is assigned) */
+    void    SetupFtServer() ;
+    virtual void connectToTurtleRouter(p3turtle *p) ;
+    virtual void connectToFileDatabase(p3FileDatabase *b);
 
-		/* Final Setup (once everything is assigned) */
-		void    SetupFtServer() ;
-		virtual void    connectToTurtleRouter(p3turtle *p) ;
+    // Implements RsTurtleClientService
+    //
+    virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
+    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data,uint32_t size) const ;
 
-		// Checks that the given hash is well formed. Used to chase 
-		// string bugs.
-		static bool checkHash(const RsFileHash& hash,std::string& error_string) ;
+    void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
+    void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
-		// Implements RsTurtleClientService
-		//
-		virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-		virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data,uint32_t size) const ;
+    /***************************************************************/
+    /*************** Control Interface *****************************/
+    /************** (Implements RsFiles) ***************************/
+    /***************************************************************/
 
-		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
-		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+    void StartupThreads();
+    void StopThreads();
 
-		/***************************************************************/
-		/*************** Control Interface *****************************/
-		/************** (Implements RsFiles) ***************************/
-		/***************************************************************/
+    // member access
 
-		void StartupThreads();
-		void StopThreads();
+    ftDataMultiplex *getMultiplexer() const { return mFtDataplex ; }
+    ftController *getController() const { return mFtController ; }
 
-		// member access
-
-		ftDataMultiplex *getMultiplexer() const { return mFtDataplex ; }
-		ftController *getController() const { return mFtController ; }
-
-        /**
+    /**
          * @see RsFiles::getFileData
          */
-        bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data);
+    bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data);
 
-		/***
-		 * Control of Downloads
-		 ***/
-		virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info);
-		virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds);
-		virtual bool FileCancel(const RsFileHash& hash);
-		virtual bool FileControl(const RsFileHash& hash, uint32_t flags);
-		virtual bool FileClearCompleted();
-		virtual bool setDestinationDirectory(const RsFileHash& hash,const std::string& new_path) ;
-		virtual bool setDestinationName(const RsFileHash& hash,const std::string& new_name) ;
-		virtual bool setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s) ;
-		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) ;
-		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() ;
-		virtual uint32_t freeDiskSpaceLimit() const ;
-		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
-
-
-		/***
-		 * Control of Downloads Priority.
-		 ***/
-		virtual uint32_t getMinPrioritizedTransfers() ;
-		virtual void setMinPrioritizedTransfers(uint32_t s) ;
-		virtual uint32_t getQueueSize() ;
-		virtual void setQueueSize(uint32_t s) ;
-		virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove queue_mv);
-		virtual bool changeDownloadSpeed(const RsFileHash& hash, int speed);
-		virtual bool getDownloadSpeed(const RsFileHash& hash, int & speed);
-		virtual bool clearDownload(const RsFileHash& hash);
-		//virtual void getDwlDetails(std::list<DwlDetails> & details);
-
-		/***
-		 * Download/Upload Details
-		 ***/
-        virtual void FileDownloads(std::list<RsFileHash> &hashs);
-		virtual bool FileUploads(std::list<RsFileHash> &hashs);
-		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info);
-		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) ;
-		virtual bool FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& map) ;
+    /***
+         * Control of Downloads
+         ***/
+    virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info);
+    virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds);
+    virtual bool FileCancel(const RsFileHash& hash);
+    virtual bool FileControl(const RsFileHash& hash, uint32_t flags);
+    virtual bool FileClearCompleted();
+    virtual bool setDestinationDirectory(const RsFileHash& hash,const std::string& new_path) ;
+    virtual bool setDestinationName(const RsFileHash& hash,const std::string& new_name) ;
+    virtual bool setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s) ;
+    virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) ;
+    virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() ;
+    virtual uint32_t freeDiskSpaceLimit() const ;
+    virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
 
-		/***
-		 * Extra List Access
-		 ***/
-		virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
-		virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
-		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
-		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
-		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);
+    /***
+         * Control of Downloads Priority.
+         ***/
+    virtual uint32_t getQueueSize() ;
+    virtual void setQueueSize(uint32_t s) ;
+    virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove queue_mv);
+    virtual bool changeDownloadSpeed(const RsFileHash& hash, int speed);
+    virtual bool getDownloadSpeed(const RsFileHash& hash, int & speed);
+    virtual bool clearDownload(const RsFileHash& hash);
+    //virtual void getDwlDetails(std::list<DwlDetails> & details);
+
+    /***
+         * Download/Upload Details
+         ***/
+    virtual void FileDownloads(std::list<RsFileHash> &hashs);
+    virtual bool FileUploads(std::list<RsFileHash> &hashs);
+    virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info);
+    virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) ;
+    virtual bool FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& map) ;
 
 
-		/***
-		 * Directory Listing / Search Interface
-		 ***/
-		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
-		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
-		virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
+    /***
+         * Extra List Access
+         ***/
+    virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
+    virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
+    virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
+    virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
+    virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);
 
-		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags);
-		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 
-		/***
-		 * Utility Functions
-		 ***/
-		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
-		virtual void ForceDirectoryCheck();
-		virtual void updateSinceGroupPermissionsChanged() ;
-		virtual bool InDirectoryCheck();
-		virtual bool copyFile(const std::string& source, const std::string& dest);
+    /***
+         * Directory Listing / Search Interface
+         ***/
+    virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
+    virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
+    virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;
+    virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
-		/***
-		 * Directory Handling
-		 ***/
-		virtual void	setDownloadDirectory(std::string path);
-		virtual void	setPartialsDirectory(std::string path);
-		virtual std::string getDownloadDirectory();
-		virtual std::string getPartialsDirectory();
+    virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags);
+    virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
+    virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
+    virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 
-		virtual bool	getSharedDirectories(std::list<SharedDirInfo> &dirs);
-		virtual bool	setSharedDirectories(std::list<SharedDirInfo> &dirs);
-		virtual bool 	addSharedDirectory(const SharedDirInfo& dir);
-		virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
-		virtual bool 	removeSharedDirectory(std::string dir);
+    /***
+         * Utility Functions
+         ***/
+    virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
+    virtual void ForceDirectoryCheck();
+    virtual void updateSinceGroupPermissionsChanged() ;
+    virtual bool InDirectoryCheck();
+    virtual bool copyFile(const std::string& source, const std::string& dest);
 
-		virtual bool	getShareDownloadDirectory();
-		virtual bool 	shareDownloadDirectory(bool share);
+    /***
+         * Directory Handling
+         ***/
+    virtual void requestDirUpdate(void *ref) ;			// triggers the update of the given reference. Used when browsing.
+    virtual void	setDownloadDirectory(std::string path);
+    virtual void	setPartialsDirectory(std::string path);
+    virtual std::string getDownloadDirectory();
+    virtual std::string getPartialsDirectory();
 
-		virtual void	setRememberHashFilesDuration(uint32_t days) ;
-		virtual uint32_t rememberHashFilesDuration() const ;
-		virtual bool rememberHashFiles() const ;
-		virtual void setRememberHashFiles(bool) ;
-		virtual void   clearHashCache() ;
-		virtual void setWatchPeriod(int minutes) ;
-		virtual int watchPeriod() const ;
+    virtual bool	getSharedDirectories(std::list<SharedDirInfo> &dirs);
+    virtual bool	setSharedDirectories(std::list<SharedDirInfo> &dirs);
+    virtual bool 	addSharedDirectory(const SharedDirInfo& dir);
+    virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
+    virtual bool 	removeSharedDirectory(std::string dir);
 
-		/***************************************************************/
-		/*************** Control Interface *****************************/
-		/***************************************************************/
+    virtual bool	getShareDownloadDirectory();
+    virtual bool 	shareDownloadDirectory(bool share);
 
-		/***************************************************************/
-		/*************** Data Transfer Interface ***********************/
-		/***************************************************************/
-	public:
-        virtual bool sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
-        virtual bool sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
-        virtual bool sendChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client) ;
-        virtual bool sendChunkMap(const RsPeerId& peer_id,const RsFileHash& hash,const CompressedChunkMap& cmap,bool is_client) ;
-        virtual bool sendSingleChunkCRCRequest(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number) ;
-        virtual bool sendSingleChunkCRC(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
+    virtual void setWatchPeriod(int minutes) ;
+    virtual int watchPeriod() const ;
+    virtual void setWatchEnabled(bool b) ;
+    virtual bool watchEnabled() ;
 
-		/*************** Internal Transfer Fns *************************/
-		virtual int tick();
+    /***************************************************************/
+    /*************** Data Transfer Interface ***********************/
+    /***************************************************************/
+public:
+    virtual bool sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+    virtual bool sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+    virtual bool sendChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client) ;
+    virtual bool sendChunkMap(const RsPeerId& peer_id,const RsFileHash& hash,const CompressedChunkMap& cmap,bool is_client) ;
+    virtual bool sendSingleChunkCRCRequest(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number) ;
+    virtual bool sendSingleChunkCRC(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
 
-		/* Configuration */
-		bool	addConfiguration(p3ConfigMgr *cfgmgr);
-		bool	ResumeTransfers();
+    /*************** Internal Transfer Fns *************************/
+    virtual int tick();
 
-		/******************* p3 Config Overload ************************/
-	protected:
-		/* Key Functions to be overloaded for Full Configuration */
-		virtual RsSerialiser *setupSerialiser();
-		virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-		virtual bool loadList(std::list<RsItem *>& load);
+    /* Configuration */
+    bool	addConfiguration(p3ConfigMgr *cfgmgr);
+    bool	ResumeTransfers();
 
-	private:
-		bool  loadConfigMap(std::map<std::string, std::string> &configMap);
-		/******************* p3 Config Overload ************************/
+    /*************************** p3 Config Overload ********************/
 
-		/*************************** p3 Config Overload ********************/
+protected:
+    int handleIncoming() ;
+    bool handleCacheData() ;
 
-	protected:
-		int handleIncoming() ;
-		bool handleCacheData() ;
+private:
 
-	private:
+    /**** INTERNAL FUNCTIONS ***/
+    //virtual int 	reScanDirs();
+    //virtual int 	check_dBUpdate();
 
-		/**** INTERNAL FUNCTIONS ***/
-		//virtual int 	reScanDirs();
-		//virtual int 	check_dBUpdate();
+private:
 
-	private:
+    /* no need for Mutex protection -
+         * as each component is protected independently.
+         */
+    p3PeerMgr        *mPeerMgr;
+    p3ServiceControl *mServiceCtrl;
+    p3FileDatabase   *mFileDatabase ;
+    ftController     *mFtController;
+    ftExtraList      *mFtExtra;
+    ftDataMultiplex  *mFtDataplex;
+    p3turtle         *mTurtleRouter ;
+    ftFileSearch     *mFtSearch;
 
-		/* no need for Mutex protection -
-		 * as each component is protected independently.
-		 */
-		p3PeerMgr *mPeerMgr;
-		p3ServiceControl *mServiceCtrl;
-
-		ftCacheStrapper *mCacheStrapper;
-		ftFiStore 	*mFiStore;
-		ftFiMonitor   	*mFiMon;
-
-		ftController  *mFtController;
-		ftExtraList   *mFtExtra;
-
-		ftDataMultiplex *mFtDataplex;
-		p3turtle *mTurtleRouter ;
-
-		ftFileSearch   *mFtSearch;
-
-		RsMutex srvMutex;
-		std::string mConfigPath;
-		std::string mDownloadPath;
-		std::string mPartialsPath;
+    RsMutex srvMutex;
+    std::string mConfigPath;
+    std::string mDownloadPath;
+    std::string mPartialsPath;
 };
 
 

@@ -1104,8 +1104,6 @@ bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const RsFileHa
 
 	if(rsTurtle->isTurtlePeer(peerId))
 		hintflags |= RS_FILE_HINTS_NETWORK_WIDE ;
-	else
-		hintflags |= RS_FILE_HINTS_CACHE ;
 
 	if(mSearch->search(hash, hintflags, info))
 	{

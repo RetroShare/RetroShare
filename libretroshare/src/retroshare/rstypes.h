@@ -138,6 +138,7 @@ public:
 
 /********************** For FileCache Interface *****************/
 
+#define DIR_TYPE_UNKNOWN	    0x00
 #define DIR_TYPE_ROOT		0x01
 #define DIR_TYPE_PERSON  	0x02
 #define DIR_TYPE_DIR  		0x04
@@ -159,7 +160,7 @@ const FileStorageFlags DIR_FLAGS_BROWSABLE_OTHERS     	( 0x0100 ); // one should
 const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_GROUPS  	( 0x0200 );
 const FileStorageFlags DIR_FLAGS_BROWSABLE_GROUPS     	( 0x0400 );
 const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	( DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_OTHERS 
-																			| DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
+                                                        | DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
 
 const FileStorageFlags DIR_FLAGS_LOCAL                  	( 0x1000 );
 const FileStorageFlags DIR_FLAGS_REMOTE                 	( 0x2000 );
@@ -214,8 +215,7 @@ class FileInfo
         std::list<RsNodeGroupId> parent_groups ;
 };
 
-std::ostream &operator<<(std::ostream &out, const FileInfo &info);
-
+std::ostream &operator<<(std::ostream &out, const FileInfo& info);
 
 class DirStub
 {
@@ -227,24 +227,26 @@ class DirStub
 
 class DirDetails
 {
-	public:
-	void *parent;
-	int prow; /* parent row */
+public:
+    void *parent;
+    int prow; /* parent row */
 
-	void *ref;
-	uint8_t type;
+    void *ref;
+    uint8_t type;
     RsPeerId id;
-	std::string name;
+    std::string name;
     RsFileHash hash;
-	std::string path;
+    std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
 	uint64_t count;
 	uint32_t age;
 	FileStorageFlags flags;
 	uint32_t min_age ;	// minimum age of files in this subtree
 
-	std::list<DirStub> children;
+    std::vector<DirStub> children;
     std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory
 };
+
+std::ostream &operator<<(std::ostream &out, const DirDetails& details);
 
 class FileDetail
 {
