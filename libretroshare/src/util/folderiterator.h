@@ -50,6 +50,7 @@ public:
     time_t   file_modtime() ;
 
 private:
+    bool is_open;
     bool validity;
 
 #ifdef WINDOWS_SYS

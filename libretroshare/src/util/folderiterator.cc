@@ -44,10 +44,10 @@ FolderIterator::FolderIterator(const std::string& folderName)
     utf16Name += L"/*.*";
 
     handle = FindFirstFileW(utf16Name.c_str(), &fileInfo);
-    validity = handle != INVALID_HANDLE_VALUE;
+    is_open = validity = handle != INVALID_HANDLE_VALUE;
 #else
     handle = opendir(folderName.c_str());
-    validity = handle != NULL;
+    is_open = validity = handle != NULL;
     next();
 #endif
 }
@@ -155,6 +155,11 @@ uint8_t            FolderIterator::file_type()     { return mType ; }
 bool FolderIterator::closedir()
 {
     validity = false;
+
+    if(!is_open)
+        return true ;
+
+    is_open = false ;
 
 #ifdef WINDOWS_SYS
     return FindClose(handle) != 0;
