@@ -146,7 +146,7 @@ void HashStorage::data_tick()
             std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
 
             std::string tmpout;
-            rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", mHashCounter+1, mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
+            rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
             RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 

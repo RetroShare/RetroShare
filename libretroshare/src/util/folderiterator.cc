@@ -4,6 +4,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif
+
 #include "folderiterator.h"
 #include "rsstring.h"
 
