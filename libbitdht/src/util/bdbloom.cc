@@ -100,6 +100,13 @@ int bloomFilter::setFilterBits(const std::string &hex)
 
 	// convert to binary array.
 	uint8_t *tmparray = (uint8_t *) malloc(bytes);
+    
+    	if(tmparray == NULL)
+        {
+            std::cerr << "(EE) Error. Cannot allocate memory for " << bytes << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return 0;
+        }
+        
 	uint32_t i = 0;
 
 	for(i = 0; i < bytes; i++)
@@ -139,6 +146,13 @@ std::string bloomFilter::getFilter()
 
 	// convert to binary array.
 	uint8_t *tmparray = (uint8_t *) malloc(bytes);
+    
+    	if(tmparray == NULL)
+        {
+            std::cerr << "(EE) Error. Cannot allocate memory for " << bytes << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return std::string();
+        }
+        
 	int i,j;
 	
 	for(i = 0; i < bytes; i++)

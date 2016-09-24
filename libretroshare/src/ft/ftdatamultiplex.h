@@ -95,6 +95,16 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 
 		ftDataMultiplex(const RsPeerId& ownId, ftDataSend *server, ftSearch *search);
 
+        /**
+         * @see RsFiles::getFileData
+     *
+     * data should be pre-allocated by the client with size sufficient gfor requested_size bytes.
+     * requested_size will be changed so as to contain the actual number of bytes copied from the file,
+     * in case where the full size wasn't available.
+     * False is returned if no data can be obtained from that file.
+         */
+        bool getFileData(const RsFileHash& hash, uint64_t offset,uint32_t& requested_size, uint8_t *data);
+
 		/* ftController Interface */
 		bool	addTransferModule(ftTransferModule *mod, ftFileCreator *f);
 		bool	removeTransferModule(const RsFileHash& hash);

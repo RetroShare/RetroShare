@@ -187,12 +187,11 @@ bool operator==(const RsTurtleStringSearchRequestItem& it1,const RsTurtleStringS
 		return false ;
 	return true ;
 }
-RsSerialType* init_item(TurtleFileInfo& info)
+void init_item(TurtleFileInfo& info)
 {
 	info.hash = RsFileHash("3f753e8ac3b94ab9fddfad94480f747bf4418370");
 	info.name = "toto.png";
 	info.size = 0x3392085443897ull ;
-	return new RsTurtleSerialiser();
 }
 bool operator==(const TurtleFileInfo& it1,const TurtleFileInfo& it2)
 {

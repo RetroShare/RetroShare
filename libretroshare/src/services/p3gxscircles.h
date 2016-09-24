@@ -124,6 +124,15 @@
 /* Permissions is part of GroupMetaData 
  */
 
+class RsGxsCircleMembershipStatus
+{
+public:
+    RsGxsCircleMembershipStatus() : last_subscription_TS(0), subscription_flags(0) {}
+    
+    time_t   last_subscription_TS ;
+    uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
+};
+
 class RsGxsCircleCache
 {
 	public:
@@ -132,9 +141,10 @@ class RsGxsCircleCache
 	bool loadBaseCircle(const RsGxsCircleGroup &circle);
 	bool loadSubCircle(const RsGxsCircleCache &subcircle);
 
-	bool getAllowedPeersList(std::list<RsPgpId> &friendlist);
-	bool isAllowedPeer(const RsPgpId &id);
-	bool addAllowedPeer(const RsPgpId &pgpid, const RsGxsId &gxsId);
+	bool getAllowedPeersList(std::list<RsPgpId> &friendlist) const;
+	bool isAllowedPeer(const RsPgpId &id) const;
+	bool isAllowedPeer(const RsGxsId &id, const RsGxsGroupId &destination_group) const;
+	bool addAllowedPeer(const RsPgpId &pgpid);
 	bool addLocalFriend(const RsPgpId &pgpid);
 
 	RsGxsCircleId mCircleId;
@@ -142,27 +152,32 @@ class RsGxsCircleCache
 
 	uint32_t      mCircleType;
 	bool	      mIsExternal;
+    	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 
 	uint32_t      mGroupStatus;
+	uint32_t      mGroupSubscribeFlags;
 
 	time_t mUpdateTime;
+#ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
-	std::set<RsGxsId> mUnprocessedPeers;
-
 	std::set<RsGxsCircleId> mProcessedCircles;
-	std::set<RsGxsId> mUnknownPeers;
-	std::map<RsPgpId, std::list<RsGxsId> > mAllowedPeers;
+#endif
+	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus;
+    	time_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
+    
+	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
+	std::set<RsPgpId> mAllowedNodes;
+    
+    	RsPeerId mOriginator ; // peer who sent the data, in case we need to ask for ids
 };
 
 
 class PgpAuxUtils;
 
-class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
-		public GxsTokenQueue, public RsTickEvent
+class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles, public GxsTokenQueue, public RsTickEvent
 {
 	public:
-	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes, 
-		p3IdService *identities, PgpAuxUtils *pgpUtils);
+	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes,  p3IdService *identities, PgpAuxUtils *pgpUtils);
 
 virtual RsServiceInfo getServiceInfo();
 
@@ -175,9 +190,12 @@ virtual RsServiceInfo getServiceInfo();
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
 
-	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+	virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool &should_encrypt);
 	virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+    
+	virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) ;
+	virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& dest_group, std::list<RsGxsId> &gxs_ids) ;
+        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) ;
 
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsCircleGroup> &groups);
@@ -185,6 +203,11 @@ virtual RsServiceInfo getServiceInfo();
     virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group);
 
 
+    	/* membership management for external circles */
+    
+    	virtual bool requestCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) ;
+    	virtual bool cancelCircleMembership(const RsGxsId &own_gxsid, const RsGxsCircleId& circle_id) ;
+    
 	/**********************************************/
 
 	// needed for background processing.
@@ -192,6 +215,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	protected:
 
+	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) ;
 	static uint32_t circleAuthenPolicy();
 
 	/** Notifications **/
@@ -211,6 +235,7 @@ virtual RsServiceInfo getServiceInfo();
 	// Load data.
 	bool request_CircleIdList();
 	bool load_CircleIdList(uint32_t token);
+	bool processMembershipRequests(uint32_t token);
 
 	// Need some crazy arsed cache to store the circle info.
 	// so we don't have to keep loading groups.
@@ -219,11 +244,15 @@ virtual RsServiceInfo getServiceInfo();
 
 	bool cache_request_load(const RsGxsCircleId &id);
 	bool cache_start_load();
+	bool force_cache_reload(const RsGxsCircleId& id);
 	bool cache_load_for_token(uint32_t token);
 	bool cache_reloadids(const RsGxsCircleId &circleId);
 
-	bool checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
-
+	bool checkCircleCache();
+    
+	bool locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
+	bool locked_processLoadingCacheEntry(RsGxsCircleCache &cache);
+	bool locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache &cache);
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
 	PgpAuxUtils *mPgpUtils;
@@ -260,12 +289,11 @@ virtual RsServiceInfo getServiceInfo();
 	void checkDummyIdData();
 	void generateDummyCircle();
 
+    time_t mLastCacheMembershipUpdateTS ;
 
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
-
-
 };
 
 #endif // P3_CIRCLES_SERVICE_HEADER

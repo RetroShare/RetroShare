@@ -30,6 +30,8 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgds.h"
 
+class RsGixs ;
+
 /*!
  * Handy function for cleaning out meta result containers
  * @param container
@@ -39,11 +41,10 @@ void freeAndClearContainerResource(Container container)
 {
 	typename Container::iterator meta_it = container.begin();
 
-	for(; meta_it != container.end(); meta_it++)
-	{
-		delete meta_it->second;
+	for(; meta_it != container.end(); ++meta_it)
+        	if(meta_it->second != NULL)
+			delete meta_it->second;
 
-	}
 	container.clear();
 }
 
@@ -61,7 +62,7 @@ inline RsGxsGrpMsgIdPair getMsgIdPair(RsGxsMsgItem& msg)
  * Does message clean up based on individual group expirations first
  * if avialable. If not then deletion s
  */
-class RsGxsMessageCleanUp : public RsThread
+class RsGxsMessageCleanUp //: public RsThread
 {
 public:
 
@@ -84,7 +85,7 @@ public:
 	/*!
 	 * TODO: Rather than manual progressions consider running through a thread
 	 */
-	void run(){}
+    //virtual void data_tick(){}
 
 private:
 
@@ -97,7 +98,7 @@ private:
  * Checks the integrity message and groups
  * in rsDataService using computed hash
  */
-class RsGxsIntegrityCheck : public RsThread
+class RsGxsIntegrityCheck : public RsSingleJobThread
 {
 
 	enum CheckState { CheckStart, CheckChecking };
@@ -112,7 +113,7 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService);
+	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGixs *gixs);
 
 
 	bool check();
@@ -120,13 +121,17 @@ public:
 
 	void run();
 
+	void getDeletedIds(std::list<RsGxsGroupId>& grpIds, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+
 private:
 
 	RsGeneralDataService* const mDs;
-	std::vector<RsNxsItem*> mItems;
 	bool mDone;
 	RsMutex mIntegrityMutex;
-
+	std::list<RsGxsGroupId> mDeletedGrps;
+	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mDeletedMsgs;
+    
+    	RsGixs *mGixs ;
 };
 
 class GroupUpdate
@@ -154,6 +159,17 @@ public:
         GroupDeletePublish(RsGxsGrpItem* item, uint32_t token)
             : grpItem(item), mToken(token) {}
 	RsGxsGrpItem* grpItem;
+	uint32_t mToken;
+};
+
+
+class MsgDeletePublish
+{
+public:
+        MsgDeletePublish(const GxsMsgReq& msgs, uint32_t token)
+            : mMsgs(msgs), mToken(token) {}
+        
+	GxsMsgReq mMsgs ;
 	uint32_t mToken;
 };
 

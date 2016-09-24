@@ -1,5 +1,25 @@
-QT     += network xml script
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
+TEMPLATE = app
+QT     += network xml
 CONFIG += qt gui uic qrc resources idle bitdht
+CONFIG += link_prl
+TARGET = RetroShare06
+DEFINES += TARGET=\\\"$TARGET\\\"
+
+# Plz never commit the .pro with these flags enabled.
+# Use this flag when developping new features only.
+#
+#CONFIG += unfinished
+#CONFIG += debug
+#DEFINES *= SIGFPE_DEBUG
+
+profiling {
+	QMAKE_CXXFLAGS -= -fomit-frame-pointer
+	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
+	QMAKE_LFLAGS *= -pg 
+}
+
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -7,39 +27,24 @@ CONFIG += qt gui uic qrc resources idle bitdht
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
 	QT     += uitools widgets multimedia printsupport
+	linux-* {
+		QT += x11extras
+	}
 } else {
 	# Qt 4
 	CONFIG += uitools
 }
 
-# Below is for GXS services.
-# Should be disabled for releases.
-CONFIG += gxs debug
-
-gxs {
-	
-	CONFIG += identities
-	CONFIG += circles
-	CONFIG += gxsforums
-	CONFIG += gxschannels
-	CONFIG += posted
-	#CONFIG += unfinished
-	CONFIG += gxsgui
-	# thewire is incomplete - dont enable
-	#CONFIG += thewire
-	CONFIG += wikipoos
-	CONFIG += photoshare
-
-	DEFINES += RS_ENABLE_GXS
-}
-
+CONFIG += identities
+CONFIG += gxsforums
+CONFIG += gxschannels
+CONFIG += posted
+CONFIG += gxsgui
+CONFIG += gxscircles
 
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
-
-TEMPLATE = app
-TARGET = RetroShare
 
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
@@ -55,6 +60,7 @@ debug {
 	QMAKE_CFLAGS += -O0
 }
 
+DEPENDPATH *= retroshare-gui
 INCLUDEPATH *= retroshare-gui
 
 # treat warnings as error for better removing
@@ -64,39 +70,44 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
+	CONFIG += link_pkgconfig
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	PKGCONFIG *= x11 xscrnsaver
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
-
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-
-		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-		isEmpty(SQLCIPHER_OK) {
-			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-			! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-				message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
-				error(Please fix this and try again. Will stop now.)
-			}
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-		} else {
-			LIBS += -lsqlcipher
-		}
-	}
-
-	LIBS *= -lglib-2.0
-	LIBS *= -rdynamic
+	LIBS *= -rdynamic 
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
+}
+
+unix {
+	target.path = "$${BIN_DIR}"
+	INSTALLS += target
+
+	data_files.path="$${DATA_DIR}/"
+	data_files.files=sounds qss
+	INSTALLS += data_files
+
+	style_files.path="$${DATA_DIR}/stylesheets"
+	style_files.files=gui/qss/chat/Bubble gui/qss/chat/Bubble_Compact
+	INSTALLS += style_files
+
+	icon_files.path = "$${PREFIX}/share/icons/hicolor"
+	icon_files.files =  ../../data/24x24
+	icon_files.files += ../../data/48x48
+	icon_files.files += ../../data/64x64
+	icon_files.files += ../../data/128x128
+	INSTALLS += icon_files
+
+	desktop_files.path = "$${PREFIX}/share/applications"
+	desktop_files.files = ../../data/retroshare06.desktop
+	INSTALLS += desktop_files
+
+	pixmap_files.path = "$${PREFIX}/share/pixmaps"
+	pixmap_files.files = ../../data/retroshare06.xpm
+	INSTALLS += pixmap_files
+
 }
 
 linux-g++ {
@@ -108,16 +119,17 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-	DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-	QMAKE_EXTRA_TARGETS += write_version_detail
-	PRE_TARGETDEPS = write_version_detail
-	write_version_detail.commands = ./version_detail.sh
-}
-
-install_rs {
-	INSTALLS += binary_rs
-	binary_rs.path = $$(PREFIX)/usr/bin
-	binary_rs.files = ./RetroShare
+	linux-* {
+		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
+		QMAKE_EXTRA_TARGETS += write_version_detail
+		PRE_TARGETDEPS = write_version_detail
+		write_version_detail.commands = $$PWD/version_detail.sh
+	}
+	win32 {
+		QMAKE_EXTRA_TARGETS += write_version_detail
+		PRE_TARGETDEPS = write_version_detail
+		write_version_detail.commands = $$PWD/version_detail.bat
+	}
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -125,7 +137,6 @@ install_rs {
 win32-x-g++ {
 		OBJECTS_DIR = temp/win32-x-g++/obj
 
-		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
 		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
@@ -147,7 +158,7 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-	debug {
+	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
 	}
@@ -155,6 +166,17 @@ win32 {
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
+
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -170,84 +192,95 @@ win32 {
 	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
 	#QTPLUGIN += qjpeg
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"$$PWD/../../../lib"
-
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlcipher
-	}
-
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-	LIBS += -lole32 -lwinmm
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
+	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
 
 	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	isEmpty(QMAKE_SH) {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	} else {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+	}
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-	INCLUDEPATH += .
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	greaterThan(QT_MAJOR_VERSION, 4) {
+		# Qt 5
+		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
+	} else {
+		# Qt 4
+		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
+	}
 }
 
 ##################################### MacOS ######################################
 
 macx {
-    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	CONFIG += ppc x86
-	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
+	#CONFIG += ppc x86
+	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	QMAKE_INFO_PLIST = Info.plist
+	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
+	mac_icon.path = Contents/Resources
+	QMAKE_BUNDLE_DATA += mac_icon
 
 	CONFIG += version_detail_bash_script
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
+	LIBS += -framework Carbon
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-		LIBS += ../../../lib/libsqlcipher.a
-                #LIBS += -lsqlite3
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
-        }
-
-
-    	INCLUDEPATH += .
-	#DEFINES* = MAC_IDLE # for idle feature
+	#DEFINES *= MAC_IDLE # for idle feature
 	CONFIG -= uitools
-
-
 }
 
 ##################################### FreeBSD ######################################
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
+
+	LIBS += -lsqlite3
+}
+
+##################################### Haiku ######################################
+
+haiku-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
-        }
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2 -lbsd
+	LIBS *= -lssl -lcrypto -lnetwork
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lz
+	LIBS *= -lixml
 
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlite3
 }
 
 ##################################### OpenBSD ######################################
@@ -255,22 +288,11 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
-
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
-        }
-
+	LIBS += -lsqlite3
 	LIBS *= -rdynamic
 }
 
@@ -283,32 +305,22 @@ openbsd-* {
 
 # ###########################################
 
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+DEPENDPATH += . $$PWD/../../libretroshare/src/
+INCLUDEPATH += $$PWD/../../libretroshare/src/
+
+PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+
+wikipoos {
+	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
-win32 {
-# must be added after bitdht
-    LIBS += -lws2_32
-}
-
-DEPENDPATH += . \
-            rsiface \
-            control \
-            gui \
-            lang \
-            util \
-            gui/bwgraph \
-            gui/chat \
-            gui/connect \
-            gui/images \
-            gui/common \
-            gui/toaster \
-            gui/help/browser \
-            gui/elastic
-
-INCLUDEPATH += ../../libretroshare/src/
+# webinterface
+DEPENDPATH += $$PWD/../../libresapi/src
+INCLUDEPATH += $$PWD/../../libresapi/src
+PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
 
 # Input
 HEADERS +=  rshare.h \
@@ -322,7 +334,6 @@ HEADERS +=  rshare.h \
             gui/StartDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
-            gui/graphframe.h \
             gui/linetypes.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
@@ -335,22 +346,32 @@ HEADERS +=  rshare.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
-            gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
             gui/ShareDialog.h \
-            gui/SFListDelegate.h \
+#            gui/SFListDelegate.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
+            gui/common/AvatarDialog.h \
+            gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/xprogressbar.h \
             gui/FileTransfer/DetailsDialog.h \
             gui/FileTransfer/FileTransferInfoWidget.h \
             gui/FileTransfer/DLListDelegate.h \
             gui/FileTransfer/ULListDelegate.h \
             gui/FileTransfer/TransfersDialog.h \
-            gui/FileTransfer/TurtleRouterDialog.h \
-            gui/FileTransfer/TurtleRouterStatistics.h \
+            gui/statistics/TurtleRouterDialog.h \
+            gui/statistics/TurtleRouterStatistics.h \
+            gui/statistics/dhtgraph.h \
+            gui/statistics/BandwidthGraphWindow.h \
+            gui/statistics/turtlegraph.h \
+            gui/statistics/BandwidthStatsWidget.h \
+            gui/statistics/DhtWindow.h \
+            gui/statistics/GlobalRouterStatistics.h \
+            gui/statistics/StatisticsWindow.h \
+            gui/statistics/BwCtrlWindow.h \
+            gui/statistics/RttStatistics.h \
             gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
@@ -359,6 +380,7 @@ HEADERS +=  rshare.h \
             lang/languagesupport.h \
             util/RsProtectedTimer.h \
             util/stringutil.h \
+            util/RsNetUtil.h \
             util/DateTime.h \
             util/win32.h \
             util/RetroStyleLabel.h \
@@ -372,10 +394,9 @@ HEADERS +=  rshare.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
-            util/EventReceiver.h \
             util/Widget.h \
-            util/rsguiversion.h \
             util/RsAction.h \
+            util/RsUserdata.h \
             util/printpreview.h \
             util/log.h \
             util/misc.h \
@@ -383,7 +404,6 @@ HEADERS +=  rshare.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
             util/RsFile.h \
-            gui/bwgraph/bwgraph.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -398,7 +418,10 @@ HEADERS +=  rshare.h \
             gui/chat/CreateLobbyDialog.h \
             gui/chat/ChatStyle.h \
             gui/chat/ChatUserNotify.h \
+            gui/chat/ChatLobbyUserNotify.h \
             gui/connect/ConfCertDialog.h \
+            gui/connect/PGPKeyDialog.h \
+            gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \
@@ -406,12 +429,13 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
+            gui/settings/RSPermissionMatrixWidget.h \
             gui/settings/rsharesettings.h \
-            gui/settings/GlobalRouterStatistics.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
             gui/settings/GeneralPage.h \
+            gui/settings/PeoplePage.h \
             gui/settings/DirectoriesPage.h \
             gui/settings/ServerPage.h \
             gui/settings/NetworkPage.h \
@@ -433,6 +457,7 @@ HEADERS +=  rshare.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/settings/GroupFrameSettingsWidget.h \
+            gui/toaster/ToasterItem.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
@@ -440,6 +465,8 @@ HEADERS +=  rshare.h \
             gui/toaster/GroupChatToaster.h \
             gui/toaster/ChatLobbyToaster.h \
             gui/toaster/FriendRequestToaster.h \
+            gui/common/RsButtonOnText.h \
+            gui/common/RSGraphWidget.h \
             gui/common/ElidedLabel.h \
             gui/common/vmessagebox.h \
             gui/common/RsUrlHandler.h \
@@ -450,11 +477,13 @@ HEADERS +=  rshare.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
+            gui/common/GroupChooser.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
             gui/common/RSListWidgetItem.h \
+            gui/common/RSTextEdit.h \
             gui/common/RSPlainTextEdit.h \
             gui/common/RSTreeWidget.h \
             gui/common/RSTreeWidgetItem.h \
@@ -464,6 +493,7 @@ HEADERS +=  rshare.h \
             gui/common/PeerDefs.h \
             gui/common/FilesDefs.h \
             gui/common/PopularityDefs.h \
+            gui/common/RsBanListDefs.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
@@ -482,6 +512,12 @@ HEADERS +=  rshare.h \
             gui/common/UIStateHelper.h \
             gui/common/FloatingHelpBrowser.h \
             gui/common/SubscribeToolButton.h \
+            gui/common/RsBanListToolButton.h \
+            gui/common/FlowLayout.h \
+            gui/common/PictureFlow.h \
+            gui/common/StyledLabel.h \
+            gui/common/StyledElidedLabel.h \
+            gui/common/ToasterNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
@@ -496,6 +532,7 @@ HEADERS +=  rshare.h \
             gui/statusbar/SoundStatus.h \
             gui/statusbar/OpModeStatus.h \
             gui/statusbar/ToasterDisable.h \
+            gui/statusbar/SysTrayStatus.h \
             gui/advsearch/advancedsearchdialog.h \
             gui/advsearch/expressionwidget.h \
             gui/advsearch/guiexprelement.h \
@@ -512,15 +549,15 @@ HEADERS +=  rshare.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/AttachFileItem.h \
             gui/feeds/SecurityItem.h \
+            gui/feeds/SecurityIpItem.h \
             gui/feeds/NewsFeedUserNotify.h \
             gui/connect/ConnectFriendWizard.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
-            gui/dht/DhtWindow.h \
-            gui/bwctrl/BwCtrlWindow.h \
-            gui/channels/ShareKey.h \
             gui/GetStartedDialog.h \
-            gui/RttStatistics.h \
+        gui/statistics/BWGraph.h \
+    util/RsSyntaxHighlighter.h \
+    util/imageutil.h
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -544,15 +581,14 @@ FORMS +=    gui/StartDialog.ui \
             gui/AboutDialog.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
+            gui/common/AvatarDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
-            gui/FileTransfer/TurtleRouterDialog.ui \
-            gui/FileTransfer/TurtleRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
+            gui/FileTransfer/SearchDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
-            gui/SearchDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
             gui/ShareDialog.ui \
@@ -560,7 +596,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
-            gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/profile/ProfileManager.ui \
@@ -572,6 +607,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/chat/CreateLobbyDialog.ui \
             gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
+            gui/connect/PGPKeyDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/connect/ConnectProgressDialog.ui \
             gui/msgs/MessageComposer.ui \
@@ -583,6 +619,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ServerPage.ui \
             gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
+            gui/settings/PeoplePage.ui \
             gui/settings/CryptoPage.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
@@ -596,7 +633,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/PostedPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
-            gui/settings/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
             gui/settings/GroupFrameSettingsWidget.ui \
             gui/toaster/MessageToaster.ui \
@@ -615,6 +651,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/feeds/SecurityItem.ui \
+            gui/feeds/SecurityIpItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
             gui/groups/CreateGroup.ui \
             gui/common/GroupTreeWidget.ui \
@@ -627,11 +664,17 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/common/RSFeedWidget.ui \
             gui/style/StyleDialog.ui \
-            gui/dht/DhtWindow.ui \
-            gui/bwctrl/BwCtrlWindow.ui \
-            gui/channels/ShareKey.ui \
+            gui/statistics/BandwidthGraphWindow.ui \
+            gui/statistics/BandwidthStatsWidget.ui \
+            gui/statistics/DhtWindow.ui \
+            gui/statistics/TurtleRouterDialog.ui \
+            gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GlobalRouterStatistics.ui \
+            gui/statistics/StatisticsWindow.ui \
+            gui/statistics/BwCtrlWindow.ui \
+            gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
-            gui/RttStatistics.ui \
+
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -656,7 +699,6 @@ SOURCES +=  main.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
-            gui/graphframe.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
             gui/NetworkView.cpp \
@@ -667,11 +709,10 @@ SOURCES +=  main.cpp \
             gui/RsAutoUpdatePage.cpp \
             gui/RetroShareLink.cpp \
             gui/SearchTreeWidget.cpp \
-            gui/SearchDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/ShareDialog.cpp \
-            gui/SFListDelegate.cpp \
+#            gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/im_history/ImHistoryBrowser.cpp \
@@ -679,13 +720,12 @@ SOURCES +=  main.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
+            gui/FileTransfer/SearchDialog.cpp \
             gui/FileTransfer/TransfersDialog.cpp \
             gui/FileTransfer/FileTransferInfoWidget.cpp \
             gui/FileTransfer/DLListDelegate.cpp \
             gui/FileTransfer/ULListDelegate.cpp \
             gui/FileTransfer/xprogressbar.cpp \
-            gui/FileTransfer/TurtleRouterDialog.cpp \
-            gui/FileTransfer/TurtleRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
             gui/MainPage.cpp \
@@ -694,6 +734,7 @@ SOURCES +=  main.cpp \
             lang/languagesupport.cpp \
             util/RsProtectedTimer.cpp \
             util/stringutil.cpp \
+            util/RsNetUtil.cpp \
             util/DateTime.cpp \
             util/win32.cpp \
             util/RetroStyleLabel.cpp \
@@ -702,17 +743,14 @@ SOURCES +=  main.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
-            util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
-            util/rsguiversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
-            gui/bwgraph/bwgraph.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
@@ -727,12 +765,16 @@ SOURCES +=  main.cpp \
             gui/chat/CreateLobbyDialog.cpp \
             gui/chat/ChatStyle.cpp \
             gui/chat/ChatUserNotify.cpp \
+            gui/chat/ChatLobbyUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
+            gui/connect/PGPKeyDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
+            gui/common/RsButtonOnText.cpp \
+            gui/common/RSGraphWidget.cpp \
             gui/common/ElidedLabel.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionFile.cpp \
@@ -741,13 +783,16 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \
             gui/common/html.cpp \
             gui/common/AvatarDefs.cpp \
+            gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
+            gui/common/GroupChooser.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
             gui/common/RSListWidgetItem.cpp \
+            gui/common/RSTextEdit.cpp \
             gui/common/RSPlainTextEdit.cpp \
             gui/common/RSTreeWidget.cpp \
             gui/common/RSTreeWidgetItem.cpp \
@@ -757,6 +802,7 @@ SOURCES +=  main.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/FilesDefs.cpp \
             gui/common/PopularityDefs.cpp \
+            gui/common/RsBanListDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
@@ -775,11 +821,17 @@ SOURCES +=  main.cpp \
             gui/common/UIStateHelper.cpp \
             gui/common/FloatingHelpBrowser.cpp \
             gui/common/SubscribeToolButton.cpp \
+            gui/common/RsBanListToolButton.cpp \
+            gui/common/FlowLayout.cpp \
+            gui/common/PictureFlow.cpp \
+            gui/common/StyledLabel.cpp \
+            gui/common/StyledElidedLabel.cpp \
+            gui/common/ToasterNotify.cpp \
             gui/style/RSStyle.cpp \
             gui/style/StyleDialog.cpp \
+            gui/settings/RSPermissionMatrixWidget.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
-            gui/settings/GlobalRouterStatistics.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \
@@ -788,6 +840,7 @@ SOURCES +=  main.cpp \
             gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
+            gui/settings/PeoplePage.cpp \
             gui/settings/MessagePage.cpp \
             gui/settings/NewTag.cpp \
             gui/settings/ForumPage.cpp \
@@ -813,6 +866,8 @@ SOURCES +=  main.cpp \
             gui/statusbar/SoundStatus.cpp \
             gui/statusbar/OpModeStatus.cpp \
             gui/statusbar/ToasterDisable.cpp \
+            gui/statusbar/SysTrayStatus.cpp \
+            gui/toaster/ToasterItem.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/DownloadToaster.cpp \
             gui/toaster/OnlineToaster.cpp \
@@ -836,15 +891,24 @@ SOURCES +=  main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/feeds/SecurityItem.cpp \
+            gui/feeds/SecurityIpItem.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
-            gui/dht/DhtWindow.cpp \
-            gui/bwctrl/BwCtrlWindow.cpp \
-            gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp \
-            gui/RttStatistics.cpp \
+            gui/statistics/BandwidthGraphWindow.cpp \
+            gui/statistics/BandwidthStatsWidget.cpp \
+            gui/statistics/DhtWindow.cpp \
+            gui/statistics/TurtleRouterDialog.cpp \
+            gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/GlobalRouterStatistics.cpp \
+            gui/statistics/StatisticsWindow.cpp \
+            gui/statistics/BwCtrlWindow.cpp \
+            gui/statistics/RttStatistics.cpp \
+            gui/statistics/BWGraph.cpp \
+    util/RsSyntaxHighlighter.cpp \
+    util/imageutil.cpp
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
@@ -863,7 +927,7 @@ SOURCES +=  main.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
 
-RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
+RESOURCES += gui/images.qrc gui/icons.qrc lang/lang.qrc gui/help/content/content.qrc gui/emojione.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_ca_ES.ts \
@@ -981,10 +1045,9 @@ DEFINES *= CHANNELS_FRAME_CATCHER
 }
 
 
-# BELOW IS GXS New Services.
-
+# BELOW IS GXS Unfinished Services.
 	
-unfinished {
+unfinished_services {
 	
 	DEPENDPATH += gui/unfinished \
 	
@@ -1025,7 +1088,7 @@ unfinished {
 }
 	
 	
-photoshare {
+gxsphotoshare {
 	#DEFINES += RS_USE_PHOTOSHARE
 
 	HEADERS += \
@@ -1072,12 +1135,14 @@ photoshare {
 	
 wikipoos {
 	
+	DEPENDPATH += ../../supportlibs/pegmarkdown
 	INCLUDEPATH += ../../supportlibs/pegmarkdown
 	
 	HEADERS += gui/WikiPoos/WikiDialog.h \
 		gui/WikiPoos/WikiAddDialog.h \
 		gui/WikiPoos/WikiEditDialog.h \
-	
+		gui/gxs/WikiGroupDialog.h \
+
 	FORMS += gui/WikiPoos/WikiDialog.ui \
 		gui/WikiPoos/WikiAddDialog.ui \
 		gui/WikiPoos/WikiEditDialog.ui \
@@ -1085,13 +1150,15 @@ wikipoos {
 	SOURCES += gui/WikiPoos/WikiDialog.cpp \
 		gui/WikiPoos/WikiAddDialog.cpp \
 		gui/WikiPoos/WikiEditDialog.cpp \
-	
+		gui/gxs/WikiGroupDialog.cpp \
+
 	RESOURCES += gui/WikiPoos/Wiki_images.qrc
+
 }
 	
 	
 	
-thewire {
+gxsthewire {
 	
 	HEADERS += gui/TheWire/PulseItem.h \
 		gui/TheWire/WireDialog.h \
@@ -1107,33 +1174,27 @@ thewire {
 	
 }
 
-HEADERS += gui/People/PeopleDialog.h
-HEADERS += gui/People/IdentityItem.h
-HEADERS += gui/People/CircleItem.h
-HEADERS += gui/People/GroupListView.h 
-FORMS   += gui/People/PeopleDialog.ui 
-SOURCES += gui/People/PeopleDialog.cpp 
-SOURCES += gui/People/GroupListView.cpp 
-SOURCES += gui/People/IdentityItem.cpp
-SOURCES += gui/People/CircleItem.cpp
-
 identities {
 	
 	HEADERS +=  \
 		gui/Identity/IdDialog.h \
 		gui/Identity/IdEditDialog.h \
+		gui/Identity/IdDetailsDialog.h \
 	
 	FORMS += gui/Identity/IdDialog.ui \
 		gui/Identity/IdEditDialog.ui \
-	
+		gui/Identity/IdDetailsDialog.ui \
+
 	SOURCES +=  \
 		gui/Identity/IdDialog.cpp \
 		gui/Identity/IdEditDialog.cpp \
+		gui/Identity/IdDetailsDialog.cpp \
 	
 }
 	
-circles {
+gxscircles {
 	DEFINES += RS_USE_CIRCLES
+#	DEFINES += RS_USE_NEW_PEOPLE_DIALOG
 
 	HEADERS +=  \
 		gui/Circles/CirclesDialog.h \
@@ -1145,7 +1206,27 @@ circles {
 	SOURCES +=  \
 		gui/Circles/CirclesDialog.cpp \
 		gui/Circles/CreateCircleDialog.cpp \
-	
+
+	HEADERS += gui/People/PeopleDialog.h
+	HEADERS += gui/People/CircleWidget.h
+	HEADERS += gui/People/IdentityWidget.h
+
+	FORMS   += gui/People/PeopleDialog.ui 
+	FORMS   += gui/People/CircleWidget.ui
+	FORMS   += gui/People/IdentityWidget.ui
+
+	SOURCES += gui/People/PeopleDialog.cpp 
+	SOURCES += gui/People/CircleWidget.cpp
+	SOURCES += gui/People/IdentityWidget.cpp
+
+#HEADERS += gui/People/IdentityItem.h
+#HEADERS += gui/People/CircleItem.h
+#HEADERS += gui/People/GroupListView.h
+#SOURCES += gui/People/GroupListView.cpp
+#SOURCES += gui/People/IdentityItem.cpp
+#SOURCES += gui/People/CircleItem.cpp
+
+
 }
 	
 	
@@ -1156,17 +1237,23 @@ gxsforums {
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h \
-		gui/gxsforums/GxsForumUserNotify.h
+		gui/gxsforums/GxsForumUserNotify.h \
+		gui/feeds/GxsForumGroupItem.h \
+		gui/feeds/GxsForumMsgItem.h
 
 	FORMS += gui/gxsforums/CreateGxsForumMsg.ui \
-		gui/gxsforums/GxsForumThreadWidget.ui
+		gui/gxsforums/GxsForumThreadWidget.ui \
+		gui/feeds/GxsForumGroupItem.ui \
+		gui/feeds/GxsForumMsgItem.ui
 
 	SOURCES += gui/gxsforums/GxsForumsDialog.cpp \
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
 		gui/gxsforums/GxsForumsFillThread.cpp \
-		gui/gxsforums/GxsForumUserNotify.cpp
+		gui/gxsforums/GxsForumUserNotify.cpp \
+		gui/feeds/GxsForumGroupItem.cpp \
+		gui/feeds/GxsForumMsgItem.cpp
 }
 	
 	
@@ -1178,6 +1265,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
+		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
@@ -1185,6 +1273,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
+		gui/feeds/GxsChannelGroupItem.ui \
 		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
@@ -1193,6 +1282,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
+		gui/feeds/GxsChannelGroupItem.cpp \
 		gui/feeds/GxsChannelPostItem.cpp \
 		gui/gxschannels/GxsChannelUserNotify.cpp
 }
@@ -1204,6 +1294,7 @@ posted {
 		gui/Posted/PostedListWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedGroupDialog.h \
+		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
 		gui/Posted/PostedUserNotify.h
 
@@ -1211,6 +1302,7 @@ posted {
 		#gui/Posted/PostedComments.h \
 	
 	FORMS += gui/Posted/PostedListWidget.ui \
+		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
 
@@ -1220,6 +1312,7 @@ posted {
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
 		gui/Posted/PostedListWidget.cpp \
+		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
@@ -1235,13 +1328,11 @@ posted {
 gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
-		gui/gxs/WikiGroupDialog.h \
 		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
 		gui/gxs/GxsCircleChooser.h \
 		gui/gxs/GxsCircleLabel.h \
-		gui/gxs/GxsIdTreeWidget.h \
 		gui/gxs/GxsIdTreeWidgetItem.h \
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/GxsCommentContainer.h \
@@ -1250,11 +1341,14 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.h \
 		gui/gxs/GxsMessageFrameWidget.h \
 		gui/gxs/GxsMessageFramePostWidget.h \
+		gui/gxs/GxsGroupFeedItem.h \
 		gui/gxs/GxsFeedItem.h \
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
 		gui/gxs/RsGxsUpdateBroadcastPage.h \
+		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
+		gui/gxs/GxsFeedWidget.h \
 		util/TokenQueue.h \
 		util/RsGxsUpdateBroadcast.h \
 	
@@ -1264,19 +1358,18 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
-		gui/gxs/GxsGroupFrameDialog.ui
-	
+		gui/gxs/GxsGroupFrameDialog.ui\
+		gui/gxs/GxsGroupShareKey.ui 
 #		gui/gxs/GxsMsgDialog.ui \
-#		gui/gxs/GxsCommentTreeWidget.ui \
+#		gui/gxs/GxsCommentTreeWidget.ui 
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
-		gui/gxs/WikiGroupDialog.cpp \
 		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
 		gui/gxs/GxsCircleChooser.cpp \
+		gui/gxs/GxsGroupShareKey.cpp \
 		gui/gxs/GxsCircleLabel.cpp \
-		gui/gxs/GxsIdTreeWidget.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/GxsCommentContainer.cpp \
@@ -1285,15 +1378,23 @@ gxsgui {
 		gui/gxs/GxsGroupFrameDialog.cpp \
 		gui/gxs/GxsMessageFrameWidget.cpp \
 		gui/gxs/GxsMessageFramePostWidget.cpp \
+		gui/gxs/GxsGroupFeedItem.cpp \
 		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
 		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		gui/gxs/GxsUserNotify.cpp \
+		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
 		util/RsGxsUpdateBroadcast.cpp \
 	
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+libresapihttpserver {
+    HEADERS *= gui/settings/WebuiPage.h
+    SOURCES *= gui/settings/WebuiPage.cpp
+    FORMS *= gui/settings/WebuiPage.ui
 }

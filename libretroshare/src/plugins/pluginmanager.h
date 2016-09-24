@@ -12,7 +12,14 @@ class p3LinkMgr ;
 
 class PluginInfo
 {
+public:
+	PluginInfo() : handle(NULL), plugin(NULL), API_version(0), svn_revision(0), status(0) {}
+
 	public:
+		// Handle of the loaded plugin.
+		//
+		void *handle;
+
 		// Main object provided by the plugin. NULL is the plugin could not be loaded.
 		//
 		RsPlugin *plugin ;
@@ -91,7 +98,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		//
 		void loadPlugins(const std::vector<RsPlugin*>& explicit_plugin_entries) ;
 
-		void stopPlugins();
+		void stopPlugins(p3ServiceServer *pqih);
 
 		void registerCacheServices() ;
 		void registerClientServices(p3ServiceServer *pqih) ;

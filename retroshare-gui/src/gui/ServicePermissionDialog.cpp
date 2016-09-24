@@ -38,7 +38,7 @@ ServicePermissionDialog::ServicePermissionDialog() :
 	Settings->loadWidgetInformation(this);
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/servicepermissions64.png"));
-	ui->headerFrame->setHeaderText(tr("Service Permissions"));
+    ui->headerFrame->setHeaderText(tr("Service Permissions"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(setPermissions()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -49,15 +49,14 @@ ServicePermissionDialog::ServicePermissionDialog() :
 	ui->servicePermissionList->setModus(FriendSelectionWidget::MODUS_SINGLE);
 	ui->servicePermissionList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_GPG);
 
-	/* add columns */
-	int column = ui->servicePermissionList->addColumn(tr("Anonymous routing"));
-	mColumns[column] = RS_SERVICE_PERM_TURTLE;
-	column = ui->servicePermissionList->addColumn(tr("Discovery"));
-	mColumns[column] = RS_SERVICE_PERM_DISCOVERY;
-	column = ui->servicePermissionList->addColumn(tr("Forums/Channels"));
-	mColumns[column] = RS_SERVICE_PERM_DISTRIB;
-	column = ui->servicePermissionList->addColumn(tr("Use as direct source, when available"));
-	mColumns[column] = RS_SERVICE_PERM_DIRECT_DL;
+    /* add columns */
+    int column ;
+    column = ui->servicePermissionList->addColumn(tr("Use as direct source, when available"));
+    mColumns[column] = RS_NODE_PERM_DIRECT_DL;
+    column = ui->servicePermissionList->addColumn(tr("Auto-download recommended files"));
+    mColumns[column] = RS_NODE_PERM_ALLOW_PUSH;
+    column = ui->servicePermissionList->addColumn(tr("Require whitelist"));
+    mColumns[column] = RS_NODE_PERM_REQUIRE_WL;
 
 	ui->servicePermissionList->start();
 }

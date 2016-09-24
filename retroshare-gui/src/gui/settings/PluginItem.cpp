@@ -21,13 +21,14 @@
 
 #include "PluginItem.h"
 
-PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& /*error_string*/, const QIcon& icon)
+PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& pluginTitle,const QString& pluginDescription,const QString& status, const QString& file_name, const QString& file_hash, const QString& error_string, const QIcon& icon)
 	:QWidget(NULL)
 {
 	setupUi(this) ;
 
 	_id = id ;
 	_statusLabel->setText(status) ;
+	_statusLabel->setToolTip(error_string);
 	_hashLabel->setText(file_hash) ;
 	_name_LE->setText(file_name) ;
 	_pluginIcon->setIcon(icon) ;

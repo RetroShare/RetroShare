@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+//#define DEBUG_GXSCOMMON
 
 RsGxsComment::RsGxsComment()
 {
@@ -45,16 +46,20 @@ RsGxsComment::RsGxsComment()
 
 RsGxsImage::RsGxsImage()
 {
+#ifdef DEBUG_GXSCOMMON
 	std::cerr << "RsGxsImage(" << this << ")";
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 	mData = NULL;
 	mSize = 0;
 }
 
 RsGxsImage::RsGxsImage(const RsGxsImage& a)
 {
-	std::cerr << "RsGxsImage(" << this << ") = RsGxsImage(" << (void *) &a << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "RsGxsImage(" << this << ") = RsGxsImage(" << (void *) &a << ")";
+    std::cerr << std::endl;
+#endif
 	mData = NULL;
 	mSize = 0;
 	copy(a.mData, a.mSize);
@@ -63,8 +68,10 @@ RsGxsImage::RsGxsImage(const RsGxsImage& a)
 
 RsGxsImage::~RsGxsImage()
 {
-	std::cerr << "~RsGxsImage(" << this << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "~RsGxsImage(" << this << ")";
+    std::cerr << std::endl;
+#endif
 	clear();
 }
 
@@ -78,8 +85,10 @@ RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 
 void RsGxsImage::take(uint8_t *data, uint32_t size)
 {
-	std::cerr << "RsGxsImage(" << this << ")::take(" << (void *) data << "," << size << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "RsGxsImage(" << this << ")::take(" << (void *) data << "," << size << ")";
+    std::cerr << std::endl;
+#endif
 	// Copies Pointer.
 	clear();
 	mData = data;
@@ -89,23 +98,30 @@ void RsGxsImage::take(uint8_t *data, uint32_t size)
 // NB Must make sure that we always use malloc/free for this data.
 uint8_t *RsGxsImage::allocate(uint32_t size)
 {
-	uint8_t *val = (uint8_t *) malloc(size);
-	std::cerr << "RsGxsImage()::allocate(" << (void *) val << ")";
-	std::cerr << std::endl;
+	uint8_t *val = (uint8_t *) rs_malloc(size);
+    
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "RsGxsImage()::allocate(" << (void *) val << ")";
+    std::cerr << std::endl;
+#endif
 	return val;
 }
 
 void RsGxsImage::release(void *data)
 {
-	std::cerr << "RsGxsImage()::release(" << (void *) data << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "RsGxsImage()::release(" << (void *) data << ")";
+    std::cerr << std::endl;
+#endif
 	free(data);
 }
 
 void RsGxsImage::copy(uint8_t *data, uint32_t size)
 {
-	std::cerr << "RsGxsImage(" << this << ")::copy(" << (void *) data << "," << size << ")";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "RsGxsImage(" << this << ")::copy(" << (void *) data << "," << size << ")";
+    std::cerr << std::endl;
+#endif
 	// Allocates and Copies.
 	clear(); 
 	if (data && size)
@@ -167,8 +183,10 @@ void p3GxsCommentService::comment_tick()
 
 bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments)
 {
-	std::cerr << "p3GxsCommentService::getGxsCommentData()";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::getGxsCommentData()";
+    std::cerr << std::endl;
+#endif
 
 	GxsMsgDataMap msgData;
 	bool ok = mExchange->getMsgData(token, msgData);
@@ -178,7 +196,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		GxsMsgDataMap::iterator mit = msgData.begin();
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *> voteMap;
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
@@ -186,7 +204,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 
 			/* now split into Comments and Votes */
 		
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsCommentItem* item = dynamic_cast<RsGxsCommentItem*>(*vit);
 		
@@ -216,9 +234,9 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		/* now iterate through comments - and set the vote counts */
 		std::vector<RsGxsComment>::iterator cit;
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *>::iterator it;
-		for(cit = comments.begin(); cit != comments.end(); cit++)
+		for(cit = comments.begin(); cit != comments.end(); ++cit)
 		{
-			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); it++)
+			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); ++it)
 			{
 				if (it->second->mMsg.mVoteType == GXS_VOTE_UP)
 				{
@@ -249,13 +267,15 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 			}
 		}
 
-		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
+#ifdef DEBUG_GXSCOMMON
+        std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << comments.size() << " Comments";
 		std::cerr << std::endl;
 		std::cerr << "p3GxsCommentService::getGxsCommentData() Found " << voteMap.size() << " Votes";
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+#endif
 
 		/* delete the votes */
-		for (it = voteMap.begin(); it != voteMap.end(); it++)
+		for (it = voteMap.begin(); it != voteMap.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -272,8 +292,10 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 
 bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments)
 {
-	std::cerr << "p3GxsCommentService::getGxsRelatedComments()";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::getGxsRelatedComments()";
+    std::cerr << std::endl;
+#endif
 
 	GxsMsgRelatedDataMap msgData;
 	bool ok = mExchange->getMsgRelatedData(token, msgData);
@@ -283,12 +305,12 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *> voteMap;
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsCommentItem* item = dynamic_cast<RsGxsCommentItem*>(*vit);
 		
@@ -318,9 +340,9 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 		/* now iterate through comments - and set the vote counts */
 		std::vector<RsGxsComment>::iterator cit;
 		std::multimap<RsGxsMessageId, RsGxsVoteItem *>::iterator it;
-		for(cit = comments.begin(); cit != comments.end(); cit++)
+		for(cit = comments.begin(); cit != comments.end(); ++cit)
 		{
-			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); it++)
+			for (it = voteMap.lower_bound(cit->mMeta.mMsgId); it != voteMap.upper_bound(cit->mMeta.mMsgId); ++it)
 			{
 				if (it->second->mMsg.mVoteType == GXS_VOTE_UP)
 				{
@@ -351,13 +373,15 @@ bool p3GxsCommentService::getGxsRelatedComments(const uint32_t &token, std::vect
 			}
 		}
 
-		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
+#ifdef DEBUG_GXSCOMMON
+        std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << comments.size() << " Comments";
 		std::cerr << std::endl;
 		std::cerr << "p3GxsCommentService::getGxsRelatedComments() Found " << voteMap.size() << " Votes";
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+#endif
 
 		/* delete the votes */
-		for (it = voteMap.begin(); it != voteMap.end(); it++)
+		for (it = voteMap.begin(); it != voteMap.end(); ++it)
 		{
 			delete it->second;
 		}
@@ -392,8 +416,10 @@ double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 
 bool p3GxsCommentService::createGxsComment(uint32_t &token, RsGxsComment &msg)
 {
-	std::cerr << "p3GxsCommentService::createGxsComment() GroupId: " << msg.mMeta.mGroupId;
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::createGxsComment() GroupId: " << msg.mMeta.mGroupId;
+    std::cerr << std::endl;
+#endif
 
 	RsGxsCommentItem* msgItem = new RsGxsCommentItem(mServiceType);
 	msgItem->mMsg = msg;
@@ -410,12 +436,14 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 	// NOTE Because we cannot do this operation immediately, we create a token, 
 	// and monitor acknowledgeTokenMsg ... to return correct answer.
 
-	std::cerr << "p3GxsCommentService::createGxsVote() GroupId: " << vote.mMeta.mGroupId;
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::createGxsVote() GroupId: " << vote.mMeta.mGroupId;
+    std::cerr << std::endl;
+#endif
 
 	/* vote must be associated with another item */
 	if (vote.mMeta.mThreadId.isNull())
-	{
+    {
 		std::cerr << "p3GxsCommentService::createGxsVote() ERROR Missing Required ThreadId";
 		std::cerr << std::endl;
 		return false;
@@ -482,8 +510,10 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 
 void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 {
+#ifdef DEBUG_GXSCOMMON
         std::cerr << "p3GxsCommentService::load_PendingVoteParent()";
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 	GxsMsgMetaMap msginfo;
         if (!mExchange->getMsgMeta(token, msginfo))
 	{
@@ -497,17 +527,19 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
         }
 
 	GxsMsgMetaMap::iterator it;
-	for(it = msginfo.begin(); it != msginfo.end(); it++)
+	for(it = msginfo.begin(); it != msginfo.end(); ++it)
 	{
 		std::vector<RsMsgMetaData>::iterator mit;
-		for(mit = it->second.begin(); mit != it->second.end(); mit++)
+		for(mit = it->second.begin(); mit != it->second.end(); ++mit)
 		{
 			/* find the matching Pending Vote */
 			RsMsgMetaData &meta = *mit;
 
-                	std::cerr << "p3GxsCommentService::load_PendingVoteParent() recv (groupId: " << meta.mGroupId;
-			std::cerr << ", msgId: " << meta.mMsgId << ")";
-			std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+                    std::cerr << "p3GxsCommentService::load_PendingVoteParent() recv (groupId: " << meta.mGroupId;
+            std::cerr << ", msgId: " << meta.mMsgId << ")";
+            std::cerr << std::endl;
+#endif
 
 			RsGxsGrpMsgIdPair parentId(meta.mGroupId, meta.mMsgId);
 			std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator pit;
@@ -535,8 +567,10 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 				continue;
 			}
 
-                	std::cerr << "p3GxsCommentService::load_PendingVoteParent() submitting Vote";
-			std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+                    std::cerr << "p3GxsCommentService::load_PendingVoteParent() submitting Vote";
+            std::cerr << std::endl;
+#endif
 
 			uint32_t status_token;
 			if (vote.mVoteType == GXS_VOTE_UP)
@@ -564,10 +598,12 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 
 void p3GxsCommentService::completeInternalVote(uint32_t &token)
 {
-	std::cerr << "p3GxsCommentService::completeInternalVote() token: " << token;
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::completeInternalVote() token: " << token;
+    std::cerr << std::endl;
+#endif
 	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
-	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); ++it)
 	{
 		if (it->second.mVoteToken == token)
 		{
@@ -575,8 +611,10 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 			uint32_t status = mExchange->getTokenService()->requestStatus(token);
 			mExchange->updatePublicRequestStatus(it->second.mReqToken, status);
 
-			std::cerr << "p3GxsCommentService::completeInternalVote() Matched to PendingVote. status: " << status;
-			std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+            std::cerr << "p3GxsCommentService::completeInternalVote() Matched to PendingVote. status: " << status;
+            std::cerr << std::endl;
+#endif
 
 			it->second.mStatus = VoteHolder::VOTE_READY;
 			return;
@@ -592,48 +630,58 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 
 bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPair& msgId)
 {
-	std::cerr << "p3GxsCommentService::acknowledgeVote() token: " << token;
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::acknowledgeVote() token: " << token;
+    std::cerr << std::endl;
+#endif
 
 	std::map<RsGxsGrpMsgIdPair, VoteHolder>::iterator it;
-	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); it++)
+	for (it = mPendingVotes.begin(); it != mPendingVotes.end(); ++it)
 	{
 		if (it->second.mReqToken == token)
 		{
-			std::cerr << "p3GxsCommentService::acknowledgeVote() Matched to PendingVote";
-			std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+            std::cerr << "p3GxsCommentService::acknowledgeVote() Matched to PendingVote";
+            std::cerr << std::endl;
+#endif
 
 			bool ans = false;
 			if (it->second.mStatus == VoteHolder::VOTE_READY)
 			{
-				std::cerr << "p3GxsCommentService::acknowledgeVote() PendingVote = READY";
-				std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+                std::cerr << "p3GxsCommentService::acknowledgeVote() PendingVote = READY";
+                std::cerr << std::endl;
+#endif
 
 				// Finally finish this Vote off.
 				ans = mExchange->acknowledgeTokenMsg(it->second.mVoteToken, msgId);
 			}
 			else if (it->second.mStatus == VoteHolder::VOTE_ERROR)
-			{
+            {
 				std::cerr << "p3GxsCommentService::acknowledgeVote() PendingVote = ERROR ???";
 				std::cerr << std::endl;
 			}
-			else
+#ifdef DEBUG_GXSCOMMON
+            else
 			{
 				std::cerr << "p3GxsCommentService::acknowledgeVote() PendingVote = OTHER STATUS";
 				std::cerr << std::endl;
-			}
+            }
 
 			std::cerr << "p3GxsCommentService::acknowledgeVote() cleanup token & PendingVote";
 			std::cerr << std::endl;
-			mExchange->disposeOfPublicToken(it->second.mReqToken);
+#endif
+            mExchange->disposeOfPublicToken(it->second.mReqToken);
 			mPendingVotes.erase(it);
 
 			return ans;
 		}
 	}
 
-	std::cerr << "p3GxsCommentService::acknowledgeVote() Failed to match PendingVote";
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::acknowledgeVote() Failed to match PendingVote";
+    std::cerr << std::endl;
+#endif
 
 	return false;
 }
@@ -642,8 +690,10 @@ bool p3GxsCommentService::acknowledgeVote(const uint32_t& token, RsGxsGrpMsgIdPa
         // Overloaded from GxsTokenQueue for Request callbacks.
 void p3GxsCommentService::handleResponse(uint32_t token, uint32_t req_type)
 {
+#ifdef DEBUG_GXSCOMMON
         std::cerr << "p3GxsCommentService::handleResponse(" << token << "," << req_type << ")";
         std::cerr << std::endl;
+#endif
 
         // stuff.
         switch(req_type)
@@ -670,8 +720,10 @@ void p3GxsCommentService::handleResponse(uint32_t token, uint32_t req_type)
 
 bool p3GxsCommentService::castVote(uint32_t &token, RsGxsVote &msg)
 {
-	std::cerr << "p3GxsCommentService::castVote() GroupId: " << msg.mMeta.mGroupId;
-	std::cerr << std::endl;
+#ifdef DEBUG_GXSCOMMON
+    std::cerr << "p3GxsCommentService::castVote() GroupId: " << msg.mMeta.mGroupId;
+    std::cerr << std::endl;
+#endif
 
 	RsGxsVoteItem* msgItem = new RsGxsVoteItem(mServiceType);
 	msgItem->mMsg = msg;

@@ -36,11 +36,13 @@
 #include "RelayPage.h"
 #include "ChatPage.h"
 #include "ChannelPage.h"
+#include "PeoplePage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
 #include "PostedPage.h"
 #include "PluginsPage.h"
 #include "ServicePermissionsPage.h"
+#include "WebuiPage.h"
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
@@ -141,24 +143,30 @@ RSettingsWin::initStackedWidget()
     addPage(new PluginsPage() );
     addPage(new NotifyPage());
     addPage(new CryptoPage());
+    addPage(new PeoplePage());
+    addPage(new ChatPage());
     addPage(new MessagePage());
     addPage(new ChannelPage());
     addPage(new ForumPage());
-	addPage(new PostedPage());
-    addPage(new ChatPage());
+    addPage(new PostedPage());
     addPage(new AppearancePage());
     addPage(new SoundPage() );
     addPage(new ServicePermissionsPage() );
-
+#ifdef ENABLE_WEBUI
+    addPage(new WebuiPage() );
+#endif // ENABLE_WEBUI
 	 // add widgets from plugins
 
-	 for(int i=0;i<rsPlugins->nbPlugins();++i)
-	 {
-		 RsPlugin *pl = rsPlugins->plugin(i) ;
-
-		 if(pl != NULL && pl->qt_config_page() != NULL)
-			 addPage(pl->qt_config_page()) ;
-	 }
+	for(int i=0;i<rsPlugins->nbPlugins();++i)
+	{
+		RsPlugin *pl = rsPlugins->plugin(i) ;
+		if(pl != NULL)
+		{
+			ConfigPage* cp = pl->qt_config_page();
+			if(cp != NULL)
+				addPage(cp) ;
+		}
+	}
 
 	 // make the first page the default.
 
@@ -214,7 +222,7 @@ RSettingsWin::saveChanges()
 
 				/* Show the user what went wrong */
 				QMessageBox::warning(this,
-				tr("Error Saving Configuration on page ")+QString::number(i), errmsg,
+				tr("Error Saving Configuration on page")+" "+QString::number(i), errmsg,
 				QMessageBox::Ok, QMessageBox::NoButton);
 
 				/* Don't process the rest of the pages */

@@ -45,7 +45,7 @@ uint32_t RsGxsWireSerialiser::size(RsItem *item)
 	{
 		return sizeGxsWirePulseItem(snap_item);
 	}
-	return NULL;
+    return 0;
 }
 
 bool RsGxsWireSerialiser::serialise(RsItem *item, void *data, uint32_t *size)

@@ -22,19 +22,27 @@
 #ifndef CHATUSERNOTIFY_H
 #define CHATUSERNOTIFY_H
 
+#include <retroshare/rsmsgs.h>
 #include "gui/common/UserNotify.h"
 
+// this class uses lots of global state
+// so only one instance is allowed
+// (it does not make sense to have multiple instances of this class anyway)
 class ChatUserNotify : public UserNotify
 {
 	Q_OBJECT
 
 public:
+    static void getPeersWithWaitingChat(std::vector<RsPeerId>& peers);
+    static void clearWaitingChat(ChatId id);
+
 	ChatUserNotify(QObject *parent = 0);
+    ~ChatUserNotify();
 
 	virtual bool hasSetting(QString *name, QString *group);
 
 private slots:
-	void privateChatChanged(int list, int type);
+    void chatMessageReceived(ChatMessage msg);
 
 private:
 	virtual QIcon getIcon();

@@ -6,15 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>412</height>
+    <width>851</width>
+    <height>721</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -39,7 +48,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -82,35 +100,99 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="ElidedLabel" name="forumName">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="LineEditClear" name="filterLineEdit">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>200</width>
-              <height>16777215</height>
+              <width>16777215</width>
+              <height>1677215</height>
              </size>
             </property>
+            <property name="text">
+             <string notr="true">Forum name</string>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="progressText">
+            <property name="text">
+             <string>Loading</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="progressBar">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>10</height>
+             </size>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="viewBox">
+            <item>
+             <property name="text">
+              <string>Last Post</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Threaded View</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Flat View</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="LineEditClear" name="filterLineEdit">
             <property name="toolTip">
              <string>Search forums</string>
             </property>
@@ -124,69 +206,10 @@
          <property name="leftMargin">
           <number>3</number>
          </property>
-         <item>
-          <widget class="QLabel" name="forumLabel">
-           <property name="text">
-            <string>Forum:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="forumName">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>2</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>1677215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="viewBox">
-           <item>
-            <property name="text">
-             <string>Last Post</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Threaded View</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Flat View</string>
-            </property>
-           </item>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
-        <widget class="GxsIdRSTreeWidget" name="threadTreeWidget">
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
+        <widget class="RSTreeWidget" name="threadTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -220,95 +243,48 @@
            <string>Author</string>
           </property>
          </column>
-         <column>
-          <property name="text">
-           <string>Signed</string>
-          </property>
-         </column>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="progressBarLayout">
-         <property name="leftMargin">
-          <number>3</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="progressText">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Loading</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QProgressBar" name="progressBar">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximum">
-            <number>1000</number>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="threadLayout">
          <property name="leftMargin">
           <number>3</number>
          </property>
-         <item>
-          <widget class="QLabel" name="threadLabel">
-           <property name="text">
-            <string>Thread:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="threadTitle">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
+         <item row="0" column="5">
+          <widget class="QToolButton" name="downloadButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Download all files</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="7">
           <widget class="QLabel" name="time_label">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <widget class="QPushButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -344,8 +320,99 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="14">
+          <widget class="QPushButton" name="expandButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="6">
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="8">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="3">
+          <widget class="QToolButton" name="previousButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Previous Thread</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="4">
-          <widget class="QPushButton" name="nextButton">
+          <widget class="QToolButton" name="nextButton">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -380,137 +447,22 @@
             <iconset resource="../images.qrc">
              <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
            </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="13">
-          <widget class="QPushButton" name="expandButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5">
-          <widget class="QToolButton" name="downloadButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Download all files</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
-           </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="6">
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="8">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="9">
-          <widget class="QLabel" name="by_label">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
+         <item row="0" column="10">
+          <widget class="GxsIdLabel" name="by_label">
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="10">
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="3">
-          <widget class="QPushButton" name="previousButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Previous Thread</string>
-           </property>
+         <item row="0" column="9">
+          <widget class="QLabel" name="by_text_label">
            <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
+            <string>By </string>
            </property>
           </widget>
          </item>
@@ -518,24 +470,52 @@
        </item>
       </layout>
      </widget>
-     <widget class="RSTextBrowser" name="postText">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>10</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="RSImageBlockWidget" name="imageBlockWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="RSTextBrowser" name="postText">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
   </layout>
+  <action name="actionSave_image">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save image</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
@@ -547,14 +527,26 @@
    <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsIdRSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/gxs/GxsIdTreeWidget.h</header>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElidedLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">gui/common/ElidedLabel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSImageBlockWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/RSImageBlockWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -16,12 +16,12 @@ extern "C" {
 #include <openpgpsdk/keyring_local.h>
 }
 
-typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad) ;
+typedef std::string (*PassphraseCallback)(void *data, const char *uid_title, const char *uid_hint, const char *passphrase_info, int prev_was_bad,bool *cancelled) ;
 
 class PGPCertificateInfo
 {
 	public:
-		PGPCertificateInfo() {}
+		PGPCertificateInfo() : _trustLvl(0), _validLvl(0), _flags(0), _type(0), _time_stamp(0), _key_index(0) {}
 
 		std::string _name;
 		std::string _email;
@@ -74,17 +74,19 @@ class PGPHandler
 		bool haveSecretKey(const RsPgpId& id) const ;
 
 		bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) ;
+		bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) ;
 		bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_id) const ;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids);
-		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, std::string& errString) ;
+		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) ;
 
 		bool LoadCertificateFromString(const std::string& pem, RsPgpId& gpg_id, std::string& error_string);
 
 		std::string SaveCertificateToString(const RsPgpId& id,bool include_signatures) const ;
 		bool exportPublicKey(const RsPgpId& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
 
-		bool SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool make_raw_signature=false) ;
+		bool parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) ;
+		bool SignDataBin(const RsPgpId& id, const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, bool make_raw_signature=false, std::string reason = "") ;
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
 		bool privateSignCertificate(const RsPgpId& own_id,const RsPgpId& id_of_key_to_sign) ;
 
@@ -109,7 +111,7 @@ class PGPHandler
 		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
 		// and given pack for proper display.
 		//
-		bool removeKeysFromPGPKeyring(const std::list<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) ;
+		bool removeKeysFromPGPKeyring(const std::set<RsPgpId>& key_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		//bool isKeySupported(const RsPgpId& id) const ;
 
@@ -151,6 +153,14 @@ class PGPHandler
 		// Returns true if the signatures have been updated
 		//
 		bool validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_keydata_t *keydata) ;
+
+        /** Check public/private key and import them into the keyring
+         * @param keyring keyring with the new public/private key pair. Will be freed by the function.
+         * @param imported_key_id PGP id of the imported key
+         * @param import_error human readbale error message
+         * @returns true on success
+         * */
+        bool checkAndImportKeyPair(ops_keyring_t *keyring, RsPgpId& imported_key_id,std::string& import_error);
 
 		const ops_keydata_t *locked_getPublicKey(const RsPgpId&,bool stamp_the_key) const;
 		const ops_keydata_t *locked_getSecretKey(const RsPgpId&) const ;

@@ -53,7 +53,7 @@ virtual std::ostream &printHex(std::ostream &out, uint16_t indent) const;
 class RsTlvStringSetRef: public RsTlvItem
 {
 	public:
-	 RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
+     RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
 virtual ~RsTlvStringSetRef() { return; }
 virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
@@ -62,7 +62,7 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mType;
-	std::list<std::string> &ids; /* Mandatory */
+    std::list<std::string> &ids; /* Mandatory */
 };
 
 

@@ -66,7 +66,7 @@ class DiscPgpInfo
 	public:
 	DiscPgpInfo() {}
 
-void    mergeFriendList(const std::list<PGPID> &friends);
+void    mergeFriendList(const std::set<PGPID> &friends);
 
 	//PGPID mPgpId;
 	std::set<PGPID> mFriendSet;

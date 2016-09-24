@@ -46,7 +46,7 @@ void	RsTickEvent::tick_events()
 		{
 			std::multimap<time_t, uint32_t>::iterator it;
 
-			for(it = mEvents.begin(); it != mEvents.end(); it++)
+			for(it = mEvents.begin(); it != mEvents.end(); ++it)
 			{
 				std::cerr << "\tEvent type: ";
 				std::cerr << it->second << " in " << it->first - now << " secs";
@@ -84,7 +84,7 @@ void	RsTickEvent::tick_events()
 		}
 	}
 
-	for(it = toProcess.begin(); it != toProcess.end(); it++)
+	for(it = toProcess.begin(); it != toProcess.end(); ++it)
 	{
 #ifdef DEBUG_EVENTS
 		std::cerr << "RsTickEvent::tick_events() calling handle_event(";

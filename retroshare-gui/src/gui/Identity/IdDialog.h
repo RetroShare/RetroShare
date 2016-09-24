@@ -25,18 +25,28 @@
 #define IDENTITYDIALOG_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-#include "ui_IdDialog.h"
 
 #include <retroshare/rsidentity.h>
 
-#include <map>
-
-#include "gui/Identity/IdEditDialog.h"
 #include "util/TokenQueue.h"
 
-#define IMAGE_IDDIALOG          ":/images/identity/identities_32.png"
+#define IMAGE_IDDIALOG          ":/icons/png/people.png"
+
+namespace Ui {
+class IdDialog;
+}
 
 class UIStateHelper;
+class QTreeWidgetItem;
+
+struct CircleUpdateOrder
+{
+    enum { UNKNOWN_ACTION=0x00, GRANT_MEMBERSHIP=0x01, REVOKE_MEMBERSHIP=0x02 };
+         
+    uint32_t token ;
+    RsGxsId  gxs_id ;
+    uint32_t action ;
+};
 
 class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -44,9 +54,10 @@ class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 
 public:
 	IdDialog(QWidget *parent = 0);
+	~IdDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
-	virtual QString pageName() const { return tr("Identities") ; } //MainPage
+	virtual QString pageName() const { return tr("People") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -54,34 +65,70 @@ public:
 protected:
 	virtual void updateDisplay(bool complete);
 
+	void loadCircleGroupMeta(const uint32_t &token);
+	void loadCircleGroupData(const uint32_t &token);
+	void updateCircleGroup(const uint32_t& token);
+
+	void requestCircleGroupMeta();
+	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
+	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
+
 private slots:
-	void filterComboBoxChanged();
+	void createExternalCircle();
+	void showEditExistingCircle();
+	void updateCirclesDisplay();
+    void toggleAutoBanIdentities(bool b);
+
+	void acceptCircleSubscription() ;
+	void cancelCircleSubscription() ;
+	void grantCircleMembership() ;
+	void revokeCircleMembership() ;
+
 	void filterChanged(const QString &text);
+	void filterToggled(const bool &value);
 
 	void addIdentity();
 	void removeIdentity();
 	void editIdentity();
 	void chatIdentity();
+	void sendMsg();
+
 
 	void updateSelection();
 
-	void todo();
 	void modifyReputation();
-	
-		/** Create the context popup menu and it's submenus */
+
+	/** Create the context popup menu and it's submenus */
 	void IdListCustomPopupMenu( QPoint point );
 
+	void CircleListCustomPopupMenu(QPoint point) ;
+#ifdef SUSPENDED
+	void circle_selected() ;
+#endif
+
+	void  addtoContacts();
+	void  removefromContacts();
+
+	void negativePerson();
+	void positivePerson();
+	void neutralPerson();
+
+	static QString inviteMessage();
+	void sendInvite();
+
 private:
-    void requestIdDetails(RsGxsGroupId &id);
+	void processSettings(bool load);
+
+	void requestIdDetails();
 	void insertIdDetails(uint32_t token);
 
 	void requestIdList();
-    void requestIdData(std::list<RsGxsGroupId> &ids);
+	void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
 
-	void requestRepList(const RsGxsGroupId &aboutId);
+	void requestRepList();
 	void insertRepList(uint32_t token);
 
 	void requestIdEdit(std::string &id);
@@ -89,10 +136,24 @@ private:
 
 private:
 	TokenQueue *mIdQueue;
+	TokenQueue *mCircleQueue;
+
 	UIStateHelper *mStateHelper;
 
-	/* UI - from Designer */
-	Ui::IdDialog ui;
+	QTreeWidgetItem *contactsItem;
+	QTreeWidgetItem *allItem;
+	QTreeWidgetItem *ownItem;
+	QTreeWidgetItem *mExternalBelongingCircleItem;
+	QTreeWidgetItem *mExternalOtherCircleItem;
+	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+
+	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
+
+	RsGxsGroupId mId;
+	int filter;
+
+	/* UI -  Designer */
+	Ui::IdDialog *ui;
 };
 
 #endif

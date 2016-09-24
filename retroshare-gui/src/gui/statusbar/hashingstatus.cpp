@@ -24,30 +24,8 @@
 #include <QMovie>
 
 #include "hashingstatus.h"
-
+#include "gui/common/ElidedLabel.h"
 #include "gui/notifyqt.h"
-
-class StatusLabel : public QLabel
-{
-public:
-    StatusLabel(QLayout *layout, int diffWidth, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
-    {
-        m_layout = layout;
-        m_diffWidth = diffWidth;
-    }
-
-    virtual QSize minimumSizeHint() const
-    {
-        const QSize sizeHint = QLabel::minimumSizeHint();
-
-        // do not resize the layout
-        return QSize(qMin(sizeHint.width(), m_layout->geometry().width() - m_diffWidth), sizeHint.height());
-    }
-
-private:
-    QLayout *m_layout;
-    int m_diffWidth;
-};
 
 HashingStatus::HashingStatus(QWidget *parent)
  : QWidget(parent)
@@ -56,18 +34,15 @@ HashingStatus::HashingStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
         
-    movie = new QMovie(":/images/loader/16-loader.gif");
+    movie = new QMovie(":/images/loader/indicator-16.gif");
     movie->setSpeed(80); // 2x speed
     hashloader = new QLabel(this);
     hashloader->setMovie(movie);
     hbox->addWidget(hashloader);
 
     movie->jumpToNextFrame(); // to calculate the real width
-    statusHashing = new StatusLabel(hbox, movie->frameRect().width() + hbox->spacing(), this);
+    statusHashing = new ElidedLabel(this);
     hbox->addWidget(statusHashing);
-
-    QSpacerItem *horizontalSpacer = new QSpacerItem(3000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hbox->addItem(horizontalSpacer);
 
     _compactMode = false;
 

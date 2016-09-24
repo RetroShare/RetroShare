@@ -30,6 +30,7 @@
 #include "gui/MainWindow.h"
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
+#include "gui/statusbar/SysTrayStatus.h"
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -43,6 +44,8 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.checkBoxStatusCompactMode, SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
 	connect(ui.checkBoxHideSoundStatus, SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(), SLOT(setHidden(bool)));
 	connect(ui.checkBoxHideToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setHidden(bool)));
+	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), pMainWindow, SLOT(toggleStatusToolTip(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -61,10 +64,6 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
-
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-#endif
 }
 
 /** Saves the changes on this page */
@@ -108,7 +107,13 @@ bool AppearancePage::save(QString &errmsg)
 		break;
 		case 3:
 			Settings->setToolButtonSize(32);
-	}
+        break;
+        case 4:
+            Settings->setToolButtonSize(64);
+        break;
+        case 5:
+            Settings->setToolButtonSize(128);
+    }
 	switch (ui.cmboListItemSize->currentIndex())
 	{
 		case 0:
@@ -123,7 +128,13 @@ bool AppearancePage::save(QString &errmsg)
 		break;
 		case 3:
 			Settings->setListItemIconSize(32);
-	}
+        break;
+        case 4:
+            Settings->setListItemIconSize(64);
+        break;
+        case 5:
+            Settings->setListItemIconSize(128);
+    }
 
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -131,6 +142,9 @@ bool AppearancePage::save(QString &errmsg)
 	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideSound", QVariant(ui.checkBoxHideSoundStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideToaster", QVariant(ui.checkBoxHideToasterDisable->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "DisableSysTrayToolTip", QVariant(ui.checkBoxDisableSysTrayToolTip->isChecked()));
+	MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked());
 
 	return true;
 }
@@ -184,7 +198,13 @@ void AppearancePage::load()
 		break;
 		case 32:
 			ui.cmboTollButtonsSize->setCurrentIndex(3);
-	}
+        break;
+        case 64:
+            ui.cmboTollButtonsSize->setCurrentIndex(4);
+        break;
+        case 128:
+            ui.cmboTollButtonsSize->setCurrentIndex(5);
+    }
 	switch (Settings->getListItemIconSize())
 	{
 		case 8:
@@ -199,11 +219,19 @@ void AppearancePage::load()
 		break;
 		case 32:
 			ui.cmboListItemSize->setCurrentIndex(3);
-	}
+        break;
+        case 64:
+            ui.cmboListItemSize->setCurrentIndex(4);
+        break;
+        case 128:
+            ui.cmboListItemSize->setCurrentIndex(5);
+    }
 
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
 	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
 	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
+	ui.checkBoxDisableSysTrayToolTip->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
 
 }
 

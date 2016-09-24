@@ -1,7 +1,11 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= qt
 TARGET = bitdht
+DESTDIR = lib
+
 QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
 
 profiling {
@@ -25,8 +29,7 @@ debug {
 
 ################################# Linux ##########################################
 linux-* {
-	DESTDIR = lib
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 }
 
 linux-g++ {
@@ -37,11 +40,17 @@ linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 }
 
+unix {
+	data_files.path = "$${DATA_DIR}"
+	data_files.files = bitdht/bdboot.txt
+	INSTALLS += data_files
+}
+
+
 #################### Cross compilation for windows under Linux ####################
 
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
-	DESTDIR = lib.win32xgcc
 	# These have been replaced by _WIN32 && __MINGW32__
 	# DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
@@ -55,13 +64,12 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-		DESTDIR = lib
 
 		# Switch on extra warnings
 		QMAKE_CFLAGS += -Wextra
@@ -81,29 +89,32 @@ win32 {
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DESTDIR = lib
 }
 
 ################################# FreeBSD ##########################################
 
 freebsd-* {
-		DESTDIR = lib
 }
 
 ################################# OpenBSD ##########################################
 
 openbsd-* {
+}
+
+################################# Haiku ##########################################
+
+haiku-* {
 		DESTDIR = lib
 }
 
 ################################### COMMON stuff ##################################
 ################################### COMMON stuff ##################################
 
-#DEPENDPATH += . \
-INCLUDEPATH += . \
+DEPENDPATH += .
+INCLUDEPATH += .
 
 HEADERS += \
 	bitdht/bdiface.h	\
@@ -159,5 +170,3 @@ SOURCES += \
 	bitdht/bdquerymgr.cc	\
 	util/bdbloom.cc		\
 	bitdht/bdfriendlist.cc	\
-
-

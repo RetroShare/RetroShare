@@ -1,16 +1,19 @@
 <RCC>
-	<qresource prefix="/">
-		<file>images/audio-volume-medium-22.png</file>
-		<file>images/muted_self.svg</file>
-		<file>images/audio-volume-muted-22.png</file>
-		<file>images/talking_on.svg</file>
-		<file>images/talking_off.svg</file>
-		<file>images/call-start-22.png</file>
-		<file>images/call-stop-22.png</file>
-		<file>images/call-hold-22.png</file>
-		<file>images/camera-on.png</file>
-		<file>images/camera-off.png</file>
-		<file>images/video-icon-big.png</file>
-	</qresource>
+  <qresource prefix="/">
+    <file>images/muted_self.svg</file>
+    <file>images/talking_on.svg</file>
+    <file>images/talking_off.svg</file>
+    <file>images/chat-bubble.png</file>
+    <file>images/filmcam.png</file>
+    <file>images/fullscreen.png</file>
+    <file>images/fullscreen_arrows.png</file>
+    <file>images/microphone.png</file>
+    <file>images/microphone_mute.png</file>
+    <file>images/phone.png</file>
+    <file>images/phone_hangup.png</file>
+    <file>images/speaker.png</file>
+    <file>images/speaker_mute.png</file>
+    <file>images/webcam.png</file>
+    <file>images/video-icon-big.png</file>
+  </qresource>
 </RCC>
-

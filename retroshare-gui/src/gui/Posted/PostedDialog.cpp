@@ -26,10 +26,20 @@
 #include "PostedGroupDialog.h"
 #include "PostedListWidget.h"
 #include "PostedUserNotify.h"
-//#include "gui/channels/ShareKey.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/GroupTreeWidget.h"
 
 #include <retroshare/rsposted.h>
+
+class PostedGroupInfoData : public RsUserdata
+{
+public:
+	PostedGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QString> mDescription;
+};
 
 /** Constructor */
 PostedDialog::PostedDialog(QWidget *parent)
@@ -46,6 +56,20 @@ UserNotify *PostedDialog::getUserNotify(QObject *parent)
 	return new PostedUserNotify(rsPosted, parent);
 }
 
+QString PostedDialog::getHelpString() const
+{
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Posted</h1>    \
+    <p>The posted service allows you to share internet links, that spread among Retroshare nodes like forums and \
+	 channels</p> \
+	 <p>Links can be commented by subscribed users. A promotion system also gives the opportunity to  \
+	 enlight important links.</p> \
+     <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
+     <p>Posted links get deleted after %1 months.</p>\
+     ").arg(QString::number(rsPosted->getStoragePeriod()));
+
+	return hlp_str ;
+}
+
 QString PostedDialog::text(TextType type)
 {
 	switch (type) {
@@ -55,9 +79,10 @@ QString PostedDialog::text(TextType type)
 		return tr("Create Topic");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
-			   "<li>Subreddits/tag to posts support"
-			   "<li>Picture Support"
-			   "</ul>";
+		       "<li>Subreddits/tag to posts support"
+		       "<li>Picture Support"
+		       "<li>Navigate channel link"
+		       "</ul>";
 
 	case TEXT_YOUR_GROUP:
 		return tr("My Topics");
@@ -76,9 +101,9 @@ QString PostedDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/images/posted_24.png";
+		return ":/icons/png/posted.png";
 	case ICON_NEW:
-		return ":/images/posted_add_24.png";
+		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
 		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:
@@ -106,7 +131,7 @@ GxsGroupDialog *PostedDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenS
 
 int PostedDialog::shareKeyType()
 {
-	return 0; //POSTED_KEY_SHARE;
+    return POSTED_KEY_SHARE;
 }
 
 GxsMessageFrameWidget *PostedDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
@@ -121,5 +146,42 @@ RsGxsCommentService *PostedDialog::getCommentService()
 
 QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 {
-	return new PostedItem(NULL, 0, grpId, msgId, true);
+	return new PostedItem(NULL, 0, grpId, msgId, true, false);
+}
+
+void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsPostedGroup> groups;
+	rsPosted->getGroupData(token, groups);
+
+	/* Save groups to fill description */
+	PostedGroupInfoData *postedData = new PostedGroupInfoData;
+	userdata = postedData;
+
+	std::vector<RsPostedGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsPostedGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (!group.mDescription.empty()) {
+			postedData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
+	}
+}
+
+void PostedDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const PostedGroupInfoData *postedData = dynamic_cast<const PostedGroupInfoData*>(userdata);
+	if (!postedData) {
+		std::cerr << "PostedDialog::groupInfoToGroupItemInfo() Failed to cast data to PostedGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = postedData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != postedData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
+	}
 }

@@ -23,11 +23,13 @@
 #define SOUNDMANAGER_H
 
 #include <QObject>
+#include <QMap>
 
 #define SOUND_NEW_CHAT_MESSAGE  "NewChatMessage"
 #define SOUND_USER_ONLINE       "User_go_Online"
 #define SOUND_MESSAGE_ARRIVED   "MessageArrived"
 #define SOUND_DOWNLOAD_COMPLETE "DownloadComplete"
+#define SOUND_NEW_LOBBY_MESSAGE "NewLobbyMessage"
 
 class SoundEvents
 {
@@ -40,16 +42,17 @@ public:
 	public:
 		QString mGroupName;
 		QString mEventName;
-		QString mEvent;
+		QString mDefaultFilename;
 	};
 
 public:
 	SoundEvents();
 
-	void addEvent(const QString &groupName, const QString &eventName, const QString &event);
+	void addEvent(const QString &groupName, const QString &eventName, const QString &event, const QString &defaultFilename);
 
 public:
-	QList<SoundEventInfo> mEventInfos;
+	QString mDefaultPath;
+	QMap<QString, SoundEventInfo> mEventInfos;
 };
 
 class SoundManager : public QObject
@@ -57,7 +60,7 @@ class SoundManager : public QObject
 	Q_OBJECT
 
 public slots:
-	void setMute(bool mute);
+	void setMute(bool m);
 
 signals:
 	void mute(bool isMute);
@@ -65,17 +68,28 @@ signals:
 public:
 	static void create();
 
-	bool isMute();
+#ifdef Q_OS_LINUX
+    static QString soundDetectPlayer();
+#endif
 
-	void play(const QString &event);
-	void playFile(const QString &filename);
+	static void initDefault();
+	static QString defaultFilename(const QString &event, bool check);
+	static QString convertFilename(const QString &filename);
+	static QString realFilename(const QString &filename);
 
-	bool eventEnabled(const QString &event);
-	void setEventEnabled(const QString &event, bool enabled);
+	static void soundEvents(SoundEvents &events);
 
-	QString eventFilename(const QString &event);
-	void setEventFilename(const QString &event, const QString &filename);
+	static bool isMute();
 
+	static void play(const QString &event);
+	static void playFile(const QString &filename);
+
+	static bool eventEnabled(const QString &event);
+	static void setEventEnabled(const QString &event, bool enabled);
+
+	static QString eventFilename(const QString &event);
+	static void setEventFilename(const QString &event, const QString &filename);
+    
 private:
 	SoundManager();
 };

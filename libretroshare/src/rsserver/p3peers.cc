@@ -241,22 +241,34 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
+bool p3Peers::getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
+{
+    return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+bool p3Peers::getPeerMaximumRates(const RsPgpId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
+{
+    return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+
+bool p3Peers::setPeerMaximumRates(const RsPgpId& pid,uint32_t maxUploadRate,uint32_t maxDownloadRate)
+{
+    return mPeerMgr->setMaxRates(pid,maxUploadRate,maxDownloadRate) ;
+}
+
 bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
-	return AuthGPG::getAuthGPG()->haveSecretKey(id) ;
+	return AuthGPG::getAuthGPG()->haveSecretKey(id);
 }
 
 /* There are too many dependancies of this function
  * to shift it immeidately
  */
 
-bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
+bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
 #endif
-
-	// NOW Only for SSL Details.
 
 	RsPeerId sOwnId = AuthSSL::getAuthSSL()->OwnId();
 	peerState ps;
@@ -271,27 +283,11 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-		return false ;
+		return false;
 	}
 
-//			bool res = getGPGDetails(id, d);
-//
-//			d.isOnlyGPGdetail = true;
-//
-//			if(id.length() == 16)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else if(id.length() == 32)
-//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-//			else
-//			{
-//				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
-//				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
-//			}
-//
-//			return res ;
-
 	/* get from gpg (first), to fill in the sign and trust details */
-	/* don't retrun now, we've got fill in the ssl and connection info */
+	/* don't return now, we've got fill in the ssl and connection info */
 	getGPGDetails(ps.gpg_id, d);
 	d.isOnlyGPGdetail = false;
 
@@ -299,7 +295,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	d.id 		= id;
 	d.location 	= ps.location;
 
-	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id) ;
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(ps.gpg_id);
 
 	/* generate */
 	d.authcode  	= "AUTHCODE";
@@ -313,8 +309,18 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = true;
 		d.hiddenNodeAddress = ps.hiddenDomain;
 		d.hiddenNodePort = ps.hiddenPort;
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
+		d.hiddenType = ps.hiddenType;
+
+		if(sockaddr_storage_isnull(ps.localaddr))	// that happens if the address is not initialised.
+		{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0 ;
+		}
+		else
+		{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+		}
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
@@ -324,16 +330,35 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.isHiddenNode = false;
 		d.hiddenNodeAddress = "";
 		d.hiddenNodePort = 0;
+		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-		d.localPort	= sockaddr_storage_port(ps.localaddr);
-		d.extAddr	= sockaddr_storage_iptostring(ps.serveraddr);
-		d.extPort	= sockaddr_storage_port(ps.serveraddr);
+		if (sockaddr_storage_isnull(ps.localaddr))
+		{
+			d.localAddr	= "INVALID_IP";
+			d.localPort	= 0;
+		}
+		else
+		{
+			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort	= sockaddr_storage_port(ps.localaddr);
+		}
+
+		if (sockaddr_storage_isnull(ps.serveraddr))
+		{
+			d.extAddr = "INVALID_IP";
+			d.extPort = 0;
+		}
+		else
+		{
+			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
+			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+
 		d.dyndns        = ps.dyndns;
-	
+
 		std::list<pqiIpAddress>::iterator it;
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-				it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "L:";
@@ -341,8 +366,7 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
-		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-				it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
 			std::string toto;
 			toto += "E:";
@@ -351,32 +375,31 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 			d.ipAddressList.push_back(toto);
 		}
 	}
-	
+
 
 	switch(ps.netMode & RS_NET_MODE_ACTUAL)
 	{
-		case RS_NET_MODE_EXT:
-			d.netMode	= RS_NETMODE_EXT;
-			break;
-		case RS_NET_MODE_UPNP:
-			d.netMode	= RS_NETMODE_UPNP;
-			break;
-		case RS_NET_MODE_UDP:
-			d.netMode	= RS_NETMODE_UDP;
-			break;
-		case RS_NET_MODE_HIDDEN:
-			d.netMode	= RS_NETMODE_HIDDEN;
-			break;
-		case RS_NET_MODE_UNREACHABLE:
-		case RS_NET_MODE_UNKNOWN:
-		default:
-			d.netMode	= RS_NETMODE_UNREACHABLE;
-			break;
+	case RS_NET_MODE_EXT:
+		d.netMode	= RS_NETMODE_EXT;
+		break;
+	case RS_NET_MODE_UPNP:
+		d.netMode	= RS_NETMODE_UPNP;
+		break;
+	case RS_NET_MODE_UDP:
+		d.netMode	= RS_NETMODE_UDP;
+		break;
+	case RS_NET_MODE_HIDDEN:
+		d.netMode	= RS_NETMODE_HIDDEN;
+		break;
+	case RS_NET_MODE_UNREACHABLE:
+	case RS_NET_MODE_UNKNOWN:
+	default:
+		d.netMode	= RS_NETMODE_UNREACHABLE;
+		break;
 	}
 
 	d.vs_disc = ps.vs_disc;
 	d.vs_dht = ps.vs_dht;
-
 
 	/* Translate */
 	peerConnectState pcs;
@@ -403,14 +426,12 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 
 	d.state		= 0;
-	if (pcs.state & RS_PEER_S_FRIEND)
-		d.state |= RS_PEER_STATE_FRIEND;
-	if (pcs.state & RS_PEER_S_ONLINE)
-		d.state |= RS_PEER_STATE_ONLINE;
-	if (pcs.state & RS_PEER_S_CONNECTED)
-		d.state |= RS_PEER_STATE_CONNECTED;
-	if (pcs.state & RS_PEER_S_UNREACHABLE)
-		d.state |= RS_PEER_STATE_UNREACHABLE;
+	if (pcs.state & RS_PEER_S_FRIEND)      d.state |= RS_PEER_STATE_FRIEND;
+	if (pcs.state & RS_PEER_S_ONLINE)      d.state |= RS_PEER_STATE_ONLINE;
+	if (pcs.state & RS_PEER_S_CONNECTED)   d.state |= RS_PEER_STATE_CONNECTED;
+	if (pcs.state & RS_PEER_S_UNREACHABLE) d.state |= RS_PEER_STATE_UNREACHABLE;
+
+	d.actAsServer = pcs.actAsServer;
 
 	d.linkType = pcs.linkType;
 
@@ -419,7 +440,6 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	d.connectState = RS_PEER_CONNECTSTATE_OFFLINE;
 	d.connectStateString.clear();
-
 
 	if (pcs.inConnAttempt)
 	{
@@ -433,24 +453,97 @@ bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
 	{
-		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+		/* peer is connected - determine how and set proper connectState */
+		if(mPeerMgr->isHidden())
 		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+			uint32_t type;
+			/* hidden location */
+			/* use connection direction to determine connection type */
+			if(pcs.actAsServer)
+			{
+				/* incoming connection */
+				/* use own type to set connectState */
+				type = mPeerMgr->getHiddenType(AuthSSL::getAuthSSL()->OwnId());
+				switch (type) {
+				case RS_HIDDEN_TYPE_TOR:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+					break;
+				case RS_HIDDEN_TYPE_I2P:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+					break;
+				default:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
+				}
+			}
+			else
+			{
+				/* outgoing connection */
+				/* use peer hidden type to set connectState */
+				switch (ps.hiddenType) {
+				case RS_HIDDEN_TYPE_TOR:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+					break;
+				case RS_HIDDEN_TYPE_I2P:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+					break;
+				default:
+					d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+					break;
+				}
+			}
 		}
-		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+		else if (ps.hiddenType & RS_HIDDEN_TYPE_MASK)
 		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+			/* hidden peer */
+			/* use hidden type to set connectState */
+			switch (ps.hiddenType) {
+			case RS_HIDDEN_TYPE_TOR:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TOR;
+				break;
+			case RS_HIDDEN_TYPE_I2P:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_I2P;
+				break;
+			default:
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+				break;
+			}
 		}
 		else
 		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+			/* peer and we are normal nodes */
+			/* use normal detection to set connectState */
+			if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
+			}
+			else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
+			}
+			else
+			{
+				d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
+			}
 		}
 	}
-
+        
 	d.wasDeniedConnection = pcs.wasDeniedConnection;
 	d.deniedTS = pcs.deniedTS;
 
 	return true;
+}
+
+bool p3Peers::isProxyAddress(const uint32_t type, const sockaddr_storage& addr)
+{
+    uint16_t port ;
+    std::string string_addr;
+	uint32_t status ;
+
+	if(!getProxyServer(type, string_addr, port, status))
+        return false ;
+
+    return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
 }
 
 bool p3Peers::isKeySupported(const RsPgpId& id)
@@ -542,9 +635,9 @@ bool	p3Peers::getAssociatedSSLIds(const RsPgpId &gpg_id, std::list<RsPeerId> &id
 	return mPeerMgr->getAssociatedPeers(gpg_id, ids);
 }
 
-bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen)
+bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason /* = "" */)
 {
-	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen);
+	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen, reason);
 }
 
 bool	p3Peers::getGPGDetails(const RsPgpId &pgp_id, RsPeerDetails &d)
@@ -646,7 +739,7 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
-bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
+bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
 	return AuthGPG::getAuthGPG()->removeKeysFromPGPKeyring(pgp_ids,backup_file,error_code) ;
 }
@@ -709,7 +802,11 @@ void p3Peers::getIPServersList(std::list<std::string>& ip_servers)
 {
 	mNetMgr->getIPServersList(ip_servers) ;
 }
-void p3Peers::allowServerIPDetermination(bool b) 
+bool p3Peers::resetOwnExternalAddressList()
+{
+    return mPeerMgr->resetOwnExternalAddressList();
+}
+void p3Peers::allowServerIPDetermination(bool b)
 {
 	mNetMgr->setIPServersEnabled(b) ;
 }
@@ -903,22 +1000,25 @@ bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
 
-bool p3Peers::getProxyServer(std::string &addr, uint16_t &port)
+bool p3Peers::getProxyServer(const uint32_t type, std::string &addr, uint16_t &port, uint32_t &status)
 {
+	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getProxyServer()" << std::endl;
+    #endif
 
 	struct sockaddr_storage proxy_addr;
-	mPeerMgr->getProxyServerAddress(proxy_addr);
+	mPeerMgr->getProxyServerAddress(type, proxy_addr);
 	addr = sockaddr_storage_iptostring(proxy_addr);
 	port = sockaddr_storage_port(proxy_addr);
-	return true;
+	mPeerMgr->getProxyServerStatus(type, status);
+    return true;
 }
 
-bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
+bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, const uint16_t port)
 {
-#ifdef P3PEERS_DEBUG
-#endif
+	#ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setProxyServer() " << std::endl;
+    #endif
 
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
@@ -935,7 +1035,7 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 	{
-		return mPeerMgr->setProxyServerAddress(addr);
+		return mPeerMgr->setProxyServerAddress(type, addr);
 	}
 	else
 	{
@@ -990,12 +1090,12 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
-	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
+	Radix64::encode(mem_block,mem_block_size,gpg_base64_string) ;
 
 	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
 
-	unsigned char tmp[3] = { (crc >> 16) & 0xff, (crc >> 8) & 0xff, crc & 0xff } ;
-	Radix64::encode((const char *)tmp,3,gpg_base64_checksum) ;
+	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
+	Radix64::encode(tmp,3,gpg_base64_checksum) ;
 
 	delete[] mem_block ;
 
@@ -1072,7 +1172,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		pd.location = cert.location_name_string();
 
 		pd.isOnlyGPGdetail = pd.id.isNull();
-		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
+        pd.service_perm_flags = RS_NODE_PERM_DEFAULT ;
 
 		if (!cert.hidden_node_string().empty())
 		{
@@ -1084,6 +1184,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			{
 				pd.hiddenNodeAddress = domain;
 				pd.hiddenNodePort = port;
+				pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
 			}
 		}
 		else
@@ -1179,7 +1280,7 @@ bool p3Peers::addGroup(RsGroupInfo &groupInfo)
 		  return res ;
 }
 
-bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3Peers::editGroup(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::editGroup()" << std::endl;
@@ -1191,7 +1292,7 @@ bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
 	return res ;
 }
 
-bool p3Peers::removeGroup(const std::string &groupId)
+bool p3Peers::removeGroup(const RsNodeGroupId &groupId)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::removeGroup()" << std::endl;
@@ -1202,7 +1303,15 @@ bool p3Peers::removeGroup(const std::string &groupId)
 		  return res ;
 }
 
-bool p3Peers::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+bool p3Peers::getGroupInfoByName(const std::string& groupName, RsGroupInfo &groupInfo)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getGroupInfo()" << std::endl;
+#endif
+
+    return mPeerMgr->getGroupInfoByName(groupName, groupInfo);
+}
+bool p3Peers::getGroupInfo(const RsNodeGroupId &groupId, RsGroupInfo &groupInfo)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getGroupInfo()" << std::endl;
@@ -1220,7 +1329,7 @@ bool p3Peers::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 	return mPeerMgr->getGroupInfoList(groupInfoList);
 }
 
-bool p3Peers::assignPeerToGroup(const std::string &groupId, const RsPgpId& peerId, bool assign)
+bool p3Peers::assignPeerToGroup(const RsNodeGroupId &groupId, const RsPgpId& peerId, bool assign)
 {
 	std::list<RsPgpId> peerIds;
 	peerIds.push_back(peerId);
@@ -1228,7 +1337,7 @@ bool p3Peers::assignPeerToGroup(const std::string &groupId, const RsPgpId& peerI
 	return assignPeersToGroup(groupId, peerIds, assign);
 }
 
-bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign)
+bool p3Peers::assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::assignPeersToGroup()" << std::endl;
@@ -1242,7 +1351,7 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<RsP
 
 FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 																		FileStorageFlags share_flags,
-																		const std::list<std::string>& directory_parent_groups)
+                                                                        const std::list<RsNodeGroupId>& directory_parent_groups)
 {
 	// We should be able to do that in O(1), using groups based on packs of bits.
 	//
@@ -1253,7 +1362,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 	bool found = false ;
 	RsPgpId pgp_id = getGPGId(peer_ssl_id) ;
 
-	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
+    for(std::list<RsNodeGroupId>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
 	{
 		RsGroupInfo info ;
 		if(!getGroupInfo(*it,info))
@@ -1262,9 +1371,11 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 			continue ;
 		}
 
-		for(std::list<RsPgpId>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
-			if(*it2 == pgp_id)
-				found = true ;
+        found = found || (info.peerIds.find(pgp_id) != info.peerIds.end()) ;
+
+        //for(std::set<RsPgpId>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
+        //	if(*it2 == pgp_id)
+        //		found = true ;
 	}
 
 	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
@@ -1280,13 +1391,20 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
-	 name(""),email(""),location(""),
-	org(""),authcode(""),
-		  trustLvl(0), validLvl(0),ownsign(false), 
-	hasSignedMe(false),accept_connection(false),
-	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
-	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
-	wasDeniedConnection(false), deniedTS(0)
+          name(""),email(""),location(""),
+          org(""),authcode(""),
+          trustLvl(0), validLvl(0),ownsign(false), 
+          hasSignedMe(false),accept_connection(false),
+          state(0),actAsServer(false),
+          connectPort(0),
+          isHiddenNode(false),
+          hiddenNodePort(0),
+          hiddenType(RS_HIDDEN_TYPE_NONE),
+          localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
+          lastConnect(0),lastUsed(0),connectState(0),connectStateString(""),
+          connectPeriod(0),
+          foundDHT(false), wasDeniedConnection(false), deniedTS(0),
+          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN)
 {
 }
 
@@ -1309,7 +1427,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 
 	std::list<RsPgpId>::const_iterator it;
         for(it = detail.gpgSigners.begin();
-                it != detail.gpgSigners.end(); it++)
+                it != detail.gpgSigners.end(); ++it)
 	{
 		out << "\t" << *it;
 		out << std::endl;

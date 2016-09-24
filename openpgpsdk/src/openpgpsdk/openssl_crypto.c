@@ -439,7 +439,7 @@ ops_boolean_t ops_dsa_verify(const unsigned char *hash,size_t hash_length,
 	 {
 		 ERR_load_crypto_strings() ;
 		 unsigned long err = 0 ;
-		 while(err = ERR_get_error())
+         while((err = ERR_get_error()) > 0)
 			 fprintf(stderr,"DSA_do_verify(): ERR = %ld. lib error:\"%s\", func_error:\"%s\", reason:\"%s\"\n",err,ERR_lib_error_string(err),ERR_func_error_string(err),ERR_reason_error_string(err)) ;
     	//assert(ret >= 0);
 		return ops_false ;
@@ -595,11 +595,12 @@ int ops_rsa_public_encrypt(unsigned char *out,const unsigned char *in,
     n=RSA_public_encrypt(length,in,out,orsa,RSA_NO_PADDING);
 
     if (n==-1)
-        {
-        BIO *fd_out;
-        fd_out=BIO_new_fd(fileno(stderr), BIO_NOCLOSE);
-        ERR_print_errors(fd_out);
-        }
+    {
+	    BIO *fd_out;
+	    fd_out=BIO_new_fd(fileno(stderr), BIO_NOCLOSE);
+	    ERR_print_errors(fd_out);
+	    BIO_free(fd_out) ;
+    }
 
     orsa->n=orsa->e=NULL;
     RSA_free(orsa);
@@ -769,7 +770,6 @@ ops_keydata_t* ops_rsa_create_selfsigned_keypair(const int numbits, const unsign
         || ops_add_selfsigned_userid_to_keydata(keydata, userid) != ops_true)
         {
         ops_keydata_free(keydata);
-		  free(keydata) ;
         return NULL;
         }
 

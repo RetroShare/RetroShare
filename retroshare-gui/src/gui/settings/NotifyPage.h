@@ -25,8 +25,11 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_NotifyPage.h"
 
+#include "gui/chat/ChatLobbyUserNotify.h"
+
 class UserNotify;
 class FeedNotify;
+class ToasterNotify;
 
 class UserNotifySetting
 {
@@ -52,6 +55,17 @@ public:
         : mFeedNotify(feedNotify), mEnabledCheckBox(enabledCheckBox) {}
 };
 
+class ToasterNotifySetting
+{
+public:
+    ToasterNotify *mToasterNotify;
+    QCheckBox *mEnabledCheckBox;
+
+public:
+    ToasterNotifySetting(ToasterNotify *toasterNotify, QCheckBox *enabledCheckBox)
+        : mToasterNotify(toasterNotify), mEnabledCheckBox(enabledCheckBox) {}
+};
+
 class NotifyPage : public ConfigPage
 {
     Q_OBJECT
@@ -67,20 +81,22 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/status_unknown.png") ; }
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/notify.svg") ; }
 	 virtual QString pageName() const { return tr("Notify") ; }
 	 virtual QString helpText() const ;
 
 private slots:
 	void notifyToggled();
 	void testToaster();
-	void testNotify();
+	void testFeed();
 
 private:
 	uint getNewsFlags();
 	uint getNotifyFlags();
+	ChatLobbyUserNotify* mChatLobbyUserNotify;
 
     QList<FeedNotifySetting> mFeedNotifySettingList;
+    QList<ToasterNotifySetting> mToasterNotifySettingList;
     QList<UserNotifySetting> mUserNotifySettingList;
 
     /** Qt Designer generated object */

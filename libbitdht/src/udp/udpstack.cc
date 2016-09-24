@@ -87,8 +87,10 @@ bool    UdpStack::getLocalAddress(struct sockaddr_in &local)
 
 bool    UdpStack::resetAddress(struct sockaddr_in &local)
 {
-	std::cerr << "UdpStack::resetAddress(" << local << ")";
+#ifdef DEBUG_UDP_RECV
+    std::cerr << "UdpStack::resetAddress(" << local << ")";
 	std::cerr << std::endl;
+#endif
 	laddr = local;
 
 	return udpLayer->reset(local);

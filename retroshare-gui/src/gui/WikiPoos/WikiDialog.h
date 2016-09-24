@@ -26,7 +26,7 @@
 
 #include <QMessageBox>
 
-#include "retroshare-gui/mainpage.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "ui_WikiDialog.h"
 
 #include <retroshare/rswiki.h>
@@ -40,23 +40,25 @@
 class WikiAddDialog;
 class WikiEditDialog;
 
-class WikiDialog : public MainPage, public TokenResponse
+class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	WikiDialog(QWidget *parent = 0);
+	~WikiDialog();
 	
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
 	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
-void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
+public:
+	virtual void updateDisplay(bool complete);
 
 private slots:
 
-	void checkUpdate();
 	void OpenOrShowAddPageDialog();
 	void OpenOrShowAddGroupDialog();
 	void OpenOrShowEditDialog();
@@ -67,8 +69,6 @@ private slots:
 	void newGroup();
 	void showGroupDetails();
 	void editGroupDetails();
-
-	void insertWikiGroups();
 
 	// GroupTreeWidget stuff.
 	void groupListCustomPopupMenu(QPoint point);

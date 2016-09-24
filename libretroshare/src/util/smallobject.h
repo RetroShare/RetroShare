@@ -68,8 +68,9 @@ namespace RsMemoryManagement
 				return p >= c._data && (static_cast<unsigned char *>(p)-c._data)/_blockSize < _numBlocks ; 
 			}
 
-			void printStatistics() const ;
-		private:
+            void printStatistics() const ;
+            uint32_t currentSize() const;
+    private:
 			size_t _blockSize ;
 			unsigned char _numBlocks ;
 			std::vector<Chunk*> _chunks ;

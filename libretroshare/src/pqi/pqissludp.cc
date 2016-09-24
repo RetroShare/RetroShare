@@ -40,7 +40,8 @@
 #include "pqi/p3linkmgr.h"
 #include <unistd.h>
 
-const int pqissludpzone = 3144;
+static struct RsLog::logInfo pqissludpzoneInfo = {RsLog::Default, "pqissludp"};
+#define pqissludpzone &pqissludpzoneInfo
 
 	/* a final timeout, to ensure this never blocks completely
 	 * 300 secs to complete udp/tcp/ssl connection.
@@ -51,20 +52,22 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 
 /********** PQI SSL UDP STUFF **************************************/
 
-pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
-        :pqissl(NULL, parent, lm), tou_bio(NULL),
-	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
+pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm) :
+	pqissl(NULL, parent, lm), tou_bio(NULL), listen_checktime(0),
+	mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
+	mConnectBandwidth(0)
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 	sockaddr_storage_clear(remote_addr);
-	return;
+	sockaddr_storage_clear(mConnectProxyAddr);
+	sockaddr_storage_clear(mConnectSrcAddr);
 }
 
 
 pqissludp::~pqissludp()
 { 
-        rslog(RSL_ALERT, pqissludpzone,  
+	rslog(RSL_ALERT, pqissludpzone,
             "pqissludp::~pqissludp -> destroying pqissludp");
 
 	/* must call reset from here, so that the
@@ -74,16 +77,13 @@ pqissludp::~pqissludp()
 	 *  This means that reset() will be called twice, but this should
 	 *  be harmless.
 	 */
-        stoplistening(); /* remove from p3proxy listenqueue */
-	reset(); 
+	stoplistening(); /* remove from p3proxy listenqueue */
+	reset();
 
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	RS_STACK_MUTEX(mSslMtx);
 
 	if (tou_bio) // this should be in the reset?
-	{
 		BIO_free(tou_bio);
-	}
-	return;
 }
 
 int pqissludp::reset_locked()
@@ -151,9 +151,9 @@ int	pqissludp::attach()
 
 
 // The Address determination is done centrally
-int 	pqissludp::Initiate_Connection()
+int pqissludp::Initiate_Connection()
 {
-	int err;
+	int err=0;
 
 	attach(); /* open socket */
 	//remote_addr.sin_family = AF_INET;
@@ -281,7 +281,7 @@ int 	pqissludp::Initiate_Connection()
 			proxyaddr.sin_port = pap->sin_port;
 			remoteaddr.sin_port = rap->sin_port;
 			
-			tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
+			err = tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
 			
 		}
 		
@@ -347,7 +347,7 @@ int 	pqissludp::Initiate_Connection()
 }
 
 /********* VERY DIFFERENT **********/
-int 	pqissludp::Basic_Connection_Complete()
+int pqissludp::Basic_Connection_Complete()
 {
 	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Basic_Connection_Complete()...");
@@ -447,15 +447,6 @@ int pqissludp::net_internal_fcntl_nonblock(int /*fd*/)
 }
 
 
-/* These are identical to pqinetssl version */
-//int 	pqissludp::status()
-
-int	pqissludp::tick()
-{
-	pqissl::tick();
-	return 1;
-}
-
         // listen fns call the udpproxy.
 int pqissludp::listen()
 {
@@ -552,6 +543,19 @@ bool 	pqissludp::moretoread(uint32_t usec)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 		
+	// Extra Checks to avoid crashes in v0.6 ... pqithreadstreamer calls this function 
+        // when sockfd = -1  during the shutdown of the thread.
+        // NB: it should never reach here if bio->isActive() returns false.
+        // Some mismatch to chase down when we have a chance.
+        // SAME test is at cansend.
+	if (sockfd < 0)
+        {
+		std::cerr << "pqissludp::moretoread() INVALID sockfd PARAMETER ... bad shutdown?";
+		std::cerr << std::endl;
+		return false;
+	}
+
+
 	{
 		std::string out = "pqissludp::moretoread()";
 		rs_sprintf_append(out, "  polling socket (%d)", sockfd);
@@ -560,8 +564,8 @@ bool 	pqissludp::moretoread(uint32_t usec)
 
 	if (usec)
 	{
-		std::cerr << "pqissludp::moretoread() usec parameter: " << usec;
-		std::cerr << std::endl;
+		//std::cerr << "pqissludp::moretoread() usec parameter: " << usec;
+		//std::cerr << std::endl;
 
 		if (0 < tou_maxread(sockfd))
 		{
@@ -612,6 +616,9 @@ bool 	pqissludp::moretoread(uint32_t usec)
 		reset_locked();
 		return 0;
 	}
+    
+	if(SSL_pending(ssl_connection) > 0)
+        	return 1 ;
 
 	/* otherwise - not error - strange! */
 	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
@@ -625,6 +632,18 @@ bool 	pqissludp::moretoread(uint32_t usec)
 bool 	pqissludp::cansend(uint32_t usec)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
+	// Extra Checks to avoid crashes in v0.6 ... pqithreadstreamer calls this function 
+        // when sockfd = -1  during the shutdown of the thread.
+        // NB: it should never reach here if bio->isActive() returns false.
+        // Some mismatch to chase down when we have a chance.
+        // SAME test is at can moretoread.
+	if (sockfd < 0)
+        {
+		std::cerr << "pqissludp::cansend() INVALID sockfd PARAMETER ... bad shutdown?";
+		std::cerr << std::endl;
+		return false;
+	}
 
 	if (usec)
 	{

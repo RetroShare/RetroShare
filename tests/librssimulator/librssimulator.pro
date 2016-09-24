@@ -1,3 +1,5 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
 CONFIG += staticlib 
 CONFIG -= qt
@@ -70,7 +72,7 @@ linux-* {
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 
 	SSL_DIR = /usr/include/openssl
 	UPNP_DIR = /usr/include/upnp
@@ -100,7 +102,7 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 	INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
 	LIBS *= -lgnome-keyring
 }
@@ -143,7 +145,7 @@ win32-x-g++ {
 ################################# Windows ##########################################
 
 win32 {
-	QMAKE_CC = g++
+	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
@@ -170,25 +172,17 @@ win32 {
 
 	CONFIG += upnp_miniupnpc
 
-	UPNPC_DIR = ../../../miniupnpc-1.3
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-	ZLIB_DIR = ../../../zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1c
-	OPENPGPSDK_DIR = ../../openpgpsdk/src
-
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
-
-	# SQLite include path is required to compile GXS.
-	gxs {
-		SQLITE_DIR = ../../../sqlcipher-2.2.0
-		INCLUDEPATH += $${SQLITE_DIR}
-	}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ################################# MacOSX ##########################################
 
 mac {
-		QMAKE_CC = g++
+		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW

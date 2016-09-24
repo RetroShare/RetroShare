@@ -682,6 +682,8 @@ uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 		s += item->localAddrV4.TlvSize(); /* localaddr */
 		s += item->extAddrV4.TlvSize(); /* remoteaddr */
 
+        s += item->currentConnectAddress.TlvSize() ;
+
 		s += item->localAddrV6.TlvSize(); /* localaddr */
 		s += item->extAddrV6.TlvSize(); /* remoteaddr */
 
@@ -758,7 +760,9 @@ bool     RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data,
 		ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset);
 		ok &= item->extAddrV6.SetTlv(data, tlvsize, &offset);
 
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+        ok &= item->currentConnectAddress.SetTlv(data, tlvsize, &offset);
+
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
 		ok &= item->localAddrList.SetTlv(data, tlvsize, &offset);
 		ok &= item->extAddrList.SetTlv(data, tlvsize, &offset);
@@ -859,6 +863,8 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 		ok &= item->extAddrV4.GetTlv(data, rssize, &offset);
 		ok &= item->localAddrV6.GetTlv(data, rssize, &offset);
 		ok &= item->extAddrV6.GetTlv(data, rssize, &offset);
+
+        ok &= item->currentConnectAddress.GetTlv(data, rssize, &offset);
 
 		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 		ok &= item->localAddrList.GetTlv(data, rssize, &offset);

@@ -85,7 +85,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (fileSize < 1024) {
 						fileSize = index.data().toLongLong();
 						temp.sprintf("%.2f ", fileSize / multi);
@@ -104,7 +104,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                                 temp = "";
 			} else {
 				multi = 1.0;
-				for(int i = 0; i < 5; ++i) {
+				for(int i = 0; i < 4; ++i) {
 					if (transferred < 1024) {
 						transferred = index.data().toLongLong();
 						temp.sprintf("%.2f ", transferred / multi);
@@ -174,12 +174,9 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 
 QSize ULListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	return QSize(50,17);
-	QVariant value = index.data(Qt::FontRole);
-	QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
-	QFontMetrics fontMetrics(fnt);
-	const QString text = index.data(Qt::DisplayRole).toString();
-	QRect textRect = QRect(0, 0, 0, fontMetrics.lineSpacing() * (text.count(QLatin1Char('\n')) + 1));
-	return textRect.size();
+    float w = QFontMetricsF(option.font).width(index.data(Qt::DisplayRole).toString());
+
+    int S = QFontMetricsF(option.font).height() ;
+    return QSize(w,S);
 }
 

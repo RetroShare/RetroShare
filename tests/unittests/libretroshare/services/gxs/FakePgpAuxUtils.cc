@@ -42,7 +42,6 @@ void FakePgpAuxUtils::addPeerListToPgpList(const std::list<RsPeerId> &ids)
 	}
 }
 
-
 void FakePgpAuxUtils::addPeerIdToPgpList(const RsPeerId &id)
 {
 	RsPgpId pgpId = getPGPId(id);
@@ -51,7 +50,6 @@ void FakePgpAuxUtils::addPeerIdToPgpList(const RsPeerId &id)
 		mPgpList.push_back(pgpId);
 	}
 }
-
 
 const RsPgpId & FakePgpAuxUtils::getPGPOwnId()
 {
@@ -74,7 +72,6 @@ RsPgpId FakePgpAuxUtils::getPGPId(const RsPeerId& sslid)
 	return pgpId;
 }
 
-
 bool FakePgpAuxUtils::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
 {
 	/* convert an sslId */
@@ -93,7 +90,12 @@ bool FakePgpAuxUtils::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp
 	return true;
 }
 
-bool FakePgpAuxUtils::VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint)
+bool FakePgpAuxUtils::parseSignature(unsigned char* /*sign*/, unsigned int /*signlen*/, RsPgpId& /*issuer*/) const
+{
+	return true;
+}
+
+bool FakePgpAuxUtils::VerifySignBin(const void* /*data*/, uint32_t /*len*/, unsigned char* /*sign*/, unsigned int /*signlen*/, const PGPFingerprintType& /*withfingerprint*/)
 {
 	return true;
 }
@@ -104,8 +106,7 @@ bool FakePgpAuxUtils::getGPGAllList(std::list<RsPgpId> &ids)
 	return true;
 }
 
-
-bool FakePgpAuxUtils::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result )
+bool FakePgpAuxUtils::askForDeferredSelfSignature(const void* /*data*/, const uint32_t /*len*/, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string /*reason = ""*/ )
 {
 	for(int i = 0; i < *signlen; i++)
 	{

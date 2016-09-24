@@ -43,7 +43,7 @@ NetworkView::NetworkView(QWidget *parent)
 
   mScene = new QGraphicsScene();
   mScene->setItemIndexMethod(QGraphicsScene::NoIndex);
-  mScene->setSceneRect(-200, -200, 1200, 1200);
+  mScene->setSceneRect(0, 0, ui.graphicsView->width(), ui.graphicsView->height());
 
   ui.graphicsView->setScene(mScene);
   ui.graphicsView->setEdgeLength(ui.edgeLengthSB->value()) ;
@@ -58,6 +58,7 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.maxFriendLevelSB, SIGNAL(valueChanged(int)), this, SLOT(setMaxFriendLevel(int)));
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
   connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
+  connect( ui.nameBox, SIGNAL(textChanged(QString)), this, SLOT(setNameSearch(QString)));
 
   _should_update = true ;
 }
@@ -71,6 +72,10 @@ NetworkView::~NetworkView()
 void NetworkView::setEdgeLength(int l)
 {
 	ui.graphicsView->setEdgeLength(l);
+}
+void NetworkView::setNameSearch(QString s)
+{
+	ui.graphicsView->setNameSearch(s);
 }
 void NetworkView::setMaxFriendLevel(int m)
 {
@@ -210,12 +215,12 @@ void  NetworkView::updateDisplay()
 	std::cerr << "NetworkView::insertSignatures()" << std::endl;
 #endif
 
-    for(std::map<RsPgpId,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); it++)
+    for(std::map<RsPgpId,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); ++it)
 	{
         std::list<RsPgpId> friendList ;
 
 		if(rsDisc->getDiscPgpFriends(it->first,friendList)) 
-            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
+            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
 			{
 #ifdef DEBUG_NETWORKVIEW
 					std::cerr << "NetworkView: Adding Edge: ";

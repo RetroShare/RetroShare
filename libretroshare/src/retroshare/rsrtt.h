@@ -2,7 +2,7 @@
 #define RETROSHARE_RTT_INTERFACE_H
 
 /*
- * libretroshare/src/retroshare: rsvoip.h
+ * libretroshare/src/retroshare: rsrtt.h
  *
  * RetroShare C++ Interface.
  *

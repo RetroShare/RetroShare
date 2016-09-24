@@ -59,14 +59,17 @@ RsAccountsDetail *rsAccounts;
 static bool checkAccount(std::string accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
 AccountDetails::AccountDetails()
-:mIsHiddenLoc(false), mFirstRun(false)
+  :mSslId(""), mAccountDir(""), mPgpId(""), mPgpName(""), mPgpEmail(""),
+    mLocation(""), mIsHiddenLoc(false), mFirstRun(false)
 {
 	return;
 }
 
 RsAccountsDetail::RsAccountsDetail()
-:mAccountsLocked(false)
+:mAccountsLocked(false), mPreferredId(""), mBaseDirectory("")
 {
+	mAccounts.clear();
+	mUnsupportedKeys.clear();
 	return;
 }
 
@@ -96,7 +99,21 @@ bool RsAccountsDetail::lockPreferredAccount()
 	
 	return false;
 }
-	
+
+void RsAccountsDetail::unlockPreferredAccount()
+{
+	mAccountsLocked = false;
+}
+
+bool RsAccountsDetail::checkAccountDirectory()
+{
+	if (!checkPreferredId())
+	{
+		return false;
+	}
+
+	return setupAccount(PathAccountDirectory());
+}
 
 bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 {
@@ -116,7 +133,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 	
 	bool pgpNameFound = false;
 	std::map<RsPeerId, AccountDetails>::const_iterator it;
-	for(it = mAccounts.begin() ; it!= mAccounts.end() ; it++)
+	for(it = mAccounts.begin() ; it!= mAccounts.end() ; ++it)
 	{
 		std::cerr << "\tChecking account (pgpid = " << it->second.mPgpId;
 		std::cerr << ", name=" << it->second.mPgpName << ", sslId="; 
@@ -179,9 +196,10 @@ const std::string kPathPGPDirectory = "pgp";
 const std::string kPathKeyDirectory = "keys";
 const std::string kPathConfigDirectory = "config";
 
-const std::string kFilenamePreferredAccount = "default_cert.txt";
+const std::string kFilenamePreferredAccount = "default_cert_06.txt";
 const std::string kFilenameKey = "user_pk.pem";
 const std::string kFilenameCert = "user_cert.pem";
+const std::string kFilenameLocation = "location_name.txt";
 
 
 /*********************************************************************
@@ -245,12 +263,22 @@ std::string RsAccountsDetail::PathCertFile()
 	std::string path = PathAccountKeysDirectory();
 	if (path.empty())
 	{
-		return path;	
+        return path;
 	}
 	path += "/" + kFilenameCert;
 	return path;
 }
 
+std::string RsAccountsDetail::LocationName()
+{
+    std::map<RsPeerId, AccountDetails>::const_iterator it;
+    it = mAccounts.find(mPreferredId);
+    if (it == mAccounts.end())
+    {
+        return "";
+    }
+    return it->second.mLocation;
+}
 
 
 /*********************************************************************
@@ -272,6 +300,20 @@ bool RsAccountsDetail::setupBaseDirectory(std::string alt_basedir)
 	else
 	{
 		mBaseDirectory = alt_basedir;
+	}
+
+	/* Check for trailing '/' */
+	if (!mBaseDirectory.empty())
+	{
+		char lastChar = *mBaseDirectory.rbegin();
+		if (lastChar == '/'
+#ifdef WINDOWS_SYS
+		    || lastChar == '\\'
+#endif
+		    )
+		{
+			mBaseDirectory.erase(mBaseDirectory.end() - 1);
+		}
 	}
 
 	if (!RsDirUtil::checkCreateDirectory(mBaseDirectory))
@@ -369,7 +411,10 @@ bool	RsAccountsDetail::loadPreferredAccount()
 			mPreferredId = RsPeerId(std::string(path));
 
 			if(mPreferredId.isNull())
+			{
+				fclose(ifd);
 				return false ;
+			}
 		}
 		fclose(ifd);
 		return true;
@@ -417,7 +462,7 @@ bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 	std::map<RsPeerId, AccountDetails>::iterator it;
 	std::cerr << "getAccountIds:" << std::endl;
 
-	for(it = mAccounts.begin(); it != mAccounts.end(); it++)
+	for(it = mAccounts.begin(); it != mAccounts.end(); ++it)
 	{
 		std::cerr << "SSL Id: " << it->second.mSslId << " PGP Id " << it->second.mPgpId;
 		std::cerr << " PGP Name: " << it->second.mPgpName;
@@ -448,7 +493,7 @@ bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
 	return false;
 }
 
-bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool isFirstTimeRun)
+bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool &isFirstTimeRun)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
 	it = mAccounts.find(mPreferredId);
@@ -488,7 +533,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 
 	struct stat64 buf;
 
-	while (dirIt.readdir())
+    for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
 		std::string fname;
@@ -533,7 +578,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 	/* close directory */
 	dirIt.closedir();
 
-	for(it = directories.begin(); it != directories.end(); it++)
+	for(it = directories.begin(); it != directories.end(); ++it)
 	{
 		// For V0.6 Accounts we expect format:
 		// LOC06_xxxhexaxxx or
@@ -616,9 +661,10 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	/* check if the cert/key file exists */
 
 	// Create the filename.
+    // TODO: use kFilenameKey
 	std::string basename = accountdir + "/";
 	basename += kPathKeyDirectory + "/";
-	basename += "user";
+    basename += "user";
 
 	std::string cert_name = basename + "_cert.pem";
 	std::string userName;
@@ -631,6 +677,10 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	/* check against authmanagers private keys */
 	if (LoadCheckX509(cert_name.c_str(), account.mPgpId, account.mLocation, account.mSslId))
 	{
+        // new locations store the name in an extra file
+        if(account.mLocation == "")
+            RsDirUtil::loadStringFromFile(accountdir + "/" + kPathKeyDirectory + "/" + kFilenameLocation,
+                                          account.mLocation);
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "location: " << account.mLocation << " id: " << account.mSslId << std::endl;
 		std::cerr << "issuerName: " << account.mPgpId << " id: " << account.mSslId << std::endl;
@@ -696,7 +746,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	//#include <CFBundle.h>
 #endif
 
-std::string RsAccountsDetail::PathDataDirectory()
+/*static*/ std::string RsAccountsDetail::PathDataDirectory(bool check)
 {
 	std::string dataDirectory;
 
@@ -734,9 +784,12 @@ std::string RsAccountsDetail::PathDataDirectory()
 	std::cerr << "getRetroshareDataDirectory() BSD: " << dataDirectory;
 
   #else
-	/* For Linux, we have a fixed standard data directory  */
-	dataDirectory = "/usr/share/RetroShare";
-	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
+	/* For Linux, the data directory is set in libretroshare.pro  */
+	#ifndef DATA_DIR
+		#error DATA_DIR variable not set. Cannot compile.
+	#endif
+	dataDirectory = DATA_DIR;
+	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory << std::endl;
 
   #endif
 #else
@@ -761,6 +814,9 @@ std::string RsAccountsDetail::PathDataDirectory()
 	dataDirectory = ".";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+	if (!check)
+		return dataDirectory;
 
 	/* Make sure the directory exists, else return emptyString */
 	if (!RsDirUtil::checkDirectory(dataDirectory))
@@ -835,9 +891,9 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 }
 
 
-bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
+bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-    return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+	return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 		// PGP Support Functions.
@@ -855,6 +911,11 @@ bool RsAccountsDetail::exportIdentity(const std::string& fname,const RsPgpId& id
 bool RsAccountsDetail::importIdentity(const std::string& fname,RsPgpId& id,std::string& import_error)
 {
 	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
+}
+
+bool RsAccountsDetail::importIdentityFromString(const std::string &data, RsPgpId &imported_pgp_id, std::string &import_error)
+{
+    return AuthGPG::getAuthGPG()->importProfileFromString(data, imported_pgp_id, import_error);
 }
 
 bool RsAccountsDetail::copyGnuPGKeyrings()
@@ -936,7 +997,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 		return false;
 	}
 
-	int nbits = 2048;
+	int nbits = 4096;
 
 	std::string pgp_name = AuthGPG::getAuthGPG()->getGPGName(pgp_id);
 
@@ -954,8 +1015,6 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	std::string key_name = keypath + kFilenameKey;
 	std::string cert_name = keypath + kFilenameCert;
 
-	bool gen_ok = false;
-
 	/* Extra step required for SSL + PGP, user must have selected
 	 * or generated a suitable key so the signing can happen.
 	 */
@@ -963,10 +1022,10 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	X509_REQ *req = GenerateX509Req(
 			key_name.c_str(),
 			passwd.c_str(),
-			pgp_name.c_str(),
+            "-", //pgp_name.c_str(), // does not allow empty name, set to constant instead
 			"", //ui -> gen_email -> value(),
 			org.c_str(),
-			loc.c_str(),
+            "", //loc.c_str(),
 			"", //ui -> gen_state -> value(),
 			country.c_str(),
 			nbits, errString);
@@ -987,9 +1046,8 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	}
 
 	/* save to file */
-	if (x509)
-	{	
-		gen_ok = true;
+
+        bool gen_ok = true;
 
 		/* Print the signed Certificate! */
 		BIO *bio_out = NULL;
@@ -1005,14 +1063,6 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 		BIO_flush(bio_out);
 		BIO_free(bio_out);
 
-	}
-	else
-	{
-		gen_ok = false;
-	}
-
-	if (gen_ok)
-	{
 		/* Save cert to file */
 		// open the file.
 		FILE *out = NULL;
@@ -1032,7 +1082,10 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	
 		fclose(out);
 		X509_free(x509);
-	}
+
+        // store location name in a file
+        if(!RsDirUtil::saveStringToFile(keypath + kFilenameLocation, loc))
+            std::cerr << "RsInit::GenerateSSLCertificate() failed to save location name to into file." << std::endl;
 
 	if (!gen_ok)
 	{
@@ -1196,54 +1249,13 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 }
 #endif
 
-
-
-std::string RsAccountsDetail::getHomePath()
-{
-	std::string home;
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-
-	home = getenv("HOME");
-
-#else /* Windows */
-
-	char *h2 = getenv("HOMEDRIVE");
-	std::cerr << "getHomePath() -> $HOMEDRIVE = " << h2 << std::endl;
-	char *h3 = getenv("HOMEPATH");
-	std::cerr << "getHomePath() -> $HOMEPATH = " << h3 << std::endl;
-
-	if (h2 == NULL)
-	{
-		// Might be Win95/98
-		// generate default.
-		home = "C:\\Retro";
-	}
-	else
-	{
-		home = h2;
-		home += h3;
-		home += "\\Desktop";
-	}
-
-	std::cerr << "fltkserver::getHomePath() -> " << home << std::endl;
-
-	// convert to desired format.
-	home = RsDirUtil::convertPathToUnix(home);
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return home;
-}
-
-
-
 /*********************************************************************************
  * PUBLIC INTERFACE FUNCTIONS 
  ********************************************************************************/
 
         // Directories.
 std::string RsAccounts::ConfigDirectory() { return rsAccounts->PathBaseDirectory(); }
-std::string RsAccounts::DataDirectory() { return rsAccounts->PathDataDirectory(); }
+std::string RsAccounts::DataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
 std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
 
@@ -1258,9 +1270,9 @@ int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std
 	return rsAccounts->GetPGPLoginDetails(id, name, email);
 }
 
-bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
+bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 // PGP Support Functions.
@@ -1272,6 +1284,11 @@ bool    RsAccounts::ExportIdentity(const std::string& fname,const RsPgpId& pgp_i
 bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error)
 {
 	return rsAccounts->importIdentity(fname,imported_pgp_id,import_error);
+}
+
+bool    RsAccounts::ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error)
+{
+    return rsAccounts->importIdentityFromString(data,imported_pgp_id,import_error);
 }
 
 void    RsAccounts::GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)

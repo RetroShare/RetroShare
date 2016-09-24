@@ -65,6 +65,8 @@ class PGPKeyManagement
 		// Computes the 24 bits CRC checksum necessary to all PGP data.
 		// 
 		static uint32_t compute24bitsCRC(unsigned char *data,size_t len) ;
+        
+        	static bool parseSignature(const unsigned char *signature, size_t sign_len, uint64_t &issuer) ;
 };
 
 // This class handles the parsing of PGP packet headers under various (old and new) formats.
@@ -75,6 +77,7 @@ class PGPKeyParser
 		static const uint8_t PGP_PACKET_TAG_PUBLIC_KEY  =  6 ;
 		static const uint8_t PGP_PACKET_TAG_USER_ID     = 13 ;
 		static const uint8_t PGP_PACKET_TAG_SIGNATURE   =  2 ;
+		static const uint8_t PGP_PACKET_TAG_ISSUER      = 16 ;
 
 		// These functions read and move the data pointer to the next byte after the read section.
 		//

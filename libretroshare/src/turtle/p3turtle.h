@@ -161,6 +161,7 @@ class ftDataMultiplex;
 class RsSerialiser;
 
 static const int TURTLE_MAX_SEARCH_DEPTH = 6 ;
+static const int TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE = 200 ;
 
 // This class is used to keep trace of requests (searches and tunnels).
 //
@@ -197,9 +198,10 @@ class TurtleHashInfo
 {
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
-		TurtleRequestId last_request ;				// last request for the tunnels of this hash
-		time_t last_digg_time ;							// last time the tunnel digging happenned.
-		RsTurtleClientService *service ; 			// client service to which items should be sent. Never NULL.
+        TurtleRequestId last_request ;			// last request for the tunnels of this hash
+        time_t last_digg_time ;				// last time the tunnel digging happenned.
+        RsTurtleClientService *service ; 		// client service to which items should be sent. Never NULL.
+        bool use_aggressive_mode ;			// allow to re-digg tunnels even when some are already available
 };
 
 // Subclassing:
@@ -237,7 +239,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		// remove the specific file search packets from the turtle router.
 		//
 		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
-		virtual TurtleSearchRequestId turtleSearch(const LinearizedExpression& expr) ;
+        virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
@@ -251,14 +253,20 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
 		//  automatically provide tunnels for the file to download.
 		//
-		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) ;
+        virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service, bool allow_multi_tunnels) ;
 
 		/// This should be called when canceling a file download, so that the turtle router stops
 		/// handling tunnels for this file.
 		///
 		virtual void stopMonitoringTunnels(const RsFileHash& file_hash) ;
 
-		/// Adds a client tunnel service. This means that the service will be added 
+        /// This is provided to turtle clients to force the TR to ask tunnels again. To be used wisely:
+        /// too many tunnel requests will kill the network. This might be useful to speed-up the re-establishment
+        /// of tunnels that have become irresponsive.
+
+        virtual void forceReDiggTunnels(const TurtleFileHash& hash) ;
+
+        /// Adds a client tunnel service. This means that the service will be added
 		/// to the list of services that might respond to tunnel requests.
 		/// Example tunnel services include:
 		///

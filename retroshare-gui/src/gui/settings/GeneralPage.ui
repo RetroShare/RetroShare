@@ -10,13 +10,13 @@
     <height>465</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="startupGBox">
      <property name="title">
       <string>Startup</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="startupGBoxGLayout">
       <property name="verticalSpacing">
        <number>2</number>
       </property>
@@ -35,9 +35,9 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <layout class="QHBoxLayout" name="runRetroshareAtSystemStartupMinimizedHLayout">
         <item>
-         <spacer name="horizontalSpacer">
+         <spacer name="runRetroshareAtSystemStartupMinimizedHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -65,11 +65,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="QGroupBox" name="advGBox">
      <property name="title">
       <string>For Advanced Users </string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="advGBoxVLayout">
       <item>
        <widget class="QCheckBox" name="checkAdvanced">
         <property name="text">
@@ -81,11 +81,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="miscGBox">
      <property name="title">
       <string>Misc</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="miscGBoxGLayout">
       <property name="verticalSpacing">
        <number>2</number>
       </property>
@@ -111,9 +111,9 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="retroshareProtocolHLayout">
         <item>
-         <widget class="QCheckBox" name="enableRetroShareProtocol">
+         <widget class="QCheckBox" name="registerRetroShareProtocol">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -121,7 +121,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Register retroshare:// as URL protocol (Restart required)</string>
+           <string>Register retroshare:// as URL protocol</string>
           </property>
          </widget>
         </item>
@@ -143,24 +143,53 @@
         </item>
        </layout>
       </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="useLocalServer">
+        <property name="toolTip">
+         <string>When checked, this instance receives new parameters (like RsLink or RsFile) and avoid new one.</string>
+        </property>
+        <property name="text">
+         <string>Use Local Server to get new arguments.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="desktopFileMissingLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install RetroShare with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare06.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>!!!The RetroShare's desktop file is missing or wrong!!!</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="idleGBox">
      <property name="title">
       <string>Idle</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="idleGBoxHLayout">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="idleLabel">
         <property name="text">
          <string>Idle Time</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="spinBox">
+       <widget class="QSpinBox" name="idleSpinBox">
         <property name="suffix">
          <string> seconds</string>
         </property>
@@ -176,7 +205,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
+    <spacer name="mainVSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

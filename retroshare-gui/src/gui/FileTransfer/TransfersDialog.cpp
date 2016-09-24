@@ -43,7 +43,7 @@
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
-#include <gui/SearchDialog.h>
+#include <gui/FileTransfer/SearchDialog.h>
 #include <gui/SharedFilesDialog.h>
 #include "xprogressbar.h"
 #include <gui/settings/rsharesettings.h>
@@ -57,15 +57,6 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rsplugin.h>
-
-/****
- * #define SHOW_RTT_STATISTICS		1
- ****/
-#define SHOW_RTT_STATISTICS		1
-
-#ifdef SHOW_RTT_STATISTICS
-	#include "gui/RttStatistics.h"
-#endif
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -85,7 +76,7 @@
 #define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
-#define IMAGE_SEARCH               ":/images/filefind.png"
+#define IMAGE_SEARCH               ":/icons/svg/magnifying-glass.svg"
 #define IMAGE_EXPAND               ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE             ":/images/edit_remove24.png"
 #define IMAGE_LIBRARY              ":/images/library.png"
@@ -93,8 +84,8 @@
 #define IMAGE_COLLMODIF            ":/images/library_edit.png"
 #define IMAGE_COLLVIEW             ":/images/library_view.png"
 #define IMAGE_COLLOPEN             ":/images/library.png"
-#define IMAGE_FRIENDSFILES         ":/images/fileshare16.png"
-#define IMAGE_MYFILES              ":images/my_documents_16.png"
+#define IMAGE_FRIENDSFILES         ":/icons/svg/folders.svg"
+#define IMAGE_MYFILES              ":icons/svg/folders1.svg"
 #define IMAGE_RENAMEFILE           ":images/filecomments.png"
 #define IMAGE_STREAMING             ":images/streaming.png"
 
@@ -228,8 +219,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
-    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
-    connect(Shortcut, SIGNAL(activated()), this, SLOT( cancel ()));
+    mShortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
+    connect(mShortcut, SIGNAL(activated()), this, SLOT( cancel ()));
 
   	//Selection Setup
     selection = ui.downloadList->selectionModel();
@@ -241,19 +232,19 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Downloads TreeView*/
     QHeaderView * _header = ui.downloadList->header () ;
-    QHeaderView_setSectionResizeMode(_header, COLUMN_NAME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_SIZE, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_COMPLETED, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_DLSPEED, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PROGRESS, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_SOURCES, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_STATUS, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PRIORITY, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_REMAINING, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_ID, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_LASTDL, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PATH, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_SIZE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_COMPLETED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_DLSPEED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PROGRESS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_SOURCES, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_STATUS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PRIORITY, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_REMAINING, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_ID, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_LASTDL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PATH, QHeaderView::Interactive);
 
     _header->resizeSection ( COLUMN_NAME, 170 );
     _header->resizeSection ( COLUMN_SIZE, 70 );
@@ -304,13 +295,13 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_UNAME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_USIZE, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_UTRANSFERRED, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_ULSPEED, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_UPROGRESS, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_USTATUS, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(upheader, COLUMN_USERNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_USIZE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UTRANSFERRED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_ULSPEED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_UPROGRESS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_USTATUS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(upheader, COLUMN_USERNAME, QHeaderView::Interactive);
 
     upheader->resizeSection ( COLUMN_UNAME, 260 );
     upheader->resizeSection ( COLUMN_USIZE, 70 );
@@ -339,10 +330,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
 
-#ifdef SHOW_RTT_STATISTICS
-         ui.tabWidget->addTab( new RttStatistics(), tr("RTT Statistics")) ;
-#endif
-
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
 
@@ -361,15 +348,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 //    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
 //    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-
     /** Setup the actions for the context menu */
-   toggleShowCacheTransfersAct = new QAction(tr( "Show cache transfers" ), this );
-	toggleShowCacheTransfersAct->setCheckable(true) ;
-	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
 
 	// Actions. Only need to be defined once.
    pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
@@ -496,17 +475,18 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
+    int S = QFontMetricsF(font()).height();
   QString help_str = tr(
-    " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
+    " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
     <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
     distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
     (you can be a source while downloading)</p>                                     \
-    <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=16 /> icon from the left side bar. \
+    <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files \
     in their Friends Files tab</p>\
     <p>The search tab reports files from your friends' file lists, and distant files that can be reached \
     anonymously using the multi-hop tunnelling system.</p> \
-    ") ;
+    ").arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 
 	 registerHelpButton(ui.helpButton,help_str) ;
@@ -536,12 +516,6 @@ UserNotify *TransfersDialog::getUserNotify(QObject *parent)
     return new TransferUserNotify(parent);
 }
 
-void TransfersDialog::toggleShowCacheTransfers()
-{
-	_show_cache_transfers = !_show_cache_transfers ;
-	insertTransfers() ;
-}
-
 void TransfersDialog::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
@@ -553,9 +527,6 @@ void TransfersDialog::processSettings(bool bLoad)
 
     if (bLoad) {
         // load settings
-
-        // state of checks
-        _show_cache_transfers = Settings->value("showCacheTransfers", false).toBool();
 
         // state of the lists
         DLHeader->restoreState(Settings->value("downloadList").toByteArray());
@@ -581,9 +552,6 @@ void TransfersDialog::processSettings(bool bLoad)
         ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
     } else {
         // save settings
-
-        // state of checks
-        Settings->setValue("showCacheTransfers", _show_cache_transfers);
 
         // state of the lists
         Settings->setValue("downloadList", DLHeader->saveState());
@@ -684,7 +652,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
 		//Look for all selected items
-		for (int i = 0; i < lst.count(); i++) {
+		for (int i = 0; i < lst.count(); ++i) {
 			//Look only for first column == File  List
 			if ( lst[i].column() == 0) {
 				//Get Info for current  item
@@ -731,12 +699,12 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 				}// if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
 			}// if (lst[i].column() == 0)
-		}// for (int i = 0; i < lst.count(); i++)
+		}// for (int i = 0; i < lst.count(); ++i)
 	}// if (!items.empty())
 
-	if (atLeastOne_Downloading) {
+	if (atLeastOne_Waiting || atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Paused) {
 		contextMnu.addMenu( &prioritySpeedMenu) ;
-	}//if (atLeastOne_Downloading)
+	}
 	if (atLeastOne_Queued) {
 		contextMnu.addMenu( &priorityQueueMenu) ;
 	}//if (atLeastOne_Queued)
@@ -817,9 +785,6 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	}
 
 	contextMnu.addSeparator() ;//-----------------------------------------------
-
-	contextMnu.addAction( toggleShowCacheTransfersAct ) ;
-	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
 
 	collCreateAct->setEnabled(true) ;
 	collModifAct->setEnabled(single && add_CollActions) ;
@@ -959,7 +924,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
-	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
+
+	qlonglong downloadtime = (fileInfo.tfRate > 0)?( (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0) ) : 0 ;
 	qint64 qi64LastDL = fileInfo.lastTS ; //std::numeric_limits<qint64>::max();
 
 	if (qi64LastDL == 0)	// file is complete, or any raison why the time has not been set properly
@@ -1057,7 +1023,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 			std::string rsversion;
 			if (rsDisc->getPeerVersion(transferInfo.peerId, rsversion))
 			{
-				version = tr("version: ") + QString::fromStdString(rsversion);
+				version = tr("version:")+" " + QString::fromStdString(rsversion);
 			}
 
 			double peerDlspeed	= 0;
@@ -1076,7 +1042,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 			/* get the sources (number of online peers) */
 			if (transferInfo.tfRate > 0 && fileInfo.downloadStatus == FT_STATE_DOWNLOADING)
-				active++;
+				++active;
 		}
 	}
 
@@ -1093,6 +1059,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 	}
 
 	return row;
+	
 }
 
 int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
@@ -1284,13 +1251,6 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
-			// if file transfer is a cache file index file, don't show it
-			DLListModel->removeRow(row);
-			rowCount = DLListModel->rowCount();
-			continue;
-		}
-
 		hashs.erase(hashIt);
 
 		if (addItem(row, fileInfo) < 0) {
@@ -1310,11 +1270,6 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if ((fileInfo.transfer_info_flags & RS_FILE_REQ_CACHE) && !_show_cache_transfers) {
-			//if file transfer is a cache file index file, don't show it
-			continue;
-		}
-
 		addItem(-1, fileInfo);
 	}
 
@@ -1331,17 +1286,14 @@ void TransfersDialog::insertTransfers()
 
     std::set<std::string> used_hashes ;
 
-	for(it = upHashes.begin(); it != upHashes.end(); it++) 
+	for(it = upHashes.begin(); it != upHashes.end(); ++it)
 	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.transfer_info_flags & RS_FILE_REQ_CACHE) && _show_cache_transfers)
-			continue ;
-
 		std::list<TransferInfo>::iterator pit;
-		for(pit = info.peers.begin(); pit != info.peers.end(); pit++) 
+		for(pit = info.peers.begin(); pit != info.peers.end(); ++pit)
 		{
 			if (pit->peerId == ownId) //don't display transfer to ourselves
 				continue ;
@@ -1371,7 +1323,7 @@ void TransfersDialog::insertTransfers()
 			qlonglong fileSize 	= info.size;
 			qlonglong completed 	= pit->transfered;
 //			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
-			qlonglong remaining   = (info.size - pit->transfered) / (pit->tfRate * 1024.0);
+			qlonglong remaining   = (pit->tfRate>0)?((info.size - pit->transfered) / (pit->tfRate * 1024.0)):0;
 
 			// Estimate the completion. We need something more accurate, meaning that we need to
 			// transmit the completion info.
@@ -1414,10 +1366,17 @@ void TransfersDialog::insertTransfers()
 			ULListModel->removeRow(removeIndex);
 			rowCount = ULListModel->rowCount();
 		} else
-			removeIndex++;
+			++removeIndex;
 	}
 
 	ui.uploadsList->setSortingEnabled(true);
+	
+	downloads = tr("Downloads") + " (" + QString::number(DLListModel->rowCount()) + ")";
+	uploads    = tr("Uploads") + " (" + QString::number(ULListModel->rowCount()) + ")" ;
+
+	ui.tabWidget->setTabText(0,  downloads);
+	ui.tabWidget_2->setTabText(0, uploads);
+
 }
 
 QString TransfersDialog::getPeerName(const RsPeerId& id) const
@@ -1428,7 +1387,7 @@ QString TransfersDialog::getPeerName(const RsPeerId& id) const
 	// connect mgr). In such a case their id can suitably hold for a name.
 	//
 	if(res == "")
-        return QString::fromStdString(id.toStdString()) ;
+        return tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
 	else
 		return res ;
 }
@@ -1446,7 +1405,7 @@ void TransfersDialog::cancel()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (first) {
 			first = false;
 			QString queryWrn2;
@@ -1494,7 +1453,7 @@ void TransfersDialog::copyLink ()
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) {
 			continue;
@@ -1517,7 +1476,7 @@ void TransfersDialog::ulCopyLink ()
     std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
 
-    for (it = items.begin(); it != items.end(); it ++) {
+    for (it = items.begin(); it != items.end(); ++it) {
         FileInfo info;
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) {
             continue;
@@ -1577,7 +1536,7 @@ void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> 
 	if (rows) rows->clear();
 
 	int i, imax = DLListModel->rowCount();
-	for (i = 0; i < imax; i++) {
+	for (i = 0; i < imax; ++i) {
 		bool isParentSelected = false;
 		bool isChildSelected = false;
 
@@ -1588,7 +1547,7 @@ void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> 
 			isParentSelected = true;
 		} else {
 			int j, jmax = parent->rowCount();
-			for (j = 0; j < jmax && !isChildSelected; j++) {
+			for (j = 0; j < jmax && !isChildSelected; ++j) {
 				QStandardItem *child = parent->child(j);
 				if (!child) continue;
 				QModelIndex cindex = child->index();
@@ -1644,7 +1603,7 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		result &= rsFiles->FileControl(*it, flags);
 	}
 
@@ -1674,7 +1633,7 @@ void TransfersDialog::openFolderTransfer()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1704,7 +1663,7 @@ void TransfersDialog::ulOpenFolder()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
-    for (it = items.begin(); it != items.end(); it ++) {
+    for (it = items.begin(); it != items.end(); ++it) {
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) continue;
         break;
     }
@@ -1731,7 +1690,7 @@ void TransfersDialog::previewTransfer()
     std::set<RsFileHash> items;
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1801,7 +1760,7 @@ void TransfersDialog::openTransfer()
 	std::set<RsFileHash> items ;
 	std::set<RsFileHash>::iterator it ;
 	getSelectedItems(&items, NULL);
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 		break;
 	}
@@ -1833,7 +1792,7 @@ void TransfersDialog::openTransfer()
 //	std::set<QStandardItem *>::iterator it;
 //	getSelectedItems(&items, NULL);
 //
-//	for (it = items.begin(); it != items.end(); it ++) {
+//	for (it = items.begin(); it != items.end(); ++it) {
 //		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
 //		rsFiles->clearDownload(hash);
 //	}
@@ -1861,7 +1820,7 @@ void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		rsFiles->setChunkStrategy(*it, s);
 	}
 }
@@ -1902,7 +1861,7 @@ void TransfersDialog::changeSpeed(int speed)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) 
+	for (it = items.begin(); it != items.end(); ++it) 
 	{
 		rsFiles->changeDownloadSpeed(*it, speed);
 	}
@@ -1967,7 +1926,7 @@ void TransfersDialog::changeQueuePosition(QueueMove mv)
     std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) 
+	for (it = items.begin(); it != items.end(); ++it) 
 	{
 		rsFiles->changeQueuePosition(*it, mv);
 	}
@@ -1984,7 +1943,7 @@ void TransfersDialog::showFileDetails()
     RsFileHash file_hash ;
 	int nb_select = 0 ;
 
-	for(int i = 0; i <= DLListModel->rowCount(); i++) 
+	for(int i = 0; i <= DLListModel->rowCount(); ++i)
 		if(selection->isRowSelected(i, QModelIndex())) 
 		{
 	        file_hash = RsFileHash(getID(i, DLListModel).toStdString());
@@ -2078,7 +2037,7 @@ void TransfersDialog::collCreate()
 	std::set<RsFileHash>::iterator it ;
 	getSelectedItems(&items, NULL);
 
-	for (it = items.begin(); it != items.end(); it ++) {
+	for (it = items.begin(); it != items.end(); ++it) {
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
 
@@ -2178,15 +2137,15 @@ void TransfersDialog::collOpen()
 				if (qinfo.exists()) {
 					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
 						RsCollectionFile collection;
-						if (collection.load(qinfo.absoluteFilePath(), this)) {
+						if (collection.load(qinfo.absoluteFilePath())) {
 							collection.downloadFiles();
 							return;
-						}//if (collection.load(this))
-					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
-				}//if (qinfo.exists())
-			}//if (info.downloadStatus == FT_STATE_COMPLETE)
-		}//if (rsFiles->FileDetails(
-	}//if (items.size() == 1)
+						}
+					}
+				}
+			}
+		}
+	}
 
 	RsCollectionFile collection;
 	if (collection.load(this)) {
@@ -2196,84 +2155,84 @@ void TransfersDialog::collOpen()
 
 void TransfersDialog::setShowDLSizeColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_SIZE) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_SIZE)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_SIZE, !show);
     }
 }
 
 void TransfersDialog::setShowDLCompleteColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_COMPLETED, !show);
     }
 }
 
 void TransfersDialog::setShowDLDLSpeedColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_DLSPEED, !show);
     }
 }
 
 void TransfersDialog::setShowDLProgressColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PROGRESS, !show);
     }
 }
 
 void TransfersDialog::setShowDLSourcesColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_SOURCES) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_SOURCES)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_SOURCES, !show);
     }
 }
 
 void TransfersDialog::setShowDLStatusColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_STATUS) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_STATUS)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_STATUS, !show);
     }
 }
 
 void TransfersDialog::setShowDLPriorityColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PRIORITY, !show);
     }
 }
 
 void TransfersDialog::setShowDLRemainingColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_REMAINING) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_REMAINING)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_REMAINING, !show);
     }
 }
 
 void TransfersDialog::setShowDLDownloadTimeColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_DOWNLOADTIME, !show);
     }
 }
 
 void TransfersDialog::setShowDLIDColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_ID) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_ID)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_ID, !show);
     }
 }
 
 void TransfersDialog::setShowDLLastDLColumn(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_LASTDL) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_LASTDL)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_LASTDL, !show);
     }
 }
 
 void TransfersDialog::setShowDLPath(bool show)
 {
-    if (!ui.downloadList->isColumnHidden(COLUMN_PATH) != show) {
+    if ( (!ui.downloadList->isColumnHidden(COLUMN_PATH)) != show) {
         ui.downloadList->setColumnHidden(COLUMN_PATH, !show);
     }
 }

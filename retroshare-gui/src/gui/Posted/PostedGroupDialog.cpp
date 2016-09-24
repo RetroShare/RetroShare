@@ -73,7 +73,7 @@ void PostedGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Topic"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Topic"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Posted Topic"));
@@ -90,7 +90,7 @@ void PostedGroupDialog::initUi()
 
 QPixmap PostedGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/posted_add_64.png");
+	return QPixmap(":/icons/png/posted.png");
 }
 
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

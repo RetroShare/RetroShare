@@ -58,7 +58,7 @@ void	p3ConfigMgr::tick()
 
 	/* iterate through and check if any have changed */
 	std::list<pqiConfig *>::iterator it;
-	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
+	for(it = mConfigs.begin(); it != mConfigs.end(); ++it)
 	{
 		if ((*it)->HasConfigChanged(0))
 		{
@@ -105,7 +105,7 @@ void p3ConfigMgr::saveConfig()
 	RsStackMutex stack(cfgMtx);  /***** LOCK STACK MUTEX ****/
 
 	std::list<pqiConfig *>::iterator it;
-	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
+	for(it = mConfigs.begin(); it != mConfigs.end(); ++it)
 	{
 		if ((*it)->HasConfigChanged(1))
 		{
@@ -133,7 +133,7 @@ void p3ConfigMgr::loadConfig()
 {
 	std::list<pqiConfig *>::iterator cit;
 	RsFileHash dummyHash ;
-	for (cit = mConfigs.begin(); cit != mConfigs.end(); cit++)
+	for (cit = mConfigs.begin(); cit != mConfigs.end(); ++cit)
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
@@ -175,7 +175,16 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 		std::cerr << "\tIgnoring new filename " << filename;
 		std::cerr << std::endl;
 		return;
-	}
+    }
+    // also check that the filename is not already registered for another config
+
+    for(std::list<pqiConfig*>::const_iterator it = mConfigs.begin();it!= mConfigs.end();++it)
+        if( (*it)->filename == filename )
+        {
+            std::cerr << "!!!!!!!!!!! Trying to register a config for file \"" << filename << "\" that is already registered" << std::endl;
+            std::cerr << "!!!!!!!!!!! Please correct the code !" << std::endl;
+            return ;
+        }
 
 	conf->setFilename(filename);
 	mConfigs.push_back(conf);
@@ -199,7 +208,7 @@ p3Config::p3Config()
 }
 
 
-bool p3Config::loadConfiguration(RsFileHash &loadHash)
+bool p3Config::loadConfiguration(RsFileHash& /* loadHash */)
 {
 	return loadConfig();
 }
@@ -230,7 +239,7 @@ bool p3Config::loadConfig()
 #endif
 
 		/* bad load */
-		for(it = load.begin(); it != load.end(); it++)
+		for(it = load.begin(); it != load.end(); ++it)
 		{
 			delete (*it);
 		}
@@ -250,7 +259,7 @@ bool p3Config::loadConfig()
 #endif
 
 			/* bad load */
-			for(it = load.begin(); it != load.end(); it++)
+			for(it = load.begin(); it != load.end(); ++it)
 			{
 				delete (*it);
 			}
@@ -295,7 +304,11 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	/* set hash */
 	setHash(bio->gethash());
 
-	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+	std::string signatureRead;
+	RsFileHash strHash(Hash());
+	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
+
+	BinMemInterface *signbio = new BinMemInterface(signatureRead.size(), BIN_FLAGS_READABLE);
 
 	if(!signbio->readfromfile(signFname.c_str()))
 	{
@@ -304,10 +317,6 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	}
 
 	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
-
-	std::string signatureRead;
-	RsFileHash strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
 
 	delete signbio;
 
@@ -484,7 +493,7 @@ bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 
 	RsConfigKeyValueSet *item = new RsConfigKeyValueSet();
 	std::map<std::string, std::string>::iterator it;
-	for(it = settings.begin(); it != settings.end(); it++)
+	for(it = settings.begin(); it != settings.end(); ++it)
 	{
 		RsTlvKeyValue kv;
 		kv.key = it->first;
@@ -503,6 +512,8 @@ bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 	{
 		savelist.push_back(item);
 	}
+    else
+        delete item;
 
 	return true;
 }
@@ -528,7 +539,7 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *>& load)
 		if (item)
 		{
 			for(kit = item->tlvkvs.pairs.begin();
-				kit != item->tlvkvs.pairs.end(); kit++)
+				kit != item->tlvkvs.pairs.end(); ++kit)
 			{
 				settings[kit->key] = kit->value;
 			}

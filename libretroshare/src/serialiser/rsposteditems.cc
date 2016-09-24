@@ -50,8 +50,6 @@ uint32_t RsGxsPostedSerialiser::size(RsItem *item)
 	{
 		return RsGxsCommentSerialiser::size(item);
 	}
-
-	return NULL;
 }
 
 bool RsGxsPostedSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
@@ -75,7 +73,6 @@ bool RsGxsPostedSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	{
 		return RsGxsCommentSerialiser::serialise(item, data, size);
 	}
-	return false;
 }
 
 RsItem* RsGxsPostedSerialiser::deserialise(void *data, uint32_t *size)
@@ -107,7 +104,6 @@ RsItem* RsGxsPostedSerialiser::deserialise(void *data, uint32_t *size)
 			return RsGxsCommentSerialiser::deserialise(data, size);
 			break;
 	}
-	return NULL;
 }
 
 /*****************************************************************************************/

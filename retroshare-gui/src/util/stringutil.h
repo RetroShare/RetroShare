@@ -84,5 +84,8 @@ QString string_format_arguments(const QStringList &args);
  * otherwise. */
 bool string_is_hex(const QString &str);
 
+namespace RsStringUtil
+{
+QString CopyLines(const QString &s, quint16 lines);
+}
 #endif
-

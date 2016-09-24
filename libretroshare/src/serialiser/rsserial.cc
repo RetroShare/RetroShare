@@ -28,6 +28,7 @@
 #include "serialiser/rsserial.h"
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
+#include "util/rsprint.h"
 
 #include <math.h>
 #include <map>
@@ -52,7 +53,8 @@ RsItem::RsItem(uint32_t t)
 {
 	_priority_level = QOS_PRIORITY_UNKNOWN ;	// This value triggers PQIInterface to complain about undefined priorities
 }
-	
+
+
 #ifdef DO_STATISTICS
 class Counter
 {
@@ -175,6 +177,11 @@ uint16_t    RsItem::PacketService() const
 	return (type >> 8) & 0xFFFF;
 }
 
+void    RsItem::setPacketService(uint16_t service)
+{
+	type &= 0xFF0000FF;
+	type |= (uint32_t) (service << 8);
+}
 
 
 RsSerialType::RsSerialType(uint32_t t)
@@ -244,7 +251,7 @@ RsSerialiser::~RsSerialiser()
 {
 	/* clean up the map */
 	std::map<uint32_t, RsSerialType *>::iterator it;
-	for(it = serialisers.begin(); it != serialisers.end(); it++)
+	for(it = serialisers.begin(); it != serialisers.end(); ++it)
 	{
 		delete (it->second);
 	}
@@ -291,7 +298,7 @@ uint32_t    RsSerialiser::size(RsItem *item)
 			{
 
 #ifdef  RSSERIAL_ERROR_DEBUG
-				std::cerr << "RsSerialiser::size() ERROR serialiser missing!";
+				std::cerr << "RsSerialiser::size() ERROR serialiser missing!" << std::endl;
 			
 				std::string out;
 				rs_sprintf(out, "%x", item->PacketId());
@@ -382,6 +389,11 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 #endif
 		return NULL;
 	}
+	if(pkt_size > getRsPktMaxSize())
+	{
+	   std::cerr << "(EE) trying to deserialise a packet with absurdely large size " << pkt_size << ". This means there's a bug upward or packet corruption. Packet content: " << RsUtil::BinToHex((unsigned char*)data,std::min(300u,pkt_size)) ;
+	   return NULL ;
+	}
 
 	/* store the packet size to return the amount we should use up */
 	*size = pkt_size;
@@ -418,7 +430,9 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << "RsSerialiser::deserialise() ERROR Failed!";
 		std::cerr << std::endl;
 		std::cerr << "RsSerialiser::deserialise() pkt_size: " << pkt_size << " vs *size: " << *size;
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+
+        //RsItem *item2 = (it->second)->deserialise(data, &pkt_size);
 
 		uint32_t failedtype = getRsItemId(data);
 		std::cerr << "RsSerialiser::deserialise() FAILED PACKET Size: ";
@@ -429,7 +443,8 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
 		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
 		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
-		std::cerr << std::endl;
+        std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size).substr(0,300) << std::endl;
+        std::cerr << std::endl;
 #endif
 		return NULL;
 	}
@@ -450,7 +465,8 @@ RsItem *    RsSerialiser::deserialise(void *data, uint32_t *size)
 		std::cerr << " Version: " << std::hex << (uint32_t) getRsItemVersion(failedtype) << std::dec;
 		std::cerr << " Class: " << std::hex << (uint32_t) getRsItemClass(failedtype) << std::dec;
 		std::cerr << " Type: " << std::hex << (uint32_t) getRsItemType(failedtype) << std::dec;
-		std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
+        std::cerr << " SubType: " << std::hex << (uint32_t) getRsItemSubType(failedtype) << std::dec;
+        std::cerr << " Data: " << RsUtil::BinToHex((char*)data,pkt_size).substr(0,300) << std::endl;
 		std::cerr << std::endl;
 #endif
 	}

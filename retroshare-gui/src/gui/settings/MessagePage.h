@@ -27,7 +27,7 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_MessagePage.h"
 
-class MsgTagType;
+#include "gui/msgs/MessageInterface.h"
 
 class MessagePage : public ConfigPage
 {
@@ -42,7 +42,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/evolution.png") ; }
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/messages.svg") ; }
 	 virtual QString pageName() const { return tr("Message") ; }
 	 virtual QString helpText() const { return ""; }
 
@@ -54,7 +54,8 @@ private slots:
     void defaultTag();
 
     void currentRowChangedTag(int row);
-	 void toggleEnableEncryptedDistantMsgs(bool) ;
+    void distantMsgsComboBoxChanged(int);
+	 
 
 private:
     void fillTags();

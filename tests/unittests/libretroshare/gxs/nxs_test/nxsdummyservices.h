@@ -39,10 +39,12 @@ namespace rs_nxs_test
 		bool isLoaded(const RsGxsCircleId &circleId);
 		bool loadCircle(const RsGxsCircleId &circleId);
 
-		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-
+		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) ;
+		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) ;
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	};
 
 	/*!
@@ -66,10 +68,12 @@ namespace rs_nxs_test
 		bool isLoaded(const RsGxsCircleId &circleId);
 		bool loadCircle(const RsGxsCircleId &circleId);
 
-		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
-		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-
+		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) { return true ;}
+		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) { return allowed(circleId) ; }
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
 	private:
 
 		bool allowed(const RsGxsCircleId& circleId);
@@ -149,8 +153,9 @@ namespace rs_nxs_test
 		bool getGPGAllList(std::list<RsPgpId> &ids) ;
 		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 
+		bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;
 		bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
-		bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
+		bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result , std::string reason = "");
 
 
 		private:

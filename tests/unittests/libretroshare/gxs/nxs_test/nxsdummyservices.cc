@@ -24,7 +24,7 @@ bool rs_nxs_test::RsNxsSimpleDummyCircles::loadCircle(
 }
 
 int rs_nxs_test::RsNxsSimpleDummyCircles::canSend(const RsGxsCircleId& circleId,
-		const RsPgpId& id) {
+		const RsPgpId& id, bool &should_encrypt) {
 	return true;
 }
 
@@ -33,11 +33,19 @@ int rs_nxs_test::RsNxsSimpleDummyCircles::canReceive(
 	return true;
 }
 
+bool rs_nxs_test::RsNxsSimpleDummyCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId &destination_group, const RsGxsId& id)
+{
+	return true ;
+}
+            
 bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(
 		const RsGxsCircleId& circleId, std::list<RsPgpId>& friendlist) {
 	return true;
 }
 
+bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId &destination_group, std::list<RsGxsId>& friendlist) {
+	return true;
+}
 rs_nxs_test::RsNxsSimpleDummyReputation::RsNxsSimpleDummyReputation(
 		RepMap& repMap, bool cached) {
 }
@@ -76,8 +84,7 @@ bool rs_nxs_test::RsNxsDelayedDummyCircles::loadCircle(
 	return allowed(circleId);
 }
 
-int rs_nxs_test::RsNxsDelayedDummyCircles::canSend(
-		const RsGxsCircleId& circleId, const RsPgpId& id) {
+int rs_nxs_test::RsNxsDelayedDummyCircles::canSend(const RsGxsCircleId& circleId, const RsPgpId& id, bool &should_encrypt) {
 	return allowed(circleId);
 }
 
@@ -114,28 +121,43 @@ const RsPgpId& rs_nxs_test::RsDummyPgpUtils::getPGPOwnId() {
 	return mOwnId;
 }
 
-RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& sslid) {
+RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& /*sslid*/) {
 	return RsPgpId().random();
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& ids) {
+bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& /*ids*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::getKeyFingerprint(const RsPgpId& id,
-		PGPFingerprintType& fp) const {
+bool rs_nxs_test::RsDummyPgpUtils::getKeyFingerprint(const RsPgpId& /*id*/,
+                                                     PGPFingerprintType& /*fp*/
+                                                     ) const {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* data, uint32_t len,
-		unsigned char* sign, unsigned int signlen,
-		const PGPFingerprintType& withfingerprint) {
+bool rs_nxs_test::RsDummyPgpUtils::parseSignature(unsigned char* /*sign*/,
+                                                  unsigned int /*signlen*/,
+                                                  RsPgpId& /*issuer*/
+                                                  ) const {
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* data,
-		const uint32_t len, unsigned char* sign, unsigned int* signlen,
-		int& signature_result) {
+bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* /*data*/,
+                                                 uint32_t /*len*/,
+                                                 unsigned char* /*sign*/,
+                                                 unsigned int /*signlen*/,
+                                                 const PGPFingerprintType& /*withfingerprint*/
+                                                 ) {
+	return true;
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* /*data*/,
+                                                               const uint32_t /*len*/,
+                                                               unsigned char* /*sign*/,
+                                                               unsigned int* /*signlen*/,
+                                                               int& /*signature_result*/,
+                                                               std::string /*reason*/
+                                                               ) {
 	return true;
 }
 

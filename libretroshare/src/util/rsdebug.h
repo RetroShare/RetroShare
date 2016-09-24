@@ -30,32 +30,46 @@
 #ifndef RS_LOG_DEBUG_H
 #define RS_LOG_DEBUG_H
 
-
-
-#define RSL_NONE     	-1
-#define RSL_ALERT     	 1
-#define RSL_ERROR	 3
-#define RSL_WARNING	 5
-#define RSL_DEBUG_ALERT  6
-#define RSL_DEBUG_BASIC	 8
-#define RSL_DEBUG_ALL	10
-
-
 #include <string>
 
+namespace RsLog {
+	enum logLvl {
+		None	= -1,
+		Default	=  0,
+		Alert	=  1,
+		Error	=  3,
+		Warning	=  5,
+		Debug_Alert	=  6,
+		Debug_Basic	=  8,
+		Debug_All	= 10
+	};
+
+	// this struct must be provided by the caller (to rslog())
+	struct logInfo {
+		// module specific log lvl
+		logLvl lvl;
+		// module name (displayed in log)
+		const std::string name;
+	};
+}
+
 int setDebugCrashMode(const char *cfile);
-int clearDebugCrashLog();
-
 int setDebugFile(const char *fname);
-int setOutputLevel(int lvl);
-int setZoneLevel(int lvl, int zone);
-int rslog(unsigned int lvl, int zone, const std::string &msg);
-
+int setOutputLevel(RsLog::logLvl lvl);
+void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg);
 
 
 /*
  * retaining old #DEFINES and functions for backward compatibility.
  */
+
+#define RSL_NONE     	RsLog::None
+#define RSL_ALERT     	RsLog::Alert
+#define RSL_ERROR	RsLog::Error
+#define RSL_WARNING	RsLog::Warning
+#define RSL_DEBUG_ALERT	RsLog::Debug_Alert
+#define RSL_DEBUG_BASIC	RsLog::Debug_Basic
+#define RSL_DEBUG_ALL	RsLog::Debug_Basic
 
 //int pqioutput(unsigned int lvl, int zone, std::string msg);
 #define pqioutput rslog

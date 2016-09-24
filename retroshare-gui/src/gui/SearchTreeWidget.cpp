@@ -36,7 +36,7 @@ QMimeData * SearchTreeWidget::mimeData ( const QList<QTreeWidgetItem *> items ) 
 	/* extract from each QTreeWidgetItem... all the member text */
 	QList<QTreeWidgetItem *>::const_iterator it;
 	QString text;
-	for(it = items.begin(); it != items.end(); it++)
+	for(it = items.begin(); it != items.end(); ++it)
 	{
 		QString line = QString("%1/%2/%3/").arg((*it)->text(SR_NAME_COL), (*it)->text(SR_HASH_COL), (*it)->text(SR_SIZE_COL));
 

@@ -22,7 +22,7 @@ class RsGxsNotify
 {
 public:
 
-	enum NotifyType { TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED };
+	enum NotifyType { TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
 
     virtual ~RsGxsNotify() {return; }
     virtual NotifyType getType() = 0;

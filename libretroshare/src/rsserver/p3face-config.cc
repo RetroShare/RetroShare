@@ -60,12 +60,6 @@ const int p3facemsgzone = 11453;
 /* RsIface Config */
 /* Config */
 
-int     RsServer::ConfigSetBootPrompt( bool /*on*/ )
-{
-
-	return 1;
-}
-
 void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers TODO */
@@ -77,29 +71,43 @@ void    RsServer::ConfigFinalSave()
 	mConfigMgr->completeConfiguration();
 }
 
+void RsServer::startServiceThread(RsTickingThread *t, const std::string &threadName)
+{
+    t->start(threadName) ;
+    mRegisteredServiceThreads.push_back(t) ;
+}
+
 void RsServer::rsGlobalShutDown()
 {
 	// TODO: cache should also clean up old files
 
 	ConfigFinalSave(); // save configuration before exit
 
-	mPluginsManager->stopPlugins();
+	mPluginsManager->stopPlugins(pqih);
 
 	mNetMgr->shutdown(); /* Handles UPnP */
 
-	join();
+    fullstop() ;
 
+    // kill all registered service threads
 
-#ifdef RS_ENABLE_GXS
-        if(mGxsCircles) mGxsCircles->join();
-        if(mGxsForums) mGxsForums->join();
-        if(mGxsChannels) mGxsChannels->join();
-        if(mGxsIdService) mGxsIdService->join();
-        if(mPosted) mPosted->join();
-        if(mWiki) mWiki->join();
-        //if(mPhoto) mPhoto->join();
-        //if(mWire) mWire->join();
-#endif
+    for(std::list<RsTickingThread*>::iterator it= mRegisteredServiceThreads.begin();it!=mRegisteredServiceThreads.end();++it)
+	{
+        (*it)->fullstop() ;
+	}
+// #ifdef RS_ENABLE_GXS
+// 		// We should automate this.
+// 		//
+//         if(mGxsCircles) mGxsCircles->join();
+//         if(mGxsForums) mGxsForums->join();
+//         if(mGxsChannels) mGxsChannels->join();
+//         if(mGxsIdService) mGxsIdService->join();
+//         if(mPosted) mPosted->join();
+//         if(mWiki) mWiki->join();
+//         if(mGxsNetService) mGxsNetService->join();
+//         if(mPhoto) mPhoto->join();
+//         if(mWire) mWire->join();
+// #endif
 
 	AuthGPG::exit();
 }

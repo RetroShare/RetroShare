@@ -40,6 +40,7 @@ bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out)
 	/* first check there is space */
 	if (size < *offset + 1)
 	{
+		std::cerr << "(EE) Cannot deserialise uint8_t: not enough size." << std::endl;
 		return false;
 	}
 	void *buf = (void *) &(((uint8_t *) data)[*offset]);
@@ -56,6 +57,7 @@ bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in)
 	/* first check there is space */
 	if (size < *offset + 1)
 	{
+		std::cerr << "(EE) Cannot serialise uint8_t: not enough size." << std::endl;
 		return false;
 	}
 
@@ -74,6 +76,7 @@ bool getRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t *out)
 	/* first check there is space */
 	if (size < *offset + 2)
 	{
+		std::cerr << "(EE) Cannot deserialise uint16_t: not enough size." << std::endl;
 		return false;
 	}
 	void *buf = (void *) &(((uint8_t *) data)[*offset]);
@@ -92,6 +95,7 @@ bool setRawUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t in)
 	/* first check there is space */
 	if (size < *offset + 2)
 	{
+		std::cerr << "(EE) Cannot serialise uint16_t: not enough size." << std::endl;
 		return false;
 	}
 
@@ -114,6 +118,7 @@ bool getRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t *out)
 	/* first check there is space */
 	if (size < *offset + 4)
 	{
+		std::cerr << "(EE) Cannot deserialise uint32_t: not enough size." << std::endl;
 		return false;
 	}
 	void *buf = (void *) &(((uint8_t *) data)[*offset]);
@@ -132,6 +137,7 @@ bool setRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t in)
 	/* first check there is space */
 	if (size < *offset + 4)
 	{
+		std::cerr << "(EE) Cannot serialise uint32_t: not enough size." << std::endl;
 		return false;
 	}
 
@@ -154,6 +160,7 @@ bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out)
 	/* first check there is space */
 	if (size < *offset + 8)
 	{
+		std::cerr << "(EE) Cannot deserialise uint64_t: not enough size." << std::endl;
 		return false;
 	}
 	void *buf = (void *) &(((uint8_t *) data)[*offset]);
@@ -172,6 +179,7 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
 	/* first check there is space */
 	if (size < *offset + 8)
 	{
+		std::cerr << "(EE) Cannot serialise uint64_t: not enough size." << std::endl;
 		return false;
 	}
 
@@ -223,6 +231,9 @@ uint32_t getRawStringSize(const std::string &outStr)
 
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
+#warning I had to change this. It seems like a bug to not clear the string. Should make sure it's not introducing any side effect.
+    outStr.clear();
+
 	uint32_t len = 0;
 	if (!getRawUInt32(data, size, offset, &len))
 	{
@@ -231,12 +242,13 @@ bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outS
 	}
 
 	/* check there is space for string */
-	if (size < *offset + len)
+    	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
 	{
                 std::cerr << "getRawString() not enough size" << std::endl;
 		return false;
 	}
 	uint8_t *buf = &(((uint8_t *) data)[*offset]);
+    
         for (uint32_t i = 0; i < len; i++)
 	{
 		outStr += buf[i];
@@ -250,11 +262,10 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 {
 	uint32_t len = inStr.length();
 	/* first check there is space */
-	if (size < *offset + 4 + len)
+    
+    	if(size < 4 || len > size-4 || size-len-4 < *offset) // better than if(size < *offset + len + 4) because it avoids integer overflow
 	{
-//#ifdef RSSERIAL_DEBUG
                 std::cerr << "setRawString() Not enough size" << std::endl;
-//#endif
 		return false;
 	}
 

@@ -20,14 +20,38 @@
  ****************************************************************/
 
 #include <QKeyEvent>
+#include <QScrollBar>
 
 #include "RSFeedWidget.h"
 #include "ui_RSFeedWidget.h"
 #include "RSTreeWidgetItem.h"
 #include "gui/feeds/FeedItem.h"
-#include "gui/gxs/GxsFeedItem.h"
+
+#include <iostream>
 
 #define COLUMN_FEED 0
+
+#define SINGLE_STEP  15
+
+/* Redefine single step for srolling */
+class RSFeedWidgetScrollBar : public QScrollBar
+{
+public:
+	RSFeedWidgetScrollBar(QWidget *parent = 0) : QScrollBar(parent) {}
+
+	void sliderChange(SliderChange change)
+	{
+		if (change == SliderStepsChange) {
+			if (singleStep() > SINGLE_STEP) {
+				/* Set our own value */
+				setSingleStep(SINGLE_STEP);
+				return;
+			}
+		}
+
+		QScrollBar::sliderChange(change);
+	}
+};
 
 RSFeedWidget::RSFeedWidget(QWidget *parent)
     : QWidget(parent), ui(new Ui::RSFeedWidget)
@@ -45,7 +69,12 @@ RSFeedWidget::RSFeedWidget(QWidget *parent)
 	/* Remove */
 	mEnableRemove = false;
 
+	/* Options */
+	mCountChangedDisabled = 0;
+
 	ui->treeWidget->installEventFilter(this);
+
+	ui->treeWidget->setVerticalScrollBar(new RSFeedWidgetScrollBar);
 }
 
 RSFeedWidget::~RSFeedWidget()
@@ -80,9 +109,14 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 						FeedItem *feedItem = feedItemFromTreeItem(treeItem);
 						if (feedItem) {
 							disconnectSignals(feedItem);
+							feedRemoved(feedItem);
 							delete(feedItem);
 						}
 						delete(treeItem);
+					}
+
+					if (!mCountChangedDisabled) {
+						emit feedCountChanged();
 					}
 
 					return true; // eat event
@@ -95,6 +129,21 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 	return QWidget::eventFilter(object, event);
 }
 
+void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
+{
+	mItems.insert(feedItem, treeItem);
+}
+
+void RSFeedWidget::feedRemoved(FeedItem *feedItem)
+{
+	mItems.remove(feedItem);
+}
+
+void RSFeedWidget::feedsCleared()
+{
+	mItems.clear();
+}
+
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
 {
 	connect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
@@ -105,6 +154,16 @@ void RSFeedWidget::disconnectSignals(FeedItem *feedItem)
 {
 	disconnect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
 	disconnect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
+}
+
+QString RSFeedWidget::placeholderText()
+{
+	return ui->treeWidget->placeholderText();
+}
+
+void RSFeedWidget::setPlaceholderText(const QString &placeholderText)
+{
+	ui->treeWidget->setPlaceholderText(placeholderText);
 }
 
 FeedItem *RSFeedWidget::feedItemFromTreeItem(QTreeWidgetItem *treeItem)
@@ -125,9 +184,15 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, co
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
 
+	feedAdded(feedItem, treeItem);
+
 	connectSignals(feedItem);
 
 	filterItem(treeItem, feedItem);
+
+	if (!mCountChangedDisabled) {
+		emit feedCountChanged();
+	}
 }
 
 void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVariant> &sort)
@@ -146,9 +211,15 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
 
+	feedAdded(feedItem, treeItem);
+
 	connectSignals(feedItem);
 
 	filterItem(treeItem, feedItem);
+
+	if (!mCountChangedDisabled) {
+		emit feedCountChanged();
+	}
 }
 
 void RSFeedWidget::setSort(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value)
@@ -184,7 +255,26 @@ void RSFeedWidget::setSort(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVar
 
 void RSFeedWidget::clear()
 {
+	/* Disconnect signals */
+	QTreeWidgetItemIterator it(ui->treeWidget);
+	QTreeWidgetItem *treeItem;
+	while ((treeItem = *it) != NULL) {
+		++it;
+
+		FeedItem *feedItem = feedItemFromTreeItem(treeItem);
+		if (feedItem) {
+			disconnectSignals(feedItem);
+		}
+	}
+
+	feedsCleared();
+
+	/* Clear items */
 	ui->treeWidget->clear();
+
+	if (!mCountChangedDisabled) {
+		emit feedCountChanged();
+	}
 }
 
 void RSFeedWidget::setSortRole(Qt::ItemDataRole role, Qt::SortOrder order)
@@ -260,9 +350,37 @@ void RSFeedWidget::enableRemove(bool enable)
 	mEnableRemove = enable;
 }
 
+void RSFeedWidget::enableCountChangedSignal(bool enable)
+{
+	if (enable) {
+		--mCountChangedDisabled;
+		if (mCountChangedDisabled < 0) {
+			std::cerr << "RSFeedWidget::enableCountChangedSignal error disable count change signal" << std::endl;
+			mCountChangedDisabled = 0;
+		}
+	} else {
+		++mCountChangedDisabled;
+	}
+}
+
 void RSFeedWidget::setSelectionMode(QAbstractItemView::SelectionMode mode)
 {
 	ui->treeWidget->setSelectionMode(mode);
+}
+
+int RSFeedWidget::feedItemCount()
+{
+	return ui->treeWidget->topLevelItemCount();
+}
+
+FeedItem *RSFeedWidget::feedItem(int index)
+{
+	QTreeWidgetItem *treeItem = ui->treeWidget->topLevelItem(index);
+	if (!treeItem) {
+		return NULL;
+	}
+
+	return feedItemFromTreeItem(treeItem);
 }
 
 void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
@@ -274,8 +392,13 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 	disconnectSignals(feedItem);
 
 	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
+	feedRemoved(feedItem);
 	if (treeItem) {
 		delete(treeItem);
+	}
+
+	if (!mCountChangedDisabled) {
+		emit feedCountChanged();
 	}
 }
 
@@ -297,34 +420,44 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 	/* No need to disconnect when object will be destroyed */
 
 	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
+	feedRemoved(feedItem);
 	if (treeItem) {
 		delete(treeItem);
+	}
+
+	if (!mCountChangedDisabled) {
+		emit feedCountChanged();
 	}
 }
 
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(FeedItem *feedItem)
 {
-	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem;
-	while ((treeItem = *it) != NULL) {
-		++it;
-		if (feedItemFromTreeItem(treeItem) == feedItem) {
-			return treeItem;
-		}
+	QMap<FeedItem*, QTreeWidgetItem*>::iterator it = mItems.find(feedItem);
+	if (it == mItems.end()) {
+		return NULL;
 	}
 
-	return NULL;
+	return it.value();
 }
 
-class RSFeedWidgetCallback
+bool RSFeedWidget::scrollTo(FeedItem *feedItem, bool focus)
 {
-public:
-	RSFeedWidgetCallback() {}
+	QTreeWidgetItem *item = findTreeWidgetItem(feedItem);
+	if (!feedItem) {
+		return false;
+	}
 
-	virtual void callback(FeedItem *feedItem, const QVariant &data) = 0;
-};
+	ui->treeWidget->scrollToItem(item);
+	ui->treeWidget->setCurrentItem(item);
 
-void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, const QVariant &data)
+	if (focus) {
+		ui->treeWidget->setFocus();
+	}
+
+	return true;
+}
+
+void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 {
 	if (!callback) {
 		return;
@@ -344,7 +477,7 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, const QVariant
 	}
 }
 
-FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, const QVariant &data1, const QVariant &data2)
+FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, void *data)
 {
 	if (!callback) {
 		return NULL;
@@ -360,7 +493,7 @@ FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, 
 			continue;
 		}
 
-		if (callback(feedItem, data1, data2)) {
+		if (callback(feedItem, data)) {
 			return feedItem;
 		}
 	}
@@ -378,29 +511,4 @@ void RSFeedWidget::selectedFeedItems(QList<FeedItem*> &feedItems)
 
 		feedItems.push_back(feedItem);
 	}
-}
-
-static bool findGxsFeedItemCallback(FeedItem *feedItem, const QVariant &data1, const QVariant &data2)
-{
-	if (!data1.canConvert<RsGxsGroupId>() || !data2.canConvert<RsGxsMessageId>()) {
-		return false;
-	}
-
-	GxsFeedItem *item = dynamic_cast<GxsFeedItem*>(feedItem);
-	if (!item) {
-		return false;
-	}
-
-	if (item->groupId() != data1.value<RsGxsGroupId>() ||
-	    item->messageId() != data2.value<RsGxsMessageId>()) {
-		return false;
-	}
-
-	return true;
-}
-
-GxsFeedItem *RSFeedWidget::findGxsFeedItem(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId)
-{
-	FeedItem *feedItem = findFeedItem(findGxsFeedItemCallback, qVariantFromValue(groupId), qVariantFromValue(messageId));
-	return dynamic_cast<GxsFeedItem*>(feedItem);
 }

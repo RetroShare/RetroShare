@@ -136,256 +136,265 @@ class p3BitDhtRelayHandler
 
 
 class UdpRelayReceiver;
+#ifdef RS_USE_DHT_STUNNER
 class UdpStunner;
+#endif // RS_USE_DHT_STUNNER
 class p3NetMgr;
 
 class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
 {
-	public:
-	p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
-		UdpStack *udpstack, std::string bootstrapfile);
+public:
+    p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
+             UdpStack *udpstack, std::string bootstrapfile, const std::string &filteredipfile);
 
 
-virtual	~p3BitDht();
+    virtual	~p3BitDht();
 
 
-/***********************************************************************************************
+    /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
-virtual uint32_t getNetState(uint32_t type);
-virtual int      getDhtPeers(int lvl, std::list<RsDhtPeer> &peers);
-virtual int      getNetPeerList(std::list<RsPeerId> &peerIds);
-virtual int      getNetPeerStatus(const RsPeerId& peerId, RsDhtNetPeer &status);
+    virtual uint32_t getNetState(uint32_t type);
+    virtual int      getDhtPeers(int lvl, std::list<RsDhtPeer> &peers);
+    virtual int      getNetPeerList(std::list<RsPeerId> &peerIds);
+    virtual int      getNetPeerStatus(const RsPeerId& peerId, RsDhtNetPeer &status);
 
-virtual int     getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds);
-virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
+    virtual int     getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds);
+    virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
 
-//virtual int      getNetFailedPeer(std::string peerId, PeerStatus &status);
+    //virtual int      getNetFailedPeer(std::string peerId, PeerStatus &status);
 
-virtual std::string getUdpAddressString();
+    virtual std::string getUdpAddressString();
 
-virtual void    getDhtRates(float &read, float &write);
-virtual void    getRelayRates(float &read, float &write, float &relay);
+    virtual void    getDhtRates(float &read, float &write);
+    virtual void    getRelayRates(float &read, float &write, float &relay);
 
-virtual bool    getOwnDhtId(std::string &ownDhtId);
+    virtual bool    getOwnDhtId(std::string &ownDhtId);
 
-/***********************************************************************************************
+    /***********************************************************************************************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
+#ifdef RS_USE_DHT_STUNNER
+    void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
+#else // RS_USE_DHT_STUNNER
+	void	setupConnectBits(UdpRelayReceiver *relay);
+#endif // RS_USE_DHT_STUNNER
+    void	setupPeerSharer(pqiNetAssistPeerShare *sharer);
+    void    modifyNodesPerBucket(uint16_t count);
 
-	void	setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay);
-	void	setupPeerSharer(pqiNetAssistPeerShare *sharer);
-	void    modifyNodesPerBucket(uint16_t count);
+    void	start(); /* starts up the bitdht thread */
 
-void	start(); /* starts up the bitdht thread */
+    /* pqiNetAssist - external interface functions */
+    virtual int     tick();
+    virtual void    enable(bool on);
+    virtual void    shutdown(); /* blocking call */
+    virtual void	restart();
 
-	/* pqiNetAssist - external interface functions */
-virtual int     tick();
-virtual void    enable(bool on);  
-virtual void    shutdown(); /* blocking call */
-virtual void	restart();
+    virtual bool    getEnabled();
+    virtual bool    getActive();
+    virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 
-virtual bool    getEnabled();
-virtual bool    getActive();
-virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
+    /* pqiNetAssistConnect - external interface functions */
 
-	/* pqiNetAssistConnect - external interface functions */
+    /* add / remove peers */
+    virtual bool 	findPeer(const RsPeerId& id);
+    virtual bool 	dropPeer(const RsPeerId& id);
 
-	/* add / remove peers */
-virtual bool 	findPeer(const RsPeerId& id);
-virtual bool 	dropPeer(const RsPeerId& id);
+    virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
+    virtual int addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags);
+    //virtual int 	addFriend(const std::string pid);
+    //virtual int 	addFriendOfFriend(const std::string pid);
+    //virtual int 	addOther(const std::string pid);
 
-virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
-virtual int addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags);
-//virtual int 	addFriend(const std::string pid);
-//virtual int 	addFriendOfFriend(const std::string pid);
-//virtual int 	addOther(const std::string pid);
+    /* feedback on success failure of Connections */
+    virtual void 	ConnectionFeedback(const RsPeerId& pid, int state);
 
-	/* feedback on success failure of Connections */
-virtual void 	ConnectionFeedback(const RsPeerId& pid, int state);
+    /* extract current peer status */
+    virtual bool 	getPeerStatus(const RsPeerId& id,
+                                  struct sockaddr_storage &laddr, struct sockaddr_storage &raddr,
+                                  uint32_t &type, uint32_t &mode);
 
-	/* extract current peer status */
-virtual bool 	getPeerStatus(const RsPeerId& id, 
-			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
-					uint32_t &type, uint32_t &mode);
+    virtual bool 	getExternalInterface(struct sockaddr_storage &raddr,
+                                         uint32_t &mode);
 
-virtual bool 	getExternalInterface(struct sockaddr_storage &raddr, 
-					uint32_t &mode);
+    virtual bool	isAddressBanned(const struct sockaddr_storage& raddr) ;
+    virtual void	getListOfBannedIps(std::list<RsDhtFilteredPeer> &lst) ;
 
-
-virtual bool    setAttachMode(bool on);
-
-
-
-	/* notifyPeer/setExtInterface/Bootstrap/Stun 
-	 * hould all be removed from NetAssist?
-	 */
-
+    virtual bool    setAttachMode(bool on);
 
 
-	/* pqiNetAssistConnect - external interface functions */
+
+    /* notifyPeer/setExtInterface/Bootstrap/Stun
+     * hould all be removed from NetAssist?
+     */
 
 
-/***********************************************************************************************
+
+    /* pqiNetAssistConnect - external interface functions */
+
+
+    /***********************************************************************************************
  ****************************** Connections (p3bitdht_peernet.cc) ******************************
 ************************************************************************************************/
-	/* Feedback from RS Upper Layers */
-//virtual void 	ConnectionFeedback(std::string pid, int state);
+    /* Feedback from RS Upper Layers */
+    //virtual void 	ConnectionFeedback(std::string pid, int state);
 
-	/* Callback functions - from bitdht */
-int 	NodeCallback(const bdId *id, uint32_t peerflags);
-int 	PeerCallback(const bdId *id, uint32_t status);
-int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
-int 	ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
-				uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode);
-int 	InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info);
-
-
-int 	OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
-int 	UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
-//int 	tick();
-int 	minuteTick();
-int 	doActions();
-int 	checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode, uint32_t &bandwidth);
-int 	checkConnectionAllowed(const bdId *peerId, int mode);
-void 	initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth);
-int 	installRelayConnection(const bdId *srcId, const bdId *destId, uint32_t &bandwidth);
-int 	removeRelayConnection(const bdId *srcId, const bdId *destId);
-void 	monitorConnections();
-
-void    ConnectCallout(const RsPeerId &peerId, struct sockaddr_in addr, uint32_t connectMode);
-
-void 	ConnectCalloutTCPAttempt(const RsPeerId &peerId, struct sockaddr_in addr);
-void 	ConnectCalloutDirectOrProxy(const RsPeerId &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay);
-void 	ConnectCalloutRelay(const RsPeerId &peerId, struct sockaddr_in srcaddr, 
-			struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
-                        uint32_t connectMode, uint32_t bandwidth);
+    /* Callback functions - from bitdht */
+    int 	NodeCallback(const bdId *id, uint32_t peerflags);
+    int 	PeerCallback(const bdId *id, uint32_t status);
+    int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
+    int 	ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
+                            uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode);
+    int 	InfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info);
 
 
-void 	Feedback_Connected(const RsPeerId& pid);
-void 	Feedback_ConnectionFailed(const RsPeerId& pid);
-void 	Feedback_ConnectionClosed(const RsPeerId& pid);
+    int 	OnlinePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
+    int 	UnreachablePeerCallback_locked(const bdId *id, uint32_t status, DhtPeerDetails *dpd);
+    //int 	tick();
+    int 	minuteTick();
+    int 	doActions();
+    int 	checkProxyAllowed(const bdId *srcId, const bdId *destId, int mode, uint32_t &bandwidth);
+    int 	checkConnectionAllowed(const bdId *peerId, int mode);
+    void 	initiateConnection(const bdId *srcId, const bdId *proxyId, const bdId *destId, uint32_t mode, uint32_t loc, uint32_t delayOrBandwidth);
+    int 	installRelayConnection(const bdId *srcId, const bdId *destId, uint32_t &bandwidth);
+    int 	removeRelayConnection(const bdId *srcId, const bdId *destId);
+    void 	monitorConnections();
 
-void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
-void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
+    void    ConnectCallout(const RsPeerId &peerId, struct sockaddr_in addr, uint32_t connectMode);
+
+    void 	ConnectCalloutTCPAttempt(const RsPeerId &peerId, struct sockaddr_in addr);
+    void 	ConnectCalloutDirectOrProxy(const RsPeerId &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay);
+    void 	ConnectCalloutRelay(const RsPeerId &peerId, struct sockaddr_in srcaddr,
+                                struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
+                                uint32_t connectMode, uint32_t bandwidth);
 
 
-	/*** RELAY HANDLER CODE ***/
-void 	installRelayHandler(p3BitDhtRelayHandler *);
-UdpRelayReceiver *getRelayReceiver();
+    void 	Feedback_Connected(const RsPeerId& pid);
+    void 	Feedback_ConnectionFailed(const RsPeerId& pid);
+    void 	Feedback_ConnectionClosed(const RsPeerId& pid);
 
-int 	RelayHandler_InstallRelayConnection(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
-int 	RelayHandler_LogFailedProxyAttempt(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
+    void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
+    void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
+
+
+    /*** RELAY HANDLER CODE ***/
+    void 	installRelayHandler(p3BitDhtRelayHandler *);
+    UdpRelayReceiver *getRelayReceiver();
+
+    int 	RelayHandler_InstallRelayConnection(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t &bandwidth);
+    int 	RelayHandler_LogFailedProxyAttempt(const bdId *srcId, const bdId *destId, uint32_t mode, uint32_t errcode);
 
 
 
-/***********************************************************************************************
+    /***********************************************************************************************
  ******************** Relay Config Stuff (TEMP - MOSTLY, in p3bitdht_relay.cc) *****************
  ********** External RsDHT Interface (defined in libretroshare/src/retroshare/rsdht.h) *********
 ************************************************************************************************/
 
-        // Interface for controlling Relays & DHT Relay Mode
-virtual int     getRelayServerList(std::list<std::string> &ids);
-virtual int     addRelayServer(std::string ids);
-virtual int     removeRelayServer(std::string ids);
+    // Interface for controlling Relays & DHT Relay Mode
+    virtual int     getRelayServerList(std::list<std::string> &ids);
+    virtual int     addRelayServer(std::string ids);
+    virtual int     removeRelayServer(std::string ids);
 
-virtual uint32_t getRelayMode();
-virtual int      setRelayMode(uint32_t mode);
+    virtual uint32_t getRelayMode();
+    virtual int      setRelayMode(uint32_t mode);
 
-virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
-virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+    virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
+    virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
 
-	private:
+private:
 
-	// Relay Handling Code / Variables (Mutex Protected).
-int 	setupRelayDefaults();
-int     pushRelayServers();
+    // Relay Handling Code / Variables (Mutex Protected).
+    int 	setupRelayDefaults();
+    int     pushRelayServers();
 
-	std::list<std::string> mRelayServerList;
-	uint32_t mRelayMode;
+    std::list<std::string> mRelayServerList;
+    uint32_t mRelayMode;
 
-        protected:
-/*****************************************************************/
-/***********************  p3config  ******************************/
-        /* Key Functions to be overloaded for Full Configuration */
-        virtual RsSerialiser *setupSerialiser();
-        virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-        virtual void saveDone();
-        virtual bool    loadList(std::list<RsItem *>& load);
-/*****************************************************************/
+protected:
+    /*****************************************************************/
+    /***********************  p3config  ******************************/
+    /* Key Functions to be overloaded for Full Configuration */
+    virtual RsSerialiser *setupSerialiser();
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+    virtual void saveDone();
+    virtual bool    loadList(std::list<RsItem *>& load);
+    /*****************************************************************/
 
-	// DATA RATES: Variables (Mutex Protected).
-	private:
+    // DATA RATES: Variables (Mutex Protected).
+private:
 
-	void 	updateDataRates();
-	void	clearDataRates();
+    void 	updateDataRates();
+    void	clearDataRates();
 
-	float mRelayReadRate;
-	float mRelayWriteRate;
-	float mRelayRelayRate;
-	float mDhtReadRate;
-	float mDhtWriteRate;
+    float mRelayReadRate;
+    float mRelayWriteRate;
+    float mRelayRelayRate;
+    float mDhtReadRate;
+    float mDhtWriteRate;
 
-	time_t mLastDataRateUpdate;
+    time_t mLastDataRateUpdate;
 
 
-/***********************************************************************************************
+    /***********************************************************************************************
  ************************** Internal Accounting (p3bitdht_peers.cc) ****************************
 ************************************************************************************************/
 
-	public:
+public:
 
-int 	removePeer(const RsPeerId& pid);
+    int 	removePeer(const RsPeerId& pid);
 
-	// Can be used externally too.
-int 	calculateNodeId(const RsPeerId& pid, bdNodeId *id);
-int 	addKnownNode(const bdId *id, uint32_t flags);
+    // Can be used externally too.
+    int 	calculateNodeId(const RsPeerId& pid, bdNodeId *id);
+    int 	addKnownNode(const bdId *id, uint32_t flags);
 
-	private:
+private:
 
-DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
-int 	removeInternalPeer_locked(const RsPeerId& pid);
-DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
-DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
+    DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
+    int 	removeInternalPeer_locked(const RsPeerId& pid);
+    DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
+    DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
 
-bool 	havePeerTranslation_locked(const RsPeerId &pid);
-int 	lookupNodeId_locked(const RsPeerId& pid, bdNodeId *id);
-int 	lookupRsId_locked(const bdNodeId *id, RsPeerId &pid);
-int 	storeTranslation_locked(const RsPeerId& pid);
-int 	removeTranslation_locked(const RsPeerId& pid);
+    bool 	havePeerTranslation_locked(const RsPeerId &pid);
+    int 	lookupNodeId_locked(const RsPeerId& pid, bdNodeId *id);
+    int 	lookupRsId_locked(const bdNodeId *id, RsPeerId &pid);
+    int 	storeTranslation_locked(const RsPeerId& pid);
+    int 	removeTranslation_locked(const RsPeerId& pid);
 
-	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
-	UdpStunner *mDhtStunner;
-	UdpStunner *mProxyStunner;
-	UdpRelayReceiver   *mRelay;
+    UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
+#ifdef RS_USE_DHT_STUNNER
+    UdpStunner *mDhtStunner;
+    UdpStunner *mProxyStunner;
+#endif // RS_USE_DHT_STUNNER
+    UdpRelayReceiver   *mRelay;
 
-	p3NetMgr *mNetMgr;
+    p3NetMgr *mNetMgr;
 
-	pqiNetAssistPeerShare *mPeerSharer;
+    pqiNetAssistPeerShare *mPeerSharer;
 
-        bdDhtFunctions *mDhtFns;
+    bdDhtFunctions *mDhtFns;
 
-	RsMutex dhtMtx;
+    RsMutex dhtMtx;
 
 
-	p3BitDhtRelayHandler *mRelayHandler;
+    p3BitDhtRelayHandler *mRelayHandler;
 
-	RsPeerId mOwnRsId;
-	bdNodeId    mOwnDhtId;
+    RsPeerId mOwnRsId;
+    bdNodeId    mOwnDhtId;
 
-	time_t mMinuteTS;
+    time_t mMinuteTS;
 
-	/* translation maps */
-        std::map<RsPeerId, bdNodeId> mTransToNodeId;
-        std::map<bdNodeId, RsPeerId> mTransToRsId;
+    /* translation maps */
+    std::map<RsPeerId, bdNodeId> mTransToNodeId;
+    std::map<bdNodeId, RsPeerId> mTransToRsId;
 
-	std::map<bdNodeId, DhtPeerDetails> mPeers;
-	std::map<bdNodeId, DhtPeerDetails> mFailedPeers;
+    std::map<bdNodeId, DhtPeerDetails> mPeers;
+    std::map<bdNodeId, DhtPeerDetails> mFailedPeers;
 
-	/* Connection Action Queue */
-	std::list<PeerAction> mActions;
+    /* Connection Action Queue */
+    std::list<PeerAction> mActions;
 
 };
 

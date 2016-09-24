@@ -1,6 +1,15 @@
-TEMPLATE = lib
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
-INCLUDEPATH += ../../libretroshare/src/ ../../retroshare-gui/src/
+TEMPLATE = lib
+CONFIG *= plugin
+
+DEPENDPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
+INCLUDEPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
+
+unix {
+	target.path = "$${PLUGIN_DIR}"
+	INSTALLS += target
+}
 
 linux-g++ {
 	LIBS *= -ldl
@@ -19,13 +28,24 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
 	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 
 	DEFINES += WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	DEFINES += MINIUPNPC_VERSION=13
+	#DEFINES += MINIUPNPC_VERSION=13
 #	DESTDIR = lib
 
 	# Switch off optimization for release version
@@ -41,18 +61,35 @@ win32 {
 	DEFINES += USE_CMD_ARGS
 
 	#miniupnp implementation files
-	HEADERS += upnp/upnputil.h
-	SOURCES += upnp/upnputil.c
+	#HEADERS += upnp/upnputil.h
+	#SOURCES += upnp/upnputil.c
 
-	UPNPC_DIR = ../../../lib/miniupnpc-1.3
-	ZLIB_DIR = ../../../lib/zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1h
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
+	PRE_TARGETDEPS += $$OUT_PWD/../../retroshare-gui/src/lib/libretroshare-gui.a
+	LIBS += -L"$$OUT_PWD/../../retroshare-gui/src/lib" -lretroshare-gui
 
-	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
-	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
-
-	LIBS += -L"$$PWD/../../../lib"
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 	LIBS += -lpthread
+}
+
+macx {
+	#You can found some information here:
+	#https://developer.apple.com/library/mac/documentation/Porting/Conceptual/PortingUnix/compiling/compiling.html
+	QMAKE_LFLAGS_PLUGIN -= -dynamiclib
+	QMAKE_LFLAGS_PLUGIN += -bundle
+	QMAKE_LFLAGS_PLUGIN += -bundle_loader "../../retroshare-gui/src/RetroShare06.app/Contents/MacOS/RetroShare06"
+
+	OBJECTS_DIR = temp/obj
+	MOC_DIR = temp/moc
+	RCC_DIR = temp/qrc
+	UI_DIR  = temp/ui
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 }

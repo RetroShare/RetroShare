@@ -31,8 +31,8 @@
 #include "gui/RetroShareLink.h"
 
 /** Default constructor */
-DetailsDialog::DetailsDialog(QWidget *parent, Qt::WindowFlags flags)
-  : QDialog(parent, flags)
+DetailsDialog::DetailsDialog(QWidget *parent)
+  : QDialog(parent, Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -101,7 +101,10 @@ DetailsDialog::show()
 
 void DetailsDialog::setFileHash(const RsFileHash & hash)
 {
-	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(hash) ;
+	FileTransferInfoWidget *ftiWidget = dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget());
+	if (ftiWidget) {
+		ftiWidget->setFileHash(hash) ;
+	}
 
 	FileInfo nfo ;
 	if(!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 

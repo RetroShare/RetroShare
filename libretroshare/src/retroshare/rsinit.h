@@ -98,8 +98,7 @@ class RsInit
 		 * Post Login Options
 		 */
 
-		static bool         getStartMinimised() ;
-		static std::string  getRetroShareLink();
+		static bool getStartMinimised();
 
 		static int getSslPwdLen();
 		static bool getAutoLogin();
@@ -132,18 +131,25 @@ namespace RsAccounts
 {
 	// Directories.
 	std::string ConfigDirectory(); // aka Base Directory. (normally ~/.retroshare)
-	std::string DataDirectory();   
+    /**
+     * @brief DataDirectory
+     * you can call this method even before initialisation (you can't with the other methods)
+     * @param check if set to true and directory does not exist, return empty string
+     * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+     */
+    std::string DataDirectory(bool check = true);
 	std::string PGPDirectory();
 	std::string AccountDirectory();
 
 	// PGP Accounts.
 	int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
 	int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
-	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 	// PGP Support Functions.
 	bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 	bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+    bool    ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
         void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 	bool    CopyGnuPGKeyrings() ;
 

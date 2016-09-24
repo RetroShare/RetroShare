@@ -22,6 +22,8 @@
 
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QMenu>
+#include <QWidgetAction>
 
 #include "ChatDialog.h"
 #include "gui/common/PeerDefs.h"
@@ -36,7 +38,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-static std::map<RsPeerId, ChatDialog*> chatDialogs;
+static std::map<ChatId, ChatDialog*> chatDialogs2;
 
 ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 	QWidget(parent, flags)
@@ -46,9 +48,9 @@ ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 
 ChatDialog::~ChatDialog()
 {
-    std::map<RsPeerId, ChatDialog *>::iterator it;
-	if (chatDialogs.end() != (it = chatDialogs.find(getPeerId()))) {
-		chatDialogs.erase(it);
+    std::map<ChatId, ChatDialog *>::iterator it;
+    if (chatDialogs2.end() != (it = chatDialogs2.find(mChatId))) {
+        chatDialogs2.erase(it);
 	}
 }
 
@@ -61,86 +63,76 @@ void ChatDialog::closeEvent(QCloseEvent *event)
 	emit dialogClose(this);
 }
 
-void ChatDialog::init(const RsPeerId &peerId, const QString &title)
+void ChatDialog::init(ChatId id, const QString &title)
 {
-	this->peerId = peerId;
-
+    mChatId = id;
 	ChatWidget *cw = getChatWidget();
 	if (cw) {
-		cw->init(peerId, title);
+        cw->init(id, title);
 
 		connect(cw, SIGNAL(infoChanged(ChatWidget*)), this, SLOT(chatInfoChanged(ChatWidget*)));
 		connect(cw, SIGNAL(newMessage(ChatWidget*)), this, SLOT(chatNewMessage(ChatWidget*)));
 	}
 }
 
-/*static*/ ChatDialog *ChatDialog::getExistingChat(const RsPeerId &peerId)
+/*static*/ ChatDialog* ChatDialog::getExistingChat(ChatId id)
 {
-    std::map<RsPeerId, ChatDialog*>::iterator it;
-	if (chatDialogs.end() != (it = chatDialogs.find(peerId))) {
-		/* exists already */
-		return it->second;
-	}
+    std::map<ChatId, ChatDialog*>::iterator it;
+    if (chatDialogs2.end() != (it = chatDialogs2.find(id))) {
+        /* exists already */
+        return it->second;
+    }
 
-	return NULL;
+    return NULL;
 }
 
-/*static*/ ChatDialog *ChatDialog::getChat(const RsPeerId &peerId, uint chatflags)
+/*static*/ ChatDialog* ChatDialog::getChat(ChatId id, uint chatflags)
 {
-	/* see if it already exists */
-	ChatDialog *cd = getExistingChat(peerId);
+    if(id.isBroadcast() || id.isNotSet())
+        return NULL; // broadcast is not handled by a chat dialog
 
-	if (cd == NULL) {
-		ChatLobbyId lobby_id = 0;
+    /* see if it already exists */
+    ChatDialog *cd = getExistingChat(id);
 
-		if (rsMsgs->isLobbyId(peerId, lobby_id)) {
-        //    chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
-		}
+    if (cd == NULL) {
 
-		uint32_t distant_peer_status ;
-		RsGxsId distant_chat_gxs_id ;
+        if(id.isDistantChatId())
+            chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // force open for distant chat
 
-		if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status)) 
-			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
+        if (chatflags & RS_CHAT_OPEN) {
+            if (id.isLobbyId()) {
+                ChatLobbyDialog* cld = new ChatLobbyDialog(id.toLobbyId());
+                cld->init();
+                cd = cld;
+            } 
+            else if(id.isDistantChatId())
+            {
+                PopupDistantChatDialog* pdcd = new PopupDistantChatDialog(id.toDistantChatId());
+                
+                pdcd->init(id.toDistantChatId());
+                cd = pdcd;
+            } 
+            else 
+            {
+                RsPeerDetails sslDetails;
+                if (rsPeers->getPeerDetails(id.toPeerId(), sslDetails)) {
+                    PopupChatDialog* pcd = new PopupChatDialog();
+                    pcd->init(id, PeerDefs::nameWithLocation(sslDetails));
+                    cd = pcd;
+                }
+            }
+            if(cd)
+                chatDialogs2[id] = cd;
+        }
+    }
 
-		if (chatflags & RS_CHAT_OPEN) {
-			if (lobby_id) {
-				std::list<ChatLobbyInfo> linfos;
-				rsMsgs->getChatLobbyList(linfos);
+    if (cd == NULL) {
+        return NULL;
+    }
 
-				for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
-					if ((*it).lobby_id == lobby_id) {
-						cd = new ChatLobbyDialog(lobby_id);
-						chatDialogs[peerId] = cd;
-						cd->init(peerId, QString::fromUtf8((*it).lobby_name.c_str()));
-					}
-				}
-			} else if(distant_peer_status > 0) {
-				cd = new PopupDistantChatDialog();
-				chatDialogs[peerId] = cd;
-				QString peer_name = cd->getPeerName(peerId) ;
-                cd->init(peerId, tr("Talking to ")+peer_name+" (GXS id="+QString::fromStdString(distant_chat_gxs_id.toStdString())+")") ;
+    cd->showDialog(chatflags);
 
-			} else {
-				RsPeerDetails sslDetails;
-				if (rsPeers->getPeerDetails(peerId, sslDetails)) {
-					cd = new PopupChatDialog();
-
-					chatDialogs[peerId] = cd;
-					cd->init(peerId, PeerDefs::nameWithLocation(sslDetails));
-				}
-			}
-		}
-	}
-
-	if (cd == NULL) {
-		return NULL;
-	}
-
-	cd->insertChatMsgs();
-	cd->showDialog(chatflags);
-
-	return cd;
+    return cd;
 }
 
 /*static*/ void ChatDialog::cleanupChat()
@@ -150,78 +142,70 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 	/* ChatDialog destuctor removes the entry from the map */
 	std::list<ChatDialog*> list;
 
-    std::map<RsPeerId, ChatDialog*>::iterator it;
-	for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
+    std::map<ChatId, ChatDialog*>::iterator it;
+    for (it = chatDialogs2.begin(); it != chatDialogs2.end(); ++it) {
 		if (it->second) {
 			list.push_back(it->second);
 		}
 	}
 
-	chatDialogs.clear();
+    chatDialogs2.clear();
 
 	std::list<ChatDialog*>::iterator it1;
-	for (it1 = list.begin(); it1 != list.end(); it1++) {
+	for (it1 = list.begin(); it1 != list.end(); ++it1) {
 		delete (*it1);
 	}
 }
 
-/*static*/ void ChatDialog::chatChanged(int list, int type)
+/*static*/ void ChatDialog::closeChat(const ChatId &chat_id)
 {
-	if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT && type == NOTIFY_TYPE_ADD) {
-		// play sound when recv a message
-		soundManager->play(SOUND_NEW_CHAT_MESSAGE);
-
-        std::list<RsPeerId> ids;
-		if (rsMsgs->getPrivateChatQueueIds(true, ids)) {
-			uint chatflags = Settings->getChatFlags();
-
-            std::list<RsPeerId>::iterator id;
-			for (id = ids.begin(); id != ids.end(); id++) {
-				ChatDialog *cd = getChat(*id, chatflags);
-
-				if (cd) {
-					cd->insertChatMsgs();
-				}
-			}
-		}
-	}
-
-	/* now notify all open priavate chat windows */
-    std::map<RsPeerId, ChatDialog *>::iterator it;
-	for (it = chatDialogs.begin (); it != chatDialogs.end(); it++) {
-		if (it->second) {
-			it->second->onChatChanged(list, type);
-		}
-	}
-}
-
-/*static*/ void ChatDialog::closeChat(const RsPeerId &peerId)
-{
-	ChatDialog *chatDialog = getExistingChat(peerId);
+    ChatDialog *chatDialog = getExistingChat(chat_id);
 
 	if (chatDialog) {
-		delete(chatDialog);
+        //delete chatDialog; // ChatDialog removes itself from the map
+        chatDialog->deleteLater();
 	}
 }
 
-/*static*/ void ChatDialog::chatFriend(const RsPeerId &peerId, const bool forceFocus)
+/*static*/ void ChatDialog::chatMessageReceived(ChatMessage msg)
 {
-    if (peerId.isNull()){
+    if(msg.chat_id.isBroadcast())
+        return; // broadcast is not handled by a chat dialog
+
+    if(msg.incoming && (msg.chat_id.isPeerId() || msg.chat_id.isDistantChatId()))
+        // play sound when recv a message
+        SoundManager::play(SOUND_NEW_CHAT_MESSAGE);
+
+    ChatDialog *cd = getChat(msg.chat_id, Settings->getChatFlags());   
+    if(cd)
+        cd->addChatMsg(msg);
+    else
+        std::cerr << "ChatDialog::chatMessageReceived(): no ChatDialog for this message. Ignoring Message: " << msg.msg << std::endl;
+}
+
+/*static*/ void ChatDialog::chatFriend(const ChatId &peerId, const bool forceFocus)
+{
+    getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+
+    // below is the old code witch does lots of error checking.
+    // because there are many different chat types, there are also different ways to check if the id is valid
+    // i think the chatservice should offer a method bool isChatAvailable(ChatId)
+    /*
+	if (peerId.isNull()){
 		return;
 	}
 
-    RsGxsId distant_chat_gxs_id ;
 	uint32_t distant_peer_status ;
 
-	if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status)) 
+    if(rsMsgs->getDistantChatStatus(RsGxsId(peerId),distant_peer_status))
 	{
-        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
+		getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
 		return ;
 	}
 
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
-        getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
+		getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
 	}
 
 	RsPeerDetails detail;
@@ -229,37 +213,67 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 		return;
 
 	if (detail.isOnlyGPGdetail) {
-        std::list<RsPeerId> onlineIds;
-
-		//let's get the ssl child details
-        std::list<RsPeerId> sslIds;
-		rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
-
-		if (sslIds.size() == 1) {
-			// chat with the one ssl id (online or offline)
-            getChat(sslIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
-			return;
-		}
-
-		// more than one ssl ids available, check for online
-        for (std::list<RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it) {
-			if (rsPeers->isOnline(*it)) {
-				onlineIds.push_back(*it);
-			}
-		}
-
-		if (onlineIds.size() == 1) {
-			// chat with the online ssl id
-            getChat(onlineIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
-			return;
-		}
-
-		// more than one ssl ids online or all offline
-		QMessageBox mb(QMessageBox::Warning, "RetroShare", tr("Your friend has more than one locations.\nPlease choose one of it to chat with."), QMessageBox::Ok);
-		mb.exec();
-	} else {
-        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+        // Should not happen
+		//chatFriend(detail.gpg_id, forceFocus);
+		return;
 	}
+
+	getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
+    */
+}
+
+/*static*/ void ChatDialog::chatFriend(const RsPgpId &gpgId, const bool forceFocus)
+{
+	if (gpgId.isNull()){
+		return;
+	}
+
+	RsPeerDetails detail;
+	if (!rsPeers->getGPGDetails(gpgId, detail))
+		return;
+
+	if (!detail.isOnlyGPGdetail) {
+		return;
+	}
+
+	//let's get the ssl child details
+	std::list<RsPeerId> sslIds;
+	rsPeers->getAssociatedSSLIds(detail.gpg_id, sslIds);
+
+	if (sslIds.size() == 1) {
+		// chat with the one ssl id (online or offline)
+        chatFriend(ChatId(sslIds.front()), forceFocus);
+		return;
+	}
+
+	// more than one ssl ids available, check for online
+	std::list<RsPeerId> onlineIds;
+	for (std::list<RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it) {
+		if (rsPeers->isOnline(*it)) {
+			onlineIds.push_back(*it);
+		}
+	}
+
+	if (onlineIds.size() == 1) {
+		// chat with the online ssl id
+        chatFriend(ChatId(onlineIds.front()), forceFocus);
+		return;
+	}
+
+    // show menu with online locations
+    QMenu menu;
+    QLabel* label = new QLabel("<strong>Select one of your friends locations to chat with</strong>");
+    QWidgetAction *widgetAction = new QWidgetAction(&menu);
+    widgetAction->setDefaultWidget(label);
+    menu.addAction(widgetAction);
+    QObject cleanupchildren;
+    for(std::list<RsPeerId>::iterator it = onlineIds.begin(); it != onlineIds.end(); ++it)
+    {
+        RsPeerDetails detail;
+        rsPeers->getPeerDetails(*it, detail);
+        menu.addAction(QString::fromUtf8(detail.location.c_str()), new ChatFriendMethod(&cleanupchildren, *it), SLOT(chatFriend()));
+    }
+    menu.exec(QCursor::pos());
 }
 
 void ChatDialog::addToParent(QWidget *newParent)
@@ -297,16 +311,37 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
-QString ChatDialog::getPeerName(const RsPeerId& id) const
+QString ChatDialog::getPeerName(const ChatId& id) const
 {
-	return QString::fromUtf8(  rsPeers->getPeerName(id).c_str() ) ;
+    if(id.isPeerId())
+        return QString::fromUtf8(rsPeers->getPeerName(id.toPeerId()).c_str()) ;
+    else
+        return "ChatDialog::getPeerName(): invalid id type passed (RsPeerId is required). This is a bug.";
+}
+
+QString ChatDialog::getOwnName() const
+{
+    if(mChatId.isPeerId())
+        return QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
+    else
+        return "ChatDialog::getOwnName(): invalid id type passed (RsPeerId is required). This is a bug.";
 }
 
 void ChatDialog::setPeerStatus(uint32_t status)
 {
 	ChatWidget *cw = getChatWidget();
-	if (cw) 
-        cw->updateStatus(QString::fromStdString(getPeerId().toStdString()), status);
+    if (cw)
+    {
+        // convert to virtual peer id
+        // this is only required for private and distant chat,
+        // because lobby and broadcast does not have a status
+        RsPeerId vpid;
+        if(mChatId.isPeerId())
+            vpid = mChatId.toPeerId();
+        if(mChatId.isDistantChatId())
+            vpid = RsPeerId(mChatId.toDistantChatId());
+        cw->updateStatus(QString::fromStdString(vpid.toStdString()), status);
+    }
 }
 int ChatDialog::getPeerStatus()
 {
@@ -364,28 +399,4 @@ void ChatDialog::chatInfoChanged(ChatWidget*)
 void ChatDialog::chatNewMessage(ChatWidget*)
 {
 	emit newMessage(this);
-}
-
-void ChatDialog::insertChatMsgs()
-{
-    RsPeerId peerId = getPeerId();
-
-	std::list<ChatInfo> newchat;
-	if (!rsMsgs->getPrivateChatQueue(true, peerId, newchat)) {
-		return;
-	}
-
-	std::list<ChatInfo>::iterator it;
-	for(it = newchat.begin(); it != newchat.end(); it++)
-	 {
-		/* are they public? */
-		if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
-			/* this should not happen */
-			continue;
-		}
-
-		addIncomingChatMsg(*it);
-	}
-
-	rsMsgs->clearPrivateChatQueue(true, peerId);
 }

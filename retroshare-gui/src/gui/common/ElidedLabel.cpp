@@ -40,73 +40,188 @@
 
 #include "ElidedLabel.h"
 
-#include <QPainter>
-#include <QTextLayout>
 #include <QDebug>
+#include <QPainter>
 #include <QStyleOption>
+#include <QTextDocument>
+#include <QTextLayout>
+#include <QToolTip>
 
 ElidedLabel::ElidedLabel(const QString &text, QWidget *parent)
   : QLabel(parent)
-  , elided(false)
-  , content(text)
+  , mElided(false)
+  , mOnlyPlainText(false)
+  , mContent(text)
 {
+	mRectElision = QRect();
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
 
 ElidedLabel::ElidedLabel(QWidget *parent)
   : QLabel(parent)
-  , elided(false)
+  , mElided(false)
+  , mOnlyPlainText(false)
+  , mContent("")
 {
+	mRectElision = QRect();
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-	content="";
 }
 
 void ElidedLabel::setText(const QString &newText)
 {
-	content = newText;
+	mContent = newText;
+	update();
+}
+
+void ElidedLabel::setOnlyPlainText(const bool &value)
+{
+	mOnlyPlainText = value;
+	update();
+}
+
+void ElidedLabel::clear()
+{
+	mContent.clear();
 	update();
 }
 
 void ElidedLabel::paintEvent(QPaintEvent *event)
 {
 	QLabel::paintEvent(event);
-	
+	QList<QPair<QTextLine,QPoint> > lLines;
+	QString elidedLastLine = "";
 	QPainter painter(this);
 	QFontMetrics fontMetrics = painter.fontMetrics();
 	QRect cr = contentsRect();
 	cr.adjust(margin(), margin(), -margin(), -margin());
 	
 	bool didElide = false;
+	QChar ellipsisChar(0x2026);//= "…"
 	int lineSpacing = fontMetrics.lineSpacing();
-	int x, y = x =cr.top()+(cr.height()-lineSpacing)/2;
-	
-	QTextLayout textLayout( content, painter.font());
+	int y = 0;
+
+	QString plainText = "";
+	if (mOnlyPlainText)
+	{
+		plainText = mContent;
+	} else {
+		QTextDocument td;
+		td.setHtml(mContent);
+		plainText = td.toPlainText();
+	}
+	plainText = plainText.replace("\n",QChar(QChar::LineSeparator));
+	plainText = plainText.replace("\r",QChar(QChar::LineSeparator));
+
+	QTextLayout textLayout(plainText, painter.font());
+	QTextOption to = textLayout.textOption();
+	to.setAlignment(alignment());
+	to.setWrapMode(wordWrap() ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
+	textLayout.setTextOption(to);
+
 	textLayout.beginLayout();
 	forever {
+		//Get new line for text.
 		QTextLine line = textLayout.createLine();
-		
+
 		if (!line.isValid())
-			break;
-		
-		line.setLineWidth(cr.width()+2*x);
+			break;// No more line to write
+
+		line.setLineWidth(cr.width());
 		int nextLineY = y + lineSpacing;
-		
-		if (cr.height() >= nextLineY + lineSpacing) {
-			line.draw(&painter, QPoint(x, y));
+
+		if ((cr.height() >= nextLineY + lineSpacing) && wordWrap()) {
+			//Line written normaly, next line will too
+			lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
 			y = nextLineY;
 		} else {
-			QString lastLine = content.mid(line.textStart());
-			QString elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, cr.width());
-			painter.drawText(QPoint(x, y + fontMetrics.ascent()), elidedLastLine);
-			line = textLayout.createLine();
-			didElide = line.isValid();
-			break;
+			//The next line can't be written.
+			QString lastLine = plainText.mid(line.textStart()).split(QChar(QChar::LineSeparator)).at(0);
+			QTextLine lineEnd = textLayout.createLine();
+			if (!lineEnd.isValid() && (wordWrap()
+			                           || (fontMetrics.width(lastLine) < cr.width()))) {
+				//No more text for next line so this one is OK
+				lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
+				elidedLastLine="";
+				didElide = false;
+			} else {
+				//Text is left, so get elided text
+				if (lastLine == "") {
+					elidedLastLine = ellipsisChar;
+				} else {
+					elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, cr.width()-1);
+					if (elidedLastLine.right(1) != ellipsisChar)
+						elidedLastLine.append(ellipsisChar);//New line at end
+				}
+				didElide = true;
+				break;
+			}
 		}
 	}
 	textLayout.endLayout();
-	
-	if (didElide != elided) {
-		elided = didElide;
+
+	int iTransX, iTransY = iTransX = 0;
+	int iHeight = lLines.count() * lineSpacing;
+	if (didElide) iHeight += lineSpacing;
+
+	//Compute lines translation with alignment
+	if (alignment() & Qt::AlignTop)
+		iTransY = 0;
+	if (alignment() & Qt::AlignBottom)
+		iTransY = cr.height() - iHeight;
+	if (alignment() & Qt::AlignVCenter)
+		iTransY = (cr.height() - iHeight) / 2;
+
+	QPair<QTextLine,QPoint> pair;
+	QPoint lastPos(-1,-1);
+	//Now we know how many lines to redraw at good position
+	foreach (pair, lLines){
+		lastPos = pair.second + QPoint(0, iTransY);
+		pair.first.draw(&painter, lastPos);
+	}
+
+	//Print last elided line
+	if (didElide) {
+		int width = fontMetrics.width(elidedLastLine);
+		if (lastPos.y() == -1){
+			y = iTransY;// Only one line
+		} else {
+			y = lastPos.y() + lineSpacing;
+		}
+		if (width < cr.width()){
+			//Text don't taking all line (with line break), so align it
+			if (alignment() & Qt::AlignLeft)
+				iTransX = 0;
+			if (alignment() & Qt::AlignRight)
+				iTransX = cr.width() - width;
+			if (alignment() & Qt::AlignHCenter)
+				iTransX = (cr.width() - width) / 2;
+			if (alignment() & Qt::AlignJustify)
+				iTransX = 0;
+		}
+
+		painter.drawText(QPoint(iTransX, y + fontMetrics.ascent()), elidedLastLine);
+		//Draw button to get ToolTip
+		mRectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar)
+		                     , y
+		                     , fontMetrics.width(ellipsisChar)
+		                     , fontMetrics.height() - 1);
+		painter.drawRoundRect(mRectElision);
+	} else {
+		mRectElision = QRect();
+	}
+
+	//Send signal if changed
+	if (didElide != mElided) {
+		mElided = didElide;
 		emit elisionChanged(didElide);
 	}
+}
+
+void ElidedLabel::mousePressEvent(QMouseEvent *ev)
+{
+	if (mElided && (ev->buttons()==Qt::LeftButton) && (mRectElision.contains(ev->pos()))){
+		QToolTip::showText(mapToGlobal(QPoint(0, 0)),QString("<FONT>") + mContent + QString("</FONT>"));
+		return; // eat event
+	}
+	QLabel::mousePressEvent(ev);
 }

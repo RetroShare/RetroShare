@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
+    <width>800</width>
     <height>486</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
-    <normaloff>:/images/user/agt_forum24.png</normaloff>:/images/user/agt_forum24.png</iconset>
+    <normaloff>:/images/logo/logo_32.png</normaloff>:/images/logo/logo_32.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">
@@ -31,13 +31,7 @@
     <widget class="QFrame" name="frame">
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="lobbyinfo_label">
-        <property name="font">
-         <font>
-          <family>Tahoma</family>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="lobbyInfoLabel">
         <property name="text">
          <string>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</string>
         </property>
@@ -82,20 +76,17 @@
              <item row="2" column="0">
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>Your nick name:</string>
+                <string>Identity to use:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
-             <item row="2" column="2">
-              <widget class="QLineEdit" name="nickName_LE"/>
-             </item>
              <item row="3" column="0">
               <widget class="QLabel" name="label_6">
                <property name="text">
-                <string>Security policy:</string>
+                <string>Visibility:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -114,6 +105,32 @@
                  <string>Private (Works on invitation only)</string>
                 </property>
                </item>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="GxsIdChooser" name="idChooser_CB"/>
+             </item>
+             <item row="4" column="2">
+              <widget class="QCheckBox" name="pgp_signed_CB">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you check this, only PGP-signed ids can be used to join and talk in this lobby. This limitation prevents anonymous spamming as it becomes possible for at least some people in the lobby to locate the spammer's node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>require PGP-signed identities</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label">
+               <property name="layoutDirection">
+                <enum>Qt::LeftToRight</enum>
+               </property>
+               <property name="text">
+                <string>Security:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
               </widget>
              </item>
             </layout>
@@ -255,6 +272,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
@@ -265,6 +287,11 @@
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

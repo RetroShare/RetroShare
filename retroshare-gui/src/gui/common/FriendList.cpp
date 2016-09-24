@@ -26,7 +26,10 @@
 #include <QTreeWidgetItem>
 #include <QWidgetAction>
 #include <QDateTime>
+#include <QPainter>
+#include <QtXml>
 
+#include "rsserver/rsaccounts.h"
 #include "retroshare/rspeers.h"
 
 #include "GroupDefs.h"
@@ -35,6 +38,7 @@
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/connect/PGPKeyDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/groups/CreateGroup.h"
 #include "gui/msgs/MessageComposer.h"
@@ -49,8 +53,9 @@
 #include "util/misc.h"
 #include "vmessagebox.h"
 #include "util/QtVersion.h"
-
+#include "gui/chat/ChatUserNotify.h"
 #include "gui/connect/ConnectProgressDialog.h"
+#include "gui/common/ElidedLabel.h"
 
 #include "FriendList.h"
 #include "ui_FriendList.h"
@@ -72,24 +77,18 @@
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
-#define IMAGE_CONNECT2           ":/images/reload24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
 #define IMAGE_GROUP24            ":/images/user/group24.png"
 
-#define COLUMN_COUNT        5
-#define COLUMN_NAME         0
-#define COLUMN_STATE        1
-#define COLUMN_LAST_CONTACT 2
-#define COLUMN_AVATAR       3
-#define COLUMN_IP           4
-
 #define COLUMN_DATA     0 // column for storing the userdata id
 
-#define COLUMN_AVATAR_WIDTH 42
-
-#define ROLE_SORT        Qt::UserRole
-#define ROLE_ID          Qt::UserRole + 1
-#define ROLE_STANDARD    Qt::UserRole + 2
+#define ROLE_ID                  Qt::UserRole
+#define ROLE_STANDARD            Qt::UserRole + 1
+#define ROLE_SORT_GROUP          Qt::UserRole + 2
+#define ROLE_SORT_STANDARD_GROUP Qt::UserRole + 3
+#define ROLE_SORT_NAME           Qt::UserRole + 4
+#define ROLE_SORT_STATE          Qt::UserRole + 5
+#define ROLE_FILTER              Qt::UserRole + 6
 
 #define TYPE_GPG   0
 #define TYPE_SSL   1
@@ -104,75 +103,71 @@
 #define PEER_STATE_INACTIVE     5
 #define PEER_STATE_OFFLINE      6
 
-#define BuildStateSortString(bEnabled,sName,nState) bEnabled ? (QString ("%1").arg(nState) + " " + sName) : sName
-
-
 /******
  * #define FRIENDS_DEBUG 1
  *****/
 
+Q_DECLARE_METATYPE(ElidedLabel*)
+
 FriendList::FriendList(QWidget *parent) :
     RsAutoUpdatePage(1500, parent),
     ui(new Ui::FriendList),
-    m_compareRole(new RSTreeWidgetItemCompareRole),
-    mBigName(false),
+    mCompareRole(new RSTreeWidgetItemCompareRole),
     mShowGroups(true),
-    mHideState(false),
+    mShowState(false),
     mHideUnconnected(false),
-    groupsHasChanged(false),
-    openGroups(NULL),
-    openPeers(NULL)
+    groupsHasChanged(false)
 {
     ui->setupUi(this);
 
-    m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
-    m_compareRole->setRole(COLUMN_STATE, ROLE_SORT);
-    m_compareRole->setRole(COLUMN_LAST_CONTACT, ROLE_SORT);
-    m_compareRole->setRole(COLUMN_IP, ROLE_SORT);
-    m_compareRole->setRole(COLUMN_AVATAR, ROLE_STANDARD);
-
-    connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCostumPopupMenu()));
+    connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
     connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
     connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
-    connect(ui->actionShowStatusColumn, SIGNAL(triggered(bool)), this, SLOT(setShowStatusColumn(bool)));
-    connect(ui->actionShowAvatarColumn, SIGNAL(triggered(bool)), this, SLOT(setShowAvatarColumn(bool)));
-    connect(ui->actionShowLastContactColumn, SIGNAL(triggered(bool)), this, SLOT(setShowLastContactColumn(bool)));
-    connect(ui->actionShowIPColumn, SIGNAL(triggered(bool)), this, SLOT(setShowIPColumn(bool)));
-    connect(ui->actionHideState, SIGNAL(triggered(bool)), this, SLOT(setHideState(bool)));
-    connect(ui->actionRootIsDecorated, SIGNAL(triggered(bool)), this, SLOT(setRootIsDecorated(bool)));
+    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-
-    connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
-    connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
-    connect(ui->actionSortByLastContact, SIGNAL(triggered()), this, SLOT(setSortByLastContact()));
-    connect(ui->actionSortByIP, SIGNAL(triggered()), this, SLOT(setSortByIP()));
-    connect(ui->actionSortPeersAscendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
-    connect(ui->actionSortPeersDescendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
+    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
+    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
-    initializeHeader(false);
+    mActionSortByState = new QAction(tr("Sort by state"), this);
+    mActionSortByState->setCheckable(true);
+    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
+    ui->peerTreeWidget->addContextMenuAction(mActionSortByState);
 
-    ui->peerTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
-
-    // set header text aligment
-    QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
-    headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(COLUMN_STATE, Qt::AlignLeft | Qt::AlignVCenter);
-    headerItem->setTextAlignment(COLUMN_AVATAR, Qt::AlignLeft | Qt::AlignVCenter);
+    /* Set sort */
+    sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
+    sortByState(false);
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
+
+    /* Initialize tree */
+    ui->peerTreeWidget->enableColumnCustomize(true);
+    ui->peerTreeWidget->setColumnCustomizable(COLUMN_NAME, false);
+    connect(ui->peerTreeWidget, SIGNAL(columnVisibleChanged(int,bool)), this, SLOT(peerTreeColumnVisibleChanged(int,bool)));
+    connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
+    connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
+
+    QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
+
+    /* Set initial column width */
+    int fontWidth = fontMetrics.width("W");
+    ui->peerTreeWidget->setColumnWidth(COLUMN_NAME, 22 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
+
+    int avatarHeight = fontMetrics.height() * 3;
+    ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
 
     /* Initialize display menu */
     createDisplayMenu();
@@ -181,7 +176,7 @@ FriendList::FriendList(QWidget *parent) :
 FriendList::~FriendList()
 {
     delete ui;
-    delete(m_compareRole);
+    delete(mCompareRole);
 }
 
 void FriendList::addToolButton(QToolButton *toolButton)
@@ -192,76 +187,69 @@ void FriendList::addToolButton(QToolButton *toolButton)
 
     /* Initialize button */
     toolButton->setAutoRaise(true);
-    toolButton->setIconSize(ui->displayButton->iconSize());
-    toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
+    float S = QFontMetricsF(ui->filterLineEdit->font()).height() ;
+    toolButton->setIconSize(QSize(S*1.5,S*1.5));
+    toolButton->setFocusPolicy(Qt::NoFocus);
 
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
-void FriendList::processSettings(bool bLoad)
+void FriendList::processSettings(bool load)
 {
-    int peerTreeVersion = 2; // version number for the settings to solve problems when modifying the column count
+    // state of peer tree
+    ui->peerTreeWidget->setSettingsVersion(2);
+    ui->peerTreeWidget->processSettings(load);
 
-    if (bLoad) {
+    if (load) {
         // load settings
 
-        // state of peer tree
-        if (Settings->value("peerTreeVersion").toInt() == peerTreeVersion) {
-            ui->peerTreeWidget->header()->restoreState(Settings->value("peerTree").toByteArray());
-        }
 //        ui->peerTreeWidget->header()->doItemsLayout(); // is needed because I added a third column
                                                        // restoreState would corrupt the internal sectionCount
 
-        // state of the columns
-        setShowStatusColumn(Settings->value("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE)).toBool());
-        setShowLastContactColumn(Settings->value("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT)).toBool());
-        setShowIPColumn(Settings->value("showIPColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_IP)).toBool());
-        setShowAvatarColumn(Settings->value("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR)).toBool());
-
         // states
         setHideUnconnected(Settings->value("hideUnconnected", mHideUnconnected).toBool());
-        setHideState(Settings->value("hideState", mHideState).toBool());
-        //setRootIsDecorated(Settings->value("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated()).toBool());
-        setRootIsDecorated(true) ;
+        setShowState(Settings->value("showState", mShowState).toBool());
         setShowGroups(Settings->value("showGroups", mShowGroups).toBool());
+
+        // sort
+        sortByState(Settings->value("sortByState", isSortByState()).toBool());
 
         // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
-        for (int index = 0; index < arrayIndex; index++) {
+        for (int index = 0; index < arrayIndex; ++index) {
             Settings->setArrayIndex(index);
-            addGroupToExpand(Settings->value("open").toString().toStdString());
+
+            std::string gids = Settings->value("open").toString().toStdString();
+
+            RsGroupInfo ginfo ;
+
+            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
+                addGroupToExpand(ginfo.id) ;
+            else
+                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
-
-        initializeHeader(true);
-        updateHeader();
     } else {
         // save settings
 
-        // state of peer tree
-        Settings->setValue("peerTree", ui->peerTreeWidget->header()->saveState());
-        Settings->setValue("peerTreeVersion", peerTreeVersion);
-
-        // state of the columns
-        Settings->setValue("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
-        Settings->setValue("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
-        Settings->setValue("showIPColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_IP));
-        Settings->setValue("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
-
         // states
         Settings->setValue("hideUnconnected", mHideUnconnected);
-        Settings->setValue("hideState", mHideState);
-        Settings->setValue("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated());
+        Settings->setValue("showState", mShowState);
         Settings->setValue("showGroups", mShowGroups);
+
+        // sort
+        Settings->setValue("sortByState", isSortByState());
 
         // open groups
         Settings->beginWriteArray("Groups");
         int arrayIndex = 0;
-        std::set<std::string> expandedPeers;
+        std::set<RsNodeGroupId> expandedPeers;
         getExpandedGroups(expandedPeers);
-        foreach (std::string groupId, expandedPeers) {
+        foreach (RsNodeGroupId groupId, expandedPeers) {
             Settings->setArrayIndex(arrayIndex++);
-            Settings->setValue("open", QString::fromStdString(groupId));
+            Settings->setValue("open", QString::fromStdString(groupId.toStdString()));
         }
         Settings->endArray();
     }
@@ -280,25 +268,6 @@ void FriendList::changeEvent(QEvent *e)
     }
 }
 
-void FriendList::initializeHeader(bool afterLoadSettings)
-{
-    // set column size
-    QHeaderView *header = ui->peerTreeWidget->header();
-    QHeaderView_setSectionsMovable(header, true);
-    //QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Stretch);
-    QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_STATE, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_LAST_CONTACT, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_IP, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_AVATAR, QHeaderView::Fixed);
-
-/*    if (!afterLoadSettings) {
-        header->resizeSection(COLUMN_NAME, 150);
-        header->resizeSection(COLUMN_LAST_CONTACT, 120);
-    }*/
-    header->resizeSection(COLUMN_AVATAR, COLUMN_AVATAR_WIDTH);
-}
-
 /* Utility Fns */
 inline std::string getRsId(QTreeWidgetItem *item)
 {
@@ -309,13 +278,13 @@ inline std::string getRsId(QTreeWidgetItem *item)
  * Creates the context popup menu and its submenus,
  * then shows it at the current cursor position.
  */
-void FriendList::peerTreeWidgetCostumPopupMenu()
+void FriendList::peerTreeWidgetCustomPopupMenu()
 {
     QTreeWidgetItem *c = getCurrentPeer();
 
-    QMenu contextMnu(this);
+    QMenu *contextMenu = new QMenu(this);
 
-    QWidget *widget = new QWidget(&contextMnu);
+    QWidget *widget = new QWidget(contextMenu);
     widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
     // create menu header
@@ -324,8 +293,9 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    iconLabel->setPixmap(QPixmap(":/images/user/friends24.png"));
-    iconLabel->setMaximumSize(iconLabel->frameSize().height() + 24, 24);
+    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    iconLabel->setPixmap(pix);
+    iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
 
     QLabel *textLabel = new QLabel("<strong>RetroShare</strong>", widget);
@@ -338,7 +308,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
     QWidgetAction *widgetAction = new QWidgetAction(this);
     widgetAction->setDefaultWidget(widget);
-    contextMnu.addAction(widgetAction);
+    contextMenu->addAction(widgetAction);
 
     // create menu entries
     if (c)
@@ -357,7 +327,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  break;
              case TYPE_SSL:
                  //this is a SSL key
-                 textLabel->setText("<strong>" + tr("Location") + "</strong>");
+                 textLabel->setText("<strong>" + tr("Node") + "</strong>");
                  break;
          }
 
@@ -368,175 +338,138 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
-                 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Group"), this, SLOT(msgfriend()));
-//                 contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
+                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
+                 contextMenu->addSeparator();
+                 contextMenu->addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
-                 contextMnu.addSeparator();
-
-                 contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
-
-                 QAction *action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
+                 QAction *action = contextMenu->addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                  action->setDisabled(standard);
-
-//                 lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
              }
              break;
          case TYPE_GPG:
-         case TYPE_SSL:
+        {
+             contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+             contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+
+             contextMenu->addSeparator();
+
+             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
+             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny"), this, SLOT(removefriend()));
+
+             if(mShowGroups)
              {
-                 contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-//                lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
+                 QMenu* addToGroupMenu = NULL;
+                 QMenu* moveToGroupMenu = NULL;
 
-                 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
+                 std::list<RsGroupInfo> groupInfoList;
+                 rsPeers->getGroupInfoList(groupInfoList);
 
-                 contextMnu.addSeparator();
+                 GroupDefs::sortByName(groupInfoList);
 
-                 contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(configurefriend()));
-                 //            contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
-                 //            action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
+                 RsPgpId gpgId ( getRsId(c));
 
-                 if (type == TYPE_GPG || type == TYPE_SSL) {
-                     contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
-                 }
+                 QTreeWidgetItem *parent = c->parent();
 
-                 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
-
-                 if (type == TYPE_SSL) {
-                     contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
-                 }
-                 //if (type == TYPE_GPG) {
-                 //    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
-                 //}
-
-                 QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
-
-                 if (/*RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) &&*/ RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) 
-                     action->setDisabled(true);
-
-                 if (type == TYPE_GPG) {
-                     contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
-                 } else {
-                     //this is a SSL key
-                     contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
-                 }
-
-                 if (mShowGroups && type == TYPE_GPG) {
-                     QMenu* addToGroupMenu = NULL;
-                     QMenu* moveToGroupMenu = NULL;
-
-                     std::list<RsGroupInfo> groupInfoList;
-                     rsPeers->getGroupInfoList(groupInfoList);
-
-                     GroupDefs::sortByName(groupInfoList);
-
-                     RsPgpId gpgId ( getRsId(c));
-
-                     QTreeWidgetItem *parent = c->parent();
-
-                     bool foundGroup = false;
-                     // add action for all groups, except the own group
-                     for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-                         if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
-                             if (parent) {
-                                 if (addToGroupMenu == NULL) {
-                                     addToGroupMenu = new QMenu(tr("Add to group"), &contextMnu);
-                                 }
-                                 QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
-                                 addToGroupAction->setData(QString::fromStdString(groupIt->id));
-                                 connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
-                                 addToGroupMenu->addAction(addToGroupAction);
+                 bool foundGroup = false;
+                 // add action for all groups, except the own group
+                 for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
+                     if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
+                         if (parent) {
+                             if (addToGroupMenu == NULL) {
+                                 addToGroupMenu = new QMenu(tr("Add to group"), contextMenu);
                              }
-
-                             if (moveToGroupMenu == NULL) {
-                                 moveToGroupMenu = new QMenu(tr("Move to group"), &contextMnu);
-                             }
-                             QAction* moveToGroupAction = new QAction(GroupDefs::name(*groupIt), moveToGroupMenu);
-                             moveToGroupAction->setData(QString::fromStdString(groupIt->id));
-                             connect(moveToGroupAction, SIGNAL(triggered()), this, SLOT(moveToGroup()));
-                             moveToGroupMenu->addAction(moveToGroupAction);
-                         } else {
-                             foundGroup = true;
+                             QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
+                             addToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
+                             connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
+                             addToGroupMenu->addAction(addToGroupAction);
                          }
+
+                         if (moveToGroupMenu == NULL) {
+                             moveToGroupMenu = new QMenu(tr("Move to group"), contextMenu);
+                         }
+                         QAction* moveToGroupAction = new QAction(GroupDefs::name(*groupIt), moveToGroupMenu);
+                         moveToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
+                         connect(moveToGroupAction, SIGNAL(triggered()), this, SLOT(moveToGroup()));
+                         moveToGroupMenu->addAction(moveToGroupAction);
+                     } else {
+                         foundGroup = true;
+                     }
+                 }
+
+                 QMenu *groupsMenu = contextMenu->addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
+                 groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+
+                 if (addToGroupMenu || moveToGroupMenu || foundGroup) {
+                     if (addToGroupMenu) {
+                         groupsMenu->addMenu(addToGroupMenu);
                      }
 
-                     QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
-                     groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+                     if (moveToGroupMenu) {
+                         groupsMenu->addMenu(moveToGroupMenu);
+                     }
 
-                     if (addToGroupMenu || moveToGroupMenu || foundGroup) {
-                         if (addToGroupMenu) {
-                             groupsMenu->addMenu(addToGroupMenu);
+                     if (foundGroup) {
+                         // add remove from group
+                         if (parent && parent->type() == TYPE_GROUP) {
+                             QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group"));
+                             removeFromGroup->setData(parent->data(COLUMN_DATA, ROLE_ID));
+                             connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
                          }
 
-                         if (moveToGroupMenu) {
-                             groupsMenu->addMenu(moveToGroupMenu);
-                         }
-
-                         if (foundGroup) {
-                             // add remove from group
-                             if (parent && parent->type() == TYPE_GROUP) {
-                                 QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group"));
-                                 removeFromGroup->setData(parent->data(COLUMN_DATA, ROLE_ID));
-                                 connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
-                             }
-
-                             QAction *removeFromAllGroups = groupsMenu->addAction(tr("Remove from all groups"));
-                             removeFromAllGroups->setData("");
-                             connect(removeFromAllGroups, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
-                         }
+                         QAction *removeFromAllGroups = groupsMenu->addAction(tr("Remove from all groups"));
+                         removeFromAllGroups->setData("");
+                         connect(removeFromAllGroups, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
                      }
                  }
              }
+
+        }
+         break ;
+
+         case TYPE_SSL:
+             {
+                 contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+
+                 contextMenu->addSeparator();
+
+                 contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Details"), this, SLOT(configurefriend()));
+
+                 if (type == TYPE_GPG || type == TYPE_SSL) {
+                     contextMenu->addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
+                 }
+
+                 contextMenu->addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+
+                 contextMenu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
+
+
+                 //this is a SSL key
+                 contextMenu->addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
+
+             }
          }
 
-//         if (lobbyMenu) {
-//            lobbyMenu->addAction(QIcon(IMAGE_ADDFRIEND), tr("Create new"), this, SLOT(createchatlobby()));
-//
-//             // Get existing lobbies
-//             //
-//             std::list<ChatLobbyInfo> cl_infos ;
-//             rsMsgs->getChatLobbyList(cl_infos) ;
-//
-//             for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
-//             {
-//                 std::cerr << "Adding meny entry with lobby id " << std::hex << (*it).lobby_id << std::dec << std::endl;
-//
-//                 QMenu *mnu2 = lobbyMenu->addMenu(QIcon(IMAGE_CHAT), QString::fromUtf8((*it).lobby_name.c_str())) ;
-//
-//                 QAction* inviteToLobbyAction = new QAction((type == TYPE_GROUP) ? tr("Invite this group") : tr("Invite this friend"), mnu2);
-//                 inviteToLobbyAction->setData(QString::number((*it).lobby_id));
-//                 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
-//                 mnu2->addAction(inviteToLobbyAction);
-//
-//                 QAction* showLobbyAction = new QAction(tr("Show"), mnu2);
-//                 showLobbyAction->setData(QString::number((*it).lobby_id));
-//                 connect(showLobbyAction, SIGNAL(triggered()), this, SLOT(showLobby()));
-//                 mnu2->addAction(showLobbyAction);
-//
-//                 QAction* unsubscribeToLobbyAction = new QAction(tr("Unsubscribe"), mnu2);
-//                 unsubscribeToLobbyAction->setData(QString::number((*it).lobby_id));
-//                 connect(unsubscribeToLobbyAction, SIGNAL(triggered()), this, SLOT(unsubscribeToLobby()));
-//                 mnu2->addAction(unsubscribeToLobbyAction);
-//             }
-//         }
-     } else {
-        QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
-        if (/*RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) &&*/ RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
-            action->setDisabled(true);
-        }
-    }
+     }
 
+    contextMenu->addSeparator();
 
-    contextMnu.addSeparator();
+    QAction *action = contextMenu->addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+    if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
+        action->setDisabled(true);
 
-    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
-    contextMnu.addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+    contextMenu->addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
+    contextMenu->addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
-    contextMnu.exec(QCursor::pos());
+    contextMenu = ui->peerTreeWidget->createStandardContextMenu(contextMenu);
+
+    contextMenu->exec(QCursor::pos());
+    delete contextMenu;
 }
 
 void FriendList::createNewGroup()
 {
-    CreateGroup createGrpDialog ("", this);
+    CreateGroup createGrpDialog (RsNodeGroupId(), this);
     createGrpDialog.exec();
 }
 
@@ -551,32 +484,64 @@ void FriendList::groupsChanged()
     insertPeers();
 }
 
-void FriendList::updateAvatar(const QString& id)
+static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 {
-    if (ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR))
-        return;
+    int avatarWidth = avatar.width();
+    int avatarHeight = avatar.height();
 
-    QTreeWidgetItemIterator it(ui->peerTreeWidget);
-    while (*it) {
-        if ((*it)->type() == TYPE_SSL && id == (*it)->data(COLUMN_DATA, ROLE_ID).toString()) {
-            if ((*it)->parent() != NULL && (*it)->parent()->type() == TYPE_GPG) {
-                QPixmap avatar;
-                AvatarDefs::getAvatarFromSslId(id.toStdString(), avatar);
-                QIcon avatar_icon(avatar);
-                (*it)->parent()->setIcon(COLUMN_AVATAR, avatar_icon);
-            }
-        }
-        ++it;
+    QPixmap pixmap(avatar);
+
+    int overlayWidth = avatarWidth / 2.5;
+    int overlayHeight = avatarHeight / 2.5;
+    int overlayX = avatarWidth - overlayWidth;
+    int overlayY = avatarHeight - overlayHeight;
+
+    QPainter painter(&pixmap);
+    painter.drawPixmap(overlayX, overlayY, overlayWidth, overlayHeight, overlay);
+
+    QIcon icon;
+    icon.addPixmap(pixmap);
+    return icon;
+}
+
+static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
+{
+    QWidget *widget = treeWidget->itemWidget(item, FriendList::COLUMN_NAME);
+
+    if (!widget) {
+        widget = new QWidget;
+        nameLabel = new ElidedLabel(widget);
+        textLabel = new ElidedLabel(widget);
+
+        widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
+        widget->setProperty("textLabel", qVariantFromValue(textLabel));
+
+        QVBoxLayout *layout = new QVBoxLayout;
+        layout->setSpacing(0);
+        layout->setContentsMargins(3, 0, 0, 0);
+
+        nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+        textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+
+        layout->addWidget(nameLabel);
+        layout->addWidget(textLabel);
+
+        widget->setLayout(layout);
+
+        treeWidget->setItemWidget(item, FriendList::COLUMN_NAME, widget);
+    } else {
+        nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
+        textLabel = widget->property("textLabel").value<ElidedLabel*>();
     }
 }
 
 /**
  * Get the list of peers from the RsIface.
- * Adds all friend gpg ids, with their locations as children to the peerTreeWidget.
+ * Adds all friend gpg ids, with their nodes as children to the peerTreeWidget.
  * If enabled, peers are sorted in their associated groups.
  * Groups are only updated, when groupsHasChanged is true.
  */
-void  FriendList::insertPeers()
+void FriendList::insertPeers()
 {
     if (RsAutoUpdatePage::eventsLocked())
         return;
@@ -585,9 +550,7 @@ void  FriendList::insertPeers()
     std::cerr << "FriendList::insertPeers() called." << std::endl;
 #endif
 
-    bool isStatusColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
-    bool isAvatarColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
-    bool isIPColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_IP);
+    int columnCount = ui->peerTreeWidget->columnCount();
 
     std::list<StatusInfo> statusInfo;
     rsStatus->getStatusList(statusInfo);
@@ -598,9 +561,9 @@ void  FriendList::insertPeers()
         return;
     }
 
-    // get ids of existing private chat messages
-    std::list<RsPeerId> privateChatIds;
-    rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
+    // get peers with waiting incoming chats
+    std::vector<RsPeerId> privateChatIds;
+    ChatUserNotify::getPeersWithWaitingChat(privateChatIds);
 
     // get existing groups
     std::list<RsGroupInfo> groupInfoList;
@@ -611,7 +574,7 @@ void  FriendList::insertPeers()
     std::list<RsPgpId>::iterator gpgIt;
     rsPeers->getGPGAcceptedList(gpgFriends);
 
-    //add own gpg id, if we have more than on location (ssl client)
+    //add own gpg id, if we have more than on node (ssl client)
     std::list<RsPeerId> ownSslContacts;
     RsPgpId ownId = rsPeers->getGPGOwnId();
     rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
@@ -626,75 +589,75 @@ void  FriendList::insertPeers()
     QTreeWidgetItemIterator itemIterator(peerTreeWidget);
     QTreeWidgetItem *item;
     while ((item = *itemIterator) != NULL) {
-        itemIterator++;
+        ++itemIterator;
         switch (item->type()) {
         case TYPE_GPG:
-        {
-            QTreeWidgetItem *parent = item->parent();
-            RsPgpId gpg_widget_id ( getRsId(item));
+            {
+                QTreeWidgetItem *parent = item->parent();
+                RsPgpId gpg_widget_id ( getRsId(item));
 
-            // remove items that are not friends anymore
-            if (std::find(gpgFriends.begin(), gpgFriends.end(), gpg_widget_id) == gpgFriends.end()) {
-                if (parent) {
-                    delete(parent->takeChild(parent->indexOfChild(item)));
-                } else {
-                    delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
+                // remove items that are not friends anymore
+                if (std::find(gpgFriends.begin(), gpgFriends.end(), gpg_widget_id) == gpgFriends.end()) {
+                    if (parent) {
+                        delete(parent->takeChild(parent->indexOfChild(item)));
+                    } else {
+                        delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
+                    }
+                    break;
                 }
-                break;
-            }
 
-            if (mShowGroups && groupsHasChanged) {
-                if (parent) {
-                    if (parent->type() == TYPE_GROUP) {
-                        std::string groupId = getRsId(parent);
+                if (mShowGroups && groupsHasChanged) {
+                    if (parent) {
+                        if (parent->type() == TYPE_GROUP) {
+                            RsNodeGroupId groupId(getRsId(parent));
 
-                        // the parent is a group, check if the gpg id is assigned to the group
-                        for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-                            if (groupIt->id == groupId) {
-                                if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) == groupIt->peerIds.end()) {
-                                    delete(parent->takeChild(parent->indexOfChild(item)));
+                            // the parent is a group, check if the gpg id is assigned to the group
+                            for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
+                                if (groupIt->id == groupId) {
+                                    if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) == groupIt->peerIds.end()) {
+                                        delete(parent->takeChild(parent->indexOfChild(item)));
+                                    }
+                                    break;
                                 }
+                            }
+                        }
+                    } else {
+                        // gpg item without group, check if the gpg id is assigned to a group
+                        for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
+                            if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) != groupIt->peerIds.end()) {
+                                delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
                                 break;
                             }
                         }
                     }
-                } else {
-                    // gpg item without group, check if the gpg id is assigned to a group
-                    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-                        if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpg_widget_id) != groupIt->peerIds.end()) {
-                            delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
-                            break;
-                        }
-                    }
                 }
             }
-        }
             break;
         case TYPE_GROUP:
-        {
-            if (!mShowGroups) {
-                if (item->parent()) {
-                    delete(item->parent()->takeChild(item->parent()->indexOfChild(item)));
-                } else {
-                    delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
-                }
-            } else if (groupsHasChanged) {
-                // remove deleted groups
-                std::string groupId = getRsId(item);
-                for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-                    if (groupIt->id == groupId) {
-                        break;
-                    }
-                }
-                if (groupIt == groupInfoList.end() || groupIt->peerIds.size() == 0) {
+            {
+                if (!mShowGroups) {
                     if (item->parent()) {
                         delete(item->parent()->takeChild(item->parent()->indexOfChild(item)));
                     } else {
                         delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
                     }
+                } else if (groupsHasChanged) {
+                    // remove deleted groups
+                    RsNodeGroupId groupId ( getRsId(item));
+                    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
+                        if (groupIt->id == groupId) {
+                            break;
+                        }
+                    }
+                    if (groupIt == groupInfoList.end() || groupIt->peerIds.empty()) {
+                        if (item->parent()) {
+                            delete(item->parent()->takeChild(item->parent()->indexOfChild(item)));
+                        } else {
+                            delete(peerTreeWidget->takeTopLevelItem(peerTreeWidget->indexOfTopLevelItem(item)));
+                        }
+                    }
                 }
             }
-        }
             break;
         }
     }
@@ -711,17 +674,17 @@ void  FriendList::insertPeers()
         if (mShowGroups && groupIt != groupInfoList.end()) {
             groupInfo = &(*groupIt);
 
-            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.size() == 0) {
+            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.empty()) {
                 // don't show empty standard groups
-                groupIt++;
+                ++groupIt;
                 continue;
             }
 
             // search existing group item
             int itemCount = peerTreeWidget->topLevelItemCount();
-            for (int index = 0; index < itemCount; index++) {
+            for (int index = 0; index < itemCount; ++index) {
                 QTreeWidgetItem *groupItemLoop = peerTreeWidget->topLevelItem(index);
-                if (groupItemLoop->type() == TYPE_GROUP && getRsId(groupItemLoop) == groupInfo->id) {
+                if (groupItemLoop->type() == TYPE_GROUP && RsNodeGroupId(getRsId(groupItemLoop)) == groupInfo->id) {
                     groupItem = groupItemLoop;
                     break;
                 }
@@ -729,21 +692,26 @@ void  FriendList::insertPeers()
 
             if (groupItem == NULL) {
                 // add group item
-                groupItem = new RSTreeWidgetItem(m_compareRole, TYPE_GROUP);
+                groupItem = new RSTreeWidgetItem(mCompareRole, TYPE_GROUP);
 
                 /* Add item to the list. Add here, because for setHidden the item must be added */
                 peerTreeWidget->addTopLevelItem(groupItem);
 
                 groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-                groupItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
                 groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
                 groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
 
                 /* used to find back the item */
-                groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
+                groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id.toStdString()));
                 groupItem->setData(COLUMN_DATA, ROLE_STANDARD, (groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? true : false);
 
+                /* Sort data */
+                for (int i = 0; i < columnCount; ++i) {
+                    groupItem->setData(i, ROLE_SORT_GROUP, 1);
+                    groupItem->setData(i, ROLE_SORT_STANDARD_GROUP, (groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? 0 : 1);
+                    groupItem->setData(i, ROLE_SORT_STATE, 0);
+                }
             } else {
                 // remove all gpg items that are not more assigned
                 int childCount = groupItem->childCount();
@@ -757,11 +725,11 @@ void  FriendList::insertPeers()
                             continue;
                         }
                     }
-                    childIndex++;
+                    ++childIndex;
                 }
             }
 
-            if (openGroups != NULL && openGroups->find(groupInfo->id) != openGroups->end()) {
+            if (openGroups.find(groupInfo->id) != openGroups.end()) {
                 groupItem->setExpanded(true);
             }
 
@@ -769,7 +737,8 @@ void  FriendList::insertPeers()
         }
 
         // iterate through gpg friends
-        for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); gpgIt++) {
+        for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); ++gpgIt)
+        {
             RsPgpId gpgId = *gpgIt;
 
             if (mShowGroups) {
@@ -800,7 +769,7 @@ void  FriendList::insertPeers()
 
             // search existing gpg item
             int itemCount = groupItem ? groupItem->childCount() : peerTreeWidget->topLevelItemCount();
-            for (int index = 0; index < itemCount; index++) {
+            for (int index = 0; index < itemCount; ++index) {
                 gpgItemLoop = groupItem ? groupItem->child(index) : peerTreeWidget->topLevelItem(index);
                 if (gpgItemLoop->type() == TYPE_GPG && getRsId(gpgItemLoop) == gpgId.toStdString()) {
                     gpgItem = gpgItemLoop;
@@ -823,7 +792,7 @@ void  FriendList::insertPeers()
 
             if (gpgItem == NULL) {
                 // create gpg item and add it to tree
-                gpgItem = new RSTreeWidgetItem(m_compareRole, TYPE_GPG); //set type to 0 for custom popup menu
+                gpgItem = new RSTreeWidgetItem(mCompareRole, TYPE_GPG); //set type to 0 for custom popup menu
 
                 /* Add gpg item to the list. Add here, because for setHidden the item must be added */
                 if (groupItem) {
@@ -837,17 +806,15 @@ void  FriendList::insertPeers()
 
                 /* not displayed, used to find back the item */
                 gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
+
+                /* Sort data */
+                for (int i = 0; i < columnCount; ++i) {
+                    gpgItem->setData(i, ROLE_SORT_GROUP, 2);
+                    gpgItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
+                }
             }
 
-            if (mBigName && !mHideState && isStatusColumnHidden) {
-                gpgItem->setSizeHint(COLUMN_NAME, QSize(40, 40));
-            } else {
-                gpgItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
-            }
-
-            availableCount++;
-
-            QString gpgItemText = QString::fromUtf8(detail.name.c_str());
+            ++availableCount;
 
             // remove items that are not friends anymore
             int childCount = gpgItem->childCount();
@@ -859,7 +826,7 @@ void  FriendList::insertPeers()
                     // count again
                     childCount = gpgItem->childCount();
                 } else {
-                    childIndex++;
+                    ++childIndex;
                 }
             }
 
@@ -869,21 +836,21 @@ void  FriendList::insertPeers()
             bool gpg_hasPrivateChat = false;
             int bestPeerState = 0;        // for gpg item
             unsigned int bestRSState = 0; // for gpg item
-            RsPeerId bestSslId;        // for gpg item
             QString bestCustomStateString;// for gpg item
             std::list<RsPeerId> sslContacts;
-            QDateTime lastContact;
-            QString itemIP;
+            QDateTime bestLastContact;
+            QString bestIP;
+            QPixmap bestAvatar;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
-            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); ++sslIt) {
                 QTreeWidgetItem *sslItem = NULL;
                 RsPeerId sslId = *sslIt;
 
-                //find the corresponding sslItem child item of the gpg item
+                // find the corresponding sslItem child item of the gpg item
                 bool newChild = true;
                 childCount = gpgItem->childCount();
-                for (int childIndex = 0; childIndex < childCount; childIndex++) {
+                for (int childIndex = 0; childIndex < childCount; ++childIndex) {
                     // we assume, that only ssl items are child of the gpg item, so we don't need to test the type
                     if (getRsId(gpgItem->child(childIndex)) == sslId.toStdString()) {
                         sslItem = gpgItem->child(childIndex);
@@ -897,15 +864,16 @@ void  FriendList::insertPeers()
 #ifdef FRIENDS_DEBUG
                     std::cerr << "Removing widget from the view : id : " << sslId << std::endl;
 #endif
-                    //child has disappeared, remove it from the gpg_item
+                    // child has disappeared, remove it from the gpg_item
                     if (sslItem) {
                         gpgItem->removeChild(sslItem);
+                        delete(sslItem);
                     }
                     continue;
                 }
 
                 if (newChild) {
-                    sslItem = new RSTreeWidgetItem(m_compareRole, TYPE_SSL); //set type to 1 for custom popup menu
+                    sslItem = new RSTreeWidgetItem(mCompareRole, TYPE_SSL); //set type to 1 for custom popup menu
 
 #ifdef FRIENDS_DEBUG
                     std::cerr << "FriendList::insertPeers() inserting sslItem." << std::endl;
@@ -913,68 +881,51 @@ void  FriendList::insertPeers()
 
                     /* Add ssl child to the list. Add here, because for setHidden the item must be added */
                     gpgItem->addChild(sslItem);
+
+                    /* Sort data */
+                    for (int i = 0; i < columnCount; ++i) {
+                        sslItem->setData(i, ROLE_SORT_GROUP, 2);
+                        sslItem->setData(i, ROLE_SORT_STANDARD_GROUP, 1);
+                    }
                 }
 
                 /* not displayed, used to find back the item */
                 sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id.toStdString()));
 
-                QString sText;
+                /* Custom state string */
                 QString customStateString;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                     customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(sslDetail.id).c_str());
                 }
-                sText = QString::fromUtf8(sslDetail.location.c_str());
-                if (customStateString.isEmpty() == false) {
-                    sText += " - " + customStateString;
-                }
 
-                QString connectStateString = StatusDefs::connectStateString(sslDetail);
-                if (!isStatusColumnHidden) {
-                    sslItem->setText(COLUMN_STATE, connectStateString);
-                } else if (!mHideState && connectStateString.isEmpty() == false) {
-                    sText += " [" + StatusDefs::connectStateString(sslDetail) + "]";
-                }
-                sslItem->setText( COLUMN_NAME, sText);
-
-                if (isStatusColumnHidden == true && mHideState == true) {
-                    /* Show the state as tooltip */
-                    sslItem->setToolTip(COLUMN_NAME, connectStateString);
-                } else {
-                    sslItem->setToolTip(COLUMN_NAME, "");
-                }
-
-                // sort location
-                sslItem->setData(COLUMN_STATE, ROLE_SORT, sText);
+                QPixmap sslAvatar;
+                AvatarDefs::getAvatarFromSslId(RsPeerId(sslDetail.id.toStdString()), sslAvatar);
 
                 /* last contact */
                 QDateTime sslLastContact = QDateTime::fromTime_t(sslDetail.lastConnect);
                 sslItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(sslLastContact));
-                sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, sslLastContact);
-                if (sslLastContact > lastContact) {
-                    lastContact = sslLastContact;
+                sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(sslLastContact));
+                if (sslLastContact > bestLastContact) {
+                    bestLastContact = sslLastContact;
                 }
 
                 /* IP */
-					 
-                QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED)?QString(sslDetail.connectAddr.c_str()):QString("---");
-
-                sslItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant(sslItemIP));
-                sslItem->setData(COLUMN_IP, ROLE_SORT, sslItemIP);
-                if (sslItemIP != itemIP) {
-                    itemIP = sslItemIP;
-                }
+                QString sslIP = (sslDetail.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(sslDetail) : QString("---");
+                sslItem->setText(COLUMN_IP, sslIP);
+                sslItem->setData(COLUMN_IP, ROLE_SORT_NAME, sslIP);
 
                 /* change color and icon */
-                QIcon sslIcon;
+                QPixmap sslOverlayIcon;
                 QFont sslFont;
                 QColor sslColor;
+                int peerState = 0;
+                QString connectStateString;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                     // get the status info for this ssl id
-                    int peerState = 0;
                     int rsState = 0;
                     std::list<StatusInfo>::iterator it;
-                    for(it = statusInfo.begin(); it != statusInfo.end(); it++) {
-                        if(it->id == sslId){
+                    for (it = statusInfo.begin(); it != statusInfo.end(); ++it) {
+                        if (it->id == sslId) {
                             rsState = it->status;
                             switch (rsState) {
                             case RS_STATUS_INACTIVE:
@@ -998,18 +949,24 @@ void  FriendList::insertPeers()
                             if (bestPeerState == 0 || peerState < bestPeerState) {
                                 /* first ssl contact or higher state */
                                 bestPeerState = peerState;
-                                bestSslId = sslId;
                                 bestRSState = rsState;
                                 bestCustomStateString = customStateString;
+                                bestIP = sslIP;
+                                if (!sslAvatar.isNull()) {
+                                    bestAvatar = sslAvatar;
+                                }
                             } else if (peerState == bestPeerState) {
                                 /* equal state */
-                                if (mBigName && bestCustomStateString.isEmpty() && !customStateString.isEmpty()) {
+                                if (bestCustomStateString.isEmpty() && !customStateString.isEmpty()) {
                                     /* when customStateString is shown in name item, use sslId with customStateString.
                                        second with a custom state string ... use second */
                                     bestPeerState = peerState;
-                                    bestSslId = sslId;
                                     bestRSState = rsState;
                                     bestCustomStateString = customStateString;
+                                }
+                                if (bestAvatar.isNull() && !sslAvatar.isNull()) {
+                                    /* Use available avatar */
+                                    bestAvatar = sslAvatar;
                                 }
                             }
                             break;
@@ -1019,7 +976,9 @@ void  FriendList::insertPeers()
                     sslItem->setHidden(false);
                     gpg_connected = true;
 
-                    sslIcon = QIcon(":/images/connect_established.png");
+                    sslOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
+
+                    connectStateString = StatusDefs::name(rsState);
 
                     if (rsState == 0) {
                         sslFont.setBold(true);
@@ -1031,45 +990,112 @@ void  FriendList::insertPeers()
                 } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
                     sslItem->setHidden(mHideUnconnected);
                     gpg_online = true;
+                    peerState = PEER_STATE_AVAILABLE;
 
                     if (sslDetail.connectState) {
-                        sslIcon = QIcon(":/images/connect_creating.png");
+                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
                     } else {
-                        sslIcon = QIcon(":/images/connect_no.png");
+                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_ONLINE));
                     }
+
+                    connectStateString = StatusDefs::name(RS_STATUS_ONLINE);
 
                     sslFont.setBold(true);
                     sslColor = mTextColorStatus[RS_STATUS_ONLINE];
                 } else {
+                    peerState = PEER_STATE_OFFLINE;
                     sslItem->setHidden(mHideUnconnected);
                     if (sslDetail.connectState) {
-                        sslIcon = QIcon(":/images/connect_creating.png");
+                        sslOverlayIcon = QPixmap(":/images/connect_creating.png");
                     } else {
-                        sslIcon = QIcon(":/images/connect_no.png");
+                        sslOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                     }
+
+                    connectStateString = StatusDefs::connectStateWithoutTransportTypeString(sslDetail);
 
                     sslFont.setBold(false);
                     sslColor = mTextColorStatus[RS_STATUS_OFFLINE];
                 }
 
+                /* Location */
+                QString sslName = QString::fromUtf8(sslDetail.location.c_str());
+                QString sslText;
+
+                if (mShowState) {
+                    if (!connectStateString.isEmpty()) {
+                        sslText = connectStateString;
+                        if (!customStateString.isEmpty()) {
+                            sslText += " [" + customStateString + "]";
+                        }
+                    } else {
+                        if (!customStateString.isEmpty()) {
+                            sslText = customStateString;
+                        }
+                    }
+
+                    sslItem->setToolTip(COLUMN_NAME, "");
+                } else {
+                    if (!customStateString.isEmpty()) {
+                        sslText = customStateString;
+                    }
+
+                    /* Show the state as tooltip */
+                    sslItem->setToolTip(COLUMN_NAME, connectStateString);
+                }
+
+                /* Create or get ssl label */
+                ElidedLabel *sslNameLabel = NULL;
+                ElidedLabel *sslTextLabel = NULL;
+
+                getNameWidget(ui->peerTreeWidget, sslItem, sslNameLabel, sslTextLabel);
+
+                if (sslNameLabel) {
+                    sslNameLabel->setText(sslName);
+                    sslNameLabel->setFont(sslFont);
+
+                    QPalette palette = sslNameLabel->palette();
+                    palette.setColor(sslNameLabel->foregroundRole(), sslColor);
+
+                    sslNameLabel->setPalette(palette);
+                }
+                if (sslTextLabel) {
+                    sslTextLabel->setText(sslText);
+                    sslTextLabel->setVisible(!sslText.isEmpty());
+                }
+
+                // Filter
+                sslItem->setData(COLUMN_NAME, ROLE_FILTER, sslName);
+
                 if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
                     // private chat is available
-                    sslIcon = QIcon(":/images/chat.png");
+                    sslOverlayIcon = QPixmap(":/images/chat.png");
                     gpg_hasPrivateChat = true;
                 }
-                sslItem -> setIcon(COLUMN_NAME, sslIcon);
+                sslItem->setIcon(COLUMN_NAME, createAvatar(sslAvatar, sslOverlayIcon));
 
-                for (int i = 0; i < COLUMN_COUNT; i++) {
-                    sslItem -> setTextColor(i, sslColor);
-                    sslItem -> setFont(i, sslFont);
+                /* Sort data */
+                sslItem->setData(COLUMN_NAME, ROLE_SORT_NAME, sslName);
+
+                for (int i = 0; i < columnCount; ++i) {
+                    sslItem->setData(i, ROLE_SORT_STATE, peerState);
+
+                    sslItem->setTextColor(i, sslColor);
+                    sslItem->setFont(i, sslFont);
                 }
             }
 
-            QIcon gpgIcon;
+            QString gpgName = QString::fromUtf8(detail.name.c_str());
+            QString gpgText;
+            QFont gpgFont;
+            QColor gpgColor;
+
+            bool showInfoAtGpgItem = !gpgItem->isExpanded();
+
+            QPixmap gpgOverlayIcon;
             if (gpg_connected) {
                 gpgItem->setHidden(false);
 
-                onlineCount++;
+                ++onlineCount;
 
                 if (bestPeerState == 0) {
                     // show as online
@@ -1077,89 +1103,99 @@ void  FriendList::insertPeers()
                     bestRSState = RS_STATUS_ONLINE;
                 }
 
-                QColor textColor = mTextColorStatus[bestRSState];
-                QFont font = StatusDefs::font(bestRSState);
-                for(int i = 0; i < COLUMN_COUNT; i++) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i, font);
-                }
+                gpgColor = mTextColorStatus[bestRSState];
+                gpgFont = StatusDefs::font(bestRSState);
 
-                gpgIcon = QIcon(StatusDefs::imageUser(bestRSState));
+                if (showInfoAtGpgItem) {
+                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(bestRSState));
 
-                if (!isStatusColumnHidden) {
-                    gpgItem->setText(COLUMN_STATE, StatusDefs::name(bestRSState));
-                }
-
-                if (isStatusColumnHidden && mBigName && !mHideState) {
-                    if (bestCustomStateString.isEmpty()) {
-                        gpgItemText += "\n" + StatusDefs::name(bestRSState);
+                    if (mShowState) {
+                        gpgText = StatusDefs::name(bestRSState);
+                        if (!bestCustomStateString.isEmpty()) {
+                            gpgText += " [" + bestCustomStateString + "]";
+                        }
                     } else {
-                        gpgItemText += "\n" + bestCustomStateString;
+                        if (!bestCustomStateString.isEmpty()) {
+                            gpgText = bestCustomStateString;
+                        }
                     }
-                } else if (isStatusColumnHidden && !mHideState){
-                    gpgItemText += " [" + StatusDefs::name(bestRSState) + "]";
                 }
             } else if (gpg_online) {
-                if (!isStatusColumnHidden) {
-                    gpgItem->setText(COLUMN_STATE, tr("Available"));
-                } else if (!mHideState && !mBigName) {
-                    gpgItemText += " [" + tr("Available") + "]";
-                }
-
-                bestPeerState = PEER_STATE_AVAILABLE;
-                onlineCount++;
                 gpgItem->setHidden(mHideUnconnected);
-                gpgIcon = QIcon(IMAGE_AVAILABLE);
+                ++onlineCount;
+                bestPeerState = PEER_STATE_AVAILABLE;
 
-                QFont font;
-                font.setBold(true);
-                QColor textColor = mTextColorStatus[RS_STATUS_ONLINE];
-                for(int i = 0; i < COLUMN_COUNT; i++) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i,font);
+                gpgFont.setBold(true);
+                gpgColor = mTextColorStatus[RS_STATUS_ONLINE];
+
+                if (showInfoAtGpgItem) {
+                    if (mShowState) {
+                        gpgText += tr("Available");
+                    }
+
+                    gpgOverlayIcon = QPixmap(IMAGE_AVAILABLE);
                 }
             } else {
-                if (!isStatusColumnHidden) {
-                    gpgItem->setText(COLUMN_STATE, StatusDefs::name(RS_STATUS_OFFLINE));
-                } else if (!mHideState && !mBigName) {
-                    gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
-                }
-
                 bestPeerState = PEER_STATE_OFFLINE;
                 gpgItem->setHidden(mHideUnconnected);
-                gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
 
-                QColor textColor = mTextColorStatus[RS_STATUS_OFFLINE];
-                QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
-                for(int i = 0; i < COLUMN_COUNT; i++) {
-                    gpgItem->setTextColor(i, textColor);
-                    gpgItem->setFont(i, font);
+                gpgFont = StatusDefs::font(RS_STATUS_OFFLINE);
+                gpgColor = mTextColorStatus[RS_STATUS_OFFLINE];
+
+                if (showInfoAtGpgItem) {
+                    if (mShowState) {
+                        gpgText += StatusDefs::name(RS_STATUS_OFFLINE);
+                    }
+
+                    gpgOverlayIcon = QPixmap(StatusDefs::imageStatus(RS_STATUS_OFFLINE));
                 }
             }
 
             if (gpg_hasPrivateChat) {
-                gpgIcon = QIcon(":/images/chat.png");
+                gpgOverlayIcon = QPixmap(":/images/chat.png");
             }
 
-            if (!isAvatarColumnHidden && gpgItem->icon(COLUMN_AVATAR).isNull()) {
-                // only set the avatar image the first time, or when it changed
-                // otherwise getAvatarFromSslId sends request packages to peers.
-                QPixmap avatar;
-                AvatarDefs::getAvatarFromSslId(bestSslId.toStdString(), avatar);
-                QIcon avatar_icon(avatar);
-                gpgItem->setIcon(COLUMN_AVATAR, avatar_icon);
+            gpgItem->setIcon(COLUMN_NAME, createAvatar(bestAvatar.isNull() ? QPixmap(AVATAR_DEFAULT_IMAGE) : bestAvatar, gpgOverlayIcon));
+
+            /* Create or get gpg label */
+            ElidedLabel *gpgNameLabel = NULL;
+            ElidedLabel *gpgTextLabel = NULL;
+
+            getNameWidget(ui->peerTreeWidget, gpgItem, gpgNameLabel, gpgTextLabel);
+
+            if (gpgNameLabel) {
+                gpgNameLabel->setText(gpgName);
+                gpgNameLabel->setFont(gpgFont);
+
+                QPalette palette = gpgNameLabel->palette();
+                palette.setColor(gpgNameLabel->foregroundRole(), gpgColor);
+
+                gpgNameLabel->setPalette(palette);
+            }
+            if (gpgTextLabel) {
+                gpgTextLabel->setText(gpgText);
+                gpgTextLabel->setVisible(!gpgText.isEmpty());
             }
 
-            gpgItem->setText(COLUMN_NAME, gpgItemText);
-            gpgItem->setData(COLUMN_NAME, ROLE_SORT, "2 " + gpgItemText);
-            gpgItem->setData(COLUMN_STATE, ROLE_SORT, "2 " + BuildStateSortString(true, gpgItemText, bestPeerState));
-            gpgItem->setIcon(COLUMN_NAME, gpgIcon);
-            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(lastContact));
-            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, "2 " + lastContact.toString("yyyyMMdd_hhmmss"));
-            gpgItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant());
-            gpgItem->setData(COLUMN_IP, ROLE_SORT, "2 " + itemIP);
+            // Filter
+            gpgItem->setData(COLUMN_NAME, ROLE_FILTER, gpgName);
 
-            if (openPeers != NULL && openPeers->find(gpgId.toStdString()) != openPeers->end()) {
+            gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, showInfoAtGpgItem ? QVariant(bestLastContact) : "");
+            gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT_NAME, QVariant(bestLastContact));
+            gpgItem->setText(COLUMN_IP, showInfoAtGpgItem ? bestIP : "");
+            gpgItem->setData(COLUMN_IP, ROLE_SORT_NAME, bestIP);
+
+            /* Sort data */
+            gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, gpgName);
+
+            for (int i = 0; i < columnCount; ++i) {
+                gpgItem->setData(i, ROLE_SORT_STATE, bestPeerState);
+
+                gpgItem->setTextColor(i, gpgColor);
+                gpgItem->setFont(i, gpgFont);
+            }
+
+            if (openPeers.find(gpgId.toStdString()) != openPeers.end()) {
                 gpgItem->setExpanded(true);
             }
         }
@@ -1172,50 +1208,42 @@ void  FriendList::insertPeers()
                 groupItem->setHidden(false);
                 QString groupName = GroupDefs::name(*groupInfo);
                 groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(groupName).arg(onlineCount).arg(availableCount));
-                // show first the standard groups, than the user groups
-                groupItem->setData(COLUMN_NAME, ROLE_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + groupName);
+
+                // Filter
+                groupItem->setData(COLUMN_NAME, ROLE_FILTER, groupName);
+
+                /* Sort data */
+                groupItem->setData(COLUMN_NAME, ROLE_SORT_NAME, groupName);
             }
         }
 
         if (mShowGroups && groupIt != groupInfoList.end()) {
-            groupIt++;
+            ++groupIt;
         } else {
             // all done
             break;
         }
     }
 
-    if (filterText.isEmpty() == false) {
-        filterItems(filterText);
-    }
-
-    QTreeWidgetItem *c = getCurrentPeer();
-    if (c && c->isHidden()) {
-        // active item is hidden, deselect it
-        ui->peerTreeWidget->setCurrentItem(NULL);
+    if (mFilterText.isEmpty() == false) {
+        filterItems(mFilterText);
     }
 
     groupsHasChanged = false;
-    if (openGroups != NULL) {
-        delete(openGroups);
-        openGroups = NULL;
-    }
-    if (openPeers != NULL) {
-        delete(openPeers);
-        openPeers = NULL;
-    }
+
+    ui->peerTreeWidget->resort();
 }
 
 /**
  * Returns a list with all groupIds that are expanded
  */
-bool FriendList::getExpandedGroups(std::set<std::string> &groups) const
+bool FriendList::getExpandedGroups(std::set<RsNodeGroupId> &groups) const
 {
     int itemCount = ui->peerTreeWidget->topLevelItemCount();
-    for (int index = 0; index < itemCount; index++) {
+    for (int index = 0; index < itemCount; ++index) {
         QTreeWidgetItem *item = ui->peerTreeWidget->topLevelItem(index);
         if (item->type() == TYPE_GROUP && item->isExpanded()) {
-            groups.insert(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
+            groups.insert(RsNodeGroupId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()));
         }
     }
     return true;
@@ -1279,14 +1307,22 @@ void FriendList::chatfriendproxy()
  *
  * @param pPeer the gpg or ssl QTreeWidgetItem to chat with
  */
-void FriendList::chatfriend(QTreeWidgetItem *pPeer)
+void FriendList::chatfriend(QTreeWidgetItem *item)
 {
-    if (pPeer == NULL) {
+    if (item == NULL) {
         return;
     }
 
-    std::string id = getRsId(pPeer);
-    ChatDialog::chatFriend(RsPeerId(id));
+    switch (item->type()) {
+    case TYPE_GROUP:
+        break;
+    case TYPE_GPG:
+        ChatDialog::chatFriend(RsPgpId(getRsId(item)));
+        break;
+    case TYPE_SSL:
+        ChatDialog::chatFriend(ChatId(RsPeerId(getRsId(item))));
+        break;
+    }
 }
 
 void FriendList::addFriend()
@@ -1304,14 +1340,21 @@ void FriendList::addFriend()
 
 void FriendList::msgfriend()
 {
-    QTreeWidgetItem *peer = getCurrentPeer();
+    QTreeWidgetItem *item = getCurrentPeer();
 
-    if (!peer)
+    if (!item)
         return;
 
-    std::string id = getRsId(peer);
-
-    MessageComposer::msgFriend(RsPeerId(id)) ;
+    switch (item->type()) {
+    case TYPE_GROUP:
+        break;
+    case TYPE_GPG:
+        MessageComposer::msgFriend(RsPgpId(getRsId(item)));
+        break;
+    case TYPE_SSL:
+        MessageComposer::msgFriend(RsPeerId(getRsId(item)));
+        break;
+    }
 }
 
 void FriendList::recommendfriend()
@@ -1335,8 +1378,11 @@ void FriendList::recommendfriend()
     default:
         return;
     }
+    std::set<RsPeerId> sids ;
+    for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+        sids.insert(*it) ;
 
-    MessageComposer::recommendFriend(ids);
+    MessageComposer::recommendFriend(sids);
 }
 
 void FriendList::pastePerson()
@@ -1406,7 +1452,7 @@ QTreeWidgetItem *FriendList::getCurrentPeer() const
     /* Display the columns of this item. */
     QString out = "CurrentPeerItem: \n";
 
-    for(int i = 1; i < COLUMN_COUNT; i++)
+    for(int i = 1; i < COLUMN_COUNT; ++i)
     {
         QString txt = item -> text(i);
         out += QString("\t%1:%2\n").arg(i).arg(txt);
@@ -1466,12 +1512,23 @@ void FriendList::removefriend()
 
     if (rsPeers)
     {
-        if(RsPgpId(getRsId(c)).isNull())
-            return ;
-
-        if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
-        {
-            rsPeers->removeFriend(RsPgpId(getRsId(c)));
+        switch (c->type()) {
+        case TYPE_GPG:
+            if(!RsPgpId(getRsId(c)).isNull()) {
+                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                {
+                    rsPeers->removeFriend(RsPgpId(getRsId(c)));
+                }
+            }
+            break;
+        case TYPE_SSL:
+            if (!RsPeerId(getRsId(c)).isNull()) {
+                if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this node?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+                {
+                    rsPeers->removeFriendLocation(RsPeerId(getRsId(c)));
+                }
+            }
+            break;
         }
     }
 }
@@ -1494,11 +1551,10 @@ void FriendList::connectfriend()
     {
         if (c->type() == TYPE_GPG) {
             int childCount = c->childCount();
-            for (int childIndex = 0; childIndex < childCount; childIndex++) {
+            for (int childIndex = 0; childIndex < childCount; ++childIndex) {
                 QTreeWidgetItem *item = c->child(childIndex);
                 if (item->type() == TYPE_SSL) {
                     rsPeers->connectAttempt(RsPeerId(getRsId(item)));
-                    item->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
 
 	    	    // Launch ProgressDialog, only if single SSL child.
 		    if (childCount == 1)
@@ -1510,7 +1566,6 @@ void FriendList::connectfriend()
         } else {
             //this is a SSL key
             rsPeers->connectAttempt(RsPeerId(getRsId(c)));
-            c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
 	    // Launch ProgressDialog.
         ConnectProgressDialog::showProgress(RsPeerId(getRsId(c)));
         }
@@ -1523,7 +1578,7 @@ void FriendList::configurefriend()
     if(!RsPeerId(getRsId(getCurrentPeer())).isNull())
         ConfCertDialog::showIt(RsPeerId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
     else if(!RsPgpId(getRsId(getCurrentPeer())).isNull())
-        ConfCertDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
+        PGPKeyDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), PGPKeyDialog::PageDetails);
     else
         std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
 }
@@ -1576,8 +1631,8 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &s
     case TYPE_GROUP:
         {
             RsGroupInfo groupInfo;
-            if (rsPeers->getGroupInfo(peerId, groupInfo)) {
-                std::list<RsPgpId>::iterator gpgIt;
+            if (rsPeers->getGroupInfo(RsNodeGroupId(peerId), groupInfo)) {
+                std::set<RsPgpId>::iterator gpgIt;
                 for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); ++gpgIt) {
                     rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
                 }
@@ -1599,10 +1654,10 @@ void FriendList::addToGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.isNull() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.isNull()) {
         return;
     }
 
@@ -1625,15 +1680,15 @@ void FriendList::moveToGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.isNull() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.isNull()) {
         return;
     }
 
     // remove from all groups
-    rsPeers->assignPeerToGroup("", gpgId, false);
+    rsPeers->assignPeerToGroup(RsNodeGroupId(), gpgId, false);
 
     // automatically expand the group, the peer is added to
     addGroupToExpand(groupId);
@@ -1654,7 +1709,7 @@ void FriendList::removeFromGroup()
         return;
     }
 
-    std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+    RsNodeGroupId groupId ( qobject_cast<QAction*>(sender())->data().toString().toStdString());
     RsPgpId gpgId ( getRsId(c));
 
     if (gpgId.isNull()) {
@@ -1677,14 +1732,13 @@ void FriendList::editGroup()
         return;
     }
 
-    std::string groupId = getRsId(c);
+    RsNodeGroupId groupId ( getRsId(c));
 
-    if (groupId.empty()) {
-        return;
+    if (!groupId.isNull())
+    {
+        CreateGroup editGrpDialog(groupId, this);
+        editGrpDialog.exec();
     }
-
-    CreateGroup editGrpDialog(groupId, this);
-    editGrpDialog.exec();
 }
 
 void FriendList::removeGroup()
@@ -1699,14 +1753,418 @@ void FriendList::removeGroup()
         return;
     }
 
-    std::string groupId = getRsId(c);
+    RsNodeGroupId groupId ( getRsId(c));
 
-    if (groupId.empty()) {
+    if (!groupId.isNull())
+        rsPeers->removeGroup(groupId);
+}
+
+void FriendList::exportFriendlistClicked()
+{
+    QString fileName;
+    if(!importExportFriendlistFileDialog(fileName, false))
+        // error was already shown - just return
         return;
+
+    if(!exportFriendlist(fileName))
+        // error was already shown - just return
+        return;
+
+    QMessageBox mbox;
+    mbox.setIcon(QMessageBox::Information);
+    mbox.setText(tr("Done!"));
+    mbox.setInformativeText(tr("Your friendlist is stored at:\n") + fileName +
+                            tr("\n(keep in mind that the file is unencrypted!)"));
+    mbox.setStandardButtons(QMessageBox::Ok);
+    mbox.exec();
+}
+
+void FriendList::importFriendlistClicked()
+{
+    QString fileName;
+    if(!importExportFriendlistFileDialog(fileName, true))
+        // error was already shown - just return
+        return;
+
+    bool errorPeers, errorGroups;
+    if(importFriendlist(fileName, errorPeers, errorGroups)) {
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Information);
+        mbox.setText(tr("Done!"));
+        mbox.setInformativeText(tr("Your friendlist was imported from:\n") + fileName);
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+    } else {
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Done - but errors happened!"));
+        mbox.setInformativeText(tr("Your friendlist was imported from:\n") + fileName +
+                                (errorPeers  ? tr("\nat least one peer was not added") : "") +
+                                (errorGroups ? tr("\nat least one peer was not added to a group") : "")
+                                );
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+    }
+}
+
+/**
+ * @brief opens a file dialog to select a file containing a friendlist
+ * @param fileName file containing a friendlist
+ * @param import show dialog for importing (true) or exporting (false) friendlist
+ * @return success or failure
+ *
+ * This function also shows an error message when no valid file was selected
+ */
+bool FriendList::importExportFriendlistFileDialog(QString &fileName, bool import)
+{
+    if(!misc::getSaveFileName(this,
+                              RshareSettings::LASTDIR_CERT,
+                              (import ? tr("Select file for importing your friendlist from") :
+                                        tr("Select a file for exporting your friendlist to")),
+                              tr("XML File (*.xml);;All Files (*)"),
+                              fileName,
+                              NULL,
+                              (import ? QFileDialog::DontConfirmOverwrite : (QFileDialog::Options)0)
+                              )) {
+        // show error to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText(tr("Failed to get a file!"));
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+        return false;
+    }
+    return true;
+}
+
+/**
+ * @brief exports friendlist to a given file
+ * @param fileName file for storing friendlist
+ * @return success or failure
+ *
+ * This function also shows an error message when the selected file is invalid/not writable
+ */
+bool FriendList::exportFriendlist(QString &fileName)
+{
+    QDomDocument doc("FriendListWithGroups");
+    QDomElement root = doc.createElement("root");
+    doc.appendChild(root);
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        // show error to user
+        QMessageBox mbox;
+        mbox.setIcon(QMessageBox::Warning);
+        mbox.setText(tr("Error"));
+        mbox.setInformativeText(tr("File is not writeable!\n") + fileName);
+        mbox.setStandardButtons(QMessageBox::Ok);
+        mbox.exec();
+        return false;
     }
 
-    rsPeers->removeGroup(groupId);
+    std::list<RsPgpId> gpg_ids;
+    rsPeers->getGPGAcceptedList(gpg_ids);
+
+    std::list<RsGroupInfo> group_info_list;
+    rsPeers->getGroupInfoList(group_info_list);
+
+    QDomElement pgpIDs = doc.createElement("pgpIDs");
+    RsPeerDetails detailPGP;
+    for(std::list<RsPgpId>::iterator list_iter = gpg_ids.begin(); list_iter !=  gpg_ids.end(); list_iter++)	{
+        rsPeers->getGPGDetails(*list_iter, detailPGP);
+        QDomElement pgpID = doc.createElement("pgpID");
+        // these values aren't used and just stored for better human readability
+        pgpID.setAttribute("id", QString::fromStdString(detailPGP.gpg_id.toStdString()));
+        pgpID.setAttribute("name", QString::fromUtf8(detailPGP.name.c_str()));
+
+        std::list<RsPeerId> ssl_ids;
+        rsPeers->getAssociatedSSLIds(*list_iter, ssl_ids);
+        for(std::list<RsPeerId>::iterator list_iter = ssl_ids.begin(); list_iter !=  ssl_ids.end(); list_iter++) {
+            RsPeerDetails detailSSL;
+            if (!rsPeers->getPeerDetails(*list_iter, detailSSL))
+                continue;
+
+            std::string certificate = rsPeers->GetRetroshareInvite(detailSSL.id, true);
+            // remove \n from certificate
+            certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
+
+            QDomElement sslID = doc.createElement("sslID");
+            // these values aren't used and just stored for better human readability
+            sslID.setAttribute("sslID", QString::fromStdString(detailSSL.id.toStdString()));
+            if(!detailSSL.location.empty())
+                sslID.setAttribute("location", QString::fromUtf8(detailSSL.location.c_str()));
+
+            // required values
+            sslID.setAttribute("certificate", QString::fromStdString(certificate));
+            sslID.setAttribute("service_perm_flags", detailSSL.service_perm_flags.toUInt32());
+
+            pgpID.appendChild(sslID);
+        }
+        pgpIDs.appendChild(pgpID);
+    }
+    root.appendChild(pgpIDs);
+
+    QDomElement groups = doc.createElement("groups");
+    for(std::list<RsGroupInfo>::iterator list_iter = group_info_list.begin(); list_iter !=  group_info_list.end(); list_iter++)	{
+        RsGroupInfo group_info = *list_iter;
+
+        //skip groups without peers
+        if(group_info.peerIds.empty())
+            continue;
+
+        QDomElement group = doc.createElement("group");
+        // id is not needed since it may differ between locatiosn / pgp ids (groups are identified by name)
+        group.setAttribute("name", QString::fromUtf8(group_info.name.c_str()));
+        group.setAttribute("flag", group_info.flag);
+
+        for(std::set<RsPgpId>::iterator i = group_info.peerIds.begin(); i !=  group_info.peerIds.end(); i++) {
+            QDomElement pgpID = doc.createElement("pgpID");
+            std::string pid = i->toStdString();
+            pgpID.setAttribute("id", QString::fromStdString(pid));
+            group.appendChild(pgpID);
+        }
+        groups.appendChild(group);
+    }
+    root.appendChild(groups);
+
+    QTextStream ts(&file);
+    ts.setCodec("UTF-8");
+    ts << doc.toString();
+    file.close();
+
+    return true;
 }
+
+/**
+ * @brief helper function to show a message box
+ */
+void showXMLParsingError()
+{
+    // show error to user
+    QMessageBox mbox;
+    mbox.setIcon(QMessageBox::Warning);
+    mbox.setText(QObject::tr("Error"));
+    mbox.setInformativeText(QObject::tr("unable to parse XML file!"));
+    mbox.setStandardButtons(QMessageBox::Ok);
+    mbox.exec();
+}
+
+/**
+ * @brief Imports friends from a given file
+ * @param fileName file to load friends from
+ * @param errorPeers an error occured while adding a peer
+ * @param errorGroups an error occured while adding a peer to a group
+ * @return success or failure (an error can also happen when adding a peer and/or adding a peer to a group fails at least once)
+ */
+bool FriendList::importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups)
+{
+    QDomDocument doc;
+    // load from file
+    {
+        QFile file(fileName);
+
+        if (!file.open(QIODevice::ReadOnly)) {
+            // show error to user
+            QMessageBox mbox;
+            mbox.setIcon(QMessageBox::Warning);
+            mbox.setText(tr("Error"));
+            mbox.setInformativeText(tr("File is not readable!\n") + fileName);
+            mbox.setStandardButtons(QMessageBox::Ok);
+            mbox.exec();
+            return false;
+        }
+
+        bool ok = doc.setContent(&file);
+        file.close();
+
+        if(!ok) {
+            showXMLParsingError();
+            return false;
+        }
+    }
+
+    QDomElement root = doc.documentElement();
+    if(root.tagName() != "root") {
+        showXMLParsingError();
+        return false;
+    }
+
+    errorPeers = false;
+    errorGroups = false;
+
+    uint32_t error_code;
+    std::string error_string;
+    RsPeerDetails rsPeerDetails;
+    RsPeerId rsPeerID;
+    RsPgpId rsPgpID;
+
+    // lock all events for faster processing
+    RsAutoUpdatePage::lockAllEvents();
+
+    // pgp and ssl IDs
+    QDomElement pgpIDs;
+    {
+        QDomNodeList nodes = root.elementsByTagName("pgpIDs");
+        if(nodes.isEmpty() || nodes.size() != 1){
+            showXMLParsingError();
+            return false;
+        }
+
+        pgpIDs = nodes.item(0).toElement();
+        if(pgpIDs.isNull()){
+            showXMLParsingError();
+            return false;
+        }
+    }
+    QDomNode pgpIDElem = pgpIDs.firstChildElement("pgpID");
+    while (!pgpIDElem.isNull()) {
+        QDomElement sslIDElem = pgpIDElem.firstChildElement("sslID");
+        while (!sslIDElem.isNull()) {
+            rsPeerID.clear();
+            rsPgpID.clear();
+
+            // load everything needed from the pubkey string
+            std::string pubkey = sslIDElem.attribute("certificate").toStdString();
+            if(rsPeers->loadDetailsFromStringCert(pubkey, rsPeerDetails, error_code)) {
+                if(rsPeers->loadCertificateFromString(pubkey, rsPeerID, rsPgpID, error_string)) {
+                    ServicePermissionFlags service_perm_flags(sslIDElem.attribute("service_perm_flags").toInt());
+
+                    // everything is loaded - start setting things
+                    if (!rsPeerDetails.id.isNull() && !rsPeerDetails.gpg_id.isNull()) {
+                        // pgp and ssl ID are available
+                        rsPeers->addFriend(rsPeerDetails.id, rsPeerDetails.gpg_id, service_perm_flags);
+                        if(rsPeerDetails.isHiddenNode) {
+                            // for hidden notes
+                            if (!rsPeerDetails.hiddenNodeAddress.empty() && rsPeerDetails.hiddenNodePort)
+                                rsPeers->setHiddenNode(rsPeerDetails.id, rsPeerDetails.hiddenNodeAddress, rsPeerDetails.hiddenNodePort);
+                        } else {
+                            // for normal nodes
+                            if (!rsPeerDetails.extAddr.empty() && rsPeerDetails.extPort)
+                                rsPeers->setExtAddress(rsPeerDetails.id, rsPeerDetails.extAddr, rsPeerDetails.extPort);
+                            if (!rsPeerDetails.localAddr.empty() && rsPeerDetails.localPort)
+                                rsPeers->setLocalAddress(rsPeerDetails.id, rsPeerDetails.localAddr, rsPeerDetails.localPort);
+                            if (!rsPeerDetails.dyndns.empty())
+                                rsPeers->setDynDNS(rsPeerDetails.id, rsPeerDetails.dyndns);
+                            if (!rsPeerDetails.location.empty())
+                                rsPeers->setLocation(rsPeerDetails.id, rsPeerDetails.location);
+                        }
+                    } else if (!rsPeerDetails.gpg_id.isNull()) {
+                        // only pgp id is avaiable
+                        RsPeerId pid;
+                        rsPeers->addFriend(pid, rsPeerDetails.gpg_id, service_perm_flags);
+                    } else {
+                        errorPeers = true;
+                        std::cerr << "FriendList::importFriendlist(): error while processing SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << std::endl;
+                    }
+                } else {
+                    errorPeers = true;
+                    std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_string << ")" << std::endl;
+                }
+            } else {
+                errorPeers = true;
+                std::cerr << "FriendList::importFriendlist(): failed to get peer detaisl from public key (SSL id: " << sslIDElem.attribute("sslID", "invalid").toStdString() << " - error: " << error_code << ")" << std::endl;
+            }
+            sslIDElem = sslIDElem.nextSiblingElement("sslID");
+        }
+        pgpIDElem = pgpIDElem.nextSiblingElement("pgpID");
+    }
+
+    // groups
+    QDomElement groups;
+    {
+        QDomNodeList nodes = root.elementsByTagName("groups");
+        if(nodes.isEmpty() || nodes.size() != 1){
+            showXMLParsingError();
+            return false;
+        }
+
+        groups = nodes.item(0).toElement();
+        if(groups.isNull()){
+            showXMLParsingError();
+            return false;
+        }
+    }
+    QDomElement group = groups.firstChildElement("group");
+    while (!group.isNull()) {
+        // get name and flags and try to get the group ID
+        std::string groupName = group.attribute("name").toStdString();
+        uint32_t flag = group.attribute("flag").toInt();
+        RsNodeGroupId groupId;
+        if(getOrCreateGroup(groupName, flag, groupId)) {
+            // group id found!
+            QDomElement pgpID = group.firstChildElement("pgpID");
+            while (!pgpID.isNull()) {
+                // add pgp id to group
+                RsPgpId rsPgpId(pgpID.attribute("id").toStdString());
+                if(rsPgpID.isNull() || !rsPeers->assignPeerToGroup(groupId, rsPgpId, true)) {
+                    errorGroups = true;
+                    std::cerr << "FriendList::importFriendlist(): failed to add '" << rsPeers->getGPGName(rsPgpId) << "'' to group '" << groupName << "'" << std::endl;
+                }
+
+                pgpID = pgpID.nextSiblingElement("pgpID");
+            }
+            pgpID = pgpID.nextSiblingElement("pgpID");
+        } else {
+            errorGroups = true;
+            std::cerr << "FriendList::importFriendlist(): failed to find/create group '" << groupName << "'" << std::endl;
+        }
+        group = group.nextSiblingElement("group");
+    }
+
+    // unlock events
+    RsAutoUpdatePage::unlockAllEvents();
+
+    return !(errorPeers || errorGroups);
+}
+
+/**
+ * @brief Gets the groups ID for a given group name
+ * @param name group name to search for
+ * @param id groupd id for the given name
+ * @return success or fail
+ */
+bool FriendList::getGroupIdByName(const std::string &name, RsNodeGroupId &id)
+{
+    std::list<RsGroupInfo> grpList;
+    if(!rsPeers->getGroupInfoList(grpList))
+        return false;
+
+    foreach (const RsGroupInfo &grp, grpList) {
+        if(grp.name == name) {
+            id = grp.id;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * @brief Gets the groups ID for a given group name. If no groupd was it will create one
+ * @param name group name to search for
+ * @param flag flag to use when creating the group
+ * @param id groupd id
+ * @return success or failure
+ */
+bool FriendList::getOrCreateGroup(const std::string &name, const uint &flag, RsNodeGroupId &id)
+{
+    if(getGroupIdByName(name, id))
+        return true;
+
+    // -> create one
+    RsGroupInfo grp;
+    grp.id.clear(); // RS will generate an ID
+    grp.name = name;
+    grp.flag = flag;
+
+    if(!rsPeers->addGroup(grp))
+        return false;
+
+    // try again
+    return getGroupIdByName(name, id);
+}
+
 
 void FriendList::setHideUnconnected(bool hidden)
 {
@@ -1716,114 +2174,67 @@ void FriendList::setHideUnconnected(bool hidden)
     }
 }
 
-void FriendList::setShowStatusColumn(bool show)
+void FriendList::setColumnVisible(Column column, bool visible)
 {
-    ui->actionHideState->setEnabled(!show);
-    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
+    ui->peerTreeWidget->setColumnHidden(column, !visible);
+    peerTreeColumnVisibleChanged(column, visible);
+}
 
-    if (isColumnVisible != show) {
-        ui->peerTreeWidget->setColumnHidden(COLUMN_STATE, !show);
+void FriendList::sortByColumn(Column column, Qt::SortOrder sortOrder)
+{
+    ui->peerTreeWidget->sortByColumn(column, sortOrder);
+}
 
-        updateHeader();
+void FriendList::peerTreeColumnVisibleChanged(int /*column*/, bool visible)
+{
+    if (visible) {
         insertPeers();
     }
 }
 
-void FriendList::setShowLastContactColumn(bool show)
+void FriendList::peerTreeItemCollapsedExpanded(QTreeWidgetItem *item)
 {
-    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT);
-
-    if (isColumnVisible != show) {
-        ui->peerTreeWidget->setColumnHidden(COLUMN_LAST_CONTACT, !show);
-
-        updateHeader();
-        insertPeers();
-    }
-}
-
-void FriendList::setShowIPColumn(bool show)
-{
-    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_IP);
-
-    if (isColumnVisible != show) {
-        ui->peerTreeWidget->setColumnHidden(COLUMN_IP, !show);
-
-        updateHeader();
-        insertPeers();
-    }
-}
-
-void FriendList::setShowAvatarColumn(bool show)
-{
-    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
-    if (isColumnVisible == show)
+    if (!item) {
         return;
+    }
 
-    ui->peerTreeWidget->setColumnHidden(COLUMN_AVATAR, !show);
-
-    updateHeader();
-    insertPeers();
-}
-
-void FriendList::setHideState(bool hidden)
-{
-    if (mHideState != hidden) {
-        mHideState = hidden;
+    if (item->type() == TYPE_GPG) {
         insertPeers();
     }
 }
 
-/**
- * Set the header visible.
- */
-void FriendList::updateHeader()
+void FriendList::setShowState(bool show)
 {
-    if (ui->peerTreeWidget->isColumnHidden(COLUMN_STATE) \
-            && ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT) \
-            && ui->peerTreeWidget->isColumnHidden(COLUMN_IP)) {
-        ui->peerTreeWidget->setHeaderHidden(true);
-    } else {
-        ui->peerTreeWidget->setHeaderHidden(false);
+    if (mShowState != show) {
+        mShowState = show;
+        insertPeers();
     }
 }
 
-void FriendList::setSortByName()
+void FriendList::sortByState(bool sort)
 {
-    ui->peerTreeWidget->sortByColumn(COLUMN_NAME);
-    sortPeersAscendingOrder();
+    int columnCount = ui->peerTreeWidget->columnCount();
+    for (int i = 0; i < columnCount; ++i) {
+        mCompareRole->setRole(i, ROLE_SORT_GROUP);
+        mCompareRole->addRole(i, ROLE_SORT_STANDARD_GROUP);
+
+        if (sort) {
+            mCompareRole->addRole(i, ROLE_SORT_STATE);
+            mCompareRole->addRole(i, ROLE_SORT_NAME);
+        } else {
+            mCompareRole->addRole(i, ROLE_SORT_NAME);
+            mCompareRole->addRole(i, ROLE_SORT_STATE);
+        }
+    }
+
+    mActionSortByState->setChecked(sort);
+
+    ui->peerTreeWidget->resort();
 }
 
-void FriendList::setSortByState()
+bool FriendList::isSortByState()
 {
-    ui->peerTreeWidget->sortByColumn(COLUMN_STATE);
-    sortPeersAscendingOrder();
-}
-
-void FriendList::setSortByLastContact()
-{
-    ui->peerTreeWidget->sortByColumn(COLUMN_LAST_CONTACT);
-    sortPeersDescendingOrder();
-}
-
-void FriendList::setSortByIP()
-{
-    ui->peerTreeWidget->sortByColumn(COLUMN_IP);
-    sortPeersDescendingOrder();
-}
-
-void FriendList::sortPeersAscendingOrder()
-{
-    ui->peerTreeWidget->sortByColumn(ui->peerTreeWidget->sortColumn(), Qt::AscendingOrder);
-}
-
-void FriendList::sortPeersDescendingOrder()
-{
-    ui->peerTreeWidget->sortByColumn(ui->peerTreeWidget->sortColumn(), Qt::DescendingOrder);
-}
-
-void FriendList::setRootIsDecorated(bool show)
-{
-    ui->peerTreeWidget->setRootIsDecorated(show);
+    return mActionSortByState->isChecked();
 }
 
 void FriendList::setShowGroups(bool show)
@@ -1841,7 +2252,7 @@ void FriendList::setShowGroups(bool show)
                     childCount = ui->peerTreeWidget->topLevelItemCount();
                     continue;
                 }
-                childIndex++;
+                ++childIndex;
             }
         }
         insertPeers();
@@ -1849,89 +2260,21 @@ void FriendList::setShowGroups(bool show)
 }
 
 /**
- * If set to true, the customStateString will be shwon in all gpg peer items,
- * not only in the ssl ids (used in MessengerWindow).
- * These items will then be doublespaced.
- */
-void FriendList::setBigName(bool bigName)
-{
-    if (mBigName != bigName) {
-        mBigName = bigName;
-
-        // Change the size of the already existing items
-        QSize newSize;
-        if (mBigName) {
-            newSize.setHeight(40);
-            newSize.setWidth(40);
-        } else {
-            newSize.setHeight(26);
-            newSize.setWidth(26);
-        }
-        QTreeWidgetItemIterator it(ui->peerTreeWidget);
-        while (*it) {
-            if ((*it)->type() == TYPE_GPG) {
-                (*it)->setSizeHint(COLUMN_NAME, newSize);
-            }
-            it++;
-        }
-    }
-}
-
-/**
- * Hides all items that don't contain sPattern in the name column.
+ * Hides all items that don't contain text in the name column.
  */
 void FriendList::filterItems(const QString &text)
 {
-    filterText = text;
-    int count = ui->peerTreeWidget->topLevelItemCount();
-    for (int index = 0; index < count; index++) {
-        FriendList::filterItem(ui->peerTreeWidget->topLevelItem(index), filterText);
-    }
-
-    QTreeWidgetItem *c = getCurrentPeer();
-    if (c && c->isHidden()) {
-        // active item is hidden, deselect it
-        ui->peerTreeWidget->setCurrentItem(NULL);
-    }
-}
-
-bool FriendList::filterItem(QTreeWidgetItem *item, const QString &text)
-{
-    bool visible = true;
-
-    if (text.isEmpty() == false) {
-        if (item->text(0).contains(text, Qt::CaseInsensitive) == false) {
-            visible = false;
-        }
-    }
-
-    int visibleChildCount = 0;
-    int count = item->childCount();
-    for (int index = 0; index < count; index++) {
-        if (FriendList::filterItem(item->child(index), text)) {
-            visibleChildCount++;
-        }
-    }
-
-    if (visible || visibleChildCount) {
-        item->setHidden(false);
-    } else {
-        item->setHidden(true);
-    }
-
-    return (visible || visibleChildCount);
+    mFilterText = text;
+    ui->peerTreeWidget->filterItems(COLUMN_NAME, mFilterText, ROLE_FILTER);
 }
 
 /**
  * Add a groupId to the openGroups list. These groups
  * will be expanded, when they're added to the QTreeWidget
  */
-void FriendList::addGroupToExpand(const std::string &groupId)
+void FriendList::addGroupToExpand(const RsNodeGroupId &groupId)
 {
-    if (openGroups == NULL) {
-        openGroups = new std::set<std::string>;
-    }
-    openGroups->insert(groupId);
+    openGroups.insert(groupId);
 }
 
 /**
@@ -1940,67 +2283,26 @@ void FriendList::addGroupToExpand(const std::string &groupId)
  */
 void FriendList::addPeerToExpand(const std::string &gpgId)
 {
-    if (openPeers == NULL) {
-        openPeers = new std::set<std::string>;
-    }
-    openPeers->insert(gpgId);
+    openPeers.insert(gpgId);
 }
 
 void FriendList::createDisplayMenu()
 {
-    QMenu *displayMenu = new QMenu(this);
+    QMenu *displayMenu = new QMenu(tr("Show Items"), this);
     connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
 
-//    displayMenu->addAction(ui->actionSortPeersDescendingOrder);
-//    displayMenu->addAction(ui->actionSortPeersAscendingOrder);
-    QMenu *menu = displayMenu->addMenu(tr("Columns"));
-    menu->addAction(ui->actionShowAvatarColumn);
-    menu->addAction(ui->actionShowLastContactColumn);
-    menu->addAction(ui->actionShowIPColumn);
-    menu->addAction(ui->actionShowStatusColumn);
-//    menu = displayMenu->addMenu(tr("Sort by"));
-//    menu->addAction(ui->actionSortByName);
-//    menu->addAction(ui->actionSortByState);
-//    menu->addAction(ui->actionSortByLastContact);
-//    menu->addAction(ui->actionSortByIP);
     displayMenu->addAction(ui->actionHideOfflineFriends);
-    displayMenu->addAction(ui->actionHideState);
-//    displayMenu->addAction(ui->actionRootIsDecorated);
+    displayMenu->addAction(ui->actionShowState);
     displayMenu->addAction(ui->actionShowGroups);
 
-//    QActionGroup *group = new QActionGroup(this);
-//    group->addAction(ui->actionSortByName);
-//    group->addAction(ui->actionSortByState);
-//    group->addAction(ui->actionSortByLastContact);
-//    group->addAction(ui->actionSortByIP);
-
-    ui->displayButton->setMenu(displayMenu);
+    ui->peerTreeWidget->addContextMenuMenu(displayMenu);
+    ui->peerTreeWidget->addContextMenuAction(ui->actionExportFriendlist);
+    ui->peerTreeWidget->addContextMenuAction(ui->actionImportFriendlist);
 }
 
 void FriendList::updateMenu()
 {
-    switch (ui->peerTreeWidget->sortColumn()) {
-    case COLUMN_NAME:
-        ui->actionSortByName->setChecked(true);
-        break;
-    case COLUMN_STATE:
-        ui->actionSortByState->setChecked(true);
-        break;
-    case COLUMN_LAST_CONTACT:
-        ui->actionSortByLastContact->setChecked(true);
-        break;
-    case COLUMN_IP:
-        ui->actionSortByIP->setChecked(true);
-        break;
-    case COLUMN_AVATAR:
-        break;
-    }
-    ui->actionShowStatusColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
-    ui->actionShowLastContactColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
-    ui->actionShowIPColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_IP));
-    ui->actionShowAvatarColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
     ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
-    ui->actionHideState->setChecked(mHideState);
-    ui->actionRootIsDecorated->setChecked(ui->peerTreeWidget->rootIsDecorated());
+    ui->actionShowState->setChecked(mShowState);
     ui->actionShowGroups->setChecked(mShowGroups);
 }

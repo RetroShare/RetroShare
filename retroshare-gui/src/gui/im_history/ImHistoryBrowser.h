@@ -43,7 +43,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWidget *parent = 0);
+    ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 
@@ -78,8 +78,7 @@ private:
 
     ImHistoryBrowserCreateItemsThread *m_createThread;
 
-    RsPeerId m_peerId;
-    bool m_isPrivateChat;
+    ChatId m_chatId;
     QTextEdit *textEdit;
     bool embedSmileys;
     ChatStyle style;
@@ -95,7 +94,7 @@ class ImHistoryBrowserCreateItemsThread : public QThread
     Q_OBJECT
 
 public:
-    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const RsPeerId &peerId);
+    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId &peerId);
     ~ImHistoryBrowserCreateItemsThread();
 
     void run();
@@ -110,7 +109,7 @@ public:
 
 private:
     ImHistoryBrowser *m_historyBrowser;
-    RsPeerId m_peerId;
+    ChatId m_chatId;
     volatile bool stopped;
 };
 

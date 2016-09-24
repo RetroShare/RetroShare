@@ -25,6 +25,7 @@
 #include <QLabel>
 #include <stdint.h>
 #include <retroshare/rstypes.h>
+#include <retroshare/rsmsgs.h>
 
 namespace Ui {
 	class AvatarWidget;
@@ -48,25 +49,29 @@ public:
 
 	QString frameState();
 	void setFrameType(FrameType type);
-    void setId(const RsPeerId &id) ;
+    void setId(const ChatId& id) ;
+    void setGxsId(const RsGxsId& id) ;
     void setOwnId();
-	void setDefaultAvatar(const QString &avatar);
+    void setDefaultAvatar(const QString &avatar_file_name);
 
 protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
-	void updateStatus(const QString peerId, int status);
+    void updateStatus(const QString& peerId, int status);
 	void updateAvatar(const QString& peerId);
-	void updateOwnAvatar();
+    void updateOwnAvatar();
 
 private:
-	void refreshStatus();
+    void refreshAvatarImage() ;
+    void refreshStatus();
+    void updateStatus(int status);
 
 	QString defaultAvatar;
 	Ui::AvatarWidget *ui;
 
-    RsPeerId mId;
+    ChatId mId;
+    RsGxsId mGxsId;
 
 	struct {
 		bool isOwnId : 1;

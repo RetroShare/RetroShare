@@ -1,20 +1,23 @@
-//#include <QTimer>
 #include <QMap>
 
 #include "RsGxsUpdateBroadcast.h"
-#include "RsProtectedTimer.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsgxsifacehelper.h>
+
+//#define DEBUG_GXS_BROADCAST 1
+
+// previously gxs allowed only one event consumer to poll for changes
+// this required a single broadcast instance per service
+// now the update notify works through rsnotify and notifyqt
+// so the single instance per service is not really needed anymore
 
 QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
 
 RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
 	QObject(NULL), mIfaceImpl(ifaceImpl)
 {
-	mTimer = new RsProtectedTimer(this);
-	mTimer->setInterval(1000);
-	mTimer->setSingleShot(true);
-	connect(mTimer, SIGNAL(timeout()), this, SLOT(poll()));
+    connect(NotifyQt::getInstance(), SIGNAL(gxsChange(RsGxsChanges)), this, SLOT(onChangesReceived(RsGxsChanges)));
 }
 
 void RsGxsUpdateBroadcast::cleanup()
@@ -36,34 +39,44 @@ RsGxsUpdateBroadcast *RsGxsUpdateBroadcast::get(RsGxsIfaceHelper *ifaceImpl)
 
 	RsGxsUpdateBroadcast *updateBroadcast = new RsGxsUpdateBroadcast(ifaceImpl);
 	updateBroadcastMap.insert(ifaceImpl, updateBroadcast);
-	updateBroadcast->poll();
 
 	return updateBroadcast;
 }
 
-void RsGxsUpdateBroadcast::poll()
+void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
 {
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgsMeta;
-	std::list<RsGxsGroupId> grps;
-	std::list<RsGxsGroupId> grpsMeta;
+#ifdef DEBUG_GXS_BROADCAST
+    std::cerr << "onChangesReceived()" << std::endl;
+    
+     {
+        std::cerr << "Received changes for service " << (void*)changes.mService << ",  expecting service " << (void*)mIfaceImpl->getTokenService() << std::endl;
+        std::cerr << "    changes content: " << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrps.begin());it!=changes.mGrps.end();++it) std::cerr << "    grp id: " << *it << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrpsMeta.begin());it!=changes.mGrpsMeta.end();++it) std::cerr << "    grp meta: " << *it << std::endl;
+        for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgs.begin());it!=changes.mMsgs.end();++it) 
+            for(uint32_t i=0;i<it->second.size();++i)
+                std::cerr << "    grp id: " << it->first << ". Msg ID " << it->second[i] << std::endl;
+        for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgsMeta.begin());it!=changes.mMsgsMeta.end();++it) 
+            for(uint32_t i=0;i<it->second.size();++i)
+                std::cerr << "    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
+    }
+#endif
+    if(changes.mService != mIfaceImpl->getTokenService())
+    {
+       // std::cerr << "(EE) Incorrect service. Dropping." << std::endl;
+        
+        return;
+    }
 
-	if (mIfaceImpl->updated(true, true))
-	{
-		mIfaceImpl->msgsChanged(msgs, msgsMeta);
-		if (!msgs.empty() || !msgsMeta.empty())
-		{
-			emit msgsChanged(msgs, msgsMeta);
-		}
+    if (!changes.mMsgs.empty() || !changes.mMsgsMeta.empty())
+    {
+        emit msgsChanged(changes.mMsgs, changes.mMsgsMeta);
+    }
 
-		mIfaceImpl->groupsChanged(grps, grpsMeta);
-		if (!grps.empty() || !grpsMeta.empty())
-		{
-			emit grpsChanged(grps, grpsMeta);
-		}
+    if (!changes.mGrps.empty() || !changes.mGrpsMeta.empty())
+    {
+        emit grpsChanged(changes.mGrps, changes.mGrpsMeta);
+    }
 
-		emit changed();
-	}
-
-	mTimer->start();
+    emit changed();
 }

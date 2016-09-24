@@ -90,7 +90,7 @@ public:
     static const int GT_INDEX;
     static const int RANGE_INDEX;
 
-    static QMap<int, ExprSearchType> * TermsIndexMap;
+    static QMap<int, ExprSearchType> TermsIndexMap;
 
     virtual QString toString(){return QString("");}
     
@@ -100,7 +100,7 @@ protected:
 
     /** provides the appropriate options list for the 
         condition combobox */
-    QStringList* getConditionOptions(ExprSearchType t);
+    QStringList getConditionOptions(ExprSearchType t);
     
     QHBoxLayout* createLayout(QWidget* parent = 0);
     QFrame * internalframe;
@@ -108,21 +108,21 @@ protected:
     ExprSearchType searchType;
 
     static bool initialised;
-    static QStringList * exprOpsList;
-    static QStringList * searchTermsOptionsList;
-    static QStringList * stringOptionsList;
-    static QStringList * relOptionsList;
+    static QStringList exprOpsList;
+    static QStringList searchTermsOptionsList;
+    static QStringList stringOptionsList;
+    static QStringList relOptionsList;
 
     // provides a mapping of condition operators to RSExpr reloperators
-    static QMap<int, LogicalOperator> * logicalOpIndexMap;
-    static QMap<int, StringOperator> *  strConditionIndexMap;
-    static QMap<int, RelOperator> *     relConditionIndexMap;
+    static QMap<int, RsRegularExpression::LogicalOperator> logicalOpIndexMap;
+    static QMap<int, RsRegularExpression::StringOperator>  strConditionIndexMap;
+    static QMap<int, RsRegularExpression::RelOperator>     relConditionIndexMap;
 
     // provides a mapping of indexes to translatable strings
-    static QMap<int, QString> * logicalOpStrMap;
-    static QMap<int, QString> * termsStrMap;
-    static QMap<int, QString> * strConditionStrMap;
-    static QMap<int, QString> * relConditionStrMap;
+    static QMap<int, QString> logicalOpStrMap;
+    static QMap<int, QString> termsStrMap;
+    static QMap<int, QString> strConditionStrMap;
+    static QMap<int, QString> relConditionStrMap;
 
 
 };
@@ -134,7 +134,7 @@ class ExprOpElement : public GuiExprElement
     
 public:
     ExprOpElement(QWidget * parent = 0);
-    LogicalOperator getLogicalOperator();
+    RsRegularExpression::LogicalOperator getLogicalOperator();
     QString toString();
 private:
     QComboBox * cb;
@@ -148,8 +148,8 @@ class ExprTermsElement : public GuiExprElement
 public:
     ExprTermsElement(QWidget * parent = 0);
     int getTermsIndex();
-    RelOperator getRelOperator();
-    StringOperator getStringOperator();
+    RsRegularExpression::RelOperator getRelOperator();
+    RsRegularExpression::StringOperator getStringOperator();
     void set(int i) {cb->setCurrentIndex(i);}
     QString toString();
 
@@ -167,8 +167,8 @@ class ExprConditionElement : public GuiExprElement
     
 public:
     ExprConditionElement(ExprSearchType, QWidget * parent = 0);
-    RelOperator getRelOperator();
-    StringOperator getStringOperator();
+    RsRegularExpression::RelOperator getRelOperator();
+    RsRegularExpression::StringOperator getStringOperator();
     void adjustForSearchType(ExprSearchType);
     void set(int i) {cb->setCurrentIndex(i);}
     QString toString();

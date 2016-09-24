@@ -68,7 +68,12 @@ void    pqiConnectCbDummy::peerConnectRequest(const RsPeerId& id,
 	std::cerr << " id: " << id;
 	std::cerr << " raddr: " << sockaddr_storage_tostring(raddr);
 	std::cerr << " source: " << source;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+}
+
+void pqiMonitor::disconnectPeer(const RsPeerId &/*peer*/)
+{
+    std::cerr << "(EE) pqiMonitor::disconnectPeer() shouldn't be called!!!"<< std::endl;
 }
 
 #if 0

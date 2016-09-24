@@ -35,8 +35,8 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 {
 	_layout = new QHBoxLayout(this) ;
 
-	setMinimumSize(128,32) ;
-	setMaximumSize(128,32) ;
+    setMinimumSize(128 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0) ;
+    setMaximumSize(128 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0) ;
 	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
 	_icons[INDEX_GROUP_BROWSABLE] = new QIcon(FLAGS_GROUP_BROWSABLE_ICON) ;
@@ -58,7 +58,7 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 		_buttons[i] = new QPushButton(this) ;
 		_buttons[i]->setCheckable(true) ;
 		_buttons[i]->setChecked(flags & _flags[i]) ;
-		_buttons[i]->setIconSize(QSize(32,32));
+        _buttons[i]->setIconSize(QSize(32 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0));
 		update_button_state(_buttons[i]->isChecked(),i) ;
 		_layout->addWidget(_buttons[i]) ;
 	}
@@ -156,19 +156,19 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QS
 	}
 	
 	if(flags & DIR_FLAGS_BROWSABLE_OTHERS)
-		res += tr("All your friends can browse this directory") + "\n" ;
+		res += tr("All friend nodes can browse this directory") + "\n" ;
 	else if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 
 		if(!groupNames.empty())
-			res += tr("Only friends in groups %1 can browse this directory").arg(groups_string) + "\n" ;
+			res += tr("Only friend nodes in groups %1 can browse this directory").arg(groups_string) + "\n" ;
 		else
 			res += tr("No one can browse this directory") + "\n" ;
 	else
 		res += tr("No one can browse this directory") + "\n" ;
 
 	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS)
-		res += tr("All your friends can relay anonymous tunnels to this directory") ;
+		res += tr("All friend nodes can relay anonymous tunnels to this directory") ;
 	else if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS)
-		res += tr("Only friends in groups ") + groups_string + tr(" can relay anonymous tunnels to this directory") ;
+		res += tr("Only friend nodes in groups")+" " + groups_string +" "+ tr("can relay anonymous tunnels to this directory") ;
 	else
 		res += tr("No one can anonymously access this directory.") ;
 

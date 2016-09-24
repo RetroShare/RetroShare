@@ -405,28 +405,44 @@ callback_cmd_get_secret_key(const ops_parser_content_t *content_,ops_parse_cb_in
 			/* now get the key from the data */
 			secret=ops_get_secret_key_from_data(cbinfo->cryptinfo.keydata);
 			int tag_to_use = OPS_PARSER_CMD_GET_SK_PASSPHRASE ;
-			int nbtries = 0 ;
+            int nbtries = 0 ;
 
 			while( (!secret) && nbtries++ < 3)
-			{
-				if (!cbinfo->cryptinfo.passphrase)
-				{
-					memset(&pc,'\0',sizeof pc);
-					pc.content.secret_key_passphrase.passphrase=&cbinfo->cryptinfo.passphrase;
-					CB(cbinfo,tag_to_use,&pc);
-					if (!cbinfo->cryptinfo.passphrase)
-					{
-						fprintf(stderr,"can't get passphrase\n");
-						return 0 ;	// ASSERT(0);
-					}
-				}
-				/* then it must be encrypted */
-				secret=ops_decrypt_secret_key_from_data(cbinfo->cryptinfo.keydata,cbinfo->cryptinfo.passphrase);
+            {
+                if (!cbinfo->cryptinfo.passphrase)
+                {
+                    cbinfo->arg = malloc(sizeof(unsigned char)) ;
+                    *(unsigned char *)cbinfo->arg = 0 ;
 
-				free(cbinfo->cryptinfo.passphrase) ;
-				cbinfo->cryptinfo.passphrase = NULL ;
-				tag_to_use = OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD ;
-			}
+                    memset(&pc,'\0',sizeof pc);
+                    pc.content.secret_key_passphrase.passphrase=&cbinfo->cryptinfo.passphrase;
+                    CB(cbinfo,tag_to_use,&pc);
+
+                    if(*(unsigned char*)(cbinfo->arg) == 1)
+                    {
+                        fprintf(stderr,"passphrase cancelled\n");
+                        free(cbinfo->arg) ;
+                        cbinfo->arg=NULL ;
+                        return 0 ;	// ASSERT(0);
+                    }
+                    if (!cbinfo->cryptinfo.passphrase)
+                    {
+                        free(cbinfo->arg) ;
+                        cbinfo->arg=NULL ;
+                        fprintf(stderr,"can't get passphrase\n");
+                        return 0 ;	// ASSERT(0);
+                    }
+                        free(cbinfo->arg) ;
+                        cbinfo->arg=NULL ;
+                }
+                /* then it must be encrypted */
+                secret=ops_decrypt_secret_key_from_data(cbinfo->cryptinfo.keydata,cbinfo->cryptinfo.passphrase);
+
+                free(cbinfo->cryptinfo.passphrase) ;
+                cbinfo->cryptinfo.passphrase = NULL ;
+
+                tag_to_use = OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD ;
+            }
 
 			if(!secret)
 				return 0 ;

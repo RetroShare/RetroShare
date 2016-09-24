@@ -153,7 +153,7 @@ int RpcProtoPeers::processAddPeer(uint32_t chan_id, uint32_t /* msg_id */, uint3
 			case rsctrl::peers::RequestAddPeer::ADD:
 
 				// TODO. NEED TO HANDLE SERVICE PERMISSION FLAGS.
-  				success = rsPeers->addFriend(ssl_id,pgp_id, RS_SERVICE_PERM_ALL);
+                success = rsPeers->addFriend(ssl_id,pgp_id, RS_NODE_PERM_DEFAULT);
 
 				break;
 			case rsctrl::peers::RequestAddPeer::REMOVE:

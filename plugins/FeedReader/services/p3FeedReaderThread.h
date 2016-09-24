@@ -33,7 +33,7 @@ class RsFeedReaderMsg;
 class HTMLWrapper;
 class RsFeedReaderXPath;
 
-class p3FeedReaderThread : public RsThread
+class p3FeedReaderThread : public RsTickingThread
 {
 public:
 	enum Type
@@ -56,7 +56,7 @@ public:
 
 	static RsFeedReaderErrorState processTransformation(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString);
 private:
-	virtual void run();
+    virtual void data_tick();
 
 	RsFeedReaderErrorState download(const RsFeedReaderFeed &feed, std::string &content, std::string &icon, std::string &errorString);
 	RsFeedReaderErrorState process(const RsFeedReaderFeed &feed, std::list<RsFeedReaderMsg*> &entries, std::string &errorString);

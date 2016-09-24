@@ -27,6 +27,7 @@
 
 #include "support.h"
 #include "serialiser/rstlvbase.h"
+#include "gxs/gxssecurity.h"
 
 void randString(const uint32_t length, std::string& outStr)
 {
@@ -67,12 +68,14 @@ void init_item(RsTlvSecurityKeySet& ks)
 	randString(SHORT_STR, ks.groupId);
 	for(int i=1; i<n; i++)
 	{
-        RsGxsId a_str;
-        a_str.random();
+		RsGxsId pub_str;
+		RsGxsId pri_str;
+		pub_str = RsGxsId::random();
+		pri_str = RsGxsId::random();
 
-		RsTlvSecurityKey& a_key = ks.keys[a_str];
-		init_item(a_key);
-		a_key.keyId = a_str;
+		RsTlvPublicRSAKey& pub_key = ks.public_keys[pub_str];
+		RsTlvPrivateRSAKey& pri_key = ks.private_keys[pri_str];
+		GxsSecurity::generateKeyPair(pub_key, pri_key);
 	}
 }
 
@@ -81,10 +84,10 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 	if(l.groupId != r.groupId) return false;
 
-    std::map<RsGxsId, RsTlvSecurityKey>::const_iterator l_cit = l.keys.begin(),
-	r_cit = r.keys.begin();
+	std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator l_cit = l.public_keys.begin(),
+	r_cit = r.public_keys.begin();
 
-	for(; l_cit != l.keys.end(); l_cit++, r_cit++){
+	for(; l_cit != l.public_keys.end(); l_cit++, r_cit++){
 		if(l_cit->first != r_cit->first) return false;
 		if(!(l_cit->second == r_cit->second)) return false;
 	}
@@ -94,7 +97,7 @@ bool operator==(const RsTlvSecurityKeySet& l, const RsTlvSecurityKeySet& r)
 
 
 
-bool operator==(const RsTlvSecurityKey& sk1, const RsTlvSecurityKey& sk2)
+bool operator==(const RsTlvPublicRSAKey& sk1, const RsTlvPublicRSAKey& sk2)
 {
 
 	if(sk1.startTS != sk2.startTS) return false;
@@ -141,7 +144,7 @@ bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& ks
 
 bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
 {
-	std::list<RsPeerId>::const_iterator it1 = pids1.ids.begin(),
+    std::set<RsPeerId>::const_iterator it1 = pids1.ids.begin(),
 			it2 = pids2.ids.begin();
 
 
@@ -182,27 +185,9 @@ bool operator==(const RsTlvBinaryData& bd1, const RsTlvBinaryData& bd2)
 	return true;
 }
 
-
-void init_item(RsTlvSecurityKey& sk)
-{
-	int randnum = rand()%313131;
-
-	sk.endTS = randnum;
-	sk.keyFlags = randnum;
-	sk.startTS = randnum;
-    sk.keyId.random();
-
-	std::string randomStr;
-	randString(LARGE_STR, randomStr);
-
-	sk.keyData.setBinData(randomStr.c_str(), randomStr.size());
-
-	return;
-}
-
 void init_item(RsTlvKeySignature& ks)
 {
-    ks.keyId.random();
+    ks.keyId = RsGxsId::random();
 
 	std::string signData;
 	randString(LARGE_STR, signData);
@@ -239,7 +224,7 @@ bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
 void init_item(RsTlvHashSet& hs)
 {
 	for(int i=0; i < 10; i++)
-		hs.ids.push_back(RsFileHash::random());
+        hs.ids.insert(RsFileHash::random());
 
 	return;
 }
@@ -247,14 +232,14 @@ void init_item(RsTlvHashSet& hs)
 void init_item(RsTlvPeerIdSet& ps)
 {
 	for(int i=0; i < 10; i++)
-		ps.ids.push_back(RsPeerId::random());
+        ps.ids.insert(RsPeerId::random());
 
 	return;
 }
 
 bool operator==(const RsTlvHashSet& hs1,const RsTlvHashSet& hs2)
 {
-	std::list<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
+    std::set<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
 			it2 = hs2.ids.begin();
 
 	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); it1++, it2++)

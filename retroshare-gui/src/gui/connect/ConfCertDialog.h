@@ -37,7 +37,7 @@ public:
 
     template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
     {
-        ConfCertDialog *confdialog = confdialog = instance(id);
+        ConfCertDialog *confdialog = instance(id);
 
         switch (page) {
         case PageDetails:
@@ -76,11 +76,7 @@ private:
 
 private slots:
     void applyDialog();
-    void makeFriend();
-    void denyFriend();
-    void signGPGKey();
     void loadInvitePage();
-    void setServiceFlags();
 
     void showHelpDialog();
     /** Called when a child window requests the given help <b>topic</b>. */

@@ -28,11 +28,6 @@
 #include <QComboBox>
 #include <retroshare/rsgxscircles.h>
 
-
-#define GXS_CIRCLE_CHOOSER_EXTERNAL	0x0001
-#define GXS_CIRCLE_CHOOSER_PERSONAL	0x0002
-#define GXS_CIRCLE_CHOOSER_ALLCIRCLES	0x0003  // OR of other two.
-
 class GxsCircleChooser : public QComboBox
 {
         Q_OBJECT
@@ -40,12 +35,11 @@ class GxsCircleChooser : public QComboBox
 public:
 	GxsCircleChooser(QWidget *parent = NULL);
 
-	void loadCircles(uint32_t chooserFlags, const RsGxsCircleId &defaultId);
+    void loadCircles(const RsGxsCircleId &defaultId);
 	bool getChosenCircle(RsGxsCircleId &id);
 
 private:
 	void loadGxsCircles();
-	uint32_t mFlags;
 
 	RsGxsCircleId mDefaultCircleId;
 };

@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTreeWidget" name="treeWidget">
+    <widget class="RSTreeWidget" name="treeWidget">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -55,6 +55,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

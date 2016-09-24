@@ -36,9 +36,12 @@ ToasterDisable::ToasterDisable(QWidget *parent)
 	hbox->setSpacing(0);
 
 	imageButton = new QPushButton(this);
+
+    int S = QFontMetricsF(imageButton->font()).height();
+
 	imageButton->setFlat(true);
 	imageButton->setCheckable(true);
-	imageButton->setMaximumSize(24, 24);
+	imageButton->setMaximumSize(S,S);
 	imageButton->setFocusPolicy(Qt::ClickFocus);
 	hbox->addWidget(imageButton);
 
@@ -55,7 +58,7 @@ ToasterDisable::ToasterDisable(QWidget *parent)
 
 void ToasterDisable::disable(bool isDisable)
 {
-	imageButton->setIcon(QIcon(isDisable ? IMAGE_TOASTERDISABLE : IMAGE_TOASTERENABLE));
-	imageButton->setToolTip(isDisable ? tr("All Toasters are disable") : tr("Toasters are enable"));
+	imageButton->setIcon(QPixmap(isDisable ? IMAGE_TOASTERDISABLE : IMAGE_TOASTERENABLE));
+	imageButton->setToolTip(isDisable ? tr("All Toasters are disabled") : tr("Toasters are enabled"));
 	imageButton->setChecked(isDisable);
 }

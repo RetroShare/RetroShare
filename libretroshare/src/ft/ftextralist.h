@@ -70,17 +70,17 @@ class FileDetails
 			return;
 		}
 
-		FileDetails(std::string path, uint32_t p, TransferRequestFlags f)
+		FileDetails(std::string path, uint32_t /*p*/, TransferRequestFlags f)
 		{
 			info.path = path;
-			period = p;
+//			period = p;
 			info.transfer_info_flags = f;
 		}
 
-		FileDetails(FileInfo &i, uint32_t p, TransferRequestFlags f)
+		FileDetails(FileInfo &i, uint32_t /*p*/, TransferRequestFlags f)
 		{
 			info = i;
-			period = p;
+    //		period = p;
 			info.transfer_info_flags = f;
 		}
 
@@ -94,8 +94,8 @@ class FileDetails
 		uint64_t size;
 #endif
 
-		uint32_t start;
-		uint32_t period;
+        //uint32_t start;
+        //uint32_t period;
 		//TransferRequestFlags flags;
 };
 
@@ -106,7 +106,7 @@ const uint32_t FT_DETAILS_REMOTE	= 0x0002;
 const uint32_t CLEANUP_PERIOD		= 600; /* 10 minutes */
 
 
-class ftExtraList: public RsThread, public p3Config, public ftSearch
+class ftExtraList: public RsTickingThread, public p3Config, public ftSearch
 {
 
 	public:
@@ -143,7 +143,7 @@ virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileIn
 		/***
 		 * Thread Main Loop 
 		 **/
-virtual void run(); 
+virtual void data_tick();
 
 		/***
 		 * Configuration - store extra files.
@@ -167,6 +167,8 @@ bool    cleanupEntry(std::string path, TransferRequestFlags flags);
 
         std::map<std::string, RsFileHash> mHashedList; /* path -> hash ( not saved ) */
         std::map<RsFileHash, FileDetails> mFiles;
+
+    time_t cleanup ;
 };
 
 

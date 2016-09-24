@@ -117,7 +117,7 @@ virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsTlvServiceIdSet signing_classes;
-	RsTlvSecurityKey  key; // has from->to, and flags.
+	RsTlvPublicRSAKey  key; // has from->to, and flags.
 	RsTlvKeySignature sign;
 };
 

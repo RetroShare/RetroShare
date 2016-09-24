@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
-    <height>263</height>
+    <width>763</width>
+    <height>241</height>
    </rect>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -25,6 +25,15 @@
      <property name="palette">
       <palette>
        <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>150</green>
+           <blue>103</blue>
+          </color>
+         </brush>
+        </colorrole>
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
@@ -36,6 +45,15 @@
         </colorrole>
        </active>
        <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>207</red>
+           <green>150</green>
+           <blue>103</blue>
+          </color>
+         </brush>
+        </colorrole>
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
@@ -47,6 +65,15 @@
         </colorrole>
        </inactive>
        <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </brush>
+        </colorrole>
         <colorrole role="Window">
          <brush brushstyle="SolidPattern">
           <color alpha="255">
@@ -73,13 +100,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <widget class="QFrame" name="frame_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QFrame" name="headFrame">
         <layout class="QGridLayout">
          <property name="verticalSpacing">
           <number>0</number>
@@ -115,12 +136,7 @@
             <number>0</number>
            </property>
            <item row="0" column="0">
-            <widget class="QLabel" name="peerNameLabel">
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
+            <widget class="StyledLabel" name="peerNameLabel">
              <property name="text">
               <string notr="true">Peer Name</string>
              </property>
@@ -139,13 +155,9 @@
              </property>
              <property name="font">
               <font>
-               <family>Tahoma</family>
-               <pointsize>9</pointsize>
                <weight>75</weight>
                <italic>true</italic>
                <bold>true</bold>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
               </font>
              </property>
              <property name="text">
@@ -157,19 +169,12 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLabel" name="requestLabel">
+            <widget class="StyledLabel" name="requestLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
              </property>
              <property name="text">
               <string>wants to be friend with you on RetroShare</string>
@@ -301,29 +306,6 @@
             </spacer>
            </item>
            <item>
-            <widget class="QToolButton" name="quickmsgButton">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="text">
-              <string>Write a quick Message</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::DelayedPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QToolButton" name="chatButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -342,7 +324,7 @@
              </property>
              <property name="icon">
               <iconset resource="../images.qrc">
-               <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
+               <normaloff>:/images/chat_24.png</normaloff>:/images/chat_24.png</iconset>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -406,19 +388,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>10</width>
-             <height>1</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
@@ -642,6 +611,11 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>

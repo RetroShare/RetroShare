@@ -35,13 +35,14 @@
 #include "ft/ftfileprovider.h"
 #include "ft/ftsearch.h"
 #include "util/rsdir.h"
+#include "util/rsmemory.h"
 #include <retroshare/rsturtle.h>
 #include <time.h>
 
 /* For Thread Behaviour */
-const uint32_t DMULTIPLEX_MIN	= 10; /* 1ms sleep */
+const uint32_t DMULTIPLEX_MIN	= 10; /* 10 msec sleep */
 const uint32_t DMULTIPLEX_MAX   = 1000; /* 1 sec sleep */
-const double   DMULTIPLEX_RELAX = 0.5; /* ??? */
+const double   DMULTIPLEX_RELAX = 0.5; /* relax factor to calculate sleep time if not working in /libretroshare/src/util/rsthreads.cc */
 
 static const uint32_t MAX_CHECKING_CHUNK_WAIT_DELAY   = 120 ; //! TTL for an inactive chunk
 const uint32_t MAX_SIMULTANEOUS_CRC_REQUESTS = 20 ;
@@ -75,6 +76,42 @@ ftDataMultiplex::ftDataMultiplex(const RsPeerId& ownId, ftDataSend *server, ftSe
 	mDataSend(server),  mSearch(search), mOwnId(ownId)
 {
 	return;
+}
+
+bool ftDataMultiplex::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size, uint8_t *data)
+{
+    RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+    ftFileProvider* provider = 0;
+
+    std::map<RsFileHash, ftClient>::iterator cit;
+    std::map<RsFileHash, ftFileProvider *>::iterator sit;
+
+    // check if file is currently downloading
+    if (mClients.end() != (cit = mClients.find(hash)))
+        provider = (cit->second).mCreator;
+
+    // else check if its already uploading
+    else if (mServers.end() != (sit = mServers.find(hash)))
+        provider = sit->second;
+
+    // else create a new provider
+    else
+    {
+        FileInfo info;
+        FileSearchFlags hintflags =   RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_NETWORK_WIDE;
+        if(mSearch->search(hash, hintflags, info))
+        {
+            provider = new ftFileProvider(info.path, info.size, hash);
+            mServers[hash] = provider;
+        }
+    }
+
+    if(!provider || ! provider->getFileData(mOwnId, offset, requested_size, data, true))
+    {
+        requested_size = 0 ;
+        return false ;
+    }
+    return true ;
 }
 
 bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
@@ -124,7 +161,7 @@ bool    ftDataMultiplex::FileUploads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
     std::map<RsFileHash, ftFileProvider *>::iterator sit;
-	for(sit = mServers.begin(); sit != mServers.end(); sit++)
+	for(sit = mServers.begin(); sit != mServers.end(); ++sit)
 	{
 		hashs.push_back(sit->first);
 	}
@@ -135,7 +172,7 @@ bool    ftDataMultiplex::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
     std::map<RsFileHash, ftClient>::iterator cit;
-	for(cit = mClients.begin(); cit != mClients.end(); cit++)
+	for(cit = mClients.begin(); cit != mClients.end(); ++cit)
 	{
 		hashs.push_back(cit->first);
 	}
@@ -315,7 +352,7 @@ bool 	ftDataMultiplex::doWork()
 
 		{
 			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-			if (mRequestQueue.size() == 0)
+			if (mRequestQueue.empty())
 			{
 				doRequests = false;
 				continue;
@@ -385,7 +422,7 @@ bool 	ftDataMultiplex::doWork()
 
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		if (mSearchQueue.size() == 0)
+		if (mSearchQueue.empty())
 		{
 			/* Finished */
 			return true;
@@ -680,6 +717,9 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const Rs
 	{
 		std::cerr << "Cannot fseek/read from file " << filename << " at position " << (uint64_t)chunk_number * (uint64_t)ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE << std::endl;
 		fclose(fd) ;
+
+		delete[] buf ;
+		return false ;
 	}
 	fclose(fd) ;
 
@@ -839,13 +879,11 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const
 		std::cerr << "Warning: peer " << peerId << " is asking a large chunk (s=" << chunksize << ") for hash " << hash << ", filesize=" << size << ". This is unexpected." << std::endl ;
 		return false ;
 	}
-	void *data = malloc(chunksize);
+	void *data = rs_malloc(chunksize);
 
 	if(data == NULL)
-	{
-		std::cerr << "WARNING: Could not allocate data for a chunksize of " << chunksize << std::endl ;
 		return false ;
-	}
+	
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::locked_handleServerRequest()";
 	std::cerr << "\t peer: " << peerId << " hash: " << hash;
@@ -1066,8 +1104,6 @@ bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const RsFileHa
 
 	if(rsTurtle->isTurtlePeer(peerId))
 		hintflags |= RS_FILE_HINTS_NETWORK_WIDE ;
-	else
-		hintflags |= RS_FILE_HINTS_CACHE ;
 
 	if(mSearch->search(hash, hintflags, info))
 	{

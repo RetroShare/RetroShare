@@ -36,6 +36,7 @@ class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
         
 public:
     GxsCommentTreeWidget(QWidget *parent = 0);
+    ~GxsCommentTreeWidget();
     void setup(RsTokenService *token_service, RsGxsCommentService *comment_service);
 
     void requestComments(const RsGxsGrpMsgIdPair& threadId);

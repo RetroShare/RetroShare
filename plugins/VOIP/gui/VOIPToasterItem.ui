@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VOIPToasterItem</class>
+ <widget class="QWidget" name="VOIPToasterItem">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>440</width>
+    <height>102</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>440</width>
+    <height>100</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>440</width>
+    <height>102</height>
+   </size>
+  </property>
+  <layout class="QHBoxLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="windowFrame">
+     <property name="frameShape">
+      <enum>QFrame::WinPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item row="0" column="0">
+       <layout class="QHBoxLayout">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="toasterImage">
+          <property name="minimumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+          <property name="pixmap">
+           <pixmap>:/images/logo/logo_16.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="toasterLabel">
+          <property name="text">
+           <string notr="true">RetroShare</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>10</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="closeButton">
+          <property name="minimumSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/images/closenormal.png</normaloff>:/images/closenormal.png</iconset>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="acceptButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+border: 1px solid #199909;
+font-size: 12pt; color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(122, 230, 110, 255), stop:0.494318 rgba(36, 191, 16, 255), stop:0.505682 rgba(26, 162, 9, 255), stop:1 rgba(17, 106, 6, 255));
+}
+QPushButton::hover{
+border: 1px solid #199909;
+font-size: 12pt;  color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(153, 240, 143, 255), stop:0.494318 rgba(59, 201, 40, 255), stop:0.505682 rgba(46, 172, 29, 255), stop:1 rgba(30, 116, 20, 255));
+}
+
+QPushButton::pressed{
+border: 1px solid #6a1106;
+font-size: 12pt; color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, 
+                                  stop: 0 #444444, stop: 1 #222222);		
+} 
+</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="AvatarWidget" name="avatarWidget">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>70</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="declineButton">
+          <property name="styleSheet">
+           <string notr="true">QPushButton{
+border: 1px solid #6a1106;
+font-size: 12pt; color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color:qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(230, 124, 110, 255), stop:0.494318 rgba(191, 35, 16, 255), stop:0.505682 rgba(162, 26, 9, 255), stop:1 rgba(106, 17, 6, 255));
+}
+QPushButton::hover{
+border: 1px solid #6a1106;
+font-size: 12pt;  color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(240, 154, 143, 255), stop:0.494318 rgba(201, 57, 40, 255), stop:0.505682 rgba(172, 45, 29, 255), stop:1 rgba(116, 30, 20, 255));
+}
+
+QPushButton::pressed{
+border: 1px solid #6a1106;
+font-size: 12pt; color: white;
+min-width: 128px; min-height: 24px;
+border-radius: 6px;
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 0.67, 
+                                  stop: 0 #444444, stop: 1 #222222);		
+} 
+</string>
+          </property>
+          <property name="text">
+           <string>Decline</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>22</width>
+            <height>22</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="StyledLabel" name="textLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>218</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="VOIP_images.qrc"/>
+ </resources>
+ <connections/>
+</ui>

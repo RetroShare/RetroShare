@@ -52,7 +52,7 @@ std::string 	getRsaKeyId(RSA *pubkey);
 
 RsGxsRecognTagItem *extractTag(const std::string &encoded);
 
-bool 		createTagRequest(const RsTlvSecurityKey &key, 
+bool 		createTagRequest(const RsTlvPrivateRSAKey &key, 
 			const RsGxsId &id, const std::string &nickname,
 			uint16_t tag_class, uint16_t tag_type, 
 			const std::string &comment, std::string &tag);

@@ -34,8 +34,8 @@ RsServerConfig *rsConfig = NULL;
 
 static const std::string pqih_ftr("PQIH_FTR");
 
-#define DEFAULT_DOWNLOAD_KB_RATE        (200.0)
-#define DEFAULT_UPLOAD_KB_RATE          (50.0)
+#define DEFAULT_DOWNLOAD_KB_RATE       (10000.0)
+#define DEFAULT_UPLOAD_KB_RATE         (10000.0)
 
 #define MIN_MINIMAL_RATE	(5.0)
 
@@ -187,14 +187,16 @@ int 	p3ServerConfig::getConfigStartup(RsConfigStartup &/*params*/)
 	return 0;
 }
 
-#if 0
-int 	p3ServerConfig::getConfigDataRates(RsConfigDataRates &/*params*/)
-{
-	return 0;
-}
-#endif
+/***** for RsConfig -> p3BandwidthControl ****/
 
-                /***** for RsConfig -> p3BandwidthControl ****/
+int p3ServerConfig::getTrafficInfo(std::list<RSTrafficClue>& out_lst,std::list<RSTrafficClue>& in_lst)
+{
+
+    if (rsBandwidthControl)
+        return rsBandwidthControl->ExtractTrafficInfo(out_lst,in_lst);
+    else
+        return 0 ;
+}
 
 int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
 {
@@ -204,7 +206,6 @@ int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
 	}
 	return 0;
 }
-
 
 int 	p3ServerConfig::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap)
 {
@@ -501,7 +502,6 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 	rsTurtle->setSessionEnabled(turtle_enabled);
 	return true;
 }
-
 
 /* handle data rates.
  * Mutex must be handled at the lower levels: TODO */

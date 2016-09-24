@@ -22,12 +22,15 @@
 #ifndef MIMETEXTEDIT_H
 #define MIMETEXTEDIT_H
 
-#include <QTextEdit>
 #include <QCompleter>
+#include "RSTextEdit.h"
+#include "util/RsSyntaxHighlighter.h"
 
-class MimeTextEdit : public QTextEdit
+class MimeTextEdit : public RSTextEdit
 {
 	Q_OBJECT
+
+	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
 
 public:
 	MimeTextEdit(QWidget *parent = 0);
@@ -44,6 +47,11 @@ public:
 	// Add QAction to context menu (action won't be deleted)
 	void addContextMenuAction(QAction *action);
 
+	QColor textColorQuote() const { return highliter->textColorQuote();}
+
+public slots:
+	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
+
 signals:
 	void calculateContextMenuActions();
 
@@ -58,6 +66,8 @@ private slots:
 	void insertCompletion(const QString &completion);
 	void pasteLink();
 	void pasteOwnCertificateLink();
+	void pastePlainText();
+	void spoiler();
 
 private:
 	QString textUnderCursor() const;
@@ -69,6 +79,7 @@ private:
 	bool mForceCompleterShowNextKeyEvent;
 	QString mCompleterStartString;
 	QList<QAction*> mContextMenuActions;
+	RsSyntaxHighlighter *highliter;
 };
 
 #endif // MIMETEXTEDIT_H

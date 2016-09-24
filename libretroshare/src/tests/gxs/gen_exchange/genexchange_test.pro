@@ -61,7 +61,7 @@ linux-* {
 	LIBS += /home/crispy/Development/retroshare/sqlcipher/sqlcipher/.libs/libsqlite3.a
 	LIBS *= -rdynamic -frtti
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 }
 
 linux-g++ {
@@ -104,7 +104,7 @@ win32 {
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz -lbz2
 # added after bitdht
 #    LIBS += -lws2_32
-        LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+        LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
         LIBS += -lole32 -lwinmm
 
         # export symbols for the plugins

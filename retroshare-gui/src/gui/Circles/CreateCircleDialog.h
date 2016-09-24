@@ -40,38 +40,47 @@ public:
 	~CreateCircleDialog();
 
 	void editNewId(bool isExternal);
-	void editExistingId(const RsGxsGroupId& circleId);
+	void editExistingId(const RsGxsGroupId &circleId, const bool &clearList = true, bool readonly=true);
+	void addMember(const QString &keyId, const QString &idtype, const QString &nickname);
+	void addMember(const RsGxsIdGroup &idGroup);
+	void addCircle(const RsGxsCircleDetails &cirDetails);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
+    
 private slots:
 	void addMember();
 	void removeMember();
 
+	void updateCircleType(bool b);
 	void selectedId(QTreeWidgetItem*, QTreeWidgetItem*);
 	void selectedMember(QTreeWidgetItem*, QTreeWidgetItem*);
 
 	void createCircle();
 	void filterChanged(const QString &text);
 	void createNewGxsId();
+	void idTypeChanged();
+	
+	/** Create the context popup menu and it's submenus */
+	void IdListCustomPopupMenu( QPoint point );
+	void MembershipListCustomPopupMenu( QPoint point);
 
 private:
 
 	void updateCircleGUI();
-	void addMember(const QString& keyId, const QString& idtype, const QString& nickname );
 
 	void setupForPersonalCircle();
 	void setupForExternalCircle();
 
 	bool mIsExistingCircle;
 	bool mIsExternalCircle;
+    	bool mReadOnly;
 
 	void loadCircle(uint32_t token);
 	void loadIdentities(uint32_t token);
 
 	void requestCircle(const RsGxsGroupId &groupId);
 	void requestGxsIdentities();
-	void getPgpIdentities();
+	//void getPgpIdentities();
 	
 	void filterIds();
 
@@ -79,6 +88,7 @@ private:
 	TokenQueue *mIdQueue;
 
 	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
+	bool mClearList;
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;

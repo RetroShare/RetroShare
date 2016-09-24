@@ -25,13 +25,10 @@
 #include <QThread>
 
 #include "GxsMessageFrameWidget.h"
-#include "util/TokenQueue.h"
 
-class GxsFeedItem;
-class UIStateHelper;
 class GxsMessageFramePostThread;
 
-class GxsMessageFramePostWidget : public GxsMessageFrameWidget, public TokenResponse
+class GxsMessageFramePostWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -42,22 +39,25 @@ public:
 	virtual ~GxsMessageFramePostWidget();
 
 	/* GxsMessageFrameWidget */
-	virtual RsGxsGroupId groupId();
-	virtual void setGroupId(const RsGxsGroupId &groupId);
+	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
 //	virtual QIcon groupIcon() = 0;
+	virtual bool navigate(const RsGxsMessageId& msgId);
+	virtual bool isLoading();
 
 	/* GXS functions */
-	uint32_t nextTokenType() { return ++mNextTokenType; }
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	int subscribeFlags() { return mSubscribeFlags; }
 
 protected:
+	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
+
 	virtual void groupNameChanged(const QString &/*name*/) {}
 
 	virtual void clearPosts() = 0;
+	virtual bool navigatePostItem(const RsGxsMessageId& msgId) = 0;
 
 	/* Thread functions */
 	virtual bool useThread() { return false; }
@@ -68,30 +68,27 @@ protected:
 	void loadGroupData(const uint32_t &token);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData) = 0;
 
-	void requestPosts();
-	void loadPosts(const uint32_t &token);
-	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
+	void requestAllPosts();
+	void loadAllPosts(const uint32_t &token);
+	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
 
-	void requestRelatedPosts(const std::vector<RsGxsMessageId> &msgIds);
-	void loadRelatedPosts(const uint32_t &token);
-	virtual void insertRelatedPosts(const uint32_t &token) = 0;
+	void requestPosts(const std::vector<RsGxsMessageId> &msgIds);
+	void loadPosts(const uint32_t &token);
+	virtual void insertPosts(const uint32_t &token) = 0;
 
 private slots:
 	void fillThreadFinished();
 	void fillThreadAddPost(const QVariant &post, bool related, int current, int count);
 
 protected:
-	TokenQueue *mTokenQueue;
 	uint32_t mTokenTypeGroupData;
+	uint32_t mTokenTypeAllPosts;
 	uint32_t mTokenTypePosts;
-	uint32_t mTokenTypeRelatedPosts;
-	UIStateHelper *mStateHelper;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 private:
-	RsGxsGroupId mGroupId; /* current group */
 	QString mGroupName;
 	int mSubscribeFlags;
-	uint32_t mNextTokenType;
 	GxsMessageFramePostThread *mFillThread;
 };
 

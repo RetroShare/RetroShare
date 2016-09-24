@@ -82,6 +82,25 @@ const char *StatusDefs::imageUser(unsigned int status)
 	return "";
 }
 
+const char *StatusDefs::imageStatus(unsigned int status)
+{
+	switch (status) {
+	case RS_STATUS_OFFLINE:
+		return ":/icons/user-offline_64.png";
+	case RS_STATUS_AWAY:
+		return ":/icons/user-away_64.png";
+	case RS_STATUS_BUSY:
+		return ":/icons/user-busy_64.png";
+	case RS_STATUS_ONLINE:
+		return ":/icons/user-online_64.png";
+	case RS_STATUS_INACTIVE:
+		return ":/icons/user-away-extended_64.png";
+	}
+
+	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;
+	return "";
+}
+
 QString StatusDefs::tooltip(unsigned int status)
 {
 	switch (status) {
@@ -139,6 +158,7 @@ QString StatusDefs::peerStateString(int peerState)
 QString StatusDefs::connectStateString(RsPeerDetails &details)
 {
 	QString stateString;
+	bool isConnected = false;
 
 	switch (details.connectState) {
 	case 0:
@@ -152,13 +172,32 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
 		stateString = qApp->translate("StatusDefs", "Connected: TCP");
+		isConnected = true;
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
 		stateString = qApp->translate("StatusDefs", "Connected: UDP");
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+		stateString = qApp->translate("StatusDefs", "Connected: Tor");
+		isConnected = true;
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+		stateString = qApp->translate("StatusDefs", "Connected: I2P");
+		isConnected = true;
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString = qApp->translate("StatusDefs", "Connected: Unknown");
+		isConnected = true;
 		break;
+	}
+
+	if(isConnected) {
+		stateString += " ";
+		if(details.actAsServer)
+			stateString += qApp->translate("StatusDefs", "inbound connection");
+		else
+			stateString += qApp->translate("StatusDefs", "outbound connection");
 	}
 
 	if (details.connectStateString.empty() == false) {
@@ -175,6 +214,65 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		}
 		stateString += qApp->translate("StatusDefs", "DHT: Contact");
 	}
+
+	return stateString;
+}
+
+QString StatusDefs::connectStateWithoutTransportTypeString(RsPeerDetails &details)
+{
+	QString stateString;
+
+	switch (details.connectState) {
+	case 0:
+		stateString = peerStateString(details.state);
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_TCP:
+		stateString = qApp->translate("StatusDefs", "Trying TCP");
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_UDP:
+		stateString = qApp->translate("StatusDefs", "Trying UDP");
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stateString = qApp->translate("StatusDefs", "Connected");
+		break;
+	}
+
+	return stateString;
+}
+
+QString StatusDefs::connectStateIpString(RsPeerDetails &details)
+{
+    QString stateString = QString("");
+
+	switch (details.connectState) {
+	case 0:
+		stateString = peerStateString(details.state);
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_TCP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_TCP:
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "TCP-in") : qApp->translate("StatusDefs", "TCP-out"));
+		break;
+	case RS_PEER_CONNECTSTATE_TRYING_UDP:
+	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
+		stateString += qApp->translate("StatusDefs", "UDP");
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_TOR:
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "Tor-in") : qApp->translate("StatusDefs", "Tor-out"));
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_I2P:
+		stateString += QString(details.actAsServer ? qApp->translate("StatusDefs", "I2P-in") : qApp->translate("StatusDefs", "I2P-out"));
+		break;
+	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
+		stateString += qApp->translate("StatusDefs", "unkown");
+		break;
+	}
+    stateString += QString(" : ");
+
+    stateString += QString(details.connectAddr.c_str()) ;
 
 	return stateString;
 }

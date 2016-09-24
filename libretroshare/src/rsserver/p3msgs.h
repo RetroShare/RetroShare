@@ -54,14 +54,13 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * @param msgList ref to list summarising client's msgs
 	   */
-	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-	  virtual bool getMessage(const std::string &mId, MessageInfo &msg);
+	  virtual bool getMessageSummaries(std::list<Rs::Msgs::MsgInfoSummary> &msgList);
+	  virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg);
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-	  virtual bool MessageSend(MessageInfo &info);
-	  virtual bool decryptMessage(const std::string& mid);
+	  virtual bool MessageSend(Rs::Msgs::MessageInfo &info);
 	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
-	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
+	  virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
 	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
 	  virtual bool MessageDelete(const std::string &mid);
 	  virtual bool MessageRead(const std::string &mid, bool unreadByUser);
@@ -71,18 +70,18 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load);
 	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
-	  virtual bool getMessageTagTypes(MsgTagType& tags);
+	  virtual bool getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
 	  virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 	  virtual bool removeMessageTagType(uint32_t tagId);
 
-	  virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info);
+	  virtual bool getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
 	  /* set == false && tagId == 0 --> remove all */
 	  virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
-	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
+	  virtual bool resetMessageStandardTagTypes(Rs::Msgs::MsgTagType& tags);
 
-	  virtual void enableDistantMessaging(bool b) ;
-	  virtual bool distantMessagingEnabled() ;
+	  virtual uint32_t getDistantMessagingPermissionFlags() ;
+	  virtual void setDistantMessagingPermissionFlags(uint32_t flags) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
@@ -116,90 +115,57 @@ class p3Msgs: public RsMsgs
 	  
 
 	  /*!
-	   * public chat sent to all peers
+       * Send a chat message.
+       * @param destination where to send the chat message
+       * @param msg the message
+       * @see ChatId
 	   */
-	  virtual	bool	sendPublicChat(const std::string& msg);
-
-	  /*!
-	   * chat is sent to specifc peer
-	   * @param id peer to send chat msg to
-	   */
-	  virtual	bool	sendPrivateChat(const RsPeerId& id, const std::string& msg);
-
-	  /*!
-	   * returns the count of messages in public or private queue
-	   * @param public or private queue
-	   */
-	  virtual	int    getPublicChatQueueCount();
-
-	  /*!
-	   * @param chats ref to list of received public chats is stored here
-	   */
-	  virtual	bool	getPublicChatQueue(std::list<ChatInfo> &chats);
-
-	  /*!
-	   * returns the count of messages in private queue
-	   * @param public or private queue
-	   */
-	  virtual	int    getPrivateChatQueueCount(bool incoming);
-
-	  /*!
-	   * @param id's of available private chat messages
-	   */
-	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids);
-
-	  /*!
-	   * @param chats ref to list of received private chats is stored here
-	   */
-	  virtual	bool	getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats);
-
-	  /*!
-	   * @param clear private chat queue
-	   */
-	  virtual	bool	clearPrivateChatQueue(bool incoming, const RsPeerId& id);
+      virtual bool sendChat(ChatId destination, std::string msg) ;
 
 	  /*!
 	   * Return the max message size for security forwarding
 	   */
-	  virtual int getMaxMessageSecuritySize();
+	  virtual uint32_t getMaxMessageSecuritySize(int type);
 
-	  /*!
-	   * sends immediate status string to a specific peer, e.g. in a private chat
-	   * @param peer_id peer to send status string to
-	   * @param status_string immediate status to send
-	   */
-	  virtual void    sendStatusString(const RsPeerId& peer_id, const std::string& status_string) ;
+    /*!
+     * sends immediate status string to a specific peer, e.g. in a private chat
+     * @param chat_id chat id to send status string to
+     * @param status_string immediate status to send
+     */
+    virtual void    sendStatusString(const ChatId& id, const std::string& status_string) ;
 
-	  /*!
-	   * sends immediate status to all peers
-	   * @param status_string immediate status to send
-	   */
-	  virtual void    sendGroupChatStatusString(const std::string& status_string) ;
+    /**
+     * @brief clearChatLobby: Signal chat was cleared by GUI.
+     * @param id: Chat id cleared.
+     */
+    virtual void clearChatLobby(const ChatId &id);
 
 	  /****************************************/
 
-	  virtual bool joinVisibleChatLobby(const ChatLobbyId& id) ;
+      virtual bool joinVisibleChatLobby(const ChatLobbyId& id, const RsGxsId &own_id) ;
 	  virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
-	  virtual bool getVirtualPeerId(const ChatLobbyId& id,RsPeerId& vpid) ;
-	  virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) ;
-	  virtual void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
-	  virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
-	  virtual bool acceptLobbyInvite(const ChatLobbyId& id) ;
+      virtual void getChatLobbyList(std::list<ChatLobbyId>& cl_list) ;
+      virtual bool getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info) ;
+      virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
+      virtual bool acceptLobbyInvite(const ChatLobbyId& id, const RsGxsId &gxs_id) ;
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 	  virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
-	  virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::string&) ;
-	  virtual bool getNickNameForChatLobby(const ChatLobbyId&,std::string& nick) ;
-	  virtual bool setDefaultNickNameForChatLobby(const std::string&) ;
-	  virtual bool getDefaultNickNameForChatLobby(std::string& nick) ;
+      virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId&) ;
+      virtual bool getIdentityForChatLobby(const ChatLobbyId&,RsGxsId& nick) ;
+      virtual bool setDefaultIdentityForChatLobby(const RsGxsId&) ;
+      virtual void getDefaultIdentityForChatLobby(RsGxsId& nick) ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
-	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
+      virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type) ;
 
-	  virtual bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
-	  virtual bool getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status) ;
-	  virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
+      virtual bool initiateDistantChatConnexion(const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id, DistantChatPeerId &pid, uint32_t& error_code) ;
+      virtual bool getDistantChatStatus(const DistantChatPeerId& gxs_id,DistantChatPeerInfo& info);
+      virtual bool closeDistantChatConnexion(const DistantChatPeerId &pid) ;
 
+    virtual uint32_t getDistantChatPermissionFlags() ;
+    virtual bool setDistantChatPermissionFlags(uint32_t flags) ;
+    
    private:
 
 	  p3MsgService  *mMsgSrv;

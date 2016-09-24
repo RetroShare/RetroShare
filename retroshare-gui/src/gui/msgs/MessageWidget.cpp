@@ -57,6 +57,8 @@
 #define COLUMN_FILE_HASH   2
 #define COLUMN_FILE_COUNT  3
 
+#include "gui/msgs/MessageInterface.h"
+
 class RsHtmlMsg : public RsHtml
 {
 public:
@@ -93,7 +95,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	}
 
 	MessageInfo msgInfo;
-	if (!rsMsgs->getMessage(msgId, msgInfo)) {
+	if (!rsMail->getMessage(msgId, msgInfo)) {
 		std::cerr << "MessageWidget::openMsg() Couldn't find Msg" << std::endl;
 		return NULL;
 	}
@@ -133,14 +135,12 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
-	connect(ui.decryptButton, SIGNAL(clicked()), this, SLOT(decrypt()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
 	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
-	ui.decryptFrame->hide();
 
 	/* hide the Tree +/- */
 	ui.msgList->setRootIsDecorated( false );
@@ -148,9 +148,9 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_NAME, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_SIZE, QHeaderView::Interactive);
-	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_HASH, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_SIZE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(msglheader, COLUMN_FILE_HASH, QHeaderView::Interactive);
 
 	msglheader->resizeSection (COLUMN_FILE_NAME, 200);
 	msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
@@ -166,16 +166,13 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	ui.tagsLabel->setVisible(false);
 
+	ui.msgText->activateLinkClick(false);
+
 	if (isControlled == false) {
 		processSettings("MessageWidget", true);
 	}
 
 	ui.dateText-> setText("");
-
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 MessageWidget::~MessageWidget()
@@ -247,7 +244,7 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		// load settings
 
 		// expandFiles
-		bool value = Settings->value("expandFiles", true).toBool();
+		bool value = Settings->value("expandFiles", false).toBool();
 		ui.expandFilesButton->setChecked(value);
 		ui.msgList->setVisible(value);
 		togglefileview();
@@ -289,10 +286,10 @@ void MessageWidget::togglefileview()
 
 	if (ui.expandFilesButton->isChecked()) {
 		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-		ui.expandFilesButton->setToolTip(tr("Hide"));
+		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
 		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-		ui.expandFilesButton->setToolTip(tr("Expand"));
+		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
 }
 
@@ -300,7 +297,7 @@ void MessageWidget::togglefileview()
 void MessageWidget::getcurrentrecommended()
 {
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		return;
 	}
 
@@ -332,7 +329,7 @@ void MessageWidget::getcurrentrecommended()
 		std::cout << "Requesting file " << fi.fname << ", size=" << fi.size << ", hash=" << fi.hash << std::endl ;
 
 		if (rsFiles->FileRequest(fi.fname, fi.hash, fi.size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds) == false) {
-			QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ") + QString::fromUtf8(fi.fname.c_str()), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+			QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:")+"\n    " + QString::fromUtf8(fi.fname.c_str()), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
 			mb.exec();
 		}
 	}
@@ -342,7 +339,7 @@ void MessageWidget::getallrecommended()
 {
 	/* get Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		return;
 	}
 
@@ -350,7 +347,7 @@ void MessageWidget::getallrecommended()
 	std::list<FileInfo>::const_iterator it;
 
 	/* do the requests */
-	for(it = recList.begin(); it != recList.end(); it++) {
+	for(it = recList.begin(); it != recList.end(); ++it) {
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
         std::list<RsPeerId> srcIds;
         srcIds.push_back(msgInfo.rspeerid_srcId);
@@ -372,7 +369,7 @@ void MessageWidget::messagesChanged()
 
 	/* test Message */
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		/* messages was removed */
 		if (isWindow) {
 			window()->close();
@@ -405,16 +402,16 @@ void MessageWidget::showTagLabels()
 	}
 
 	MsgTagInfo tagInfo;
-	rsMsgs->getMessageTag(currMsgId, tagInfo);
+	rsMail->getMessageTag(currMsgId, tagInfo);
 
 	if (tagInfo.tagIds.empty() == false) {
 		ui.tagsLabel->setVisible(true);
 
 		MsgTagType Tags;
-		rsMsgs->getMessageTagTypes(Tags);
+		rsMail->getMessageTagTypes(Tags);
 
 		std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
+		for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
 			Tag = Tags.types.find(*tagId);
 			if (Tag != Tags.types.end()) {
 				QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
@@ -444,8 +441,6 @@ void MessageWidget::fill(const std::string &msgId)
 //		// message doesn't changed
 //		return;
 //	}
-
-	ui.decryptFrame->hide();
 
 	currMsgId = msgId;
 
@@ -479,7 +474,7 @@ void MessageWidget::fill(const std::string &msgId)
 	clearTagLabels();
 
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		std::cerr << "MessageWidget::fill() Couldn't find Msg" << std::endl;
 		return;
 	}
@@ -490,11 +485,12 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgList->clear();
 
 	QList<QTreeWidgetItem*> items;
-	for (it = recList.begin(); it != recList.end(); it++) {
+	for (it = recList.begin(); it != recList.end(); ++it) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
-		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
-        item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
+		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
+		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
+		item->setTextAlignment( COLUMN_FILE_SIZE, Qt::AlignRight );
 
 		/* add to the list */
 		items.append(item);
@@ -507,8 +503,8 @@ void MessageWidget::fill(const std::string &msgId)
 	RetroShareLink link;
 	QString text;
 
-    for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-    for(std::list<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for(std::set<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 	ui.toText->setText(text);
 
@@ -518,8 +514,8 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->setVisible(true);
 
 		text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 		ui.ccText->setText(text);
 	} else {
@@ -534,8 +530,8 @@ void MessageWidget::fill(const std::string &msgId)
         ui.bccText->setVisible(true);
 
         text.clear();
-        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
-        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::set<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::set<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); ++pit)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
 
 		ui.bccText->setText(text);
 	} else {
@@ -549,21 +545,22 @@ void MessageWidget::fill(const std::string &msgId)
     RsPeerId ownId = rsPeers->getOwnId();
 	 QString tooltip_string ;
 
-	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
-	{
-		tooltip_string = PeerDefs::rsidFromId(ownId) ;
-		link.createMessage(ownId, "");
-	} 
-	else if(msgInfo.msgflags & RS_MSG_DECRYPTED || msgInfo.msgflags & RS_MSG_ENCRYPTED)	// distant message
-	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
-		link.createMessage(msgInfo.rsgxsid_srcId, "");
-	}
-	else
-	{
-		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
-		link.createMessage(msgInfo.rspeerid_srcId, "");
-	}
+//	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
+//	{
+//		tooltip_string = PeerDefs::rsidFromId(ownId) ;
+//		link.createMessage(ownId, "");
+//	}
+
+     if(msgInfo.msgflags & RS_MSG_DISTANT)	// distant message
+     {
+         tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
+         link.createMessage(msgInfo.rsgxsid_srcId, "");
+     }
+     else
+     {
+         tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
+         link.createMessage(msgInfo.rspeerid_srcId, "");
+     }
 
     if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
@@ -572,22 +569,14 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.fromText->setToolTip(tooltip_string) ;
 	}
 
-	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
-		ui.subjectText->setText(tr("Encrypted message"));
-		ui.fromText->setText(tr("Unknown (needs decryption)")) ;
-	} else {
 		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
-	}
 
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
-	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
-
-	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
-		ui.decryptFrame->show();
-	}
+	ui.filesText->setText(QString("%1").arg(msgInfo.count));
+	ui.filesSize->setText(QString(misc::friendlyUnit(msgInfo.size)));
 
 	showTagLabels();
 
@@ -597,7 +586,7 @@ void MessageWidget::fill(const std::string &msgId)
 void MessageWidget::remove()
 {
 	MessageInfo msgInfo;
-	if (rsMsgs->getMessage(currMsgId, msgInfo) == false) {
+	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
 		std::cerr << "MessageWidget::fill() Couldn't find Msg" << std::endl;
 		return;
 	}
@@ -612,9 +601,9 @@ void MessageWidget::remove()
 	}
 
 	if (deleteReal) {
-		rsMsgs->MessageDelete(currMsgId);
+		rsMail->MessageDelete(currMsgId);
 	} else {
-		rsMsgs->MessageToTrash(currMsgId, true);
+		rsMail->MessageToTrash(currMsgId, true);
 	}
 
 	if (isWindow) {
@@ -729,9 +718,10 @@ void MessageWidget::anchorClicked(const QUrl &url)
 		return;
 	}
 
-	if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
-		link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
-	}
+    if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+        std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
+    //	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+    }
 
 	QList<RetroShareLink> links;
 	links.append(link);
@@ -744,42 +734,5 @@ void MessageWidget::loadImagesAlways()
 		return;
 	}
 
-	rsMsgs->MessageLoadEmbeddedImages(currMsgId, true);
-}
-
-void MessageWidget::decrypt()
-{
-	if (!decryptMsg(currMsgId)) {
-		return;
-	}
-
-	// Force refill
-	std::string msgId = currMsgId;
-	currMsgId.clear();
-
-	fill(msgId);
-}
-
-bool MessageWidget::decryptMsg(const std::string &msgId)
-{
-	if (msgId.empty()) {
-		return false;
-	}
-
-	MessageInfo msgInfo;
-	if (!rsMsgs->getMessage(msgId, msgInfo)) {
-		return false;
-	}
-
-	if (!(msgInfo.msgflags & RS_MSG_ENCRYPTED)) {
-		QMessageBox::warning(NULL, tr("Decryption failed!"), tr("This message is not encrypted. Cannot decrypt!"));
-		return false;
-	}
-
-	if (!rsMsgs->decryptMessage(msgId)) {
-		 QMessageBox::warning(NULL, tr("Decryption failed!"), tr("This message could not be decrypted."));
-		 return false;
-	}
-
-	return true;
+	rsMail->MessageLoadEmbeddedImages(currMsgId, true);
 }

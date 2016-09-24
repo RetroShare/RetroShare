@@ -45,6 +45,7 @@ class RatesStatus;
 class OpModeStatus;
 class SoundStatus;
 class ToasterDisable;
+class SysTrayStatus;
 //class ForumsDialog;
 class GxsChannelDialog ;
 class GxsForumsDialog ;
@@ -169,19 +170,24 @@ public:
 
     SoundStatus *soundStatusInstance();
     ToasterDisable *toasterDisableInstance();
+    SysTrayStatus *sysTrayStatusInstance();
 
 public slots:
+    void receiveNewArgs(QStringList args);
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
 
-    void retroshareLinkActivated(const QUrl &url);
     void externalLinkActivated(const QUrl &url);
+    void retroshareLinkActivated(const QUrl &url);
+    void openRsCollection(const QString &filename);
+    void processLastArgs();
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
     void setCompactStatusMode(bool compact);
 
+    void toggleStatusToolTip(bool toggle);
 protected:
     /** Default Constructor */
     MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -204,9 +210,11 @@ private slots:
     void addFriend();
     void newRsCollection();
     void showMessengerWindow();
-    void showDhtWindow();
-    void showBwCtrlWindow();
-    void servicePermission();
+    void showStatisticsWindow();
+#ifdef ENABLE_WEBUI
+    void showWebinterface();
+#endif
+    //void servicePermission();
 
 #ifdef UNFINISHED    
     void showApplWindow();
@@ -269,6 +277,7 @@ private:
     OpModeStatus *opModeStatus;
     SoundStatus *soundStatus;
     ToasterDisable *toasterDisable;
+    SysTrayStatus *sysTrayStatus;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

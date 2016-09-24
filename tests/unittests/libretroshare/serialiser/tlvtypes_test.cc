@@ -47,7 +47,7 @@ TEST(libretroshare_serialiser, test_RsTlvFileItem)
 
 	/* initialise */
 	i1.filesize = 101010;
-	i1.hash = RsFileHash("ABCDEFEGHE");
+	i1.hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
 	i1.name = "TestFile.txt";
 	i1.pop  = 12;
 	i1.age  = 456;
@@ -105,7 +105,7 @@ TEST(libretroshare_serialiser, test_RsTlvFileSet)
 	{
 		RsTlvFileItem fi;
 		fi.filesize = 16 + i * i;
-		fi.hash = RsFileHash("ABCDEF");
+		fi.hash = RsFileHash("123456789ABCDEF67890123456789ABCDEF67890");//SHA1_SIZE*2 = 40
 		std::ostringstream out;
 		out << "File" << i << "_inSet.txt";
 		fi.name = out.str();
@@ -176,8 +176,8 @@ TEST(libretroshare_serialiser, test_RsTlvPeerIdSet)
 
 	for(int i = 0; i < 15 ; i++)
 	{
-		testId.random();
-		i1.ids.push_back(testId);
+        testId = RsPeerId::random();
+        i1.ids.insert(testId);
 	}
 
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &i1, &i2));
@@ -195,6 +195,7 @@ TEST(libretroshare_serialiser, test_RsTlvServiceIdSet)
 		i1.ids.push_back(1 + rand() % 12564);
 	}
 	std::cout << "error here!!!?";
+	std::cout << std::endl;
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &i1, &i2));
 }
 
@@ -296,8 +297,8 @@ TEST(libretroshare_serialiser, test_RsTlvHashSet)
 	for(int i = 0; i < numRandStrings ; i++)
 	{
 		RsPeerId randId;
-		randId.random();
-		i1.ids.push_back(randId);
+        randId = RsPeerId::random();
+        i1.ids.insert(randId);
 	}
 
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &i1, &i2));

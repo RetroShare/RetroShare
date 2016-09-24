@@ -23,10 +23,12 @@
 #ifndef _RSHARESETTINGS_H
 #define _RSHARESETTINGS_H
 
+#include <stdint.h>
 #include <QHash>
 #include <QRgb>
 #include <QSettings>
 
+#include <stdint.h>
 #include <gui/linetypes.h>
 #include "rsettings.h"
 
@@ -73,8 +75,9 @@ public:
 		LASTDIR_IMAGES,
 		LASTDIR_MESSAGES,
 		LASTDIR_BLOGS,
-		LASTDIR_SOUNDS
-	};
+        LASTDIR_SOUNDS,
+        LASTDIR_PLUGIN
+    };
 
 	enum enumToasterPosition
 	{
@@ -153,8 +156,13 @@ public:
 	bool canSetRetroShareProtocol();
 	/** Returns true if retroshare:// is registered as protocol */
 	bool getRetroShareProtocol();
-	/** Register retroshare:// as protocl */
-	bool setRetroShareProtocol(bool value);
+	/** Register retroshare:// as protocol */
+	bool setRetroShareProtocol(bool value, QString &error);
+
+	/** Returns true if this instance have to run Local Server*/
+	bool getUseLocalServer();
+	/** Sets whether to run Local Server */
+	void setUseLocalServer(bool value);
 
 	/* Get the destination log file. */
 	QString getLogFile();
@@ -199,11 +207,14 @@ public:
 	bool getDisplayTrayGroupChat();
 	void setDisplayTrayGroupChat(bool bValue);
 
-	bool getAddFeedsAtEnd();
-	void setAddFeedsAtEnd(bool bValue);
-
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
+
+	bool getChatSendAsPlainTextByDef();
+	void setChatSendAsPlainTextByDef(bool bValue);
+
+	bool getChatSearchShowBarByDefault();
+	void setChatSearchShowBarByDefault(bool bValue);
 
 	void setChatSearchCharToStartSearch(int iValue);
 	int getChatSearchCharToStartSearch();
@@ -225,6 +236,9 @@ public:
 
 	void setChatSearchFoundColor(QRgb rgbValue);
 	QRgb getChatSearchFoundColor();
+
+	bool getChatLoadEmbeddedImages();
+	void setChatLoadEmbeddedImages(bool value);
 
 	enumToasterPosition getToasterPosition();
 	void setToasterPosition(enumToasterPosition position);
@@ -304,6 +318,19 @@ public:
 	uint getMaxTimeBeforeIdle();
 	void setMaxTimeBeforeIdle(uint value);
 
+    // webinterface
+    bool getWebinterfaceEnabled();
+    void setWebinterfaceEnabled(bool enabled);
+
+    uint16_t getWebinterfacePort();
+    void setWebinterfacePort(uint16_t port);
+
+    bool getWebinterfaceAllowAllIps();
+    void setWebinterfaceAllowAllIps(bool allow_all);
+    
+    // proxy function that computes the best icon size among sizes passed as array, to match the recommended size on screen.
+    int computeBestIconSize(int n_sizes, int *sizes, int recommended_size);
+
 protected:
 	/** Default constructor. */
 	RshareSettings();
@@ -311,7 +338,7 @@ protected:
 	void initSettings();
 
 	/* member for fast access */
-	int m_maxTimeBeforeIdle;
+    int m_maxTimeBeforeIdle;
 };
 
 // the one and only global settings object

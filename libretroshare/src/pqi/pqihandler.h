@@ -26,22 +26,28 @@
 #ifndef MRK_PQI_HANDLER_HEADER
 #define MRK_PQI_HANDLER_HEADER
 
-#include "pqi/pqi.h"
-#include "pqi/pqisecurity.h"
-#include "pqi/pqiqos.h"
+#include <stdint.h>              // for uint32_t
+#include <time.h>                // for time_t, NULL
+#include <list>                  // for list
+#include <map>                   // for map
 
-#include "util/rsthreads.h"
-#include "retroshare/rstypes.h"
+#include "pqi/pqi.h"             // for P3Interface, pqiPublisher
+#include "retroshare/rstypes.h"  // for RsPeerId
+#include "util/rsthreads.h"      // for RsStackMutex, RsMutex
 
-#include <map>
-#include <list>
+class PQInterface;
+class RSTrafficClue;
+class RsBwRates;
+class RsItem;
+class RsRawItem;
 
 class SearchModule
 {
 	public:
-	RsPeerId peerid;
-	PQInterface *pqi;
-	SecurityPolicy *sp;
+        	SearchModule() : pqi(NULL) {}
+            
+		RsPeerId peerid	;
+		PQInterface *pqi;
 };
 
 // Presents a P3 Face to the world!
@@ -50,7 +56,7 @@ class SearchModule
 class pqihandler: public P3Interface, public pqiPublisher
 {
 	public:
-		pqihandler(SecurityPolicy *Global);
+        pqihandler();
 
 		/**** Overloaded from pqiPublisher ****/
 		virtual bool sendItem(RsRawItem *item)
@@ -67,33 +73,40 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		// Service Data Interface
 		virtual int     SendRsRawItem(RsRawItem *);
+#ifdef TO_BE_REMOVED
 		virtual RsRawItem *GetRsRawItem();
+#endif
 
 		// rate control.
+		//void	setMaxRate(const RsPeerId& pid,bool in, uint32_t val_kBs);
 		void	setMaxRate(bool in, float val);
 		float	getMaxRate(bool in);
+                
+                void   setMaxRates(const RsPeerId& pid,bool in,float val) ;
+                float  getMaxRates(const RsPeerId& pid,bool in) ;
 
 		void	getCurrentRates(float &in, float &out);
 
 		// TESTING INTERFACE.
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
+		int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
 
-	protected:
+protected:
 		/* check to be overloaded by those that can
 		 * generates warnings otherwise
 		 */
 
-		int	locked_HandleRsItem(RsItem *ns, int allowglobal,uint32_t& size);
+        int	locked_HandleRsItem(RsItem *ns, uint32_t& size);
 		bool  queueOutRsItem(RsItem *) ;
 
-		virtual int locked_checkOutgoingRsItem(RsItem *item, int global);
-		int	locked_GetItems();
+#ifdef TO_BE_REMOVED
+		int		locked_GetItems();
 		void	locked_SortnStoreItem(RsItem *item);
+#endif
 
 		RsMutex coreMtx; /* MUTEX */
 
 		std::map<RsPeerId, SearchModule *> mods;
-		SecurityPolicy *globsec;
 
 		std::list<RsItem *> in_service;
 
@@ -113,6 +126,7 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		uint32_t nb_ticks ;
 		time_t last_m ;
+        	time_t mLastRateCapUpdate ;
 		float ticks_per_sec ;
 };
 

@@ -65,6 +65,13 @@
          </spacer>
         </item>
         <item>
+         <widget class="QPushButton" name="defaultButton">
+          <property name="text">
+           <string>Default</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="browseButton">
           <property name="text">
            <string>Browse</string>
@@ -108,6 +115,13 @@
    <header>gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>eventTreeWidget</tabstop>
+  <tabstop>filenameEdit</tabstop>
+  <tabstop>defaultButton</tabstop>
+  <tabstop>browseButton</tabstop>
+  <tabstop>playButton</tabstop>
+ </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

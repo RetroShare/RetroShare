@@ -139,7 +139,7 @@ void ftFileProvider::getAvailabilityMap(CompressedChunkMap& cmap)
 }
 
 
-bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data, bool /*allow_unverified*/)
 {
 	/* dodgey checking outside of mutex...
 	 * much check again inside FileAttrs().
@@ -175,7 +175,14 @@ bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32
 		/*
 		 * seek for base_loc 
 		 */
-		fseeko64(fd, base_loc, SEEK_SET);
+        if(fseeko64(fd, base_loc, SEEK_SET) == -1)
+        {
+            #ifdef DEBUG_FT_FILE_PROVIDER
+            std::cerr << "ftFileProvider::getFileData() Failed to seek. Data_size=" << data_size << ", base_loc=" << base_loc << " !" << std::endl;
+            #endif
+            //free(data); No!! It's already freed upwards in ftDataMultiplex::locked_handleServerRequest()
+            return 0;
+        }
 
 		// Data space allocated by caller.
 		//void *data = malloc(chunk_size);

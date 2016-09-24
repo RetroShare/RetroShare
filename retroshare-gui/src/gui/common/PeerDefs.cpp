@@ -39,6 +39,12 @@ const QString PeerDefs::nameWithLocation(const RsIdentityDetails &details)
 {
     return QString::fromUtf8(details.mNickname.c_str()) + " (" + QString::fromStdString(details.mId.toStdString()) + ")";
 }
+
+const QString PeerDefs::nameWithId(const RsIdentityDetails &details)
+{
+     return QString::fromUtf8(details.mNickname.c_str()) + " <" + QString::fromUtf8(details.mNickname.c_str()) + "@" + QString::fromStdString(details.mId.toStdString()) + ">";
+}
+
 const QString PeerDefs::rsid(const std::string &name, const RsPgpId &id)
 {
     if (name.empty()) {
@@ -119,7 +125,6 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-    DistantMsgPeerId pid ;
 
     if(!peerName.empty())
     {

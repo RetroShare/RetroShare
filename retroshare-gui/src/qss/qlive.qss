@@ -8,19 +8,24 @@ QDialog{
                                      stop: 0 #77AEF1, stop: 0.4 #86BBF7);
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+       border-image: url(qss/qlive/qb.png);
+}
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarAction {
        border-image: url(qss/qlive/qb.png);
 
 }
 
-QToolBar#toolBar_2 {
-       border-image: url(qss/qlive/qb2.png);
+QToolBar#toolBarPage {
+       border-image: url(qss/qlive/qb.png);
 
 }
 

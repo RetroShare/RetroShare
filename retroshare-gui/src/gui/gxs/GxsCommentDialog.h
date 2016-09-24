@@ -46,8 +46,8 @@ public:
 
 private slots:
 	void refresh();
+    void idChooserReady();
 	void voterSelectionChanged( int index );
-	void createNewGxsId();
 
 private:
 	RsGxsGroupId   mGrpId;

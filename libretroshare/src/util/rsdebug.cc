@@ -37,8 +37,7 @@ const int RS_DEBUG_LOGCRASH 	= 3;  /* minimal logfile stored after crashes */
 const int RS_DEBUG_LOGC_MAX 	= 100000;  /* max length of crashfile log */
 const int RS_DEBUG_LOGC_MIN_SAVE = 100;    /* min length of crashfile log */
 
-static std::map<int, int> zoneLevel;
-static int defaultLevel = RSL_WARNING;
+static RsLog::logLvl defaultLevel = RsLog::Warning;
 static FILE *ofd = stderr;
 
 static int debugMode = RS_DEBUG_STDERR;
@@ -49,7 +48,6 @@ static int debugTS = 0;
 static RsMutex logMtx("logMtx");
 
 int locked_setDebugFile(const char *fname);
-int locked_getZoneLevel(int zone);
 
 int setDebugCrashMode(const char *cfile)
 {
@@ -111,33 +109,6 @@ int setDebugCrashMode(const char *cfile)
 	return 1;
 }
 
-
-/* this is called when we exit normally */
-int clearDebugCrashLog()
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	/* check we are in crashLog Mode */
-	if (debugMode != RS_DEBUG_LOGCRASH)
-	{
-		fprintf(stderr, "Not in CrashLog Mode - nothing to clear!\n");
-		return 1;
-	}
-
-	fprintf(stderr, "clearDebugCrashLog() Cleaning up\n");
-	/* shutdown crashLog Mode */
-	fclose(ofd);
-	ofd = stderr;
-	debugMode = RS_DEBUG_STDERR;
-
-	/* just open the file, and then close */
-	FILE *tmpin = RsDirUtil::rs_fopen(crashfile.c_str(), "w");
-	fclose(tmpin);
-
-	return 1;
-}
-
-
-
 int setDebugFile(const char *fname)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
@@ -161,41 +132,23 @@ int locked_setDebugFile(const char *fname)
 	}
 }
 
-
-int setOutputLevel(int lvl)
+int setOutputLevel(RsLog::logLvl lvl)
 {
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	return defaultLevel = lvl;
 }
 
-int setZoneLevel(int lvl, int zone)
+void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg)
 {
+	// skipp when log level is set to 'None'
+	// NB: when default is set to 'None' the later check will always fail -> no need to check it here
+	if(info->lvl == RsLog::None)
+		return;
+
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	zoneLevel[zone] = lvl;
-	return zone;
-}
 
-
-int getZoneLevel(int zone)
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	return locked_getZoneLevel(zone);
-}
-
-int locked_getZoneLevel(int zone)
-{
-	std::map<int, int>::iterator it = zoneLevel.find(zone);
-	if (it == zoneLevel.end())
-	{
-		return defaultLevel;
-	}
-	return it -> second;
-}
-
-int rslog(unsigned int lvl, int zone, const std::string &msg)
-{
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-	if ((signed) lvl <= locked_getZoneLevel(zone))
+	bool process = info->lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
+	if(process)
 	{
 		time_t t = time(NULL);
 
@@ -226,12 +179,11 @@ int rslog(unsigned int lvl, int zone, const std::string &msg)
 		std::string timestr = ctime(&t);
 		std::string timestr2 = timestr.substr(0,timestr.length()-1);
 		/* remove the endl */
-		fprintf(ofd, "(%s Z: %d, lvl:%d): %s \n", 
-				timestr2.c_str(), zone, lvl, msg.c_str());
+		fprintf(ofd, "(%s Z: %s, lvl: %u): %s \n",
+				timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
 		lineCount++;
 	}
-	return 1;
 }
 
 

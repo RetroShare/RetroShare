@@ -6,6 +6,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
+#include "gui/gxs/GxsIdDetails.h"
 #include "IdentityItem.h"
 #include "CircleItem.h"
 
@@ -90,7 +91,7 @@ void CircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 	uint32_t i=0 ;
 	for(std::set<RsGxsId>::const_iterator it(_circle_details.mUnknownPeers.begin());it!= _circle_details.mUnknownPeers.end();++it)
 	{
-		painter->drawImage(QPoint(CRC_SIZE*cos(_angles[i]) -(int)IMG_SIZE/2, CRC_SIZE*sin(_angles[i]) -(int)IMG_SIZE/2), IdentityItem::makeDefaultIcon(RsGxsGroupId(*it))) ;
+		painter->drawImage(QPoint(CRC_SIZE*cos(_angles[i]) -(int)IMG_SIZE/2, CRC_SIZE*sin(_angles[i]) -(int)IMG_SIZE/2), GxsIdDetails::makeDefaultIcon(*it)) ;
 		++i ;
 	}
 

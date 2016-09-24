@@ -61,6 +61,7 @@ class RsNetworkExchangeService
 public:
 
 	RsNetworkExchangeService(){ return;}
+    virtual ~RsNetworkExchangeService() {}
 
     /*!
      * Use this to set how far back synchronisation of messages should take place
@@ -111,7 +112,47 @@ public:
      */
     virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId) = 0;
 
+    /*!
+     * returns some stats about this group related to the network visibility.
+     * For now, only one statistics:
+     *     max_known_messages:   max number of messages reported by a friend. This is used to display unsubscribed group content.
+     */
+    virtual bool getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)=0;
 
+    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) =0;
+
+    /*!
+     * Request for this group is sent through to peers on your network
+     * and how many hops from them you've indicated
+     */
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers)=0 ;
+
+    /*!
+     * \brief rejectMessage
+     * 		Tells the network exchange service to not download this message again, at least for some time (maybe 24h or more)
+     * 		in order to avoid cluttering the network pipe with copied of this rejected message.
+     * \param msgId
+     */
+    virtual void rejectMessage(const RsGxsMessageId& msgId) =0;
+    
+    /*!
+     * \brief getGroupServerUpdateTS
+     * 		Returns the server update time stamp for that group. This is used for synchronisation of TS between
+     * 		various network exchange services, suhc as channels/circles or forums/circles
+     * \param gid	group for that request
+     * \param tm	time stamp computed
+     * \return 		false if the group is not found, true otherwise
+     */
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+
+    /*!
+     * \brief stampMsgServerUpdateTS
+     * 		Updates the msgServerUpdateMap structure to time(NULL), so as to trigger sending msg lists to friends.
+     * 		This is needed when e.g. posting a new message to a group.
+     * \param gid the group to stamp in msgServerUpdateMap
+     * \return
+     */
+    virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
 };
 
 #endif // RSGNP_H

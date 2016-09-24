@@ -43,8 +43,8 @@
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
 
-const int rstcpstreamzone = 28455;
-
+static struct RsLog::logInfo rstcpstreamzoneInfo = {RsLog::Default, "rstcpstream"};
+#define rstcpstreamzone &rstcpstreamzoneInfo
 
 /*
  * #define DEBUG_TCP_STREAM		1
@@ -93,6 +93,12 @@ TcpStream::TcpStream(UdpSubReceiver *lyr)
 	retransTimerOn(false),
 	retransTimeout(TCP_RETRANS_TIMEOUT),
 	retransTimerTs(0),
+	keepAliveTimer(0),
+	lastIncomingPkt(0),
+	lastSentAck(0),
+	lastSentWinSize(0),
+	initOurSeqno(0),
+	initPeerSeqno(0),
 	lastWriteTF(0),lastReadTF(0),
 	wcount(0), rcount(0),
 	errorState(0),
@@ -102,12 +108,15 @@ TcpStream::TcpStream(UdpSubReceiver *lyr)
 	congestThreshold(TCP_MAX_WIN),
 	congestWinSize(MAX_SEG),
 	congestUpdate(0),
+	ttl(0),
         mTTL_period(0), 
         mTTL_start(0),
         mTTL_end(0), 
 	peerKnown(false),
 	udp(lyr)
 {
+	sockaddr_clear(&peeraddr);
+
 	return;
 }
 
@@ -914,7 +923,7 @@ bool 	TcpStream::widle()
 		return false;
 	}
 
-	if ((lastWriteTF == int_wbytes()) && (inSize + inQueue.size() == 0))
+	if ((lastWriteTF == int_wbytes()) && (inSize == 0) && inQueue.empty())
 	{
 		wcount++;
 		if (wcount > ilevel)
@@ -1596,7 +1605,7 @@ int TcpStream::check_InPkts()
 			}
 			else
 			{
-				it++;
+				++it;
 			}
 		}
 		if (found)
@@ -1871,7 +1880,8 @@ int TcpStream::toSend(TcpPacket *pkt, bool retrans)
 		std::cerr << "TcpStream::toSend() peerUnknown ERROR!!!";
 		std::cerr << std::endl;
 #endif
-                return 0;
+		delete pkt;
+		return 0;
 	}
 
 	/* get accurate timestamp */
@@ -2438,7 +2448,7 @@ int TcpStream::send()
 	}
 
 	/* if inqueue empty, and enough window space, send partial stuff */
-	if ((!sent) && (inQueue.size() == 0) && (maxsend >= inSize) && (inSize))
+	if ((!sent) && (inQueue.empty()) && (maxsend >= inSize) && (inSize))
 	{
 		TcpPacket *pkt = new TcpPacket(inData, inSize);
 #ifdef DEBUG_TCP_STREAM

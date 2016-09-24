@@ -27,31 +27,10 @@
 #ifndef PQI_TOP_HEADER
 #define PQI_TOP_HEADER
 
-/* This just includes the standard headers required.
- */
-
-
-#include "pqi/pqi_base.h"
-#include "pqi/pqinetwork.h"
 #include "serialiser/rsserial.h"
 
-#include <iostream>
-#include <functional>
-#include <algorithm>
 
-/********************** SEARCH INTERFACE ***************************/
-// this is an interface.... so should be
-// classified as virtual   = 0;
-
-class SearchInterface
-{
-public:
-	SearchInterface()  { return; }
-
-	virtual	~SearchInterface() { return; }
-};
-
-class P3Interface: public SearchInterface
+class P3Interface
 {
 public:
 	P3Interface() {return; }
@@ -61,15 +40,13 @@ virtual int	tick() { return 1; }
 virtual int	status() { return 1; }
 
 virtual int	SendRsRawItem(RsRawItem *) = 0;
-virtual RsRawItem *GetRsRawItem() = 0;
-
 };
 
 
-/* interface to allow outgoing messages to be sent directly 
- * through to the pqiperson, rather than being queued
+/**
+ * @brief Interface to allow outgoing messages to be sent directly through to
+ * the pqiperson, rather than being queued
  */
-
 class pqiPublisher
 {
         public:
@@ -79,6 +56,4 @@ virtual bool sendItem(RsRawItem *item) = 0;
 };
 
 
-
 #endif // PQI_TOP_HEADER
-

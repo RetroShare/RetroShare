@@ -33,6 +33,7 @@
 #include "bitdht/bdobj.h"
 #include "bitdht/bdhash.h"
 #include "bitdht/bdhistory.h"
+#include "bitdht/bdfilter.h"
 
 #include "bitdht/bdconnection.h"
 #include "bitdht/bdaccount.h"
@@ -43,7 +44,8 @@ class bdFilter;
 
 
 #define BD_QUERY_NEIGHBOURS		1
-#define BD_QUERY_HASH			2
+#define BD_QUERY_LOCALNET		2
+#define BD_QUERY_HASH			3
 
 /**********************************
  * Running a node....
@@ -82,6 +84,9 @@ output -> call back to Udp().
 
  *********/
 
+class bdFilteredPeer ;
+class bdNodeManager;
+
 class bdNodeNetMsg
 {
 
@@ -102,7 +107,7 @@ class bdNodePublisher
 	public:
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id) = 0; /* message out */
-	virtual void send_query(bdId *id, bdNodeId *targetNodeId) = 0; /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId, bool localnet) = 0; /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
 				bdId *srcAddr, bdId *destAddr, int mode, int param, int status) = 0;
 
@@ -117,8 +122,8 @@ class bdNode: public bdNodePublisher
 {
 	public:
 
-	bdNode(bdNodeId *id, std::string dhtVersion, std::string bootfile, 
-		bdDhtFunctions *fns);	
+    bdNode(bdNodeId *id, std::string dhtVersion, const std::string& bootfile, const std::string& filterfile,
+		bdDhtFunctions *fns, bdNodeManager* manager);
 
 	void init(); /* sets up the self referential classes (mQueryMgr & mConnMgr) */
 
@@ -144,9 +149,13 @@ class bdNode: public bdNodePublisher
 	void processRemoteQuery();
 	void updateStore();
 
+    bool addressBanned(const sockaddr_in &raddr) ;
+    bool getFilteredPeers(std::list<bdFilteredPeer> &peers);
+    //void loadFilteredPeers(const std::list<bdFilteredPeer> &peers);
+
 	/* simplified outgoing msg functions (for the managers) */
 	virtual void send_ping(bdId *id); /* message out */
-	virtual void send_query(bdId *id, bdNodeId *targetNodeId); /* message out */
+	virtual void send_query(bdId *id, bdNodeId *targetNodeId, bool localnet); /* message out */
 	virtual void send_connect_msg(bdId *id, int msgtype, 
 				bdId *srcAddr, bdId *destAddr, int mode, int param, int status);
 
@@ -162,8 +171,9 @@ void 	incomingMsg(struct sockaddr_in *addr, char *msg, int len);
 void	dropRelayServers();
 void	pingRelayServers();
 
-	// Below is internal Management of incoming / outgoing messages.
-	private:
+// Below is internal Management of incoming / outgoing messages.
+
+private:
 
 	/* internal interaction with network */
 void	sendPkt(char *msg, int len, struct sockaddr_in addr);
@@ -173,7 +183,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	/* output functions (send msg) */
 	void msgout_ping(bdId *id, bdToken *transId);
 	void msgout_pong(bdId *id, bdToken *transId);
-	void msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query);
+	void msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet);
 	void msgout_reply_find_node(bdId *id, bdToken *transId, 
 						std::list<bdId> &peers);
 	void msgout_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash);
@@ -188,10 +198,11 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 
 	/* input functions (once mesg is parsed) */
-	void msgin_ping(bdId *id, bdToken *token);
+	uint32_t parseVersion(bdToken *versionId);
+	void msgin_ping(bdId *id, bdToken *token, bdToken *versionId);
 	void msgin_pong(bdId *id, bdToken *transId, bdToken *versionId);
 
-	void msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query);
+	void msgin_find_node(bdId *id, bdToken *transId, bdNodeId *query, bool localnet);
 	void msgin_reply_find_node(bdId *id, bdToken *transId, 
 						std::list<bdId> &entries);
 
@@ -233,10 +244,10 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	protected:
 
 	bdSpace mNodeSpace;
+	bdFilter mFilterPeers;
 
 	bdQueryManager *mQueryMgr;
 	bdConnectManager *mConnMgr;
-	bdFilter *mFilterPeers;
 
 	bdNodeId mOwnId;
 	bdId 	mLikelyOwnId; // Try to workout own id address.

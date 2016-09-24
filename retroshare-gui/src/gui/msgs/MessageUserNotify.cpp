@@ -23,7 +23,7 @@
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 
-#include <retroshare/rsmsgs.h>
+#include "gui/msgs/MessageInterface.h"
 
 MessageUserNotify::MessageUserNotify(QObject *parent) :
 	UserNotify(parent)
@@ -41,18 +41,18 @@ bool MessageUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon MessageUserNotify::getIcon()
 {
-	return QIcon(":/images/inbox_22.png");
+    return QIcon(":/icons/png/messages.png");
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/message_new.png") : QIcon(":/images/evolution.png");
+    return hasNew ? QIcon(":/icons/png/messages-notify.png") : QIcon(":/icons/png/messages.png");
 }
 
 unsigned int MessageUserNotify::getNewCount()
 {
 	unsigned int newInboxCount = 0;
-	rsMsgs->getMessageCount(NULL, &newInboxCount, NULL, NULL, NULL, NULL);
+	rsMail->getMessageCount(NULL, &newInboxCount, NULL, NULL, NULL, NULL);
 
 	return newInboxCount;
 }

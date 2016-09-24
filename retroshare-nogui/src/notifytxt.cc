@@ -74,7 +74,7 @@ char *getpass (const char *prompt)
 }
 #endif
 
-void NotifyTxt::notifyErrorMsg(int list, int type, std::string msg)
+void NotifyTxt::notifyErrorMsg(int /* list */, int /* type */, std::string /* msg */)
 {
 	return;
 }
@@ -101,17 +101,18 @@ bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, co
 	return a == 'y' ;
 }
 
-bool NotifyTxt::askForPassword(const std::string& question, bool prev_is_bad, std::string& password)
+bool NotifyTxt::askForPassword(const std::string& title, const std::string& question, bool /* prev_is_bad */, std::string& password,bool& cancel)
 {
-	std::string question1="Please enter your PGP password for key:\n    " + question + " :";
+	std::string question1=title + "\nPlease enter your PGP password for key:\n    " + question + " :";
 	char *passwd = getpass(question1.c_str()) ;
 	password = passwd;
+    cancel = false ;
 
 	return !password.empty();
 }
 
 
-void NotifyTxt::notifyListChange(int list, int type)
+void NotifyTxt::notifyListChange(int list, int /* type */)
 {
 	//std::cerr << "NotifyTxt::notifyListChange()" << std::endl;
 	switch(list)

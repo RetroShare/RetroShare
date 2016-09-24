@@ -55,7 +55,10 @@ class RsGxsChannelGroup
 
 class RsGxsChannelPost
 {
-	public:
+public:
+	RsGxsChannelPost() : mCount(0), mSize(0) {}
+
+public:
 	RsMsgMetaData mMeta;
 	std::string mMsg;  // UTF8 encoded.
 
@@ -80,9 +83,10 @@ virtual ~RsGxsChannels() { return; }
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
-
-virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
+//Not currently used
+//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
 	/* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
@@ -94,14 +98,18 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
 virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled) = 0;
-virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid) = 0;
+virtual bool getChannelAutoDownload(const RsGxsGroupId &groupid, bool& enabled) = 0;
+
+virtual bool setChannelDownloadDirectory(const RsGxsGroupId &groupId, const std::string& directory)=0;
+virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::string& directory)=0;
+
 //virtual void setChannelAutoDownload(uint32_t& token, const RsGxsGroupId& groupId, bool autoDownload) = 0;
 
 //virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
 //virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
 //virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+    virtual bool groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)=0;
 
 	// Overloaded subscribe fn.
 virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool subscribe) = 0;

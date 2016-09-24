@@ -33,115 +33,91 @@
 
 #define GXSID_DEBUG	1
 
-
-uint32_t RsGxsIdSerialiser::size(RsItem *item)
-{
-	RsGxsIdGroupItem* grp_item = NULL;
-#if 0
-	RsGxsIdOpinionItem* op_item = NULL;
-        RsGxsIdCommentItem* com_item = NULL;
-#endif
-
-	if((grp_item = dynamic_cast<RsGxsIdGroupItem*>(item)) != NULL)
-	{
-		return sizeGxsIdGroupItem(grp_item);
-	}
-#if 0
-	else if((op_item = dynamic_cast<RsGxsIdOpinionItem*>(item)) != NULL)
-	{
-		return sizeGxsIdOpinionItem(op_item);
-	}
-	else if((com_item = dynamic_cast<RsGxsIdCommentItem*>(item)) != NULL)
-	{
-		return sizeGxsIdCommentItem(com_item);
-	}
-#endif
-	std::cerr << "RsGxsIdSerialiser::size() ERROR invalid item" << std::endl;
-	return 0;
-}
-
-bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
-{
-	RsGxsIdGroupItem* grp_item = NULL;
-#if 0
-	RsGxsIdOpinionItem* op_item = NULL;
-        RsGxsIdCommentItem* com_item = NULL;
-#endif
-
-	if((grp_item = dynamic_cast<RsGxsIdGroupItem*>(item)) != NULL)
-	{
-		return serialiseGxsIdGroupItem(grp_item, data, size);
-	}
-#if 0
-	else if((op_item = dynamic_cast<RsGxsIdOpinionItem*>(item)) != NULL)
-	{
-		return serialiseGxsIdOpinionItem(op_item, data, size);
-	}
-	else if((com_item = dynamic_cast<RsGxsIdCommentItem*>(item)) != NULL)
-	{
-		return serialiseGxsIdCommentItem(com_item, data, size);
-	}
-#endif
-	std::cerr << "RsGxsIdSerialiser::serialise() ERROR invalid item" << std::endl;
-	return false;
-}
-
 RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 {
-		
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-		
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXS_TYPE_GXSID != getRsItemService(rstype)))
-	{
-		return NULL; /* wrong type */
-	}
-		
-	switch(getRsItemSubType(rstype))
-	{
-		
-		case RS_PKT_SUBTYPE_GXSID_GROUP_ITEM:
-			return deserialiseGxsIdGroupItem(data, size);
-			break;
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_GXS_TYPE_GXSID != getRsItemService(rstype)))
+        return NULL; /* wrong type */
+
+    switch(getRsItemSubType(rstype))
+    {
+        case RS_PKT_SUBTYPE_GXSID_GROUP_ITEM:        return deserialise_GxsIdGroupItem(data, size);
+        case RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM:   return deserialise_GxsIdLocalInfoItem(data, size);
 #if 0
-		case RS_PKT_SUBTYPE_GXSID_OPINION_ITEM:
-			return deserialiseGxsIdOpinionItem(data, size);
-			break;
-		case RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM:
-			return deserialiseGxsIdCommentItem(data, size);
-			break;
+        case RS_PKT_SUBTYPE_GXSID_OPINION_ITEM: return deserialise_GxsIdOpinionItem(data, size);
+        case RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM: return deserialise_GxsIdCommentItem(data, size);
 #endif
-		default:
+        default:
 #ifdef GXSID_DEBUG
-			std::cerr << "RsGxsIdSerialiser::deserialise(): unknown subtype";
-			std::cerr << std::endl;
+            std::cerr << "RsGxsIdSerialiser::deserialise(): unknown subtype";
+            std::cerr << std::endl;
 #endif
-			break;
-	}
-	return NULL;
+            break;
+    }
+    return NULL;
 }
 
+bool RsGxsIdItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset)
+{
+    tlvsize = serial_size() ;
+    offset = 0;
 
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    pktsize = tlvsize;
+
+    if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
+    {
+        std::cerr << "RsItem::serialise_header(): ERROR. Not enough size!" << std::endl;
+        return false ;
+    }
+    offset += 8;
+
+    return true ;
+}
 
 /*****************************************************************************************/
 /*****************************************************************************************/
 /*****************************************************************************************/
 
 
+void RsGxsIdLocalInfoItem::clear()
+{
+    mTimeStamps.clear() ;
+}
 void RsGxsIdGroupItem::clear()
 {
-	group.mPgpIdHash.clear();
-	group.mPgpIdSign.clear();
+    mPgpIdHash.clear();
+    mPgpIdSign.clear();
 
-	group.mRecognTags.clear();
+    mRecognTags.clear();
+    mImage.TlvClear();
+}
+uint32_t RsGxsIdLocalInfoItem::serial_size()
+{
+    uint32_t s = 8 ;	// header
+    s += 4 ; 		// number of items
+    s += mTimeStamps.size() * (RsGxsId::SIZE_IN_BYTES + 8) ;
+    s += 4 ; 		// number of contacts
+    s += mContacts.size() * RsGxsId::SIZE_IN_BYTES ;
 
-        group.mPgpKnown = false;
-        group.mPgpId.clear();
-
+    return s;
 }
 
+std::ostream& RsGxsIdLocalInfoItem::print(std::ostream& out, uint16_t indent)
+{
+    printRsItemBase(out, "RsGxsIdLocalInfoItem", indent);
 
+    // convert from binary to hex.
+    for(std::map<RsGxsId,time_t>::const_iterator it(mTimeStamps.begin());it!=mTimeStamps.end();++it)
+        out << it->first << " : " << it->second << std::endl;
+
+    printRsItemEnd(out ,"RsGxsIdLocalInfoItem", indent);
+    return out;
+}
 std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsGxsIdGroupItem", indent);
@@ -150,20 +126,20 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "MetaData: " << meta << std::endl;
 	printIndent(out, int_Indent);
-	out << "PgpIdHash: " << group.mPgpIdHash << std::endl;
+    out << "PgpIdHash: " << mPgpIdHash << std::endl;
 	printIndent(out, int_Indent);
 
 	std::string signhex;
 	// convert from binary to hex.
-	for(unsigned int i = 0; i < group.mPgpIdSign.length(); i++)
+    for(unsigned int i = 0; i < mPgpIdSign.length(); i++)
 	{
-		rs_sprintf_append(signhex, "%02x", (uint32_t) ((uint8_t) group.mPgpIdSign[i]));
+        rs_sprintf_append(signhex, "%02x", (uint32_t) ((uint8_t) mPgpIdSign[i]));
 	}
 	out << "PgpIdSign: " << signhex << std::endl;
 	printIndent(out, int_Indent);
 	out << "RecognTags:" << std::endl;
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, group.mRecognTags);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, mRecognTags);
 	set.print(out, int_Indent + 2);
   
 	printRsItemEnd(out ,"RsGxsIdGroupItem", indent);
@@ -171,71 +147,202 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 }
 
 
-uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
+uint32_t RsGxsIdGroupItem::serial_size()
 {
+    uint32_t s = 8; // header
 
-	const RsGxsIdGroup& group = item->group;
-	uint32_t s = 8; // header
+    s += Sha1CheckSum::SIZE_IN_BYTES;
+    s += GetTlvStringSize(mPgpIdSign);
 
-	s += Sha1CheckSum::SIZE_IN_BYTES;
-	s += GetTlvStringSize(group.mPgpIdSign);
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, mRecognTags);
+    s += set.TlvSize();
+    s += mImage.TlvSize() ;
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
-	s += set.TlvSize();
-
-	return s;
+    return s;
 }
 
-bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *data, uint32_t *size)
-{
-	
-	
-	uint32_t tlvsize = sizeGxsIdGroupItem(item);
-	uint32_t offset = 0;
-	
-	if(*size < tlvsize)
-	{
-#ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem() Size too small" << std::endl;
-#endif
-		return false;
-	}
-	
-	*size = tlvsize;
-	
-	bool ok = true;
-	
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-	
-	/* skip the header */
-	offset += 8;
-	
-	/* GxsIdGroupItem */
-	ok &= item->group.mPgpIdHash.serialise(data, tlvsize, offset);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
-	ok &= set.SetTlv(data, tlvsize, &offset);
-	
-	if(offset != tlvsize)
-	{
+bool RsGxsIdLocalInfoItem::serialise(void *data, uint32_t& size)
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    ok &= setRawUInt32(data, tlvsize, &offset, mTimeStamps.size()) ;
+
+    for(std::map<RsGxsId,time_t>::const_iterator it = mTimeStamps.begin();it!=mTimeStamps.end();++it)
+    {
+        ok &= it->first.serialise(data,tlvsize,offset) ;
+        ok &= setRawTimeT(data,tlvsize,&offset,it->second) ;
+    }
+    ok &= setRawUInt32(data, tlvsize, &offset, mContacts.size()) ;
+    
+    for(std::set<RsGxsId>::const_iterator it(mContacts.begin());it!=mContacts.end();++it)
+	    ok &= (*it).serialise(data,tlvsize,offset) ;
+    
+    if(offset != tlvsize)
+    {
 #ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem() FAIL Size Error! " << std::endl;
+        std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem() FAIL Size Error! " << std::endl;
 #endif
-		ok = false;
-	}
-	
+        ok = false;
+    }
+
 #ifdef GXSID_DEBUG
-	if (!ok)
-	{
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdgroupItem() NOK" << std::endl;
-	}
+    if (!ok)
+    {
+        std::cerr << "RsGxsIdSerialiser::serialiseGxsIdgroupItem() NOK" << std::endl;
+    }
 #endif
-	
-	return ok;
-	}
-	
-RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint32_t *size)
+
+    return ok;
+}
+
+bool RsGxsIdGroupItem::serialise(void *data, uint32_t& size)
+{
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
+
+    /* GxsIdGroupItem */
+    ok &= mPgpIdHash.serialise(data, tlvsize, offset);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, mPgpIdSign);
+
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, mRecognTags);
+    ok &= set.SetTlv(data, tlvsize, &offset);
+
+    ok &= mImage.SetTlv(data,tlvsize,&offset) ;
+
+    if(offset != tlvsize)
+    {
+#ifdef GXSID_DEBUG
+        std::cerr << "RsGxsIdSerialiser::serialiseGxsIdGroupItem() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef GXSID_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsIdSerialiser::serialiseGxsIdgroupItem() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
+
+bool RsGxsIdGroupItem::fromGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
+{
+        clear();
+        meta = group.mMeta;
+        mPgpIdHash = group.mPgpIdHash;
+        mPgpIdSign = group.mPgpIdSign;
+        mRecognTags = group.mRecognTags;
+
+        if (moveImage)
+        {
+            mImage.binData.bin_data = group.mImage.mData;
+            mImage.binData.bin_len = group.mImage.mSize;
+            group.mImage.shallowClear();
+        }
+        else
+        {
+            mImage.binData.setBinData(group.mImage.mData, group.mImage.mSize);
+        }
+    return true ;
+}
+bool RsGxsIdGroupItem::toGxsIdGroup(RsGxsIdGroup &group, bool moveImage)
+{
+        group.mMeta = meta;
+        group.mPgpIdHash = mPgpIdHash;
+        group.mPgpIdSign = mPgpIdSign;
+        group.mRecognTags = mRecognTags;
+
+        if (moveImage)
+        {
+            group.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+            // mImage doesn't have a ShallowClear at the moment!
+            mImage.binData.TlvShallowClear();
+        }
+        else
+        {
+            group.mImage.copy((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+        }
+    return true ;
+}
+RsGxsIdGroupItem* RsGxsIdSerialiser::deserialise_GxsIdGroupItem(void *data, uint32_t *size)
+{
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+        (RS_SERVICE_GXS_TYPE_GXSID != getRsItemService(rstype)) ||
+        (RS_PKT_SUBTYPE_GXSID_GROUP_ITEM != getRsItemSubType(rstype)))
+    {
+#ifdef GXSID_DEBUG
+        std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL wrong type" << std::endl;
+#endif
+        return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef GXSID_DEBUG
+        std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL wrong size" << std::endl;
+#endif
+        return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+    /* skip the header */
+    offset += 8;
+
+    ok &= item->mPgpIdHash.deserialise(data, rssize, offset);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->mPgpIdSign);
+
+    RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->mRecognTags);
+    ok &= set.GetTlv(data, rssize, &offset);
+
+    // image is optional,so that we can continue reading old items.
+    if(offset < rssize)
+        ok &= item->mImage.GetTlv(data,rssize,&offset) ;
+
+    if (offset != rssize)
+    {
+#ifdef GXSID_DEBUG
+        std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL size mismatch" << std::endl;
+#endif
+        /* error */
+        delete item;
+        return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef GXSID_DEBUG
+        std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() NOK" << std::endl;
+#endif
+        delete item;
+        return NULL;
+    }
+
+    return item;
+}
+RsGxsIdLocalInfoItem *RsGxsIdSerialiser::deserialise_GxsIdLocalInfoItem(void *data, uint32_t *size)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -246,7 +353,7 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_GXS_TYPE_GXSID != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_GXSID_GROUP_ITEM != getRsItemSubType(rstype)))
+        (RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
 		std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL wrong type" << std::endl;
@@ -267,18 +374,38 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	
 	bool ok = true;
 	
-	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+    RsGxsIdLocalInfoItem* item = new RsGxsIdLocalInfoItem();
 	/* skip the header */
 	offset += 8;
-	
-	ok &= item->group.mPgpIdHash.deserialise(data, rssize, offset);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
-	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
-	ok &= set.GetTlv(data, rssize, &offset);
-	
-	
-	if (offset != rssize)
+    uint32_t n=0 ;
+    ok &= getRawUInt32(data, rssize, &offset, &n) ;
+
+    for(uint32_t i=0;ok && i<n;++i)
+    {
+        RsGxsId gxsid ;
+        time_t TS ;
+
+        ok &= gxsid.deserialise(data,rssize,offset) ;
+        ok &= getRawTimeT(data,rssize,&offset,TS) ;
+
+        item->mTimeStamps[gxsid] = TS ;
+    }
+
+    if (offset < rssize)	// backward compatibility, making that section optional.
+    {
+	ok &= getRawUInt32(data, rssize, &offset, &n) ;
+    	RsGxsId gxsid ;
+
+        for(uint32_t i=0;ok && i<n;++i)
+        {
+		ok &= gxsid.deserialise(data,rssize,offset) ;
+        
+        item->mContacts.insert(gxsid) ;
+        }
+    }
+    
+    if (offset != rssize)
 	{
 #ifdef GXSID_DEBUG
 		std::cerr << "RsGxsIdSerialiser::deserialiseGxsIdGroupItem() FAIL size mismatch" << std::endl;
@@ -332,7 +459,7 @@ std::ostream& RsGxsIdOpinionItem::print(std::ostream& out, uint16_t indent)
 }
 
 
-uint32_t RsGxsIdSerialiser::sizeGxsIdOpinionItem(RsGxsIdOpinionItem *item)
+uint32_t RsGxsIdOpinionItem::serial_size()
 {
 
 	const RsGxsIdOpinion& opinion = item->opinion;
@@ -345,29 +472,13 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdOpinionItem(RsGxsIdOpinionItem *item)
 	return s;
 }
 
-bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void *data, uint32_t *size)
+bool RsGxsIdOpinionItem::serialise(void *data, uint32_t *size)
 {
-	
-	
-	uint32_t tlvsize = sizeGxsIdOpinionItem(item);
-	uint32_t offset = 0;
-	
-	if(*size < tlvsize)
-	{
-#ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdOpinionItem()" << std::endl;
-#endif
-		return false;
-	}
-	
-	*size = tlvsize;
-	
-	bool ok = true;
-	
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-	
-	/* skip the header */
-	offset += 8;
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
+
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
 	
 	/* GxsIdOpinionItem */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->opinion.mOpinion);
@@ -392,7 +503,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void
 	return ok;
 	}
 	
-RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, uint32_t *size)
+RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialise_GxsIdOpinionItem(void *data, uint32_t *size)
 {
 	
 	/* get the type and size */
@@ -479,7 +590,7 @@ std::ostream& RsGxsIdCommentItem::print(std::ostream& out, uint16_t indent)
 }
 
 
-uint32_t RsGxsIdSerialiser::sizeGxsIdCommentItem(RsGxsIdCommentItem *item)
+uint32_t RsGxsIdCommentItem::serial_size()
 {
 
 	const RsGxsIdComment& comment = item->comment;
@@ -490,28 +601,13 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdCommentItem(RsGxsIdCommentItem *item)
 	return s;
 }
 
-bool RsGxsIdSerialiser::serialiseGxsIdCommentItem(RsGxsIdCommentItem *item, void *data, uint32_t *size)
+bool RsGxsIdCommentItem::serialise(void *data, uint32_t *size)
 {
-	
-	uint32_t tlvsize = sizeGxsIdCommentItem(item);
-	uint32_t offset = 0;
-	
-	if(*size < tlvsize)
-	{
-#ifdef GXSID_DEBUG
-		std::cerr << "RsGxsIdSerialiser::serialiseGxsIdCommentItem() Not enough space" << std::endl;
-#endif
-		return false;
-	}
-	
-	*size = tlvsize;
-	
-	bool ok = true;
-	
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-	
-	/* skip the header */
-	offset += 8;
+        uint32_t tlvsize,offset=0;
+        bool ok = true;
+
+        if(!serialise_header(data,size,tlvsize,offset))
+            return false ;
 	
 	/* GxsIdCommentItem */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
@@ -534,7 +630,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdCommentItem(RsGxsIdCommentItem *item, void
 	return ok;
 }
 	
-RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, uint32_t *size)
+RsGxsIdCommentItem* RsGxsIdSerialiser::deserialise_GxsIdCommentItem(void *data, uint32_t *size)
 {
 	
 	/* get the type and size */

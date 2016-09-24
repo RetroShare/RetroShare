@@ -15,7 +15,8 @@ using namespace rs_nxs_test;
 
 
 
-NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation)
+NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation):
+    mServType(0)
 {
 
 	int numPeers = 2;
@@ -76,7 +77,7 @@ NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation)
 		if(circle)
 		{
 			meta->mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
-			meta->mCircleId.random();
+            meta->mCircleId = RsGxsCircleId::random();
 		}
 
 		RsGxsGroupId grpId = grp->grpId;

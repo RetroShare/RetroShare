@@ -96,7 +96,7 @@ public:
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
 };
 
-class AuthGPG: public p3Config, public RsThread, public PGPHandler
+class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 {
 	public:
 
@@ -135,7 +135,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
 
 		virtual int  GPGInit(const RsPgpId &ownId);
-		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
 		/*********************************************************************************/
 		/************************* STAGE 3 ***********************************************/
@@ -164,9 +164,10 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool	getGPGAcceptedList(std::list<RsPgpId> &ids);
 		virtual bool	getGPGSignedList(std::list<RsPgpId> &ids);
 		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
+        virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
 
-		virtual bool   removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code) ;
+        virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/
@@ -179,7 +180,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
 
 		// Cached certificates.
-		bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
+		//bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
 
 		/*********************************************************************************/
 		/************************* STAGE 6 ***********************************************/
@@ -207,8 +208,9 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * There should also be Encryption Functions... (do later).
 		 *
 		 ****/
-		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
+		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "");
 		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
+		virtual bool parseSignature(const void *sig, unsigned int siglen, RsPgpId& issuer_id);
 
 		virtual bool encryptDataBin(const RsPgpId& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
 		virtual bool decryptDataBin(const void *data, const uint32_t len, unsigned char *decr, unsigned int *decrlen);
@@ -252,7 +254,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		//void createDummyFriends(void); //NYI
 
 		/* Internal functions */
-		bool DoOwnSignature(const void *, unsigned int, void *, unsigned int *);
+		bool DoOwnSignature(const void *, unsigned int, void *, unsigned int *, std::string reason);
 		bool VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint);
 
 		/* Sign/Trust stuff */
@@ -274,7 +276,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		bool    printOwnKeys_locked();
 
 		/* own thread */
-		virtual void run();
+        virtual void data_tick();
 
 	private:
 
@@ -295,7 +297,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;
-		bool _force_sync_database ;
+        bool _force_sync_database ;
+        uint32_t mCount ;
 
 		std::list<AuthGPGService*> services ;
 

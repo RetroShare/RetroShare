@@ -114,7 +114,7 @@ void StatisticDialog::timerEvent( QTimerEvent * )
   QTime elapsed;
   elapsed= QTime(0,0,0).addMSecs(UpTime.elapsed());
   if( UpDays>0)
-      model->setData(ind1,QString(tr("%1 days ")).arg(UpDays)+elapsed.toString("hh:mm:ss"));
+      model->setData(ind1,QString(tr("%1 days")).arg(UpDays)+" "+elapsed.toString("hh:mm:ss"));
   else
       model->setData(ind1,elapsed.toString("hh:mm:ss"));
 

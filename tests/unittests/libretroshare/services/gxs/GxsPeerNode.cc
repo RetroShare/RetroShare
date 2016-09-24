@@ -18,6 +18,8 @@
 	#include "RsGxsNetServiceTester.h"
 #endif
 
+#include <unistd.h>
+
 
 GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &friends, int testMode, bool useIdentityService)
 	:PeerNode(ownId, friends, false),
@@ -65,7 +67,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 		mGxsIdNs = new RsGxsNetService(
 				RS_SERVICE_GXS_TYPE_GXSID, mGxsIdDs, nxsMgr,
 				mGxsIdService, mGxsIdService->getServiceInfo(),
-				mGxsIdService, mGxsCircles,
+				mGxsIdService, mGxsCircles,mGxsIdService,
 				mPgpAuxUtils,
 				false); // don't synchronise group automatic (need explicit group request)
 
@@ -79,7 +81,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 #endif
 				(RS_SERVICE_GXS_TYPE_GXSCIRCLE, mGxsCirclesDs, nxsMgr,
 				mGxsCircles, mGxsCircles->getServiceInfo(),
-				mGxsIdService, mGxsCircles,
+				mGxsIdService, mGxsCircles,NULL,
 				mPgpAuxUtils);
 	}
 	else
@@ -105,7 +107,7 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 #endif
 			(RS_SERVICE_GXS_TYPE_TEST, mTestDs, nxsMgr,
 			mTestService, mTestService->getServiceInfo(),
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			mPgpAuxUtils);
 
 	if (mUseIdentityService)
@@ -122,14 +124,14 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 		//mConfigMgr->addConfiguration("gxsid.cfg", mGxsIdNs);
 		//mConfigMgr->addConfiguration("gxscircles.cfg", mGxsCircleNs);
 
-		createThread(*mGxsIdService);
-		createThread(*mGxsIdNs);
-		createThread(*mGxsCircles);
-		createThread(*mGxsCirclesNs);
+        mGxsIdService->start();
+        mGxsIdNs->start();
+        mGxsCircles->start();
+        mGxsCirclesNs->start();
 	}
 
-	createThread(*mTestService);
-	createThread(*mTestNs);
+    mTestService->start();
+    mTestNs->start();
 
 	//node->AddPqiServiceMonitor(status);
 }
@@ -212,7 +214,7 @@ bool GxsPeerNode::createIdentity(const std::string &name,
 
 	switch(circleType)
 	{
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			id.mMeta.mInternalCircle = circleId;
                         break;
                 case GXS_CIRCLE_TYPE_LOCAL:
@@ -262,8 +264,8 @@ bool GxsPeerNode::createCircle(const std::string &name,
 		uint32_t circleType, 
 		const RsGxsCircleId &circleId, 
 		const RsGxsId &authorId,
-		std::list<RsPgpId> localMembers,
-		std::list<RsGxsId> externalMembers,
+        std::set<RsPgpId> localMembers,
+        std::set<RsGxsId> externalMembers,
 		RsGxsGroupId &groupId)
 {
 	/* create a couple of groups */
@@ -281,7 +283,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
 			// THIS is for LOCAL Storage.... 
 			grp1.mLocalFriends = localMembers;
                         break;
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			// Circle shouldn't use this.
 			// but could potentially.
 			grp1.mMeta.mInternalCircle = circleId;
@@ -312,13 +314,7 @@ bool GxsPeerNode::createCircle(const std::string &name,
         std::cerr << std::endl;
 
 	uint32_t token;
-	if (!mGxsCircles->createGroup(token, grp1))
-	{
-		std::cerr << "GxsPeerNode::createCircle() failed";
-		std::cerr << std::endl;
-		return false;
-	}
-
+	mGxsCircles->createGroup(token, grp1) ;
 
 	while(tokenService->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
 	{
@@ -347,7 +343,7 @@ bool GxsPeerNode::createGroup(const std::string &name,
 
 	switch(circleType)
 	{
-                case GXS_CIRCLE_TYPE_YOUREYESONLY:
+                case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
 			grp1.mMeta.mInternalCircle = circleId;
                         break;
                 case GXS_CIRCLE_TYPE_LOCAL:

@@ -56,7 +56,9 @@ class ServicePeerFilter
 
 std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter);
 
-class p3ServiceControl: public RsServiceControl, public pqiMonitor /* , public p3Config */
+class ServiceControlSerialiser ;
+
+class p3ServiceControl: public RsServiceControl, public pqiMonitor, public p3Config
 {
 public:
 
@@ -133,6 +135,7 @@ protected:
 	// configuration.
 virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
 virtual bool loadList(std::list<RsItem *>& load);
+virtual RsSerialiser *setupSerialiser() ;
 
 private:
 
@@ -177,9 +180,6 @@ bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t service
 	// derived from all the others.
         std::map<RsPeerId, ServicePeerFilter> mPeerFilterMap;
 
-	// Below here is saved in Configuration.
-	std::map<uint32_t, RsServicePermissions> mServicePermissionMap;
-
         std::map<uint32_t, ServiceNotifications> mNotifications;
         std::list<pqiServicePeer> mFriendNotifications;
 
@@ -188,7 +188,13 @@ bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t service
 
 	// Separate mutex here - must not hold both at the same time!
 	RsMutex mMonitorMtx; /* below is protected */
-	std::multimap<uint32_t, pqiServiceMonitor *> mMonitors;
+    std::multimap<uint32_t, pqiServiceMonitor *> mMonitors;
+
+    ServiceControlSerialiser *mSerialiser ;
+
+    // Below here is saved in Configuration.
+    std::map<uint32_t, RsServicePermissions> mServicePermissionMap;
+
 };
 
 

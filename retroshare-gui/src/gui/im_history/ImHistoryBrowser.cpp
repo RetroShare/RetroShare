@@ -36,17 +36,17 @@
 
 #include "rshare.h"
 #include <retroshare/rshistory.h>
+#include <retroshare/rsidentity.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 
 #define ROLE_MSGID     Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
-#define ROLE_OFFLINE   Qt::UserRole + 2
 
-ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const RsPeerId& peerId)
+ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const ChatId& peerId)
     : QThread(parent)
 {
-    m_peerId = peerId;
+    m_chatId = peerId;
     m_historyBrowser = parent;
     stopped = false;
 }
@@ -55,7 +55,7 @@ ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
 {
     // remove all items (when items are available, the thread was terminated)
     QList<QListWidgetItem*>::iterator it;
-    for (it = m_items.begin(); it != m_items.end(); it++) {
+    for (it = m_items.begin(); it != m_items.end(); ++it) {
         delete(*it);
     }
 
@@ -72,13 +72,13 @@ void ImHistoryBrowserCreateItemsThread::stop()
 void ImHistoryBrowserCreateItemsThread::run()
 {
     std::list<HistoryMsg> historyMsgs;
-    rsHistory->getMessages(m_peerId, historyMsgs, 0);
+    rsHistory->getMessages(m_chatId, historyMsgs, 0);
 
     int count = historyMsgs.size();
     int current = 0;
 
     std::list<HistoryMsg>::iterator it;
-    for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
+    for (it = historyMsgs.begin(); it != historyMsgs.end(); ++it) {
         if (stopped) {
             break;
         }
@@ -91,7 +91,7 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWidget *parent)
+ImHistoryBrowser::ImHistoryBrowser(const ChatId &chatId, QTextEdit *edit, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
@@ -100,8 +100,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
     ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
     ui.headerFrame->setHeaderText(tr("Message History"));
 
-    m_peerId = peerId;
-    m_isPrivateChat = !m_peerId.isNull();
+    m_chatId = chatId;
     textEdit = edit;
 
     connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));
@@ -117,7 +116,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
     ui.filterLineEdit->showFilterIcon();
 
     // embed smileys ?
-    if (m_isPrivateChat) {
+    if (m_chatId.isPeerId() || m_chatId.isDistantChatId()) {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_PrivatChat", true).toBool();
     } else {
         embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool();
@@ -137,7 +136,7 @@ ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWid
 
     ui.listWidget->installEventFilter(this);
 
-    m_createThread = new ImHistoryBrowserCreateItemsThread(this, m_peerId);
+    m_createThread = new ImHistoryBrowserCreateItemsThread(this, m_chatId);
     connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
     connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
     m_createThread->start();
@@ -162,7 +161,7 @@ void ImHistoryBrowser::createThreadFinished()
         if (!m_createThread->wasStopped()) {
             // append created items
             QList<QListWidgetItem*>::iterator it;
-            for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); it++) {
+            for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); ++it) {
                 ui.listWidget->addItem(*it);
             }
 
@@ -178,7 +177,7 @@ void ImHistoryBrowser::createThreadFinished()
             m_createThread = NULL;
 
             QList<HistoryMsg>::iterator histIt;
-            for (histIt = itemsAddedOnLoad.begin(); histIt != itemsAddedOnLoad.end(); histIt++) {
+            for (histIt = itemsAddedOnLoad.begin(); histIt != itemsAddedOnLoad.end(); ++histIt) {
                 historyAdd(*histIt);
             }
             itemsAddedOnLoad.clear();
@@ -241,7 +240,7 @@ void ImHistoryBrowser::historyChanged(uint msgId, int type)
     if (type == NOTIFY_TYPE_DEL) {
         /* history message removed */
         int count = ui.listWidget->count();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             QListWidgetItem *itemWidget = ui.listWidget->item(i);
             if (itemWidget->data(ROLE_MSGID).toString().toUInt() == msgId) {
                 delete(ui.listWidget->takeItem(i));
@@ -274,11 +273,23 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, HistoryMsg& msg)
     }
 
     QString messageText = RsHtml().formatText(NULL, QString::fromUtf8(msg.message.c_str()), formatTextFlag);
-    QString formatMsg = style.formatMessage(type, QString::fromUtf8(msg.peerName.c_str()), QDateTime::fromTime_t(msg.sendTime), messageText);
+
+    QString name;
+    if (m_chatId.isLobbyId() || m_chatId.isDistantChatId()) {
+        RsIdentityDetails details;
+        if (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+            name = QString::fromUtf8(details.mNickname.c_str());
+        else
+            name = QString::fromUtf8(msg.peerName.c_str());
+    } else {
+        name = QString::fromUtf8(msg.peerName.c_str());
+    }
+
+    QColor backgroundColor = ui.listWidget->palette().base().color();
+    QString formatMsg = style.formatMessage(type, name, QDateTime::fromTime_t(msg.sendTime), messageText, 0, backgroundColor);
 
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_MSGID, msg.msgId);
-    itemWidget->setData(ROLE_OFFLINE, (type == ChatStyle::FORMATMSG_OOUTGOING) ? true : false);
 
     /* calculate plain text */
     QTextDocument doc;
@@ -302,7 +313,7 @@ void ImHistoryBrowser::filterItems(const QString &text, QListWidgetItem *item)
 {
     if (item == NULL) {
         int count = ui.listWidget->count();
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
             item = ui.listWidget->item(i);
             if (text.isEmpty()) {
                 item->setHidden(false);
@@ -332,7 +343,7 @@ void ImHistoryBrowser::getSelectedItems(std::list<uint32_t> &items)
     QList<QListWidgetItem*> itemWidgets = ui.listWidget->selectedItems();
 
     QList<QListWidgetItem*>::iterator it;
-    for (it = itemWidgets.begin(); it != itemWidgets.end(); it++) {
+    for (it = itemWidgets.begin(); it != itemWidgets.end(); ++it) {
         QListWidgetItem *item = *it;
         if (item->isHidden()) {
             continue;
@@ -430,7 +441,7 @@ void ImHistoryBrowser::removeMessages()
 
 void ImHistoryBrowser::clearHistory()
 {
-    rsHistory->clear(m_peerId);
+    rsHistory->clear(m_chatId);
 }
 
 void ImHistoryBrowser::sendMessage()

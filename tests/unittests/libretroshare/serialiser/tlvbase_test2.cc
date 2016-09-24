@@ -81,6 +81,7 @@ int test_OneString(std::string input, uint16_t type)
 	std::cerr << "DeSerialising" << std::endl;
 
 	/* fails if type is wrong! */
+	std::cerr << "### These errors are expected." << std::endl;
 	EXPECT_TRUE(0 == GetTlvString((void*)tlvdata, outOffset, &inOffset, type-1, OutString));
 	EXPECT_TRUE(GetTlvString((void*)tlvdata, outOffset, &inOffset, type, OutString));
 
@@ -141,6 +142,7 @@ int test_IpAddr(struct sockaddr_in *addr, uint16_t type)
 	std::cerr << "DeSerialising" << std::endl;
 
 	/* fails if type is wrong! */
+	std::cerr << "### These errors are expected." << std::endl;
 	EXPECT_TRUE(0 == GetTlvIpAddrPortV4((void*)tlvdata, outOffset, &inOffset, type-1, &outaddr));
 	EXPECT_TRUE(GetTlvIpAddrPortV4((void*)tlvdata, outOffset, &inOffset, type, &outaddr));
 

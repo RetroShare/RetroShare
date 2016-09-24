@@ -16,8 +16,6 @@ class IdentityItem: public QObject, public QGraphicsItem
 
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) ;
 
-		static QImage makeDefaultIcon(const RsGxsGroupId& id) ;
-
 		static const int IMG_SIZE = 64;
 		static IdentityItem *_selected_node ;
 

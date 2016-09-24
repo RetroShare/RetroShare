@@ -34,6 +34,11 @@
 #include <stdint.h>
 
 #include "rsturtle.h"
+#include "rsgxsifacetypes.h"
+
+class ChatId;
+class ChatMessage;
+class RsGxsChanges;
 
 class RsNotify;
 extern RsNotify   *rsNotify;
@@ -63,10 +68,15 @@ const uint32_t RS_CHAT_TABBED_WINDOW = 0x0008;
 const uint32_t RS_CHAT_BLINK         = 0x0010;
 
 const uint32_t RS_FEED_TYPE_PEER     = 0x0010;
+const uint32_t RS_FEED_TYPE_CHANNEL  = 0x0020;
+const uint32_t RS_FEED_TYPE_FORUM    = 0x0040;
+//const uint32_t RS_FEED_TYPE_BLOG     = 0x0080;
 const uint32_t RS_FEED_TYPE_CHAT     = 0x0100;
 const uint32_t RS_FEED_TYPE_MSG      = 0x0200;
 const uint32_t RS_FEED_TYPE_FILES    = 0x0400;
 const uint32_t RS_FEED_TYPE_SECURITY = 0x0800;
+const uint32_t RS_FEED_TYPE_POSTED   = 0x1000;
+const uint32_t RS_FEED_TYPE_SECURITY_IP = 0x2000;
 
 const uint32_t RS_FEED_ITEM_PEER_CONNECT	    = RS_FEED_TYPE_PEER  | 0x0001;
 const uint32_t RS_FEED_ITEM_PEER_DISCONNECT	 = RS_FEED_TYPE_PEER  | 0x0002;
@@ -81,6 +91,27 @@ const uint32_t RS_FEED_ITEM_SEC_WRONG_SIGNATURE     = RS_FEED_TYPE_SECURITY  | 0
 const uint32_t RS_FEED_ITEM_SEC_BAD_CERTIFICATE     = RS_FEED_TYPE_SECURITY  | 0x0006;
 const uint32_t RS_FEED_ITEM_SEC_INTERNAL_ERROR      = RS_FEED_TYPE_SECURITY  | 0x0007;
 const uint32_t RS_FEED_ITEM_SEC_MISSING_CERTIFICATE = RS_FEED_TYPE_SECURITY  | 0x0008;
+
+const uint32_t RS_FEED_ITEM_SEC_IP_BLACKLISTED      = RS_FEED_TYPE_SECURITY_IP  | 0x0001;
+const uint32_t RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED = RS_FEED_TYPE_SECURITY_IP  | 0x0002;
+
+const uint32_t RS_FEED_ITEM_CHANNEL_NEW      = RS_FEED_TYPE_CHANNEL  | 0x0001;
+//const uint32_t RS_FEED_ITEM_CHANNEL_UPDATE   = RS_FEED_TYPE_CHANNEL  | 0x0002;
+const uint32_t RS_FEED_ITEM_CHANNEL_MSG      = RS_FEED_TYPE_CHANNEL  | 0x0003;
+const uint32_t RS_FEED_ITEM_CHANNEL_PUBLISHKEY = RS_FEED_TYPE_CHANNEL  | 0x0004;
+
+const uint32_t RS_FEED_ITEM_FORUM_NEW        = RS_FEED_TYPE_FORUM | 0x0001;
+//const uint32_t RS_FEED_ITEM_FORUM_UPDATE     = RS_FEED_TYPE_FORUM | 0x0002;
+const uint32_t RS_FEED_ITEM_FORUM_MSG        = RS_FEED_TYPE_FORUM | 0x0003;
+const uint32_t RS_FEED_ITEM_FORUM_PUBLISHKEY = RS_FEED_TYPE_FORUM | 0x0004;
+
+//const uint32_t RS_FEED_ITEM_BLOG_NEW         = RS_FEED_TYPE_BLOG  | 0x0001;
+//const uint32_t RS_FEED_ITEM_BLOG_UPDATE      = RS_FEED_TYPE_BLOG  | 0x0002;
+//const uint32_t RS_FEED_ITEM_BLOG_MSG         = RS_FEED_TYPE_BLOG  | 0x0003;
+
+const uint32_t RS_FEED_ITEM_POSTED_NEW       = RS_FEED_TYPE_POSTED  | 0x0001;
+//const uint32_t RS_FEED_ITEM_POSTED_UPDATE    = RS_FEED_TYPE_POSTED  | 0x0002;
+const uint32_t RS_FEED_ITEM_POSTED_MSG       = RS_FEED_TYPE_POSTED  | 0x0003;
 
 const uint32_t RS_FEED_ITEM_CHAT_NEW		 = RS_FEED_TYPE_CHAT  | 0x0001;
 const uint32_t RS_FEED_ITEM_MESSAGE		 = RS_FEED_TYPE_MSG   | 0x0001;
@@ -120,19 +151,14 @@ const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 class RsFeedItem
 {
 	public:
-		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
-			:mType(type), mId1(id1), mId2(id2), mId3(id3)
-		{
-			return;
-		}
+		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
+			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4), mResult1(result1) {}
 
-		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4)
-			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
-
-		RsFeedItem() :mType(0) { return; }
+		RsFeedItem() :mType(0), mResult1(0) { return; }
 
 		uint32_t mType;
 		std::string mId1, mId2, mId3, mId4;
+		uint32_t mResult1;
 };
 
 // This class implements a generic notify client. To have your own components being notified by
@@ -184,9 +210,10 @@ class NotifyClient
 		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
 		virtual void notifyListChange                 (int /* list */, int /* type */) {}
 		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
-		virtual void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) {}
-		virtual void notifyChatShow                   (const std::string& /* peer_id  */) {}
-		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) {}
+		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
+		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
+		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
 		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
 		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
 		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
@@ -196,18 +223,18 @@ class NotifyClient
 		virtual void notifyOwnStatusMessageChanged    () {}
 		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
 		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
+        virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
 
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary   () {}
 		virtual void notifyDiscInfoChanged            () {}
-		virtual void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-		virtual void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) { signature_result = false ;return true; }
-		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {};
-		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {};
+
+		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
+		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
+		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
 		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
-		virtual bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) { return false ;}
+		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
 		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
 
 };

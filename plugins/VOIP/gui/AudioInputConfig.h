@@ -28,18 +28,34 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _AUDIOINPUTCONFIG_H
-#define _AUDIOINPUTCONFIG_H
+#pragma once
 
 #include <QAudioInput>
 #include <QWidget>
 
 #include "retroshare-gui/configpage.h"
 
-#include "ui_AudioInputConfig.h"
 #include "SpeexProcessor.h"
 #include "VideoProcessor.h"
 #include "AudioStats.h"
+#include "gui/common/RSGraphWidget.h"
+
+class voipGraphSource ;
+
+class voipGraph: public RSGraphWidget
+{
+public:
+    voipGraph(QWidget *parent) ;
+    
+    voipGraphSource *voipSource() const { return _src ; }
+    
+    void setVoipSource(voipGraphSource *gs) ;
+    
+private:
+    voipGraphSource *_src ;
+};
+
+#include "ui_AudioInputConfig.h"
 
 class AudioInputConfig : public ConfigPage 
 {
@@ -53,8 +69,10 @@ class AudioInputConfig : public ConfigPage
 		//VideoDecoder *videoDecoder ;
 		//VideoEncoder *videoEncoder ;
 		QVideoInputDevice *videoInput ;
+        	VideoProcessor *videoProcessor ;
 		bool loaded;
 
+        voipGraphSource *graph_source ;
 
 	protected:
 		QTimer *qtTick;
@@ -75,10 +93,12 @@ class AudioInputConfig : public ConfigPage
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/talking_on.svg") ; }
 		virtual QString pageName() const { return tr("VOIP") ; }
 		virtual QString helpText() const { return ""; }
-
-	private slots:
+        
+private slots:
+	void updateAvailableBW(double r);
 		void loadSettings();
 		void emptyBuffer();
+		void togglePreview(bool) ;
 
 		void on_qsTransmitHold_valueChanged(int v);
 		void on_qsAmp_valueChanged(int v);
@@ -88,5 +108,3 @@ class AudioInputConfig : public ConfigPage
 		void on_qpbAudioWizard_clicked();
 		void on_qcbEchoCancel_clicked();
 };
-
-#endif

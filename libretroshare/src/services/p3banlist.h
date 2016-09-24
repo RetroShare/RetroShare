@@ -33,20 +33,10 @@
 
 #include "serialiser/rsbanlistitems.h"
 #include "services/p3service.h"
-//#include "retroshare/rsbanlist.h"
+#include "retroshare/rsbanlist.h"
 
 class p3ServiceControl;
 class p3NetMgr;
-
-class BanListPeer
-{
-	public:
-	
-	struct sockaddr_storage addr;
-	uint32_t reason; // Dup Self, Dup Friend
-	int level; // LOCAL, FRIEND, FoF.
-	time_t mTs;
-};
 
 class BanList
 {
@@ -57,78 +47,116 @@ class BanList
 	std::map<struct sockaddr_storage, BanListPeer> mBanPeers;
 };
 
-
-
 //!The RS BanList service.
  /**
   *
   * Exchange list of Banned IP addresses with peers.
   */
 
-class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
+class p3BanList: public RsBanList, public p3Service, public pqiNetAssistPeerShare, public p3Config /*, public pqiMonitor */
 {
-	public:
-		p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
-		virtual RsServiceInfo getServiceInfo();
+public:
+    p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
+    virtual RsServiceInfo getServiceInfo();
 
-		/***** overloaded from RsBanList *****/
+    /***** overloaded from RsBanList *****/
 
-		/***** overloaded from pqiNetAssistPeerShare *****/
+    virtual bool isAddressAccepted(const struct sockaddr_storage& addr, uint32_t checking_flags,uint32_t *check_result=NULL) ;
 
-		virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int age);
+    virtual void getBannedIps(std::list<BanListPeer>& list) ;
+    virtual void getWhiteListedIps(std::list<BanListPeer>& list) ;
+
+    virtual bool addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) ;
+    virtual bool removeIpRange(const sockaddr_storage &addr, int masked_bytes, uint32_t list_type);
+
+    virtual void enableIPFiltering(bool b) ;
+    virtual bool ipFilteringEnabled() ;
+
+    virtual bool autoRangeEnabled() { return mAutoRangeIps ; }
+    virtual void enableAutoRange(bool b) ;
+
+    virtual int  autoRangeLimit()   { return mAutoRangeLimit ; }
+    virtual void setAutoRangeLimit(int b) ;
+
+    virtual void enableIPsFromFriends(bool b) ;
+    virtual bool IPsFromFriendsEnabled() { return mIPFriendGatheringEnabled ;}
+
+    virtual void enableIPsFromDHT(bool b) ;
+    virtual bool iPsFromDHTEnabled() { return mIPDHTGatheringEnabled ;}
+
+    /***** overloaded from pqiNetAssistPeerShare *****/
+
+    virtual void    updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int time_stamp);
+
+    /***********************  p3config  ******************************/
+    virtual RsSerialiser *setupSerialiser();
+    virtual bool saveList(bool &cleanup, std::list<RsItem *>& itemlist);
+    virtual bool loadList(std::list<RsItem *>& load);
+
+    /***** overloaded from p3Service *****/
+    /*!
+     * This retrieves all chat msg items and also (important!)
+     * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+     * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
+     * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
+     * @see NotifyBase
+
+     */
+    virtual int   tick();
+    virtual int   status();
+
+    int     sendPackets();
+    bool 	processIncoming();
+
+    bool recvBanItem(RsBanListItem *item);
+    bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, time_t time_stamp);
+    void sendBanLists();
+    int  sendBanSet(const RsPeerId& peerid);
 
 
-		/***** overloaded from p3Service *****/
-		/*!
-		 * This retrieves all chat msg items and also (important!)
-		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-		 * @see NotifyBase
+    /*!
+     * Interface stuff.
+     */
 
-		 */
-		virtual int   tick();
-		virtual int   status();
-
-		int     sendPackets();
-		bool 	processIncoming();
-
-		bool recvBanItem(RsBanListItem *item);
-		bool addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, 
-			int level, uint32_t reason, uint32_t age);
-		void sendBanLists();
-		int sendBanSet(const RsPeerId& peerid);
+    /*************** pqiMonitor callback ***********************/
+    //virtual void statusChange(const std::list<pqipeer> &plist);
 
 
-		/*!
-		 * Interface stuff.
-		 */
+    /************* from p3Config *******************/
+    //virtual RsSerialiser *setupSerialiser() ;
+    //virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+    //virtual void saveDone();
+    //virtual bool loadList(std::list<RsItem*>& load) ;
 
-		/*************** pqiMonitor callback ***********************/
-		//virtual void statusChange(const std::list<pqipeer> &plist);
+private:
+    void getDhtInfo() ;
 
+    RsMutex mBanMtx;
 
-		/************* from p3Config *******************/
-		//virtual RsSerialiser *setupSerialiser() ;
-		//virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
-		//virtual void saveDone();
-		//virtual bool loadList(std::list<RsItem*>& load) ;
+    bool acceptedBanSet_locked(const BanListPeer &blp);
+    bool acceptedBanRanges_locked(const BanListPeer &blp);
+    void autoFigureOutBanRanges();
+    int condenseBanSources_locked();
+    int printBanSources_locked(std::ostream &out);
+    int printBanSet_locked(std::ostream &out);
+    bool isWhiteListed_locked(const sockaddr_storage &addr);
 
+    time_t mSentListTime;
+    std::map<RsPeerId, BanList> mBanSources;
+    std::map<struct sockaddr_storage, BanListPeer> mBanSet;
+    std::map<struct sockaddr_storage, BanListPeer> mBanRanges;
+    std::map<struct sockaddr_storage, BanListPeer> mWhiteListedRanges;
 
-	private:
-		RsMutex mBanMtx;
+    p3ServiceControl *mServiceCtrl;
+    p3NetMgr *mNetMgr;
+    time_t mLastDhtInfoRequest ;
 
-		int condenseBanSources_locked();
-		int printBanSources_locked(std::ostream &out);
-		int printBanSet_locked(std::ostream &out);
+    bool mIPFilteringEnabled ;
+    bool mIPFriendGatheringEnabled ;
+    bool mIPDHTGatheringEnabled ;
 
-		time_t mSentListTime;
-		std::map<RsPeerId, BanList> mBanSources;
-		std::map<struct sockaddr_storage, BanListPeer> mBanSet;
-
-		p3ServiceControl *mServiceCtrl;
-		p3NetMgr *mNetMgr;
-
+    uint32_t mAutoRangeLimit ;
+    bool mAutoRangeIps ;
 };
 
 #endif // SERVICE_RSBANLIST_HEADER

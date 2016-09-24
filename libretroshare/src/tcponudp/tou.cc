@@ -35,6 +35,7 @@ static  const int kInitStreamTable = 5;
 #include <time.h>
 
 #include "udp/udpstack.h"
+#include "pqi/pqinetwork.h"
 #include "tcpstream.h"
 #include <vector>
 #include <iostream>
@@ -42,6 +43,7 @@ static  const int kInitStreamTable = 5;
 #include <errno.h>
 
 #define DEBUG_TOU_INTERFACE 1
+#define EUSERS          87
 
 struct TcpOnUdp_t
 {
@@ -55,6 +57,10 @@ struct TcpOnUdp_t
 
 typedef struct TcpOnUdp_t TcpOnUdp;
 
+static RsMutex touMutex("touMutex"); 
+// Mutex is used to control addition / removals from tou_streams.
+// Lookup should be okay - as long as you stick to your allocated ID!
+
 static  std::vector<TcpOnUdp *> tou_streams;
 
 static  int tou_inited = 0;
@@ -66,8 +72,6 @@ static  int tou_inited = 0;
 static  UdpSubReceiver *udpSR[MAX_TOU_RECEIVERS] = {NULL};
 static  uint32_t	udpType[MAX_TOU_RECEIVERS] = { 0 };
 static  uint32_t        noUdpSR = 0;
-
-static int	tou_tick_all();
 
 /* 	tou_init 
  *
@@ -82,6 +86,8 @@ static int	tou_tick_all();
 /* 	tou_init - opens the udp port (universal bind) */
 int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 {
+	RsStackMutex stack(touMutex); /***** LOCKED ******/
+
 	UdpSubReceiver **usrArray = (UdpSubReceiver **) in_udpsubrecvs;
 	if (number > MAX_TOU_RECEIVERS)
 	{
@@ -113,6 +119,8 @@ int 	tou_init(void **in_udpsubrecvs, int *type, int number)
 /* 	open - allocates a sockfd, and checks that the type is okay */
 int     tou_socket(uint32_t recvIdx, uint32_t type, int /*protocol*/)
 {
+	RsStackMutex stack(touMutex); /***** LOCKED ******/
+
 	if (!tou_inited)
 	{
 		return -1;
@@ -167,10 +175,29 @@ int     tou_socket(uint32_t recvIdx, uint32_t type, int /*protocol*/)
 	return -1;
 }
 
+
+bool tou_stream_check(int sockfd)
+{
+	if (sockfd < 0)
+	{
+		std::cerr << "tou_stream_check() ERROR sockfd < 0";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (tou_streams[sockfd] == NULL)
+	{
+		std::cerr << "tou_stream_check() ERROR tou_streams[sockfd] == NULL";
+		std::cerr << std::endl;
+		return false;
+	}
+	return true;
+}
+
 /* 	bind - opens the udp port */
 int 	tou_bind(int sockfd, const struct sockaddr * /* my_addr */, socklen_t /* addrlen */ )
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -192,15 +219,27 @@ int 	tou_bind(int sockfd, const struct sockaddr * /* my_addr */, socklen_t /* ad
 int 	tou_connect(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen, uint32_t conn_period)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
 
-	if (addrlen != sizeof(struct sockaddr_in))
+	if (addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_connect() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_connect() ERROR not ipv4";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
@@ -239,7 +278,6 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 
 	tous->tcp->connect(*(const struct sockaddr_in *) serv_addr, conn_period);
 	tous->tcp->tick();
-	tou_tick_all();
 	if (tous->tcp->isConnected())
 	{
 		return 0;	
@@ -253,17 +291,30 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, 
 					socklen_t addrlen)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
-	if (addrlen != sizeof(struct sockaddr_in))
+	if (addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_listenfor() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_listenfor() ERROR not ipv4";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
 
 	/* enforce that the udptype is correct */
 	if (tous -> udptype != TOU_RECEIVER_TYPE_UDPPEER)
@@ -298,14 +349,12 @@ int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr,
 
 	tous->tcp->listenfor(*((struct sockaddr_in *) serv_addr));
 	tous->tcp->tick();
-	tou_tick_all();
 
 	return 0;
 }
 
 int     tou_listen(int /* sockfd */ , int /* backlog */ )
 {
-	tou_tick_all();
 	return 1;
 }
 
@@ -334,7 +383,7 @@ int 	tou_connect_via_relay(int sockfd,
 			const struct sockaddr_in *dest_addr)
 
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -377,7 +426,6 @@ int 	tou_connect_via_relay(int sockfd,
 	 */
 	tous->tcp->connect(*dest_addr, DEFAULT_RELAY_CONN_PERIOD);
 	tous->tcp->tick();
-	tou_tick_all();
 	if (tous->tcp->isConnected())
 	{
 		return 0;	
@@ -391,21 +439,32 @@ int 	tou_connect_via_relay(int sockfd,
         /* slightly different - returns sockfd on connection */
 int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	
-	if (*addrlen != sizeof(struct sockaddr_in))
+	if (*addrlen < sizeof(struct sockaddr_in))
 	{
+		std::cerr << "tou_accept() ERROR invalid size of sockaddr";
+		std::cerr << std::endl;
+		tous -> lasterrno = EINVAL;
+		return -1;
+	}
+
+	// only IPv4 for the moment.
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) addr;
+	if (ss_addr->ss_family != AF_INET)
+	{
+		std::cerr << "tou_accept() ERROR not ipv4";
+		std::cerr << std::endl;
 		tous -> lasterrno = EINVAL;
 		return -1;
 	}
 
 	//tous->tcp->connect();
 	tous->tcp->tick();
-	tou_tick_all();
 	if (tous->tcp->isConnected())
 	{
 		// should get remote address
@@ -420,14 +479,13 @@ int     tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 
 int     tou_connected(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 
 	tous->tcp->tick();
-	tou_tick_all();
 
 	return (tous->tcp->TcpState() == 4);
 }
@@ -438,14 +496,13 @@ int     tou_connected(int sockfd)
 
 ssize_t tou_read(int sockfd, void *buf, size_t count)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 
 	tous->tcp->tick();
-	tou_tick_all();
 
 	int err = tous->tcp->read((char *) buf, count);
 	if (err < 0)
@@ -458,7 +515,7 @@ ssize_t tou_read(int sockfd, void *buf, size_t count)
 
 ssize_t tou_write(int sockfd, const void *buf, size_t count)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -470,24 +527,21 @@ ssize_t tou_write(int sockfd, const void *buf, size_t count)
 	{
 		tous->lasterrno = tous->tcp->TcpErrorState();
 		tous->tcp->tick();
-		tou_tick_all();
 		return -1;
 	}
 	tous->tcp->tick();
-	tou_tick_all();
 	return err;
 }
 
         /* check stream */
 int     tou_maxread(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	tous->tcp->tick();
-	tou_tick_all();
 
 	int ret = tous->tcp->read_pending();
 	if (ret < 0)
@@ -500,13 +554,12 @@ int     tou_maxread(int sockfd)
 
 int     tou_maxwrite(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
 	TcpOnUdp *tous = tou_streams[sockfd];
 	tous->tcp->tick();
-	tou_tick_all();
 
 	int ret = tous->tcp->write_allowed();
 	if (ret < 0)
@@ -521,13 +574,16 @@ int     tou_maxwrite(int sockfd)
 /*	close down the tcp over udp connection */
 int 	tou_close(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	TcpOnUdp *tous = NULL;
 	{
-		return -1;
+		RsStackMutex stack(touMutex); /***** LOCKED ******/
+		if (!tou_stream_check(sockfd))
+		{
+			return -1;
+		}
+		tous = tou_streams[sockfd];
+		tou_streams[sockfd] = NULL;
 	}
-	TcpOnUdp *tous = tou_streams[sockfd];
-
-	tou_tick_all();
 
 	if (tous->tcp)
 	{
@@ -577,19 +633,19 @@ int 	tou_close(int sockfd)
 		
 #endif
 
-		delete tous->tcp;
+        delete tous->tcp;
+        tous->tcp = NULL ;	// prevents calling
 
 	}
 
 	delete tous;
-	tou_streams[sockfd] = NULL;
 	return 1;
 }
 
 /*	get an error number */
 int	tou_errno(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return ENOTSOCK;
 	}
@@ -599,7 +655,7 @@ int	tou_errno(int sockfd)
 
 int     tou_clear_error(int sockfd)
 {
-	if (tou_streams[sockfd] == NULL)
+	if (!tou_stream_check(sockfd))
 	{
 		return -1;
 	}
@@ -607,66 +663,4 @@ int     tou_clear_error(int sockfd)
 	tous->lasterrno = 0;
 	return 0;
 }
-
-/*	unfortuately the library needs to be ticked. (not running a thread)
- *	you can put it in a thread!
- */
-
-/*
- * Some helper functions for stuff.
- *
- */
-
-static int	tou_passall();
-static int	tou_active_rw();
-
-static int nextActiveCycle;
-static int nextIdleCheck;
-static const int kActiveCycleStep = 1;
-static const int kIdleCheckStep = 5;
-
-static int	tou_tick_all()
-{
-	tou_passall();
-	return 1;
-
-	/* check timer */
-	int ts = time(NULL);
-	if (ts > nextActiveCycle)
-	{
-		tou_active_rw();
-		nextActiveCycle += kActiveCycleStep;
-	}
-	if (ts > nextIdleCheck)
-	{
-		tou_passall();
-		nextIdleCheck += kIdleCheckStep;
-	}
-	return 0;
-}
-
-
-static int	tou_passall()
-{
-	/* iterate through all and clean up old sockets.
-	 * check if idle are still idle.
-	 */
-	std::vector<TcpOnUdp *>::iterator it;
-	for(it = tou_streams.begin(); it != tou_streams.end(); it++)
-	{
-		if ((*it) && ((*it)->tcp))
-		{
-			(*it)->tcp->tick();
-		}
-	}
-	return 1;
-}
-
-static int	tou_active_rw()
-{
-	/* iterate through actives and tick
-	 */
-	return 1;
-}
-
 

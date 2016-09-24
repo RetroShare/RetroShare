@@ -11,6 +11,129 @@ AvatarWidget[frameState="ONLINE"]{border-image:url(:/images/avatarstatus-bg-onli
 AvatarWidget[frameState="AWAY"]{border-image:url(:/images/avatarstatus-bg-away-116.png);}
 AvatarWidget[frameState="BUSY"]{border-image:url(:/images/avatarstatus-bg-busy-116.png);}
 
+/* Font */
+
+QLabel#titleBarLabel
+{
+	font-weight: bold;
+	qproperty-fontSizeFactor: 115;
+}
+
+QLabel#toasterLabel
+{
+	font-weight: bold;
+}
+
+ChatWidget QLabel#titleLabel, ChatWidget QLabel#statusLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+FriendsDialog QLabel#nicknameLabel
+{
+	qproperty-fontSizeFactor: 200;
+}
+
+ChatMsgItem QLabel#peerNameLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+PeerItem QLabel#peerNameLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+SecurityIpItem QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 175;
+}
+
+PostedItem QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 120; 
+}
+
+PostedItem QLabel#scoreLabel
+{
+	qproperty-fontSizeFactor: 140;
+}
+
+GxsChannelPostItem QLabel#titleLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+PluginItem QLabel#subjectLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+RSettingsWin QLabel#pageName
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ConfCertDialog QLabel#servicePermissionsLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+GxsChannelPostsWidget QLabel#nameLabel
+{
+	qproperty-fontSizeFactor: 250;
+}
+
+CreateLobbyDialog QLabel#lobbyInfoLabel
+{
+	qproperty-fontSizeFactor: 150;
+}
+
+HeaderFrame QLabel#headerLabel
+{
+	qproperty-fontSizeFactor: 225;
+}
+
+ConnectFrientWizard QLabel#fr_label
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ConnectFrientWizard QLabel#requestinfolabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ConnectFriendWizard QLabel#makefriend_infolabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ShareManager QLabel#labelInstructions
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+CryptoPage QLabel#publicLabel, CryptoPage QLabel#otherLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+ProfileWidget QLabel#publicLabel, ProfileWidget QLabel#otherLabel, ProfileWidget QLabel#myLabel
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+PostedCreatePostDialog QLabel#info_label
+{
+	qproperty-fontSizeFactor: 125;
+}
+
 /* Color definitions */
 
 ForumsDialog, GxsForumThreadWidget
@@ -25,7 +148,7 @@ ForumsDialog, GxsForumThreadWidget
 GroupTreeWidget
 {
 	qproperty-textColorCategory: rgb(79, 79, 79);
-	qproperty-textColorPrivateKey: blue;
+	qproperty-textColorPrivateKey: rgb(35,91,159);
 }
 
 FriendSelectionWidget
@@ -43,7 +166,7 @@ FriendList
     qproperty-textColorStatusOffline: black;
     qproperty-textColorStatusAway: gray;
     qproperty-textColorStatusBusy: gray;
-    qproperty-textColorStatusOnline: darkBlue;
+    qproperty-textColorStatusOnline: darkGreen;
     qproperty-textColorStatusInactive: gray;
 	qproperty-textColorGroup: rgb(123, 123, 123);
 }
@@ -63,4 +186,39 @@ NetworkDialog
 	qproperty-backgroundColorAcceptConnection: rgb(67, 192, 67);
 	qproperty-backgroundColorHasSignedMe: rgb(178, 66, 178);
 	qproperty-backgroundColorDenied: lightGray;
+}
+
+RSTextBrowser, MimeTextEdit
+{
+	qproperty-textColorQuote: rgb(120, 153, 34);
+}
+
+QLabel#headerTextLabel_Person
+{
+	qproperty-fontSizeFactor: 225;
+}
+
+QLabel#headerTextLabel_Circles
+{
+	qproperty-fontSizeFactor: 225;
+}
+
+IdEditDialog QLabel#info_label
+{
+	qproperty-fontSizeFactor: 125;
+}
+
+GenCertDialog QLabel#header_label
+{
+	qproperty-fontSizeFactor: 120;
+}
+
+GenCertDialog QLabel#genprofileinfo_label
+{
+	qproperty-fontSizeFactor: 120;
+}
+
+GenCertDialog QLabel#entropy_label
+{
+	qproperty-fontSizeFactor: 115;
 }

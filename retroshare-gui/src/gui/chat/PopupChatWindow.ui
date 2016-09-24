@@ -41,12 +41,6 @@
   </widget>
   <widget class="QStatusBar" name="chatstatusbar"/>
   <widget class="QToolBar" name="chattoolBar">
-   <property name="maximumSize">
-    <size>
-     <width>16777215</width>
-     <height>32</height>
-    </size>
-   </property>
    <property name="movable">
     <bool>false</bool>
    </property>
@@ -55,8 +49,8 @@
    </property>
    <property name="iconSize">
     <size>
-     <width>24</width>
-     <height>24</height>
+     <width>32</width>
+     <height>32</height>
     </size>
    </property>
    <property name="floatable">

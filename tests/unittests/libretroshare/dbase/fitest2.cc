@@ -156,7 +156,7 @@ int test2(FileIndex *fi)
 FileIndex *createBasicFileIndex(time_t age)
 {
 	RsPeerId peerId;
-	peerId.random();
+    peerId = RsPeerId::random();
 	FileIndex *fi = new FileIndex(peerId);
 
 	FileEntry fe;

@@ -91,6 +91,9 @@ PeerConnectStateBox::PeerConnectStateBox()
         mNoFailedAttempts = 0;
         mNextAttemptTS = now;
         mAttemptLength = 0;
+	mProxyPortFlags = 0;
+	mProxyPortChoice = false;
+	mProxyPortTS = 0;
 
 
 }
@@ -783,7 +786,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 	{
 		case CSB_UPDATE_CONNECTED:
 		{
-			if ((mState == CSB_DIRECT_ATTEMPT) || (mState == CSB_PROXY_ATTEMPT) || (mState == CSB_PROXY_ATTEMPT))	
+			if ((mState == CSB_DIRECT_ATTEMPT) || (mState == CSB_PROXY_ATTEMPT) || (mState == CSB_RELAY_ATTEMPT))
 			{
 				mAttemptLength = now - mStateTS;
 			}

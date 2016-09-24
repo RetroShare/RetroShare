@@ -38,8 +38,10 @@
 #include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
 
+#include "chat/p3chatservice.h"
+#include "gxstunnel/p3gxstunnel.h"
+
 #include "services/p3msgservice.h"
-#include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
 
 class p3heartbeat;
@@ -73,7 +75,7 @@ class RsPluginManager;
 //int InitRetroShare(int argc, char **argv, RsInit *config);
 //int LoadCertificates(RsInit *config);
 
-class RsServer: public RsControl, public RsThread
+class RsServer: public RsControl, public RsTickingThread
 {
 	public:
 		/****************************************/
@@ -87,7 +89,7 @@ class RsServer: public RsControl, public RsThread
 		virtual ~RsServer();
 
 		/* Thread Fn: Run the Core */
-		virtual void run();
+        virtual void data_tick();
 
 		/* locking stuff */
 		void    lockRsCore() 
@@ -109,24 +111,7 @@ class RsServer: public RsControl, public RsThread
 		/* mutex */
 		RsMutex coreMutex;
 
-		/* General Internal Helper Functions
-			(Must be Locked)
-		 */
-
-		/****************************************/
-		/****************************************/
-		/* p3face-msg Operations */
-
-	public:
-		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
-		virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
-		virtual int     ClearInBroadcast();
-		virtual int     ClearInSubscribe();
-
 	private:
-
-		void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 
 		/****************************************/
 		/****************************************/
@@ -135,9 +120,8 @@ class RsServer: public RsControl, public RsThread
 	public:
 		/* Config */
 
-		virtual int     ConfigSetBootPrompt( bool on );
-
 		virtual void    ConfigFinalSave( );
+		virtual void	startServiceThread(RsTickingThread *t, const std::string &threadName) ;
 
 		/************* Rs shut down function: in upnp 'port lease time' bug *****************/
 
@@ -151,8 +135,11 @@ class RsServer: public RsControl, public RsThread
 
 	public:
 		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) { return pqih->getCryptoParams(ssl_id,params); }
+		virtual void getLibraries(std::list<RsLibraryInfo> &libraries);
 
 	private: 
+
+		std::string getSQLCipherVersion();
 
 		// The real Server Parts.
 
@@ -176,16 +163,22 @@ class RsServer: public RsControl, public RsThread
 		p3MsgService  *msgSrv;
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
+		p3GxsTunnelService *mGxsTunnels;
 
-		/* GXS */
-		p3Wiki *mWiki;
-		p3Posted *mPosted;
-		p3PhotoService *mPhoto;
-		p3GxsCircles *mGxsCircles;
-		p3IdService *mGxsIdService;
-		p3GxsForums *mGxsForums;
-		p3GxsChannels *mGxsChannels;
-		p3Wire *mWire;
+        // This list contains all threaded services. It will be used to shut them down properly.
+
+        std::list<RsTickingThread*> mRegisteredServiceThreads ;
+
+        /* GXS */
+//		p3Wiki *mWiki;
+//		p3Posted *mPosted;
+//		p3PhotoService *mPhoto;
+//		p3GxsCircles *mGxsCircles;
+//        p3GxsNetService *mGxsNetService;
+//        p3IdService *mGxsIdService;
+//		p3GxsForums *mGxsForums;
+//		p3GxsChannels *mGxsChannels;
+//		p3Wire *mWire;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;
@@ -196,6 +189,16 @@ class RsServer: public RsControl, public RsThread
 
 		// Worker Data.....
 
+    int mMin ;
+    int mLoop ;
+    int mLastts ;
+    long mLastSec ;
+    double mAvgTickRate ;
+    double mTimeDelta ;
+
+    static const double minTimeDelta; // 25;
+    static const double maxTimeDelta;
+    static const double kickLimit;
 };
 
 /* Helper function to convert windows paths

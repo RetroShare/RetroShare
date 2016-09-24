@@ -85,6 +85,8 @@
 	#define OS_OPENBSD
 #elif defined(__GNU_HURD__)
 	#define OS_HURD
+#elif defined(__HAIKU__)
+	#define OS_HAIKU
 #elif defined(WIN32_PLATFORM_PSPC)
 	#define OS_WINCE_POCKETPC
 #elif defined(WIN32_PLATFORM_WFSP)
@@ -101,7 +103,7 @@
 	#define OS_BSD
 #endif
 
-#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_HURD) || defined(OS_BSD)
+#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_HURD) || defined(OS_BSD) || defined(OS_HAIKU)
 	#define OS_POSIX
 #endif
 

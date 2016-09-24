@@ -38,7 +38,7 @@ GroupChatToaster::GroupChatToaster(const RsPeerId &peerId, const QString &messag
 	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":/images/user/personal64.png");
-	ui.avatarWidget->setId(peerId);
+    ui.avatarWidget->setId(ChatId(peerId));
 }
 
 void GroupChatToaster::chatButtonSlot()

@@ -83,7 +83,7 @@ int     UdpPeerReceiver::status(std::ostream &out)
 	out << "UdpPeerReceiver::status()" << std::endl;
 	out << "UdpPeerReceiver::peers:" << std::endl;
         std::map<struct sockaddr_in, UdpPeer *>::iterator it;
-	for(it = streams.begin(); it != streams.end(); it++)
+	for(it = streams.begin(); it != streams.end(); ++it)
 	{
 		out << "\t" << it->first << std::endl;
 	}
@@ -123,7 +123,7 @@ int UdpPeerReceiver::removeUdpPeer(UdpPeer *peer)
 
 	/* check for duplicate */
         std::map<struct sockaddr_in, UdpPeer *>::iterator it;
-	for(it = streams.begin(); it != streams.end(); it++)
+	for(it = streams.begin(); it != streams.end(); ++it)
 	{
 		if (it->second == peer)
 		{

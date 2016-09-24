@@ -103,10 +103,18 @@ bool upnphandler::background_setup_upnp(bool start, bool stop)
 	data->start = start;
 	data->stop = stop;
 
-	pthread_create(&tid, 0, &doSetupUPnP, (void *) data);
+    if(! pthread_create(&tid, 0, &doSetupUPnP, (void *) data))
+    {
 	pthread_detach(tid); /* so memory is reclaimed in linux */
 
 	return true;
+    }
+    else
+    {
+        delete data ;
+        std::cerr << "(EE) Could not start background upnp thread!" << std::endl;
+        return false ;
+    }
 }
 
 bool upnphandler::start_upnp()
@@ -232,7 +240,8 @@ bool upnphandler::shutdown_upnp()
 
 		//destroy the upnp object
 		cUPnPControlPoint->~CUPnPControlPoint();
-	} else {
+        cUPnPControlPoint=NULL ;
+    } else {
     	    #ifdef UPNP_DEBUG
 		    std::cerr << "upnphandler::shutdown_upnp() : avoid upnp connection for shutdonws because probably a net flag went down." << std::endl;
 	    #endif

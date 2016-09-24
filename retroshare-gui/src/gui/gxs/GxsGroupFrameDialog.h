@@ -26,6 +26,7 @@
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/RsUserdata.h"
 
 #include <inttypes.h>
 
@@ -71,23 +72,26 @@ public:
 
 public:
 	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
-	~GxsGroupFrameDialog();
+	virtual ~GxsGroupFrameDialog();
 
-	bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
+	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+	virtual QString getHelpString() const =0;
 
 protected:
 	virtual void showEvent(QShowEvent *event);
 	virtual void updateDisplay(bool complete);
 
-	RsGxsGroupId groupId() { return mGroupId; }
+	const RsGxsGroupId &groupId() { return mGroupId; }
 	void setSingleTab(bool singleTab);
 	void setHideTabBarWithOneTab(bool hideTabBarWithOneTab);
 	bool getCurrentGroupName(QString& name);
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
+	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 
 private slots:
 	void todo();
@@ -105,6 +109,7 @@ private slots:
 	void messageTabCloseRequested(int index);
 	void messageTabChanged(int index);
 	void messageTabInfoChanged(QWidget *widget);
+	void messageTabWaitingChanged(QWidget *widget);
 
 	void copyGroupLink();
 
@@ -117,7 +122,7 @@ private slots:
 	void markMsgAsRead();
 	void markMsgAsUnread();
 
-	void shareKey();
+	void sharePublishKey();
 
 	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
@@ -137,7 +142,6 @@ private:
 	void initUi();
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
-	void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
@@ -145,10 +149,12 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::list<RsGroupMetaData> &groupList);
+	void insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata);
 
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
+	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
+	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata); // use with requestGroupSummaryType
 
 	void requestGroupStatistics(const RsGxsGroupId &groupId);
 	void loadGroupStatistics(const uint32_t &token);
@@ -164,8 +170,12 @@ private:
 //	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
 //	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
+protected:
+	bool mCountChildMsgs; // Count unread child messages?
+
 private:
 	bool mInitialized;
+	bool mInFill;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
@@ -177,6 +187,9 @@ private:
 	QTreeWidgetItem *mSubscribedGroups;
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
+
+	RsGxsGroupId mNavigatePendingGroupId;
+	RsGxsMessageId mNavigatePendingMsgId;
 
 	UIStateHelper *mStateHelper;
 

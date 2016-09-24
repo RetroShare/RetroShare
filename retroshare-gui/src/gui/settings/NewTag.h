@@ -28,7 +28,7 @@
 
 #include "ui_NewTag.h"
 
-class MsgTagType;
+#include "gui/msgs/MessageInterface.h"
 
 class NewTag : public QDialog
 {

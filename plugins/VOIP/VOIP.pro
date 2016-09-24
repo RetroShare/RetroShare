@@ -13,66 +13,152 @@ exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
 CONFIG += qt uic qrc resources
 MOBILITY = multimedia
 
-INCLUDEPATH += ../../retroshare-gui/src/temp/ui ../../libretroshare/src
+DEPENDPATH += $$PWD/../../retroshare-gui/src/temp/ui
+INCLUDEPATH += $$PWD/../../retroshare-gui/src/temp/ui
+
+#################################### Linux #####################################
+
+linux-* {
+	CONFIG += link_pkgconfig
+
+	PKGCONFIG += libavcodec libavutil
+	PKGCONFIG += speex speexdsp
+	PKGCONFIG += opencv
+} else {
+	LIBS += -lspeex -lspeexdsp -lavcodec -lavutil
+}
 
 #################################### Windows #####################################
 
-linux-* {
-	INCLUDEPATH += /usr/include
-	LIBS += -lopencv_core -lopencv_highgui
-}
-
 win32 {
-	SPEEX_DIR = ../../../speex-1.2rc1
-	OPENCV_DIR = ../../../lib/opencv
 
-	INCLUDEPATH += $${SPEEX_DIR}/include $${OPENCV_DIR}/include
-	LIBS += -L"$$OPENCV_DIR/x86/mingw/staticlib"
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
-	LIBS += -lopencv_core249 -lopencv_highgui249 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf -lole32 -loleaut32 -luuid -lavicap32 -lavifil32 -lvfw32 -lz
+	OPENCV_VERSION = "2413"
+	USE_PRECOMPILED_LIBS =
+	for(lib, LIB_DIR) {
+#message(Scanning $$lib)
+		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv $$OPENCV_VERSION libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core$$OPENCV_VERSION -lopencv_highgui$$OPENCV_VERSION -lopencv_imgproc$$OPENCV_VERSION
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/opencv/libopencv_core.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_core.dll.a) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_videoio.dll.a) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_videoio
+		}
+	}
+	isEmpty(USE_PRECOMPILED_LIBS) {
+		message(Use system opencv libraries.)
+		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+	}
+	LIBS += -lz -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
+	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
+
+#################################### MacOSX #####################################
+
+macx {
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	#OPENCV_VERSION = "249"
+	USE_PRECOMPILED_LIBS =
+	for(lib, LIB_DIR) {
+#message(Scanning $$lib)
+		exists( $$lib/opencv/libopencv_core*.dylib) {
+			isEmpty(USE_PRECOMPILED_LIBS) {
+				message(Get pre-compiled opencv libraries here:)
+				message($$lib)
+				LIBS += -L"$$lib/opencv"
+				LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+				USE_PRECOMPILED_LIBS = 1
+			}
+		}
+		exists( $$lib/libopencv_videoio*.dylib) {
+			message(videoio found in opencv libraries.)
+			message($$lib)
+			LIBS += -lopencv_videoio
+		}
+	}
+	isEmpty(USE_PRECOMPILED_LIBS) {
+		message(Use system opencv libraries.)
+		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+	}
+}
+
+
+# ffmpeg (and libavutil: https://github.com/ffms/ffms2/issues/11)
+QMAKE_CXXFLAGS += -D__STDC_CONSTANT_MACROS
 
 QMAKE_CXXFLAGS *= -Wall
 
-SOURCES = services/p3vors.cc \
-			 services/rsvoipitems.cc \
-			 gui/AudioInputConfig.cpp \
-			 gui/AudioStats.cpp \
-			 gui/AudioWizard.cpp \
-			 gui/SpeexProcessor.cpp \
-			 gui/audiodevicehelper.cpp \
-          gui/VoipStatistics.cpp \
+SOURCES = VOIPPlugin.cpp               \
+          services/p3VOIP.cc           \
+          services/rsVOIPItems.cc      \
+          gui/AudioInputConfig.cpp     \
+          gui/AudioStats.cpp           \
+          gui/AudioWizard.cpp          \
+          gui/SpeexProcessor.cpp       \
+          gui/audiodevicehelper.cpp    \
+          gui/VideoProcessor.cpp       \
+          gui/QVideoDevice.cpp         \
           gui/VOIPChatWidgetHolder.cpp \
-          gui/PluginGUIHandler.cpp \
-          gui/PluginNotifier.cpp \
-			 gui/VideoProcessor.cpp \
-			 gui/QVideoDevice.cpp \
-          VOIPPlugin.cpp
+          gui/VOIPGUIHandler.cpp       \
+          gui/VOIPNotify.cpp           \
+          gui/VOIPToasterItem.cpp      \
+          gui/VOIPToasterNotify.cpp
 
-HEADERS = services/p3vors.h \
-			 services/rsvoipitems.h \
-          gui/AudioInputConfig.h \
-			 gui/AudioStats.h \
-			 gui/AudioWizard.h \
-			 gui/SpeexProcessor.h \
-			 gui/audiodevicehelper.h \
-          gui/VoipStatistics.h \
-          gui/VOIPChatWidgetHolder.h \
-          gui/PluginGUIHandler.h \
-          gui/PluginNotifier.h \
-			 gui/VideoProcessor.h \
-			 gui/QVideoDevice.h \
-			 interface/rsvoip.h \
-          VOIPPlugin.h
+HEADERS = VOIPPlugin.h                 \
+          services/p3VOIP.h            \
+          services/rsVOIPItems.h       \
+          gui/AudioInputConfig.h       \
+          gui/AudioStats.h             \
+          gui/AudioWizard.h            \
+          gui/SpeexProcessor.h         \
+          gui/audiodevicehelper.h      \
+          gui/VideoProcessor.h         \
+          gui/QVideoDevice.h           \
+          gui/VOIPChatWidgetHolder.h   \
+          gui/VOIPGUIHandler.h         \
+          gui/VOIPNotify.h             \
+          gui/VOIPToasterItem.h        \
+          gui/VOIPToasterNotify.h     \
+          interface/rsVOIP.h
 
-FORMS   = gui/AudioInputConfig.ui \
-          gui/AudioStats.ui \
-          gui/VoipStatistics.ui \
-			 gui/AudioWizard.ui
+FORMS   = gui/AudioInputConfig.ui      \
+          gui/AudioStats.ui            \
+          gui/AudioWizard.ui           \
+          gui/VOIPToasterItem.ui
 
 TARGET = VOIP
 
-RESOURCES = gui/VOIP_images.qrc lang/VOIP_lang.qrc
+RESOURCES = gui/VOIP_images.qrc lang/VOIP_lang.qrc qss/VOIP_qss.qrc
 
 TRANSLATIONS +=  \
             lang/VOIP_ca_ES.ts \
@@ -94,5 +180,3 @@ TRANSLATIONS +=  \
             lang/VOIP_sv.ts \
             lang/VOIP_tr.ts \
             lang/VOIP_zh_CN.ts
-
-LIBS += -lspeex -lspeexdsp

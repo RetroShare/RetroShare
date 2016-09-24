@@ -241,8 +241,6 @@ bool RsFileTransferItem::serialise_header(void *data,uint32_t& pktsize,uint32_t&
 
 	pktsize = tlvsize;
 
-	bool ok = true;
-
 	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
 	{
 		std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;

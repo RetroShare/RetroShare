@@ -26,21 +26,22 @@
 
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
-#include "util/misc.h"
+#include "gui/common/AvatarDialog.h"
 
 #include "AvatarWidget.h"
 #include "ui_AvatarWidget.h"
 
 #include <algorithm>
 
-AvatarWidget::AvatarWidget(QWidget *parent) :
-	QLabel(parent), ui(new Ui::AvatarWidget)
+//#define DEBUG_AVATAR_GUI 1
+
+AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarWidget)
 {
 	ui->setupUi(this);
 
 	mFlag.isOwnId = false;
-//	mFlag.isGpg = false;
 	defaultAvatar = ":/images/no_avatar_background.png";
+	mPeerState = RS_STATUS_OFFLINE ;
 
 	setFrameType(NO_FRAME);
 
@@ -82,11 +83,21 @@ QString AvatarWidget::frameState()
 
 void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 {
-	if (mFlag.isOwnId) {
-		QByteArray ba;
-		if (misc::getOpenAvatarPicture(this, ba)) {
-			rsMsgs->setOwnAvatarData((unsigned char*)(ba.data()), ba.size()); // last char 0 included.
-		}
+	if (!mFlag.isOwnId) {
+		return;
+	}
+
+	AvatarDialog dialog(this);
+
+	QPixmap avatar;
+	AvatarDefs::getOwnAvatar(avatar, "");
+
+	dialog.setAvatar(avatar);
+	if (dialog.exec() == QDialog::Accepted) {
+		QByteArray newAvatar;
+		dialog.getAvatar(newAvatar);
+
+		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
 	}
 }
 
@@ -106,20 +117,29 @@ void AvatarWidget::setFrameType(FrameType type)
 		break;
 	}
 
-	refreshStatus();
-    updateAvatar(QString::fromStdString(mId.toStdString()));
-	Rshare::refreshStyleSheet(this, false);
+    //refreshAvatarImage();
+    refreshStatus();
+    Rshare::refreshStyleSheet(this, false);
 }
-void AvatarWidget::setId(const RsPeerId &id)
+void AvatarWidget::setId(const ChatId &id)
 {
     mId = id;
-//    mPgpId = rsPeers->getGPGId(id) ;
-//    mFlag.isGpg = false ;
+    mGxsId.clear();
 
-    if (mId == rsPeers->getOwnId()) {
-        mFlag.isOwnId = true;
-        setToolTip(tr("Click to change your avatar"));
+    setPixmap(QPixmap());
+
+    if (id.isNotSet()) {
+        setEnabled(false);
     }
+    
+    refreshAvatarImage();
+    refreshStatus();
+}
+
+void AvatarWidget::setGxsId(const RsGxsId &id)
+{
+    mId = ChatId();
+    mGxsId = id;
 
     setPixmap(QPixmap());
 
@@ -127,117 +147,174 @@ void AvatarWidget::setId(const RsPeerId &id)
         setEnabled(false);
     }
 
+    refreshAvatarImage();
     refreshStatus();
-    updateAvatar(QString::fromStdString(mId.toStdString()));
 }
 
 void AvatarWidget::setOwnId()
 {
-    setId(rsPeers->getOwnId());
+    mFlag.isOwnId = true;
+    setToolTip(tr("Click to change your avatar"));
+
+    setId(ChatId(rsPeers->getOwnId()));
 }
 
-void AvatarWidget::setDefaultAvatar(const QString &avatar)
+void AvatarWidget::setDefaultAvatar(const QString &avatar_file_name)
 {
-	defaultAvatar = avatar;
-    updateAvatar(QString::fromStdString(mId.toStdString()));
+    defaultAvatar = avatar_file_name;
+    refreshAvatarImage();
 }
 
 void AvatarWidget::refreshStatus()
 {
-	switch (mFrameType) {
-	case NO_FRAME:
-	case NORMAL_FRAME:
-	{
-		Rshare::refreshStyleSheet(this, false);
-		break;
-	}
-	case STATUS_FRAME:
-	{
-		StatusInfo statusInfo;
+    switch (mFrameType)
+    {
+    case NO_FRAME:
+    case NORMAL_FRAME:
+    {
+        Rshare::refreshStyleSheet(this, false);
+        break;
+    }
+    case STATUS_FRAME:
+    {
+        uint32_t status = 0;
 
-		if (mFlag.isOwnId) {
-			rsStatus->getOwnStatus(statusInfo);
-		} else {
-			// No check of return value. Non existing status info is handled as offline.
-			rsStatus->getStatus(mId, statusInfo);
-		}
-        updateStatus(QString::fromStdString(statusInfo.id.toStdString()), statusInfo.status);
-		break;
-	}
-	}
+    if(mId.isNotSet())
+        return ;
+
+        if (mFlag.isOwnId)
+        {
+            if(mId.isPeerId())
+            {
+                StatusInfo statusInfo;
+                rsStatus->getOwnStatus(statusInfo);
+                status = statusInfo.status ;
+            }
+            else if(mId.isDistantChatId())
+                status = RS_STATUS_ONLINE ;
+            else
+            {
+                std::cerr << "Unhandled chat id type in AvatarWidget::refreshStatus()" << std::endl;
+                return ;
+            }
+        }
+        else
+        {
+            // No check of return value. Non existing status info is handled as offline.
+            if(mId.isPeerId())
+            {
+                StatusInfo statusInfo;
+                rsStatus->getStatus(mId.toPeerId(), statusInfo);
+                status = statusInfo.status ;
+            }
+            else if(mId.isDistantChatId())
+	    {
+		    DistantChatPeerInfo dcpinfo ;
+
+		    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+			    status = dcpinfo.status ;
+		    else
+			    std::cerr << "(EE) cannot get distant chat status for ID=" << mId.toDistantChatId() << std::endl;
+	    }
+            else
+            {
+                std::cerr << "Unhandled chat id type in AvatarWidget::refreshStatus()" << std::endl;
+                return ;
+            }
+        }
+        updateStatus(status);
+        break;
+    }
+    }
 }
 
-void AvatarWidget::updateStatus(const QString peerId, int status)
+void AvatarWidget::updateStatus(const QString& peerId, int status)
 {
-	if (mFrameType != STATUS_FRAME) {
-		return;
-	}
+        if (mId.isPeerId() && mId.toPeerId() == RsPeerId(peerId.toStdString()))
+        updateStatus(status) ;
+}
 
-    if (mId.isNull()) {
-		mPeerState = status;
-		Rshare::refreshStyleSheet(this, false);
-	} else {
-		/* set style for status */
-        if (mId.toStdString() == peerId.toStdString()) {
-			// the peers status has changed
-			mPeerState = status;
-			setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
-			Rshare::refreshStyleSheet(this, false);
-		}
-	}
+void AvatarWidget::updateStatus(int status)
+{
+    if (mFrameType != STATUS_FRAME)
+		return;
+
+    mPeerState = status;
+
+    setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
+    Rshare::refreshStyleSheet(this, false);
 }
 
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
-    if (mId.isNull()) {
-		QPixmap avatar(defaultAvatar);
-		setPixmap(avatar);
-		return;
-	}
+	if(mId.isPeerId()){
+		if(mId.toPeerId() == RsPeerId(peerId.toStdString()))
+			refreshAvatarImage() ;
+		//else not mId so pass through
+	} else if(mId.isDistantChatId()) {
+			if (mId.toDistantChatId() == DistantChatPeerId(peerId.toStdString()))
+				refreshAvatarImage() ;
+			//else not mId so pass through
+	} 
+#ifdef DEBUG_AVATAR_GUI
+    else
+		std::cerr << "(EE) cannot update avatar. mId has unhandled type." << std::endl;
+#endif
+}
 
-	if (mFlag.isOwnId) {
-		QPixmap avatar;
-		AvatarDefs::getOwnAvatar(avatar);
-		setPixmap(avatar);
-		return;
-	}
+void AvatarWidget::refreshAvatarImage()
+{
+    if (mGxsId.isNull()==false)
+    {
+        QPixmap avatar;
 
-    //if (mFlag.isGpg) {
-    //	if (mId == peerId.toStdString()) {
-    //		/* called from AvatarWidget with gpg id */
-    //		QPixmap avatar;
-    //		AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-    //		setPixmap(avatar);
-    //		return;
-    //	}
-    //
-    //	/* Is this one of the ssl ids of the gpg id ? */
-    //	std::list<std::string> sslIds;
-    //	if (rsPeers->getAssociatedSSLIds(mId, sslIds) == false) {
-    //		return;
-    //	}
-    //
-    //	if (std::find(sslIds.begin(), sslIds.end(), peerId.toStdString()) != sslIds.end()) {
-    //		/* One of the ssl ids of the gpg id */
-    //		QPixmap avatar;
-    //		AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-    //		setPixmap(avatar);
-    //	}
-    //
-    //	return;
-    //}
+        AvatarDefs::getAvatarFromGxsId(mGxsId, avatar, defaultAvatar);
+        setPixmap(avatar);
+        return;
+    }
+    if (mId.isNotSet())
+    {
+        QPixmap avatar(defaultAvatar);
+        setPixmap(avatar);
+        return;
+    }
+    else  if (mFlag.isOwnId && mId.isPeerId())
+    {
+        QPixmap avatar;
+        AvatarDefs::getOwnAvatar(avatar);
+        setPixmap(avatar);
+        return;
+    }
+    else  if (mId.isPeerId())
+    {
+        QPixmap avatar;
+        AvatarDefs::getAvatarFromSslId(mId.toPeerId(), avatar, defaultAvatar);
+        setPixmap(avatar);
+        return;
+    }
+    else  if (mId.isDistantChatId())
+    {
+	    QPixmap avatar;
 
-    if (mId.toStdString() == peerId.toStdString()) {
-		QPixmap avatar;
-        AvatarDefs::getAvatarFromSslId(mId.toStdString(), avatar, defaultAvatar);
-		setPixmap(avatar);
-		return;
-	}
+	    DistantChatPeerInfo dcpinfo ;
+
+	    if(rsMsgs->getDistantChatStatus(mId.toDistantChatId(),dcpinfo))
+	    {
+		    if(mFlag.isOwnId)
+			    AvatarDefs::getAvatarFromGxsId(dcpinfo.own_id, avatar, defaultAvatar);
+		    else
+			    AvatarDefs::getAvatarFromGxsId(dcpinfo.to_id, avatar, defaultAvatar);
+		    setPixmap(avatar);
+		    return;
+	    }
+    }
+    else
+        std::cerr << "WARNING: unhandled situation in AvatarWidget::refreshAvatarImage()" << std::endl;
 }
 
 void AvatarWidget::updateOwnAvatar()
 {
-	if (mFlag.isOwnId) {
-        updateAvatar(QString::fromStdString(mId.toStdString()));
-	}
+    if (mFlag.isOwnId)
+        refreshAvatarImage() ;
 }
+

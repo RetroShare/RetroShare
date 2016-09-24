@@ -86,22 +86,22 @@ class p3Notify: public RsNotify
 		bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
 		bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
 
-		/* Overloaded from pqiNotify */
-		virtual bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
-		virtual bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-		virtual bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3);
-		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4);
-		virtual bool ClearFeedItems(uint32_t type);
+		/* Notify messages */
+		bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
+		bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2 = "", const std::string& id3 = "", const std::string& id4 = "", uint32_t result1 = 0);
+		bool ClearFeedItems(uint32_t type);
 
 		// Notifications of clients. Can be called from anywhere inside libretroshare.
 		//
 		void notifyListPreChange              (int /* list */, int /* type */) ;
 		void notifyListChange                 (int /* list */, int /* type */) ;
 		void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) ;
-		void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) ;
-		void notifyChatShow                   (const std::string& /* peer_id  */) ;
-		void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) ;
+		void notifyChatMessage                (const ChatMessage& /* msg      */) ;
+		void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) ;
+		void notifyChatCleared                (const ChatId&      /* chat_id  */) ;
+		void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ , const RsGxsId & /* nickname */, const std::string& /* any string */) ;
 		void notifyChatLobbyTimeShift         (int                /* time_shift*/) ;
 		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;
 		void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) ;
@@ -111,17 +111,17 @@ class p3Notify: public RsNotify
 		void notifyOwnStatusMessageChanged    () ;
 		void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) ;
 		void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) ;
+        void notifyGxsChange                  (const RsGxsChanges& /* changes  */);
 
 		void notifyPeerStatusChangedSummary   () ;
 		void notifyDiscInfoChanged            () ;
-		void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
-		void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
-		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) ;
+
+		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */, int& signature_result , std::string reason = "") ;
 		void notifyDownloadComplete           (const std::string& /* fileHash  */) ;
 		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;
 		void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) ;
 
-		bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) ;
+		bool askForPassword                   (const std::string& title, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string&, bool *cancelled /* password */ ) ;
 		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) ;
 
 	private:

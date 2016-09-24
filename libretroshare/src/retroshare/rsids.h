@@ -73,14 +73,13 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			memcpy(bytes,id.toByteArray(),ID_SIZE_IN_BYTES) ;
 		}
 
-		// Random initialization. Can be useful for testing.
+        // Random initialization. Can be useful for testing and to generate new ids.
 		//
 		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> random() 
 		{
 			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> id ;
 
-			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
-				id.bytes[i] = RSRandom::random_u32() & 0xff ;
+            RSRandom::random_bytes(id.bytes,ID_SIZE_IN_BYTES) ;
 
 			return id ;
 		}
@@ -111,7 +110,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 
 		inline std::string toStdString() const { return toStdString(UPPER_CASE) ; }
 
-		inline uint32_t serial_size() const { return SIZE_IN_BYTES ; }
+        inline static uint32_t serial_size() { return SIZE_IN_BYTES ; }
         bool serialise(void *data,uint32_t pktsize,uint32_t& offset) const
 		{
 			if(offset + SIZE_IN_BYTES > pktsize)
@@ -163,8 +162,9 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 	int n=0;
 	if(s.length() != ID_SIZE_IN_BYTES*2)
 	{
-		if(!s.empty()) 
-			std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size." << std::endl;
+		if(!s.empty())
+			std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size. Expected ID size=" << ID_SIZE_IN_BYTES*2 << " String=\"" << s << "\" = " << s.length() << std::endl;
+
 		clear();
 		return;
 	}
@@ -184,8 +184,8 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 			else if(b >= '0' && b <= '9')
 				bytes[i] += (b-'0') << 4*(1-k) ;
 			else {
-				std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal" << std::endl;
-				clear();
+                std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal: s=\"" << s << "\"" << std::endl;
+                clear();
 				return;
 			}
 		}
@@ -208,18 +208,20 @@ static const int SHA1_SIZE                = 20 ;
 
 // These constants are random, but should be different, in order to make the various IDs incompatible with each other.
 //
-static const uint32_t RS_GENERIC_ID_SSL_ID_TYPE          = 0x0001 ;
-static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE          = 0x0002 ;
-static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE         = 0x0003 ;
-static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE = 0x0004 ;
-static const uint32_t RS_GENERIC_ID_GXS_GROUP_ID_TYPE    = 0x0005 ;
-static const uint32_t RS_GENERIC_ID_GXS_ID_TYPE          = 0x0006 ;
-static const uint32_t RS_GENERIC_ID_GXS_MSG_ID_TYPE      = 0x0007 ;
-static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE   = 0x0008 ;
-static const uint32_t RS_GENERIC_ID_GROUTER_ID_TYPE      = 0x0009 ;
+static const uint32_t RS_GENERIC_ID_SSL_ID_TYPE              = 0x0001 ;
+static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE              = 0x0002 ;
+static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE             = 0x0003 ;
+static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE     = 0x0004 ;
+static const uint32_t RS_GENERIC_ID_GXS_GROUP_ID_TYPE        = 0x0005 ;
+static const uint32_t RS_GENERIC_ID_GXS_ID_TYPE              = 0x0006 ;
+static const uint32_t RS_GENERIC_ID_GXS_MSG_ID_TYPE          = 0x0007 ;
+static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE       = 0x0008 ;
+static const uint32_t RS_GENERIC_ID_GROUTER_ID_TYPE          = 0x0009 ;
+static const uint32_t RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE       = 0x0010 ;
+static const uint32_t RS_GENERIC_ID_GXS_DISTANT_CHAT_ID_TYPE = 0x0011 ;
+static const uint32_t RS_GENERIC_ID_NODE_GROUP_ID_TYPE       = 0x0012 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
-typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GROUTER_ID_TYPE>      GRouterKeyIdType ;
 typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType ;
 typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
 typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
@@ -227,4 +229,7 @@ typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_F
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_GROUP_ID_TYPE   > GXSGroupId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_ID_TYPE         > GXSId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE  > GXSCircleId ;
+typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GXS_TUNNEL_ID_TYPE  > GXSTunnelId ;
+typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_GXS_DISTANT_CHAT_ID_TYPE  > DistantChatPeerId ;
+typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_NODE_GROUP_ID_TYPE  > RsNodeGroupId ;
 

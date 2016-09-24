@@ -29,6 +29,7 @@
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
+#include "util/rsmemory.h"
 #include "util/rsstring.h"
 
 static const int STUN_TTL = 64;
@@ -535,7 +536,11 @@ bool UdpStun_generate_stun_pkt(void *stun_pkt, int *len)
 void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
 {
 	/* just the header */
-	void *stun_pkt = malloc(28);
+	void *stun_pkt = rs_malloc(28);
+    
+    	if(!stun_pkt)
+            return NULL ;
+        
 	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(0x0101);
 	((uint16_t *) stun_pkt)[1] = (uint16_t) htons(28); /* only header + 8 byte addr */
 	/* transaction id - should be random */
@@ -649,7 +654,7 @@ bool    UdpStunner::storeStunPeer(const struct sockaddr_in &remote, const char *
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		if ((remote.sin_addr.s_addr == it->remote.sin_addr.s_addr) &&
 		    (remote.sin_port == it->remote.sin_port))
@@ -719,7 +724,7 @@ bool    UdpStunner::dropStunPeer(const struct sockaddr_in &remote)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 
@@ -956,7 +961,7 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 
 	bool found = true;
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		if ((remote.sin_addr.s_addr == it->remote.sin_addr.s_addr) &&
 		    (remote.sin_port == it->remote.sin_port))
@@ -1038,7 +1043,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 	std::list<TouStunPeer>::reverse_iterator it;
 	std::list<TouStunPeer>::reverse_iterator p1;
 	std::list<TouStunPeer>::reverse_iterator p2;
-	for(it = mStunList.rbegin(); it != mStunList.rend(); it++)
+	for(it = mStunList.rbegin(); it != mStunList.rend(); ++it)
 	{
 		/* check:
 		   1) have response.
@@ -1138,7 +1143,7 @@ bool    UdpStunner::locked_printStunList()
 	rs_sprintf_append(out, "\tLastRecvAny: %ld\n", now - mStunLastRecvAny);
 
 	std::list<TouStunPeer>::iterator it;
-	for(it = mStunList.begin(); it != mStunList.end(); it++)
+	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
 		out += "id:" + RsUtil::BinToHex(it->id);
 		rs_sprintf_append(out, " addr: %s:%u", rs_inet_ntoa(it->remote.sin_addr).c_str(), htons(it->remote.sin_port));
@@ -1162,7 +1167,7 @@ bool    UdpStunner::getStunPeer(int idx, std::string &id,
 
 	std::list<TouStunPeer>::iterator it;
 	int i;
-	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); it++, i++) ;
+	for(i=0, it=mStunList.begin(); (i<idx) && (it!=mStunList.end()); ++it, i++) ;
 
 	if (it != mStunList.end())
 	{

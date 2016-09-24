@@ -32,7 +32,7 @@
 #include <vector>
 #include "retroshare/rspeers.h"
 #include "retroshare/rsfiles.h"
-#include "util/rsversion.h"
+#include "retroshare/rsversion.h"
 #include "util/rsinitedptr.h"
 
 class RsPluginHandler ;
@@ -40,12 +40,16 @@ extern RsPluginHandler *rsPlugins ;
 
 class p3Service ;
 class RsServiceControl ;
+class RsReputations ;
 class RsTurtle ;
+class RsGxsTunnelService ;
 class RsDht ;
 class RsDisc ;
 class RsMsgs ;
-//class RsForums;
+class RsGxsForums;
+class RsGxsChannels;
 class RsNotify;
+class RsServiceControl;
 class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
@@ -61,6 +65,7 @@ class RsPQIService ;
 class RsAutoUpdatePage ;
 class SoundEvents;
 class FeedNotify;
+class ToasterNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
@@ -70,6 +75,12 @@ class RsGxsIdExchange;
 class RsGcxs;
 class PgpAuxUtils;
 class p3Config;
+
+namespace resource_api
+{
+    class ResourceRouter;
+    class StateTokenServer;
+}
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -104,6 +115,8 @@ public:
     RsUtil::inited_ptr<RsDisc>   mDisc;
     RsUtil::inited_ptr<RsDht>    mDht;
     RsUtil::inited_ptr<RsNotify> mNotify;
+    RsUtil::inited_ptr<RsServiceControl> mServiceControl;
+    RsUtil::inited_ptr<RsPluginHandler> mPluginHandler;
 
     // gxs
     std::string     mGxsDir;
@@ -112,11 +125,18 @@ public:
     RsUtil::inited_ptr<RsGxsIdExchange> mGxsIdService;
     RsUtil::inited_ptr<RsGcxs>          mGxsCirlces;
     RsUtil::inited_ptr<PgpAuxUtils>     mPgpAuxUtils;
+    RsUtil::inited_ptr<RsGxsForums>     mGxsForums;
+    RsUtil::inited_ptr<RsGxsChannels>   mGxsChannels;
+    RsUtil::inited_ptr<RsGxsTunnelService>    mGxsTunnels;
+    RsUtil::inited_ptr<RsReputations>   mReputations;
 };
 
 class RsPlugin
 {
 	public:
+		RsPlugin() {}
+		virtual ~RsPlugin() {}
+
 		//
 		//================================ Services ==================================//
 		//
@@ -135,6 +155,12 @@ class RsPlugin
         virtual p3Service   *p3_service() 		const	{ return NULL ; }
         virtual p3Config   *p3_config() 		const	{ return NULL ; }
 		virtual uint16_t        rs_service_id() 	   const	{ return 0    ; }
+
+
+        // creates a new resource api handler object. ownership is transferred to the caller.
+        // the caller should supply a statetokenserver, and keep it valid until destruction
+        // the plugin should return a entry point name. this is to make the entry point name independent from file names
+        virtual resource_api::ResourceRouter* new_resource_api_handler(const RsPlugInInterfaces& /* ifaces */, resource_api::StateTokenServer* /* sts */, std::string & /*entrypoint*/) const { return 0;}
 
 		// Shutdown
 		virtual void stop() {}
@@ -169,23 +195,26 @@ class RsPlugin
 		// Provide buttons for the ChatWidget
 		virtual ChatWidgetHolder    *qt_get_chat_widget_holder(ChatWidget */*chatWidget*/) const { return NULL ; }
 
+		virtual std::string    qt_stylesheet() { return ""; }
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */, const QString& /* externalDir */ ) const	{ return NULL ; }
 
 		//
 		//================================== Notify ==================================//
 		//
 		virtual FeedNotify *qt_feedNotify() { return NULL; }
+		virtual ToasterNotify *qt_toasterNotify() { return NULL; }
 
 		//
 		//========================== Plugin Description ==============================//
 		//
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
-	uint32_t getSvnRevision() const { return SVN_REVISION_NUMBER ; } 	// This is read from libretroshare/util/rsversion.h
+		uint32_t getSvnRevision() const { return RS_REVISION_NUMBER ; } 	// This is read from libretroshare/retroshare/rsversion.h
 
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
-		virtual void getPluginVersion(int& major,int& minor,int& svn_rev) const = 0 ;
+		virtual void getPluginVersion(int& major,int& minor, int& build, int& svn_rev) const = 0 ;
+		virtual void getLibraries(std::list<RsLibraryInfo> & /*libraries*/) {}
 
 		//
 		//========================== Plugin Interface ================================//

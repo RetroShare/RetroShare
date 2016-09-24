@@ -29,7 +29,7 @@
    <item>
     <widget class="QCheckBox" name="openAllInNewTabCheckBox">
      <property name="text">
-      <string>Open all forums in new tab</string>
+      <string notr="true">Open each group in a new tab (not translated)</string>
      </property>
     </widget>
    </item>

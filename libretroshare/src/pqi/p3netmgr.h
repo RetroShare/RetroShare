@@ -209,13 +209,16 @@ virtual bool	getDHTEnabled();
 /************************************************************************************************/
 
 void	setManagers(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+#ifdef RS_USE_DHT_STUNNER
 void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
+#endif // RS_USE_DHT_STUNNER
 
 void 	tick();
 
 	// THESE MIGHT BE ADDED TO INTERFACE.
 bool 	setLocalAddress(const struct sockaddr_storage &addr);
 bool 	setExtAddress(const struct sockaddr_storage &addr);
+bool 	getExtAddress(sockaddr_storage &addr);
 
 	/*************** Setup ***************************/
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
@@ -225,7 +228,6 @@ void    addNetListener(pqiNetListener *listener);
 
 	// SHOULD MAKE THIS PROTECTED.
 bool	checkNetAddress(); /* check our address is sensible */
-
 
 protected:
 
@@ -319,13 +321,16 @@ private:
 	p3LinkMgr *mLinkMgr; 
 
 	//p3BitDht   *mBitDht;
+#ifdef RS_USE_DHT_STUNNER
 	pqiAddrAssist *mDhtStunner;
 	pqiAddrAssist *mProxyStunner;
+#endif // RS_USE_DHT_STUNNER
 
 	RsMutex mNetMtx; /* protects below */
 
 void 	netStatusReset_locked();
 
+	// TODO: Sat Oct 24 15:51:24 CEST 2015 The fact of having just two possible address is a flawed assumption, this should be redesigned soon.
 	struct sockaddr_storage mLocalAddr;
 	struct sockaddr_storage mExtAddr;
 

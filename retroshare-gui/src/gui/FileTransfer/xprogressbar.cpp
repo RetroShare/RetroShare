@@ -45,6 +45,7 @@ xProgressBar::xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *p
 	this->schemaIndex = schemaIndex;
 	this->rect = rect;
 	this->painter = painter;
+	displayText = false;
 	// set the progress bar colors
 	setColor();
 	// configure span
@@ -226,7 +227,7 @@ void xProgressBar::paint()
 	linearGrad.setColorAt(1.00, gradColor1);
 	painter->setPen(gradBorderColor);
 
-	int width = static_cast<int>(rect.width()-1-2*hSpan) ;
+	uint32_t width = static_cast<uint32_t>(rect.width()-1-2*hSpan) ;
 
 	painter->setBrush(linearGrad);
 

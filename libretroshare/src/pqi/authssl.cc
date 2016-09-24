@@ -117,10 +117,10 @@ static struct CRYPTO_dynlock_value *dyn_create_function(const char */*file*/, in
 {
 	struct CRYPTO_dynlock_value *value;
 
-	value = (struct CRYPTO_dynlock_value*) malloc(sizeof(struct CRYPTO_dynlock_value));
-	if (!value) {
+	value = (struct CRYPTO_dynlock_value*) rs_malloc(sizeof(struct CRYPTO_dynlock_value));
+	if (!value) 
 		return NULL;
-	}
+	
 	pthread_mutex_init(&value->mutex, NULL);
 
 	return value;
@@ -166,10 +166,10 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l, const char */*f
 bool tls_init()
 {
 	/* static locks area */
-	mutex_buf = (pthread_mutex_t*) malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
-	if (mutex_buf == NULL) {
+	mutex_buf = (pthread_mutex_t*) rs_malloc(CRYPTO_num_locks() * sizeof(pthread_mutex_t));
+	if (mutex_buf == NULL) 
 		return false;
-	}
+	
 	for (int i = 0; i < CRYPTO_num_locks(); i++) {
 		pthread_mutex_init(&mutex_buf[i], NULL);
 	}
@@ -198,7 +198,7 @@ void tls_cleanup()
 	CRYPTO_set_locking_callback(NULL);
 	CRYPTO_set_id_callback(NULL);
 
-	if (mutex_buf == NULL) {
+	if (mutex_buf != NULL) {
 		for (int i = 0; i < CRYPTO_num_locks(); i++) {
 			pthread_mutex_destroy(&mutex_buf[i]);
 		}
@@ -288,7 +288,7 @@ bool AuthSSLimpl::active()
 
 
 int	AuthSSLimpl::InitAuth(const char *cert_file, const char *priv_key_file,
-			const char *passwd)
+            const char *passwd, std::string alternative_location_name)
 {
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::InitAuth()";
@@ -331,7 +331,15 @@ static  int initLib = 0;
 	std::cerr << "SSL Library Init!" << std::endl;
 
 	// setup connection method
-	sslctx = SSL_CTX_new(TLSv1_method());
+	sslctx = SSL_CTX_new(SSLv23_method());
+	SSL_CTX_set_options(sslctx,SSL_OP_NO_SSLv3) ;
+
+	//SSL_OP_SINGLE_DH_USE 	CVE-2016-0701
+	//https://www.openssl.org/docs/manmaster/ssl/SSL_CTX_set_options.html
+	//If "strong" primes were used, it is not strictly necessary to generate a new DH key during each handshake but it is also recommended. SSL_OP_SINGLE_DH_USE should therefore be enabled whenever temporary/ephemeral DH parameters are used.
+	//SSL_CTX_set_options() adds the options set via bitmask in options to ctx. Options already set before are not cleared!
+        SSL_CTX_set_options(sslctx,SSL_OP_SINGLE_DH_USE) ;
+
 
 	// Setup cipher lists:
 	//
@@ -467,6 +475,11 @@ static  int initLib = 0;
 	std::cerr << "SSL Verification Set" << std::endl;
 
 	mOwnCert = new sslcert(x509, mOwnId);
+
+    // new locations don't store the name in the cert
+    // if empty, use the external supplied value
+    if(mOwnCert->location == "")
+        mOwnCert->location = alternative_location_name;
 
 	std::cerr << "Inited SSL context: " << std::endl;
 	std::cerr << "    Certificate: " << mOwnId << std::endl;
@@ -662,7 +675,7 @@ bool AuthSSLimpl::VerifyOwnSignBin(const void *data, const uint32_t len,
  * only using GPG functions - which lock themselves
  */
 
-X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
+X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 {
         /* Transform the X509_REQ into a suitable format to
          * generate DIGEST hash. (for SSL to do grunt work)
@@ -681,7 +694,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         }
 
         //long version = 0x00;
-        unsigned long chtype = MBSTRING_ASC;
+        unsigned long chtype = MBSTRING_UTF8;
         X509_NAME *issuer_name = X509_NAME_new();
         X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
                         (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().toStdString().c_str(), -1, -1, 0);
@@ -727,7 +740,13 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         }
         X509_NAME_free(issuer_name);
 
+        // NEW code, set validity time between null and null
+        // (does not leak the key creation date to the outside anymore. for more privacy)
+        ASN1_TIME_set(X509_get_notBefore(x509), 0);
+        ASN1_TIME_set(X509_get_notAfter(x509), 0);
 
+        // OLD code, sets validity time of cert to be between now and some days in the future
+        /*
         if (!X509_gmtime_adj(X509_get_notBefore(x509),0))
         {
                 std::cerr << "AuthSSLimpl::SignX509Req() notbefore FAIL" << std::endl;
@@ -739,6 +758,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
                 std::cerr << "AuthSSLimpl::SignX509Req() notafter FAIL" << std::endl;
                 return NULL;
         }
+        */
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
         {
@@ -830,7 +850,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
 
         /* NOW Sign via GPG Functions */
-        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl))
+        if (!AuthGPG::getAuthGPG()->SignDataBin(buf_hashout, hashoutl, buf_sigout, (unsigned int *) &sigoutl,"AuthSSLimpl::SignX509ReqWithGPG()"))
         {
                 sigoutl = 0;
                 goto err;
@@ -971,6 +991,11 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 #endif
 
 	/* copy data into signature */
+        if(sigoutl < signature->length)
+        {
+        diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR ;
+        goto err;
+        }
 	sigoutl = signature->length;
 	memmove(buf_sigout, signature->data, sigoutl);
 
@@ -1094,106 +1119,113 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
-        char    buf[256];
-        X509   *err_cert;
-        int     err, depth;
+    char    buf[256];
+    X509   *err_cert;
 
-        err_cert = X509_STORE_CTX_get_current_cert(ctx);
-        err = X509_STORE_CTX_get_error(ctx);
-        depth = X509_STORE_CTX_get_error_depth(ctx);
+    err_cert = X509_STORE_CTX_get_current_cert(ctx);
+#ifdef AUTHSSL_DEBUG
+    int err, depth;
+    err = X509_STORE_CTX_get_error(ctx);
+    depth = X509_STORE_CTX_get_error_depth(ctx);
+#endif
 
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSLimpl::VerifyX509Callback(preverify_ok: " << preverify_ok
-                                 << " Err: " << err << " Depth: " << depth << std::endl;
-        #endif
+    if(err_cert == NULL)
+    {
+        std::cerr << "AuthSSLimpl::VerifyX509Callback(): Cannot get certificate. Error!" << std::endl;
+        return false ;
+    }
+#ifdef AUTHSSL_DEBUG
+    std::cerr << "AuthSSLimpl::VerifyX509Callback(preverify_ok: " << preverify_ok
+              << " Err: " << err << " Depth: " << depth << std::endl;
+#endif
 
-        /*
-        * Retrieve the pointer to the SSL of the connection currently treated
-        * and the application specific data stored into the SSL object.
-        */
+    /*
+    * Retrieve the pointer to the SSL of the connection currently treated
+    * and the application specific data stored into the SSL object.
+    */
 
-        X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
+    X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
 
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSLimpl::VerifyX509Callback: depth: " << depth << ":" << buf << std::endl;
-        #endif
+#ifdef AUTHSSL_DEBUG
+    std::cerr << "AuthSSLimpl::VerifyX509Callback: depth: " << depth << ":" << buf << std::endl;
+#endif
 
 
-        if (!preverify_ok) {
-                #ifdef AUTHSSL_DEBUG
-                fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
+    if (!preverify_ok) {
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
                 X509_verify_cert_error_string(err), depth, buf);
-                #endif
-        }
+#endif
+    }
 
-        /*
-        * At this point, err contains the last verification error. We can use
-        * it for something special
-        */
+    /*
+    * At this point, err contains the last verification error. We can use
+    * it for something special
+    */
 
-        if (!preverify_ok)
+    if (!preverify_ok)
+    {
+
+        X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+#ifdef AUTHSSL_DEBUG
+        printf("issuer= %s\n", buf);
+#endif
+
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "Doing REAL PGP Certificates\n");
+#endif
+        uint32_t auth_diagnostic ;
+
+        /* do the REAL Authentication */
+        if (!AuthX509WithGPG(X509_STORE_CTX_get_current_cert(ctx),auth_diagnostic))
         {
+#ifdef AUTHSSL_DEBUG
+            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() X509 not authenticated.\n");
+#endif
+            std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
+            return false;
+        }
+        RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
 
-            X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
-            #ifdef AUTHSSL_DEBUG
-            printf("issuer= %s\n", buf);
-            #endif
-
-            #ifdef AUTHSSL_DEBUG
-            fprintf(stderr, "Doing REAL PGP Certificates\n");
-            #endif
-			uint32_t auth_diagnostic ;
-
-            /* do the REAL Authentication */
-            if (!AuthX509WithGPG(X509_STORE_CTX_get_current_cert(ctx),auth_diagnostic))
-            {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() X509 not authenticated.\n");
-                    #endif
-					std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
-                    return false;
-            }
-            RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
-
-            if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
-            {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() pgp key not accepted : \n");
-                    fprintf(stderr, "issuer pgpid : ");
-                    fprintf(stderr, "%s\n",pgpid.c_str());
-                    fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                    fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-                    fprintf(stderr, "\n");
-                    #endif
-                    return false;
-            }
-
-            preverify_ok = true;
-
-        } else {
-                #ifdef AUTHSSL_DEBUG
-                fprintf(stderr, "A normal certificate is probably a security breach attempt. We sould fail it !!!\n");
-                #endif
-                preverify_ok = false;
+        if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
+        {
+#ifdef AUTHSSL_DEBUG
+            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() pgp key not accepted : \n");
+            fprintf(stderr, "issuer pgpid : ");
+            fprintf(stderr, "%s\n",pgpid.c_str());
+            fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+            fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+            fprintf(stderr, "\n");
+#endif
+            return false;
         }
 
-        if (preverify_ok) {
+        preverify_ok = true;
 
-            //sslcert *cert = NULL;
-            RsPeerId certId;
-            getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
+    } else {
+#ifdef AUTHSSL_DEBUG
+        fprintf(stderr, "A normal certificate is probably a security breach attempt. We sould fail it !!!\n");
+#endif
+        preverify_ok = false;
+    }
 
-        }
+    if (preverify_ok) {
 
-        #ifdef AUTHSSL_DEBUG
-        if (preverify_ok) {
-            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned true.\n");
-        } else {
-            fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned false.\n");
-        }
-        #endif
+        //sslcert *cert = NULL;
+        RsPeerId certId;
+        getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
 
-        return preverify_ok;
+    }
+
+#ifdef AUTHSSL_DEBUG
+    if (preverify_ok) {
+        fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned true.\n");
+    } else {
+        fprintf(stderr, "AuthSSLimpl::VerifyX509Callback returned false.\n");
+    }
+#endif
+
+    return preverify_ok;
 }
 
 
@@ -1239,7 +1271,11 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         int out_offset = 0;
 
         int max_evp_key_size = EVP_PKEY_size(public_key);
-        ek = (unsigned char*)malloc(max_evp_key_size);
+        ek = (unsigned char*)rs_malloc(max_evp_key_size);
+        
+        if(ek == NULL)
+            return false ;
+        
         const EVP_CIPHER *cipher = EVP_aes_128_cbc();
         int cipher_block_size = EVP_CIPHER_block_size(cipher);
         int size_net_ekl = sizeof(net_ekl);
@@ -1253,8 +1289,13 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         }
 
     	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-        out = (unsigned char*)malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
+        out = (unsigned char*)rs_malloc(inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH);
 
+        if(out == NULL)
+        {
+            free(ek) ;
+            return false ;
+        }
     	net_ekl = htonl(eklen);
     	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
     	out_offset += size_net_ekl;
@@ -1323,6 +1364,12 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         unsigned char iv[EVP_MAX_IV_LENGTH];
         int ek_mkl = EVP_PKEY_size(mOwnPrivateKey);
         ek = (unsigned char*)malloc(ek_mkl);
+        
+        if(ek == NULL)
+        {
+            std::cerr << "(EE) Cannot allocate memory for " << ek_mkl << " bytes in " << __PRETTY_FUNCTION__ << std::endl;
+            return false ;
+        }
         EVP_CIPHER_CTX_init(&ctx);
 
         int in_offset = 0, out_currOffset = 0;
@@ -1360,8 +1407,13 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        out = (unsigned char*)malloc(inlen - in_offset);
+        out = (unsigned char*)rs_malloc(inlen - in_offset);
 
+        if(out == NULL)
+        {
+            free(ek) ;
+            return false ;
+        }
         if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) {
             free(ek);
 				free(out) ;
@@ -1633,7 +1685,7 @@ bool AuthSSLimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
         std::map<RsPeerId, sslcert*>::iterator mapIt;
-        for (mapIt = mCerts.begin(); mapIt != mCerts.end(); mapIt++) {
+        for (mapIt = mCerts.begin(); mapIt != mCerts.end(); ++mapIt) {
             if (mapIt->first == mOwnId) {
                 continue;
             }
@@ -1658,7 +1710,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 
         /* load the list of accepted gpg keys */
         std::list<RsItem *>::iterator it;
-        for(it = load.begin(); it != load.end(); it++) {
+        for(it = load.begin(); it != load.end(); ++it) {
                 RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
 
                 if(vitem) {
@@ -1669,7 +1721,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
                         #endif
 
                         std::list<RsTlvKeyValue>::iterator kit;
-                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
                             if (RsPeerId(kit->key) == mOwnId) {
                                 continue;
                             }
@@ -1685,6 +1737,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
                 }
                 delete (*it);
         }
+        load.clear() ;
         return true;
 }
 

@@ -84,7 +84,7 @@ virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 		int 	handlePong(RsItem *item);
 
 		int 	storePingAttempt(const RsPeerId& id, double ts, uint32_t mCounter);
-		int 	storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset);
+		int 	storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts, double rtt, double offset);
 
 
 		/*!

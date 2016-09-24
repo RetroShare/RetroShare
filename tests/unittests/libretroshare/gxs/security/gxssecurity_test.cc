@@ -35,12 +35,30 @@
 
 TEST(libretroshare_gxs, GxsSecurity)
 {
-	RsTlvSecurityKey pub_key ;
-	RsTlvSecurityKey priv_key ;
+	RsTlvPublicRSAKey pub_key ;
+	RsTlvPrivateRSAKey priv_key ;
 
 	EXPECT_TRUE(GxsSecurity::generateKeyPair(pub_key,priv_key)) ;
 
+#ifdef WIN32
+	srand(getpid()) ;
+#else
 	srand48(getpid()) ;
+#endif
+
+	EXPECT_TRUE( pub_key.keyId   == priv_key.keyId   );
+	EXPECT_TRUE( pub_key.startTS == priv_key.startTS );
+
+	RsTlvPublicRSAKey pub_key2 ;
+	EXPECT_TRUE(GxsSecurity::extractPublicKey(priv_key,pub_key2)) ;
+
+	EXPECT_TRUE( pub_key.keyId    == pub_key2.keyId    );
+	EXPECT_TRUE( pub_key.keyFlags == pub_key2.keyFlags );
+	EXPECT_TRUE( pub_key.startTS  == pub_key2.startTS  );
+	EXPECT_TRUE( pub_key.endTS    == pub_key2.endTS    );
+
+	EXPECT_TRUE(pub_key.keyData.bin_len == pub_key2.keyData.bin_len) ;
+	EXPECT_TRUE(!memcmp(pub_key.keyData.bin_data,pub_key2.keyData.bin_data,pub_key.keyData.bin_len));
 
 	// create some random data and sign it / verify the signature.
 	
@@ -61,9 +79,9 @@ TEST(libretroshare_gxs, GxsSecurity)
 	// test encryption/decryption
 
 	uint8_t *out = NULL ;
-	int outlen = 0 ;
+    uint32_t outlen = 0 ;
 	uint8_t *out2 = NULL ;
-	int outlen2 = 0 ;
+    uint32_t outlen2 = 0 ;
 
 	EXPECT_TRUE(GxsSecurity::encrypt(out,outlen,(const uint8_t*)data,data_len,pub_key) );
 

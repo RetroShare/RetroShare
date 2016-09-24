@@ -26,11 +26,13 @@
 #include "pqi/pqipersongrp.h"
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
+#include "util/rsprint.h"
 #include "serialiser/rsserviceserialiser.h"
 
 #include <stdio.h>
 
-const int pqipersongrpzone = 354;
+static struct RsLog::logInfo pqipersongrpzoneInfo = {RsLog::Default, "pqipersongrp"};
+#define pqipersongrpzone &pqipersongrpzoneInfo
 
 #ifdef WINDOWS_SYS
 ///////////////////////////////////////////////////////////
@@ -69,7 +71,7 @@ bool pqipersongrp::RecvRsRawItem(RsRawItem *item)
 
 
 
-
+#ifdef TO_BE_REMOVED
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
@@ -82,9 +84,13 @@ int pqipersongrp::tickServiceRecv()
 
 	while(NULL != (pqi = GetRsRawItem()))
 	{
+		static int ntimes=0 ;
+		if(++ntimes < 20)
+		{
 		std::cerr << "pqipersongrp::tickServiceRecv() GetRsRawItem()";
-		std::cerr << " should never happen anymore!";
-		std::cerr << std::endl;
+        std::cerr << " should never happen anymore! item data=" << RsUtil::BinToHex((char*)pqi->getRawData(),pqi->getRawLength()) ;
+        std::cerr << std::endl;
+		}
 
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
@@ -98,13 +104,14 @@ int pqipersongrp::tickServiceRecv()
 	}
 	return 0;
 }
+#endif
 
 // handle the tunnel services.
 
 // Improvements:
 // This function is no longer necessary, and data is pushed directly to pqihandler.
 
-#if 0
+#ifdef TO_BE_REMOVED
 int pqipersongrp::tickServiceSend()
 {
         RsRawItem *pqi = NULL;
@@ -133,8 +140,8 @@ int pqipersongrp::tickServiceSend()
 
 
 	// init
-pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), p3ServiceServer(this, ctrl), pqil(NULL), initFlags(flags)
+pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, unsigned long flags)
+    :pqihandler(), p3ServiceServer(this, ctrl), pqil(NULL), pqilMtx("pqipersongrp"), initFlags(flags)
 {
 }
 
@@ -146,7 +153,7 @@ int	pqipersongrp::tick()
 	 */
 
 	{ 
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		if (pqil)
 		{
 			pqil -> tick();
@@ -155,18 +162,14 @@ int	pqipersongrp::tick()
 
 	int i = 0;
 
-#if 0
-	if (tickServiceSend())
+#ifdef TO_BE_REMOVED
+    if (tickServiceSend())
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
 #endif
 	}
-#endif
-
-
-#if 0
 	if (pqihandler::tick()) /* does Send/Recv */
 	{
 		i = 1;
@@ -174,29 +177,19 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
 #endif
 	}
-#endif
-
-
 	if (tickServiceRecv())
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
 #endif
-	}
-
-	p3ServiceServer::tick(); 
-
-#if 1
-	if (pqihandler::tick()) /* does Send/Recv */
-	{
-		i = 1;
-#ifdef PGRP_DEBUG
-                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
+    }
 #endif
-	}
 
-#endif
+	if(pqihandler::tick())
+		i=1;
+
+    p3ServiceServer::tick();
 
 	return i;
 }
@@ -204,7 +197,7 @@ int	pqipersongrp::tick()
 int	pqipersongrp::status()
 {
 	{ 
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		if (pqil)
 		{
 			pqil -> status();
@@ -221,7 +214,7 @@ int	pqipersongrp::init_listener()
 	/* extract our information from the p3ConnectMgr */
 	if (initFlags & PQIPERSON_NO_LISTENER)
 	{
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqil = NULL;
 	}
 	else
@@ -231,7 +224,7 @@ int	pqipersongrp::init_listener()
 		struct sockaddr_storage laddr;
 		mLinkMgr->getLocalAddress(laddr);
 		
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqil = locked_createListener(laddr);
 	}
 	return 1;
@@ -247,7 +240,7 @@ bool    pqipersongrp::resetListener(const struct sockaddr_storage &local)
 	// change the address.
 	// restart.
 
-	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+	RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 
 	if (pqil != NULL)
 	{
@@ -272,7 +265,7 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 
 	/* iterate through, only worry about the friends */
 	std::list<pqipeer>::const_iterator it;
-	for(it = plist.begin(); it != plist.end(); it++)
+	for(it = plist.begin(); it != plist.end(); ++it)
 	{
 	  if (it->state & RS_PEER_S_FRIEND)
 	  {
@@ -339,7 +332,7 @@ void pqipersongrp::statusChanged()
 
 		/* count connection attempts */
 		std::list<RsPeerId>::iterator peer;
-		for (peer = peers.begin(); peer != peers.end(); peer++) {
+		for (peer = peers.begin(); peer != peers.end(); ++peer) {
 			peerConnectState state;
 			if (mLinkMgr->getFriendNetStatus(*peer, state) == false) {
 				continue;
@@ -383,7 +376,7 @@ void pqipersongrp::statusChanged()
 	} /* UNLOCKED */
 
 	std::list<RsPeerId>::iterator cit;
-	for(cit = toConnect.begin(); cit != toConnect.end(); cit++)
+	for(cit = toConnect.begin(); cit != toConnect.end(); ++cit)
 	{
 		connectPeer(*cit, true);
 	}
@@ -418,14 +411,13 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 
 	{ 
 		// The Mutex is required here as pqiListener is not thread-safe.
-		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
 		pqiperson *pqip = locked_createPerson(id, pqil);
 	
 		// attach to pqihandler
 		sm = new SearchModule();
 		sm -> peerid = id;
 		sm -> pqi = pqip;
-		sm -> sp = secpolicy_create();
 	
 		// reset it to start it working.
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::addPeer() => reset() called to initialise new person");
@@ -443,9 +435,9 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	std::map<RsPeerId, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
-#endif
 	std::cerr << "pqipersongrp::removePeer() id: " << id;
 	std::cerr << std::endl;
+#endif
 
   	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
@@ -453,7 +445,6 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	if (it != mods.end())
 	{
 		SearchModule *mod = it->second;
-		secpolicy_delete(mod -> sp);
 		pqiperson *p = (pqiperson *) mod -> pqi;
 		p -> stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
@@ -627,15 +618,19 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		if (type == RS_NET_CONN_TCP_HIDDEN)
-		{
-			ptype = PQI_CONNECT_HIDDEN_TCP;
-			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD; 
-		}
-		else
-		{
+		switch (type) {
+		case RS_NET_CONN_TCP_HIDDEN_TOR:
+			ptype = PQI_CONNECT_HIDDEN_TOR_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
+			break;
+		case RS_NET_CONN_TCP_HIDDEN_I2P:
+			ptype = PQI_CONNECT_HIDDEN_I2P_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD;
+			break;
+		default:
 			ptype = PQI_CONNECT_TCP;
-			timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+			timeout = RS_TCP_STD_TIMEOUT_PERIOD;
+			break;
 		}
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
@@ -665,7 +660,7 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
+bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool success, bool isIncomingConnection, const struct sockaddr_storage &raddr)
 {
 	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -678,7 +673,7 @@ bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool suc
 	}
 	
 	if (mLinkMgr)
-		mLinkMgr->connectResult(id, success, type, raddr);
+		mLinkMgr->connectResult(id, success, isIncomingConnection, type, raddr);
 	
 	return (NULL != mLinkMgr);
 }

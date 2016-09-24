@@ -28,8 +28,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _AUDIOWIZARD_H
-#define _AUDIOWIZARD_H
+#pragma once
 
 #include <QAudioInput>
 #include <QAudioOutput>
@@ -95,5 +94,3 @@ class AudioWizard: public QWizard, public Ui::AudioWizard {
                 void loopAudio();
 
 };
-
-#endif

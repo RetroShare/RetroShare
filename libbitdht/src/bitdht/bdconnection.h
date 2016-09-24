@@ -151,12 +151,11 @@ class bdConnection
 
 class bdProxyId
 {
-	public:
-
+public:
 	bdProxyId(const bdId &in_id, uint32_t in_srctype, uint32_t in_errcode)
 	:id(in_id), srcType(in_srctype), errcode(in_errcode) { return; }
 
-	bdProxyId() :srcType(BD_PI_SRC_UNKNOWN) { return; }
+	bdProxyId() :srcType(BD_PI_SRC_UNKNOWN), errcode(0) { return; }
 
 	std::string proxySrcType() const;
 
@@ -168,7 +167,13 @@ class bdProxyId
 
 class bdConnectionRequest
 {
-	public:
+public:
+	bdConnectionRequest() : mMode(0), mState(0), mStateTS(0), mPauseTS(0), mErrCode(0), mDelay(0), mRequestTS(0), mRecycled(0), mCurrentSrcType(0)
+	{
+		bdsockaddr_clear(&mLocalAddr);
+	}
+
+public:
 	int setupDirectConnection(struct sockaddr_in *laddr, bdNodeId *target);
 	int setupProxyConnection(struct sockaddr_in *laddr, bdNodeId *target, uint32_t mode, uint32_t delay);
 

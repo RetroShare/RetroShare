@@ -22,30 +22,36 @@
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
+
 #include <rshare.h>
-#include "gui/MainWindow.h"
 #include "gui/FriendsDialog.h"
-#include "gui/SearchDialog.h"
-#include "gui/FileTransfer/TransfersDialog.h"
-#include "gui/MessagesDialog.h"
-#include "gui/SharedFilesDialog.h"
-#include "gui/NetworkDialog.h"
-#include "gui/chat/ChatDialog.h"
-#include "gui/QuickStartWizard.h"
-#include "gui/MessengerWindow.h"
-#include "gui/StartDialog.h"
 #include "gui/GenCertDialog.h"
-#include "gui/settings/rsharesettings.h"
-#include "gui/settings/RsharePeerSettings.h"
-#include "gui/connect/ConfCertDialog.h"
-#include "idle/idle.h"
-#include "gui/common/Emoticons.h"
-#include "util/EventReceiver.h"
-#include "gui/RetroShareLink.h"
-#include "gui/SoundManager.h"
+#include "gui/MainWindow.h"
+#include "gui/MessengerWindow.h"
+#include "gui/NetworkDialog.h"
 #include "gui/NetworkView.h"
+#include "gui/QuickStartWizard.h"
+#include "gui/RetroShareLink.h"
+#include "gui/SharedFilesDialog.h"
+#include "gui/SoundManager.h"
+#include "gui/StartDialog.h"
+#include "gui/chat/ChatDialog.h"
+#include "gui/connect/ConfCertDialog.h"
+#include "gui/common/Emoticons.h"
+#include "gui/FileTransfer/SearchDialog.h"
+#include "gui/FileTransfer/TransfersDialog.h"
+#include "gui/settings/RsharePeerSettings.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/settings/WebuiPage.h"
+#include "idle/idle.h"
 #include "lang/languagesupport.h"
 #include "util/RsGxsUpdateBroadcast.h"
+
+#include "retroshare/rsidentity.h"
+
+#ifdef SIGFPE_DEBUG
+#include <fenv.h>
+#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
 #ifdef WINDOWS_SYS
@@ -73,7 +79,7 @@ static void displayWarningAboutDSAKeys()
 
 	QMessageBox msgBox;
 
-	QString txt = QObject::tr("You appear to have locations associated to DSA keys:");
+	QString txt = QObject::tr("You appear to have nodes associated to DSA keys:");
 	txt += "<UL>" ;
 	for(std::map<std::string,std::vector<std::string> >::const_iterator it(unsupported_keys.begin());it!=unsupported_keys.end();++it)
 	{
@@ -89,10 +95,10 @@ static void displayWarningAboutDSAKeys()
 	txt += "</UL>" ;
 
 	msgBox.setText(txt) ;
-	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We're very sorry for that."));
+	msgBox.setInformativeText(QObject::tr("DSA keys are not yet supported by this version of RetroShare. All these nodes will be unusable. We're very sorry for that."));
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-	msgBox.setWindowIcon(QIcon(":/images/logo/logo_32.png"));
+    msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
 
 	msgBox.exec();
 }
@@ -157,10 +163,14 @@ int main(int argc, char *argv[])
 		QDir::setCurrent(QCoreApplication::applicationDirPath());
 	}
 #endif
+#ifdef SIGFPE_DEBUG
+feenableexcept(FE_INVALID | FE_DIVBYZERO);
+#endif
 
 	QStringList args = char_array_to_stringlist(argv+1, argc-1);
 
-	Q_INIT_RESOURCE(images);
+    Q_INIT_RESOURCE(images);
+    Q_INIT_RESOURCE(icons);
 
 	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
 	//
@@ -184,7 +194,7 @@ int main(int argc, char *argv[])
 		msgBox.setInformativeText(QObject::tr("Choose between:<br><ul><li><b>Ok</b> to copy the existing keyring from gnupg (safest bet), or </li><li><b>Close without saving</b> to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). </li><li><b>Cancel</b> to quit and forge a keyring by yourself (needs some PGP skills)</li></ul>"));
 		msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Ok);
-		msgBox.setWindowIcon(QIcon(":/images/logo/logo_32.png"));
+        msgBox.setWindowIcon(QIcon(":/icons/logo_128.png"));
 
 		int ret = msgBox.exec();
 
@@ -213,7 +223,7 @@ int main(int argc, char *argv[])
 		displayWarningAboutDSAKeys();
 
 		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
-		mb.setWindowIcon(QIcon(":/images/logo/logo_32.png"));
+        mb.setWindowIcon(QIcon(":/icons/logo_128.png"));
 
 		switch (initResult) 
 		{
@@ -238,21 +248,12 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+	              QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
-	std::string url = RsInit::getRetroShareLink();
-	if (!url.empty()) {
-		/* start with RetroShare link */
-		EventReceiver eventReceiver;
-		if (eventReceiver.sendRetroShareLink(QString::fromStdString(url))) {
-			return 0;
-		}
-
-		/* Start RetroShare */
-	}
-
+	/* Start RetroShare */
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
+	QString sDefaultGXSIdToCreate = "";
 	switch (initResult) {
 	case RS_INIT_OK:
 		{
@@ -281,6 +282,7 @@ int main(int argc, char *argv[])
 				if (gd.exec () == QDialog::Rejected) {
 					return 1;
 				}
+				sDefaultGXSIdToCreate = gd.getGXSNickname();
 			}
 
 			splashScreen.show();
@@ -334,6 +336,8 @@ int main(int argc, char *argv[])
 
 		Settings->setValue(QString::fromUtf8("FirstRun"), false);
 
+		SoundManager::initDefault();
+
 #ifdef __APPLE__
 		/* For OSX, we set the default to "cleanlooks", as the AQUA style hides some input boxes 
 		 * only on the first run - as the user might want to change it ;)
@@ -355,21 +359,15 @@ int main(int argc, char *argv[])
 	MainWindow *w = MainWindow::Create ();
 	splashScreen.finish(w);
 
-	EventReceiver *eventReceiver = NULL;
-	if (Settings->getRetroShareProtocol()) {
-		/* Create event receiver */
-		eventReceiver = new EventReceiver;
-		if (eventReceiver->start()) {
-			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(retroshareLinkActivated(const QUrl&)));
-		}
-	}
+	w->processLastArgs();
 
-	if (!url.empty()) {
-		/* Now use link from the command line, because no RetroShare was running */
-		RetroShareLink link(QString::fromStdString(url));
-		if (link.valid()) {
-			w->retroshareLinkActivated(link.toUrl());
-		}
+	if (!sDefaultGXSIdToCreate.isEmpty()) {
+		RsIdentityParameters params;
+		params.nickname = sDefaultGXSIdToCreate.toUtf8().constData();
+		params.isPgpLinked = true;
+		params.mImage.clear();
+		uint32_t token = 0;
+		rsIdentity->createIdentity(token, params);
 	}
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
@@ -382,15 +380,12 @@ int main(int argc, char *argv[])
 	std::cerr << "connecting signals and slots" << std::endl ;
 	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,FileDetail)),w->transfersDialog->searchDialog	,SLOT(updateFiles(qulonglong,FileDetail))) ;
 	QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
-	QObject::connect(notify,SIGNAL(raiseChatWindow(const RsPeerId&)),notify,SLOT(raiseChatWindow_slot(const RsPeerId&)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)         )) ;
+    QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)) ,Qt::QueuedConnection        ) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));
 	QObject::connect(notify,SIGNAL(neighboursChanged())               ,w->friendsDialog->networkDialog    		,SLOT(securedUpdateDisplay())) ;
-	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
-	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->friendsDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->friendsDialog,SLOT(loadmypersonalstatus()));
@@ -416,15 +411,17 @@ int main(int argc, char *argv[])
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
+#ifdef ENABLE_WEBUI
+    WebuiPage::checkStartWebui();
+#endif // ENABLE_WEBUI
+
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
 
-	if (eventReceiver) {
-		/* Destroy event receiver */
-		delete eventReceiver;
-		eventReceiver = NULL;
-	}
+#ifdef ENABLE_WEBUI
+	WebuiPage::checkShutdownWebui();
+#endif // ENABLE_WEBUI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BwCtrlWindow</class>
+ <widget class="QWidget" name="BwCtrlWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1447</width>
+    <height>471</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QTreeWidget" name="bwTreeWidget">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <column>
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>In (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InQueue</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>InAllocated (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allocated Sent</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Out (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutMax (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutQueue</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>OutAllowed (KB/s)</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Allowed Recvd</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="BandwidthStatsWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BandwidthStatsWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/statistics/BandwidthStatsWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

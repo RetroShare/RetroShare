@@ -147,6 +147,7 @@ void g_string_append_printf(GString* baseString, char* format, ...)
 		g_string_append(baseString, formattedString);
 		free(formattedString);
 	}
+	va_end(args);
 } 
 
 void g_string_prepend(GString* baseString, char* prependedString)

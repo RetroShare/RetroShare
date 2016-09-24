@@ -182,7 +182,7 @@ bool XMLWrapper::readXML(const char *xml)
 	cleanup();
 
 	handleError(true, mLastErrorString);
-	mDocument = xmlReadDoc(BAD_CAST xml, "", NULL, /*XML_PARSE_NOERROR | XML_PARSE_NOWARNING | */XML_PARSE_COMPACT | XML_PARSE_NOENT | XML_PARSE_NOCDATA);
+	mDocument = xmlReadDoc(BAD_CAST xml, "", NULL, /*XML_PARSE_NOERROR | XML_PARSE_NOWARNING | */XML_PARSE_COMPACT | XML_PARSE_NOCDATA);
 	handleError(false, mLastErrorString);
 
 	if (mDocument) {

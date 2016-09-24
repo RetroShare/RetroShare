@@ -25,6 +25,7 @@
 GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
     GxsUserNotify(ifaceImpl, parent)
 {
+	mCountChildMsgs = true;
 }
 
 bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
@@ -37,12 +38,12 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsForumUserNotify::getIcon()
 {
-	return QIcon(":/images/konversation16.png");
+    return QIcon(":/icons/png/forums.png");
 }
 
 QIcon GxsForumUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/forums_new.png") : QIcon(":/images/konversation.png");
+    return hasNew ? QIcon(":/icons/png/forums-notify.png") : QIcon(":/icons/png/forums.png");
 }
 
 void GxsForumUserNotify::iconClicked()

@@ -33,6 +33,7 @@ class PeerDefs
 public:
     static const QString nameWithLocation(const RsPeerDetails &details);
     static const QString nameWithLocation(const RsIdentityDetails &details);
+    static const QString nameWithId(const RsIdentityDetails &details);
 
     static const QString rsid(const RsPeerDetails &details);
     static const QString rsid(const std::string &name, const RsPeerId &id);

@@ -149,7 +149,7 @@ FileAssociationsPage::save (QString &/*errmsg*/)
 //     {
 //         settings.setValue( ati.key(), ati.value() );
 //         qDebug() << "  - " << ati.key() << ati.value() << "\n" ;
-//         ati++;
+//         ++ati;
 //     }
 //
 //     settings.endGroup();
@@ -173,14 +173,14 @@ FileAssociationsPage::load()
 
     int rowi = 0;
     QStringList::const_iterator ki;
-    for(ki=keys.constBegin(); ki!=keys.constEnd(); ki++)
+    for(ki=keys.constBegin(); ki!=keys.constEnd(); ++ki)
     {
         QString val = (Settings->value(*ki, "")).toString();
 
         addNewItemToTable( rowi, 0, *ki );
         addNewItemToTable( rowi, 1, val );
 
-        rowi++;
+        ++rowi;
     }
 
     if (keys.count()==0)
@@ -237,7 +237,7 @@ FileAssociationsPage::addnew()
         }
         else
         {
-            for(int rowi=0; rowi<table->rowCount(); rowi++)
+            for(int rowi=0; rowi<table->rowCount(); ++rowi)
             {
                 titem = table->item( rowi, 0);
                 if (titem->data(QTableWidgetItem::Type).toString()==currType)

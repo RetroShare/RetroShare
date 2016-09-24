@@ -14,9 +14,9 @@
 
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
+#include <util/rsversioninfo.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
-#include <dbase/cachestrapper.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsfiles.h>
 #include <pqi/pqiservice.h>
@@ -81,6 +81,8 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 	//
 #ifdef WINDOWS_SYS
 	return name.size() > 4 && name.substr(name.size() - 4) == ".dll";
+#elif defined(__MACH__)
+	return name.size() > 6 && !strcmp(name.c_str()+name.size()-6,".dylib") ;
 #else
 	return name.size() > 3 && !strcmp(name.c_str()+name.size()-3,".so") ;
 #endif
@@ -143,7 +145,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 			continue ;
 		}
 
-		while(dirIt.readdir())
+        for(;dirIt.isValid();dirIt.next())
 		{
 			std::string fname;
 			dirIt.d_name(fname);
@@ -173,7 +175,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 	saveConfiguration();
 }
 
-void RsPluginManager::stopPlugins()
+void RsPluginManager::stopPlugins(p3ServiceServer *pqih)
 {
 	std::cerr << "  Stopping plugins." << std::endl;
 
@@ -181,9 +183,20 @@ void RsPluginManager::stopPlugins()
 	{
 		if (_plugins[i].plugin != NULL)
 		{
+			p3Service *service = _plugins[i].plugin->p3_service();
+			if (service)
+			{
+				pqih->removeService(service);
+			}
+
 			_plugins[i].plugin->stop();
-//			delete _plugins[i].plugin;
-//			_plugins[i].plugin = NULL;
+			delete _plugins[i].plugin;
+			_plugins[i].plugin = NULL;
+		}
+		if (_plugins[i].handle)
+		{
+			dlclose(_plugins[i].handle);
+			_plugins[i].handle = NULL;
 		}
 	}
 }
@@ -320,6 +333,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr  << "    -> No API version number." << std::endl;
 		pinfo.status = PLUGIN_STATUS_MISSING_API ;
 		pinfo.info_string = "" ;
+		dlclose(handle);
 		return false ;
 	} 
 	if(pinfo.svn_revision == 0)
@@ -327,6 +341,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr  << "    -> No svn revision number." << std::endl;
 		pinfo.status = PLUGIN_STATUS_MISSING_SVN ;
 		pinfo.info_string = "" ;
+		dlclose(handle);
 		return false ;
 	} 
 
@@ -339,6 +354,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr << dlerror() << std::endl ;
 		pinfo.status = PLUGIN_STATUS_MISSING_SYMBOL ;
 		pinfo.info_string = _plugin_entry_symbol ;
+		dlclose(handle);
 		return false ;
 	}
 	std::cerr << "   -> Added function entry for symbol " << _plugin_entry_symbol << std::endl ;
@@ -350,11 +366,13 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 		std::cerr << "  Plugin entry function " << _plugin_entry_symbol << " returns NULL ! It should return an object of type RsPlugin* " << std::endl;
 		pinfo.status = PLUGIN_STATUS_NULL_PLUGIN ;
 		pinfo.info_string = "Plugin entry " + _plugin_entry_symbol + "() return NULL" ;
+		dlclose(handle);
 		return false ;
 	}
 
 	pinfo.status = PLUGIN_STATUS_LOADED ;
 	pinfo.plugin = p ;
+	pinfo.handle = handle;
 	p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
 	pinfo.info_string = "" ;
 
@@ -391,14 +409,17 @@ void RsPluginManager::slowTickPlugins(time_t seconds)
 
 void RsPluginManager::registerCacheServices()
 {
+    // this is removed since the old cache syste is gone, but we need to make it register new GXS group services instead.
+#ifdef REMOVED
 	std::cerr << "  Registering cache services." << std::endl;
 
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL)
 		{
-			rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
+            //rsFiles->getCacheStrapper()->addCachePair(CachePair(_plugins[i].plugin->rs_cache_service(),_plugins[i].plugin->rs_cache_service(),CacheId(_plugins[i].plugin->rs_service_id(), 0))) ;
 			std::cerr << "     adding new cache pair for plugin " << _plugins[i].plugin->getPluginName() << ", with RS_ID " << _plugins[i].plugin->rs_service_id() << std::endl ;
 		}
+#endif
 }
 
 void RsPluginManager::registerClientServices(p3ServiceServer *pqih)
@@ -444,7 +465,7 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
     RsFileHash reference_executable_hash ;
 
 	std::list<RsItem *>::iterator it;
-	for(it = list.begin(); it != list.end(); it++) 
+	for(it = list.begin(); it != list.end(); ++it)
 	{
 		RsConfigKeyValueSet *witem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 
@@ -527,15 +548,7 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 	return true;
 }
 
-// RsCacheService::RsCacheService(uint16_t service_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
-//         : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
-//           CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
-// 	  p3Config(), 
-// 	  _tick_delay_in_seconds(tick_delay)
-// {
-// }
-
-RsPQIService::RsPQIService(uint16_t service_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
+RsPQIService::RsPQIService(uint16_t /*service_type*/, uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(),p3Config()
 {
 }

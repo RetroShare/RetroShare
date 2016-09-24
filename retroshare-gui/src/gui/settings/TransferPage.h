@@ -40,15 +40,15 @@ class TransferPage: public ConfigPage
 		/** Loads the settings for this page */
 		virtual void load() {}
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/ktorrent32.png") ; }
-		virtual QString pageName() const { return tr("Transfer") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/filesharing.svg") ; }
+        virtual QString pageName() const { return tr("File transfer") ; }
 		virtual QString helpText() const { return ""; }
 
 	public slots:
 		void updateQueueSize(int) ;
-		void updateMinPrioritized(int) ;
 		void updateDefaultStrategy(int) ;
 		void updateDiskSizeLimit(int) ;
+        void updateMaxTRUpRate(int);
 
 	private:
 

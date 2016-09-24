@@ -24,12 +24,9 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Loaded plugins</string>
+      <string>Plugins</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
-      <property name="margin">
-       <number>6</number>
-      </property>
       <item>
        <widget class="QScrollArea" name="scrollArea">
         <property name="frameShape">
@@ -43,7 +40,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>391</width>
+           <width>920</width>
            <height>16</height>
           </rect>
          </property>
@@ -74,20 +71,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTextBrowser" name="_lookupDirectories_TB">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>50</height>
-         </size>
-        </property>
-       </widget>
+       <widget class="QTextBrowser" name="_lookupDirectories_TB"/>
       </item>
      </layout>
     </widget>

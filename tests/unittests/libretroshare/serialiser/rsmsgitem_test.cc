@@ -27,6 +27,7 @@
 
 #include "util/rsrandom.h"
 #include "serialiser/rsmsgitems.h"
+#include "chat/rschatitems.h"
 
 #include "support.h"
 #include "rstlvutil.h"
@@ -48,19 +49,15 @@ RsSerialType* init_item(RsChatLobbyListItem& cmi)
 {
 	int n = rand()%20 ;
 
-	cmi.lobby_ids.resize(n) ;
-	cmi.lobby_names.resize(n) ;
-	cmi.lobby_topics.resize(n) ;
-	cmi.lobby_counts.resize(n) ;
-	cmi.lobby_privacy_levels.resize(n) ;
-
 	for(int i=0;i<n;++i)
 	{
-		cmi.lobby_ids[i] = RSRandom::random_u64() ;
-		randString(5+(rand()%10), cmi.lobby_names[i]);
-		randString(20+(rand()%15), cmi.lobby_topics[i]);
-		cmi.lobby_counts[i] = RSRandom::random_u32() ;
-		cmi.lobby_privacy_levels[i] = RSRandom::random_u32()%3 ;
+        struct VisibleChatLobbyInfo info;
+        info.id = RSRandom::random_u64() ;
+        randString(5+(rand()%10), info.name);
+        randString(20+(rand()%15), info.topic);
+        info.count = RSRandom::random_u32() ;
+        info.flags = ChatLobbyFlags(RSRandom::random_u32()%3) ;
+        cmi.lobbies.push_back(info);
 	}
 
 	return new RsChatSerialiser();
@@ -72,7 +69,6 @@ RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
 	cmi.msg_id = RSRandom::random_u64() ;
 	cmi.lobby_id = RSRandom::random_u64() ;
 	cmi.nick = "My nickname" ;
-	cmi.subpacket_id = rand()%256 ;
 	cmi.parent_msg_id = RSRandom::random_u64() ;
 
 	return serial ;
@@ -98,7 +94,7 @@ RsSerialType* init_item(RsChatLobbyInviteItem& cmi)
 
 RsSerialType* init_item(RsPrivateChatMsgConfigItem& pcmi)
 {
-	pcmi.configPeerId.random();
+    pcmi.configPeerId = RsPeerId::random();
 	pcmi.chatFlags = rand()%34;
 	pcmi.configFlags = rand()%21;
 	pcmi.sendTime = rand()%422224;
@@ -173,7 +169,7 @@ RsSerialType* init_item(RsMsgTags& mt)
 RsSerialType* init_item(RsMsgSrcId& ms)
 {
 	ms.msgId = rand()%434;
-	ms.srcId.random();
+    ms.srcId = RsPeerId::random();
 
 	return new RsMsgSerialiser();
 }
@@ -186,19 +182,18 @@ RsSerialType* init_item(RsMsgParentId& ms)
 	return new RsMsgSerialiser();
 }
 
+bool operator ==(const struct VisibleChatLobbyInfo& l, const struct VisibleChatLobbyInfo& r)
+{
+    return l.id == r.id
+            && l.name == r.name
+            && l.topic == r.topic
+            && l.count == r.count
+            && l.flags == r.flags;
+}
+
 bool operator ==(const RsChatLobbyListItem& cmiLeft,const  RsChatLobbyListItem& cmiRight)
 {
-	if(cmiLeft.lobby_ids.size() != cmiRight.lobby_ids.size()) return false;
-	if(cmiLeft.lobby_names.size() != cmiRight.lobby_names.size()) return false;
-	if(cmiLeft.lobby_counts.size() != cmiRight.lobby_counts.size()) return false;
-
-	for(uint32_t i=0;i<cmiLeft.lobby_ids.size();++i)
-	{
-		if(cmiLeft.lobby_ids[i] != cmiRight.lobby_ids[i]) return false ;
-		if(cmiLeft.lobby_names[i] != cmiRight.lobby_names[i]) return false ;
-		if(cmiLeft.lobby_counts[i] != cmiRight.lobby_counts[i]) return false ;
-	}
-	return true ;
+    return cmiLeft.lobbies == cmiRight.lobbies;
 }
 bool operator ==(const RsChatLobbyListRequestItem& ,const  RsChatLobbyListRequestItem& )
 {

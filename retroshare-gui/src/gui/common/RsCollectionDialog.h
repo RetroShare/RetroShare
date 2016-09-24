@@ -56,6 +56,7 @@ private slots:
 	void makeDir() ;
 	void fileHashingFinished(QList<HashedFile> hashedFiles) ;
 	void itemChanged(QTreeWidgetItem* item,int col) ;
+	void updateRemoveDuplicate(bool checked);
 	void cancel() ;
 	void download() ;
 	void save() ;
@@ -68,6 +69,7 @@ private:
 	QTreeWidgetItem*  getRootItem();
 	bool updateList();
 	bool addChild(QTreeWidgetItem *parent, const std::vector<ColFileInfo> &child);
+	bool removeItem(QTreeWidgetItem *item, bool &removeOnlyFile) ;
 	void addRecursive(bool recursive) ;
 	bool addAllChild(QFileInfo &fileInfoParent
 	                 , QMap<QString, QString > &dirToAdd

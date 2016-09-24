@@ -22,11 +22,20 @@
 
 #include "AboutDialog.h"
 #include "HelpDialog.h"
+#include "rshare.h"
 
+#include <retroshare/rsiface.h>
+#include <retroshare/rsplugin.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
 
+#ifdef ENABLE_WEBUI
+#include <microhttpd.h>
+#endif
+
+#include <QClipboard>
+#include <QSysInfo>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QBrush>
@@ -47,17 +56,9 @@ AboutDialog::AboutDialog(QWidget* parent)
     frame->setLayout(l);
     tWidget = NULL;
     installAWidget();
-    
-	QString title = tr("About RetroShare ");    
-	
-    /* get libretroshare version */
-    std::string version;
-    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-    {
-		title += QString::fromStdString(version);
-    }
-	setWindowTitle(title);
-        
+
+    updateTitle();
+
 #ifdef Q_OS_WIN
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
 #endif
@@ -130,22 +131,14 @@ void AboutDialog::sl_levelChanged(int level) {
     emit si_levelChanged(tr("Level: %1").arg(level));
 }
 
-
-void AboutDialog::updateTitle() {
+void AboutDialog::updateTitle()
+{
     if (tWidget == NULL) 
-	{
-		QString title = tr("About RetroShare ");    
-		
-		/* get libretroshare version */
-		std::string version;
-		if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-		{
-			title += QString::fromStdString(version);
-		}
-		setWindowTitle(title);
-	} 
-	else 
-	{
+    {
+        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), Rshare::retroshareVersion(true)));
+    }
+    else
+    {
         setWindowTitle(tr("Have fun ;-)"));
     }
 }
@@ -182,25 +175,17 @@ AWidget::AWidget() {
     p.setPen(Qt::black);
     QFont font = p.font();
     font.setBold(true);
-    font.setPointSizeF(11);
+    font.setPointSizeF(font.pointSizeF() + 2);
     p.setFont(font);
 
-	QString title = tr("About RetroShare ");    
-	
-	/* get libretroshare version */
-	std::string version;
-	if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
-    {
-	    QString versionq = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(version);
-        p.drawText(QRect(10, 10, width()-10, 60), versionq);
-		
-    }
+    /* Draw RetroShare version */
+    p.drawText(QRect(10, 10, width()-10, 60), QString("%1 : \n%2").arg(tr("RetroShare version"), Rshare::retroshareVersion(true)));
 
     /* Draw Qt's version number */
     p.drawText(QRect(10, 50, width()-10, 60), QString("Qt %1 : \n%2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
-	
+
     image1 = image2 = image;
     setFixedSize(image1.size());
 
@@ -265,7 +250,7 @@ void AWidget::calcWater(int npage, int density) {
     }
 
     for (int y = (h-1)*w; count < y; count += 2) {
-        for (int x = count+w-2; count < x; count++) {
+        for (int x = count+w-2; count < x; ++count) {
             // This does the eight-pixel method.  It looks much better.
             int newh  = ((oldptr[count + w]
             + oldptr[count - w]
@@ -308,9 +293,9 @@ void AWidget::addBlob(int x, int y, int radius, int height) {
     if (x + radius > w-1) right -= (x+radius-w+1);
     if (y + radius > h-1) bottom-= (y+radius-h+1);
 
-    for(int cy = top; cy < bottom; cy++) {
+    for(int cy = top; cy < bottom; ++cy) {
         int cyq = cy*cy;
-        for(int cx = left; cx < right; cx++) {
+        for(int cx = left; cx < right; ++cx) {
             if (cx*cx + cyq < rquad) {
                 newptr[w*(cy+y) + (cx+x)] += height;
             }
@@ -330,7 +315,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
     int *ptr = &heightField1.front();
 
     for (int y = (h-1)*w; offset < y; offset += 2) {
-        for (int x = offset+w-2; offset < x; offset++) {
+        for (int x = offset+w-2; offset < x; ++offset) {
             int dx = ptr[offset] - ptr[offset+1];
             int dy = ptr[offset] - ptr[offset+w];
 
@@ -340,7 +325,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
                 c = shiftColor(c, dx);
                 dstImage[offset] = c;
             }
-            offset++;
+            ++offset;
             dx = ptr[offset] - ptr[offset+1];
             dy = ptr[offset] - ptr[offset+w];
 
@@ -361,11 +346,16 @@ TBoard::TBoard(QWidget *parent) {
     
     setFocusPolicy(Qt::StrongFocus);
     isStarted = false;
+    isWaitingAfterLine = false;
+    numLinesRemoved = 0;
+    numPiecesDropped = 0;
     isPaused = false;
     clearBoard();
     nextPiece.setRandomShape();
     score = 0;
     level = 0;
+    curX = 0;
+    curY = 0;
 
     maxScore = Settings->value("/about/maxsc").toInt();
 }
@@ -509,7 +499,7 @@ void TBoard::dropDown() {
             break;
         }
         newY--;
-        dropHeight++;
+        ++dropHeight;
     }
     pieceDropped(dropHeight);
 }
@@ -738,4 +728,82 @@ NextPieceLabel::NextPieceLabel( QWidget* parent /* = 0*/ ) : QLabel(parent)
     setFrameShape(QFrame::Box);
     setAlignment(Qt::AlignCenter);
     setAutoFillBackground(true);
+}
+
+static QString addLibraries(const std::string &name, const std::list<RsLibraryInfo> &libraries)
+{
+    QString mTextEdit;
+    mTextEdit+=QString::fromUtf8(name.c_str());
+    mTextEdit+="\n";
+
+    std::list<RsLibraryInfo>::const_iterator libraryIt;
+    for (libraryIt = libraries.begin(); libraryIt != libraries.end(); ++libraryIt) {
+
+        mTextEdit+=" - ";
+        mTextEdit+=QString::fromUtf8(libraryIt->mName.c_str());
+        mTextEdit+=": ";
+        mTextEdit+=QString::fromUtf8(libraryIt->mVersion.c_str());
+        mTextEdit+="\n";
+    }
+    mTextEdit+="\n";
+    return mTextEdit;
+}
+
+
+void AboutDialog::on_copy_button_clicked()
+{
+    QString verInfo;
+    QString rsVerString = "RetroShare Version: ";
+    rsVerString+=Rshare::retroshareVersion(true);
+    verInfo+=rsVerString;
+    verInfo+="\n";
+
+
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+	#if QT_VERSION >= QT_VERSION_CHECK (5, 4, 0)
+		verInfo+=QSysInfo::prettyProductName();
+	#endif
+#else
+	#ifdef Q_OS_LINUX
+	verInfo+="Linux";
+	#endif
+	#ifdef Q_OS_WIN
+	verInfo+="Windows";
+	#endif
+	#ifdef Q_OS_MAC
+	verInfo+="Mac";
+	#endif
+#endif
+	verInfo+=" ";
+    QString qtver = QString("QT ")+QT_VERSION_STR;
+    verInfo+=qtver;
+    verInfo+="\n\n";
+
+    /* Add version numbers of libretroshare */
+    std::list<RsLibraryInfo> libraries;
+    RsControl::instance()->getLibraries(libraries);
+    verInfo+=addLibraries("libretroshare", libraries);
+
+#ifdef ENABLE_WEBUI
+    /* Add version numbers of RetroShare */
+    // Add versions here. Find a better place.
+    libraries.clear();
+    libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
+    verInfo+=addLibraries("RetroShare", libraries);
+#endif // ENABLE_WEBUI
+
+    /* Add version numbers of plugins */
+    if (rsPlugins) {
+        for (int i = 0; i < rsPlugins->nbPlugins(); ++i) {
+            RsPlugin *plugin = rsPlugins->plugin(i);
+            if (plugin) {
+                libraries.clear();
+                plugin->getLibraries(libraries);
+                verInfo+=addLibraries(plugin->getPluginName(), libraries);
+            }
+        }
+    }
+
+
+    QApplication::clipboard()->setText(verInfo);
 }

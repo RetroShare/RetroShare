@@ -50,7 +50,7 @@ uint32_t RsGxsWikiSerialiser::size(RsItem *item)
 	{
 		return sizeGxsWikiCommentItem(com_item);
 	}
-	return NULL;
+    return 0;
 }
 
 bool RsGxsWikiSerialiser::serialise(RsItem *item, void *data, uint32_t *size)

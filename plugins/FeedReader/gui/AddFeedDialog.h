@@ -24,6 +24,7 @@
 
 #include <QDialog>
 #include "interface/rsFeedReader.h"
+#include "util/TokenQueue.h"
 
 namespace Ui {
 class AddFeedDialog;
@@ -31,8 +32,9 @@ class AddFeedDialog;
 
 class RsFeedReader;
 class FeedReaderNotify;
+class UIStateHelper;
 
-class AddFeedDialog : public QDialog
+class AddFeedDialog : public QDialog, public TokenResponse
 {
 	Q_OBJECT
     
@@ -42,6 +44,9 @@ public:
 
 	void setParent(const std::string &parentId);
 	bool fillFeed(const std::string &feedId);
+
+	/* TokenResponse */
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void authenticationToggled();
@@ -53,20 +58,30 @@ private slots:
 	void validate();
 	void createFeed();
 	void preview();
+	void clearMessageCache();
 
 private:
 	void processSettings(bool load);
 	void getFeedInfo(FeedInfo &feedInfo);
+	void setActiveForumId(const std::string &forumId);
 
+	void requestForumGroups();
+	void loadForumGroups(const uint32_t &token);
+
+private:
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
 	std::string mFeedId;
 	std::string mParentId;
+	std::string mFillForumId;
 
 	RsFeedTransformationType mTransformationType;
 	std::list<std::string> mXPathsToUse;
 	std::list<std::string> mXPathsToRemove;
 	std::string mXslt;
+
+	TokenQueue *mTokenQueue;
+	UIStateHelper *mStateHelper;
 
 	Ui::AddFeedDialog *ui;
 };

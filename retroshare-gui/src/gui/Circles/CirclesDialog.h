@@ -38,6 +38,7 @@ class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 
 public:
 	CirclesDialog(QWidget *parent = 0);
+	~CirclesDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CIRCLES) ; } //MainPage
 	virtual QString pageName() const { return tr("Circles") ; } //MainPage

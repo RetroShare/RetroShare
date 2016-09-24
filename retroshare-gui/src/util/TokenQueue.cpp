@@ -87,9 +87,11 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 
 void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
+#ifdef ID_DEBUG
 	std::cerr << "TokenQueue::queueRequest() Token: " << token << " Type: " << basictype;
 	std::cerr << " AnsType: " << anstype << " UserType: " << usertype;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	TokenRequest req;
 	req.mToken = token;
@@ -105,7 +107,7 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	if (mRequests.size() == 1)
 	{
 		/* start the timer */
-		doPoll(0.1);
+		doPoll(0.25);
 	}
 }
 
@@ -117,7 +119,7 @@ void TokenQueue::doPoll(float dt)
 
 void TokenQueue::pollRequests()
 {
-	double pollPeriod = 1.0; // max poll period.
+	double pollPeriod = 0.5; // max poll period.
 
 	if (mRequests.empty())	{
 		return;
@@ -136,19 +138,20 @@ void TokenQueue::pollRequests()
 	else
 	{
 
-#define MAX_REQUEST_AGE 30
+// checkForRequest returns also true when the request cannot be found (e.g. removed by a timeout)
+//#define MAX_REQUEST_AGE 30
 
-		/* drop old requests too */
-		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
-		{
+//		/* drop old requests too */
+//		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
+//		{
 			mRequests.push_back(req);
-		}
-		else
-		{
-			std::cerr << "TokenQueue::loadRequest(): ";
-			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
-			std::cerr << std::endl;
-		}
+//		}
+//		else
+//		{
+//			std::cerr << "TokenQueue::loadRequest(): ";
+//			std::cerr << "Dropping old Token: " << req.mToken << " Type: " << req.mType;
+//			std::cerr << std::endl;
+//		}
 	}
 
 	if (mRequests.size() > 0)
@@ -169,7 +172,7 @@ bool TokenQueue::activeRequestExist(const uint32_t& userType) const
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
-	for(; lit != mRequests.end(); lit++)
+	for(; lit != mRequests.end(); ++lit)
 	{
 		const TokenRequest& req = *lit;
 
@@ -186,7 +189,7 @@ void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_
 {
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
-	for(; lit != mRequests.end(); lit++)
+	for(; lit != mRequests.end(); ++lit)
 	{
 		const TokenRequest& req = *lit;
 
@@ -209,10 +212,12 @@ void TokenQueue::cancelActiveRequestTokens(const uint32_t& userType)
 
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
-	std::cerr << "TokenQueue::loadRequest(): ";
+#ifdef DEBUG_INFO
+    std::cerr << "TokenQueue::loadRequest(): ";
 	std::cerr << "Token: " << req.mToken << " Type: " << req.mType;
 	std::cerr << " AnsType: " << req.mAnsType << " UserType: " << req.mUserType;
-	std::cerr << std::endl;
+    std::cerr << std::endl;
+#endif
 
 	mResponder->loadRequest(this, req);
 }
@@ -224,14 +229,16 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 
 	std::list<TokenRequest>::iterator it;
 
-	for(it = mRequests.begin(); it != mRequests.end(); it++)
+	for(it = mRequests.begin(); it != mRequests.end(); ++it)
 	{
 		if (it->mToken == token)
 		{
-			mRequests.erase(it);
+            mRequests.erase(it);
 
-			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
-			std::cerr << std::endl;
+#ifdef DEBUG_INFO
+            std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
+            std::cerr << std::endl;
+#endif
 
 			return true;
 		}

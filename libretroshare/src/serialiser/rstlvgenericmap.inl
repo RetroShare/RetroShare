@@ -26,7 +26,7 @@
 
 
 // Must be different - as this is inline in headers.
-#define TLV_GENERICMAP_DEBUG 1
+//#define TLV_GENERICMAP_DEBUG 1
 
 /*********************************** RsTlvGenericPairRef ***********************************/
 
@@ -77,12 +77,14 @@ bool  RsTlvGenericPairRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *off
 		std::cerr << "RsTlvGenericPairRef<>::SetTlv() Failed";
 		std::cerr << std::endl;
 	}
-	else
-	{
-		std::cerr << "RsTlvGenericPairRef<>::SetTlv() Ok";
-		std::cerr << std::endl;
+#ifdef TLV_GENERICMAP_DEBUG
+    else
+    {
+        std::cerr << "RsTlvGenericPairRef<>::SetTlv() Ok";
+        std::cerr << std::endl;
 	}
-	return ok;
+#endif
+    return ok;
 }
 
 template<class K, class V>

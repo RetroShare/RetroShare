@@ -860,14 +860,12 @@ int GeneratePasswordHash(std::string saltBin, std::string password, std::string 
 int CheckPasswordHash(std::string pwdHashRadix64, std::string password)
 {
 	char output[1024];
-	char *buf = NULL;
-	size_t len = 1024;
-	Radix64::decode(pwdHashRadix64, buf, len);
+    std::vector<uint8_t> buf = Radix64::decode(pwdHashRadix64);
+    size_t len = buf.size();
 	for(unsigned int i = 0; (i < len) && (i < 1024); i++)
 	{
 		output[i] = buf[i];
 	}
-	delete []buf;
 
 #if 0
 	std::cerr << "CheckPasswordHash() Input: " << pwdHashRadix64;

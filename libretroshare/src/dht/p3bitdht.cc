@@ -23,13 +23,18 @@
  *
  */
 
+#include <list>
 
 #include "dht/p3bitdht.h"
 
 #include "bitdht/bdstddht.h"
 
 #include "tcponudp/udprelay.h"
+#ifdef RS_USE_DHT_STUNNER
 #include "tcponudp/udpstunner.h"
+#endif // RS_USE_DHT_STUNNER
+
+#include "retroshare/rsbanlist.h"
 
 #include <openssl/sha.h>
 
@@ -75,6 +80,27 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 	return mParent->InfoCallback(id, type, flags, info);
 }  
 
+	virtual int dhtIsBannedCallback(const sockaddr_in *addr, bool *isBanned)
+	{
+		// check whether ip filtering is enabled
+		// if not return 0 to signal that no filter is available
+		if(!rsBanList->ipFilteringEnabled())
+			return 0;
+
+		// now check the filter
+		if(rsBanList->isAddressAccepted(*(const sockaddr_storage*)addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, NULL)) {
+			*isBanned = false;
+		} else {
+#ifdef DEBUG_BITDHT
+			std::cerr << "p3BitDht dhtIsBannedCallback: peer is banned " << sockaddr_storage_tostring(*(const sockaddr_storage*)addr) << std::endl;
+#endif
+			*isBanned = true;
+		}
+
+		// return 1 to signal that a filter is available
+		return 1;
+	}
+
 	private:
 
 	p3BitDht *mParent;
@@ -82,11 +108,13 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 
 
 p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm, 
-			UdpStack *udpstack, std::string bootstrapfile)
+            UdpStack *udpstack, std::string bootstrapfile,const std::string& filteredipfile)
 	:p3Config(), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
+#ifdef RS_USE_DHT_STUNNER
 	mDhtStunner = NULL;
 	mProxyStunner = NULL;
+#endif
 	mRelay = NULL;
 
         mPeerSharer = NULL;
@@ -129,7 +157,7 @@ p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
 #endif
 
 	/* create dht */
-	mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, mDhtFns);
+    mUdpBitDht = new UdpBitDht(udpstack, &mOwnDhtId, dhtVersion, bootstrapfile, filteredipfile,mDhtFns);
 	udpstack->addReceiver(mUdpBitDht);
 
 	/* setup callback to here */
@@ -167,13 +195,19 @@ bool 	p3BitDht::getOwnDhtId(std::string &ownDhtId)
 	return true;
 }
 
-
+#ifdef RS_USE_DHT_STUNNER
 void    p3BitDht::setupConnectBits(UdpStunner *dhtStunner, UdpStunner *proxyStunner, UdpRelayReceiver  *relay)
 {
 	mDhtStunner = dhtStunner;
 	mProxyStunner = proxyStunner;
 	mRelay = relay;
 }
+#else // RS_USE_DHT_STUNNER
+void    p3BitDht::setupConnectBits(UdpRelayReceiver  *relay)
+{
+	mRelay = relay;
+}
+#endif //RS_USE_DHT_STUNNER
 
 void    p3BitDht::setupPeerSharer(pqiNetAssistPeerShare *sharer)
 {
@@ -373,9 +407,36 @@ bool 	p3BitDht::getExternalInterface(struct sockaddr_storage &/*raddr*/,
 #endif
 
 
-	return false;
+    return false;
 }
 
+bool p3BitDht::isAddressBanned(const sockaddr_storage &raddr)
+{
+    if(raddr.ss_family == AF_INET6)	// the DHT does not handle INET6 addresses yet.
+        return false ;
+
+    if(raddr.ss_family == AF_INET)
+        return mUdpBitDht->isAddressBanned((sockaddr_in&)raddr) ;
+
+    return false ;
+}
+
+void p3BitDht::getListOfBannedIps(std::list<RsDhtFilteredPeer>& ips)
+{
+    std::list<bdFilteredPeer> lst ;
+
+    mUdpBitDht->getListOfBannedIps(lst) ;
+
+    for(std::list<bdFilteredPeer>::const_iterator it(lst.begin());it!=lst.end();++it)
+    {
+        RsDhtFilteredPeer fp ;
+        fp.mAddr = (*it).mAddr ;
+        fp.mFilterFlags = (*it).mFilterFlags ;
+        fp.mFilterTS = (*it).mFilterTS ;
+        fp.mLastSeen = (*it).mLastSeen ;
+        ips.push_back(fp) ;
+    }
+}
 
 bool 	p3BitDht::setAttachMode(bool on)
 {

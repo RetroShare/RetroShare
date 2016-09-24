@@ -25,6 +25,7 @@
 #include <QObject>
 
 class FeedHolder;
+class FeedItem;
 
 class FeedNotify : public QObject
 {
@@ -37,8 +38,8 @@ public:
 	virtual bool hasSetting(QString &/*name*/);
 	virtual bool notifyEnabled();
 	virtual void setNotifyEnabled(bool /*enabled*/);
-	virtual QWidget *feedItem(FeedHolder */*parent*/);
-	virtual QWidget *testFeedItem(FeedHolder */*parent*/);
+	virtual FeedItem *feedItem(FeedHolder */*parent*/);
+	virtual FeedItem *testFeedItem(FeedHolder */*parent*/);
 };
 
 #endif // FEEDNOTIFY_H

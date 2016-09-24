@@ -84,32 +84,24 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-	 if(id.isNull())
-		 ui._useOldFormat_CB->setChecked(true) ;
-	 else
-	 {
-		 ui._useOldFormat_CB->setChecked(false) ;
-		 ui._useOldFormat_CB->setEnabled(false) ;
-	 }
+//	 if(id.isNull())
+//		 ui._useOldFormat_CB->setChecked(true) ;
+//	 else
+//	 {
+//		 ui._useOldFormat_CB->setChecked(false) ;
+//		 ui._useOldFormat_CB->setEnabled(false) ;
+//	 }
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
-	ui.headerFrame->setHeaderText(tr("Friend Details"));
+    ui.headerFrame->setHeaderText(tr("Friend node details"));
 
-	ui._chat_CB->hide() ;
+    //ui._chat_CB->hide() ;
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
-    connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
-    connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
-    connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
-    connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-    connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
-    // connect(ui._anonymous_routing_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
-    // connect(ui._discovery_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
-    // connect(ui._forums_channels_CB, SIGNAL(toggled(bool)), this, SLOT(setServiceFlags()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -121,44 +113,27 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
-//    if(peerId.isNull())
-    {
-        QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
-        if (it != instances_ssl.end())
-            instances_ssl.erase(it);
-    }
-//    else
-    {
-        QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
-        if (it != instances_pgp.end())
-            instances_pgp.erase(it);
-    }
+    QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
+    if (it != instances_ssl.end())
+	    instances_ssl.erase(it);
+
+    QMap<RsPgpId, ConfCertDialog*>::iterator it2 = instances_pgp.find(pgpId);
+    if (it2 != instances_pgp.end())
+	    instances_pgp.erase(it2);
 }
 
-
-void ConfCertDialog::setServiceFlags()
-{
-    ServicePermissionFlags flags(0) ;
-
-    if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
-    if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
-    if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
-    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
-
-    rsPeers->setServicePermissionFlags(pgpId,flags) ;
-}
 
 void ConfCertDialog::loadAll()
 {
-    for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); it++)  it.value()->load();
-    for(QMap<RsPgpId , ConfCertDialog*>::iterator it = instances_pgp.begin(); it != instances_pgp.end(); it++)  it.value()->load();
+    for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); ++it)  it.value()->load();
+    for(QMap<RsPgpId , ConfCertDialog*>::iterator it = instances_pgp.begin(); it != instances_pgp.end(); ++it)  it.value()->load();
 }
 
 void ConfCertDialog::load()
 {
     RsPeerDetails detail;
 
-    if(!(rsPeers->getPeerDetails(peerId, detail) || rsPeers->getGPGDetails(pgpId, detail)))
+    if(!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
                                  tr("RetroShare"),
@@ -167,35 +142,16 @@ void ConfCertDialog::load()
         return;
     }
 
-    if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(pgpId))
-	 {
-		 ui.make_friend_button->setEnabled(false) ;
-		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
-	 }
-	 else
-	 {
-		 ui.make_friend_button->setEnabled(true) ;
-		 ui.make_friend_button->setToolTip("") ;
-	 }
-
-	 ui._anonymous_routing_CB->setChecked(detail.service_perm_flags & RS_SERVICE_PERM_TURTLE    ) ;
-	 ui._discovery_CB->setChecked(        detail.service_perm_flags & RS_SERVICE_PERM_DISCOVERY ) ;
-	 ui._forums_channels_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DISTRIB   ) ;
-	 ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL ) ;
-
-    ui.name->setText(QString::fromUtf8(detail.name.c_str()));
+    //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
     ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
 
     RetroShareLink link;
     link.createPerson(detail.gpg_id);
 
-    ui.rsid->setText(link.toHtml());
-    ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
-    ui.rsid->setToolTip(link.title());
+    ui.pgpfingerprint->setText(link.toHtml());
+    ui.pgpfingerprint->setToolTip(link.title());
 
-    if (!detail.isOnlyGPGdetail) 
-	 {
-		 ui.avatar->setId(peerId);
+         ui.avatar->setId(ChatId(peerId));
 
 		 ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
 		 // Dont Show a timestamp in RS calculate the day
@@ -210,9 +166,12 @@ void ConfCertDialog::load()
 		 if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
 		 {
 			 QString ct ;
-			 ct += QString::fromStdString(cdet.cipher_name) ;
-			 ct += QString::number(cdet.cipher_bits_1) ;
-			 ct += "-"+QString::fromStdString(cdet.cipher_version) ;
+			  ct += QString::fromStdString(cdet.cipher_version) + ": ";
+			 ct += QString::fromStdString(cdet.cipher_name);
+
+			 if(cdet.cipher_version != "TLSv1.2")
+				ct += QString::number(cdet.cipher_bits_1);
+
 			 ui.crypto_info->setText(ct) ;
 		 }
 		 else
@@ -220,18 +179,40 @@ void ConfCertDialog::load()
 
 		 if (detail.isHiddenNode)
 		 {
-			 /* set local address */
-			 ui.localAddress->setText("hidden");
-			 ui.localPort -> setValue(0);
-			 /* set the server address */
-			 ui.extAddress->setText("hidden");
-			 ui.extPort -> setValue(0);
+			 // enable only the first row and set name of the first label to "Hidden Address"
+			 ui.l_localAddress->setText(tr("Hidden Address"));
 
-			 ui.dynDNS->setText(QString::fromStdString(detail.hiddenNodeAddress));
+			 ui.l_extAddress->setEnabled(false);
+			 ui.extAddress->setEnabled(false);
+			 ui.l_portExternal->setEnabled(false);
+			 ui.extPort->setEnabled(false);
+
+			 ui.l_dynDNS->setEnabled(false);
+			 ui.dynDNS->setEnabled(false);
+
+			 /* set hidden address */
+			 ui.localAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
+			 ui.localPort -> setValue(detail.hiddenNodePort);
+
+			 // set everything else to none
+			 ui.extAddress->setText(tr("none"));
+			 ui.extPort->setValue(0);
+			 ui.dynDNS->setText(tr("none"));
 		 }
 		 else
 		 {
-			 /* set local address */
+			 // enable everything and set name of the first label to "Local Address"
+			 ui.l_localAddress->setText(tr("Local Address"));
+
+			 ui.l_extAddress->setEnabled(true);
+			 ui.extAddress->setEnabled(true);
+			 ui.l_portExternal->setEnabled(true);
+			 ui.extPort->setEnabled(true);
+
+			 ui.l_dynDNS->setEnabled(true);
+			 ui.dynDNS->setEnabled(true);
+
+			 /* set local address */			 
 			 ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 			 ui.localPort -> setValue(detail.localPort);
 			 /* set the server address */
@@ -259,163 +240,23 @@ void ConfCertDialog::load()
 		 ui.groupBox->show();
 		 ui.groupBox_4->show();
 		 ui.tabWidget->show();
-		 ui.rsid->hide();
-		 ui.label_rsid->hide();
+         //ui.rsid->hide();
+         //ui.label_rsid->hide();
 		 ui.pgpfingerprint->show();
-		 ui.pgpfingerprint_label->show();
+         //ui.pgpfingerprint_label->show();
 
-		  ui.stabWidget->setTabEnabled(2,true) ;
-		  ui.stabWidget->setTabEnabled(3,true) ;
-	 } 
-	 else 
-	 {
-        //ui.avatar->setId(pgpId.toStdString(), true);
+		ui.stabWidget->setTabEnabled(2,true) ;
+		ui.stabWidget->setTabEnabled(3,true) ;
+		ui.stabWidget->setTabEnabled(4,true) ;
 
-        ui.rsid->show();
-        ui.peerid->hide();
-        ui.label_id->hide();
-        ui.label_rsid->show();
-        ui.pgpfingerprint->show();
-        ui.pgpfingerprint_label->show();
-        ui.loc->hide();
-        ui.label_loc->hide();
-        ui.statusline->hide();
-        ui.label_status->hide();
-        ui.lastcontact->hide();
-        ui.label_last_contact->hide();
-        ui.version->hide();
-        ui.label_version->hide();
-        ui.groupBox_4->hide();
-        ui.crypto_info->hide();
-        ui.crypto_label->hide();
-
-        ui.groupBox->hide();
-        ui.tabWidget->hide();
-
-		  ui.stabWidget->setTabEnabled(2,true) ;
-		  ui.stabWidget->setTabEnabled(3,false) ;
-		  ui._useOldFormat_CB->setEnabled(false) ;
-    }
-
-    if (detail.gpg_id == rsPeers->getGPGOwnId()) {
-        ui.make_friend_button->hide();
-        ui.signGPGKeyCheckBox->hide();
-        ui.signKeyButton->hide();
-        ui.denyFriendButton->hide();
-
-        ui.web_of_trust_label->hide();
-        ui.radioButton_trust_fully->hide();
-        ui.radioButton_trust_marginnaly->hide();
-        ui.radioButton_trust_never->hide();
-
-        ui.is_signing_me->hide();
-        ui.signersBox->setTitle(tr("My key is signed by : "));
-
-    } else {
-        ui.web_of_trust_label->show();
-        ui.radioButton_trust_fully->show();
-        ui.radioButton_trust_marginnaly->show();
-        ui.radioButton_trust_never->show();
-
-        ui.is_signing_me->show();
-        ui.signersBox->setTitle(tr("Peer key is signed by : "));
-
-        if (detail.accept_connection) {
-            ui.make_friend_button->hide();
-            ui.denyFriendButton->show();
-            ui.signGPGKeyCheckBox->hide();
-            //connection already accepted, propose to sign gpg key
-            if (!detail.ownsign) {
-                ui.signKeyButton->show();
-            } else {
-                ui.signKeyButton->hide();
-            }
-        } else {
-            ui.make_friend_button->show();
-            ui.denyFriendButton->hide();
-            ui.signKeyButton->hide();
-            if (!detail.ownsign) {
-                ui.signGPGKeyCheckBox->show();
-                ui.signGPGKeyCheckBox->setChecked(false);
-            } else {
-                ui.signGPGKeyCheckBox->hide();
-            }
-        }
-
-        //web of trust
-        if (detail.trustLvl == RS_TRUST_LVL_ULTIMATE) {
-            //trust is ultimate, it means it's one of our own keys
-            ui.web_of_trust_label->setText(tr("Your trust in this peer is ultimate, it's probably a key you own."));
-            ui.radioButton_trust_fully->hide();
-            ui.radioButton_trust_marginnaly->hide();
-            ui.radioButton_trust_never->hide();
-        } else {
-            ui.radioButton_trust_fully->show();
-            ui.radioButton_trust_marginnaly->show();
-            ui.radioButton_trust_never->show();
-            if (detail.trustLvl == RS_TRUST_LVL_FULL) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
-                ui.radioButton_trust_fully->setChecked(true);
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-            } else if (detail.trustLvl == RS_TRUST_LVL_MARGINAL) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
-                ui.radioButton_trust_marginnaly->setChecked(true);
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-48.png"));
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-            } else if (detail.trustLvl == RS_TRUST_LVL_NEVER) {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
-                ui.radioButton_trust_never->setChecked(true);
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-            } else {
-                ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
-
-                //we have to set up the set exclusive to false in order to uncheck it all
-                ui.radioButton_trust_fully->setAutoExclusive(false);
-                ui.radioButton_trust_marginnaly->setAutoExclusive(false);
-                ui.radioButton_trust_never->setAutoExclusive(false);
-
-                ui.radioButton_trust_fully->setChecked(false);
-                ui.radioButton_trust_marginnaly->setChecked(false);
-                ui.radioButton_trust_never->setChecked(false);
-
-                ui.radioButton_trust_fully->setAutoExclusive(true);
-                ui.radioButton_trust_marginnaly->setAutoExclusive(true);
-                ui.radioButton_trust_never->setAutoExclusive(true);
-
-                ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
-                ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
-                ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
-            }
-        }
-
-        if (detail.hasSignedMe) {
-            ui.is_signing_me->setText(tr("Peer has authenticated me as a friend and did sign my PGP key"));
-        } else {
-            ui.is_signing_me->setText(tr("Peer has not authenticated me as a friend and did not sign my PGP key"));
-        }
-    }
-
-    QString text;
-    for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {
-        link.createPerson(*it);
-        if (link.valid()) {
-            text += link.toHtml() + "<BR>";
-        }
-    }
-    ui.signers->setHtml(text);
-
-	 loadInvitePage() ;
+     loadInvitePage() ;
 }
 
 void ConfCertDialog::loadInvitePage()
 {
-	RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(peerId, detail) && !rsPeers->getGPGDetails(pgpId,detail))
+    RsPeerDetails detail;
+
+    if (!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
                                  tr("RetroShare"),
@@ -423,21 +264,59 @@ void ConfCertDialog::loadInvitePage()
         close();
         return;
     }
-	 std::string invite ;
 
-	 if(detail.isOnlyGPGdetail)
-		 invite = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
-	 else
-		 invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+    ui._shouldAddSignatures_CB->setEnabled(detail.gpgSigners.size() > 1) ;
 
-    ui.userCertificateText->setReadOnly(true);
-    ui.userCertificateText->setMinimumHeight(200);
-    ui.userCertificateText->setMinimumWidth(530);
-    QFont font("Courier New",10,50,false);
-    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
-    font.setStyle(QFont::StyleNormal);
-    ui.userCertificateText->setFont(font);
-    ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
+ //   std::string pgp_key = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB_2->isChecked()) ; // this needs to be a SSL id
+
+//	ui.userCertificateText_2->setReadOnly(true);
+//	ui.userCertificateText_2->setMinimumHeight(200);
+//	ui.userCertificateText_2->setMinimumWidth(530);
+//	QFont font("Courier New",10,50,false);
+//	font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+//	font.setStyle(QFont::StyleNormal);
+//	ui.userCertificateText_2->setFont(font);
+//	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
+
+        std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+
+    QString infotext ;
+
+    //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+    infotext += tr("<p>This certificate contains:") ;
+    infotext += "<UL>" ;
+    infotext += "<li> a <b>PGP public key</b>";
+    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
+    if(ui._shouldAddSignatures_CB->isChecked())
+        infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
+    else
+        infotext += "</li>" ;
+
+    infotext += tr("<li>a <b>node ID</b> and <b>name</b>") +" (" + detail.id.toStdString().c_str() + ", " + QString::fromUtf8(detail.location.c_str()) +")" ;
+    infotext += "</li>" ;
+
+    infotext += "<li>" ;
+    if(detail.isHiddenNode)
+        infotext += tr("an <b>onion address</b> and <b>port</b>") +" (" + detail.hiddenNodeAddress.c_str() + ":" + QString::number(detail.hiddenNodePort)+ ")";
+    else
+        infotext += tr("an <b>IP address</b> and <b>port</b>") +" (" + detail.connectAddr.c_str() + ":" + QString::number(detail.connectPort)+ ")";
+    infotext += "</li>" ;
+
+    infotext += QString("</p>") ;
+
+    if(rsPeers->getOwnId() == detail.id)
+        infotext += tr("<p>You can use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
+
+    ui.userCertificateText->setToolTip(infotext) ;
+
+        ui.userCertificateText->setReadOnly(true);
+        ui.userCertificateText->setMinimumHeight(200);
+        ui.userCertificateText->setMinimumWidth(530);
+        QFont font("Courier New",10,50,false);
+        font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+        font.setStyle(QFont::StyleNormal);
+        ui.userCertificateText->setFont(font);
+        ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
 }
 
 
@@ -447,97 +326,58 @@ void ConfCertDialog::applyDialog()
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(peerId, detail))
     {
-        if (!rsPeers->getGPGDetails(pgpId, detail)) {
-            QMessageBox::information(this,
-                                     tr("RetroShare"),
-                                     tr("Error : cannot get peer details."));
-            close();
-            return;
-        }
+	    if (!rsPeers->getGPGDetails(pgpId, detail)) {
+		    QMessageBox::information(this,
+		                             tr("RetroShare"),
+		                             tr("Error : cannot get peer details."));
+		    close();
+		    return;
+	    }
     }
 
-    //check the GPG trustlvl
-    if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != RS_TRUST_LVL_FULL) {
-        //trust has changed to fully
-        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_FULL);
-    } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != RS_TRUST_LVL_MARGINAL) {
-        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_MARGINAL);
-    } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != RS_TRUST_LVL_NEVER) {
-        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_NEVER);
+    if(!detail.isHiddenNode)
+    {
+	    /* check if the data is the same */
+	    bool localChanged = false;
+	    bool extChanged = false;
+	    bool dnsChanged = false;
+
+	    /* set local address */
+	    if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
+		    localChanged = true;
+
+	    if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
+		    extChanged = true;
+
+	    if ((detail.dyndns != ui.dynDNS->text().toStdString()))
+		    dnsChanged = true;
+
+	    /* now we can action the changes */
+	    if (localChanged)
+		    rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
+
+	    if (extChanged)
+		    rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
+
+	    if (dnsChanged)
+		    rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
+
+	    if(localChanged || extChanged || dnsChanged)
+		    emit configChanged();
     }
-
-    if (!detail.isOnlyGPGdetail) {
-        /* check if the data is the same */
-        bool localChanged = false;
-        bool extChanged = false;
-        bool dnsChanged = false;
-
-        /* set local address */
-        if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
-            localChanged = true;
-
-        if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
-            extChanged = true;
-
-        if ((detail.dyndns != ui.dynDNS->text().toStdString()))
-            dnsChanged = true;
-
-        /* now we can action the changes */
-        if (localChanged)
-            rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
-
-        if (extChanged)
-            rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
-
-        if (dnsChanged)
-            rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
-
-        if(localChanged || extChanged || dnsChanged)
-            emit configChanged();
+    else
+    {
+	    if((detail.hiddenNodeAddress != ui.localAddress->text().toStdString()) || (detail.hiddenNodePort != ui.localPort->value()))
+	    {
+		    rsPeers->setHiddenNode(peerId,ui.localAddress->text().toStdString(), ui.localPort->value());
+		    emit configChanged();
+	    }
     }
-
-	 setServiceFlags() ;
 
     loadAll();
     close();
 }
 
-void ConfCertDialog::makeFriend()
-{
-    if (ui.signGPGKeyCheckBox->isChecked()) {
-        rsPeers->signGPGCertificate(pgpId);
-    } 
-	
-    rsPeers->addFriend(peerId, pgpId);
-	 setServiceFlags() ;
-    loadAll();
-
-    emit configChanged();
-}
-
-void ConfCertDialog::denyFriend()
-{
-    rsPeers->removeFriend(pgpId);
-    loadAll();
-
-    emit configChanged();
-}
-
-void ConfCertDialog::signGPGKey()
-{
-    if (!rsPeers->signGPGCertificate(pgpId)) {
-                 QMessageBox::warning ( NULL,
-                                tr("Signature Failure"),
-                                tr("Maybe password is wrong"),
-                                QMessageBox::Ok);
-    }
-    loadAll();
-
-    emit configChanged();
-}
-
-/** Displays the help browser and displays the most recently viewed help
- * topic. */
 void ConfCertDialog::showHelpDialog()
 {
     showHelpDialog("trust");

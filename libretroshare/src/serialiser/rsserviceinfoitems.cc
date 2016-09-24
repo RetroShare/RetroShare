@@ -36,7 +36,7 @@
 /***** RsServiceInfo ****/
 
 template<>
-std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t indent) const
+std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t /*indent*/) const
 {
 	out << "RsServiceInfo: " << mParam.mServiceType << " name " << mParam.mServiceName;
 	out << std::endl;

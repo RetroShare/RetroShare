@@ -97,6 +97,7 @@ WikiEditDialog::WikiEditDialog(QWidget *parent)
 WikiEditDialog::~WikiEditDialog()
 {
         delete (mThreadCompareRole);
+	delete(mWikiQueue);
 }
 
 void WikiEditDialog::mergeModeToggle()
@@ -184,7 +185,7 @@ void WikiEditDialog::updateHistoryStatus()
 
 	/* iterate through every History Item */
 	int count = ui.treeWidget_History->topLevelItemCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(i);
 		bool isLatest = (i==count-1);
@@ -196,7 +197,7 @@ void WikiEditDialog::updateHistoryStatus()
 void WikiEditDialog::updateHistoryChildren(QTreeWidgetItem *item, bool isLatest)
 {
 	int count = item->childCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *child = item->child(i);
 
@@ -700,7 +701,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 		return;
 	}
 
-	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
+	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
                 RsWikiSnapshot &page = *vit;
 
@@ -732,7 +733,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
-		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID);
+		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID, false);
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
 		ui.treeWidget_History->addTopLevelItem(modItem);
@@ -788,7 +789,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 
 	// Grab the existing TopLevelItems, and insert into map.
        	int itemCount = ui.treeWidget_History->topLevelItemCount();
-       	for (int nIndex = 0; nIndex < itemCount; nIndex++) 
+       	for (int nIndex = 0; nIndex < itemCount; ++nIndex)
        	{
 		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(nIndex);
 
@@ -798,7 +799,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	}
 
 
-	for(vit = snapshots.begin(); vit != snapshots.end(); vit++)
+	for(vit = snapshots.begin(); vit != snapshots.end(); ++vit)
 	{
                 RsWikiSnapshot &snapshot = *vit;
 	
@@ -846,7 +847,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 			modItem->setText(WET_COL_DATE, text);
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
-		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID);
+		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID, false);
         modItem->setText(WET_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
 
 		/* find the parent */
@@ -862,7 +863,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 		items[snapshot.mMeta.mOrigMsgId] = modItem;
 	}
 
-	for(uit = unparented.begin(); uit != unparented.end(); uit++)
+	for(uit = unparented.begin(); uit != unparented.end(); ++uit)
 	{
         RsGxsMessageId parentId ( (*uit)->data(WET_DATA_COLUMN, WET_ROLE_PARENTID).toString().toStdString());
 

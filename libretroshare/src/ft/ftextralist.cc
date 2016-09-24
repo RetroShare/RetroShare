@@ -43,60 +43,55 @@
 ftExtraList::ftExtraList()
 	:p3Config(), extMutex("p3Config")
 {
-	return;
+    cleanup = 0;
+    return;
 }
 
 
-void ftExtraList::run()
+void ftExtraList::data_tick()
 {
-	bool todo = false;
-	time_t cleanup = 0;
-	time_t now = 0;
+    bool todo = false;
+    time_t now = time(NULL);
 
-	while (isRunning())
-	{
 #ifdef  DEBUG_ELIST
-		//std::cerr << "ftExtraList::run() Iteration";
-		//std::cerr << std::endl;
+    //std::cerr << "ftExtraList::run() Iteration";
+    //std::cerr << std::endl;
 #endif
 
-		now = time(NULL);
+    {
+        RsStackMutex stack(extMutex);
 
-		{
-			RsStackMutex stack(extMutex);
+        todo = (mToHash.size() > 0);
+    }
 
-			todo = (mToHash.size() > 0);
-		}
-
-		if (todo)
-		{
-			/* Hash a file */
-			hashAFile();
+    if (todo)
+    {
+        /* Hash a file */
+        hashAFile();
 
 #ifdef WIN32
-			Sleep(1);
+        Sleep(1);
 #else
-			/* microsleep */
-			usleep(10);
+        /* microsleep */
+        usleep(10);
 #endif
-		}
-		else
-		{
-			/* cleanup */
-			if (cleanup < now)
-			{
-				cleanupOldFiles();
-				cleanup = now + CLEANUP_PERIOD;
-			}
+    }
+    else
+    {
+        /* cleanup */
+        if (cleanup < now)
+        {
+            cleanupOldFiles();
+            cleanup = now + CLEANUP_PERIOD;
+        }
 
-			/* sleep */
+        /* sleep */
 #ifdef WIN32
-			Sleep(1000);
+        Sleep(1000);
 #else
-			sleep(1);
+        sleep(1);
 #endif
-		}
-	}
+    }
 }
 
 
@@ -114,7 +109,7 @@ void ftExtraList::hashAFile()
 	{
 		RsStackMutex stack(extMutex);
 
-		if (mToHash.size() == 0)
+		if (mToHash.empty())
 			return;
 
 		details = mToHash.front();
@@ -250,7 +245,7 @@ bool	ftExtraList::cleanupOldFiles()
     std::list<RsFileHash>::iterator rit;
 
     std::map<RsFileHash, FileDetails>::iterator it;
-	for(it = mFiles.begin(); it != mFiles.end(); it++)
+	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
 		/* check timestamps */
 		if ((time_t)it->second.info.age < now)
@@ -262,7 +257,7 @@ bool	ftExtraList::cleanupOldFiles()
 	if (toRemove.size() > 0)
 	{
 		/* remove items */
-		for(rit = toRemove.begin(); rit != toRemove.end(); rit++)
+		for(rit = toRemove.begin(); rit != toRemove.end(); ++rit)
 		{
 			if (mFiles.end() != (it = mFiles.find(*rit)))
 			{
@@ -398,9 +393,9 @@ bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 
 
     std::map<RsFileHash, FileDetails>::const_iterator it;
-	for(it = mFiles.begin(); it != mFiles.end(); it++)
+	for(it = mFiles.begin(); it != mFiles.end(); ++it)
 	{
-		RsFileConfigItem *fi = new RsFileConfigItem();
+		RsFileConfigItem_deprecated *fi = new RsFileConfigItem_deprecated();
 		fi->file.path        = (it->second).info.path;
 		fi->file.name        = (it->second).info.fname;
 		fi->file.hash        = (it->second).info.hash;
@@ -430,10 +425,10 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 
 
 	std::list<RsItem *>::iterator it;
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 
-		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
+		RsFileConfigItem_deprecated *fi = dynamic_cast<RsFileConfigItem_deprecated *>(*it);
 		if (!fi)
 		{
 			delete (*it);
@@ -489,6 +484,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	}
+    load.clear() ;
 	return true;
 }
 

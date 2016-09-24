@@ -48,6 +48,16 @@ typedef std::map<RsPeerId, TransactionIdMap > TransactionsPeerMap;
 
 class PgpAuxUtils;
 
+class RsGroupNetworkStatsRecord
+{
+    public:
+        RsGroupNetworkStatsRecord() { max_visible_count= 0 ; update_TS=0; }
+
+        std::set<RsPeerId> suppliers ;
+	uint32_t max_visible_count ;
+    time_t update_TS ;
+};
+
 /*!
  * This class implements the RsNetWorkExchangeService
  * using transactions to handle synchrnisation of Nxs items between
@@ -78,12 +88,12 @@ public:
      * arrive
      */
     RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
-                RsNxsNetMgr *netMgr, 
- 		RsNxsObserver *nxsObs,  // used to be = NULL.
-		const RsServiceInfo serviceInfo,
-		RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, 
-		PgpAuxUtils *pgpUtils = NULL,
-		bool grpAutoSync = true);
+                RsNxsNetMgr *netMgr,
+        RsNxsObserver *nxsObs,  // used to be = NULL.
+        const RsServiceInfo serviceInfo,
+        RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, RsGixs *gixs=NULL,
+        PgpAuxUtils *pgpUtils = NULL,
+        bool grpAutoSync = true, bool msgAutoSync = true);
 
     virtual ~RsGxsNetService();
 
@@ -96,14 +106,16 @@ public:
      * Use this to set how far back synchronisation of messages should take place
      * @param age the max age a sync item can to be allowed in a synchronisation
      */
-    void setSyncAge(uint32_t age);
+    // NOT IMPLEMENTED
+    virtual void setSyncAge(uint32_t age);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers
      * @param enabled set to false to disable pause, and true otherwise
      */
-    void pauseSynchronisation(bool enabled);
+    // NOT IMPLEMENTED
+    virtual void pauseSynchronisation(bool enabled);
 
 
     /*!
@@ -112,7 +124,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
+    virtual int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -120,10 +132,32 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
+    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
+
+    /*!
+     * share publish keys for the specified group with the peers in the specified list.
+     */
+
+    virtual int sharePublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
+
+    /*!
+     * Returns statistics for the group networking activity: popularity (number of friends subscribers) and max_visible_msg_count,
+     * that is the max nnumber of messages reported by a friend.
+     */
+    virtual bool getGroupNetworkStats(const RsGxsGroupId& id,RsGroupNetworkStats& stats) ;
+
+    /*!
+     * Used to inform the net service that we changed subscription status. That helps
+     * optimising data transfer when e.g. unsubsribed groups are updated less often, etc
+     */
+    virtual void subscribeStatusChanged(const RsGxsGroupId& id,bool subscribed) ;
+
+    virtual void rejectMessage(const RsGxsMessageId& msg_id) ;
+    
+    virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) ;
 
     /* p3Config methods */
-
 public:
 
     bool	loadList(std::list<RsItem *>& load);
@@ -140,8 +174,7 @@ public:
     /*!
      * Processes transactions and job queue
      */
-    void run();
-
+    virtual void data_tick();
 private:
 
     /*!
@@ -185,7 +218,7 @@ private:
      * @param item the transaction item to process
      * @return false ownership of item left with callee
      */
-    bool locked_processTransac(RsNxsTransac* item);
+    bool locked_processTransac(RsNxsTransacItem* item);
 
     /*!
      * This adds a transaction
@@ -196,6 +229,13 @@ private:
      */
     void locked_completeTransaction(NxsTransaction* trans);
 
+    /*!
+     * \brief locked_stampMsgServerUpdateTS
+     * 		updates the server msg time stamp. This function is the locked method for the one above with similar name
+     * \param gid group id to stamp.
+     * \return
+     */
+    bool locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid);
     /*!
      * This retrieves a unique transaction id that
      * can be used in an outgoing transaction
@@ -288,13 +328,25 @@ private:
      * of groups held by user
      * @param item contains grp sync info
      */
-    void handleRecvSyncGroup(RsNxsSyncGrp* item);
+    void handleRecvSyncGroup(RsNxsSyncGrpReqItem* item);
 
+    /*!
+     * Handles an nxs item for group statistics
+     * @param item contaims update time stamp and number of messages
+     */
+    void handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs);
+    
     /*!
      * Handles an nxs item for msgs synchronisation
      * @param item contaims msg sync info
      */
-    void handleRecvSyncMessage(RsNxsSyncMsg* item);
+    void handleRecvSyncMessage(RsNxsSyncMsgReqItem* item,bool item_was_encrypted);
+
+    /*!
+     * Handles an nxs item for group publish key
+     * @param item contaims keys/grp info
+     */
+    void handleRecvPublishKeys(RsNxsGroupPublishKeyItem*) ;
 
     /** E: item handlers **/
 
@@ -307,42 +359,61 @@ private:
      * @param toVet groupid/peer to vet are stored here if their circle id is not cached
      * @return false, if you cannot send to this peer, true otherwise
      */
-    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
+    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet, bool &should_encrypt);
+    bool canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId, RsGxsCircleId &should_encrypt_id);
 
+    /*!
+     * \brief checkPermissionsForFriendGroup
+     * 			Checks that we can send/recv from that node, given that the grpMeta has a distribution limited to a local circle.
+     * \param sslId		Candidate peer to send to or to receive from.
+     * \param grpMeta	Contains info about the group id, internal circle id, etc.
+     * \return 			true only when the internal exists and validates as a friend node group, and contains the owner of sslId.
+     */
+    bool checkPermissionsForFriendGroup(const RsPeerId& sslId,const RsGxsGrpMetaData& grpMeta) ;
 
-    bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId);
-
-    bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta);
+    bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta, RsGxsCircleId& should_encrypt_id);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
-    void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
-    void locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend);
+    bool locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend) ;
+    bool locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend) ;
 
-    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
-    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
+    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN); // forms a grp list request
+    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);	// forms a msg list request
     void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
-    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
+    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId &grp_id, const uint32_t& transN);
+    
     void syncWithPeers();
+    void syncGrpStatistics();
     void addGroupItemToList(NxsTransaction*& tr,
     		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
 
-    bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
+    //bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
 
     void processExplicitGroupRequests();
-    
-    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
+
+    void locked_doMsgUpdateWork(const RsNxsTransacItem* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
+#ifdef TO_REMOVE
+    void updateClientSyncTS();
+#endif
 
-    bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
-    bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
+    bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
 
+    static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
+    
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
 	typedef std::vector<RsNxsMsg*> MsgFragments;
+
+    /*!
+     * Loops over pending publish key orders.
+     */
+    void sharePublishKeysPending() ;
 
     /*!
      * Fragment a message into individual fragments which are at most 150kb
@@ -384,7 +455,7 @@ private:
      * @param fragments message fragments which are not necessarily from the same message
      * @param partFragments the partitioned fragments (into message ids)
      */
-    void collateMsgFragments(MsgFragments fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const;
+    void collateMsgFragments(MsgFragments &fragments, std::map<RsGxsMessageId, MsgFragments>& partFragments) const;
 
     /*!
 	 * Note that if all fragments for a group are not found then its fragments are dropped
@@ -392,6 +463,23 @@ private:
 	 * @param partFragments the partitioned fragments (into message ids)
 	 */
     void collateGrpFragments(GrpFragments fragments, std::map<RsGxsGroupId, GrpFragments>& partFragments) const;
+
+    /*!
+    * stamp the group info from that particular peer at the given time.
+    */
+
+    void locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages) ;
+
+    /*!
+    * encrypts/decrypts the transaction for the destination circle id.
+    */
+    bool encryptSingleNxsItem(RsNxsItem *item, const RsGxsCircleId& destination_circle, const RsGxsGroupId &destination_group, RsNxsItem *& encrypted_item, uint32_t &status) ;
+    bool decryptSingleNxsItem(const RsNxsEncryptedDataItem *encrypted_item, RsNxsItem *&nxsitem, std::vector<RsTlvPrivateRSAKey> *private_keys=NULL);
+    bool processTransactionForDecryption(NxsTransaction *tr); // return false when the keys are not loaded => need retry later
+
+    void cleanRejectedMessages();
+    void processObserverNotifications();
+
 private:
 
 
@@ -409,8 +497,8 @@ private:
     /*** transactions ***/
 
     /*** synchronisation ***/
-    std::list<RsNxsSyncGrp*> mSyncGrp;
-    std::list<RsNxsSyncMsg*> mSyncMsg;
+    std::list<RsNxsSyncGrpItem*> mSyncGrp;
+    std::list<RsNxsSyncMsgItem*> mSyncMsg;
     /*** synchronisation ***/
 
     RsNxsObserver* mObserver;
@@ -421,7 +509,6 @@ private:
     // for an active transaction
     uint32_t mTransactionTimeOut;
 
-
     RsPeerId mOwnId;
 
     RsNxsNetMgr* mNetMgr;
@@ -430,19 +517,25 @@ private:
     RsMutex mNxsMutex;
 
     uint32_t mSyncTs;
+    uint32_t mLastKeyPublishTs;
+    uint32_t mLastCleanRejectedMessages;
 
     const uint32_t mSYNC_PERIOD;
+    int mUpdateCounter ;
 
     RsGcxs* mCircles;
+    RsGixs *mGixs;
     RsGixsReputation* mReputations;
     PgpAuxUtils *mPgpUtils;
     bool mGrpAutoSync;
+    bool mAllowMsgSync;
 
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
-
+    std::map<RsGxsGroupId,std::set<RsPeerId> > mPendingPublishKeyRecipients ;
     std::map<RsPeerId, std::list<RsGxsGroupId> > mExplicitRequest;
+    std::map<RsPeerId, std::set<RsGxsGroupId> > mPartialMsgUpdates ;
 
     // nxs sync optimisation
     // can pull dynamically the latest timestamp for each message
@@ -452,15 +545,22 @@ public:
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
-
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
     ServerMsgMap mServerMsgUpdateMap;
     ClientGrpMap mClientGrpUpdateMap;
 
+    std::map<RsGxsGroupId,RsGroupNetworkStatsRecord> mGroupNetworkStats ;
+
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
+    
+    std::map<RsGxsMessageId,time_t> mRejectedMessages;
+    std::vector<RsNxsGrp*> mNewGroupsToNotify ;
+    std::vector<RsNxsMsg*> mNewMessagesToNotify ;
+    
+    void debugDump();
 };
 
 #endif // RSGXSNETSERVICE_H

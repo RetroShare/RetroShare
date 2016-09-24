@@ -32,7 +32,10 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbanlist.h"
 
-#define RS_PKT_SUBTYPE_BANLIST_ITEM       0x01
+#define RS_PKT_SUBTYPE_BANLIST_ITEM_deprecated  		0x01
+#define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM_deprecated   	0x02
+#define RS_PKT_SUBTYPE_BANLIST_ITEM				0x03
+#define RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM   			0x04
 
 /**************************************************************************/
 
@@ -47,33 +50,52 @@ class RsBanListItem: public RsItem
 		return; 
 	}
 
-virtual ~RsBanListItem();
-virtual void clear();  
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    virtual ~RsBanListItem();
+    virtual void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsTlvBanList	peerList;
-
 };
 
+class RsBanListConfigItem: public RsItem
+{
+public:
+    RsBanListConfigItem()
+            :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST, RS_PKT_SUBTYPE_BANLIST_CONFIG_ITEM) {}
+
+    virtual ~RsBanListConfigItem(){}
+    virtual void clear();
+
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+    uint32_t		type ;
+    RsPeerId  		peerId ;
+    time_t		update_time ;
+    RsTlvBanList	banned_peers;
+};
 
 class RsBanListSerialiser: public RsSerialType
 {
-	public:
-	RsBanListSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST)
-	{ return; }
-virtual     ~RsBanListSerialiser()
-	{ return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+public:
+    RsBanListSerialiser()
+            :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_BANLIST)
+    { return; }
+    virtual     ~RsBanListSerialiser()
+    { return; }
 
-	private:
+    virtual	uint32_t    size(RsItem *);
+    virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+    virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
-virtual	uint32_t    sizeList(RsBanListItem *);
-virtual	bool        serialiseList  (RsBanListItem *item, void *data, uint32_t *size);
-virtual	RsBanListItem *deserialiseList(void *data, uint32_t *size);
+private:
+
+    virtual	uint32_t    sizeList(RsBanListItem *);
+    virtual	bool        serialiseList  (RsBanListItem *item, void *data, uint32_t *size);
+    virtual	RsBanListItem *deserialiseList(void *data, uint32_t *size);
+
+    virtual	uint32_t    sizeListConfig(RsBanListConfigItem *);
+    virtual	bool        serialiseListConfig  (RsBanListConfigItem *item, void *data, uint32_t *size);
+    virtual	RsBanListConfigItem *deserialiseListConfig(void *data, uint32_t *size);
 
 
 };

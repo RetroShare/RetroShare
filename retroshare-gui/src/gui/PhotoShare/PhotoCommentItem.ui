@@ -147,11 +147,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="font">
-         <font>
-          <stylestrategy>PreferAntialias</stylestrategy>
-         </font>
-        </property>
         <property name="wordWrap">
          <bool>true</bool>
         </property>
@@ -182,7 +177,6 @@
          <font>
           <weight>75</weight>
           <bold>true</bold>
-          <stylestrategy>PreferAntialias</stylestrategy>
          </font>
         </property>
         <property name="text">
@@ -200,8 +194,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -75,9 +75,26 @@ public:
 
 };
 
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > NxsMsgDataResult;
+/*!
+ * This is used to query network statistics for a given group. This is useful to e.g. show group
+ * popularity, or number of visible messages for unsubscribed group.
+ */
+
+class RsGroupNetworkStats
+{
+public:
+    RsGroupNetworkStats()
+    {
+        mMaxVisibleCount = 0 ;
+    }
+
+    uint32_t mSuppliers ;
+    uint32_t mMaxVisibleCount ;
+};
+
+typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsNxsMsg*> > NxsMsgRelatedDataResult;
-typedef std::map<RsGxsGroupId, std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
+typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > GxsMsgResult; // <grpId, msgs>
 
 /*!
  * The main role of GDS is the preparation and handing out of messages requested from
@@ -230,6 +247,7 @@ public:
      */
     virtual int updateGroupMetaData(GrpLocMetaData& meta) = 0;
 
+    virtual int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys,uint32_t subscribed_flags) = 0 ;
 
     /*!
      * Completely clear out data stored in

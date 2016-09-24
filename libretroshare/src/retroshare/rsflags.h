@@ -28,6 +28,7 @@ template<int n> class t_RsFlags32
 
 		inline t_RsFlags32<n> operator| (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits | f._bits) ; }
 		inline t_RsFlags32<n> operator^ (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits ^ f._bits) ; }
+		inline t_RsFlags32<n> operator* (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits & f._bits) ; }
 
 		inline bool operator!=(const t_RsFlags32<n>& f) const { return _bits != f._bits ; }
 		inline bool operator==(const t_RsFlags32<n>& f) const { return _bits == f._bits ; }
@@ -46,7 +47,12 @@ template<int n> class t_RsFlags32
 
 		friend std::ostream& operator<<(std::ostream& o,const t_RsFlags32<n>& f) 	// friendly print with 0 and I
 		{
-			for(int i=31;i>=0;--i) { o << ( (f._bits&(1<<i))?"I":"0") ; if(i%8==0) o << " " ; }
+			for(int i=31;i>=0;--i) {
+				std::string res = f._bits&(1<<i)?"I":"0" ;
+				std::string blank = " " ;
+				o << res ;
+				if(i%8==0) o << blank ;
+			}
 			return o ;
 		}
 	private:
@@ -55,7 +61,7 @@ template<int n> class t_RsFlags32
 
 #define FLAGS_TAG_TRANSFER_REQS 	0x4228af
 #define FLAGS_TAG_FILE_STORAGE 	0x184738
-#define FLAGS_TAG_FILE_SEARCH 	0xf29ba5
+#define FLAGS_TAG_FILE_SEARCH 		0xf29ba5
 #define FLAGS_TAG_SERVICE_PERM 	0x380912
 #define FLAGS_TAG_SERVICE_CHAT 	0x839042
 

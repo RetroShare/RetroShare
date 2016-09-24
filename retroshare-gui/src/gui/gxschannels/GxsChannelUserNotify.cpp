@@ -37,12 +37,12 @@ bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsChannelUserNotify::getIcon()
 {
-	return QIcon(":/images/channels16.png");
+	return QIcon(":/icons/png/channels.png");
 }
 
 QIcon GxsChannelUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/channels_new.png") : QIcon(":/images/channels.png");
+    return hasNew ? QIcon(":/icons/png/channels-notify.png") : QIcon(":/icons/png/channels.png");
 }
 
 void GxsChannelUserNotify::iconClicked()

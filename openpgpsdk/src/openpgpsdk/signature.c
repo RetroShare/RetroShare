@@ -1116,10 +1116,14 @@ ops_boolean_t ops_sign_file_as_cleartext(const char* input_filename,
 		&& ops_signature_hashed_subpackets_end(sig)
 		&& ops_write_signature(sig, &skey->public_key, skey, cinfo);
 
-	ops_teardown_file_write(cinfo, fd_out);
-
 	if (!rtn)
 		OPS_ERROR(&cinfo->errors, OPS_E_W, "Cannot sign file as cleartext");
+
+    // we can't get errors in cinfo->errors while closing
+    // because ops_teardown_file_write frees everything
+    // it seems that writer finalisers do not report errors anyway
+    // and ops_teardown_file_write does not have an return value, so we could not bubble something up
+    ops_teardown_file_write(cinfo, fd_out);
 
 	return rtn;
 }

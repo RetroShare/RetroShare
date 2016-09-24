@@ -115,7 +115,7 @@ bool ftTransferModule::setFileSources(const std::list<RsPeerId>& peerIds)
 #endif
 
   std::list<RsPeerId>::const_iterator it;
-  for(it = peerIds.begin(); it != peerIds.end(); it++)
+  for(it = peerIds.begin(); it != peerIds.end(); ++it)
   {
 
 #ifdef FT_DEBUG
@@ -137,7 +137,7 @@ bool ftTransferModule::getFileSources(std::list<RsPeerId> &peerIds)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
     std::map<RsPeerId,peerInfo>::iterator it;
-    for(it = mFileSources.begin(); it != mFileSources.end(); it++)
+    for(it = mFileSources.begin(); it != mFileSources.end(); ++it)
     {
 	peerIds.push_back(it->first);
     }
@@ -188,12 +188,12 @@ bool ftTransferModule::removeFileSource(const RsPeerId& peerId)
 		/* add in new source */
 		mFileSources.erase(mit) ;
 #ifdef FT_DEBUG
-		std::cerr << "ftTransferModule::addFileSource(): removing peer: " << peerId << " from sourceList" << std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource(): removing peer: " << peerId << " from sourceList" << std::endl;
 #endif
 	}
 #ifdef FT_DEBUG
 	else
-		std::cerr << "ftTransferModule::addFileSource(): Should remove peer: " << peerId << ", but it's not in the source list. " << std::cerr << std::endl;
+		std::cerr << "ftTransferModule::addFileSource(): Should remove peer: " << peerId << ", but it's not in the source list. " << std::endl;
 #endif
 
 	return true;
@@ -428,7 +428,7 @@ bool ftTransferModule::queryInactive()
 		return false ;
 
 	std::map<RsPeerId,peerInfo>::iterator mit;
-	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+	for(mit = mFileSources.begin(); mit != mFileSources.end(); ++mit)
 	{
 		locked_tickPeerTransfer(mit->second);
 	}
@@ -497,7 +497,7 @@ int ftTransferModule::tick()
 
 	std::cerr << "Peers: ";
   	std::map<RsPeerId,peerInfo>::iterator it;
-  	for(it = mFileSources.begin(); it != mFileSources.end(); it++)
+  	for(it = mFileSources.begin(); it != mFileSources.end(); ++it)
 	{
 		std::cerr << " " << it->first;
 	}
@@ -542,13 +542,13 @@ bool ftTransferModule::isCheckingHash()
 	return mFlag == FT_TM_FLAG_CHECKING || mFlag == FT_TM_FLAG_CHUNK_CRC;
 }
 
-class HashThread: public RsThread
+class HashThread: public RsSingleJobThread
 {
 	public:
 		HashThread(ftFileCreator *m) 
 			: _hashThreadMtx("HashThread"), _m(m),_finished(false),_hash("") {}
 
-		virtual void run()
+        virtual void run()
 		{
 #ifdef FT_DEBUG
 			std::cerr << "hash thread is running for file " << std::endl;
@@ -592,7 +592,7 @@ bool ftTransferModule::checkFile()
 			// Note: using new is really important to avoid copy and write errors in the thread.
 			//
 			_hash_thread = new HashThread(mFileCreator) ;
-			_hash_thread->start() ;
+			_hash_thread->start("ft hash") ;
 #ifdef FT_DEBUG
 			std::cerr << "ftTransferModule::checkFile(): launched hashing thread for file " << mHash << std::endl ;
 #endif
@@ -608,8 +608,6 @@ bool ftTransferModule::checkFile()
 		}
 
 		RsFileHash check_hash( _hash_thread->hash() ) ;
-
-		_hash_thread->join();	// allow releasing of resources when finished.
 
 		delete _hash_thread ;
 		_hash_thread = NULL ;
@@ -649,7 +647,7 @@ void ftTransferModule::adjustSpeed()
 
 
   actualRate = 0;
-  for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+  for(mit = mFileSources.begin(); mit != mFileSources.end(); ++mit)
   {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::adjustSpeed()";
@@ -741,7 +739,7 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 #endif
 	/* update rate */
 
-	if(info.lastTransfers > 0 || ageReq > 2)
+    if( (info.lastTransfers > 0 && ageReq > 0) || ageReq > 2)
 	{
 		info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers / (float)ageReq;
 		info.lastTransfers = 0;

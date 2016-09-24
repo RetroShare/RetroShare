@@ -38,9 +38,10 @@
 
 #include "pqi/p3linkmgr.h"
 
-const int pqisslproxyzone = 3517;
+static struct RsLog::logInfo pqisslproxyzoneInfo = {RsLog::Default, "pqisslproxy"};
+#define pqisslproxyzone &pqisslproxyzoneInfo
 
-#define PROXY_DEBUG	1
+// #define PROXY_DEBUG	1
 
 #define PROXY_STATE_FAILED			0
 #define PROXY_STATE_INIT			1
@@ -595,7 +596,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, const std::string &value)
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
 	
 	                mDomainAddress = value;
+#ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;
+#endif
 	                return true;
 	        }
 	}
@@ -615,7 +618,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, uint32_t value)
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
 	
 	        	mRemotePort = value;
+#ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;
+#endif
 	                return true;
 	        }
 	}

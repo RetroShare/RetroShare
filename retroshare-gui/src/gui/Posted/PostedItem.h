@@ -26,48 +26,69 @@
 
 #include <QMetaType>
 
-#include "ui_PostedItem.h"
-
 #include <retroshare/rsposted.h>
 #include "gui/gxs/GxsFeedItem.h"
 
+namespace Ui {
+class PostedItem;
+}
+
 class RsPostedPost;
 
-class PostedItem : public GxsFeedItem, private Ui::PostedItem
+class PostedItem : public GxsFeedItem
 {
 	Q_OBJECT
 
 public:
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	virtual ~PostedItem();
+
+	bool setGroup(const RsPostedGroup& group, bool doFill = true);
+	bool setPost(const RsPostedPost& post, bool doFill = true);
 
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
-	void setContent(const RsPostedPost& post);
-	virtual void setContent(const QVariant &content);
 
+protected:
 	/* FeedItem */
-	virtual void expand(bool /*open*/) {}
+	virtual void doExpand(bool /*open*/) {}
 
 private slots:
 	void loadComments();
 	void makeUpVote();
 	void makeDownVote();
+	void readToggled(bool checked);
+	void readAndClearItem();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 protected:
-	virtual void loadMessage(const uint32_t &token);
+	/* GxsGroupFeedItem */
+	virtual QString groupName();
+	virtual void loadGroup(const uint32_t &token);
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+
+	/* GxsFeedItem */
 	virtual QString messageName();
+	virtual void loadMessage(const uint32_t &token);
+	virtual void loadComment(const uint32_t &token);
 
 private:
 	void setup();
+	void fill();
+	void setReadStatus(bool isNew, bool isUnread);
 
-	uint32_t mType;
-	bool mSelected;
+private:
+	bool mInFill;
+
+	RsPostedGroup mGroup;
 	RsPostedPost mPost;
+
+	/** Qt Designer generated object */
+	Ui::PostedItem *ui;
 };
 
 Q_DECLARE_METATYPE(RsPostedPost)

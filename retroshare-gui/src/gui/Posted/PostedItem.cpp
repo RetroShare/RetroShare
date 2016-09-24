@@ -23,142 +23,322 @@
 
 #include <QDateTime>
 
+#include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
 
 #include <iostream>
 
+#define COLOR_NORMAL QColor(248, 248, 248)
+#define COLOR_NEW    QColor(220, 236, 253)
+
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
-	GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, true, false)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
 {
 	setup();
+
+	requestGroup();
+	requestMessage();
+	requestComment();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome) :
-	GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false, false),
-	mPost(post)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
 
-	setContent(mPost);
+	setGroup(group, false);
+	setPost(post);
+	requestComment();
+}
+
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
+{
+	setup();
+
+	requestGroup();
+	setPost(post);
+	requestComment();
+}
+
+PostedItem::~PostedItem()
+{
+	delete(ui);
 }
 
 void PostedItem::setup()
 {
-	setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui = new Ui::PostedItem;
+	ui->setupUi(this);
+
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect(commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
-	connect(voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-	connect(voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+	mInFill = false;
+
+	/* clear ui */
+	ui->titleLabel->setText(tr("Loading"));
+	ui->dateLabel->clear();
+	ui->fromLabel->clear();
+	ui->siteLabel->clear();
+	ui->newCommentLabel->hide();
+	ui->commLabel->hide();
+
+	/* general ones */
+	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
+
+	/* specific */
+	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
+
+	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
+	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+
+	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+
+	ui->clearButton->hide();
+	ui->readAndClearButton->hide();
+
+	ui->frame_notes->hide();
+}
+
+bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
+{
+	if (groupId() != group.mMeta.mGroupId) {
+		std::cerr << "PostedItem::setGroup() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mGroup = group;
+
+	if (doFill) {
+		fill();
+	}
+
+	return true;
+}
+
+bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
+{
+	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
+		std::cerr << "PostedItem::setPost() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mPost = post;
+
+	if (doFill) {
+		fill();
+	}
+
+	return true;
+}
+
+void PostedItem::loadGroup(const uint32_t &token)
+{
+	std::vector<RsPostedGroup> groups;
+	if (!rsPosted->getGroupData(token, groups))
+	{
+		std::cerr << "PostedItem::loadGroup() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "PostedItem::loadGroup() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
+
+	setGroup(groups[0]);
 }
 
 void PostedItem::loadMessage(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
-	if (!rsPosted->getPostData(token, posts))
+	std::vector<RsGxsComment> cmts;
+	if (!rsPosted->getPostData(token, posts, cmts))
 	{
 		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
 
-	if (posts.size() != 1)
+	if (posts.size() == 1)
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+		setPost(posts[0]);
+	}
+	else if (cmts.size() == 1)
+	{
+		RsGxsComment cmt = cmts[0];
+
+		ui->newCommentLabel->show();
+		ui->commLabel->show();
+		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+
+		//Change this item to be uploaded with thread element.
+		setMessageId(cmt.mMeta.mThreadId);
+		requestMessage();
+	}
+	else
+	{
+		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
+		std::cerr << std::endl;
+		removeItem();
+		return;
+	}
+}
+
+void PostedItem::loadComment(const uint32_t &token)
+{
+	std::vector<RsGxsComment> cmts;
+	if (!rsPosted->getRelatedComments(token, cmts))
+	{
+		std::cerr << "GxsChannelPostItem::loadComment() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
 
-	mPost = posts[0];
-	setContent(mPost);
+	size_t comNb = cmts.size();
+	QString sComButText = tr("Comment");
+	if (comNb == 1) {
+		sComButText = sComButText.append("(1)");
+	} else if (comNb > 1) {
+		sComButText = tr("Comments").append("(%1)").arg(comNb);
+	}
+	ui->commentButton->setText(sComButText);
 }
 
-void PostedItem::setContent(const QVariant &content)
+void PostedItem::fill()
 {
-	if (!content.canConvert<RsPostedPost>()) {
+	if (isLoading()) {
+		/* Wait for all requests */
 		return;
 	}
 
-	RsPostedPost post = content.value<RsPostedPost>();
-	setContent(post);
-}
-
-void PostedItem::setContent(const RsPostedPost &post)
-{
-	mPost = post;
+	mInFill = true;
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-	dateLabel->setText(timestamp);
-	fromLabel->setId(post.mMeta.mAuthorId);
-	titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-					   QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
-	siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
-					   QString::fromStdString(post.mLink) + "</span></a>");
+	QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
+	ui->dateLabel->setText(timestamp);
+	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
+
+	// Use QUrl to check/parse our URL
+	// The only combination that seems to work: load as EncodedUrl, extract toEncoded().
+	QByteArray urlarray(mPost.mLink.c_str());
+    QUrl url = QUrl::fromEncoded(urlarray.trimmed());
+	QString urlstr = "Invalid Link";
+	QString sitestr = "Invalid Link";
+	bool urlOkay = url.isValid();
+	if (urlOkay)
+	{
+		QString scheme = url.scheme();
+		if ((scheme != "https") 
+			&& (scheme != "http")
+			&& (scheme != "ftp") 
+			&& (scheme != "retroshare")) 
+		{
+			urlOkay = false;
+			sitestr = "Invalid Link Scheme";
+		}
+	}
+    
+	if (urlOkay)
+	{
+		urlstr =  QString("<a href=\"");
+		urlstr += QString(url.toEncoded());
+		urlstr += QString("\" ><span style=\" text-decoration: underline; color:#2255AA;\"> ");
+		urlstr += messageName();
+		urlstr += QString(" </span></a>");
+
+		QString siteurl = url.scheme() + "://" + url.host();
+		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+	}
+
+	ui->titleLabel->setText(urlstr);
+	ui->siteLabel->setText(sitestr);
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
 	//score += " Top" + QString::number(post.mTopScore); 
 	//score += " New" + QString::number(post.mNewScore);
 
-	QString score = QString::number(post.mTopScore);
+	QString score = QString::number(mPost.mTopScore);
 
-	scoreLabel->setText(score); 
+	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	notes->setText(QString::fromUtf8(post.mNotes.c_str()));
+	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
 		// feed.
-		frame_notes->hide();
+		ui->frame_notes->hide();
 		//frame_comment->show();
-		commentButton->show();
+		ui->commentButton->show();
 
-		if (post.mComments)
+		if (mPost.mComments)
 		{
-			QString commentText = QString::number(post.mComments);
+			QString commentText = QString::number(mPost.mComments);
 			commentText += " ";
 			commentText += tr("Comments");
-			commentButton->setText(commentText);
+			ui->commentButton->setText(commentText);
 		}
 		else
 		{
-			commentButton->setText(tr("Comment"));
+			ui->commentButton->setText(tr("Comment"));
 		}
+
+		setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 	}
 	else
 	{
 		// no feed.
-		if(notes->text().isEmpty())
-		{		
-      frame_notes->hide();
+		if(ui->notes->text().isEmpty())
+		{
+			ui->frame_notes->hide();
 		}
 		else
 		{
-      frame_notes->show();
+			ui->frame_notes->show();
 		}
 		//frame_comment->hide();
-		commentButton->hide();
+		ui->commentButton->hide();
+
+		ui->readButton->hide();
+		ui->newLabel->hide();
+	}
+
+	if (mIsHome)
+	{
+		ui->clearButton->hide();
+		ui->readAndClearButton->hide();
+	}
+	else
+	{
+		ui->clearButton->show();
+		ui->readAndClearButton->show();
 	}
 
 	// disable voting buttons - if they have already voted.
-	if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+	if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 	{
-		voteUpButton->setEnabled(false);
-		voteDownButton->setEnabled(false);
+		ui->voteUpButton->setEnabled(false);
+		ui->voteDownButton->setEnabled(false);
 	}
 
-	uint32_t up, down, nComments;
-
 #if 0
+	uint32_t up, down, nComments;
+    
 	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
 	if(ok)
@@ -173,6 +353,10 @@ void PostedItem::setContent(const RsPostedPost &post)
 								  + QString::number(nComments) + "</span></p>");
 	}
 #endif
+
+	mInFill = false;
+
+	emit sizeChanged(this);
 }
 
 const RsPostedPost &PostedItem::getPost() const
@@ -183,6 +367,11 @@ const RsPostedPost &PostedItem::getPost() const
 RsPostedPost &PostedItem::post()
 {
 	return mPost;
+}
+
+QString PostedItem::groupName()
+{
+	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
 }
 
 QString PostedItem::messageName()
@@ -196,8 +385,8 @@ void PostedItem::makeDownVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, false);
 }
@@ -208,8 +397,8 @@ void PostedItem::makeUpVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, true);
 }
@@ -224,4 +413,56 @@ void PostedItem::loadComments()
 		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
 	}
+}
+
+void PostedItem::setReadStatus(bool isNew, bool isUnread)
+{
+	if (isUnread)
+	{
+		ui->readButton->setChecked(true);
+		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		ui->readButton->setChecked(false);
+		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+	}
+
+	ui->newLabel->setVisible(isNew);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+
+	QPalette palette = ui->mainFrame->palette();
+	palette.setColor(ui->mainFrame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL); // QScrollArea
+	palette.setColor(QPalette::Base, isNew ? COLOR_NEW : COLOR_NORMAL); // QTreeWidget
+	ui->mainFrame->setPalette(palette);
+
+	ui->mainFrame->setProperty("new", isNew);
+	Rshare::refreshStyleSheet(ui->mainFrame, false);
+}
+
+void PostedItem::readToggled(bool checked)
+{
+	if (mInFill) {
+		return;
+	}
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+
+	uint32_t token;
+	rsPosted->setMessageReadStatus(token, msgPair, !checked);
+
+	setReadStatus(false, checked);
+}
+
+void PostedItem::readAndClearItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "PostedItem::readAndClearItem()";
+	std::cerr << std::endl;
+#endif
+
+	readToggled(false);
+	removeItem();
 }

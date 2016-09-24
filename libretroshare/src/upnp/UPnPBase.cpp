@@ -1304,7 +1304,10 @@ int CUPnPControlPoint::Callback(Upnp_EventType EventType, void *Event, void * /*
 	// Somehow, this is unreliable. UPNP_DISCOVERY_ADVERTISEMENT_ALIVE events
 	// happen with a wrong cookie and... boom!
 	// CUPnPControlPoint *upnpCP = static_cast<CUPnPControlPoint *>(Cookie);
-	CUPnPControlPoint *upnpCP = CUPnPControlPoint::s_CtrlPoint;
+    CUPnPControlPoint *upnpCP = CUPnPControlPoint::s_CtrlPoint;
+
+    if(upnpCP == NULL)
+        return 0 ;
 	
 	//fprintf(stderr, "Callback: %d, Cookie: %p\n", EventType, Cookie);
 	switch (EventType) {

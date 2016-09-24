@@ -1,8 +1,13 @@
+#include <iostream>
+
+#include <QDir>
 #include <QDesktopServices>
 #include <QPainter>
 
 #include "RSTextBrowser.h"
 #include "RSImageBlockWidget.h"
+
+#include <retroshare/rsinit.h> //To get RsAccounts
 
 RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	QTextBrowser(parent)
@@ -12,12 +17,19 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 
 	mShowImages = true;
 	mImageBlockWidget = NULL;
+	mLinkClickActive = true;
+
+	highliter = new RsSyntaxHighlighter(this);
 
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
 
 void RSTextBrowser::linkClicked(const QUrl &url)
 {
+	if (!mLinkClickActive) {
+		return;
+	}
+
 	// some links are opened directly in the QTextBrowser with open external links set to true,
 	// so we handle links by our own
 
@@ -65,15 +77,33 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 {
-	if (mShowImages || type != QTextDocument::ImageResource || name.scheme().compare("data", Qt::CaseInsensitive) != 0) {
+	// case 1: always trust the image if it comes from an internal resource.
+
+	if(name.scheme().compare("qrc",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource)
 		return QTextBrowser::loadResource(type, name);
+
+	// case 2: always trust the image if it comes from local Config or Data directories.
+
+	if(name.scheme().compare("file",Qt::CaseInsensitive)==0 && type == QTextDocument::ImageResource) {
+		if (name.path().startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).absolutePath().prepend("/"),Qt::CaseInsensitive)
+		    || name.path().startsWith(QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str())).absolutePath().prepend("/"),Qt::CaseInsensitive))
+			return QTextBrowser::loadResource(type, name);
 	}
 
-	if (mImageBlockWidget) {
+	// case 3: only display if the user allows it. Data resources can be bad (svg bombs) but we filter them out globally at the network layer.
+	//         It would be good to add here a home-made resource loader that only loads images and not svg crap, just in case.
+
+	if(name.scheme().compare("data",Qt::CaseInsensitive)==0 && mShowImages)
+		return QTextBrowser::loadResource(type, name);
+
+	// case 4: otherwise, do not display
+
+	std::cerr << "TEXTBROWSER: refusing load ressource request: type=" << type << " scheme=" << name.scheme().toStdString() << ", url=" << name.toString().toStdString() << std::endl;
+
+	if (mImageBlockWidget)
 		mImageBlockWidget->show();
-	}
 
-	return QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
+	return QPixmap(":/images/imageblocked_24.png");
 }
 
 void RSTextBrowser::setImageBlockWidget(RSImageBlockWidget *widget)
@@ -123,4 +153,9 @@ void RSTextBrowser::resetImagesStatus(bool load)
 		mImageBlockWidget->hide();
 	}
 	mShowImages = load;
+}
+
+void RSTextBrowser::activateLinkClick(bool active)
+{
+	mLinkClickActive = active;
 }

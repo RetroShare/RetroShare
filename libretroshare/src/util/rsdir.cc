@@ -27,12 +27,13 @@
 // Includes for directory creation.
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
+#include "util/rsmemory.h"
 #include "retroshare/rstypes.h"
 #include "rsthreads.h"
 #include <iostream>
@@ -41,6 +42,7 @@
 #include <dirent.h>
 #include <openssl/sha.h>
 #include <iomanip>
+#include <sstream>
 
 #include <fstream>
 #include <stdexcept>
@@ -266,7 +268,14 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 	size_t T=0;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = malloc(BUFF_SIZE) ;
+	RsTemporaryMemory buffer(BUFF_SIZE) ;
+    
+    	if(!buffer)
+	{
+		fclose(in) ;
+		fclose(out) ;
+		return false ;
+	}
 
 	bool bRet = true;
 
@@ -285,9 +294,7 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 	fclose(in) ;
 	fclose(out) ;
 
-	free(buffer) ;
-
-	return true ;
+	return bRet ;
 
 #endif
 
@@ -645,13 +652,14 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint64_t &size, RsThread *thread /*= NULL*/)
 {
 	FILE *fd;
+
+	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
+		return false;
+
 	int  len;
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
-
-	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
-		return false;
 
 	/* determine size */
  	fseeko64(fd, 0, SEEK_END);
@@ -722,6 +730,32 @@ Sha1CheckSum RsDirUtil::sha1sum(const unsigned char *data, uint32_t size)
 	return Sha1CheckSum(sha_buf) ;
 }
 
+bool RsDirUtil::saveStringToFile(const std::string &file, const std::string &str)
+{
+    std::ofstream out(file.c_str(), std::ios_base::out | std::ios_base::binary);
+    if(!out.is_open())
+    {
+        std::cerr << "RsDirUtil::saveStringToFile() ERROR: can't open file " << file << std::endl;
+        return false;
+    }
+    out << str;
+    return true;
+}
+
+bool RsDirUtil::loadStringFromFile(const std::string &file, std::string &str)
+{
+    std::ifstream in(file.c_str(), std::ios_base::in | std::ios_base::binary);
+    if(!in.is_open())
+    {
+        std::cerr << "RsDirUtil::loadStringFromFile() ERROR: can't open file " << file << std::endl;
+        return false;
+    }
+    std::stringstream buffer;
+    buffer << in.rdbuf();
+    str = buffer.str();
+    return true;
+}
+
 bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 {
 	int loops = 0;
@@ -732,7 +766,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	std::wstring t;
 	librs::util::ConvertUtf8ToUtf16(to, t);
 
-	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 #else
 	std::string f(from),t(to) ;
 
@@ -746,11 +780,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #endif
 			/* set errno? */
 			return false ;
-#ifdef WIN32
-		Sleep(200);				/* 200 milliseconds */
-#else
-		usleep(100000);		/* 100000 microseconds */
-#endif
+		usleep(100 * 1000);		// 100 msec
 
 		if (loops >= 30)
 			return false ;
@@ -956,11 +986,7 @@ RsStackFileLock::RsStackFileLock(const std::string& file_path)
 	while(RsDirUtil::createLockFile(file_path,_file_handle))
 	{
 		std::cerr << "Cannot acquire file lock " << file_path << ", waiting 1 sec." << std::endl;
-#ifdef WINDOWS_SYS
-		Sleep(1000) ;
-#else
-		sleep(1) ;
-#endif
+		usleep(1 * 1000 * 1000) ; // 1 sec
 	}
 #ifdef RSDIR_DEBUG 
 	std::cerr << "Acquired file handle " << _file_handle << ", lock file:" << file_path << std::endl;
@@ -1348,7 +1374,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #else
 	std::wstring f(from),t(to) ;
 #endif
-	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 #else
 	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
         std::string f(from.begin(), from.end());
@@ -1364,11 +1390,7 @@ bool RsDirUtil::renameWideFile(const std::wstring& from, const std::wstring& to)
 #endif
 			/* set errno? */
 			return false ;
-#ifdef WIN32
-		Sleep(100000);				/* us */
-#else
-		usleep(100000);				/* us */
-#endif
+		usleep(100 * 1000); //100 msec
 
 		if (loops >= 30)
 			return false ;

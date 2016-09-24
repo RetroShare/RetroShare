@@ -41,10 +41,9 @@ class PgpAuxUtils
 	virtual bool getGPGAllList(std::list<RsPgpId> &ids) = 0;
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const = 0;
 
+	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const =0;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint) = 0;
-	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result ) = 0;
-
-
+	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason) = 0;
 };
 
 class PgpAuxUtilsImpl: public PgpAuxUtils
@@ -55,10 +54,11 @@ public:
 	virtual const RsPgpId &getPGPOwnId();
 	virtual RsPgpId getPGPId(const RsPeerId& sslid);
 
+	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const ;
 	virtual	bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
 	virtual bool getGPGAllList(std::list<RsPgpId> &ids);
-	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
+	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason);
 
 };
 

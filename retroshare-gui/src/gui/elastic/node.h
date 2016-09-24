@@ -72,14 +72,19 @@ public:
     void addEdge(Edge *edge);
     const QList<Edge *>& edges() const;
 
-    int type() const { return Type; }
-	 std::string idString() const { return _gpg_id.toStdString() ; }
+	int type() const { return Type; }
+	std::string idString() const { return _gpg_id.toStdString() ; }
+	std::string descString() const { return _desc_string ; }
 
     void calculateForces(const double *data,int width,int height,int W,int H,float x,float y,float speedf);
     bool advance();
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
+
+	void setNodeDrawSize(int nds){mNodeDrawSize = nds;}
+	int getNodeDrawSize(){return mNodeDrawSize;}
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 	 int n_edges() const { return edgeList.size() ; }
@@ -106,16 +111,17 @@ private:
 	 GraphWidget::AuthType _auth ;
 	 bool mDeterminedBB ;
 	 int mBBWidth ;
+	 int mNodeDrawSize;
 
 	 static Node *_selected_node ;
 
 	 RsPeerId _ssl_id ;
 	 RsPgpId _gpg_id ;
 
-	 static const float MASS_FACTOR = 10 ;
-	 static const float FRICTION_FACTOR = 10.8 ;
-	 static const float REPULSION_FACTOR = 4 ;
-	 static const float NODE_DISTANCE = 130.0 ;
+     static const float MASS_FACTOR;
+     static const float FRICTION_FACTOR;
+     static const float REPULSION_FACTOR;
+     static const float NODE_DISTANCE;
 };
 
 #endif

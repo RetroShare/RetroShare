@@ -59,14 +59,14 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
 //    ui.checkBoxTunnelConnection->setChecked(b) ;
     
-    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
-    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
  
     ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
 	  
   /* Hide platform specific features */
-#ifndef Q_WS_WIN
+#ifndef Q_OS_WIN
   ui.checkBoxRunRetroshareAtSystemStartup->setVisible(false);
   ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
 #endif
@@ -183,16 +183,31 @@ void QuickStartWizard::on_pushButtonSharesExit_clicked()
         close();
 }
 
-void QuickStartWizard::on_pushButtonSystemBack_clicked()
+void QuickStartWizard::on_pushButtonStyleBack_clicked()
 {
         ui.pagesWizard->setCurrentIndex(2);
+}
+
+void QuickStartWizard::on_pushButtonStyleNext_clicked()
+{
+        ui.pagesWizard->setCurrentIndex(4);
+}
+
+void QuickStartWizard::on_pushButtonStyleExit_clicked()
+{
+        close();
+}
+
+void QuickStartWizard::on_pushButtonSystemBack_clicked()
+{
+        ui.pagesWizard->setCurrentIndex(3);
 }
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
   Settings->setStartMinimized(ui.checkBoxStartMinimized->isChecked());
   Settings->setValue("doQuit", ui.checkBoxQuit->isChecked());
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
 #endif
 
@@ -239,7 +254,7 @@ void QuickStartWizard::on_pushButtonSharesRemove_clicked()
 
 	QString queryWrn;
 	queryWrn.clear();
-	queryWrn.append(tr("Do you really want to stop sharing this directory ? "));
+	queryWrn.append(tr("Do you really want to stop sharing this directory ?"));
 
 	if (qdir)
 	{
@@ -279,7 +294,7 @@ void QuickStartWizard::loadShare()
 	connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
 
 	int row=0 ;
-	for(it = dirs.begin(); it != dirs.end(); it++,++row)
+	for(it = dirs.begin(); it != dirs.end(); ++it,++row)
 	{
 		listWidget->insertRow(row) ;
 		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
@@ -289,7 +304,7 @@ void QuickStartWizard::loadShare()
 		cb->addItem(tr("Browsable")) ;
 		cb->addItem(tr("Universal")) ;
 
-		cb->setToolTip(tr("Decide here whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
+		cb->setToolTip(tr("Please decide whether this directory is\n* Network Wide: \tanonymously shared over the network (including your friends)\n* Browsable: \tbrowsable by your friends\n* Universal: \t\tboth")) ;
 
 		// TODO
 		//  - set combobox current value depending on what rsFiles reports.
@@ -345,7 +360,7 @@ void QuickStartWizard::updateFlags(bool b)
 	rsFiles->getSharedDirectories(dirs);
 
 	int row=0 ;
-	for(it = dirs.begin(); it != dirs.end(); it++,++row)
+	for(it = dirs.begin(); it != dirs.end(); ++it,++row)
 	{
 		std::cerr << "Looking for row=" << row << ", file=" << (*it).filename << ", flags=" << (*it).shareflags << std::endl ;
 		FileStorageFlags current_flags(0u) ;
@@ -381,7 +396,7 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
   bool minimized;
   ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
@@ -390,6 +405,9 @@ QuickStartWizard::loadGeneral()
   ui.checkBoxStartMinimized->setChecked(Settings->getStartMinimized());
   ui.checkBoxQuit->setChecked(Settings->value("doQuit", false).toBool());
   
+  ui.rbtPageOnToolBar->setChecked(Settings->getPageButtonLoc());
+	ui.rbtPageOnListItem->setChecked(!Settings->getPageButtonLoc());
+
   //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
@@ -419,6 +437,12 @@ void QuickStartWizard::loadNetwork()
 		case RS_NETMODE_UDP:
 			netIndex = 1;
 			break;
+        case RS_NETMODE_HIDDEN:
+            ui.netModeLabel->hide();
+            ui.netModeComboBox->hide();
+            ui.discoveryLabel->hide();
+            ui.discoveryComboBox->hide();
+            break;
 		default:
 		case RS_NETMODE_UPNP:
 			netIndex = 0;
@@ -471,6 +495,8 @@ void QuickStartWizard::saveChanges()
 	QString str;
 
 	//bool saveAddr = false;
+
+	Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());
 
 
 	RsPeerDetails detail;

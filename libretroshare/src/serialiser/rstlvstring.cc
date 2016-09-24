@@ -218,14 +218,14 @@ std::ostream &RsTlvStringSet::printHex(std::ostream &out, uint16_t indent) const
 /************************************* String Set Ref ************************************/
 /* This is exactly the same as StringSet, but it uses an alternative list.
  */
-RsTlvStringSetRef::RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids) 
+RsTlvStringSetRef::RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids)
 	:mType(type), ids(refids)
 {
 }
 
 void RsTlvStringSetRef::TlvClear()
 {
-	ids.clear();
+    ids.clear();
 
 }
 

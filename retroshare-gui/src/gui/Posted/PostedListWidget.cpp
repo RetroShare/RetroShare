@@ -28,7 +28,6 @@
 
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
-#include "gui/Identity/IdDialog.h"
 #include "gui/common/UIStateHelper.h"
 
 #include <retroshare/rsposted.h>
@@ -45,13 +44,13 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	ui->setupUi(this);
 
 	/* Setup UI helper */
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->hotSortButton);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->newSortButton);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->topSortButton);
+
 	mStateHelper->addWidget(mTokenTypePosts, ui->hotSortButton);
 	mStateHelper->addWidget(mTokenTypePosts, ui->newSortButton);
 	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
-
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->hotSortButton);
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->newSortButton);
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->topSortButton);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
@@ -62,8 +61,6 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
-
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
@@ -110,7 +107,7 @@ void PostedListWidget::processSettings(bool /*load*/)
 
 QIcon PostedListWidget::groupIcon()
 {
-	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypePosts)) {
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
 //		return QIcon(":/images/kalarm.png");
 	}
 
@@ -182,8 +179,7 @@ void PostedListWidget::showPrev()
 
 void PostedListWidget::updateShowText()
 {
-	QString showText = tr("Showing");
-	showText += " ";
+    QString showText ;
 	showText += QString::number(mPostIndex + 1);
 	showText += "-";
 	showText += QString::number(mPostIndex + mPostShow);
@@ -273,14 +269,6 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, mTokenTypeVote);
 }
 
-void PostedListWidget::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
-}
-
 void PostedListWidget::subscribeGroup(bool subscribe)
 {
 	if (groupId().isNull()) {
@@ -311,15 +299,7 @@ void PostedListWidget::loadVoteData(const uint32_t &/*token*/)
 
 void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 {
-	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
-	{
-		mStateHelper->setWidgetEnabled(ui->submitPostButton, true);
-	}
-	else
-	{
-		mStateHelper->setWidgetEnabled(ui->submitPostButton, false);
-	}
-
+	mStateHelper->setWidgetEnabled(ui->submitPostButton, IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 }
 
@@ -330,7 +310,11 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 
 void PostedListWidget::loadPost(const RsPostedPost &post)
 {
-	PostedItem *item = new PostedItem(this, 0, post, true);
+	/* Group is not always available because of the TokenQueue */
+	RsPostedGroup dummyGroup;
+	dummyGroup.mMeta.mGroupId = groupId();
+
+	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true, false);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mPosts.insert(post.mMeta.mMsgId, item);
 	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
@@ -460,7 +444,7 @@ void PostedListWidget::applyRanking()
 			std::cerr << std::endl;
 			item->hide();
 		}
-		counter++;
+		++counter;
 	}
 
 	std::cerr << "PostedListWidget::applyRanking() Loaded New Order";
@@ -480,6 +464,12 @@ void PostedListWidget::clearPosts()
 	mPosts.clear();
 }
 
+bool PostedListWidget::navigatePostItem(const RsGxsMessageId & /*msgId*/)
+{
+	//TODO
+	return false;
+}
+
 void PostedListWidget::shallowClearPosts()
 {
 	std::cerr << "PostedListWidget::shallowClearPosts()" << std::endl;
@@ -489,7 +479,7 @@ void PostedListWidget::shallowClearPosts()
 
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
 	int count = alayout->count();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QLayoutItem *litem = alayout->itemAt(i);
 		if (!litem)
@@ -514,7 +504,7 @@ void PostedListWidget::shallowClearPosts()
 		}
 	}
 
-	for(pit = postedItems.begin(); pit != postedItems.end(); pit++)
+	for(pit = postedItems.begin(); pit != postedItems.end(); ++pit)
 	{
 		PostedItem *item = *pit;
 		alayout->removeWidget(item);
@@ -536,13 +526,13 @@ bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &m
 	return false;
 }
 
-void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
+void PostedListWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
 {
 	std::vector<RsPostedPost> posts;
 	rsPosted->getPostData(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); vit++)
+	for(vit = posts.begin(); vit != posts.end(); ++vit)
 	{
 		RsPostedPost& p = *vit;
 		loadPost(p);
@@ -551,13 +541,13 @@ void PostedListWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThr
 	applyRanking();
 }
 
-void PostedListWidget::insertRelatedPosts(const uint32_t &token)
+void PostedListWidget::insertPosts(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
-	rsPosted->getRelatedPosts(token, posts);
+	rsPosted->getPostData(token, posts);
 
 	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); vit++)
+	for(vit = posts.begin(); vit != posts.end(); ++vit)
 	{
 		RsPostedPost& p = *vit;
 
@@ -567,7 +557,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 			std::cerr << "PostedListWidget::updateCurrentDisplayComplete() updating MsgId: " << p.mMeta.mMsgId;
 			std::cerr << std::endl;
 
-			mPosts[p.mMeta.mMsgId]->setContent(p);
+			mPosts[p.mMeta.mMsgId]->setPost(p);
 		}
 		else
 		{
@@ -580,7 +570,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 
 	time_t now = time(NULL);
 	QMap<RsGxsMessageId, PostedItem*>::iterator pit;
-	for(pit = mPosts.begin(); pit != mPosts.end(); pit++)
+	for(pit = mPosts.begin(); pit != mPosts.end(); ++pit)
 	{
 		(*pit)->post().calculateScores(now);
 	}
@@ -588,7 +578,7 @@ void PostedListWidget::insertRelatedPosts(const uint32_t &token)
 	applyRanking();
 }
 
-void PostedListWidget::setAllMessagesRead(bool read)
+void PostedListWidget::setAllMessagesReadDo(bool read, uint32_t &token)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
 		return;
@@ -597,7 +587,6 @@ void PostedListWidget::setAllMessagesRead(bool read)
 	foreach (PostedItem *item, mPostItems) {
 		RsGxsGrpMsgIdPair msgPair = std::make_pair(item->groupId(), item->messageId());
 
-		uint32_t token;
 		rsPosted->setMessageReadStatus(token, msgPair, read);
 	}
 }

@@ -1,5 +1,26 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2015
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
 #include <retroshare/rsplugin.h>
-#include <util/rsversion.h>
+#include <retroshare/rsversion.h>
+#include <retroshare/rsinit.h>
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <QTranslator>
 #include <QApplication>
@@ -8,15 +29,17 @@
 #include <QMessageBox>
 
 #include "VOIPPlugin.h"
-#include "interface/rsvoip.h"
+#include "interface/rsVOIP.h"
 
-#include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
 #include "gui/VOIPChatWidgetHolder.h"
-#include "gui/PluginGUIHandler.h"
-#include "gui/PluginNotifier.h"
+#include "gui/VOIPGUIHandler.h"
+#include "gui/VOIPNotify.h"
 #include "gui/SoundManager.h"
 #include "gui/chat/ChatWidget.h"
+
+#include <opencv/cv.h>
+#include <speex/speex.h>
 
 #define IMAGE_VOIP ":/images/talking_on.svg"
 
@@ -29,18 +52,16 @@ extern "C" {
 	// - always respect the C linkage convention
 	// - always return an object of type RsPlugin*
 	//
-	void *RETROSHARE_PLUGIN_provide()
+	RsPlugin *RETROSHARE_PLUGIN_provide()
 	{
-		static VOIPPlugin *p = new VOIPPlugin() ;
-
-		return (void*)p ;
+		return new VOIPPlugin() ;
 	}
 
 	// This symbol contains the svn revision number grabbed from the executable. 
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
 	// with same revision numbers, assuming that the revision numbers are up-to-date.
 	//
-	uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
 
 	// This symbol contains the svn revision number grabbed from the executable. 
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -49,29 +70,37 @@ extern "C" {
 	uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
-void VOIPPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
+void VOIPPlugin::getPluginVersion(int& major, int& minor, int& build, int& svn_rev) const
 {
-	major = 5 ;
-	minor = 4 ;
-	svn_rev = SVN_REVISION_NUMBER ;
+	major = RS_MAJOR_VERSION ;
+	minor = RS_MINOR_VERSION ;
+	build = RS_BUILD_NUMBER ;
+	svn_rev = RS_REVISION_NUMBER ;
 }
 
 VOIPPlugin::VOIPPlugin()
 {
-	mVoip = NULL ;
+	qRegisterMetaType<RsPeerId>("RsPeerId");
+	mVOIP = NULL ;
 	mPlugInHandler = NULL;
 	mPeers = NULL;
 	config_page = NULL ;
 	mIcon = NULL ;
+	mVOIPToasterNotify = NULL ;
 
-	mPluginGUIHandler = new PluginGUIHandler ;
-	mPluginNotifier = new PluginNotifier ;
+	mVOIPGUIHandler = new VOIPGUIHandler ;
+	mVOIPNotify = new VOIPNotify ;
 
-	QObject::connect(mPluginNotifier,SIGNAL(voipInvitationReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedInvitation(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipDataReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipData(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipAcceptReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipAccept(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipHangUpReceived(const QString&)),mPluginGUIHandler,SLOT(ReceivedVoipHangUp(const QString&)),Qt::QueuedConnection) ;
-	QObject::connect(mPluginNotifier,SIGNAL(voipBandwidthInfoReceived(const QString&,int)),mPluginGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const QString&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipInvitationReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedInvitation(const RsPeerId&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipDataReceived(const RsPeerId&)),mVOIPGUIHandler,SLOT(ReceivedVoipData(const RsPeerId&)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipAcceptReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipAccept(const RsPeerId&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipHangUpReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipHangUp(const RsPeerId&,int)),Qt::QueuedConnection) ;
+	QObject::connect(mVOIPNotify,SIGNAL(voipBandwidthInfoReceived(const RsPeerId&,int)),mVOIPGUIHandler,SLOT(ReceivedVoipBandwidthInfo(const RsPeerId&,int)),Qt::QueuedConnection) ;
+
+	Q_INIT_RESOURCE(VOIP_images);
+	Q_INIT_RESOURCE(VOIP_qss);
+
+	avcodec_register_all();
 }
 
 void VOIPPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
@@ -115,7 +144,7 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 {
 	switch (chatWidget->chatType()) {
 	case ChatWidget::CHATTYPE_PRIVATE:
-		return new VOIPChatWidgetHolder(chatWidget);
+		return new VOIPChatWidgetHolder(chatWidget, mVOIPNotify);
 	case ChatWidget::CHATTYPE_UNKNOWN:
 	case ChatWidget::CHATTYPE_LOBBY:
 	case ChatWidget::CHATTYPE_DISTANT:
@@ -125,22 +154,12 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 	return NULL;
 }
 
-std::string VOIPPlugin::qt_transfers_tab_name() const
+p3Service *VOIPPlugin::p3_service() const
 {
-	return QObject::tr("RTT Statistics").toUtf8().constData() ;
-}
+    if(mVOIP == NULL)
+        rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
 
-RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
-{
-	return new VoipStatistics ;
-}
-
-RsPQIService *VOIPPlugin::rs_pqi_service() const
-{
-    if(mVoip == NULL)
-        rsVoip = mVoip = new p3VoRS(mPlugInHandler,mPluginNotifier) ; // , 3600 * 24 * 30 * 6); // 6 Months
-
-	return mVoip ;
+	return mVOIP ;
 }
 
 void VOIPPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
@@ -151,8 +170,6 @@ void VOIPPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 QIcon *VOIPPlugin::qt_icon() const
 {
 	if (mIcon == NULL) {
-		Q_INIT_RESOURCE(VOIP_images);
-
 		mIcon = new QIcon(IMAGE_VOIP);
 	}
 
@@ -167,6 +184,16 @@ std::string VOIPPlugin::getShortPluginDescription() const
 std::string VOIPPlugin::getPluginName() const
 {
 	return QApplication::translate("VOIPPlugin", "VOIP").toUtf8().constData();
+}
+
+void VOIPPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
+{
+	libraries.push_back(RsLibraryInfo("OpenCV", CV_VERSION));
+
+	const char *speexVersion = NULL;
+	if (speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, &speexVersion) == 0 && speexVersion) {
+		libraries.push_back(RsLibraryInfo("Speex", speexVersion));
+	}
 }
 
 QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const
@@ -187,7 +214,31 @@ QTranslator* VOIPPlugin::qt_translator(QApplication */*app*/, const QString& lan
 	return NULL;
 }
 
-void VOIPPlugin::qt_sound_events(SoundEvents &/*events*/) const
+void VOIPPlugin::qt_sound_events(SoundEvents &events) const
 {
-//	events.addEvent(QApplication::translate("VOIP", "VOIP"), QApplication::translate("VOIP", "Incoming call"), VOIP_SOUND_INCOMING_CALL);
+	QDir baseDir = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/sounds");
+
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Incoming audio call")
+	                , VOIP_SOUND_INCOMING_AUDIO_CALL
+	                , QFileInfo(baseDir, "incomingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Incoming video call")
+	                , VOIP_SOUND_INCOMING_VIDEO_CALL
+	                , QFileInfo(baseDir, "incomingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Outgoing audio call")
+	                , VOIP_SOUND_OUTGOING_AUDIO_CALL
+	                , QFileInfo(baseDir, "outgoingcall.wav").absoluteFilePath());
+	events.addEvent(QApplication::translate("VOIP", "VOIP")
+	                , QApplication::translate("VOIP", "Outgoing video call")
+	                , VOIP_SOUND_OUTGOING_VIDEO_CALL
+	                , QFileInfo(baseDir, "outgoingcall.wav").absoluteFilePath());
+}
+
+ToasterNotify *VOIPPlugin::qt_toasterNotify(){
+	if (!mVOIPToasterNotify) {
+		mVOIPToasterNotify = new VOIPToasterNotify(mVOIP, mVOIPNotify);
+	}
+	return mVOIPToasterNotify;
 }

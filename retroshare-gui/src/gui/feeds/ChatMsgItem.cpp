@@ -36,13 +36,15 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
+#include "gui/msgs/MessageInterface.h"
+
 /*****
  * #define DEBUG_ITEM 1
  ****/
 
 /** Constructor */
-ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
+ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :
+    FeedItem(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -62,9 +64,7 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &pe
     connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
     connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
-    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
-
-    avatar->setId(mPeerId);
+    avatar->setId(ChatId(mPeerId));
 
     updateItemStatic();
     updateItem();
@@ -161,12 +161,15 @@ void ChatMsgItem::removeItem()
 	std::cerr << std::endl;
 #endif
 
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
 
-	if (mParent)
-	{
+	hide();
+
+	if (mParent) {
+		mParent->lockLayout(this, false);
+
 		mParent->deleteFeedItem(this, mFeedId);
 	}
 }
@@ -224,16 +227,18 @@ void ChatMsgItem::togglequickmessage()
 
 	if (messageFrame->isHidden())
 	{
-		messageFrame->setVisible(true);
+		messageFrame->show();
         sendButton->show();
         cancelButton->show();
     }
 	else
 	{
-		messageFrame->setVisible(false);
+		messageFrame->hide();
         sendButton->hide();
         cancelButton->hide();
-    }	
+    }
+
+    emit sizeChanged(this);
 
     mParent->lockLayout(this, false);
 }
@@ -245,14 +250,16 @@ void ChatMsgItem::sendMessage()
     
     mi.title = tr("Quick Message").toUtf8().constData();
     mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.rspeerid_msgto.push_back(mPeerId);
+    mi.rspeerid_msgto.insert(mPeerId);
     
-    rsMsgs->MessageSend(mi);
+    rsMail->MessageSend(mi);
 
     quickmsgText->clear();
     messageFrame->setVisible(false);
     sendButton->hide();
     cancelButton->hide();
+
+    emit sizeChanged(this);
 }
 
 void ChatMsgItem::on_quickmsgText_textChanged()

@@ -15,6 +15,11 @@ GroupFrameSettingsWidget::~GroupFrameSettingsWidget()
 	delete ui;
 }
 
+void GroupFrameSettingsWidget::setOpenAllInNewTabText(const QString &text)
+{
+	ui->openAllInNewTabCheckBox->setText(text);
+}
+
 void GroupFrameSettingsWidget::loadSettings(GroupFrameSettings::Type type)
 {
 	GroupFrameSettings groupFrameSettings;

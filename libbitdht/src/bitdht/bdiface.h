@@ -337,20 +337,25 @@ class BitDhtCallback
 	public:
 //        ~BitDhtCallback();
 
-		// dummy cos not needed for standard dht behaviour;
-virtual int dhtNodeCallback(const bdId *  /*id*/, uint32_t /*peerflags*/)  { return 0; } 
+	// dummy cos not needed for standard dht behaviour;
+	virtual int dhtNodeCallback(const bdId *  /*id*/, uint32_t /*peerflags*/)  { return 0; }
 
-		// must be implemented.
-virtual int dhtPeerCallback(const bdId *id, uint32_t status) = 0;
-virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status) = 0;
+	// must be implemented.
+	virtual int dhtPeerCallback(const bdId *id, uint32_t status) = 0;
+	virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status) = 0;
 
-		// connection callback. Not required for basic behaviour, but forced for initial development.
-virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId, 
-			uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
+	// connection callback. Not required for basic behaviour, but forced for initial development.
+	virtual int dhtConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId *destId,
+	uint32_t mode, uint32_t point, uint32_t param, uint32_t cbtype, uint32_t errcode) = 0; /*  { return 0; }  */
 
-		// Generic Info callback - initially will be used to provide bad peers.	
-virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info) = 0;
+	// Generic Info callback - initially will be used to provide bad peers.
+	virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::string info) = 0;
 
+	// ask upper layer whether an IP is banned or not
+	// must not be implemented
+	// when set it will be used instead of the own ban list
+	// return code is used to express availability/absence
+	virtual int dhtIsBannedCallback(const sockaddr_in */*addr*/, bool */*isBanned*/) { return 0;}
 };
 
 

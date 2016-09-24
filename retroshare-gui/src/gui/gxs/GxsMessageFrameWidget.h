@@ -23,25 +23,53 @@
 #define GXSMESSAGEFRAMEWIDGET_H
 
 #include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
+#include "util/TokenQueue.h"
 
 class RsGxsIfaceHelper;
+class UIStateHelper;
 
-class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget
+class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
 {
 	Q_OBJECT
 
 public:
 	explicit GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = NULL);
+	virtual ~GxsMessageFrameWidget();
 
-	virtual RsGxsGroupId groupId() = 0;
-	virtual void setGroupId(const RsGxsGroupId &groupId) = 0;
+	const RsGxsGroupId &groupId();
+	void setGroupId(const RsGxsGroupId &groupId);
+	void setAllMessagesRead(bool read);
+
+	virtual void groupIdChanged() = 0;
 	virtual QString groupName(bool withUnreadCount) = 0;
 	virtual QIcon groupIcon() = 0;
-	virtual void setAllMessagesRead(bool read) = 0;
+	virtual bool navigate(const RsGxsMessageId& msgId) = 0;
+	virtual bool isLoading();
+	virtual bool isWaiting();
+
+	/* GXS functions */
+	uint32_t nextTokenType() { return ++mNextTokenType; }
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 signals:
 	void groupChanged(QWidget *widget);
+	void waitingChanged(QWidget *widget);
 	void loadComment(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+
+protected:
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token) = 0;
+
+protected:
+	TokenQueue *mTokenQueue;
+	UIStateHelper *mStateHelper;
+
+	/* Set read status */
+	uint32_t mTokenTypeAcknowledgeReadStatus;
+	uint32_t mAcknowledgeReadStatusToken;
+
+private:
+	RsGxsGroupId mGroupId; /* current group */
+	uint32_t mNextTokenType;
 };
 
 #endif // GXSMESSAGEFRAMEWIDGET_H

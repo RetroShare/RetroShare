@@ -364,7 +364,7 @@ Changes for 0.5.5a
 
   * Bug fixes
       - Fixed proper display of crypto params for UDP connections
-  		- Added missing location from cert when addign new friend
+  		- Added missing location from cert when adding new friend
       - Added missing IndicateConfigChanged to p3PeerMgrIMPL::setDynDNS
       - Fixed crash when closing the main window without the setting "Minimize to Tray Icon"
       - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray
@@ -1189,7 +1189,7 @@ Changes for v0.5.3b
     - Added BSD specific changes - data directory and #including <sys/params.h>
     - improved plugin management to allow services to be used, and config pages to be added
     - Improvement to plugin system:
-      - made config page system more automatic, to allow addign config pages from plugins
+      - made config page system more automatic, to allow adding config pages from plugins
       - added (disabled) checkbox and function to allow all plugins for development
       - added config page methods to RsPlugin class
     - Mark local existing files in SearchDialog with red text color.
@@ -1202,7 +1202,7 @@ Changes for v0.5.3b
     - Added Cache system for GPG Certificates.
       - This should reduce gpg calls by 90+%.
     - Added translation for "[ ... Missing Message ... ]".
-    - removed cache adding strategy to DL queue that was O(n^2). Now addign cache at the end of the queue
+    - removed cache adding strategy to DL queue that was O(n^2). Now adding cache at the end of the queue
     - The channel message (in channels) is set to read when the user clicks on the show more button.
     - The forum/channel news feed is removed when the user reads the message in forums/channels.
     - The standard font is now used for new chat lobbies.

@@ -26,7 +26,11 @@ bool RsPhotoThumbnail::copyFrom(const RsPhotoThumbnail &nail)
 
         size = nail.size;
         type = nail.type;
-        data = (uint8_t *) malloc(size);
+        data = (uint8_t *) rs_malloc(size);
+        
+        if(data == NULL)
+            return false ;
+        
         memcpy(data, nail.data, size);
 
         return true;
@@ -153,7 +157,7 @@ void p3PhotoService::groupsChanged(std::list<RsGxsGroupId>& grpIds)
             RsGxsGroupChange* gc = mGroupChange.back();
             std::list<RsGxsGroupId>& gList = gc->mGrpIdList;
             std::list<RsGxsGroupId>::iterator lit = gList.begin();
-            for(; lit != gList.end(); lit++)
+            for(; lit != gList.end(); ++lit)
                     grpIds.push_back(*lit);
 
             mGroupChange.pop_back();
@@ -221,7 +225,7 @@ bool p3PhotoService::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>& 
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsPhotoAlbumItem* item = dynamic_cast<RsGxsPhotoAlbumItem*>(*vit);
 			if (item)
@@ -252,13 +256,13 @@ bool p3PhotoService::getPhoto(const uint32_t& token, PhotoResult& photos)
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsPhotoPhotoItem* item = dynamic_cast<RsGxsPhotoPhotoItem*>(*vit);
 
@@ -289,13 +293,13 @@ bool p3PhotoService::getPhotoComment(const uint32_t &token, PhotoCommentResult &
     {
         GxsMsgDataMap::iterator mit = msgData.begin();
 
-        for(; mit != msgData.end();  mit++)
+        for(; mit != msgData.end(); ++mit)
         {
             RsGxsGroupId grpId = mit->first;
             std::vector<RsGxsMsgItem*>& msgItems = mit->second;
             std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-            for(; vit != msgItems.end(); vit++)
+            for(; vit != msgItems.end(); ++vit)
             {
                 RsGxsPhotoCommentItem* item = dynamic_cast<RsGxsPhotoCommentItem*>(*vit);
 
@@ -348,7 +352,7 @@ void p3PhotoService::notifyChanges(std::vector<RsGxsNotify*>& changes)
 
     std::vector<RsGxsNotify*>::iterator vit = changes.begin();
 
-    for(; vit != changes.end(); vit++)
+    for(; vit != changes.end(); ++vit)
     {
         RsGxsNotify* n = *vit;
         RsGxsGroupChange* gc;

@@ -27,6 +27,9 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
 {
 	ui.setupUi(this);
 	setAttribute(Qt::WA_QuitOnClose, false);
+
+	/* Initialize GroupFrameSettingsWidget */
+	ui.groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each channel in a new tab"));
 }
 
 ChannelPage::~ChannelPage()

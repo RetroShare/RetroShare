@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>913</width>
+    <width>727</width>
     <height>524</height>
    </rect>
   </property>
@@ -19,88 +19,237 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QFrame" name="titleBarFrame">
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="margin">
-         <number>2</number>
+  <layout class="QGridLayout" name="titleBarLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QFrame" name="titleBarFrame">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout">
+      <property name="margin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="titleBarPixmap">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
-        <item>
-         <widget class="QLabel" name="titleBarPixmap_3">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../images.qrc">:/images/identity/identities_32.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="StyledLabel" name="titleBarLabel">
+        <property name="text">
+         <string>People</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="titleBarSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tabExternal">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>People</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QSplitter" name="splitterExternal">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QScrollArea" name="scrollAreaExternal">
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>0</height>
+            <height>250</height>
            </size>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/identity/identities_32.png</pixmap>
-          </property>
-          <property name="scaledContents">
+          <property name="widgetResizable">
            <bool>true</bool>
           </property>
+          <widget class="FlowLayoutWidget" name="idExternal">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>701</width>
+             <height>248</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout"/>
+          </widget>
          </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="titleBarLabel_3">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;People&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
+         <widget class="QWidget" name="widgetExternal">
+          <layout class="QGridLayout" name="layoutExternal">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_External">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Drag your circles or people to each other.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="PictureFlow" name="pictureFlowWidgetExternal" native="true">
+             <property name="widgetResizable" stdset="0">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
-        </item>
-        <item>
-         <spacer name="titleBarSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabInternal">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="title">
+       <string>Internal</string>
+      </attribute>
+      <layout class="QVBoxLayout">
+       <item>
+        <widget class="QSplitter" name="splitterInternal">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <widget class="QScrollArea" name="scrollAreaInternal">
+          <property name="minimumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>0</width>
+            <height>250</height>
            </size>
           </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="GroupListView" name="circles_view"/>
-     </item>
-    </layout>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="FlowLayoutWidget" name="idInternal">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>701</width>
+             <height>248</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout"/>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="widgetInternal">
+          <layout class="QGridLayout" name="layoutInternal">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_Internal">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Drag your circles or people to each other.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="PictureFlow" name="pictureFlowWidgetInternal" native="true">
+             <property name="widgetResizable" stdset="0">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GroupListView</class>
-   <extends>QGraphicsView</extends>
-   <header>gui/People/GroupListView.h</header>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PictureFlow</class>
+   <extends>QWidget</extends>
+   <header location="global">gui/common/PictureFlow.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FlowLayoutWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">gui/common/FlowLayout.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

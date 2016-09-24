@@ -40,7 +40,7 @@ class ChatPage : public ConfigPage
       /** Loads the settings for this page */
       virtual void load();
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/chat_24.png") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/chat.svg") ; }
 		virtual QString pageName() const { return tr("Chat") ; }
 		virtual QString helpText() const { return ""; }
 
@@ -55,9 +55,9 @@ class ChatPage : public ConfigPage
 
     void on_cbSearch_WithoutLimit_toggled(bool);
     void on_btSearch_FoundColor_clicked();
-    
-		void collectedContacts_customPopupMenu(QPoint) ;
-		void collectedInvite_openDistantChat() ;
+ 
+    void distantChatComboBoxChanged(int);
+  
 
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);

@@ -176,18 +176,16 @@ const uint16_t TLV_TYPE_CERT_X509     = 0x0101;
 const uint16_t TLV_TYPE_CERT_OPENPGP  = 0x0102;
 
 const uint16_t TLV_TYPE_KEY_EVP_PKEY  = 0x0110; /* Used (Generic - Distrib) */
-const uint16_t TLV_TYPE_KEY_PRIV_RSA  = 0x0111; /* not used yet */
-const uint16_t TLV_TYPE_KEY_PUB_RSA   = 0x0112; /* not used yet */
+const uint16_t TLV_TYPE_KEY_PRIV_RSA  = 0x0111; /* not used yet             */
+const uint16_t TLV_TYPE_KEY_PUB_RSA   = 0x0112; /* not used yet             */
 
-const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0120; /* Used (Distrib/Forums) */
+const uint16_t TLV_TYPE_SIGN_RSA_SHA1 = 0x0120; /* Used (Distrib/Forums)    */
 
-const uint16_t TLV_TYPE_BIN_IMAGE     = 0x0130; /* Used (Generic - Forums) */
-
-const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE! */
-
+const uint16_t TLV_TYPE_BIN_IMAGE     = 0x0130; /* Used (Generic - Forums)  */
+const uint16_t TLV_TYPE_BIN_FILEDATA  = 0x0140; /* Used - ACTIVE!           */
 const uint16_t TLV_TYPE_BIN_SERIALISE = 0x0150; /* Used (Generic - Distrib) */
-
-const uint16_t TLV_TYPE_BIN_GENERIC   = 0x0160; /* Used (DSDV Data) */
+const uint16_t TLV_TYPE_BIN_GENERIC   = 0x0160; /* Used (DSDV Data)         */
+const uint16_t TLV_TYPE_BIN_ENCRYPTED = 0x0170; /* Encrypted data           */
 
 
 	/**** Compound Types ****/
@@ -206,15 +204,20 @@ const uint16_t TLV_TYPE_PGPIDSET      = 0x1023;
 const uint16_t TLV_TYPE_RECOGNSET     = 0x1024;
 const uint16_t TLV_TYPE_GXSIDSET      = 0x1025;
 const uint16_t TLV_TYPE_GXSCIRCLEIDSET= 0x1026;
+const uint16_t TLV_TYPE_NODEGROUPIDSET= 0x1027;
 
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
-const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
-const uint16_t TLV_TYPE_SECURITYKEYSET= 0x1041;
+// *_deprectate should not be used anymore!! 
+// We use 1040 for both public and private keys, so that transmitting them still works (backward compatibility), and so that
+// signatures are kept. But the two different classes will check that the flags are correct when deserialising.
 
-const uint16_t TLV_TYPE_KEYSIGNATURE  = 0x1050;
+const uint16_t TLV_TYPE_SECURITY_KEY   = 0x1040;
+const uint16_t TLV_TYPE_SECURITYKEYSET = 0x1041;
+
+const uint16_t TLV_TYPE_KEYSIGNATURE     = 0x1050;
 const uint16_t TLV_TYPE_KEYSIGNATURESET  = 0x1051;
-const uint16_t TLV_TYPE_KEYSIGNATURETYPE  = 0x1052;
+const uint16_t TLV_TYPE_KEYSIGNATURETYPE = 0x1052;
 
 const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
@@ -226,9 +229,12 @@ const uint16_t TLV_TYPE_DSDV_ENDPOINT = 0x1080;
 const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1081;
 const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1082;
 
-const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1090;
+const uint16_t TLV_TYPE_BAN_ENTRY_dep = 0x1090;
+const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1092;
 const uint16_t TLV_TYPE_BAN_LIST      = 0x1091;
 
+const uint16_t TLV_TYPE_MSG_ADDRESS   = 0x10A0;
+const uint16_t TLV_TYPE_MSG_ID        = 0x10A1;
 
 
 const uint32_t RSTLV_IMAGE_TYPE_PNG = 0x0001;
@@ -272,9 +278,11 @@ bool     SetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type
 bool     GetTlvString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::string &in);
 uint32_t GetTlvStringSize(const std::string &in);
 
+#ifdef REMOVED_CODE
 bool     SetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring out);
 bool     GetTlvWideString(void *data, uint32_t size, uint32_t *offset, uint16_t type, std::wstring &in);
 uint32_t GetTlvWideStringSize(std::wstring &in);
+#endif
 
 bool     SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *out);
 bool     GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *in);

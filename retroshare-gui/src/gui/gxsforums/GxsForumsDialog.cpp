@@ -24,16 +24,48 @@
 #include "GxsForumThreadWidget.h"
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
-#include "gui/channels/ShareKey.h"
+#include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
+
+class GxsForumGroupInfoData : public RsUserdata
+{
+public:
+	GxsForumGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QString> mDescription;
+};
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
+	mCountChildMsgs = true;
 }
 
 GxsForumsDialog::~GxsForumsDialog()
 {
+}
+
+QString GxsForumsDialog::getHelpString() const
+{
+	QString hlp_str = tr(
+			"<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>               \
+			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
+			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
+			your friends. This automatically promotes interesting forums in the network.</p>            \
+            <p>Forum messages get deleted after %1 months.</p>\
+                ").arg(QString::number(rsGxsForums->getStoragePeriod()));
+
+                // not true anymore in v0.6
+                /*
+			<p>Forums are either Authenticated (<img src=\":/images/konv_message2.png\" width=\"12\"/>) \
+			or anonymous (<img src=\":/images/konversation.png\" width=\"12\"/>). The former            \
+			class is more resistant to spamming because posts are                                       \
+			cryptographically signed using a Retroshare pseudo-identity.</p>") ;
+                        */
+
+	return hlp_str ;	
 }
 
 UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
@@ -52,8 +84,6 @@ QString GxsForumsDialog::text(TextType type)
 		return "<b>Open points:</b><ul>"
 		       "<li>Restore forum keys"
 		       "<li>Display AUTHD"
-		       "<li>Navigate forum link"
-		       "<li>Don't show own posts as unread"
 		       "<li>Remove messages"
 		       "</ul>";
 
@@ -74,9 +104,9 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/images/konversation.png";
+		return ":/icons/png/forums.png";
 	case ICON_NEW:
-		return ":/images/new_forum16.png";
+		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
 		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:
@@ -104,10 +134,53 @@ GxsGroupDialog *GxsForumsDialog::createGroupDialog(TokenQueue *tokenQueue, RsTok
 
 int GxsForumsDialog::shareKeyType()
 {
-	return FORUM_KEY_SHARE;
+	return 0; // Forums are public
 }
 
 GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
 	return new GxsForumThreadWidget(groupId);
+}
+
+void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsGxsForumGroup> groups;
+	rsGxsForums->getGroupData(token, groups);
+
+	/* Save groups to fill description */
+	GxsForumGroupInfoData *forumData = new GxsForumGroupInfoData;
+	userdata = forumData;
+
+	std::vector<RsGxsForumGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsGxsForumGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (!group.mDescription.empty()) {
+			forumData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
+	}
+}
+
+void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const GxsForumGroupInfoData *forumData = dynamic_cast<const GxsForumGroupInfoData*>(userdata);
+	if (!forumData) {
+		std::cerr << "GxsForumsDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsForumGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = forumData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != forumData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
+	}
+	
+	//if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
+	//	groupItemInfo.icon = QIcon(":images/konv_message2.png");
+	if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
+		groupItemInfo.icon = QIcon(":images/konv_message3.png");
+
 }

@@ -53,6 +53,8 @@
 #include "rstlvutil.h"
 
 #define TEST_LENGTH 10
+// more time for valgrind
+//#define TEST_LENGTH 500
 
 
 #define BIN_LEN 523456  /* bigger than 64k */
@@ -63,10 +65,10 @@ bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, 
 
 int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 {
-	uint32_t tmpoffset = 0;
+	//uint32_t tmpoffset = 0;
 
 	/* List of all the TLV types it could be! */
-	RsTlvSecurityKey skey;
+	RsTlvPublicRSAKey skey;
 	RsTlvSecurityKeySet skeyset;
 	RsTlvKeySignature   keysign;
 
@@ -112,7 +114,7 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 	EXPECT_TRUE(test_SetTlvItem(&kv, TLV_TYPE_KEYVALUE, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&kvset, TLV_TYPE_KEYVALUESET, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys (TYPESET)" << std::endl;
-	EXPECT_TRUE(test_SetTlvItem(&skey, TLV_TYPE_SECURITYKEY, data, len, offset));
+	EXPECT_TRUE(test_SetTlvItem(&skey, TLV_TYPE_SECURITY_KEY, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&skeyset, TLV_TYPE_SECURITYKEYSET, data, len, offset));
 	EXPECT_TRUE(test_SetTlvItem(&keysign, TLV_TYPE_KEYSIGNATURE, data, len, offset));
 
@@ -147,7 +149,7 @@ bool test_SetTlvItem(RsTlvItem *item, uint16_t type, void *data, uint32_t size, 
 }
 
 
-TEST(libretroshare_serialiser, test_RsTlvRandom)
+TEST(libretroshare_serialiser, DISABLED_test_RsTlvRandom)
 {
 	/* random data array to work through */
 	uint32_t dsize = 100000;
@@ -175,7 +177,16 @@ TEST(libretroshare_serialiser, test_RsTlvRandom)
 	int count = 0;
 	for(i = 0; endTs > time(NULL); i += 2)
 	{
-		uint32_t len = dsize - i;
+        uint32_t len = dsize - 2*i; // two times i, because we also use it as offset
+
+        // no point in testing smaller than header size,
+        // because items currently don't check if they can read the header
+        if(len < TLV_HEADER_SIZE)
+        {
+            std::cerr << "reached the end of our datablock!";
+            std::cerr << std::endl;
+            return;
+        }
 		count += test_TlvRandom(&(data[i]), len, i);
 
 		std::cerr << "Run: " << count << " tests";

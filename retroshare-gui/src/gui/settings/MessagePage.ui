@@ -18,6 +18,41 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Distant messages:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="2">
+       <widget class="QComboBox" name="comboBox">
+        <item>
+         <property name="text">
+          <string>Everyone</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Contacts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nobody</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Accept encrypted distant messages from</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Reading</string>
@@ -50,32 +85,6 @@
          <widget class="QComboBox" name="openComboBox"/>
         </item>
        </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Distant messages:</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="encryptedMsgs_CB">
-        <property name="text">
-         <string>Accept encrypted distant messages from everyone</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>

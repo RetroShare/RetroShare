@@ -31,6 +31,7 @@ ServiceTest::ServiceTest()
 {
 
 	mConnMgr = new p3ConnectMgr();
+#error secpolicy was removed, should remove it from tests too
 	SecurityPolicy *none = secpolicy_create();
 	mPersonGrp = new pqisslpersongrp(none, NULL);
 	mPeers = new p3Peers(mConnMgr);

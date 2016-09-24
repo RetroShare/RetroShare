@@ -39,7 +39,7 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60*24*30 // 1 month
+#define DEFAULT_MSG_STORE_PERIOD 60*60*24*31*4 // 4 months
 
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
@@ -79,8 +79,7 @@ public:
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
 	bool mIsUpdate;
-	RsTlvSecurityKeySet mPrivateKeys;
-	RsTlvSecurityKeySet mPublicKeys;
+	RsTlvSecurityKeySet mKeys;
 };
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
@@ -109,7 +108,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgItem*> > GxsMsgRelatedDa
 
 class RsGixs;
 
-class RsGenExchange : public RsNxsObserver, public RsThread, public RsGxsIface
+class RsGenExchange : public RsNxsObserver, public RsTickingThread, public RsGxsIface
 {
 public:
 
@@ -137,18 +136,29 @@ public:
     // and passes to network service.
     virtual RsServiceInfo getServiceInfo() = 0; 
 
+    void setNetworkExchangeService(RsNetworkExchangeService *ns) ;
 
     /** S: Observer implementation **/
 
     /*!
      * @param messages messages are deleted after function returns
      */
-    void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
+    virtual void notifyNewMessages(std::vector<RsNxsMsg*>& messages);
 
     /*!
-     * @param messages messages are deleted after function returns
+     * @param groups groups are deleted after function returns
      */
-    void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+    virtual void notifyNewGroups(std::vector<RsNxsGrp*>& groups);
+
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyReceivePublishKey(const RsGxsGroupId &grpId);
+
+    /*!
+     * @param grpId group id
+     */
+    virtual void notifyChangedGroupStats(const RsGxsGroupId &grpId);
 
     /** E: Observer implementation **/
 
@@ -171,7 +181,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-    void run();
+    virtual void data_tick();
 
     /*!
      * Policy bit pattern portion
@@ -250,42 +260,14 @@ public:
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
 
     /*!
-     * Checks to see if a change has been received for
-     * for a message or group
-     * @param willCallGrpChanged if this is set to true, group changed function will return list
-     *        groups that have changed, if false, the group changed list is cleared
-     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
-     *        messages that have changed, if false, the message changed map is cleared
-     * @return true if a change has occured for msg or group
-     * @see groupsChanged
-     * @see msgsChanged
+     * \brief acceptNewGroup
+     * 		Early checks if the group can be accepted. This is mainly used to check wether the group is banned for some reasons.
+     * 		Returns true unless derived in GXS services.
+     *
+     * \param grpMeta Group metadata to check
+     * \return
      */
-    bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false);
-
-    /*!
-     * The groups changed. \n
-     * class can reimplement to use to tailor
-     * the group actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param grpIds returns list of grpIds that have changed
-     * @param grpIdsMeta returns list of grpIds with meta data changes
-     * @see updated
-     */
-    void groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta);
-
-    /*!
-     * The msg changed. \n
-     * class can reimplement to use to tailor
-     * the msg actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param msgs returns map of message ids that have changed
-     * @param msgsMeta returns map of message ids with meta data changes
-     * @see updated
-     */
-    void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta);
-
+    virtual bool acceptNewGroup(const RsGxsGrpMetaData *grpMeta) ;
 
     bool subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe);
 
@@ -307,6 +289,7 @@ public:
 
 protected:
 
+	bool messagePublicationTest(const RsGxsMsgMetaData&) ;
     /*!
      * retrieves group data associated to a request token
      * @param token token to be redeemed for grpitem retrieval
@@ -321,7 +304,7 @@ protected:
     	bool ok = getGroupData(token, items);
     	std::vector<RsGxsGrpItem*>::iterator vit = items.begin();
 
-    	for(; vit != items.end(); vit++)
+    	for(; vit != items.end(); ++vit)
     	{
     		RsGxsGrpItem* gi = *vit;
 
@@ -361,12 +344,12 @@ public:
 
     	GxsMsgDataMap::iterator mit = msgData.begin();
 
-    	for(; mit != msgData.end(); mit++)
+    	for(; mit != msgData.end(); ++mit)
     	{
     		const RsGxsGroupId& grpId = mit->first;
     		std::vector<RsGxsMsgItem*>& mv = mit->second;
     		std::vector<RsGxsMsgItem*>::iterator vit = mv.begin();
-    		for(; vit != mv.end(); vit++)
+    		for(; vit != mv.end(); ++vit)
     		{
     			RsGxsMsgItem* mi = *vit;
     			MsgType* mt = dynamic_cast<MsgType*>(mi);
@@ -413,14 +396,14 @@ protected:
 
         if(ok)
         {
-            for(; mit != msgResult.end(); mit++)
+            for(; mit != msgResult.end(); ++mit)
             {
                 std::vector<MsgType> gxsMsgItems;
                 const RsGxsGrpMsgIdPair& msgId = mit->first;
                 std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
                 std::vector<RsNxsMsg*>::iterator vit
                 = nxsMsgsV.begin();
-                for(; vit != nxsMsgsV.end(); vit++)
+                for(; vit != nxsMsgsV.end(); ++vit)
                 {
                     RsNxsMsg*& msg = *vit;
                     RsItem* item = NULL;
@@ -561,6 +544,14 @@ public:
      */
     void publishMsg(uint32_t& token, RsGxsMsgItem* msgItem);
 
+    /*!
+     * Deletes the messages \n
+     * This will induce a related change message \n
+     * @param token
+     * @param msgs
+     */
+    void deleteMsgs(uint32_t& token, const GxsMsgReq& msgs);
+    
 protected:
     /*!
      * This represents the group before its signature is calculated
@@ -615,6 +606,19 @@ public:
     void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
 
     /*!
+     *
+     * @param token value set to be redeemed with acknowledgement
+     * @param grpId group id of the group to update
+     * @param CutOff The cut off value to set
+     */
+    void updateGroupLastMsgTimeStamp(uint32_t& token, const RsGxsGroupId& grpId);
+
+    /*!
+     * @return storage time of messages in months
+     */
+    int getStoragePeriod(){ return MESSAGE_STORE_PERIOD/(60*60*24*31);}
+
+    /*!
      * sets the msg status flag
      * @param token this is set to token value associated to this request
      * @param grpId Id of group whose subscribe file will be changed
@@ -630,6 +634,20 @@ public:
      * @param servString The service string to set msg to
      */
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
+
+    /*!
+     * sets the message service string
+     */
+
+    void shareGroupPublishKey(const RsGxsGroupId& grpId,const std::set<RsPeerId>& peers) ;
+    
+    /*!
+     * Returns the local TS of the group as known by the network service.
+     * This is useful to allow various network services to sync their update TS
+     * when needed. Typical use case is forums and circles.
+     * @param gid GroupId the TS is which is requested
+     */
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
 
 protected:
 
@@ -663,7 +681,9 @@ private:
 
     void processGroupUpdatePublish();
 
-		void processGroupDelete();
+    void processGroupDelete();
+    void processMessageDelete();
+    void processRoutingClues();
 
     void publishMsgs();
 
@@ -691,7 +711,7 @@ private:
      * @return CREATE_SUCCESS for success, CREATE_FAIL for fail,
      * 		   CREATE_FAIL_TRY_LATER for Id sign key not avail (but requested)
      */
-    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+    uint8_t createGroup(RsNxsGrp* grp, RsTlvSecurityKeySet& keySet);
 
     /*!
      * This completes the creation of an instance on RsNxsMsg
@@ -739,26 +759,18 @@ private:
      * @param publickeySet contains public generated keys (counterpart of private)
      * @param genPublicKeys should publish key pair also be generated
      */
-    void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
-
-    /*!
-     * Generate public set of keys from their private counterparts
-     * No keys will be generated if one fails
-     * @param privatekeySet contains private generated keys
-     * @param publickeySet contains public generated keys (counterpart of private)
-     * @return false if key gen failed for a key set
-     */
-    void generatePublicFromPrivateKeys(const RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet);
+    void generateGroupKeys(RsTlvSecurityKeySet& keySet, bool genPublishKeys);
 
     /*!
      * Attempts to validate msg signatures
      * @param msg message to be validated
-     * @param grpFlag the flag for the group the message belongs to
+     * @param grpFlag the distribution flag for the group the message belongs to
+     * @param grpFlag the signature flag for the group the message belongs to
      * @param grpKeySet the key set user has for the message's group
      * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
      * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
      */
-    int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, RsTlvSecurityKeySet& grpKeySet);
+    int validateMsg(RsNxsMsg* msg, const uint32_t& grpFlag, const uint32_t &signFlag, RsTlvSecurityKeySet& grpKeySet);
 
     /*!
 	 * Attempts to validate group signatures
@@ -864,9 +876,6 @@ private:
 
 private:
 
-    std::vector<RsGxsGroupChange*> mGroupChange;
-    std::vector<RsGxsMsgChange*> mMsgChange;
-
     const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
     const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_ATTEMPTS;
@@ -876,9 +885,11 @@ private:
     std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+    std::vector<GroupDeletePublish> mGroupDeletePublish;
+    std::vector<MsgDeletePublish>   mMsgDeletePublish;
 
-		std::vector<GroupDeletePublish> mGroupDeletePublish;
-
+    std::map<RsGxsId,std::set<RsPeerId> > mRoutingClues ;
+    std::list<std::pair<RsGxsMessageId,RsPeerId> > mTrackingClues ;
 };
 
 #endif // RSGENEXCHANGE_H

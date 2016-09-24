@@ -10,6 +10,7 @@ SubscribeToolButton::SubscribeToolButton(QWidget *parent) :
 {
 	mSubscribed = false;
 
+    	mMenu = NULL ;
 	setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
 #ifdef USE_MENUBUTTONPOPUP
@@ -46,14 +47,18 @@ void SubscribeToolButton::updateUi()
 		setIcon(QIcon(":/images/accepted16.png"));
 		setText(tr("Subscribed"));
 
-		QMenu *menu = new QMenu;
-		menu->addAction(QIcon(":/images/cancel.png"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
+        	if(mMenu != NULL)	// that's because setMenu does not give away memory ownership
+		    delete mMenu ;
+            
+		mMenu = new QMenu;
+		mMenu->addAction(QIcon(":/images/cancel.png"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
 
 		if (!mSubscribedActions.empty()) {
-			menu->addSeparator();
-			menu->addActions(mSubscribedActions);
+			mMenu->addSeparator();
+			mMenu->addActions(mSubscribedActions);
 		}
-		setMenu(menu);
+        
+		setMenu(mMenu);
 
 #ifndef USE_MENUBUTTONPOPUP
 		disconnect(this, SIGNAL(clicked()), this, SLOT(subscribePrivate()));
@@ -61,7 +66,7 @@ void SubscribeToolButton::updateUi()
 	} else {
 		setPopupMode(QToolButton::DelayedPopup);
 		setMenu(NULL);
-		setIcon(QIcon());
+		setIcon(QIcon(":/images/RSS_004_32.png"));
 		setText(tr("Subscribe"));
 
 #ifndef USE_MENUBUTTONPOPUP

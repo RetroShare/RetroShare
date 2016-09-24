@@ -34,6 +34,7 @@
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #if defined(_WIN32) || defined(__MINGW32__)
 
+//#define BDNET_DEBUG
 
 /* error handling */
 int bdnet_int_errno;
@@ -188,7 +189,9 @@ int bdnet_setsockopt(int s, int level, int optname,
 ssize_t bdnet_recvfrom(int s, void *buf, size_t len, int flags,
                               struct sockaddr *from, socklen_t *fromlen)
 {
+#ifdef BDNET_DEBUG
 	std::cerr << "bdnet_recvfrom()" << std::endl;
+#endif
 	int ret = recvfrom(s, (char *) buf, len, flags, from, fromlen);
 	if (ret == SOCKET_ERROR)
 	{
@@ -201,7 +204,9 @@ ssize_t bdnet_recvfrom(int s, void *buf, size_t len, int flags,
 ssize_t bdnet_sendto(int s, const void *buf, size_t len, int flags, 
  				const struct sockaddr *to, socklen_t tolen)
 {
+#ifdef BDNET_DEBUG
 	std::cerr << "bdnet_sendto()" << std::endl;
+#endif
 	int ret = sendto(s, (const char *) buf, len, flags, to, tolen);
 	if (ret == SOCKET_ERROR)
 	{

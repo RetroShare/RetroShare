@@ -39,8 +39,8 @@ class CryptoPage : public ConfigPage
       virtual bool save(QString &errmsg);
       /** Loads the settings for this page */
 
-		virtual QPixmap iconPixmap() const { return QPixmap(":/images/encrypted32.png") ; }
-		virtual QString pageName() const { return tr("Profile") ; }
+		virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/profile.svg") ; }
+		virtual QString pageName() const { return tr("Node") ; }
 		virtual QString helpText() const { return ""; }
 
   private slots:
@@ -51,6 +51,7 @@ class CryptoPage : public ConfigPage
 		void profilemanager();
       bool fileSave();
       bool fileSaveAs();
+      void showStats();
 
   private:
       QString fileName;

@@ -22,6 +22,8 @@
 #include <QDateTime>
 #include <QSignalMapper>
 
+#include "retroshare/rsgxscircles.h"
+
 #include "GxsChannelPostsWidget.h"
 #include "ui_GxsChannelPostsWidget.h"
 #include "gui/feeds/GxsChannelPostItem.h"
@@ -52,15 +54,14 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	mInProcessSettings = false;
 
 	/* Setup UI helper */
 
-	mStateHelper->addWidget(mTokenTypePosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
-	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-	mStateHelper->addWidget(mTokenTypePosts, ui->filterLineEdit);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->filterLineEdit);
 
-	mStateHelper->addWidget(mTokenTypeRelatedPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
+	mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 
 	mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
 
@@ -83,6 +84,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/* Initialize view button */
 	//setViewMode(VIEW_MODE_FEEDS); see processSettings
+	ui->infoWidget->hide();
 
 	QSignalMapper *signalMapper = new QSignalMapper(this);
 	connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
@@ -133,19 +135,27 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 
 void GxsChannelPostsWidget::processSettings(bool load)
 {
-	mInProcessSettings = true;
 	Settings->beginGroup(QString("ChannelPostsWidget"));
 
 	if (load) {
 		// load settings
+
+		/* Filter */
 		ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
+
+		/* View mode */
 		setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
 	} else {
 		// save settings
+
+		/* Filter */
+		Settings->setValue("filter", ui->filterLineEdit->currentFilter());
+
+		/* View mode */
+		Settings->setValue("viewMode", viewMode());
 	}
 
 	Settings->endGroup();
-	mInProcessSettings = false;
 }
 
 void GxsChannelPostsWidget::settingsChanged()
@@ -167,7 +177,7 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 
 QIcon GxsChannelPostsWidget::groupIcon()
 {
-	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypePosts)) {
+	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
 		return QIcon(":/images/kalarm.png");
 	}
 
@@ -228,6 +238,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 	ui->logoLabel->setPixmap(chanImage);
 
+	ui->subscribersLabel->setText(QString::number(group.mMeta.mPop)) ;
+
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, true);
@@ -239,8 +251,72 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId);
+    bool autoDownload ;
+            rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
+
+	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
+		ui->feedToolButton->setEnabled(true);
+
+		ui->fileToolButton->setEnabled(true);
+		ui->infoWidget->hide();
+		setViewMode(viewMode());
+
+		ui->infoPosts->clear();
+		ui->infoDescription->clear();
+	} else {
+		ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+		ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+        
+        	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
+        
+        	QString distrib_string ( "[unknown]" );
+            
+        	switch(group.mMeta.mCircleType)
+		{
+		case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+			break ;
+		case GXS_CIRCLE_TYPE_EXTERNAL: 
+		{
+			RsGxsCircleDetails det ;
+
+			// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+
+			if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det)) 
+				distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+			else
+				distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+		}
+			break ;
+		case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
+			break ;
+		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+			break ;
+		default:
+			std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+		}
+ 
+		ui->infoDistribution->setText(distrib_string);
+
+		ui->infoWidget->show();
+		ui->feedWidget->hide();
+		ui->fileWidget->hide();
+
+		ui->feedToolButton->setEnabled(false);
+		ui->fileToolButton->setEnabled(false);
+	}
+}
+
+int GxsChannelPostsWidget::viewMode()
+{
+	if (ui->feedToolButton->isChecked()) {
+		return VIEW_MODE_FEEDS;
+	} else if (ui->fileToolButton->isChecked()) {
+		return VIEW_MODE_FILES;
+	}
+
+	/* Default */
+	return VIEW_MODE_FEEDS;
 }
 
 void GxsChannelPostsWidget::setViewMode(int viewMode)
@@ -266,22 +342,12 @@ void GxsChannelPostsWidget::setViewMode(int viewMode)
 		setViewMode(VIEW_MODE_FEEDS);
 		return;
 	}
-
-	if (!mInProcessSettings) {
-		/* Save view mode */
-		Settings->setValueToGroup("ChannelPostsWidget", "viewMode", viewMode);
-	}
 }
 
 void GxsChannelPostsWidget::filterChanged(int filter)
 {
 	ui->feedWidget->setFilterType(filter);
 	ui->fileWidget->setFilterType(filter);
-
-	if (!mInProcessSettings) {
-		// save index
-		Settings->setValueToGroup("ChannelPostsWidget", "filter", filter);
-	}
 }
 
 /*static*/ bool GxsChannelPostsWidget::filterItem(FeedItem *feedItem, const QString &text, int filter)
@@ -293,29 +359,32 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 
 	bool bVisible = text.isEmpty();
 
-	switch(filter)
+	if (!bVisible)
 	{
-	case FILTER_TITLE:
-		bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_MSG:
-		bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
-		break;
-	case FILTER_FILE_NAME:
-	{
-		std::list<SubFileItem *> fileItems = item->getFileItems();
-		std::list<SubFileItem *>::iterator lit;
-		for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+		switch(filter)
 		{
-			SubFileItem *fi = *lit;
-			QString fileName = QString::fromUtf8(fi->FileName().c_str());
-			bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+			case FILTER_TITLE:
+				bVisible = item->getTitleLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_MSG:
+				bVisible = item->getMsgLabel().contains(text,Qt::CaseInsensitive);
+			break;
+			case FILTER_FILE_NAME:
+			{
+				std::list<SubFileItem *> fileItems = item->getFileItems();
+				std::list<SubFileItem *>::iterator lit;
+				for(lit = fileItems.begin(); lit != fileItems.end(); ++lit)
+				{
+					SubFileItem *fi = *lit;
+					QString fileName = QString::fromUtf8(fi->FileName().c_str());
+					bVisible = (bVisible || fileName.contains(text,Qt::CaseInsensitive));
+				}
+				break;
+			}
+			default:
+				bVisible = true;
+			break;
 		}
-		break;
-	}
-	default:
-		bVisible = true;
-		break;
 	}
 
 	return bVisible;
@@ -329,11 +398,14 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost &post, bool re
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
 	if (item) {
-		item->setContent(post);
+		item->setPost(post);
 		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	} else {
-		uint32_t subscribeFlags = 0xffffffff;
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, subscribeFlags, true, false);
+		/* Group is not always available because of the TokenQueue */
+		RsGxsChannelGroup dummyGroup;
+		dummyGroup.mMeta.mGroupId = groupId();
+		dummyGroup.mMeta.mSubscribeFlags = 0xffffffff;
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, dummyGroup, post, true, false);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
 
@@ -361,7 +433,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		return;
 	}
 
-	std::vector<RsGxsChannelPost>::const_iterator it;
+    std::vector<RsGxsChannelPost>::const_reverse_iterator it;
 
 	int count = posts.size();
 	int pos = 0;
@@ -370,7 +442,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 		ui->feedWidget->setSortingEnabled(false);
 	}
 
-	for (it = posts.begin(); it != posts.end(); it++)
+    for (it = posts.rbegin(); it != posts.rend(); ++it)
 	{
 		if (thread && thread->stopped()) {
 			break;
@@ -392,6 +464,16 @@ void GxsChannelPostsWidget::clearPosts()
 {
 	ui->feedWidget->clear();
 	ui->fileWidget->clear();
+}
+
+bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
+{
+	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);
+	if (!feedItem) {
+		return false;
+	}
+
+	return ui->feedWidget->scrollTo(feedItem, true);
 }
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
@@ -418,8 +500,8 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 		return;
 	}
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
-	if (!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+    bool autoDownload ;
+        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
 	{
 		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
 		std::cerr << std::endl;
@@ -441,7 +523,7 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	return false;
 }
 
-void GxsChannelPostsWidget::insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
+void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
 {
 	std::vector<RsGxsChannelPost> posts;
 	rsGxsChannels->getPostData(token, posts);
@@ -449,32 +531,53 @@ void GxsChannelPostsWidget::insertPosts(const uint32_t &token, GxsMessageFramePo
 	insertChannelPosts(posts, thread, false);
 }
 
-void GxsChannelPostsWidget::insertRelatedPosts(const uint32_t &token)
+void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 {
 	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getRelatedPosts(token, posts);
+	rsGxsChannels->getPostData(token, posts);
 
 	insertChannelPosts(posts, NULL, true);
 }
 
-static void setAllMessagesReadCallback(FeedItem *feedItem, const QVariant &data)
+class GxsChannelPostsReadData
+{
+public:
+	GxsChannelPostsReadData(bool read)
+	{
+		mRead = read;
+		mLastToken = 0;
+	}
+
+public:
+	bool mRead;
+	uint32_t mLastToken;
+};
+
+static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 {
 	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	if (!channelPostItem) {
 		return;
 	}
 
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
+	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
+	bool is_not_new = !channelPostItem->isUnread() ;
 
-	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, data.toBool());
+	if(is_not_new == readData->mRead)
+		return ;
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
+	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
 }
 
-void GxsChannelPostsWidget::setAllMessagesRead(bool read)
+void GxsChannelPostsWidget::setAllMessagesReadDo(bool read, uint32_t &token)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(subscribeFlags())) {
 		return;
 	}
 
-	ui->feedWidget->withAll(setAllMessagesReadCallback, read);
+	GxsChannelPostsReadData data(read);
+	ui->feedWidget->withAll(setAllMessagesReadCallback, &data);
+
+	token = data.mLastToken;
 }

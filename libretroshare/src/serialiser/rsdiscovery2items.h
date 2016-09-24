@@ -33,10 +33,11 @@
 #include "serialiser/rstlvaddrs.h"
 #include "serialiser/rsserviceids.h"
 
-const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST  = 0x01;
-const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT  = 0x02;
-const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT   = 0x03;
-const uint8_t RS_PKT_SUBTYPE_DISC_SERVICES  = 0x04;
+const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
+const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
+const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT_deprecated = 0x03;
+const uint8_t RS_PKT_SUBTYPE_DISC_SERVICES           = 0x04;
+const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
 
 class RsDiscItem: public RsItem
 {
@@ -124,6 +125,8 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint16_t    hiddenPort;
 
 	// STANDARD.
+
+    RsTlvIpAddress currentConnectAddress ;	// used to check!
 
 	RsTlvIpAddress localAddrV4;		/* Mandatory */
 	RsTlvIpAddress extAddrV4;		/* Mandatory */

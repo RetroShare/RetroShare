@@ -28,8 +28,6 @@
 
 #include <retroshare/rsgxschannels.h>
 #include "gui/gxs/GxsFeedItem.h"
-#include <stdint.h>
-#include "util/HandleRichText.h"
 
 namespace Ui {
 class GxsChannelPostItem;
@@ -43,27 +41,36 @@ class GxsChannelPostItem : public GxsFeedItem
 	Q_OBJECT
 
 public:
-	/** Default Constructor */
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
-	virtual void setContent(const QVariant &content);
-	bool setContent(const RsGxsChannelPost &post);
+	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
+	bool setPost(const RsGxsChannelPost &post, bool doFill = true);
 
 	void setFileCleanUpWarning(uint32_t time_left);
 
-	const QString getTitleLabel() {return QString::fromUtf8(mPost.mMeta.mMsgName.c_str()); }
-	const QString getMsgLabel() {return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS); }
+	QString getTitleLabel();
+	QString getMsgLabel();
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
-	/* FeedItem */
-	virtual void expand(bool open);
+    bool isUnread() const ;
 
 protected:
-	virtual void loadMessage(const uint32_t &token);
+	/* FeedItem */
+	virtual void doExpand(bool open);
+	virtual void expandFill(bool first);
+
+	/* GxsGroupFeedItem */
+	virtual QString groupName();
+	virtual void loadGroup(const uint32_t &token);
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+
+	/* GxsFeedItem */
 	virtual QString messageName();
+	virtual void loadMessage(const uint32_t &token);
+	virtual void loadComment(const uint32_t &token);
 
 private slots:
 	/* default stuff */
@@ -74,7 +81,6 @@ private slots:
 	void loadComments();
 
 	void readToggled(bool checked);
-	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
 	void unsubscribeChannel();
 	void updateItem();
@@ -87,14 +93,15 @@ signals:
 
 private:
 	void setup();
-	void loadPost(const RsGxsChannelPost &post);
-
+	void fill();
+	void fillExpandFrame();
 	void setReadStatus(bool isNew, bool isUnread);
 
-	bool mInUpdateItemStatic;
+private:
+	bool mInFill;
+	bool mCloseOnRead;
 
-	uint32_t mMode;
-	uint32_t mSubscribeFlags;
+	RsGxsChannelGroup mGroup;
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem*> mFileItems;

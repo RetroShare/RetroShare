@@ -52,7 +52,7 @@
 #define IMAGE_VOTEDOWN   ":/images/vote_down.png"
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
-	:QTreeWidget(parent), mRsTokenService(NULL), mCommentService(NULL), mTokenQueue(NULL)
+	:QTreeWidget(parent), mTokenQueue(NULL), mRsTokenService(NULL), mCommentService(NULL)
 {
 //	QTreeWidget* widget = this;
 
@@ -73,6 +73,13 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	return;
 }
 
+GxsCommentTreeWidget::~GxsCommentTreeWidget()
+{
+	if (mTokenQueue) {
+		delete(mTokenQueue);
+	}
+}
+
 void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
 
@@ -84,7 +91,7 @@ void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidget
 	}
 }
 
-void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
+void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 {
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
@@ -102,6 +109,8 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 
 	if (!mCurrentMsgId.isNull())
 	{
+        // not implemented yet
+        /*
 		contextMnu.addSeparator();
 		QMenu *rep_menu = contextMnu.addMenu(tr("Reputation"));
 
@@ -113,6 +122,7 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 
 		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Mark Spammy"), this, SLOT(markSpammer()));
 		action = rep_menu->addAction(QIcon(IMAGE_MESSAGE), tr("Ban User"), this, SLOT(banUser()));
+        */
 	}
 
 	contextMnu.exec(QCursor::pos());
@@ -275,7 +285,7 @@ void GxsCommentTreeWidget::completeItems()
 	std::cerr << " PendingItems";
 	std::cerr << std::endl;
 
-	for(pit = mPendingInsertMap.begin(); pit != mPendingInsertMap.end(); pit++)
+	for(pit = mPendingInsertMap.begin(); pit != mPendingInsertMap.end(); ++pit)
 	{
 		std::cerr << "GxsCommentTreeWidget::completeItems() item->parent: " << pit->first;
 		std::cerr << std::endl;
@@ -401,14 +411,14 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 	std::vector<RsGxsComment>::iterator vit;
 
-	for(vit = comments.begin(); vit != comments.end(); vit++)
+	for(vit = comments.begin(); vit != comments.end(); ++vit)
 	{
 		RsGxsComment &comment = *vit;
 		/* convert to a QTreeWidgetItem */
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
 
-		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();
+        GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL);
 		QString text;
 
 		{
@@ -423,7 +433,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		item->setText(PCITEM_COLUMN_COMMENT, text);
 
 		RsGxsId authorId = comment.mMeta.mAuthorId;
-		item->setId(authorId, PCITEM_COLUMN_AUTHOR);
+		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
 
 		text = QString::number(comment.mScore);
 		item->setText(PCITEM_COLUMN_SCORE, text);

@@ -84,6 +84,31 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 	return 1;
 }
 
+int p3ServiceServer::removeService(pqiService *ts)
+{
+	RsStackMutex stack(srvMtx); /********* LOCKED *********/
+
+#ifdef SERVICE_DEBUG
+	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, "p3ServiceServer::removeService()");
+#endif
+
+	RsServiceInfo info = ts->getServiceInfo();
+
+	// This doesn't need to be in Mutex.
+	mServiceControl->deregisterService(info.mServiceType);
+
+	std::map<uint32_t, pqiService *>::iterator it = services.find(info.mServiceType);
+	if (it == services.end())
+	{
+		std::cerr << "p3ServiceServer::removeService(): Service not found with id " << info.mServiceType << "!" << std::endl;
+		return -1;
+	}
+
+	services.erase(it);
+
+	return 1;
+}
+
 bool	p3ServiceServer::recvItem(RsRawItem *item)
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
@@ -105,7 +130,9 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 	// This doesn't need to be in Mutex.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
-		std::cerr << "p3ServiceServer::recvItem() Fails Filtering";
+#ifdef  SERVICE_DEBUG
+        std::cerr << "p3ServiceServer::recvItem() Fails Filtering " << std::endl;
+#endif
 		delete item;
 		return false;
 	}
@@ -156,7 +183,7 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 	// Packet Filtering.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
-		std::cerr << "p3ServiceServer::sendItem() Fails Filtering for packet id=" << std::hex << item->PacketId() << ", and peer " << item->PeerId() << std::endl;
+		std::cerr << "p3ServiceServer::sendItem() Fails Filtering for packet id=" << std::hex << item->PacketId() << std::dec << ", and peer " << item->PeerId() << std::endl;
 		delete item;
 		return false;
 	}
@@ -182,7 +209,7 @@ int	p3ServiceServer::tick()
 	std::map<uint32_t, pqiService *>::iterator it;
 
 	// from the beginning to where we started.
-	for(it = services.begin();it != services.end(); it++)
+	for(it = services.begin();it != services.end(); ++it)
 	{
 
 #ifdef  SERVICE_DEBUG

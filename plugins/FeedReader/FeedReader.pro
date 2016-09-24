@@ -56,8 +56,9 @@ FORMS =		gui/FeedReaderDialog.ui \
 TARGET = FeedReader
 
 RESOURCES = gui/FeedReader_images.qrc \
-			lang/FeedReader_lang.qrc
-			
+			lang/FeedReader_lang.qrc \
+			qss/FeedReader_qss.qrc
+
 TRANSLATIONS +=  \
 			lang/FeedReader_ca_ES.ts \
 			lang/FeedReader_cs.ts \
@@ -80,31 +81,55 @@ TRANSLATIONS +=  \
 			lang/FeedReader_zh_CN.ts
 
 linux-* {
-	LIBXML2_DIR = /usr/include/libxml2
+	CONFIG += link_pkgconfig
 
-	INCLUDEPATH += $${LIBXML2_DIR}
-
-	LIBS += -lcurl -lxml2 -lxslt
+	PKGCONFIG *= libcurl libxml-2.0 libxslt
 }
 
 win32 {
 	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
 
-	CURL_DIR = ../../../curl-7.34.0
-	LIBXML2_DIR = ../../../libxml2-2.9.1
-	LIBXSLT_DIR = ../../../libxslt-1.1.28
+	#Have to reorder libs, else got /libs/lib/libcrypto.a(bio_lib.o):bio_lib.c:(.text+0x0): multiple definition of `BIO_new'
+	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 $${LIBS}
 
-	INCLUDEPATH += $${CURL_DIR}/include $${LIBXML2_DIR}/include $${LIBXSLT_DIR} $${LIBICONV_DIR}/include
+	# Check for msys2
+	!isEmpty(PREFIX_MSYS2) {
+		message(Use msys2 xml2.)
+		INC_DIR  += "$${PREFIX_MSYS2}/include/libxml2"
+	}
 
-	# Change order of the libraries
-	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 -lwsock32 $${LIBS}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+}
+
+macx {
+	DEFINES += CURL_STATICLIB LIBXML_STATIC LIBXSLT_STATIC LIBEXSLT_STATIC
+
+	XML2_FOUND =
+	for(inc, INC_DIR){
+#message(Scanning $$inc)s
+		exists($$inc/libxml2){
+			isEmpty( XML2_FOUND) {
+				message(xml2 is first found here: $$inc .)
+				INC_DIR  += "$$inc/libxml2"
+				XML2_FOUND = 1
+			}
+		}
+	}
+	DEPENDPATH += . $$INC_DIRs
+	INCLUDEPATH += . $$INC_DIR
+
+	LIBS = -lcurl -lxml2 -lxslt -lcrypto
 }
 
 openbsd-* {
 	LIBXML2_DIR = /usr/local/include/libxml2
+}
+
+haiku-* {
+	LIBXML2_DIR = pkg-config --cflags libxml-2.0
 
 	INCLUDEPATH += $${LIBXML2_DIR}
 
 	LIBS += -lcurl -lxml2 -lxslt
 }
-

@@ -23,12 +23,13 @@
 #define _MSG_ITEM_DIALOG_H
 
 #include "ui_MsgItem.h"
+#include "FeedItem.h"
 #include <stdint.h>
 
 class FeedHolder;
 class SubFileItem;
 
-class MsgItem : public QWidget, private Ui::MsgItem
+class MsgItem : public FeedItem, private Ui::MsgItem
 {
 	Q_OBJECT
 
@@ -37,6 +38,14 @@ public:
 	MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome);
 
 	void updateItemStatic();
+
+protected:
+	/* FeedItem */
+	virtual void doExpand(bool open);
+	virtual void expandFill(bool first);
+
+private:
+	void fillExpandFrame();
 
 private slots:
 	/* default stuff */
@@ -47,6 +56,7 @@ private slots:
 	void playMedia();
 	void deleteMsg();
 	void replyMsg();
+	void checkMessageReadStatus();
 
 	void updateItem();
 
@@ -54,10 +64,11 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-    RsPeerId mPeerId;
 	std::string mMsgId;
+	QString mMsg;
 
 	bool mIsHome;
+	bool mCloseOnRead;
 
 	std::list<SubFileItem *> mFileItems;
 };

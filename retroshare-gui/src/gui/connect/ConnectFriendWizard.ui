@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>623</height>
+    <width>691</width>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
     <string>Add a new Friend</string>
    </property>
    <property name="subTitle">
-    <string>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</string>
+    <string>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;Select how you would like to add a friend:</string>
    </property>
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Intro</string>
@@ -31,7 +31,7 @@
     <item>
      <widget class="QRadioButton" name="textRadioButton">
       <property name="text">
-       <string>&amp;Enter the certificate manually</string>
+       <string>Enter the certificate manually</string>
       </property>
      </widget>
     </item>
@@ -52,7 +52,14 @@
     <item>
      <widget class="QRadioButton" name="rsidRadioButton">
       <property name="text">
-       <string>&amp;Enter RetroShare ID manually</string>
+       <string>Enter RetroShare ID manually</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="webmailRadioButton">
+      <property name="text">
+       <string>&amp;Send an Invitation by Web Mail Providers</string>
       </property>
      </widget>
     </item>
@@ -60,14 +67,14 @@
      <widget class="QRadioButton" name="emailRadioButton">
       <property name="text">
        <string>&amp;Send an Invitation by Email 
- (She/He receives an email with instructions how to to download RetroShare)</string>
+ (Your friend will receive an email with instructions how to to download RetroShare)</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QRadioButton" name="friendRecommendationsRadioButton">
       <property name="text">
-       <string>Recommend many friends to each others</string>
+       <string>Recommend many friends to each other</string>
       </property>
      </widget>
     </item>
@@ -87,7 +94,7 @@
     <item>
      <widget class="QLabel" name="userCertLabel">
       <property name="text">
-       <string>The text below is your PGP certificate. You have to provide it to your friend</string>
+       <string>The text below is your Retroshare certificate. You have to provide it to your friend</string>
       </property>
      </widget>
     </item>
@@ -98,7 +105,6 @@
         <property name="font">
          <font>
           <family>Courier New</family>
-          <pointsize>10</pointsize>
          </font>
         </property>
         <property name="lineWrapMode">
@@ -115,29 +121,35 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="userCertHelpButton">
+         <widget class="QToolButton" name="userCertHelpButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertIncludeSignaturesButton">
+         <widget class="QToolButton" name="userCertIncludeSignaturesButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Include signatures</string>
@@ -149,18 +161,21 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertCopyButton">
+         <widget class="QToolButton" name="userCertCopyButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Copy your Cert to Clipboard</string>
@@ -169,18 +184,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertSaveButton">
+         <widget class="QToolButton" name="userCertSaveButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Save your Cert into a File</string>
@@ -189,18 +207,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/document_save.png</normaloff>:/images/document_save.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertMailButton">
+         <widget class="QToolButton" name="userCertMailButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Run Email program</string>
@@ -209,18 +230,21 @@
            <iconset resource="../images.qrc">
             <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="userCertOldFormatButton">
+         <widget class="QToolButton" name="userCertOldFormatButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
@@ -229,7 +253,7 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="flat">
+          <property name="autoRaise">
            <bool>true</bool>
           </property>
          </widget>
@@ -254,7 +278,7 @@
     <item>
      <widget class="QLabel" name="friendCertLabel">
       <property name="text">
-       <string>Please, paste your friends PGP certificate into the box below</string>
+       <string>Please, paste your friend's Retroshare certificate into the box below</string>
       </property>
      </widget>
     </item>
@@ -265,8 +289,10 @@
         <property name="font">
          <font>
           <family>Courier New</family>
-          <pointsize>10</pointsize>
          </font>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's PGP key. Do not paste your friend's PGP key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="lineWrapMode">
          <enum>QPlainTextEdit::NoWrap</enum>
@@ -289,18 +315,35 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="friendCertCleanLabel">
+         <widget class="QToolButton" name="userCertPasteButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>20</horstretch>
             <verstretch>20</verstretch>
            </sizepolicy>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="toolTip">
+           <string>Paste Cert of your friend from Clipboard</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="friendCertCleanLabel">
           <property name="pixmap">
            <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
           </property>
-          <property name="scaledContents">
-           <bool>true</bool>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -471,6 +514,218 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="WebmalPage">
+   <property name="title">
+    <string>RetroShare is better with Friends </string>
+   </property>
+   <property name="subTitle">
+    <string>Invite your Friends from other Networks to RetroShare.</string>
+   </property>
+   <attribute name="pageId">
+    <string notr="true">ConnectFriendWizard::Page_WebMail</string>
+   </attribute>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <property name="margin">
+       <number>9</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="gmailButton">
+        <property name="text">
+         <string>GMail</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/gmail.png</normaloff>:/icons/gmail.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="yahooButton">
+        <property name="text">
+         <string>Yahoo</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/yahoo.png</normaloff>:/icons/yahoo.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="outlookButton">
+        <property name="text">
+         <string>Outlook</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/outlook.png</normaloff>:/icons/outlook.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="aolButton">
+        <property name="text">
+         <string>AOL</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/aol.png</normaloff>:/icons/aol.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="yandexButton">
+        <property name="text">
+         <string>Yandex</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/yandex.png</normaloff>:/icons/yandex.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="emailButton">
+        <property name="text">
+         <string>Email</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/mail_128.png</normaloff>:/icons/mail_128.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <spacer name="verticalSpacer_6">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>444</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
   <widget class="ConnectFriendPage" name="EmailPage">
    <property name="title">
     <string>Invite Friends by Email</string>
@@ -544,12 +799,7 @@
      <widget class="QFrame" name="frame">
       <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
-        <widget class="QLabel" name="fr_label">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
+        <widget class="StyledLabel" name="fr_label_3">
          <property name="text">
           <string notr="true">You have a friend request from</string>
          </property>
@@ -604,16 +854,16 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="fr_locationLabel">
+             <widget class="QLabel" name="fr_nodeLabel">
               <property name="text">
-               <string>Location:</string>
+               <string>Node:</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QLabel" name="fr_locationEdit">
+             <widget class="QLabel" name="fr_nodeEdit">
               <property name="text">
-               <string notr="true">Location</string>
+               <string notr="true">Node</string>
               </property>
              </widget>
             </item>
@@ -684,36 +934,42 @@
          <item>
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Service permissions</string>
+            <string>Options</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <widget class="QCheckBox" name="_anonymous_routing_CB">
-              <property name="text">
-               <string>Anonymous routing</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_discovery_CB">
-              <property name="text">
-               <string>Discovery</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_forums_channels_CB">
-              <property name="text">
-               <string>Forums/channels</string>
-              </property>
-             </widget>
-            </item>
             <item>
              <widget class="QCheckBox" name="_direct_transfer_CB">
               <property name="text">
                <string>Use as direct source, when available</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_allow_push_CB">
+              <property name="text">
+               <string>Auto-download recommended files</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_require_WL_CB">
+              <property name="text">
+               <string>Require whitelist clearance to connect</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -724,12 +980,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="requestinfolabel">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
+     <widget class="StyledLabel" name="requestinfolabel_3">
       <property name="text">
        <string>To accept the Friend Request, click the Finish button.</string>
       </property>
@@ -780,20 +1031,168 @@
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Conclusion</string>
    </attribute>
-   <layout class="QVBoxLayout" name="verticalLayout_18">
+   <layout class="QVBoxLayout" name="verticalLayout_17">
     <item>
-     <widget class="QLabel" name="makefriend_infolabel">
-      <property name="font">
-       <font>
-        <family>Tahoma</family>
-        <pointsize>11</pointsize>
-       </font>
+     <widget class="StyledLabel" name="makefriend_infolabel">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
       </property>
       <property name="text">
-       <string>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</string>
+       <string>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add too many friends. You can add as many friends as you like, but more than 40 will probably require too much 
+resources.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="StyledLabel" name="fr_label">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="text">
+       <string notr="true">You have a friend request from</string>
+      </property>
+      <property name="margin">
+       <number>2</number>
       </property>
      </widget>
     </item>
@@ -849,34 +1248,34 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="locationLabel">
+        <widget class="QLabel" name="nodeLabel">
          <property name="text">
           <string>Location:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLabel" name="locationEdit">
+        <widget class="QLabel" name="nodeEdit">
          <property name="text">
           <string notr="true">Location</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="signersLabel">
          <property name="text">
           <string>Signers</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="6" column="1">
         <widget class="QPlainTextEdit" name="signersEdit">
          <property name="readOnly">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" colspan="2">
+       <item row="7" column="0" colspan="2">
         <widget class="QLabel" name="alreadyRegisteredLabel">
          <property name="text">
           <string>This peer is already on your friend list. Adding it might just set it's ip address.</string>
@@ -886,109 +1285,205 @@
          </property>
         </widget>
        </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="ipLabel">
+         <property name="text">
+          <string>IP-Addr:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLabel" name="ipEdit">
+         <property name="text">
+          <string>IP-Address</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="addKeyToKeyring_CB">
-      <property name="text">
-       <string>Add key to keyring</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QCheckBox" name="acceptNoSignGPGCheckBox">
-      <property name="text">
-       <string>Add as friend to connect with</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="optionsFrame">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_17">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_18">
+        <item>
+         <widget class="QCheckBox" name="addKeyToKeyring_CB">
+          <property name="text">
+           <string>Add key to keyring</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="signGPGCheckBox">
+          <property name="text">
+           <string>Authenticate friend (Sign PGP Key)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="acceptNoSignGPGCheckBox">
+          <property name="text">
+           <string>Add as friend to connect with</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <item>
+           <widget class="QCheckBox" name="_addIPToWhiteList_CB_2">
+            <property name="text">
+             <string>Add IP to whitelist</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="_addIPToWhiteList_ComboBox_2"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="groupLabel">
+            <property name="text">
+             <string>Add friend to group:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="groupComboBox"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_19">
+        <item>
+         <widget class="QGroupBox" name="_options_GB">
+          <property name="title">
+           <string>Options</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QCheckBox" name="signGPGCheckBox">
+            <widget class="QCheckBox" name="_direct_transfer_CB_2">
              <property name="text">
-              <string>Authenticate friend (Sign PGP Key)</string>
+              <string>Can be used as direct source</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLabel" name="groupLabel">
-               <property name="text">
-                <string>Add friend to group:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="groupComboBox"/>
-             </item>
-            </layout>
+            <widget class="QCheckBox" name="_allow_push_CB_2">
+             <property name="text">
+              <string>Auto-download recommended files</string>
+             </property>
+            </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+            <widget class="QCheckBox" name="_require_WL_CB_2">
+             <property name="text">
+              <string>Require whitelist clearance to connect</string>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
+            </widget>
            </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_2">
-           <property name="title">
-            <string>Service permissions</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <item>
-             <widget class="QCheckBox" name="_direct_transfer_CB_2">
-              <property name="text">
-               <string>Direct source</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_discovery_CB_2">
-              <property name="text">
-               <string>Discovery</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_forums_channels_CB_2">
-              <property name="text">
-               <string>Forums/channels</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_anonymous_routing_CB_2">
-              <property name="text">
-               <string>Anonymous routing</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>38</width>
+            <height>38</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="StyledLabel" name="requestinfolabel">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>255</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>255</red>
+            <green>255</green>
+            <blue>178</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="text">
+       <string>To accept the Friend Request, click the Finish button.</string>
+      </property>
+      <property name="margin">
+       <number>2</number>
+      </property>
      </widget>
     </item>
    </layout>
@@ -1056,6 +1551,17 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
    <header>gui/common/DropLineEdit.h</header>
@@ -1066,17 +1572,10 @@
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
   </customwidget>
-  <customwidget>
-   <class>FriendSelectionWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -36,6 +36,7 @@
 
 #define CIRCLEGROUP_CIRCLE_COL_GROUPNAME 0
 #define CIRCLEGROUP_CIRCLE_COL_GROUPID   1
+#define CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS   2
 
 #define CIRCLEGROUP_FRIEND_COL_NAME 0
 #define CIRCLEGROUP_FRIEND_COL_ID   1
@@ -62,8 +63,8 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.pushButton_editCircle);
 
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_membership, UISTATE_ACTIVE_ENABLED);
-	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_friends, UISTATE_ACTIVE_ENABLED);
-	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_category, UISTATE_ACTIVE_ENABLED);
+//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_friends, UISTATE_ACTIVE_ENABLED);
+//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_category, UISTATE_ACTIVE_ENABLED);
 
 	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false);
 
@@ -74,8 +75,8 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui.treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
-	connect(ui.treeWidget_friends, SIGNAL(itemSelectionChanged()), this, SLOT(friend_selected()));
-	connect(ui.treeWidget_category, SIGNAL(itemSelectionChanged()), this, SLOT(category_selected()));
+//	connect(ui.treeWidget_friends, SIGNAL(itemSelectionChanged()), this, SLOT(friend_selected()));
+//	connect(ui.treeWidget_category, SIGNAL(itemSelectionChanged()), this, SLOT(category_selected()));
 
 	/* Setup TokenQueue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
@@ -84,9 +85,14 @@ CirclesDialog::CirclesDialog(QWidget *parent)
   QHeaderView * membership_header = ui.treeWidget_membership->header () ;
   membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
 
-  QHeaderView * friends_header = ui.treeWidget_friends->header () ;
-  friends_header->resizeSection ( CIRCLEGROUP_FRIEND_COL_NAME, 200 );
+//  QHeaderView * friends_header = ui.treeWidget_friends->header () ;
+//  friends_header->resizeSection ( CIRCLEGROUP_FRIEND_COL_NAME, 200 );
   
+}
+
+CirclesDialog::~CirclesDialog()
+{
+	delete mCircleQueue;
 }
 
 void CirclesDialog::todo()
@@ -130,8 +136,10 @@ void CirclesDialog::editExistingCircle()
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
     RsGxsGroupId id ( coltext.toStdString());
 
+	uint32_t subscribe_flags = item->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt();
+    
 	CreateCircleDialog dlg;
-	dlg.editExistingId(id);
+	dlg.editExistingId(id,true,!!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
 	dlg.exec();
 }
 
@@ -149,6 +157,7 @@ void CirclesDialog::reloadAll()
 	rsPeers->getGPGAcceptedList(friend_pgpIds);
 	rsPeers->getGPGAllList(all_pgpIds);
 
+#ifdef SUSPENDED_CODE
 	/* clear tree */
 	ui.treeWidget_friends->clear();
 
@@ -161,7 +170,7 @@ void CirclesDialog::reloadAll()
 	fofItem->setText(0, tr("Friends Of Friends"));
 	ui.treeWidget_friends->addTopLevelItem(fofItem);
 
-	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); it++)
+	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
 	{
 		RsPeerDetails details;
 		if (rsPeers->getGPGDetails(*it, details))
@@ -175,7 +184,7 @@ void CirclesDialog::reloadAll()
 		}
 	}
 
-	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); it++)
+	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it)
 	{
 		if (friend_set.end() != friend_set.find(*it))
 		{
@@ -193,6 +202,7 @@ void CirclesDialog::reloadAll()
 			fofItem->addChild(item);
 		}
 	}
+#endif
 }
 
 void set_item_background(QTreeWidgetItem *item, uint32_t type)
@@ -223,7 +233,7 @@ void set_item_background(QTreeWidgetItem *item, uint32_t type)
 void update_children_background(QTreeWidgetItem *item, uint32_t type)
 {
 	int count = item->childCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *child = item->child(i);
 
@@ -242,7 +252,7 @@ void set_tree_background(QTreeWidget *tree, uint32_t type)
 
 	/* grab all toplevel */
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		/* resursively clear child backgrounds */
@@ -266,7 +276,7 @@ void check_mark_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names, uint
 void update_mark_children(QTreeWidgetItem *item, const std::set<RsPgpId> &names, uint32_t col, uint32_t type)
 {
 	int count = item->childCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *child = item->child(i);
 
@@ -285,7 +295,7 @@ void mark_matching_tree(QTreeWidget *tree, const std::set<RsPgpId> &names, uint3
 
 	/* grab all toplevel */
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		/* resursively clear child backgrounds */
@@ -303,9 +313,9 @@ void mark_circle_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names)
 	if (rsGxsCircles->getCircleDetails(id, details))
 	{
         std::set<RsPgpId>::iterator it;
-		for(it = names.begin(); it != names.end(); it++)
+		for(it = names.begin(); it != names.end(); ++it)
 		{
-            if (details.mAllowedPeers.end() != details.mAllowedPeers.find(*it))
+            if (details.mAllowedNodes.end() != details.mAllowedNodes.find(*it))
 			{
 				set_item_background(item, GREEN_BACKGROUND);
 				std::cerr << "CirclesDialog mark_circle_item: found match: " << id;
@@ -324,7 +334,7 @@ void mark_circle_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names)
 void mark_circle_children(QTreeWidgetItem *item, const std::set<RsPgpId> &names)
 {
 	int count = item->childCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *child = item->child(i);
 
@@ -343,7 +353,7 @@ void mark_circle_tree(QTreeWidget *tree, const std::set<RsPgpId> &names)
 
 	/* grab all toplevel */
 	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QTreeWidgetItem *item = tree->topLevelItem(i);
 		mark_circle_children(item, names);
@@ -377,16 +387,7 @@ void CirclesDialog::circle_selected()
 	if (rsGxsCircles->getCircleDetails(id, details))
 	{
 		/* now mark all the members */
-        std::set<RsPgpId> members;
-		std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-		for(it = details.mAllowedPeers.begin(); it != details.mAllowedPeers.end(); it++)
-		{
-			members.insert(it->first);
-			std::cerr << "Circle member: " << it->first;
-			std::cerr << std::endl;
-		}
-
-		mark_matching_tree(ui.treeWidget_friends, members, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
+		mark_matching_tree(ui.treeWidget_friends, details.mAllowedNodes, CIRCLEGROUP_FRIEND_COL_ID, GREEN_BACKGROUND);
 	}
 	else
 	{
@@ -624,7 +625,7 @@ void CirclesDialog::loadGroupMeta(const uint32_t &token)
 	externalOtherCirclesItem->setText(0, tr("External Circles (Other)"));
 	ui.treeWidget_membership->addTopLevelItem(externalOtherCirclesItem);
 
-	for(vit = groupInfo.begin(); vit != groupInfo.end(); vit++)
+	for(vit = groupInfo.begin(); vit != groupInfo.end(); ++vit)
 	{
 		/* Add Widget, and request Pages */
 		std::cerr << "CirclesDialog::loadGroupMeta() GroupId: " << vit->mGroupId;

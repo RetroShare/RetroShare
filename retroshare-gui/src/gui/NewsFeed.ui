@@ -6,11 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
+    <width>598</width>
     <height>376</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
@@ -26,19 +38,28 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
        <widget class="QLabel" name="titleBarPixmap">
         <property name="maximumSize">
          <size>
-          <width>16</width>
-          <height>16</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/newsfeed/news-feed-32.png</pixmap>
+         <pixmap resource="icons.qrc">:/icons/png/newsfeed.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -46,20 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="titleBarLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
+       <widget class="StyledLabel" name="titleBarLabel">
         <property name="text">
          <string>News Feed</string>
         </property>
@@ -77,6 +85,9 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QComboBox" name="sortComboBox"/>
       </item>
       <item>
        <widget class="QPushButton" name="feedOptionsButton">
@@ -99,7 +110,13 @@
         </property>
         <property name="icon">
          <iconset resource="images.qrc">
-          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
+          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -113,40 +130,33 @@
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="widgetResizable">
-      <bool>true</bool>
+    <widget class="RSFeedWidget" name="feedWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>551</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QVBoxLayout" name="itemsLayout">
-       <property name="spacing">
-        <number>3</number>
-       </property>
-       <property name="margin">
-        <number>3</number>
-       </property>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSFeedWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/RSFeedWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

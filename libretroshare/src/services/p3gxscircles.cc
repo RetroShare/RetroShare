@@ -27,9 +27,13 @@
 #include "serialiser/rsgxscircleitems.h"
 #include "retroshare/rsgxsflags.h"
 #include "util/rsrandom.h"
+#include "util/rsdir.h"
+#include "util/radix64.h"
 #include "util/rsstring.h"
 
 #include "pgp/pgpauxutils.h"
+#include "retroshare/rsgxscircles.h"
+#include "retroshare/rspeers.h"
 
 #include <sstream>
 #include <stdio.h>
@@ -71,8 +75,9 @@ RsGxsCircles *rsGxsCircles = NULL;
  */
 
 
-#define CIRCLEREQ_CACHELOAD	0x0001
-#define CIRCLEREQ_CIRCLE_LIST   0x0002
+#define CIRCLEREQ_CACHELOAD	  0x0001
+#define CIRCLEREQ_CIRCLE_LIST    0x0002
+#define CIRCLEREQ_MESSAGE_DATA   0x0003
 
 //#define CIRCLEREQ_PGPHASH 	0x0010
 //#define CIRCLEREQ_REPUTATION 	0x0020
@@ -97,6 +102,8 @@ RsGxsCircles *rsGxsCircles = NULL;
 #define GXSID_LOAD_CYCLE		10	// GXSID completes a load in this period.
 
 #define MIN_CIRCLE_LOAD_GAP		5
+#define GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
+#define GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -115,14 +122,22 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
-
+    	mLastCacheMembershipUpdateTS = 0 ;
+        
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
 	// Dummy Circles.
-//	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
-
+	//	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
+	mDummyIdToken = 0;
 }
 
+static bool allowedGxsIdFlagTest(uint32_t subscription_flags,bool group_is_self_restricted)
+{
+    if(group_is_self_restricted)
+	    return   (subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) && (subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE);
+    else
+	    return   (subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) && (subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED) && (subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE);
+}
 
 const std::string GXS_CIRCLES_APP_NAME = "gxscircle";
 const uint16_t GXS_CIRCLES_APP_MAJOR_VERSION  =       1;
@@ -169,72 +184,80 @@ void	p3GxsCircles::service_tick()
 {
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
+    
+	time_t now = time(NULL);
+    	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
+	{
+		checkCircleCache();
+		mLastCacheMembershipUpdateTS = now ;
+	}
 	return;
 }
 
 void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::notifyChanges()";
-	std::cerr << std::endl;
+    std::cerr << "p3GxsCircles::notifyChanges()";
+    std::cerr << std::endl;
 #endif
 
-	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); it++)
-	{
-	       RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
-	       RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
-	       if (msgChange && !msgChange->metaChange())
-	       {
+    std::vector<RsGxsNotify *>::iterator it;
+    for(it = changes.begin(); it != changes.end(); ++it)
+    {
+	    RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+	    RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
+	    if (msgChange && !msgChange->metaChange())
+	    {
 #ifdef DEBUG_CIRCLES
-			std::cerr << "p3GxsCircles::notifyChanges() Found Message Change Notification";
-			std::cerr << std::endl;
+		    std::cerr << "  Found circle Message Change Notification" << std::endl;
 #endif
-
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); mit++)
-			{
+		    for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
+		    {
 #ifdef DEBUG_CIRCLES
-				std::cerr << "p3GxsCircles::notifyChanges() Msgs for Group: " << mit->first;
-				std::cerr << std::endl;
+			    std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
-			}
-	       }
+			    for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator it2(msgChange->msgChangeMap.begin());it2!=msgChange->msgChangeMap.end();++it2)
+				    force_cache_reload(RsGxsCircleId(it2->first)) ;
+		    }
+	    }
 
-	       /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
-		if (groupChange && !groupChange->metaChange())
-		{
+	    /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
+	    if (groupChange && !groupChange->metaChange())
+	    {
 #ifdef DEBUG_CIRCLES
-			std::cerr << "p3GxsCircles::notifyChanges() Found Group Change Notification";
-			std::cerr << std::endl;
+		    std::cerr << "  Found Group Change Notification" << std::endl;
 #endif
-
-			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-			std::list<RsGxsGroupId>::iterator git;
-			for(git = groupList.begin(); git != groupList.end(); git++)
-			{
+		    for(std::list<RsGxsGroupId>::iterator git = groupChange->mGrpIdList.begin(); git != groupChange->mGrpIdList.end(); ++git)
+		    {
 #ifdef DEBUG_CIRCLES
-				std::cerr << "p3GxsCircles::notifyChanges() Incoming Group: " << *git;
-				std::cerr << std::endl;
+			    std::cerr << "    Incoming Group: " << *git << ". Forcing cache load." << std::endl;
 #endif
 
-				// for new circles we need to add them to the list.
-                // we don't know the type of this circle here
-                // original behavior was to add all ids to the external ids list
-                addCircleIdToList(RsGxsCircleId(*git), 0);
+			    // for new circles we need to add them to the list.
+			    // we don't know the type of this circle here
+			    // original behavior was to add all ids to the external ids list
 
-                // reset the cached circle data for this id
-                {
-                    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-                    mCircleCache.erase(RsGxsCircleId(*git));
-                }
-			}
-		}
-	}
-	RsGxsIfaceHelper::receiveChanges(changes);
+			    addCircleIdToList(RsGxsCircleId(*git), 0);
 
+			    // reset the cached circle data for this id
+			    {
+				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+				    mCircleCache.erase(RsGxsCircleId(*git));
+			    }
+		    }
+	    }
 
+	    if(groupChange)
+		    for(std::list<RsGxsGroupId>::const_iterator git(groupChange->mGrpIdList.begin());git!=groupChange->mGrpIdList.end();++git)
+		    {
+#ifdef DEBUG_CIRCLES
+			    std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
+#endif
+			    force_cache_reload(RsGxsCircleId(*git)) ;
+		    }
+    }
+    RsGxsIfaceHelper::receiveChanges(changes);	// this clear up the vector and delete its elements
 }
 
 /********************************************************************************/
@@ -245,33 +268,50 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 {
 
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::getCircleDetails(" << id << ")";
-	std::cerr << std::endl;
+    std::cerr << "p3GxsCircles::getCircleDetails(" << id << ")";
+    std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
 
-	{
-		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-		if (mCircleCache.is_cached(id))
-		{
-			RsGxsCircleCache &data = mCircleCache.ref(id);
+    {
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	    if (mCircleCache.is_cached(id))
+	    {
+		    RsGxsCircleCache &data = mCircleCache.ref(id);
 
-			// should also have meta data....
-			details.mCircleId = id;
-			details.mCircleName = data.mCircleName;
+		    // should also have meta data....
+		    details.mCircleId = id;
+		    details.mCircleName = data.mCircleName;
 
-			details.mCircleType = data.mCircleType;
-			details.mIsExternal = data.mIsExternal;
+		    details.mCircleType = data.mCircleType;
+		    details.mRestrictedCircleId = data.mRestrictedCircleId;
 
-			details.mUnknownPeers = data.mUnknownPeers;
-			details.mAllowedPeers = data.mAllowedPeers;
-			return true;
-		}
-	}
+		    details.mAllowedNodes = data.mAllowedNodes;
+		    details.mSubscriptionFlags.clear();
+		    details.mAllowedGxsIds.clear();
+		    details.mAmIAllowed = false ;
 
-	/* it isn't there - add to public requests */
-	cache_request_load(id);
+		    for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it(data.mMembershipStatus.begin());it!=data.mMembershipStatus.end();++it)
+		    {
+			    details.mSubscriptionFlags[it->first] = it->second.subscription_flags ;
 
-	return false;
+			    if(it->second.subscription_flags == GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED)
+                		{
+				    details.mAllowedGxsIds.insert(it->first) ;
+                    
+                    			if(rsIdentity->isOwnId(it->first))
+		    				details.mAmIAllowed = true ;
+                    		}
+		    }
+
+
+		    return true;
+	    }
+    }
+
+    /* it isn't there - add to public requests */
+    cache_request_load(id);
+
+    return false;
 }
 
 
@@ -290,7 +330,7 @@ bool p3GxsCircles:: getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds)
 	else
 	{
 		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); it++)
+		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); ++it)
 		{
 			circleIds.push_back(*it);
 		}
@@ -315,7 +355,7 @@ bool p3GxsCircles:: getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds)
 	else
 	{
 		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCircleExternalIdList.begin(); it != mCircleExternalIdList.begin(); it++)
+		for(it = mCircleExternalIdList.begin(); it != mCircleExternalIdList.begin(); ++it)
 		{
 			circleIds.push_back(*it);
 		}
@@ -340,16 +380,18 @@ bool p3GxsCircles::loadCircle(const RsGxsCircleId &circleId)
 	return cache_request_load(circleId);
 }
 
-int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id)
+
+int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool& should_encrypt)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))
 	{
 		RsGxsCircleCache &data = mCircleCache.ref(circleId);
+		should_encrypt = (data.mCircleType == GXS_CIRCLE_TYPE_EXTERNAL);
+                
 		if (data.isAllowedPeer(id))
-		{
 			return 1;
-		}
+        
 		return 0;
 	}
 	return -1;
@@ -370,7 +412,7 @@ int p3GxsCircles::canReceive(const RsGxsCircleId &circleId, const RsPgpId &id)
 	return -1;
 }
 
-bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist)
+bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))
@@ -380,6 +422,38 @@ bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> 
 		return true;
 	}
 	return false;
+}
+
+bool p3GxsCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) 
+{
+	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	if (mCircleCache.is_cached(circleId))
+	{
+		const RsGxsCircleCache &data = mCircleCache.ref(circleId);
+		return data.isAllowedPeer(id,destination_group);
+	}
+	return false;
+}
+
+// This function uses the destination group for the transaction in order to decide which list of
+// keys to ecnrypt to. When sending to a self-restricted group, the list of recipients is extended to
+// the admin list rather than just the members list.
+
+bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId& dest_group, std::list<RsGxsId>& gxs_ids)
+{
+	gxs_ids.clear() ;
+
+	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+	if (!mCircleCache.is_cached(circleId))
+		return false ;
+
+	const RsGxsCircleCache& cache = mCircleCache.ref(circleId);
+
+	for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it(cache.mMembershipStatus.begin());it!=cache.mMembershipStatus.end();++it)
+        	if(allowedGxsIdFlagTest(it->second.subscription_flags, RsGxsCircleId(dest_group) == circleId))
+			gxs_ids.push_back(it->first) ;
+		
+	return true;
 }
 
 /********************************************************************************/
@@ -396,7 +470,7 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsCircleGroupItem* item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
 			if (item)
@@ -494,6 +568,8 @@ RsGxsCircleCache::RsGxsCircleCache()
 	mIsExternal = true;
 	mUpdateTime = 0;
 	mGroupStatus = 0;
+	mGroupSubscribeFlags = 0;
+    	mLastUpdatedMembershipTS = 0 ;
 
 	return; 
 }
@@ -505,11 +581,25 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mCircleId = RsGxsCircleId(circle.mMeta.mGroupId);
 	mCircleName = circle.mMeta.mGroupName;
 	mUpdateTime = time(NULL);
-	mProcessedCircles.insert(mCircleId);
+//	mProcessedCircles.insert(mCircleId);
 
 	mCircleType = circle.mMeta.mCircleType;
 	mIsExternal = (mCircleType != GXS_CIRCLE_TYPE_LOCAL);
 	mGroupStatus = circle.mMeta.mGroupStatus;
+	mGroupSubscribeFlags = circle.mMeta.mSubscribeFlags;
+	mOriginator = circle.mMeta.mOriginator ;
+        
+        mAllowedNodes = circle.mLocalFriends ;
+        mRestrictedCircleId = circle.mMeta.mCircleId ;
+        
+        mMembershipStatus.clear() ;
+        
+        for(std::set<RsGxsId>::const_iterator it(circle.mInvitedMembers.begin());it!=circle.mInvitedMembers.end();++it)
+        {
+            RsGxsCircleMembershipStatus& s(mMembershipStatus[*it]) ;
+            s.last_subscription_TS = 0 ;
+            s.subscription_flags = GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST ;
+        }
 
 #ifdef DEBUG_CIRCLES
 	std::cerr << "RsGxsCircleCache::loadBaseCircle(" << mCircleId << ")";
@@ -533,39 +623,35 @@ bool RsGxsCircleCache::loadSubCircle(const RsGxsCircleCache &subcircle)
 	return true;
 }
 
-bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId> &friendlist)
+bool RsGxsCircleCache::getAllowedPeersList(std::list<RsPgpId>& friendlist) const
 {
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it;
-	for(it = mAllowedPeers.begin(); it != mAllowedPeers.end(); it++)
-	{
-		friendlist.push_back(it->first);
-	}
+    friendlist.clear() ;
+    
+	for(std::set<RsPgpId>::const_iterator it = mAllowedNodes.begin(); it != mAllowedNodes.end(); ++it)
+		friendlist.push_back(*it) ;
+	
 	return true;
 }
 
-bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id)
+bool RsGxsCircleCache::isAllowedPeer(const RsGxsId& id,const RsGxsGroupId& destination_group) const
 {
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = mAllowedPeers.find(id);
-	if (it != mAllowedPeers.end())
-	{
-		return true;
-	}
-	return false;
+	std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it = mMembershipStatus.find(id) ;
+    
+    	if(it == mMembershipStatus.end())
+            return false ;
+        
+        return allowedGxsIdFlagTest(it->second.subscription_flags, RsGxsGroupId(mCircleId) == destination_group) ;
 }
 
-bool RsGxsCircleCache::addAllowedPeer(const RsPgpId &pgpId, const RsGxsId &gxsId)
+bool RsGxsCircleCache::isAllowedPeer(const RsPgpId &id) const
 {
-	/* created if doesn't exist */
-	std::list<RsGxsId> &gxsList = mAllowedPeers[pgpId];
-	gxsList.push_back(gxsId);
-	return true;
+    return mAllowedNodes.find(id) != mAllowedNodes.end() ;
 }
-
 
 bool RsGxsCircleCache::addLocalFriend(const RsPgpId &pgpId)
 {
 	/* empty list as no GxsID associated */
-	std::list<RsGxsId> &gxsList = mAllowedPeers[pgpId];
+            mAllowedNodes.insert(pgpId) ;
 	return true;
 }
 
@@ -613,7 +699,7 @@ bool p3GxsCircles::load_CircleIdList(uint32_t token)
             mCircleExternalIdList.clear();
         }
 
-        for(std::list<RsGroupMetaData>::iterator it = groups.begin(); it != groups.end(); it++)
+        for(std::list<RsGroupMetaData>::iterator it = groups.begin(); it != groups.end(); ++it)
 		{
             addCircleIdToList(RsGxsCircleId(it->mGroupId), it->mCircleType);
 		}
@@ -667,7 +753,7 @@ bool p3GxsCircles::cachetest_handlerequest(uint32_t token)
 	if(ok)
 	{
 		std::list<RsGxsId>::iterator vit = grpIds.begin();
-		for(; vit != grpIds.end(); vit++)
+		for(; vit != grpIds.end(); ++vit)
 		{
 			/* 5% chance of checking it! */
 			if (RSRandom::random_f32() < 0.25)
@@ -752,6 +838,33 @@ bool p3GxsCircles::cachetest_handlerequest(uint32_t token)
 /************************************************************************************/
 // Complicated deal of loading Circles.
 
+bool p3GxsCircles::force_cache_reload(const RsGxsCircleId& id)
+{
+#ifdef DEBUG_CIRCLES
+    std::cerr << "p3GxsCircles::force_cache_reload(): Forcing cache reload of Circle ID " << id << std::endl;
+#endif
+    
+    {
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+
+#ifdef DEBUG_CIRCLES
+	    std::cerr << "  clearing from existing cache entries..." << std::endl;
+#endif
+
+	    std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it = mLoadingCache.find(id);
+	    if (it != mLoadingCache.end())
+	    {
+		    mLoadingCache.erase(it) ;
+#ifdef DEBUG_CIRCLES
+		    std::cerr << "  removed item from currently loading cache entries..." << std::endl;
+#endif
+	    }
+	    mCircleCache.erase(id) ;
+    }
+    cache_request_load(id) ;
+    
+    return true ;
+}
 
 bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 {
@@ -791,8 +904,7 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 	{
 		if (age < MIN_CIRCLE_LOAD_GAP)
 		{
-			RsTickEvent::schedule_in(CIRCLE_EVENT_CACHELOAD, 
-						MIN_CIRCLE_LOAD_GAP - age);
+			RsTickEvent::schedule_in(CIRCLE_EVENT_CACHELOAD,  MIN_CIRCLE_LOAD_GAP - age);
 			return true;
 		}
 	}
@@ -816,7 +928,7 @@ bool p3GxsCircles::cache_start_load()
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
 		std::list<RsGxsCircleId>::iterator it;
-		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
+		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); ++it)
 		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "p3GxsCircles::cache_start_load() GroupId: " << *it;
@@ -851,354 +963,298 @@ bool p3GxsCircles::cache_start_load()
 bool p3GxsCircles::cache_load_for_token(uint32_t token)
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::cache_load_for_token() : " << token;
-	std::cerr << std::endl;
+    std::cerr << "p3GxsCircles::cache_load_for_token() : " << token << std::endl;
 #endif // DEBUG_CIRCLES
 
-	std::vector<RsGxsGrpItem*> grpData;
-	bool ok = RsGenExchange::getGroupData(token, grpData);
+    std::vector<RsGxsGrpItem*> grpData;
 
-	if(ok)
+    if(!RsGenExchange::getGroupData(token, grpData))
+    {
+	    std::cerr << "p3GxsCircles::cache_load_for_token() ERROR no data";
+	    std::cerr << std::endl;
+
+	    return false;
+    }
+
+    std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+
+    for(; vit != grpData.end(); ++vit)
+    {
+	    RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
+	    if (!item)
+	    {
+		    std::cerr << "  Not a RsGxsCircleGroupItem Item, deleting!" << std::endl;
+		    delete(*vit);
+		    continue;
+	    }
+	    RsGxsCircleGroup group;
+	    item->convertTo(group);
+
+#ifdef DEBUG_CIRCLES
+	    std::cerr << "  Loaded Id with Meta: " << item->meta << std::endl;
+#endif // DEBUG_CIRCLES
+
+
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+
+	    /* should already have a LoadingCache entry */
+	    RsGxsCircleId id = RsGxsCircleId(item->meta.mGroupId) ;
+
+	    // (cyril) I'm not sure this logic is needed. The token system would avoid duplicates normally.
+
+	    std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it = mLoadingCache.find(id);
+
+	    if (it == mLoadingCache.end())
+	    {
+		    std::cerr << "p3GxsCircles::cache_load_for_token() Load ERROR: ";
+		    std::cerr << item->meta;
+		    std::cerr << std::endl;
+		    delete(item);
+		    // ERROR.
+		    continue;
+	    }
+
+	    RsGxsCircleCache& cache = it->second;
+
+	    cache.loadBaseCircle(group);
+	    delete item;
+
+	    if(locked_processLoadingCacheEntry(it->second)) 
+	    {
+#ifdef DEBUG_CIRCLES
+		    std::cerr << "  All peers available. Moving to cache..." << std::endl;
+#endif
+		    mLoadingCache.erase(it);
+	    }
+	    else
+	    {
+#ifdef DEBUG_CIRCLES
+		    std::cerr << "  Unprocessed peers. Requesting reload..." << std::endl;
+#endif
+
+		    /* schedule event to try reload gxsIds */
+		    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
+	    }
+
+    }
+
+    return true;
+}
+
+// This method parses the cache entry and makes sure that all ids are known. If not, requests the missing ids
+// when done, the entry is removed from mLoadingCache
+
+bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
+{
+	//bool isUnprocessedPeers = false;
+
+	if (cache.mIsExternal)
 	{
-		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+#ifdef DEBUG_CIRCLES
+		std::cerr << "Processing External Circle " << cache.mCircleId << std::endl;
+#endif
 
-		for(; vit != grpData.end(); vit++)
+        // Do we actually need to retrieve the missing keys for all members of a circle???
+        // These keys are needed for subscribtion request signature checking. But this is only
+        // when a subscription msg is posted, which would trigger retrieval of the key anyway
+        // Maybe this can be made an option of p3GxsCircles, or of rsIdentity.
+
+		// need to trigger the searches.
+		for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::iterator pit = cache.mMembershipStatus.begin(); pit != cache.mMembershipStatus.end(); ++pit)
 		{
-			RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
-			if (!item)
-			{
-				std::cerr << "Not a RsGxsCircleGroupItem Item, deleting!" << std::endl;
-				delete(*vit);
-				continue;
-			}
-			RsGxsCircleGroup group;
-			item->convertTo(group);
-
 #ifdef DEBUG_CIRCLES
-			std::cerr << "p3GxsCircles::cache_load_for_token() Loaded Id with Meta: ";
-			std::cerr << item->meta;
-			std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-
-
-			RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-
-			/* should already have a LoadingCache entry */
-			RsGxsCircleId id = RsGxsCircleId(item->meta.mGroupId.toStdString());
-			std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it;
-			it = mLoadingCache.find(id);
-			if (it == mLoadingCache.end())
-			{
-				std::cerr << "p3GxsCircles::cache_load_for_token() Load ERROR: ";
-				std::cerr << item->meta;
-				std::cerr << std::endl;
-				delete(item);
-				// ERROR.
-				continue;
-			}
-
-			RsGxsCircleCache &cache = it->second;
-			cache.loadBaseCircle(group);
-			delete item;
-
-
-			bool isComplete = true;
-			bool isUnprocessedPeers = false;
-
-
-			if (cache.mIsExternal)
-			{
-#ifdef DEBUG_CIRCLES
-				std::cerr << "p3GxsCircles::cache_load_for_token() Loading External Circle";
-				std::cerr << std::endl;
+			std::cerr << "  Member status: " << pit->first << " : " << pit->second.subscription_flags;
 #endif
 
-				std::list<RsGxsId> &peers = group.mInvitedMembers;
-				std::list<RsGxsId>::const_iterator pit;
-	
-				// need to trigger the searches.
-				for(pit = peers.begin(); pit != peers.end(); pit++)
+			/* check cache */
+			if(!(pit->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE))
+			{
+				if(mIdentities->haveKey(pit->first))
 				{
+					pit->second.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE;
 #ifdef DEBUG_CIRCLES
-					std::cerr << "p3GxsCircles::cache_load_for_token() Invited Member: " << *pit;
-					std::cerr << std::endl;
+					std::cerr << "    Key is now available!"<< std::endl;
 #endif
+				}
+				else
+				{
+                    std::list<RsPeerId> peers;
 
-					/* check cache */
-					if (mIdentities->haveKey(*pit))
+					if(!cache.mOriginator.isNull())
 					{
-						/* we can process now! */
-						RsIdentityDetails details;
-						if (mIdentities->getIdDetails(*pit, details))
-						{
-							if (details.mPgpLinked && details.mPgpKnown)
-							{
+						peers.push_back(cache.mOriginator) ;
 #ifdef DEBUG_CIRCLES
-								std::cerr << "p3GxsCircles::cache_load_for_token() Is Known -> AllowedPeer: " << *pit;
-								std::cerr << std::endl;
+						std::cerr << "    Requesting unknown/unloaded identity: " << pit->first << " to originator " << cache.mOriginator << std::endl;
 #endif
-								cache.addAllowedPeer(details.mPgpId, *pit);
-							}
-							else
-							{
-#ifdef DEBUG_CIRCLES
-								std::cerr << "p3GxsCircles::cache_load_for_token() Is Unknown -> UnknownPeer: " << *pit;
-								std::cerr << std::endl;
-#endif
-								cache.mUnknownPeers.insert(*pit);
-							}
-						}
-						else
-						{
-							std::cerr << "p3GxsCircles::cache_load_for_token() ERROR no details: " << *pit;
-							std::cerr << std::endl;
-							// ERROR.
-						}
 					}
 					else
 					{
-#ifdef DEBUG_CIRCLES
+						std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
 
-						std::cerr << "p3GxsCircles::cache_load_for_token() Requesting UnprocessedPeer: " << *pit;
-						std::cerr << std::endl;
-#endif
-
-						std::list<PeerId> peers;
-						mIdentities->requestKey(*pit, peers);
-
-						/* store in to_process queue. */
-						cache.mUnprocessedPeers.insert(*pit);
-	
-						isComplete = false;
-						isUnprocessedPeers = true;
+						rsPeers->getOnlineList(peers) ;
 					}
+
+					mIdentities->requestKey(pit->first, peers);
+					//isUnprocessedPeers = true;
 				}
-	
+			}
+#ifdef DEBUG_CIRCLES
+	    		else
+                		std::cerr << "  Key is available. Nothing to process." << std::endl;
+#endif
+		}
+
 #ifdef HANDLE_SUBCIRCLES
 #if 0
-				std::list<RsGxsCircleId> &circles = group.mSubCircles;
-				std::list<RsGxsCircleId>::const_iterator cit;
-				for(cit = circles.begin(); cit != circles.end(); cit++)
+		std::list<RsGxsCircleId> &circles = group.mSubCircles;
+		std::list<RsGxsCircleId>::const_iterator cit;
+		for(cit = circles.begin(); cit != circles.end(); ++cit)
+		{
+			/* if its cached already -> then its complete. */
+			if (mCircleCache.is_loaded(*cit))
+			{
+				RsGxsCircleCache cachedCircle;
+				if (mCircleCache.fetch(&cit, cachedCircle))
 				{
-					/* if its cached already -> then its complete. */
-					if (mCircleCache.is_loaded(*cit))
-					{
-						RsGxsCircleCache cachedCircle;
-						if (mCircleCache.fetch(&cit, cachedCircle))
-						{
-							/* copy cached circle into circle */
-							cache.loadSubCircle(cachedCircle);
-						}
-						else
-						{
-							/* error */
-							continue;
-						}
-					}
-					else
-					{
-						/* push into secondary processing queues */
-						std::list<RsGxsCircleId> &proc_circles = mCacheLoad_SubCircle[*cit];
-						proc_circles.push_back(id);
-	
-						subCirclesToLoad.push_back(*cit);
-	
-						isComplete = false;
-						isUnprocessedCircles = true;
-					}
+					/* copy cached circle into circle */
+					cache.loadSubCircle(cachedCircle);
 				}
-#endif
-#endif
+				else
+				{
+					/* error */
+					continue;
+				}
 			}
 			else
 			{
-#ifdef DEBUG_CIRCLES
-				std::cerr << "p3GxsCircles::cache_load_for_token() Loading Personal Circle";
-				std::cerr << std::endl;
-#endif
+				/* push into secondary processing queues */
+				std::list<RsGxsCircleId> &proc_circles = mCacheLoad_SubCircle[*cit];
+				proc_circles.push_back(id);
 
-				// LOCAL Load.
-				std::list<RsPgpId> &peers = group.mLocalFriends;
-				std::list<RsPgpId>::const_iterator pit;
-	
-				// need to trigger the searches.
-				for(pit = peers.begin(); pit != peers.end(); pit++)
-				{
-#ifdef DEBUG_CIRCLES
-					std::cerr << "p3GxsCircles::cache_load_for_token() Local Friend: " << *pit;
-					std::cerr << std::endl;
-#endif
+				subCirclesToLoad.push_back(*cit);
 
-					cache.addLocalFriend(*pit);
-				}
-				isComplete = true;
-				isUnprocessedPeers = false;
-			}
-
-
-
-			if (isComplete)
-			{
-				checkCircleCacheForAutoSubscribe(cache);
-
-				/* move straight into the cache */
-				mCircleCache.store(id, cache);
-				mCircleCache.resize();
-
-				/* remove from loading queue */
-				mLoadingCache.erase(it);
-			}
-
-			if (isUnprocessedPeers)
-			{
-				/* schedule event to try reload gxsIds */
-				RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
+				isComplete = false;
+				isUnprocessedCircles = true;
 			}
 		}
+#endif
+#endif
 	}
+#ifdef DEBUG_CIRCLES
 	else
-	{
-		std::cerr << "p3GxsCircles::cache_load_for_token() ERROR no data";
-		std::cerr << std::endl;
-
-		return false;
-	}
-
-#ifdef HANDLE_SUBCIRCLES
-#if 0
-	if (!subCirclesToLoad.empty())
-	{
-		/* request load of subcircles */
-
-
-	}
+		std::cerr << "  Loading Personal Circle" << std::endl;
 #endif
-#endif
-	return true;
+
+	// We can check for self inclusion in the circle right away, since own ids are always loaded.
+	// that allows to subscribe/unsubscribe uncomplete circles 
+    
+	locked_checkCircleCacheForAutoSubscribe(cache);
+	locked_checkCircleCacheForMembershipUpdate(cache);
+
+    	// always store in cache even if uncomplete. But do not remove the loading items so that they can be kept in loading state.
+//	if(isUnprocessedPeers)
+	//	return false ;
+    
+	/* move straight into the cache */
+	mCircleCache.store(cache.mCircleId, cache);
+	mCircleCache.resize();
+
+	std::cerr << "  Loading complete." << std::endl;
+        
+	return true ;
 }
-
 
 bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::cache_reloadids()";
-	std::cerr << std::endl;
+    std::cerr << "p3GxsCircles::cache_reloadids()";
+    std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
 
-	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
-	/* fetch from loadMap */
-	std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it;
-	it = mLoadingCache.find(circleId);
-	if (it == mLoadingCache.end())
-	{
-		std::cerr << "p3GxsCircles::cache_reloadids() ERROR Id: " << circleId;
-		std::cerr << " Not in mLoadingCache Map";
-		std::cerr << std::endl;
+    /* fetch from loadMap */
+    std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it;
+    it = mLoadingCache.find(circleId);
+    if (it == mLoadingCache.end())
+    {
+	    std::cerr << "p3GxsCircles::cache_reloadids() ERROR Id: " << circleId;
+	    std::cerr << " Not in mLoadingCache Map";
+	    std::cerr << std::endl;
 
-		// ERROR
-		return false;
-	}
+	    // ERROR
+	    return false;
+    }
 
-	RsGxsCircleCache &cache = it->second;
-
-	/* try reload Ids */
-	std::set<RsGxsId>::const_iterator pit;
-	for(pit = cache.mUnprocessedPeers.begin();
-		pit != cache.mUnprocessedPeers.end(); pit++)
-	{
-		/* check cache */
-		if (mIdentities->haveKey(*pit))
-		{
-			/* we can process now! */
-			RsIdentityDetails details;
-			if (mIdentities->getIdDetails(*pit, details))
-			{
-				if (details.mPgpLinked && details.mPgpKnown)
-				{
-					cache.addAllowedPeer(details.mPgpId, *pit);
-
+    if(locked_processLoadingCacheEntry(it->second))
+    {
+	    /* remove from loading queue */
+	    mLoadingCache.erase(it);
+    }
+    else
+    {
 #ifdef DEBUG_CIRCLES
-					std::cerr << "p3GxsCircles::cache_reloadids() AllowedPeer: ";
-					std::cerr << *pit;
-					std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-				}
-				else
-				{
-					cache.mUnknownPeers.insert(*pit);
+	    std::cerr << "  Unprocessed peers. Requesting reload for circle " << circleId << std::endl;
+#endif
 
-#ifdef DEBUG_CIRCLES
-					std::cerr << "p3GxsCircles::cache_reloadids() UnknownPeer: ";
-					std::cerr << *pit;
-					std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-				}
-			}
-			else
-			{
-				// ERROR.
-				std::cerr << "p3GxsCircles::cache_reloadids() ERROR ";
-				std::cerr << " Should haveKey for Id: " << *pit;
-				std::cerr << std::endl;
-			}
-		}
-		else
-		{
-			// UNKNOWN ID.
-			std::cerr << "p3GxsCircles::cache_reloadids() UNKNOWN Id: ";
-			std::cerr << *pit;
-			std::cerr << std::endl;
-		}
-	}
+	    /* schedule event to try reload gxsIds */
+	    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, circleId.toStdString());
+    }
 
-	// clear unprocessed List.
-	cache.mUnprocessedPeers.clear();
-
-	// If sub-circles are complete too.
-	if (cache.mUnprocessedCircles.empty())
-	{
-#ifdef DEBUG_CIRCLES
-		std::cerr << "p3GxsCircles::cache_reloadids() Adding to cache Id: ";
-		std::cerr << circleId;
-		std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-
-		checkCircleCacheForAutoSubscribe(cache);
-
-		// Push to Cache.
-		mCircleCache.store(circleId, cache);
-		mCircleCache.resize();
-
-		/* remove from loading queue */
-		mLoadingCache.erase(it);
-	}
-	else
-	{
-		std::cerr << "p3GxsCircles::cache_reloadids() WARNING Incomplete Cache Loading: ";
-		std::cerr << circleId;
-		std::cerr << std::endl;
-	}
-
-	return true;
+    return true;
 }
-
-
-/* We need to AutoSubscribe if the Circle is relevent to us */
-bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
+    
+bool p3GxsCircles::checkCircleCache()
 {
 #ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() : ";
-	std::cerr << cache.mCircleId;
-	std::cerr << std::endl;
+    std::cerr << "checkCircleCache(): calling auto-subscribe check and membership update check." << std::endl;
+#endif
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    
+   mCircleCache.applyToAllCachedEntries(*this,&p3GxsCircles::locked_checkCircleCacheForAutoSubscribe) ;
+//    mCircleCache.applyToAllCachedEntries(*this,&p3GxsCircles::locked_checkCircleCacheForMembershipUpdate) ;
+    
+    return true ;
+}
+
+bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
+{
+	time_t now = time(NULL) ;
+
+	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
+	{ 
+#ifdef DEBUG_CIRCLES
+		std::cerr << "Cache entry for circle " << cache.mCircleId << " needs a swab over membership requests. Re-scheduling it." << std::endl;
+#endif
+
+		// this should be called regularly
+
+		uint32_t token ;
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+		std::list<RsGxsGroupId> grpIds ;
+
+		grpIds.push_back(RsGxsGroupId(cache.mCircleId)) ;
+
+		RsGenExchange::getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY,	opts, grpIds);
+		GxsTokenQueue::queueRequest(token, CIRCLEREQ_MESSAGE_DATA);	
+	}
+	return true ;
+}
+
+/* We need to AutoSubscribe if the Circle is relevent to us */
+
+bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
+{
+#ifdef DEBUG_CIRCLES
+	std::cerr << "p3GxsCircles::locked_checkCircleCacheForAutoSubscribe() : "<< cache.mCircleId << std::endl;
 #endif
 
 	/* if processed already - ignore */
 	if (!(cache.mGroupStatus & GXS_SERV::GXS_GRP_STATUS_UNPROCESSED))
 	{
 #ifdef DEBUG_CIRCLES
-		std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() : Already Processed";
-		std::cerr << std::endl;
+		std::cerr << "  Already Processed" << std::endl;
 #endif
 
 		return false;
@@ -1208,54 +1264,89 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 	if (!cache.mIsExternal)
 	{
 #ifdef DEBUG_CIRCLES
-		std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() : Personal Circle";
-		std::cerr << std::endl;
+		std::cerr << "  Personal Circle. Nothing to do." << std::endl;
 #endif
 
 		return false;
 	}
 
-	/* if we appear in the group - then autosubscribe, and mark as processed */
-	const RsPgpId& ownId = mPgpUtils->getPGPOwnId();
-	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = cache.mAllowedPeers.find(ownId);
-	if (it != cache.mAllowedPeers.end())
-	{
-#ifdef DEBUG_CIRCLES
-		/* we are part of this group - subscribe, clear unprocessed flag */
-		std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() Found OwnId -> AutoSubscribe!";
-		std::cerr << std::endl;
-#endif
+	/* if we appear in the group - then autosubscribe, and mark as processed. This also applies if we're the group admin */
+        
+	std::list<RsGxsId> myOwnIds;
+                        
+	if(!rsIdentity->getOwnIds(myOwnIds))
+	{      
+		std::cerr << "  own ids not loaded yet." << std::endl;
 
+		/* schedule event to try reload gxsIds */
+		RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, cache.mCircleId.toStdString());
+		return false ;
+	}
+                            
+	bool in_admin_list = false ;
+	bool member_request = false ;
 	
+	for(std::list<RsGxsId>::const_iterator it(myOwnIds.begin());it!=myOwnIds.end() && (!in_admin_list) && (!member_request);++it)
+        {
+            std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it2 = cache.mMembershipStatus.find(*it) ;
+            
+            if(it2 != cache.mMembershipStatus.end())
+            {
+		in_admin_list = in_admin_list || bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
+		member_request= member_request|| bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED) ;
+            }
+        }
+                                
+    	bool am_I_admin( cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
+                                
+#ifdef DEBUG_CIRCLES
+	std::cerr << "  own ID in circle: " << in_admin_list << ", own subscribe request: " << member_request << ", am I admin?: " << am_I_admin << std::endl;
+#endif
+	if(in_admin_list || member_request || am_I_admin)
+	{
 		uint32_t token, token2;	
-		RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId.toStdString()), true);
-		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
-		cache.mGroupStatus ^= GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
+        
+        	if(! (cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+                {
+#ifdef DEBUG_CIRCLES
+		    /* we are part of this group - subscribe, clear unprocessed flag */
+		    std::cerr << "  I'm allowed in this circle => AutoSubscribing!" << std::endl;
+#endif
+			RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId), true);
+                }
+#ifdef DEBUG_CIRCLES
+                else
+		    std::cerr << "  I'm allowed in this circle, and already subscribed." << std::endl;
+#endif
+                
+		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
+        
+		cache.mGroupStatus &= ~GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
+		
 		return true;
 	}
-	else if (cache.mUnknownPeers.empty())
+	else 
 	{
-#ifdef DEBUG_CIRCLES
-		std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() Know All Peers -> Processed";
-		std::cerr << std::endl;
-#endif
-
 		/* we know all the peers - we are not part - we can flag as PROCESSED. */
-		uint32_t token;	
+		uint32_t token,token2;	
 		RsGenExchange::setGroupStatusFlags(token, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
-		cache.mGroupStatus ^= GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
-	}
-	else
-	{
+        
+        	if(cache.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+                {
+			RsGenExchange::subscribeToGroup(token2, RsGxsGroupId(cache.mCircleId), false);
 #ifdef DEBUG_CIRCLES
-		std::cerr << "p3GxsCircles::checkCircleCacheForAutoSubscribe() Leaving Unprocessed";
-		std::cerr << std::endl;
+		std::cerr << "  Not part of the group! Let's unsubscribe this circle of unfriendly Napoleons!" << std::endl;
 #endif
-
-		// Don't clear UNPROCESSED - as we might not know all the peers.
-		// TODO - work out when we flag as PROCESSED.
+                }
+#ifdef DEBUG_CIRCLES
+                else
+			std::cerr << "  Not part of the group, and not subscribed either." << std::endl;
+#endif
+        
+		cache.mGroupStatus &= ~GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
+        
+		return true ;
 	}
-	return false;
 }
 
 void p3GxsCircles::addCircleIdToList(const RsGxsCircleId &circleId, uint32_t circleType)
@@ -1294,7 +1385,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 
@@ -1337,7 +1428,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 			std::list<RsGxsId>::const_iterator pit;
 
 			// need to trigger the searches.
-			for(pit = peers.begin(); pit != peers.end(); pit++)
+			for(pit = peers.begin(); pit != peers.end(); ++pit)
 			{
 				/* check cache */
 				if (mIdentities->is_cached(*pit))
@@ -1352,7 +1443,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 							// TODO.
 							//cache.mAllowedPeers[details.mPgpId] = *pit;
 
-							for(uit = updateCaches.begin(); uit != updateCaches.end(); uit++)
+							for(uit = updateCaches.begin(); uit != updateCaches.end(); ++uit)
 							{
 								/* fetch the cache - and update */
 								mLoadingCache[id] = RsGxsCircleCache();
@@ -1387,7 +1478,7 @@ bool p3GxsCircles::cache_load_subcircles(uint32_t token)
 
 			std::list<RsGxsCircleId> &circles = group.circles;
 			std::list<RsGxsCircleId>::const_iterator cit;
-			for(cit = circles.begin(); cit != circles.end(); cit++)
+			for(cit = circles.begin(); cit != circles.end(); ++cit)
 			{
 				/* if its cached already -> then its complete. */
 				if (mCircleCache.is_loaded(*cit))
@@ -1514,7 +1605,7 @@ void p3GxsCircles::checkDummyIdData()
 		}
 
 		std::vector<RsGxsIdGroup>::iterator it;
-		for(it = ids.begin(); it != ids.end(); it++)
+		for(it = ids.begin(); it != ids.end(); ++it)
 		{
                         if (it->mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 			{
@@ -1580,7 +1671,7 @@ void p3GxsCircles::generateDummyCircle()
 
 		int selection = (RSRandom::random_u32() % npgps);
 		std::list<RsGxsId>::iterator it = mDummyPgpLinkedIds.begin();
-		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, it++) ;
+		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, ++it) ;
 		if (it != mDummyPgpLinkedIds.end())
 		{
 			idset.insert(*it);
@@ -1594,7 +1685,7 @@ void p3GxsCircles::generateDummyCircle()
 		int selection = (RSRandom::random_u32() % mDummyOwnIds.size());
 		std::list<RsGxsId>::iterator it = mDummyOwnIds.begin();
 					mDummyOwnIds.push_back(*it);
-		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, it++) ;
+		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, ++it) ;
 		if (it != mDummyOwnIds.end())
 		{
 			idset.insert(*it);
@@ -1608,9 +1699,9 @@ void p3GxsCircles::generateDummyCircle()
 #endif // DEBUG_CIRCLES
 
 	std::set<RsGxsId>::iterator it;
-	for(it = idset.begin(); it != idset.end(); it++)
+	for(it = idset.begin(); it != idset.end(); ++it)
 	{
-		group.mInvitedMembers.push_back(*it);
+        group.mInvitedMembers.insert(*it);
 #ifdef DEBUG_CIRCLES
 		std::cerr << "p3GxsCircles::generateDummyCircle() Adding: " << *it;
 		std::cerr << std::endl;
@@ -1634,17 +1725,17 @@ std::ostream &operator<<(std::ostream &out, const RsGxsCircleGroup &grp)
 	out << "InvitedMembers: ";
 	out << std::endl;
 
-        std::list<RsGxsId>::const_iterator it;
-        std::list<RsGxsCircleId>::const_iterator sit;
+        std::set<RsGxsId>::const_iterator it;
+        std::set<RsGxsCircleId>::const_iterator sit;
 	for(it = grp.mInvitedMembers.begin();
-		it != grp.mInvitedMembers.begin(); it++)
+		it != grp.mInvitedMembers.begin(); ++it)
 	{
 		out << "\t" << *it;
 		out << std::endl;
 	}
 
 	for(sit = grp.mSubCircles.begin();
-		sit != grp.mSubCircles.begin(); sit++)
+		sit != grp.mSubCircles.begin(); ++sit)
 	{
 		out << "\t" << *it;
 		out << std::endl;
@@ -1675,6 +1766,10 @@ void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 	{
 		case CIRCLEREQ_CIRCLE_LIST:
 			load_CircleIdList(token);
+			break;
+
+		case CIRCLEREQ_MESSAGE_DATA:
+			processMembershipRequests(token);
 			break;
 
 		case CIRCLEREQ_CACHELOAD:
@@ -1745,6 +1840,250 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 			break;
 	}
 }
+
+// Circle membership is requested/denied by posting a message into the cicle group, according to the following rules:
+// 
+//	- a subscription request is a RsItem (which serialises into a radix64 message, that is further signed by the group message publishing system)
+//	  The item contains:
+//		* subscribe order (yes/no), boolean
+//		* circle ID (this is important, otherwise people can copy subscribe messages from one circle to another)
+//		* subscribe date
+//		* subscribe timeout (how long is the message kept. When timed out, the message is removed and subscription cancelled)
+//
+//	- subscribe messages follow the following rules, which are enforced by a timer-based method:
+//		* subscription requests from a given user are always replaced by the last subscription request
+//		* a complete list of who's subscribed to a given group is kept, saved, and regularly updated when new subscribe messages are received, or when admin list is changed.
+//		* getGroupDetails reads this list in order to respond who's subscribed to a group. The list of 
+//
+//	- compatibility with self-restricted circles:
+//		* subscription should be based on admin list, so that non subscribed peers still receive the invitation
+//
+//	- two possible subscription models for circle member list (Restricted forums only propagate to members):
+//		1 - list of admin who have not opposed subscription
+//			- solves propagation issue. Only admin see data. They can however unsubscribe using a negative req. Admin needs to remove them.
+//			- bad for security. Admin can refuse to remove them => back to square one
+//		2 - list of admin who have also requested membership
+//			- propagation is ok. On restricted circle, the circle msgs/group should be sent to admin list, instead of member list.
+//			- solves membership issue since people need to actively be in the group.
+//          => choose 2
+//			- forum  group : encrypted for Member list
+//			- circle group : clear / encrypted for admin list (for self-restricted)
+//		We decide between the two by comparing the group we're sending and the circle id it is restricted to.
+//
+//	- Use cases
+//		* user sees group (not self restricted) and requests to subscribe => RS subscribes the group and the user can propagate the response
+//		* user is invited to self-restricted circle. He will see it and can subscribe, so he will be in admin list and receive e.g. forum posts.
+//		* 
+//
+//	- Threat model
+//		* a malicious user forges a new subscription request: NP-hard as it needs to break the RSA key of the GXS id.
+//		* a malicious corrupts a subscription request: NP-hard. Messages are signed.
+//		* a malicious user copies an old subscription of someone else and inserts it in the system.
+//			=> not possible. Either this existing old susbscription already exists, or it has been replaced by a more recent one, which
+//			   will always replace the old one because of the date.
+//		* a malicious user removes someone's subscription messages. This is possible, but the mesh nature of the network will allow the message to propagate anyway.
+//		* a malicious user creates a circle with an incriminating name/content and adds everyone in it
+//			=> people can oppose their membership in the circle using a msg
+//
+//
+//	- the table below summarizes the various choices: forum and circle propagation when restricted to a circle, and group subscribe to the circle
+//
+//                                  +------------------------------+-----------------------------+
+//                                  |   User in admin list         |   User not in admin list    |
+//                    +-------------+------------------------------+-----------------------------+
+//                    | User request|   Forum  Grp/Msg: YES        |   Forum  Grp/Msg: NO        |         
+//                    | Subscription|   Circle Grp/Msg: YES/YES    |   Circle Grp/Msg: YES/NO    |         
+//                    |             |   Grp Subscribed: YES        |   Grp Subscribed: YES       |
+//                    +-------------+------------------------------+-----------------------------+
+//                    | No request  |   Forum  Grp/Msg: NO         |   Forum  Grp/Msg: NO        |         
+//                    | Subscription|   Circle Grp/Msg: YES/YES    |   Circle Grp/Msg: YES/NO    |         
+//                    |             |   Grp Subscribed: NO         |   Grp Subscribed: NO        |         
+//                    +-------------+------------------------------+-----------------------------+
+
+bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) 
+{
+#ifdef DEBUG_CIRCLES
+    std::cerr << "Circle membership request: own_gxsid = " << own_gxsid << ", circle=" << circle_id << ", req type=" << request_type << std::endl;
+#endif
+    
+    // check for some consistency
+    
+    if(request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE &&  request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
+        return false ;
+    
+    std::list<RsGxsId> own_ids ;
+    if(!rsIdentity->getOwnIds(own_ids))
+        return false ;
+    
+    bool found = false ;
+    for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end() && !found;++it)
+        found = ( (*it) == own_gxsid) ;
+
+    if(!found)
+        return false ;
+    
+    // Create a subscribe item
+
+    RsGxsCircleSubscriptionRequestItem *s = new RsGxsCircleSubscriptionRequestItem ;
+
+    s->time_stamp           = time(NULL) ;
+    s->time_out             = 0 ;	// means never
+    s->subscription_type    = request_type ;
+
+    RsTemporaryMemory tmpmem(circle_id.serial_size() + own_gxsid.serial_size()) ;
+    
+    uint32_t off = 0 ;
+    circle_id.serialise(tmpmem,tmpmem.size(),off) ;
+    own_gxsid.serialise(tmpmem,tmpmem.size(),off) ;
+    
+    s->meta.mGroupId = RsGxsGroupId(circle_id) ;
+    s->meta.mMsgId.clear();
+    s->meta.mThreadId = RsDirUtil::sha1sum(tmpmem,tmpmem.size()); // make the ID from the hash of the cirle ID and the author ID
+    s->meta.mAuthorId = own_gxsid;
+
+    // msgItem->meta.mParentId = ; // leave these blank
+    // msgItem->meta.mOrigMsgId= ; 
+
+#ifdef DEBUG_CIRCLES
+    std::cerr << "p3GxsCircles::publishSubscribeRequest()" << std::endl;
+    std::cerr << "  GroupId    : " << circle_id << std::endl;
+    std::cerr << "  AuthorId   : " << s->meta.mAuthorId << std::endl;
+    std::cerr << "  ThreadId   : " << s->meta.mThreadId << std::endl;
+#endif
+    uint32_t token ;
+    
+    if(request_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+	    RsGenExchange::subscribeToGroup(token, RsGxsGroupId(circle_id), true);
+    
+    RsGenExchange::publishMsg(token, s);
+    
+    // update the cache.
+    force_cache_reload(circle_id);
+    
+    return true;
+}
+
+bool p3GxsCircles::requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
+{
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE) ;
+}
+bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
+{
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
+}
+
+
+bool p3GxsCircles::processMembershipRequests(uint32_t token)
+{
+    // Go through membership request messages and process them according to the following rule:
+    //	* for each ID only keep the latest membership request. Delete the older ones.
+    //	* for each circle, keep a list of IDs sorted into membership categories (e.g. keep updated flags for each IDs)
+    // Because msg loading is async-ed, the job in split in two methods: one calls the loading, the other one handles the loaded data.
+    
+#ifdef DEBUG_CIRCLES
+    std::cerr << "Processing circle membership requests." << std::endl;
+#endif
+    GxsMsgDataMap msgItems ;
+
+    if(!RsGenExchange::getMsgData(token, msgItems))
+    {
+	    std::cerr << "(EE) Cannot get msg data for circle. Something's weird." << std::endl;
+	    return false;
+    }
+    
+    GxsMsgReq messages_to_delete ;
+
+    for(GxsMsgDataMap::const_iterator it(msgItems.begin());it!=msgItems.end();++it)
+    {
+	    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+#ifdef DEBUG_CIRCLES
+	    std::cerr << "  Circle ID: " << it->first << std::endl;
+#endif
+
+	    RsGxsCircleId cid ( it->first );
+
+	    if (!mCircleCache.is_cached(cid))
+	    {
+		    std::cerr << "    (EE) Circle is not in cache!" << std::endl;
+		    continue ;
+	    }
+            
+            // Find the circle ID in cache and process the list of messages to keep the latest order in time.
+
+	    RsGxsCircleCache& data = mCircleCache.ref(cid);
+#ifdef DEBUG_CIRCLES
+	    std::cerr << "    Circle found in cache!" << std::endl;
+	    std::cerr << "    Retrieving messages..." << std::endl;
+#endif
+
+            for(uint32_t i=0;i<it->second.size();++i)
+            {
+#ifdef DEBUG_CIRCLES
+	    	std::cerr << "      Group ID: " << it->second[i]->meta.mGroupId << ", Message ID: " << it->second[i]->meta.mMsgId << ": " ;
+#endif
+            
+                RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
+                
+                if(item == NULL)
+		{
+                    std::cerr << "    (EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird." << std::endl;
+                    continue ;
+                }
+                    
+                RsGxsCircleMembershipStatus& info(data.mMembershipStatus[item->meta.mAuthorId]) ;
+                
+#ifdef DEBUG_CIRCLES
+		std::cerr << " is from id " << item->meta.mAuthorId << "  " << time(NULL) - item->time_stamp << " seconds ago, " ;
+#endif
+                
+                if(info.last_subscription_TS < item->time_stamp)
+                {
+                    info.last_subscription_TS = item->time_stamp ;
+                    
+                    if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+                    	info.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
+                    else if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
+                    	info.subscription_flags &= ~GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
+                    else
+                    	std::cerr << " (EE) unknown subscription order type: " << item->subscription_type ;
+                    
+#ifdef DEBUG_CIRCLES
+                    std::cerr << " UPDATING" << std::endl;
+#endif
+                }
+                else if(info.last_subscription_TS > item->time_stamp)
+                {
+#ifdef DEBUG_CIRCLES
+                    std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
+#endif
+                    messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
+                }
+            }
+            
+            data.mLastUpdatedMembershipTS = time(NULL) ;
+    }
+    
+    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+    uint32_t token2;
+    RsGenExchange::deleteMsgs(token2,messages_to_delete);
+    
+    return true ;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

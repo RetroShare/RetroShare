@@ -13,11 +13,17 @@
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="ChatLobbyDialogHLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
    <property name="topMargin">
     <number>0</number>
    </property>
    <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -28,7 +34,7 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QHBoxLayout" name="chatLayout">
        <property name="topMargin">
-        <number>3</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="ChatWidget" name="chatWidget" native="true">
@@ -51,30 +57,63 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>50</width>
+        <width>120</width>
         <height>0</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="participantsFrameVLayout">
        <property name="leftMargin">
         <number>0</number>
        </property>
        <property name="topMargin">
-        <number>3</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
         <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>3</number>
+        <number>0</number>
        </property>
        <item>
-        <widget class="QTreeWidget" name="participantsList">
+        <widget class="QFrame" name="toolBarFrame">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QHBoxLayout" name="toolBarFrameHLayout">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="LineEditClear" name="filterLineEdit"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="RSTreeWidget" name="participantsList">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
          </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
@@ -111,72 +150,15 @@
            <string>Participants</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
         </widget>
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="leftsideFrame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>14</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="participantsFrameButton">
-        <property name="minimumSize">
-         <size>
-          <width>14</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>14</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>12</width>
-          <height>335</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>
@@ -188,12 +170,25 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
    <class>ChatWidget</class>
    <extends>QWidget</extends>
    <header location="global">gui/chat/ChatWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

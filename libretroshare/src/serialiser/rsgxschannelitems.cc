@@ -29,7 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#define GXSCHANNEL_DEBUG	1
+//#define GXSCHANNEL_DEBUG	1
 
 
 uint32_t RsGxsChannelSerialiser::size(RsItem *item)
@@ -357,7 +357,7 @@ bool RsGxsChannelPostItem::fromChannelPost(RsGxsChannelPost &post, bool moveImag
 	}
 
 	std::list<RsGxsFile>::iterator fit;
-	for(fit = post.mFiles.begin(); fit != post.mFiles.end(); fit++)
+	for(fit = post.mFiles.begin(); fit != post.mFiles.end(); ++fit)
 	{
 		RsTlvFileItem fi;
 		fi.name = fit->mName;
@@ -388,7 +388,7 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 	post.mCount = 0;
 	post.mSize = 0;
 	std::list<RsTlvFileItem>::iterator fit;
-	for(fit = mAttachment.items.begin(); fit != mAttachment.items.end(); fit++)
+	for(fit = mAttachment.items.begin(); fit != mAttachment.items.end(); ++fit)
 	{
 		RsGxsFile fi;
 		fi.mName = RsDirUtil::getTopDir(fit->name);

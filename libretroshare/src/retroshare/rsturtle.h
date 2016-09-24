@@ -35,7 +35,7 @@
 
 #include "retroshare/rstypes.h"
 
-class LinearizedExpression ;
+namespace RsRegularExpression { class LinearizedExpression ; }
 class RsTurtleClientService ;
 
 class RsTurtle;
@@ -102,15 +102,18 @@ class RsTurtle
 		// as they come back.
 		//
 		virtual TurtleRequestId turtleSearch(const std::string& match_string) = 0 ;
-		virtual TurtleRequestId turtleSearch(const LinearizedExpression& expr) = 0 ;
+        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) = 0 ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
 		// turtle router itself does not initiate downloads, it only maintains
 		// tunnels for the given hash. The download should be driven by the file
-		// transfer module by calling ftServer::FileRequest().
+        // transfer module by calling ftServer::FileRequest().
+        // Aggressive mode causes the turtle router to regularly re-ask tunnels in addition to the ones already
+        // available without replacing them. In non aggressive mode, we wait for all tunnels to die before asking
+        // for new tunnels.
 		//
-		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) = 0 ;
+        virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service,bool use_aggressive_mode) = 0 ;
 
 		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
 		// be called after calling ftServer::fileCancel().

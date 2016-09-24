@@ -11,6 +11,7 @@
 #include "util/rsprint.h"
 #include "pqi/p3dhtmgr.h"
 #include "pqi/p3connmgr.h"
+#error secpolicy was removed, also remove it from test to fix compile
 #include "pqi/pqisecurity.h"
 #include "pqi/pqipersongrp.h"
 
@@ -287,7 +288,7 @@ int main()
 	connMgr.setUpnpMgr(NULL);
 
 	/************ ADD pqipersongrp as pqimonitor *****************/
-
+#error secpolicy was removed, should remove it from tests too
 	SecurityPolicy *pol = secpolicy_create();
 	unsigned long flags = 0;
 	pqipersongrp *pqipg = new pqipersongrpDummy(pol, flags);

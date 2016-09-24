@@ -27,9 +27,12 @@
 #include <QCompleter>
 #include <QTextCursor>
 #include <QTextCharFormat>
+#include <QToolButton>
 #include "gui/common/HashBox.h"
+#include "gui/common/RsButtonOnText.h"
 #include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
+#include "ChatLobbyUserNotify.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
@@ -71,23 +74,31 @@ public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
-    void init(const RsPeerId &peerId, const QString &title);
-	ChatType chatType() { return mChatType; }
+    void init(const ChatId &chat_id, const QString &title);
+    ChatId getChatId();
+    ChatType chatType();
+
+    // allow/disallow sendng of messages
+    void blockSending(QString msg);
+    void unblockSending();
 
 	bool hasNewMessages() { return newMessages; }
 	bool isTyping() { return typing; }
 
 	void focusDialog();
+	QToolButton* getNotifyButton();
+	void setNotify(ChatLobbyUserNotify* clun);
+	void scrollToAnchor(QString anchor);
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);
 
 	void setWelcomeMessage(QString &text);
 	void addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
-	void updateStatusString(const QString &statusMask, const QString &statusString);
+	void addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType);
+    void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
 
-    RsPeerId getPeerId() { return peerId; }
 	QString getTitle() { return title; }
 	int getPeerStatus() { return peerStatus; }
 	void setName(const QString &name);
@@ -98,6 +109,10 @@ public:
 	// Adds one widget in the chat bar. Used to add e.g. new buttons. The widget should be
 	// small enough in size.
 	void addChatBarWidget(QWidget *w) ;
+	void addTitleBarWidget(QWidget *w);
+	void hideChatText(bool hidden);
+	RSButtonOnText* getNewButtonOnTextBrowser();
+	RSButtonOnText* getNewButtonOnTextBrowser(QString text);
 
 	// Adds a new horizonal widget in the layout of the chat window.
 	void addChatHorizontalWidget(QWidget *w) ;
@@ -150,11 +165,14 @@ private slots:
 	void toogle_MoveToCursor();
 	void toogle_SeachWithoutLimit();
 
+	void on_notifyButton_clicked();
+
 	void on_markButton_clicked(bool bValue);
 
 	void chooseColor();
 	void chooseFont();
 	void resetFont();
+	void resetFonts();
 	void setFont();
 
 	void updateLenOfChatTextEdit();
@@ -165,6 +183,10 @@ private slots:
 	bool fileSave();
 	bool fileSaveAs();
 
+	void quote();
+	void dropPlacemark();
+	void saveImage();
+
 private:
 	bool findText(const QString& qsStringToFind);
 	bool findText(const QString& qsStringToFind, bool bBackWard, bool bForceMove);
@@ -173,14 +195,13 @@ private:
 	void setCurrentFileName(const QString &fileName);
 
 	void colorChanged();
-	void fontChanged();
-	void setColorAndFont();
+	void setColorAndFont(bool both);
 	void processSettings(bool load);
 
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
 
-    RsPeerId peerId;
+    ChatId chatId;
 	QString title;
 	QString name;
 	QString completionWord;
@@ -194,7 +215,8 @@ private:
 	bool newMessages;
 	bool typing;
 	int peerStatus;
-	ChatType mChatType;
+
+    bool sendingBlocked;
 
 	time_t lastStatusSendTime;
 
@@ -218,12 +240,16 @@ private:
 
 	QTextCursor qtcMark;
 
+	int lastUpdateCursorPos;
+	int lastUpdateCursorEnd;
+
 	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
 	QDate lastMsgDate ;
 
     QCompleter *completer;
 
 	QList<ChatWidgetHolder*> mChatWidgetHolder;
+	ChatLobbyUserNotify* notify;
 
 	Ui::ChatWidget *ui;
 };

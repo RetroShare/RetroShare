@@ -96,34 +96,38 @@
  * as these will be used very frequently.
  *****/
 
-typedef RsPeerId  PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
 typedef PGPIdType RsPgpId;
-
-//
-//// External Interface - 
-//class RsIdentityService
-//{
-//    enum IdentityType { Pseudonym, Signed, Anonymous };
-//
-//    virtual bool loadId(const GxsId &id) = 0;	
-//
-//    virtual bool getNickname(const GxsId &id, std::string &nickname) = 0;	
-//
-//    virtual bool createKey(RsGixsProfile& profile, uint32_t type) = 0; /* fills in mKeyId, and signature */
-//
-//    virtual RsGixsProfile* getProfile(const KeyRef& keyref) = 0;
-//
-//	// modify reputation.
-//
-//};
-
 
 /* Identity Interface for GXS Message Verification.
  */
 class RsGixs
 {
 public:
-	// Key related interface - used for validating msgs and groups.
+
+    static const uint32_t RS_GIXS_ERROR_NO_ERROR           = 0x0000 ;
+    static const uint32_t RS_GIXS_ERROR_UNKNOWN            = 0x0001 ;
+    static const uint32_t RS_GIXS_ERROR_KEY_NOT_AVAILABLE  = 0x0002 ;
+    static const uint32_t RS_GIXS_ERROR_SIGNATURE_MISMATCH = 0x0003 ;
+
+     /* Performs/validate a signature with the given key ID. The key must be available, otherwise the signature error
+     * will report it. Each time a key is used to validate a signature, its usage timestamp is updated.
+     *
+     * If force_load is true, the key will be forced loaded from the cache. If not, uncached keys will return
+     * with error_status=RS_GIXS_SIGNATURE_ERROR_KEY_NOT_AVAILABLE, but will likely be cached on the next call.
+     */
+
+    virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) = 0 ;
+    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) = 0 ;
+
+    virtual bool encryptData(const uint8_t *clear_data,uint32_t clear_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) = 0 ;
+    virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& clear_data,uint32_t& clear_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) = 0 ;
+
+    virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
+    virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
+
+    virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
+
+    // Key related interface - used for validating msgs and groups.
     /*!
      * Use to query a whether given key is available by its key reference
      * @param keyref the keyref of key that is being checked for
@@ -138,14 +142,14 @@ public:
      */
     virtual bool havePrivateKey(const RsGxsId &id) = 0;
 
-	// The fetchKey has an optional peerList.. this is people that had the msg with the signature.
-	// These same people should have the identity - so we ask them first.
+    // The fetchKey has an optional peerList.. this is people that had the msg with the signature.
+    // These same people should have the identity - so we ask them first.
     /*!
      * Use to request a given key reference
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const RsGxsId &id, const std::list<PeerId> &peers) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers) = 0;
     virtual bool requestPrivateKey(const RsGxsId &id) = 0;
 
 
@@ -155,10 +159,9 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    virtual int  getKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;
-    virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key) = 0;	// For signing outgoing messages.
-
-
+    virtual bool  getKey(const RsGxsId &id, RsTlvPublicRSAKey& key) = 0;
+    virtual bool  getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey& key) = 0;	// For signing outgoing messages.
+    virtual bool  getIdDetails(const RsGxsId& id, RsIdentityDetails& details) = 0 ;  // Proxy function so that we get p3Identity info from Gxs
 };
 
 class GixsReputation
@@ -207,9 +210,15 @@ class RsGcxs
         virtual bool isLoaded(const RsGxsCircleId &circleId) = 0;
         virtual bool loadCircle(const RsGxsCircleId &circleId) = 0;
 
-        virtual int canSend(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
-        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist) = 0;
+        virtual int  canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt) = 0;
+        virtual int  canReceive(const RsGxsCircleId &circleId, const RsPgpId &id) = 0;
+    
+        virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>& friendlist) = 0;
+        virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) = 0;
+    
+        virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) = 0;
+        
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
 };
 
 
@@ -220,8 +229,12 @@ public:
 	RsGxsCircleExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, 
 			uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy)
 	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
-virtual ~RsGxsCircleExchange() { return; }
-
+	virtual ~RsGxsCircleExchange() { return; }
+    
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) 
+	{
+		return RsGenExchange::getGroupServerUpdateTS(RsGxsGroupId(gid),grp_server_update_TS,msg_server_update_TS) ;
+	}
 };
 
 

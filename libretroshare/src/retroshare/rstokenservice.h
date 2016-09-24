@@ -121,6 +121,7 @@ public:
         static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
         static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
         static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
+        static const uint8_t GXS_REQUEST_V2_STATUS_CANCELLED;
 
 public:
 

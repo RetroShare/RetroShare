@@ -37,7 +37,7 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/folder_doments.png") ; }
+	 virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/directories.svg") ; }
 	 virtual QString pageName() const { return tr("Directories") ; }
 	 virtual QString helpText() const { return ""; }
 
@@ -45,9 +45,6 @@ private slots:
     void editDirectories() ;
     void setIncomingDirectory();
     void setPartialsDirectory();
-	void clearHashCache();
-	void clickedRememberHashes(bool);
-	void toggleRememberHashes();
 	void toggleAutoCheckDirectories(bool);
 
 private:

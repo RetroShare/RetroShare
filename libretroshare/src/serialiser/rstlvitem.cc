@@ -135,7 +135,7 @@ bool RsTlvUnit::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	}
 
 	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */

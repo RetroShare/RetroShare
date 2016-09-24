@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "util/rsmemory.h"
 #include "retroshare/rstypes.h"
 
 /*******************************************************************
@@ -101,9 +102,11 @@ class RsItem: public RsMemoryManagement::SmallObject
 		/* For Service Packets */
 		RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
 		uint16_t  PacketService() const; /* combined Packet class/type (mid 16bits) */
+		void    setPacketService(uint16_t service);
 
 		inline uint8_t priority_level() const { return _priority_level ;}
-		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+        inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
+
 	private:
 		uint32_t type;
 		RsPeerId peerId;
@@ -175,32 +178,21 @@ std::ostream &printIndent(std::ostream &out, uint16_t indent);
 
 class RsRawItem: public RsItem
 {
-	public:
-		RsRawItem(uint32_t t, uint32_t size)
-			:RsItem(t), len(size)
-		{ 
-			data = malloc(len);
-		}
+public:
+	RsRawItem(uint32_t t, uint32_t size) : RsItem(t), len(size)
+	{ data = rs_malloc(len); }
+	virtual ~RsRawItem() { free(data); }
 
-		virtual ~RsRawItem()
-		{
-			if (data)
-				free(data);
-			data = NULL;
-			len = 0;
-		}
+	uint32_t getRawLength() { return len; }
+	void * getRawData() { return data; }
 
-		uint32_t	getRawLength() { return len; }
-		void  *getRawData() { return data; }
+	virtual void clear() {}
+	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-		virtual void clear() { return; } /* what can it do? */
-		virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-	private:
-		void *data;
-		uint32_t len;
+private:
+	void *data;
+	uint32_t len;
 };
-
 
 
 #endif /* RS_BASE_SERIALISER_H */

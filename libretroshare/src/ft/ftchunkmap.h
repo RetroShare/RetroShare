@@ -159,6 +159,8 @@ class ChunkMap
 		/// This function is used by the parent ftFileProvider to know whether the chunk can be sent or not.
 		bool isChunkAvailable(uint64_t offset, uint32_t chunk_size) const ;
 
+        bool isChunkOutstanding(uint64_t offset, uint32_t chunk_size) const ;
+
 		/// Remove active chunks that have not received any data for the last 60 seconds, and return
 		/// the list of slice numbers that should be canceled.
 		void removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove) ;
@@ -206,6 +208,8 @@ class ChunkMap
 		uint32_t getAvailableChunk(const RsPeerId& peer_id,bool& chunk_map_too_old) ;
 
 	private:
+        bool hasChunkState(uint64_t offset, uint32_t chunk_size, FileChunksInfo::ChunkState state) const;
+
 		uint64_t												_file_size ;						//! total size of the file in bytes.
 		uint32_t												_chunk_size ;						//! Size of chunks. Common to all chunks.
 		FileChunksInfo::ChunkStrategy 				_strategy ;							//! how do we allocate new chunks

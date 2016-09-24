@@ -36,10 +36,10 @@ class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog
         
 public:
     AdvancedSearchDialog(QWidget * parent = 0 );
-    Expression * getRsExpr();
+    RsRegularExpression::Expression * getRsExpr();
     QString getSearchAsString();
 signals:
-    void search(Expression*);
+    void search(RsRegularExpression::Expression*);
     
 private slots:
     void deleteExpression(ExpressionWidget*);

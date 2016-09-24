@@ -37,12 +37,15 @@
 #include "rsgxsitems.h"
 #include "retroshare/rsgxscircles.h"
 
-const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM = 0x02;
-const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM                = 0x02;
+const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM                  = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM = 0x04;
 
 const uint16_t GXSCIRCLE_PGPIDSET	= 0x0001;
 const uint16_t GXSCIRCLE_GXSIDSET	= 0x0002;
 const uint16_t GXSCIRCLE_SUBCIRCLESET	= 0x0003;
+
+// These classes are a mess. Needs proper item serialisation etc.
 
 class RsGxsCircleGroupItem : public RsGxsGrpItem
 {
@@ -83,6 +86,27 @@ public:
 	RsGxsCircleMsg msg;
 };
 
+class RsGxsCircleSubscriptionRequestItem: public RsGxsMsgItem
+{
+public:
+    
+    RsGxsCircleSubscriptionRequestItem() : RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE, RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM) { }
+    virtual ~RsGxsCircleSubscriptionRequestItem() {}
+    
+    void clear();
+    std::ostream &print(std::ostream &out, uint16_t indent = 0);
+    
+    enum {
+        SUBSCRIPTION_REQUEST_UNKNOWN     = 0x00, 
+        SUBSCRIPTION_REQUEST_SUBSCRIBE   = 0x01,
+        SUBSCRIPTION_REQUEST_UNSUBSCRIBE = 0x02
+    };
+    
+    time_t           time_stamp ;
+    time_t           time_out ;           
+    uint8_t          subscription_type ;
+};
+
 class RsGxsCircleSerialiser : public RsSerialType
 {
 public:
@@ -97,6 +121,10 @@ public:
 	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
+
+	uint32_t    sizeGxsCircleSubscriptionRequestItem(RsGxsCircleSubscriptionRequestItem *item);
+	bool        serialiseGxsCircleSubscriptionRequestItem  (RsGxsCircleSubscriptionRequestItem *item, void *data, uint32_t *size);
+	RsGxsCircleSubscriptionRequestItem *    deserialiseGxsCircleSubscriptionRequestItem(void *data, uint32_t *size);
 
 	uint32_t    sizeGxsCircleGroupItem(RsGxsCircleGroupItem *item);
 	bool        serialiseGxsCircleGroupItem  (RsGxsCircleGroupItem *item, void *data, uint32_t *size);

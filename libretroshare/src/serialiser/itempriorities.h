@@ -76,6 +76,11 @@ const uint8_t QOS_PRIORITY_RS_DISC_PGP_LIST       		= 2 ; // same priority.
 const uint8_t QOS_PRIORITY_RS_DISC_SERVICES    			= 2 ;
 const uint8_t QOS_PRIORITY_RS_DISC_PGP_CERT    			= 1 ;
 
+// File database
+//
+const uint8_t QOS_PRIORITY_RS_FAST_SYNC_REQUEST         = 7 ;
+const uint8_t QOS_PRIORITY_RS_SLOW_SYNC_REQUEST         = 3 ;
+
 // Heartbeat.
 //
 const uint8_t QOS_PRIORITY_RS_HEARTBEAT_PULSE 			= 8 ;
@@ -84,7 +89,8 @@ const uint8_t QOS_PRIORITY_RS_HEARTBEAT_PULSE 			= 8 ;
 //
 const uint8_t QOS_PRIORITY_RS_CHAT_ITEM       			= 7 ;
 const uint8_t QOS_PRIORITY_RS_CHAT_AVATAR_ITEM       	= 2 ;
-const uint8_t QOS_PRIORITY_RS_MSG_ITEM               	= 2 ;
+const uint8_t QOS_PRIORITY_RS_MSG_ITEM               	= 2 ;  // depreciated.
+const uint8_t QOS_PRIORITY_RS_MAIL_ITEM               	= 2 ;  // new mail service
 const uint8_t QOS_PRIORITY_RS_STATUS_ITEM     			= 2 ;
 
 // RTT

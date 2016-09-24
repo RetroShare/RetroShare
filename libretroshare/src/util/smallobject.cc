@@ -1,6 +1,7 @@
 #include <iostream>
 #include "smallobject.h"
 #include "util/rsthreads.h"
+#include "util/rsmemory.h"
 
 using namespace RsMemoryManagement ;
 
@@ -158,6 +159,15 @@ void FixedAllocator::deallocate(void *p)
 		_chunks.pop_back();
 	}
 }
+uint32_t FixedAllocator::currentSize() const
+{
+    uint32_t res = 0 ;
+
+    for(uint32_t i=0;i<_chunks.size();++i)
+        res += (_numBlocks - _chunks[i]->_blocksAvailable) * _blockSize ;
+
+    return res ;
+}
 void FixedAllocator::printStatistics() const
 {
 	std::cerr << "    numBLocks=" << (int)_numBlocks << std::endl;
@@ -181,16 +191,23 @@ SmallObjectAllocator::~SmallObjectAllocator()
 {
 	RsStackMutex m(SmallObject::_mtx) ;
 
-	for(std::map<int,FixedAllocator*>::const_iterator it(_pool.begin());it!=_pool.end();++it)
-		delete it->second ;
-
+    	//std::cerr << __PRETTY_FUNCTION__ << " not deleting. Leaving it to the system." << std::endl;
+        
 	_active = false ;
+    
+    	uint32_t still_allocated = 0 ;
+        
+	for(std::map<int,FixedAllocator*>::const_iterator it(_pool.begin());it!=_pool.end();++it)
+        	still_allocated += it->second->currentSize() ;
+		//delete it->second ;
+    
+    	std::cerr << "Memory still in use at end of program: " << still_allocated << " bytes." << std::endl;
 }
 
 void *SmallObjectAllocator::allocate(size_t bytes)
 {
 	if(bytes > _maxObjectSize)
-		return malloc(bytes) ;
+		return rs_malloc(bytes) ;
 	else if(_lastAlloc != NULL && _lastAlloc->blockSize() == bytes)
 		return _lastAlloc->allocate() ;
 	else
@@ -262,15 +279,22 @@ void *SmallObject::operator new(size_t size)
 #endif
 
 	RsStackMutex m(_mtx) ;
-
-	if(!_allocator._active)
-		return (void*)NULL;
-
-	void *p = _allocator.allocate(size) ;
+    
+    	// This should normally not happen. But that prevents a crash when quitting, since we cannot prevent the constructor
+    	// of an object to call operator new(), nor to handle the case where it returns NULL.
+    	// The memory will therefore not be deleted if that happens. We thus print a warning.
+    
+    	if(_allocator._active)
+		return _allocator.allocate(size) ;
+	else
+        {
+            std::cerr << "(EE) allocating " << size << " bytes of memory that cannot be deleted. This is a bug, except if it happens when closing Retroshare" << std::endl;
+	    return malloc(size) ;	
+        }
+        
 #ifdef DEBUG_MEMORY
 	std::cerr << "new RsItem: " << p << ", size=" << size << std::endl;
 #endif
-	return p ;
 }
 
 void SmallObject::operator delete(void *p,size_t size)

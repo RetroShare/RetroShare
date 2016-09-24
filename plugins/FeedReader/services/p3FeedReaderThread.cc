@@ -37,7 +37,7 @@ enum FeedFormat { FORMAT_RSS, FORMAT_RDF, FORMAT_ATOM };
  *********/
 
 p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId) :
-	RsThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
+    RsTickingThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
 {
 }
 
@@ -49,9 +49,8 @@ p3FeedReaderThread::~p3FeedReaderThread()
 /****************************** Thread *************************************/
 /***************************************************************************/
 
-void p3FeedReaderThread::run()
+void p3FeedReaderThread::data_tick()
 {
-	while (isRunning()) {
 #ifdef WIN32
 		Sleep(1000);
 #else
@@ -148,7 +147,6 @@ void p3FeedReaderThread::run()
 			}
 			break;
 		}
-	}
 }
 
 /***************************************************************************/
@@ -1009,7 +1007,7 @@ std::string p3FeedReaderThread::getProxyForFeed(const RsFeedReaderFeed &feed)
 
 RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &feed, RsFeedReaderMsg *msg, std::string &errorString)
 {
-	long todo_fill_errorString;
+	//long todo_fill_errorString;
 
 	if (!msg) {
 		return RS_FEED_ERRORSTATE_PROCESS_INTERNAL_ERROR;
@@ -1075,7 +1073,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processMsg(const RsFeedReaderFeed &fe
 
 	if (isRunning()) {
 		/* process description */
-		long todo; // encoding
+		//long todo; // encoding
 		HTMLWrapper html;
 		if (html.readHTML(msg->description.c_str(), url.c_str())) {
 			xmlNodePtr root = html.getRootElement();
@@ -1386,7 +1384,8 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 				std::cerr << "p3FeedReaderThread::processXPath - unable to process xpath expression" << std::endl;
 #endif
 				errorString = *xpathIt;
-				return RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION;
+				result = RS_FEED_ERRORSTATE_PROCESS_XPATH_WRONG_EXPRESSION;
+				break;
 			}
 		}
 
@@ -1528,7 +1527,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processXslt(const std::string &xslt, 
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
 	/* process description */
-	long todo; // encoding
+	//long todo; // encoding
 	HTMLWrapper html;
 	if (html.readHTML(description.c_str(), "")) {
 		xmlNodePtr root = html.getRootElement();

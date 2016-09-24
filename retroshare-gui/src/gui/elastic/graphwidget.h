@@ -86,14 +86,16 @@ public:
     virtual void itemMoved();
 
 	 void setEdgeLength(uint32_t l) ;
+	 void setNameSearch(QString) ;
 	 uint32_t edgeLength() const { return _edge_length ; }
 
 	 void forceRedraw() ;
 protected:
-    void keyPressEvent(QKeyEvent *event);
-    void timerEvent(QTimerEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void timerEvent(QTimerEvent *event);
+    virtual void wheelEvent(QWheelEvent *event);
+    virtual void resizeEvent(QResizeEvent *event);
+    //void drawBackground(QPainter *painter, const QRectF &rect);
 
     void scaleView(qreal scaleFactor);
 

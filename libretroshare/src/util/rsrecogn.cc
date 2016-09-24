@@ -57,16 +57,12 @@ static std::string RecognSigningKeys[NUM_RECOGN_SIGN_KEYS] =
 EVP_PKEY *RsRecogn::loadMasterKey()
 {
 	/* load master signing key */
-	size_t keylen;
-	char *keyptr;
-	
-	Radix64::decode(RecognKey, keyptr, keylen);
+    std::vector<uint8_t> decoded = Radix64::decode(RecognKey);
 		
-	const unsigned char *keyptr2 = (const unsigned char *) keyptr;
-	long keylen2 = keylen;
+    const unsigned char *keyptr2 = decoded.data();
+    long keylen2 = decoded.size();
 	
 	RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr2), keylen2);
-	delete []keyptr;
 
 	if (!rsakey)
 	{
@@ -102,15 +98,11 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 
 	for(int i = 0; i < NUM_RECOGN_SIGN_KEYS; i++)
 	{
-		char *signerbuf;
-		size_t len;
-		Radix64::decode(RecognSigningKeys[i], signerbuf, len);
+        std::vector<uint8_t> signerbuf = Radix64::decode(RecognSigningKeys[i]);
 
-		uint32_t pktsize = len;
-		RsItem *pktitem = recognSerialiser.deserialise(signerbuf, &pktsize);
+        uint32_t pktsize = signerbuf.size();
+        RsItem *pktitem = recognSerialiser.deserialise(signerbuf.data(), &pktsize);
 		RsGxsRecognSignerItem *item = dynamic_cast<RsGxsRecognSignerItem *>(pktitem);
-
-		delete []signerbuf;
 
 		if (!item)
 		{
@@ -153,7 +145,12 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 
 		/* store in */
 		uint32_t datalen = recognSerialiser.size(item);
-		uint8_t *data = (uint8_t *) malloc(datalen);
+        
+        	RsTemporaryMemory data(datalen) ;
+            
+            	if(!data)
+                    return false ;
+                
 		uint32_t pktlen = datalen;
 		int signOk = 0;
 		
@@ -189,8 +186,6 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 #endif // DEBUG_RECOGN
 			delete item;
 		}
-
-		free(data);
 	}
 
 	/* clean up */
@@ -241,7 +236,12 @@ bool	RsRecogn::validateTagSignature(RsGxsRecognSignerItem *signer, RsGxsRecognTa
 	RsGxsRecognSerialiser serialiser;
 
 	uint32_t datalen = serialiser.size(item);
-	uint8_t *data = (uint8_t *) malloc(datalen);
+    
+    	RsTemporaryMemory data(datalen) ;
+        
+        if(!data)
+            return false ;
+        
 	int signOk = 0;
 		
 	uint32_t pktlen = datalen;
@@ -270,8 +270,6 @@ bool	RsRecogn::validateTagSignature(RsGxsRecognSignerItem *signer, RsGxsRecognTa
 		
 	EVP_MD_CTX_destroy(mdctx);
 	EVP_PKEY_free(signKey);
-
-	free(data);
 		
 	return (signOk == 1);		
 }
@@ -329,6 +327,7 @@ bool rsa_sanity_check(RSA *rsa)
 }
 
 		
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 {
@@ -375,6 +374,8 @@ bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 
 	return true;
 }
+
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 {
@@ -431,6 +432,7 @@ bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 	return true;
 }
 
+#warning this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTagRequest(EVP_PKEY *signKey, RsGxsRecognReqItem *item)
 {
@@ -488,7 +490,9 @@ bool	RsRecogn::itemToRadix64(RsItem *item, std::string &radstr)
 
 	/* write out the item for signing */
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    
+    	RsTemporaryMemory buf(len) ;
+        
 	if (!serialiser.serialise(item, buf, &len))
 	{
 		return false;
@@ -527,16 +531,13 @@ std::string RsRecogn::getRsaKeyId(RSA *pubkey)
 RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 {
 	// Decode from Radix64 encoded Packet.
-	size_t buflen;
-	char *buffer;
 	uint32_t pktsize;
 
-	Radix64::decode(encoded, buffer, buflen);
-	pktsize = buflen;
+    std::vector<uint8_t> buffer = Radix64::decode(encoded);
+    pktsize = buffer.size();
 
 	RsGxsRecognSerialiser serialiser;
-	RsItem *item = serialiser.deserialise(buffer, &pktsize);
-	delete []buffer;
+    RsItem *item = serialiser.deserialise(buffer.data(), &pktsize);
 
 	if (!item)
 	{
@@ -563,10 +564,8 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 }
 
 
-bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
+bool RsRecogn::createTagRequest(const RsTlvPrivateRSAKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
 {
-	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
-
 	EVP_PKEY *signKey = EVP_PKEY_new();
 	RSA *rsakey = d2i_RSAPrivateKey(NULL, (const unsigned char **)&key.keyData.bin_data, key.keyData.bin_len);
 
@@ -587,6 +586,8 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 #endif // DEBUG_RECOGN
                 return false;
         }
+
+	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
 
 	item->issued_at = time(NULL);
 	item->period = 365 * 24 * 3600;
@@ -614,16 +615,13 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 	/* write out the item for signing */
 	RsGxsRecognSerialiser serialiser;
 	uint32_t len = serialiser.size(item);
-	char *buf = new char[len];
+    RsTemporaryMemory buf(len) ;
 	bool serOk = serialiser.serialise(item, buf, &len);
-	delete item;
 
 	if (serOk)
 	{
 		Radix64::encode(buf, len, tag);
 	}
-
-	delete []buf;
 
 	if (!serOk)
 	{
@@ -632,9 +630,11 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 		std::cerr << std::endl;
 		item->print(std::cerr);
 #endif // DEBUG_RECOGN
-		return false;
-	}
+        delete item;
+        return false;
+    }
 
+    delete item;
 	return serOk;
 }
 

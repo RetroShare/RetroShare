@@ -58,7 +58,6 @@ void randString(const uint32_t, std::wstring&);
 
 /* for testing compound tlv items */
 
-void init_item(RsTlvSecurityKey&);
 void init_item(RsTlvSecurityKeySet&);
 void init_item(RsTlvKeySignature&);
 void init_item(RsTlvKeySignatureSet&);
@@ -70,7 +69,7 @@ void init_item(RsTlvPeerIdSet&);
 void init_item(RsTlvImage&);
 void init_item(RsTlvPeerIdSet&);
 
-bool operator==(const RsTlvSecurityKey&, const RsTlvSecurityKey& );
+bool operator==(const RsTlvPublicRSAKey&, const RsTlvPublicRSAKey& );
 bool operator==(const RsTlvSecurityKeySet&, const RsTlvSecurityKeySet& );
 bool operator==(const RsTlvKeySignature&, const RsTlvKeySignature& );
 bool operator==(const RsTlvBinaryData&, const RsTlvBinaryData&);
@@ -112,7 +111,7 @@ template<class T> int test_RsItem()
 	RsSerialType *rsfis = init_item(rsfi) ;
 
 	/* attempt to serialise it before we add it to the serialiser */
-
+	std::cerr << "### These errors are expected." << std::endl;
 	EXPECT_TRUE(0 == srl.size(&rsfi));
 
 	static const uint32_t MAX_BUFSIZE = 22000 ;
@@ -120,6 +119,7 @@ template<class T> int test_RsItem()
 	char *buffer = new char[MAX_BUFSIZE];
 	uint32_t sersize = MAX_BUFSIZE;
 
+	std::cerr << "### These errors are expected." << std::endl;
 	EXPECT_TRUE(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
 
 	/* now add to serialiser */
@@ -133,7 +133,7 @@ template<class T> int test_RsItem()
 	std::cerr << "test_Item() done: " << done << std::endl;
 	std::cerr << "test_Item() sersize: " << sersize << std::endl;
 
-	std::cerr << "test_Item() serialised:" << std::endl;
+	//std::cerr << "test_Item() serialised:" << std::endl;
 	//displayRawPacket(std::cerr, (void *) buffer, sersize);
 
 	EXPECT_TRUE(done == true);
@@ -192,7 +192,7 @@ template<class T> int test_RsItem(uint16_t servtype)
         RsSerialType *rsfis = init_item(rsfi) ; // deleted on destruction of srl
 
         /* attempt to serialise it before we add it to the serialiser */
-
+        std::cerr << "### These errors are expected." << std::endl;
         EXPECT_TRUE(0 == srl.size(&rsfi));
 
         static const uint32_t MAX_BUFSIZE = 22000 ;

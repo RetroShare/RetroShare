@@ -2,20 +2,20 @@
 #define GXSFORUMTHREADWIDGET_H
 
 #include "gui/gxs/GxsMessageFrameWidget.h"
-#include "util/TokenQueue.h"
+#include <retroshare/rsgxsforums.h>
+#include "gui/gxs/GxsIdDetails.h"
 
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
-class UIStateHelper;
 class RsGxsForumGroup;
 
 namespace Ui {
 class GxsForumThreadWidget;
 }
 
-class GxsForumThreadWidget : public GxsMessageFrameWidget, public TokenResponse
+class GxsForumThreadWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -41,17 +41,18 @@ public:
 	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
-	virtual RsGxsGroupId groupId() { return mForumId; }
-	virtual void setGroupId(const RsGxsGroupId &forumId);
+	/* GxsMessageFrameWidget */
+	virtual void groupIdChanged();
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
+	virtual bool navigate(const RsGxsMessageId& msgId);
+	virtual bool isLoading();
+
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
-	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
+	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent = NULL);
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
-
-	virtual void setAllMessagesRead(bool read);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -59,17 +60,29 @@ public:
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 	void changeEvent(QEvent *e);
+
+	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
 
+	/* GxsMessageFrameWidget */
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+    
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
+	void contextMenuTextBrowser(QPoint point);
 
 	void changedThread();
 	void clickedThread (QTreeWidgetItem *item, int column);
 
 	void replytomessage();
+	void replytoforummessage();
+
 	void replyMessageData(const RsGxsForumMsg &msg);
+	void replyForumMessageData(const RsGxsForumMsg &msg);
+	
+	void saveImage();
+
 
 	//void print();
 	//void printpreview();
@@ -95,6 +108,7 @@ private slots:
 	void downloadAllFiles();
 
 	void changedViewBox();
+    	void flagpersonasbad();
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
@@ -104,13 +118,10 @@ private slots:
 	void fillThreadStatus(QString text);
 
 private:
-	void insertForumThreads(const RsGxsForumGroup &group);
-	void insertPostData(const RsGxsForumMsg &msg); // Second Half.
+	void insertMessageData(const RsGxsForumMsg &msg);
 
 	void insertThreads();
-	void insertPost();
-
-//	void forumMsgReadStatusChanged(const QString &forumId, const QString &msgId, int status);
+	void insertMessage();
 
 	void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
 	void fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
@@ -128,27 +139,41 @@ private:
 
 	void processSettings(bool bLoad);
 
-	RsGxsGroupId mForumId;
+	void requestGroupData();
+	void loadGroupData(const uint32_t &token);
+    void insertGroupData();
+    static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
+
+	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
+	void loadMessageData(const uint32_t &token);
+	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
+	void loadMsgData_ReplyMessage(const uint32_t &token);
+	
+	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
+	void loadMsgData_ReplyForumMessage(const uint32_t &token);
+  void loadMsgData_BanAuthor(const uint32_t &token);
+
+private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
+    RsGxsForumGroup mForumGroup;
 	QString mForumDescription;
 	int mSubscribeFlags;
+	int mSignFlags;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
-	TokenQueue *mThreadQueue;
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 
-	void requestGroup_CurrentForum();
-	void loadGroup_CurrentForum(const uint32_t &token);
-
-	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);
-	void loadMsgData_InsertPost(const uint32_t &token);
-	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
-	void loadMsgData_ReplyMessage(const uint32_t &token);
+	uint32_t mTokenTypeGroupData;
+	uint32_t mTokenTypeInsertThreads;
+	uint32_t mTokenTypeMessageData;
+	uint32_t mTokenTypeReplyMessage;
+	uint32_t mTokenTypeReplyForumMessage;
+	uint32_t mTokenTypeBanAuthor;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
@@ -157,9 +182,10 @@ private:
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
 
-	UIStateHelper *mStateHelper;
+	RsGxsMessageId mNavigatePendingMsgId;
+	QList<RsGxsMessageId> mIgnoredMsgId;
 
-	Ui::GxsForumThreadWidget *ui;
+    Ui::GxsForumThreadWidget *ui;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H

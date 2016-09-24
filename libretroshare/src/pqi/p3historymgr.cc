@@ -34,6 +34,10 @@
 #include "rsserver/p3face.h"
 #include "util/rsstring.h"
 
+/****
+ * #define HISTMGR_DEBUG 1
+ ***/
+
 // clean too old messages every 5 minutes
 //
 #define MSG_HISTORY_CLEANING_PERIOD  300
@@ -63,7 +67,8 @@ p3HistoryMgr::~p3HistoryMgr()
 
 /***** p3HistoryMgr *****/
 
-void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem)
+//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem)
+void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
 
@@ -78,38 +83,49 @@ void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const R
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-		if (mPublicEnable == false && chatPeerId.isNull()) {
-			// public chat not enabled
-			return;
-		}
 
-		const RsChatLobbyMsgItem *cli = dynamic_cast<const RsChatLobbyMsgItem*>(chatItem);
+        RsPeerId peerId; // id of sending peer
+        RsPeerId chatPeerId; // id of chat endpoint
+        std::string peerName; //name of sending peer
 
-		if (cli) 
-		{
-			if (mLobbyEnable == false && !chatPeerId.isNull()) // lobby chat not enabled
-				return;
+        bool enabled = false;
+        if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
+            peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
+            enabled = true;
 		}
-		else 
-		{
-			if (mPrivateEnable == false && !chatPeerId.isNull()) // private chat not enabled
-				return;
-		}
+        if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
+            peerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
+            peerName = rsPeers->getPeerName(peerId);
+            enabled = true;
+        }
+        if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
+            peerName = cm.lobby_peer_gxs_id.toStdString();
+            enabled = true;
+        }
+
+        if(cm.chat_id.isDistantChatId())
+	{
+		DistantChatPeerInfo dcpinfo;
+		if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
+			peerName = cm.chat_id.toPeerId().toStdString();
+		enabled = true;
+	}
+
+        if(enabled == false)
+            return;
+
+        if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))
+            return;
 
 		RsHistoryMsgItem* item = new RsHistoryMsgItem;
 		item->chatPeerId = chatPeerId;
-		item->incoming = incoming;
+        item->incoming = cm.incoming;
 		item->peerId = peerId;
-		item->peerName = cli ? cli->nick : rsPeers->getPeerName(RsPeerId(item->peerId));
-		item->sendTime = chatItem->sendTime;
-		item->recvTime = chatItem->recvTime;
+        item->peerName = peerName;
+        item->sendTime = cm.sendTime;
+        item->recvTime = cm.recvTime;
 
-		if (cli) {
-			// disable save to disc for chat lobbies until they are saved
-			item->saveToDisc = false;
-		}
-
-		item->message = chatItem->message ;
+        item->message = cm.msg ;
 		//librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
@@ -122,7 +138,7 @@ void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const R
 			uint32_t limit;
 			if (chatPeerId.isNull()) 
 				limit = mPublicSaveCount;
-			else if (cli) 
+            else if (cm.chat_id.isLobbyId())
 				limit = mLobbySaveCount;
 			else 
 				limit = mPrivateSaveCount;
@@ -155,7 +171,9 @@ void p3HistoryMgr::cleanOldMessages()
 {
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
+#ifdef HISTMGR_DEBUG
 	std::cerr << "****** cleaning old messages." << std::endl;
+#endif
 	time_t now = time(NULL) ;
 	bool changed = false ;
 
@@ -169,7 +187,9 @@ void p3HistoryMgr::cleanOldMessages()
 					std::map<uint32_t, RsHistoryMsgItem*>::iterator lit2 = lit ;
 					++lit2 ;
 
+#ifdef HISTMGR_DEBUG
 					std::cerr << "   removing msg id " << lit->first << ", for peer id " << mit->first << std::endl;
+#endif
 					delete lit->second ;
 
 					mit->second.erase(lit) ;
@@ -185,7 +205,9 @@ void p3HistoryMgr::cleanOldMessages()
 		{
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit2 = mit ;
 			++mit2 ;
-				std::cerr << "   removing peer id " << mit->first << ", since it has no messages" << std::endl;
+#ifdef HISTMGR_DEBUG
+			std::cerr << "   removing peer id " << mit->first << ", since it has no messages" << std::endl;
+#endif
 			mMessages.erase(mit) ;
 			mit = mit2 ;
 
@@ -218,8 +240,8 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
 	std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
-	for (mit = mMessages.begin(); mit != mMessages.end(); mit++) {
-		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
+	for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
+		for (lit = mit->second.begin(); lit != mit->second.end(); ++lit) {
 			if (lit->second->saveToDisc) {
 				saveData.push_back(lit->second);
 			}
@@ -284,13 +306,16 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 	RsHistoryMsgItem *msgItem;
 	std::list<RsItem*>::iterator it;
 
-	for (it = load.begin(); it != load.end(); it++) {
+	for (it = load.begin(); it != load.end(); ++it) 
+   	 {
 		if (NULL != (msgItem = dynamic_cast<RsHistoryMsgItem*>(*it))) {
 
 			std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(msgItem->chatPeerId);
 			msgItem->msgId = nextMsgId++;
 
+#ifdef HISTMGR_DEBUG
 			std::cerr << "Loading msg history item: peer id=" << msgItem->chatPeerId << "), msg id =" << msgItem->msgId  << std::endl;
+#endif
 
 			if (mit != mMessages.end()) {
 				mit->second.insert(std::make_pair(msgItem->msgId, msgItem));
@@ -307,7 +332,7 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 
 		RsConfigKeyValueSet *rskv ;
 		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet*>(*it))) {
-			for (std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++) {
+			for (std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); ++kit) {
 				if (kit->key == "PUBLIC_ENABLE") {
 					mPublicEnable = (kit->value == "TRUE") ? true : false;
 					continue;
@@ -328,7 +353,9 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 					if (sscanf(kit->value.c_str(), "%d", &val) == 1)
 						mMaxStorageDurationSeconds = val ;
 
+#ifdef HISTMGR_DEBUG
 					std::cerr << "Loaded max storage time for history = " << val << " seconds" << std::endl;
+#endif
 					continue;
 				}
 
@@ -354,7 +381,40 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 		delete (*it);
 	}
 
+    load.clear() ;
 	return true;
+}
+
+// have to convert to virtual peer id, to be able to use existing serialiser and file format
+bool p3HistoryMgr::chatIdToVirtualPeerId(ChatId chat_id, RsPeerId &peer_id)
+{
+    if (chat_id.isBroadcast()) {
+        peer_id = RsPeerId();
+        return true;
+    }
+    if (chat_id.isPeerId()) {
+        peer_id = chat_id.toPeerId();
+        return true;
+    }
+    if (chat_id.isLobbyId()) {
+        if(sizeof(ChatLobbyId) > RsPeerId::SIZE_IN_BYTES){
+            std::cerr << "p3HistoryMgr::chatIdToVirtualPeerId() ERROR: ChatLobbyId does not fit into virtual peer id. Please report this error." << std::endl;
+            return false;
+        }
+        uint8_t bytes[RsPeerId::SIZE_IN_BYTES] ;
+        memset(bytes,0,RsPeerId::SIZE_IN_BYTES) ;
+        ChatLobbyId lobby_id = chat_id.toLobbyId();
+        memcpy(bytes,&lobby_id,sizeof(ChatLobbyId));
+        peer_id = RsPeerId(bytes);
+        return true;
+    }
+
+    if (chat_id.isDistantChatId()) {
+        peer_id = RsPeerId(chat_id.toDistantChatId());
+        return true;
+    }
+
+    return false;
 }
 
 /***** p3History *****/
@@ -371,24 +431,36 @@ static void convertMsg(const RsHistoryMsgItem* item, HistoryMsg &msg)
 	msg.message = item->message;
 }
 
-bool p3HistoryMgr::getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount)
+bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs, uint32_t loadCount)
 {
 	msgs.clear();
 
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-	std::cerr << "Getting history for peer " << chatPeerId << std::endl;
+    RsPeerId chatPeerId;
+    bool enabled = false;
+    if (chatId.isBroadcast() && mPublicEnable == true) {
+        enabled = true;
+    }
+    if (chatId.isPeerId() && mPrivateEnable == true) {
+        enabled = true;
+    }
+    if (chatId.isLobbyId() && mLobbyEnable == true) {
+        enabled = true;
+    }
+    if (chatId.isDistantChatId() && mPrivateEnable == true) {
+        enabled = true;
+    }
 
-	if (mPublicEnable == false && chatPeerId.isNull()) {	// chatPeerId.empty() means it's public chat
-		// public chat not enabled
-		return false;
-	}
+    if(enabled == false)
+        return false;
 
-	if (mPrivateEnable == false && chatPeerId.isNull() == false) // private chat not enabled
-		return false;
+    if(!chatIdToVirtualPeerId(chatId, chatPeerId))
+        return false;
 
-	if (mLobbyEnable == false && chatPeerId.isNull() == false) // private chat not enabled
-		return false;
+#ifdef HISTMGR_DEBUG
+    std::cerr << "Getting history for virtual peer " << chatPeerId << std::endl;
+#endif
 
 	uint32_t foundCount = 0;
 
@@ -398,7 +470,7 @@ bool p3HistoryMgr::getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg>
 	{
 		std::map<uint32_t, RsHistoryMsgItem*>::reverse_iterator lit;
 
-		for (lit = mit->second.rbegin(); lit != mit->second.rend(); lit++) 
+		for (lit = mit->second.rbegin(); lit != mit->second.rend(); ++lit)
 		{
 			HistoryMsg msg;
 			convertMsg(lit->second, msg);
@@ -409,7 +481,9 @@ bool p3HistoryMgr::getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg>
 			}
 		}
 	}
+#ifdef HISTMGR_DEBUG
 	std::cerr << msgs.size() << " messages added." << std::endl;
+#endif
 
 	return true;
 }
@@ -419,7 +493,7 @@ bool p3HistoryMgr::getMessage(uint32_t msgId, HistoryMsg &msg)
 	RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
-	for (mit = mMessages.begin(); mit != mMessages.end(); mit++) {
+	for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
 		std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.find(msgId);
 		if (lit != mit->second.end()) {
 			convertMsg(lit->second, msg);
@@ -430,12 +504,18 @@ bool p3HistoryMgr::getMessage(uint32_t msgId, HistoryMsg &msg)
 	return false;
 }
 
-void p3HistoryMgr::clear(const RsPeerId &chatPeerId)
+void p3HistoryMgr::clear(const ChatId &chatId)
 {
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
-		std::cerr << "********** p3History::clear()called for peer id " << chatPeerId << std::endl;
+        RsPeerId chatPeerId;
+        if(!chatIdToVirtualPeerId(chatId, chatPeerId))
+            return;
+
+#ifdef HISTMGR_DEBUG
+        std::cerr << "********** p3History::clear()called for virtual peer id " << chatPeerId << std::endl;
+#endif
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
 		if (mit == mMessages.end()) {
@@ -443,7 +523,7 @@ void p3HistoryMgr::clear(const RsPeerId &chatPeerId)
 		}
 
 		std::map<uint32_t, RsHistoryMsgItem*>::iterator lit;
-		for (lit = mit->second.begin(); lit != mit->second.end(); lit++) {
+		for (lit = mit->second.begin(); lit != mit->second.end(); ++lit) {
 			delete(lit->second);
 		}
 		mit->second.clear();
@@ -461,20 +541,28 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 	std::list<uint32_t> removedIds;
 	std::list<uint32_t>::iterator iit;
 
-		std::cerr << "********** p3History::removeMessages called()" << std::endl;
+#ifdef HISTMGR_DEBUG
+	std::cerr << "********** p3History::removeMessages called()" << std::endl;
+#endif
 	{
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit;
-		for (mit = mMessages.begin(); mit != mMessages.end(); ++mit) {
+		for (mit = mMessages.begin(); mit != mMessages.end(); ++mit)
+		{
 			iit = ids.begin();
-			while (iit != ids.end()) {
+			while ( !ids.empty() || (iit != ids.end()) )
+			{
 				std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.find(*iit);
-				if (lit != mit->second.end()) {
+				if (lit != mit->second.end())
+				{
+#ifdef HISTMGR_DEBUG
+					std::cerr << "**** Removing " << mit->first << " msg id = " << lit->first << std::endl;
+#endif
+
 					delete(lit->second);
 					mit->second.erase(lit);
 
-		std::cerr << "**** Removing " << mit->first << " msg id = " << lit->first << std::endl;
 					removedIds.push_back(*iit);
 					iit = ids.erase(iit);
 
@@ -483,19 +571,15 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 
 				++iit;
 			}
-
-			if (ids.empty()) {
-				break;
-			}
 		}
 	}
 
-	if (removedIds.empty() == false) {
+	if (!removedIds.empty())
+	{
 		IndicateConfigChanged();
 
-		for (iit = removedIds.begin(); iit != removedIds.end(); ++iit) {
+		for (iit = removedIds.begin(); iit != removedIds.end(); ++iit)
 			RsServer::notify()->notifyHistoryChanged(*iit, NOTIFY_TYPE_DEL);
-		}
 	}
 }
 
@@ -543,6 +627,8 @@ void p3HistoryMgr::setEnable(uint32_t chat_type, bool enable)
 		case RS_HISTORY_TYPE_PRIVATE: oldValue = mPrivateEnable ;
 											  mPrivateEnable = enable ;
 											  break ;
+		default:
+			return;
 	}
 
 	if (oldValue != enable) 
@@ -579,6 +665,8 @@ void p3HistoryMgr::setSaveCount(uint32_t chat_type, uint32_t count)
 		case RS_HISTORY_TYPE_PRIVATE: oldValue = mPrivateSaveCount ;
 											  mPrivateSaveCount = count ;
 											  break ;
+		default:
+			return;
 	}
 
 	if (oldValue != count) 

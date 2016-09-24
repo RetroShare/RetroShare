@@ -494,61 +494,180 @@ bool SetTlvString(void *data, uint32_t size, uint32_t *offset,
 	return ok;
 }
 
+static bool readHex(char s1,char s2,uint8_t& v)
+{
+    v=0 ;
+
+    if(s1 >= 'a' && s1 <= 'f')
+	    v += (s1-'a')+10;
+    else if(s1 >= 'A' && s1 <= 'F')
+	    v += (s1-'A')+10;
+    else if(s1 >= '0' && s1 <= '9')
+	    v += s1 - '0' ;
+    else
+	    return false ;
+
+    v = v << 4;
+
+    if(s2 >= 'a' && s2 <= 'f')
+	    v += (s2-'a')+10;
+    else if(s2 >= 'A' && s2 <= 'F')
+	    v += (s2-'A')+10;
+    else if(s2 >= '0' && s2 <= '9')
+	    v += s2 - '0' ;
+    else
+	    return false ;
+
+    return true ;
+}
+
+static bool find_decoded_string(const std::string& in,const std::string& suspicious_string)
+{
+    uint32_t ss_pointer = 0 ;
+            
+    for(uint32_t i=0;i<in.length();++i)
+    {
+        uint8_t hexv ;
+        char next_char ;
+        
+        if(in[i] == '%' && i+2 < in.length() && readHex(in[i+1],in[i+2],hexv))
+        {
+            next_char = hexv ;
+            i += 2 ;
+        }
+        else
+            next_char = in[i] ;
+        
+        if(suspicious_string[ss_pointer] == next_char)
+            ss_pointer++ ;
+        else
+            ss_pointer = 0 ;
+        
+        if(ss_pointer == suspicious_string.length())
+            return true ;
+    }
+    return false ;
+}
+
 //tested
 bool GetTlvString(void *data, uint32_t size, uint32_t *offset, 
 			uint16_t type, std::string &in) 
 {
-	if (!data)
-		return false;
+    if (!data)
+        return false;
 
-	if (size < *offset)
-	{
+    if (size < *offset)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
-		std::cerr << "GetTlvString() size: " << size << std::endl;
-		std::cerr << "GetTlvString() *offset: " << *offset << std::endl;
+        std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
+        std::cerr << "GetTlvString() size: " << size << std::endl;
+        std::cerr << "GetTlvString() *offset: " << *offset << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	/* extract the type and size */
-	void *tlvstart = right_shift_void_pointer(data, *offset);
-	uint16_t tlvtype = GetTlvType(tlvstart);
-	uint32_t tlvsize = GetTlvSize(tlvstart);
+    /* extract the type and size */
+    void *tlvstart = right_shift_void_pointer(data, *offset);
+    uint16_t tlvtype = GetTlvType(tlvstart);
+    uint32_t tlvsize = GetTlvSize(tlvstart);
 
-	/* check that there is size */
-	uint32_t tlvend = *offset + tlvsize;
-	if (size < tlvend)
-	{
+    /* check that there is size */
+    uint32_t tlvend = *offset + tlvsize;
+    if (size < tlvend)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
-		std::cerr << "GetTlvString() size: " << size << std::endl;
-		std::cerr << "GetTlvString() tlvsize: " << tlvsize << std::endl;
-		std::cerr << "GetTlvString() tlvend: " << tlvend << std::endl;
+        std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;
+        std::cerr << "GetTlvString() size: " << size << std::endl;
+        std::cerr << "GetTlvString() tlvsize: " << tlvsize << std::endl;
+        std::cerr << "GetTlvString() tlvend: " << tlvend << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	if (type != tlvtype)
-	{
+    if (type != tlvtype)
+    {
 #ifdef TLV_BASE_DEBUG
-		std::cerr << "GetTlvString() FAILED - invalid type" << std::endl;
-		std::cerr << "GetTlvString() type: " << type << std::endl;
-		std::cerr << "GetTlvString() tlvtype: " << tlvtype << std::endl;
+        std::cerr << "GetTlvString() FAILED - invalid type" << std::endl;
+        std::cerr << "GetTlvString() type: " << type << std::endl;
+        std::cerr << "GetTlvString() tlvtype: " << tlvtype << std::endl;
 #endif
-		return false;
-	}
+        return false;
+    }
 
-	char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
-	uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
-        if (strsize <= 0) {
-            in = "";
-        } else {
-            in = std::string(strdata, strsize);
+    char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
+    uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
+    if (strsize <= 0) {
+        in = "";
+    } else {
+        in = std::string(strdata, strsize);
+    }
+
+#ifdef TLV_BASE_DEBUG
+    if(type == TLV_TYPE_STR_MSG)
+	    std::cerr << "Checking string \"" << in << "\"" << std::endl;
+#endif
+    
+    // Check for string content. We want to avoid possible lol bombs as soon as possible.
+
+    static const int number_of_suspiscious_strings = 4 ;
+    static const std::string err_in = "**** String removed (SVG bomb?) ****" ;
+    static std::string suspiscious_strings[number_of_suspiscious_strings] = { "<!e",     // base ingredient of xml bombs
+                                                                              "<!E",
+                                                                              "PD94bW",  // this is the base64 encoding of "<?xml*"
+                                                                              "PHN2Zy"   // this is the base64 encoding of "<svg*"
+                                                                            } ;
+
+#ifdef TLV_BASE_DEBUG
+    std::cerr << "Checking wide string \"" << in << std::endl;
+#endif
+    // Drop any string with "<!" or "<!"...
+    // TODO: check what happens with partial messages
+    //
+    for(int i=0;i<number_of_suspiscious_strings;++i)
+        if (find_decoded_string(in,suspiscious_strings[i]))
+        {
+            std::cerr << "**** suspiscious wstring contains \"" << suspiscious_strings[i] << "\" (SVG bomb suspected). " ;
+            std::cerr << "========== Original string =========" << std::endl;
+            std::cerr << in << std::endl;
+            std::cerr << "=============== END ================" << std::endl;
+
+            for(uint32_t k=0;k<in.length();++k)
+                if(k < err_in.length())
+                    in[k] = err_in[k] ;	// It's important to keep the same size for in than the size it should have,
+                else
+                    in[k] = ' ';		// otherwise the deserialization of derived items that use it might fail
+            break ;
         }
 
-	*offset += tlvsize; /* step along */
-	return true;
+    // Also check that the string does not contain invalid characters.
+    // Every character less than 0x20 will be turned into a space (0x20).
+    // This is compatible with utf8, as all utf8 chars are > 0x7f.
+    // We do this for strings that should not contain some
+    // special characters by design.
+
+    if(       type == 0				// this is used for mGroupName and mMsgName
+       || type == TLV_TYPE_STR_PEERID
+           || type == TLV_TYPE_STR_NAME
+           || type == TLV_TYPE_STR_PATH
+           || type == TLV_TYPE_STR_TITLE
+           || type == TLV_TYPE_STR_SUBJECT
+           || type == TLV_TYPE_STR_LOCATION
+           || type == TLV_TYPE_STR_VERSION   )
+    {
+        bool modified = false ;
+        for(uint32_t i=0;i<in.length();++i)
+            if(in[i] < 0x20 && in[i] > 0)
+            {
+                modified = true ;
+                in[i] = 0x20 ;
+            }
+
+        if(modified)
+            std::cerr << "(WW) De-serialised string of type " << type << " contains forbidden characters. They have been replaced by spaces. New string: \"" << in << "\"" << std::endl;
+    }
+
+    *offset += tlvsize; /* step along */
+    return true;
 }
 
 uint32_t GetTlvStringSize(const std::string &in) {
@@ -556,6 +675,7 @@ uint32_t GetTlvStringSize(const std::string &in) {
 }
 
 
+#ifdef REMOVED_CODE
 /* We must use a consistent wchar size for cross platform ness.
  * As unix uses 4bytes, and windows 2bytes? we'll go with 4bytes for maximum flexibility
  */
@@ -692,7 +812,7 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 uint32_t GetTlvWideStringSize(std::wstring &in) {
 	return TLV_HEADER_SIZE + in.size() * RS_WCHAR_SIZE;
 }
-
+#endif
 
 bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 		uint16_t type, struct sockaddr_in *out) {
@@ -799,7 +919,7 @@ bool SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
 	if (!data)
 		return false;
 
-	uint32_t tlvsize = GetTlvIpAddrPortV4Size();
+    uint32_t tlvsize = GetTlvIpAddrPortV6Size();
 	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
 
 	if (size < tlvend)

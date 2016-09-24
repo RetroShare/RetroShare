@@ -36,13 +36,14 @@ public:
 
 	virtual ~GenCertDialog() ;
 	virtual void mouseMoveEvent(QMouseEvent *e) ;
+	QString getGXSNickname() {return mGXSNickname;}
 private slots:
 	void genPerson();
 	void importIdentity();
 	void exportIdentity();
 	void newGPGKeyGenUiSetup();
 	void grabMouse();
-	void hiddenUiSetup();
+    void updateUiSetup();
 
 private:
 	void init();
@@ -51,7 +52,9 @@ private:
 	Ui::GenCertDialog ui;
 
 	bool genNewGPGKey;
+	bool haveGPGKeys;
 	bool mOnlyGenerateIdentity;
+	QString mGXSNickname;
 
 	QTimer *entropy_timer ;
 };

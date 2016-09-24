@@ -23,7 +23,6 @@
 
 #include "gui/gxs/GxsCommentDialog.h"
 #include "ui_GxsCommentDialog.h"
-#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -42,16 +41,17 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	//ui->postFrame->setVisible(false);
 
 	ui->treeWidget->setup(token_service, comment_service);
+	
+	/* Set header resize modes and initial section sizes */
+	QHeaderView * ttheader = ui->treeWidget->header () ;
+	ttheader->resizeSection (0, 440);
 
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
-
-	/* force voterId through - first time */
-	voterSelectionChanged( 0 );
+    connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -81,6 +81,11 @@ void GxsCommentDialog::refresh()
 	std::cerr << std::endl;
 
 	commentLoad(mGrpId, mMsgId);
+}
+
+void GxsCommentDialog::idChooserReady()
+{
+    voterSelectionChanged(0);
 }
 
 void GxsCommentDialog::voterSelectionChanged( int index )
@@ -142,12 +147,4 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
-}
-
-void  GxsCommentDialog::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }

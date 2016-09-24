@@ -20,6 +20,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <math.h>
 #include <QDir>
 #include <QCoreApplication>
 #include <QStyleFactory>
@@ -33,7 +34,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 #include <util/win32.h>
 #endif
 
@@ -60,7 +61,7 @@
 /* Default Retroshare Settings */
 #define DEFAULT_OPACITY             100
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
 #define STARTUP_REG_KEY        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
 #define RETROSHARE_REG_KEY         "RetroShare" 
 #endif
@@ -100,11 +101,15 @@ RshareSettings::RshareSettings()
 
 void RshareSettings::initSettings()
 { 
-#if defined(Q_WS_MAC)
+#ifdef Q_OS_LINUX
+	// use GTK as default style on linux
+	setDefault(SETTING_STYLE, "GTK+");
+#else
+#if defined(Q_OS_MAC)
 	setDefault(SETTING_STYLE, "macintosh (aqua)");
 #else
 	static QStringList styles = QStyleFactory::keys();
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	if (styles.contains("windowsvista", Qt::CaseInsensitive))
 		setDefault(SETTING_STYLE, "windowsvista");
 	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
@@ -118,6 +123,7 @@ void RshareSettings::initSettings()
 			setDefault(SETTING_STYLE, "plastique");
 	}
 #endif
+#endif
 
 	setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
 	setDefault(SETTING_SHEETNAME, ":Standard");
@@ -128,11 +134,7 @@ void RshareSettings::initSettings()
 	// This is not default... RS_CHAT_FOCUS.
 
 	uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
-
-	uint defNewsFeed = (RS_FEED_TYPE_PEER |
-	                    //	RS_FEED_TYPE_CHAN | RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
-	                    RS_FEED_TYPE_CHAT | RS_FEED_TYPE_MSG |
-	                    RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY);
+    uint defNewsFeed = (RS_FEED_TYPE_MSG | RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_SECURITY_IP);
 
 	setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
 	setDefault(SETTING_CHAT_FLAGS, defChat);
@@ -180,7 +182,7 @@ void RshareSettings::setSheetName(QString sheet)
 /** Gets the page button Location.*/
 bool RshareSettings::getPageButtonLoc()
 {
-	return value(SETTING_PAGEBUTTONLOC, false).toBool();
+    return value(SETTING_PAGEBUTTONLOC, true).toBool();
 }
 /** Sets the page button Location.*/
 void RshareSettings::setPageButtonLoc(bool onToolBar)
@@ -236,22 +238,32 @@ void RshareSettings::setToolButtonStyle(Qt::ToolButtonStyle style)
 	}
 }
 
+int RshareSettings::computeBestIconSize(int n_sizes,int *sizes,int recommended_size)
+{
+    float default_size = QFontMetricsF(QWidget().font()).height()/16.0 * recommended_size ;
+    float closest_ratio_dist = 10000.0f ;
+    int best_default_size = sizes[0] ;
+    
+    for(int i=0;i<n_sizes;++i)
+    {
+        float ratio = default_size / sizes[i] ;
+        
+        if(fabsf(ratio - 1.0f) < closest_ratio_dist)
+        {
+            closest_ratio_dist = fabsf(ratio-1.0f) ;
+            best_default_size = sizes[i] ;
+        }
+    }
+    
+    return best_default_size ;
+}
+
 /** Gets the tool button's size.*/
 int RshareSettings::getToolButtonSize()
 {
-	int intValue=value(SETTING_TOOLBUTTONSIZE, 24).toInt();
-	switch (intValue)
-	{
-	case 8:
-		return 8;
-	case 16:
-		return 16;
-	case 24:
-	default:
-		return 24;
-	case 32:
-		return 32;
-	}
+    static int sizes[6] = { 8,16,24,32,64,128 } ;
+    
+    return value(SETTING_TOOLBUTTONSIZE, computeBestIconSize(6,sizes,24)).toInt();
 }
 
 /** Sets the tool button's size.*/
@@ -271,25 +283,22 @@ void RshareSettings::setToolButtonSize(int size)
 		break;
 	case 32:
 		setValue(SETTING_TOOLBUTTONSIZE, 32);
-	}
+        break;
+    case 64:
+        setValue(SETTING_TOOLBUTTONSIZE, 64);
+        break;
+    case 128:
+        setValue(SETTING_TOOLBUTTONSIZE, 128);
+        break;
+    }
 }
 
 /** Gets the list item icon's size.*/
 int RshareSettings::getListItemIconSize()
 {
-	int intValue=value(SETTING_LISTITEMICONSIZE, 24).toInt();
-	switch (intValue)
-	{
-	case 8:
-		return 8;
-	case 16:
-		return 16;
-	case 24:
-	default:
-		return 24;
-	case 32:
-		return 32;
-	}
+    static int sizes[6] = { 8,16,24,32,64,128 } ;
+    
+    return value(SETTING_LISTITEMICONSIZE, computeBestIconSize(6,sizes,24)).toInt();
 }
 
 /** Sets the list item icon's size.*/
@@ -309,7 +318,14 @@ void RshareSettings::setListItemIconSize(int size)
 		break;
 	case 32:
 		setValue(SETTING_LISTITEMICONSIZE, 32);
-	}
+            break ;
+    case 64:
+        setValue(SETTING_LISTITEMICONSIZE, 64);
+        break ;
+    case 128:
+        setValue(SETTING_LISTITEMICONSIZE, 128);
+        break ;
+    }
 }
 
 static QString getKeyForLastDir(RshareSettings::enumLastDir type)
@@ -329,6 +345,8 @@ static QString getKeyForLastDir(RshareSettings::enumLastDir type)
 		return "Messages";
 	case RshareSettings::LASTDIR_SOUNDS:
 		return "SOUNDS";
+	case RshareSettings::LASTDIR_PLUGIN:
+		return "PLUGIN";
 	}
 	return "";
 }
@@ -458,7 +476,7 @@ void RshareSettings::setNotifyFlags(uint flags)
 
 uint RshareSettings::getMessageFlags()
 {
-	return value("MessageFlags").toUInt();
+  return value("MessageFlags", RS_MESSAGE_CONNECT_ATTEMPT).toUInt();
 }
 
 void RshareSettings::setMessageFlags(uint flags)
@@ -486,16 +504,6 @@ void RshareSettings::setDisplayTrayGroupChat(bool bValue)
 	setValue("DisplayTrayGroupChat", bValue);
 }
 
-bool RshareSettings::getAddFeedsAtEnd()
-{
-	return value("AddFeedsAtEnd").toBool();
-}
-
-void RshareSettings::setAddFeedsAtEnd(bool bValue)
-{
-	setValue("AddFeedsAtEnd", bValue);
-}
-
 bool RshareSettings::getChatSendMessageWithCtrlReturn()
 {
 	return valueFromGroup("Chat", "SendMessageWithCtrlReturn", false).toBool();
@@ -504,6 +512,26 @@ bool RshareSettings::getChatSendMessageWithCtrlReturn()
 void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
 {
 	setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
+}
+
+bool RshareSettings::getChatSendAsPlainTextByDef()
+{
+	return valueFromGroup("Chat", "SendAsPlainTextByDef", false).toBool();
+}
+
+void RshareSettings::setChatSendAsPlainTextByDef(bool bValue)
+{
+	setValueToGroup("Chat", "SendAsPlainTextByDef", bValue);
+}
+
+bool RshareSettings::getChatSearchShowBarByDefault()
+{
+	return valueFromGroup("Chat", "SearchShowBarByDefault", false).toBool();
+}
+
+void RshareSettings::setChatSearchShowBarByDefault(bool bValue)
+{
+	setValueToGroup("Chat", "SearchShowBarByDefault", bValue);
 }
 
 void RshareSettings::setChatSearchCharToStartSearch(int iValue)
@@ -575,6 +603,16 @@ QRgb RshareSettings::getChatSearchFoundColor()
 	return valueFromGroup("Chat", "SearchMaxSearchFoundColor", QString::number(QColor(255,255,150).rgba())).toUInt();
 }
 
+bool RshareSettings::getChatLoadEmbeddedImages()
+{
+	return valueFromGroup("Chat", "LoadEmbeddedImages", true).toBool();
+}
+
+void RshareSettings::setChatLoadEmbeddedImages(bool value)
+{
+	setValueToGroup("Chat", "LoadEmbeddedImages", value);
+}
+
 RshareSettings::enumToasterPosition RshareSettings::getToasterPosition()
 {
 	return (enumToasterPosition) value("ToasterPosition", TOASTERPOS_BOTTOMRIGHT).toInt();
@@ -607,12 +645,12 @@ void RshareSettings::setChatScreenFont(const QString &font)
 
 void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
-	stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/standard/public").toString();
+	stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/compact/public").toString();
 	// Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
 	if (stylePath == ":/qss/chat/public") {
 		stylePath = ":/qss/chat/standard/public";
 	}
-	styleVariant = valueFromGroup("Chat", "StylePublicVariant", "").toString();
+	styleVariant = valueFromGroup("Chat", "StylePublicVariant", "Colored").toString();
 }
 
 void RshareSettings::setPublicChatStyle(const QString &stylePath, const QString &styleVariant)
@@ -687,7 +725,7 @@ RshareSettings::runRetroshareOnBoot(bool &minimized)
 {
 	minimized = false;
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	QString value = win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
 
 	if (!value.isEmpty()) {
@@ -706,9 +744,9 @@ RshareSettings::runRetroshareOnBoot(bool &minimized)
 void
 RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	if (run) {
-		QString value = "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\"";
+		QString value = "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\"";
 
 		if (minimized) {
 			value += " -m";
@@ -725,31 +763,47 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 #endif
 }
 
-#if defined(Q_WS_WIN)
 static QString getAppPathForProtocol()
 {
-	return "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
-}
+#if defined(Q_OS_WIN)
+	return "\"" + QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
+#elif defined(Q_OS_LINUX)
+	return QDir::toNativeSeparators(QCoreApplication::applicationFilePath()) + " %U";
 #endif
+}
 
 /** Returns true if retroshare:// is registered as protocol */
 bool RshareSettings::getRetroShareProtocol()
 {
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 	/* Check key */
-	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+	QSettings retroshare("HKEY_CURRENT_USER\\Software\\Classes\\retroshare", QSettings::NativeFormat);
 	if (retroshare.contains("Default")) {
-		/* Check profile */
-		if (retroshare.value("Profile").toString().toStdString() == rsPeers->getOwnId().toStdString()) {
+		/* URL Protocol */
+		if (retroshare.contains("URL Protocol")) {
 			/* Check app path */
-			QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+			QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 			if (command.value("Default").toString() == getAppPathForProtocol()) {
 				return true;
 			}
 		}
 	}
+#elif defined(Q_OS_LINUX)
+	QFile desktop("/usr/share/applications/RetroShare06.desktop");
+	if (desktop.exists()) {
+		desktop.open(QIODevice::ReadOnly | QIODevice::Text);
+		QTextStream in(&desktop);
+		QStringList lines;
+		while(!in.atEnd()) {
+			lines << in.readLine();
+		}
+		desktop.close();
+		if (lines.contains("Exec=" + getAppPathForProtocol()))
+			if (lines.contains("MimeType=x-scheme-handler/retroshare"))
+				return true;
+	}
 #else
-	/* Platforms other than windows aren't supported yet */
+	/* Platforms not supported yet */
 #endif
 	return false;
 }
@@ -757,49 +811,71 @@ bool RshareSettings::getRetroShareProtocol()
 /** Returns true if the user can set retroshare as protocol */
 bool RshareSettings::canSetRetroShareProtocol()
 {
-#if defined(Q_WS_WIN)
-	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
-	return retroshare.isWritable();
+#if defined(Q_OS_WIN)
+	QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
+	return classRoot.isWritable();
+#elif defined(Q_OS_LINUX)
+	return RshareSettings::getRetroShareProtocol();
 #else
 	return false;
 #endif
 }
 
 /** Register retroshare:// as protocol */
-bool RshareSettings::setRetroShareProtocol(bool value)
+bool RshareSettings::setRetroShareProtocol(bool value, QString &error)
 {
-#if defined(Q_WS_WIN)
+	error = "";
+#if defined(Q_OS_WIN)
 	if (value) {
-		QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+		QSettings retroshare("HKEY_CURRENT_USER\\Software\\Classes\\retroshare", QSettings::NativeFormat);
 		retroshare.setValue("Default", "URL: RetroShare protocol");
 
 		QSettings::Status state = retroshare.status();
 		if (state == QSettings::AccessError) {
+			error = tr("Registry Access Error. Maybe you need Administrator right.");
 			return false;
 		}
 		retroshare.setValue("URL Protocol", "");
-		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
-		QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+		QSettings command("HKEY_CURRENT_USER\\Software\\Classes\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());
 		state = command.status();
 	} else {
-		QSettings retroshare("HKEY_CLASSES_ROOT", QSettings::NativeFormat);
-		retroshare.remove("retroshare");
+		QSettings classRoot("HKEY_CURRENT_USER\\Software\\Classes", QSettings::NativeFormat);
+		classRoot.remove("retroshare");
 
-		QSettings::Status state = retroshare.status();
+		QSettings::Status state = classRoot.status();
 		if (state == QSettings::AccessError) {
+			error = tr("Registry Access Error. Maybe you need Administrator right.");
 			return false;
 		}
 	}
 
 	return true;
-#else
-	/* Platforms other than windows aren't supported yet */
+#elif defined(Q_OS_LINUX)
+	/* RetroShare protocol is always activated for Linux */
 	Q_UNUSED(value);
-
+	return true;
+#else
+	/* Platforms not supported yet */
+	Q_UNUSED(value);
 	return false;
 #endif
+}
+
+/** Returns true if this instance have to run Local Server*/
+bool RshareSettings::getUseLocalServer()
+{
+	return value("UseLocalServer", true).toBool();
+}
+
+/** Sets whether to run Local Server */
+void RshareSettings::setUseLocalServer(bool value)
+{
+	if (value != getUseLocalServer()) {
+		setValue("UseLocalServer", value);
+		Rshare::updateLocalServer();
+	}
 }
 
 /** Saving Generic Widget Size / Location */
@@ -1034,4 +1110,34 @@ void RshareSettings::setMaxTimeBeforeIdle(uint nValue)
 {
 	m_maxTimeBeforeIdle = nValue;
 	setValue("maxTimeBeforeIdle", nValue);
+}
+
+bool RshareSettings::getWebinterfaceEnabled()
+{
+    return valueFromGroup("Webinterface", "enabled", false).toBool();
+}
+
+void RshareSettings::setWebinterfaceEnabled(bool enabled)
+{
+    setValueToGroup("Webinterface", "enabled", enabled);
+}
+
+uint16_t RshareSettings::getWebinterfacePort()
+{
+    return valueFromGroup("Webinterface", "port", 9090).toUInt();
+}
+
+void RshareSettings::setWebinterfacePort(uint16_t port)
+{
+    setValueToGroup("Webinterface", "port", port);
+}
+
+bool RshareSettings::getWebinterfaceAllowAllIps()
+{
+    return valueFromGroup("Webinterface", "allowAllIps", false).toBool();
+}
+
+void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
+{
+    setValueToGroup("Webinterface", "allowAllIps", allow_all);
 }

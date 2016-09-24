@@ -50,14 +50,20 @@ typedef uint32_t in_addr_t;
 int inet_aton(const char *name, struct in_addr *addr);
 
 // Missing defines in MinGW
+#ifndef MSG_WAITALL
 #define MSG_WAITALL  8
+#endif
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 /* 64 bit conversions */
+#ifndef ntohll
 uint64_t ntohll(uint64_t x);
+#endif
+#ifndef htonll
 uint64_t htonll(uint64_t x);
+#endif
 
 /* blank a network address */
 void sockaddr_clear(struct sockaddr_in *addr);
@@ -67,6 +73,9 @@ bool isValidNet(const struct in_addr *addr);
 bool isLoopbackNet(const struct in_addr *addr);
 bool isPrivateNet(const struct in_addr *addr);
 bool isExternalNet(const struct in_addr *addr);
+
+// uses a re-entrant version of gethostbyname
+bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
 
 std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 
@@ -79,7 +88,7 @@ std::string rs_inet_ntoa(struct in_addr in);
 
 // Standard bind, on OSX anyway will not accept a longer socklen for IPv4.
 // so hidding details behind function.
-int     universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen);
+int universal_bind(int fd, const struct sockaddr *addr, socklen_t socklen);
 
 void sockaddr_storage_clear(struct sockaddr_storage &addr);
 
@@ -102,14 +111,13 @@ bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &
 bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_samefamily(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
-bool sockaddr_storage_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
 
 // string,
 std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
+void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString = NULL);
 
 // output
 //void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);
@@ -122,6 +130,6 @@ bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
 bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr);
 
-
+bool rs_inet_ntop(const sockaddr_storage &addr, std::string &dst);
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

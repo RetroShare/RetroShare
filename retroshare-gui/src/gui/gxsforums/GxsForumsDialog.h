@@ -24,7 +24,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_GXSFORUMS         ":/images/konversation.png"
+#define IMAGE_GXSFORUMS         ":/icons/png/forums.png"
 
 class GxsForumsDialog : public GxsGroupFrameDialog
 {
@@ -41,8 +41,10 @@ public:
 	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
+	virtual QString getHelpString() const ;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Forum; }
+	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 
 private:
 	/* GxsGroupFrameDialog */
@@ -53,6 +55,8 @@ private:
 	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
 	virtual int shareKeyType();
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
+	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
+	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 };
 
 #endif

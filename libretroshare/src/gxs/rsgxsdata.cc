@@ -33,23 +33,28 @@ RsGxsGrpMetaData::RsGxsGrpMetaData()
     clear();
 }
 
-uint32_t RsGxsGrpMetaData::serial_size()
+uint32_t RsGxsGrpMetaData::serial_size(uint32_t api_version)
 {
     uint32_t s = 8; // header size
 
     s += mGroupId.serial_size();
     s += mOrigGrpId.serial_size();
+    s += mParentGrpId.serial_size();
     s += GetTlvStringSize(mGroupName);
-    s += 4;
-    s += 4;
+    s += 4;          // mGroupFlags
+    s += 4;          // mPublishTs
+    s += 4;          // mCircleType
+    s += 4;          // mAuthenFlag
     s += mAuthorId.serial_size();
     s += GetTlvStringSize(mServiceString);
+    s += mCircleId.serial_size();
     s += signSet.TlvSize();
     s += keys.TlvSize();
-    s += 4; // for mCircleType
-    s += mCircleId.serial_size();
-    s += 4; // mAuthenFlag
-    s += mParentGrpId.serial_size();
+    
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+        s += 4;      // mSignFlag
+    else if(api_version != RS_GXS_GRP_META_DATA_VERSION_ID_0001)
+        std::cerr << "(EE) wrong/unknown API version " << api_version << " requested in RsGxsGrpMetaData::serial_size()" << std::endl;
 
     return s;
 }
@@ -58,33 +63,42 @@ void RsGxsGrpMetaData::clear(){
 
     mGroupId.clear();
     mOrigGrpId.clear();
-    mAuthorId.clear();
     mGroupName.clear();
-    mServiceString.clear();
-    mPublishTs = 0;
     mGroupFlags = 0;
-    mPop = 0;
-    mMsgCount = 0;
-    mGroupStatus = 0;
-    mLastPost = 0;
-    mSubscribeFlags = 0;
+    mPublishTs = 0;
+    mSignFlags = 0;
+    mAuthorId.clear();
+
+    mCircleId.clear();
+    mCircleType = 0;
+
     signSet.TlvClear();
     keys.TlvClear();
-    mCircleId.clear();
-    mInternalCircle.clear();
-    mOriginator.clear();
-    mCircleType = 0;
+
+    mServiceString.clear();
     mAuthenFlags = 0;
     mParentGrpId.clear();
-    mRecvTS = 0;
-    mReputationCutOff = 0;
 
+    mSubscribeFlags = 0;
+
+    mPop = 0;
+    mVisibleMsgCount = 0;
+    mGroupStatus = 0;
+    mLastPost = 0;
+    mReputationCutOff = 0;
+    mGrpSize = 0 ;
+
+    mGroupStatus = 0 ;
+    mRecvTS = 0;
+
+    mOriginator.clear();
+    mInternalCircle.clear();
+    mHash.clear() ;
 }
 
-bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
+bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize,uint32_t api_version)
 {
-
-    uint32_t tlvsize = serial_size() ;
+    uint32_t tlvsize = serial_size(api_version) ;
     uint32_t offset = 0;
 
     if (pktsize < tlvsize)
@@ -94,7 +108,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, 0, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, api_version, tlvsize); 
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;
@@ -120,6 +134,8 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
 
+    if(api_version == RS_GXS_GRP_META_DATA_VERSION_ID_0002)
+	    ok &= setRawUInt32(data, tlvsize, &offset, mSignFlags);	// new in API v2. Was previously missing. Kept in the end for backward compatibility
 
     return ok;
 }
@@ -144,19 +160,50 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
     ok &= getRawUInt32(data, pktsize, &offset, &mCircleType);
     ok &= getRawUInt32(data, pktsize, &offset, &mAuthenFlags);
+    
+       
     ok &= mAuthorId.deserialise(data, pktsize, offset);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
     ok &= mCircleId.deserialise(data, pktsize, offset);
     ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
+    
+    switch(getRsItemId(data))
+    {
+    case RS_GXS_GRP_META_DATA_VERSION_ID_0002:	ok &= getRawUInt32(data, pktsize, &offset, &mSignFlags);	// current API
+	    break ;
 
+    case RS_GXS_GRP_META_DATA_VERSION_ID_0001: mSignFlags = 0;						// old API. Do not leave this uninitialised!
+	    break ;
+
+    default:
+	    std::cerr << "(EE) RsGxsGrpMetaData::deserialise(): ERROR: unknown API version " << std::hex << getRsItemId(data) << std::dec << std::endl;
+    }
+ 
+    if(offset != pktsize)
+    {
+	std::cerr << "(EE) RsGxsGrpMetaData::deserialise(): ERROR: unmatched size " << offset << ", expected: " << pktsize << std::dec << std::endl;
+    	return false ;
+    }
+#ifdef DROP_NON_CANONICAL_ITEMS
+    if(mGroupName.length() > RsGxsGrpMetaData::MAX_ALLOWED_STRING_SIZE)
+    {
+        std::cerr << "WARNING: Deserialised group with mGroupName.length() = " << mGroupName.length() << ". This is not allowed. This item will be dropped." << std::endl;
+        return false ;
+    }
+    if(mServiceString.length() > RsGxsGrpMetaData::MAX_ALLOWED_STRING_SIZE)
+    {
+        std::cerr << "WARNING: Deserialised group with mServiceString.length() = " << mGroupName.length() << ". This is not allowed. This item will be dropped." << std::endl;
+        return false ;
+    }
+#endif
 
     return ok;
 }
 int RsGxsMsgMetaData::refcount = 0;
 
 RsGxsMsgMetaData::RsGxsMsgMetaData(){
-
+	clear();
 	//std::cout << "\nrefcount++ : " << ++refcount << std::endl;
 	return;
 }
@@ -180,8 +227,8 @@ uint32_t RsGxsMsgMetaData::serial_size()
 
     s += signSet.TlvSize();
     s += GetTlvStringSize(mMsgName);
-    s += 4;
-    s += 4;
+    s += 4;          // mPublishTS
+    s += 4;          // mMsgFlags
 
     return s;
 }
@@ -217,7 +264,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
 
     bool ok = true;
 
-    ok &= setRsItemHeader(data, tlvsize, 0, tlvsize);
+    ok &= setRsItemHeader(data, tlvsize, RS_GXS_MSG_META_DATA_VERSION_ID_0002, tlvsize);
 
 #ifdef GXS_DEBUG
     std::cerr << "RsGxsGrpMetaData serialise()" << std::endl;
@@ -264,7 +311,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
     ok &= signSet.GetTlv(data, *size, &offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgName);
-    uint32_t t;
+    uint32_t t=0;
     ok &= getRawUInt32(data, *size, &offset, &t);
     mPublishTs = t;
     ok &= getRawUInt32(data, *size, &offset, &mMsgFlags);
@@ -274,17 +321,17 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
 void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 {
-	this->mAuthorId = rMeta.mAuthorId;
-	this->mGroupFlags = rMeta.mGroupFlags;
-	this->mGroupId = rMeta.mGroupId;
-	this->mGroupStatus = rMeta.mGroupStatus ;
-	this->mLastPost = rMeta.mLastPost;
-	this->mMsgCount = rMeta.mMsgCount ;
-	this->mPop = rMeta.mPop;
-	this->mPublishTs = rMeta.mPublishTs;
-	this->mSubscribeFlags = rMeta.mSubscribeFlags;
-	this->mGroupName = rMeta.mGroupName;
-	this->mServiceString = rMeta.mServiceString;
+    this->mAuthorId = rMeta.mAuthorId;
+    this->mGroupFlags = rMeta.mGroupFlags;
+    this->mGroupId = rMeta.mGroupId;
+    this->mGroupStatus = rMeta.mGroupStatus ;
+    this->mLastPost = rMeta.mLastPost;
+    this->mVisibleMsgCount = rMeta.mVisibleMsgCount ;
+    this->mPop = rMeta.mPop;
+    this->mPublishTs = rMeta.mPublishTs;
+    this->mSubscribeFlags = rMeta.mSubscribeFlags;
+    this->mGroupName = rMeta.mGroupName;
+    this->mServiceString = rMeta.mServiceString;
         this->mSignFlags = rMeta.mSignFlags;
         this->mCircleId = rMeta.mCircleId;
         this->mCircleType = rMeta.mCircleType;
@@ -297,18 +344,18 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)
 {
-	this->mAuthorId = rMeta.mAuthorId;
-	this->mChildTs = rMeta.mChildTs ;
-	this->mGroupId = rMeta.mGroupId;
-	this->mMsgFlags = rMeta.mMsgFlags ;
-	this->mMsgId = rMeta.mMsgId ;
-	this->mMsgName = rMeta.mMsgName;
-	this->mMsgStatus = rMeta.mMsgStatus;
-	this->mOrigMsgId = rMeta.mOrigMsgId;
-	this->mParentId = rMeta.mParentId ;
-	this->mPublishTs = rMeta.mPublishTs ;
-	this->mThreadId = rMeta.mThreadId;
-	this->mServiceString = rMeta.mServiceString;
+    this->mAuthorId = rMeta.mAuthorId;
+    this->mChildTs = rMeta.mChildTs ;
+    this->mGroupId = rMeta.mGroupId;
+    this->mMsgFlags = rMeta.mMsgFlags ;
+    this->mMsgId = rMeta.mMsgId ;
+    this->mMsgName = rMeta.mMsgName;
+    this->mMsgStatus = rMeta.mMsgStatus;
+    this->mOrigMsgId = rMeta.mOrigMsgId;
+    this->mParentId = rMeta.mParentId ;
+    this->mPublishTs = rMeta.mPublishTs ;
+    this->mThreadId = rMeta.mThreadId;
+    this->mServiceString = rMeta.mServiceString;
 }
 
 

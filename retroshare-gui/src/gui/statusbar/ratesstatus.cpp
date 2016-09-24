@@ -39,7 +39,7 @@ RatesStatus::RatesStatus(QWidget *parent)
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
-    statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) "), this );
+    statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s)")+" ", this );
 //    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusRates);
 

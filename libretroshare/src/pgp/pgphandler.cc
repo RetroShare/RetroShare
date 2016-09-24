@@ -26,6 +26,7 @@ extern "C" {
 #include "retroshare/rspeers.h"		// For rsicontrol.
 #include "util/rsdir.h"		
 #include "util/rsdiscspace.h"		
+#include "util/rsmemory.h"		
 #include "pgp/pgpkeyutil.h"
 
 static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE   = 64 ;
@@ -39,7 +40,11 @@ PassphraseCallback PGPHandler::_passphrase_callback = NULL ;
 
 ops_keyring_t *PGPHandler::allocateOPSKeyring() 
 {
-	ops_keyring_t *kr = (ops_keyring_t*)malloc(sizeof(ops_keyring_t)) ;
+	ops_keyring_t *kr = (ops_keyring_t*)rs_malloc(sizeof(ops_keyring_t)) ;
+    
+    	if(kr == NULL)
+            return NULL ;
+        
 	kr->nkeys = 0 ;
 	kr->nkeys_allocated = 0 ;
 	kr->keys = 0 ;
@@ -56,20 +61,25 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 	{
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD: prev_was_bad = true ;
 		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-																				{
-																					std::string passwd;
-																					std::string uid_hint ;
-																					
-																					if(cbinfo->cryptinfo.keydata->nuids > 0)
-																						uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
-																					uid_hint += "(" + RsPgpId(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+		{
+			std::string passwd;
+			std::string uid_hint ;
 
-																					passwd = PGPHandler::passphraseCallback()(NULL,uid_hint.c_str(),NULL,prev_was_bad) ;
-																					*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
-																					memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
-																					return OPS_KEEP_MEMORY;
-																				}
-																				break;
+			if(cbinfo->cryptinfo.keydata->nuids > 0)
+				uid_hint = std::string((const char *)cbinfo->cryptinfo.keydata->uids[0].user_id) ;
+			uid_hint += "(" + RsPgpId(cbinfo->cryptinfo.keydata->key_id).toStdString()+")" ;
+
+			bool cancelled = false ;
+			passwd = PGPHandler::passphraseCallback()(NULL,"",uid_hint.c_str(),NULL,prev_was_bad,&cancelled) ;
+
+			if(cancelled)
+				*(unsigned char *)cbinfo->arg = 1;
+
+			*(content->secret_key_passphrase.passphrase)= (char *)ops_mallocz(passwd.length()+1) ;
+			memcpy(*(content->secret_key_passphrase.passphrase),passwd.c_str(),passwd.length()) ;
+			return OPS_KEEP_MEMORY;
+		}
+		break;
 
 		default:
 			break;
@@ -282,7 +292,7 @@ bool PGPHandler::printKeys() const
 	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
 #endif
 
-	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
+	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); ++it)
 	{
 		std::cerr << "PGP Key: " << it->first.toStdString() << std::endl;
 
@@ -297,7 +307,7 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tSigners       : " << it->second.signers.size() <<  std::endl;
 
 		std::set<RsPgpId>::const_iterator sit;
-		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
+		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); ++sit)
 		{
 			std::cerr << "\t\tSigner ID:" << (*sit).toStdString() << ", Name: " ;
 			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(*sit) ;
@@ -360,7 +370,7 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids
 	return true ;
 }
 
-bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, RsPgpId& pgpId, std::string& errString) 
+bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, RsPgpId& pgpId, const int keynumbits, std::string& errString)
 {
 	// Some basic checks
 	
@@ -384,12 +394,15 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 		errString = std::string("(EE) passphrase in certificate exceeds the maximum allowed passphrase size") ;
 		return false ;
 	}
+	if(keynumbits % 1024 != 0)
+	{
+		errString = std::string("(EE) RSA key length is not a multiple of 1024") ;
+		return false ;
+	}
 
 	// Now the real thing
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
-
-	static const int KEY_NUMBITS = 2048 ;
 
 	// 1 - generate keypair - RSA-2048
 	//
@@ -398,7 +411,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	uid.user_id = (unsigned char *)s ;
 	unsigned long int e = 65537 ; // some prime number
 
-	ops_keydata_t *key = ops_rsa_create_selfsigned_keypair(KEY_NUMBITS,e,&uid) ;
+	ops_keydata_t *key = ops_rsa_create_selfsigned_keypair(keynumbits, e, &uid) ;
 
 	free(s) ;
 
@@ -409,7 +422,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 
 	ops_create_info_t *cinfo = NULL ;
 	ops_memory_t *buf = NULL ;
-   ops_setup_memory_write(&cinfo, &buf, 0);
+	ops_setup_memory_write(&cinfo, &buf, 0);
 
 	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
@@ -527,6 +540,7 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,bool inc
 	}
 	else
 	{
+        ops_create_info_delete(cinfo);
 		std::cerr << "Unhandled key type " << key->type << std::endl;
 		return "ERROR: Cannot write key. Unhandled key type. " ;
 	}
@@ -775,8 +789,39 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,RsPgpId& imported_
 	if(ops_false == ops_keyring_read_from_file(tmp_keyring, ops_true, filename.c_str()))
 	{
 		import_error = "PGPHandler::readKeyRing(): cannot read key file. File corrupted?" ;
+        free(tmp_keyring);
 		return false ;
 	}
+
+    return checkAndImportKeyPair(tmp_keyring, imported_key_id, import_error);
+}
+
+bool PGPHandler::importGPGKeyPairFromString(const std::string &data, RsPgpId &imported_key_id, std::string &import_error)
+{
+    import_error = "" ;
+
+    ops_memory_t* mem = ops_memory_new();
+    ops_memory_add(mem, (unsigned char*)data.data(), data.length());
+
+    ops_keyring_t *tmp_keyring = allocateOPSKeyring();
+
+    if(ops_false == ops_keyring_read_from_mem(tmp_keyring, ops_true, mem))
+    {
+        import_error = "PGPHandler::importGPGKeyPairFromString(): cannot parse key data" ;
+        free(tmp_keyring);
+        return false ;
+    }
+    return checkAndImportKeyPair(tmp_keyring, imported_key_id, import_error);
+}
+
+bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &imported_key_id, std::string &import_error)
+{
+    if(tmp_keyring == 0)
+    {
+        import_error = "PGPHandler::checkAndImportKey(): keyring is null" ;
+        return false;
+    }
+
 	if(tmp_keyring->nkeys != 2)
 	{
 		import_error = "PGPHandler::importKeyPair(): file does not contain a valid keypair." ;
@@ -915,6 +960,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,RsPgpId& imported_
 	// 6 - clean
 	//
 	ops_keyring_free(tmp_keyring) ;
+    free(tmp_keyring);
 
     // write public key to disk
     syncDatabase();
@@ -984,12 +1030,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 	//
 	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
 
-	if(!ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase)) 
-	{
-		std::cerr << "Cannot validate self-signature for this certificate. Format error?" << std::endl;
-		error_string = "Cannot validate self signature for this certificate. Format error?" ;
-		return false ;
-	}
+    ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase) ;
 
 	bool found = false ;
 
@@ -1262,7 +1303,7 @@ bool PGPHandler::decryptTextFromFile(const RsPgpId&,std::string& text,const std:
 
 	if (f == NULL)
 	{
-		std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
+        std::cerr << "Cannot open file " << inputfile << " for read." << std::endl;
 		return false;
 	}
 
@@ -1285,7 +1326,7 @@ bool PGPHandler::decryptTextFromFile(const RsPgpId&,std::string& text,const std:
 	return (bool)res ;
 }
 
-bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature)
+bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature, std::string reason /* = "" */)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	// need to find the key and to decrypt it.
@@ -1309,15 +1350,33 @@ bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t 
 
 	PGPFingerprintType fp(f.fingerprint) ;
 #endif
-	std::string passphrase = _passphrase_callback(NULL,uid_hint.c_str(),"Please enter passwd for encrypting your key : ",false) ;
 
-	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+    bool last_passwd_was_wrong = false ;
+ops_secret_key_t *secret_key = NULL ;
 
-	if(!secret_key)
-	{
-		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
-		return false ;
-	}
+    for(int i=0;i<3;++i)
+    {
+        bool cancelled =false;
+        std::string passphrase = _passphrase_callback(NULL,reason.c_str(),uid_hint.c_str(),"Please enter passwd for encrypting your key : ",last_passwd_was_wrong,&cancelled) ;//TODO reason
+
+        secret_key = ops_decrypt_secret_key_from_data(key,passphrase.c_str()) ;
+
+        if(cancelled)
+        {
+            std::cerr << "Key entering cancelled" << std::endl;
+            return false ;
+        }
+        if(secret_key)
+            break ;
+
+        std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
+        last_passwd_was_wrong = true ;
+    }
+    if(!secret_key)
+    {
+        std::cerr << "Could not obtain secret key. Signature cancelled." << std::endl;
+        return false ;
+    }
 
 	// then do the signature.
 
@@ -1389,11 +1448,17 @@ bool PGPHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpId& id_o
 		return false ;
 	}
 
-	std::string passphrase = _passphrase_callback(NULL,RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false) ;
+	bool cancelled = false;
+	std::string passphrase = _passphrase_callback(NULL,"",RsPgpId(skey->key_id).toStdString().c_str(),"Please enter passwd for encrypting your key : ",false,&cancelled) ;
 
 	ops_secret_key_t *secret_key = ops_decrypt_secret_key_from_data(skey,passphrase.c_str()) ;
 
-	if(!secret_key)
+    if(cancelled)
+    {
+        std::cerr << "Key cancelled by used." << std::endl;
+        return false ;
+    }
+    if(!secret_key)
 	{
 		std::cerr << "Key decryption went wrong. Wrong passwd?" << std::endl;
 		return false ;
@@ -1625,6 +1690,24 @@ bool PGPHandler::mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src)
 		ops_add_packet_to_keydata(dst,&*it) ;
 	}
 	return to_add.size() > 0 ;
+}
+
+bool PGPHandler::parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) 
+{
+    uint64_t issuer ;
+    
+    if(!PGPKeyManagement::parseSignature(sign,signlen,issuer))
+        return false ;
+    
+    unsigned char bytes[8] ;
+    for(int i=0;i<8;++i)
+    {
+        bytes[7-i] = issuer & 0xff ;
+        issuer >>= 8 ;
+    }
+    issuer_id = RsPgpId(bytes) ;
+    
+    return true ;     
 }
 
 bool PGPHandler::privateTrustCertificate(const RsPgpId& id,int trustlvl)
@@ -1869,7 +1952,7 @@ void PGPHandler::locked_mergeKeyringFromDisk(	ops_keyring_t *keyring,
 	ops_keyring_free(tmp_keyring) ;
 }
 
-bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remove,std::string& backup_file,uint32_t& error_code)
+bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remove,std::string& backup_file,uint32_t& error_code)
 {
 	// 1 - lock everything.
 	//
@@ -1878,7 +1961,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remo
 
 	error_code = PGP_KEYRING_REMOVAL_ERROR_NO_ERROR ;
 
-	for(std::list<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
 		if(locked_getSecretKey(*it) != NULL)
 		{
 			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << " since its shared by a secret key! Operation cancelled." << std::endl;
@@ -1895,12 +1978,20 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remo
 	char template_name[_pubring_path.length()+8] ;
 	sprintf(template_name,"%s.XXXXXX",_pubring_path.c_str()) ;
 	
+#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K8
+	int fd_keyring_backup(mkstemp(template_name));
+	if (fd_keyring_backup == -1)
+#else
 	if(mktemp(template_name) == NULL)
+#endif
 	{
 		std::cerr << "PGPHandler::removeKeysFromPGPKeyring(): cannot create keyring backup file. Giving up." << std::endl;
 		error_code = PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP ;
 		return false ;
 	}
+#if defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K8
+	close(fd_keyring_backup);	// TODO: keep the file open and use the fd
+#endif
 
 	if(!ops_write_keyring_to_file(_pubring,ops_false,template_name,ops_true)) 
 	{
@@ -1914,7 +2005,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<RsPgpId>& keys_to_remo
 
 	// Remove keys from the keyring, and update the keyring map.
 	//
-	for(std::list<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(keys_to_remove.begin());it!=keys_to_remove.end();++it)
 	{
 		if(locked_getSecretKey(*it) != NULL)
 		{

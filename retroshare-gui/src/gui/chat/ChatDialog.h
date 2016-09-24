@@ -34,12 +34,13 @@ class ChatDialog : public QWidget
 	Q_OBJECT
 
 public:
-    static ChatDialog *getExistingChat(const RsPeerId &peerId);
-    static ChatDialog *getChat(const RsPeerId &peerId, uint chatflags);
+    static ChatDialog *getExistingChat(ChatId id);
+    static ChatDialog *getChat(ChatId id, uint chatflags = 0);
 	static void cleanupChat();
-    static void chatFriend(const RsPeerId &peerId, bool forceFocus = true);
-    static void closeChat(const RsPeerId &peerId);
-	static void chatChanged(int list, int type);
+    static void chatFriend(const ChatId &peerId, bool forceFocus = true);
+	static void chatFriend(const RsPgpId &gpgId, bool forceFocus = true);
+    static void closeChat(const ChatId &chat_id);
+    static void chatMessageReceived(ChatMessage msg);
 
 	virtual void showDialog(uint /*chatflags*/) {}
 
@@ -50,7 +51,6 @@ public:
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);
 
-    RsPeerId getPeerId() { return peerId; }
 	QString getTitle();
 	bool hasNewMessages();
 	bool isTyping();
@@ -58,11 +58,12 @@ public:
 	bool setStyle();
 	const RSStyle *getStyle();
 
-	void insertChatMsgs();
 	int getPeerStatus();
 	void setPeerStatus(uint32_t state);
 
 	void focusDialog();
+
+    ChatId getChatId(){ return mChatId; }
 
 signals:
 	void infoChanged(ChatDialog *dialog);
@@ -80,14 +81,24 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	virtual bool canClose() { return true; }
 
-    virtual QString getPeerName(const RsPeerId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+    virtual QString getPeerName(const ChatId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+    virtual QString getOwnName() const;
 
-    virtual void init(const RsPeerId &peerId, const QString &title);
-	virtual void onChatChanged(int /*list*/, int /*type*/) {}
+    virtual void init(ChatId id, const QString &title);
+    virtual void addChatMsg(const ChatMessage& msg) = 0;
 
-	virtual void addIncomingChatMsg(const ChatInfo& info) = 0;
+    ChatId mChatId;
+};
 
-    RsPeerId peerId;
+class ChatFriendMethod: public QObject
+{
+    Q_OBJECT
+public:
+    ChatFriendMethod(QObject* parent, RsPeerId peerId): QObject(parent), mPeerId(peerId){}
+public slots:
+    void chatFriend(){ChatDialog::chatFriend(ChatId(mPeerId));}
+private:
+    RsPeerId mPeerId;
 };
 
 #endif // CHATDIALOG_H

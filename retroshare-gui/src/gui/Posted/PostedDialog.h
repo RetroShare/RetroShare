@@ -26,7 +26,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_POSTED ":/images/posted_32.png"
+#define IMAGE_POSTED ":/icons/png/posted.png"
 
 class PostedDialog : public GxsGroupFrameDialog
 {
@@ -45,8 +45,10 @@ public:
 	virtual UserNotify *getUserNotify(QObject *parent);
 
 protected:
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+	virtual QString getHelpString() const ;
+    virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_POSTED; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Posted; }
+	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
 
 private:
 	/* GxsGroupFrameDialog */
@@ -59,6 +61,8 @@ private:
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual RsGxsCommentService *getCommentService();
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
+	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 };
 
 #endif

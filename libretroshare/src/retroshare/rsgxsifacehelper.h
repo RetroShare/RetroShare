@@ -62,51 +62,6 @@ public:
     }
 
     /*!
-     * Checks to see if a change has been received for
-     * for a message or group
-     * @param willCallGrpChanged if this is set to true, group changed function will return list
-     *        groups that have changed, if false, the group changed list is cleared
-     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
-     *        messages that have changed, if false, the message changed map is cleared
-     * @return true if a change has occured for msg or group
-     * @see groupsChanged
-     * @see msgsChanged
-     */
-    bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false)
-    {
-    	return mGxs->updated(willCallGrpChanged, willCallMsgChanged);
-    }
-
-    /*!
-     * The groups changed. \n
-     * class can reimplement to use to tailor
-     * the group actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param grpIds returns list of grpIds that have changed
-     * @param grpIdsMeta returns list of grpIds with meta data changes
-     * @see updated
-     */
-    void groupsChanged(std::list<RsGxsGroupId> &grpIds, std::list<RsGxsGroupId>& grpIdsMeta)
-    {
-    	mGxs->groupsChanged(grpIds, grpIdsMeta);
-    }
-
-    /*!
-     * The msg changed. \n
-     * class can be reimplemented to use to tailor
-     * the msg actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param msgs returns map of message ids that have changed
-     * @param msgsMeta returns map of message ids with meta data changes
-     * @see updated
-     */
-    void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta)
-    {
-    	mGxs->msgsChanged(msgs, msgsMeta);
-    }
-    /*!
      * @return handle to token service for this GXS service
      */
     RsTokenService* getTokenService()
@@ -178,7 +133,7 @@ public:
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgrelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
+    bool getMsgRelatedSummary(const uint32_t &token, GxsMsgRelatedMetaMap &msgInfo)
     {
         return mGxs->getMsgRelatedMeta(token, msgInfo);
     }
@@ -252,6 +207,14 @@ public:
 	{
 		return mGxs->setGroupReputationCutOff(token, grpId, CutOff);
 	}
+
+    /*!
+     * @return storage time of messages in months
+     */
+    int getStoragePeriod()
+    {
+        return mGxs->getStoragePeriod();
+    }
 
 private:
 

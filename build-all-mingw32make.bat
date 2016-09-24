@@ -1,17 +1,14 @@
-set QTDIR=C:\Qt\4.8.5
-set MINGW=C:\MinGW
+set QTDIR=C:\Qt\5.5\mingw492_32\
+set MINGW=C:\Qt\Tools\mingw492_32
 
 set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
-
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\util\rsguiversion.in retroshare-gui\src\util\rsguiversion.h
-"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
-
+set DEBUG=1
 
 @echo off
 rem emptying used variables in case the script was aborted and tempfile
 set pack=
 set clean=
+set errorlevel=
 if exist tmp.txt del tmp.txt
 
 
@@ -22,12 +19,12 @@ if %1x == x (
 )
 if /i %1==clean (
     set clean=clean
-	shift
+    shift
     goto :loop1 
 )
 if /i %1==pack (
     set pack=pack
-	shift
+    shift
     goto :loop1 
 )
 echo.%1>>tmp.txt
@@ -47,70 +44,174 @@ if not exist tmp.txt (
 )
 
 for /f %%a in (tmp.txt) do (
-@echo on
+if ECHO==1 @echo on
 
+
+
+
+rem TODO: Remove these lines
+rem GOTO :retroshare-gui
+
+
+
+
+:libbitdht
+rem ###################################
+rem ### libbitdht #####################
+rem ###################################
 cd libbitdht\src
 
 if not %clean%x==x mingw32-make clean 
 
 qmake libbitdht.pro
+CALL :TEST_ERROR
 
 mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### libbitdht done ################
+echo ###################################
+cd ..\..
 
-
-cd ..\..\openpgpsdk\src
+:openpgpsdk
+rem ###################################
+rem ### openpgpsdk ####################
+rem ###################################
+cd openpgpsdk\src
 
 if not %clean%x==x mingw32-make clean 
 
 qmake openpgpsdk.pro
+CALL :TEST_ERROR
 
 mingw32-make
+CALL :TEST_ERROR
+echo ###################################
+echo ### openpgpsdk done ###############
+echo ###################################
+cd ..\..
 
-
-cd ..\..\libretroshare\src
+:libresapi
+rem ###################################
+rem ### libresapi #####################
+rem ###################################
+cd libresapi\src
 
 if not %clean%x==x mingw32-make clean 
 
-qmake libretroshare.pro
+qmake libresapi.pro
+CALL :TEST_ERROR
 
 mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### libresapi done ################
+echo ###################################
+cd ..\..
 
+:libretroshare
+rem ###################################
+rem ### libretroshare #################
+rem ###################################
+cd libretroshare\src
 
-cd ..\..\supportlibs\pegmarkdown
+if not %clean%x==x mingw32-make clean 
+
+qmake libretroshare.pro  "CONFIG+=version_detail_bash_script"
+CALL :TEST_ERROR
+
+mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### libretroshare done ############
+echo ###################################
+cd ..\..
+
+:pegmarkdown
+rem ###################################
+rem ### pegmarkdown ###################
+rem ###################################
+cd supportlibs\pegmarkdown
 
 if not %clean%x==x mingw32-make clean 
 
 qmake pegmarkdown.pro
+CALL :TEST_ERROR
 
 mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### pegmarkdown done ##############
+echo ###################################
+cd ..\..
 
-
-cd ..\..\retroshare-nogui\src
+:retroshare-nogui
+rem ###################################
+rem ### retroshare-nogui ##############
+rem ###################################
+cd retroshare-nogui\src
 
 if not %clean%x==x mingw32-make clean 
 
 qmake retroshare-nogui.pro
+CALL :TEST_ERROR
 
 mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### retroshare-nogui done #########
+echo ###################################
+cd ..\..
 
-
-cd ..\..\retroshare-gui\src
+:retroshare-gui
+rem ###################################
+rem ### retroshare-gui ################
+rem ###################################
+cd retroshare-gui\src
 
 if not %clean%x==x mingw32-make clean
 
-qmake retroshare-gui.pro
+rem qmake -r -spec ..\mkspecs\win32-g++ "CONFIG+=version_detail_bash_script" retroshare-gui.pro
+qmake retroshare-gui.pro "CONFIG+=version_detail_bash_script"
+CALL :TEST_ERROR
 
 mingw32-make %%a
+CALL :TEST_ERROR
+echo ###################################
+echo ### retroshare-gui done ###########
+echo ###################################
 
 cd ..\..
 @echo off
 )
 
+
 @echo off
 if %pack%x==packx call packaging.bat
-rem clean up
+rem ###################################
+rem ### clean up ######################
+rem ###################################
 set clean=
 del tmp.txt
 set pack=
 pause
 
+rem ###################################
+rem ### END ###########################
+rem ###################################
+GOTO :EOF
+
+
+:TEST_ERROR
+@echo off
+if errorlevel 1 (
+    pause
+    set clean=
+    del tmp.txt
+    set pack=
+    EXIT
+)
+if ECHO==1 @echo on
+EXIT /B
+
+:EOF

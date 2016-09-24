@@ -28,6 +28,8 @@
 
 #include <retroshare/rsidentity.h>
 
+#include "rsserver/p3face.h"
+#include "retroshare/rsnotify.h"
 
 #include "retroshare/rsgxsflags.h"
 #include <stdio.h>
@@ -42,6 +44,7 @@
 
 RsGxsForums *rsGxsForums = NULL;
 
+const uint32_t GXSFORUMS_MSG_STORE_PERIOD = 60*60*24*31*12; // 12 months / 1 year
 
 #define FORUM_TESTEVENT_DUMMYDATA	0x0001
 #define DUMMYDATA_PERIOD		60	// long enough for some RsIdentities to be generated.
@@ -51,10 +54,12 @@ RsGxsForums *rsGxsForums = NULL;
 /********************************************************************************/
 
 p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
+    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy(), GXSFORUMS_MSG_STORE_PERIOD), RsGxsForums(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+    mGenCount = 0;
+    mGenToken = 0;
 
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
@@ -98,6 +103,77 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
+	if (!changes.empty())
+	{
+		p3Notify *notify = RsServer::notify();
+
+		if (notify)
+		{
+			std::vector<RsGxsNotify*>::iterator it;
+			for(it = changes.begin(); it != changes.end(); ++it)
+			{
+				RsGxsNotify *c = *it;
+
+				switch (c->getType())
+				{
+					case RsGxsNotify::TYPE_PROCESSED:
+					case RsGxsNotify::TYPE_PUBLISH:
+						break;
+
+					case RsGxsNotify::TYPE_RECEIVE:
+					{
+						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
+						if (msgChange)
+						{
+							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+							for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+							{
+								std::vector<RsGxsMessageId>::iterator mit1;
+								for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+								{
+									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
+								}
+							}
+							break;
+						}
+
+						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+						if (grpChange)
+						{
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
+							}
+							break;
+						}
+						break;
+					}
+
+					case RsGxsNotify::TYPE_PUBLISHKEY:
+					{
+						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+						if (grpChange)
+						{
+							/* group received */
+							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+							std::list<RsGxsGroupId>::iterator git;
+							for (git = grpList.begin(); git != grpList.end(); ++git)
+							{
+								notify->AddFeedItem(RS_FEED_ITEM_FORUM_PUBLISHKEY, git->toStdString());
+							}
+							break;
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
@@ -117,14 +193,13 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 		
-		for(; vit != grpData.end(); vit++)
+		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsForumGroupItem* item = dynamic_cast<RsGxsForumGroupItem*>(*vit);
 			if (item)
 			{
 				RsGxsForumGroup grp = item->mGroup;
-				item->mGroup.mMeta = item->meta;
-				grp.mMeta = item->mGroup.mMeta;
+				grp.mMeta = item->meta;
 				delete item;
 				groups.push_back(grp);
 			}
@@ -152,13 +227,12 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
 
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end(); ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
 
@@ -181,8 +255,8 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 	return ok;
 }
 
-
-bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
+//Not currently used
+/*bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs)
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
@@ -191,12 +265,12 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	{
 		GxsMsgRelatedDataMap::iterator mit = msgData.begin();
 		
-		for(; mit != msgData.end();  mit++)
+		for(; mit != msgData.end();  ++mit)
 		{
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 			
-			for(; vit != msgItems.end(); vit++)
+			for(; vit != msgItems.end(); ++vit)
 			{
 				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
 		
@@ -217,7 +291,7 @@ bool p3GxsForums::getRelatedMessages(const uint32_t &token, std::vector<RsGxsFor
 	}
 			
 	return ok;
-}
+}*/
 
 /********************************************************************************************/
 
@@ -268,8 +342,8 @@ bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
 
 void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
 {
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
-	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 	if (read)
 	{
 		status = 0;
@@ -446,7 +520,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	msg.mMeta.mThreadId = threadId;
 	msg.mMeta.mParentId = parentId;
 
-	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 
 	/* chose a random Id to sign with */
 	std::list<RsGxsId> ownIds;
@@ -455,8 +529,8 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	rsIdentity->getOwnIds(ownIds);
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
-	int i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
+    uint32_t i = 0;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); ++it, i++) ;
 
 	if (it != ownIds.end())
 	{
@@ -489,7 +563,7 @@ bool p3GxsForums::generateGroup(uint32_t &token, std::string groupName)
 
 
         // Overloaded from RsTickEvent for Event callbacks.
-void p3GxsForums::handle_event(uint32_t event_type, const std::string &elabel)
+void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*/)
 {
 	std::cerr << "p3GxsForums::handle_event(" << event_type << ")";
 	std::cerr << std::endl;

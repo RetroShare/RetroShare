@@ -23,19 +23,24 @@
 #define _CHATMSG_ITEM_DIALOG_H
 
 #include "ui_ChatMsgItem.h"
+#include "FeedItem.h"
 #include <stdint.h>
 
 class FeedHolder;
 
-class ChatMsgItem : public QWidget, private Ui::ChatMsgItem
+class ChatMsgItem : public FeedItem, private Ui::ChatMsgItem
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-    ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message);
+	ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message);
 
 	void updateItemStatic();
+
+protected:
+	/* FeedItem */
+	virtual void doExpand(bool /*open*/) {}
 
 private slots:
 	/* default stuff */
@@ -58,7 +63,7 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-    RsPeerId mPeerId;
+	RsPeerId mPeerId;
 };
 
 #endif

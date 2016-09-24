@@ -41,7 +41,16 @@ class ftFileProvider
 		ftFileProvider(const std::string& path, uint64_t size, const RsFileHash& hash);
 		virtual ~ftFileProvider();
 
-		virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
+        /**
+         * read a block of data from the file
+         * @param peer_id for the uploading stats: to which peer the data will be send
+         * @param offset begin of the requested data range
+         * @param chunk_size how many bytes to read. Will be set to the number of valid bytes in data on return.
+         * @param data pointer to a buffer of size chunk_size. Contains the data on success.
+         * @param allow_unverified for ftFileCreator: set to true to return data from unverified chunks. Use it if you want data asap.
+         * @return true if data was read
+         */
+        virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data, bool allow_unverified = false);
 		virtual bool    FileDetails(FileInfo &info);
 		RsFileHash getHash();
 		uint64_t getFileSize();

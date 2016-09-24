@@ -19,18 +19,26 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <rshare.h>
-#include <util/rsrandom.h>
-#include <retroshare/rsinit.h>
 #include "GenCertDialog.h"
+
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QGraphicsOpacityEffect>
-#include <QTimer>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QTextBrowser>
+#include <QTimer>
 #include <QProgressBar>
+
+#include <rshare.h>
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+
+#include <retroshare/rsidentity.h>
+#include <retroshare/rsinit.h>
+#include <rsserver/rsaccounts.h>
+#include <util/rsrandom.h>
+
 #include <time.h>
 #include <math.h>
 #include <iostream>
@@ -71,8 +79,8 @@ class MyFilter: public QObject
 
 void GenCertDialog::grabMouse()
 {
-	static int last_x = 0 ;
-	static int last_y = 0 ;
+	static uint32_t last_x = 0 ;
+	static uint32_t last_y = 0 ;
 	static uint32_t count = 0 ;
 
 	uint32_t x = QCursor::pos().x() ;
@@ -97,9 +105,17 @@ void GenCertDialog::grabMouse()
 	ui.entropy_bar->setValue(count*100/2048) ;
 
 	if(ui.entropy_bar->value() < 20)
+	{
 		ui.genButton->setEnabled(false) ;
+		//ui.genButton->setIcon(QIcon(":/images/delete.png")) ;
+		ui.genButton->setToolTip(tr("Currently disabled. Please move your mouse around until you reach at least 20%")) ;
+	}
 	else
+	{
 		ui.genButton->setEnabled(true) ;
+		//ui.genButton->setIcon(QIcon(":/images/resume.png")) ;
+		ui.genButton->setToolTip(tr("Click to create your node and/or profile")) ;
+	}
 
 	RsInit::collectEntropy(E+(F << 16)) ;
 }
@@ -110,16 +126,19 @@ void GenCertDialog::grabMouse()
 //}
 /** Default constructor */
 GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mOnlyGenerateIdentity(onlyGenerateIdentity)
+  : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+  , mOnlyGenerateIdentity(onlyGenerateIdentity)
+  ,	mGXSNickname("")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
-	ui.headerFrame->setHeaderText(tr("Create a new Identity"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
+	ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
-	connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(hiddenUiSetup()));
+	connect(ui.adv_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
+	connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(updateUiSetup()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
@@ -147,15 +166,24 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 
 	ui.entropy_bar->setValue(0) ;
 
+	// make sure that QVariant always takes an 'int' otherwise the program will crash!
+	ui.keylength_comboBox->addItem("default (2048 bits, recommended)", QVariant(2048));
+	ui.keylength_comboBox->addItem("high (3072 bits)", QVariant(3072));
+	ui.keylength_comboBox->addItem("insane (4096 bits)", QVariant(4096));
+
 #if QT_VERSION >= 0x040700
 	ui.email_input->setPlaceholderText(tr("[Optional] Visible to your friends, and friends of friends.")) ;
-	ui.location_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
+	ui.node_input->setPlaceholderText(tr("[Required] Examples: Home, Laptop,...")) ;
+	ui.hiddenaddr_input->setPlaceholderText(tr("[Required] Tor/I2P address - Examples: xa76giaf6ifda7ri63i263.onion (obtained by you from Tor)")) ;
 	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
-	ui.password_input->setPlaceholderText(tr("[Required] This password protects your PGP key."));
+	ui.nickname_input->setPlaceholderText(tr("[Optional] Used when you write in chat lobbies, forums and channel comments. Can be setup later if you need one."));
+	ui.password_input->setPlaceholderText(tr("[Required] This password protects your private PGP key."));
 	ui.password_input_2->setPlaceholderText(tr("[Required] Type the same password again here."));
 #endif
 
-	ui.location_input->setToolTip(tr("Put a meaningful location. ex : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same identity (PGP key).")) ;
+	ui.nickname_input->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
+
+	ui.node_input->setToolTip(tr("Enter a meaningful node description. e.g. : home, laptop, etc. \nThis field will be used to differentiate different installations with\nthe same profile (PGP key pair).")) ;
 
 	ui.email_input->hide() ;
 	ui.email_label->hide() ;
@@ -180,10 +208,13 @@ void GenCertDialog::init()
 
 	std::list<RsPgpId> pgpIds;
 	std::list<RsPgpId>::iterator it;
-	bool foundGPGKeys = false;
+	haveGPGKeys = false;
+#ifdef TO_REMOVE
+	/* replace with true/false below */
 	if (!mOnlyGenerateIdentity) {
+#endif
 		if (RsAccounts::GetPGPLogins(pgpIds)) {
-			for(it = pgpIds.begin(); it != pgpIds.end(); it++)
+			for(it = pgpIds.begin(); it != pgpIds.end(); ++it)
 			{
 				QVariant userData(QString::fromStdString( (*it).toStdString() ));
 				std::string name, email;
@@ -191,42 +222,49 @@ void GenCertDialog::init()
 				std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
 				QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
 				ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
-				foundGPGKeys = true;
+				haveGPGKeys = true;
 			}
 		}
+#ifdef TO_REMOVE
 	}
-
-	if (foundGPGKeys) {
+#endif
+	if (haveGPGKeys) {
 		ui.no_gpg_key_label->hide();
+		ui.header_label->show();
 		ui.new_gpg_key_checkbox->setChecked(false);
-		setWindowTitle(tr("Create new Location"));
-		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerFrame->setHeaderText(tr("Create a new Location"));
+		setWindowTitle(tr("Create new node"));
+		ui.genButton->setText(tr("Generate new node"));
+		ui.headerFrame->setHeaderText(tr("Create a new node"));
 		genNewGPGKey = false;
 	} else {
 		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
+		ui.header_label->setVisible(mOnlyGenerateIdentity);
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->setEnabled(true);
-		setWindowTitle(tr("Create new Identity"));
-		ui.genButton->setText(tr("Generate new Identity"));
-		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
+		setWindowTitle(tr("Create new profile"));
+		ui.genButton->setText(tr("Generate new profile and node"));
+		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
 		genNewGPGKey = true;
 	}
 
-	QString text = ui.header_label->text() + "\n";
+#ifdef TO_REMOVE
+	QString text; /* = ui.header_label->text() + "\n";*/
+	text += tr("You can create a new profile with this form.");
 
 	if (mOnlyGenerateIdentity) {
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->hide();
+#endif
 		ui.genprofileinfo_label->hide();
-		text += tr("You can create a new identity with this form.");
+#ifdef TO_REMOVE
 	} else {
-		text += tr("You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.");
+		text += "\n";
+		text += tr("Alternatively you can use an existing profile. Just uncheck \"Create a new profile\"");
 	}
 	ui.header_label->setText(text);
-
+#endif
 	newGPGKeyGenUiSetup();
-	hiddenUiSetup();
+    //updateUiSetup();
 }
 
 void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
@@ -237,90 +275,174 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 }
 
 void GenCertDialog::newGPGKeyGenUiSetup() {
+	bool adv_state = ui.adv_checkbox->isChecked();
+	bool hidden_state = ui.hidden_checkbox->isChecked();
+	ui.no_node_label->setVisible(false);
 
 	if (ui.new_gpg_key_checkbox->isChecked()) {
 		genNewGPGKey = true;
+		setWindowTitle(tr("Create new profile"));
+		ui.headerFrame->setHeaderText(tr("Create a new profile and node"));
+		if (!mOnlyGenerateIdentity) {
+			ui.header_label->setVisible(haveGPGKeys);
+		}
+		ui.genprofileinfo_label->setVisible(false);
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to create a profile and associate a node with it. To do so please fill out this form.\nAlternatively you can import a (previously exported) profile. Just uncheck \"Create a new profile\""));
+
+		ui.importIdentity_PB->hide() ;
+		ui.exportIdentity_PB->hide();
+		ui.adv_checkbox->setVisible(true);
+
+		ui.genPGPuserlabel->hide();
+		ui.genPGPuser->hide();
 		ui.name_label->show();
 		ui.name_input->show();
+		ui.nickname_label->setVisible(!mOnlyGenerateIdentity);
+		ui.nickname_input->setVisible(!mOnlyGenerateIdentity);
+		ui.node_label->setVisible(true);
+		ui.node_input->setVisible(true);
 //		ui.email_label->show();
 //		ui.email_input->show();
 		ui.password_label->show();
 		ui.password_label_2->show();
 		ui.password_input->show();
 		ui.password_input_2->show();
-		ui.genPGPuserlabel->hide();
-		ui.genPGPuser->hide();
-		ui.importIdentity_PB->hide() ;
-		ui.exportIdentity_PB->hide();
-		setWindowTitle(tr("Create new Identity"));
-		ui.genButton->setText(tr("Generate new Identity"));
-		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
-		ui.genprofileinfo_label->hide();
-		ui.header_label->show();
+		//ui.keylength_label->show();
+		//ui.keylength_comboBox->show();
+
+		ui.entropy_label->setVisible(true);
+		ui.entropy_bar->setVisible(true);
+
+		ui.genButton->setVisible(true);
+		ui.genButton->setText(tr("Generate new profile and node"));
 	} else {
 		genNewGPGKey = false;
+		setWindowTitle(tr("Create new node"));
+		ui.headerFrame->setHeaderText(tr("Create a new node"));
+		ui.header_label->setVisible(false);
+		//haveGPGKeys = (ui.genPGPuser->count() != 0)?true:false;
+		if (haveGPGKeys) {
+			QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
+			if (!rsAccounts->selectAccountByString(data.toString().toStdString())) {
+				ui.no_node_label->setText(tr("No node is associated with the profile named") + " " + ui.genPGPuser->currentText() + ". " +tr("Please create a node for it by providing a node name."));
+				ui.no_node_label->setVisible(true);
+			} else {
+				ui.genprofileinfo_label->show();
+			}
+		}
+		//ui.genprofileinfo_label->show();
+		ui.no_gpg_key_label->setText(tr("Welcome to Retroshare. Before you can proceed you need to import a profile and after that associate a node with it."));
+
+		ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
+		ui.exportIdentity_PB->setVisible(haveGPGKeys);
+		ui.exportIdentity_PB->setEnabled(haveGPGKeys);
+		ui.adv_checkbox->setVisible(haveGPGKeys);
+		ui.adv_checkbox->setChecked(haveGPGKeys && adv_state);
+
+		//ui.genPGPuserlabel->show();
+		//ui.genPGPuser->show();
+		ui.genPGPuserlabel->setVisible(haveGPGKeys);
+		ui.genPGPuser->setVisible(haveGPGKeys);
 		ui.name_label->hide();
 		ui.name_input->hide();
+		ui.nickname_label->setVisible(!mOnlyGenerateIdentity && haveGPGKeys);
+		ui.nickname_input->setVisible(!mOnlyGenerateIdentity && haveGPGKeys);
+		ui.node_label->setVisible(haveGPGKeys);
+		ui.node_input->setVisible(haveGPGKeys);
 //		ui.email_label->hide();
 //		ui.email_input->hide();
 		ui.password_label->hide();
-		ui.password_label_2->hide();
 		ui.password_input->hide();
+		ui.password_label_2->hide();
 		ui.password_input_2->hide();
-		ui.genPGPuserlabel->show();
-		ui.genPGPuser->show();
-		ui.importIdentity_PB->setVisible(!mOnlyGenerateIdentity);
-		ui.exportIdentity_PB->setVisible(!mOnlyGenerateIdentity);
-		ui.exportIdentity_PB->setEnabled(ui.genPGPuser->count() != 0);
-		setWindowTitle(tr("Create new Location"));
-		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerFrame->setHeaderText(tr("Create a new Location"));
-		ui.genprofileinfo_label->show();
-		ui.header_label->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
+
+		ui.entropy_label->setVisible(haveGPGKeys);
+		ui.entropy_bar->setVisible(haveGPGKeys);
+
+		ui.genButton->setText(tr("Generate new node"));
+		ui.genButton->setVisible(haveGPGKeys);
 	}
+	updateUiSetup();
+	ui.adv_checkbox->setChecked(adv_state);
+	ui.hidden_checkbox->setChecked(hidden_state);
 }
 
-
-void GenCertDialog::hiddenUiSetup() 
+void GenCertDialog::updateUiSetup()
 {
-
-	if (ui.hidden_checkbox->isChecked()) 
+	if (ui.adv_checkbox->isChecked())
 	{
-		ui.hiddenaddr_input->show();
-		ui.hiddenaddr_label->show();
-		ui.label_hiddenaddr2->show();
-		ui.hiddenport_label->show();
-		ui.hiddenport_spinBox->show();
-	} 
-	else 
+		ui.hidden_checkbox->show();
+
+		if (ui.new_gpg_key_checkbox->isChecked())
+		{
+			// key length is only for pgp key creation
+			ui.keylength_label->show();
+			ui.keylength_comboBox->show();
+		}
+		else
+		{
+			ui.keylength_label->hide();
+			ui.keylength_comboBox->hide();
+		}
+
+		if(ui.hidden_checkbox->isChecked())
+		{
+			ui.hiddenaddr_input->show();
+			ui.hiddenaddr_label->show();
+			ui.label_hiddenaddr->show();
+			ui.hiddenport_label->show();
+			ui.hiddenport_spinBox->show();
+		}
+		else
+		{
+			ui.hiddenaddr_input->hide();
+			ui.hiddenaddr_label->hide();
+			ui.label_hiddenaddr->hide();
+			ui.hiddenport_label->hide();
+			ui.hiddenport_spinBox->hide();
+		}
+	}
+	else
 	{
 		ui.hiddenaddr_input->hide();
 		ui.hiddenaddr_label->hide();
-		ui.label_hiddenaddr2->hide();
+		ui.label_hiddenaddr->hide();
 		ui.hiddenport_label->hide();
 		ui.hiddenport_spinBox->hide();
+
+		ui.hidden_checkbox->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
+
+		if(ui.hidden_checkbox->isChecked())
+			ui.hidden_checkbox->setChecked(false) ;
 	}
+
 }
 
 void GenCertDialog::exportIdentity()
 {
-	QString fname = QFileDialog::getSaveFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("RetroShare profile files (*.asc)")) ;
 
-	if(fname.isNull())
-		return ;
+	if(fname.isNull()) return ;
+	if(fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
 	RsPgpId gpg_id (data.toString().toStdString()) ;
 
 	if(RsAccounts::ExportIdentity(fname.toStdString(),gpg_id))
-		QMessageBox::information(this,tr("Identity saved"),tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
+		QMessageBox::information(this,tr("Profile saved"),tr("Your profile was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
 	else
-		QMessageBox::information(this,tr("Identity not saved"),tr("Your identity was not saved. An error occurred.")) ;
+		QMessageBox::information(this,tr("Profile not saved"),tr("Your profile was not saved. An error occurred.")) ;
 }
 
 void GenCertDialog::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Export Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+	QString fname ;
+	if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import profile"), tr("RetroShare profile files (*.asc);;All files (*)"),fname))
+		return ;
 
 	if(fname.isNull())
 		return ;
@@ -330,7 +452,7 @@ void GenCertDialog::importIdentity()
 
 	if(!RsAccounts::ImportIdentity(fname.toStdString(),gpg_id,err_string))
 	{
-		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
+		QMessageBox::information(this,tr("Profile not loaded"),tr("Your profile was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
 		return ;
 	}
 	else
@@ -340,7 +462,7 @@ void GenCertDialog::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new location.")) ;
+		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
 	}
 
 	init() ;
@@ -349,11 +471,34 @@ void GenCertDialog::importIdentity()
 void GenCertDialog::genPerson()
 {
 	/* Check the data from the GUI. */
-	std::string genLoc  = ui.location_input->text().toUtf8().constData();
+	std::string genLoc  = ui.node_input->text().toUtf8().constData();
 	RsPgpId PGPId;
 	bool isHiddenLoc = false;
 
-	if (ui.hidden_checkbox->isChecked()) 
+	mGXSNickname = ui.nickname_input->text();
+	if (!mGXSNickname.isEmpty())
+	{
+		if (mGXSNickname.size() < RSID_MINIMUM_NICKNAME_SIZE)
+		{
+			std::cerr << "GenCertDialog::genPerson() GXS Nickname too short (min " << RSID_MINIMUM_NICKNAME_SIZE<< " chars)";
+			std::cerr << std::endl;
+
+			QMessageBox::warning(this, "", tr("The GXS nickname is too short. Please input at least %1 characters.").arg(RSID_MINIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
+			mGXSNickname = "";
+			return;
+		}
+		if (mGXSNickname.size() > RSID_MAXIMUM_NICKNAME_SIZE)
+		{
+			std::cerr << "GenCertDialog::genPerson() GXS Nickname too long (max " << RSID_MAXIMUM_NICKNAME_SIZE<< " chars)";
+			std::cerr << std::endl;
+
+			QMessageBox::warning(this, "", tr("The GXS nickname is too long. Please reduce the length to %1 characters.").arg(RSID_MAXIMUM_NICKNAME_SIZE), QMessageBox::Ok, QMessageBox::Ok);
+			mGXSNickname = "";
+			return;
+		}
+	}
+
+	if (ui.hidden_checkbox->isChecked())
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
@@ -361,8 +506,8 @@ void GenCertDialog::genPerson()
 		{
 			/* Message Dialog */
 			QMessageBox::warning(this,
-				tr("Invalid Hidden Location"),
-			tr("Please put in a valid address of the form: 31769173498.onion:7800"),
+				tr("Invalid hidden node"),
+			tr("Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p"),
 			QMessageBox::Ok);
 			return;
 		}
@@ -373,8 +518,8 @@ void GenCertDialog::genPerson()
 		if (genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
-								 tr("Location field is required with a minimum of 3 characters"),
+								 tr("PGP key pair generation failure"),
+								 tr("Node field is required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
 		}
@@ -383,8 +528,8 @@ void GenCertDialog::genPerson()
 		{
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 "Generate ID Failure",
-								 "Missing PGP Certificate",
+								 tr("Profile generation failure"),
+								 tr("Missing PGP certificate"),
 								 QMessageBox::Ok);
 			return;
 		}
@@ -394,7 +539,7 @@ void GenCertDialog::genPerson()
 		if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3 || genLoc.length() < 3) {
 			/* Message Dialog */
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
+								 tr("PGP key pair generation failure"),
 								 tr("All fields are required with a minimum of 3 characters"),
 								 QMessageBox::Ok);
 			return;
@@ -403,18 +548,20 @@ void GenCertDialog::genPerson()
 		if(ui.password_input->text() != ui.password_input_2->text())
 		{
 			QMessageBox::warning(this,
-								 tr("Generate PGP key Failure"),
+								 tr("PGP key pair generation failure"),
 								 tr("Passwords do not match"),
 								 QMessageBox::Ok);
 			return;
 		}
 		//generate a new gpg key
 		std::string err_string;
-		ui.no_gpg_key_label->setText(tr("Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your PGP password when asked, to sign your new key."));
+		ui.no_gpg_key_label->setText(tr("Generating new PGP key pair, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your PGP password when asked, to sign your new key."));
 		ui.no_gpg_key_label->show();
 		ui.new_gpg_key_checkbox->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
+		ui.nickname_label->hide();
+		ui.nickname_input->hide();
 //		ui.email_label->hide();
 //		ui.email_input->hide();
 		ui.password_label_2->hide();
@@ -423,20 +570,31 @@ void GenCertDialog::genPerson()
 		ui.password_input->hide();
 		ui.genPGPuserlabel->hide();
 		ui.genPGPuser->hide();
-		ui.location_label->hide();
-		ui.location_input->hide();
+		ui.node_label->hide();
+		ui.node_input->hide();
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
 		ui.hidden_checkbox->hide();
+		ui.adv_checkbox->hide();
+		ui.keylength_label->hide();
+		ui.keylength_comboBox->hide();
 
 		setCursor(Qt::WaitCursor) ;
 
 		QCoreApplication::processEvents();
-		while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ;
+		QAbstractEventDispatcher* ed = QAbstractEventDispatcher::instance();
+		if (ed->hasPendingEvents())
+			while(ed->processEvents(QEventLoop::AllEvents));
 
 		std::string email_str = "" ;
-		RsAccounts::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), email_str.c_str(), ui.password_input->text().toUtf8().constData(), PGPId, err_string);
+		RsAccounts::GeneratePGPCertificate(
+					ui.name_input->text().toUtf8().constData(),
+					email_str.c_str(),
+					ui.password_input->text().toUtf8().constData(),
+					PGPId,
+					ui.keylength_comboBox->itemData(ui.keylength_comboBox->currentIndex()).toInt(),
+					err_string);
 
 		setCursor(Qt::ArrowCursor) ;
 	}
@@ -450,6 +608,7 @@ void GenCertDialog::genPerson()
 	RsPeerId sslId;
 	std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
 	std::string err;
+	this->hide();//To show dialog asking password PGP Key.
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
 
 	if (okGen)
@@ -457,6 +616,7 @@ void GenCertDialog::genPerson()
 		/* complete the process */
 		RsInit::LoadPassword(sslPasswd);
 		if (Rshare::loadCertificate(sslId, false)) {
+
 			accept();
 		}
 	}
@@ -464,8 +624,8 @@ void GenCertDialog::genPerson()
 	{
 		/* Message Dialog */
 		QMessageBox::warning(this,
-                               tr("Generate ID Failure"),
-                               tr("Failed to Generate your new Certificate, maybe PGP password is wrong!"),
+                               tr("Profile generation failure"),
+                               tr("Failed to generate your new certificate, maybe PGP password is wrong!"),
                                QMessageBox::Ok);
 		reject();
        }

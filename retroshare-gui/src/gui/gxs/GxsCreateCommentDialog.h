@@ -38,13 +38,11 @@ class GxsCreateCommentDialog : public QDialog
 
 public:
 	explicit GxsCreateCommentDialog(TokenQueue* tokQ, RsGxsCommentService *service, 
-		const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, QWidget *parent = 0);
+	const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, QWidget *parent = 0);
 	~GxsCreateCommentDialog();
 
 private slots:
-
 	void createComment();
-	void createNewGxsId();
 
 private:
 	Ui::GxsCreateCommentDialog *ui;

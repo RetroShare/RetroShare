@@ -56,6 +56,9 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
+#include "gxstunnel/p3gxstunnel.h"
+#include "file_sharing/p3filelists.h"
+
 #define ENABLE_GROUTER
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
@@ -75,7 +78,9 @@
 #include "grouter/p3grouter.h"
 #endif
 
+#ifdef RS_USE_DHT_STUNNER
 #include "tcponudp/udpstunner.h"
+#endif // RS_USE_DHT_STUNNER
 
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
@@ -126,8 +131,6 @@ class RsInitConfig
 		std::string load_trustedpeer_file;
 
 		bool udpListenerOnly;
-
-		std::string RetroShareLink;
 };
 
 static RsInitConfig *rsInitConfig = NULL;
@@ -221,7 +224,7 @@ void RsInit::InitRsConfig()
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
-	setOutputLevel(PQL_WARNING); // default to Warnings.
+	setOutputLevel(RsLog::Warning); // default to Warnings.
 
 	// For Testing purposes.
 	// We can adjust everything under Linux.
@@ -264,7 +267,7 @@ bool doPortRestrictions = false;
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-int RsInit::InitRetroShare(int argc, char **argv, bool strictCheck)
+int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
@@ -361,11 +364,12 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			   >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."              ,false)
 			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
-			   >> parameter('r',"link"          ,rsInitConfig->RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+			// by rshare    'r' "link"                                         "Link" "Open RsLink with protocol retroshare://"
+			// by rshare    'f' "rsfile"                                       "RsFile" "Open RsFile like RsCollection"
 #ifdef LOCALNET_TESTING
 			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
 #endif
-				>> help() ;
+ 				>> help('h',"help","Display this Help") ;
 
 			as.defaultErrorHandling(true) ;
 
@@ -417,7 +421,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          }
 #endif
 
-			setOutputLevel(rsInitConfig->debugLevel);
+			setOutputLevel((RsLog::logLvl)rsInitConfig->debugLevel);
 
 //	// set the default Debug Level...
 //	if (rsInitConfig->haveDebugLevel)
@@ -488,7 +492,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	// Hash the main executable.
 	
 	uint64_t tmp_size ;
-	std::string tmp_name ;
 
 	if(!RsDirUtil::getFileHash(argv[0],rsInitConfig->main_executable_hash,tmp_size,NULL))
 		std::cerr << "Cannot hash executable! Plugins will not be loaded correctly." << std::endl;
@@ -503,7 +506,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 */
 	/* create singletons */
 	AuthSSL::AuthSSLInit();
-	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
+    AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
 	rsAccounts = new RsAccountsDetail() ;
 
@@ -625,33 +628,39 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 		return 3; // invalid PreferredAccount.
 	}
 
+	int retVal = 0;
+
 	// Logic that used to be external to RsInit...
 	RsPeerId accountId;
 	if (!rsAccounts->getPreferredAccountId(accountId))
 	{
-		return 3; // invalid PreferredAccount;
+		retVal = 3; // invalid PreferredAccount;
 	}
 	
 	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
-	if (!rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-		return 3; // invalid PreferredAccount;
+	if (retVal == 0 && !rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+		retVal = 3; // invalid PreferredAccount;
 		
-	if (!rsAccounts->SelectPGPAccount(pgpId))
-		return 3; // PGP Error.
+	if (retVal == 0 && !rsAccounts->SelectPGPAccount(pgpId))
+		retVal = 3; // PGP Error.
 	
-	int retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
-	if(retVal != 0)
-		return retVal;
+	if(retVal == 0)
+		retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
 
-	retVal = LoadCertificates(autoLoginNT);
-	if(retVal != 1) {
+	if(retVal == 0 && LoadCertificates(autoLoginNT) != 1)
+	{
 		UnlockConfigDirectory();
-		return 3;
+		retVal = 3;
 	}
 
-	return 0;
+	if(retVal != 0)
+	{
+		rsAccounts->unlockPreferredAccount();
+	}
+
+	return retVal;
 }
 
 
@@ -702,7 +711,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	std::cerr << "rsAccounts->PathKeyFile() : " << rsAccounts->PathKeyFile() << std::endl;
 
-	if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str()))
+    if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str(), rsAccounts->LocationName()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -763,11 +772,6 @@ bool RsInit::getStartMinimised()
 	return rsInitConfig->startMinimised;
 }
 
-std::string RsInit::getRetroShareLink()
-{
-	return rsInitConfig->RetroShareLink;
-}
-
 int RsInit::getSslPwdLen(){
 	return SSLPWD_LEN;
 }
@@ -801,7 +805,6 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 #include <unistd.h>
 //#include <getopt.h>
 
-#include "dbase/cachestrapper.h"
 #include "ft/ftserver.h"
 #include "ft/ftcontroller.h"
 
@@ -814,6 +817,7 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
+RsReputations *rsReputations = NULL ;
 #ifdef ENABLE_GROUTER
 RsGRouter *rsGRouter = NULL ;
 #endif
@@ -842,13 +846,15 @@ RsGRouter *rsGRouter = NULL ;
         #endif
 #endif
 	
+#include "services/p3gxsreputation.h"
 #include "services/p3serviceinfo.h"
 #include "services/p3heartbeat.h"
 #include "services/p3discovery2.h"
 #include "services/p3msgservice.h"
-#include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
+
 #include "turtle/p3turtle.h"
+#include "chat/p3chatservice.h"
 
 #ifdef RS_ENABLE_GXS
 // NEW GXS SYSTEMS.
@@ -897,7 +903,9 @@ RsGRouter *rsGRouter = NULL ;
 	
 #ifdef RS_USE_BITDHT
 #include "dht/p3bitdht.h"
+#ifdef RS_USE_DHT_STUNNER
 #include "dht/stunaddrassist.h"
+#endif // RS_USE_DHT_STUNNER
 
 #include "udp/udpstack.h"
 #include "tcponudp/udppeer.h"
@@ -948,7 +956,7 @@ int RsServer::StartupRetroShare()
 	/* (1) Load up own certificate (DONE ALREADY) - just CHECK */
 	/**************************************************************************/
 
-	if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL))
+    if (1 != AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, ""))
 	{
 		std::cerr << "main() - Fatal Error....." << std::endl;
 		std::cerr << "Invalid Certificate configuration!" << std::endl;
@@ -975,6 +983,15 @@ int RsServer::StartupRetroShare()
 	if (rsInitConfig->udpListenerOnly)
 	{
 		flags |= PQIPERSON_NO_LISTENER;
+	}
+
+	/* check account directory */
+	if (!rsAccounts->checkAccountDirectory())
+	{
+		std::cerr << "RsServer::StartupRetroShare() - Fatal Error....." << std::endl;
+		std::cerr << "checkAccount failed!" << std::endl;
+		std::cerr << std::endl;
+		return 0;
 	}
 
 	/**************************************************************************/
@@ -1028,7 +1045,7 @@ int RsServer::StartupRetroShare()
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
 	//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
-	//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); sslIdsIt++) {
+	//        for (std::list<std::string>::iterator sslIdsIt = sslIds.begin(); sslIdsIt != sslIds.end(); ++sslIdsIt) {
 	//            mConnMgr->addFriend(*sslIdsIt);
 	//        }
 	//p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, rsInitConfig->configDir);
@@ -1072,16 +1089,20 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_BITDHT
 
 #define BITDHT_BOOTSTRAP_FILENAME  	"bdboot.txt"
+#define BITDHT_FILTERED_IP_FILENAME  	"bdfilter.txt"
 
 
 	std::string bootstrapfile = rsAccounts->PathAccountDirectory();
 	if (bootstrapfile != "")
-	{
 		bootstrapfile += "/";
-	}
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
-	std::cerr << "Checking for DHT bootstrap file: " << bootstrapfile << std::endl;
+    std::string filteredipfile = rsAccounts->PathAccountDirectory();
+    if (filteredipfile != "")
+        filteredipfile += "/";
+    filteredipfile += BITDHT_FILTERED_IP_FILENAME;
+
+    std::cerr << "Checking for DHT bootstrap file: " << bootstrapfile << std::endl;
 
 	/* check if bootstrap file exists...
 	 * if not... copy from dataDirectory
@@ -1120,6 +1141,7 @@ int RsServer::StartupRetroShare()
 	UdpSubReceiver *udpReceivers[RSUDP_NUM_TOU_RECVERS];
 	int udpTypes[RSUDP_NUM_TOU_RECVERS];
 
+#ifdef RS_USE_DHT_STUNNER
 	// FIRST DHT STUNNER.
 	UdpStunner *mDhtStunner = new UdpStunner(mDhtStack);
 	mDhtStunner->setTargetStunPeriod(300); /* slow (5mins) */
@@ -1128,9 +1150,12 @@ int RsServer::StartupRetroShare()
 #ifdef LOCALNET_TESTING
 	mDhtStunner->SetAcceptLocalNet();
 #endif
+#endif // RS_USE_DHT_STUNNER
+
 
 	// NEXT BITDHT.
-	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile);
+	p3BitDht *mBitDht = new p3BitDht(ownId, mLinkMgr, mNetMgr, mDhtStack, bootstrapfile, filteredipfile);
+
 	/* install external Pointer for Interface */
 	rsDht = mBitDht;
 
@@ -1170,6 +1195,7 @@ int RsServer::StartupRetroShare()
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(sndladdr);
 #endif
 
+#ifdef RS_USE_DHT_STUNNER
 	// FIRSTLY THE PROXY STUNNER.
 	UdpStunner *mProxyStunner = new UdpStunner(mProxyStack);
 	mProxyStunner->setTargetStunPeriod(300); /* slow (5mins) */
@@ -1178,6 +1204,7 @@ int RsServer::StartupRetroShare()
 #ifdef LOCALNET_TESTING
 	mProxyStunner->SetAcceptLocalNet();
 #endif
+#endif // RS_USE_DHT_STUNNER
 
 
 	// FINALLY THE PROXY UDP CONNECTIONS
@@ -1188,9 +1215,15 @@ int RsServer::StartupRetroShare()
 	// REAL INITIALISATION - WITH THREE MODES
 	tou_init((void **) udpReceivers, udpTypes, RSUDP_NUM_TOU_RECVERS);
 
+#ifdef RS_USE_DHT_STUNNER
 	mBitDht->setupConnectBits(mDhtStunner, mProxyStunner, mRelay);
+#else // RS_USE_DHT_STUNNER
+	mBitDht->setupConnectBits(mRelay);
+#endif // RS_USE_DHT_STUNNER
 
+#ifdef RS_USE_DHT_STUNNER
 	mNetMgr->setAddrAssist(new stunAddrAssist(mDhtStunner), new stunAddrAssist(mProxyStunner));
+#endif // RS_USE_DHT_STUNNER
 #else
 	/* install NULL Pointer for rsDht Interface */
 	rsDht = NULL;
@@ -1202,17 +1235,14 @@ int RsServer::StartupRetroShare()
 	p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr);
 	rsServiceControl = serviceCtrl;
 
-	SecurityPolicy *none = secpolicy_create();
-	pqih = new pqisslpersongrp(serviceCtrl, none, flags, mPeerMgr);
+    pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-	ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-	ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
+    ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
+    ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
-	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
-	//CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
 	/* setup any extra bits (Default Paths) */
 	ftserver->setPartialsDirectory(emergencyPartialsDir);
@@ -1231,8 +1261,11 @@ int RsServer::StartupRetroShare()
 
 	std::vector<std::string> plugins_directories ;
 
+#ifdef __APPLE__
+	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
+#endif
 #ifndef WINDOWS_SYS
-	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions6/")) ;
+	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
 	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
@@ -1253,7 +1286,6 @@ int RsServer::StartupRetroShare()
 	// These are needed to load plugins: plugin devs might want to know the place of
 	// cache directories, get pointers to cache strapper, or access ownId()
 	//
-	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setServiceControl(serviceCtrl) ;
 
 //	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
@@ -1291,66 +1323,84 @@ int RsServer::StartupRetroShare()
 
         // init gxs services
 	PgpAuxUtils *pgpAuxUtils = new PgpAuxUtilsImpl();
-        mGxsIdService = new p3IdService(gxsid_ds, NULL, pgpAuxUtils);
+        p3IdService *mGxsIdService = new p3IdService(gxsid_ds, NULL, pgpAuxUtils);
 
         // circles created here, as needed by Ids.
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, rsInitConfig->gxs_passwd);
 
 	// create GxsCircles - early, as IDs need it.
-        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
+        p3GxsCircles *mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
 
         // create GXS ID service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
-			false); // don't synchronise group automatic (need explicit group request)
+            false,false); // don't synchronise group automatic (need explicit group request)
+                        // don't sync messages at all.
+
+        // Normally we wouldn't need this (we do in other service):
+        //	mGxsIdService->setNetworkExchangeService(gxsid_ns) ;
+        // ...since GxsIds are propagated manually. But that requires the gen exchange of GXSids to
+        // constantly test that mNetService is not null. The call below is to make the service aware of the
+        // netService so that it can request the missing ids. We'll need to fix this.
 
         mGxsIdService->setNes(gxsid_ns);
+
         /**** GxsCircle service ****/
 
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
-			pgpAuxUtils);
+			mGxsIdService, mGxsCircles,mGxsIdService,
+			pgpAuxUtils,
+	            	true,	// synchronise group automatic 
+                    	true); 	// sync messages automatic, since they contain subscription requests.
 
+	mGxsCircles->setNetworkExchangeService(gxscircles_ns) ;
+    
         /**** Posted GXS service ****/
-
-
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
                         RS_SERVICE_GXS_TYPE_POSTED, 
 			NULL, rsInitConfig->gxs_passwd);
 
-        mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
+        p3Posted *mPosted = new p3Posted(posted_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_POSTED, posted_ds, nxsMgr, 
 			mPosted, mPosted->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
+    mPosted->setNetworkExchangeService(posted_ns) ;
+
+    	/**** Reputation system ****/
+    
+    	p3GxsReputation *mReputations = new p3GxsReputation(mLinkMgr) ;
+    	rsReputations = mReputations ;
+        
         /**** Wiki GXS service ****/
 
-
+#ifdef RS_USE_WIKI
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                         RS_SERVICE_GXS_TYPE_WIKI,
                         NULL, rsInitConfig->gxs_passwd);
 
-        mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
-
-        // create GXS photo service
+        p3Wiki *mWiki = new p3Wiki(wiki_ds, NULL, mGxsIdService);
+        // create GXS wiki service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr, 
 			mWiki, mWiki->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,
 			pgpAuxUtils);
 
+    mWiki->setNetworkExchangeService(wiki_ns) ;
+#endif
 
         /**** Forum GXS service ****/
 
@@ -1358,31 +1408,32 @@ int RsServer::StartupRetroShare()
                                                             RS_SERVICE_GXS_TYPE_FORUMS, NULL, rsInitConfig->gxs_passwd);
 
 
-        mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
+        p3GxsForums *mGxsForums = new p3GxsForums(gxsforums_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
+    mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
 
         /**** Channel GXS service ****/
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
                                                             RS_SERVICE_GXS_TYPE_CHANNELS, NULL, rsInitConfig->gxs_passwd);
 
-        mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
+        p3GxsChannels *mGxsChannels = new p3GxsChannels(gxschannels_ds, NULL, mGxsIdService);
 
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
                         mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
-
+    mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;
 
 #if 0 // PHOTO IS DISABLED FOR THE MOMENT
         /**** Photo service ****/
@@ -1396,7 +1447,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* photo_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_PHOTO, photo_ds, nxsMgr, 
 			mPhoto, mPhoto->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
 
@@ -1412,14 +1463,16 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wire_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIRE, wire_ds, nxsMgr, 
 			mWire, mWire->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,
+			mGxsIdService, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 #endif
         // now add to p3service
         pqih->addService(gxsid_ns, true);
         pqih->addService(gxscircles_ns, true);
         pqih->addService(posted_ns, true);
+#ifdef RS_USE_WIKI
         pqih->addService(wiki_ns, true);
+#endif
         pqih->addService(gxsforums_ns, true);
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
@@ -1438,15 +1491,21 @@ int RsServer::StartupRetroShare()
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef ENABLE_GROUTER
-	p3GRouter *gr = new p3GRouter(serviceCtrl,mLinkMgr) ;
+    p3GRouter *gr = new p3GRouter(serviceCtrl,mGxsIdService) ;
 	rsGRouter = gr ;
 	pqih->addService(gr,true) ;
 #endif
 
-	p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
+    p3FileDatabase *fdb = new p3FileDatabase(serviceCtrl) ;
+    p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr,true);
-	pqih -> addService(ftserver,true);
+    pqih -> addService(fdb,true);
+    pqih -> addService(ftserver,true);
+
+        mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
+        mGxsTunnels->connectToTurtleRouter(tr) ;
+        rsGxsTunnel = mGxsTunnels;
 
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
@@ -1454,7 +1513,9 @@ int RsServer::StartupRetroShare()
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToTurtleRouter(tr) ;
+    ftserver->connectToFileDatabase(fdb) ;
+    chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
+    gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
 #endif
@@ -1464,8 +1525,9 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mDisc,true);
 	pqih -> addService(msgSrv,true);
 	pqih -> addService(chatSrv,true);
-	pqih ->addService(mStatusSrv,true);
-
+	pqih -> addService(mStatusSrv,true);
+	pqih -> addService(mGxsTunnels,true);
+	pqih -> addService(mReputations,true);
 
 	// set interfaces for plugins
 	//
@@ -1477,6 +1539,8 @@ int RsServer::StartupRetroShare()
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
 	interfaces.mNotify = mNotify;
+    interfaces.mServiceControl = serviceCtrl;
+    interfaces.mPluginHandler  = mPluginsManager;
     // gxs
     interfaces.mGxsDir          = currGxsDir;
     interfaces.mIdentity        = mGxsIdService;
@@ -1484,6 +1548,11 @@ int RsServer::StartupRetroShare()
     interfaces.mGxsIdService    = mGxsIdService;
     interfaces.mGxsCirlces      = mGxsCircles;
     interfaces.mPgpAuxUtils     = pgpAuxUtils;
+    interfaces.mGxsForums       = mGxsForums;
+    interfaces.mGxsChannels     = mGxsChannels;
+	interfaces.mGxsTunnels = mGxsTunnels;
+    interfaces.mReputations     = mReputations;
+    
 	mPluginsManager->setInterfaces(interfaces);
 
 	// now add plugin objects inside the loop:
@@ -1502,7 +1571,8 @@ int RsServer::StartupRetroShare()
 #endif
 
 	// new services to test.
-	p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
+    p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
+    rsBanList = mBanList ;
 	pqih -> addService(mBanList, true);
 	mBitDht->setupPeerSharer(mBanList);
 
@@ -1549,10 +1619,6 @@ int RsServer::StartupRetroShare()
 	mLinkMgr->addMonitor(serviceCtrl);
 	mLinkMgr->addMonitor(serviceInfo);
 
-	// NOTE these were added in ftServer (was added twice).
-	//mLinkMgr->addMonitor(mCacheStrapper);
-	//mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
-
 	// Services that have been changed to pqiServiceMonitor
 	serviceCtrl->registerServiceMonitor(msgSrv, msgSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
@@ -1574,12 +1640,16 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
+	mConfigMgr->addConfiguration("banlist.cfg", mBanList);
+	mConfigMgr->addConfiguration("servicecontrol.cfg", serviceCtrl);
+	mConfigMgr->addConfiguration("reputations.cfg", mReputations);
 #ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
+    mConfigMgr->addConfiguration("p3identity.cfg", mGxsIdService);
 
 #ifdef RS_USE_BITDHT
-	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
+    mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
 #ifdef RS_ENABLE_GXS
@@ -1588,7 +1658,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
 	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+#ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
+#endif
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
@@ -1602,12 +1674,6 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "(2) Load configuration files" << std::endl;
 
-	/* NOTE: CacheStrapper's load causes Cache Files to be
-	 * loaded into all the CacheStores/Sources. This happens
-	 * after all the other configurations have happened.
-	 */
-
-	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->loadConfiguration();
 
 	/**************************************************************************/
@@ -1695,33 +1761,39 @@ int RsServer::StartupRetroShare()
 #ifdef RS_ENABLE_GXS
 
 	// Must Set the GXS pointers before starting threads.
-	rsIdentity = mGxsIdService;
-	rsGxsCircles = mGxsCircles;
-	rsWiki = mWiki;
-	rsPosted = mPosted;
-	rsGxsForums = mGxsForums;
-	rsGxsChannels = mGxsChannels;
-	//rsPhoto = mPhoto;
-	//rsWire = mWire;
+    rsIdentity = mGxsIdService;
+    rsGxsCircles = mGxsCircles;
+#if RS_USE_WIKI
+    rsWiki = mWiki;
+#endif
+    rsPosted = mPosted;
+    rsGxsForums = mGxsForums;
+    rsGxsChannels = mGxsChannels;
+    //rsPhoto = mPhoto;
+    //rsWire = mWire;
 
 	/*** start up GXS core runner ***/
-	createThread(*mGxsIdService);
-	createThread(*mGxsCircles);
-	createThread(*mPosted);
-	createThread(*mWiki);
-	createThread(*mGxsForums);
-	createThread(*mGxsChannels);
+	startServiceThread(mGxsIdService, "gxs id");
+	startServiceThread(mGxsCircles, "gxs circle");
+	startServiceThread(mPosted, "gxs posted");
+#if RS_USE_WIKI
+	startServiceThread(mWiki, "gxs wiki");
+#endif
+	startServiceThread(mGxsForums, "gxs forums");
+	startServiceThread(mGxsChannels, "gxs channels");
 
 	//createThread(*mPhoto);
 	//createThread(*mWire);
 
 	// cores ready start up GXS net servers
-	createThread(*gxsid_ns);
-	createThread(*gxscircles_ns);
-	createThread(*posted_ns);
-	createThread(*wiki_ns);
-	createThread(*gxsforums_ns);
-	createThread(*gxschannels_ns);
+	startServiceThread(gxsid_ns, "gxs id ns");
+	startServiceThread(gxscircles_ns, "gxs circle ns");
+	startServiceThread(posted_ns, "gxs posted ns");
+#if RS_USE_WIKI
+	startServiceThread(wiki_ns, "gxs wiki ns");
+#endif
+	startServiceThread(gxsforums_ns, "gxs forums ns");
+	startServiceThread(gxschannels_ns, "gxs channels ns");
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
@@ -1745,7 +1817,6 @@ int RsServer::StartupRetroShare()
 
 	mod -> peerid = ownId;
 	mod -> pqi = ploop;
-	mod -> sp = secpolicy_create();
 
 	pqih->AddSearchModule(mod);
 
@@ -1768,7 +1839,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* Startup this thread! */
-	createThread(*this);
+	start("rs main") ;
 
 	return 1;
 }

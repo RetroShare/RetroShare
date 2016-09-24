@@ -116,6 +116,7 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 			if (mNotifyIcon == NULL) {
 				mNotifyIcon = notifyMenu->addAction(getIcon(), "", this, SLOT(trayIconClicked()));
 				mNotifyIcon->setVisible(false);
+				connect(mNotifyIcon, SIGNAL(hovered()), this, SLOT(trayIconHovered()));
 			}
 		} else {
 			DELETE_OBJECT(mNotifyIcon);
@@ -212,9 +213,14 @@ QString UserNotify::getNotifyMessage(bool plural)
 
 void UserNotify::trayIconClicked(QSystemTrayIcon::ActivationReason e)
 {
-	if (e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+	if (e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick || e == QSystemTrayIcon::Context) {
 		iconClicked();
 	}
+}
+
+void UserNotify::trayIconHovered()
+{
+	iconHovered();
 }
 
 void UserNotify::blink(bool on)

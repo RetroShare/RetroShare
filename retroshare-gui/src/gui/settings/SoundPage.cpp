@@ -22,8 +22,7 @@
 #include "SoundPage.h"
 #include "rsharesettings.h"
 #include "util/misc.h"
-
-#include <retroshare/rsplugin.h>
+#include "gui/SoundManager.h"
 
 #define COLUMN_NAME     0
 #define COLUMN_FILENAME 1
@@ -44,6 +43,7 @@ SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.eventTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, SLOT(eventChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.filenameEdit, SIGNAL(textChanged(QString)), this, SLOT(filenameChanged(QString)));
+	connect(ui.defaultButton, SIGNAL(clicked()), this, SLOT(defaultButtonClicked()));
 	connect(ui.browseButton, SIGNAL(clicked()), this, SLOT(browseButtonClicked()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
 
@@ -60,10 +60,6 @@ SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
 #endif
 	ui.eventTreeWidget->setTextElideMode(Qt::ElideMiddle);
 
-	/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 SoundPage::~SoundPage()
@@ -95,9 +91,9 @@ QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &n
 	QTreeWidgetItem *item = new QTreeWidgetItem(TYPE_ITEM);
 	item->setData(COLUMN_DATA, ROLE_EVENT, event);
 	item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-	item->setCheckState(COLUMN_NAME, soundManager->eventEnabled(event) ? Qt::Checked : Qt::Unchecked);
+	item->setCheckState(COLUMN_NAME, SoundManager::eventEnabled(event) ? Qt::Checked : Qt::Unchecked);
 	item->setText(COLUMN_NAME, name);
-	item->setText(COLUMN_FILENAME, soundManager->eventFilename(event));
+	item->setText(COLUMN_FILENAME, SoundManager::eventFilename(event));
 	groupItem->addChild(item);
 
 	return item;
@@ -109,12 +105,12 @@ bool SoundPage::save(QString &/*errmsg*/)
 	QTreeWidgetItemIterator itemIterator(ui.eventTreeWidget);
 	QTreeWidgetItem *item = NULL;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (item->type() == TYPE_ITEM) {
 			const QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
-			soundManager->setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
-			soundManager->setEventFilename(event, item->text(COLUMN_FILENAME));
+			SoundManager::setEventEnabled(event, item->checkState(COLUMN_NAME) == Qt::Checked);
+			SoundManager::setEventFilename(event, item->text(COLUMN_FILENAME));
 		}
 	}
 
@@ -126,42 +122,20 @@ void SoundPage::load()
 {
 	ui.eventTreeWidget->clear();
 
-	/* add standard events */
+	/* add sound events */
+	SoundEvents events;
+	SoundManager::soundEvents(events);
 
-	QTreeWidgetItem *groupItem = addGroup(tr("Friend"));
-	addItem(groupItem, tr("go Online"), SOUND_USER_ONLINE);
+	QString event;
+	foreach (event, events.mEventInfos.keys()) {
+		SoundEvents::SoundEventInfo &eventInfo = events.mEventInfos[event];
 
-	groupItem = addGroup(tr("Chatmessage"));
-	addItem(groupItem, tr("New Msg"), SOUND_NEW_CHAT_MESSAGE);
-
-	groupItem = addGroup(tr("Message"));
-	addItem(groupItem, tr("Message arrived"), SOUND_MESSAGE_ARRIVED);
-
-	groupItem = addGroup(tr("Download"));
-	addItem(groupItem, tr("Download complete"), SOUND_DOWNLOAD_COMPLETE);
-
-	/* add plugin events */
-	int pluginCount = rsPlugins->nbPlugins();
-	for (int i = 0; i < pluginCount; ++i) {
-		RsPlugin *plugin = rsPlugins->plugin(i);
-
-		if (plugin) {
-			SoundEvents events;
-			plugin->qt_sound_events(events);
-
-			if (events.mEventInfos.empty()) {
-				continue;
-			}
-
-			QList<SoundEvents::SoundEventInfo>::iterator it;
-			for (it = events.mEventInfos.begin(); it != events.mEventInfos.end(); ++it) {
-				groupItem = addGroup(it->mGroupName);
-				addItem(groupItem, it->mEventName, it->mEvent);
-			}
-		}
+		QTreeWidgetItem *groupItem = addGroup(eventInfo.mGroupName);
+		addItem(groupItem, eventInfo.mEventName, event);
 	}
 
 	ui.eventTreeWidget->resizeColumnToContents(COLUMN_NAME);
+	ui.eventTreeWidget->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
 
 	eventChanged(NULL, NULL);
 }
@@ -185,6 +159,9 @@ void SoundPage::eventChanged(QTreeWidgetItem *current, QTreeWidgetItem */*previo
 	}
 	eventName += current->text(COLUMN_NAME);
 	ui.eventName->setText(eventName);
+
+	QString event = current->data(COLUMN_DATA, ROLE_EVENT).toString();
+	ui.defaultButton->setDisabled(SoundManager::defaultFilename(event, true).isEmpty());
 }
 
 void SoundPage::filenameChanged(QString filename)
@@ -197,13 +174,24 @@ void SoundPage::filenameChanged(QString filename)
 	}
 }
 
+void SoundPage::defaultButtonClicked()
+{
+	QTreeWidgetItem *item = ui.eventTreeWidget->currentItem();
+	if (!item) {
+		return;
+	}
+
+	QString event = item->data(COLUMN_DATA, ROLE_EVENT).toString();
+	ui.filenameEdit->setText(SoundManager::defaultFilename(event, true));
+}
+
 void SoundPage::browseButtonClicked()
 {
 	QString filename;
 	if (!misc::getOpenFileName(this, RshareSettings::LASTDIR_SOUNDS, tr("Open File"), "wav (*.wav)", filename)) {
 		return;
 	}
-	ui.filenameEdit->setText(filename);
+	ui.filenameEdit->setText(SoundManager::convertFilename(filename));
 }
 
 void SoundPage::playButtonClicked()
@@ -214,5 +202,5 @@ void SoundPage::playButtonClicked()
 	}
 
 	QString filename = item->text(COLUMN_FILENAME);
-	soundManager->playFile(filename);
+	SoundManager::playFile(filename);
 }

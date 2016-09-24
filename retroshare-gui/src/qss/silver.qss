@@ -8,20 +8,27 @@ QFrame#titleBarFrame, QFrame#toolBarFrame {
                                      stop: 0 #F9F9FF, stop: 1 #9F9DB9);
 }
 
+FriendsDialog QFrame#headFrame {
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F9F9FF, stop: 1 #9F9DB9);
+	border: 1px;
+	border-radius: 4px;
+}
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarAction {
     border-image: url(qss/silver/silver.png);
 
 }
 
 /* Customize the toolbar. */
-QToolBar#toolBar_2 {
-    border-image: url(qss/silver/silver2.png);
+QToolBar#toolBarPage {
+    border-image: url(qss/silver/silver.png);
 
 }
 
@@ -128,3 +135,4 @@ QLabel#fromText{
 	color: blue;
 
 }
+

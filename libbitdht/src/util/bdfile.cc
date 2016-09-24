@@ -17,7 +17,7 @@ bool bdFile::renameFile(const std::string& from, const std::string& to)
 {
 	int loops = 0;
 
-#ifdef WINDOWS_SYS
+#ifdef WIN32
 	std::wstring f;
 	librs::util::ConvertUtf8ToUtf16(from, f);
 	std::wstring t;

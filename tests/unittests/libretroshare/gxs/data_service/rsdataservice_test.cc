@@ -139,8 +139,8 @@ void test_messageStoresAndRetrieve()
     // first create a grpId
     RsGxsGroupId grpId0, grpId1;
 
-    grpId0.random();
-    grpId1.random();
+    grpId0 = RsGxsGroupId::random();
+    grpId1 = RsGxsGroupId::random();
     std::vector<RsGxsGroupId> grpV; // stores grpIds of all msgs stored and retrieved
     grpV.push_back(grpId0);
     grpV.push_back(grpId1);

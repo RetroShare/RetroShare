@@ -509,7 +509,7 @@ ops_boolean_t ops_write_transferable_public_key_from_packet_data(const ops_keyda
 						ops_create_info_t *info)
 {
 	ops_boolean_t rtn = ops_true;
-	unsigned int i=0,j=0;
+	unsigned int i=0;
 
 	if (armoured)
 	{ ops_writer_push_armoured(info, OPS_PGP_PUBLIC_KEY_BLOCK); }
@@ -532,7 +532,7 @@ ops_boolean_t ops_write_transferable_secret_key_from_packet_data(const ops_keyda
 						ops_create_info_t *info)
 {
 	ops_boolean_t rtn = ops_true;
-	unsigned int i=0,j=0;
+	unsigned int i=0;
 
 	if(keydata->type != OPS_PTAG_CT_ENCRYPTED_SECRET_KEY)
 	{
@@ -1211,6 +1211,12 @@ ops_write_literal_data_from_file(const char *filename,
         n=read(fd,buf,1024);
         if (!n)
             break;
+        if (n == -1)
+        {
+            close(fd);
+            ops_memory_free(mem);
+            return ops_false;
+        }
         ops_memory_add(mem, &buf[0], n);
         }
     close(fd);    

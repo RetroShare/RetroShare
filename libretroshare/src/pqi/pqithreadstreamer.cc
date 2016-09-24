@@ -31,12 +31,13 @@
 #define DEFAULT_STREAMER_SLEEP		   1000 // 1 ms.
 #define DEFAULT_STREAMER_IDLE_SLEEP	1000000 // 1 sec
 
+//#define PQISTREAMER_DEBUG
+
 pqithreadstreamer::pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-:pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mThreadMutex("pqithreadstreamer"),  mTimeout(0)
+:pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mTimeout(0), mThreadMutex("pqithreadstreamer")
 {
-	mTimeout = DEFAULT_STREAMER_TIMEOUT;
-	mSleepPeriod = DEFAULT_STREAMER_SLEEP;
-	return;
+    mTimeout = DEFAULT_STREAMER_TIMEOUT;
+    mSleepPeriod = DEFAULT_STREAMER_SLEEP;
 }
 
 bool pqithreadstreamer::RecvItem(RsItem *item)
@@ -46,128 +47,53 @@ bool pqithreadstreamer::RecvItem(RsItem *item)
 
 int	pqithreadstreamer::tick()
 {
-	tick_bio();
+        RsStackMutex stack(mThreadMutex);
+    tick_bio();
 
 	return 0;
 }
 
-void pqithreadstreamer::start()
+void	pqithreadstreamer::data_tick()
 {
-	{
-		RsStackMutex stack(mThreadMutex);
-		mToRun = true;
-	}
-	RsThread::start();
-}
+    uint32_t recv_timeout = 0;
+    uint32_t sleep_period = 0;
+    bool isactive = false;
+    {
+        RsStackMutex stack(mStreamerMtx);
+        recv_timeout = mTimeout;
+        sleep_period = mSleepPeriod;
+        isactive = mBio->isactive();
+    }
+    
+    updateRates() ;
 
-void pqithreadstreamer::run()
-{
-	std::cerr << "pqithreadstream::run()";
-	std::cerr << std::endl;
+    if (!isactive)
+    {
+        usleep(DEFAULT_STREAMER_IDLE_SLEEP);
+        return ;
+    }
 
-	{
-		RsStackMutex stack(mThreadMutex);
-		mRunning = true;
-	}
+    {
+        RsStackMutex stack(mThreadMutex);
+        tick_recv(recv_timeout);
+    }
 
-	while(1)
-	{
-		{
-			RsStackMutex stack(mThreadMutex);
-			if (!mToRun)
-			{
-				std::cerr << "pqithreadstream::run() stopping";
-				std::cerr << std::endl;
+    // Push Items, Outside of Mutex.
+    RsItem *incoming = NULL;
+    while((incoming = GetItem()))
+    {
+        RecvItem(incoming);
+    }
 
-				mRunning = false;
-				return;
-			}
-		}
-		data_tick();
-	}
-}
+    {
+        RsStackMutex stack(mThreadMutex);
+        tick_send(0);
+    }
 
-void pqithreadstreamer::stop()
-{
-	RsStackMutex stack(mThreadMutex);
-
-	std::cerr << "pqithreadstream::stop()";
-	std::cerr << std::endl;
-
-	mToRun = false;
-}
-
-void pqithreadstreamer::fullstop()
-{
-	stop();
-
-	while(1)
-	{
-		RsStackMutex stack(mThreadMutex);
-		if (!mRunning)
-		{
-			std::cerr << "pqithreadstream::fullstop() complete";
-			std::cerr << std::endl;
-			return;
-		}
-		usleep(1000);
-	}
-}
-
-bool pqithreadstreamer::threadrunning()
-{
-	RsStackMutex stack(mThreadMutex);
-	return mRunning;
-}
-
-
-int	pqithreadstreamer::data_tick()
-{
-	//std::cerr << "pqithreadstream::data_tick()";
-	//std::cerr << std::endl;
-
-	uint32_t recv_timeout = 0;
-	uint32_t sleep_period = 0;
-	bool isactive = false;
-	{
-		RsStackMutex stack(mStreamerMtx);
-		recv_timeout = mTimeout;
-		sleep_period = mSleepPeriod;
-        	isactive = mBio->isactive();
-	}
-
-	if (!isactive)
-	{
-		usleep(DEFAULT_STREAMER_IDLE_SLEEP);
-		return 0;
-	}
-
-
-	//std::cerr << "pqithreadstream::data_tick() tick_recv";
-	//std::cerr << std::endl;
-
-	tick_recv(recv_timeout);
-
-	// Push Items, Outside of Mutex.
-	RsItem *incoming = NULL;
-	while((incoming = GetItem()))
-	{
-		RecvItem(incoming);
-	}
-
-	//std::cerr << "pqithreadstream::data_tick() tick_send";
-	//std::cerr << std::endl;
-
-	tick_send(0);
-
-	if (sleep_period)
-	{
-		//std::cerr << "pqithreadstream::data_tick() usleep";
-		//std::cerr << std::endl;
-
-		usleep(sleep_period);
-	}
-	return 1;
+    if (sleep_period)
+    {
+        usleep(sleep_period);
+    }
 }
 
 

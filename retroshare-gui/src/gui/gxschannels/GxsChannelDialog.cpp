@@ -19,14 +19,30 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMenu>
+#include <QFileDialog>
+
+#include <retroshare/rsfiles.h>
+
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
 #include "GxsChannelUserNotify.h"
-#include "gui/channels/ShareKey.h"
+#include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "gui/common/GroupTreeWidget.h"
+
+class GxsChannelGroupInfoData : public RsUserdata
+{
+public:
+	GxsChannelGroupInfoData() : RsUserdata() {}
+
+public:
+	QMap<RsGxsGroupId, QIcon> mIcon;
+	QMap<RsGxsGroupId, QString> mDescription;
+};
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
@@ -36,6 +52,23 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 
 GxsChannelDialog::~GxsChannelDialog()
 {
+}
+
+QString GxsChannelDialog::getHelpString() const
+{
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Channels</h1>    \
+    <p>Channels allow you to post data (e.g. movies, music) that will spread in the network</p>            \
+    <p>You can see the channels your friends are subscribed to, and you automatically forward subscribed channels to \
+    your friends. This promotes good channels in the network.</p>\
+    <p>Only the channel's creator can post on that channel. Other peers                       \
+    in the network can only read from it, unless the channel is private. You can however share \
+	 the posting rights or the reading rights with friend Retroshare nodes.</p>\
+	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
+	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
+    <p>Channel posts get deleted after %1 months.</p>\
+    ").arg(QString::number(rsGxsChannels->getStoragePeriod()));
+
+	return hlp_str ;
 }
 
 UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
@@ -52,10 +85,7 @@ QString GxsChannelDialog::text(TextType type)
 		return tr("Create Channel");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
-		        "<li>Share key"
 		        "<li>Restore channel keys"
-		        "<li>Navigate channel link"
-		        "<li>Don't show own posts as unread"
 		        "</ul>";
 
 	case TEXT_YOUR_GROUP:
@@ -75,17 +105,17 @@ QString GxsChannelDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/images/channels24.png";
+		return ":/icons/png/channels.png";
 	case ICON_NEW:
-		return ":/images/add_channel24.png";
+		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/images/channelsblue.png";
+		return ":/images/folder16.png";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/images/channelsred.png";
+		return ":/images/folder_red.png";
 	case ICON_POPULAR_GROUP:
-		return ":/images/channelsgreen.png";
+		return ":/images/folder_green.png";
 	case ICON_OTHER_GROUP:
-		return ":/images/channelsyellow.png";
+		return ":/images/folder_yellow.png";
 	case ICON_DEFAULT:
 		return ":/images/channels.png";
 	}
@@ -113,19 +143,101 @@ GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGro
 	return new GxsChannelPostsWidget(groupId);
 }
 
+void GxsChannelDialog::setDefaultDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,"") ;
+}
+void GxsChannelDialog::specifyDownloadDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    QString dir = QFileDialog::getExistingDirectory(NULL,tr("Select channel download directory")) ;
+
+    if(dir.isNull())
+        return ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,std::string(dir.toUtf8())) ;
+}
+void GxsChannelDialog::setDownloadDirectory()
+{
+    RsGxsGroupId grpId = groupId() ;
+    if (grpId.isNull())
+        return ;
+
+    QAction *action = qobject_cast<QAction*>(sender()) ;
+
+    if(!action)
+        return ;
+
+    QString directory = action->data().toString() ;
+
+    rsGxsChannels->setChannelDownloadDirectory(grpId,std::string(directory.toUtf8())) ;
+}
 void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions)
 {
-	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
+    bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
+    bool autoDownload ;
+    rsGxsChannels->getChannelAutoDownload(grpId,autoDownload);
 
-	if (isSubscribed)
-	{
-		QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
-		                               : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
+    if (isSubscribed)
+    {
+        QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                       : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
 
-		connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
-		actions.append(action);
-	}
+        connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
+        actions.append(action);
+
+        std::string dl_directory;
+        rsGxsChannels->getChannelDownloadDirectory(grpId,dl_directory) ;
+
+        QMenu *mnu = new QMenu(tr("Set download directory")) ;
+
+        if(dl_directory.empty())
+            mnu->addAction(QIcon(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+        else
+            mnu->addAction(tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+
+        std::list<SharedDirInfo> lst ;
+        rsFiles->getSharedDirectories(lst) ;
+        bool found = false ;
+
+        for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!=lst.end();++it)
+        {
+            QAction *action = NULL;
+
+            if(dl_directory == it->filename)
+            {
+                action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                found = true ;
+            }
+            else
+                action = new QAction(QString::fromUtf8(it->filename.c_str()),NULL) ;
+
+            connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
+            action->setData(QString::fromUtf8(it->filename.c_str())) ;
+
+            mnu->addAction(action) ;
+        }
+
+        if(!found && !dl_directory.empty())
+        {
+            QAction *action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
+            connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
+            action->setData(QString::fromUtf8(dl_directory.c_str())) ;
+
+            mnu->addAction(action) ;
+        }
+
+        mnu->addAction(tr("Specify..."), this, SLOT(specifyDownloadDirectory())) ;
+
+        actions.push_back( mnu->menuAction()) ;
+    }
 }
 
 RsGxsCommentService *GxsChannelDialog::getCommentService()
@@ -145,10 +257,59 @@ void GxsChannelDialog::toggleAutoDownload()
 		return;
 	}
 
-	bool autoDownload = rsGxsChannels->getChannelAutoDownload(grpId);
-	if (!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+    bool autoDownload ;
+
+        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
 	{
 		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
 		std::cerr << std::endl;
+	}
+}
+
+void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
+{
+	std::vector<RsGxsChannelGroup> groups;
+	rsGxsChannels->getGroupData(token, groups);
+
+	/* Save groups to fill icons and description */
+	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
+	userdata = channelData;
+
+	std::vector<RsGxsChannelGroup>::iterator groupIt;
+	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
+		RsGxsChannelGroup &group = *groupIt;
+		groupInfo.push_back(group.mMeta);
+
+		if (group.mImage.mData != NULL) {
+			QPixmap image;
+			image.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
+			channelData->mIcon[group.mMeta.mGroupId] = image;
+		}
+
+		if (!group.mDescription.empty()) {
+			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+		}
+	}
+}
+
+void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+
+	const GxsChannelGroupInfoData *channelData = dynamic_cast<const GxsChannelGroupInfoData*>(userdata);
+	if (!channelData) {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = channelData->mDescription.find(groupInfo.mGroupId);
+	if (descriptionIt != channelData->mDescription.end()) {
+		groupItemInfo.description = descriptionIt.value();
+	}
+
+	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = channelData->mIcon.find(groupInfo.mGroupId);
+	if (iconIt != channelData->mIcon.end()) {
+		groupItemInfo.icon = iconIt.value();
 	}
 }

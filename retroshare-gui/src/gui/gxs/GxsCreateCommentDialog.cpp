@@ -24,7 +24,6 @@
 
 #include "GxsCreateCommentDialog.h"
 #include "ui_GxsCreateCommentDialog.h"
-#include "gui/Identity/IdDialog.h"
 
 #include <QMessageBox>
 #include <iostream>
@@ -36,7 +35,7 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(TokenQueue *tokQ, RsGxsCommentSer
 {
 	ui->setupUi(this);
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
 	/* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
@@ -86,14 +85,6 @@ void GxsCreateCommentDialog::createComment()
 	mCommentService->createComment(token, comment);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
 	close();
-}
-
-void  GxsCreateCommentDialog::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }
 
 GxsCreateCommentDialog::~GxsCreateCommentDialog()

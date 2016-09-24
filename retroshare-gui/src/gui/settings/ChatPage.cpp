@@ -68,7 +68,7 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
     }
 
     ChatStyle::getAvailableStyles(type, styles);
-    for (style = styles.begin(); style != styles.end(); style++) {
+    for (style = styles.begin(); style != styles.end(); ++style) {
         item = new QListWidgetItem(style->styleName);
         item->setData(Qt::UserRole, qVariantFromValue(*style));
         listWidget->addItem(item);
@@ -100,50 +100,12 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+       connect(ui.distantChatComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantChatComboBoxChanged(int)));
+
 #if QT_VERSION < 0x040600
     ui.minimumContrastLabel->hide();
     ui.minimumContrast->hide();
 #endif
-
-	 connect(ui._collected_contacts_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(collectedContacts_customPopupMenu(QPoint)));
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-}
-
-void ChatPage::collectedContacts_customPopupMenu(QPoint p)
-{
-	// items: chat with this person, copy to clipboard, delete
-	std::cerr << "In custom popup menu" << std::endl;
-
-	QListWidgetItem *item = ui._collected_contacts_LW->itemAt(p) ;
-
-	if(item == NULL)
-		return  ;
-
-	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
-
-	QMenu contextMnu( this );
-
-	if(selected.size() == 1)
-		contextMnu.addAction( QIcon(IMAGE_CHAT_OPEN), tr("Open secured chat tunnel"), this, SLOT(collectedInvite_openDistantChat()) ) ;
-
-	contextMnu.exec(QCursor::pos());
-}
-
-void ChatPage::collectedInvite_openDistantChat()
-{
-	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
-
-	RsGxsId gxs_id( (*selected.begin())->data(Qt::UserRole).toString().toStdString() );
-
-	std::cerr << "Openning secured chat tunnel for virtual peer id " << gxs_id << ". Please wait..." << std::endl;
-	uint32_t error_code ;
-
-	if(!rsMsgs->initiateDistantChatConnexion(gxs_id,error_code))
-		QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot open distant chat. Error code=")+QString::number(error_code)) ;
 }
 
 /** Saves the changes on this page */
@@ -155,14 +117,20 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setValue("Emoteicons_GroupChat", ui.checkBox_emotegroupchat->isChecked());
     Settings->setValue("EnableCustomFonts", ui.checkBox_enableCustomFonts->isChecked());
     Settings->setValue("EnableCustomFontSize", ui.checkBox_enableCustomFontSize->isChecked());
+		Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
     Settings->setValue("EnableBold", ui.checkBox_enableBold->isChecked());
     Settings->setValue("EnableItalics", ui.checkBox_enableItalics->isChecked());
     Settings->setValue("MinimumContrast", ui.minimumContrast->value());
     Settings->endGroup();
+    // state of distant Chat combobox
+    Settings->setValue("DistantChat", ui.distantChatComboBox->currentIndex());
 
     Settings->setChatScreenFont(fontTempChat.toString());
+    NotifyQt::getInstance()->notifyChatFontChanged();
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
+    Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
+    Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
 
     Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
     Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
@@ -184,7 +152,16 @@ ChatPage::save(QString &/*errmsg*/)
     rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
     rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
 
-    rsMsgs->setDefaultNickNameForChatLobby(ui.chatLobbyNick_LE->text().toUtf8().constData()) ;
+    RsGxsId chosen_id ;
+    switch(ui.chatLobbyIdentity_IC->getChosenId(chosen_id))
+    {
+        case GxsIdChooser::KnowId:
+        case GxsIdChooser::UnKnowId:
+        rsMsgs->setDefaultIdentityForChatLobby(chosen_id) ;
+        break ;
+
+        default:;
+    }
 
     ChatStyleInfo info;
     QListWidgetItem *item = ui.publicList->currentItem();
@@ -248,14 +225,21 @@ ChatPage::load()
     ui.checkBox_emotegroupchat->setChecked(Settings->value("Emoteicons_GroupChat", true).toBool());
     ui.checkBox_enableCustomFonts->setChecked(Settings->value("EnableCustomFonts", true).toBool());
     ui.checkBox_enableCustomFontSize->setChecked(Settings->value("EnableCustomFontSize", true).toBool());
+		ui.minimumFontSize->setValue(Settings->value("MinimumFontSize", 10).toInt());
     ui.checkBox_enableBold->setChecked(Settings->value("EnableBold", true).toBool());
     ui.checkBox_enableItalics->setChecked(Settings->value("EnableItalics", true).toBool());
     ui.minimumContrast->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
     Settings->endGroup();
 
+	     // state of distant Chat combobox
+    int index = Settings->value("DistantChat", 0).toInt();
+    ui.distantChatComboBox->setCurrentIndex(index);
+
     fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+    ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
+    ui.loadEmbeddedImages->setChecked(Settings->getChatLoadEmbeddedImages());
 
     ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
     ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
@@ -279,8 +263,11 @@ ChatPage::load()
     ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
     ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
     ui.lobbyChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
-
-    ui.labelChatFontPreview->setText(fontTempChat.rawName());
+    
+    // using fontTempChat.rawname() does not always work!
+    // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
+    QStringList fontname = fontTempChat.toString().split(",");
+    ui.labelChatFontPreview->setText(fontname[0]);
     ui.labelChatFontPreview->setFont(fontTempChat);
 
 	 ui.max_storage_period->setValue(rsHistory->getMaxStorageDuration()/86400) ;
@@ -290,9 +277,13 @@ ChatPage::load()
     privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList, ui.privateComboBoxVariant, privateStyleVariant);
     historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList, ui.historyComboBoxVariant, historyStyleVariant);
 
-    std::string nick ;
-    rsMsgs->getDefaultNickNameForChatLobby(nick) ;
-    ui.chatLobbyNick_LE->setText(QString::fromUtf8(nick.c_str())) ;
+    RsGxsId gxs_id ;
+    rsMsgs->getDefaultIdentityForChatLobby(gxs_id) ;
+
+    ui.chatLobbyIdentity_IC->setFlags(IDCHOOSER_ID_REQUIRED) ;
+
+    if(!gxs_id.isNull())
+        ui.chatLobbyIdentity_IC->setChosenId(gxs_id);
 
     uint chatflags = Settings->getChatFlags();
 
@@ -311,12 +302,12 @@ ChatPage::load()
 	 for()
 	 {
 		 QListWidgetItem *item = new QListWidgetItem;
-		 item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
+		 item->setData(Qt::DisplayRole,tr("Private chat invite from")+" "+QString::fromUtf8(detail.name.c_str())) ;
 
 		 QString tt ;
-		 tt +=        tr("Name : ") + QString::fromUtf8(detail.name.c_str())) ;
-		 tt += "\n" + tr("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
-		 tt += "\n" + tr("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
+		 tt +=        tr("Name :")+" " + QString::fromUtf8(detail.name.c_str()) ;
+		 tt += "\n" + tr("PGP id :")+" " + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
+		 tt += "\n" + tr("Valid until :")+" " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
 
 		 item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
 		 item->setToolTip(tt) ;
@@ -332,7 +323,10 @@ void ChatPage::on_pushButtonChangeChatFont_clicked()
 	QFont font = QFontDialog::getFont(&ok, fontTempChat, this);
 	if (ok) {
 		fontTempChat = font;
-		ui.labelChatFontPreview->setText(fontTempChat.rawName());
+		// using fontTempChat.rawname() does not always work!
+		// see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName
+		QStringList fontname = fontTempChat.toString().split(",");
+		ui.labelChatFontPreview->setText(fontname[0]);
 		ui.labelChatFontPreview->setFont(fontTempChat);
 	}
 }
@@ -347,13 +341,15 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     QString nameIncoming = tr("Incoming");
     QString nameOutgoing = tr("Outgoing");
     QDateTime timestmp = QDateTime::fromTime_t(time(NULL));
+    QColor backgroundColor = textBrowser->palette().base().color();
 
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history")));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history")));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message")));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message")));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message")));
-    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message")));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HINCOMING, nameIncoming, timestmp, tr("Incoming message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_HOUTGOING, nameOutgoing, timestmp, tr("Outgoing message in history"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_INCOMING,  nameIncoming, timestmp, tr("Incoming message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, tr("Outgoing message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, tr("Outgoing offline message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_SYSTEM,  tr("System"), timestmp, tr("System message"), 0, backgroundColor));
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  tr("UserName"), timestmp, tr("/me is sending a message with /me"), 0, backgroundColor));
 }
 
 void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)
@@ -508,3 +504,21 @@ void ChatPage::on_btSearch_FoundColor_clicked()
 		ui.btSearch_FoundColor->setIcon(pix);
 	}
 }
+
+void ChatPage::distantChatComboBoxChanged(int i)
+{
+	switch(i)
+	{
+		default: 
+		case 0: rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NONE) ;           
+				  break ;
+				  
+		case 1:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ;
+				  break ;
+
+		case 2:  rsMsgs->setDistantChatPermissionFlags(RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
+				  break ;
+	}
+
+}
+

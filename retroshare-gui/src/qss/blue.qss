@@ -3,6 +3,21 @@
    border-color: transparent;
 }
 
+QFrame#titleBarFrame, QFrame#toolBarFrame {
+       
+   	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
+                                     	border: 1px solid #87ADE4;
+}
+
+FriendsDialog QFrame#headFrame {
+   	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #E3EFFF, stop: 1 #87ADE4);
+                                     	border: 1px solid #87ADE4;
+	border: 1px;
+	border-radius: 4px;
+}
+
 HeaderFrame {
 	background-image: url(:/images/headerFrame.png);
 	border: 0px;
@@ -26,13 +41,13 @@ QToolBar#chattoolBar{
 
 
 /* Customize the toolbar. */
-QToolBar#toolBar {
+QToolBar#toolBarPage {
     border-image: url(qss/blue/blue.png);
 
 }
 
-QToolBar#toolBar_2 {
-    border-image: url(qss/blue/blue2.png);
+QToolBar#toolBarAction {
+    border-image: url(qss/blue/blue.png);
 
 }
 
@@ -110,6 +125,7 @@ QStatusBar{
                                      stop: 0 #E3EFFF, stop: 1 #87ADE4);
 }
 
+
 QFrame#messengerframetop{
          
     border-image: url(qss/blue/blue.png);
@@ -156,3 +172,4 @@ QSplitter#splitter{
     border-image: url(qss/blue/blue.png);
 
 }
+

@@ -32,7 +32,10 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsids.h"
+#include "serialiser/rstlvimage.h"
+#include "retroshare/rsgxscommon.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -41,7 +44,6 @@ extern RsIdentity *rsIdentity;
 
 // GroupFlags: Only one so far:
 #define RSGXSID_GROUPFLAG_REALID  0x0001
-
 
 // THESE ARE FLAGS FOR INTERFACE.
 #define RSID_TYPE_MASK		0xff00
@@ -58,7 +60,17 @@ extern RsIdentity *rsIdentity;
 
 #define RSRECOGN_MAX_TAGINFO	5
 
+// Unicode symbols. NOT utf-8 bytes, because of multi byte characters
+#define RSID_MAXIMUM_NICKNAME_SIZE 30
+#define RSID_MINIMUM_NICKNAME_SIZE 2
+
 std::string rsIdTypeToString(uint32_t idtype);
+
+static const uint32_t RS_IDENTITY_FLAGS_IS_A_CONTACT = 0x0001;
+static const uint32_t RS_IDENTITY_FLAGS_PGP_LINKED   = 0x0002;
+static const uint32_t RS_IDENTITY_FLAGS_PGP_KNOWN    = 0x0004;
+static const uint32_t RS_IDENTITY_FLAGS_IS_OWN_ID    = 0x0008;
+static const uint32_t RS_IDENTITY_FLAGS_IS_DEPRECATED= 0x0010;	// used to denote keys with deprecated fingerprint format.
 
 class GxsReputation
 {
@@ -77,7 +89,7 @@ class GxsReputation
 class RsGxsIdGroup
 {
 	public:
-	RsGxsIdGroup():mPgpKnown(false) { return; }
+    RsGxsIdGroup(): mLastUsageTS(0), mPgpKnown(false),mIsAContact(false) { return; }
 	~RsGxsIdGroup() { return; }
 
 
@@ -105,10 +117,15 @@ class RsGxsIdGroup
 	// Recognition Strings. MAX# defined above.
 	std::list<std::string> mRecognTags;
 
-	// Not Serialised - for GUI's benefit.
-	bool mPgpKnown;
-	RsPgpId mPgpId;
-	GxsReputation mReputation; 
+    // Avatar
+    RsGxsImage mImage ;
+    time_t mLastUsageTS ;
+
+    // Not Serialised - for GUI's benefit.
+    bool mPgpKnown;
+    bool mIsAContact;	// change that into flags one day
+    RsPgpId mPgpId;
+    GxsReputation mReputation;
 };
 
 
@@ -145,30 +162,37 @@ class RsRecognTagDetails
 	bool is_pending;
 };
 
-
 class RsIdentityDetails
 {
-	public:
-	RsIdentityDetails()
-	:mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-	mReputation() { return; }
+public:
+    RsIdentityDetails()
+            : mFlags(0), mLastUsageTS(0) { return; }
 
-	RsGxsId mId;
+    RsGxsId mId;
 
-	// identity details.
-	std::string mNickname;
-	bool mIsOwnId;
+    // identity details.
+    std::string mNickname;
+    
+    uint32_t mFlags ;
 
-	// PGP Stuff.
-	bool mPgpLinked;
-	bool mPgpKnown;
-	RsPgpId mPgpId;
+    // PGP Stuff.
+    RsPgpId mPgpId;
 
-	// Recogn details.
-	std::list<RsRecognTag> mRecognTags;
+    // Recogn details.
+    std::list<RsRecognTag> mRecognTags;
 
-	// reputation details.
-	GxsReputation mReputation;
+    // Cyril: Reputation details. At some point we might want to merge information
+    // between the two into a single global score. Since the old reputation system
+    // is not finished yet, I leave this in place. We should decide what to do with it.
+    
+    GxsReputation mReputation_oldSystem;		// this is the old "mReputation" field, which apparently is not used.
+    RsReputations::ReputationInfo mReputation;
+
+    // avatar
+    RsGxsImage mAvatar ;
+
+    // last usage
+    time_t mLastUsageTS ;
 };
 
 
@@ -185,7 +209,8 @@ class RsIdentityParameters
 	public:
 	RsIdentityParameters(): isPgpLinked(false) { return; }
 	bool isPgpLinked;
-	std::string nickname;
+    std::string nickname;
+    RsGxsImage mImage ;
 };
 
 
@@ -197,40 +222,48 @@ public:
     RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs)  { return; }
     virtual ~RsIdentity() { return; }
 
-/********************************************************************************************/
-/********************************************************************************************/
+    /********************************************************************************************/
+    /********************************************************************************************/
 
-	// For Other Services....
-	// It should be impossible for them to get a message which we don't have the identity.
-	// Its a major error if we don't have the identity.
+    // For Other Services....
+    // It should be impossible for them to get a message which we don't have the identity.
+    // Its a major error if we don't have the identity.
 
-	// We cache all identities, and provide alternative (instantaneous) 
-	// functions to extract info, rather than the standard Token system.
+    // We cache all identities, and provide alternative (instantaneous)
+    // functions to extract info, rather than the standard Token system.
 
-//virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
-virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
-virtual void  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+    //virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
+    virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 
-	// 
-virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
-				bool absOpinion, int score) = 0;
-virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
+    // Fills up list of all own ids. Returns false if ids are not yet loaded.
+    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+    virtual bool  isOwnId(const RsGxsId& id) = 0;
 
-virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
-virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+    //
+    virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
+                               bool absOpinion, int score) = 0;
+    virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
-virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
-                        const std::string &tag, RsRecognTagDetails &details) = 0;
-virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
-                        uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
+    virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+    virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
 
-	// Specific RsIdentity Functions....
-        /* Specific Service Data */
-	/* We expose these initially for testing / GUI purposes.
+    virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
+                                const std::string &tag, RsRecognTagDetails &details) = 0;
+    virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
+                                     uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
+
+    virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
+    virtual bool isARegularContact(const RsGxsId& id) = 0 ;
+    virtual bool isBanned(const RsGxsId& id) =0;
+    virtual time_t getLastUsageTS(const RsGxsId &id) =0;
+
+    // Specific RsIdentity Functions....
+    /* Specific Service Data */
+    /* We expose these initially for testing / GUI purposes.
          */
 
-virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
-//virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
+    virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
+    //virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };
 

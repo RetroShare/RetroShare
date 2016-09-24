@@ -24,16 +24,18 @@
 #ifndef IDEDITDIALOG_H
 #define IDEDITDIALOG_H
 
-#include "ui_IdEditDialog.h"
-
 #include <inttypes.h>
 
 #include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rsgxsifacetypes.h>
-#include <QString>
+#include <QDialog>
 
 class UIStateHelper;
+
+namespace Ui {
+class IdEditDialog;
+}
 
 class IdEditDialog : public QDialog, public TokenResponse
 {
@@ -41,17 +43,21 @@ class IdEditDialog : public QDialog, public TokenResponse
 
 public:
 	IdEditDialog(QWidget *parent = 0);
+	~IdEditDialog();
 
-	void setupNewId(bool pseudo);
-	void setupExistingId(std::string keyId);
+	void setupNewId(bool pseudo, bool enable_anon = true);
+	void setupExistingId(const RsGxsGroupId &keyId);
+    	void enforceNoAnonIds() ;
+
+	RsGxsGroupId groupId() { return mGroupId; }
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-	std::string getLastIdName() {return mLastIdName;}
 
 private slots:
 	void idTypeToggled(bool checked);
 	void submit();
+
+	void changeAvatar();
 
 	void addRecognTag();
 	void checkNewTag();
@@ -66,21 +72,25 @@ private:
 	void updateId();
 	void updateIdType(bool pseudo);
 	void loadExistingId(uint32_t token);
+	void setAvatar(const QPixmap &avatar);
+	void idCreated(uint32_t token);
 
 	void loadRecognTags();
 	// extract details.
-    bool tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc);
+	bool tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc);
 	void rmTag(int idx);
 	
 protected:
-	Ui::IdEditDialog ui;
+	Ui::IdEditDialog *ui;
 	bool mIsNew;
 	UIStateHelper *mStateHelper;
-	
+
 	RsGxsIdGroup mEditGroup;
 
 	TokenQueue *mIdQueue;
-	std::string mLastIdName;
+	RsGxsGroupId mGroupId;
+
+	QPixmap mAvatar; // Avatar from identity (not calculated)
 };
 
 #endif

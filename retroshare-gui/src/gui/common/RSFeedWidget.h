@@ -26,21 +26,18 @@
 #include <QWidget>
 #include <QMap>
 
-#include "retroshare/rsgxsifacetypes.h"
-
 #define FEED_TREEWIDGET_SORTROLE Qt::UserRole
 
 class FeedItem;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
-class GxsFeedItem;
 
 namespace Ui {
 class RSFeedWidget;
 }
 
-typedef void (*RSFeedWidgetCallbackFunction)(FeedItem *feedItem, const QVariant &data);
-typedef bool (*RSFeedWidgetFindCallbackFunction)(FeedItem *feedItem, const QVariant &data1, const QVariant &data2);
+typedef void (*RSFeedWidgetCallbackFunction)(FeedItem *feedItem, void *data);
+typedef bool (*RSFeedWidgetFindCallbackFunction)(FeedItem *feedItem, void *data);
 typedef bool (*RSFeedWidgetFilterCallbackFunction)(FeedItem *feedItem, const QString &text, int filter);
 
 class RSFeedWidget : public QWidget
@@ -51,37 +48,48 @@ public:
 	RSFeedWidget(QWidget *parent = 0);
 	virtual ~RSFeedWidget();
 
+	QString placeholderText();
+	void setPlaceholderText(const QString &placeholderText);
+
 	void addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value);
 	void addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVariant> &sort);
 
 	void setSort(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value);
 	void setSort(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVariant> &sort);
 
+	int feedItemCount();
+	FeedItem *feedItem(int index);
 	void removeFeedItem(FeedItem *feedItem);
-	void clear();
 
 	void setSortRole(Qt::ItemDataRole role, Qt::SortOrder order);
 	void setSortingEnabled(bool enable);
 	void setFilterCallback(RSFeedWidgetFilterCallbackFunction callback);
 
 	void enableRemove(bool enable);
+	void enableCountChangedSignal(bool enable);
 	void setSelectionMode(QAbstractItemView::SelectionMode mode);
 
-	void withAll(RSFeedWidgetCallbackFunction callback, const QVariant &data);
-	FeedItem *findFeedItem(RSFeedWidgetFindCallbackFunction callback, const QVariant &data1, const QVariant &data2);
+	bool scrollTo(FeedItem *feedItem, bool focus);
+
+	void withAll(RSFeedWidgetCallbackFunction callback, void *data);
+	FeedItem *findFeedItem(RSFeedWidgetFindCallbackFunction callback, void *data);
 
 	void selectedFeedItems(QList<FeedItem*> &feedItems);
 
-	/* Convenience functions */
-	GxsFeedItem *findGxsFeedItem(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId);
+signals:
+	void feedCountChanged();
 
 public slots:
+	void clear();
 	void setFilter(const QString &text, int type);
 	void setFilterText(const QString &text);
 	void setFilterType(int type);
 
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
+	virtual void feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem);
+	virtual void feedRemoved(FeedItem *feedItem);
+	virtual void feedsCleared();
 
 private slots:
 	void feedItemDestroyed(FeedItem *feedItem);
@@ -106,6 +114,12 @@ private:
 
 	/* Remove */
 	bool mEnableRemove;
+
+	/* Options */
+	int mCountChangedDisabled;
+
+	/* Items */
+	QMap<FeedItem*, QTreeWidgetItem*> mItems;
 
 	Ui::RSFeedWidget *ui;
 };

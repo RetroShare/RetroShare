@@ -119,7 +119,7 @@ bool p3StatusService::getStatusList(std::list<StatusInfo>& statusInfo)
 
 	// fill up statusInfo list with this information
 	std::map<RsPeerId, StatusInfo>::iterator mit;
-	for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); mit++){
+	for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); ++mit){
 		statusInfo.push_back(mit->second);
 	}
 	
@@ -193,7 +193,7 @@ bool p3StatusService::sendStatus(const RsPeerId &id, uint32_t status)
 #endif
 
 	// send to all peers online
-	for(it = onlineList.begin(); it != onlineList.end(); it++){
+	for(it = onlineList.begin(); it != onlineList.end(); ++it){
 		RsStatusItem* statusItem = new RsStatusItem();
 		statusItem->sendTime = time(NULL);
 		statusItem->status = statusInfo.status;
@@ -260,7 +260,7 @@ void p3StatusService::receiveStatusQueue()
 
 	if (changed.size()) {
 		std::map<RsPeerId, uint32_t>::iterator it;
-		for (it = changed.begin(); it != changed.end(); it++) {
+		for (it = changed.begin(); it != changed.end(); ++it) {
 			RsServer::notify()->notifyPeerStatusChanged(it->first.toStdString(), it->second);
 		}
 		RsServer::notify()->notifyPeerStatusChangedSummary();
@@ -309,42 +309,34 @@ bool p3StatusService::saveList(bool& cleanup, std::list<RsItem*>& ilist){
 	return true;
 }
 
-bool p3StatusService::loadList(std::list<RsItem*>& load){
-
-	// load your status from last rs session
-	StatusInfo own_info;
-	std::list<RsItem*>::const_iterator it = load.begin();
-
-	if(it == load.end()){
-		std::cerr << "p3StatusService::loadList(): Failed to load " << std::endl;
-		return false;
-	}
-
-	for(; it != load.end(); it++){
-	RsStatusItem* own_status = dynamic_cast<RsStatusItem* >(*it);
+bool p3StatusService::loadList(std::list<RsItem*>& load)
+{
+    // load your status from last rs session
+    StatusInfo own_info;
 
 
-	if(own_status != NULL){
+    for(std::list<RsItem*>::const_iterator it = load.begin() ; it != load.end(); ++it)
+    {
+	    RsStatusItem* own_status = dynamic_cast<RsStatusItem* >(*it);
 
-		own_info.id = mServiceCtrl->getOwnId();
-		own_info.status = own_status->status;
-		own_info.time_stamp = own_status->sendTime;
-		delete own_status;
+	    if(own_status != NULL)
+	    {
+		    own_info.id = mServiceCtrl->getOwnId();
+		    own_info.status = own_status->status;
+		    own_info.time_stamp = own_status->sendTime;
 
-		{
-			RsStackMutex stack(mStatusMtx);
-			std::pair<RsPeerId, StatusInfo> pr(mServiceCtrl->getOwnId(), own_info);
-			mStatusInfoMap.insert(pr);
-		}
+		    {
+			    RsStackMutex stack(mStatusMtx);
+			    std::pair<RsPeerId, StatusInfo> pr(mServiceCtrl->getOwnId(), own_info);
+			    mStatusInfoMap.insert(pr);
+		    }
 
-		return true;
-	}else{
-		std::cerr << "p3StatusService::loadList " << "Failed to load list "
-				  << std::endl;
-	}
+	    }
 
-	}
-	return false;
+	    delete *it ;
+    }
+    load.clear() ;
+    return false;
 }
 
 
@@ -369,7 +361,7 @@ void p3StatusService::statusChange(const std::list<pqiServicePeer> &plist)
 
 	StatusInfo statusInfo;
 	std::list<pqiServicePeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++)
+	for (it = plist.begin(); it != plist.end(); ++it)
  	{
 		if (it->actions & RS_SERVICE_PEER_DISCONNECTED)
 		{

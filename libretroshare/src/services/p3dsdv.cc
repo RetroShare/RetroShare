@@ -163,7 +163,7 @@ void 	p3Dsdv::advanceLocalSequenceNumbers()
 	time_t now = time(NULL);
 
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		RsDsdvTableEntry &v = (it->second);
 		if (v.mOwnSource)
@@ -179,7 +179,7 @@ void 	p3Dsdv::clearSignificantChangesFlags()
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 	
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		RsDsdvTableEntry &v = (it->second);
 		if (v.mFlags & RSDSDV_FLAGS_SIGNIFICANT_CHANGE)
@@ -211,7 +211,7 @@ int 	p3Dsdv::generateRoutingTables(bool incremental)
 
 	/* prepare packets */
 	std::set<RsPeerId>::iterator it;
-	for(it = idList.begin(); it != idList.end(); it++)
+	for(it = idList.begin(); it != idList.end(); ++it)
 	{
 #ifdef DEBUG_DSDV
 		std::cerr << "p3Dsdv::generateRoutingTables() For: " << *it;
@@ -236,7 +236,7 @@ int p3Dsdv::generateRoutingTable(const RsPeerId &peerId, bool incremental)
 	RsStackMutex stack(mDsdvMtx); /****** LOCKED MUTEX *******/
 
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		RsDsdvTableEntry &v = (it->second);
 
@@ -331,8 +331,8 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 #endif
 
 	std::list<RsTlvDsdvEntry>::iterator it;
-	//for(it = dsdv->routes.entries.begin(); it != dsdv->routes.entries.end(); it++)
-	for(it = dsdv->routes.mList.begin(); it != dsdv->routes.mList.end(); it++)
+	//for(it = dsdv->routes.entries.begin(); it != dsdv->routes.entries.end(); ++it)
+	for(it = dsdv->routes.mList.begin(); it != dsdv->routes.mList.end(); ++it)
 	{
 		/* check for existing */
 		RsTlvDsdvEntry &entry = *it;
@@ -471,7 +471,7 @@ int p3Dsdv::selectStableRoutes()
 
 	/* find the entry */
 	std::map<std::string, RsDsdvTableEntry>::iterator tit;
-	for(tit = mTable.begin(); tit != mTable.end(); tit++)
+	for(tit = mTable.begin(); tit != mTable.end(); ++tit)
 	{
 	
 #ifdef	DEBUG_DSDV
@@ -497,7 +497,7 @@ int p3Dsdv::selectStableRoutes()
 
 		/* find newest sequence number */
 		for(rit = tit->second.mAllRoutes.begin(); 
-			rit != tit->second.mAllRoutes.end(); rit++)
+			rit != tit->second.mAllRoutes.end(); ++rit)
 		{
 			if ((now - rit->second.mReceived <= DSDV_DISCARD_PERIOD) &&
 					(rit->second.mSequence >= newest))
@@ -531,7 +531,7 @@ int p3Dsdv::selectStableRoutes()
 
 		/* find closest distance - with valid seq & max valid time */
 		for(rit = tit->second.mAllRoutes.begin(); 
-			rit != tit->second.mAllRoutes.end(); rit++)
+			rit != tit->second.mAllRoutes.end(); ++rit)
 		{
 			/* Maximum difference in Sequence number is 2*DISTANCE
 			 * Otherwise it must be old.
@@ -617,7 +617,7 @@ int p3Dsdv::clearOldRoutes()
 
 	/* find the entry */
 	std::map<std::string, RsDsdvTableEntry>::iterator it, it2;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		if (it->second.mOwnSource)	
 		{
@@ -652,7 +652,7 @@ int p3Dsdv::clearOldRoutes()
 void p3Dsdv::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	std::list<pqiServicePeer>::const_iterator it;
-	for(it = plist.begin(); it != plist.end(); it++)
+	for(it = plist.begin(); it != plist.end(); ++it)
 	{
 		/* only care about disconnected / not friends cases */
 		if (	1	)
@@ -676,8 +676,7 @@ int p3Dsdv::addTestService()
 	std::string realHash;
 	std::string seedHash;
 
-	int i;
-	for(i = 0; i < SHA_DIGEST_LENGTH / 4; i++)
+	for(int i = 0; i < SHA_DIGEST_LENGTH / 4; i++)
 	{
 		rndhash1[i] = RSRandom::random_u32();
 		rndhash2[i] = RSRandom::random_u32();
@@ -796,7 +795,7 @@ int p3Dsdv::printDsdvTable(std::ostream &out)
 
 	/* iterate over the entries */
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		RsDsdvTableEntry &v = it->second;
 		out << v;
@@ -813,7 +812,7 @@ uint32_t p3Dsdv::getLocalServices(std::list<std::string> &hashes)
 
 	/* iterate over the entries */
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		if (it->second.mOwnSource)
 		{
@@ -830,7 +829,7 @@ uint32_t p3Dsdv::getAllServices(std::list<std::string> &hashes)
 
 	/* iterate over the entries */
 	std::map<std::string, RsDsdvTableEntry>::iterator it;
-	for(it = mTable.begin(); it != mTable.end(); it++)
+	for(it = mTable.begin(); it != mTable.end(); ++it)
 	{
 		hashes.push_back(it->first);
 	}
@@ -905,7 +904,7 @@ std::ostream &operator<<(std::ostream &out, const RsDsdvTableEntry &entry)
 	}
 
 	std::map<RsPeerId, RsDsdvRoute>::const_iterator it;
-	for(it = entry.mAllRoutes.begin(); it != entry.mAllRoutes.end(); it++)
+	for(it = entry.mAllRoutes.begin(); it != entry.mAllRoutes.end(); ++it)
 	{
 		out << "\t\t" << it->second << std::endl;
 	}

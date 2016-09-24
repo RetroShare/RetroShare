@@ -26,6 +26,7 @@
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
 #include "util/rsstring.h"
+#include "util/rsmemory.h"
 
 #ifdef WINDOWS_SYS
 #else
@@ -39,6 +40,7 @@
 	#define BIG_ENDIAN  4321
 #endif
 
+#ifndef ntohll
 uint64_t ntohll(uint64_t x)
 {
 #ifdef BYTE_ORDER
@@ -60,11 +62,13 @@ uint64_t ntohll(uint64_t x)
 #endif
 
 }
-
+#endif
+#ifndef htonll
 uint64_t htonll(uint64_t x)
 {
         return ntohll(x);
 }
+#endif
 
 void sockaddr_clear(struct sockaddr_in *addr)
 {
@@ -72,6 +76,55 @@ void sockaddr_clear(struct sockaddr_in *addr)
         addr->sin_family = AF_INET;
 }
 
+bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
+{
+    addrinfo *info = NULL;
+    int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
+
+    if(res > 0 || info == NULL || info->ai_addr == NULL)
+    {
+	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
+	returned_addr.s_addr = 0 ;
+    }
+    else
+        returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
+    
+    freeaddrinfo(info) ;
+    
+#ifdef DEPRECATED_TO_REMOVE
+#if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
+	hostent *result = gethostbyname(hostname.c_str()) ;
+#else
+    RsTemporaryMemory mem(8192) ;
+
+    if(!mem)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory!" << std::endl;
+	    return false; // Do something.
+    }
+
+    int error = 0;
+    struct hostent pHost;
+    struct hostent *result;
+
+    if(gethostbyname_r(hostname.c_str(), &pHost, (char*)(unsigned char*)mem, mem.size(), &result, &error) != 0)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": cannot call gethostname_r. Internal error reported. Check buffer size." << std::endl;
+	    return false ;
+    }
+#endif
+    if(!result)
+    {
+	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname returned null result." << std::endl;
+	    return false ;
+    }
+    // Use contents of result.
+
+    returned_addr.s_addr = *(unsigned long*) (result->h_addr);
+#endif
+    
+    return true ;
+}
 
 bool    isValidNet(const struct in_addr *addr)
 {

@@ -33,17 +33,22 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
+
+#include "gui/msgs/MessageInterface.h"
 
 /****
  * #define DEBUG_ITEM 1
  ****/
 
 /** Constructor */
-MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, bool isHome) :
+   FeedItem(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
+
+  mCloseOnRead = true;
 
   setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -53,6 +58,7 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
+  connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(checkMessageReadStatus()));
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
@@ -62,7 +68,6 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, const std::string &msgId, 
   updateItemStatic();
   updateItem();
 }
-
 
 void MsgItem::updateItemStatic()
 {
@@ -74,24 +79,36 @@ void MsgItem::updateItemStatic()
 
 	MessageInfo mi;
 
-	if (!rsMsgs) 
+	if (!rsMail) 
 		return;
 
-	if (!rsMsgs->getMessage(mMsgId, mi))
+	if (!rsMail->getMessage(mMsgId, mi))
 		return;
 
-	/* get peer Id */
-    mPeerId = mi.rspeerid_srcId;
+    /* get peer Id */
 
-    avatar->setId(mPeerId);
+    if(mi.msgflags & RS_MSG_SIGNED)
+        avatar->setGxsId(mi.rsgxsid_srcId);
+    else
+        avatar->setId(ChatId(mi.rspeerid_srcId));
 
 	QString title;
-	QString srcName;
-    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId()) {
+    QString srcName;
+
+    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId())
 		srcName = "RetroShare";
-	} else {
-        srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
-	}
+    else
+    {
+        if(mi.msgflags & RS_MSG_SIGNED)
+        {
+            RsIdentityDetails details ;
+            rsIdentity->getIdDetails(mi.rsgxsid_srcId, details) ;
+
+            srcName = QString::fromUtf8(details.mNickname.c_str());
+        }
+        else
+            srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
+    }
 
 	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
 
@@ -102,7 +119,7 @@ void MsgItem::updateItemStatic()
 	else
 	{
 		/* subject */
-		uint32_t box = mi.msgflags & RS_MSG_BOXMASK;
+        uint32_t box = mi.msgflags & RS_MSG_BOXMASK;
 		switch(box)
 		{
 			case RS_MSG_SENTBOX:
@@ -128,14 +145,14 @@ void MsgItem::updateItemStatic()
 
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
-		
-	if(mi.msgflags & RS_MSG_ENCRYPTED)
-		msgLabel->setText(RsHtml().formatText(NULL, QString("[%1]").arg(tr("Encrypted message")), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	else
-		msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mi.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	mMsg = QString::fromUtf8(mi.msg.c_str());
+
+	if (wasExpanded() || expandFrame->isVisible()) {
+		fillExpandFrame();
+	}
 
 	std::list<FileInfo>::iterator it;
-	for(it = mi.files.begin(); it != mi.files.end(); it++)
+	for(it = mi.files.begin(); it != mi.files.end(); ++it)
 	{
 		/* add file */
         SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.rspeerid_srcId);
@@ -147,9 +164,6 @@ void MsgItem::updateItemStatic()
 
 	playButton->setEnabled(false);
 	
-	if(mi.msgflags & RS_MSG_ENCRYPTED)
-		replyButton->setEnabled(false) ;
-
 	if (mIsHome)
 	{
 		/* disable buttons */
@@ -159,12 +173,12 @@ void MsgItem::updateItemStatic()
 		/* hide buttons */
 		clearButton->hide();
 	}
-	else
-	{
-		//deleteButton->setEnabled(false);
-	}
 }
 
+void MsgItem::fillExpandFrame()
+{
+	msgLabel->setText(RsHtml().formatText(NULL, mMsg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+}
 
 void MsgItem::updateItem()
 {
@@ -177,7 +191,7 @@ void MsgItem::updateItem()
 
 	/* Very slow Tick to check when all files are downloaded */
 	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
+	for(it = mFileItems.begin(); it != mFileItems.end(); ++it)
 	{
 		if (!(*it)->done())
 		{
@@ -194,24 +208,47 @@ void MsgItem::updateItem()
 
 void MsgItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(expandFrame->isHidden());
+}
 
-	if (expandFrame->isHidden())
+void MsgItem::doExpand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open)
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-        expandButton->setToolTip(tr("Hide"));
+		expandButton->setToolTip(tr("Hide"));
+
+		mCloseOnRead = false;
+		rsMail->MessageRead(mMsgId, false);
+		mCloseOnRead = true;
 	}
 	else
 	{
 		expandFrame->hide();
-        expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-        expandButton->setToolTip(tr("Expand"));
+		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
+	emit sizeChanged(this);
+
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
 }
 
+void MsgItem::expandFill(bool first)
+{
+	FeedItem::expandFill(first);
+
+	if (first) {
+		fillExpandFrame();
+	}
+}
 
 void MsgItem::removeItem()
 {
@@ -248,11 +285,11 @@ void MsgItem::deleteMsg()
 	std::cerr << "MsgItem::deleteMsg()";
 	std::cerr << std::endl;
 #endif
-	if (rsMsgs)
+	if (rsMail)
 	{
-		rsMsgs->MessageDelete(mMsgId);
+		rsMail->MessageDelete(mMsgId);
 
-		hide(); /* will be cleaned up next refresh */
+		removeItem();
 	}
 }
 
@@ -284,4 +321,24 @@ void MsgItem::playMedia()
 	std::cerr << "MsgItem::playMedia()";
 	std::cerr << std::endl;
 #endif
+}
+
+void MsgItem::checkMessageReadStatus()
+{
+	if (!mCloseOnRead) {
+		return;
+	}
+
+	MessageInfo msgInfo;
+	if (!rsMail->getMessage(mMsgId, msgInfo)) {
+		std::cerr << "MsgItem::checkMessageReadStatus() Couldn't find Msg" << std::endl;
+		return;
+	}
+
+	if (msgInfo.msgflags & RS_MSG_NEW) {
+		/* Message status is still "new" */
+		return;
+	}
+
+	removeItem();
 }

@@ -73,7 +73,11 @@ bool IdlePlatform::init()
 	old_handler = XSetErrorHandler(xerrhandler);
 
 	int event_base, error_base;
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	if(QX11Info::isPlatformX11() && XScreenSaverQueryExtension(QX11Info::display(), &event_base, &error_base)) {
+#else
 	if(XScreenSaverQueryExtension(QApplication::desktop()->screen()->x11Info().display(), &event_base, &error_base)) {
+#endif
 		d->ss_info = XScreenSaverAllocInfo();
 		return true;
 	}
@@ -84,7 +88,11 @@ int IdlePlatform::secondsIdle()
 {
 	if(!d->ss_info)
 		return 0;
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	if(!QX11Info::isPlatformX11() || !XScreenSaverQueryInfo(QX11Info::display(), QX11Info::appRootWindow(), d->ss_info))
+#else
 	if(!XScreenSaverQueryInfo(QApplication::desktop()->screen()->x11Info().display(), QX11Info::appRootWindow(), d->ss_info))
+#endif
 		return 0;
 	return d->ss_info->idle / 1000;
 }
@@ -262,7 +270,7 @@ pascal void IdlePlatform::Private::IdleTimerAction(EventLoopTimerRef, EventLoopI
 			break;
 		case kEventLoopIdleTimerIdling:
 			// Called every time the timer fires (i.e. every second).
-		   ((IdlePlatform::Private*)inUserData)->mSecondsIdle++;
+		   ++((IdlePlatform::Private*)inUserData)->mSecondsIdle;
 			break;
 	}
 }

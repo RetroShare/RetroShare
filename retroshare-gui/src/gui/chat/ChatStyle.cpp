@@ -101,6 +101,8 @@
 #include <QApplication>
 #include <QColor>
 #include <QXmlStreamReader>
+#include <QDomDocument>
+#include <QTextStream>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
@@ -142,35 +144,30 @@ void ChatStyle::styleChanged(int styleType)
     }
 }
 
-static QString getBaseDir()
+static QStringList getBaseDirList()
 {
-    // application path
-    QString baseDir = QString::fromUtf8(RsAccounts::ConfigDirectory().c_str());
+    // Search chat styles in config dir and data dir (is application dir for portable)
+    QStringList baseDirs;
+    baseDirs.append(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
+    baseDirs.append(QString::fromUtf8(RsAccounts::DataDirectory().c_str()));
 
-#ifdef WIN32
-    if (RsInit::isPortable ()) {
-        // application dir for portable version
-        baseDir = QApplication::applicationDirPath();
-    }
-#endif
-
-    return baseDir;
+    return baseDirs;
 }
 
 bool ChatStyle::setStylePath(const QString &stylePath, const QString &styleVariant)
 {
     m_styleType = TYPE_UNKNOWN;
 
-    m_styleDir.setPath(getBaseDir());
-    if (m_styleDir.cd(stylePath) == false) {
-        m_styleDir = QDir("");
-        m_styleVariant.clear();
-        return false;
+    foreach (QString dir, getBaseDirList()) {
+        m_styleDir.setPath(dir);
+        if (m_styleDir.cd(stylePath)) {
+            m_styleVariant = styleVariant;
+            return true;
+        }
     }
-
-    m_styleVariant = styleVariant;
-
-    return true;
+    m_styleDir.setPath("");
+    m_styleVariant.clear();
+    return false;
 }
 
 bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
@@ -197,7 +194,7 @@ bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
     m_styleType = styleType;
 
     // reset cache
-    for (int i = 0; i < FORMATMSG_COUNT; i++) {
+    for (int i = 0; i < FORMATMSG_COUNT; ++i) {
         m_style[i].clear();
     }
 
@@ -268,8 +265,57 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
     return style;
 }
 
-QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
+QString ChatStyle::formatMessage(enumFormatMessage type
+                                 , const QString &name
+                                 , const QDateTime &timestamp
+                                 , const QString &message
+                                 , unsigned int flag
+                                 , const QColor &backgroundColor /*= Qt::white*/
+                                 )
 {
+	bool me = false;
+	QDomDocument doc ;
+	QString styleOptimized ;
+	QString errorMsg ; int errorLine ; int errorColumn ;
+	QString messageBody = message ;
+	me = me || message.trimmed().startsWith("/me ");
+	if (doc.setContent(messageBody, &errorMsg, &errorLine, &errorColumn)) {
+		QDomElement body = doc.documentElement();
+		if (!body.isNull()){
+			messageBody = "";
+			int count = body.childNodes().count();
+			for (int curs = 0; curs < count; ++curs){
+				QDomNode it = body.childNodes().item(curs);
+				if (it.nodeName().toLower() != "style") {
+					//find out if the message starts with /me
+					if(it.isText()){
+						me = me || it.toText().data().trimmed().startsWith("/me ");
+					}else if(it.isElement()){
+						me = me || it.toElement().text().trimmed().startsWith("/me ");
+					}
+					QString str;
+					QTextStream stream(&str);
+					it.toElement().save(stream, -1);
+					//remove Body element, as it was saved with...
+					if ((str.startsWith("<body>")) && (str.endsWith( "</body>"))) {
+						str.remove(0, 6);
+						str.chop(     7);
+					}
+					//remove first <span> if it is without attribute
+					if ((str.startsWith("<span>")) && (str.endsWith( "</span>"))) {
+						str.remove(0, 6);
+						str.chop(     7);
+					}
+					messageBody += str;
+				} else {
+					QDomText text = it.firstChild().toText();
+					styleOptimized = text.data();
+				}
+			}
+		}
+	}
+	if (messageBody.isEmpty()) messageBody = message;
+
     QString style = m_style[type];
 
     if (style.isEmpty()) {
@@ -292,46 +338,71 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         case FORMATMSG_SYSTEM:
             style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_SYSTEM);
             break;
-        }
+		}
 
         if (style.isEmpty()) {
             // default style
             style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
-        }
+		}
 
         m_style[type] = style;
-    }
+	}
 
 #ifdef COLORED_NICKNAMES
-    QColor color;
-    if (flag & CHAT_FORMATMSG_SYSTEM) {
-        color = Qt::darkBlue;
-    } else {
-        // Calculate color from the name
-//        uint hash = 0x73ffe23a;
-//        for (int i = 0; i < name.length(); ++i) {
-//            hash = (hash ^ 0x28594888) + ((uint32_t) name[i].toLatin1() << (i % 4));
-//        }
+	QColor color;
+	QString colorName;
 
-        uint hash = 0;
-        for (int i = 0; i < name.length(); ++i) {
-            hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
-        }
+	if (flag & CHAT_FORMATMSG_SYSTEM) {
+		color = Qt::darkBlue;
+	} else {
+		// Calculate color from the name
+		uint hash = 0;
+		for (int i = 0; i < name.length(); ++i) {
+			hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
+		}
 
-        color.setHsv(hash, 255, 150);
-    }
+		color.setHsv(hash, 255, 150);
+		// Always fix colors
+		qreal desiredContrast = Settings->valueFromGroup("Chat", "MinimumContrast", 4.5).toDouble();
+		colorName = color.name();
+		RsHtml::findBestColor(colorName, backgroundColor, desiredContrast);
+	}
 #else
-    Q_UNUSED(flag);
+	Q_UNUSED(flag);
+	Q_UNUSED(backgroundColor);
 #endif
 
-    QString formatMsg = style.replace("%name%", RsHtml::plainText(name))
-                             .replace("%date%", DateTime::formatDate(timestamp.date()))
-                             .replace("%time%", DateTime::formatTime(timestamp.time()))
+	QString strName = RsHtml::plainText(name).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+	QString strDate = DateTime::formatDate(timestamp.date()).prepend(QString("<a name=\"date\">")).append(QString("</a>"));
+	QString strTime = DateTime::formatTime(timestamp.time()).prepend(QString("<a name=\"time\">")).append(QString("</a>"));
+
+	int bi = name.lastIndexOf(QRegExp(" \\(.*\\)")); //trim location from the end
+	QString strShortName = RsHtml::plainText(name.left(bi)).prepend(QString("<a name=\"name\">")).append(QString("</a>"));
+
+	//handle /me
+	//%nome% and %me% for including formatting conditionally
+	//meName class for modifying the style of the name in the palce of /me
+	if(me){
+		messageBody = messageBody.replace(messageBody.indexOf("/me "), 3, strShortName.prepend(QString("<span class=\"meName\">")).append(QString("</span>"))); //replace only the first /me
+		style = style.remove(QRegExp("%nome%.*%/nome%")).remove("%me%").remove("%/me%");
+	} else {
+		style = style.remove(QRegExp("%me%.*%/me%")).remove("%nome%").remove("%/nome%");
+	}
+
+	QString formatMsg = style.replace("%name%", strName)
+							 .replace("%shortname%", strShortName)
+	                         .replace("%date%", strDate)
+	                         .replace("%time%", strTime)
 #ifdef COLORED_NICKNAMES
-                             .replace("%color%", color.name())
+	                         .replace("%color%", colorName)
 #endif
-                             .replace("%message%", message);
-
+	                         .replace("%message%", messageBody ) ;
+	if ( !styleOptimized.isEmpty() ) {
+		int pos = formatMsg.indexOf("</style>") ;
+		if ( pos >= 0 ) {
+			formatMsg.insert(pos, styleOptimized) ;
+		}
+	}
     return formatMsg;
 }
 
@@ -434,9 +505,6 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
 {
     styles.clear();
 
-    // base dir
-    QDir baseDir(getBaseDir());
-
     ChatStyleInfo standardInfo;
     QString stylePath;
 
@@ -479,25 +547,27 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
         return false;
     }
 
-    QDir dir(baseDir);
-    if (dir.cd("stylesheets") == false) {
-        // no user styles available
-        return true;
-    }
-
-    // get all style directories
-    QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
-
-    // iterate style directories and get info
-    for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); it++) {
-        QDir styleDir = QDir(it->absoluteFilePath());
-        if (styleDir.cd(stylePath) == false) {
-            // no user styles available
+    foreach (QDir baseDir, getBaseDirList()) {
+        QDir dir(baseDir);
+        if (dir.cd("stylesheets") == false) {
+            // no user styles available here
             continue;
         }
-        ChatStyleInfo info;
-        if (getStyleInfo(styleDir.absolutePath(), baseDir.relativeFilePath(styleDir.absolutePath()), info)) {
-            styles.append(info);
+
+        // get all style directories
+        QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
+
+        // iterate style directories and get info
+        for (QFileInfoList::iterator it = dirList.begin(); it != dirList.end(); ++it) {
+            QDir styleDir = QDir(it->absoluteFilePath());
+            if (styleDir.cd(stylePath) == false) {
+                // no user styles available
+                continue;
+            }
+            ChatStyleInfo info;
+            if (getStyleInfo(styleDir.absolutePath(), baseDir.relativeFilePath(styleDir.absolutePath()), info)) {
+                styles.append(info);
+            }
         }
     }
 
@@ -530,7 +600,7 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files, QDir::Name);
 
     // iterate variants
-    for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); file++) {
+    for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); ++file) {
 #ifndef COLORED_NICKNAMES
         if (file->baseName().toLower() == "colored") {
             continue;

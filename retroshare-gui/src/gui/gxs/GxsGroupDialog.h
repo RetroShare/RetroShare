@@ -63,14 +63,14 @@ public:
 #define GXS_GROUP_FLAGS_SHAREKEYS		0x00000020
 #define GXS_GROUP_FLAGS_PERSONALSIGN		0x00000040
 #define GXS_GROUP_FLAGS_COMMENTS		0x00000080
-
 #define GXS_GROUP_FLAGS_EXTRA			0x00000100
+#define GXS_GROUP_FLAGS_ANTI_SPAM   		0x00000200
 
 /*** Default flags are used to determine privacy of group, signatures required ***
  *** whether publish or id and whether comments are allowed or not             ***/
 
-#define GXS_GROUP_DEFAULTS_DISTRIB_MASK		0x0000000f
-#define GXS_GROUP_DEFAULTS_PUBLISH_MASK		0x000000f0
+#define GXS_GROUP_DEFAULTS_DISTRIB_MASK	0x0000000f
+#define GXS_GROUP_DEFAULTS_PUBLISH_MASK	0x000000f0
 #define GXS_GROUP_DEFAULTS_PERSONAL_MASK	0x00000f00
 #define GXS_GROUP_DEFAULTS_COMMENTS_MASK	0x0000f000
 
@@ -78,17 +78,21 @@ public:
 #define GXS_GROUP_DEFAULTS_DISTRIB_GROUP	0x00000002
 #define GXS_GROUP_DEFAULTS_DISTRIB_LOCAL	0x00000004
 
-#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN		0x00000010
+#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN	0x00000010
 #define GXS_GROUP_DEFAULTS_PUBLISH_THREADS	0x00000020
 #define GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED	0x00000040
 #define GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED	0x00000080
 
-#define GXS_GROUP_DEFAULTS_PERSONAL_PGP		0x00000100
+#define GXS_GROUP_DEFAULTS_PERSONAL_PGP	0x00000100
 #define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED	0x00000200
 #define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB	0x00000400
 
-#define GXS_GROUP_DEFAULTS_COMMENTS_YES		0x00001000
+#define GXS_GROUP_DEFAULTS_COMMENTS_YES	0x00001000
 #define GXS_GROUP_DEFAULTS_COMMENTS_NO		0x00002000
+
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP		0x00100000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK		0x00200000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN	0x00400000
 
 /*!
  * The aim of this dialog is to be convenient to encapsulate group
@@ -143,6 +147,8 @@ public:
 	 */
 	GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
+	~GxsGroupDialog();
+
 	uint32_t mode() { return mMode; }
 
 	// overloaded from TokenResponse
@@ -152,7 +158,6 @@ private:
 	void newGroup();
 	void init();
 	void initMode();
-	void createNewGxsId();
 
 	// Functions that can be overloaded for specific stuff.
 

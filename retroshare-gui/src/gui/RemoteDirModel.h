@@ -72,10 +72,13 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 		void openSelected(const QModelIndexList &list);
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
-		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
+        void getFilePath(const QModelIndex& index, std::string& fullpath);
+        void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
-		const DirDetailsVector *requestDirDetails(void *ref, bool remote) const;
+        bool requestDirDetails(void *ref, bool remote,DirDetails& d) const;
 		virtual void update() {}
+
+        virtual void updateRef(const QModelIndex&) const =0;
 
 	public:
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
@@ -91,7 +94,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(FileStorageFlags f) ;
-		static QString getGroupsString(const std::list<std::string>&) ;
+        static QString getGroupsString(const std::list<RsNodeGroupId> &) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 //		void getAgeIndicatorRec(const DirDetails &details, QString &ret) const;
 
@@ -166,7 +169,9 @@ class TreeStyle_RDM: public RetroshareDirModel
 		virtual ~TreeStyle_RDM() ;
 
 	protected:
-		/* These are all overloaded Virtual Functions */
+        virtual void updateRef(const QModelIndex&) const ;
+
+        /* These are all overloaded Virtual Functions */
 		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -189,7 +194,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 	public:
 		FlatStyle_RDM(bool mode)
-			: RetroshareDirModel(mode)
+            : RetroshareDirModel(mode), _ref_mutex("Flat file list")
 		{
 			_needs_update = true ;
 		}
@@ -202,7 +207,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 		void updateRefs() ;
 
 	protected:
-		virtual void postMods();
+        virtual void updateRef(const QModelIndex&) const {}
+        virtual void postMods();
 
 		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -217,7 +223,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		QString computeDirectoryPath(const DirDetails& details) const ;
 
-		std::vector<std::pair<void *,QString> > _ref_entries ;// used to store the refs to display
+        mutable RsMutex _ref_mutex ;
+        std::vector<void *> _ref_entries ;// used to store the refs to display
 		std::vector<void *> _ref_stack ;		// used to store the refs to update
 		bool _needs_update ;
 };

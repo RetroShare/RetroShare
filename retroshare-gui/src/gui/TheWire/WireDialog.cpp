@@ -178,7 +178,7 @@ bool WireDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::
 	std::multimap<double, std::string>::iterator sit;
 	std::list<std::string>::const_iterator it;
 	
-	for(it = albumIds.begin(); it != albumIds.end(); it++)
+	for(it = albumIds.begin(); it != albumIds.end(); ++it)
 	{
 		RsPhotoAlbum album;
 		rsPhoto->getAlbum(*it, album);
@@ -192,7 +192,7 @@ bool WireDialog::FilterNSortAlbums(const std::list<std::string> &albumIds, std::
 	}
 
 	int i;
-	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); sit++, i++)
+	for (sit = sortedAlbums.begin(), i = 0; (sit != sortedAlbums.end()) && (i < count); ++sit, ++i)
 	{
 		filteredAlbumIds.push_back(sit->second);
 	}
@@ -209,7 +209,7 @@ bool WireDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::
 	std::list<std::string>::const_iterator it;
 
 	int i = 0;
-	for(it = photoIds.begin(); it != photoIds.end(); it++, i++)
+	for(it = photoIds.begin(); it != photoIds.end(); ++it, ++i)
 	{
 		RsPhotoPhoto photo;
 		rsPhoto->getPhoto(*it, photo);
@@ -221,7 +221,7 @@ bool WireDialog::FilterNSortPhotos(const std::list<std::string> &photoIds, std::
 		}
 	}
 
-	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); sit++, i++)
+	for (sit = sortedPhotos.begin(), i = 0; (sit != sortedPhotos.end()) && (i < count); ++sit, ++i)
 	{
 		filteredPhotoIds.push_back(sit->second);
 	}
@@ -253,7 +253,7 @@ void WireDialog::insertAlbums()
 	int count = MAX_ALBUMS;
 	FilterNSortAlbums(albumIds, filteredAlbumIds, count);
 
-	for(it = filteredAlbumIds.begin(); it != filteredAlbumIds.end(); it++)
+	for(it = filteredAlbumIds.begin(); it != filteredAlbumIds.end(); ++it)
 	{
 		addAlbum(*it);
 	}
@@ -312,7 +312,7 @@ void WireDialog::clearAlbums()
 	
 	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
         int count = alayout->count();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QLayoutItem *litem = alayout->itemAt(i);
 		if (!litem)
@@ -337,7 +337,7 @@ void WireDialog::clearAlbums()
 		}
 	}
 	
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
+	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
 	{
 		PulseItem *item = *pit;
 		alayout->removeWidget(item);
@@ -357,7 +357,7 @@ void WireDialog::clearPhotos()
 	
 	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
         int count = alayout->count();
-	for(int i = 0; i < count; i++)
+	for(int i = 0; i < count; ++i)
 	{
 		QLayoutItem *litem = alayout->itemAt(i);
 		if (!litem)
@@ -382,7 +382,7 @@ void WireDialog::clearPhotos()
 		}
 	}
 	
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
+	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
 	{
 		PulseItem *item = *pit;
 		alayout->removeWidget(item);
@@ -409,7 +409,7 @@ void WireDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
 	std::list<std::string> filteredPhotoIds;
 	std::list<std::string>::const_iterator it;
 
-	for(it = albumIds.begin(); it != albumIds.end(); it++)
+	for(it = albumIds.begin(); it != albumIds.end(); ++it)
 	{
 		rsPhoto->getPhotoList(*it, photoIds);
 	}
@@ -421,7 +421,7 @@ void WireDialog::insertPhotosForAlbum(const std::list<std::string> &albumIds)
 
 	FilterNSortPhotos(photoIds, filteredPhotoIds, MAX_PHOTOS);
 
-	for(it = filteredPhotoIds.begin(); it != filteredPhotoIds.end(); it++)
+	for(it = filteredPhotoIds.begin(); it != filteredPhotoIds.end(); ++it)
 	{
 		addPhoto(*it);
 	}

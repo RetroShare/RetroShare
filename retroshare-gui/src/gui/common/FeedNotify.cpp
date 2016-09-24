@@ -44,12 +44,12 @@ void FeedNotify::setNotifyEnabled(bool /*enabled*/)
 {
 }
 
-QWidget *FeedNotify::feedItem(FeedHolder */*parent*/)
+FeedItem *FeedNotify::feedItem(FeedHolder */*parent*/)
 {
 	return NULL;
 }
 
-QWidget *FeedNotify::testFeedItem(FeedHolder */*parent*/)
+FeedItem *FeedNotify::testFeedItem(FeedHolder */*parent*/)
 {
 	return NULL;
 }

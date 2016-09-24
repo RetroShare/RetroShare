@@ -1,10 +1,13 @@
 #pragma once 
 
 #include <QLabel>
-#include "interface/rsvoip.h"
+#include "interface/rsVOIP.h"
+
+#include "opencv2/opencv.hpp"
+
+#include "gui/VideoProcessor.h"
 
 class VideoEncoder ;
-class CvCapture ;
 
 // Responsible from displaying the video. The source of the video is
 // a VideoDecoder object, which uses a codec.
@@ -12,7 +15,7 @@ class CvCapture ;
 class QVideoOutputDevice: public QLabel
 {
 	public:
-		QVideoOutputDevice(QWidget *parent) ;
+		QVideoOutputDevice(QWidget *parent = 0) ;
 		
 		void showFrame(const QImage&) ;
 		void showFrameOff() ;
@@ -26,12 +29,12 @@ class QVideoInputDevice: public QObject
 	Q_OBJECT
 
 	public:
-		QVideoInputDevice(QWidget *parent) ;
+		QVideoInputDevice(QWidget *parent = 0) ;
 		~QVideoInputDevice() ;
 
 		// Captured images are sent to this encoder. Can be NULL.
 		//
-		void setVideoEncoder(VideoEncoder *venc) { _video_encoder = venc ; }
+		void setVideoProcessor(VideoProcessor *venc) { _video_processor = venc ; }
 
 		// All images received will be echoed to this target. We could use signal/slots, but it's
 		// probably faster this way. Can be NULL.
@@ -40,24 +43,30 @@ class QVideoInputDevice: public QObject
 	
 		// get the next encoded video data chunk.
 		//
-		bool getNextEncodedPacket(RsVoipDataChunk&) ;
+		bool getNextEncodedPacket(RsVOIPDataChunk&) ;
 
+        	// gets the estimated current bandwidth required to transmit the encoded data, in B/s
+        	//
+        	uint32_t currentBandwidth() const ;
+        
+        	// control
+        
 		void start() ;
 		void stop() ;
-
-	protected slots:
+		bool stopped();
+protected slots:
 		void grabFrame() ;
 
 	signals:
 		void networkPacketReady() ;
 
 	private:
-		VideoEncoder *_video_encoder ;
+		VideoProcessor *_video_processor ;
 		QTimer *_timer ;
-		CvCapture *_capture_device ;
+		cv::VideoCapture *_capture_device ;
 
 		QVideoOutputDevice *_echo_output_device ;
 
-		std::list<RsVoipDataChunk> _out_queue ;
+		std::list<RsVOIPDataChunk> _out_queue ;
 };
 

@@ -26,7 +26,6 @@
 
 #include <retroshare-gui/configpage.h>
 #include "ui_SoundPage.h"
-#include "gui/SoundManager.h"
 
 class SoundPage : public ConfigPage
 {
@@ -43,13 +42,14 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/images/sound.png") ; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/sound.svg") ; }
 	virtual QString pageName() const { return tr("Sound") ; }
 	virtual QString helpText() const { return ""; }
 
 private slots:
 	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void filenameChanged(QString filename);
+	void defaultButtonClicked();
 	void browseButtonClicked();
 	void playButtonClicked();
 

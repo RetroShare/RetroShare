@@ -39,6 +39,7 @@
 #include "util/rsstring.h"
 #endif
 #include "util/rsdiscspace.h"
+#include "util/rsmemory.h"
 
 #include "ft/ftcontroller.h"
 
@@ -69,20 +70,18 @@
  * #define DEBUG_DWLQUEUE 1
  *****/
 
-static const int32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
+static const int32_t SAVE_TRANSFERS_DELAY 			= 301	; // save transfer progress every 301 seconds.
 static const int32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 240	; // time after which an inactive chunk is released
 static const int32_t MAX_TIME_INACTIVE_REQUEUED 	= 120 ; // time after which an inactive ftFileControl is bt-queued
-static const int32_t TIMOUT_CACHE_FILE_TRANSFER 	= 800 ; // time after which cache transfer gets cancelled if inactive.
 
 static const int32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
-static const int32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
 
 const uint32_t FT_CNTRL_STANDARD_RATE = 10 * 1024 * 1024;
 const uint32_t FT_CNTRL_SLOW_RATE     = 100   * 1024;
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
-	 mState(DOWNLOADING), mSize(0), mFlags(0)
+	 mState(DOWNLOADING), mSize(0), mFlags(0), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
 {
 	return;
 }
@@ -93,13 +92,13 @@ ftFileControl::ftFileControl(std::string fname,
 		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags)
+	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
 {
 	return;
 }
 
-ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
-	:CacheTransfer(cs), p3Config(), 
+ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
+    : p3Config(),
 	last_save_time(0),
 	last_clean_time(0),
 	mDataplex(dm),
@@ -115,6 +114,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceCont
 	_max_active_downloads = 5 ; // default queue size
 	_min_prioritized_transfers = 3 ;
 	/* TODO */
+    cnt = 0 ;
 }
 
 void ftController::setTurtleRouter(p3turtle *pt) { mTurtle = pt ; }
@@ -169,9 +169,9 @@ void ftController::addFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 
     std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
-//#ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
-//#endif
+#endif
 	if(it != mDownloads.end())
 	{
 		it->second->mTransfer->addFileSource(peer_id);
@@ -209,19 +209,12 @@ void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::run()
+void ftController::data_tick()
 {
-
 	/* check the queues */
-	uint32_t cnt = 0 ;
 
-	while(isRunning())
-	{
-#ifdef WIN32
-		Sleep(1000);
-#else
-		sleep(1);
-#endif
+		//Waiting 1 sec before start
+		usleep(1*1000*1000); // 1 sec
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::run()";
@@ -236,7 +229,6 @@ void ftController::run()
 		time_t now = time(NULL) ;
 		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
-			cleanCacheDownloads() ;
 			searchForDirectSources() ;
 
 			IndicateConfigChanged() ;
@@ -279,26 +271,23 @@ void ftController::run()
 
 		if(cnt++ % 10 == 0)
 			checkDownloadQueue() ;
-	}
-
 }
 
 void ftController::searchForDirectSources()
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
-			if(! (it->second->mFlags & RS_FILE_REQ_CACHE))
-			{
-				FileInfo info ;	// info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
+        {
+            FileInfo info ;	// info needs to be re-allocated each time, to start with a clear list of peers (it's not cleared down there)
 
-				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
-					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
-						if(rsPeers->servicePermissionFlags(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
-							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
-								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, pit->peerId));
-			}
+            if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+                for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit)
+                    if(rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL)
+                        if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
+                            setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, pit->peerId));
+        }
 }
 
 void ftController::tickTransfers()
@@ -312,7 +301,7 @@ void ftController::tickTransfers()
 #endif
 	// Collect all non queued files.
 	//
-    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); ++it)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
 			it->second->mTransfer->tick() ;
 }
@@ -340,37 +329,6 @@ void ftController::setPriority(const RsFileHash& hash,DwlSpeed p)
 
 	if(it != mDownloads.end())
 		it->second->mTransfer->setDownloadPriority(p) ;
-}
-
-void ftController::cleanCacheDownloads()
-{
-    std::vector<RsFileHash> toCancel ;
-	time_t now = time(NULL) ;
-
-	{
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-
-        for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			if (((it->second)->mFlags & RS_FILE_REQ_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
-				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
-			{
-#ifdef CONTROL_DEBUG
-				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second)->mCreateTime);
-				std::cerr << std::endl;
-#endif
-				if (now > (it->second)->mCreator->creationTimeStamp() + TIMOUT_CACHE_FILE_TRANSFER) 
-				{
-#ifdef CONTROL_DEBUG
-					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second)->mHash << ", time=" << (it->second)->mCreateTime << ", now = " << time(NULL) ;
-					std::cerr << std::endl;
-#endif
-					toCancel.push_back((it->second)->mHash);
-				}
-			}
-	}
-
-	for(uint32_t i=0;i<toCancel.size();++i)
-		FileCancel(toCancel[i]);
 }
 
 /* Called every 10 seconds or so */
@@ -453,17 +411,13 @@ void ftController::checkDownloadQueue()
 	for(uint32_t p=0;p<_queue.size();++p)
 	{
 		if(p < _min_prioritized_transfers)
-			if(_queue[p]->mFlags & RS_FILE_REQ_CACHE)		// cache file. add to potential move list
-				to_move_before.push_back(p) ;
-			else
 				++user_transfers ;									// count one more user file in the prioritized range.
 		else
 		{
 			if(to_move_after.size() + user_transfers >= _min_prioritized_transfers)	// we caught enough transfers to move back to the top of the queue.
 				break ;
 
-			if(!(_queue[p]->mFlags & RS_FILE_REQ_CACHE))	// non cache file. add to potential move list
-				to_move_after.push_back(p) ;
+            to_move_after.push_back(p) ;
 		}
 	}
 	uint32_t to_move = (uint32_t)std::max(0,(int)_min_prioritized_transfers - (int)user_transfers) ;	// we move as many transfers as needed to get _min_prioritized_transfers user transfers.
@@ -488,27 +442,6 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 		//
 		case FT_FILECONTROL_QUEUE_ADD_END:			 _queue.push_back(ftfc) ;
 																 locked_checkQueueElement(_queue.size()-1) ;
-																 break ;
-		case FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE:
-																 {
-																	 // We add the transfer just before the first non cache transfer.
-																	 // This is costly, so only use this in case we really need it.
-																	 //
-																	 uint32_t pos =0;
-																	 while(pos < _queue.size() && (pos < _min_prioritized_transfers || (_queue[pos]->mFlags & RS_FILE_REQ_CACHE)>0) )
-																		 ++pos ;
-
-																	 _queue.push_back(NULL) ;
-
-																	 for(int i=int(_queue.size())-1;i>(int)pos;--i)
-																	 {
-																		 _queue[i] = _queue[i-1] ;
-																		 locked_checkQueueElement(i) ;
-																	 }
-
-																	 _queue[pos] = ftfc ;
-																	 locked_checkQueueElement(pos) ;
-																 }
 																 break ;
 	}
 }
@@ -647,7 +580,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer) ;
+            mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer,true) ;
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
@@ -755,8 +688,14 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 	size_t T=0;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = malloc(BUFF_SIZE) ;
+	void *buffer = rs_malloc(BUFF_SIZE) ;
 
+    	if(buffer == NULL)
+        {
+	    fclose (in);
+	    fclose (out);
+            return false ;
+        }
 	bool bRet = true;
 
 	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
@@ -788,8 +727,8 @@ bool ftController::completeFile(const RsFileHash& hash)
 	std::string path;
 	std::string name;
 	uint64_t    size = 0;
-	uint32_t    state = 0;
-	uint32_t    period = 0;
+    uint32_t    state = 0;
+    uint32_t    period = 0;
 	TransferRequestFlags flags ;
 	TransferRequestFlags extraflags ;
 	uint32_t    completeCount = 0;
@@ -890,12 +829,8 @@ bool ftController::completeFile(const RsFileHash& hash)
 		locked_queueRemove(it->second->mQueuePosition) ;
 
 		/* switch map */
-		if (!(fc->mFlags & RS_FILE_REQ_CACHE)) /* clean up completed cache files automatically */
-		{
-			mCompleted[fc->mHash] = fc;
-			completeCount = mCompleted.size();
-		} else
-			delete fc ;
+        mCompleted[fc->mHash] = fc;
+        completeCount = mCompleted.size();
 
 		mDownloads.erase(it);
 
@@ -911,51 +846,14 @@ bool ftController::completeFile(const RsFileHash& hash)
 
 	/* If it has a callback - do it now */
 
-	if(flags & ( RS_FILE_REQ_CACHE | RS_FILE_REQ_EXTRA))// | RS_FILE_HINTS_MEDIA))
+    if(flags & RS_FILE_REQ_EXTRA)// | RS_FILE_HINTS_MEDIA))
 	{
-#ifdef CONTROL_DEBUG
-	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_REQ_CACHE | RS_FILE_REQ_EXTRA ));//| RS_FILE_HINTS_MEDIA)) ;
-	  std::cerr << std::endl;
-#endif
-	  if(flags & RS_FILE_REQ_CACHE)
-	  {
-		  /* callback */
-		  if (state == ftFileControl::COMPLETED)
-		  {
-#ifdef CONTROL_DEBUG
-			  std::cerr << "ftController::completeFile() doing Callback : Success";
-			  std::cerr << std::endl;
-#endif
-
-			  CompletedCache(hash);
-		  }
-		  else
-		  {
-#ifdef CONTROL_DEBUG
-			  std::cerr << "ftController::completeFile() Cache Callback : Failed";
-			  std::cerr << std::endl;
-#endif
-			  FailedCache(hash);
-		  }
-	  }
-
-	  if(flags & RS_FILE_REQ_EXTRA)
-	  {
 #ifdef CONTROL_DEBUG
 		  std::cerr << "ftController::completeFile() adding to ExtraList";
 		  std::cerr << std::endl;
 #endif
 
 		  mExtraList->addExtraFile(path, hash, size, period, extraflags);
-	  }
-
-//	  if(flags & RS_FILE_HINTS_MEDIA)
-//	  {
-//#ifdef CONTROL_DEBUG
-//		std::cerr << "ftController::completeFile() NULL MEDIA callback";
-//		std::cerr << std::endl;
-//#endif
-//	  }
 	}
 	else
 	{
@@ -966,14 +864,12 @@ bool ftController::completeFile(const RsFileHash& hash)
 	}
 
 	/* Notify GUI */
-	if ((flags & RS_FILE_REQ_CACHE) == 0) {
-        RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash.toStdString(), name, "");
+    RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash.toStdString(), name, "");
 
-        RsServer::notify()->notifyDownloadComplete(hash.toStdString());
-		RsServer::notify()->notifyDownloadCompleteCount(completeCount);
+    RsServer::notify()->notifyDownloadComplete(hash.toStdString());
+    RsServer::notify()->notifyDownloadCompleteCount(completeCount);
 
-		rsFiles->ForceDirectoryCheck() ;
-	}
+    rsFiles->ForceDirectoryCheck() ;
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
@@ -1135,17 +1031,16 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 
 	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
 	//
-	if(!(flags & RS_FILE_REQ_CACHE))
-        for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
-			if(!(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL))
-			{
-                std::list<RsPeerId>::iterator tmp(it) ;
-				++tmp ;
-				srcIds.erase(it) ;
-				it = tmp ;
-			}
-			else
-				++it ;
+    for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
+        if(!(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL))
+        {
+            std::list<RsPeerId>::iterator tmp(it) ;
+            ++tmp ;
+            srcIds.erase(it) ;
+            it = tmp ;
+        }
+        else
+            ++it ;
 	
     std::list<RsPeerId>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
@@ -1155,7 +1050,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	std::cerr << hash << "," << size << "," << dest << ",";
 	std::cerr << flags << ",<";
 
-	for(it = srcIds.begin(); it != srcIds.end(); it++)
+	for(it = srcIds.begin(); it != srcIds.end(); ++it)
 	{
 		std::cerr << *it << ",";
 	}
@@ -1192,8 +1087,8 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 			 * (needed for channels).
 			 */
 
-			for(it = srcIds.begin(); it != srcIds.end(); it++)
-				if(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL)
+			for(it = srcIds.begin(); it != srcIds.end(); ++it)
+                if(rsPeers->servicePermissionFlags(*it) & RS_NODE_PERM_DIRECT_DL)
 				{
 					uint32_t i, j;
 					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
@@ -1211,11 +1106,9 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 					(dit->second)->mTransfer->addFileSource(*it);
 					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
-
-					IndicateConfigChanged(); /* new peer for transfer -> save */
 				}
 
-			if (srcIds.size() == 0)
+			if (srcIds.empty())
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << "ftController::FileRequest() WARNING: No Src Peers";
@@ -1242,7 +1135,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 
 			/* if the sources don't exist already - add in */
-			for(pit = info.peers.begin(); pit != info.peers.end(); pit++)
+			for(pit = info.peers.begin(); pit != info.peers.end(); ++pit)
 			{
 #ifdef CONTROL_DEBUG
                                 std::cerr << "\tSource: " << pit->peerId;
@@ -1250,7 +1143,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 #endif
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
+                if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_NODE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
 				{
 					srcIds.push_back(pit->peerId);
 
@@ -1281,9 +1174,9 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
   // We check that flags are consistent.  
   
   	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-		mTurtle->monitorTunnels(hash,mFtServer) ;
+        mTurtle->monitorTunnels(hash,mFtServer,true) ;
 
-	bool assume_availability = flags & RS_FILE_REQ_CACHE ;	// assume availability for cache files
+    bool assume_availability = false;
 
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash,assume_availability);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
@@ -1301,7 +1194,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	tm->setFileSources(srcIds);
 
 	/* get current state for transfer module */
-	for(it = srcIds.begin(); it != srcIds.end(); it++)
+	for(it = srcIds.begin(); it != srcIds.end(); ++it)
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::FileRequest() adding peer: " << *it;
@@ -1529,20 +1422,19 @@ bool 	ftController::FileClearCompleted()
 }
 
 	/* get Details of File Transfers */
-bool 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
+void 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
     std::map<RsFileHash, ftFileControl*>::iterator it;
-	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+	for(it = mDownloads.begin(); it != mDownloads.end(); ++it)
 	{
 		hashs.push_back(it->second->mHash);
 	}
-	for(it = mCompleted.begin(); it != mCompleted.end(); it++)
+	for(it = mCompleted.begin(); it != mCompleted.end(); ++it)
 	{
 		hashs.push_back(it->second->mHash);
 	}
-	return true;
 }
 
 
@@ -1593,7 +1485,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
             std::list<SharedDirInfo>::iterator it;
             std::list<SharedDirInfo> dirs;
             rsFiles->getSharedDirectories(dirs);
-            for (it = dirs.begin(); it != dirs.end(); it++) {
+            for (it = dirs.begin(); it != dirs.end(); ++it) {
                 if (!path.find((*it).filename)) {
                     return false;
                 }
@@ -1614,7 +1506,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
 #if 0 /*** FIX ME !!!**************/
 		/* move all existing files! */
         std::map<RsFileHash, ftFileControl>::iterator it;
-		for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		for(it = mDownloads.begin(); it != mDownloads.end(); ++it)
 		{
 			(it->second).mCreator->changePartialDirectory(mPartialPath);
 		}
@@ -1729,7 +1621,7 @@ bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 	bool isDownloading = false;
 	bool isSuspended = false;
 
-	for(pit = peerIds.begin(); pit != peerIds.end(); pit++)
+	for(pit = peerIds.begin(); pit != peerIds.end(); ++pit)
 	{
 		if (it->second->mTransfer->getPeerState(*pit, state, tfRate))
 		{
@@ -1831,7 +1723,7 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 	std::cerr << std::endl;
 #endif
 
-	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+	for(it = mDownloads.begin(); it != mDownloads.end(); ++it)
 		if(it->second->mState == ftFileControl::DOWNLOADING)
 	{
 #ifdef CONTROL_DEBUG
@@ -1839,7 +1731,7 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 		std::cerr << it->first;
 		std::cerr << std::endl;
 #endif
-		for(pit = plist.begin(); pit != plist.end(); pit++)
+		for(pit = plist.begin(); pit != plist.end(); ++pit)
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "Peer: " << pit->id;
@@ -1881,7 +1773,7 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 		std::cerr << "vlist.size() = " << vlist.size() << std::endl;
 #endif
 
-		for(vit = vlist.begin(); vit != vlist.end(); vit++)
+		for(vit = vlist.begin(); vit != vlist.end(); ++vit)
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "Peer: " << vit->id;
@@ -1913,58 +1805,6 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 			}
 		}
 	}
-}
-
-	/* Cache Interface */
-bool ftController::RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
-{
-#ifdef CONTROL_DEBUG
- std::cerr << "ftController::RequestCacheFile(" << id << ",";
- std::cerr << path << "," << hash << "," << size << ")";
- std::cerr << std::endl;
-#endif
-
-	/* Request File */
-    std::list<RsPeerId> ids;
-	ids.push_back(id);
-
-	FileInfo info ;
-	if(mSearch->search(hash, RS_FILE_HINTS_CACHE, info))
-	{
-#ifdef CONTROL_DEBUG
-		std::cerr << "I already have this file:" << std::endl ;
-		std::cerr << "  path: " << info.path << std::endl ;
-		std::cerr << "  fname: " << info.fname << std::endl ;
-		std::cerr << "  hash: " << info.hash << std::endl ;
-
-		std::cerr << "Copying it !!" << std::endl ;
-#endif
-
-        if(info.size > 0 && copyFile(info.path,path+"/"+hash.toStdString()))
-		{
-			CompletedCache(hash);
-			return true ;
-		}
-		else
-			return false ;
-	}
-
-    FileRequest(hash.toStdString(), hash, size, path, RS_FILE_REQ_CACHE | RS_FILE_REQ_NO_SEARCH, ids);
-
-	return true;
-}
-
-
-bool ftController::CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
-{
-	std::cerr << "ftController::CancelCacheFile(" << id << ",";
-	std::cerr << path << "," << hash << "," << size << ")";
-	std::cerr << std::endl;
-#ifdef CONTROL_DEBUG
-#endif
-
-	return FileCancel(hash);
-
 }
 
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
@@ -2026,7 +1866,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
 	/* Convert to TLV */
-	for(mit = configMap.begin(); mit != configMap.end(); mit++)
+	for(mit = configMap.begin(); mit != configMap.end(); ++mit)
 	{
 		RsTlvKeyValue kv;
 		kv.key = mit->first;
@@ -2049,7 +1889,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
     std::list<RsFileHash> hashs;
 	FileDownloads(hashs);
 
-	for(it = hashs.begin(); it != hashs.end(); it++)
+	for(it = hashs.begin(); it != hashs.end(); ++it)
 	{
 		/* stack mutex released each loop */
   		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
@@ -2059,14 +1899,6 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 			continue;
 
 		/* ignore cache files. As this is small files, better download them again from scratch at restart.*/
-
-		if (fit->second->mFlags & RS_FILE_REQ_CACHE)
-		{
-#ifdef CONTROL_DEBUG
-			std::cerr << "ftcontroller::saveList(): Not saving (callback) file entry " << fit->second->mName << ", " << fit->second->mHash << ", " << fit->second->mSize << std::endl ;
-#endif
-			continue;
-		}
 
 		// Node: We still save finished transfers. This keeps transfers that are 
 		// in checking mode. Finished or checked transfers will restart and
@@ -2095,7 +1927,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		//
 		for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it) 
 			if(!mTurtle->isTurtlePeer(*it))
-                rft->allPeerIds.ids.push_back(*it) ;
+                rft->allPeerIds.ids.insert(*it) ;
 
 		rft->transferred = fit->second->mCreator->getRecvd();
 		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
@@ -2132,17 +1964,17 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 				rft->allPeerIds.ids.clear() ;
 				for(std::list<RsPeerId>::const_iterator it(pit->mSrcIds.begin());it!=pit->mSrcIds.end();++it)
-                    rft->allPeerIds.ids.push_back( *it ) ;
+                    rft->allPeerIds.ids.insert( *it ) ;
 			}
 
 			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed. We do that in post
 			// process since the rft object may have been created from mPendingChunkMaps
 			//
-            for(std::list<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+            for(std::set<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
 				if(mTurtle->isTurtlePeer(RsPeerId(*sit)))
                 {
-                    std::list<RsPeerId>::iterator sittmp(sit) ;
+                    std::set<RsPeerId>::iterator sittmp(sit) ;
             ++sittmp ;
                     rft->allPeerIds.ids.erase(sit) ;
             sit = sittmp ;
@@ -2171,7 +2003,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 	std::cerr << std::endl;
 #endif
 
-	for(it = load.begin(); it != load.end(); it++)
+	for(it = load.begin(); it != load.end(); ++it)
 	{
 		/* switch on type */
 		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
@@ -2179,7 +2011,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			/* make into map */
 			std::map<std::string, std::string> configMap;
 			for(kit = rskv->tlvkvs.pairs.begin();
-				kit != rskv->tlvkvs.pairs.end(); kit++)
+				kit != rskv->tlvkvs.pairs.end(); ++kit)
 			{
 				configMap[kit->key] = kit->value;
 			}
@@ -2205,7 +2037,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
 			std::list<RsPeerId> src_lst ;
-            for(std::list<RsPeerId>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
+            for(std::set<RsPeerId>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
                 src_lst.push_back(*it) ;
 
 			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), src_lst, rsft->state);
@@ -2235,6 +2067,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 		/* cleanup */
 		delete (*it);
 	}
+    load.clear() ;
 	return true;
 
 }

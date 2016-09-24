@@ -1,7 +1,16 @@
 <RCC>
     <qresource prefix="/">
+        <file>images/global_switch_on.png</file>
+        <file>images/global_switch_off.png</file>
+        <file>images/switch00.png</file>
+        <file>images/switch01.png</file>
+        <file>images/switch10.png</file>
+        <file>images/switch11.png</file>
         <file>images/add_chat24.png</file>
+        <file>images/RSS_004_32.png</file>
         <file>images/mail-encrypted-full.png</file>
+        <file>images/mail-signed-full.png</file>
+        <file>images/document-edit-sign.png</file>
         <file>images/decrypt-mail.png</file>
         <file>images/inbox_22.png</file>
         <file>images/blue_lock.png</file>
@@ -9,6 +18,8 @@
         <file>images/d-chat64.png</file>
         <file>images/edit_24.png</file>
         <file>images/streaming.png</file>
+        <file>images/white-bubble-64.png</file>
+        <file>images/orange-bubble-64.png</file>
         <file>images/stock_signature_bad.png</file>
         <file>images/stock_signature_ok.png</file>
         <file>images/stock_signature_missing.png</file>
@@ -18,11 +29,12 @@
         <file>images/browsable_128_blue.png</file>
         <file>images/blank_128_green.png</file>
         <file>images/blank_128_blue.png</file>
+        <file>images/door_in.png</file>
         <file>images/tor-logo.png</file>
         <file>images/help/addafriend.png</file>
         <file>images/help/addfriendkey.png</file>
         <file>images/help/dhtgreen.png</file>
-        <file>images/64px_help.png</file>
+        <file>icons/help_64.png</file>
         <file>images/help/natgreen.png</file>
         <file>images/help/natred.png</file>
         <file>images/attach.png</file>
@@ -48,11 +60,9 @@
         <file>images/btn_green.png</file>
         <file>images/btn_green_hover.png</file>
         <file>images/btn_green_pressed.png</file>
-        <file>images/connect_established.png</file>
-        <file>images/connect_established_low.png</file>
         <file>images/connect_creating.png</file>
-        <file>images/connect_no.png</file>
         <file>images/dht16.png</file>
+        <file>images/dht32.png</file>
         <file>images/edit-clear-history.png</file>
         <file>images/edit_16.png</file>
         <file>images/feedback_arrow.png</file>
@@ -108,10 +118,12 @@
         <file>images/channelsblue.png</file>
         <file>images/copyrslink.png</file>
         <file>images/contacts24.png</file>
+        <file>images/contactsclosed24.png</file>
         <file>images/connection.png</file>
         <file>images/contact_new.png</file>
         <file>images/contact_new22.png</file>
         <file>images/contact.png</file>
+        <file>images/contact22.png</file>
         <file>images/Client0.png</file>
         <file>images/Client1.png</file>
         <file>images/Client2.png</file>
@@ -304,6 +316,7 @@
         <file>images/konversation16.png</file>
         <file>images/konversation128.png</file>
         <file>images/konv_message2.png</file>
+        <file>images/konv_message3.png</file>
         <file>images/konv_message64.png</file>
         <file>images/konversation64.png</file>
         <file>images/forums_new.png</file>
@@ -338,6 +351,7 @@
         <file>images/logobar/logo_bar_start.png</file>
         <file>images/logobar/rslogo.png</file>
         <file>images/logobar/rslogo2.png</file>
+        <file>images/mail-message-new.png</file>
         <file>images/mail-signed.png</file>
         <file>images/mail-signature-unknown.png</file>
         <file>images/mail_delete.png</file>
@@ -379,6 +393,8 @@
         <file>images/no_avatar_70.png</file>
         <file>images/no_avatar_background.png</file>
         <file>images/openimage.png</file>
+        <file>images/office-chart-area-stacked.png</file>
+        <file>images/office-chart-line.png</file>
         <file>images/pasterslink.png</file>
         <file>images/package_games1.png</file>
         <file>images/pin32.png</file>
@@ -406,10 +422,8 @@
         <file>images/replymail-pressed.png</file>
         <file>images/replymail24.png</file>
         <file>images/replymailall24-hover.png</file>
-        <file>images/reload24.png</file>
         <file>images/reset.png</file>
         <file>images/resume.png</file>
-        <file>images/rstray_star.png</file>
         <file>images/security-high-16.png</file>
         <file>images/security-high-48.png</file>
         <file>images/security-low-48.png</file>
@@ -444,8 +458,9 @@
         <file>images/trustsettings.png</file>
         <file>images/uploads.png</file>
         <file>images/headerFrame.png</file>
-        <file>images/loader/16-loader.gif</file>
-        <file>images/loader/32-loader.gif</file>
+        <file>images/loader/indicator-16.gif</file>
+        <file>images/loader/indicator-32.gif</file>
+        <file>images/loader/circleball-16.gif</file>
         <file>images/loader/progress.gif</file>
         <file>images/mimetypes/pdf.png</file>
         <file>images/mimetypes/rscollection-16.png</file>
@@ -492,6 +507,7 @@
         <file>images/user/remove_user24.png</file>
         <file>images/user/deny_user48.png</file>
         <file>images/user/friends24.png</file>
+        <file>images/user/friends32.png</file>
         <file>images/user/friends64.png</file>
         <file>images/user/friends24_notify.png</file>
         <file>images/user/friend_suggestion16.png</file>
@@ -538,6 +554,7 @@
         <file>images/view_split_top_bottom.png</file>
         <file>images/vote_up.png</file>
         <file>images/vote_down.png</file>
+        <file>images/vote_neutral.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>images/identity/identities_32.png</file>
@@ -603,65 +620,8 @@
         <file>qss/chat/compact/history/system.htm</file>
         <file>qss/chat/compact/history/main.css</file>
         <file>qss/chat/compact/history/variants/Standard.css</file>
-		<file>qss/stylesheet/qss.default</file>
-		<file>qss/stylesheet/Standard.qss</file>
-        <file>smileys/amorous.png</file>
-        <file>smileys/angry.png</file>
-        <file>smileys/bad.png</file>
-        <file>smileys/beer.png</file>
-        <file>smileys/cake.png</file>
-        <file>smileys/camera.png</file>
-        <file>smileys/cat.png</file>
-        <file>smileys/clock.png</file>
-        <file>smileys/coffee.png</file>
-        <file>smileys/coins.png</file>
-        <file>smileys/confused.png</file>
-        <file>smileys/crying.png</file>
-        <file>smileys/embarrassed.png</file>
-        <file>smileys/eyeroll.png</file>
-        <file>smileys/excited.png</file>
-        <file>smileys/face-devil-grin48.png</file>
-        <file>smileys/happy.png</file>
-        <file>smileys/in-love.png</file>
-        <file>smileys/island.png</file>
-        <file>smileys/kissing.png</file>
-        <file>smileys/laugh.png</file>
-        <file>smileys/liquor.png</file>
-        <file>smileys/love-over.png</file>
-        <file>smileys/love.png</file>
-        <file>smileys/mobile.png</file>
-        <file>smileys/moon.png</file>
-        <file>smileys/party.png</file>
-        <file>smileys/peace.png</file>
-        <file>smileys/phone.png</file>
-        <file>smileys/pirate.png</file>
-        <file>smileys/pizza.png</file>
-        <file>smileys/pouty.png</file>
-        <file>smileys/pumpkin.png</file>
-        <file>smileys/rotfl.png</file>
-        <file>smileys/sad.png</file>
-        <file>smileys/shocked.png</file>
-        <file>smileys/sleeping.png</file>
-        <file>smileys/tongue.png</file>
-        <file>smileys/umbrella.png</file>
-        <file>smileys/wink.png</file>
-        <file>smileys/emotes.acs</file>
-        <file>smileys/lamp.png</file>
-        <file>smileys/good.png</file>
-        <file>smileys/drink.png</file>
-        <file>smileys/airplane.png</file>
-        <file>smileys/turtle.png</file>
-        <file>smileys/time-out.png</file>
-        <file>smileys/weather-overcast.png</file>
-        <file>smileys/weather-few-clouds.png</file>
-        <file>smileys/weather-clear.png</file>
-        <file>smileys/weather-clear-night.png</file>
-        <file>smileys/weather-few-clouds-night.png</file>
-        <file>smileys/weather-severe-alert.png</file>
-        <file>smileys/weather-showers.png</file>
-        <file>smileys/weather-showers-scattered.png</file>
-        <file>smileys/weather-snow.png</file>
-        <file>smileys/weather-storm.png</file>
+        <file>qss/stylesheet/qss.default</file>
+        <file>qss/stylesheet/Standard.qss</file>
         <file>images/connect/connectFriendWatermark.png</file>
         <file>images/connect/connectFriendLogo.png</file>
         <file>images/connect/connectFriendBanner.png</file>
@@ -694,5 +654,12 @@
         <file>images/btn_red.png</file>
         <file>images/view-feeds.png</file>
         <file>images/view-files.png</file>
+        <file>images/emblem-web.png</file>
+        <file>images/rsmessenger16.png</file>
+        <file>images/rsmessenger32.png</file>
+        <file>images/rsmessenger48.png</file>
+        <file>images/SmileyText.png</file>
+        <file>images/SimpleText.png</file>
+        <file>images/ColoredText.png</file>
     </qresource>
 </RCC>

@@ -1,9 +1,9 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 QT     += network xml script
 CONFIG += bitdht
 
 CONFIG += gxs debug
-
-LIBS += -lgtest
 
 gxs {
 	DEFINES += RS_ENABLE_GXS
@@ -14,6 +14,21 @@ TARGET = unittests
 
 OPENPGPSDK_DIR = ../../openpgpsdk/src
 INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+
+# it is impossible to use precompield googletest lib
+# because googletest must be compiled with same compiler flags as the tests!
+!exists(../googletest/googletest/src/gtest-all.cc){
+    message(trying to git clone googletest...)
+    !system(git clone https://github.com/google/googletest.git ../googletest){
+        error(Could not git clone googletest files. You can manually download them to /tests/googletest)
+    }
+}
+
+INCLUDEPATH += \
+    ../googletest/googletest/include   \
+    ../googletest/googletest
+
+SOURCES += ../googletest/googletest/src/gtest-all.cc
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -28,19 +43,38 @@ linux-* {
 	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lX11 -lz
+	LIBS *= -lcrypto -ldl -lX11 -lz -lpthread
 
-gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+        #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-		LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-	}
+        contains(CONFIG, NO_SQLCIPHER) {
+                DEFINES *= NO_SQLCIPHER
+                PKGCONFIG *= sqlite3
+        } else {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+
+                SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
+                isEmpty(SQLCIPHER_OK) {
+                # We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+
+                        ! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
+                                message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
+                                error(Please fix this and try again. Will stop now.)
+                        }
+
+                        LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+                        INCLUDEPATH += ../../../lib/sqlcipher/src/
+                        INCLUDEPATH += ../../../lib/sqlcipher/tsrc/
+                } else {
+                        LIBS += -lsqlcipher
+                }
+        }
+
 
 	LIBS *= -lglib-2.0
 	LIBS *= -rdynamic
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= UBUNTU
+	DEFINES *= HAS_GNOME_KEYRING
 }
 
 linux-g++ {
@@ -82,6 +116,9 @@ win32 {
 	QMAKE_CFLAGS += -Wextra
 	QMAKE_CXXFLAGS += -Wextra
 
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
+
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
 	QMAKE_CXXFLAGS_RELEASE += -O0
@@ -100,31 +137,35 @@ win32 {
 	PRE_TARGETDEPS *= ../librssimulator/lib/librssimulator.a
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"$$PWD/../../../lib"
 
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlcipher
-	}
-
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-	LIBS += -lole32 -lwinmm
-	RC_FILE = gui/images/retroshare_win.rc
-
-	# export symbols for the plugins
-	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
-
-	# create lib directory
-	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
+	LIBS += -lwinmm
 
 	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 
-	INCLUDEPATH += .
+	# create lib directory
+	message(CHK_DIR_EXISTS=$(CHK_DIR_EXISTS))
+	message(MKDIR=$(MKDIR))
+	QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
+
+	greaterThan(QT_MAJOR_VERSION, 4) {
+		# Qt 5
+		RC_INCLUDEPATH += $$_PRO_FILE_PWD_/../../libretroshare/src
+	} else {
+		# Qt 4
+		QMAKE_RC += --include-dir=$$_PRO_FILE_PWD_/../../libretroshare/src
+	}
 }
 
 ##################################### MacOS ######################################
@@ -241,12 +282,13 @@ SOURCES +=  libretroshare/serialiser/rsturtleitem_test.cc \
 		libretroshare/serialiser/rsstatusitem_test.cc \
 		libretroshare/serialiser/rsnxsitems_test.cc \
 		libretroshare/serialiser/rsgxsiditem_test.cc \
-		libretroshare/serialiser/rsphotoitem_test.cc \
+#		libretroshare/serialiser/rsphotoitem_test.cc \
 		libretroshare/serialiser/tlvbase_test2.cc \
 		libretroshare/serialiser/tlvrandom_test.cc \
 		libretroshare/serialiser/tlvbase_test.cc \
 		libretroshare/serialiser/tlvstack_test.cc \
 		libretroshare/serialiser/tlvitems_test.cc \
+#		libretroshare/serialiser/rsgrouteritem_test.cc \
 		libretroshare/serialiser/tlvtypes_test.cc \
 		libretroshare/serialiser/tlvkey_test.cc \
 		libretroshare/serialiser/support.cc \
@@ -311,9 +353,9 @@ SOURCES += libretroshare/gxs/data_service/rsdataservice_test.cc \
 ################################ dbase #####################################
 
 
-SOURCES += libretroshare/dbase/fisavetest.cc \
-	libretroshare/dbase/fitest2.cc \
-	libretroshare/dbase/searchtest.cc \
+#SOURCES += libretroshare/dbase/fisavetest.cc \
+#	libretroshare/dbase/fitest2.cc \
+#	libretroshare/dbase/searchtest.cc \
 
 #	libretroshare/dbase/ficachetest.cc \
 #	libretroshare/dbase/fimontest.cc \

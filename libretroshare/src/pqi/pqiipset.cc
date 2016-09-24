@@ -94,7 +94,7 @@ bool 	pqiIpAddrList::updateIpAddressList(const pqiIpAddress &addr)
 		return false;
 	}
 
-	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
+	for(it = mAddrs.begin(); it != mAddrs.end(); ++it)
 	{
 		if (it->sameAddress(addr))
 		{
@@ -124,7 +124,7 @@ bool 	pqiIpAddrList::updateIpAddressList(const pqiIpAddress &addr)
 
 	// ordered by decreaseing time. (newest at front)
 	bool added = false;
-	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
+	for(it = mAddrs.begin(); it != mAddrs.end(); ++it)
 	{
 		if (it->mSeenTime < addr.mSeenTime)
 		{
@@ -198,7 +198,7 @@ void 	pqiIpAddrList::printIpAddressList(std::string &out) const
 {
 	std::list<pqiIpAddress>::const_iterator it;
 	time_t now = time(NULL);
-	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
+	for(it = mAddrs.begin(); it != mAddrs.end(); ++it)
 	{
 		out += sockaddr_storage_tostring(it->mAddr);
 		rs_sprintf_append(out, "( %ld old)\n", now - it->mSeenTime);
@@ -226,7 +226,7 @@ bool    pqiIpAddrSet::updateAddrs(const pqiIpAddrSet &addrs)
 
 	bool newAddrs = false;
 	std::list<pqiIpAddress>::const_iterator it;
-	for(it = addrs.mLocal.mAddrs.begin(); it != addrs.mLocal.mAddrs.end(); it++)
+	for(it = addrs.mLocal.mAddrs.begin(); it != addrs.mLocal.mAddrs.end(); ++it)
 	{
 		if (mLocal.updateIpAddressList(*it))
 		{
@@ -238,7 +238,7 @@ bool    pqiIpAddrSet::updateAddrs(const pqiIpAddrSet &addrs)
 		}
 	}
 
-	for(it = addrs.mExt.mAddrs.begin(); it != addrs.mExt.mAddrs.end(); it++)
+	for(it = addrs.mExt.mAddrs.begin(); it != addrs.mExt.mAddrs.end(); ++it)
 	{
 		if (mExt.updateIpAddressList(*it))
 		{

@@ -25,15 +25,20 @@
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
 #include "ui_MessageComposer.h"
 
+#include "gui/msgs/MessageInterface.h"
+
 class QAction;
+class RsIdentityDetails;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
-struct MessageInfo;
+class RsGxsChannelGroup;
+class RsGxsForumGroup;
 
 class MessageComposer : public QMainWindow 
 {
@@ -51,12 +56,18 @@ public:
     ~MessageComposer();
 
     static void msgFriend(const RsPeerId &id);
+    // send msg to all locations
+    static void msgFriend(const RsPgpId &id);
     static void msgGxsIdentity(const RsGxsId& gxs_id) ;
     static void msgGroup(const std::string& group_id) ;
 
     static QString recommendMessage();
-    static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
+    static void recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
     static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
+#ifdef UNUSED_CODE
+    static void sendChannelPublishKey(RsGxsChannelGroup &group);
+    static void sendForumPublishKey(RsGxsForumGroup &group);
+#endif
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);
@@ -80,7 +91,6 @@ public slots:
     void  addImage();
     
     void changeFormatType(int styleIndex );
-	 void updateSigningButton(int) ;
 
 protected:
     void closeEvent (QCloseEvent * event);
@@ -89,11 +99,14 @@ protected:
 private slots:
     /* toggle Contacts DockWidget */
     void contextMenuFileList(QPoint);
-    void contextMenuMsgSendList(QPoint);
     void pasteRecommended();
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
     void buildCompleter();
+    void updatecontactsviewicons();
+    void updateCells(int,int) ;
+
+	void filterComboBoxChanged(int);
 
     void fileNew();
     void fileOpen();
@@ -110,8 +123,9 @@ private slots:
     void textItalic();
     void textFamily(const QString &f);
     void textSize(const QString &p);
-    void textStyle(int styleIndex);
+    void textStyle(QAction *a);
     void textColor();
+    void textbackgroundColor();
     void textAlign(QAction *a);
     void smileyWidget();
     void addSmileys();
@@ -135,24 +149,29 @@ private slots:
     void titleChanged();
 
     // Add to To/Cc/Bcc address fields
-    void toggleShowNonFriend(bool bValue);
     void addTo();
     void addCc();
     void addBcc();
     void addRecommend();
     void editingRecipientFinished();
-    void friendDetails();
+    void contactDetails();
 
     void peerStatusChanged(const QString& peer_id, int status);
+    void friendSelectionChanged();
 
     void tagAboutToShow();
     void tagSet(int tagId, bool set);
     void tagRemoveAll();
+    
+    void on_closeInfoFrameButton_clicked();
 
 private:
     static QString buildReplyHeader(const MessageInfo &msgInfo);
 
     void processSettings(bool bLoad);
+
+    static QString getRecipientEmailAddress(const RsGxsId& id,const RsIdentityDetails& detail) ;
+    static QString getRecipientEmailAddress(const RsPeerId& id,const RsPeerDetails& detail) ;
 
     void addContact(enumType type);
     void setTextColor(const QColor& col) ;
@@ -161,6 +180,7 @@ private:
     void setupViewActions();
     void setupInsertActions();
     void setupFormatActions();
+    void setupContactActions();
 
     bool load(const QString &f);
     bool maybeSave();
@@ -170,6 +190,7 @@ private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
+    void colorChanged2(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
     bool sendMessage_internal(bool bDraftbox);
@@ -192,9 +213,22 @@ private:
     *actionRedo,
     *actionCut,
     *actionCopy,
-    *actionPaste;
+    *actionPaste,   
+    *actionDisc,
+    *actionCircle,
+    *actionSquare,
+    *actionDecimal,
+    *actionLowerAlpha,
+    *actionUpperAlpha,
+    *actionLowerRoman,
+    *actionUpperRoman;
 
     QAction *contactSidebarAction;
+    QAction *mActionAddTo;
+    QAction *mActionAddCC;
+    QAction *mActionAddBCC;
+    QAction *mActionAddRecommend;
+    QAction *mActionContactDetails;
 
     QTreeView *channelstreeView;
 
@@ -224,7 +258,6 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-    std::set<RsGxsId> _distant_peers ;	// we keep a list of them, in order to know which peer is a GXS id.
 };
 
 #endif

@@ -21,7 +21,10 @@
 
 #include <QMenu>
 #include <QToolButton>
+#include <QLabel>
+#include <QMovie>
 
+#include "retroshare/rsgxsflags.h"
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
@@ -43,9 +46,11 @@
 #define ROLE_DESCRIPTION     Qt::UserRole + 2
 #define ROLE_POPULARITY      Qt::UserRole + 3
 #define ROLE_LASTPOST        Qt::UserRole + 4
-#define ROLE_SEARCH_SCORE    Qt::UserRole + 5
-#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
-#define ROLE_COLOR           Qt::UserRole + 7
+#define ROLE_POSTS           Qt::UserRole + 5
+#define ROLE_SEARCH_SCORE    Qt::UserRole + 6
+#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 7
+#define ROLE_COLOR           Qt::UserRole + 8
+#define ROLE_SAVED_ICON      Qt::UserRole + 9
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -61,6 +66,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	actionSortByName = NULL;
 	actionSortByPopularity = NULL;
 	actionSortByLastPost = NULL;
+	actionSortByPosts = NULL;
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
@@ -85,12 +91,14 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(COLUMN_COUNT);
 
+            int S = QFontMetricsF(font()).height();
+
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
-	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Stretch);
-	header->resizeSection(COLUMN_NAME, 170);
-	QHeaderView_setSectionResizeMode(header, COLUMN_POPULARITY, QHeaderView::Fixed);
-	header->resizeSection(COLUMN_POPULARITY, 25);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
+    header->resizeSection(COLUMN_NAME, 10*S);
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
+    header->resizeSection(COLUMN_POPULARITY, 2*S);
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
@@ -99,6 +107,8 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
+
+        ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6)) ;
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -145,6 +155,7 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	const int SORTBY_NAME = 1;
 	const int SORTBY_POPULRITY = 2;
 	const int SORTBY_LASTPOST = 3;
+	const int SORTBY_POSTS = 4;
 
 	if (load) {
 		// load settings
@@ -165,6 +176,11 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 		case SORTBY_LASTPOST:
 			if (actionSortByLastPost) {
 				actionSortByLastPost->setChecked(true);
+			}
+			break;
+		case SORTBY_POSTS:
+			if (actionSortByPosts) {
+				actionSortByPosts->setChecked(true);
 			}
 			break;
 		}
@@ -213,6 +229,10 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	actionSortByLastPost = displayMenu->addAction(QIcon(), tr("Sort by Last Post"), this, SLOT(sort()));
 	actionSortByLastPost->setCheckable(true);
 	actionSortByLastPost->setActionGroup(actionGroup);
+	
+	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Posts"), this, SLOT(sort()));
+	actionSortByPosts->setCheckable(true);
+	actionSortByPosts->setActionGroup(actionGroup);
 
 	toolButton->setMenu(displayMenu);
 }
@@ -225,7 +245,7 @@ void GroupTreeWidget::updateColors()
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
 		if (color >= 0) {
@@ -275,12 +295,14 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	QTreeWidgetItem *item = new QTreeWidgetItem();
 	font = item->font(COLUMN_NAME);
 	font.setBold(true);
-	font.setPointSize(10);
 	item->setText(COLUMN_NAME, name);
 	item->setData(COLUMN_DATA, ROLE_NAME, name);
 	item->setFont(COLUMN_NAME, font);
 	item->setIcon(COLUMN_NAME, icon);
-	item->setSizeHint(COLUMN_NAME, QSize(18, 18));
+
+        int S = QFontMetricsF(font).height();
+
+    item->setSizeHint(COLUMN_NAME, QSize(S*1.1, S*1.1));
 	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
@@ -312,97 +334,114 @@ QString GroupTreeWidget::itemIdAt(QPoint &point)
 
 void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList)
 {
-	if (categoryItem == NULL) {
-		return;
-	}
+    if (categoryItem == NULL) {
+	    return;
+    }
 
-	QString filterText = ui->filterLineEdit->text();
+    QString filterText = ui->filterLineEdit->text();
 
-	/* Iterate all items */
-	QList<GroupItemInfo>::const_iterator it;
-	for (it = itemList.begin(); it != itemList.end(); it++) {
-		const GroupItemInfo &itemInfo = *it;
+    /* Iterate all items */
+    QList<GroupItemInfo>::const_iterator it;
+    for (it = itemList.begin(); it != itemList.end(); ++it) {
+	    const GroupItemInfo &itemInfo = *it;
 
-		QTreeWidgetItem *item = NULL;
+	    QTreeWidgetItem *item = NULL;
 
-		/* Search exisiting item */
-		int childCount = categoryItem->childCount();
-		for (int child = 0; child < childCount; child++) {
-			QTreeWidgetItem *childItem = categoryItem->child(child);
-			if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
-				/* Found child */
-				item = childItem;
-				break;
-			}
-		}
+	    /* Search exisiting item */
+	    int childCount = categoryItem->childCount();
+	    for (int child = 0; child < childCount; ++child) {
+		    QTreeWidgetItem *childItem = categoryItem->child(child);
+		    if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
+			    /* Found child */
+			    item = childItem;
+			    break;
+		    }
+	    }
 
-		if (item == NULL) {
-			item = new RSTreeWidgetItem(compareRole);
-			item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
-			categoryItem->addChild(item);
-		}
+	    if (item == NULL) {
+		    item = new RSTreeWidgetItem(compareRole);
+		    item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
+		    categoryItem->addChild(item);
+	    }
 
-		item->setText(COLUMN_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
-		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
+	    item->setText(COLUMN_NAME, itemInfo.name);
+	    item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
+	    item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
-		/* Set last post */
-		qlonglong lastPost = itemInfo.lastpost.toTime_t();
-		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
+	    /* Set last post */
+	    qlonglong lastPost = itemInfo.lastpost.toTime_t();
+	    item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
 
-		/* Set icon */
-		item->setIcon(COLUMN_NAME, itemInfo.icon);
+	    /* Set visible posts */
+	    item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
 
-		/* Set popularity */
-		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
-		item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
-		item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
+	    /* Set icon */
+	    if (ui->treeWidget->itemWidget(item, COLUMN_NAME)) {
+		    /* Item is waiting, save icon in role */
+		    item->setData(COLUMN_DATA, ROLE_SAVED_ICON, itemInfo.icon);
+	    } else {
+		    item->setIcon(COLUMN_NAME, itemInfo.icon);
+	    }
 
-		/* Set tooltip */
-		if (itemInfo.privatekey) {
-			tooltip += "\n" + tr("Private Key Available");
-		}
-		item->setToolTip(COLUMN_NAME, tooltip);
-		item->setToolTip(COLUMN_POPULARITY, tooltip);
+	    /* Set popularity */
+	    QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
 
-		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
+	    item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
+	    item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
 
-		/* Set color */
-		QBrush brush;
-		if (itemInfo.privatekey) {
-			brush = QBrush(textColorPrivateKey());
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
-		} else {
-			brush = ui->treeWidget->palette().color(QPalette::Text);
-			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
-		}
-		item->setForeground(COLUMN_NAME, brush);
+	    /* Set tooltip */
+	    if (itemInfo.adminKey) 
+		    tooltip += "\n" + tr("You are admin (modify names and description using Edit menu)");
+	    else if (itemInfo.publishKey) 
+		    tooltip += "\n" + tr("You have been granted as publisher (you can post here!)");
 
-		/* Calculate score */
-		calculateScore(item, filterText);
-	}
+	    if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
+	    {
+		    tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
+		    tooltip += "\n" + tr("Subscribe to download and read messages") ;
+	    }
 
-	/* Remove all items not in list */
-	int child = 0;
-	int childCount = categoryItem->childCount();
-	while (child < childCount) {
-		QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
+	    item->setToolTip(COLUMN_NAME, tooltip);
+	    item->setToolTip(COLUMN_POPULARITY, tooltip);
 
-		for (it = itemList.begin(); it != itemList.end(); it++) {
-			if (it->id == id) {
-				break;
-			}
-		}
+	    item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
-		if (it == itemList.end()) {
-			delete(categoryItem->takeChild(child));
-			childCount = categoryItem->childCount();
-		} else {
-			child++;
-		}
-	}
+	    /* Set color */
+	    QBrush brush;
+	    if (itemInfo.publishKey) {
+		    brush = QBrush(textColorPrivateKey());
+		    item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+	    } else {
+		    brush = ui->treeWidget->palette().color(QPalette::Text);
+		    item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
+	    }
+	    item->setForeground(COLUMN_NAME, brush);
 
-	resort(categoryItem);
+	    /* Calculate score */
+	    calculateScore(item, filterText);
+    }
+
+    /* Remove all items not in list */
+    int child = 0;
+    int childCount = categoryItem->childCount();
+    while (child < childCount) {
+	    QString id = categoryItem->child(child)->data(COLUMN_DATA, ROLE_ID).toString();
+
+	    for (it = itemList.begin(); it != itemList.end(); ++it) {
+		    if (it->id == id) {
+			    break;
+		    }
+	    }
+
+	    if (it == itemList.end()) {
+		    delete(categoryItem->takeChild(child));
+		    childCount = categoryItem->childCount();
+	    } else {
+		    ++child;
+	    }
+    }
+
+    resort(categoryItem);
 }
 
 void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
@@ -435,7 +474,7 @@ QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (item->parent() == NULL) {
 			continue;
@@ -459,6 +498,50 @@ QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
 		ui->treeWidget->setFocus();
 	}
 	return item;
+}
+
+bool GroupTreeWidget::setWaiting(const QString &id, bool wait)
+{
+	QTreeWidgetItem *item = getItemFromId(id);
+	if (!item) {
+		return false;
+	}
+
+	QWidget *w = ui->treeWidget->itemWidget(item, COLUMN_NAME);
+	if (wait) {
+		if (w) {
+			/* Allready waiting */
+		} else {
+			/* Save icon in role */
+			QIcon icon = item->icon(COLUMN_NAME);
+			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, icon);
+
+			/* Create empty icon of the same size */
+			QPixmap pixmap(ui->treeWidget->iconSize());
+			pixmap.fill(Qt::transparent);
+
+			item->setIcon(COLUMN_NAME, QIcon(pixmap));
+
+			QLabel *label = new QLabel(this);
+			QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+			label->setMovie(movie);
+
+			ui->treeWidget->setItemWidget(item, COLUMN_NAME, label);
+
+			movie->start();
+		}
+	} else {
+		if (w) {
+			ui->treeWidget->setItemWidget(item, COLUMN_NAME, NULL);
+			delete(w);
+
+			/* Set icon saved in role */
+			item->setIcon(COLUMN_NAME, item->data(COLUMN_DATA, ROLE_SAVED_ICON).value<QIcon>());
+			item->setData(COLUMN_DATA, ROLE_SAVED_ICON, QIcon());
+		}
+	}
+
+	return true;
 }
 
 RSTreeWidget *GroupTreeWidget::treeWidget()
@@ -526,7 +609,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filte
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *tmpItem;
 	while ((tmpItem = *itemIterator) != NULL) {
-		itemIterator++;
+		++itemIterator;
 
 		if (tmpItem->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
 			continue;
@@ -557,13 +640,15 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 		compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
 	} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
 		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
+	} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_POSTS);
 	}
 
 	if (categoryItem) {
 		categoryItem->sortChildren(COLUMN_DATA, order);
 	} else {
 		int count = ui->treeWidget->topLevelItemCount();
-		for (int child = 0; child < count; child++) {
+		for (int child = 0; child < count; ++child) {
 			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
 		}
 	}

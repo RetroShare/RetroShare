@@ -82,16 +82,16 @@ void FeedReaderFeedNotify::msgChanged(const QString &feedId, const QString &msgI
 
 	mMutex->lock();
 
-	FeedItem feedItem;
-	feedItem.mFeedId = feedId;
-	feedItem.mMsgId = msgId;
+	FeedItemData feedItemData;
+	feedItemData.mFeedId = feedId;
+	feedItemData.mMsgId = msgId;
 
-	mPendingNewsFeed.push_back(feedItem);
+	mPendingNewsFeed.push_back(feedItemData);
 
 	mMutex->unlock();
 }
 
-QWidget *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
+FeedItem *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 {
 	bool msgPending = false;
 	FeedInfo feedInfo;
@@ -99,11 +99,11 @@ QWidget *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 
 	mMutex->lock();
 	while (!mPendingNewsFeed.empty()) {
-		FeedItem feedItem = mPendingNewsFeed.front();
+		FeedItemData feedItemData = mPendingNewsFeed.front();
 		mPendingNewsFeed.pop_front();
 
-		if (mFeedReader->getFeedInfo(feedItem.mFeedId.toStdString(), feedInfo) &&
-			mFeedReader->getMsgInfo(feedItem.mFeedId.toStdString(), feedItem.mMsgId.toStdString(), msgInfo)) {
+		if (mFeedReader->getFeedInfo(feedItemData.mFeedId.toStdString(), feedInfo) &&
+			mFeedReader->getMsgInfo(feedItemData.mFeedId.toStdString(), feedItemData.mMsgId.toStdString(), msgInfo)) {
 			if (msgInfo.flag.isnew) {
 				msgPending = true;
 				break;
@@ -119,7 +119,7 @@ QWidget *FeedReaderFeedNotify::feedItem(FeedHolder *parent)
 	return new FeedReaderFeedItem(mFeedReader, mNotify, parent, feedInfo, msgInfo);
 }
 
-QWidget *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
+FeedItem *FeedReaderFeedNotify::testFeedItem(FeedHolder *parent)
 {
 	FeedInfo feedInfo;
 	feedInfo.name = tr("Test").toUtf8().constData();

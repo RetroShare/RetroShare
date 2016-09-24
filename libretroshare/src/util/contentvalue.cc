@@ -64,7 +64,7 @@ ContentValue::ContentValue(const ContentValue &from){
     char *src = NULL;
     uint32_t data_len = 0;
 
-    for(; cit != keyTypeMap.end(); cit++){
+    for(; cit != keyTypeMap.end(); ++cit){
 
         type = cit->second;
         currKey = cit->first;
@@ -73,42 +73,44 @@ ContentValue::ContentValue(const ContentValue &from){
 
         case INT32_TYPE:
             {
-                int32_t value;
-                from.getAsInt32(currKey, value);
-                put(currKey, value);
+                int32_t value = 0;
+                if (from.getAsInt32(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case INT64_TYPE:
             {
-                int64_t value;
-                from.getAsInt64(currKey, value);
-                put(currKey, value);
+                int64_t value = 0;
+                if (from.getAsInt64(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case STRING_TYPE:
             {
-                from.getAsString(currKey, val);
-                put(currKey, val);
+                if (from.getAsString(currKey, val))
+                    put(currKey, val);
                 break;
             }
         case BOOL_TYPE:
             {
-                bool value;
-                from.getAsBool(currKey, value);
-                put(currKey, value);
+                bool value = false;
+                if (from.getAsBool(currKey, value))
+                    put(currKey, value);
                 break;
             }
         case DATA_TYPE:
             {
-                from.getAsData(currKey, data_len, src);
-                put(currKey, data_len, src);
+                if (from.getAsData(currKey, data_len, src))
+                    put(currKey, data_len, src);
                 break;
             }
         case DOUBLE_TYPE:
-            double value;
-            from.getAsDouble(currKey, value);
-            put(currKey, value);
-            break;
+            {
+                double value = 0;
+                if (from.getAsDouble(currKey, value))
+                    put(currKey, value);
+                break;
+            }
         default:
             std::cerr << "ContentValue::ContentValue(ContentValue &from):"
                     << "Error! Unrecognised data type!" << std::endl;
@@ -182,6 +184,7 @@ void ContentValue::put(const std::string &key, uint32_t len, const char* value){
 
     mKvData.insert(std::pair<std::string, std::pair<uint32_t, char*> >
                    (key, std::pair<uint32_t, char*>(len, dest)));
+    //delete[] dest; //Deleted by clearData()
 }
 
 bool ContentValue::getAsBool(const std::string &key, bool& value) const{
@@ -303,7 +306,7 @@ void ContentValue::clearData(){
     std::map<std::string, std::pair<uint32_t, char*> >::iterator
             mit = mKvData.begin();
 
-    for(; mit != mKvData.end(); mit++){
+    for(; mit != mKvData.end(); ++mit){
 
         if(mit->second.first != 0)
             delete[] (mit->second.second);

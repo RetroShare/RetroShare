@@ -114,13 +114,16 @@ void ops_finish(void)
    \note Should be freed after use with free().
 */
 void *ops_mallocz(size_t n)
-    {
-    void *m=malloc(n);
+{
+	void *m=malloc(n);
 
-    memset(m,'\0',n);
+	if(m == NULL)
+		fprintf(stderr,"(EE) Cannot allocate %lu bytes of memory in %s\n",n,__PRETTY_FUNCTION__) ;
+	else
+		memset(m,'\0',n);
 
-    return m;
-    }
+	return m;
+}
 
 typedef struct
     {

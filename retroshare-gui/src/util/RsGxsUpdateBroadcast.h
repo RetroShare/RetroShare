@@ -6,7 +6,7 @@
 #include <retroshare/rsgxsifacetypes.h>
 
 class RsGxsIfaceHelper;
-class QTimer;
+class RsGxsChanges;
 
 class RsGxsUpdateBroadcast : public QObject
 {
@@ -23,14 +23,13 @@ signals:
 	void grpsChanged(const std::list<RsGxsGroupId>& grpIds, const std::list<RsGxsGroupId>& grpIdsMeta);
 
 private slots:
-	void poll();
+    void onChangesReceived(const RsGxsChanges& changes);
 
 private:
 	explicit RsGxsUpdateBroadcast(RsGxsIfaceHelper* ifaceImpl);
 
 private:
 	RsGxsIfaceHelper* mIfaceImpl;
-	QTimer *mTimer;
 };
 
 #endif // RSGXSUPDATEBROADCAST_H

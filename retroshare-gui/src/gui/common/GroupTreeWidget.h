@@ -47,8 +47,9 @@ public:
 	GroupItemInfo()
 	{
 		popularity = 0;
-		privatekey = false;
-		subscribeFlags = 0;
+		publishKey = false;
+        subscribeFlags = 0;
+        max_visible_posts =0;
 	}
 
 public:
@@ -58,8 +59,10 @@ public:
 	int       popularity;
 	QDateTime lastpost;
 	QIcon     icon;
-	bool      privatekey;
-	int       subscribeFlags;
+	bool      publishKey;
+	bool      adminKey;
+    quint32  subscribeFlags;
+    quint32  max_visible_posts ;
 };
 
 class GroupTreeWidget : public QWidget
@@ -91,6 +94,8 @@ public:
 
 	QTreeWidgetItem *getItemFromId(const QString &id);
 	QTreeWidgetItem *activateId(const QString &id, bool focus);
+
+	bool setWaiting(const QString &id, bool wait);
 
 	RSTreeWidget *treeWidget();
 
@@ -133,6 +138,7 @@ private:
 	QAction *actionSortByName;
 	QAction *actionSortByPopularity;
 	QAction *actionSortByLastPost;
+	QAction *actionSortByPosts;
 
 	RSTreeWidgetItemCompareRole *compareRole;
 

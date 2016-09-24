@@ -1,13 +1,12 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = app
-TARGET = retroshare-nogui
+TARGET = RetroShare06-nogui
 CONFIG += bitdht
 #CONFIG += introserver
 #CONFIG += sshserver
 CONFIG -= qt xml gui
-
-# if you are linking against the libretroshare with gxs.
-# this option links against the required sqlite library.
-CONFIG += gxs
+CONFIG += link_prl
 
 #CONFIG += debug
 debug {
@@ -25,27 +24,12 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -lssl -lupnp -lixml -lgnome-keyring
-	LIBS *= -lcrypto -ldl -lz
 	LIBS *= -rdynamic
+}
 
-	gxs {
-		SQLCIPHER_OK = $$system(pkg-config --exists sqlcipher && echo yes)
-		isEmpty(SQLCIPHER_OK) {
-			# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-
-			! exists(../../../lib/sqlcipher/.libs/libsqlcipher.a) {
-				message(../../../lib/sqlcipher/.libs/libsqlcipher.a does not exist)
-				error(Please fix this and try again. Will stop now.)
-			}
-
-			LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-		} else {
-			LIBS += -lsqlcipher
-		}
-	}
+unix {
+	target.path = "$${BIN_DIR}"
+	INSTALLS += target
 }
 
 linux-g++ {
@@ -61,7 +45,6 @@ linux-g++-64 {
 win32-x-g++ {
 	OBJECTS_DIR = temp/win32-x-g++/obj
 
-	LIBS += ../../../../lib/win32-x-g++/libretroshare.a 
 	LIBS += ../../../../lib/win32-x-g++/libssl.a 
 	LIBS += ../../../../lib/win32-x-g++/libcrypto.a 
 	LIBS += ../../../../lib/win32-x-g++/libminiupnpc.a 
@@ -84,32 +67,31 @@ win32 {
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	# solve linker warnings because of the order of the libraries
+	QMAKE_LFLAGS += -Wl,--start-group
 
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"$$PWD/../../../lib"
+	CONFIG(debug, debug|release) {
+	} else {
+		# Tell linker to use ASLR protection
+		QMAKE_LFLAGS += -Wl,-dynamicbase
+		# Tell linker to use DEP protection
+		QMAKE_LFLAGS += -Wl,-nxcompat
+	}
+
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
 	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-#	LIBS += -lcrypto -lws2_32 -lgdi32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin
+	LIBS += -lcrypto -lws2_32 -lgdi32
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32
 	LIBS += -lole32 -lwinmm
 
-	PROTOCPATH=$$PWD/../../../lib/bin/
+	PROTOCPATH=$$BIN_DIR
 
 	RC_FILE = resources/retroshare_win.rc
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	SSL_DIR = ../../../openssl-1.0.1h
-
-	INCLUDEPATH += . $${SSL_DIR}/include
-
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlcipher
-	}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 }
 
 ##################################### MacOS ######################################
@@ -119,18 +101,15 @@ macx {
     # CONFIG += ppc x86 
 
 	LIBS += -Wl,-search_paths_first
-	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-        LIBS += -lssl -lcrypto -lz 
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+        LIBS += -lssl -lcrypto -lz
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-	gxs {
-		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-	    # LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
-	    LIBS += ../../../lib/libsqlcipher.a
-	}
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
 	sshserver {
 		LIBS += -L../../../lib
@@ -145,12 +124,10 @@ macx {
 
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 }
 
 ##################################### OpenBSD  ######################################
@@ -158,33 +135,46 @@ freebsd-* {
 openbsd-* {
 	INCLUDEPATH *= /usr/local/include
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-	LIBS *= ../../libretroshare/src/lib/libretroshare.a
-	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
 	LIBS *= -lgnome-keyring
-	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
-	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 	LIBS *= -rdynamic
 }
 
+##################################### Haiku ######################################
+
+haiku-* {
+	QMAKE_CXXFLAGS *= -D_BSD_SOURCE
+
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2 -lbsd
+	LIBS *= -lssl -lcrypto -lnetwork
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lz
+	LIBS *= -lixml
+
+	LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS += -lsqlite3
+	
+}
 
 ############################## Common stuff ######################################
 
-# bitdht config
-bitdht {
-	LIBS += ../../libbitdht/src/lib/libbitdht.a
-}
+DEPENDPATH += . $$PWD/../../libretroshare/src
+INCLUDEPATH += . $$PWD/../../libretroshare/src
 
-DEPENDPATH += ../../libretroshare/src
-            
-INCLUDEPATH += . ../../libretroshare/src
+PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
+LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
 
 # Input
-HEADERS +=  notifytxt.h 
+HEADERS +=  notifytxt.h
 SOURCES +=  notifytxt.cc \
-            retroshare.cc 
+            retroshare.cc
 
 introserver {
 	HEADERS += introserver.h
@@ -192,6 +182,17 @@ introserver {
 	DEFINES *= RS_INTRO_SERVER
 }
 
+libresapihttpserver {
+	DEFINES *= ENABLE_WEBUI
+        PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+	LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+        DEPENDPATH += $$PWD/../../libresapi/src
+	INCLUDEPATH += $$PWD/../../libresapi/src
+        HEADERS += \
+            TerminalApiClient.h
+        SOURCES +=  \
+            TerminalApiClient.cpp
+}
 
 sshserver {
 
@@ -199,8 +200,8 @@ sshserver {
 	# Please use this path below.
         # (You can modify it locally if required - but dont commit it!)
 
-	#LIBSSH_DIR = ../../../lib/libssh-0.5.2
-	LIBSSH_DIR = ../../../libssh-0.6.0rc1
+	#LIBSSH_DIR = $PWD/../../../lib/libssh-0.5.2
+	LIBSSH_DIR = $PWD/../../../libssh-0.6.0rc1
 
 	#
 	# Use the following commend to generate a Server RSA Key.
@@ -219,6 +220,7 @@ sshserver {
 		DEFINES *= LIBSSH_STATIC
 	}
 
+	DEPENDPATH += $$LIBSSH_DIR/include/
 	INCLUDEPATH += $$LIBSSH_DIR/include/
 
 	win32 {
@@ -341,6 +343,7 @@ protorpc {
 	#	        ../../rsctrl/src/gencc/files.pb.cc \
 	#	        ../../rsctrl/src/gencc/stream.pb.cc \
 
+	DEPENDPATH *= rpc/proto/gencc
 	INCLUDEPATH *= rpc/proto/gencc
 
 	!win32 {
@@ -351,16 +354,12 @@ protorpc {
 	LIBS += -lprotobuf -lpthread
 	
 	win32 {
-		PROTOPATH = ../../../protobuf-2.4.1
-		INCLUDEPATH += . $${PROTOPATH}/src
+		DEPENDPATH += $$LIBS_DIR/include/protobuf
+		INCLUDEPATH += $$LIBS_DIR/include/protobuf
 	}
 	
 	macx {
 		PROTOPATH = ../../../protobuf-2.4.1
 		INCLUDEPATH += $${PROTOPATH}/src
 	}
-}
-win32 {
-# must be added after ssh
-	LIBS += -lcrypto -lws2_32 -lgdi32
 }

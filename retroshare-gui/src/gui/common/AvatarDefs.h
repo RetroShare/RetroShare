@@ -25,6 +25,8 @@
 
 #include <string>
 #include <QString>
+#include <retroshare/rstypes.h>
+#include <retroshare/rsgxsifacetypes.h>
 
 #define AVATAR_DEFAULT_IMAGE ":/images/no_avatar_background.png"
 
@@ -33,9 +35,11 @@ class QPixmap;
 class AvatarDefs
 {
 public:
-	static void getOwnAvatar(QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-	static void getAvatarFromSslId(const std::string& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-	static void getAvatarFromGpgId(const std::string& gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static void getOwnAvatar(QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+
+    static void getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static void getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static void getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
 };
 
 #endif

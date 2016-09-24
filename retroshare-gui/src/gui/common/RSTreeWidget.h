@@ -32,21 +32,48 @@ class RSTreeWidget : public QTreeWidget
 public:
 	RSTreeWidget(QWidget *parent = 0);
 
+	QString placeholderText() { return mPlaceholderText; }
 	void setPlaceholderText(const QString &text);
 
-	void filterItems(int filterColumn, const QString &text);
+	void filterItems(int filterColumn, const QString &text, int role = Qt::DisplayRole);
+
+	void setSettingsVersion(qint32 version);
+	void processSettings(bool load);
+
+	void enableColumnCustomize(bool customizable);
+	void setColumnCustomizable(int column, bool customizable);
+
+	void resort();
+
+	// Add QAction to context menu (action won't be deleted)
+	void addContextMenuAction(QAction *action);
+	// Add QMenu to context menu (menu won't be deleted)
+	void addContextMenuMenu(QMenu *menu);
+	// Get Default context menu (Columns choice and menus added)
+	QMenu *createStandardContextMenu(QMenu *menu);
 
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
+	void columnVisibleChanged(int column, bool visible);
 
 private:
-	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text);
+	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text, int role);
+
+private slots:
+	void headerContextMenuRequested(const QPoint &pos);
+	void columnVisible();
 
 protected:
 	void paintEvent(QPaintEvent *event);
 	virtual void mousePressEvent(QMouseEvent *event);
 
+private:
 	QString mPlaceholderText;
+	bool mEnableColumnCustomize;
+	quint32 mSettingsVersion;
+	QMap<int, bool> mColumnCustomizable;
+	QList<QAction*> mContextMenuActions;
+	QList<QMenu*> mContextMenuMenus;
 };
 
 #endif

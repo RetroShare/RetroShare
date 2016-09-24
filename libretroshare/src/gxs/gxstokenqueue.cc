@@ -69,7 +69,7 @@ void GxsTokenQueue::checkRequests()
 				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " Complete";
 				std::cerr << std::endl;
 #endif
-				it++;
+				++it;
 			}
 			else if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
 			{
@@ -85,14 +85,14 @@ void GxsTokenQueue::checkRequests()
 				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " is unfinished, status: " << status;
 				std::cerr << std::endl;
 #endif
-				it++;
+				++it;
 			}
 		}
 	}
 
 	if (stuffToLoad)
 	{
-		for(it = toload.begin(); it != toload.end(); it++)
+		for(it = toload.begin(); it != toload.end(); ++it)
 		{
 			handleResponse(it->mToken, it->mReqType);
 		}

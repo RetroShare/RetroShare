@@ -21,45 +21,36 @@
  *
  */
 
-#include <QMessageBox>
 
 #include "PeopleDialog.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
-#include "gui/common/UIStateHelper.h"
+#include "gui/Circles/CreateCircleDialog.h"
+#include "gui/common/FlowLayout.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+#include "gui/Identity/IdDetailsDialog.h"
 
-#include <retroshare/rspeers.h>
-#include <retroshare/rsidentity.h>
+#include "retroshare/rspeers.h"
+#include "retroshare/rsidentity.h"
+#include "retroshare/rsgxscircles.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsmsgs.h" 
+#include "retroshare/rsids.h" 
 
 #include <iostream>
+#include <QMenu>
+#include <QMessageBox>
 
 /******
- * #define ID_DEBUG 1
+ * #define PEOPLE_DIALOG_DEBUG 1
  *****/
 
-// Data Requests.
-#define IDDIALOG_IDLIST		1
-#define IDDIALOG_IDDETAILS	2
-#define IDDIALOG_REPLIST	3
-#define IDDIALOG_REFRESH	4
 
-/****************************************************************
- */
-
-#define RSID_COL_NICKNAME   0
-#define RSID_COL_KEYID      1
-#define RSID_COL_IDTYPE     2
-
-#define RSIDREP_COL_NAME       0
-#define RSIDREP_COL_OPINION    1
-#define RSIDREP_COL_COMMENT    2
-#define RSIDREP_COL_REPUTATION 3
-
-#define RSID_FILTER_YOURSELF     0x0001
-#define RSID_FILTER_FRIENDS      0x0002
-#define RSID_FILTER_OTHERS       0x0004
-#define RSID_FILTER_PSEUDONYMS   0x0008
-#define RSID_FILTER_ALL          0xffff
+const uint32_t PeopleDialog::PD_IDLIST    = 0x0001 ;
+const uint32_t PeopleDialog::PD_IDDETAILS = 0x0002 ;
+const uint32_t PeopleDialog::PD_REFRESH   = 0x0003 ;
+const uint32_t PeopleDialog::PD_CIRCLES   = 0x0004 ;
 
 /** Constructor */
 PeopleDialog::PeopleDialog(QWidget *parent)
@@ -67,540 +58,1008 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 {
 	setupUi(this);
 
-#if 0
-	/* Setup UI helper */
-	mStateHelper = new UIStateHelper(this);
-	mStateHelper->addWidget(IDDIALOG_IDLIST, ui.treeWidget_IdList);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDLIST, ui.treeWidget_IdList, false);
-	mStateHelper->addClear(IDDIALOG_IDLIST, ui.treeWidget_IdList);
+	/* Setup TokenQueue */
+	mIdentityQueue = new TokenQueue(rsIdentity->getTokenService(), this);
+	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
+	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
+	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
+	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Reputation);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Delete);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_EditId);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repModButton);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Accept);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Ban);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Negative);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Positive);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Custom);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_spinBox);
+	
+	tabWidget->removeTab(1);
 
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
+	//need erase QtCreator Layout first(for Win)
+	delete idExternal->layout();
+	delete idInternal->layout();
+	//QT Designer don't accept Custom Layout, maybe on QT5
+	_flowLayoutExt = new FlowLayout(idExternal);
+	_flowLayoutInt = new FlowLayout(idInternal);
 
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_KeyId);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
-	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
+	{//First Get Item created in Qt Designer for External
+		int count = idExternal->children().count();
+		for (int curs = 0; curs < count; ++curs){
+			QObject *obj = idExternal->children().at(curs);
+			QWidget *wid = qobject_cast<QWidget *>(obj);
+			if (wid) _flowLayoutExt->addWidget(wid);
+		}//for (int curs = 0; curs < count; ++curs)
+	}//End First Get Item created in Qt Designer for External
 
-	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui.treeWidget_RepList);
-	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui.treeWidget_RepList);
-	//mStateHelper->addClear(IDDIALOG_REPLIST, ui.treeWidget_RepList);
+	{//First Get Item created in Qt Designer for Internal
+		int count = idInternal->children().count();
+		for (int curs = 0; curs < count; ++curs){
+			QObject *obj = idInternal->children().at(curs);
+			QWidget *wid = qobject_cast<QWidget *>(obj);
+			if (wid) _flowLayoutInt->addWidget(wid);
+		}//for (int curs = 0; curs < count; ++curs)
+	}//End First Get Item created in Qt Designer for Internal
 
-	/* Connect signals */
-	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
-	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
-	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
-	connect(ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	pictureFlowWidgetExternal->setAcceptDrops(true);
+	QObject::connect(pictureFlowWidgetExternal, SIGNAL(centerIndexChanged(int)), this, SLOT(pf_centerIndexChanged(int)));
+	QObject::connect(pictureFlowWidgetExternal, SIGNAL(mouseMoveOverSlideEvent(QMouseEvent*,int)), this, SLOT(pf_mouseMoveOverSlideEvent(QMouseEvent*,int)));
+	QObject::connect(pictureFlowWidgetExternal, SIGNAL(dragEnterEventOccurs(QDragEnterEvent*)), this, SLOT(pf_dragEnterEventOccurs(QDragEnterEvent*)));
+	QObject::connect(pictureFlowWidgetExternal, SIGNAL(dragMoveEventOccurs(QDragMoveEvent*)), this, SLOT(pf_dragMoveEventOccurs(QDragMoveEvent*)));
+	QObject::connect(pictureFlowWidgetExternal, SIGNAL(dropEventOccurs(QDropEvent*)), this, SLOT(pf_dropEventOccursExt(QDropEvent*)));
+	pictureFlowWidgetExternal->setMinimumHeight(60);
+	pictureFlowWidgetExternal->setSlideSizeRatio(4/4.0);
 
-	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
-	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-	connect(ui.repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
+	pictureFlowWidgetInternal->setAcceptDrops(true);
+	QObject::connect(pictureFlowWidgetInternal, SIGNAL(centerIndexChanged(int)), this, SLOT(pf_centerIndexChanged(int)));
+	QObject::connect(pictureFlowWidgetInternal, SIGNAL(mouseMoveOverSlideEvent(QMouseEvent*,int)), this, SLOT(pf_mouseMoveOverSlideEvent(QMouseEvent*,int)));
+	QObject::connect(pictureFlowWidgetInternal, SIGNAL(dragEnterEventOccurs(QDragEnterEvent*)), this, SLOT(pf_dragEnterEventOccurs(QDragEnterEvent*)));
+	QObject::connect(pictureFlowWidgetInternal, SIGNAL(dragMoveEventOccurs(QDragMoveEvent*)), this, SLOT(pf_dragMoveEventOccurs(QDragMoveEvent*)));
+	QObject::connect(pictureFlowWidgetInternal, SIGNAL(dropEventOccurs(QDropEvent*)), this, SLOT(pf_dropEventOccursInt(QDropEvent*)));
+	pictureFlowWidgetInternal->setMinimumHeight(60);
+	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
 
-	/* Add filter types */
-	ui.filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
-	ui.filterComboBox->addItem(tr("Yourself"), RSID_FILTER_YOURSELF);
-	ui.filterComboBox->addItem(tr("Friends / Friends of Friends"), RSID_FILTER_FRIENDS);
-	ui.filterComboBox->addItem(tr("Others"), RSID_FILTER_OTHERS);
-	ui.filterComboBox->addItem(tr("Pseudonyms"), RSID_FILTER_PSEUDONYMS);
-	ui.filterComboBox->setCurrentIndex(0);
+	QByteArray geometryExt = Settings->valueFromGroup("PeopleDialog", "SplitterExtState", QByteArray()).toByteArray();
+	if (geometryExt.isEmpty() == false) {
+		splitterExternal->restoreState(geometryExt);
+	}
+	QByteArray geometryInt = Settings->valueFromGroup("PeopleDialog", "SplitterIntState", QByteArray()).toByteArray();
+	if (geometryInt.isEmpty() == false) {
+		splitterInternal->restoreState(geometryInt);
+	}
 
-	/* Add filter actions */
-	QTreeWidgetItem *headerItem = ui.treeWidget_IdList->headerItem();
-	QString headerText = headerItem->text(RSID_COL_NICKNAME);
-	ui.filterLineEdit->addFilter(QIcon(), headerText, RSID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
-	headerText = headerItem->text(RSID_COL_KEYID);
-	ui.filterLineEdit->addFilter(QIcon(), headerItem->text(RSID_COL_KEYID), RSID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	reloadAll();
 
-	/* Setup tree */
-	ui.treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
-
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
-	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-	mStateHelper->setActive(IDDIALOG_REPLIST, false);
-
-	// Hiding RepList until that part is finished.
-	//ui.treeWidget_RepList->setVisible(false);
-	ui.toolButton_Reputation->setVisible(false);
-#endif
 }
 
-void PeopleDialog::updateDisplay(bool /*complete*/)
+/** Destructor. */
+PeopleDialog::~PeopleDialog()
+{
+	delete mIdentityQueue;
+	delete mCirclesQueue;
+
+	Settings->setValueToGroup("PeopleDialog", "SplitterExtState", splitterExternal->saveState());
+	Settings->setValueToGroup("PeopleDialog", "SplitterIntState", splitterInternal->saveState());
+}
+
+void PeopleDialog::updateDisplay(bool complete)
+{
+	Q_UNUSED(complete);
+	reloadAll();
+}
+
+void PeopleDialog::reloadAll()
 {
 	/* Update identity list */
-	circles_view->requestIdList();
-	circles_view->requestCirclesList();
-}
-
-#if 0
-void IdDialog::todo()
-{
-	QMessageBox::information(this, "Todo",
-							 "<b>Open points:</b><ul>"
-							 "<li>Delete ID"
-							 "<li>Reputation"
-							 "<li>Load/save settings"
-							 "</ul>");
-}
-
-void IdDialog::filterComboBoxChanged()
-{
 	requestIdList();
+	requestCirclesList();
+
+	/* grab all ids */
+	std::list<RsPgpId> friend_pgpIds;
+	std::list<RsPgpId> all_pgpIds;
+	std::list<RsPgpId>::iterator it;
+
+	std::set<RsPgpId> friend_set;
+
+	rsPeers->getGPGAcceptedList(friend_pgpIds);
+	//rsPeers->getGPGAllList(all_pgpIds);
+
+
+	for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it) {
+		RsPeerDetails details;
+		if(rsPeers->getGPGDetails(*it, details)){
+			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
+			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
+				IdentityWidget *new_item = new IdentityWidget();
+				new_item->updateData(details) ;
+				_pgp_identity_widgets[*it] = new_item ;
+
+				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
+				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
+				_flowLayoutInt->addWidget(new_item);
+			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
+				IdentityWidget *idWidget = itFound->second;
+
+				idWidget->updateData(details) ;
+			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
+
+		friend_set.insert(*it);
+		}//if(rsPeers->getGPGDetails(*it, details))
+	}//for(it = friend_pgpIds.begin(); it != friend_pgpIds.end(); ++it)
+
+	for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it) {
+		if(friend_set.end() != friend_set.find(*it)) {
+			// already added as a friend.
+			continue;
+		}//if(friend_set.end() != friend_set.find(*it))
+
+		RsPeerDetails details;
+		if (rsPeers->getGPGDetails(*it, details)) {
+			std::map<RsPgpId,IdentityWidget *>::iterator itFound;
+			if((itFound=_pgp_identity_widgets.find(*it)) == _pgp_identity_widgets.end()) {
+				IdentityWidget *new_item = new IdentityWidget();
+				new_item->updateData(details) ;
+				_pgp_identity_widgets[*it] = new_item ;
+
+				QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedInt()));
+				QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
+				_flowLayoutInt->addWidget(new_item);
+			} else {//if((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
+				IdentityWidget *idWidget = itFound->second;
+
+				idWidget->updateData(details) ;
+			}//else ((itFound=_pgp_identity_widgets.find(gdItem.mPgpId)) == _pgp_identity_widgets.end())
+		}//if(rsPeers->getGPGDetails(*it, details))
+	}//for(it = all_pgpIds.begin(); it != all_pgpIds.end(); ++it)
 }
 
-void IdDialog::filterChanged(const QString& /*text*/)
+void PeopleDialog::insertIdList(uint32_t token)
 {
-	filterIds();
-}
+	std::cerr << "**** In insertIdList() ****" << std::endl;
 
-void IdDialog::updateSelection()
-{
-	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
-    RsGxsGroupId id;
+	std::vector<RsGxsIdGroup> gdataVector;
+	std::vector<RsGxsIdGroup>::iterator gdIt;
 
-	if (item)
-	{
-        id = RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString());
-	}
-
-	requestIdDetails(id);
-}
-
-bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
-{
-	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
-
-	/* do filtering */
-	bool ok = false;
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (isOwnId && (accept & RSID_FILTER_YOURSELF))
-		{
-			ok = true;
-		}
-		else
-		{
-			if (data.mPgpKnown)
-			{
-				if (accept & RSID_FILTER_FRIENDS)
-				{
-					ok = true;
-				}
-			}
-			else
-			{
-				if (accept & RSID_FILTER_OTHERS)
-				{
-					ok = true;
-				}
-			}
-		}
-	}
-	else
-	{
-		if (accept & RSID_FILTER_PSEUDONYMS)
-		{
-			ok = true;
-		}
-
-		if (isOwnId && (accept & RSID_FILTER_YOURSELF))
-		{
-			ok = true;
-		}
-	}
-
-	if (!ok)
-	{
-		return false;
-	}
-
-	if (!item)
-	{
-		item = new QTreeWidgetItem();
-	}
-	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-    item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-
-	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (data.mPgpKnown)
-		{
-			RsPeerDetails details;
-			rsPeers->getGPGDetails(data.mPgpId, details);
-			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
-		}
-		else
-		{
-			item->setText(RSID_COL_IDTYPE, tr("PGP Linked Id"));
-		}
-	}
-	else
-	{
-		item->setText(RSID_COL_IDTYPE, tr("Anon Id"));
-	}
-
-	return true;
-}
-
-void IdDialog::requestIdDetails(RsGxsGroupId &id)
-{
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDDETAILS);
-
-    if (id.isNull())
-	{
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-		mStateHelper->setActive(IDDIALOG_REPLIST, false);
-		mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
-		mStateHelper->setLoading(IDDIALOG_REPLIST, false);
-		mStateHelper->clear(IDDIALOG_IDDETAILS);
-		mStateHelper->clear(IDDIALOG_REPLIST);
+	if (!rsIdentity->getGroupData(token, gdataVector)) {
+		std::cerr << "PeopleDialog::insertIdList() Error getting GroupData";
+		std::cerr << std::endl;
 
 		return;
-	}
+	}//if (!rsIdentity->getGroupData(token, gdataVector))
 
-	mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
-	mStateHelper->setLoading(IDDIALOG_REPLIST, true);
+	//RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
+
+	/* Insert items */
+	int i=0 ;
+	for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt){
+		RsGxsIdGroup gdItem = (*gdIt);
+		bool bGotDetail = false;
+
+		RsPeerDetails details;
+		if (gdItem.mPgpKnown) {
+			bGotDetail = rsPeers->getGPGDetails(gdItem.mPgpId, details);
+		}//if (gdItem.mPgpKnown)
+
+		std::map<RsGxsId,IdentityWidget *>::iterator itFound;
+		if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()) {
+			std::cerr << "Loading data vector identity GXS ID = " << gdItem.mMeta.mGroupId << ", i="<< i << std::endl;
+
+			IdentityWidget *new_item = new IdentityWidget();
+			if (bGotDetail) {
+				new_item->updateData(gdItem, details);
+			} else {//if (bGotDetail)
+				new_item->updateData(gdItem);
+			}//else (bGotDetail)
+			_gxs_identity_widgets[RsGxsId(gdItem.mMeta.mGroupId)] = new_item ;
+
+			QObject::connect(new_item, SIGNAL(addButtonClicked()), this, SLOT(iw_AddButtonClickedExt()));
+			QObject::connect(new_item, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+			_flowLayoutExt->addWidget(new_item);
+			++i ;
+		} else {//if((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end())
+
+			std::cerr << "Updating data vector identity GXS ID = " << gdItem.mMeta.mGroupId << std::endl;
+			IdentityWidget *idWidget = itFound->second;
+
+			if (bGotDetail) {
+				idWidget->updateData(gdItem, details) ;
+			} else {//if (bGotDetail)
+				idWidget->updateData(gdItem) ;
+			}//else (bGotDetail)
+
+		}//else ((itFound=_gxs_identity_widgets.find(RsGxsId(gdItem.mMeta.mGroupId))) == _gxs_identity_widgets.end()))
+	}//for (gdIt = gdataVector.begin(); gdIt != gdataVector.end(); ++gdIt)
+}
+
+void PeopleDialog::insertCircles(uint32_t token)
+{
+	std::cerr << "PeopleDialog::insertExtCircles(token==" << token << ")" << std::endl;
+
+	std::list<RsGroupMetaData> gSummaryList;
+	std::list<RsGroupMetaData>::iterator gsIt;
+
+	if (!rsGxsCircles->getGroupSummary(token,gSummaryList)) {
+		std::cerr << "PeopleDialog::insertExtCircles() Error getting GroupSummary";
+		std::cerr << std::endl;
+
+		return;
+	}//if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
+
+	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt) {
+		RsGroupMetaData gsItem = (*gsIt);
+
+		RsGxsCircleDetails details ;
+		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details)){
+			std::cerr << "(EE) Cannot get details for circle id " << gsItem.mGroupId << ". Circle item is not created!" << std::endl;
+			continue ;
+		}//if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(git->mGroupId), details))
+
+		if (details.mCircleType != GXS_CIRCLE_TYPE_EXTERNAL){
+			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
+			if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end()) {
+				std::cerr << "PeopleDialog::insertExtCircles() add new Internal GroupId: " << gsItem.mGroupId;
+				std::cerr << " GroupName: " << gsItem.mGroupName;
+				std::cerr << std::endl;
+
+				CircleWidget *gitem = new CircleWidget() ;
+				QObject::connect(gitem, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem*>,bool&)));
+				QObject::connect(gitem, SIGNAL(askForGXSIdentityWidget(RsGxsId)), this, SLOT(cw_askForGXSIdentityWidget(RsGxsId)));
+				QObject::connect(gitem, SIGNAL(askForPGPIdentityWidget(RsPgpId)), this, SLOT(cw_askForPGPIdentityWidget(RsPgpId)));
+				QObject::connect(gitem, SIGNAL(imageUpdated()), this, SLOT(cw_imageUpdatedInt()));
+				gitem->updateData( gsItem, details );
+				_int_circles_widgets[gsItem.mGroupId] = gitem ;
+
+				_flowLayoutInt->addWidget(gitem);
+
+				QPixmap pixmap = gitem->getImage();
+				pictureFlowWidgetInternal->addSlide( pixmap );
+				_intListCir << gitem;
+			} else {//if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
+				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
+				std::cerr << " GroupName: " << gsItem.mGroupName;
+				std::cerr << std::endl;
+
+				CircleWidget *cirWidget = itFound->second;
+				cirWidget->updateData( gsItem, details );
+
+				//int index = _intListCir.indexOf(cirWidget);
+				//QPixmap pixmap = cirWidget->getImage();
+				//pictureFlowWidgetInternal->setSlide(index, pixmap);
+			}//if((item=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
+		} else {//if (!details.mIsExternal)
+			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
+			if((itFound=_ext_circles_widgets.find(gsItem.mGroupId)) == _ext_circles_widgets.end()) {
+				std::cerr << "PeopleDialog::insertExtCircles() add new GroupId: " << gsItem.mGroupId;
+				std::cerr << " GroupName: " << gsItem.mGroupName;
+				std::cerr << std::endl;
+
+				CircleWidget *gitem = new CircleWidget() ;
+				QObject::connect(gitem, SIGNAL(flowLayoutItemDropped(QList<FlowLayoutItem*>,bool&)), this, SLOT(fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem*>,bool&)));
+				QObject::connect(gitem, SIGNAL(askForGXSIdentityWidget(RsGxsId)), this, SLOT(cw_askForGXSIdentityWidget(RsGxsId)));
+				QObject::connect(gitem, SIGNAL(askForPGPIdentityWidget(RsPgpId)), this, SLOT(cw_askForPGPIdentityWidget(RsPgpId)));
+				QObject::connect(gitem, SIGNAL(imageUpdated()), this, SLOT(cw_imageUpdatedExt()));
+				gitem->updateData( gsItem, details );
+				_ext_circles_widgets[gsItem.mGroupId] = gitem ;
+
+				_flowLayoutExt->addWidget(gitem);
+
+				QPixmap pixmap = gitem->getImage();
+				pictureFlowWidgetExternal->addSlide( pixmap );
+				_extListCir << gitem;
+			} else {//if((itFound=_circles_widgets.find(gsItem.mGroupId)) == _circles_widgets.end())
+				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
+				std::cerr << " GroupName: " << gsItem.mGroupName;
+				std::cerr << std::endl;
+
+				CircleWidget *cirWidget = itFound->second;
+				cirWidget->updateData( gsItem, details );
+
+				//int index = _extListCir.indexOf(cirWidget);
+				//QPixmap pixmap = cirWidget->getImage();
+				//pictureFlowWidgetExternal->setSlide(index, pixmap);
+			}//if((item=_circles_items.find(gsItem.mGroupId)) == _circles_items.end())
+		}//else (!details.mIsExternal)
+	}//for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt)
+}
+
+void PeopleDialog::requestIdList()
+{
+	std::cerr << "Requesting ID list..." << std::endl;
+
+	if (!mIdentityQueue) return;
+
+	mIdentityQueue->cancelActiveRequestTokens(PD_IDLIST);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
-    std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(id);
 
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
+	mIdentityQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, PD_IDLIST);
 }
 
-void IdDialog::insertIdDetails(uint32_t token)
+void PeopleDialog::requestCirclesList()
 {
-	mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
+	std::cerr << "Requesting Circles list..." << std::endl;
 
-	/* get details from libretroshare */
-	RsGxsIdGroup data;
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-		mStateHelper->setActive(IDDIALOG_REPLIST, false);
-		mStateHelper->setLoading(IDDIALOG_REPLIST, false);
-		mStateHelper->clear(IDDIALOG_IDDETAILS);
-		mStateHelper->clear(IDDIALOG_REPLIST);
+	if (!mCirclesQueue) return;
 
-		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
+	mCirclesQueue->cancelActiveRequestTokens(PD_CIRCLES);
 
-		return;
-	}
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-	if (datavector.size() != 1)
-	{
-		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
+	uint32_t token;
+	mCirclesQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, PD_CIRCLES);
+}
 
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-		mStateHelper->setActive(IDDIALOG_REPLIST, false);
-		mStateHelper->setLoading(IDDIALOG_REPLIST, false);
-		mStateHelper->clear(IDDIALOG_IDDETAILS);
-		mStateHelper->clear(IDDIALOG_REPLIST);
+void PeopleDialog::updateCirclesDisplay(bool)
+{
+	std::cerr << "!!Updating circles display!" << std::endl;
 
-		ui.lineEdit_KeyId->setText("INVALID DV SIZE");
+	requestCirclesList() ;
+}
 
-		return;
-	}
+void PeopleDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
+{
+	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
 
-	mStateHelper->setActive(IDDIALOG_IDDETAILS, true);
+	switch(req.mUserType) {
+	case PD_IDLIST:
+		insertIdList(req.mToken);
+	break;
 
-	data = datavector[0];
+	case PD_IDDETAILS:
+		//insertIdDetails(req.mToken);
+	break;
 
-	/* get GPG Details from rsPeers */
-	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
+	case PD_CIRCLES:
+		insertCircles(req.mToken);
+	break;
 
-	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-    ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
-	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+	case PD_REFRESH:
+		updateDisplay(true);
+	break;
+	default:
+		std::cerr << "IdDialog::loadRequest() ERROR";
+		std::cerr << std::endl;
+	break;
+	}//switch(req.mUserType)
 
-	if (data.mPgpKnown)
-	{
-		RsPeerDetails details;
-		rsPeers->getGPGDetails(data.mPgpId, details);
-		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
-	}
-	else
-	{
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-		{
-			ui.lineEdit_GpgName->setText(tr("Unknown real name"));
-		}
-		else
-		{
-			ui.lineEdit_GpgName->setText(tr("Anonymous Id"));
-		}
-	}
+}
 
-	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
+void PeopleDialog::iw_AddButtonClickedExt()
+{
+	IdentityWidget *dest=
+	    qobject_cast<IdentityWidget *>(QObject::sender());
+	if (dest) {
+		QMenu contextMnu( this );
 
-	if (isOwnId)
-	{
-		ui.radioButton_IdYourself->setChecked(true);
-	}
-	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		if (data.mPgpKnown)
-		{
-			if (rsPeers->isGPGAccepted(data.mPgpId))
+		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
+		for( itCurs =_ext_circles_widgets.begin();
+		     itCurs != _ext_circles_widgets.end();
+		     ++itCurs) {
+			CircleWidget *curs = itCurs->second;
+			QIcon icon = QIcon(curs->getImage());
+			QString name = curs->getName();
+
+			QAction *action = contextMnu.addAction(icon, name, this, SLOT(addToCircleExt()));
+			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
+			                + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+		}//for( itCurs =_ext_circles_widgets.begin();
+		
+		  std::list<RsGxsId> own_identities ;
+      rsIdentity->getOwnIds(own_identities) ;
+      
+      if(own_identities.size() <= 1)
 			{
-				ui.radioButton_IdFriend->setChecked(true);
+				QAction *action = contextMnu.addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+
+				if(own_identities.empty())
+					action->setEnabled(false) ;
+				else
+					action->setData(QString::fromStdString((own_identities.front()).toStdString()) + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString())) ;
 			}
 			else
 			{
-				ui.radioButton_IdFOF->setChecked(true);
+				QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+
+				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
+				{
+					RsIdentityDetails idd ;
+					rsIdentity->getIdDetails(*it,idd) ;
+
+					QPixmap pixmap ;
+
+					if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
+						pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+
+					QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
+					action->setData(QString::fromStdString((*it).toStdString()) + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString())) ;
+				}
 			}
+			
+			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMessage()));
+			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+			
+			contextMnu.addSeparator();
+			
+			QAction *actionDetails = contextMnu.addAction(QIcon(":/images/info16.png"), tr("Person details"), this, SLOT(personDetails()));
+			actionDetails->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+
+		contextMnu.exec(QCursor::pos());
+	}//if (dest)
+}
+
+void PeopleDialog::iw_AddButtonClickedInt()
+{
+	IdentityWidget *dest=
+	    qobject_cast<IdentityWidget *>(QObject::sender());
+	if (dest) {
+		QMenu contextMnu( this );
+
+		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
+		for( itCurs =_int_circles_widgets.begin();
+		     itCurs != _int_circles_widgets.end();
+		     ++itCurs) {
+			CircleWidget *curs = itCurs->second;
+			QIcon icon = QIcon(curs->getImage());
+			QString name = curs->getName();
+
+			QAction *action = contextMnu.addAction(icon, name, this, SLOT(addToCircleInt()));
+			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
+			                + ";" + QString::fromStdString(dest->details().gpg_id.toStdString()));
+		}//for( itCurs =_int_circles_widgets.begin();
+
+		contextMnu.exec(QCursor::pos());
+	}//if (dest)
+}
+
+void PeopleDialog::addToCircleExt()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+		QStringList idList = data.split(";");
+
+		RsGxsGroupId groupId = RsGxsGroupId(idList.at(0).toStdString());
+		std::map<RsGxsGroupId, CircleWidget*>::iterator itCirFound;
+		if((itCirFound=_ext_circles_widgets.find(groupId)) != _ext_circles_widgets.end()) {
+			CircleWidget *circle = itCirFound->second;
+			CreateCircleDialog dlg;
+			dlg.addCircle(circle->circleDetails());
+
+			RsGxsId gxs_id = RsGxsId(idList.at(1).toStdString());
+
+			std::map<RsGxsId,IdentityWidget *>::iterator itIdFound;
+			if((itIdFound=_gxs_identity_widgets.find(gxs_id)) != _gxs_identity_widgets.end()) {
+				IdentityWidget *idWidget = itIdFound->second;
+				dlg.addMember(idWidget->groupInfo());
+			}//if((itFound=_gxs_identity_widgets.find(gxs_id)) != _gxs_identity_widgets.end())
+
+			dlg.editExistingId(circle->groupInfo().mGroupId, false,false);
+			dlg.exec();
+		}//if((itFound=_ext_circles_widgets.find(groupId)) != _ext_circles_widgets.end())
+	}//if (action)
+}
+
+void PeopleDialog::addToCircleInt()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+		QStringList idList = data.split(";");
+
+		RsGxsGroupId groupId = RsGxsGroupId(idList.at(0).toStdString());
+		std::map<RsGxsGroupId, CircleWidget*>::iterator itCirFound;
+		if((itCirFound=_int_circles_widgets.find(groupId)) != _int_circles_widgets.end()) {
+			CircleWidget *circle = itCirFound->second;
+			CreateCircleDialog dlg;
+			dlg.addCircle(circle->circleDetails());
+
+			RsPgpId pgp_id = RsPgpId(idList.at(1).toStdString());
+
+			std::map<RsPgpId,IdentityWidget *>::iterator itIdFound;
+			if((itIdFound=_pgp_identity_widgets.find(pgp_id)) != _pgp_identity_widgets.end()) {
+				IdentityWidget *idWidget = itIdFound->second;
+				dlg.addMember(idWidget->keyId(), idWidget->idtype(), idWidget->nickname());
+			}//if((itFound=_pgp_identity_widgets.find(pgp_id)) != _pgp_identity_widgets.end())
+
+			dlg.editExistingId(circle->groupInfo().mGroupId, false,false);
+			dlg.exec();
+		}//if((itFound=_ext_circles_widgets.find(groupId)) != _ext_circles_widgets.end())
+	}//if (action)
+}
+
+void PeopleDialog::chatIdentity()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+      QString data = action->data().toString();
+      QStringList idList = data.split(";");
+
+      RsGxsId from_gxs_id = RsGxsId(idList.at(0).toStdString());
+			RsGxsId gxs_id = RsGxsId(idList.at(1).toStdString());
+				
+			uint32_t error_code ;
+
+            DistantChatPeerId dpid ;
+            
+      if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(gxs_id), from_gxs_id, dpid,error_code))
+	      QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
+
 		}
-		else
+}
+
+void PeopleDialog::sendMessage()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+      return;
+    }
+
+   	RsGxsId gxs_id = RsGxsId(data.toStdString());;
+
+    nMsgDialog->addRecipient(MessageComposer::TO,  RsGxsId(gxs_id));
+		nMsgDialog->show();
+		nMsgDialog->activateWindow();
+
+    /* window will destroy itself! */
+    
+    }
+
+}
+
+void PeopleDialog::personDetails()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+
+   	RsGxsId gxs_id = RsGxsId(data.toStdString());
+   	
+    if (RsGxsGroupId(gxs_id).isNull()) {
+        return;
+    }
+
+    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(gxs_id));
+    dialog->show();
+
+    /* Dialog will destroy itself */
+
+    }
+
+}
+
+void PeopleDialog::cw_askForGXSIdentityWidget(RsGxsId gxs_id)
+{
+	CircleWidget *dest =
+	    qobject_cast<CircleWidget *>(QObject::sender());
+	if (dest) {
+
+		std::map<RsGxsId,IdentityWidget *>::iterator itFound;
+		if((itFound=_gxs_identity_widgets.find(gxs_id)) != _gxs_identity_widgets.end()) {
+			IdentityWidget *idWidget = itFound->second;
+			dest->addIdent(idWidget);
+		}//if((itFound=_gxs_identity_widgets.find(gxs_id)) != _gxs_identity_widgets.end()) {
+	} else {
+		reloadAll();
+	}
+}
+
+void PeopleDialog::cw_askForPGPIdentityWidget(RsPgpId pgp_id)
+{
+	CircleWidget *dest =
+	    qobject_cast<CircleWidget *>(QObject::sender());
+	if (dest) {
+
+		std::map<RsPgpId,IdentityWidget *>::iterator itFound;
+		if((itFound=_pgp_identity_widgets.find(pgp_id)) != _pgp_identity_widgets.end()) {
+			IdentityWidget *idWidget = itFound->second;
+			dest->addIdent(idWidget);
+		}//if((itFound=_pgp_identity_widgets.find(gxs_id)) != _pgp_identity_widgets.end()) {
+	} else {
+		reloadAll();
+	}
+}
+
+void PeopleDialog::cw_imageUpdatedInt()
+{
+	CircleWidget *cirWidget =
+	    qobject_cast<CircleWidget *>(QObject::sender());
+	if (cirWidget){
+		int index = _intListCir.indexOf(cirWidget);
+		QPixmap pixmap = cirWidget->getImage();
+		pictureFlowWidgetInternal->setSlide(index, pixmap);
+	}//if (cirWidget)
+}
+
+void PeopleDialog::cw_imageUpdatedExt()
+{
+	CircleWidget *cirWidget =
+	    qobject_cast<CircleWidget *>(QObject::sender());
+	if (cirWidget){
+		int index = _extListCir.indexOf(cirWidget);
+		QPixmap pixmap = cirWidget->getImage();
+		pictureFlowWidgetExternal->setSlide(index, pixmap);
+	}//if (cirWidget)
+}
+
+void PeopleDialog::fl_flowLayoutItemDroppedExt(QList<FlowLayoutItem *>flListItem, bool &bAccept)
+{
+	bAccept=false;
+	bool bCreateNewCircle=false;
+	QApplication::restoreOverrideCursor();
+
+	FlowLayoutItem *dest =
+	    qobject_cast<FlowLayoutItem *>(QObject::sender());
+	if (dest) {
+		CreateCircleDialog dlg;
+
+		CircleWidget* cirDest = qobject_cast<CircleWidget*>(dest);
+		if (cirDest) {
+			dlg.addCircle(cirDest->circleDetails());
+
+		} else {//if (cirDest)
+			bCreateNewCircle=true;
+		IdentityWidget* idDest = qobject_cast<IdentityWidget*>(dest);
+		if (idDest) {
+				if (idDest->haveGXSId()){
+				dlg.addMember(idDest->groupInfo());
+
+				}//if (idDest->haveGXSId())
+		}//if (idDest)
+		}//else (cirDest)
+
+
+		typedef QList<FlowLayoutItem *>::Iterator itList;
+		for (itList listCurs = flListItem.begin()
+		     ; listCurs != flListItem.end()
+		     ; ++listCurs) {
+			FlowLayoutItem *flCurs = *listCurs;
+			CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+			//Create new circle if circle dropped in circle or ident
+			if (cirDropped) {
+				bCreateNewCircle = true;
+				dlg.addCircle(cirDropped->circleDetails());
+
+			} else {//if (cirDropped)
+				IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+				if (idDropped){
+					if (idDropped->haveGXSId()){
+					dlg.addMember(idDropped->groupInfo());
+
+					}//if (idDropped->haveGXSId())
+				}//if (idDropped)
+			}//else (cirDropped)
+
+		}//for (itList listCurs = flListItem.begin()
+
+		if (bCreateNewCircle){
+			dlg.editNewId(true);
+		} else {//if (bCreateNewCircle)
+			dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
+		}//else (bCreateNewCircle)
+
+		dlg.exec();
+
+		bAccept=true;
+	}//if (dest)
+}
+
+void PeopleDialog::fl_flowLayoutItemDroppedInt(QList<FlowLayoutItem *>flListItem, bool &bAccept)
+{
+	bAccept=false;
+	bool bCreateNewCircle=false;
+	QApplication::restoreOverrideCursor();
+
+	FlowLayoutItem *dest =
+	    qobject_cast<FlowLayoutItem *>(QObject::sender());
+	if (dest) {
+		CreateCircleDialog dlg;
+
+		CircleWidget* cirDest = qobject_cast<CircleWidget*>(dest);
+		if (cirDest) {
+			dlg.addCircle(cirDest->circleDetails());
+
+		} else {//if (cirDest)
+			bCreateNewCircle=true;
+			IdentityWidget* idDest = qobject_cast<IdentityWidget*>(dest);
+			if (idDest) {
+				if (idDest->havePGPDetail()){
+					dlg.addMember(idDest->keyId(), idDest->idtype(), idDest->nickname());
+
+				}//if (idDest->havePGPDetail())
+			}//if (idDest)
+		}//else (cirDest)
+
+
+		typedef QList<FlowLayoutItem *>::Iterator itList;
+		for (itList listCurs = flListItem.begin()
+		     ; listCurs != flListItem.end()
+		     ; ++listCurs) {
+			FlowLayoutItem *flCurs = *listCurs;
+			CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+			//Create new circle if circle dropped in circle or ident
+			if (cirDropped) {
+				bCreateNewCircle = true;
+				dlg.addCircle(cirDropped->circleDetails());
+
+			} else {//if (cirDropped)
+				IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+				if (idDropped){
+					dlg.addMember(idDropped->keyId(), idDropped->idtype(), idDropped->nickname());
+
+				}//if (idDropped)
+			}//else (cirDropped)
+
+		}//for (itList listCurs = flListItem.begin()
+
+		if (bCreateNewCircle){
+			dlg.editNewId(false);
+		} else {//if (bCreateNewCircle)
+			dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
+		}//else (bCreateNewCircle)
+
+		dlg.exec();
+
+		bAccept=true;
+	}//if (dest)
+}
+
+void PeopleDialog::pf_centerIndexChanged(int index)
+{
+	Q_UNUSED(index)
+}
+
+void PeopleDialog::pf_mouseMoveOverSlideEvent(QMouseEvent* event, int slideIndex)
+{
+	Q_UNUSED(event)
+	Q_UNUSED(slideIndex)
+}
+
+void PeopleDialog::pf_dragEnterEventOccurs(QDragEnterEvent *event)
+{
+	FlowLayoutItem *flItem =
+	    qobject_cast<FlowLayoutItem *>(event->source());
+	if (flItem) {
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+		return;
+	}//if (flItem)
+	QWidget *wid =
+	    qobject_cast<QWidget *>(event->source());//QT5 return QObject
+	FlowLayout *layout = 0;
+	if (wid) layout =
+	    qobject_cast<FlowLayout *>(wid->layout());
+	if (layout) {
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+		return;
+	}//if (layout)
+}
+
+void PeopleDialog::pf_dragMoveEventOccurs(QDragMoveEvent *event)
+{
+	FlowLayoutItem *flItem =
+	    qobject_cast<FlowLayoutItem *>(event->source());
+	if (flItem) {
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+		return;
+	}//if (flItem)
+	QWidget *wid =
+	    qobject_cast<QWidget *>(event->source());//QT5 return QObject
+	FlowLayout *layout = 0;
+	if (wid) layout =
+	    qobject_cast<FlowLayout *>(wid->layout());
+	if (layout) {
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+		return;
+	}//if (layout)
+}
+
+void PeopleDialog::pf_dropEventOccursExt(QDropEvent *event)
+{
+	bool bCreateNewCircle=false;
+	bool atLeastOne = false;
+	QApplication::restoreOverrideCursor();
+
+	int index = pictureFlowWidgetExternal->centerIndex();
+	CircleWidget* cirDest = _extListCir[index];
+	if (cirDest) {
+		CreateCircleDialog dlg;
+
+		dlg.addCircle(cirDest->circleDetails());
+
+		{//Test if source is only one FlowLayoutItem
+			FlowLayoutItem *flCurs =
+			    qobject_cast<FlowLayoutItem *>(event->source());
+			if (flCurs) {
+				CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+				//Create new circle if circle dropped in circle or ident
+				if (cirDropped) {
+					bCreateNewCircle = true;
+					dlg.addCircle(cirDropped->circleDetails());
+					atLeastOne = true;
+
+				} else {//if (cirDropped)
+					IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+					if (idDropped){
+						if (idDropped->haveGXSId()){
+							dlg.addMember(idDropped->groupInfo());
+							atLeastOne = true;
+						}//if (idDropped->haveGXSId())
+					}//if (idDropped)
+				}//else (cirDropped)
+
+			}//if (flCurs)
+		}//End Test if source is only one FlowLayoutItem
+
+		QWidget *wid =
+		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
+		FlowLayout *layout;
+		if (wid) layout =
+		    qobject_cast<FlowLayout *>(wid->layout());
+		if (layout) {
+
+			QList<QLayoutItem *> list = layout->selectionList();
+			int count = list.count();
+			for (int curs = 0; curs < count; ++curs){
+				QLayoutItem *layoutItem = list.at(curs);
+				if (layoutItem){
+					FlowLayoutItem *flCurs =
+					    qobject_cast<FlowLayoutItem *>(layoutItem->widget());
+					if (flCurs){
+						CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+						//Create new circle if circle dropped in circle or ident
+						if (cirDropped) {
+							bCreateNewCircle = true;
+							dlg.addCircle(cirDropped->circleDetails());
+							atLeastOne = true;
+
+						} else {//if (cirDropped)
+							IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+							if (idDropped){
+								if (idDropped->haveGXSId()){
+								dlg.addMember(idDropped->groupInfo());
+								atLeastOne = true;
+								}//if (idDropped->haveGXSId())
+
+							}//if (idDropped)
+						}//else (cirDropped)
+
+					}//if (flCurs)
+				}//if (layoutItem)
+			}//for (int curs = 0; curs < count; ++curs)
+		}//if (layout)
+
+		if (atLeastOne) {
+			if (bCreateNewCircle){
+				dlg.editNewId(true);
+			} else {//if (bCreateNewCircle)
+				dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
+			}//else (bCreateNewCircle)
+
+			dlg.exec();
+
+			event->setDropAction(Qt::CopyAction);
+			event->accept();
+		}//if (atLeastOne)
+	}//if (cirDest)
+}
+
+void PeopleDialog::pf_dropEventOccursInt(QDropEvent *event)
 		{
-			ui.radioButton_IdOther->setChecked(true);
-		}
-	}
-	else
-	{
-		ui.radioButton_IdPseudo->setChecked(true);
-	}
+	bool bCreateNewCircle=false;
+	bool atLeastOne = false;
+	QApplication::restoreOverrideCursor();
 
-	if (isOwnId)
-	{
-		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, false);
-		// No Delete Ids yet!
-		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, /*true*/ false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
-	}
-	else
-	{
-		// No Reputation yet!
-		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, /*true*/ false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, false);
-		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
-	}
+	int index = pictureFlowWidgetInternal->centerIndex();
+	CircleWidget* cirDest = _intListCir[index];
+	if (cirDest) {
+		CreateCircleDialog dlg;
 
-	/* now fill in the reputation information */
-	ui.line_RatingOverall->setText("Overall Rating TODO");
-	ui.line_RatingOwn->setText("Own Rating TODO");
+		dlg.addCircle(cirDest->circleDetails());
 
-	if (data.mPgpKnown)
-	{
-		ui.line_RatingImplicit->setText("+50 Known PGP");
-	}
-	else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
-	{
-		ui.line_RatingImplicit->setText("+10 UnKnown PGP");
-	}
-	else
-	{
-		ui.line_RatingImplicit->setText("+5 Anon Id");
-	}
+		{//Test if source is only one FlowLayoutItem
+			FlowLayoutItem *flCurs =
+			    qobject_cast<FlowLayoutItem *>(event->source());
+			if (flCurs) {
+				CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+				//Create new circle if circle dropped in circle or ident
+				if (cirDropped) {
+					bCreateNewCircle = true;
+					dlg.addCircle(cirDropped->circleDetails());
+					atLeastOne = true;
 
-	{
-		QString rating = QString::number(data.mReputation.mOverallScore);
-		ui.line_RatingOverall->setText(rating);
-	}
+				} else {//if (cirDropped)
+					IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+					if (idDropped){
+						if (idDropped->havePGPDetail()){
+							dlg.addMember(idDropped->keyId(), idDropped->idtype(), idDropped->nickname());
+							atLeastOne = true;
+						}//if (idDropped->havePGPDetail())
+					}//if (idDropped)
+				}//else (cirDropped)
 
-	{
-		QString rating = QString::number(data.mReputation.mIdScore);
-		ui.line_RatingImplicit->setText(rating);
-	}
+			}//if (flCurs)
+		}//End Test if source is only one FlowLayoutItem
 
-	{
-		QString rating = QString::number(data.mReputation.mOwnOpinion);
-		ui.line_RatingOwn->setText(rating);
-	}
+		QWidget *wid =
+		    qobject_cast<QWidget *>(event->source());//QT5 return QObject
+		FlowLayout *layout;
+		if (wid) layout =
+		    qobject_cast<FlowLayout *>(wid->layout());
+		if (layout) {
 
-	{
-		QString rating = QString::number(data.mReputation.mPeerOpinion);
-		ui.line_RatingPeers->setText(rating);
-	}
+			QList<QLayoutItem *> list = layout->selectionList();
+			int count = list.count();
+			for (int curs = 0; curs < count; ++curs){
+				QLayoutItem *layoutItem = list.at(curs);
+				if (layoutItem){
+					FlowLayoutItem *flCurs =
+					    qobject_cast<FlowLayoutItem *>(layoutItem->widget());
+					if (flCurs){
+						CircleWidget* cirDropped = qobject_cast<CircleWidget*>(flCurs);
+						//Create new circle if circle dropped in circle or ident
+						if (cirDropped) {
+							bCreateNewCircle = true;
+							dlg.addCircle(cirDropped->circleDetails());
+							atLeastOne = true;
 
-	/* request network ratings */
-	// Removing this for the moment.
-	// requestRepList(data.mMeta.mGroupId);
-}
-
-void IdDialog::modifyReputation()
-{
-	std::cerr << "IdDialog::modifyReputation()";
-	std::cerr << std::endl;
-
-	RsGxsId id(ui.lineEdit_KeyId->text().toStdString());
-
-	int mod = 0;
-	if (ui.repMod_Accept->isChecked())
-	{
-		mod += 100;
-	}
-	else if (ui.repMod_Positive->isChecked())
-	{
-		mod += 10;
-	}
-	else if (ui.repMod_Negative->isChecked())
-	{
-		mod += -10;
-	}
-	else if (ui.repMod_Ban->isChecked())
-	{
-		mod += -100;
-	}
-	else if (ui.repMod_Custom->isChecked())
-	{
-		mod += ui.repMod_spinBox->value();
-	}
-	else
-	{
-		// invalid
-		return;
-	}
-
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
-	std::cerr << std::endl;
-
-	uint32_t token;
-	if (!rsIdentity->submitOpinion(token, id, false, mod))
-	{
-		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
-		std::cerr << std::endl;
-
-	}
-
-	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
-	std::cerr << std::endl;
-
-	// trigger refresh when finished.
-	// basic / anstype are not needed.
-	mIdQueue->queueRequest(token, 0, 0, IDDIALOG_REFRESH);
-
-	return;
-}
+						} else {//if (cirDropped)
+							IdentityWidget* idDropped = qobject_cast<IdentityWidget*>(flCurs);
+							if (idDropped){
+								if (idDropped->havePGPDetail()){
+									dlg.addMember(idDropped->keyId(), idDropped->idtype(), idDropped->nickname());
+									atLeastOne = true;
+								}//if (idDropped->havePGPDetail())
 	
-void IdDialog::addIdentity()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
+							}//if (idDropped)
+						}//else (cirDropped)
+
+					}//if (flCurs)
+				}//if (layoutItem)
+			}//for (int curs = 0; curs < count; ++curs)
+		}//if (layout)
+
+		if (atLeastOne) {
+			if (bCreateNewCircle){
+				dlg.editNewId(false);
+			} else {//if (bCreateNewCircle)
+				dlg.editExistingId(cirDest->groupInfo().mGroupId, false,false);
+			}//else (bCreateNewCircle)
+
 	dlg.exec();
+
+			event->setDropAction(Qt::CopyAction);
+			event->accept();
+		}//if (atLeastOne)
+	}//if (cirDest)
 }
 
-void IdDialog::editIdentity()
-{
-	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
-	if (!item)
+void PeopleDialog::populatePictureFlowExt()
 	{
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
-		return;
+	std::map<RsGxsGroupId,CircleWidget *>::iterator it;
+	for (it=_ext_circles_widgets.begin(); it!=_ext_circles_widgets.end(); ++it) {
+		CircleWidget *item = it->second;
+		QPixmap pixmap = item->getImage();
+		pictureFlowWidgetExternal->addSlide( pixmap );
+	}//for (it=_ext_circles_widgets.begin(); it!=_ext_circles_widgets.end(); ++it)
+	pictureFlowWidgetExternal->setSlideSizeRatio(4/4.0);
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-
-	IdEditDialog dlg(this);
-	dlg.setupExistingId(keyId);
-	dlg.exec();
-}
-
-void IdDialog::filterIds()
-{
-	int filterColumn = ui.filterLineEdit->currentFilter();
-	QString text = ui.filterLineEdit->text();
-
-	ui.treeWidget_IdList->filterItems(filterColumn, text);
-}
-
-void IdDialog::requestRepList(const RsGxsGroupId &aboutId)
-{
-	mStateHelper->setLoading(IDDIALOG_REPLIST, true);
-
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_REPLIST);
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(aboutId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_REPLIST);
-}
-
-void IdDialog::insertRepList(uint32_t token)
-{
-	mStateHelper->setLoading(IDDIALOG_REPLIST, false);
-#if 0
-
-	std::vector<RsGxsIdOpinion> opinions;
-	std::vector<RsGxsIdOpinion>::iterator vit;
-	if (!rsIdentity->getMsgData(token, opinions))
+void PeopleDialog::populatePictureFlowInt()
 	{
-		std::cerr << "IdDialog::insertRepList() Error getting Opinions";
-		std::cerr << std::endl;
-
-		mStateHelper->setActive(IDDIALOG_REPLIST, false);
-		mStateHelper->clear(IDDIALOG_REPLIST);
-
-		return;
-	}
-
-	for(vit = opinions.begin(); vit != opinions.end(); vit++)
-	{
-		RsGxsIdOpinion &op = (*vit);
-		GxsIdTreeWidgetItem *item = new GxsIdTreeWidgetItem();
-
-		/* insert 4 columns */
-
-		/* friend name */
-        item->setId(op.mMeta.mAuthorId, RSIDREP_COL_NAME);
-
-		/* score */
-		item->setText(RSIDREP_COL_OPINION, QString::number(op.getOpinion()));
-
-		/* comment */
-		item->setText(RSIDREP_COL_COMMENT, QString::fromUtf8(op.mComment.c_str()));
-
-		/* local reputation */
-		item->setText(RSIDREP_COL_REPUTATION, QString::number(op.getReputation()));
-
-		ui.treeWidget_RepList->addTopLevelItem(item);
-	}
-#endif
-	mStateHelper->setActive(IDDIALOG_REPLIST, true);
+	std::map<RsGxsGroupId,CircleWidget *>::iterator it;
+	for (it=_int_circles_widgets.begin(); it!=_int_circles_widgets.end(); ++it) {
+		CircleWidget *item = it->second;
+		QPixmap pixmap = item->getImage();
+		pictureFlowWidgetInternal->addSlide( pixmap );
+	}//for (it=_int_circles_widgets.begin(); it!=_int_circles_widgets.end(); ++it)
+	pictureFlowWidgetInternal->setSlideSizeRatio(4/4.0);
 }
-
-
-#endif

@@ -40,31 +40,38 @@
 
 class bdFilteredPeer
 {
-	public:
-	struct sockaddr_in mAddr;
-	uint32_t mFilterFlags; /* reasons why we are filtering */
-	time_t mFilterTS;
-	time_t mLastSeen;
+    public:
+    struct sockaddr_in mAddr;
+    uint32_t mFilterFlags; /* reasons why we are filtering */
+    time_t mFilterTS;
+    time_t mLastSeen;
 };
+
+class bdNodeManager;
 
 class bdFilter
 {
 	public:
-	bdFilter(const bdNodeId *ownid, std::list<bdFilteredPeer> &initialFilters, 
-		uint32_t filterFlags, bdDhtFunctions *fns);
+    bdFilter(const std::string& fname, const bdNodeId *ownid, uint32_t filterFlags, bdDhtFunctions *fns, bdNodeManager *manager);
 
 	// get the answer.
-bool	filtered(std::list<bdFilteredPeer> &answer);
+//bool	filtered(std::list<bdFilteredPeer> &answer);
 bool	filteredIPs(std::list<struct sockaddr_in> &answer);
+
+//void    loadFilteredPeers(const std::list<bdFilteredPeer>& peers) ;
+void 	getFilteredPeers(std::list<bdFilteredPeer> &peers);
 
 int 	checkPeer(const bdId *id, uint32_t peerFlags);
 
 int 	addrOkay(struct sockaddr_in *addr);
-int 	addPeerToFilter(const bdId *id, uint32_t flags);
+int 	addPeerToFilter(const struct sockaddr_in &addr, uint32_t flags);
 
 bool 	cleanupFilter();
 
-	private:
+void loadBannedIpFile() ;
+void writeBannedIpFile() ;
+
+private:
 
 bool	isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags);
 
@@ -72,11 +79,12 @@ bool	isOwnIdWithoutBitDhtFlags(const bdId *id, uint32_t peerFlags);
 	bdNodeId mOwnId;
 	uint32_t mFilterFlags;
 
-	std::list<bdFilteredPeer> mFiltered;
+	std::map<uint32_t,bdFilteredPeer> mFiltered;
 	bdDhtFunctions *mFns;
+	std::string mFilename ;
 
-	// = addr.sin_addr.s_addr (uint32_t) stored in network order.
-	std::set<uint32_t> mIpsBanned; 
+	// have access to the manager for isBanned callback
+	bdNodeManager* mNodeManager;
 };
 
 

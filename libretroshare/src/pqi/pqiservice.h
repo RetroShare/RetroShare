@@ -109,6 +109,7 @@ public:
 	p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl);
 
 int	addService(pqiService *, bool defaultOn);
+int	removeService(pqiService *);
 
 bool	recvItem(RsRawItem *);
 bool	sendItem(RsRawItem *);

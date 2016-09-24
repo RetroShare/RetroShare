@@ -21,49 +21,120 @@
  *
  */
 
+#include "rshare.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsIdDetails.h"
+#include "util/HandleRichText.h"
 
-#include "rshare.h"
-
-#include <retroshare/rspeers.h>
-
-#include <iostream>
-
-#define MAX_ATTEMPTS 5
+#define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
 /** Constructor */
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
-: QObject(NULL), RSTreeWidgetItem(compareRole, parent), mCount(0), mColumn(0)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
 {
 	init();
 }
 
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidgetItem *parent)
-: QObject(NULL), RSTreeWidgetItem(compareRole, parent), mCount(0), mColumn(0)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidgetItem *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
 {
 	init();
 }
 
 void GxsIdRSTreeWidgetItem::init()
 {
+	mIdFound = false;
+	mRetryWhenFailed = false;
+    	mBannedState = false ;
 }
 
-void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
+static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-	std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
-	std::cerr << std::endl;
+	GxsIdRSTreeWidgetItem *item = dynamic_cast<GxsIdRSTreeWidgetItem*>(object);
+	if (!item) {
+		return;
+	}
+
+	QList<QIcon> icons;
+
+	switch (type) {
+	case GXS_ID_DETAILS_TYPE_EMPTY:
+		item->processResult(true);
+		break;
+
+	case GXS_ID_DETAILS_TYPE_FAILED:
+		item->processResult(false);
+		break;
+
+	case GXS_ID_DETAILS_TYPE_LOADING:
+		icons.push_back(GxsIdDetails::getLoadingIcon(details.mId));
+		break;
+
+	case GXS_ID_DETAILS_TYPE_DONE:
+        GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
+		item->processResult(true);
+		break;
+        
+    	case GXS_ID_DETAILS_TYPE_BANNED:
+        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+            	break ;
+	}
+
+	int column = item->idColumn();
+	item->setToolTip(column, GxsIdDetails::getComment(details));
+
+	item->setText(column, GxsIdDetails::getNameForType(type, details));
+	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));
+
+	QPixmap combinedPixmap;
+	if (!icons.empty()) {
+        GxsIdDetails::GenerateCombinedPixmap(combinedPixmap, icons, QFontMetricsF(item->font(item->idColumn())).height()*1.4);
+	}
+	item->setData(column, Qt::DecorationRole, combinedPixmap);
+	item->setAvatar(details.mAvatar);
+}
+
+void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenFailed)
+{
+	//std::cerr << " GxsIdRSTreeWidgetItem::setId(" << id << "," << column << ")";
+	//std::cerr << std::endl;
+
+	if (mIdFound) {
+		if (mColumn == column && mId == id) {
+			return;
+		}
+	}
+
+	mIdFound = false;
+	mRetryWhenFailed = retryWhenFailed;
 
 	mId = id;
 	mColumn = column;
-    if (mId.isNull())
-	{
-		setText(mColumn, "No Signature");
+
+	startProcess();
+}
+
+void GxsIdRSTreeWidgetItem::updateBannedState()
+{
+    if(mBannedState != rsIdentity->isBanned(mId))
+        forceUpdate() ;
+}
+
+void GxsIdRSTreeWidgetItem::forceUpdate()
+{
+	mIdFound = false;
+	mBannedState = rsIdentity->isBanned(mId) ;
+
+	startProcess();
+}
+
+void GxsIdRSTreeWidgetItem::startProcess()
+{
+	if (mRetryWhenFailed) {
+		disconnect(rApp, SIGNAL(minuteTick()), this, SLOT(startProcess()));
 	}
-	else
-	{
-		loadId();
-	}
+
+	GxsIdDetails::process(mId, fillGxsIdRSTreeWidgetItemCallback, this);
 }
 
 bool GxsIdRSTreeWidgetItem::getId(RsGxsId &id)
@@ -72,120 +143,47 @@ bool GxsIdRSTreeWidgetItem::getId(RsGxsId &id)
 	return true;
 }
 
-void GxsIdRSTreeWidgetItem::loadId()
+void GxsIdRSTreeWidgetItem::processResult(bool success)
 {
-	disconnect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
+	mIdFound = success;
 
-	std::cerr << " GxsIdRSTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
-	std::cerr << std::endl;
-
-	mCount++;
-
-	/* try and get details - if not there ... set callback */
-	QString desc;
-	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
-	QIcon combinedIcon;
-	if (!icons.empty())
-	{
-		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
-		setIcon(mColumn, combinedIcon);
-	}
-
-	setText(mColumn, desc);
-
-	if (loaded)
-	{
-		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Loaded Okay";
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (mCount < MAX_ATTEMPTS)
-	{
-		std::cerr << " GxsIdRSTreeWidgetItem::loadId() Starting Timer for re-try";
-		std::cerr << std::endl;
-
-		/* timer event to try again */
-		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
+	if (!mIdFound && mRetryWhenFailed) {
+		/* Try again */
+		connect(rApp, SIGNAL(minuteTick()), this, SLOT(startProcess()));
 	}
 }
 
-/** Constructor */
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidget *parent)
-: QObject(NULL), QTreeWidgetItem(parent), mCount(0), mColumn(0)
+void GxsIdRSTreeWidgetItem::setAvatar(const RsGxsImage &avatar)
 {
-	init();
+	mAvatar = avatar;
 }
 
-GxsIdTreeWidgetItem::GxsIdTreeWidgetItem(QTreeWidgetItem *parent)
-: QObject(NULL), QTreeWidgetItem(parent), mCount(0), mColumn(0)
+QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 {
-	init();
-}
+    if (column == idColumn()) 
+    {
+	    if (role == Qt::ToolTipRole)
+	    {
+		    QString t = RSTreeWidgetItem::data(column, role).toString();
+		    QImage pix;
 
-void GxsIdTreeWidgetItem::init()
-{
-}
+		    if(mId.isNull())
+			    return RSTreeWidgetItem::data(column, role);
+		    else if(rsIdentity->isBanned(mId))
+			    pix = QImage(BANNED_IMAGE) ;
+		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
+			    pix = GxsIdDetails::makeDefaultIcon(mId);
 
-void GxsIdTreeWidgetItem::setId(const RsGxsId &id, int column)
-{
-	std::cerr << " GxsIdTreeWidgetItem::setId(" << id << "," << column << ")";
-	std::cerr << std::endl;
+		    int S = QFontMetricsF(font(column)).height();
 
-	mId = id;
-	mColumn = column;
-    if (mId.isNull())
-	{
-		setText(mColumn, "No Signature");
-	}
-	else
-	{
-		loadId();
-	}
-}
+		    QString embeddedImage;
+		    if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
+			    t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
+		    }
 
-bool GxsIdTreeWidgetItem::getId(RsGxsId &id)
-{
-	id = mId;
-	return true;
-}
+		    return t;
+	    }
+    }
 
-void GxsIdTreeWidgetItem::loadId()
-{
-	disconnect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
-
-	std::cerr << " GxsIdTreeWidgetItem::loadId() Id: " << mId << ", mCount: " << mCount;
-	std::cerr << std::endl;
-
-	mCount++;
-
-	/* try and get details - if not there ... set callback */
-	QString desc;
-	std::list<QIcon> icons;
-	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
-	QIcon combinedIcon;
-	if (!icons.empty())
-	{
-		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
-		setIcon(mColumn, combinedIcon);
-	}
-	
-	setText(mColumn, desc);
-
-	if (loaded)
-	{
-		std::cerr << " GxsIdTreeWidgetItem::loadId() Loaded Okay";
-		std::cerr << std::endl;
-		return;
-	}
-
-	if (mCount < MAX_ATTEMPTS)
-	{
-		std::cerr << " GxsIdTreeWidgetItem::loadId() Starting Timer for re-try";
-		std::cerr << std::endl;
-
-		/* timer event to try again */
-		connect(rApp, SIGNAL(secondTick()), this, SLOT(loadId()));
-	}
+    return RSTreeWidgetItem::data(column, role);
 }

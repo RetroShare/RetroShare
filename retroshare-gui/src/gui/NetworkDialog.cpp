@@ -34,11 +34,12 @@
 #include "common/RSTreeWidgetItem.h"
 #include <gui/common/FriendSelectionDialog.h>
 #include "gui/msgs/MessageComposer.h"
+#include "gui/profile/ProfileManager.h"
 #include "NetworkDialog.h"
 //#include "TrustView.h"
 #include "NetworkView.h"
 #include "GenCertDialog.h"
-#include "connect/ConfCertDialog.h"
+#include "connect/PGPKeyDialog.h"
 #include "settings/rsharesettings.h"
 #include "RetroShareLink.h"
 #include "util/QtVersion.h"
@@ -96,26 +97,26 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connectTreeWidget->header () ;
-    QHeaderView_setSectionResizeMode(_header, COLUMN_CHECK, QHeaderView::Custom);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PEERNAME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_I_AUTH_PEER, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PEER_AUTH_ME, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_PEERID, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_header, COLUMN_LAST_USED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_CHECK, QHeaderView::Custom);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PEERNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_I_AUTH_PEER, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PEER_AUTH_ME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_PEERID, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(_header, COLUMN_LAST_USED, QHeaderView::Interactive);
 
     _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(""));
     _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name"));
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I authenticated peer"));
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticated me"));
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Trust level"));
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticate you"));
     _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Cert Id"));
     _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last used"));
 
-    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" If I accept connection from peer"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of peer"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I sign his PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer sign mine PGP key"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Peer's Certificat ID"),Qt::ToolTipRole);
-    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this Certificat"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" Do you accept connections signed by this key?"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of the key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("This column indicates trust level and whether you signed their PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did that peer sign your PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Certificat ID"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this certificate"),Qt::ToolTipRole);
 
     _header->resizeSection ( COLUMN_CHECK, 25 );
     _header->resizeSection ( COLUMN_PEERNAME, 200 );
@@ -138,16 +139,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
 //    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
-    
+
     ui.onlyTrustedKeys->setMinimumWidth(20);
-     
-    QString version = "-";
-    std::string rsversion;
-    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), rsversion))
-	{
-    	version	= QString::fromStdString(rsversion);
-    }
-      
+
     QMenu *menu = new QMenu();
     //menu->addAction(ui.actionAddFriend); 
     //menu->addAction(ui.actionCopyKey);
@@ -168,17 +162,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     timer2->start(1000);
     
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME, tr("Search Name"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search Peer ID"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_PEERNAME, tr("Search name"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Peer ID"), COLUMN_PEERID, tr("Search peer ID"));
     ui.filterLineEdit->setCurrentFilter(COLUMN_PEERNAME);
 
     //updateNetworkStatus();
     //loadtabsettings();
     
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 void NetworkDialog::changeEvent(QEvent *e)
@@ -210,19 +200,19 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 	if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 		return ;
 
-	if(peer_id != rsPeers->getGPGOwnId())
-	{
-		if(detail.accept_connection)
-			contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
-		else	// not a friend
-			contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend"), this, SLOT(makeFriend()));
-	}
+    if(peer_id != rsPeers->getGPGOwnId())
+    {
+        if(detail.accept_connection)
+            contextMnu->addAction(QIcon(IMAGE_DENIED), tr("Deny friend"), this, SLOT(denyFriend()));
+        else	// not a friend
+            contextMnu->addAction(QIcon(IMAGE_MAKEFRIEND), tr("Make friend..."), this, SLOT(makeFriend()));
+    }
 	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export my certificate..."), this, SLOT(on_actionExportKey_activated()));
+		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
-    //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
-	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+   //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
+	//contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
@@ -231,7 +221,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 void NetworkDialog::removeUnusedKeys()
 {
-    std::list<RsPgpId> pre_selected ;
+    std::set<RsPgpId> pre_selected ;
     std::list<RsPgpId> ids ;
 
 	rsPeers->getGPGAllList(ids) ;
@@ -251,17 +241,17 @@ void NetworkDialog::removeUnusedKeys()
 		if(now > (time_t) (THREE_MONTHS + details.lastUsed))
 		{
 			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
-			pre_selected.push_back(*it) ;
+            pre_selected.insert(*it) ;
 		}
 	}
 
-    std::list<RsPgpId> selected = FriendSelectionDialog::selectFriends_PGP(NULL,
+    std::set<RsPgpId> selected = FriendSelectionDialog::selectFriends_PGP(NULL,
 			tr("Clean keyring"),
 			tr("The selected keys below haven't been used in the last 3 months. \nDo you want to delete them permanently ? \n\nNotes: Your old keyring will be backed up.\n    The removal may fail when running multiple Retroshare instances on the same machine."),FriendSelectionWidget::MODUS_CHECK,FriendSelectionWidget::SHOW_GPG | FriendSelectionWidget::SHOW_NON_FRIEND_GPG,
              pre_selected) ;
 	
 	std::cerr << "Removing these keys from the keyring: " << std::endl;
-    for(std::list<RsPgpId>::const_iterator it(selected.begin());it!=selected.end();++it)
+    for(std::set<RsPgpId>::const_iterator it(selected.begin());it!=selected.end();++it)
 		std::cerr << "  " << *it << std::endl;
 
 	std::string backup_file ;
@@ -290,7 +280,7 @@ void NetworkDialog::removeUnusedKeys()
 																				  break ;
 
 		}
-		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error: ")+error_string ) ;
+		QMessageBox::warning(NULL,tr("Keyring info"),tr("Key removal has failed. Your keyring remains intact.\n\nReported error:")+" "+error_string ) ;
 	}
 	insertConnect() ;
 }
@@ -321,7 +311,7 @@ void NetworkDialog::denyFriend()
 
 void NetworkDialog::makeFriend()
 {
-    ConfCertDialog::showIt(RsPgpId(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(RsPgpId(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString()), PGPKeyDialog::PageDetails);
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -331,7 +321,7 @@ void NetworkDialog::peerdetails()
 	if (item == NULL) {
 		return;
 	}
-    ConfCertDialog::showIt(RsPgpId(item->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageDetails);
+    PGPKeyDialog::showIt(RsPgpId(item->text(COLUMN_PEERID).toStdString()), PGPKeyDialog::PageDetails);
 }
 
 void NetworkDialog::copyLink()
@@ -403,6 +393,8 @@ void NetworkDialog::insertConnect()
 
 	/* get a link to the table */
 	QTreeWidget *connectWidget = ui.connectTreeWidget;
+	/* disable sorting while editing the table */
+	connectWidget->setSortingEnabled(false);
 
 	//remove items
 	int index = 0;
@@ -413,12 +405,12 @@ void NetworkDialog::insertConnect()
 		if ( (!rsPeers->getGPGDetails(gpg_widget_id, detail)) || (ui.onlyTrustedKeys->isChecked() && (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection))) 
 			delete (connectWidget->takeTopLevelItem(index));
 		else 
-			index++;
+			++index;
 	}
     //QList<QTreeWidgetItem *> validItems;
     //QList<QTreeWidgetItem *> unvalidItems;
 
-	for(it = neighs.begin(); it != neighs.end(); it++)
+	for(it = neighs.begin(); it != neighs.end(); ++it)
 	{
 #ifdef NET_DEBUG
 		std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
@@ -445,7 +437,9 @@ void NetworkDialog::insertConnect()
 #endif
 				item = new RSTreeWidgetItem(NULL, 0);
 				item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-                item -> setSizeHint(COLUMN_CHECK, QSize( 18,18 ) );
+
+				int S = QFontMetricsF(font()).height() ;
+                item -> setSizeHint(COLUMN_CHECK, QSize( S,S ) );
 
 				/* (1) Person */
 				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));
@@ -536,7 +530,7 @@ void NetworkDialog::insertConnect()
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-        for(int i = 0; i <COLUMN_COUNT; i++)
+        for(int i = 0; i <COLUMN_COUNT; ++i)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		if( (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) || !ui.onlyTrustedKeys->isChecked()) 
@@ -568,7 +562,10 @@ void NetworkDialog::insertConnect()
 	}
 	connectWidget->addTopLevelItem(self_item);
 
-	connectWidget->update(); /* update display */
+	/* enable sorting */
+	connectWidget->setSortingEnabled(true);
+	/* update display */
+	connectWidget->update();
 
 	if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
@@ -690,42 +687,8 @@ void NetworkDialog::on_actionAddFriend_activated()
 
 void NetworkDialog::on_actionExportKey_activated()
 {
-//    qDebug() << "  exportcert";
-//
-//    std::string cert = rsPeers->GetRetroshareInvite();
-//    if (cert.empty()) {
-//        QMessageBox::information(this, tr("RetroShare"),
-//                         tr("Sorry, create certificate failed"),
-//                         QMessageBox::Ok, QMessageBox::Ok);
-//        return;
-//    }
-//
-// use misc::getSaveFileName
-//    QString qdir = QFileDialog::getSaveFileName(this,
-//                                                tr("Please choose a filename"),
-//                                                QDir::homePath(),
-//                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-//    //Todo: move save to file to p3Peers::SaveCertificateToFile
-//
-//    if (qdir.isEmpty() == false) {
-//        QFile CertFile (qdir);
-//        if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
-//            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
-//                QMessageBox::information(this, tr("RetroShare"),
-//                                 tr("Certificate file successfully created"),
-//                                 QMessageBox::Ok, QMessageBox::Ok);
-//            } else {
-//                QMessageBox::information(this, tr("RetroShare"),
-//                                 tr("Sorry, certificate file creation failed"),
-//                                 QMessageBox::Ok, QMessageBox::Ok);
-//            }
-//            CertFile.close();
-//        } else {
-//            QMessageBox::information(this, tr("RetroShare"),
-//                             tr("Sorry, certificate file creation failed"),
-//                             QMessageBox::Ok, QMessageBox::Ok);
-//        }
-//    }
+	ProfileManager prof ;
+	prof.exec() ;
 }
 
 void NetworkDialog::on_actionCreate_New_Profile_activated()
@@ -813,7 +776,7 @@ void NetworkDialog::filterItems(const QString &text)
     int filterColumn = ui.filterLineEdit->currentFilter();
 
     int count = ui.connectTreeWidget->topLevelItemCount ();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         filterItem(ui.connectTreeWidget->topLevelItem(index), text, filterColumn);
     }
 }
@@ -830,9 +793,9 @@ bool NetworkDialog::filterItem(QTreeWidgetItem *item, const QString &text, int f
 
     int visibleChildCount = 0;
     int count = item->childCount();
-    for (int index = 0; index < count; index++) {
+    for (int index = 0; index < count; ++index) {
         if (filterItem(item->child(index), text, filterColumn)) {
-            visibleChildCount++;
+            ++visibleChildCount;
         }
     }
 

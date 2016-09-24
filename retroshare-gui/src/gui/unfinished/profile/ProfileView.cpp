@@ -49,11 +49,6 @@ ProfileView::ProfileView(QWidget *parent)
   connect(ui.profileditButton, SIGNAL(clicked()), this, SLOT(profileEdit()));
 
   loadAvatar();
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 /** context popup menus */

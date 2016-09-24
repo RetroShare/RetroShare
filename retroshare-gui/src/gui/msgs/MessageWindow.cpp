@@ -27,6 +27,8 @@
 
 #include <retroshare/rsmsgs.h>
 
+#include "gui/msgs/MessageInterface.h"
+
 /** Constructor */
 MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 : RWindow("MessageWindow", parent, flags)
@@ -76,11 +78,6 @@ MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 	ui.viewtoolButton->setMenu(viewmenu);
 
 	processSettings(true);
-
-    /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 MessageWindow::~MessageWindow()
@@ -162,7 +159,7 @@ void MessageWindow::tagAboutToShow()
 
 	// activate actions
 	MsgTagInfo tagInfo;
-	rsMsgs->getMessageTag(msgWidget->msgId(), tagInfo);
+	rsMail->getMessageTag(msgWidget->msgId(), tagInfo);
 
 	menu->activateActions(tagInfo.tagIds);
 }
@@ -173,7 +170,7 @@ void MessageWindow::tagRemoveAll()
 		return;
 	}
 
-	rsMsgs->setMessageTag(msgWidget->msgId(), 0, false);
+	rsMail->setMessageTag(msgWidget->msgId(), 0, false);
 }
 
 void MessageWindow::tagSet(int tagId, bool set)
@@ -186,7 +183,7 @@ void MessageWindow::tagSet(int tagId, bool set)
 		return;
 	}
 
-	rsMsgs->setMessageTag(msgWidget->msgId(), tagId, set);
+	rsMail->setMessageTag(msgWidget->msgId(), tagId, set);
 }
 
 void MessageWindow::setupFileActions()

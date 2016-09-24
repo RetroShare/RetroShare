@@ -15,7 +15,21 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QTreeWidget" name="friendList">
+    <widget class="QLabel" name="filterLabel">
+     <property name="text">
+      <string>Search :</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="LineEditClear" name="filterLineEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="RSTreeWidget" name="friendList">
      <property name="minimumSize">
       <size>
        <width>20</width>
@@ -44,34 +58,6 @@
      </column>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="filterLabel">
-       <property name="text">
-        <string>Search :</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="LineEditClear" name="filterLineEdit"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="selectAll_PB">
-       <property name="text">
-        <string>All</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deselectAll_PB">
-       <property name="text">
-        <string>None</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -79,6 +65,11 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -56,7 +56,6 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
-	virtual void setAllMessagesRead(bool read);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -68,11 +67,15 @@ protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
-	virtual void insertRelatedPosts(const uint32_t &token);
+	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
+	virtual void insertPosts(const uint32_t &token);
 	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
+	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
+
+	/* GxsMessageFrameWidget */
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
 	void createMsg();
@@ -88,6 +91,8 @@ private:
 	void setAutoDownload(bool autoDl);
 	static bool filterItem(FeedItem *feedItem, const QString &text, int filter);
 
+	int viewMode();
+
 	void insertChannelDetails(const RsGxsChannelGroup &group);
 	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
 
@@ -96,7 +101,6 @@ private:
 private:
 	QAction *mAutoDownloadAction;
 
-	bool mInProcessSettings;
 	bool mUseThread;
 
 	/* UI - from Designer */

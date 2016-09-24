@@ -67,7 +67,8 @@ class RetroShareLink
 		    TYPE_CERTIFICATE   = 0x07,
 		    TYPE_EXTRAFILE     = 0x08,
 		    TYPE_PRIVATE_CHAT  = 0x09,
-		    TYPE_PUBLIC_MSG    = 0x0a
+            TYPE_PUBLIC_MSG    = 0x0a,
+            TYPE_POSTED        = 0x0b
 		};
 
 	public:

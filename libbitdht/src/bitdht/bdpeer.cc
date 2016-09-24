@@ -336,14 +336,16 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 	mFns->bdDistance(id, &(mOwnId), &dist);
 	int buckno = mFns->bdBucketDistance(&dist);
 
-	std::cerr << "bdSpace::find_node(NodeId:";
+#ifdef DEBUG_BD_SPACE
+    std::cerr << "bdSpace::find_node(NodeId:";
 	mFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << ")";
 
 	std::cerr << " Number: " << number;
 	std::cerr << " Bucket #: " << buckno;
 	std::cerr << std::endl;
-#ifdef DEBUG_BD_SPACE
+#else
+	(void)number;
 #endif
 
 	bdBucket &buck = buckets[buckno];
@@ -352,10 +354,12 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 	int matchCount = 0;
 	for(eit = buck.entries.begin(); eit != buck.entries.end(); eit++) 
 	{
-		std::cerr << "bdSpace::find_node() Checking Against Peer: ";
+#ifdef DEBUG_BD_SPACE
+        std::cerr << "bdSpace::find_node() Checking Against Peer: ";
 		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 		std::cerr << " withFlags: " << eit->mPeerFlags;
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+#endif
 
 		if ((!with_flags) || ((with_flags & eit->mPeerFlags) == with_flags))
 		{
@@ -364,10 +368,12 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 		  		matchIds.push_back(eit->mPeerId);
 				matchCount++;
 
-				std::cerr << "bdSpace::find_node() Found Matching Peer: ";
+#ifdef DEBUG_BD_SPACE
+                std::cerr << "bdSpace::find_node() Found Matching Peer: ";
 			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 				std::cerr << " withFlags: " << eit->mPeerFlags;
-			  	std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 			}
 		}
 		else
@@ -377,17 +383,19 @@ int bdSpace::find_node(const bdNodeId *id, int number, std::list<bdId> &matchIds
 		  		//matchIds.push_back(eit->mPeerId);
 				//matchCount++;
 
-				std::cerr << "bdSpace::find_node() Found (WITHOUT FLAGS) Matching Peer: ";
+#ifdef DEBUG_BD_SPACE
+                std::cerr << "bdSpace::find_node() Found (WITHOUT FLAGS) Matching Peer: ";
 			  	mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 				std::cerr << " withFlags: " << eit->mPeerFlags;
-			  	std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 			}
 		}
 	}
 
-	std::cerr << "bdSpace::find_node() Found " << matchCount << " Matching Peers";
-	std::cerr << std::endl << std::endl;
 #ifdef DEBUG_BD_SPACE
+    std::cerr << "bdSpace::find_node() Found " << matchCount << " Matching Peers";
+	std::cerr << std::endl << std::endl;
 #endif
 
 	return matchCount;
@@ -451,18 +459,22 @@ int bdSpace::clean_node_flags(uint32_t flags)
 		{
 			if (flags & eit->mPeerFlags)
 			{	
-				std::cerr << "bdSpace::clean_node_flags() Found Match: ";
+#ifdef DEBUG_BD_SPACE
+                std::cerr << "bdSpace::clean_node_flags() Found Match: ";
 		  		mFns->bdPrintId(std::cerr, &(eit->mPeerId));
 				std::cerr << " withFlags: " << eit->mPeerFlags;
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 
 				count++;
 				eit->mPeerFlags &= ~flags;
 			}
 		}
 	}
-	std::cerr << "bdSpace::clean_node_flags() Cleaned " << count << " Matching Peers";
-	std::cerr << std::endl;
+#ifdef DEBUG_BD_SPACE
+    std::cerr << "bdSpace::clean_node_flags() Cleaned " << count << " Matching Peers";
+    std::cerr << std::endl;
+#endif
 
 	return count;
 }

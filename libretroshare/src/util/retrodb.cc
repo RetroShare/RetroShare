@@ -32,7 +32,10 @@
 #include "rsdbbind.h"
 
 //#define RETRODB_DEBUG
+
+#ifndef NO_SQLCIPHER
 #define ENABLE_ENCRYPTED_DB
+#endif
 
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
@@ -64,10 +67,45 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
 			return;
 		 }
     }
+
+    char *err = NULL;
+    rc = sqlite3_exec(mDb, "PRAGMA cipher_migrate;", NULL, NULL, &err);
+    if (rc != SQLITE_OK)
+    {
+        std::cerr << "RetroDb::RetroDb(): Error upgrading database, error code: " << rc;
+        if (err)
+        {
+            std::cerr << ", " << err;
+        }
+        std::cerr << std::endl;
+        sqlite3_free(err);
+    }
+
+	//Test DB for correct sqlcipher version
+	if (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) != SQLITE_OK)
+	{
+		std::cerr << "RetroDb::RetroDb(): Failed to open database: " << dbPath << std::endl << "Trying with settings for sqlcipher version 3...";
+		//Reopening the database with correct settings
+		rc = sqlite3_close(mDb);
+		mDb = NULL;
+		if(!rc)
+			rc = sqlite3_open_v2(dbPath.c_str(), &mDb, flags, NULL);
+		if(!rc && !mKey.empty())
+			rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
+		if(!rc)
+			rc = sqlite3_exec(mDb, "PRAGMA kdf_iter = 64000;", NULL, NULL, NULL);
+		if (!rc && (sqlite3_exec(mDb, "PRAGMA user_version;", NULL, NULL, NULL) == SQLITE_OK))
+		{
+			std::cerr << "\tSuccess" << std::endl;
+		} else {
+			std::cerr << "\tFailed, giving up" << std::endl;
+			sqlite3_close(mDb);
+			mDb = NULL;
+			return;
+		}
+	}
 #endif
-
 }
-
 
 RetroDb::~RetroDb(){
 
@@ -78,10 +116,12 @@ RetroDb::~RetroDb(){
 void RetroDb::closeDb(){
 
     int rc= sqlite3_close(mDb);
-	 mDb = NULL ;
+	mDb = NULL ;
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::closeDb(): Error code on close: " << rc << std::endl;
+#else
+    (void)rc;
 #endif
 
 }
@@ -167,13 +207,12 @@ RetroCursor* RetroDb::sqlQuery(const std::string& tableName, const std::list<std
     sqlite3_stmt* stmt = NULL;
     std::list<std::string>::const_iterator it = columns.begin();
 
-    for(; it != columns.end(); it++){
-        columnSelection += *it;
-
-        it++;
-        if(it != columns.end())
+    for(; it != columns.end(); ++it){
+        if (it != columns.begin()) {
             columnSelection += ",";
-        it--;
+        }
+
+        columnSelection += *it;
     }
 
     // construct query
@@ -213,11 +252,11 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
     // build columns part of insertion
     std::string qColumns = table + "(";
 
-    for(; mit != keyTypeMap.end(); mit++){
+    for(; mit != keyTypeMap.end(); ++mit){
 
         qColumns += mit->first;
 
-        mit++;
+        ++mit;
 
         // add comma if more columns left
         if(mit == keyTypeMap.end())
@@ -225,7 +264,7 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
         else
             qColumns += ",";
 
-        mit--;
+        --mit;
     }
 
     // build values part of insertion
@@ -250,6 +289,32 @@ std::string RetroDb::getKey() const
 	return mKey;
 }
 
+bool RetroDb::beginTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("BEGIN;");
+}
+
+bool RetroDb::commitTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("COMMIT;");
+}
+bool RetroDb::rollbackTransaction()
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    return execSQL("ROLLBACK;");
+}
+
 bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &paramBindings){
 
     // prepare statement
@@ -271,7 +336,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
 
     std::list<RetroBind*>::iterator lit = paramBindings.begin();
 
-    for(; lit != paramBindings.end(); lit++){
+    for(; lit != paramBindings.end(); ++lit){
         RetroBind* rb = *lit;
 
         if(!rb->bind(stm))
@@ -339,7 +404,7 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
 
 	parameter = "VALUES(";
 	int index = 0;
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); ++mit)
     {
 
         uint8_t type = mit->second;
@@ -388,14 +453,14 @@ void RetroDb::buildInsertQueryValue(const std::map<std::string, uint8_t> keyType
         {
         	paramBindings.push_back(rb);
 
-        	mit++;
+        	++mit;
 
         	if(mit == keyTypeMap.end())
         		parameter += "?";
         	else
         		parameter += "?,";
 
-        	mit--;
+        	--mit;
         }
     }
 
@@ -411,7 +476,7 @@ void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyType
 	std::map<std::string, uint8_t>::const_iterator mit = keyTypeMap.begin();
 
 	int index = 0;
-    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); mit++)
+    for(mit=keyTypeMap.begin(); mit!=keyTypeMap.end(); ++mit)
     {
 
         uint8_t type = mit->second;
@@ -460,14 +525,14 @@ void RetroDb::buildUpdateQueryValue(const std::map<std::string, uint8_t> keyType
         {
         	paramBindings.push_back(rb);
 
-        	mit++;
+        	++mit;
 
         	if(mit == keyTypeMap.end())
         		parameter += key + "=?";
         	else
         		parameter += key + "=?,";
 
-        	mit--;
+        	--mit;
         }
     }
 
@@ -517,11 +582,48 @@ bool RetroDb::sqlUpdate(const std::string &tableName, std::string whereClause, c
     return execSQL_bind(sqlQuery, paramBindings);
 }
 
+bool RetroDb::tableExists(const std::string &tableName)
+{
+    if (!isOpen()) {
+        return false;
+    }
+
+    std::string sqlQuery = "PRAGMA table_info(" + tableName + ");";
+
+    bool result = false;
+    sqlite3_stmt* stmt = NULL;
+
+    int rc = sqlite3_prepare_v2(mDb, sqlQuery.c_str(), sqlQuery.length(), &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        rc = sqlite3_step(stmt);
+        switch (rc) {
+        case SQLITE_ROW:
+            result = true;
+            break;
+        case SQLITE_DONE:
+            break;
+        default:
+            std::cerr << "RetroDb::tableExists(): Error executing statement (code: " << rc << ")"
+                      << std::endl;
+            return false;
+        }
+    } else {
+        std::cerr << "RetroDb::tableExists(): Error preparing statement\n";
+        std::cerr << "Error code: " <<  sqlite3_errmsg(mDb)
+                  << std::endl;
+    }
+
+    if (stmt) {
+        sqlite3_finalize(stmt);
+    }
+
+    return result;
+}
 
 /********************** RetroCursor ************************/
 
 RetroCursor::RetroCursor(sqlite3_stmt *stmt)
-    : mStmt(NULL), mCount(0), mPosCounter(0) {
+    : mStmt(NULL) {
 
      open(stmt);
 }
@@ -558,7 +660,6 @@ bool RetroCursor::moveToFirst(){
     rc = sqlite3_step(mStmt);
 
     if(rc == SQLITE_ROW){
-        mPosCounter = 0;
         return true;
     }
 
@@ -596,15 +697,14 @@ bool RetroCursor::moveToLast(){
         return false;
 
     }else{
-        mPosCounter = mCount;
         return true;
     }
 }
 
-int RetroCursor::getResultCount() const {
+int RetroCursor::columnCount() const {
 
     if(isOpen())
-        return mCount;
+        return sqlite3_data_count(mStmt);
     else
         return -1;
 }
@@ -621,8 +721,6 @@ bool RetroCursor::close(){
 
     int rc = sqlite3_finalize(mStmt);
     mStmt = NULL;
-    mPosCounter = 0;
-    mCount = 0;
 
     return (rc == SQLITE_OK);
 }
@@ -642,12 +740,6 @@ bool RetroCursor::open(sqlite3_stmt *stm){
     int rc = sqlite3_reset(mStmt);
 
     if(rc == SQLITE_OK){
-
-        while((rc = sqlite3_step(mStmt)) == SQLITE_ROW)
-            mCount++;
-
-        sqlite3_reset(mStmt);
-
         return true;
     }
     else{
@@ -670,7 +762,6 @@ bool RetroCursor::moveToNext(){
     int rc = sqlite3_step(mStmt);
 
     if(rc == SQLITE_ROW){
-        mPosCounter++;
         return true;
 
     }else if(rc == SQLITE_DONE){ // no more results
@@ -688,16 +779,6 @@ bool RetroCursor::moveToNext(){
         return false;
     }
 }
-
-
-int32_t RetroCursor::getPosition() const {
-
-    if(isOpen())
-        return mPosCounter;
-    else
-        return -1;
-}
-
 
 int32_t RetroCursor::getInt32(int columnIndex){
     return sqlite3_column_int(mStmt, columnIndex);

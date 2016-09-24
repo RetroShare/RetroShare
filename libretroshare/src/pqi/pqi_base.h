@@ -37,12 +37,15 @@
 
 #include "pqi/pqinetwork.h"
 
+class RSTrafficClue ;
+
 /*** Base DataTypes: ****/
 #include "serialiser/rsserial.h"
 #include "retroshare/rstypes.h"
 
 
 #define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
+#define PQI_MIN_PORT_RNG 1024
 #define PQI_MAX_PORT 65535
 #define PQI_DEFAULT_PORT 7812
 
@@ -77,101 +80,103 @@ class RateInterface
 public:
 
 	RateInterface()
-	:bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
-	bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
+	        :bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
+	          bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
 
-virtual	~RateInterface() { return; }
+	virtual	~RateInterface() { return; }
 
-virtual void    getRates(RsBwRates &rates)
-{
-	rates.mRateIn = bw_in;
-	rates.mRateOut = bw_out;
-	rates.mMaxRateIn = bwMax_in;
-	rates.mMaxRateOut = bwMax_out;
-	return;
-}
-
-virtual int     getQueueSize(bool /* in */) { return 0;}
-virtual float	getRate(bool in)
+	virtual void    getRates(RsBwRates &rates)
 	{
-	if (in)
-		return bw_in;
-	return bw_out;
+		rates.mRateIn = bw_in;
+		rates.mRateOut = bw_out;
+		rates.mMaxRateIn = bwMax_in;
+		rates.mMaxRateOut = bwMax_out;
+		return;
 	}
 
-virtual float	getMaxRate(bool in)
+	virtual int gatherStatistics(std::list<RSTrafficClue>& /* outqueue_lst */,std::list<RSTrafficClue>& /* inqueue_lst */) { return 0;}
+
+	virtual int     getQueueSize(bool /* in */) { return 0;}
+	virtual float	getRate(bool in)
 	{
-	if (in)
-		return bwMax_in;
-	return bwMax_out;
+		if (in)
+			return bw_in;
+		return bw_out;
 	}
 
-virtual void	setMaxRate(bool in, float val)
+	virtual float	getMaxRate(bool in)
 	{
-	if (in)
+		if (in)
+			return bwMax_in;
+		return bwMax_out;
+	}
+
+	virtual void	setMaxRate(bool in, float val)
 	{
-		bwMax_in = val;
-		if (bwCapEnabled)
+		if (in)
 		{
-			if (bwMax_in > bwCap_in)
+			bwMax_in = val;
+			if (bwCapEnabled)
 			{
-				bwMax_in = bwCap_in;
+				if (bwMax_in > bwCap_in)
+				{
+					bwMax_in = bwCap_in;
+				}
 			}
 		}
-	}
-	else
-	{
-		bwMax_out = val;
-		if (bwCapEnabled)
+		else
 		{
-			if (bwMax_out > bwCap_out)
+			bwMax_out = val;
+			if (bwCapEnabled)
 			{
-				bwMax_out = bwCap_out;
+				if (bwMax_out > bwCap_out)
+				{
+					bwMax_out = bwCap_out;
+				}
 			}
 		}
+
+		return;
 	}
 
-	return;
-	}
 
-
-virtual void	setRateCap(float val_in, float val_out)
-{
-	if ((val_in == 0) && (val_out == 0))
+	virtual void	setRateCap(float val_in, float val_out)
 	{
+		if ((val_in == 0) && (val_out == 0))
+		{
 #ifdef DEBUG_RATECAP
-        	std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
+			std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
 #endif
-		bwCapEnabled = false;
-	}
-	else
-	{
+			bwCapEnabled = false;
+		}
+		else
+		{
 #ifdef DEBUG_RATECAP
-        	std::cerr << "RateInterface::setRateCap() Enabled ";
-        	std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
+			std::cerr << "RateInterface::setRateCap() Enabled ";
+			std::cerr << "in: " << bwCap_in << " out: " << bwCap_out << std::endl;
 #endif
-		bwCapEnabled = true;
-		bwCap_in = val_in;
-		bwCap_out = val_out;
+			bwCapEnabled = true;
+			bwCap_in = val_in;
+			bwCap_out = val_out;
+		}
+		return;
 	}
-	return;
-}
 
 protected:
 
-void	setRate(bool in, float val)
+	virtual void	setRate(bool in, float val)
 	{
-	if (in)
-		bw_in = val;
-	else
-		bw_out = val;
-	return;
+		if (in)
+			bw_in = val;
+		else
+			bw_out = val;
+		return;
 	}
 
-	private:
-float	bw_in, bw_out, bwMax_in, bwMax_out;
-bool    bwCapEnabled;
-float   bwCap_in, bwCap_out;
+private:
+	float	bw_in, bw_out, bwMax_in, bwMax_out;
+	bool    bwCapEnabled;
+	float   bwCap_in, bwCap_out;
 
 };
 
@@ -220,18 +225,14 @@ class PQInterface: public RateInterface
 		/**
 		 * also there are  tick + person id  functions.
 		 */
-		virtual int     tick() { return 0; }
-		virtual int     status() { return 0; }
+		virtual int tick() { return 0; }
+		virtual int status() { return 0; }
 		virtual const RsPeerId& PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
-		virtual int	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &remote_peer_address) 
-		{ 
-			(void) ni; /* remove unused parameter warnings */
-			(void) event; /* remove unused parameter warnings */
-			(void) remote_peer_address;
-			return 0; 
-		}
+		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,
+								const sockaddr_storage & /*remote_peer_address*/)
+		{ return 0; }
 
 	private:
 
@@ -244,7 +245,8 @@ class PQInterface: public RateInterface
 
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
-const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
+const uint32_t PQI_CONNECT_HIDDEN_TOR_TCP = 0x0004;
+const uint32_t PQI_CONNECT_HIDDEN_I2P_TCP = 0x0008;
 
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
@@ -261,57 +263,57 @@ const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
 class BinInterface
 {
 public:
-	BinInterface() { return; }
-virtual ~BinInterface() { return; }
+	BinInterface() {}
+	virtual ~BinInterface() {}
 
-/**
- * To be called loop, for updating state
- */
-virtual int     tick() = 0;
+	/**
+	 * To be called loop, for updating state
+	 */
+	virtual int tick() = 0;
 
-/**
- * Sends data to a prescribed location (implementation dependent)
- *@param data what will be sent
- *@param len the size of data pointed to in memory
- */
-virtual int	senddata(void *data, int len) = 0;
+	/**
+	 * Sends data to a prescribed location (implementation dependent)
+	 *@param data what will be sent
+	 *@param len the size of data pointed to in memory
+	 */
+	virtual int senddata(void *data, int len) = 0;
 
-/**
- * reads data from a prescribed location (implementation dependent)
- *@param data what will be sent
- *@param len the size of data pointed to in memory
- */
-virtual int	readdata(void *data, int len) = 0;
+	/**
+	 * reads data from a prescribed location (implementation dependent)
+	 *@param data what will be sent
+	 *@param len the size of data pointed to in memory
+	 */
+	virtual int readdata(void *data, int len) = 0;
 
-/**
- * Is more particular the case of the sending data through a socket (internet)
- * moretoread and candsend, take a microsec timeout argument.
- *
- */
-virtual int	netstatus() = 0;
-virtual int	isactive() = 0;
-virtual bool	moretoread(uint32_t usec) = 0;
-virtual bool 	cansend(uint32_t usec) = 0;
+	/**
+	 * Is more particular the case of the sending data through a socket (internet)
+	 * moretoread and candsend, take a microsec timeout argument.
+	 *
+	 */
+	virtual int netstatus() = 0;
+	virtual int isactive() = 0;
+	virtual bool moretoread(uint32_t usec) = 0;
+	virtual bool cansend(uint32_t usec) = 0;
 
-/**
- *  method for streamer to shutdown bininterface
- **/
-virtual int	close() = 0;
+	/**
+	 *  method for streamer to shutdown bininterface
+	 **/
+	virtual int close() = 0;
 
-/**
- * If hashing data
- **/
-virtual RsFileHash gethash() = 0;
+	/**
+	 * If hashing data
+	 **/
+	virtual RsFileHash gethash() = 0;
 
-/**
- * Number of bytes read/sent
- */
-virtual uint64_t bytecount() { return 0; }
+	/**
+	 * Number of bytes read/sent
+	 */
+	virtual uint64_t bytecount() { return 0; }
 
-/**
- *  used by pqistreamer to limit transfers
- **/
-virtual bool 	bandwidthLimited() { return true; }
+	/**
+	 *  used by pqistreamer to limit transfers
+	 **/
+	virtual bool bandwidthLimited() { return true; }
 };
 
 
@@ -354,26 +356,30 @@ public:
 	/**
 	 * @param p_in used to notify system of connect/disconnect events
 	 */
-	NetInterface(PQInterface *p_in, const RsPeerId& id)
-	:p(p_in), peerId(id) { return; }
+	NetInterface(PQInterface *p_in, const RsPeerId& id) : p(p_in), peerId(id) {}
 
-virtual ~NetInterface() 
-	{ return; }
+	virtual ~NetInterface() {}
 
-virtual int connect(const struct sockaddr_storage &raddr) = 0; 
-virtual int listen() = 0; 
-virtual int stoplistening() = 0; 
-virtual int disconnect() = 0;
-virtual int reset() = 0;
-virtual const RsPeerId& PeerId() { return peerId; }
-virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
+	/* TODO
+	 * The data entrypoint is connect(const struct sockaddr_storage &raddr)
+	 * To generalize NetInterface we should have a more general type for raddr
+	 * As an example a string containing an url or encoded like a domain name
+	 */
+	virtual int connect(const struct sockaddr_storage &raddr) = 0;
 
-virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
-virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
-virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
+	virtual int listen() = 0;
+	virtual int stoplistening() = 0;
+	virtual int disconnect() = 0;
+	virtual int reset() = 0;
+	virtual const RsPeerId& PeerId() { return peerId; }
+	virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
+
+	virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
+	virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
+	virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
 
 protected:
-PQInterface *parent() { return p; }
+	PQInterface *parent() { return p; }
 
 private:
 	PQInterface *p;
@@ -391,10 +397,9 @@ private:
 class NetBinInterface: public NetInterface, public BinInterface
 {
 public:
-	NetBinInterface(PQInterface *parent, const RsPeerId& id)
-	:NetInterface(parent, id)
-	{ return; }
-virtual ~NetBinInterface() { return; }
+	NetBinInterface(PQInterface *parent, const RsPeerId& id) :
+		NetInterface(parent, id) {}
+	virtual ~NetBinInterface() {}
 };
 
 #define CHAN_SIGN_SIZE 16

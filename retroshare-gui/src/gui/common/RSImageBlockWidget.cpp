@@ -26,15 +26,28 @@
 
 RSImageBlockWidget::RSImageBlockWidget(QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::RSImageBlockWidget)
+	ui(new Ui::RSImageBlockWidget),
+	mAutoHide(false), mAutoHideHeight(4), mAutoHideTimeToStart(3000), mAutoHideDuration(3000)
 {
 	ui->setupUi(this);
+	mDefaultRect = this->geometry();
+
+	ui->infoFrame->installEventFilter(this);
+
+	mTimer = new RsProtectedTimer(this);
+	mTimer->setSingleShot(true);
+	connect(mTimer, SIGNAL(timeout()), this, SLOT(startAutoHide()));
+
+	mAnimation = new QPropertyAnimation(this, "geometry");
 
 	connect(ui->loadImagesButton, SIGNAL(clicked()), this, SIGNAL(showImages()));
 }
 
 RSImageBlockWidget::~RSImageBlockWidget()
 {
+	delete mAnimation;
+	mTimer->stop();
+	delete mTimer;
 	delete ui;
 }
 
@@ -62,5 +75,63 @@ void RSImageBlockWidget::addButtonAction(const QString &text, const QObject *rec
 	if (standardAction) {
 		/* Connect standard action */
 		connect(action, SIGNAL(triggered()), this, SIGNAL(showImages()));
+	}
+}
+
+bool RSImageBlockWidget::eventFilter(QObject *obj, QEvent *event)
+{
+	if (mAutoHide) {
+		if (event->type() == QEvent::Show) {
+			mTimer->start(mAutoHideTimeToStart);
+		}
+		if (event->type() == QEvent::Hide) {
+			mTimer->stop();
+		}
+		if (event->type() == QEvent::Enter) {
+			mAnimation->stop();
+			this->setGeometry(mDefaultRect);
+			this->updateGeometry();
+			mTimer->start(mAutoHideTimeToStart);
+			mAnimation->setCurrentTime(0);
+		}
+	}
+	if (mAnimation->currentTime() == 0) {
+		mDefaultRect = this->geometry();
+	} else if (mAnimation->state() == QAbstractAnimation::Running) {
+		this->updateGeometry();
+	}
+
+	// pass the event on to the parent class
+	return QObject::eventFilter(obj, event);
+}
+
+void RSImageBlockWidget::setAutoHide(const bool value)
+{
+	if(value && !mAutoHide) {
+		if (this->isVisible()) mTimer->start(mAutoHideTimeToStart);
+	} else if (!value && mAutoHide) {
+		mTimer->stop();
+	}
+	mAutoHide = value;
+}
+
+void RSImageBlockWidget::startAutoHide()
+{
+	QRect r = mDefaultRect;
+	r.setHeight(mAutoHideHeight);
+	this->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Preferred);
+	mAnimation->setDuration(mAutoHideDuration);
+	mAnimation->setStartValue(mDefaultRect);
+	mAnimation->setEndValue(r);
+
+	mAnimation->start();
+}
+
+QSize RSImageBlockWidget::sizeHint() const
+{
+	if (mAnimation->currentTime() == 0) {
+		return mDefaultRect.size();
+	} else {
+		return mAnimation->currentValue().toRect().size();
 	}
 }

@@ -17,6 +17,10 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
+ *
+ *  ccr . 2016 Jan 30 . Change regular expression(s) for identifying
+ *      .             . hotlinks in feral text.
+ *
  ****************************************************************/
 
 #include <QApplication>
@@ -24,7 +28,9 @@
 #include <QtXml>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QTextDocumentFragment>
 #include <qmath.h>
+#include <QUrl>
 
 #include "HandleRichText.h"
 #include "gui/RetroShareLink.h"
@@ -54,7 +60,7 @@ protected:
 
 public:
 	const EmbeddedType myType;
-	QRegExp myRE;
+        QList<QRegExp> myREs;
 };
 
 /**
@@ -65,10 +71,42 @@ class EmbedInHtmlAhref : public EmbedInHtml
 public:
 	EmbedInHtmlAhref() : EmbedInHtml(Ahref)
 	{
-		myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
-	}
-};
+	  // myRE.setPattern("(\\bretroshare://[^\\s]*)|(\\bhttps?://[^\\s]*)|(\\bfile://[^\\s]*)|(\\bwww\\.[^\\s]*)");
 
+	  // The following regular expressions for finding URLs in
+	  // plain text are borrowed from *gnome-terminal*:
+
+	  QString regPassCharset = "[-\\w,?;\\.:/!%$^*&~\\\"#']";
+	  QString regHost = "[-\\w]+(\\.[-\\w]+)*";
+	  QString regPort = "(?:\\:\\d{1,5})?";
+	  QString regPathCharset = "[-\\w_$\\.+!*,;@&=?/~#%]";
+	  QString regPathTermSet = "[^\\]'.}<>) \\t\\r\\n,\\\"]";
+      QStringList regSchemes;
+//	  regSchemes.append("news:");
+//	  regSchemes.append("telnet:");
+//	  regSchemes.append("nntp:");
+//	  regSchemes.append("file:/");
+	  regSchemes.append("https?:");
+//	  regSchemes.append("ftps?:");
+//	  regSchemes.append("sftp:");
+//	  regSchemes.append("webcal:");
+	  regSchemes.append("retroshare:");
+	  QString regScheme = "((?:" + regSchemes.join(")|(?:") + "))";
+	  QString regUserPass = "[-\\w]+(?:%s+)?" % regPassCharset;
+	  QString regUrlPath = "(?:(/" + regPathCharset + "+(?:[(]" + regPathCharset +"*[)])*" + regPathCharset + "*)*" + regPathTermSet + ")?";
+	  QStringList regHotLinkFinders;
+	  regHotLinkFinders.append(regScheme + "//(?:" + regUserPass + "@)?"+ regHost + regPort + regUrlPath);
+//	  regHotLinkFinders.append("(?:(?:www)|(?:ftp))[-\\w]*\\." + regHost + regPort + regUrlPath);
+//	  regHotLinkFinders.append("(?:(?:callto:)|(?:h323:)|(?:sip:))[-\\w][-\\w\\.]*(?:" + regPort + "/[a-z0-9]+)?@" + regHost);
+//	  regHotLinkFinders.append("(?:mailto:)?[-\\w][-\\w\\.]*@[-\\w]+\\." + regHost);
+//	  regHotLinkFinders.append("news:[\\w^_{|}~!\\\"#$%&'()*+,\\./;:=?`]+");
+	  while (!regHotLinkFinders.isEmpty()) {
+        myREs.append(QRegExp(regHotLinkFinders.takeFirst(), Qt::CaseInsensitive));
+	  };
+    }
+};
+	  
+     
 /**
   * This class is used to store information for embedding smileys into <img/> tags.
   *
@@ -103,10 +141,36 @@ void RsHtml::initEmoticons(const QHash< QString, QString >& hash)
 				continue;
 			}
 			defEmbedImg.smileys.insert(smile, it.value());
-			newRE += "(" + QRegExp::escape(smile) + ")|";
+			// add space around smileys
+			newRE += "(?:^|\\s)(" + QRegExp::escape(smile) + ")(?:$|\\s)|";
+			// explanations:
+			//	(?:^|\s)(*smiley*)(?:$|\s)
+			//
+			//	(?:^|\s) Non-capturing group
+			//		1st Alternative: ^
+			//			^ assert position at start of the string
+			//		2nd Alternative: \s
+			//			\s match any white space character [\r\n\t\f ]
+			//
+			//	1st Capturing group (*smiley*)
+			//		*smiley* matches the characters *smiley* literally (case sensitive)
+			//
+			//	(?:$|\s) Non-capturing group
+			//		1st Alternative: $
+			//			$ assert position at end of the string
+			//		2nd Alternative: \s
+			//			\s match any white space character [\r\n\t\f ]
+
+			/*
+			 * TODO
+			 * a better version is:
+			 * (?<=^|\s)(*smile*)(?=$|\s) using the lookbehind/lookahead operator instead of non-capturing groups.
+			 * This solves the problem that spaces are matched, too (see workaround in RsHtml::embedHtml)
+			 * This is not supported by Qt4!
+			 */
 		}
 	newRE.chop(1);	// remove last |
-	defEmbedImg.myRE.setPattern(newRE);
+	defEmbedImg.myREs.append(QRegExp(newRE));
 }
 
 bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, const RetroShareLink &link)
@@ -117,6 +181,7 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
+          case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:
@@ -145,6 +210,7 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_PERSON:
 	case RetroShareLink::TYPE_FORUM:
 	case RetroShareLink::TYPE_CHANNEL:
+        case RetroShareLink::TYPE_POSTED:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
 	case RetroShareLink::TYPE_EXTRAFILE:
@@ -213,7 +279,7 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
  * nodes. Any other kind of node is terminal.
  *
  * If the node is of type Text, its data is checked against the user-provided
- * regular expression. If there is a match, the text is cut in three parts: the
+ * regular expression(s). If there is a match, the text is cut in three parts: the
  * preceding part that will be inserted before, the part to be replaced, and the
  * following part which will be itself checked against the regular expression.
  *
@@ -222,20 +288,19 @@ void RsHtml::replaceAnchorWithImg(QDomDocument &doc, QDomElement &element, QText
  *
  * @param[in] doc The whole DOM tree, necessary to create new nodes
  * @param[in,out] currentElement The current node (which is of type Element)
- * @param[in] embedInfos The regular expression and the type of embedding to use
+ * @param[in] embedInfos The regular expression(s) and the type of embedding to use
  */
 void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos, ulong flag)
 {
-	if(embedInfos.myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
-		return;
-
 	QDomNodeList children = currentElement.childNodes();
-	for(uint index = 0; index < children.length(); index++) {
+	for(uint index = 0; index < (uint)children.length(); index++) {
 		QDomNode node = children.item(index);
 		if(node.isElement()) {
 			// child is an element, we skip it if it's an <a> tag
 			QDomElement element = node.toElement();
 			if(element.tagName().toLower() == "head") {
+				// skip it
+			} else if(element.tagName().toLower() == "style") {
 				// skip it
 			} else if (element.tagName().toLower() == "a") {
 				// skip it
@@ -266,15 +331,20 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 			}
 		}
 		else if(node.isText()) {
-			// child is a text, we parse it
-			QString tempText = node.toText().data();
-			if(embedInfos.myRE.indexIn(tempText) == -1)
+          // child is a text, we parse it
+          QString tempText = node.toText().data();
+          for (int patNdx = 0; patNdx < embedInfos.myREs.size(); ++patNdx) {
+            QRegExp myRE = embedInfos.myREs.at(patNdx);
+            if(myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
+                return;
+
+			if(myRE.indexIn(tempText) == -1)
 				continue;
 
 			// there is at least one link inside, we start replacing
 			int currentPos = 0;
 			int nextPos = 0;
-			while((nextPos = embedInfos.myRE.indexIn(tempText, currentPos)) != -1) {
+			while((nextPos = myRE.indexIn(tempText, currentPos)) != -1) {
 				// if nextPos == 0 it means the text begins by a link
 				if(nextPos > 0) {
 					QDomText textPart = doc.createTextNode(tempText.mid(currentPos, nextPos - currentPos));
@@ -288,10 +358,10 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 					case Ahref:
 							{
 								insertedTag = doc.createElement("a");
-								insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
-								insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+								insertedTag.setAttribute("href", myRE.cap(0));
+								insertedTag.appendChild(doc.createTextNode(myRE.cap(0)));
 
-								RetroShareLink link(embedInfos.myRE.cap(0));
+								RetroShareLink link(myRE.cap(0));
 								if (link.valid()) {
 									QString title = link.title();
 									if (!title.isEmpty()) {
@@ -308,7 +378,21 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 							{
 								insertedTag = doc.createElement("img");
 								const EmbedInHtmlImg& embedImg = static_cast<const EmbedInHtmlImg&>(embedInfos);
-								insertedTag.setAttribute("src", embedImg.smileys[embedInfos.myRE.cap(0)]);
+								// myRE.cap(0) may include spaces at the end/beginning -> trim!
+								insertedTag.setAttribute("src", embedImg.smileys[myRE.cap(0).trimmed()]);
+								/*
+								 * NOTE
+								 * Trailing spaces are matched, too. This leads to myRE.matchedLength() being incorrect.
+								 * This hack reduces nextPos by one so that the new value of currentPos is calculated corretly.
+								 * This is needed to match multiple smileys since the leading whitespace in front of a smiley is required!
+								 *
+								 * This can be avoided by using Qt5 (see comment in RsHtml::initEmoticons)
+								 *
+								 * NOTE
+								 * Preceding spaces are also matched and removed.
+								 */
+								if(myRE.cap(0).endsWith(' '))
+									nextPos--;
 							}
 							break;
 				}
@@ -316,7 +400,7 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				currentElement.insertBefore(insertedTag, node);
 				index++;
 
-				currentPos = nextPos + embedInfos.myRE.matchedLength();
+				currentPos = nextPos + myRE.matchedLength();
 			}
 
 			// text after the last link, only if there's one, don't touch the index
@@ -329,9 +413,17 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 				index--;
 
 			currentElement.removeChild(node);
+            break;
+            // We'd better not expect that
+            // subsequent hotlink patterns
+            // wouldn't also match replacements
+            // we've already made.  They might, so
+            // skip 'em to be safe.
+		  };
 		}
 	}
 }
+
 
 /**
  * Save space and tab out of bracket that XML loose.
@@ -376,7 +468,7 @@ static QString saveSpace(const QString text)
 	return savedSpaceText;
 }
 
-QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast)
+QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast, int desiredMinimumFontSize)
 {
 	if (flag == 0 || text.isEmpty()) {
 		// nothing to do
@@ -416,7 +508,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
-		optimizeHtml(formattedText, flag & RSHTML_OPTIMIZEHTML_MASK, backgroundColor, desiredContrast);
+		optimizeHtml(formattedText, flag, backgroundColor, desiredContrast, desiredMinimumFontSize);
 	}
 
 	return formattedText;
@@ -429,7 +521,7 @@ static void findElements(QDomDocument& doc, QDomElement& currentElement, const Q
 	}
 
 	QDomNodeList children = currentElement.childNodes();
-	for (uint index = 0; index < children.length(); index++) {
+	for (uint index = 0; index < (uint)children.length(); index++) {
 		QDomNode node = children.item(index);
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
@@ -511,6 +603,7 @@ static qreal getContrastRatio(qreal lum1, qreal lum2)
  * @brief Find a color with the same hue that provides the desired contrast with bglum.
  * @param[in,out] val Name of the original color. Will be modified.
  * @param bglum Background's relative luminance as returned by getRelativeLuminance().
+ * @param desiredContrast Contrast to get.
  */
 static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 {
@@ -556,8 +649,48 @@ static void findBestColor(QString &val, qreal bglum, qreal desiredContrast)
 #endif // QT_VERSION < 0x040600
 }
 
-static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigned int flag, qreal bglum, qreal desiredContrast)
+/**
+ * @brief optimizeHtml: Optimize HTML Text in DomDocument to reduce size
+ * @param doc: QDomDocument containing Text to optimize
+ * @param currentElement: Current element optimized
+ * @param stylesList: List where to save all differents styles used in text
+ * @param knownStyle: List of known styles
+ */
+static void optimizeHtml(QDomDocument& doc
+                       , QDomElement& currentElement
+                       , QHash<QString, QStringList> &stylesList
+                       , QHash<QString, QString> &knownStyle)
 {
+	if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
+		//Already optimized only get StyleList
+		QDomElement styleElem = doc.documentElement().namedItem("style").toElement();
+		if (!styleElem.isElement()) return; //Not an element so a bad message.
+		QDomAttr styleAttr = styleElem.attributeNode("RSOptimized");
+		if (!styleAttr.isAttr()) return;  //Not an attribute so a bad message.
+		QString version = styleAttr.value();
+		if (version == "v2") {
+
+			QStringList allStyles = styleElem.text().split('}');
+			foreach (QString style, allStyles){
+				QStringList pair = style.split('{');
+				if (pair.length()!=2) return; //Malformed style list so a bad message or last item.
+				QString keyvalue = pair.at(1);
+				keyvalue.replace(";","");
+				QStringList classUsingIt(pair.at(0).split(','));
+				QStringList exported ;
+				foreach (QString keyVal, classUsingIt) {
+					if(!keyVal.trimmed().isEmpty()) {
+						exported.append(keyVal.trimmed().replace(".",""));
+					}
+				}
+
+				stylesList.insert(keyvalue, exported);
+			}
+		}
+
+		return;
+	}
+
 	if (currentElement.tagName().toLower() == "html") {
 		// change <html> to <span>
 		currentElement.setTagName("span");
@@ -567,70 +700,11 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 	bool addBR = false;
 
 	QDomNodeList children = currentElement.childNodes();
-	for (uint index = 0; index < children.length(); ) {
+	for (uint index = 0; index < (uint)children.length(); ) {
 		QDomNode node = children.item(index);
-
-		// compress style attribute
-		styleNode = node.attributes().namedItem("style");
-		if (styleNode.isAttr()) {
-			QDomAttr styleAttr = styleNode.toAttr();
-			QString style = styleAttr.value().simplified();
-			style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
-			style.replace("; ", ";");
-
-			if (flag) {
-				QStringList styles = style.split(';');
-				style.clear();
-				foreach (QString pair, styles) {
-					if (!pair.trimmed().isEmpty()) {
-						QStringList keyvalue = pair.split(':');
-						if (keyvalue.length() == 2) {
-							QString key = keyvalue.at(0).trimmed();
-							QString val = keyvalue.at(1).trimmed();
-
-							if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
-								(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
-								continue;
-							}
-							if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
-								if (key == "color") {
-									continue;
-								}
-							}
-							else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
-								if (key == "color") {
-									findBestColor(val, bglum, desiredContrast);
-								}
-							}
-							if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
-								if (key == "background" || key == "background-color") {
-									// Remove background color because if we change the text color,
-									// it can become unreadable on the original background.
-									// Also, FIX_COLORS is intended to display text on the default
-									// background color of the operating system.
-									continue;
-								}
-							}
-
-							style += key + ":" + val + ";";
-						} else {
-							style += pair + ";";
-						}
-					}
-				}
-			}
-			if (style.isEmpty()) {
-				node.attributes().removeNamedItem("style");
-				styleNode.clear();
-			} else {
-				styleAttr.setValue(style);
-			}
-		}
-
 		if (node.isElement()) {
 			QDomElement element = node.toElement();
+			styleNode = node.attributes().namedItem("style");
 
 			// not <p>
 			if (addBR && element.tagName().toLower() != "p") {
@@ -661,19 +735,43 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 				continue;
 			}
 
+			//hidden text in a
+			if (element.tagName().toLower() == "a") {
+				if(element.hasAttribute("href")){
+					QString href = element.attribute("href", "");
+					if(href.startsWith("hidden:")){
+						//this text should be hidden and appear in title
+						//we need this trick, because QTextEdit doesn't export the title attribute
+						QString title = href.remove(0, QString("hidden:").length());
+						QString text = element.text();
+						element.setTagName("span");
+						element.removeAttribute("href");
+						QDomNodeList c = element.childNodes();
+						for(int i = 0; i < c.count(); i++){
+							element.removeChild(c.at(i));
+						};
+						element.setAttribute(QString("title"), title);
+						QDomText textnode = doc.createTextNode(text);
+						element.appendChild(textnode);
+					}
+				}
+			}
+
 			// iterate children
-			optimizeHtml(doc, element, flag, bglum, desiredContrast);
+			optimizeHtml(doc, element, stylesList, knownStyle);
 
 			// <p>
 			if (element.tagName().toLower() == "p") {
 				// <p style="...">
-				if (element.attributes().size() == 1 && styleNode.isAttr()) {
-					QString style = styleNode.toAttr().value().simplified();
-					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;" ||
-						style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
+				if (styleNode.isAttr()) {
+					QString style = styleNode.toAttr().value().simplified().trimmed();
+					style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+					style.replace("; ", ";");
+					if (style == "margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;"
+					    || style.startsWith("-qt-paragraph-type:empty;margin:0px 0px 0px 0px;-qt-block-indent:0;text-indent:0px;")) {
 
 						if (addBR) {
-							// add <br> after a removed <p> before a removed <p>
+							// add <br> after a removed <p> but not before a removed <p>
 							QDomElement elementBr = doc.createElement("br");
 							currentElement.insertBefore(elementBr, element);
 							++index;
@@ -681,60 +779,190 @@ static void optimizeHtml(QDomDocument& doc, QDomElement& currentElement, unsigne
 						// remove Qt standard <p> or empty <p>
 						index += element.childNodes().length();
 						removeElement(currentElement, element);
-						addBR = true;
+						// do not add extra <br> after empty paragraph, the paragraph already contains one
+						addBR = ! style.startsWith("-qt-paragraph-type:empty");
 						continue;
 					}
 
-					// check for blockquote (not ready)
-					// style="margin-top:12px;margin-bottom:12px;margin-left:40px;margin-right:40px;-qt-block-indent:0;text-indent:0px;"
-//					int count = 0; // should be 6
-//					QStringList styles = style.split(';');
-//					foreach (QString pair, styles) {
-//						if (!pair.trimmed().isEmpty()) {
-//							QStringList keyvalue = pair.split(':');
-//							if (keyvalue.length() == 2) {
-//								QString key = keyvalue.at(0).trimmed();
-//								QString value = keyvalue.at(1).trimmed();
-
-//								if ((key == "margin-top" || key == "margin-bottom") && value == "12px") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "margin-left" || key == "margin-right") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "-qt-block-indent" && value == "0") {
-//									++count;
-//									continue;
-//								}
-//								if (key == "text-indent" && value == "0px") {
-//									++count;
-//									continue;
-//								}
-//								count = 0;
-//								break;
-//							} else {
-//								count = 0;
-//								break;
-//							}
-//						}
-//					}
-//					if (count == 6) {
-//						// change to "blockquote"
-//						element.setTagName("blockquote");
-//						element.attributes().removeNamedItem("style");
-//						element.setAttribute("type", "cite");
-//					}
 				}
 				addBR = false;
+			}
+			// Compress style attribute
+			if (styleNode.isAttr()) {
+				QDomAttr styleAttr = styleNode.toAttr();
+				QString style = styleAttr.value().simplified().trimmed();
+				style.replace("margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;", "margin:0px 0px 0px 0px;");
+				style.replace("; ", ";");
+
+				QString className = knownStyle.value(style);
+				if (className.isEmpty()) {
+					// Create a new class
+					className = QString("S%1").arg(knownStyle.count());
+					knownStyle.insert(style, className);
+
+					// Now add this for each attribute values
+					QStringList styles = style.split(';');
+					foreach (QString pair, styles) {
+						pair.replace(" ","");
+						if (!pair.isEmpty()) {
+							QStringList& stylesListItem = stylesList[pair];
+							
+							//Add the new class to this value
+							stylesListItem.push_back(className);
+						}
+					}
+				}
+				style.clear();
+
+				node.attributes().removeNamedItem("style");
+				styleNode.clear();
+
+				if (!className.isEmpty()) {
+					QDomNode classNode = doc.createAttribute("class");
+					classNode.setNodeValue(className);
+					node.attributes().setNamedItem(classNode);
+				}
 			}
 		}
 		++index;
 	}
 }
 
-void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
+/**
+ * @brief styleCreate: Add styles filtered in QDomDocument.
+ * @param doc: QDomDocument containing all text formatted
+ * @param stylesList: List of all styles recognized
+ * @param flag: Bitfield of RSHTML_FORMATTEXT_* constants (they must be part of
+ *             RSHTML_OPTIMIZEHTML_MASK).
+ * @param bglum: Luminance background color of the widget where the text will be
+ *                        displayed. Needed only if RSHTML_FORMATTEXT_FIX_COLORS
+ *                        is passed inside flag.
+ * @param desiredContrast: Minimum contrast between text and background color,
+ *                        between 1 and 21.
+ * @param desiredMinimumFontSize: Minimum font size.
+ */
+static void styleCreate(QDomDocument& doc
+                        , QHash<QString, QStringList>& stylesList
+                        , unsigned int flag
+                        , qreal bglum
+                        , qreal desiredContrast
+                        , int desiredMinimumFontSize)
+{
+	QDomElement styleElem;
+	do{
+		if (doc.documentElement().namedItem("style").toElement().attributeNode("RSOptimized").isAttr()) {
+			QDomElement ele = doc.documentElement().namedItem("style").toElement();
+			//Remove child before filter
+			if (!ele.isElement()) break; //Not an element so a bad message.
+			QDomAttr styleAttr = ele.attributeNode("RSOptimized");
+			if (!styleAttr.isAttr()) break; //Not an attribute so a bad message.
+			QString version = styleAttr.value();
+			if (version == "v2") {
+				styleElem = ele;
+			}
+		}
+	}while (false); //for break
+
+	if(!styleElem.isElement()) {
+		styleElem = doc.createElement("style");
+		// Creation of Style class list: <style type="text/css">
+		QDomAttr styleAttr;
+		styleAttr = doc.createAttribute("type");
+		styleAttr.setValue("text/css");
+		styleElem.attributes().setNamedItem(styleAttr);
+		QDomAttr optAttr;
+		optAttr = doc.createAttribute("RSOptimized");
+		optAttr.setValue("v2");
+		styleElem.attributes().setNamedItem(optAttr);
+		if (flag & RSHTML_FORMATTEXT_NO_EMBED) {
+			QDomAttr noEmbedAttr;
+			noEmbedAttr = doc.createAttribute("NoEmbed");
+			noEmbedAttr.setValue("true");
+			styleElem.attributes().setNamedItem(noEmbedAttr);
+		}
+	}
+
+	while(styleElem.childNodes().count()>0) {
+		styleElem.removeChild(styleElem.firstChild());
+	}
+
+	QString style = "";
+
+	QHashIterator<QString, QStringList> it(stylesList);
+	while(it.hasNext()) {
+		it.next();
+		const QStringList& classUsingIt ( it.value()) ;
+		bool first = true;
+		foreach(QString className, classUsingIt) {
+			if (!className.trimmed().isEmpty()) {
+				style += QString(first?".":",.") + className;// + " ";
+				first = false;
+			}
+		}
+
+		QStringList keyvalue = it.key().split(':');
+		if (keyvalue.length() == 2) {
+			QString key = keyvalue.at(0).trimmed();
+			QString val = keyvalue.at(1).trimmed();
+
+			if (key == "font-size") {
+				QRegExp re("(\\d+)(\\D*)");
+				if (re.indexIn(val) != -1) {
+					bool ok; int iVal = re.cap(1).toInt(&ok);
+					if (ok && (iVal < desiredMinimumFontSize)) {
+						val = QString::number(desiredMinimumFontSize) + re.cap(2);
+					}
+				}
+			}
+			if ((flag & RSHTML_FORMATTEXT_REMOVE_FONT_FAMILY && key == "font-family") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_SIZE && key == "font-size") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_WEIGHT && key == "font-weight") ||
+				(flag & RSHTML_FORMATTEXT_REMOVE_FONT_STYLE && key == "font-style")) {
+				continue;
+			}
+
+			if (flag & RSHTML_FORMATTEXT_REMOVE_COLOR) {
+				if (key == "color") {
+					continue;
+				}
+			} else if (flag & RSHTML_FORMATTEXT_FIX_COLORS) {
+				if (key == "color") {
+					findBestColor(val, bglum, desiredContrast);
+				}
+			}
+
+			if (flag & (RSHTML_FORMATTEXT_REMOVE_COLOR | RSHTML_FORMATTEXT_FIX_COLORS)) {
+				if (key == "background" || key == "background-color") {
+					// Remove background color because if we change the text color,
+					// it can become unreadable on the original background.
+					// Also, FIX_COLORS is intended to display text on the default
+					// background color of the operating system.
+					continue;
+				}
+			}
+
+			//.S1 .S2 .S4 {font-family:'Sans';}
+			style += "{" + key + ":" + val + ";}";
+		} else {
+			style += "{" + it.key() + ";}\n";
+		}
+	}
+
+	QDomText styleText = doc.createTextNode(style);
+	styleElem.appendChild(styleText);
+
+	//Create a Body element to be trunk, and doc could open it.
+	QDomElement trunk = doc.createElement("body");
+	trunk.appendChild(styleElem);
+	while (!doc.firstChild().isNull()){
+		trunk.appendChild(doc.firstChild().cloneNode());
+		doc.removeChild(doc.firstChild());
+	}
+	doc.appendChild(trunk);
+
+}
+
+void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag /*= 0*/)
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
@@ -758,10 +986,14 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
  *                        is passed inside flag.
  * @param desiredContrast Minimum contrast between text and background color,
  *                        between 1 and 21.
+ * @param desiredMinimumFontSize Minimum font size.
  */
-void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgroundColor, qreal desiredContrast)
+void RsHtml::optimizeHtml(QString &text, unsigned int flag /*= 0*/
+                          , const QColor &backgroundColor /*= Qt::white*/
+                          , qreal desiredContrast /*= 1.0*/
+                          , int desiredMinimumFontSize /*=10*/
+                          )
 {
-//	int originalLength = text.length();
 
 	// remove doctype
 	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
@@ -777,7 +1009,12 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgr
 	}
 
 	QDomElement body = doc.documentElement();
-	::optimizeHtml(doc, body, flag, ::getRelativeLuminance(backgroundColor), desiredContrast);
+    
+	QHash<QString, QStringList> stylesList;
+	QHash<QString, QString> knownStyle;
+
+	::optimizeHtml(doc, body, stylesList, knownStyle);
+	::styleCreate(doc, stylesList, flag, ::getRelativeLuminance(backgroundColor), desiredContrast, desiredMinimumFontSize);
 	text = doc.toString(-1);
 
 //	std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << originalLength << std::endl;
@@ -802,7 +1039,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 	QImage image;
 
 	if (image.load (fileName) == false) {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load", fileName.toLatin1().constData());
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", fileName.toLatin1().constData());
 		return false;
 	}
 	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);
@@ -845,11 +1082,11 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 			embeddedImage.append(encodedByteArray);
 			embeddedImage.append("\">");
 		} else {
-			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer");
+            //fprintf (stderr, "RsHtml::makeEmbeddedImage() - image can't be saved to buffer\n");
 			return false;
 		}
 	} else {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened");
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - buffer can't be opened\n");
 		return false;
 	}
 	return true;
@@ -872,3 +1109,39 @@ QString RsHtml::plainText(const std::string &text)
 	return Qt::escape(QString::fromUtf8(text.c_str()));
 #endif
 }
+
+QString RsHtml::makeQuotedText(RSTextBrowser *browser)
+{
+	QString text = browser->textCursor().selection().toPlainText();
+	if(text.length() == 0)
+	{
+		text = browser->toPlainText();
+	}
+	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+	text = sl.join("\n>");
+	text.replace(QChar(-4),"");//Char used when image on text.
+	return QString(">") + text;
+}
+
+void RsHtml::insertSpoilerText(QTextCursor cursor)
+{
+	QString hiddentext = cursor.selection().toPlainText();
+	if(hiddentext.isEmpty()) return;
+	QString publictext = "*SPOILER*";
+
+	QString encoded = hiddentext;
+	encoded = encoded.replace(QChar('\"'), QString("&quot;"));
+	encoded = encoded.replace(QChar('\''), QString("&apos;"));
+	encoded = encoded.replace(QChar('<'), QString("&lt;"));
+	encoded = encoded.replace(QChar('>'), QString("&gt;"));
+	encoded = encoded.replace(QChar('&'), QString("&amp;"));
+
+	QString html = QString("<a href=\"hidden:%1\" title=\"%1\">%2</a>").arg(encoded, publictext);
+	cursor.insertHtml(html);
+}
+
+void RsHtml::findBestColor(QString &val, const QColor &backgroundColor /*= Qt::white*/, qreal desiredContrast /*= 1.0*/)
+{
+	::findBestColor(val, ::getRelativeLuminance(backgroundColor), desiredContrast);
+}
+

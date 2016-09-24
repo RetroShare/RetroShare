@@ -20,48 +20,67 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QDir>
-#include <QTimer>
-#include <QTextStream>
-#include <QShortcut>
-#include <QStyleFactory>
-#include <QStyle>
-#include <QString>
-#include <QLocale>
-#include <QRegExp>
+#include <QBuffer>
 #include <QDateTime>
-#include <gui/common/vmessagebox.h>
-#include <gui/common/html.h>
-#include <util/stringutil.h>
-#include <stdlib.h>
+#include <QDir>
+#include <QFileOpenEvent>
+#include <QLocale>
+#include <QLocalSocket>
+#include <QRegExp>
+#include <QSharedMemory>
+#include <QShortcut>
+#include <QString>
+#include <QStyle>
+#include <QStyleFactory>
+#include <QTextStream>
+#include <QTimer>
+#ifdef __APPLE__
+#include <QUrl>
+#endif
+
 #include <iostream>
+#include <stdlib.h>
+
+#include <gui/common/html.h>
+#include <gui/common/vmessagebox.h>
+#include <gui/gxs/GxsIdDetails.h>
+#include <gui/settings/rsharesettings.h>
+#include <lang/languagesupport.h>
+#include <util/stringutil.h>
 
 #include <retroshare/rsinit.h>
-#include <lang/languagesupport.h>
-#include "gui/settings/rsharesettings.h"
+#include <retroshare/rsversion.h>
+#include <retroshare/rsplugin.h>
 
 #include "rshare.h"
 
 /* Available command-line arguments. */
-#define ARG_LANGUAGE   		"lang"    		/**< Argument specifying language.    */
-#define ARG_GUISTYLE   		"style"  	 	/**< Argument specfying GUI style.    */
+#define ARG_LANGUAGE        "lang"          /**< Argument specifying language.    */
+#define ARG_GUISTYLE        "style"         /**< Argument specfying GUI style.    */
 #define ARG_GUISTYLESHEET   "stylesheet"    /**< Argument specfying GUI style.    */
-#define ARG_RESET      		"reset"   		/**< Reset Rshare's saved settings.  */
-#define ARG_DATADIR    		"datadir" 		/**< Directory to use for data files. */
-#define ARG_LOGFILE    		"logfile"       /**< Location of our logfile.         */
-#define ARG_LOGLEVEL   		"loglevel"      /**< Log verbosity.                   */
-
+#define ARG_RESET           "reset"         /**< Reset Rshare's saved settings.   */
+#define ARG_DATADIR         "datadir"       /**< Directory to use for data files. */
+#define ARG_LOGFILE         "logfile"       /**< Location of our logfile.         */
+#define ARG_LOGLEVEL        "loglevel"      /**< Log verbosity.                   */
+#define ARG_RSLINK_S        "r"             /**< Open RsLink with protocol retroshare:// */
+#define ARG_RSLINK_L        "link"          /**< Open RsLink with protocol retroshare:// */
+#define ARG_RSFILE_S        "f"             /**< Open RsFile with or without arg  */
+#define ARG_RSFILE_L        "rsfile"        /**< Open RsFile with or without arg  */
+//Other defined for server in /libretroshare/src/rsserver/rsinit.cc:351
 
 /* Static member variables */
 QMap<QString, QString> Rshare::_args; /**< List of command-line arguments.  */
 QString Rshare::_style;               /**< The current GUI style.           */
-QString Rshare::_language;            /**< The current language.            */
 QString Rshare::_stylesheet;          /**< The current GUI stylesheet.      */
+QString Rshare::_language;            /**< The current language.            */
 QString Rshare::_dateformat;          /**< The format of dates in feed items etc. */
-Log Rshare::_log;
-bool Rshare::useConfigDir;           
-QString Rshare::configDir;           
+Log Rshare::_log;                     /**< Logs debugging messages to file or stdout. */
+QStringList Rshare::_links;           /**< List of links passed by arguments. */
+QStringList Rshare::_files;           /**< List of files passed by arguments. */
 QDateTime Rshare::mStartupTime;
+bool Rshare::useConfigDir;
+QString Rshare::configDir;
+QLocalServer* Rshare::localServer;
 
 /** Catches debugging messages from Qt and sends them to RetroShare's logs. If Qt
  * emits a QtFatalMsg, we will write the message to the log and then abort().
@@ -85,6 +104,10 @@ void qt_msg_handler(QtMsgType type, const char *msg)
     case QtFatalMsg:
       rError(QString("QtFatalMsg: %1").arg(msg));
       break;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 5, 0)
+    case QtInfoMsg:
+      break;
+#endif
   }
   if (type == QtFatalMsg) {
     rError("Fatal Qt error. Aborting.");
@@ -99,6 +122,65 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 : QApplication(argc, argv)
 {
   mStartupTime = QDateTime::currentDateTime();
+  localServer = NULL;
+
+  //Initialize connection to LocalServer to know if other process runs.
+  {
+    QString serverName = QString(TARGET);
+
+    if (!args.isEmpty()) {
+      // load into shared memory
+      QBuffer buffer;
+      buffer.open(QBuffer::ReadWrite);
+      QDataStream out(&buffer);
+      out << args;
+      int size = buffer.size();
+
+      QSharedMemory newArgs;
+      newArgs.setKey(serverName + "_newArgs");
+      if (newArgs.isAttached()) newArgs.detach();
+
+      if (!newArgs.create(size)) {
+        std::cerr << "(EE) Rshare::Rshare Unable to create shared memory segment of size:"
+                  << size << " error:" << newArgs.errorString().toStdString() << "." << std::endl;
+#ifdef Q_OS_UNIX
+        std::cerr << "Look with `ipcs -m` for nattch==0 segment. And remove it with `ipcrm -m 'shmid'`." << std::endl;
+        //No need for windows, as it removes shared segment directly even when crash.
+#endif
+        newArgs.detach();
+        ::exit(EXIT_FAILURE);
+      }
+      newArgs.lock();
+      char *to = (char*)newArgs.data();
+      const char *from = buffer.data().data();
+      memcpy(to, from, qMin(newArgs.size(), size));
+      newArgs.unlock();
+
+      // Connect to the Local Server of the main process to notify it
+      // that a new process had been started
+      QLocalSocket localSocket;
+      localSocket.connectToServer(QString(TARGET));
+
+      std::cerr << "Rshare::Rshare waitForConnected to other instance." << std::endl;
+      if( localSocket.waitForConnected(100) )
+      {
+        std::cerr << "Rshare::Rshare Connection etablished. Waiting for disconnection." << std::endl;
+        localSocket.waitForDisconnected(1000);
+        newArgs.detach();
+        std::cerr << "Rshare::Rshare Arguments was sended." << std::endl
+                  << " To disable it, in Options - General - Misc," << std::endl
+                  << " uncheck \"Use Local Server to get new Arguments\"." << std::endl;
+        ::exit(EXIT_SUCCESS); // Terminate the program using STDLib's exit function
+      }
+      newArgs.detach();
+    }
+    // No main process exists
+    // Or started without arguments
+    // So we start a Local Server to listen for connections from new process
+    localServer= new QLocalServer();
+    QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
+    updateLocalServer();
+  }
 
 #if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
   qInstallMessageHandler(qt_msg_handler);
@@ -109,7 +191,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 #ifndef __APPLE__
 
   /* set default window icon */
-  setWindowIcon(QIcon(":/images/logo/logo_32.png"));
+  setWindowIcon(QIcon(":/icons/logo_128.png"));
 
 #endif
 
@@ -117,6 +199,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
   QTimer *timer = new QTimer(this);
   timer->setInterval(500);
   connect(timer, SIGNAL(timeout()), this, SLOT(blinkTimer()));
+  timer->start();
+
+  timer = new QTimer(this);
+  timer->setInterval(60000);
+  connect(timer, SIGNAL(timeout()), this, SIGNAL(minuteTick()));
   timer->start();
 
   /* Read in all our command-line arguments. */
@@ -154,12 +241,68 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 
   /* Switch off auto shutdown */
   setQuitOnLastWindowClosed ( false );
+
+	/* Initialize GxsIdDetails */
+	GxsIdDetails::initialize();
 }
 
 /** Destructor */
 Rshare::~Rshare()
 {
+	/* Cleanup GxsIdDetails */
+	GxsIdDetails::cleanup();
+	if (localServer)
+	{
+		localServer->close();
+		delete localServer;
+	}
+}
 
+/**
+ * @brief Executed when new instance connect command is sent to LocalServer
+ */
+void Rshare::slotConnectionEstablished()
+{
+	QLocalSocket *socket = localServer->nextPendingConnection();
+	socket->close();
+	delete socket;
+
+	QSharedMemory newArgs;
+	newArgs.setKey(QString(TARGET) + "_newArgs");
+
+	if (!newArgs.attach())
+	{
+		std::cerr << "(EE) Rshare::slotConnectionEstablished() Unable to attach to shared memory segment."
+		          << newArgs.errorString().toStdString() << std::endl;
+		return;
+	}
+
+	QBuffer buffer;
+	QDataStream in(&buffer);
+	QStringList args;
+
+	newArgs.lock();
+	buffer.setData((char*)newArgs.constData(), newArgs.size());
+	buffer.open(QBuffer::ReadOnly);
+	in >> args;
+	newArgs.unlock();
+	newArgs.detach();
+
+	emit newArgsReceived(args);
+	while (!args.empty())
+	{
+		std::cerr << "Rshare::slotConnectionEstablished args:" << QString(args.takeFirst()).toStdString() << std::endl;
+	}
+}
+
+QString Rshare::retroshareVersion(bool withRevision)
+{
+	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
+	if (withRevision) {
+		version += QString(" %1 %2").arg(tr("Revision")).arg(QString::number(RS_REVISION_NUMBER,16));
+	}
+
+	return version;
 }
 
 /** Enters the main event loop and waits until exit() is called. The signal
@@ -222,21 +365,21 @@ Rshare::showUsageMessageBox()
   out << "<table>";
   //out << trow(tcol("-"ARG_HELP) + 
   //            tcol(tr("Displays this usage message and exits.")));
-  out << trow(tcol("-"ARG_RESET) +
+  out << trow(tcol("-" ARG_RESET) +
               tcol(tr("Resets ALL stored RetroShare settings.")));
-  out << trow(tcol("-"ARG_DATADIR" &lt;dir&gt;") +
+  out << trow(tcol("-" ARG_DATADIR" &lt;dir&gt;") +
               tcol(tr("Sets the directory RetroShare uses for data files.")));
-  out << trow(tcol("-"ARG_LOGFILE" &lt;file&gt;") +
+  out << trow(tcol("-" ARG_LOGFILE" &lt;file&gt;") +
               tcol(tr("Sets the name and location of RetroShare's logfile.")));
-  out << trow(tcol("-"ARG_LOGLEVEL" &lt;level&gt;") +
+  out << trow(tcol("-" ARG_LOGLEVEL" &lt;level&gt;") +
               tcol(tr("Sets the verbosity of RetroShare's logging.") +
                    "<br>[" + Log::logLevels().join("|") +"]"));
-  out << trow(tcol("-"ARG_GUISTYLE" &lt;style&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLE" &lt;style&gt;") +
               tcol(tr("Sets RetroShare's interface style.") +
                    "<br>[" + QStyleFactory::keys().join("|") + "]"));
-  out << trow(tcol("-"ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
+  out << trow(tcol("-" ARG_GUISTYLESHEET" &lt;stylesheet&gt;") +
               tcol(tr("Sets RetroShare's interface stylesheets.")));                   
-  out << trow(tcol("-"ARG_LANGUAGE" &lt;language&gt;") + 
+  out << trow(tcol("-" ARG_LANGUAGE" &lt;language&gt;") +
               tcol(tr("Sets RetroShare's language.") +
                    "<br>[" + LanguageSupport::languageCodes().join("|") + "]"));
   out << "</table>";
@@ -249,39 +392,62 @@ Rshare::showUsageMessageBox()
 bool
 Rshare::argNeedsValue(QString argName)
 {
-  return (argName == ARG_GUISTYLE ||
-		  argName == ARG_GUISTYLESHEET ||
-          argName == ARG_LANGUAGE ||
-          argName == ARG_DATADIR  ||        
-          argName == ARG_LOGFILE  ||
-          argName == ARG_LOGLEVEL);
-
+	return (argName == ARG_GUISTYLE ||
+	        argName == ARG_GUISTYLESHEET ||
+	        argName == ARG_LANGUAGE ||
+	        argName == ARG_DATADIR  ||
+	        argName == ARG_LOGFILE  ||
+	        argName == ARG_LOGLEVEL ||
+	        argName == ARG_RSLINK_S ||
+	        argName == ARG_RSLINK_L ||
+	        argName == ARG_RSFILE_S ||
+	        argName == ARG_RSFILE_L   );
 }
 
 /** Parses the list of command-line arguments for their argument names and
  * values. */
 void
-Rshare::parseArguments(QStringList args)
+Rshare::parseArguments(QStringList args, bool firstRun)
 {
-  QString arg, value;
+	QString arg, value;
 
-  /* Loop through all command-line args/values and put them in a map */
-  for (int i = 0; i < args.size(); i++) {
-    /* Get the argument name and set a blank value */
-    arg   = args.at(i).toLower();
-    value = "";
+	/* Loop through all command-line args/values and put them in a map */
+	for (int i = 0; i < args.size(); ++i) {
+		/* Get the argument name and set a blank value */
+		arg = args.at(i);//.toLower(); Need Upper case for file name.
+		if (arg.toLower() == "empty") continue;
+		value = "";
 
-    /* Check if it starts with a - or -- */
-    if (arg.startsWith("-")) {
-      arg = arg.mid((arg.startsWith("--") ? 2 : 1));
-    }
-    /* Check if it takes a value and there is one on the command-line */
-    if (i < args.size()-1 && argNeedsValue(arg)) {
-      value = args.at(++i);
-    }
-    /* Place this arg/value in the map */
-    _args.insert(arg, value);
-  }
+		/* Check if it starts with a - or -- */
+		if (arg.startsWith("-")) {
+			arg = arg.mid((arg.startsWith("--") ? 2 : 1));
+			/* Check if it takes a value and there is one on the command-line */
+			if (i < args.size()-1 && argNeedsValue(arg.toLower())) {
+				value = args.at(++i);
+			}
+		} else {
+			/* Check if links or files without arg */
+			if (arg.toLower().startsWith("retroshare://")) {
+				value = arg;
+				arg = ARG_RSLINK_L;
+			} else {
+				if (QFile(arg).exists()) {
+					value = arg;
+					arg = ARG_RSFILE_L;
+				}
+			}
+		}
+
+		/* Don't send theses argument to _args map to allow multiple. */
+		if (arg == ARG_RSLINK_S || arg == ARG_RSLINK_L) {
+			_links.append(value);
+		} else if (arg == ARG_RSFILE_S || arg == ARG_RSFILE_L) {
+			_files.append(value);
+		} else if (firstRun) {
+			/* Place this arg/value in the map only first time*/
+			_args.insert(arg, value);
+		}
+	}
 }
 
 /** Verifies that all specified arguments were valid. */
@@ -291,20 +457,20 @@ Rshare::validateArguments(QString &errmsg)
   /* Check for a language that Retroshare recognizes. */
   if (_args.contains(ARG_LANGUAGE) &&
       !LanguageSupport::isValidLanguageCode(_args.value(ARG_LANGUAGE))) {
-    errmsg = tr("Invalid language code specified: ") + _args.value(ARG_LANGUAGE);
+    errmsg = tr("Invalid language code specified:")+" " + _args.value(ARG_LANGUAGE);
     return false;
   }
   /* Check for a valid GUI style */
   if (_args.contains(ARG_GUISTYLE) &&
       !QStyleFactory::keys().contains(_args.value(ARG_GUISTYLE),
                                       Qt::CaseInsensitive)) {
-    errmsg = tr("Invalid GUI style specified: ") + _args.value(ARG_GUISTYLE);
+    errmsg = tr("Invalid GUI style specified:")+" " + _args.value(ARG_GUISTYLE);
     return false;
   }
   /* Check for a valid log level */
   if (_args.contains(ARG_LOGLEVEL) &&
       !Log::logLevels().contains(_args.value(ARG_LOGLEVEL))) {
-    errmsg = tr("Invalid log level specified: ") + _args.value(ARG_LOGLEVEL);
+    errmsg = tr("Invalid log level specified:")+" " + _args.value(ARG_LOGLEVEL);
     return false;
   }
   /* Check for a writable log file */
@@ -423,50 +589,92 @@ void Rshare::resetLanguageAndStyle()
     setSheet(_args.value(ARG_GUISTYLESHEET));
 }
 
+// RetroShare:
+//   Default:
+//     :/qss/stylesheet/qss.default
+//     :/qss/stylesheet/qss.<locale>
+//   Internal:
+//     :/qss/stylesheet/<name>.qss
+//   External:
+//     <ConfigDirectory|DataDirectory>/qss/<name>.qss
+//   Language depended stylesheet
+//     <Internal|External>_<locale>.lqss
+//
+// Plugin:
+//   Default:
+//     :/qss/stylesheet/<plugin>/<plugin>_qss.default
+//     :/qss/stylesheet/<plugin>/<plugin>_qss.<locale>
+//   Internal:
+//     :/qss/stylesheet/<plugin>/<plugin>_<name>.qss
+//   External:
+//     <ConfigDirectory|DataDirectory>/qss/<plugin>/<plugin>_<name>.qss
+//   Language depended stylesheet
+//     <Internal|External>_<locale>.lqss
+
 void Rshare::loadStyleSheet(const QString &sheetName)
 {
     QString locale = QLocale().name();
     QString styleSheet;
 
-    /* load the default stylesheet */
-    QFile file(":/qss/stylesheet/qss.default");
-    if (file.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(file.readAll()) + "\n";
-        file.close();
-    }
+    QStringList names;
+    names.push_back(""); // RetroShare
 
-    /* load locale depended default stylesheet */
-    file.setFileName(":/qss/stylesheet/qss." + locale);
-    if (file.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(file.readAll()) + "\n";
-        file.close();
-    }
-
-    if (!sheetName.isEmpty()) {
-        /* load stylesheet */
-        if (sheetName.left(1) == ":") {
-            /* internal stylesheet */
-            file.setFileName(":/qss/stylesheet/" + sheetName.mid(1) + ".qss");
-        } else {
-            /* external stylesheet */
-            file.setFileName(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/qss/" + sheetName + ".qss");
-            if (!file.exists()) {
-                file.setFileName(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+    /* Get stylesheet from plugins */
+    if (rsPlugins) {
+        int count = rsPlugins->nbPlugins();
+        for (int i = 0; i < count; ++i) {
+            RsPlugin* plugin = rsPlugins->plugin(i);
+            if (plugin) {
+                QString pluginStyleSheetName = QString::fromUtf8(plugin->qt_stylesheet().c_str());
+                if (!pluginStyleSheetName.isEmpty()) {
+                    names.push_back(QString("%1/%1_").arg(pluginStyleSheetName));
+                }
             }
         }
+    }
+
+    foreach (QString name, names) {
+        /* load the default stylesheet */
+        QFile file(QString(":/qss/stylesheet/%1qss.default").arg(name));
         if (file.open(QFile::ReadOnly)) {
             styleSheet += QLatin1String(file.readAll()) + "\n";
             file.close();
+        }
 
-            /* load language depended stylesheet */
-            QFileInfo fileInfo(file.fileName());
-            file.setFileName(fileInfo.path() + "/" + fileInfo.baseName() + "_" + locale + ".lqss");
+        /* load locale depended default stylesheet */
+        file.setFileName(QString(":/qss/stylesheet/%1qss.%2").arg(name, locale));
+        if (file.open(QFile::ReadOnly)) {
+            styleSheet += QLatin1String(file.readAll()) + "\n";
+            file.close();
+        }
+
+        if (!sheetName.isEmpty()) {
+            /* load stylesheet */
+            if (sheetName.left(1) == ":") {
+                /* internal stylesheet */
+                file.setFileName(QString(":/qss/stylesheet/%1%2.qss").arg(name, sheetName.mid(1)));
+            } else {
+                /* external stylesheet */
+                file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()), name, sheetName));
+                if (!file.exists()) {
+                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::DataDirectory().c_str()), name, sheetName));
+                }
+            }
             if (file.open(QFile::ReadOnly)) {
                 styleSheet += QLatin1String(file.readAll()) + "\n";
                 file.close();
+
+                /* load language depended stylesheet */
+                QFileInfo fileInfo(file.fileName());
+                file.setFileName(fileInfo.path() + "/" + fileInfo.baseName() + "_" + locale + ".lqss");
+                if (file.open(QFile::ReadOnly)) {
+                    styleSheet += QLatin1String(file.readAll()) + "\n";
+                    file.close();
+                }
             }
         }
     }
+
     qApp->setStyleSheet(styleSheet);
 }
 
@@ -514,7 +722,7 @@ void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)
 		if (processChildren == true) {
 			// process children recursively
 			QObjectList childList =	widget->children ();
-			for (QObjectList::Iterator it = childList.begin(); it != childList.end(); it++) {
+			for (QObjectList::Iterator it = childList.begin(); it != childList.end(); ++it) {
 				QWidget *child = qobject_cast<QWidget*>(*it);
 				if (child != NULL) {
 					refreshStyleSheet(child, processChildren);
@@ -527,6 +735,7 @@ void Rshare::refreshStyleSheet(QWidget *widget, bool processChildren)
 /** Initialize plugins. */
 void Rshare::initPlugins()
 {
+    loadStyleSheet(_stylesheet);
     LanguageSupport::translatePlugins(_language);
 }
 
@@ -548,7 +757,7 @@ Rshare::dataDirectory()
 QString
 Rshare::defaultDataDirectory()
 {
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
   return (win32_app_data_folder() + "\\RetroShare");
 #else
   return (QDir::homePath() + "/.RetroShare");
@@ -595,6 +804,29 @@ Rshare::createShortcut(const QKeySequence &key, QWidget *sender,
   connect(s, SIGNAL(activated()), receiver, slot);
 }
 
+#ifdef __APPLE__
+bool Rshare::event(QEvent *event)
+{
+  switch (event->type()) {
+    case QEvent::FileOpen:{
+      QFileOpenEvent* fileOE = static_cast<QFileOpenEvent *>(event);
+      QStringList args;
+      if (! fileOE->file().isEmpty()) {
+        _files.append(fileOE->file());
+        emit newArgsReceived(QStringList());
+        return true;
+      } else if (! fileOE->url().isEmpty()) {
+        _links.append(fileOE->url().toString());
+        emit newArgsReceived(QStringList());
+        return true;
+      }
+    }
+    default:
+    return QApplication::event(event);
+  }
+}
+#endif
+
 void Rshare::blinkTimer()
 {
     mBlink = !mBlink;
@@ -629,14 +861,29 @@ bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 										QObject::tr("An unexpected error occurred when Retroshare "
 										"tried to acquire the single instance lock\n Lock file:\n") +
 										QString::fromUtf8(lockFile.c_str()));
-				return false;
-		case 3: QMessageBox::critical(	0,
-										QObject::tr("Login Failure"),
-										QObject::tr("Maybe password is wrong") );
+                return false;
+        case 3:
+//		case 3: QMessageBox::critical(	0,
+//										QObject::tr("Login Failure"),
+//										QObject::tr("Maybe password is wrong") );
 				return false;
 		default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
 				return false;
 	}
 
 	return true;
+}
+
+bool Rshare::updateLocalServer()
+{
+	if (localServer) {
+		QString serverName = QString(TARGET);
+		if (Settings->getUseLocalServer()) {
+			localServer->removeServer(serverName);
+			localServer->listen(serverName);
+			return true;
+		}
+		localServer->close();
+	}
+	return false;
 }

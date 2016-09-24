@@ -71,7 +71,7 @@ LIBS +=  -lssl -lcrypto  -lpthread
 #LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
 LIBS +=  -lupnp 
-LIBS += ../../../../../lib/sqlcipher/.libs/libsqlcipher.a
+LIBS += -lsqlcipher
 	
 RSLIBS = $(LIBS)
 

@@ -83,8 +83,10 @@ virtual ~RsPosted() { return; }
 
 	    /* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) = 0;
+virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
-virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
+//Not currently used
+//virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 
 	    /* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
@@ -99,6 +101,8 @@ virtual bool createGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;
 
 virtual bool updateGroup(uint32_t &token, RsPostedGroup &group) = 0;
+
+    virtual bool groupShareKeys(const RsGxsGroupId& group,const std::set<RsPeerId>& peers) = 0 ;
 };
 
 
@@ -113,7 +117,10 @@ class RsPostedPost
 		mDownVotes = 0;
 		mComments = 0;
 		mHaveVoted = false;
-		return;
+
+        mHotScore = 0;
+        mTopScore = 0;
+        mNewScore = 0;
 	}
 
 	bool calculateScores(time_t ref_time);

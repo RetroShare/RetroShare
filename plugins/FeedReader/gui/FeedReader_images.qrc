@@ -16,5 +16,6 @@
 		<file>images/FeedAdd.png</file>
 		<file>images/Link.png</file>
 		<file>images/Update.png</file>
+		<file>images/feedreader-notify.png</file>
 	</qresource>
 </RCC>

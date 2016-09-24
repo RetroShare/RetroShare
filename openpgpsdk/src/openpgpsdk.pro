@@ -1,8 +1,10 @@
+!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
+
 TEMPLATE = lib
-win32 {
-	CONFIG += staticlib
+macx {
+	CONFIG = staticlib 
 } else {
-	CONFIG = staticlib debug
+	CONFIG += staticlib
 }
 
 DEFINES *= OPENSSL_NO_IDEA 
@@ -33,11 +35,8 @@ win32 {
 	#QMAKE_CXXFLAGS_DEBUG += -O2
 	#QMAKE_CFLAGS_DEBUG += -O2
 
-	SSL_DIR = ../../../openssl-1.0.1h
-	ZLIB_DIR = ../../../zlib-1.2.3
-	BZIP_DIR = ../../../bzip2-1.0.6
-
-	INCLUDEPATH += $${SSL_DIR}/include $${ZLIB_DIR} $${BZIP_DIR}
+	DEPENDPATH += $$INC_DIR
+	INCLUDEPATH += $$INC_DIR
 }
 
 # Input

@@ -29,7 +29,7 @@
 #include <QPushButton>
 
 #include <iostream>
-
+#include <math.h>
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 
@@ -40,7 +40,7 @@ void Emoticons::load()
     QString sm_codes;
     bool internalEmoticons = true;
 
-#if defined(Q_OS_WIN32)
+#if defined(Q_OS_WIN)
     // first try external emoticons
     QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
     if(sm_file.open(QIODevice::ReadOnly))
@@ -48,7 +48,7 @@ void Emoticons::load()
         internalEmoticons = false;
     } else {
         // then embedded emotions
-        sm_file.setFileName(":/smileys/emotes.acs");
+        sm_file.setFileName(":/emojione/emotes.acs");
         if(!sm_file.open(QIODevice::ReadOnly))
         {
             std::cout << "error opening ressource file" << std::endl ;
@@ -56,7 +56,7 @@ void Emoticons::load()
         }
     }
 #else
-    QFile sm_file(QString(":/smileys/emotes.acs"));
+    QFile sm_file(QString(":/emojione/emotes.acs"));
     if(!sm_file.open(QIODevice::ReadOnly))
     {
         std::cout << "error opening ressource file" << std::endl ;
@@ -73,9 +73,9 @@ void Emoticons::load()
     int i = 0;
     QString smcode;
     QString smfile;
-    while(sm_codes[i] != '{')
+    while(i < sm_codes.length() && sm_codes[i] != '{')
     {
-        i++;
+        ++i;
     }
     while (i < sm_codes.length()-2)
     {
@@ -84,27 +84,27 @@ void Emoticons::load()
 
         while(sm_codes[i] != '\"')
         {
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         while (sm_codes[i] != '\"')
         {
             smcode += sm_codes[i];
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
 
         while(sm_codes[i] != '\"')
         {
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
         {
             smfile += sm_codes[i];
-            i++;
+            ++i;
         }
-        i++;
+        ++i;
         if(!smcode.isEmpty() && !smfile.isEmpty()) {
             while (smcode.right(1) == "|") {
                 smcode.remove(smcode.length() - 1, 1);
@@ -128,9 +128,9 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 
     const int buttonWidth = 26;
     const int buttonHeight = 26;
-    const int countPerLine = 9;
 
-    int rowCount = (Smileys.size()/countPerLine) + ((Smileys.size() % countPerLine) ? 1 : 0);
+    int rowCount = (int)sqrt((double)Smileys.size());
+    int countPerLine = (Smileys.size()/rowCount) + ((Smileys.size() % rowCount) ? 1 : 0);
 
     smWidget->setAttribute( Qt::WA_DeleteOnClose);
     smWidget->setWindowTitle("Emoticons");
@@ -189,7 +189,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         if(x >= countPerLine)
         {
             x = 0;
-            y++;
+            ++y;
         }
         QObject::connect(smButton, SIGNAL(clicked()), parent, slotAddMethod);
         QObject::connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));

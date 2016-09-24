@@ -13,8 +13,12 @@ TODO
 
 COMPILATION
 	- add the following libraries:
+
 			libqtmultimediakit1
 			qtmobility-dev
 			libspeex-dev
 			libspeexdsp-dev
+			libcv-dev
+			libopencv-core-dev
+			libhighgui-dev
 

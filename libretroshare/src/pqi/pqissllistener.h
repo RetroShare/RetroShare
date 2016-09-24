@@ -49,13 +49,12 @@ class p3PeerMgr;
 
 class AcceptedSSL
 {
-	public:
-	
+public:
 	int mFd;
 	SSL *mSSL;
 	RsPeerId mPeerId;
-	
-	struct sockaddr_storage mAddr;
+
+	sockaddr_storage mAddr;
 	time_t mAcceptTS;
 };
 
@@ -64,26 +63,22 @@ class AcceptedSSL
 
 class pqissllistenbase: public pqilistener
 {
-	public:
+public:
+	pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm);
+	virtual ~pqissllistenbase();
 
+	/*************************************/
+	/*       LISTENER INTERFACE          */
+	virtual int tick();
+	virtual int status();
+	virtual int setListenAddr(const struct sockaddr_storage &addr);
+	virtual int setuplisten();
+	virtual int resetlisten();
+	/*************************************/
 
-        pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm);
-virtual ~pqissllistenbase();
-
-/*************************************/
-/*       LISTENER INTERFACE         **/
-
-virtual int 	tick();
-virtual int 	status();
-virtual int     setListenAddr(const struct sockaddr_storage &addr);
-virtual int	setuplisten();
-virtual int     resetlisten();
-
-/*************************************/
-
-int	acceptconnection();
-int	continueaccepts();
-int	finaliseAccepts();
+	int acceptconnection();
+	int continueaccepts();
+	int finaliseAccepts();
 
 	struct IncomingSSLInfo
 	{
@@ -95,52 +90,44 @@ int	finaliseAccepts();
 	};
 
 	// fn to get cert, anyway
-int	continueSSL(IncomingSSLInfo&, bool);
-int 	closeConnection(int fd, SSL *ssl);
-int 	isSSLActive(int fd, SSL *ssl);
+	int	continueSSL(IncomingSSLInfo&, bool);
+	int closeConnection(int fd, SSL *ssl);
+	int isSSLActive(int fd, SSL *ssl);
 
-virtual int completeConnection(int sockfd, IncomingSSLInfo&) = 0;
-virtual int finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId, const struct sockaddr_storage &raddr) = 0;
-	protected:
+	virtual int completeConnection(int sockfd, IncomingSSLInfo&) = 0;
+	virtual int finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId,
+								   const sockaddr_storage &raddr) = 0;
 
+protected:
 	struct sockaddr_storage laddr;
 	std::list<AcceptedSSL> accepted_ssl;
-
-	private:
-
-	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
-
-	bool active;
-	int lsock;
-
-	std::list<IncomingSSLInfo> incoming_ssl ;
-
-	protected:
-
 	p3PeerMgr *mPeerMgr;
 
+private:
+	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
+	bool active;
+	int lsock;
+	std::list<IncomingSSLInfo> incoming_ssl ;
 };
 
 
 class pqissllistener: public pqissllistenbase
 {
-	public:
+public:
+	pqissllistener(const struct sockaddr_storage &addr, p3PeerMgr *pm) :
+		pqissllistenbase(addr, pm) {}
+	virtual ~pqissllistener() {}
 
-        pqissllistener(const struct sockaddr_storage &addr, p3PeerMgr *pm);
-virtual ~pqissllistener();
+	int addlistenaddr(const RsPeerId& id, pqissl *acc);
+	int removeListenPort(const RsPeerId& id);
 
-int 	addlistenaddr(const RsPeerId& id, pqissl *acc);
-int	removeListenPort(const RsPeerId& id);
+	virtual int status();
+	virtual int completeConnection(int sockfd, IncomingSSLInfo&);
+	virtual int finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId,
+								   const sockaddr_storage &raddr);
 
-//virtual int 	tick();
-virtual int 	status();
-
-virtual int completeConnection(int sockfd, IncomingSSLInfo&);
-virtual int finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId, const struct sockaddr_storage &raddr);
-
-	private:
-
-	std::map<RsPeerId, pqissl *> listenaddr;
+private:
+	std::map<RsPeerId, pqissl*> listenaddr;
 };
 
 

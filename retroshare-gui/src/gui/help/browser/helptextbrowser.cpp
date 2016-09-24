@@ -63,7 +63,7 @@ HelpTextBrowser::loadResource(int type, const QUrl &name)
     
     QFile file(helpPath + name.path());
     if (!file.open(QIODevice::ReadOnly)) {
-      return tr("Error opening help file: ") + name.path();
+      return tr("Error opening help file:")+" "+ name.path();
     }
     return QString::fromUtf8(file.readAll());
   }

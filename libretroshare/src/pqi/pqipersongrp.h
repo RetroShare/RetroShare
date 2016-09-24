@@ -50,7 +50,7 @@ class RsPeerCryptoParams ;
 class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer, public pqiNetListener
 {
 	public:
-	pqipersongrp(p3ServiceControl *ctrl, SecurityPolicy *, unsigned long flags);
+    pqipersongrp(p3ServiceControl *ctrl, unsigned long flags);
 
 	/*************************** Setup *************************/
 	/* pqilistener */
@@ -88,7 +88,7 @@ virtual bool RecvRsRawItem(RsRawItem *item);
 int	tagHeartbeatRecvd(const RsPeerId& id);
 
 	/*** callback from children ****/
-bool    notifyConnect(const RsPeerId& id, uint32_t type, bool success, const struct sockaddr_storage &remote_peer_address);
+bool    notifyConnect(const RsPeerId& id, uint32_t type, bool success, bool isIncomingConnection, const struct sockaddr_storage &remote_peer_address);
 //bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.
@@ -119,18 +119,19 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 	private:
 
 	// The serviceserver operation.
-	int tickServiceRecv();
+    //int tickServiceRecv();
 	//int tickServiceSend();
 
 	pqilistener *pqil;
+	RsMutex pqilMtx; /* MUTEX */
 	unsigned long initFlags;
 };
 
 class pqipersongrpDummy: public pqipersongrp
 {
 	public:
-	pqipersongrpDummy(p3ServiceControl *ctrl, SecurityPolicy *pol, unsigned long flags)
-	:pqipersongrp(ctrl, pol, flags) { return; }
+    pqipersongrpDummy(p3ServiceControl *ctrl, unsigned long flags)
+    :pqipersongrp(ctrl, flags) { return; }
 
 	protected:
 

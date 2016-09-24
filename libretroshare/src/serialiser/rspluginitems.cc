@@ -123,7 +123,7 @@ std::ostream& RsPluginHashSetItem::print(std::ostream& o, uint16_t)
 	o << "Item type: RsPluginHashSetItem" << std::endl;
 	o << "  Hash list: " << std::endl;
 
-    for(std::list<Sha1CheckSum>::const_iterator it(hashes.ids.begin());it!=hashes.ids.end();++it)
+    for(std::set<Sha1CheckSum>::const_iterator it(hashes.ids.begin());it!=hashes.ids.end();++it)
 		o << "       " << *it << std::endl;
 
 	return o ;

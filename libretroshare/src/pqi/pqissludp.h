@@ -45,7 +45,7 @@
 class pqissludp;
 class cert;
 
-/* This provides a NetBinInterface, which is 
+/* This provides a NetBinInterface, which is
  * primarily inherited from pqissl.
  * fns declared here are different -> all others are identical.
  */
@@ -53,48 +53,47 @@ class cert;
 class pqissludp: public pqissl
 {
 public:
-        pqissludp(PQInterface *parent, p3LinkMgr *lm);
+	pqissludp(PQInterface *parent, p3LinkMgr *lm);
 
-virtual ~pqissludp();
+	virtual ~pqissludp();
 
 	// NetInterface.
 	// listen fns call the udpproxy.
-virtual int listen();
-virtual int stoplistening();
-virtual int tick();
+	virtual int listen();
+	virtual int stoplistening();
 
-virtual bool connect_parameter(uint32_t type, uint32_t value);
-virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr);
+	virtual bool connect_parameter(uint32_t type, uint32_t value);
+	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr);
 
 	// BinInterface.
 	// These are reimplemented.	
-virtual bool moretoread(uint32_t usec);
-virtual bool cansend(uint32_t usec);
+	virtual bool moretoread(uint32_t usec);
+	virtual bool cansend(uint32_t usec);
 	/* UDP always through firewalls -> always bandwidth Limited */
-virtual bool bandwidthLimited() { return true; } 
+	virtual bool bandwidthLimited() { return true; }
 
 protected:
 
 	// pqissludp specific.
 	// called to initiate a connection;
-int 	attach();
+	int attach();
 
-virtual int reset_locked();
+	virtual int reset_locked();
 
-virtual int Initiate_Connection(); 
-virtual int Basic_Connection_Complete();
+	virtual int Initiate_Connection();
+	virtual int Basic_Connection_Complete();
 
-//protected internal fns that are overloaded for udp case.
-virtual int net_internal_close(int fd);
-virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
-virtual int net_internal_fcntl_nonblock(int fd);
+	/* Do we really need this ?
+	 * It is very specific UDP+ToU+SSL stuff and unlikely to be reused.
+	 * In fact we are overloading them here becase they are very do different of pqissl.
+	 */
+	virtual int net_internal_close(int fd);
+	virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
+	virtual int net_internal_fcntl_nonblock(int fd);
 
 private:
 
 	BIO *tou_bio;  // specific to ssludp.
-
-	//int remote_timeout;
-	//int proxy_timeout;
 
 	long listen_checktime;
 

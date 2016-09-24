@@ -54,7 +54,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 QVBoxLayout *vbox = new QVBoxLayout() ;
 
 	 QHBoxLayout *hb2 = new QHBoxLayout() ;
-	 hb2->addWidget(new QLabel(tr("Share flags and groups: "))) ;
+	 hb2->addWidget(new QLabel(tr("Share flags and groups:")+" ")) ;
 
 	 groupflagsbox = new GroupFlagsWidget(ui.shareflags_GB) ;
 	 groupflagsbox->setFlags(DIR_FLAGS_NETWORK_WIDE_OTHERS) ;	// default value
@@ -76,8 +76,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
 	 ui.shareflags_GB->setLayout(hbox) ;
 	 updateInfoMessage() ;
 
-	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(updateInfoMessage())) ;
-//	 connect(groupselectionbox,SIGNAL(itemSelectionChanged()),this,SLOT(groupSelectionChanged())) ;
+     connect(groupselectionbox,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(updateInfoMessage())) ;
 	 connect(groupflagsbox,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateInfoMessage())) ;
 
     if (!filename.empty()) 
@@ -86,7 +85,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent)
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == filename) 
 				{
                 /* fill dialog */
@@ -156,7 +155,7 @@ void ShareDialog::addDirectory()
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == sdi.filename) {
                 found = true;
 

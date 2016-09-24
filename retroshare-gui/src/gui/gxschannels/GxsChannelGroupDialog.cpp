@@ -75,7 +75,7 @@ void GxsChannelGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Channel"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Channel"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Channel"));
@@ -95,11 +95,11 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		return QPixmap(":/images/add_channel64.png");
+		return QPixmap(":/icons/png/channels.png");
 	case MODE_SHOW:
-		return QPixmap(":/images/channels.png");
+		return QPixmap(":/icons/png/channels.png");
 	case MODE_EDIT:
-		return QPixmap(":/images/channels.png");
+		return QPixmap(":/icons/png/channels.png");
 	}
 
 	return QPixmap();

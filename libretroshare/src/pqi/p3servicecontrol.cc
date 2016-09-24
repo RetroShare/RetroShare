@@ -23,22 +23,224 @@
  *
  */
 
+#include <iostream>
 
 #include "p3servicecontrol.h"
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "serialiser/rsbaseserial.h"
+#include "pqi/p3cfgmgr.h"
 
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
 /*******************************/
 
+static const uint8_t RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS = 0x01 ;
+
+class RsServiceControlItem: public RsItem
+{
+public:
+    RsServiceControlItem(uint8_t item_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_SERVICE_CONTROL,item_subtype) {}
+
+    virtual uint32_t serial_size() const =0;
+    virtual bool serialise(uint8_t *data,uint32_t size) const =0;
+
+        bool serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvsize, uint32_t& offset) const
+        {
+            tlvsize = serial_size() ;
+            offset = 0;
+
+            if (pktsize < tlvsize)
+                return false; /* not enough space */
+
+            pktsize = tlvsize;
+
+            if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
+            {
+                std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;
+                return false ;
+            }
+        #ifdef RSSERIAL_DEBUG
+            std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
+        #endif
+            offset += 8;
+
+            return true ;
+        }
+};
+class RsServicePermissionItem: public RsServiceControlItem, public RsServicePermissions
+{
+public:
+    RsServicePermissionItem()
+            : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS) {}
+    RsServicePermissionItem(const RsServicePermissions& perms)
+            : RsServiceControlItem(RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS),
+              RsServicePermissions(perms) {}
+
+    virtual uint32_t serial_size() const
+    {
+        uint32_t s = 8 ; // header
+
+        s += 4 ; // mServiceId
+        s += GetTlvStringSize(mServiceName) ;
+        s += 1 ; // mDefaultAllowed
+        s += 4 ; // mPeersAllowed.size()
+        s += mPeersAllowed.size() * RsPeerId::serial_size() ;
+        s += 4 ; // mPeersAllowed.size()
+        s += mPeersDenied.size() * RsPeerId::serial_size() ;
+
+    return s ;
+    }
+    virtual bool serialise(uint8_t *data,uint32_t size) const
+    {
+        uint32_t tlvsize,offset=0;
+        bool ok = true;
+
+        if(!serialise_header(data,size,tlvsize,offset))
+            return false ;
+
+        /* add mandatory parts first */
+        ok &= setRawUInt32(data, tlvsize, &offset, mServiceId);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, mServiceName);
+        ok &= setRawUInt8(data, tlvsize, &offset, mDefaultAllowed);
+        ok &= setRawUInt32(data, tlvsize, &offset, mPeersAllowed.size());
+
+        for(std::set<RsPeerId>::const_iterator it(mPeersAllowed.begin());it!=mPeersAllowed.end();++it)
+            (*it).serialise(data,tlvsize,offset) ;
+
+        ok &= setRawUInt32(data, tlvsize, &offset, mPeersDenied.size());
+
+        for(std::set<RsPeerId>::const_iterator it(mPeersDenied.begin());it!=mPeersDenied.end();++it)
+            (*it).serialise(data,tlvsize,offset) ;
+
+        if(offset != tlvsize)
+        {
+            std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelGroupItem() FAIL Size Error! " << std::endl;
+            ok = false;
+        }
+
+        if (!ok)
+            std::cerr << "RsGxsChannelSerialiser::serialiseGxsChannelGroupItem() NOK" << std::endl;
+
+        return ok;
+    }
+
+    static RsServicePermissionItem *deserialise(uint8_t *data, uint32_t size)
+    {
+        RsServicePermissionItem *item = new RsServicePermissionItem ;
+
+        uint32_t offset = 8; // skip the header
+        uint32_t rssize = getRsItemSize(data);
+        bool ok = true ;
+
+        if(rssize > size)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+            return NULL ;
+        }
+            
+        /* add mandatory parts first */
+        ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);
+
+    uint8_t v ;
+        ok &= getRawUInt8(data, rssize, &offset, &v) ;
+
+    if(v != 0 && v != 1)
+        ok = false ;
+    else
+        item->mDefaultAllowed = (bool)v;
+
+        uint32_t tmp ;
+        ok &= getRawUInt32(data, rssize, &offset, &tmp);
+
+        for(uint32_t i=0;i<tmp && offset < rssize;++i)
+        {
+            RsPeerId peer_id ;
+            ok &= peer_id.deserialise(data,rssize,offset) ;
+            item->mPeersAllowed.insert(peer_id) ;
+        }
+
+        ok &= getRawUInt32(data, rssize, &offset, &tmp);
+
+        for(uint32_t i=0;i<tmp && offset < rssize;++i)
+        {
+            RsPeerId peer_id ;
+            ok &= peer_id.deserialise(data,rssize,offset) ;
+            item->mPeersDenied.insert(peer_id) ;
+        }
+        if (offset != rssize || !ok)
+        {
+            std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+            delete(item);
+            return NULL ;
+        }
+
+        return item;
+    }
+
+    virtual void clear() {}
+    virtual std::ostream& print(std::ostream& out,uint16_t)
+    {
+        std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
+    return out ;
+    }
+};
+
+class ServiceControlSerialiser: public RsSerialType
+{
+public:
+    ServiceControlSerialiser() : RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_SERVICE_CONTROL) {}
+
+    virtual uint32_t size (RsItem *item)
+    {
+        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
+        if (!scitem)
+        {
+            return 0;
+        }
+        return scitem->serial_size() ;
+    }
+    virtual bool serialise(RsItem *item, void *data, uint32_t *size)
+    {
+        RsServiceControlItem *scitem = dynamic_cast<RsServiceControlItem *>(item);
+        if (!scitem)
+        {
+            return false;
+        }
+        return scitem->serialise((uint8_t*)data,*size) ;
+    }
+    virtual RsItem *deserialise (void *data, uint32_t *size)
+    {
+                uint32_t rstype = getRsItemId(data);
+
+                if(RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype) || RS_SERVICE_TYPE_SERVICE_CONTROL != getRsItemService(rstype))  { return NULL; /* wrong type */ }
+
+                switch(getRsItemSubType(rstype))
+        {
+        case RS_PKT_SUBTYPE_SERVICE_CONTROL_SERVICE_PERMISSIONS:return RsServicePermissionItem::deserialise((uint8_t*)data, *size);
+        default:
+            return NULL ;
+        }
+    }
+};
+
 RsServiceControl *rsServiceControl = NULL;
 
 p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr)
-	:RsServiceControl(), /* p3Config(configId), pqiMonitor(),  */
-	mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
+    :RsServiceControl(), p3Config(),
+          mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
 	mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor")
 {
+    mSerialiser = new ServiceControlSerialiser ;
+}
+
+RsSerialiser *p3ServiceControl::setupSerialiser()
+{
+    RsSerialiser *serial = new RsSerialiser;
+    serial->addSerialType(new ServiceControlSerialiser) ;
+
+    return serial ;
 }
 
 const 	RsPeerId& p3ServiceControl::getOwnId()
@@ -152,7 +354,7 @@ void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 #endif
 
 	std::set<RsPeerId>::iterator it;
-	for (it = mUpdatedSet.begin(); it != mUpdatedSet.end(); it++)
+	for (it = mUpdatedSet.begin(); it != mUpdatedSet.end(); ++it)
 	{
 		updateSet.insert(*it);
 	}
@@ -189,7 +391,7 @@ bool p3ServiceControl::getServicesAllowed(const RsPeerId &peerId, RsPeerServiceI
 
 	// For each registered Service.. check if peer has permissions.
 	std::map<uint32_t, RsServiceInfo>::iterator it;
-	for(it = mOwnServices.begin(); it != mOwnServices.end(); it++)
+	for(it = mOwnServices.begin(); it != mOwnServices.end(); ++it)
 	{
 		if (peerHasPermissionForService_locked(peerId, it->first))
 		{
@@ -243,14 +445,15 @@ bool p3ServiceControl::updateServicesProvided(const RsPeerId &peerId, const RsPe
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateServicesProvided() from: " << peerId.toStdString();
 	std::cerr << std::endl;
-#endif
-
 	std::cerr << info;
 	std::cerr << std::endl;
+#endif
 
 	mServicesProvided[peerId] = info;
-	updateFilterByPeer_locked(peerId);
-	return true;
+    updateFilterByPeer_locked(peerId);
+
+    IndicateConfigChanged() ;
+    return true;
 }
 
 /* External Interface to RsServiceControl */
@@ -286,7 +489,8 @@ bool p3ServiceControl::createDefaultPermissions_locked(uint32_t serviceId, std::
 		perms.mDefaultAllowed = defaultOn;
 
 		mServicePermissionMap[serviceId] = perms;
-		return true;
+        IndicateConfigChanged() ;
+        return true;
 	}
 	return false;
 }
@@ -317,7 +521,7 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 	std::list<RsPeerId>::const_iterator pit;
 	if (it != mServicePermissionMap.end())
 	{
-		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); pit++)
+		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); ++pit)
 		{
 			if (it->second.peerHasPermission(*pit) != 
 				permissions.peerHasPermission(*pit))
@@ -332,7 +536,8 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 
 	// This is overkill - but will update everything.
 	updateAllFilters_locked();
-	return true;
+    IndicateConfigChanged() ;
+    return true;
 }
 
 
@@ -526,18 +731,18 @@ bool	p3ServiceControl::updateAllFilters_locked()
 	std::set<RsPeerId>::const_iterator pit;
 
 	std::map<RsPeerId, RsPeerServiceInfo>::const_iterator it;
-	for(it = mServicesProvided.begin(); it != mServicesProvided.end(); it++)
+	for(it = mServicesProvided.begin(); it != mServicesProvided.end(); ++it)
 	{
 		peerSet.insert(it->first);
 	}
 
 	std::map<RsPeerId, ServicePeerFilter>::const_iterator fit;
-	for(fit = mPeerFilterMap.begin(); fit != mPeerFilterMap.end(); fit++)
+	for(fit = mPeerFilterMap.begin(); fit != mPeerFilterMap.end(); ++fit)
 	{
 		peerSet.insert(fit->first);
 	}
 
-	for(pit = peerSet.begin(); pit != peerSet.end(); pit++)
+	for(pit = peerSet.begin(); pit != peerSet.end(); ++pit)
 	{
 		updateFilterByPeer_locked(*pit);
 	}
@@ -618,8 +823,8 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 					peerFilter.mAllowedServices.insert(oit->first);
 				}
 			}
-			oit++;
-			tit++;
+			++oit;
+			++tit;
 		}
 		else
 		{
@@ -629,7 +834,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 				std::cerr << "\tSkipping Only Own Service ID: " << oit->first;
 				std::cerr << std::endl;
 #endif
-				oit++;
+				++oit;
 			}
 			else
 			{
@@ -637,7 +842,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 				std::cerr << "\tSkipping Only Peer Service ID: " << tit->first;
 				std::cerr << std::endl;
 #endif
-				tit++;
+				++tit;
 			}
 		}
 	}
@@ -735,7 +940,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	}
 
 	// Handle the unfinished Set.
-	for(; it1 != eit1; it1++)
+	for(; it1 != eit1; ++it1)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Removed Service: " << *it1;
@@ -746,7 +951,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		filterChangeRemoved_locked(peerId, *it1);
 	}
 
-	for(; it2 != eit2; it2++)
+	for(; it2 != eit2; ++it2)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Added Service: " << *it2;
@@ -761,7 +966,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 #if 0
 	// now we to store for later notifications.
 	std::map<uint32_t, bool>::const_iterator cit;
-	for(cit = changes.begin(); cit != changes.end(); cit++)
+	for(cit = changes.begin(); cit != changes.end(); ++cit)
 	{
 		ServiceNotifications &notes = mNotifications[cit->first];
 		if (cit->second)
@@ -961,7 +1166,13 @@ bool p3ServiceControl::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 	std::cerr << "p3ServiceControl::saveList()";
 	std::cerr << std::endl;
 #endif
+    cleanup = true ;
 
+    for(std::map<uint32_t, RsServicePermissions>::iterator it(mServicePermissionMap.begin());it!=mServicePermissionMap.end();++it)
+    {
+        RsServicePermissionItem *item = new RsServicePermissionItem(it->second) ;
+        saveList.push_back(item) ;
+    }
 	return true;
 }
 
@@ -971,7 +1182,17 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 	std::cerr << "p3ServiceControl::loadList()";
 	std::cerr << std::endl;
 #endif
+    for(std::list<RsItem*>::const_iterator it(loadList.begin());it!=loadList.end();++it)
+    {
+        RsServicePermissionItem *item = dynamic_cast<RsServicePermissionItem*>(*it) ;
 
+        if(item != NULL)
+		mServicePermissionMap[item->mServiceId] = *item ;
+        
+        delete *it ;
+    }
+
+    loadList.clear() ;
 	return true;
 }
 
@@ -988,7 +1209,7 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 #endif
 
 	std::list<pqipeer>::const_iterator pit;
-	for(pit =  plist.begin(); pit != plist.end(); pit++)
+	for(pit =  plist.begin(); pit != plist.end(); ++pit)
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::statusChange() for peer: ";
@@ -1032,6 +1253,8 @@ void    p3ServiceControl::updatePeerConnect(const RsPeerId &peerId)
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerConnect(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#else
+	(void)peerId;
 #endif
 	return;
 }
@@ -1111,7 +1334,7 @@ void	p3ServiceControl::notifyAboutFriends()
 		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
 		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit;
-		for(sit = mMonitors.begin(); sit != mMonitors.end(); sit++)
+		for(sit = mMonitors.begin(); sit != mMonitors.end(); ++sit)
 		{
 			sit->second->statusChange(friendNotifications);
 		}
@@ -1143,7 +1366,7 @@ void	p3ServiceControl::notifyServices()
 
 		std::map<uint32_t, ServiceNotifications>::const_iterator it;
 		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
-		for(it = notifications.begin(); it != notifications.end(); it++)
+		for(it = notifications.begin(); it != notifications.end(); ++it)
 		{
 #ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::notifyServices(): Notifications for Service: " << it->first;
@@ -1166,7 +1389,7 @@ void	p3ServiceControl::notifyServices()
 			std::list<pqiServicePeer> peers;
 			std::set<RsPeerId>::const_iterator pit;
 			for(pit = it->second.mAdded.begin(); 
-				pit != it->second.mAdded.end(); pit++)
+				pit != it->second.mAdded.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
@@ -1181,7 +1404,7 @@ void	p3ServiceControl::notifyServices()
 			}
 	
 			for(pit = it->second.mRemoved.begin(); 
-				pit != it->second.mRemoved.end(); pit++)
+				pit != it->second.mRemoved.end(); ++pit)
 			{
 				pqiServicePeer peer;
 				peer.id = *pit;
@@ -1195,7 +1418,7 @@ void	p3ServiceControl::notifyServices()
 #endif
 			}
 	
-			for(; sit != eit; sit++)
+			for(; sit != eit; ++sit)
 			{
 #ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
@@ -1239,6 +1462,29 @@ bool RsServicePermissions::peerHasPermission(const RsPeerId &peerId) const
 	}
 }
 
+void RsServicePermissions::setPermission(const RsPeerId& peerId)
+{
+    std::set<RsPeerId>::const_iterator it;
+    if (mDefaultAllowed)
+    {
+        it = mPeersDenied.find(peerId);
+        mPeersDenied.erase(it) ;
+    }
+    else
+        mPeersAllowed.insert(peerId);
+}
+void RsServicePermissions::resetPermission(const RsPeerId& peerId)
+{
+    std::set<RsPeerId>::const_iterator it;
+    if (!mDefaultAllowed)
+    {
+        it = mPeersAllowed.find(peerId);
+        mPeersAllowed.erase(it) ;
+    }
+    else
+        mPeersDenied.insert(peerId);
+}
+
 RsServiceInfo::RsServiceInfo(
 		const uint16_t service_type, 
 		const std::string service_name, 
@@ -1273,7 +1519,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info)
 	out << "RsPeerServiceInfo(" << info.mPeerId << ")";
 	out << std::endl;
 	std::map<uint32_t, RsServiceInfo>::const_iterator it;
-	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); it++)
+	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); ++it)
 	{
 		out << "\t Service:" << it->first << " : ";
 		out << it->second;
@@ -1297,7 +1543,7 @@ std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter)
 	out << " AllowAll: " << filter.mAllowAll;
 	out << " Matched Services: ";
 	std::set<uint32_t>::const_iterator it;
-	for(it = filter.mAllowedServices.begin(); it != filter.mAllowedServices.end(); it++)
+	for(it = filter.mAllowedServices.begin(); it != filter.mAllowedServices.end(); ++it)
 	{
 	 	out << *it << " ";
 	}

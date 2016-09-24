@@ -39,7 +39,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
     connect (ui.deletepushButton, SIGNAL(clicked(bool)), this, SLOT (deleteTag()));
     connect (ui.defaultTagButton, SIGNAL(clicked(bool)), this, SLOT (defaultTag()));
-    connect (ui.encryptedMsgs_CB, SIGNAL(toggled(bool)), this, SLOT (toggleEnableEncryptedDistantMsgs(bool)));
+    //connect (ui.encryptedMsgs_CB, SIGNAL(toggled(bool)), this, SLOT (toggleEnableEncryptedDistantMsgs(bool)));
 
     connect (ui.tags_listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(currentRowChangedTag(int)));
 
@@ -48,6 +48,9 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 
     ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
     ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
+    
+    connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantMsgsComboBoxChanged(int)));
+
 
 	 //ui.encryptedMsgs_CB->setEnabled(false) ;
 }
@@ -57,9 +60,23 @@ MessagePage::~MessagePage()
     delete(m_pTags);
 }
 
-void MessagePage::toggleEnableEncryptedDistantMsgs(bool b)
+void MessagePage::distantMsgsComboBoxChanged(int i)
 {
-	rsMsgs->enableDistantMessaging(b) ;
+	switch(i)
+	{
+		case 0:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NONE) ; 
+				  break ;
+				  
+		case 1:  rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS) ; 
+				  break ;
+
+		case 2: rsMail->setDistantMessagingPermissionFlags(RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY) ;
+				  break ;
+				    
+				  
+		default: ;
+	}
+
 }
 
 /** Saves the changes on this page */
@@ -69,20 +86,23 @@ MessagePage::save(QString &/*errmsg*/)
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
     Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
     Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
+    
+    // state of distant Message combobox
+    Settings->setValue("DistantMessages", ui.comboBox->currentIndex());
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         // check for changed tags
         std::list<uint32_t>::iterator changedTagId;
-        for (changedTagId = m_changedTagIds.begin(); changedTagId != m_changedTagIds.end(); changedTagId++) {
+        for (changedTagId = m_changedTagIds.begin(); changedTagId != m_changedTagIds.end(); ++changedTagId) {
             if (*changedTagId == Tag->first) {
                 if (Tag->second.first.empty()) {
                     // delete tag
-                    rsMsgs->removeMessageTagType(Tag->first);
+                    rsMail->removeMessageTagType(Tag->first);
                     continue;
                 }
 
-                rsMsgs->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second);
+                rsMail->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second);
                 break;
             }
         }
@@ -99,9 +119,19 @@ MessagePage::load()
     ui.loadEmbeddedImages->setChecked(Settings->getMsgLoadEmbeddedImages());
     ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
-	 ui.encryptedMsgs_CB->setChecked(rsMsgs->distantMessagingEnabled()) ;
+	  // state of filter combobox
+    
+    uint32_t flags = rsMail->getDistantMessagingPermissionFlags() ;
+    
+    if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY)
+	    ui.comboBox->setCurrentIndex(2);
+    else if(flags & RS_DISTANT_MESSAGING_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
+	    ui.comboBox->setCurrentIndex(1);
+    else
+	    ui.comboBox->setCurrentIndex(0);
+	  
     // fill items
-    rsMsgs->getMessageTagTypes(*m_pTags);
+    rsMail->getMessageTagTypes(*m_pTags);
     fillTags();
 }
 
@@ -111,7 +141,7 @@ void MessagePage::fillTags()
     ui.tags_listWidget->clear();
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         QString text = TagDefs::name(Tag->first, Tag->second.first);
 
         QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
@@ -202,11 +232,11 @@ void MessagePage::deleteTag()
 
 void MessagePage::defaultTag()
 {
-    rsMsgs->resetMessageStandardTagTypes(*m_pTags);
+    rsMail->resetMessageStandardTagTypes(*m_pTags);
 
     // add all standard items to changed list
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
-    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         if (Tag->first < RS_MSGTAGTYPE_USER) {
             if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), Tag->first) == m_changedTagIds.end()) {
                 m_changedTagIds.push_back(Tag->first);

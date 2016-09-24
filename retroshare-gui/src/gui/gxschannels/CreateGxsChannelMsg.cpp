@@ -49,7 +49,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
 	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
-	headerFrame->setHeaderText(tr("New GxsChannel Post"));
+	headerFrame->setHeaderText(tr("New Channel Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
@@ -84,6 +84,15 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 #endif
 }
 
+CreateGxsChannelMsg::~CreateGxsChannelMsg()
+{
+#ifdef CHANNELS_FRAME_CATCHER
+	delete fCatcher;
+#endif
+
+	delete(mChannelQueue);
+}
+
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 {
 	QList<RetroShareLink> links ;
@@ -93,7 +102,7 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
 		if((*it).type() == RetroShareLink::TYPE_FILE)
-			n_file++ ;
+			++n_file ;
 
 	QMenu contextMnu(this) ;
 
@@ -133,20 +142,15 @@ void CreateGxsChannelMsg::pasteLink()
 
 	if(!not_have.empty())
 	{
-		QString msg = tr("GxsChannel security policy prevents you from posting files that you don't have. If you have these files, you need to share them before, or attach them explicitly:")+"<br><br>" ;
+        QString msg = tr("You are about to add files you're not actually sharing. Do you still want this to happen?")+"<br><br>" ;
 
-		for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
-			msg += (*it).toString() + "<br>" ;
+        for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+            msg += (*it).toString() + "<br>" ;
 
-		QMessageBox::warning(NULL,tr("You can only post files that you do have"),msg) ;
+        if(QMessageBox::YesToAll == QMessageBox::question(NULL,tr("About to post un-owned files to a channel."),msg,QMessageBox::YesToAll | QMessageBox::No))
+            for(QList<RetroShareLink>::const_iterator it(not_have.begin());it!=not_have.end();++it)
+                addAttachment(RsFileHash((*it).hash().toStdString()), (*it).name().toUtf8().constData(), (*it).size(), false, RsPeerId()) ;
 	}
-}
-
-CreateGxsChannelMsg::~CreateGxsChannelMsg()
-{
-#ifdef CHANNELS_FRAME_CATCHER
-	delete fCatcher;
-#endif
 }
 
 /* Dropping */
@@ -158,7 +162,7 @@ void CreateGxsChannelMsg::dragEnterEvent(QDragEnterEvent *event)
 	std::cerr << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
+	for(it = formats.begin(); it != formats.end(); ++it)
 	{
 		std::cerr << "Format: " << (*it).toStdString();
 		std::cerr << std::endl;
@@ -203,7 +207,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 	std::cerr << "CreateGxsChannelMsg::dropEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
+	for(it = formats.begin(); it != formats.end(); ++it)
 	{
 		std::cerr << "Format: " << (*it).toStdString();
 		std::cerr << std::endl;
@@ -223,7 +227,7 @@ void CreateGxsChannelMsg::dropEvent(QDropEvent *event)
 
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
-		for(uit = urls.begin(); uit != urls.end(); uit++)
+		for(uit = urls.begin(); uit != urls.end(); ++uit)
 		{
 			QString localpath = uit->toLocalFile();
 			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
@@ -275,7 +279,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 	QStringList::iterator it;
 	QStringList::iterator it2;
 
-	for(it = attachItems.begin(); it != attachItems.end(); it++)
+	for(it = attachItems.begin(); it != attachItems.end(); ++it)
 	{
 		std::cerr << "CreateGxsChannelMsg::parseRsFileListAttachments() Entry: ";
 
@@ -290,7 +294,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		RsPeerId source;
 
 		int i = 0;
-		for(it2 = parts.begin(); it2 != parts.end(); it2++, i++)
+		for(it2 = parts.begin(); it2 != parts.end(); ++it2, ++i)
 		{
 			std::cerr << "\"" << it2->toStdString() << "\" ";
 			switch(i)
@@ -372,7 +376,7 @@ void CreateGxsChannelMsg::addExtraFile()
 
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-		for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+		for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			addAttachment((*fileIt).toUtf8().constData());
 		}
 	}
@@ -393,7 +397,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	// check attachment if hash exists already
 	std::list<SubFileItem* >::iterator  it;
 
-	for(it= mAttachments.begin(); it != mAttachments.end(); it++){
+	for(it= mAttachments.begin(); it != mAttachments.end(); ++it){
 
 		if((*it)->FilePath() == path){
 			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
@@ -409,10 +413,10 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
 	rsGxsChannels->ExtraFileHash(path, filename);
 
-#warning: hash is used uninitialized below ?!?
-
-	// only path and filename are valid.
-	// destroyed when fileFrame (this subfileitem) is destroyed
+    // Only path and filename are valid.
+    // Destroyed when fileFrame (this subfileitem) is destroyed
+    // Hash will be retrieved later when the file is finished hashing.
+    //
 	//SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
 	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, RsPeerId()); 
 
@@ -464,7 +468,7 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	tNail.save(&buffer, "PNG");
 	QPixmap img;
 	img.loadFromData(ba, "PNG");
-	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio);
+	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	thumbnail_label->setPixmap(img);
 
 	delete[] imageBuffer;
@@ -487,7 +491,7 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 
 	mCheckAttachment = false;
 
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
 	{
 		if (!(*fit)->isHidden())
 		{
@@ -524,7 +528,7 @@ void CreateGxsChannelMsg::cancelMsg()
 
 	std::list<SubFileItem* >::const_iterator it;
 
-	for(it = mAttachments.begin(); it != mAttachments.end(); it++)
+	for(it = mAttachments.begin(); it != mAttachments.end(); ++it)
 		rsGxsChannels->ExtraFileRemove((*it)->FileHash());
 
 	reject();
@@ -575,7 +579,7 @@ void CreateGxsChannelMsg::sendMsg()
 
 	std::list<SubFileItem *>::iterator fit;
 
-	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); ++fit)
 	{
 		if (!(*fit)->isHidden())
 		{

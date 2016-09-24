@@ -49,6 +49,7 @@
 typedef SSLIdType     RsPeerId ;
 typedef PGPIdType     RsPgpId ;
 typedef Sha1CheckSum  RsFileHash ;
+typedef Sha1CheckSum  RsMessageId ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
 const uint32_t FT_STATE_OKAY				= 0x0001 ;
@@ -117,6 +118,15 @@ class Condition
 	std::string name;
 };
 
+class PeerBandwidthLimits
+{
+public:
+    PeerBandwidthLimits() : max_up_rate_kbs(0), max_dl_rate_kbs(0) {}
+    
+    uint32_t max_up_rate_kbs ;
+    uint32_t max_dl_rate_kbs ;
+};
+
 //class SearchRequest // unused stuff.
 //{
 //	public:
@@ -128,6 +138,7 @@ class Condition
 
 /********************** For FileCache Interface *****************/
 
+#define DIR_TYPE_UNKNOWN	    0x00
 #define DIR_TYPE_ROOT		0x01
 #define DIR_TYPE_PERSON  	0x02
 #define DIR_TYPE_DIR  		0x04
@@ -149,7 +160,7 @@ const FileStorageFlags DIR_FLAGS_BROWSABLE_OTHERS     	( 0x0100 ); // one should
 const FileStorageFlags DIR_FLAGS_NETWORK_WIDE_GROUPS  	( 0x0200 );
 const FileStorageFlags DIR_FLAGS_BROWSABLE_GROUPS     	( 0x0400 );
 const FileStorageFlags DIR_FLAGS_PERMISSIONS_MASK     	( DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_OTHERS 
-																			| DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
+                                                        | DIR_FLAGS_NETWORK_WIDE_GROUPS | DIR_FLAGS_BROWSABLE_GROUPS );
 
 const FileStorageFlags DIR_FLAGS_LOCAL                  	( 0x1000 );
 const FileStorageFlags DIR_FLAGS_REMOTE                 	( 0x2000 );
@@ -159,7 +170,8 @@ class FileInfo
 	/* old BaseInfo Entries */
 	public:
 
-		FileInfo() : mId(0) { return; }
+        FileInfo() : mId(0), searchId(0), size(0), avail(0), rank(0), age(0), queue_position(0),
+        transfered(0), tfRate(0), downloadStatus(0), priority(SPEED_NORMAL), lastTS(0){}
 //		RsCertId id; /* key for matching everything */
 
 		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
@@ -200,11 +212,10 @@ class FileInfo
 		DwlSpeed priority ;
 		time_t lastTS;
 		
-		std::list<std::string> parent_groups ;
+        std::list<RsNodeGroupId> parent_groups ;
 };
 
-std::ostream &operator<<(std::ostream &out, const FileInfo &info);
-
+std::ostream &operator<<(std::ostream &out, const FileInfo& info);
 
 class DirStub
 {
@@ -216,24 +227,26 @@ class DirStub
 
 class DirDetails
 {
-	public:
-	void *parent;
-	int prow; /* parent row */
+public:
+    void *parent;
+    int prow; /* parent row */
 
-	void *ref;
-	uint8_t type;
+    void *ref;
+    uint8_t type;
     RsPeerId id;
-	std::string name;
+    std::string name;
     RsFileHash hash;
-	std::string path;
+    std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
 	uint64_t count;
 	uint32_t age;
 	FileStorageFlags flags;
 	uint32_t min_age ;	// minimum age of files in this subtree
 
-	std::list<DirStub> children;
-	std::list<std::string> parent_groups;	// parent groups for the shared directory
+    std::vector<DirStub> children;
+    std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory
 };
+
+std::ostream &operator<<(std::ostream &out, const DirDetails& details);
 
 class FileDetail
 {
@@ -322,9 +335,9 @@ class CompressedChunkMap
 			uint32_t residue = total_size%chunk_size ;
 
 			if(residue && operator[](nbchks-1))
-				return (filledChunks(nbchks)-1)*chunk_size + (total_size%chunk_size) ;
+				return (filledChunks(nbchks)-1)*(uint64_t)chunk_size + (total_size%chunk_size) ;
 			else
-				return filledChunks(nbchks)*chunk_size ;
+				return filledChunks(nbchks)*(uint64_t)chunk_size ;
 		}
 		inline bool operator[](uint32_t i) const { return (_map[i >> 5] & (1 << (i & 31))) > 0 ; }
 
@@ -385,6 +398,20 @@ public:
 
 	/* how many times a failed dwl will be requeued */
 	unsigned int retries;
+};
+
+/* class for the information about a used library */
+class RsLibraryInfo
+{
+public:
+	RsLibraryInfo() {}
+	RsLibraryInfo(const std::string &name, const std::string &version) :
+	    mName(name), mVersion(version)
+	{}
+
+public:
+	std::string mName;
+	std::string mVersion;
 };
 
 #endif

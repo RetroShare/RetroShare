@@ -32,6 +32,7 @@
 #include "util/DateTime.h"
 #include <gui/RetroShareLink.h>
 #include <gui/profile/ProfileManager.h>
+#include <gui/statistics/StatisticsWindow.h>
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsdisc.h> //for rsPeers variable
@@ -47,27 +48,19 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
-  connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
-
-  ui._useOldFormat_CB->setEnabled(false) ;
-  ui._useOldFormat_CB->setChecked(false) ;
+  connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
 
   // hide profile manager as it causes bugs when generating a new profile.
   //ui.profile_Button->hide() ;
 
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
-      connect(ui.profile_Button,SIGNAL(clicked()), this, SLOT(profilemanager()));
+  connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
 
     ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
 void CryptoPage::profilemanager()
 {
-    ProfileManager profilemanager;
-    profilemanager.exec();
+    ProfileManager().exec();
 }
 void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 {
@@ -82,9 +75,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         /* set retroshare version */
-        std::string version;
-        rsDisc->getPeerVersion(detail.id, version);
-		ui.version->setText(QString::fromStdString(version));
+        ui.version->setText(Rshare::retroshareVersion(true));
 
         std::list<RsPgpId> ids;
         ids.clear();
@@ -170,4 +161,9 @@ bool CryptoPage::fileSaveAs()
         return fileSave();
     }
     return false;
+}
+
+void CryptoPage::showStats()
+{
+    StatisticsWindow::showYourself();
 }

@@ -26,6 +26,7 @@
 #include "udprelay.h"
 #include <iostream>
 #include <time.h>
+#include <util/rsmemory.h>
 
 /*
  * #define DEBUG_UDP_RELAY 		1
@@ -70,7 +71,7 @@ UdpRelayReceiver::UdpRelayReceiver(UdpPublisher *pub)
 	setRelayClassMax(UDP_RELAY_CLASS_GENERAL, UDP_RELAY_DEFAULT_GENERAL, UDP_RELAY_DEFAULT_BANDWIDTH);
 
 	/* only allocate this space once */
-	mTmpSendPkt = malloc(MAX_RELAY_UDP_PACKET_SIZE);
+	mTmpSendPkt = rs_malloc(MAX_RELAY_UDP_PACKET_SIZE);
 	mTmpSendSize = MAX_RELAY_UDP_PACKET_SIZE;
 
 	clearDataTransferred();
@@ -139,13 +140,13 @@ int     UdpRelayReceiver::removeUdpPeer(UdpPeer *peer)
 		RsStackMutex stack(udppeerMtx);   /********** LOCK MUTEX *********/
 		
 		std::map<struct sockaddr_in, UdpPeer *>::iterator it;
-		for(it = mPeers.begin(); it != mPeers.end(); it++)
+		for(it = mPeers.begin(); it != mPeers.end(); ++it)
 		{
 			if (it->second == peer)
 			{
+				realPeerAddr = it->first;
 				mPeers.erase(it);
 				found = true;
-				realPeerAddr = it->first;
 
 #ifdef DEBUG_UDP_RELAY
 				std::cerr << "UdpRelayReceiver::removeUdpPeer() removing UdpPeer" << std::endl;
@@ -190,7 +191,7 @@ int UdpRelayReceiver::getRelayEnds(std::list<UdpRelayEnd> &relayEnds)
 
 	std::map<struct sockaddr_in, UdpRelayEnd>::iterator rit;
 	
-	for(rit = mStreams.begin(); rit != mStreams.end(); rit++)
+	for(rit = mStreams.begin(); rit != mStreams.end(); ++rit)
 	{
 		relayEnds.push_back(rit->second);
 	}
@@ -205,7 +206,7 @@ int UdpRelayReceiver::getRelayProxies(std::list<UdpRelayProxy> &relayProxies)
 
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
 	
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		relayProxies.push_back(rit->second);
 	}
@@ -239,7 +240,7 @@ int UdpRelayReceiver::checkRelays()
 
 #define BANDWIDTH_FILTER_K	(0.8)
 	
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		/* calc bandwidth */
 		//rit->second.mBandwidth = rit->second.mDataSize / (float) (now - rit->second.mLastBandwidthTS);
@@ -327,7 +328,7 @@ int UdpRelayReceiver::checkRelays()
 	}
 
 	std::list<UdpRelayAddrSet>::iterator it;
-	for(it = eraseList.begin(); it != eraseList.end(); it++)
+	for(it = eraseList.begin(); it != eraseList.end(); ++it)
 	{
 		removeUdpRelay_relayLocked(&(*it));
 	}
@@ -480,8 +481,8 @@ int UdpRelayReceiver::installRelayClass_relayLocked(int &classIdx, uint32_t &ban
 	std::cerr << std::endl;
 
 	/* if we get here we can add one */
-	mClassCount[UDP_RELAY_CLASS_ALL]++;
-	mClassCount[classIdx]++;
+	++mClassCount[UDP_RELAY_CLASS_ALL];
+	++mClassCount[classIdx];
 	bandwidth = mClassBandwidth[classIdx];
 
 	return 1;
@@ -611,7 +612,7 @@ int UdpRelayReceiver::RelayStatus(std::ostream &out)
 	out << std::endl;
 
 	std::map<UdpRelayAddrSet, UdpRelayProxy>::iterator rit;
-	for(rit = mRelays.begin(); rit != mRelays.end(); rit++)
+	for(rit = mRelays.begin(); rit != mRelays.end(); ++rit)
 	{
 		out << "Relay for: " << rit->first;
 		out << std::endl;
@@ -649,7 +650,7 @@ int     UdpRelayReceiver::status(std::ostream &out)
 		out << "UdpRelayReceiver::Connections:" << std::endl;
 
 		std::map<struct sockaddr_in, UdpRelayEnd>::iterator pit;
-		for(pit = mStreams.begin(); pit != mStreams.end(); pit++)
+		for(pit = mStreams.begin(); pit != mStreams.end(); ++pit)
 		{
 			out << "\t" << pit->first << " : " << pit->second;
 			out << std::endl;
@@ -670,7 +671,7 @@ int UdpRelayReceiver::UdpPeersStatus(std::ostream &out)
 	out << std::endl;
 
         std::map<struct sockaddr_in, UdpPeer *>::iterator pit;
-	for(pit = mPeers.begin(); pit != mPeers.end(); pit++)
+	for(pit = mPeers.begin(); pit != mPeers.end(); ++pit)
 	{
 		out << "UdpPeer for: " << pit->first;
 		out << " is: " << pit->second;
@@ -1036,20 +1037,17 @@ UdpRelayProxy::UdpRelayProxy()
 }
 
 UdpRelayProxy::UdpRelayProxy(UdpRelayAddrSet *addrSet, int relayClass, uint32_t bandwidth)
+	: mAddrs(*addrSet),
+	  mBandwidth(0),
+	  mDataSize(0),
+	  mLastBandwidthTS(0),
+	  mLastTS(time(NULL)),
+	  mStartTS(time(NULL)),
+      mBandwidthLimit(bandwidth),
+      mRelayClass(relayClass)
 {
-	mAddrs = *addrSet;
-	mRelayClass = relayClass;
-
-	mBandwidth = 0;
-	mDataSize = 0;
-	mLastBandwidthTS = 0;
-	mLastTS = time(NULL);
-
-
-        mStartTS = time(NULL);
-	mBandwidthLimit = bandwidth;
-	/* fallback */
-	if (mBandwidthLimit == 0)
+	/* bandwidth fallback */
+	if (bandwidth == 0)
 	{
 		switch(relayClass)
 		{

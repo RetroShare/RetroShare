@@ -32,6 +32,20 @@
 #include "retroshare/rsgxsifacetypes.h"
 
 /*!
+ * Stores ids of changed gxs groups and messages. It is used to notify the GUI about changes.
+ */
+class RsGxsChanges
+{
+public:
+    RsGxsChanges(): mService(0){}
+    RsTokenService *mService;
+    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgs;
+    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgsMeta;
+    std::list<RsGxsGroupId> mGrps;
+    std::list<RsGxsGroupId> mGrpsMeta;
+};
+
+/*!
  * All implementations must offer thread safety
  */
 class RsGxsIface
@@ -48,43 +62,6 @@ public:
      * @param changes
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes) = 0;
-
-    /*!
-     * Checks to see if a change has been received for
-     * for a message or group
-     * @param willCallGrpChanged if this is set to true, group changed function will return list
-     *        groups that have changed, if false, the group changed list is cleared
-     * @param willCallMsgChanged if this is set to true, msgChanged function will return map
-     *        messages that have changed, if false, the message changed map is cleared
-     * @return true if a change has occured for msg or group
-     * @see groupsChanged
-     * @see msgsChanged
-     */
-    virtual bool updated(bool willCallGrpChanged = false, bool willCallMsgChanged = false) = 0;
-
-    /*!
-     * The groups changed. \n
-     * class can reimplement to use to tailor
-     * the group actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param grpIds returns list of grpIds that have changed
-     * @param grpIdsMeta returns list of grpIds with meta data changes
-     * @see updated
-     */
-    virtual void groupsChanged(std::list<RsGxsGroupId>& grpIds, std::list<RsGxsGroupId>& grpIdsMeta) = 0;
-
-    /*!
-     * The msg changed. \n
-     * class can reimplement to use to tailor
-     * the msg actually set for ui notification.
-     * If receivedChanges is not passed RsGxsNotify changes
-     * this function does nothing
-     * @param msgs returns map of message ids that have changed
-     * @param msgsMeta returns map of message ids with meta data changes
-     * @see updated
-     */
-    virtual void msgsChanged(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgs, std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgsMeta) = 0;
 
     /*!
      * @return handle to token service for this GXS service
@@ -193,6 +170,11 @@ public:
 	 * @param CutOff The cut off value to set
 	 */
 	virtual void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff) = 0;
+
+    /*!
+     * @return storage time of messages in months
+     */
+    virtual int getStoragePeriod() = 0;
 };
 
 

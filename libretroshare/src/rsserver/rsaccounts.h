@@ -70,9 +70,16 @@ class RsAccountsDetail
 		bool	setupBaseDirectory(std::string alt_basedir);
 		bool 	loadAccounts();
 		bool	lockPreferredAccount();
+		void	unlockPreferredAccount();
+		bool	checkAccountDirectory();
 
 		// Paths.
-		std::string 	PathDataDirectory();
+        /**
+         * @brief PathDataDirectory
+         * @param check if set to true and directory does not exist, return empty string
+         * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
+         */
+        static std::string 	PathDataDirectory(bool check = true);
 		std::string 	PathBaseDirectory();
 
 		// PGP Path is only dependent on BaseDirectory.
@@ -83,18 +90,20 @@ class RsAccountsDetail
 		std::string 	PathAccountKeysDirectory();
 		std::string 	PathKeyFile();
 		std::string 	PathCertFile();
+        std::string     LocationName();
 
 		// PGP Accounts.
 
 		int  	GetPGPLogins(std::list<RsPgpId> &pgpIds);
 		int	GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
-		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
+		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
 
                 bool    SelectPGPAccount(const RsPgpId& pgpId);
 
 		// PGP Support Functions.
 		bool    exportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 		bool    importIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+        bool    importIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
         	void    getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 		bool    copyGnuPGKeyrings() ;
 
@@ -107,7 +116,7 @@ class RsAccountsDetail
 		bool getPreferredAccountId(RsPeerId &id);
 		bool getAccountDetails(const RsPeerId &id, RsPgpId& gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
-		bool getAccountOptions(bool &ishidden, bool isFirstTimeRun);
+		bool getAccountOptions(bool &ishidden, bool &isFirstTimeRun);
 
 
 		bool getAccountIds(std::list<RsPeerId> &ids);
@@ -126,8 +135,6 @@ class RsAccountsDetail
 		bool checkPreferredId();
 
 		bool defaultBaseDirectory();
-
-		std::string getHomePath() ;
 
 		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts, 
 			int& failing_accounts,

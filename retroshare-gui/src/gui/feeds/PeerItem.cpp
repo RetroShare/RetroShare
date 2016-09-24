@@ -40,14 +40,13 @@
  ****/
 
 /** Constructor */
-PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mPeerId(peerId), mType(type), mIsHome(isHome)
+PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome) :
+    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    mPeerId(peerId), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
   
-    messageframe->setVisible(false);
     sendmsgButton->setEnabled(false);
 
     /* general ones */
@@ -56,21 +55,11 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
 
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-    connect( actionNew_Message, SIGNAL( triggered( ) ), this, SLOT( sendMsg ( void ) ) );
-
-    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
-    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
-
-    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
+    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-    QMenu *msgmenu = new QMenu();
-    msgmenu->addAction(actionNew_Message);
-
-    quickmsgButton->setMenu(msgmenu);
-
-    avatar->setId(RsPeerId(mPeerId));
+    avatar->setId(ChatId(mPeerId));// TODO: remove unnecesary converstation
 
     expandFrame->hide();
 
@@ -165,7 +154,7 @@ void PeerItem::updateItem()
 		if (!rsPeers->getPeerDetails(mPeerId, details))
 		{
 			chatButton->setEnabled(false);
-			quickmsgButton->setEnabled(false);
+			sendmsgButton->setEnabled(false);
 
 			return;
 		}
@@ -192,11 +181,11 @@ void PeerItem::updateItem()
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
 		if (details.state & RS_PEER_STATE_FRIEND)
 		{
-			quickmsgButton->setEnabled(true);
+			sendmsgButton->setEnabled(true);
 		}
 		else
 		{
-			quickmsgButton->setEnabled(false);
+			sendmsgButton->setEnabled(false);
 		}
 	}
 
@@ -209,9 +198,16 @@ void PeerItem::updateItem()
 
 void PeerItem::toggle()
 {
-	mParent->lockLayout(this, true);
+	expand(expandFrame->isHidden());
+}
 
-	if (expandFrame->isHidden())
+void PeerItem::doExpand(bool open)
+{
+	if (mParent) {
+		mParent->lockLayout(this, true);
+	}
+
+	if (open)
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
@@ -224,9 +220,12 @@ void PeerItem::toggle()
 		expandButton->setToolTip(tr("Expand"));
 	}
 
-	mParent->lockLayout(this, false);
-}
+	emit sizeChanged(this);
 
+	if (mParent) {
+		mParent->lockLayout(this, false);
+	}
+}
 
 void PeerItem::removeItem()
 {
@@ -295,41 +294,3 @@ void PeerItem::openChat()
 	}
 }
 
-void PeerItem::togglequickmessage()
-{
-	if (messageframe->isHidden())
-	{
-		messageframe->setVisible(true);
-	}
-	else
-	{
-		messageframe->setVisible(false);
-	}
-}
-
-void PeerItem::sendMessage()
-{
-    /* construct a message */
-    MessageInfo mi;
-    
-    mi.title = tr("Quick Message").toUtf8().constData();
-    mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.rspeerid_msgto.push_back(mPeerId);
-    
-    rsMsgs->MessageSend(mi);
-
-    quickmsgText->clear();
-    messageframe->setVisible(false);
-}
-
-void PeerItem::on_quickmsgText_textChanged()
-{
-    if (quickmsgText->toPlainText().isEmpty())
-    {
-        sendmsgButton->setEnabled(false);
-    }
-    else
-    {
-        sendmsgButton->setEnabled(true);
-    }
-}

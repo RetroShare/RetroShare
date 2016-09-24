@@ -26,7 +26,6 @@
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/TokenQueue.h"
-#include "gui/Identity/IdDialog.h"
 
 #include <iostream>
 
@@ -39,7 +38,6 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
-	connect(ui->toolButton_NewId, SIGNAL(clicked()), this, SLOT(createNewGxsId()));
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
 	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
@@ -91,12 +89,4 @@ void PostedCreatePostDialog::createPost()
 //	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
-}
-
-void  PostedCreatePostDialog::createNewGxsId()
-{
-	IdEditDialog dlg(this);
-	dlg.setupNewId(false);
-	dlg.exec();
-	ui->idChooser->setDefaultId(dlg.getLastIdName());
 }

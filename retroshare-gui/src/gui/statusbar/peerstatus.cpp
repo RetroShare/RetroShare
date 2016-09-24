@@ -31,13 +31,13 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
     
+
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap(":/images/user/identitygray16.png"));
-    // iconLabel doesn't change over time, so we didn't need a minimum size
+    int S = QFontMetricsF(iconLabel->font()).height();
+	 iconLabel->setPixmap(QPixmap(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(iconLabel);
     
     statusPeers = new QLabel( tr("Friends: 0/0"), this );
-//    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
 
     _compactMode = false;
@@ -48,22 +48,19 @@ PeerStatus::PeerStatus(QWidget *parent)
 
 void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount)
 {
-    /* set users/friends/network */
+	/* set users/friends/network */
 
-    if (statusPeers){
-        statusPeers->setToolTip(tr("Online Friends/Total Friends") );
-        QString text;
-        if (_compactMode) text = QString("%1/%2").arg(nOnlineCount).arg(nFriendCount);
-        else text = QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount);
-        statusPeers -> setText(text);
-    }
+	if (statusPeers){
+		statusPeers->setToolTip(tr("Online Friends/Total Friends") );
+		QString text;
+		if (_compactMode) text = QString("%1/%2").arg(nOnlineCount).arg(nFriendCount);
+		else text = QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount);
+		statusPeers -> setText(text);
+	}
+	int S = QFontMetricsF(iconLabel->font()).height();
 
-    if (nOnlineCount > 0)
-    {
-        iconLabel->setPixmap(QPixmap(":/images/user/identity16.png"));
-    }
-    else
-    {
-        iconLabel->setPixmap(QPixmap(":/images/user/identitygray16.png"));
-    }
+	if (nOnlineCount > 0)
+		iconLabel->setPixmap(QPixmap(":/icons/avatar_128.png").scaledToHeight(S,Qt::SmoothTransformation));
+	else
+		iconLabel->setPixmap(QPixmap(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
 }

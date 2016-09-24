@@ -215,7 +215,7 @@ QString misc::userFriendlyUnit(double count, unsigned int decimal, double factor
     QString output;
 
     int i;
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < 5; ++i) {
         if (count < factor) {
             break;
         }
@@ -290,10 +290,10 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 {
 	// Let the user choose an picture file
 	QString fileName;
-	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
+	if (!getOpenFileName(parent, RshareSettings::LASTDIR_IMAGES, caption, tr("Pictures (*.png *.jpeg *.xpm *.jpg *.tiff *.gif)"), fileName))
 		return QPixmap();
 
-    return QPixmap(fileName).scaledToHeight(height).copy( 0, 0, width, height); 
+    return QPixmap(fileName).scaledToHeight(height, Qt::SmoothTransformation).copy( 0, 0, width, height);
 	//return QPixmap(fileName).scaledToHeight(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 }
 
@@ -303,7 +303,7 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
-    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | options);
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
 
     if (file.isEmpty())
         return false;
@@ -326,7 +326,7 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
-    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | options);
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
 
     if (files.isEmpty())
         return false;
@@ -337,7 +337,7 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 #ifdef WINDOWS_SYS
     // fix bug in Qt for Windows Vista and higher, convert path from native separators
     if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based))
-        for (QStringList::iterator file = files.begin(); file != files.end(); file++) {
+        for (QStringList::iterator file = files.begin(); file != files.end(); ++file) {
             (*file) = QDir::fromNativeSeparators(*file);
         }
 #endif
@@ -352,7 +352,7 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
-		file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, options);
+    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
 
     if (file.isEmpty())
         return false;

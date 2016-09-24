@@ -41,7 +41,8 @@
 
 
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE_deprecated  = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x0003;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x0004;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x0008;
 
@@ -50,13 +51,13 @@ public:
     RsGxsGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
                                                    RS_PKT_SUBTYPE_GXS_GRP_UPDATE)
     {clear();}
-            virtual ~RsGxsGrpUpdateItem() {}
+    virtual ~RsGxsGrpUpdateItem() {}
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     RsPeerId peerId;
-	uint32_t grpUpdateTS;
+    uint32_t grpUpdateTS;
 };
 
 class RsGxsServerGrpUpdateItem : public RsItem {
@@ -79,11 +80,19 @@ public:
     { clear();}
     virtual ~RsGxsMsgUpdateItem() {}
 
-	virtual void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent);
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+    struct MsgUpdateInfo
+    {
+        MsgUpdateInfo(): time_stamp(0), message_count(0) {}
+        
+        uint32_t time_stamp ;
+        uint32_t message_count ;
+    };
 
     RsPeerId peerId;
-    std::map<RsGxsGroupId, uint32_t> msgUpdateTS;
+    std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
 
 class RsGxsServerMsgUpdateItem : public RsItem
@@ -98,7 +107,7 @@ public:
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
         RsGxsGroupId grpId;
-        uint32_t msgUpdateTS; // the last time this group received a new msg
+        uint32_t msgUpdateTS; // local time stamp this group last received a new msg
 };
 
 

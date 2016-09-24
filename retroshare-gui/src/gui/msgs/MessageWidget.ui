@@ -23,7 +23,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QSplitter" name="msgSplitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -67,13 +67,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="text">
                <string>Subject:</string>
               </property>
@@ -89,13 +82,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
               </property>
               <property name="text">
                <string>From:</string>
@@ -125,11 +111,6 @@
                 <height>16777215</height>
                </size>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
               <property name="scaledContents">
                <bool>true</bool>
               </property>
@@ -145,13 +126,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
               </property>
               <property name="text">
                <string>To:</string>
@@ -179,13 +153,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="text">
                <string>Cc:</string>
               </property>
@@ -204,13 +171,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
               </property>
               <property name="text">
                <string>Bcc:</string>
@@ -248,13 +208,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>9</pointsize>
-                <weight>50</weight>
-                <bold>false</bold>
-               </font>
-              </property>
               <property name="text">
                <string>Tags:</string>
               </property>
@@ -276,11 +229,6 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
                 <property name="wordWrap">
                  <bool>true</bool>
                 </property>
@@ -296,11 +244,6 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
                 </property>
                 <property name="layoutDirection">
                  <enum>Qt::LeftToRight</enum>
@@ -365,28 +308,42 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="3">
+            <item row="0" column="4">
              <widget class="QLabel" name="label_2">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
               <property name="text">
                <string>Recommended Files</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="4">
-             <widget class="QLabel" name="filesText">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-                <italic>true</italic>
-               </font>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="expandFilesButton">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
               </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="filesText">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="5">
+             <widget class="QLabel" name="filesSize">
               <property name="text">
                <string/>
               </property>
@@ -415,29 +372,12 @@
             <property name="toolTip">
              <string>Download all Recommended Files</string>
             </property>
+            <property name="text">
+             <string>Download all</string>
+            </property>
             <property name="icon">
              <iconset resource="../images.qrc">
               <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="expandFilesButton">
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -447,11 +387,6 @@
       </widget>
      </widget>
      <widget class="QTreeWidget" name="msgList">
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
       <property name="contextMenuPolicy">
        <enum>Qt::CustomContextMenu</enum>
       </property>
@@ -477,125 +412,6 @@
        </property>
       </column>
      </widget>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QFrame" name="decryptFrame">
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>255</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>255</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>255</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>255</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="spacing">
-       <number>6</number>
-      </property>
-      <property name="margin">
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="decryptImage">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../images.qrc">:/images/mail-encrypted-full.png</pixmap>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="decryptLabel">
-        <property name="text">
-         <string>This messages is encrypted. Click the right button to decrypt it.</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>280</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QToolButton" name="decryptButton">
-        <property name="text">
-         <string>Decrypt</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

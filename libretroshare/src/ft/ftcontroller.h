@@ -48,7 +48,6 @@ class ftDataMultiplex;
 class p3turtle ;
 class p3ServiceControl;
 
-#include "dbase/cachestrapper.h"
 #include "util/rsthreads.h"
 #include "pqi/pqiservicemonitor.h"
 #include "pqi/p3cfgmgr.h"
@@ -113,12 +112,12 @@ class ftPendingRequest
 };
 
 
-class ftController: public CacheTransfer, public RsThread, public pqiServiceMonitor, public p3Config
+class ftController: public RsTickingThread, public pqiServiceMonitor, public p3Config
 {
 	public:
 
 		/* Setup */
-		ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
+        ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
 
 		void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 		void	setTurtleRouter(p3turtle *) ;
@@ -126,7 +125,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		bool    activate();
 		bool 	isActiveAndNoPending();
 
-		virtual void run();
+        virtual void data_tick();
 
 		/***************************************************************/
 		/********************** Controller Access **********************/
@@ -167,7 +166,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		uint32_t getMinPrioritizedTransfers() ;
 
 		/* get Details of File Transfers */
-        bool 	FileDownloads(std::list<RsFileHash> &hashs);
+        void FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
         bool 	setDownloadDirectory(std::string path);
@@ -195,10 +194,6 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 
 	protected:
 
-    virtual bool RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
-        virtual bool CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
-
-		void cleanCacheDownloads() ;
 		void searchForDirectSources() ;
 		void tickTransfers() ;
 
@@ -243,6 +238,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiServiceMoni
 		p3ServiceControl *mServiceCtrl;
 		uint32_t mFtServiceId;
 
+        uint32_t cnt ;
 		RsMutex ctrlMutex;
 
         std::map<RsFileHash, ftFileControl*> mCompleted;

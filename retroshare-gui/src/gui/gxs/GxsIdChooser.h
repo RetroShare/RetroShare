@@ -21,14 +21,10 @@
  *
  */
 
-
 #ifndef _GXS_ID_CHOOSER_H
 #define _GXS_ID_CHOOSER_H
 
 #include <QComboBox>
-#include <QPushButton>
-#include "util/TokenQueue.h"
-#include <retroshare/rsidentity.h>
 #include <retroshare/rsgxsifacetypes.h>
 
 // This class implement a basic RS functionality which is that ComboBox displaying Id
@@ -38,62 +34,60 @@
 class RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
-#define IDCHOOSER_ID_REQUIRED	0x0001
+#define IDCHOOSER_ID_REQUIRED   0x0001
 #define IDCHOOSER_ANON_DEFAULT  0x0002
+#define IDCHOOSER_NO_CREATE     0x0004
+#define IDCHOOSER_NON_ANONYMOUS 0x0008
 
-class GxsIdChooser : public QComboBox, public TokenResponse
+class GxsIdChooser : public QComboBox
 {
-        Q_OBJECT
+	Q_OBJECT
 
 public:
 	GxsIdChooser(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
 	GxsIdChooser(QWidget *parent = NULL);
 	virtual ~GxsIdChooser();
 
-	void setUpdateWhenInvisible(bool update);
-	const std::list<RsGxsGroupId> &getGrpIds();
-	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
-
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);//TokenResponse
+	void setFlags(uint32_t flags) ;
+    uint32_t flags() const { return mFlags ; }
 
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
-	void loadIds(uint32_t chooserFlags, RsGxsId defId);
-	void setDefaultId(RsGxsId defId) {mDefaultId=defId;}
-	void setDefaultId(std::string defIdName) {mDefaultIdName=defIdName;}
+	void loadIds(uint32_t chooserFlags, const RsGxsId &defId);
+	void setDefaultId(const RsGxsId &defId);
 
-	bool setChosenId(RsGxsId &gxsId);
+	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
+
+	void setEntryEnabled(int index, bool enabled);
+    
+    	void setIdConstraintSet(const std::set<RsGxsId>& s) ;
+        bool isInConstraintSet(const RsGxsId& id) const ;
+        
+	uint32_t countEnabledEntries() const ;
+signals:
+    // emitted after first load of own ids
+    void idsLoaded();
 
 protected:
 	virtual void showEvent(QShowEvent *event);
-	virtual void updateDisplay(bool complete);
+    void updateDisplay(bool reset);
 
 private slots:
 	void fillDisplay(bool complete);
-	void timer();
 	void myCurrentIndexChanged(int index);
+	void indexActivated(int index);
 
 private:
-	void requestIdList() ;
-	void loadPrivateIds(uint32_t token);
-	void addPrivateId(const RsGxsId &gxsId, bool replace);
-	bool makeIdDesc(const RsGxsId &gxsId, QString &desc);
-	void insertIdList(uint32_t token);
-	void setDefaultItem();
+    void loadPrivateIds();
+    void setDefaultItem();
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
-	std::string mDefaultIdName;
 	bool mFirstLoad;
-	QPushButton* addNewCxsId;
+    uint32_t mAllowedCount ;
 
-	QList<RsGxsId> mPendingId;
-	QTimer *mTimer;
-	unsigned int mTimerCount;
-
-	TokenQueue *mIdQueue;
-	RsGxsUpdateBroadcastBase *mBase;
+    std::set<RsGxsId> mConstraintIdsSet ; // leave empty if all allowed
+    RsGxsUpdateBroadcastBase *mBase;
 };
 
 #endif
-

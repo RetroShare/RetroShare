@@ -50,7 +50,7 @@
 #include <QStyleOption>
 #include <iostream>
 
-#include <gui/connect/ConfCertDialog.h>
+#include <gui/connect/PGPKeyDialog.h>
 
 #include <retroshare/rspeers.h>
 #include "edge.h"
@@ -78,6 +78,7 @@ Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget
     setZValue(1);
 	 mDeterminedBB = false ;
 	 mBBWidth = 0 ;
+	 mNodeDrawSize = 20;
 
 	 _speedx=_speedy=0;
 	 _steps=0;
@@ -85,6 +86,12 @@ Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget
 	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
 		_auth = GraphWidget::ELASTIC_NODE_AUTH_FULL ;
 }
+
+const float Node::MASS_FACTOR = 10 ;
+const float Node::FRICTION_FACTOR = 10.8f ;
+const float Node::REPULSION_FACTOR = 4;
+const float Node::NODE_DISTANCE = 130.0f ;
+
 
 void Node::addEdge(Edge *edge)
 {
@@ -204,8 +211,8 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 	QRectF sceneRect = scene()->sceneRect();
 	newPos = pos() + QPointF(_speedx, _speedy) / friction_factor;
-	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
-	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left()), sceneRect.right()));
+	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top()) , sceneRect.bottom()));
 }
 
 bool Node::advance()
@@ -221,20 +228,22 @@ bool Node::advance()
 
 QRectF Node::boundingRect() const
 {
-	    qreal adjust = 2;
+        float m = QFontMetricsF(graph->font()).height();
+        float f = m/16.0;
+    qreal adjust = 2*f;
     /* add in the size of the text */
-    qreal realwidth = 40;
+    qreal realwidth = 40*f;
+    
     if (mDeterminedBB)
     {
 	realwidth = mBBWidth + adjust;
     }
-    if (realwidth < 23 + adjust)
+    if (realwidth < 23*f + adjust)
     {
-    	realwidth = 23 + adjust;
+    	realwidth = 23*f + adjust;
     }
 
-    return QRectF(-10 - adjust, -10 - adjust,
-                  realwidth, 23 + adjust);
+    return QRectF(-10*f - adjust, -10*f - adjust, realwidth, 23*f + adjust);
 }
 
 QPainterPath Node::shape() const
@@ -284,7 +293,8 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
-	painter->drawEllipse(-7, -7, 20, 20);
+	int mNodeDrawSize2 = mNodeDrawSize/2;
+	painter->drawEllipse(-mNodeDrawSize2+3, -mNodeDrawSize2+3, mNodeDrawSize, mNodeDrawSize);
 
 	QRadialGradient gradient(-3, -3, 10);
 	if (option->state & QStyle::State_Sunken) 
@@ -311,13 +321,18 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 	}
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
-	painter->drawEllipse(-10, -10, 20, 20);
-	painter->drawText(-10, 0, QString::fromUtf8(_desc_string.c_str()));
+	painter->drawEllipse(-mNodeDrawSize2, -mNodeDrawSize2, mNodeDrawSize, mNodeDrawSize);
+    
+    	QString txt = QString::fromUtf8(_desc_string.c_str());
+        float m = QFontMetricsF(graph->font()).height();
+        float f = m/16.0;
+        
+	painter->drawText(-10, 5*f, txt) ;
 
 	if (!mDeterminedBB)
 	{
-		QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromUtf8(_desc_string.c_str()));
-		mBBWidth = textBox.width();
+		QRect textBox = painter->boundingRect(-10, 5*f, QFontMetricsF(graph->font()).width(txt), 1.5*m, Qt::AlignVCenter, QString::fromUtf8(_desc_string.c_str()));
+		mBBWidth = textBox.width()+40*f;
 		mDeterminedBB = true;
 	}
 }
@@ -354,15 +369,15 @@ void Node::peerDetails()
 #ifdef DEBUG_ELASTIC
 	std::cerr << "Calling peer details" << std::endl;
 #endif
-    ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageDetails);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 void Node::makeFriend()
 {
-	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 void Node::denyFriend()
 {
-	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+    PGPKeyDialog::showIt(_gpg_id, PGPKeyDialog::PageDetails);
 }
 
 void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) 

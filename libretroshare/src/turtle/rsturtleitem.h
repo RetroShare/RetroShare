@@ -49,7 +49,7 @@ class RsTurtleItem: public RsItem
 class RsTurtleSearchResultItem: public RsTurtleItem
 {
 	public:
-		RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
+        RsTurtleSearchResultItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_SEARCH_RESULT), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT) ;}
 		RsTurtleSearchResultItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleSearchRequestId request_id ;	// Randomly generated request id.
@@ -70,7 +70,7 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 class RsTurtleSearchRequestItem: public RsTurtleItem
 {
 	public:
-		RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
+        RsTurtleSearchRequestItem(uint32_t subtype) : RsTurtleItem(subtype), request_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST) ;}
 
 		virtual RsTurtleSearchRequestItem *clone() const = 0 ;						// used for cloning in routing methods
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const = 0 ;	// abstracts the search method
@@ -102,7 +102,7 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 		RsTurtleRegExpSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST) {} 
 		RsTurtleRegExpSearchRequestItem(void *data,uint32_t size) ;
 
-		LinearizedExpression expr ;	// Reg Exp in linearised mode
+        RsRegularExpression::LinearizedExpression expr ;	// Reg Exp in linearised mode
 
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;
@@ -120,7 +120,7 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 class RsTurtleOpenTunnelItem: public RsTurtleItem
 {
 	public:
-		RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
+        RsTurtleOpenTunnelItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_OPEN_TUNNEL), request_id(0), partial_tunnel_id(0), depth(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_OPEN_TUNNEL) ;}
 		RsTurtleOpenTunnelItem(void *data,uint32_t size) ;		// deserialization
 
 		TurtleFileHash file_hash ;	  // hash to match
@@ -138,7 +138,7 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 class RsTurtleTunnelOkItem: public RsTurtleItem
 {
 	public:
-		RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
+        RsTurtleTunnelOkItem() : RsTurtleItem(RS_TURTLE_SUBTYPE_TUNNEL_OK), tunnel_id(0), request_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_TUNNEL_OK) ;}
 		RsTurtleTunnelOkItem(void *data,uint32_t size) ;		// deserialization
 
 		uint32_t tunnel_id ;		// id of the tunnel. Should be identical for a tunnel between two same peers for the same hash.
@@ -158,7 +158,7 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 class RsTurtleGenericTunnelItem: public RsTurtleItem
 {
 	public:
-		RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
+        RsTurtleGenericTunnelItem(uint8_t sub_packet_id) : RsTurtleItem(sub_packet_id), direction(0), tunnel_id(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_ITEM);}
 
 		typedef uint32_t Direction ;
 		static const Direction DIRECTION_CLIENT = 0x001 ;
@@ -196,7 +196,7 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 {
 	public:
-		RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
+        RsTurtleGenericDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_DATA), data_size(0), data_bytes(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_REQUEST);}
 		RsTurtleGenericDataItem(void *data,uint32_t size) ;		// deserialization
 
 		virtual ~RsTurtleGenericDataItem() { if(data_bytes != NULL) free(data_bytes) ; }

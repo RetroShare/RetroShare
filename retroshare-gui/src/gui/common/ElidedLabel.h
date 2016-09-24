@@ -38,38 +38,47 @@
  **
  ****************************************************************************/
 
- #ifndef ELIDEDLABEL_H
- #define ELIDEDLABEL_H
+#ifndef ELIDEDLABEL_H
+#define ELIDEDLABEL_H
 
- #include <QLabel>
- #include <QRect>
- #include <QResizeEvent>
- #include <QString>
- #include <QWidget>
+#include <QLabel>
+#include <QRect>
+#include <QResizeEvent>
+#include <QString>
+#include <QWidget>
 
- class ElidedLabel : public QLabel
- {
-     Q_OBJECT
-     Q_PROPERTY(QString text READ text WRITE setText)
-     Q_PROPERTY(bool isElided READ isElided)
+class ElidedLabel : public QLabel
+{
+	Q_OBJECT
+	Q_PROPERTY(QString text READ text WRITE setText)
+	Q_PROPERTY(bool isElided READ isElided)
+	Q_PROPERTY(bool isOnlyPlainText READ isOnlyPlainText WRITE setOnlyPlainText)
 
- public:
-     ElidedLabel(const QString &text, QWidget *parent = 0);
-		 ElidedLabel(QWidget *parent = 0);
+public:
+	ElidedLabel(const QString &text, QWidget *parent = 0);
+	ElidedLabel(QWidget *parent = 0);
 
-     void setText(const QString &text);
-     const QString & text() const { return content; }
-     bool isElided() const { return elided; }
+	const QString & text() const { return mContent; }
+	bool isElided() const { return mElided; }
+	bool isOnlyPlainText() const { return mOnlyPlainText; }
 
- protected:
-     void paintEvent(QPaintEvent *event);
+public slots:
+	void setText(const QString &text);
+	void setOnlyPlainText(const bool &value);
+	void clear();
 
- signals:
-     void elisionChanged(bool elided);
+protected:
+	void paintEvent(QPaintEvent *event);
+	void mousePressEvent(QMouseEvent *ev);
 
- private:
-     bool elided;
-     QString content;
- };
+signals:
+	void elisionChanged(bool elided);
 
- #endif // TEXTWRAPPINGWIDGET_H
+private:
+	bool mElided;
+	bool mOnlyPlainText;
+	QString mContent;
+	QRect mRectElision;
+};
+
+#endif // ELIDEDLABEL_H

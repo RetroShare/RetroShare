@@ -4,6 +4,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsmsgs.h>
 #include <QObject>
 #include <QMutex>
 #include <QPoint>
@@ -20,11 +21,11 @@ class ChatDialog;
 class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
-class Toaster;
+class ToasterItem;
+class ToasterNotify;
 class SignatureEventData ;
 struct TurtleFileInfo;
 
-//class NotifyQt: public NotifyBase, public QObject
 class NotifyQt: public QObject, public NotifyClient
 {
 	Q_OBJECT
@@ -41,14 +42,15 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
-		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private);
-		virtual void notifyChatShow(const std::string& peer_id) ;
+		virtual void notifyChatMessage(const ChatMessage&        /* msg */);
+		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
+		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
-		virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /*nickname*/,const std::string& /* any string */) ;
+        virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
 
 		virtual void notifyOwnStatusMessageChanged() ;
@@ -57,14 +59,15 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
-		virtual void notifyForumMsgReadSatusChanged(const std::string& forumId, const std::string& msgId, uint32_t status);
-		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
+
+        virtual void notifyGxsChange(const RsGxsChanges& change);
+
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
-		virtual bool askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password);
+		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash);
 
 		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
@@ -79,12 +82,15 @@ class NotifyQt: public QObject, public NotifyClient
 		// 					1: signature success
 		// 					2: signature failed. Wrong passwd, user pressed cancel, etc.
 		//
-		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result) ;
+		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result, std::string reason = "") ;
 
 		/* Notify from GUI */
+		void notifyChatFontChanged();
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
-		void testToaster(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToaster(ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
+		void testToaster(QString tag, ToasterNotify *toasterNotify, /*RshareSettings::enumToasterPosition*/ int position, QPoint margin);
 
 		void notifySettingsChanged();
 
@@ -98,15 +104,18 @@ class NotifyQt: public QObject, public NotifyClient
 		void transfersChanged() const ;
 		void friendsChanged() const ;
 		void lobbyListChanged() const ;
-		void chatLobbyEvent(qulonglong,int,const QString&,const QString&) ;
+        void chatLobbyEvent(qulonglong,int,const RsGxsId&,const QString&) ;
 		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;
+#ifdef REMOVE
 		void forumsChanged() const ; // use connect with Qt::QueuedConnection
 		void channelsChanged(int type) const ; // use connect with Qt::QueuedConnection
+#endif
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
-		void chatStatusChanged(const QString&,const QString&,bool) const ;
+		void chatStatusChanged(const ChatId&,const QString&) const ;
+		void chatCleared(const ChatId&) const ;
 		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
@@ -116,21 +125,27 @@ class NotifyQt: public QObject, public NotifyClient
 		void diskFull(int,int) const ;
 		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 		void peerStatusChangedSummary() const;
+        void gxsChange(const RsGxsChanges& /* changes  */);
+#ifdef REMOVE
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
-		void raiseChatWindow(const RsPeerId&) const ;
+#endif
+        void chatMessageReceived(ChatMessage msg);
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void downloadComplete(const QString& /* fileHash */);
 		void downloadCompleteCountChanged(int /* count */);
+#ifdef REMOVE
 		void forumMsgReadSatusChanged(const QString& forumId, const QString& msgId, int status);
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+#endif
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
 		void deferredSignatureHandlingRequested() ;
 		void chatLobbyTimeShift(int time_shift) ;
 
 		/* Notify from GUI */
+		void chatFontChanged();
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 		void settingsChanged();
 		void disableAllChanged(bool disableAll) const;
@@ -143,7 +158,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void runningTick();
 		void handleSignatureEvent() ;
 		void handleChatLobbyTimeShift(int) ;
-		void raiseChatWindow_slot(const RsPeerId&) ;
 
 	private:
 		NotifyQt();
@@ -156,10 +170,10 @@ class NotifyQt: public QObject, public NotifyClient
 		void startWaitingToasters();
 
 //		QMutex waitingToasterMutex; // for lock of the waiting toaster list
-		QList<Toaster*> waitingToasterList;
+		QList<ToasterItem*> waitingToasterList;
 
 		QTimer *runningToasterTimer;
-		QList<Toaster*> runningToasterList;
+		QList<ToasterItem*> runningToasterList;
 
 		bool _enabled ;
 		QMutex _mutex ;

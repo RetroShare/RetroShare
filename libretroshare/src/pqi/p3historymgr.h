@@ -34,6 +34,7 @@
 #include "pqi/p3cfgmgr.h"
 
 class RsChatMsgItem;
+class ChatMessage;
 
 //! handles history
 /*!
@@ -48,13 +49,13 @@ public:
 
 	/******** p3HistoryMgr *********/
 
-	void addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem);
+    void addMessage(const ChatMessage &cm);
 
 	/********* RsHistory ***********/
 
-	bool getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
+    bool getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
 	bool getMessage(uint32_t msgId, HistoryMsg &msg);
-	void clear(const RsPeerId &chatPeerId);
+    void clear(const ChatId &chatPeerId);
 	void removeMessages(const std::list<uint32_t> &msgIds);
 
 	virtual bool getEnable(uint32_t chat_type);
@@ -72,6 +73,8 @@ public:
 	virtual bool loadList(std::list<RsItem*>& load);
 
 private:
+    static bool chatIdToVirtualPeerId(ChatId chat_id, RsPeerId& peer_id);
+
 	uint32_t nextMsgId;
 	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> > mMessages;
 

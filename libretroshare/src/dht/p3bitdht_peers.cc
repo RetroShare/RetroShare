@@ -202,7 +202,7 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 	addrv4.sin_addr = ap->sin_addr;
 	addrv4.sin_port = ap->sin_port;	
 	
-	
+#ifdef RS_USE_DHT_STUNNER
 	if (mDhtStunner)
 	{
 		mDhtStunner->dropStunPeer(addrv4);
@@ -211,20 +211,23 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 	{
 		mProxyStunner->dropStunPeer(addrv4);
 	}
-
+#endif // RS_USE_DHT_STUNNER
 	return 1;
 }
 
 
 int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
 {
-	struct sockaddr_in addrv4;
+    struct sockaddr_in addrv4;
+    sockaddr_clear(&addrv4);
 
 	if (addr.ss_family != AF_INET)
-	{
-		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet.";
-		std::cerr << std::endl;
-		sockaddr_clear(&addrv4);
+    {
+        if(addr.ss_family != AF_UNSPEC)
+        {
+            std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
+            std::cerr << std::endl;
+        }
 
 		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
 		{
@@ -418,14 +421,21 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
 	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
 	if (!dpd)
 	{
-		DhtPeerDetails newdpd;
-		mPeers[id] = newdpd;
-		dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+        DhtPeerDetails newdpd;
 
-		dpd->mDhtId.id = id;
-		dpd->mRsId = pid;
-        	dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+        newdpd.mDhtId.id = id;
+        newdpd.mRsId = pid;
+            newdpd.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+            newdpd.mPeerType = RSDHT_PEERTYPE_ANY;
 
+        mPeers[id] = newdpd;
+        dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+
+        if(dpd == NULL)
+        {
+            std::cerr << "(EE) inconsistency error in p3BitDht::addInternalPeer_locked() Cannot find peer that was just added." << std::endl;
+            return NULL;
+        }
 	}
 
 	/* what do we need to reset? */

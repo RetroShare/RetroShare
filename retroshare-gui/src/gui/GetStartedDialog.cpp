@@ -26,6 +26,7 @@
 #include "retroshare/rsconfig.h"
 
 #include "retroshare-gui/RsAutoUpdatePage.h"
+#include "rshare.h"
 
 #include <QDesktopServices>
 
@@ -66,11 +67,6 @@ GetStartedDialog::GetStartedDialog(QWidget *parent)
 	connect(ui.pushButton_Website, SIGNAL(clicked( bool )), this, SLOT(OpenWebsite()));
 	connect(ui.pushButton_EmailFeedback, SIGNAL(clicked( bool )), this, SLOT(emailFeedback()));
 	connect(ui.pushButton_EmailSupport, SIGNAL(clicked( bool )), this, SLOT(emailSupport()));
-
-/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 GetStartedDialog::~GetStartedDialog()
@@ -193,7 +189,7 @@ void GetStartedDialog::tickFirewallChanged()
 static void sendMail(const QString &address, const QString &subject, QString body)
 {
 	/* Only under windows do we need to do this! */
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 	/* search and replace the end of lines with: "%0D%0A" */
 	body.replace("\n", "%0D%0A");
 #endif
@@ -257,7 +253,7 @@ QString GetStartedDialog::GetInviteText()
 	text += tr("You can get RetroShare here: %1").arg(URL_DOWNLOAD) + "\n";
 	text += "\n";
 	text += tr("RetroShare is a private Friend-2-Friend sharing network.") + "\n";
-	text += tr("It has many features, including built-in chat, messaging, ") + "\n";
+	text += tr("It has many features, including built-in chat, messaging,") + "\n";
 	text += tr("forums and channels, all of which are as secure as the file-sharing.") + "\n";
 	text += "\n";
 	text += "\n";
@@ -278,7 +274,7 @@ void GetStartedDialog::emailSubscribe()
 	// when translation is needed, replace QString by tr
 	QString text = QString("Please let me know when RetroShare has a new release, or exciting news") + "\n";
 	text += "\n";
-	text += QString("Furthermore, I'd like to say ... ") + "\n";
+	text += QString("Furthermore, I'd like to say ...") + "\n";
 	text += "\n";
 
 	sendMail(EMAIL_SUBSCRIBE, "Subscribe", text);
@@ -330,12 +326,10 @@ void GetStartedDialog::emailSupport()
 		return;
 	}
 
-	std::string versionString;
 	uint32_t    userLevel;
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		rsDisc->getPeerVersion(rsPeers->getOwnId(), versionString);
 		userLevel = rsConfig->getUserLevel();
 
 		RsAutoUpdatePage::unlockAllEvents() ;
@@ -349,7 +343,7 @@ void GetStartedDialog::emailSupport()
 
 #ifdef __APPLE__
 
-  #ifdef Q_WS_MAC
+  #ifdef Q_OS_MAC
 	switch(QSysInfo::MacintoshVersion)
 	{
 		case QSysInfo::MV_9: 
@@ -389,7 +383,7 @@ void GetStartedDialog::emailSupport()
 #else
   #if defined(_WIN32) || defined(__MINGW32__)
 	// Windows
-	#ifdef Q_WS_WIN
+	#ifdef Q_OS_WIN
 	switch(QSysInfo::windowsVersion())
 	{
 		case QSysInfo::WV_32s: 
@@ -434,7 +428,7 @@ void GetStartedDialog::emailSupport()
 	sysVersion = "Linux";
   #endif
 #endif
-    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(QString::fromStdString(versionString)).arg(sysVersion).arg(userLevel) + "\n";
+    text += QString("My RetroShare Configuration is: (%1, %2, 0x60%3)").arg(Rshare::retroshareVersion(true)).arg(sysVersion).arg(userLevel) + "\n";
     text += "\n";
 
 	text += QString("I am having trouble with RetroShare.");

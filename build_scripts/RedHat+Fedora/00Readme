@@ -1,0 +1,14 @@
+This is the build directory for RPM based Linux distributions like RedHat
+Enterprise Linux and compatible distributions (CentOS, Oracle Linux, ...) or
+Fedora.
+
+To create an RPM package (as well as Source RPM) for your distribution, just
+run the makePackages.sh script found in this directory, like so:
+
+	./makepackages.sh
+
+The script needs the rpmbuild command, which is part of the rpm-build package.
+
+In case any build dependency is missing, the rpmbuild command will fail. Just
+install the missing package(s) and restart the script (Hint: all needed
+packages are listed in the provided retroshare06.spec file.)

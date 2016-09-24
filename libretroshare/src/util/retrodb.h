@@ -24,7 +24,11 @@
  *
  */
 
-#include "sqlite3.h"
+#ifdef NO_SQLCIPHER
+#include <sqlite3.h>
+#else
+#include <sqlcipher/sqlite3.h>
+#endif
 
 #include <string>
 #include <set>
@@ -33,8 +37,6 @@
 #include "rsdbbind.h"
 
 #include "contentvalue.h"
-
-
 
 class RetroCursor;
 
@@ -86,7 +88,23 @@ public:
     /* modifying db */
 public:
 
+    /*!
+     * Start transaction
+     * @return true/false
+     */
+    bool beginTransaction();
 
+    /*!
+     * Commit transaction
+     * @return true/false
+     */
+    bool commitTransaction();
+
+    /*!
+     * Rollback transaction
+     * @return true/false
+     */
+    bool rollbackTransaction();
 
     /*!
      * To a make query which do not return a result \n
@@ -149,22 +167,13 @@ public:
      */
     void vacuum();
 
-
     /*!
-     * Build the "VALUE" part of an insertiong sql query
-     * @param parameter contains place holder query
-     * @param paramBindings
+     * Check if table exist in database
+     * @param tableName table to check
+     * @return true/false
      */
-    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
-    		std::string& parameter, std::list<RetroBind*>& paramBindings);
+    bool tableExists(const std::string& tableName);
 
-    /*!
-     * Build the "VALUE" part of an insertiong sql query
-     * @param parameter contains place holder query
-     * @param paramBindings
-     */
-    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
-    		std::string& parameter, std::list<RetroBind*>& paramBindings);
 public:
 
     static const int OPEN_READONLY;
@@ -174,6 +183,22 @@ public:
 private:
 
     bool execSQL_bind(const std::string &query, std::list<RetroBind*>& blobs);
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildInsertQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+            std::string& parameter, std::list<RetroBind*>& paramBindings);
+
+    /*!
+     * Build the "VALUE" part of an insertiong sql query
+     * @param parameter contains place holder query
+     * @param paramBindings
+     */
+    void buildUpdateQueryValue(const std::map<std::string, uint8_t> keyMap, const ContentValue& cv,
+            std::string& parameter, std::list<RetroBind*>& paramBindings);
 
 private:
 
@@ -214,12 +239,6 @@ public:
      */
     bool moveToLast();
 
-    /*!
-     * gets current position of cursor
-     * @return current position of cursor
-     */
-    int32_t getPosition() const;
-
     /* data retrieval */
 
     /*!
@@ -235,9 +254,9 @@ public:
 
     /*!
      *
-     * @return -1 if cursor is in error, otherwise number of rows in result
+     * @return -1 if cursor is in error, otherwise number of columns in result
      */
-    int32_t getResultCount() const;
+    int32_t columnCount() const ;
 
     /*!
      * Current statement is closed and discarded (finalised)
@@ -248,8 +267,6 @@ public:
     bool open(sqlite3_stmt* stm);
 
 public:
-
-
     /*!
      * Returns the value of the requested column as a String.
      * @param columnIndex the zero-based index of the target column.
@@ -300,17 +317,8 @@ public:
     	getString(columnIndex, temp);
     	str = T(temp);
     }
-
-
 private:
-
     sqlite3_stmt* mStmt;
-    int mCount; /// number of results
-    int mPosCounter;
 };
-
-
-
-
 
 #endif // RSSQLITE_H

@@ -23,14 +23,45 @@
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
 #include "gui/chat/ChatDialog.h"
+#include "gui/settings/rsharesettings.h"
 
+#include <algorithm>
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
 
-ChatUserNotify::ChatUserNotify(QObject *parent) :
-	UserNotify(parent)
+static std::map<ChatId, int> waitingChats;
+static ChatUserNotify* instance = 0;
+
+/*static*/ void ChatUserNotify::getPeersWithWaitingChat(std::vector<RsPeerId> &peers)
 {
-	connect(NotifyQt::getInstance(), SIGNAL(privateChatChanged(int, int)), this, SLOT(privateChatChanged(int, int)));
+    for(std::map<ChatId, int>::iterator mit = waitingChats.begin(); mit != waitingChats.end(); ++mit)
+    {
+        if(mit->first.isPeerId() && std::find(peers.begin(), peers.end(), mit->first.toPeerId()) == peers.end())
+            peers.push_back(mit->first.toPeerId());
+    }
+}
+
+/*static*/ void ChatUserNotify::clearWaitingChat(ChatId id)
+{
+    std::map<ChatId, int>::iterator mit = waitingChats.find(id);
+    if(mit != waitingChats.end())
+    {
+        waitingChats.erase(mit);
+        if(instance)
+            instance->updateIcon();
+    }
+}
+
+ChatUserNotify::ChatUserNotify(QObject *parent) :
+    UserNotify(parent)
+{
+    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    instance = this;
+}
+
+ChatUserNotify::~ChatUserNotify()
+{
+    instance = 0;
 }
 
 bool ChatUserNotify::hasSetting(QString *name, QString *group)
@@ -48,34 +79,54 @@ QIcon ChatUserNotify::getIcon()
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-	return hasNew ? QIcon(":/images/user/friends24_notify.png") : QIcon(":/images/groupchat.png");
+    return hasNew ? QIcon(":/icons/png/network-notify.png") : QIcon(":/icons/png/network.png");
 }
 
 unsigned int ChatUserNotify::getNewCount()
 {
-	return rsMsgs->getPrivateChatQueueCount(true);
+    int sum = 0;
+    for(std::map<ChatId, int>::iterator mit = waitingChats.begin(); mit != waitingChats.end(); ++mit)
+    {
+        sum += mit->second;
+    }
+    return sum;
 }
 
 void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
-    std::list<RsPeerId> ids;
-	if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
-		chatDialog = ChatDialog::getChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
-	}
+    // ChatWidget removes the waiting chat from the list with clearWaitingChat()
+    chatDialog = ChatDialog::getChat(waitingChats.begin()->first, RS_CHAT_OPEN | RS_CHAT_FOCUS);
 
 	if (chatDialog == NULL) {
 		MainWindow::showWindow(MainWindow::Friends);
 	}
+    updateIcon();
 }
 
-void ChatUserNotify::privateChatChanged(int list, int type)
+void ChatUserNotify::chatMessageReceived(ChatMessage msg)
 {
-	/* first process the chat messages */
-	ChatDialog::chatChanged(list, type);
-
-	if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT) {
-		updateIcon();
-	}
+    if(!msg.chat_id.isBroadcast()
+            &&( ChatDialog::getExistingChat(msg.chat_id)
+                || (Settings->getChatFlags() & RS_CHAT_OPEN)
+                || msg.chat_id.isDistantChatId()))
+    {
+        ChatDialog::chatMessageReceived(msg);
+    }
+    else
+    {
+        // this implicitly counts broadcast messages, because broadcast messages are not handled by chat dialog
+        bool found = false;
+        for(std::map<ChatId, int>::iterator mit = waitingChats.begin(); mit != waitingChats.end(); ++mit)
+        {
+            if(msg.chat_id.isSameEndpoint(mit->first))
+            {
+                mit->second++;
+                found = true;
+            }
+        }
+        if(!found)
+            waitingChats[msg.chat_id] = 1;
+        updateIcon();
+    }
 }
-

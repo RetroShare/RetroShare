@@ -220,6 +220,7 @@ int RsIntroServer::addCertificateFile(std::string filepath)
 	std::cerr << std::endl;
 	std::cerr << "==========================================================" << std::endl;
 
+    fclose(fd) ;
 	return addNewUser(certGPG);
 }
 
@@ -289,7 +290,7 @@ int RsIntroServer::checkForNewCerts()
 	mCertCheckTime = now;
         struct stat64 buf;
 
-	while(dirIt.readdir())
+    for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
 		std::string fname;
@@ -623,7 +624,8 @@ bool	RsIntroStore::loadPeers()
 		std::cerr << "RsIntroStore::loadPeers() Cannot open file, trying tmp";
 		std::cerr << std::endl;
 
-		FILE *fd = fopen(mTempStoreFile.c_str(), "r");
+		fd = fopen(mTempStoreFile.c_str(), "r");
+
 		if (!fd)
 		{
 			std::cerr << "RsIntroStore::loadPeers() Cannot open tmp file";

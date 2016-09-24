@@ -38,7 +38,6 @@
 
 #include "printpreview.h"
 
-#include <QAbstractScrollArea>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QToolBar>
@@ -54,7 +53,7 @@
 #include <QPageSetupDialog>
 #include <QStatusBar>
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
 const QString rsrcPath = ":/images/mac";
 #else
 const QString rsrcPath = ":/images/win";
@@ -69,35 +68,6 @@ static inline qreal mmToInches(double mm)
 {
     return mm*0.039370147;
 }
-
-class PreviewView : public QAbstractScrollArea
-{
-    Q_OBJECT
-public:
-    PreviewView(QTextDocument *document, PrintPreview *printPrev);
-
-    inline void updateLayout() { resizeEvent(0); viewport()->update(); }
-
-public slots:
-    void zoomIn();
-    void zoomOut();
-
-protected:
-    virtual void paintEvent(QPaintEvent *e);
-    virtual void resizeEvent(QResizeEvent *);
-    virtual void mousePressEvent(QMouseEvent *e);
-    virtual void mouseMoveEvent(QMouseEvent *e);
-    virtual void mouseReleaseEvent(QMouseEvent *e);
-
-private:
-    void paintPage(QPainter *painter, int page);
-    QTextDocument *doc;
-    qreal scale;
-    int interPageSpacing;
-    QPoint mousePressPos;
-    QPoint scrollBarValuesOnMousePress;
-    PrintPreview *printPreview;
-};
 
 PreviewView::PreviewView(QTextDocument *document, PrintPreview *printPrev)
     : printPreview(printPrev)
@@ -330,5 +300,3 @@ void PrintPreview::pageSetup()
         view->updateLayout();
     }
 }
-
-#include "printpreview.moc"

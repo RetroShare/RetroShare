@@ -108,7 +108,7 @@ bool p3ServiceInfo::processIncoming()
 				}
 				else
 				{
-					// error.
+                    // error.
 					std::cerr << "p3ServiceInfo::processingIncoming() Error with Received Item:";
 					std::cerr << std::endl;
 					item->print(std::cerr);
@@ -148,8 +148,10 @@ bool p3ServiceInfo::recvServiceInfoList(RsServiceInfoListItem *item)
 {
 	RsPeerId peerId = item->PeerId();
 
-	std::cerr << "p3ServiceInfo::recvServiceInfoList() from: " << peerId.toStdString();
-	std::cerr << std::endl;
+#ifdef DEBUG_INFO
+    std::cerr << "p3ServiceInfo::recvServiceInfoList() from: " << peerId.toStdString();
+    std::cerr << std::endl;
+#endif
 
 	RsPeerServiceInfo info;
 	if (convertServiceItemToInfo(item, info))
@@ -184,7 +186,7 @@ bool	p3ServiceInfo::sendPackets()
 
 	RsStackMutex stack(mInfoMtx); /****** LOCKED MUTEX *******/
 	std::set<RsPeerId>::iterator it;
-	for(it = updateSet.begin(); it != updateSet.end(); it++)
+	for(it = updateSet.begin(); it != updateSet.end(); ++it)
 	{
 		sendServiceInfoList(*it);
 	}
@@ -195,8 +197,10 @@ bool	p3ServiceInfo::sendPackets()
 
 int p3ServiceInfo::sendServiceInfoList(const RsPeerId &peerId)
 {
-	std::cerr << "p3ServiceInfo::sendServiceInfoList() to " << peerId.toStdString();
-	std::cerr << std::endl;
+#ifdef DEBUG_INFO
+    std::cerr << "p3ServiceInfo::sendServiceInfoList() to " << peerId.toStdString();
+    std::cerr << std::endl;
+#endif
 
 	RsServiceInfoListItem *item = new RsServiceInfoListItem();
 
@@ -204,10 +208,12 @@ int p3ServiceInfo::sendServiceInfoList(const RsPeerId &peerId)
 	bool sent = false;
 	if (mServiceControl->getServicesAllowed(peerId, info))
 	{
-		std::cerr << "p3ServiceInfo::sendServiceInfoList() Info: ";
+#ifdef DEBUG_INFO
+        std::cerr << "p3ServiceInfo::sendServiceInfoList() Info: ";
 		std::cerr << std::endl;
 		std::cerr << info;
-		std::cerr << std::endl;
+        std::cerr << std::endl;
+#endif
 
 		if (convertServiceInfoToItem(info, item))
 		{
@@ -228,20 +234,24 @@ int p3ServiceInfo::sendServiceInfoList(const RsPeerId &peerId)
 
 void p3ServiceInfo::statusChange(const std::list<pqipeer> &plist)
 {
-	std::cerr << "p3ServiceInfo::statusChange()";
-	std::cerr << std::endl;
+#ifdef DEBUG_INFO
+    std::cerr << "p3ServiceInfo::statusChange()";
+    std::cerr << std::endl;
+#endif
 
 	std::list<pqipeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++) 
+	for (it = plist.begin(); it != plist.end(); ++it)
 	{
 		if (it->state & RS_PEER_S_FRIEND) 
 		{
 			if (it->actions & RS_PEER_CONNECTED) 
 			{
-				std::cerr << "p3ServiceInfo::statusChange()";
+#ifdef DEBUG_INFO
+                std::cerr << "p3ServiceInfo::statusChange()";
 				std::cerr << "Peer: " << it->id;
 				std::cerr << " Connected";
-				std::cerr << std::endl;
+                std::cerr << std::endl;
+#endif
 
 				RsStackMutex stack(mInfoMtx); /****** LOCKED MUTEX *******/
 				mPeersToUpdate.insert(it->id);

@@ -128,7 +128,7 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 	time_t now = time(NULL);
 	std::list<RsPeerId> oldIds; // unused for now!
 
-	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
+	for(bit = mBwMap.begin(); bit != mBwMap.end(); ++bit)
 	{
 		/* check alloc rate */
 		//time_t age = now - bit->second.mLastSend;
@@ -255,7 +255,7 @@ int p3BandwidthControl::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRate
 	RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
 
 	std::map<RsPeerId, BwCtrlData>::iterator bit;
-	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
+	for(bit = mBwMap.begin(); bit != mBwMap.end(); ++bit)
 	{
 		RsConfigDataRates rates;
 
@@ -280,6 +280,11 @@ int p3BandwidthControl::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRate
 
 }
 
+int     p3BandwidthControl::ExtractTrafficInfo(std::list<RSTrafficClue>& out_stats, std::list<RSTrafficClue>& in_stats)
+{
+    return mPg->ExtractTrafficInfo(out_stats,in_stats) ;
+}
+
 
 
 
@@ -299,7 +304,7 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 	out << std::endl;
 
 	std::map<RsPeerId, BwCtrlData>::iterator bit;
-	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
+	for(bit = mBwMap.begin(); bit != mBwMap.end(); ++bit)
 	{
 		out << "\t" << bit->first;
 		out << " In: " << bit->second.mRates.mRateIn;
@@ -315,7 +320,7 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 void p3BandwidthControl::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	std::list<pqiServicePeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++) 
+	for (it = plist.begin(); it != plist.end(); ++it)
 	{
 		RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
 

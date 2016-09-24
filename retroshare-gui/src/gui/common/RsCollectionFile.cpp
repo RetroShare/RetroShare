@@ -157,15 +157,15 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& det
 
 		d.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
 
-		for (std::list<DirStub>::const_iterator it = details.children.begin(); it != details.children.end(); it++)
+        for(uint32_t i=0;i<details.children.size();++i)
 		{
-			if (!it->ref) 
+            if (!details.children[i].ref)
 				continue;
 
 			DirDetails subDirDetails;
 			FileSearchFlags flags = RS_FILE_HINTS_LOCAL;
 
-			if (!rsFiles->RequestDirDetails(it->ref, subDirDetails, flags)) 
+            if (!rsFiles->RequestDirDetails(details.children[i].ref, subDirDetails, flags))
 				continue;
 
 			recursAddElements(doc,subDirDetails,d) ;
@@ -193,7 +193,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const ColFileInfo& co
 
 		d.setAttribute(QString("name"),colFileInfo.name) ;
 
-		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); it++)
+		for (std::vector<ColFileInfo>::const_iterator it = colFileInfo.children.begin(); it != colFileInfo.children.end(); ++it)
 {
 			recursAddElements(doc,(*it),d) ;
 		}
@@ -298,7 +298,7 @@ bool RsCollectionFile::checkFile(const QString& fileName, bool showError)
 			if(file.atEnd())
 			n-- ;
 		else if(n < max_size)
-			n++ ;
+			++n ;
 	}
 	file.close();
 		return true;
@@ -374,7 +374,7 @@ bool RsCollectionFile::openNewColl(QWidget *parent)
 
 		QMessageBox mb;
 		mb.setText(tr("Save Collection File."));
-		mb.setInformativeText(tr("File already exist.")+"\n"+tr("What do you want to do?"));
+		mb.setInformativeText(tr("File already exists.")+"\n"+tr("What do you want to do?"));
 		QAbstractButton *btnOwerWrite = mb.addButton(tr("Overwrite"), QMessageBox::YesRole);
 		QAbstractButton *btnMerge = mb.addButton(tr("Merge"), QMessageBox::NoRole);
 		QAbstractButton *btnCancel = mb.addButton(tr("Cancel"), QMessageBox::ResetRole);

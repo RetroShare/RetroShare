@@ -35,12 +35,12 @@ OnlineToaster::OnlineToaster(const RsPeerId &peerId) : QWidget(NULL)
 
 	/* set informations */
 	ui.textLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
-	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-	ui.avatarWidget->setId(peerId);
+    ui.avatarWidget->setId(ChatId(peerId));
+    ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 }
 
 void OnlineToaster::chatButtonSlot()
 {
-	ChatDialog::chatFriend(peerId);
+    ChatDialog::chatFriend(ChatId(peerId));
 	hide();
 }

@@ -32,6 +32,10 @@
 #include "gui/FeedReaderFeedNotify.h"
 #include "services/p3FeedReader.h"
 
+#include <libxml/xmlversion.h>
+#include <libxslt/xsltconfig.h>
+#include <curl/curlver.h>
+
 #define IMAGE_FEEDREADER ":/images/FeedReader.png"
 
 static void *inited = new FeedReaderPlugin();
@@ -40,11 +44,9 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	void *RETROSHARE_PLUGIN_provide()
+	RsPlugin *RETROSHARE_PLUGIN_provide()
 	{
-		static FeedReaderPlugin *p = new FeedReaderPlugin();
-
-		return (void*)p;
+		return new FeedReaderPlugin();
 	}
 
 	// This symbol contains the svn revision number grabbed from the executable.
@@ -54,7 +56,7 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	uint32_t RETROSHARE_PLUGIN_revision = SVN_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
 
 	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -66,11 +68,12 @@ extern "C" {
 	uint32_t RETROSHARE_PLUGIN_api = RS_PLUGIN_API_VERSION ;
 }
 
-void FeedReaderPlugin::getPluginVersion(int& major,int& minor,int& svn_rev) const
+void FeedReaderPlugin::getPluginVersion(int& major, int& minor, int &build, int& svn_rev) const
 {
-	major = 5;
-	minor = 4;
-	svn_rev = SVN_REVISION_NUMBER;
+	major = RS_MAJOR_VERSION;
+	minor = RS_MINOR_VERSION;
+	build = RS_BUILD_NUMBER;
+	svn_rev = RS_REVISION_NUMBER;
 }
 
 FeedReaderPlugin::FeedReaderPlugin()
@@ -81,11 +84,20 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mFeedReader = NULL;
 	mNotify = NULL;
 	mFeedNotify = NULL;
+
+	Q_INIT_RESOURCE(FeedReader_images);
+	Q_INIT_RESOURCE(FeedReader_qss);
 }
 
 void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
 	mInterfaces = interfaces;
+
+	mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mGxsForums);
+	rsFeedReader = mFeedReader;
+
+	mNotify = new FeedReaderNotify();
+	mFeedReader->setNotify(mNotify);
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -108,20 +120,6 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 		mFeedNotify = new FeedReaderFeedNotify(mFeedReader, mNotify);
 	}
 	return mFeedNotify;
-}
-
-RsPQIService *FeedReaderPlugin::rs_pqi_service() const
-{
-	if (mFeedReader == NULL) {
-		//Todo: Replace with gxs forums
-		mFeedReader = new p3FeedReader(mPlugInHandler, NULL /*mInterfaces.mForums*/);
-		rsFeedReader = mFeedReader;
-
-		mNotify = new FeedReaderNotify();
-		mFeedReader->setNotify(mNotify);
-	}
-
-	return mFeedReader;
 }
 
 void FeedReaderPlugin::stop()
@@ -148,8 +146,6 @@ void FeedReaderPlugin::setPlugInHandler(RsPluginHandler *pgHandler)
 QIcon *FeedReaderPlugin::qt_icon() const
 {
 	if (mIcon == NULL) {
-		Q_INIT_RESOURCE(FeedReader_images);
-
 		mIcon = new QIcon(IMAGE_FEEDREADER);
 	}
 
@@ -164,6 +160,13 @@ std::string FeedReaderPlugin::getShortPluginDescription() const
 std::string FeedReaderPlugin::getPluginName() const
 {
 	return QApplication::translate("FeedReaderPlugin", "FeedReader").toUtf8().constData();
+}
+
+void FeedReaderPlugin::getLibraries(std::list<RsLibraryInfo> &libraries)
+{
+	libraries.push_back(RsLibraryInfo("LibCurl", LIBCURL_VERSION));
+	libraries.push_back(RsLibraryInfo("Libxml2", LIBXML_DOTTED_VERSION));
+	libraries.push_back(RsLibraryInfo("libxslt", LIBXSLT_DOTTED_VERSION));
 }
 
 QTranslator* FeedReaderPlugin::qt_translator(QApplication */*app*/, const QString& languageCode, const QString& externalDir) const

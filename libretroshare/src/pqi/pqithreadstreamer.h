@@ -29,34 +29,25 @@
 #include "pqi/pqistreamer.h"
 #include "util/rsthreads.h"
 
-class pqithreadstreamer: public pqistreamer, public RsThread
+class pqithreadstreamer: public pqistreamer, public RsTickingThread
 {
-	public:
-		pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
+public:
+    pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
-virtual void run(); 
-virtual void start(); 
-virtual void stop(); 
-virtual void fullstop(); 
-virtual bool threadrunning();
-
-virtual bool RecvItem(RsItem *item);
-virtual int  tick();
+    // from pqistreamer
+    virtual bool RecvItem(RsItem *item);
+    virtual int  tick();
 
 protected:
+    virtual void  data_tick();
 
-int  data_tick();
-
-	PQInterface *mParent;
-	uint32_t mTimeout;
-	uint32_t mSleepPeriod;
+    PQInterface *mParent;
+    uint32_t mTimeout;
+    uint32_t mSleepPeriod;
 
 private:
-	/* thread variables */
-	RsMutex mThreadMutex;
-	bool mRunning;
-	bool mToRun;
-
+    /* thread variables */
+    RsMutex mThreadMutex;
 };
 
 #endif //MRK_PQI_THREAD_STREAMER_HEADER

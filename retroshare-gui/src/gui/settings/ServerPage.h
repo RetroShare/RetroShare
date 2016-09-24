@@ -24,8 +24,13 @@
 
 #include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
+#include "RsAutoUpdatePage.h"
+#include <inttypes.h>
 
-class TurtleRouterDialog ;
+class QNetworkReply;
+class QNetworkAccessManager;
+class BanListPeer;
+struct sockaddr_storage;
 
 class ServerPage: public ConfigPage
 {
@@ -40,35 +45,61 @@ public:
     /** Loads the settings for this page */
     virtual void load();
 
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
-	 virtual QString pageName() const { return tr("Server") ; }
-	 virtual QString helpText() const { return ""; }
+    virtual QPixmap iconPixmap() const { return QPixmap(":/icons/png/network.png") ; }
+    virtual QString pageName() const { return tr("Network") ; }
+    virtual QString helpText() const { return ""; }
 
 public slots:
     void updateStatus();
 
 private slots:
+    // ban list
+    void updateSelectedBlackListIP(int row, int, int, int);
+    void updateSelectedWhiteListIP(int row,int,int,int);
+    void addIpRangeToBlackList();
+    void addIpRangeToWhiteList();
+    void moveToWhiteList0();
+    void moveToWhiteList1();
+    void moveToWhiteList2();
+    void removeWhiteListedIp();
+    void checkIpRange(const QString &);
+    void setGroupIpLimit(int n);
+    void toggleGroupIps(bool b);
+    void toggleAutoIncludeDHT(bool b);
+    void toggleAutoIncludeFriends(bool b);
+    void toggleIpFiltering(bool b);
+    void ipFilterContextMenu(const QPoint &);
+    void ipWhiteListContextMenu(const QPoint &point);
+    void removeBannedIp();
+
+    // server
     void saveAddresses();
     void toggleUPnP();
-    void showRoutingInfo();
     void toggleIpDetermination(bool) ;
     void toggleTunnelConnection(bool) ;
-	 void updateMaxTRUpRate(int) ;
-	 void toggleTurtleRouting(bool) ;
+    void clearKnownAddressList() ;
+    void handleNetworkReply(QNetworkReply *reply);
+    void updateInProxyIndicator();
 
 private:
+    // ban list
+    void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
+    bool removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,int& masked_bytes);
+    bool removeCurrentRowFromWhiteList(sockaddr_storage &collected_addr, int &masked_bytes);
 
-	// Alternative Versions for HiddenNode Mode.
-	void loadHiddenNode();
-	void updateStatusHiddenNode();
-	void saveAddressesHiddenNode();
-
+    // Alternative Versions for HiddenNode Mode.
+    void loadHiddenNode();
+    void updateStatusHiddenNode();
+    void saveAddressesHiddenNode();
+    void updateOutProxyIndicator();
+    void loadFilteredIps() ;
 
     Ui::ServerPage ui;
 
-	 TurtleRouterDialog *_routing_info_page ;
+    QNetworkAccessManager *manager ;
 
-	bool mIsHiddenNode;
+    bool mIsHiddenNode;
+	uint32_t mHiddenType;
 };
 
 #endif // !SERVERPAGE_H

@@ -40,11 +40,6 @@ ProfileEdit::ProfileEdit(QWidget *parent)
   connect(ui.moveDownButton, SIGNAL(clicked()), this, SLOT(profileEntryMoveDown()));
   connect(ui.moveUpButton, SIGNAL(clicked()), this, SLOT(profileEntryMoveUp()));
   connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
-
-  /* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 void ProfileEdit::profileCustomPopupMenu( QPoint /*point*/ )

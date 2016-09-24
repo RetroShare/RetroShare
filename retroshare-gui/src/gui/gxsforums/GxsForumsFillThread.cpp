@@ -45,7 +45,6 @@ GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
 	mFillComplete = false;
 
 	mFilterColumn = 0;
-	mSubscribeFlags = 0;
 
 	mViewType = 0;
 	mFlatView = false;
@@ -60,7 +59,7 @@ GxsForumsFillThread::~GxsForumsFillThread()
 
 	// remove all items (when items are available, the thread was terminated)
 	QList<QTreeWidgetItem *>::iterator item;
-	for (item = mItems.begin (); item != mItems.end (); item++) {
+	for (item = mItems.begin (); item != mItems.end (); ++item) {
 		if (*item) {
 			delete (*item);
 		}
@@ -99,7 +98,6 @@ void GxsForumsFillThread::run()
 	/* get all messages of the forum */
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
 	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(mForumId);
@@ -112,7 +110,7 @@ void GxsForumsFillThread::run()
 	service->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds);
 
 	/* wait for the answer */
-	uint32_t requestStatus;
+	uint32_t requestStatus = RsTokenService::GXS_REQUEST_V2_STATUS_PENDING;
 	while (!wasStopped()) {
 		requestStatus = service->requestStatus(token);
 		if (requestStatus == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ||
@@ -169,7 +167,7 @@ void GxsForumsFillThread::run()
 
 		const RsGxsForumMsg &msg = *msgIt;
 
-		if (!msg.mMeta.mParentId.isNull()) {
+		if (!mFlatView && !msg.mMeta.mParentId.isNull()) {
 			++msgIt;
 			continue;
 		}
@@ -179,7 +177,9 @@ void GxsForumsFillThread::run()
 #endif
 
 		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-		threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
+		if (!mFlatView) {
+			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
+		}
 		calculateExpand(msg, item);
 
 		mItems.append(item);
@@ -218,12 +218,7 @@ void GxsForumsFillThread::run()
 				std::cerr << "GxsForumsFillThread::run() adding " << msg.mMeta.mMsgId << std::endl;
 #endif
 
-				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-				if (mFlatView) {
-					mItems.append(item);
-				} else {
-					threadPair.second->addChild(item);
-				}
+				QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn, threadPair.second);
 
 				calculateExpand(msg, item);
 

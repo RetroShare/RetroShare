@@ -188,22 +188,13 @@ bool p3Notify::GetFeedItem(RsFeedItem &item)
 }
 
 
-bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4)
+bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3, id4));
+	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3, id4, result1));
 
 	return true;
 }
-
-bool p3Notify::AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
-{
-	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
-	pendingNewsFeed.push_back(RsFeedItem(type, id1, id2, id3));
-
-	return true;
-}
-
 
 bool p3Notify::ClearFeedItems(uint32_t type)
 {
@@ -218,7 +209,7 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 		}
 		else
 		{
-			it++;
+			++it;
 		}
 	}
 	return true;
@@ -226,14 +217,15 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 
 #define FOR_ALL_NOTIFY_CLIENTS for(std::list<NotifyClient*>::const_iterator it(notifyClients.begin());it!=notifyClients.end();++it)
 
-void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const std::string& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
+void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const RsGxsId& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
 
 void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListPreChange(list,type) ; }
 void p3Notify::notifyListChange   (int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListChange   (list,type) ; }
 
 void p3Notify::notifyErrorMsg      (int list, int sev, std::string msg)                                                         { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyErrorMsg(list,sev,msg) ; }
-void p3Notify::notifyChatStatus    (const std::string& peer_id , const std::string& status_string ,bool is_private)             { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(peer_id,status_string,is_private) ; }
-void p3Notify::notifyChatShow      (const std::string& peer_id)                                                                 { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatShow(peer_id) ; }
+void p3Notify::notifyChatMessage   (const ChatMessage &msg)                                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatMessage(msg) ; }
+void p3Notify::notifyChatStatus    (const ChatId&  chat_id, const std::string& status_string)                                   { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(chat_id,status_string) ; }
+void p3Notify::notifyChatCleared   (const ChatId&  chat_id)                                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatCleared(chat_id) ; }
 
 void p3Notify::notifyChatLobbyTimeShift     (int                time_shift)                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyTimeShift(time_shift) ; }
 void p3Notify::notifyCustomState            (const std::string& peer_id   , const std::string&               status_string )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyCustomState       (peer_id,status_string) ; }
@@ -244,21 +236,19 @@ void p3Notify::notifyOwnAvatarChanged       ()                                  
 void p3Notify::notifyOwnStatusMessageChanged()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnStatusMessageChanged() ; } 
 void p3Notify::notifyDiskFull               (uint32_t           location  , uint32_t                         size_limit_in_MB ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiskFull          (location,size_limit_in_MB) ; }
 void p3Notify::notifyPeerStatusChanged      (const std::string& peer_id   , uint32_t                         status           ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChanged (peer_id,status) ; }
+void p3Notify::notifyGxsChange              (const RsGxsChanges& changes) {FOR_ALL_NOTIFY_CLIENTS (*it)->notifyGxsChange(changes) ;}
 
 void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
 void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 
-
-void p3Notify::notifyForumMsgReadSatusChanged   (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyForumMsgReadSatusChanged   (channelId,msgId,status) ; }
-void p3Notify::notifyChannelMsgReadSatusChanged (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChannelMsgReadSatusChanged (channelId,msgId,status) ; }
 
 void p3Notify::notifyDownloadComplete           (const std::string& fileHash )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadComplete           (fileHash) ; }
 void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
 void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }
 
-bool p3Notify::askForPassword                   (const std::string& key_details    , bool               prev_is_bad , std::string& password) 
+bool p3Notify::askForPassword                   (const std::string& title    , const std::string& key_details    , bool               prev_is_bad , std::string& password,bool *cancelled)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForPassword(key_details,prev_is_bad,password))
+        if( (*it)->askForPassword(title,key_details,prev_is_bad,password,*cancelled))
 			return true ;
 
 	return false ;
@@ -271,10 +261,10 @@ bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filen
 
 	return false ;
 }
-bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result ) 
+bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
 {
 	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result)) 
+		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result, reason))
 			return true ;
 
 	return false ;

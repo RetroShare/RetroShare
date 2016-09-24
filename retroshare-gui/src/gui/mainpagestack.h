@@ -50,6 +50,8 @@ public:
 public slots:
   /** Displays the page associated with the activated action. */
   void showPage(QAction *pageAction);
+  /** Adjusts the size of the Main page and the Main window. */
+  void onCurrentChanged(int index);
   
 private:
   /** Maps an action to a Main page. */

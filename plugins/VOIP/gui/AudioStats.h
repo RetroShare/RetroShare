@@ -28,8 +28,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef _AUDIOSTATS_H
-#define _AUDIOSTATS_H
+#pragma once
 
 #include <QWidget>
 
@@ -89,7 +88,3 @@ class AudioStats : public QDialog, public Ui::AudioStats {
 		void on_Tick_timeout();
 };
 */
-
-#else
-class AudioStats;
-#endif

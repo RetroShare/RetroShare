@@ -24,7 +24,9 @@
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
 #include "ProfileManager.h"
+#include "util/misc.h"
 #include "gui/GenCertDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/common/RSTreeWidgetItem.h"
 
 #include <QAbstractEventDispatcher>
@@ -48,22 +50,15 @@ ProfileManager::ProfileManager(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-//	setAttribute ( Qt::WA_DeleteOnClose, true );
-
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
 	ui.headerFrame->setHeaderText(tr("Profile Manager"));
 
 	connect(ui.identityTreeWidget, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT( identityTreeWidgetCostumPopupMenu(QPoint)));
 	connect(ui.identityTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(identityItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
-//	connect(ui.newIdentity_PB, SIGNAL(clicked()), this, SLOT(newIdentity()));
-//	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
-//	ui.newIdentity_PB->hide() ;
-//	ui.importIdentity_PB->hide() ;
-
+//	ui.exportIdentity_PB->setEnabled(false);
 	fillIdentities();
-	ui.exportIdentity_PB->setEnabled(false);
 }
 
 void ProfileManager::identityTreeWidgetCostumPopupMenu(QPoint)
@@ -90,6 +85,8 @@ void ProfileManager::fillIdentities()
 	ui.identityTreeWidget->setColumnWidth(COLUMN_NAME, 200);
 	ui.identityTreeWidget->setColumnWidth(COLUMN_EMAIL, 200);
 
+	RsPgpId own_pgp_id = rsPeers->getGPGOwnId() ;
+
 	std::cerr << "Finding PGPUsers" << std::endl;
 
 	QTreeWidget *identityTreeWidget = ui.identityTreeWidget;
@@ -100,7 +97,7 @@ void ProfileManager::fillIdentities()
     std::list<RsPgpId>::iterator it;
 
 	if (RsAccounts::GetPGPLogins(pgpIds)) {
-		for (it = pgpIds.begin(); it != pgpIds.end(); it++) {
+		for (it = pgpIds.begin(); it != pgpIds.end(); ++it) {
 			std::string name, email;
 			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
@@ -111,6 +108,12 @@ void ProfileManager::fillIdentities()
 			item -> setText(COLUMN_EMAIL, QString::fromUtf8(email.c_str()));
 			item -> setText(COLUMN_GID, gid);
 			identityTreeWidget->addTopLevelItem(item);
+
+			if(own_pgp_id == *it) 
+			{
+				item->setSelected(true) ;
+				ui.exportIdentity_PB->setEnabled(true);
+			}
 		}
 	}
 
@@ -134,9 +137,7 @@ void ProfileManager::exportIdentity()
 	if (fname.isNull())
 		return;
 
-	if (QFileInfo(fname).suffix().isEmpty()) {
-		fname += ".asc";
-	}
+	if (fname.right(4).toUpper() != ".ASC") fname += ".asc";
 
 	if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
 		QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
@@ -146,7 +147,10 @@ void ProfileManager::exportIdentity()
 
 void ProfileManager::importIdentity()
 {
-	QString fname = QFileDialog::getOpenFileName(this,tr("Import Identity"), "",tr("RetroShare Identity files (*.asc)")) ;
+    QString fname ;
+
+    if(!misc::getOpenFileName(this,RshareSettings::LASTDIR_CERT,tr("Import Identity"), tr("RetroShare Identity files (*.asc)"),fname))
+            return ;
 
 	if(fname.isNull())
 		return ;
@@ -166,7 +170,7 @@ void ProfileManager::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromUtf8(name.c_str())+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new location.")) ;
+		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromUtf8(name.c_str())+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
 	}
 
 	fillIdentities();

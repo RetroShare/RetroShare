@@ -51,14 +51,16 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
         //QTimer::singleShot(5000, this, SLOT(timerEvent()));
 }
 
-PhotoSlideShow::~PhotoSlideShow(){
-
+PhotoSlideShow::~PhotoSlideShow()
+{
     std::map<RsGxsMessageId, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
 
-    for(; mit != mPhotos.end(); mit++)
+    for(; mit != mPhotos.end(); ++mit)
     {
         delete mit->second;
     }
+
+    delete(mPhotoQueue);
 }
 
 void PhotoSlideShow::showPhotoDetails()
@@ -91,7 +93,7 @@ void PhotoSlideShow::moveRight()
 		return;
 	}
 
-	mImageIdx++;
+	++mImageIdx;
 	if (mImageIdx >= mPhotos.size())
 	{
 		mImageIdx = 0;
@@ -130,7 +132,7 @@ void PhotoSlideShow::timerEvent()
 		return;
 	}
 
-	mImageIdx++;
+	++mImageIdx;
 	if (mImageIdx >= mPhotos.size())
 	{
 		mImageIdx = 0;
@@ -157,7 +159,7 @@ void PhotoSlideShow::loadImage()
 
 	//std::map<std::string, RsPhotoPhoto *>::iterator it;
     std::map<int, RsGxsMessageId>::iterator it;
-	for(it = mPhotoOrder.begin(); it != mPhotoOrder.end(); it++, i++)
+	for(it = mPhotoOrder.begin(); it != mPhotoOrder.end(); ++it, ++i)
 	{
 		if (i == mImageIdx)
 		{
@@ -240,12 +242,12 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
         PhotoResult::iterator mit = res.begin();
 
 
-        for(; mit != res.end(); mit++)
+        for(; mit != res.end(); ++mit)
         {
             std::vector<RsPhotoPhoto>& photoV = mit->second;
             std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
             int i = 0;
-            for(; vit != photoV.end(); vit++)
+            for(; vit != photoV.end(); ++vit)
             {
                 RsPhotoPhoto& photo = *vit;
                 RsPhotoPhoto *ptr = new RsPhotoPhoto;
@@ -297,7 +299,7 @@ void PhotoSlideShow::setFullScreen()
   if (!isFullScreen()) {
     // hide menu & toolbars
 
-#ifdef Q_WS_X11
+#ifdef Q_OS_LINUX
     show();
     raise();
     setWindowState( windowState() | Qt::WindowFullScreen );

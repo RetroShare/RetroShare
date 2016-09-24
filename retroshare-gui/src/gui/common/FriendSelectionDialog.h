@@ -8,26 +8,26 @@
 class FriendSelectionDialog : public QDialog
 {
 	public:
-        static std::list<RsPgpId> selectFriends_PGP(QWidget *parent,const QString& caption,const QString& header_string,
+        static std::set<RsPgpId> selectFriends_PGP(QWidget *parent,const QString& caption,const QString& header_string,
                                 FriendSelectionWidget::Modus  modus   = FriendSelectionWidget::MODUS_MULTI,
                                 FriendSelectionWidget::ShowTypes = FriendSelectionWidget::SHOW_GROUP,
-                                const std::list<RsPgpId>& pre_selected_ids = std::list<RsPgpId>()) ;
+                                const std::set<RsPgpId>& pre_selected_ids = std::set<RsPgpId>()) ;
 
-        static std::list<RsPeerId> selectFriends_SSL(QWidget *parent,const QString& caption,const QString& header_string,
+        static std::set<RsPeerId> selectFriends_SSL(QWidget *parent,const QString& caption,const QString& header_string,
                                 FriendSelectionWidget::Modus  modus   = FriendSelectionWidget::MODUS_MULTI,
                                 FriendSelectionWidget::ShowTypes = FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL,
-                                const std::list<RsPeerId>& pre_selected_ids = std::list<RsPeerId>()) ;
+                                const std::set<RsPeerId>& pre_selected_ids = std::set<RsPeerId>()) ;
 
-        static std::list<RsGxsId> selectFriends_GXS(QWidget *parent,const QString& caption,const QString& header_string,
+        static std::set<RsGxsId> selectFriends_GXS(QWidget *parent,const QString& caption,const QString& header_string,
                                 FriendSelectionWidget::Modus  modus   = FriendSelectionWidget::MODUS_MULTI,
                                 FriendSelectionWidget::ShowTypes = FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_GXS,
-                                const std::list<RsGxsId>& pre_selected_ids = std::list<RsGxsId>()) ;
+                                const std::set<RsGxsId>& pre_selected_ids = std::set<RsGxsId>()) ;
  
     private:
 		virtual ~FriendSelectionDialog() ;
 		FriendSelectionDialog(QWidget *parent,const QString& header_string,FriendSelectionWidget::Modus modus,FriendSelectionWidget::ShowTypes show_type,
 																	FriendSelectionWidget::IdType pre_selected_id_type,
-																	const std::list<std::string>& pre_selected_ids) ;
+                                                                    const std::set<std::string>& pre_selected_ids) ;
 
 		FriendSelectionWidget *friends_widget ;
 };

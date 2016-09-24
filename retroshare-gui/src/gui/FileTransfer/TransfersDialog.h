@@ -29,8 +29,9 @@
 
 #include "ui_TransfersDialog.h"
 
-#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
+#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
 
+class QShortcut;
 class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
@@ -198,7 +199,6 @@ private:
     QAction *chunkProgressiveAct;
     QAction *chunkStreamingAct;
     QAction *detailsFileAct;
-    QAction *toggleShowCacheTransfersAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
     QAction *expandAllAct;
@@ -239,11 +239,15 @@ private:
 
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
+    
+      QString downloads;
+      QString uploads;
+
+    QShortcut *mShortcut ;
 
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;
 
-	 bool _show_cache_transfers ;
 public slots:
 	// these two functions add entries to the transfers dialog, and return the row id of the entry modified/added
 	//
@@ -253,7 +257,6 @@ public slots:
     int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
 
     void showFileDetails() ;
-	 void toggleShowCacheTransfers() ;
 
     double getProgress(int row, QStandardItemModel *model);
     double getSpeed(int row, QStandardItemModel *model);

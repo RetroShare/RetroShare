@@ -40,16 +40,17 @@ class DNSResolver ;
 
 
 /* order of attempts ... */
-const uint32_t RS_NET_CONN_TCP_ALL             = 0x000f;
-const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
+const uint32_t RS_NET_CONN_TCP_ALL             = 0x00ff;
+const uint32_t RS_NET_CONN_UDP_ALL             = 0x0f00;
  
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
-const uint32_t RS_NET_CONN_TCP_HIDDEN 	       = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_TOR      = 0x0008;
+const uint32_t RS_NET_CONN_TCP_HIDDEN_I2P      = 0x0010;
 
-const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
-const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0100;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0200; /* coming soon */
 
 // These are set in pqipersongroup.
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
@@ -101,7 +102,8 @@ class peerConnectState
 	bool dhtVisible;
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
-        time_t lastavailable;
+	bool actAsServer;
+	time_t lastavailable;
 	time_t lastattempt;
 
 	std::string name;
@@ -111,9 +113,9 @@ class peerConnectState
 	uint32_t    linkType;
 
 	uint32_t		source; /* most current source */
-	peerAddrInfo		dht;
-	peerAddrInfo		disc;
-	peerAddrInfo		peer;
+	peerAddrInfo	dht;
+	peerAddrInfo	disc;
+	peerAddrInfo	peer;
 
 	struct sockaddr_storage connectaddr; // current connection address. Can be local or external.
 
@@ -127,11 +129,10 @@ class peerConnectState
         time_t deniedTS;
 	bool deniedInConnAttempt; /* is below valid */
 	peerConnectAddress deniedConnectionAttempt;
-
 };
 
 class p3tunnel; 
-class RsPeerGroupItem;
+class RsPeerGroupItem_deprecated;
 class RsGroupInfo;
 
 class p3PeerMgr;
@@ -171,7 +172,7 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
 					std::string &domain_addr, uint16_t &domain_port) = 0;
 	
-virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
+virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
 virtual bool	retryConnect(const RsPeerId &id) = 0;
 
 virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
@@ -185,6 +186,7 @@ virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
 virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
+virtual bool 	checkPotentialAddr(const struct sockaddr_storage &addr, time_t age)=0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
@@ -229,7 +231,7 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth, 
 					std::string &domain_addr, uint16_t &domain_port);
 	
-virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
+virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
 virtual bool	retryConnect(const RsPeerId &id);
 
 virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
@@ -256,11 +258,14 @@ virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state); //
 /************************************************************************************************/
 
         p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr);
+        virtual ~p3LinkMgrIMPL();
 
 void 	tick();
 
 	/* THIS COULD BE ADDED TO INTERFACE */
 void    setFriendVisibility(const RsPeerId &id, bool isVisible);
+
+    void disconnectFriend(const RsPeerId& id) ;
 
 	/* add/remove friends */
 virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible);
@@ -268,6 +273,7 @@ int 	removeFriend(const RsPeerId &ssl_id);
 
 void 	printPeerLists(std::ostream &out);
 
+virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, time_t age);
 protected:
 	/* THESE CAN PROBABLY BE REMOVED */
 //bool	shutdown(); /* blocking shutdown call */
@@ -296,7 +302,7 @@ void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struc
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
 void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
-void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
+void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t type, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
@@ -305,7 +311,7 @@ bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAdd
 
 
 private:
-	// These should have there own Mutex Protection,
+	// These should have their own Mutex Protection,
 	//p3tunnel *mP3tunnel;
 	DNSResolver *mDNSResolver ;
 
@@ -332,9 +338,6 @@ private:
 
 	std::map<RsPeerId, peerConnectState> mFriendList;
 	std::map<RsPeerId, peerConnectState> mOthersList;
-
-	std::list<RsPeerGroupItem *> groupList;
-	uint32_t lastGroupId;
 
 	/* relatively static list of banned ip addresses */
 	std::list<struct sockaddr_storage> mBannedIpList;

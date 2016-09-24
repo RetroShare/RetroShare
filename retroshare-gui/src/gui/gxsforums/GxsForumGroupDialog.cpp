@@ -33,6 +33,7 @@ const uint32_t ForumCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 			GXS_GROUP_FLAGS_SHAREKEYS     |
+			GXS_GROUP_FLAGS_ANTI_SPAM     |
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
 			// GXS_GROUP_FLAGS_COMMENTS      |
 			0);
@@ -46,7 +47,7 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 			//GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
 			//GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
 			
-			//GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
+			//GXS_GROUP_DEFAULTS_PERSONAL_PGP         |
 			GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
 			//GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
 			
@@ -73,7 +74,7 @@ void GxsForumGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Forum"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Forum"));
@@ -85,12 +86,12 @@ void GxsForumGroupDialog::initUi()
 	}
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Forum Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));
+    setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/konversation64.png");
+	return QPixmap(":/icons/png/forums.png");
 }
 
 bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

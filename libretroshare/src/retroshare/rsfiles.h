@@ -36,9 +36,7 @@
 class RsFiles;
 extern RsFiles  *rsFiles;
 
-class Expression;
-class CacheStrapper ;
-class CacheTransfer;
+namespace RsRegularExpression { class Expression; }
 
 /* These are used mainly by ftController at the moment */
 const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
@@ -65,26 +63,26 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 
 // Flags used when requesting info about transfers, mostly to filter out the result.
 //
-const FileSearchFlags RS_FILE_HINTS_CACHE	 		       	 ( 0x00000001 );
-const FileSearchFlags RS_FILE_HINTS_EXTRA	 		       	 ( 0x00000002 );
-const FileSearchFlags RS_FILE_HINTS_LOCAL	 		       	 ( 0x00000004 );
-const FileSearchFlags RS_FILE_HINTS_REMOTE	 		       ( 0x00000008 );
+const FileSearchFlags RS_FILE_HINTS_CACHE_deprecated	    	 ( 0x00000001 );
+const FileSearchFlags RS_FILE_HINTS_EXTRA	 		    	 ( 0x00000002 );
+const FileSearchFlags RS_FILE_HINTS_LOCAL	 		    	 ( 0x00000004 );
+const FileSearchFlags RS_FILE_HINTS_REMOTE	 		     ( 0x00000008 );
 const FileSearchFlags RS_FILE_HINTS_DOWNLOAD		       	 ( 0x00000010 );
-const FileSearchFlags RS_FILE_HINTS_UPLOAD	 		       ( 0x00000020 );
-const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY	          ( 0x01000000 );
+const FileSearchFlags RS_FILE_HINTS_UPLOAD	 		     ( 0x00000020 );
+const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY	         ( 0x01000000 );
 
-const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE           ( 0x00000080 );// anonymously shared over network
-const FileSearchFlags RS_FILE_HINTS_BROWSABLE              ( 0x00000100 );// browsable by friends
-const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000180 );// OR of the last two flags. Used to filter out.
+const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE          ( 0x00000080 );// anonymously shared over network
+const FileSearchFlags RS_FILE_HINTS_BROWSABLE             ( 0x00000100 );// browsable by friends
+const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK       ( 0x00000180 );// OR of the last two flags. Used to filter out.
 
 // Flags used when requesting a transfer
 //
 const TransferRequestFlags RS_FILE_REQ_ANONYMOUS_ROUTING   ( 0x00000040 ); // Use to ask turtle router to download the file.
 const TransferRequestFlags RS_FILE_REQ_ASSUME_AVAILABILITY ( 0x00000200 ); // Assume full source availability. Used for cache files.
-const TransferRequestFlags RS_FILE_REQ_CACHE               ( 0x00000400 ); // Assume full source availability. Used for cache files.
+const TransferRequestFlags RS_FILE_REQ_CACHE_deprecated    ( 0x00000400 ); // Assume full source availability. Used for cache files.
 const TransferRequestFlags RS_FILE_REQ_EXTRA               ( 0x00000800 );
 const TransferRequestFlags RS_FILE_REQ_MEDIA	              ( 0x00001000 );
-const TransferRequestFlags RS_FILE_REQ_BACKGROUND	        ( 0x00002000 ); // To download slowly.
+const TransferRequestFlags RS_FILE_REQ_BACKGROUND	          ( 0x00002000 ); // To download slowly.
 const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// disable searching for potential direct sources.
 
 // const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS 
@@ -99,7 +97,7 @@ struct SharedDirInfo
 	std::string filename ;
 	std::string virtualname ;
 	FileStorageFlags shareflags ;		// DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | ...
-	std::list<std::string> parent_groups ;
+    std::list<RsNodeGroupId> parent_groups ;
 };
 
 class RsFiles
@@ -109,9 +107,22 @@ class RsFiles
 		RsFiles() { return; }
 		virtual ~RsFiles() { return; }
 
-		/****************************************/
-		/* download */
-
+        /**
+         * Provides file data for the gui: media streaming or rpc clients.
+         * It may return unverified chunks. This allows streaming without having to wait for hashes or completion of the file.
+         * This function returns an unspecified amount of bytes. Either as much data as available or a sensible maximum. Expect a block size of around 1MiB.
+         * To get more data, call this function repeatedly with different offsets.
+         * Returns false in case
+         * - the files is not available on the local node
+         * - not downloading
+         * - the requested data was not downloaded yet
+         * - end of file was reached
+         * @param hash hash of a file. The file has to be available on this node or it has to be in downloading state.
+         * @param offset where the desired block starts
+     * @param requested_size size of pre-allocated data. Will be updated by the function.
+         * @param data pre-allocated memory chunk of size 'requested_size' by the client
+         */
+        virtual bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data)=0;
 
 		/***
 		 *  Control of Downloads.
@@ -134,8 +145,6 @@ class RsFiles
 		/***
 		 * Control of Downloads Priority.
 		 ***/
-		virtual uint32_t getMinPrioritizedTransfers() = 0 ;
-		virtual void setMinPrioritizedTransfers(uint32_t s) = 0 ;
 		virtual uint32_t getQueueSize() = 0 ;
 		virtual void setQueueSize(uint32_t s) = 0 ;
 		virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove mv) = 0;
@@ -147,7 +156,7 @@ class RsFiles
 		/***
 		 * Download / Upload Details.
 		 ***/
-		virtual bool FileDownloads(std::list<RsFileHash> &hashs) = 0;
+        virtual void FileDownloads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
 
@@ -173,12 +182,13 @@ class RsFiles
 		 */
 		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
 		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
-		virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
+        virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) =0;
+        virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
+        virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
+        virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 
 		/***
 		 * Utility Functions.
@@ -192,6 +202,8 @@ class RsFiles
 		/***
 		 * Directory Control
 		 ***/
+        virtual void requestDirUpdate(void *ref) =0 ;			// triggers the update of the given reference. Used when browsing.
+
 		virtual void    setDownloadDirectory(std::string path) = 0;
 		virtual void    setPartialsDirectory(std::string path) = 0;
 		virtual std::string getDownloadDirectory() = 0;
@@ -201,16 +213,11 @@ class RsFiles
 		virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
-		virtual void	setRememberHashFilesDuration(uint32_t days) = 0 ;
-		virtual uint32_t rememberHashFilesDuration() const = 0 ;
-		virtual void   clearHashCache() = 0 ;
-				virtual bool rememberHashFiles() const =0;
-		virtual void setRememberHashFiles(bool) =0;
-				virtual void setWatchPeriod(int minutes) =0;
-		virtual int watchPeriod() const =0;
 
-		virtual CacheStrapper *getCacheStrapper() =0;
-		virtual CacheTransfer *getCacheTransfer() =0;
+        virtual void setWatchPeriod(int minutes) =0;
+        virtual void setWatchEnabled(bool b) =0;
+        virtual int watchPeriod() const =0;
+        virtual bool watchEnabled() =0;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;

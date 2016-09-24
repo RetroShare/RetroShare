@@ -229,11 +229,21 @@ class RsFileTransferSerialiser: public RsSerialType
 
 		virtual uint32_t size(RsItem *item)
 		{
-			return dynamic_cast<RsFileTransferItem*>(item)->serial_size() ;
+			RsFileTransferItem *ftitem = dynamic_cast<RsFileTransferItem *>(item);
+			if (!ftitem)
+			{
+				return 0;
+			}
+			return ftitem->serial_size() ;
 		}
 		virtual bool serialise(RsItem *item, void *data, uint32_t *size)
 		{
-			return dynamic_cast<RsFileTransferItem*>(item)->serialise(data,*size) ;
+			RsFileTransferItem *ftitem = dynamic_cast<RsFileTransferItem *>(item);
+			if (!ftitem)
+			{
+				return false;
+			}
+			return ftitem->serialise(data,*size) ;
 		}
 		virtual RsFileTransferItem *deserialise(void *data, uint32_t *size);
 

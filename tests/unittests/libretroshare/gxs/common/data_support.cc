@@ -32,6 +32,7 @@ bool operator ==(const RsGxsGrpMetaData& l, const RsGxsGrpMetaData& r)
     if(!(l.keys == r.keys)) return false;
     if(l.mGroupFlags != r.mGroupFlags) return false;
     if(l.mPublishTs != r.mPublishTs) return false;
+    if(l.mSignFlags != r.mSignFlags) return false;
     if(l.mAuthorId != r.mAuthorId) return false;
     if(l.mGroupName != r.mGroupName) return false;
     if(l.mGroupId != r.mGroupId) return false;
@@ -107,7 +108,7 @@ void init_item(RsGxsGrpMetaData* metaGrp)
 
     metaGrp->mSubscribeFlags = rand()%2251;
     metaGrp->mPop = rand()%5262;
-    metaGrp->mMsgCount = rand()%2421;
+    metaGrp->mVisibleMsgCount = rand()%2421;
     metaGrp->mLastPost = rand()%2211;
     metaGrp->mReputationCutOff = rand()%5262;
 
@@ -175,21 +176,21 @@ RsSerialType* init_item(RsNxsMsg& nxm)
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncGrp& rsg)
+RsSerialType* init_item(RsNxsSyncGrpReqItem& rsg)
 {
     rsg.clear();
-    rsg.flag = RsNxsSyncGrp::FLAG_USE_SYNC_HASH;
+    rsg.flag = RsNxsSyncGrpItem::FLAG_USE_SYNC_HASH;
     rsg.createdSince = rand()%2423;
     randString(3124,rsg.syncHash);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsSyncMsg& rsgm)
+RsSerialType* init_item(RsNxsSyncMsgReqItem& rsgm)
 {
     rsgm.clear();
 
-    rsgm.flag = RsNxsSyncMsg::FLAG_USE_SYNC_HASH;
+    rsgm.flag = RsNxsSyncMsgItem::FLAG_USE_SYNC_HASH;
     rsgm.createdSince = rand()%24232;
     rsgm.transactionNumber = rand()%23;
     init_random(rsgm.grpId) ;
@@ -222,7 +223,7 @@ RsSerialType* init_item(RsNxsSyncMsgItem& rsgml)
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
-RsSerialType* init_item(RsNxsTransac& rstx){
+RsSerialType* init_item(RsNxsTransacItem &rstx){
 
     rstx.clear();
 
@@ -235,7 +236,7 @@ RsSerialType* init_item(RsNxsTransac& rstx){
 }
 
 
-bool operator==(const RsNxsSyncGrp& l, const RsNxsSyncGrp& r)
+bool operator==(const RsNxsSyncGrpReqItem& l, const RsNxsSyncGrpReqItem& r)
 {
 
     if(l.syncHash != r.syncHash) return false;
@@ -246,7 +247,7 @@ bool operator==(const RsNxsSyncGrp& l, const RsNxsSyncGrp& r)
     return true;
 }
 
-bool operator==(const RsNxsSyncMsg& l, const RsNxsSyncMsg& r)
+bool operator==(const RsNxsSyncMsgReqItem& l, const RsNxsSyncMsgReqItem& r)
 {
 
     if(l.flag != r.flag) return false;
@@ -278,11 +279,12 @@ bool operator==(const RsNxsSyncMsgItem& l, const RsNxsSyncMsgItem& r)
     return true;
 }
 
-bool operator==(const RsNxsTransac& l, const RsNxsTransac& r){
+bool operator==(const RsNxsTransacItem& l, const RsNxsTransacItem& r){
 
     if(l.transactFlag != r.transactFlag) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
-    if(l.timestamp != r.timestamp) return false;
+    // timestamp is not serialised, see rsnxsitems.h
+    //if(l.timestamp != r.timestamp) return false;
     if(l.nItems != r.nItems) return false;
 
 

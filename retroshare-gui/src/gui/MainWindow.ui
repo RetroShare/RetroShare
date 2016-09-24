@@ -14,24 +14,30 @@
    <string notr="true">MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
-     <number>0</number>
-    </property>
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <property name="handleWidth">
-       <number>2</number>
-      </property>
       <widget class="QListWidget" name="listWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>100</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
        </property>
        <property name="alternatingRowColors">
         <bool>false</bool>
@@ -61,7 +67,7 @@
         <enum>QListView::SinglePass</enum>
        </property>
        <property name="spacing">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="viewMode">
         <enum>QListView::ListMode</enum>
@@ -76,7 +82,20 @@
         <number>-1</number>
        </property>
       </widget>
-      <widget class="MainPageStack" name="stackPages" native="true"/>
+      <widget class="MainPageStack" name="stackPages" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>

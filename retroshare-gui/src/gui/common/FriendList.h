@@ -49,20 +49,32 @@ class FriendList : public RsAutoUpdatePage
     Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
 
 public:
+    enum Column
+    {
+        COLUMN_NAME         = 0,
+        COLUMN_LAST_CONTACT = 1,
+        COLUMN_IP           = 2
+    };
+
+public:
     explicit FriendList(QWidget *parent = 0);
     ~FriendList();
 
     // Add a tool button to the tool area
     void addToolButton(QToolButton *toolButton);
-    void processSettings(bool bLoad);
-    void addGroupToExpand(const std::string &groupId);
-    bool getExpandedGroups(std::set<std::string> &groups) const;
+    void processSettings(bool load);
+    void addGroupToExpand(const RsNodeGroupId &groupId);
+    bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
     void addPeerToExpand(const std::string &gpgId);
     bool getExpandedPeers(std::set<std::string> &peers) const;
 
     std::string getSelectedGroupId() const;
 
     virtual void updateDisplay();
+    void setColumnVisible(Column column, bool visible);
+
+    void sortByColumn(Column column, Qt::SortOrder sortOrder);
+    bool isSortByState();
 
     QColor textColorGroup() const { return mTextColorGroup; }
     QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
@@ -80,22 +92,15 @@ public:
 
 public slots:
     void filterItems(const QString &text);
+    void sortByState(bool sort);
 
-    void setBigName(bool bigName); // show customStateString in second line of the name cell
     void setShowGroups(bool show);
     void setHideUnconnected(bool hidden);
-    void setHideState(bool hidden);
-    void setShowStatusColumn(bool show);
-    void setShowLastContactColumn(bool show);
-    void setShowIPColumn(bool show);
-    void setShowAvatarColumn(bool show);
-    void setRootIsDecorated(bool show);
-    void setSortByName();
-    void setSortByState();
-    void setSortByLastContact();
-    void setSortByIP();
-    void sortPeersAscendingOrder();
-    void sortPeersDescendingOrder();
+    void setShowState(bool show);
+
+private slots:
+    void peerTreeColumnVisibleChanged(int column, bool visible);
+    void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
 
 protected:
     void changeEvent(QEvent *e);
@@ -103,42 +108,46 @@ protected:
 
 private:
     Ui::FriendList *ui;
-    RSTreeWidgetItemCompareRole *m_compareRole;
+    RSTreeWidgetItemCompareRole *mCompareRole;
+    QAction *mActionSortByState;
 
     // Settings for peer list display
-    bool mBigName;
     bool mShowGroups;
-    bool mHideState;
+    bool mShowState;
     bool mHideUnconnected;
 
-    QString filterText;
+    QString mFilterText;
 
     bool groupsHasChanged;
-    std::set<std::string> *openGroups;
-    std::set<std::string> *openPeers;
+    std::set<RsNodeGroupId> openGroups;
+#warning this would needs an ID, not a std::string.
+    std::set<std::string>   openPeers;
 
     /* Color definitions (for standard see qss.default) */
     QColor mTextColorGroup;
     QColor mTextColorStatus[RS_STATUS_COUNT];
 
     QTreeWidgetItem *getCurrentPeer() const;
-    static bool filterItem(QTreeWidgetItem *item, const QString &text);
-    void updateHeader();
-    void initializeHeader(bool afterLoadSettings);
     void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
+
+    bool getOrCreateGroup(const std::string &name, const uint &flag, RsNodeGroupId &id);
+    bool getGroupIdByName(const std::string &name, RsNodeGroupId &id);
+
+    bool importExportFriendlistFileDialog(QString &fileName, bool import);
+    bool exportFriendlist(QString &fileName);
+    bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
 
 private slots:
     void groupsChanged();
     void insertPeers();
-    void peerTreeWidgetCostumPopupMenu();
-    void updateAvatar(const QString &);
+    void peerTreeWidgetCustomPopupMenu();
     void updateMenu();
 
     void pastePerson();
 
     void connectfriend();
     void configurefriend();
-    void chatfriend(QTreeWidgetItem *);
+    void chatfriend(QTreeWidgetItem *item);
     void chatfriendproxy();
     //void copyLink();
     void copyFullCertificate();
@@ -158,6 +167,9 @@ private slots:
 
     void editGroup();
     void removeGroup();
+
+    void exportFriendlistClicked();
+    void importFriendlistClicked();
 
 //	 void inviteToLobby();
 //	 void createchatlobby();

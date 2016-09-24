@@ -92,7 +92,7 @@ int     PhotoDrop::getPhotoCount()
 	const QObjectList &items = children();
 	QObjectList::const_iterator qit;
 	int count = 0;
-	for(qit = items.begin(); qit != items.end(); qit++)
+	for(qit = items.begin(); qit != items.end(); ++qit)
 	{
 		PhotoItem *item = dynamic_cast<PhotoItem *>(*qit);
 		if (item)
@@ -100,7 +100,7 @@ int     PhotoDrop::getPhotoCount()
 			std::cerr << "PhotoDrop::getPhotoCount() item: " << item;
 			std::cerr << std::endl;
 
-			count++;
+			++count;
 		}
 		else
 		{
@@ -124,7 +124,7 @@ PhotoItem *PhotoDrop::getPhotoIdx(int idx)
 	QObjectList::const_iterator qit;
 
 	int count = 0;
-	for(qit = items.begin(); qit != items.end(); qit++)
+	for(qit = items.begin(); qit != items.end(); ++qit)
 	{
 		PhotoItem *item = dynamic_cast<PhotoItem *>(*qit);
 		if (item)
@@ -136,7 +136,7 @@ PhotoItem *PhotoDrop::getPhotoIdx(int idx)
 				return item;
 			}
 
-			count++;
+			++count;
 		}
 		else
 		{
@@ -175,7 +175,7 @@ void PhotoDrop::reorderPhotos()
 
 	int count = glayout->count();
 	int i = 0;
-	for(i = 0; i < count; i++)
+	for(i = 0; i < count; ++i)
 	{
 		QLayoutItem *litem = glayout->itemAt(i);
 		if (!litem)
@@ -246,12 +246,12 @@ void PhotoDrop::reorderPhotos()
 	std::cerr << std::endl;
 
 
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
+	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
 	{
 		glayout->removeWidget(pit->second);
 	}
 	
-	for(pit = photoItems.begin(), i = 0; pit != photoItems.end(); pit++, i++)
+	for(pit = photoItems.begin(), i = 0; pit != photoItems.end(); ++pit, ++i)
 	{
 		int row = i / mColumns;
 		int column = i % mColumns;
@@ -400,7 +400,7 @@ void PhotoDrop::moveRight()
 
 	if (swapColumn == mColumns)
 	{
-		swapRow++;
+		++swapRow;
 		swapColumn = 0;
 	}
 
@@ -504,7 +504,7 @@ void PhotoDrop::clearPhotos()
 	std::list<PhotoItem *> photoItems;
 	std::list<PhotoItem *>::iterator pit;
 
-	for(qit = items.begin(); qit != items.end(); qit++)
+	for(qit = items.begin(); qit != items.end(); ++qit)
 	{
 		PhotoItem *item = dynamic_cast<PhotoItem *>(*qit);
 		if (item)
@@ -529,7 +529,7 @@ void PhotoDrop::clearPhotos()
 		return;
 	}
 
-	for(pit = photoItems.begin(); pit != photoItems.end(); pit++)
+	for(pit = photoItems.begin(); pit != photoItems.end(); ++pit)
 	{
 		PhotoItem *item = *pit;
 		glayout->removeWidget(item);

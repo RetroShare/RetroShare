@@ -79,7 +79,7 @@ ShareManager::ShareManager()
     ui.removeButton->setEnabled(false);
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
-    QHeaderView_setSectionResizeMode(header, COLUMN_PATH, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
 
     //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
     //header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);
@@ -141,14 +141,14 @@ void ShareManager::load()
     listWidget->setRowCount(dirs.size());
 
     int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); it++,++row)
+    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
     {
         listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
         listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8((*it).virtualname.c_str())));
 
 		  GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,(*it).shareflags);
 
-		  listWidget->setRowHeight(row, 32);
+          listWidget->setRowHeight(row, 32 * QFontMetricsF(font()).height()/14.0);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
 		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
@@ -157,7 +157,7 @@ void ShareManager::load()
 		  //connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
     }
 
-	 listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132) ;
+     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
 
     //ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 
@@ -243,13 +243,13 @@ void ShareManager::updateGroups()
     rsFiles->getSharedDirectories(dirs);
 
     int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); it++,++row)
+    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
     {
         QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_GROUPS);
 
         QString group_string;
         int n = 0;
-        for (std::list<std::string>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
+        for (std::list<RsNodeGroupId>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
         {
             if (n>0)
                 group_string += ", " ;
@@ -276,12 +276,13 @@ void ShareManager::editShareDirectory()
         rsFiles->getSharedDirectories(dirs);
 
         std::list<SharedDirInfo>::const_iterator it;
-        for (it = dirs.begin(); it != dirs.end(); it++) {
+        for (it = dirs.begin(); it != dirs.end(); ++it) {
             if (it->filename == filename) {
                 /* file name found, show dialog */
                 ShareDialog sharedlg (it->filename, this);
                 sharedlg.setWindowTitle(tr("Edit Shared Folder"));
                 sharedlg.exec();
+                load();
                 break;
             }
         }
@@ -318,6 +319,7 @@ void ShareManager::showShareDialog()
 {
     ShareDialog sharedlg ("", this);
     sharedlg.exec();
+    load();
 }
 
 void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -357,7 +359,7 @@ void ShareManager::dropEvent(QDropEvent *event)
 	if (event->mimeData()->hasUrls()) {
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator it;
-		for (it = urls.begin(); it != urls.end(); it++) {
+		for (it = urls.begin(); it != urls.end(); ++it) {
 			QString localpath = it->toLocalFile();
 
 			if (localpath.isEmpty() == false) {
@@ -387,4 +389,6 @@ void ShareManager::dropEvent(QDropEvent *event)
 
 	event->setDropAction(Qt::CopyAction);
 	event->accept();
+
+    load();
 }

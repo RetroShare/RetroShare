@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
-    <height>682</height>
+    <width>935</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -56,14 +56,23 @@
         <set>QDockWidget::DockWidgetClosable</set>
        </property>
        <property name="windowTitle">
-        <string>Contacts</string>
+        <string>Address list:</string>
        </property>
        <widget class="QWidget" name="dockWidgetContents">
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="margin">
-          <number>1</number>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <item row="0" column="0">
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="filterComboBox"/>
+         </item>
+         <item>
           <widget class="FriendSelectionWidget" name="friendSelectionWidget" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -100,32 +109,8 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QCheckBox" name="onlyTrustedKeys">
-             <property name="text">
-              <string>Only show people you trusted</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="addToButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>&gt;&gt; To</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
@@ -137,7 +122,20 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Cc</string>
+                <string>Cc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addToButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>To</string>
                </property>
               </widget>
              </item>
@@ -150,7 +148,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Bcc</string>
+                <string>Bcc</string>
                </property>
               </widget>
              </item>
@@ -167,7 +165,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&gt;&gt; Recommend</string>
+                <string>Recommend this friend</string>
                </property>
               </widget>
              </item>
@@ -187,7 +185,7 @@
          <property name="verticalSpacing">
           <number>2</number>
          </property>
-         <item row="5" column="0">
+         <item row="4" column="0">
           <widget class="QFrame" name="toolBarFrame">
            <property name="maximumSize">
             <size>
@@ -202,7 +200,16 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
              <number>6</number>
             </property>
             <item row="0" column="0">
@@ -210,44 +217,6 @@
               <property name="horizontalSpacing">
                <number>1</number>
               </property>
-              <item row="0" column="12">
-               <widget class="QToolButton" name="imagebtn">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>167</width>
-                  <height>167</height>
-                 </size>
-                </property>
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="toolTip">
-                 <string>Add an Image</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="0">
                <widget class="QComboBox" name="comboStyle">
                 <property name="maximumSize">
@@ -328,9 +297,15 @@
                 <property name="toolTip">
                  <string>Font size</string>
                 </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
                </widget>
               </item>
-              <item row="0" column="4">
+              <item row="0" column="5">
                <widget class="QToolButton" name="sizeincreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -362,7 +337,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="5">
+              <item row="0" column="6">
                <widget class="QToolButton" name="sizedecreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -394,7 +369,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="6">
+              <item row="0" column="7">
                <widget class="QToolButton" name="boldbtn">
                 <property name="minimumSize">
                  <size>
@@ -435,7 +410,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="8">
+              <item row="0" column="9">
                <widget class="QToolButton" name="italicbtn">
                 <property name="minimumSize">
                  <size>
@@ -476,8 +451,8 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="10">
-               <widget class="QToolButton" name="colorbtn">
+              <item row="0" column="14">
+               <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -494,17 +469,27 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="toolTip">
-                 <string>Select Color</string>
+                 <string>Add an Image</string>
                 </property>
                 <property name="text">
                  <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
+              <item row="0" column="13">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -541,7 +526,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="9">
+              <item row="0" column="10">
                <widget class="QToolButton" name="codeButton">
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
@@ -567,7 +552,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="16">
+              <item row="0" column="17">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -580,27 +565,7 @@
                 </property>
                </spacer>
               </item>
-              <item row="0" column="3">
-               <widget class="QToolButton" name="emoticonButton">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="7">
+              <item row="0" column="8">
                <widget class="QToolButton" name="underlinebtn">
                 <property name="minimumSize">
                  <size>
@@ -641,6 +606,96 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="15">
+               <widget class="QToolButton" name="emoticonButton">
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="icon">
+                 <iconset resource="../emojione.qrc">
+                  <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QToolButton" name="colorbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="toolTip">
+                 <string>Set Text color</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QToolButton" name="color2btn">
+                <property name="toolTip">
+                 <string>Set Text background color</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="11">
+               <widget class="QToolButton" name="styleButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/format-list-unordered.png</normaloff>:/images/textedit/format-list-unordered.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>false</bool>
+                </property>
+                <property name="popupMode">
+                 <enum>QToolButton::MenuButtonPopup</enum>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -659,50 +714,219 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QTableWidget" name="recipientWidget">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item row="5" column="0">
+          <widget class="QFrame" name="distantFrame">
+           <property name="palette">
+            <palette>
+             <active>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </active>
+             <inactive>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>255</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </inactive>
+             <disabled>
+              <colorrole role="Base">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+              <colorrole role="Window">
+               <brush brushstyle="SolidPattern">
+                <color alpha="255">
+                 <red>255</red>
+                 <green>255</green>
+                 <blue>178</blue>
+                </color>
+               </brush>
+              </colorrole>
+             </disabled>
+            </palette>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>68</height>
-            </size>
+           <property name="autoFillBackground">
+            <bool>true</bool>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>68</height>
-            </size>
+           <property name="styleSheet">
+            <string notr="true"/>
            </property>
-           <property name="tabKeyNavigation">
-            <bool>false</bool>
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
            </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderDefaultSectionSize">
-            <number>22</number>
-           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="leftMargin">
+             <number>6</number>
+            </property>
+            <property name="topMargin">
+             <number>6</number>
+            </property>
+            <property name="rightMargin">
+             <number>6</number>
+            </property>
+            <property name="bottomMargin">
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="infoPixmap">
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="infoLabel">
+              <property name="text">
+               <string notr="true">Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="closeInfoFrameButton">
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Close</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton
+{
+ border-image: url(:/images/closenormal.png) 
+}
+                                
+QToolButton:hover 
+{
+border-image: url(:/images/closehover.png) 
+}
+                                
+QToolButton:pressed  {
+border-image: url(:/images/closepressed.png) 
+}</string>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
-         <item row="2" column="0" rowspan="2">
-          <layout class="QGridLayout" name="gridLayout_6">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetNoConstraint</enum>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_3">
+         <item row="2" column="0">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="3" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QPushButton" name="tagButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Tags</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../images.qrc">
+                 <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="tagLayout"/>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="sizeIncrement">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>Subject:</string>
              </property>
@@ -711,11 +935,30 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1" colspan="7">
-            <widget class="QLineEdit" name="titleEdit"/>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="titleEdit">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text">
               <string>Tags:</string>
              </property>
@@ -724,67 +967,67 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
-            <widget class="QPushButton" name="tagButton">
+           <item row="0" column="1">
+            <widget class="GxsIdChooser" name="respond_to_CB">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="toolTip">
-              <string>Tags</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
             </widget>
            </item>
-           <item row="1" column="3">
-            <layout class="QHBoxLayout" name="tagLayout"/>
-           </item>
-           <item row="1" column="4">
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>Respond to:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
+           <item row="0" column="0">
+            <widget class="QLabel" name="fromLabel">
+             <property name="minimumSize">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>60</width>
+               <height>0</height>
               </size>
              </property>
-            </spacer>
-           </item>
-           <item row="1" column="5">
-            <widget class="QComboBox" name="respond_to_CB"/>
-           </item>
-           <item row="1" column="6">
-            <widget class="QPushButton" name="signMessage_CB">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
              <property name="text">
-              <string/>
+              <string>From:</string>
              </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/stock_signature_ok.png</normaloff>:/images/stock_signature_ok.png</iconset>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="checkable">
-              <bool>true</bool>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QTableWidget" name="recipientWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>68</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>68</height>
+              </size>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>22</number>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -793,7 +1036,16 @@
        </widget>
        <widget class="QWidget" name="layoutWidget_1">
         <layout class="QGridLayout" name="layoutrecommended">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <property name="spacing">
@@ -809,7 +1061,6 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -869,8 +1120,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>892</width>
-     <height>25</height>
+     <width>935</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -992,14 +1243,16 @@
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>recipientWidget</tabstop>
   <tabstop>titleEdit</tabstop>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
-  <tabstop>addToButton</tabstop>
-  <tabstop>addCcButton</tabstop>
   <tabstop>addBccButton</tabstop>
   <tabstop>addRecommendButton</tabstop>
   <tabstop>comboSize</tabstop>
@@ -1009,6 +1262,7 @@
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../emojione.qrc"/>
  </resources>
  <connections/>
 </ui>

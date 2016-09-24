@@ -29,7 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 
-#define GXSCOMMENT_DEBUG	1
+//#define GXSCOMMENT_DEBUG	1
 
 
 uint32_t RsGxsCommentSerialiser::size(RsItem *item)
@@ -147,6 +147,7 @@ uint32_t RsGxsCommentSerialiser::sizeGxsCommentItem(RsGxsCommentItem *item)
 
 #ifdef GXSCOMMENT_DEBUG
 	std::cerr << "RsGxsCommentSerialiser::sizeGxsCommentItem() is: " << s << std::endl;
+	msg.print(std::cerr);
 #endif
 
 	return s;
@@ -288,10 +289,8 @@ std::ostream& RsGxsVoteItem::print(std::ostream& out, uint16_t indent)
 }
 
 
-uint32_t RsGxsCommentSerialiser::sizeGxsVoteItem(RsGxsVoteItem *item)
+uint32_t RsGxsCommentSerialiser::sizeGxsVoteItem(RsGxsVoteItem */*item*/)
 {
-
-	const RsGxsVote& msg = item->mMsg;
 	uint32_t s = 8; // header
 
 	s += 4; // vote flags.
