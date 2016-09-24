@@ -2288,7 +2288,9 @@ void p3IdService::requestIdsFromNet()
         }
         else
         {
+#ifdef DEBUG_IDS
             std::cerr << "(EE) no online peers among supply list in ID request for groupId " << cit->first << ". Keeping it until peers show up."<< std::endl;
+#endif
             ++cit ;
         }
     }
