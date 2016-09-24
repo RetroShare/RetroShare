@@ -210,8 +210,8 @@ int p3FileDatabase::tick()
         {
             if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
             {
-                P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
 #ifdef DEBUG_FILE_HIERARCHY
+                P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
                 mRemoteDirectories[i]->print();
 #endif
 
