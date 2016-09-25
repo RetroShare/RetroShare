@@ -144,7 +144,7 @@ public:
 
     bool searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results);
     int searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const ;
-    int searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const ;
+    int searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const ;		// does a logical OR between items of the list of terms
 
     bool check(std::string& error_string) const	;// checks consistency of storage.
 

@@ -11,6 +11,8 @@
 #include "folderiterator.h"
 #include "rsstring.h"
 
+#define DEBUG_FOLDER_ITERATOR 1
+
 namespace librs { namespace util {
 
 
@@ -59,57 +61,75 @@ FolderIterator::~FolderIterator()
 
 void FolderIterator::next()
 {
-    do {
-        if(!readdir())
-        {
-            validity = false ;
-            break ;
-        }
-
+    while(readdir())
+    {
         d_name(mFileName);
-    } while(mFileName == "." || mFileName == "..") ;
 
-    mFullPath = mFolderName + "/" + mFileName ;
+        if(mFileName == "." || mFileName == "..")
+            continue ;
 
-    struct stat64 buf ;
+        mFullPath = mFolderName + "/" + mFileName ;
+
+        struct stat64 buf ;
+
+#ifdef DEBUG_FOLDER_ITERATOR
+        std::cerr << "FolderIterator: next. Looking into file " << mFileName ;
+#endif
 
 #ifdef WINDOWS_SYS
-    std::wstring wfullname;
-    librs::util::ConvertUtf8ToUtf16(mFullPath, wfullname);
-    if ( 0 == _wstati64(wfullname.c_str(), &buf))
+        std::wstring wfullname;
+        librs::util::ConvertUtf8ToUtf16(mFullPath, wfullname);
+        if ( 0 == _wstati64(wfullname.c_str(), &buf))
 #else
-    if ( 0 == stat64(mFullPath.c_str(), &buf))
+        if ( 0 == stat64(mFullPath.c_str(), &buf))
 #endif
-    {
-        mFileModTime = buf.st_mtime ;
-        mStatInfoOk = true;
+        {
+            mFileModTime = buf.st_mtime ;
+            mStatInfoOk = true;
 
-        if (S_ISDIR(buf.st_mode))
-        {
-            mType = TYPE_DIR ;
-            mFileSize = 0 ;
-            mFileModTime = buf.st_mtime;
+            if (S_ISDIR(buf.st_mode))
+            {
+#ifdef DEBUG_FOLDER_ITERATOR
+                std::cerr << ": is a directory" << std::endl;
+#endif
+
+                mType = TYPE_DIR ;
+                mFileSize = 0 ;
+                mFileModTime = buf.st_mtime;
+
+                return ;
+            }
+
+            if (S_ISREG(buf.st_mode))
+            {
+#ifdef DEBUG_FOLDER_ITERATOR
+                std::cerr << ": is a file" << std::endl;
+#endif
+
+                mType = TYPE_FILE ;
+                mFileSize = buf.st_size;
+                mFileModTime = buf.st_mtime;
+
+                return ;
+            }
         }
-        else if (S_ISREG(buf.st_mode))
-        {
-            mType = TYPE_FILE ;
-            mFileSize = buf.st_size;
-            mFileModTime = buf.st_mtime;
-        }
-        else
-        {
-            mType = TYPE_UNKNOWN ;
-            mFileSize = 0 ;
-            mFileModTime = 0;
-        }
+
+#ifdef DEBUG_FOLDER_ITERATOR
+        std::cerr << ": is unknown skipping" << std::endl;
+#endif
+
+        mType = TYPE_UNKNOWN ;
+        mFileSize = 0 ;
+        mFileModTime = 0;
     }
-    else
-    {
-            mType = TYPE_UNKNOWN ;
-            mFileSize = 0 ;
-            mFileModTime = 0;
-            validity = false ;
-    }
+#ifdef DEBUG_FOLDER_ITERATOR
+    std::cerr << "End of directory." << std::endl;
+#endif
+
+    mType = TYPE_UNKNOWN ;
+    mFileSize = 0 ;
+    mFileModTime = 0;
+    validity = false ;
 }
 
 bool FolderIterator::readdir()
