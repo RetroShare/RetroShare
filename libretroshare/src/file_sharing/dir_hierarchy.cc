@@ -23,6 +23,7 @@
  *
  */
 #include <sstream>
+#include <algorithm>
 #include <time.h>
 #include "util/rsdir.h"
 #include "util/rsprint.h"
@@ -687,13 +688,12 @@ int InternalFileHierarchyStorage::searchTerms(const std::list<std::string>& term
             {
                 /* always ignore case */
                 const std::string &str2 = (*iter);
-#ifdef TODO
-                if(str1.end() != std::search( str1.begin(), str1.end(), str2.begin(), str2.end(), CompareCharIC() ))
+
+                if(str1.end() != std::search( str1.begin(), str1.end(), str2.begin(), str2.end(), RsRegularExpression::CompareCharIC() ))
                 {
-                    results.push_back(fit->second);
+                    results.push_back(it->second);
                     break;
                 }
-#endif
             }
         }
     return 0 ;
