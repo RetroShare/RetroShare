@@ -151,7 +151,7 @@ bool FileListIO::saveEncryptedDataToFile(const std::string& fname,const unsigned
 
     if(!AuthSSL::getAuthSSL()->encrypt( encryptedData, encDataLen, data,total_size, AuthSSL::getAuthSSL()->OwnId()))
     {
-        std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
+        std::cerr << "Cannot encrypt encrypted file. Something's wrong." << std::endl;
         return false;
     }
 
@@ -159,14 +159,14 @@ bool FileListIO::saveEncryptedDataToFile(const std::string& fname,const unsigned
 
     if(!F)
     {
-        std::cerr << "Cannot open encrypted file cache for writing: " << fname+".tmp" << std::endl;
+        std::cerr << "Cannot open encrypted file for writing: " << fname+".tmp" << std::endl;
 
         free(encryptedData);
         return false;
     }
     if(fwrite(encryptedData,1,encDataLen,F) != (uint32_t)encDataLen)
     {
-        std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
+        std::cerr << "Could not write entire encrypted file. Out of disc space??" << std::endl;
         fclose(F) ;
 
         free(encryptedData);
@@ -190,7 +190,7 @@ bool FileListIO::loadEncryptedDataFromFile(const std::string& fname,unsigned cha
 
     if(!RsDirUtil::checkFile( fname,file_size,false ) )
     {
-        std::cerr << "Encrypted hash cache file not present." << std::endl;
+        std::cerr << "Encrypted file " << fname << " not available." << std::endl;
         return false;
     }
 
@@ -204,7 +204,7 @@ bool FileListIO::loadEncryptedDataFromFile(const std::string& fname,unsigned cha
     FILE *F = fopen( fname.c_str(),"rb") ;
     if (!F)
     {
-       std::cerr << "Cannot open file for reading encrypted file cache, filename " << fname << std::endl;
+       std::cerr << "Cannot open encrypted file, filename " << fname << std::endl;
        return false;
     }
     if(fread(buffer,1,file_size,F) != file_size)
@@ -221,7 +221,7 @@ bool FileListIO::loadEncryptedDataFromFile(const std::string& fname,unsigned cha
 
     if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
     {
-       std::cerr << "Cannot decrypt encrypted file cache. Something's wrong." << std::endl;
+       std::cerr << "Cannot decrypt encrypted file. Something's wrong." << std::endl;
        return false;
     }
 

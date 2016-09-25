@@ -1262,7 +1262,9 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         RS_STACK_MUTEX(mFLSMtx) ;
         fi = locked_getFriendIndex(item->PeerId());
 
-        std::cerr << "  friend index is " << fi ;
+#ifdef DEBUG_P3FILELISTS
+        P3FILELISTS_DEBUG() << "  friend index is " << fi ;
+#endif
 
         // make sure we have a remote directory for that friend.
 

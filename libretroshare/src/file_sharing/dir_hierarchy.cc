@@ -982,7 +982,7 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
         mNodes.clear();
         mNodes.resize(n_nodes,NULL) ;
 
-        for(uint32_t i=0;i<mNodes.size();++i)
+        for(uint32_t i=0;i<mNodes.size() && buffer_offset < buffer_size;++i)	// only the 2nd condition really is needed. The first one ensures that the loop wont go forever.
         {
             unsigned char *node_section_data = NULL ;
             uint32_t node_section_size = 0 ;
