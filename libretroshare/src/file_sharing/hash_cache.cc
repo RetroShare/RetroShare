@@ -150,14 +150,12 @@ void HashStorage::data_tick()
 
             RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
-            if(!RsDirUtil::getFileHash(job.full_path, hash,size, this))
-                std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
-            else
+            if(RsDirUtil::getFileHash(job.full_path, hash,size, this))
+            {
+                // store the result
+
                 std::cerr << "done."<< std::endl;
 
-            // store the result
-
-            {
                 RS_STACK_MUTEX(mHashMtx) ;
                 HashStorageInfo& info(mFiles[job.full_path]);
 
@@ -168,9 +166,12 @@ void HashStorage::data_tick()
                 info.hash = hash;
 
                 mChanged = true ;
-                ++mHashCounter ;
                 mTotalHashedSize += size ;
             }
+            else
+                std::cerr << "ERROR: cannot hash file " << job.full_path << std::endl;
+
+            ++mHashCounter ;
         }
     }
     // call the client
