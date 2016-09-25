@@ -426,15 +426,12 @@ void p3FileDatabase::cleanup()
         }
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-            if(friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
+            if(mRemoteDirectories[i] != NULL && friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
             {
 
 #ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing file list of non friend " << mRemoteDirectories[i]->peerId() << std::endl;
 #endif
-
-                delete mRemoteDirectories[i];
-                mRemoteDirectories[i] = NULL ;
 
                 mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
@@ -442,6 +439,9 @@ void p3FileDatabase::cleanup()
 
                 mFriendIndexMap.erase(mRemoteDirectories[i]->peerId());
                 mFriendIndexTab[i].clear();
+
+                delete mRemoteDirectories[i];
+                mRemoteDirectories[i] = NULL ;
             }
 
         // look through the remaining list of friends, which are the ones for which no remoteDirectoryStorage class has been allocated.
@@ -1040,7 +1040,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         RS_STACK_MUTEX(mFLSMtx) ;
 
 #ifdef DEBUG_P3FILELISTS
-        P3FILELISTS_DEBUG() << "Received directory sync request. hash=" << item->entry_hash << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
+        P3FILELISTS_DEBUG() << "Received directory sync request from peer " << item->PeerId() << ". hash=" << item->entry_hash << ", flags=" << (void*)(intptr_t)item->flags << ", request id: " << std::hex << item->request_id << std::dec << ", last known TS: " << item->last_known_recurs_modf_TS << std::endl;
 #endif
 
         EntryIndex entry_index = DirectoryStorage::NO_INDEX;
@@ -1314,7 +1314,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         else
             P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 
-#ifdef DEBUG_FILE_HIERARCHY
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "  new content after update: " << std::endl;
         mRemoteDirectories[fi]->print();
 #endif
