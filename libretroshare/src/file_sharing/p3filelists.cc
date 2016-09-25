@@ -861,39 +861,119 @@ uint32_t p3FileDatabase::watchPeriod()
 
 int p3FileDatabase::SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id)
 {
-    std::list<EntryIndex> firesults;
+    if(flags & RS_FILE_HINTS_LOCAL)
     {
-        RS_STACK_MUTEX(mFLSMtx) ;
-
-        mLocalSharedDirs->searchTerms(keywords,firesults) ;
-
-        for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+        std::list<EntryIndex> firesults;
         {
-            void *p=NULL;
-            convertEntryIndexToPointer(*it,0,p);
-            *it = (intptr_t)p ;
+            RS_STACK_MUTEX(mFLSMtx) ;
+
+            mLocalSharedDirs->searchTerms(keywords,firesults) ;
+
+            for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+            {
+                void *p=NULL;
+                convertEntryIndexToPointer(*it,0,p);
+                *it = (intptr_t)p ;
+            }
         }
+
+        filterResults(firesults,results,flags,client_peer_id) ;
     }
 
-    return filterResults(firesults,results,flags,client_peer_id) ;
+    if(flags & RS_FILE_HINTS_REMOTE)
+    {
+        std::list<EntryIndex> firesults;
+
+        {
+            RS_STACK_MUTEX(mFLSMtx) ;
+
+            for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+                if(mRemoteDirectories[i] != NULL)
+                {
+                    std::list<EntryIndex> local_results;
+                    mRemoteDirectories[i]->searchTerms(keywords,local_results) ;
+
+                    for(std::list<EntryIndex>::iterator it(local_results.begin());it!=local_results.end();++it)
+                    {
+                        void *p=NULL;
+                        convertEntryIndexToPointer(*it,i+1,p);
+                        firesults.push_back((intptr_t)p) ;
+                    }
+                }
+        }
+
+        for(std::list<EntryIndex>::const_iterator rit ( firesults.begin()); rit != firesults.end(); ++rit)
+        {
+            DirDetails dd;
+
+            if(!RequestDirDetails ((void*)(intptr_t)*rit,dd,RS_FILE_HINTS_REMOTE))
+                continue ;
+
+            results.push_back(dd);
+        }
+
+    }
+
+    return !results.empty() ;
 }
+
 int p3FileDatabase::SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& client_peer_id) const
 {
-    std::list<EntryIndex> firesults;
+    if(flags & RS_FILE_HINTS_LOCAL)
     {
-        RS_STACK_MUTEX(mFLSMtx) ;
-
-        mLocalSharedDirs->searchBoolExp(exp,firesults) ;
-
-        for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+        std::list<EntryIndex> firesults;
         {
-            void *p=NULL;
-            convertEntryIndexToPointer(*it,0,p);
-            *it = (intptr_t)p ;
+            RS_STACK_MUTEX(mFLSMtx) ;
+
+            mLocalSharedDirs->searchBoolExp(exp,firesults) ;
+
+            for(std::list<EntryIndex>::iterator it(firesults.begin());it!=firesults.end();++it)
+            {
+                void *p=NULL;
+                convertEntryIndexToPointer(*it,0,p);
+                *it = (intptr_t)p ;
+            }
+        }
+
+        filterResults(firesults,results,flags,client_peer_id) ;
+    }
+
+    if(flags & RS_FILE_HINTS_REMOTE)
+    {
+        std::list<EntryIndex> firesults;
+
+        {
+            RS_STACK_MUTEX(mFLSMtx) ;
+
+            for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+                if(mRemoteDirectories[i] != NULL)
+                {
+                    std::list<EntryIndex> local_results;
+                    mRemoteDirectories[i]->searchBoolExp(exp,local_results) ;
+
+                    for(std::list<EntryIndex>::iterator it(local_results.begin());it!=local_results.end();++it)
+                    {
+                        void *p=NULL;
+                        convertEntryIndexToPointer(*it,i+1,p);
+                        firesults.push_back((intptr_t)p) ;
+                    }
+
+                }
+        }
+
+        for(std::list<EntryIndex>::const_iterator rit ( firesults.begin()); rit != firesults.end(); ++rit)
+        {
+            DirDetails dd;
+
+            if(!RequestDirDetails ((void*)(intptr_t)*rit,dd,RS_FILE_HINTS_REMOTE))
+                continue ;
+
+            results.push_back(dd);
         }
     }
 
-    return filterResults(firesults,results,flags,client_peer_id) ;
+    return !results.empty() ;
+
 }
 bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
