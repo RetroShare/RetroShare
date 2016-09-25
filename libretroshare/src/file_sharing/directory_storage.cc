@@ -597,6 +597,9 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
     const InternalFileHierarchyStorage::DirEntry *dir = mFileHierarchy->getDirEntry(indx);
 
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
+    std::cerr << "Serialising Dir entry " << std::hex << indx << " for client id " << client_id << std::endl;
+#endif
     if(dir == NULL)
     {
         std::cerr << "(EE) serialiseDirEntry: ERROR. Cannot find entry " << (void*)(intptr_t)indx << std::endl;
@@ -620,7 +623,14 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
               return false;
             }
             allowed_subdirs.push_back(hash) ;
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
+            std::cerr << "  pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << std::endl;
+#endif
         }
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
+        else
+            std::cerr << "  not pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << ": permission denied for this peer." << std::endl;
+#endif
 
     unsigned char *section_data = NULL;
     uint32_t section_size = 0;
@@ -673,6 +683,10 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
         if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,file_section_data,file_section_offset)) return false ;
 
         free(file_section_data) ;
+
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
+        std::cerr << "  pushing subfile " << file->hash << ", array position=" << i << " indx=" << dir->subfiles[i] << std::endl;
+#endif
     }
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
