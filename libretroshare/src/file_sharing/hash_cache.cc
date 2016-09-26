@@ -47,7 +47,9 @@ HashStorage::HashStorage(const std::string& save_file_name)
 
     {
         RS_STACK_MUTEX(mHashMtx) ;
-        locked_load() ;
+
+        if(!locked_load())
+            try_load_import_old_hash_cache();
     }
 }
 static std::string friendlyUnit(uint64_t val)
@@ -287,7 +289,7 @@ void HashStorage::clean()
 #endif
 }
 
-void HashStorage::locked_load()
+bool HashStorage::locked_load()
 {
     unsigned char *data = NULL ;
     uint32_t data_size=0;
@@ -295,7 +297,7 @@ void HashStorage::locked_load()
     if(!FileListIO::loadEncryptedDataFromFile(mFilePath,data,data_size))
     {
         std::cerr << "(EE) Cannot read hash cache." << std::endl;
-        return ;
+        return false;
     }
     uint32_t offset = 0 ;
     HashStorageInfo info ;
@@ -315,6 +317,7 @@ void HashStorage::locked_load()
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << n << " entries loaded." << std::endl ;
 #endif
+    return true ;
 }
 
 void HashStorage::locked_save()
@@ -392,3 +395,114 @@ std::ostream& operator<<(std::ostream& o,const HashStorage::HashStorageInfo& inf
 {
     return o << info.hash << " " << info.size << " " << info.filename ;
 }
+
+/********************************************************************************************************************************/
+/* 09/26/2016                                                                                                                   */
+/* This method should be removed in a few months. It only helps importing the old hash cache in order to                        */
+/* spare the re-hashing of everything. If successful, it also renames the old hash cache into a new name so that                */
+/* the file is not found at the next attempt.                                                                                   */
+/********************************************************************************************************************************/
+//
+#include "rsserver/rsaccounts.h"
+#include <sstream>
+
+bool HashStorage::try_load_import_old_hash_cache()
+{
+    // compute file name
+
+    std::string base_dir = rsAccounts->PathAccountDirectory();
+    std::string old_cache_filename = base_dir + "/" + "file_cache.bin" ;
+
+    // check for unencrypted
+
+    std::istream *f = NULL ;
+    uint64_t file_size ;
+
+    if(RsDirUtil::checkFile( old_cache_filename,file_size,false ) )
+    {
+        std::cerr << "Encrypted hash cache file present. Reading it." << std::endl;
+
+        // read the binary stream into memory.
+        //
+        RsTemporaryMemory buffer(file_size) ;
+
+        if(buffer == NULL)
+            return false;
+
+        FILE *F = fopen( old_cache_filename.c_str(),"rb") ;
+        if (!F)
+        {
+            std::cerr << "Cannot open file for reading encrypted file cache, filename " << old_cache_filename << std::endl;
+            return false;
+        }
+        if(fread(buffer,1,file_size,F) != file_size)
+        {
+            std::cerr << "Cannot read from file " << old_cache_filename << ": something's wrong." << std::endl;
+            fclose(F) ;
+            return false;
+        }
+        fclose(F) ;
+
+        void *decrypted_data =NULL;
+        int decrypted_data_size =0;
+
+        if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
+        {
+            std::cerr << "Cannot decrypt encrypted file cache. Something's wrong." << std::endl;
+            return false;
+        }
+        std::string s((char *)decrypted_data,decrypted_data_size) ;
+        f = new std::istringstream(s) ;
+
+        free(decrypted_data) ;
+    }
+    else
+        return false;
+
+    std::streamsize max_line_size = 2000 ; // should be enough. Anyway, if we
+                                                        // miss one entry, we just lose some
+                                                        // cache itemsn but this is not too
+                                                        // much of a problem.
+    char *buff = new char[max_line_size] ;
+
+    std::cerr << "Importing hashCache from file " << old_cache_filename << std::endl ;
+    int n=0 ;
+
+    std::map<std::string, HashStorageInfo> tmp_files ;	// stored as (full_path, hash_info)
+
+    while(!f->eof())
+    {
+        HashStorageInfo info ;
+
+        f->getline(buff,max_line_size,'\n') ;
+        info.filename = std::string(buff) ;
+
+        f->getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
+
+        info.size = 0 ;
+        sscanf(buff, RsDirUtil::scanf_string_for_uint(sizeof(info.size)), &info.size);
+
+        f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.time_stamp)),&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
+        f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
+        f->getline(buff,max_line_size,'\n') ; info.hash = RsFileHash(std::string(buff)) ;
+
+        std::cerr << "  (" << info.filename << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;
+        ++n ;
+
+        tmp_files[info.filename] = info ;
+    }
+
+    delete[] buff ;
+    delete f ;
+
+    std::cerr << "(II) Successfully imported hash cache from file " << old_cache_filename << " for a total of " << n << " entries." << std::endl;
+    std::cerr << "(II) This file is now obsolete, and will be renamed " << old_cache_filename + ".bak" << " in case you needed it. But you can safely remove it." << std::endl;
+
+    RsDirUtil::renameFile(old_cache_filename,old_cache_filename+".bak") ;
+
+    mFiles = tmp_files ;
+    locked_save() ;		// this is called explicitly here because the ticking thread is not active.
+
+    return true;
+}
+/********************************************************************************************************************************/

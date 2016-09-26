@@ -100,7 +100,8 @@ private:
     // loading/saving the entire hash database to a file
 
     void locked_save() ;
-    void locked_load() ;
+    bool locked_load() ;
+    bool try_load_import_old_hash_cache();
 
     bool readHashStorageInfo(const unsigned char *data,uint32_t total_size,uint32_t& offset,HashStorageInfo& info) const;
     bool writeHashStorageInfo(unsigned char *& data,uint32_t&  total_size,uint32_t& offset,const HashStorageInfo& info) const;
