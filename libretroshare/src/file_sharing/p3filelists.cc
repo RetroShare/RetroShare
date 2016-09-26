@@ -760,7 +760,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     if(storage==NULL || !storage->extractData(e,d))
     {
-        P3FILELISTS_ERROR() << "(EE) request on index " << e << ", for directory ID=" << storage->peerId() << " failed. This should not happen." << std::endl;
+        P3FILELISTS_ERROR() << "(EE) request on index " << e << ", for directory ID=" << ((storage==NULL)?("[NULL]"):(storage->peerId().toStdString())) << " failed. This should not happen." << std::endl;
         return false ;
     }
 
