@@ -207,19 +207,20 @@ int p3FileDatabase::tick()
         mServCtrl->getPeersConnected(getServiceInfo().mServiceType, online_peers) ;
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-        {
-            if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+            if(mRemoteDirectories[i] != NULL)
             {
+               if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+               {
 #ifdef DEBUG_FILE_HIERARCHY
-                P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
-                mRemoteDirectories[i]->print();
+                  P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
+                  mRemoteDirectories[i]->print();
 #endif
 
-                locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root(),0) ;
-            }
+                  locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root(),0) ;
+               }
 
-            mRemoteDirectories[i]->checkSave() ;
-        }
+               mRemoteDirectories[i]->checkSave() ;
+            }
 
         mLastRemoteDirSweepTS = now;
 
