@@ -722,16 +722,17 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
             d.children.push_back(stub);
         }
         else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-        {
-            void *p;
-            convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,p);
+            if(mRemoteDirectories[i] != NULL)
+            {
+               void *p;
+               convertEntryIndexToPointer(mRemoteDirectories[i]->root(),i+1,p);
 
-            DirStub stub;
-            stub.type = DIR_TYPE_PERSON;
-            stub.name = mRemoteDirectories[i]->peerId().toStdString();
-            stub.ref  = p;
-            d.children.push_back(stub);
-        }
+               DirStub stub;
+               stub.type = DIR_TYPE_PERSON;
+               stub.name = mRemoteDirectories[i]->peerId().toStdString();
+               stub.ref  = p;
+               d.children.push_back(stub);
+            }
 
         d.count = d.children.size();
 
@@ -757,7 +758,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
-    if(!storage->extractData(e,d))
+    if(storage==NULL || !storage->extractData(e,d))
     {
         P3FILELISTS_ERROR() << "(EE) request on index " << e << ", for directory ID=" << storage->peerId() << " failed. This should not happen." << std::endl;
         return false ;
@@ -823,8 +824,10 @@ uint32_t p3FileDatabase::getType(void *ref) const
 
     if(fi == 0)
         return mLocalSharedDirs->getEntryType(e) ;
-    else
+    else if(mRemoteDirectories[fi-1]!=NULL)
         return mRemoteDirectories[fi-1]->getEntryType(e) ;
+    else
+        return DIR_TYPE_ROOT ;// some failure case. Should not happen
 }
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
