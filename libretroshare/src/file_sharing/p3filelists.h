@@ -196,7 +196,6 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         static bool convertEntryIndexToPointer(const EntryIndex &e, uint32_t friend_index, void *& p);
         static bool convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index) ;
         uint32_t locked_getFriendIndex(const RsPeerId& pid);
-        const RsPeerId& locked_getFriendFromIndex(uint32_t indx) const;
 
         void handleDirSyncRequest (RsFileListsSyncRequestItem *) ;
         void handleDirSyncResponse (RsFileListsSyncResponseItem *) ;

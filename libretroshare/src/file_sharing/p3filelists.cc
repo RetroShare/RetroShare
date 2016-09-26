@@ -67,7 +67,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
         throw std::runtime_error("Cannot create base directory to store/access file sharing files.") ;
 
     // loads existing indexes for friends. Some might be already present here.
-	// 
+    //
     mRemoteDirectories.clear() ;	// we should load them!
     mOwnId = mpeers->getOwnId() ;
 
@@ -76,7 +76,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
 
-	mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
+    mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
     mLastCleanupTime = 0 ;
 
@@ -154,16 +154,16 @@ RsServiceInfo p3FileDatabase::getServiceInfo()
 }
 int p3FileDatabase::tick()
 {
-	// tick the input/output list of update items and process them
-	//
-	tickRecv() ;
-	tickSend() ;
+    // tick the input/output list of update items and process them
+    //
+    tickRecv() ;
+    tickSend() ;
 
     time_t now = time(NULL) ;
 
     // cleanup
-	// 	- remove/delete shared file lists for people who are not friend anymore
-	// 	- 
+    // 	- remove/delete shared file lists for people who are not friend anymore
+    // 	-
 
     if(mLastCleanupTime + 5 < now)
     {
@@ -176,7 +176,7 @@ int p3FileDatabase::tick()
     if(last_print_time + 20 < now)
     {
         RS_STACK_MUTEX(mFLSMtx) ;
-        
+
 #ifdef DEBUG_FILE_HIERARCHY
         mLocalSharedDirs->print();
 #endif
@@ -439,10 +439,18 @@ void p3FileDatabase::cleanup()
                 friend_set.erase(mRemoteDirectories[i]->peerId());
 
                 mFriendIndexMap.erase(mRemoteDirectories[i]->peerId());
-                mFriendIndexTab[i].clear();
 
                 delete mRemoteDirectories[i];
                 mRemoteDirectories[i] = NULL ;
+
+                // now, in order to avoid empty seats, just move the last one here, and update indexes
+
+                mRemoteDirectories[i] = mRemoteDirectories.back();
+                mRemoteDirectories.pop_back();
+
+                mFriendIndexMap[mRemoteDirectories[i]->peerId()] = i;
+
+                mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
             }
 
         // look through the remaining list of friends, which are the ones for which no remoteDirectoryStorage class has been allocated.
@@ -452,21 +460,6 @@ void p3FileDatabase::cleanup()
             // Check if a remote directory exists for that friend, possibly creating the index.
 
             uint32_t friend_index = locked_getFriendIndex(*it) ;
-
-            if(mRemoteDirectories.size() > friend_index && mRemoteDirectories[friend_index] != NULL)
-                continue ;
-
-#ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
-#endif
-
-            if(mRemoteDirectories.size() <= friend_index)
-                mRemoteDirectories.resize(friend_index+1,NULL) ;
-
-            mRemoteDirectories[friend_index] = new RemoteDirectoryStorage(*it,makeRemoteFileName(*it));
-
-            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
-            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
         }
 
         // cancel existing requests for which the peer is offline
@@ -511,8 +504,8 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
     {
         // allocate a new index for that friend, and tell that we should save.
         uint32_t found = 0 ;
-        for(uint32_t i=0;i<mFriendIndexTab.size();++i)
-            if(mFriendIndexTab[i].isNull())
+        for(uint32_t i=0;i<mRemoteDirectories.size();++i)
+            if(mRemoteDirectories[i] == NULL)
             {
                 found = i ;
                 break;
@@ -520,21 +513,24 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
 
         if(!found)
         {
-            found = mFriendIndexTab.size();
-            mFriendIndexTab.push_back(pid);
+            found = mRemoteDirectories.size();
+            mRemoteDirectories.push_back(new RemoteDirectoryStorage(pid,makeRemoteFileName(pid)));
+
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
+
+#ifdef DEBUG_P3FILELISTS
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+#endif
         }
 
-        if(mFriendIndexTab.size() >= (1 << NB_FRIEND_INDEX_BITS) )
+        if(mRemoteDirectories.size() >= (1 << NB_FRIEND_INDEX_BITS) )
         {
             std::cerr << "(EE) FriendIndexTab is full. This is weird. Do you really have more than " << (1<<NB_FRIEND_INDEX_BITS) << " friends??" << std::endl;
             return 1 << NB_FRIEND_INDEX_BITS ;
         }
 
-        mFriendIndexTab[found] = pid ;
         mFriendIndexMap[pid] = found;
-
-        if(mRemoteDirectories.size() <= found)
-            mRemoteDirectories.resize(found,NULL) ;
 
         IndicateConfigChanged();
 
@@ -543,27 +539,22 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
     else
     {
         if(mRemoteDirectories.size() <= it->second)
-            mRemoteDirectories.resize(it->second,NULL) ;
+        {
+            mRemoteDirectories.resize(it->second+1,NULL) ;
+            mRemoteDirectories[it->second] = new RemoteDirectoryStorage(pid,makeRemoteFileName(pid));
+
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
+            mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
+
+#ifdef DEBUG_P3FILELISTS
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+#endif
+        }
 
         return it->second;
     }
 }
 
-const RsPeerId& p3FileDatabase::locked_getFriendFromIndex(uint32_t indx) const
-{
-    static const RsPeerId null_id ;
-
-    if(indx >= mFriendIndexTab.size())
-        return null_id ;
-
-    if(mFriendIndexTab[indx].isNull())
-    {
-        std::cerr << "(EE) null friend id requested from index " << indx << ": this is a bug, most likely" << std::endl;
-        return null_id ;
-    }
-
-    return mFriendIndexTab[indx];
-}
 bool p3FileDatabase::convertPointerToEntryIndex(const void *p, EntryIndex& e, uint32_t& friend_index)
 {
     // trust me, I can do this ;-)
@@ -1351,12 +1342,6 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
 #endif
 
         // make sure we have a remote directory for that friend.
-
-        if(mRemoteDirectories.size() <= fi)
-            mRemoteDirectories.resize(fi+1,NULL) ;
-
-        if(mRemoteDirectories[fi] == NULL)
-            mRemoteDirectories[fi] = new RemoteDirectoryStorage(item->PeerId(),makeRemoteFileName(item->PeerId()));
 
         if(!mRemoteDirectories[fi]->getIndexFromDirHash(item->entry_hash,entry_index))
         {
