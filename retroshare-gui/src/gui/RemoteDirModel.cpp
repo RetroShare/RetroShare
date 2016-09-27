@@ -1133,10 +1133,10 @@ void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 	{
 		if ((*it).type & DIR_TYPE_PERSON) continue;
 
-		std::string path, name;
-		rsFiles->ConvertSharedFilePath((*it).path, path);
+        //std::string path, name;
+        //rsFiles->ConvertSharedFilePath((*it).path, path);
 
-		QDir dir(QString::fromUtf8(path.c_str()));
+        QDir dir(QString::fromUtf8((*it).path.c_str()));
 		QString dest;
 		if ((*it).type & DIR_TYPE_FILE) {
 			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
