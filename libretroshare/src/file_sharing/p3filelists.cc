@@ -239,7 +239,7 @@ void p3FileDatabase::startThreads()
 #ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Starting directory watcher thread..." ;
 #endif
-    mLocalDirWatcher->start();
+	mLocalDirWatcher->start("fs dir watcher");
 #ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
 #endif
@@ -458,8 +458,7 @@ void p3FileDatabase::cleanup()
         for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
         {
             // Check if a remote directory exists for that friend, possibly creating the index.
-
-            uint32_t friend_index = locked_getFriendIndex(*it) ;
+			locked_getFriendIndex(*it) ;
         }
 
         // cancel existing requests for which the peer is offline
@@ -639,8 +638,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
             convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
-        else
-            return false;
+	else
+		return false;
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -788,7 +787,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     return true;
 }
 
-int p3FileDatabase::RequestDirDetails(const RsPeerId& uid,const std::string& path, DirDetails &details) const
+int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string &/*path*/, DirDetails &/*details*/) const
 {
     NOT_IMPLEMENTED();
     return 0;

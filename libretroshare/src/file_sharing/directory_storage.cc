@@ -426,6 +426,10 @@ void LocalDirectoryStorage::updateTimeStamps()
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+#else
+		// remove unused variable warning
+		// variable is only used for debugging
+		(void)last_modf_time;
 #endif
     }
 }

@@ -184,7 +184,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
     return true;
 }
 
-RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string& dir_name,const std::string& dir_parent_path)
+RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string &/*dir_name*/, const std::string &/*dir_parent_path*/)
 {
     // What we need here: a unique identifier
     // - that cannot be bruteforced to find the real directory name and path
@@ -226,7 +226,7 @@ bool InternalFileHierarchyStorage::removeDirectory(DirectoryStorage::EntryIndex 
             parent_dir.subdirs[i] = parent_dir.subdirs.back() ;
             parent_dir.subdirs.pop_back();
 
-            bool res = recursRemoveDirectory(indx) ;
+			recursRemoveDirectory(indx) ;
 #ifdef DEBUG_DIRECTORY_STORAGE
             print();
             std::string err ;

@@ -252,7 +252,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
         mHashCounter = 0;
         mTotalHashedSize = 0;
 
-        start() ;
+		start("fs hash cache") ;
     }
 
     return false;
@@ -301,7 +301,9 @@ bool HashStorage::locked_load()
     }
     uint32_t offset = 0 ;
     HashStorageInfo info ;
+#ifdef HASHSTORAGE_DEBUG
     uint32_t n=0;
+#endif
 
     while(offset < data_size)
        if(readHashStorageInfo(data,data_size,offset,info))
