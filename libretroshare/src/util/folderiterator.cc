@@ -11,7 +11,7 @@
 #include "folderiterator.h"
 #include "rsstring.h"
 
-#define DEBUG_FOLDER_ITERATOR 1
+//#define DEBUG_FOLDER_ITERATOR 1
 
 namespace librs { namespace util {
 
