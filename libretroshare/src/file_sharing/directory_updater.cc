@@ -55,7 +55,7 @@ void LocalDirectoryUpdater::setEnabled(bool b)
         return ;
 
     if(b)
-        start() ;
+		start("fs dir updater") ;
     else
         shutdown();
 
@@ -203,7 +203,7 @@ bool LocalDirectoryUpdater::inDirectoryCheck() const
     return mHashCache->isRunning();
 }
 
-void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size)
+void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string &/*name*/, const RsFileHash &hash, uint64_t /*size*/)
 {
     if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
         std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;

@@ -226,10 +226,12 @@ RsFileListsSyncResponseItem* RsFileListsSerialiser::deserialFileListsSyncRespons
 
     RsFileListsSyncResponseItem* item = new RsFileListsSyncResponseItem();
 
+	/*
     uint32_t entry_index ;              // index of the directory to sync
     uint32_t flags;                     // used to say that it's a request or a response, say that the directory has been removed, ask for further update, etc.
     uint32_t last_known_recurs_modf_TS; // time of last modification, computed over all files+directories below.
     uint64_t request_id;                // use to determine if changes that have occured since last hash
+	*/
 
     ok &= item->entry_hash.deserialise(data, *size, offset);
     ok &= item->checksum.deserialise(data, *size, offset);
