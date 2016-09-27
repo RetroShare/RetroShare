@@ -117,8 +117,8 @@ void HashStorage::data_tick()
                 if(!mChanged)	// otherwise it might prevent from saving the hash cache
                 {
                     std::cerr << "Stopping hashing thread." << std::endl;
-                    shutdown();
-                    mRunning = false ;
+					askForStop();
+					mRunning = false;
                     mTotalSizeToHash = 0;
                     mTotalFilesToHash = 0;
                     std::cerr << "done." << std::endl;
