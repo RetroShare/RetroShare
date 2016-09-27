@@ -78,9 +78,11 @@ ApplicationWindow
 				qParent: swipeView
 			}
 
-			AddTrustedNode
+			TrustedNodesView { id: trustedNodesView }
+
+			Contacts
 			{
-				id: addTrustedNodeView
+				id: contactsView
 				visible: true
 			}
 
@@ -105,13 +107,11 @@ ApplicationWindow
 				height: 100
 			}
 
-/*
-
-			Contacts
+			AddTrustedNode
 			{
-				id: contactsView
+				id: addTrustedNodeView
 				visible: true
-			}*/
+			}
 		}
 	}
 

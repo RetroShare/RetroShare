@@ -22,31 +22,37 @@ import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
 {
-	function refreshData() { rsApi.request("/identity/*/", "") }
+	function refreshData() { rsApi.request("/peers", "") }
 
 	onFocusChanged: focus && refreshData()
 
 	LibresapiLocalClient
 	{
 		id: rsApi
-		onGoodResponseReceived: locationsModel.json = msg
+		onGoodResponseReceived: jsonModel.json = msg
 		Component.onCompleted: { openConnection(apiSocketPath) }
 	}
 
 	JSONListModel
 	{
-		id: locationsModel
+		id: jsonModel
 		query: "$.data[*]"
 	}
 
 	ListView
 	{
-		id: locationsListView
 		width: parent.width
-		height: 300
-		model: locationsModel.model
+		anchors.top: parent.top
+		anchors.bottom: bottomButton.top
+		model: jsonModel.model
 		delegate: Text { text: model.name }
 	}
 
-	Text { text: "Contacts View"; anchors.bottom: parent.bottom }
+	Button
+	{
+		id: bottomButton
+		text: "Add Trusted Node"
+		anchors.bottom: parent.bottom
+		onClicked: swipeView.currentIndex = addTrustedNodeView.SwipeView.index
+	}
 }

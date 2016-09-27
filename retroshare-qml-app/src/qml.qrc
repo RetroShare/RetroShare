@@ -21,5 +21,6 @@
         <file>qml/Contacts.qml</file>
         <file>qml/AddTrustedNode.qml</file>
         <file>qml/RsLoginPassView.qml</file>
+        <file>qml/TrustedNodesView.qml</file>
     </qresource>
 </RCC>
