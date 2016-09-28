@@ -720,9 +720,9 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
 {
     // recurs go through all entries, check that all
 
+    error_string = "";
     std::vector<uint32_t> hits(mNodes.size(),0) ;	// count hits of children. Should be 1 for all in the end. Otherwise there's an error.
     hits[0] = 1 ;	// because 0 is never the child of anyone
-    std::map<RsFileHash,DirectoryStorage::EntryIndex> tmp_hashes ;
 
     for(uint32_t i=0;i<mNodes.size();++i)
         if(mNodes[i] != NULL && mNodes[i]->type() == FileStorageNode::TYPE_DIR)
@@ -734,13 +734,13 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
             {
                 if(de.subdirs[j] >= mNodes.size())
                 {
-                    error_string += " - Node child out of tab!" ;
+                    error_string += " - Node child dir out of tab!" ;
                     de.subdirs[j] = de.subdirs.back() ;
                     de.subdirs.pop_back();
                 }
                 else if(hits[de.subdirs[j]] != 0)
                 {
-                    error_string += " - Double hit on a single node" ;
+                    error_string += " - Double hit on a single node dir." ;
                     de.subdirs[j] = de.subdirs.back() ;
                     de.subdirs.pop_back();
                 }
@@ -754,13 +754,13 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
             {
                 if(de.subfiles[j] >= mNodes.size())
                 {
-                    error_string += " - Node child out of tab!" ;
+                    error_string += " - Node child file out of tab!" ;
                     de.subfiles[j] = de.subfiles.back() ;
                     de.subfiles.pop_back();
                 }
                 else if(hits[de.subfiles[j]] != 0)
                 {
-                    error_string += " - Double hit on a single node" ;
+                    error_string += " - Double hit on a single node file." ;
                     de.subfiles[j] = de.subfiles.back() ;
                     de.subfiles.pop_back();
                 }
@@ -780,7 +780,7 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
             mNodes[i] = NULL ;
         }
 
-    return true;
+    return error_string.empty();;
 }
 
 void InternalFileHierarchyStorage::print() const
