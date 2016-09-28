@@ -26,12 +26,17 @@
 #pragma once
 
 #include <stdint.h>              // for uint32_t, uint16_t
-#include <sys/socket.h>          // for sockaddr_storage
 #include <time.h>                // for NULL, time_t
 #include <iostream>              // for operator<<, basic_ostream, cerr, endl
 #include <list>                  // for list
 #include <map>                   // for map
 #include <string>                // for string, char_traits
+
+#ifdef WINDOWS_SYS
+#	include <winsock2.h>         // for sockaddr_storage
+#else
+#	include <sys/socket.h>       // for sockaddr_storage
+#endif
 
 #include "pqi/pqi_base.h"        // for NetBinInterface, NetInterface, PQInt...
 #include "pqi/pqiqosstreamer.h"  // for pqiQoSstreamer
