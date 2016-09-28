@@ -242,6 +242,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.hash.clear() ;
         d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
         d.min_age = now - dir_entry->dir_most_recent_time ;
+        d.age     = now - dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
         d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
