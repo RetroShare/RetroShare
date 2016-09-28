@@ -1,5 +1,106 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  Warning: new file list sharing system. 
+     * Old list of shares is not preserved and should be re-defined. 
+     * The hash cache however is imported from the old format, meaning that Retroshare should not re-hash new files that were already shared before.
+     * New system offers interactive browsing of shared dirs from online friends and background update of directory lists
+     * The old cachestrapper system is removed since it is now obsolete.
+
+  6e4ba76 csoler   Wed, 28 Sep 2016 21:55:03 +0200 improved display of shared directories for friends with no update info
+  1d977dd csoler   Wed, 28 Sep 2016 16:39:48 +0200 Merge pull request #518 from PhenomRetroShare/Fix_InternalFileHierarchyStorage__check
+  9672fe3 Phenom   Wed, 28 Sep 2016 11:35:44 +0200 Fix InternalFileHierarchyStorage::check, error_string will never be shown as always return true.
+  bf0777f csoler   Tue, 27 Sep 2016 23:13:59 +0200 fixed update of DirHash list and FileHash list when files and dirs are removed, while keeping the cost low
+  5547d71 csoler   Tue, 27 Sep 2016 21:09:13 +0200 fixed advanced search not closing
+  c26970f csoler   Tue, 27 Sep 2016 20:20:12 +0200 fixed open folder from File Sharing dialog
+  37a4e77 csoler   Tue, 27 Sep 2016 20:13:02 +0200 removed debug info in directory_storage.cc
+  2916c8b csoler   Tue, 27 Sep 2016 10:13:51 +0200 removed debug output in folderiterator
+  0bcb6c3 csoler   Tue, 27 Sep 2016 09:59:51 +0200 Merge pull request #517 from sehraf/pr-filelist-fixes
+  9d72b06 sehraf   Tue, 27 Sep 2016 09:50:59 +0200 add thread names & remove some warnings
+  a2ff5d2 csoler   Mon, 26 Sep 2016 22:06:30 +0200 simplified p3FileList code a little bit: removed mFriendIndexTab and made locked_getFriendIndex() create the remote directories on demand
+  fc1a350 csoler   Mon, 26 Sep 2016 21:12:13 +0200 added automated import of old hash cache in order to avoid re-hashing everything when switching to the new system
+  15f69b2 csoler   Mon, 26 Sep 2016 11:11:22 +0200 fixed crash in debug output in p3filelists
+  b95fbe3 csoler   Mon, 26 Sep 2016 10:49:59 +0200 added a few more missing checks for null entries in mRemoteDirectories
+  3beaa97 csoler   Mon, 26 Sep 2016 10:03:51 +0200 fixed potential crash when an entry in mRemoteDirectories is NULL
+  1125dfe csoler   Sun, 25 Sep 2016 23:42:20 +0200 fixed folder iterator to properly handle broken symbolic links
+  be6370e csoler   Sun, 25 Sep 2016 21:34:18 +0200 added missing code for searchTerms in new p3filelists service
+  93e70ca csoler   Sun, 25 Sep 2016 21:01:03 +0200 fixed search on remote files
+  068955d csoler   Sun, 25 Sep 2016 18:51:33 +0200 fixed up a few debug messages in p3filelists
+  bb4b577 csoler   Sun, 25 Sep 2016 18:44:28 +0200 prevent storage for hash of files that cannot be hashed
+  ddc870c csoler   Sun, 25 Sep 2016 11:05:01 +0200 added some more debug info in DirectoryStorage class
+  19b1c4f csoler   Sun, 25 Sep 2016 11:04:42 +0200 fixed potential crash due to not checking if mRemoteDirectory[i] is empty in p3FileLists
+  cb4dc96 csoler   Sat, 24 Sep 2016 17:12:38 +0200 removed debug info in p3filelists
+  ee54c02 csoler   Sat, 24 Sep 2016 14:47:45 +0200 merged branch v0.6-FileLists locally into master
+  52ee76e csoler   Sat, 24 Sep 2016 14:14:32 +0200 removed annoying debug message in ID system
+  34f1ebb csoler   Sat, 24 Sep 2016 14:13:38 +0200 Merge pull request #507 from mr-alice/v0.6-FileLists
+  e03bd6c mr-alice Sat, 24 Sep 2016 13:56:02 +0200 fixed bug causing call to closedir on invalid handle
+  96b333d Mr.Alice Sat, 24 Sep 2016 09:04:25 +0200 Merge pull request #1 from hunbernd/v0.6-FileLists
+  8500b5e hunbernd Fri, 23 Sep 2016 21:56:41 +0200 Fixed inconsistency in integer sizes that caused segmentation fault while hashing files also broken message on the GUI
+  71a5bff mr-alice Fri, 23 Sep 2016 20:07:57 +0200 added small hack against re-hashing due to stat64 depending on local time on windows
+  70c8e14 hunbernd Fri, 23 Sep 2016 19:00:07 +0200 Fix folderiterator.cc:23: error: cannot convert '_stat64*' to '_stati64*' for argument '2' to 'int _wstati64(const wchar_t*, _stati64*)'
+  529ab64 hunbernd Fri, 23 Sep 2016 18:43:48 +0200 Fixed missing time.h includes
+  ca281e4 hunbernd Fri, 23 Sep 2016 18:32:36 +0200 Fixed error with 32 bit GCC Both uint32_t and size_t are resolved to unsigned int, it makes 2 lines conflicted. This happens in filelist_io.cc, lines: 31-32, 36-37, 41-42
+  9ce4b13 mr-alice Fri, 23 Sep 2016 19:03:54 +0200 merged upstream/master
+  9f76b76 mr-alice Fri, 23 Sep 2016 19:01:14 +0200 forced closedir in order to avoid leak of file descriptor in FolderIterator
+  7bddd4b csoler   Fri, 23 Sep 2016 13:18:55 +0200 removed call to exit causing the software to stop when local network interfaces are not ready
+  0cc4ebd mr-alice Thu, 22 Sep 2016 21:47:58 +0200 added comments in the file lists code. Removed unused functions. Added a few missing mutexes.
+  e6e9582 csoler   Thu, 22 Sep 2016 13:44:53 +0200 fixed bug in estimation of next FT rate that caused downloads to stuck for a while
+  7f99bc2 mr-alice Thu, 22 Sep 2016 10:26:05 +0200 fixed compilation after removal of dbase/
+  1be5990 mr-alice Wed, 21 Sep 2016 22:31:39 +0200 disabled dbase from unittests.pro, which should be cnverted into proper tests for file_sharing.
+  0f5cf56 mr-alice Wed, 21 Sep 2016 22:27:53 +0200 removed dbase directory
+  0757fb3 mr-alice Tue, 20 Sep 2016 20:51:50 +0200 merged upstream/master
+  7488ad4 mr-alice Sun, 18 Sep 2016 22:32:30 +0200 added display of files being hashed with green color and blue icon. This could be improved I suppose.
+  0579fb0 mr-alice Sun, 18 Sep 2016 22:14:25 +0200 removed unused tickWatchers()
+  9cf9504 mr-alice Sun, 18 Sep 2016 22:05:27 +0200 removed most of debug info in file list sharing code
+  ff4c438 mr-alice Sun, 18 Sep 2016 21:41:18 +0200 fixed reloading of ShareManager due to postModDirectories and made it reload after addign new share
+  e4568a8 mr-alice Sun, 18 Sep 2016 21:16:25 +0200 removed some unused code
+  de104d3 mr-alice Sun, 18 Sep 2016 18:34:39 +0200 fixed up GUI parameters in Directories. Removed HashCache duration handles since this is now automatic
+  04c908e MrAlice  Fri, 16 Sep 2016 09:35:03 +0200 fixed two bugs in dirlist chunking system causing checksum errors
+  3f9acb5 mr-alice Thu, 15 Sep 2016 23:51:46 +0200 added item splitting and checksum checking in p3filelists
+  2343c91 mr-alice Thu, 15 Sep 2016 21:40:53 +0200 added display of hash progress
+  d3b4622 mr-alice Thu, 15 Sep 2016 21:45:00 +0200 merged modifications from origin
+  ca30b0d MrAlice  Thu, 15 Sep 2016 10:41:40 +0200 fixed terrible cost of calling requestDirDetails before createIndex
+  f58e9c1 mr-alice Wed, 14 Sep 2016 22:41:02 +0200 improved debug output of directory storage, and fixed bug causing loading error (previously crashing files should be removed)
+  ddc89a6 mr-alice Wed, 14 Sep 2016 21:52:16 +0200 fixed core dump in printout of empty slots. Improved dir sync-ing strategy
+  e985a2c mr-alice Wed, 14 Sep 2016 20:43:52 +0200 removed call to setDynamicSortFilter in SharedFilesDialog, as a workaround for the crash when sorting
+  afbb641 mr-alice Wed, 14 Sep 2016 20:41:22 +0200 fixed forceDirectoryCheck and inDirectoryCheck methods
+  93818f6 mr-alice Tue, 13 Sep 2016 21:23:27 +0200 simplified a bit the code in Flat_Model, and tried to fix the crash when sorting items
+  53c65ff mr-alice Tue, 13 Sep 2016 18:54:00 +0200 removed cache transfers from the GUI
+  02d2fb4 mr-alice Tue, 13 Sep 2016 13:53:51 +0200 fixed search and filter for regular expressions and terms
+  6ac9b27 mr-alice Tue, 13 Sep 2016 12:14:16 +0200 moved rsexpr.cc into util/
+  a2e34f9 mr-alice Tue, 13 Sep 2016 12:05:22 +0200 moved regular expression classes into a separate namespace
+  e9418bb mr-alice Tue, 13 Sep 2016 00:01:26 +0200 added file headers with proper licence terms
+  9f66c00 mr-alice Mon, 12 Sep 2016 23:37:19 +0200 moved rsexpr to file_sharing directory
+  274f924 mr-alice Mon, 12 Sep 2016 20:55:20 +0200 fixed getFileInfo and transfer from new database
+  af69790 csoler   Mon, 12 Sep 2016 10:15:13 +0200 added control file for debian jessie
+  c1e538f mr-alice Sun, 11 Sep 2016 17:52:12 +0200 added interactive update of dir entries when browsing files from an online friend
+  3718e7e mr-alice Sat, 10 Sep 2016 20:47:51 +0200 fixed last bugs in hash-based dir list exchange. It works!
+  88f8538 mr-alice Sat, 10 Sep 2016 17:25:29 +0200 fixed a few bugs in hash-based syncing
+  384d001 mr-alice Sat, 10 Sep 2016 13:57:05 +0200 progress in hash-based sync. Not there yet.
+  0ea695b mr-alice Thu,  8 Sep 2016 23:43:14 +0200 fixed a few bugs in hash-based sync. Not there yet.
+  fafe684 mr-alice Thu,  8 Sep 2016 21:34:53 +0200 finished implementing hash-based transactions. To be tested.
+  e3d12c4 csoler   Thu,  8 Sep 2016 17:08:34 +0200 Merge pull request #491 from G10h4ck/warnings_cleanup
+  eaa8ad8 MrAlice  Wed,  7 Sep 2016 22:31:12 +0200 half implemented the hash-based communication for dirs between friends
+  ea380b2 csoler   Wed,  7 Sep 2016 21:29:48 +0200 Merge pull request #487 from AsamK/fix_wayland
+  798ffd8 csoler   Wed,  7 Sep 2016 21:28:28 +0200 Merge pull request #488 from sehraf/pr-stats-api
+  ad1ba7a mr-alice Tue,  6 Sep 2016 23:05:46 +0200 fixed loading/saving of remote directories
+  e9540d7 defnax   Tue,  6 Sep 2016 17:45:42 +0200 Improved look and feel layout of Profile Generation Dialog
+  679c53b mr-alice Mon,  5 Sep 2016 21:22:11 +0200 added load/save of directory hierarchies. Fixed bug in loading of hash cache (caused y non initialisation of dest string in GetRawString())
+  5f5ce4a thunder2 Tue, 17 May 2016 19:02:14 +0200 Fixed version_detail_bash_script with shadow build
+  ea6431e thunder2 Mon,  5 Sep 2016 14:03:39 +0200 Fixed Windows shadow build with Qt 5.6 or higher
+  5b221c5 mr-alice Sat,  3 Sep 2016 18:46:03 +0200 moved encrypted data output/input to FileListIO
+  371171f mr-alice Sat,  3 Sep 2016 13:29:23 +0200  moved InternalFileHierarchyStorage to separate file. Fixed loading/saving infrastructure (not working yet)
+  153783a mr-alice Fri,  2 Sep 2016 22:08:27 +0200 fixed bug in saving hash cache
+  7b566f2 mr-alice Fri,  2 Sep 2016 21:49:43 +0200 added load/save for hash cache in the proper place
+  52ef7ad mr-alice Thu,  1 Sep 2016 21:41:12 +0200 fixed saving of config when diretory list is changed
+  6fc02e0 mr-alice Thu,  1 Sep 2016 21:04:48 +0200 added load/save of configuration and shared dirs list
+  f191fe6 mr-alice Thu,  1 Sep 2016 20:02:47 +0200 fixed compilation with new RsNodeGroupId
+  ade6017 mr-alice Thu,  1 Sep 2016 19:52:31 +0200 merged with upstream/master
+  1f3ea6f mr-alice Wed, 31 Aug 2016 22:47:05 +0200 added selection of subdirs to be seen for friends depending on permissions. Enabled dynamic update at friends
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Wed, 28 Sep 2016 22:00:00 +0100
+
+retroshare06 (0.6.1-1.20160831.53e26983~trusty) trusty; urgency=low
+
   Release of version 0.6.1. 
      * See detailed logs: https://github.com/RetroShare/RetroShare/blob/master/build_scripts/Debian%2BUbuntu/changelog
      * Release blog post: https://retroshareteam.wordpress.com
