@@ -24,11 +24,7 @@ Compilation on Linux
 1. Install package dependencies:
    * Debian/Ubuntu
    ```bash
-   sudo apt-get install libglib2.0-dev libupnp-dev qt4-dev-tools \
-       libqt4-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev \
-       libqt4-opengl-dev libqtmultimediakit1 qtmobility-dev libsqlcipher-dev \
-       libspeex-dev libspeexdsp-dev libxslt1-dev libcurl4-openssl-dev \
-       libopencv-dev tcl8.5 libmicrohttpd-dev
+   sudo apt-get install ibglib2.0-dev libupnp-dev libssl-dev libxss-dev libgnome-keyring-dev libbz2-dev libspeex-dev libspeexdsp-dev libxslt1-dev cmake libcurl4-openssl-dev libopencv-dev tcl8.6 libsqlcipher-dev libmicrohttpd-dev libavcodec-dev qtmultimedia5-dev qttools5-dev libqt5x11extras5-dev qt5-default
    ```
    * openSUSE
    ```bash
