@@ -624,8 +624,9 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "    Tunnel is a ending point. Also removing associated outgoing hash." ;
 #endif
-		std::map<TurtleFileHash,RsTurtleClientService*>::iterator itHash = _outgoing_file_hashes.find(it->second.hash);
-		if(itHash != _outgoing_file_hashes.end())
+        std::map<TurtleTunnelId,RsTurtleClientService*>::iterator itHash = _outgoing_tunnel_client_services.find(tid);
+
+        if(itHash != _outgoing_tunnel_client_services.end())
 		{
 			TurtleVirtualPeerId vpid = it->second.vpid ;
 			TurtleFileHash hash = it->second.hash ;
@@ -634,7 +635,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 
 			sources_to_remove.push_back(std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> >(itHash->second,hash_vpid)) ;
 
-			_outgoing_file_hashes.erase(itHash) ;
+            _outgoing_tunnel_client_services.erase(itHash) ;
 
 			// Also remove the associated virtual peer
 			//
@@ -1197,11 +1198,11 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 	}
 	else if(tunnel.local_dst == _own_id)
 	{
-		std::map<TurtleFileHash,RsTurtleClientService*>::const_iterator it = _outgoing_file_hashes.find(hash) ;
+        std::map<TurtleTunnelId,RsTurtleClientService*>::const_iterator it = _outgoing_tunnel_client_services.find(tunnel_id) ;
 
-		if(it == _outgoing_file_hashes.end())
+        if(it == _outgoing_tunnel_client_services.end())
 		{
-			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for server side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
+            std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << tunnel.hash << " for server side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
 			return false;
 		}
 
@@ -1475,7 +1476,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 			// Store some info string about the tunnel.
 			//
-			_outgoing_file_hashes[item->file_hash] = service ;
+            _outgoing_tunnel_client_services[t_id] = service ;
 
 			// Notify the client service that there's a new virtual peer id available as a client.
 			//
@@ -2096,8 +2097,8 @@ void p3turtle::dumpState()
 		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
-	for(std::map<TurtleFileHash,RsTurtleClientService*>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
-		std::cerr << "    hash=0x" << it->first << std::endl ;
+    for(std::map<TurtleTunnelId,RsTurtleClientService*>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+        std::cerr << "    TID=0x" << it->first << std::endl ;
 
 	std::cerr << "  Local tunnels:" << std::endl ;
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
