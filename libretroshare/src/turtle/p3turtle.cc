@@ -430,21 +430,21 @@ void p3turtle::autoWash()
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(unsigned int i=0;i<_hashes_to_remove.size();++i)
+        for(std::set<RsFileHash>::const_iterator hit(_hashes_to_remove.begin());hit!=_hashes_to_remove.end();++hit)
 		{
-			std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.find(_hashes_to_remove[i])) ;
+            std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.find(*hit)) ;
 
 			if(it == _incoming_file_hashes.end())
 			{
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "p3turtle: asked to stop monitoring file hash " << _hashes_to_remove[i] << ", but this hash is actually not handled by the turtle router." << std::endl ;
+                std::cerr << "p3turtle: asked to stop monitoring file hash " << *hit << ", but this hash is actually not handled by the turtle router." << std::endl ;
 #endif
 				continue ;
 			}
 
 			// copy the list of tunnels to remove.
 #ifdef P3TURTLE_DEBUG
-			std::cerr << "p3turtle: stopping monitoring for file hash " << _hashes_to_remove[i] << ", and closing " << it->second.tunnels.size() << " tunnels (" ;
+            std::cerr << "p3turtle: stopping monitoring for file hash " << *hit << ", and closing " << it->second.tunnels.size() << " tunnels (" ;
 #endif
 			std::vector<TurtleTunnelId> tunnels_to_remove ;
 
@@ -463,11 +463,8 @@ void p3turtle::autoWash()
 
 			_incoming_file_hashes.erase(it) ;
 		}
-		if(!_hashes_to_remove.empty())
-		{
-			IndicateConfigChanged() ;	// initiates saving of handled hashes.
-			_hashes_to_remove.clear() ;
-		}
+
+        _hashes_to_remove.clear() ;
 	}
 
 	// look for tunnels and stored temporary info that have not been used for a while.
@@ -657,7 +654,7 @@ void p3turtle::stopMonitoringTunnels(const RsFileHash& hash)
 	std::cerr << "p3turtle: Marking hash " << hash << " to be removed during autowash." << std::endl ;
 #endif
 	// We don't do the deletion in this process, because it can cause a race with tunnel management.
-	_hashes_to_remove.push_back(hash) ;
+    _hashes_to_remove.insert(hash) ;
 }
 
 // -----------------------------------------------------------------------------------//
@@ -1855,15 +1852,13 @@ void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *clie
 
 		// First, check if the hash is tagged for removal (there's a delay)
 
-		for(uint32_t i=0;i<_hashes_to_remove.size();++i)
-			if(_hashes_to_remove[i] == hash)
-			{
-				_hashes_to_remove[i] = _hashes_to_remove.back() ;
-				_hashes_to_remove.pop_back() ;
+        if(_hashes_to_remove.find(hash) != _hashes_to_remove.end())
+        {
+            _hashes_to_remove.erase(hash) ;
 #ifdef P3TURTLE_DEBUG
-				std::cerr << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
+            std::cerr << "p3turtle: File hash " << hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
 #endif
-			}
+        }
 
 		// Then, check if the hash is already there
 		//

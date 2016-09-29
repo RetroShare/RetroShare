@@ -409,7 +409,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				
 
 		/// Hashes marked to be deleted.
-		std::vector<TurtleFileHash>								_hashes_to_remove ;			
+        std::set<TurtleFileHash>								_hashes_to_remove ;
 
 		/// List of client services that have regitered.
 		std::list<RsTurtleClientService*>						_registered_services ;
