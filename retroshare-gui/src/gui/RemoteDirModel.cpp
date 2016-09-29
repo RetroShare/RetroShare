@@ -38,6 +38,7 @@
 
 #include <set>
 #include <algorithm>
+#include <time.h>
 
 /*****
  * #define RDM_DEBUG
