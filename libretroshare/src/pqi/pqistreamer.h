@@ -159,8 +159,8 @@ class pqistreamer: public PQInterface
 		int mCurrRead;
 		int mCurrSent;
         
-		time_t mCurrReadTS; // TS from which these are measured.
-		time_t mCurrSentTS;
+        double mCurrReadTS; // TS from which these are measured.
+        double mCurrSentTS;
 
 		time_t mAvgLastUpdate; // TS from which these are measured.
 		uint32_t mAvgReadCount;
