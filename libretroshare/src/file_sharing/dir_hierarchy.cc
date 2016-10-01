@@ -583,12 +583,25 @@ time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectorySto
     DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
 
     time_t largest_modf_time = d.dir_modtime ;
+    bool unfinished_files_present = false ;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
-        largest_modf_time = std::max(largest_modf_time,static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_modtime) ;
+    {
+        FileEntry *f = static_cast<FileEntry*>(mNodes[d.subfiles[i]]) ;
+
+        if(!f->file_hash.isNull())
+            largest_modf_time = std::max(largest_modf_time, f->file_modtime) ;	// only account for hashed files, since we never send unhashed files to friends.
+        else
+            unfinished_files_present = true ;
+    }
 
     for(uint32_t i=0;i<d.subdirs.size();++i)
         largest_modf_time = std::max(largest_modf_time,recursUpdateLastModfTime(d.subdirs[i])) ;
+
+    // now if some files are not hashed in this directory, reduce the recurs time by 1, so that the TS wil be updated when all hashes are ready.
+
+    if(unfinished_files_present && largest_modf_time > 0)
+        largest_modf_time-- ;
 
     d.dir_most_recent_time = largest_modf_time ;
 

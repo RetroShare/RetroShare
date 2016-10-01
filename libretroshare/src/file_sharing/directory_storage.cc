@@ -637,6 +637,17 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
             std::cerr << "  not pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << ": permission denied for this peer." << std::endl;
 #endif
 
+    // now count the files that do not have a null hash (meaning the hash has indeed been computed)
+
+    uint32_t allowed_subfiles = 0 ;
+
+    for(uint32_t i=0;i<dir->subfiles.size();++i)
+    {
+        const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
+        if(file != NULL && !file->file_hash.isNull())
+            allowed_subfiles++ ;
+    }
+
     unsigned char *section_data = NULL;
     uint32_t section_size = 0;
     uint32_t section_offset = 0;
@@ -655,7 +666,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     // serialise number of subdirs and number of subfiles
 
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subdirs.size()  )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subfiles.size()    )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subfiles        )) return false ;
 
     // serialise subdirs entry indexes
 
@@ -672,9 +683,9 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
         const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
 
-        if(file == NULL)
+        if(file == NULL || file->file_hash.isNull())
         {
-            std::cerr << "(EE) cannot reach file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
+            std::cerr << "(II) skipping unhashed or Null file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
             continue ;
         }
 
