@@ -256,13 +256,14 @@ void SharedFilesDialog::showEvent(QShowEvent *)
 {
 	if(model!=NULL)
 	{
-        std::set<std::string> expanded_indexes ;
-        saveExpandedPaths(expanded_indexes);
+        std::set<std::string> expanded_indexes,selected_indexes ;
+
+        saveExpandedPathsAndSelection(expanded_indexes,selected_indexes);
 
         model->setVisible(true) ;
 		model->update() ;
 
-        restoreExpandedPaths(expanded_indexes);
+        restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes);
     }
 }
 RemoteSharedFilesDialog::~RemoteSharedFilesDialog()
@@ -359,8 +360,9 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 
 	showProperColumns() ;
 
-    std::set<std::string> expanded_indexes ;
-    saveExpandedPaths(expanded_indexes);
+    std::set<std::string> expanded_indexes,selected_indexes ;
+
+    saveExpandedPathsAndSelection(expanded_indexes,selected_indexes);
 
     if(isVisible())
 	{
@@ -374,7 +376,7 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	ui.dirTreeView->setModel(proxyModel);
 	ui.dirTreeView->update();
 
-    restoreExpandedPaths(expanded_indexes);
+    restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes);
 
     QHeaderView * header = ui.dirTreeView->header () ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Interactive);
@@ -851,7 +853,7 @@ void  SharedFilesDialog::preModDirectories(bool local)
 	flat_model->preMods();
 }
 
-void SharedFilesDialog::saveExpandedPaths(std::set<std::string>& expanded_indexes)
+void SharedFilesDialog::saveExpandedPathsAndSelection(std::set<std::string>& expanded_indexes, std::set<std::string>& selected_indexes)
 {
     if(ui.dirTreeView->model() == NULL)
         return ;
@@ -862,11 +864,12 @@ void SharedFilesDialog::saveExpandedPaths(std::set<std::string>& expanded_indexe
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursSaveExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes);
+
+        recursSaveExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,selected_indexes);
     }
 }
 
-void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expanded_indexes)
+void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::string>& expanded_indexes, const std::set<std::string>& selected_indexes)
 {
     if(ui.dirTreeView->model() == NULL)
         return ;
@@ -881,17 +884,22 @@ void SharedFilesDialog::restoreExpandedPaths(const std::set<std::string>& expand
     for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
     {
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
-        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes);
+        recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,selected_indexes);
     }
+    QItemSelection selection ;
+
     ui.dirTreeView->blockSignals(false) ;
 }
 
-void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp)
+void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp,std::set<std::string>& sel)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
+
+    if(ui.dirTreeView->selectionModel()->selection().contains(index))
+        sel.insert(local_path) ;
 
     if(ui.dirTreeView->isExpanded(index))
     {
@@ -902,7 +910,7 @@ void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const s
             exp.insert(local_path) ;
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),local_path,exp) ;
+            recursSaveExpandedItems(index.child(row,0),local_path,exp,sel) ;
     }
 #ifdef DEBUG_SHARED_FILES_DIALOG
     else
@@ -910,12 +918,14 @@ void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const s
 #endif
 }
 
-void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path, const std::set<std::string>& exp)
+void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path, const std::set<std::string>& exp, const std::set<std::string> &sel)
 {
     std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
+    if(sel.find(local_path) != sel.end())
+        ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
     if(exp.find(local_path) != exp.end())
     {
@@ -925,7 +935,7 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
         ui.dirTreeView->setExpanded(index,true) ;
 
         for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp) ;
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel) ;
     }
 }
 
@@ -935,8 +945,9 @@ void  SharedFilesDialog::postModDirectories(bool local)
     if (isRemote() == local) {
         return;
     }
-    std::set<std::string> expanded_indexes;
-    saveExpandedPaths(expanded_indexes) ;
+    std::set<std::string> expanded_indexes,selected_indexes;
+
+    saveExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "Saving expanded items. " << expanded_indexes.size() << " items found" << std::endl;
 #endif
@@ -946,7 +957,7 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	flat_model->postMods();
 	ui.dirTreeView->update() ;
 
-    restoreExpandedPaths(expanded_indexes) ;
+    restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
 
     if (ui.filterPatternLineEdit->text().isEmpty() == false)
 		FilterItems();

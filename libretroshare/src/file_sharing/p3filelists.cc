@@ -224,7 +224,7 @@ int p3FileDatabase::tick()
 
         mLastRemoteDirSweepTS = now;
 
-        // This is a hash to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
+        // This is a hack to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
         // so the first notify is ignored, and no other notify will happen next.
 
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
