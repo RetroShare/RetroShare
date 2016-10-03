@@ -738,6 +738,7 @@ void RemoteDirectoryStorage::checkSave()
     {
         save(mFileName);
         mLastSavedTime = now ;
+        mChanged = false ;
     }
 }
 
