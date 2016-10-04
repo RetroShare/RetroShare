@@ -25,7 +25,9 @@ set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 
-if exist "%~dp0env-mod.bat" call "%~dp0env-mod.bat"
+if not exist "%~dp0env-mod.bat" goto no_mod
+call "%~dp0env-mod.bat"
 if errorlevel 1 exit /B %ERRORLEVEL%
+:no_mod
 
 exit /B 0
