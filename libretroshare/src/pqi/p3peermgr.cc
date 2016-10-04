@@ -286,7 +286,7 @@ bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 
 void p3PeerMgrIMPL::tick()
 {
-    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
+    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 100 ; // Remove unused locations and clean IPs every 10 minutes.
 
     static time_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
 
@@ -2841,121 +2841,48 @@ bool p3PeerMgrIMPL::removeBannedIps()
 bool p3PeerMgrIMPL::removeUnusedLocations()
 {
 	std::list<RsPeerId> toRemove;
-
-	std::map<RsPgpId, bool>     hasRecentLocation;
 	std::map<RsPgpId, time_t>   mostRecentTime;
-	std::map<RsPgpId, RsPeerId> mostRecentLocation;
-
-	// init maps
-	{
-		std::list<RsPgpId> pgpList;
-
-		if(!rsPeers->getGPGAcceptedList(pgpList))
-			return false;
-
-		std::list<RsPgpId>::iterator it;
-		for(it = pgpList.begin(); it != pgpList.end(); ++it)
-		{
-			hasRecentLocation[*it] = false;
-			mostRecentTime[*it] = (time_t)0;
-		}
-	}
 
 	const time_t now = time(NULL);
-	RsPgpId pgpID;
-	
+
+    std::list<RsPgpId> pgpList;
+
+    if(!rsPeers->getGPGAcceptedList(pgpList))
+        return false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	
+        // First put a sensible number in all PGP ids
+
+        for(std::list<RsPgpId>::const_iterator it = pgpList.begin(); it != pgpList.end(); ++it)
+            mostRecentTime[*it] = (time_t)0;
+
 #ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgr::removeUnusedLocations()" << std::endl;
 #endif
+        // Then compute the most recently used location for all PGP ids
 		
-		std::map<RsPeerId, peerState>::iterator it;
-		for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
-		{
-			pgpID = it->second.gpg_id;
+        for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)
+        {
+            time_t& bst(mostRecentTime[it->second.gpg_id]) ;
+            bst = std::max(bst,it->second.lastcontact) ;
+        }
 
-			// store some references to speed up accessing
-			RsPeerId &idRef = mostRecentLocation[pgpID];
-			bool &recentRef = hasRecentLocation[pgpID];
+        // And remove all locations that are too old and also older than the most recent location. Doing this we're sure to always keep at least one location per PGP id.
 
-			if (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE)
-			{
-				// location is too old
-				if(recentRef)
-				{
-					// there is already one location that won't get removed
-					// -> we can safely remove this one
-					toRemove.push_back(it->first);
+        for( std::map<RsPeerId, peerState>::iterator it = mFriendList.begin(); it != mFriendList.end(); ++it)
+        {
+            if (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE && it->second.lastcontact < mostRecentTime[it->second.gpg_id])
+                toRemove.push_back(it->first);
 #ifdef PEER_DEBUG
-					std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
+            std::cerr << "Location " << it->first << " PGP id " << it->second.gpg_id << " last contact " << it->second.lastcontact << " remove: " << (now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE)  << " most recent: " << mostRecentTime[it->second.gpg_id]
+                      << ". Final result remove: " << (it->second.lastcontact < mostRecentTime[it->second.gpg_id] && now > it->second.lastcontact + RS_PEER_OFFLINE_DELETE )<< std::endl;
 #endif
-				}
-				else
-				{
-					// we need to take care that the most recent location it not removed
-					time_t &timeRef = mostRecentTime[pgpID];
-
-					if(timeRef > it->second.lastcontact)
-					{
-						// this (it) location is longer offline compared to mostRecentLocation
-						// -> we can remove this one
-						toRemove.push_back(it->first);
-#ifdef PEER_DEBUG
-						std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
-#endif
-					}
-					else
-					{
-						// this (it) location is more recent compared to mostRecentLocation
-						// -> we can remove mostRecentLocation
-						if(!idRef.isNull())
-						{
-							toRemove.push_back(idRef);
-#ifdef PEER_DEBUG
-							std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
-#endif
-						}
-						// update maps
-						idRef = it->first;
-						timeRef = it->second.lastcontact;
-					}
-				}
-			}
-			else
-			{
-				// found a location that won't get removed
-				recentRef = true;
-
-				// we can remove mostRecentLocation if it is set
-				if(!idRef.isNull())
-				{
-					toRemove.push_back(idRef);
-#ifdef PEER_DEBUG
-					std::cerr << "p3PeerMgr::removeUnusedLocations() removing Old SSL Id: " << it->first << std::endl;
-#endif
-				}
-			}
-			
-//			if (isDummyFriend(it->first))
-//			{
-//				toRemove.push_back(it->first);
-//				
-//#ifdef PEER_DEBUG
-//				std::cerr << "p3PeerMgr::removeUnusedLocations() removing Dummy Id: " << it->first << std::endl;
-//#endif
-//				
-//			}
-			
-		}
+        }
 	}
 
-	std::list<RsPeerId>::iterator it;	
-	for(it = toRemove.begin(); it != toRemove.end(); ++it)
-	{
-		removeFriend(*it, false);
-	}
+    for( std::list<RsPeerId>::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
+        removeFriend(*it, false);
 
 	return true;
 }
