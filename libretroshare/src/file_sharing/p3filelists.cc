@@ -1125,7 +1125,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
         {
-            P3FILELISTS_ERROR() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#ifdef DEBUG_P3FILELISTS
+            P3FILELISTS_DEBUG() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#endif
             return;
         }
 
