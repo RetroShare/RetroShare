@@ -286,7 +286,7 @@ bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 
 void p3PeerMgrIMPL::tick()
 {
-    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 100 ; // Remove unused locations and clean IPs every 10 minutes.
+    static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 300 ; // Remove unused locations and clean IPs every 10 minutes.
 
     static time_t last_friends_check = time(NULL) ; // first cleaning after 1 hour.
 
