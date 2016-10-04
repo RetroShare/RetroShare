@@ -555,7 +555,7 @@ int	pqistreamer::handleoutgoing_locked()
         	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
 		time_t now = time(NULL) ;
         
-        	if((!mAcceptsPacketSlicing) && now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
+            if(now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
         	{
 #ifdef DEBUG_PACKET_SLICING
                 	std::cerr << "(II) Inserting packet slicing probe in traffic" << std::endl;
