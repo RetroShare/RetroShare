@@ -188,7 +188,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
 
         de->row = mNodes.size();
         de->parent_index = indx;
-        de->dir_modtime = it->second;
+        de->dir_modtime = 0;// forces parsing.it->second;
         de->dir_parent_path = d.dir_parent_path + "/" + d.dir_name ;
         de->dir_hash = createDirHash(de->dir_name,de->dir_parent_path) ;
 
