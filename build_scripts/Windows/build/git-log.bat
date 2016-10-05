@@ -1,6 +1,12 @@
+:: Usage:
+:: call git-log.bat [no-ask]
+
 @echo off
 
 setlocal
+
+set NoAsk=
+if "%~1"=="no-ask" set NoAsk=1
 
 :: Initialize environment
 call "%~dp0..\env.bat"
@@ -56,9 +62,11 @@ set RsLastRefFile=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%-LastRef.txt
 set RsLastRef=
 if exist "%RsLastRefFile%" set /P RsLastRef=<"%RsLastRefFile%"
 
+if "%NoAsk%"=="1" goto no_ask_for_last_revision
 if not "%RsLastRef%"=="" echo Last Revision was %RsLastRef%
 set /P RsLastRefInput=Last Revision: 
 if "%RsLastRefInput%" NEQ "" set RsLastRef=%RsLastRefInput%
+:no_ask_for_last_revision
 
 :: Get current revision
 pushd "%SourcePath%"
@@ -71,8 +79,11 @@ if "%RsRef%"=="" echo Cannot get git revision.& exit /B 1
 echo.
 echo Creating log from %RsLastRef%
 echo                to %RsRef%
+
+if "%NoAsk%"=="1" goto no_confirm
 choice /M "Do you want to proceed?"
 if %errorlevel%==2 exit /B 1
+:no_confirm
 
 if "%RsBuildConfig%" NEQ "release" (
 	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%-%RsBuildConfig%.txt
