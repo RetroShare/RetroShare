@@ -326,7 +326,7 @@ MainWindow::~MainWindow()
     delete(ui);
 }
 
-/** Initialyse Stacked Page*/
+/** Initialize Stacked Page*/
 void MainWindow::initStackedPage()
 {
   /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
@@ -340,9 +340,6 @@ void MainWindow::initStackedPage()
 
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
-
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -372,6 +369,9 @@ void MainWindow::initStackedPage()
 #ifdef BLOGS
   addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
 #endif
+
+addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
