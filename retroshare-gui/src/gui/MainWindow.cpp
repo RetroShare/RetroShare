@@ -341,25 +341,25 @@ void MainWindow::initStackedPage()
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
 
-#ifdef RS_USE_NEW_PEOPLE_DIALOG
-  PeopleDialog *peopleDialog = NULL;
-  addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
-#endif
-
-  IdDialog *idDialog = NULL;
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
 //#ifdef RS_USE_CIRCLES
 //  CirclesDialog *circlesDialog = NULL;
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
-
-  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
-  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
+  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
-  addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
+  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
+
+  IdDialog *idDialog = NULL;
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
+#ifdef RS_USE_NEW_PEOPLE_DIALOG
+  PeopleDialog *peopleDialog = NULL;
+  addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
+#endif
 
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
