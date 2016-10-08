@@ -1,10 +1,20 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  9a3eb1c csoler       Sat,  8 Oct 2016 14:30:58 +0200 Merge pull request #528 from sehraf/pr-drop-ssh-protobuf
+  c55fb0d csoler       Sat,  8 Oct 2016 14:11:43 +0200 Merge pull request #524 from cavebeat/compile
+  97f2589 csoler       Sat,  8 Oct 2016 14:09:34 +0200 Merge pull request #513 from grennvyper/patch-1
+  aa200bf csoler       Sat,  8 Oct 2016 14:06:54 +0200 Merge pull request #526 from marcobarbosa16/master
+  2591818 csoler       Sat,  8 Oct 2016 14:04:31 +0200 Merge pull request #515 from PhenomRetroShare/Add_ContextMenuToShowImageInLobby
   9ed759d csoler       Sat,  8 Oct 2016 13:38:18 +0200 Merge pull request #527 from PhenomRetroShare/Fix_DesktopFileName
+  ada1cee sehraf       Sat,  8 Oct 2016 12:59:27 +0200 remove deprecated ssh/protobuf code
   4b0f82a Phenom       Sat,  8 Oct 2016 12:12:26 +0200 Fix Desktop Filename for option page message.
+  69ecca4 MarcoBarbosa Fri,  7 Oct 2016 23:12:40 -0300 add uninstall section in README.md
   7cd31aa csoler       Wed,  5 Oct 2016 14:15:12 +0200 fixed bug preventign update of subdirs after last commit
+  fdfd2e9 Phenom       Sat, 24 Sep 2016 16:12:44 +0200 Add context menu to show hidden image on lobby.
   854eebb csoler       Wed,  5 Oct 2016 10:59:51 +0200 only update subfiles and subdirs list during dir watching sweep when the TS of the dir has changed. Greatly improve cost of regular directory watching process
   d020d8d thunder2     Wed,  5 Oct 2016 06:40:02 +0200 Windows build environment: - Added automatic mode for creating git-log - Fixed filename of installer
+  891e61e cave beat    Tue,  4 Oct 2016 23:27:40 +0200 MacOS to .md, + README update
+  9177c82 cave beat    Tue,  4 Oct 2016 23:14:50 +0200 updated MSys2 Install Guide to .md
   d367491 thunder2     Tue,  4 Oct 2016 21:45:59 +0200 Fixed env.bat for Windows build
   20cd123 csoler       Tue,  4 Oct 2016 21:41:38 +0200 removed annoying ERROR output that is more a debug info than a real error, in p3filelists
   e42dae8 csoler       Tue,  4 Oct 2016 21:34:23 +0200 continue sending packet slicing probes in case the peer has restarted
