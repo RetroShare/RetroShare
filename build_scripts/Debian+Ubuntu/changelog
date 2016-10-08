@@ -1,5 +1,33 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  9ed759d csoler       Sat,  8 Oct 2016 13:38:18 +0200 Merge pull request #527 from PhenomRetroShare/Fix_DesktopFileName
+  4b0f82a Phenom       Sat,  8 Oct 2016 12:12:26 +0200 Fix Desktop Filename for option page message.
+  7cd31aa csoler       Wed,  5 Oct 2016 14:15:12 +0200 fixed bug preventign update of subdirs after last commit
+  854eebb csoler       Wed,  5 Oct 2016 10:59:51 +0200 only update subfiles and subdirs list during dir watching sweep when the TS of the dir has changed. Greatly improve cost of regular directory watching process
+  d020d8d thunder2     Wed,  5 Oct 2016 06:40:02 +0200 Windows build environment: - Added automatic mode for creating git-log - Fixed filename of installer
+  d367491 thunder2     Tue,  4 Oct 2016 21:45:59 +0200 Fixed env.bat for Windows build
+  20cd123 csoler       Tue,  4 Oct 2016 21:41:38 +0200 removed annoying ERROR output that is more a debug info than a real error, in p3filelists
+  e42dae8 csoler       Tue,  4 Oct 2016 21:34:23 +0200 continue sending packet slicing probes in case the peer has restarted
+  b08a62a csoler       Tue,  4 Oct 2016 21:25:48 +0200 restored delay between location cleaning to 5 mins
+  133676f csoler       Tue,  4 Oct 2016 21:24:53 +0200 simplified the code to remove old locations and fixed bug that in some situation would let a PGP key with no locations
+  a35985e thunder2     Tue,  6 Sep 2016 21:31:41 +0200 Windows build environment: - Added build script - Added build-installer script - Added pack script - Added gitlog script - Use shadow build
+  ebfc82c csoler       Mon,  3 Oct 2016 21:44:34 +0200 save/restore selection in shared dir list tree view
+  ed8d786 csoler       Mon,  3 Oct 2016 20:49:49 +0200 added missing mChanged=false that caused remote directories to save far too often
+  c968490 csoler       Sat,  1 Oct 2016 22:14:50 +0200 switched to floating point time for bandwidth estimation in pqistreamer. Helps a lot RTTs since rounding to int prveviously caused packets to be delayed up to 1 sec (improvement by Jollavilette)
+  20397c3 csoler       Sat,  1 Oct 2016 18:09:39 +0200 Merge pull request #523 from bryongloden/patch-1
+  9ae0511 Bryon Gloden Sat,  1 Oct 2016 12:01:09 -0400 uninitialized variable: size
+  a751155 csoler       Sat,  1 Oct 2016 15:46:32 +0200 do not send un-hashed files to friends, and allow to re-send the directory content when all files are hashed
+  84341f2 csoler       Thu, 29 Sep 2016 22:30:26 +0200 changed _outgoing_file_hashes into a new map that connects services to tunnel ID instead of file hash, hence avoiding to remove a hash on server side when a tunnel is closed (bug found by Jolavillette)
+  b62b66a csoler       Thu, 29 Sep 2016 20:55:16 +0200 replace std::vector for std::set to represent _hashes_to_remove, so as to avoid duplicates (suggested by Jo)
+  1fd624c csoler       Thu, 29 Sep 2016 12:47:14 +0200 Merge pull request #519 from PhenomRetroShare/Fix_WinCompil
+  0ea909d Phenom       Thu, 29 Sep 2016 12:45:01 +0200 Fix Windows Compilation after 6e4ba76b
+  e185bcd csoler       Wed, 28 Sep 2016 23:02:24 +0200 fixed removal of directory when removing a friend
+  c276165 csoler       Wed, 28 Sep 2016 22:28:43 +0200 updated clean.sh script to 0.6.1
+  
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 8 Oct 2016 15:00:00 +0100
+
+retroshare06 (0.6.1-1.20160928.e185bcda~trusty) trusty; urgency=low
+
   Warning: new file list sharing system. 
      * Old list of shares is not preserved and should be re-defined. 
      * The hash cache however is imported from the old format, meaning that Retroshare should not re-hash new files that were already shared before.
