@@ -789,7 +789,10 @@ bool RshareSettings::getRetroShareProtocol()
 		}
 	}
 #elif defined(Q_OS_LINUX)
-	QFile desktop("/usr/share/applications/RetroShare06.desktop");
+	QFile desktop("/usr/share/applications/retroshare06.desktop");
+	if (!desktop.exists()) {
+		desktop.setFileName("/usr/share/applications/RetroShare06.desktop");
+	}
 	if (desktop.exists()) {
 		desktop.open(QIODevice::ReadOnly | QIODevice::Text);
 		QTextStream in(&desktop);
