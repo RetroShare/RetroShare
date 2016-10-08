@@ -1,13 +1,13 @@
 #include "imageutil.h"
 #include "util/misc.h"
 
-#include <QMessageBox>
-#include <QTextCursor>
-#include <QByteArray>
-#include <QString>
-#include <QImage>
-#include <QTextDocumentFragment>
 #include <QApplication>
+#include <QByteArray>
+#include <QImage>
+#include <QMessageBox>
+#include <QString>
+#include <QTextCursor>
+#include <QTextDocumentFragment>
 
 ImageUtil::ImageUtil() {}
 
@@ -42,10 +42,3 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
 	}
 }
 
-bool ImageUtil::checkImage(QTextCursor cursor)
-{
-	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
-	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
-	QString imagestr = cursor.selection().toHtml();
-	return imagestr.indexOf("base64,") != -1;
-}
