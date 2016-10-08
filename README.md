@@ -67,6 +67,11 @@ Compilation on Linux
          /usr/bin/RetroShare06
          /usr/bin/RetroShare06-nogui
 
+5. Uninstall:
+   ```bash
+   sudo make uninstall
+   ```
+
 Compile only retroshare-nogui
 -----------------------------
 If you want to run RetroShare on a server and don’t need the gui and plugins,
