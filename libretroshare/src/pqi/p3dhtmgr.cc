@@ -23,7 +23,6 @@
  *
  */
 
-#include <unistd.h>
 #include <iomanip>
 #include <stdio.h>
 #include <openssl/sha.h>
@@ -33,6 +32,7 @@
 #include "pqi/p3peermgr.h"
 #include "pqi/p3linkmgr.h"
 
+#include "util/rssleep.h"
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
@@ -562,14 +562,7 @@ void p3DhtMgr::run()
 				break; /* speed up config modifications */
 			}
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-			sleep(waittime);
-#else
-			Sleep(1000 * waittime); 
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
+			rs_usleep(1000 * 1000 * waittime);
 		}
 	}
 }

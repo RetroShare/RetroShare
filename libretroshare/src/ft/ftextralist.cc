@@ -32,8 +32,8 @@
 #include "ft/ftextralist.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
+#include "util/rssleep.h"
 #include <stdio.h>
-#include <unistd.h>		/* for (u)sleep() */
 #include <time.h>
 
 /******
@@ -69,12 +69,7 @@ void ftExtraList::data_tick()
         /* Hash a file */
         hashAFile();
 
-#ifdef WIN32
-        Sleep(1);
-#else
-        /* microsleep */
-        usleep(10);
-#endif
+		rs_usleep(10);
     }
     else
     {
@@ -82,16 +77,11 @@ void ftExtraList::data_tick()
         if (cleanup < now)
         {
             cleanupOldFiles();
-            cleanup = now + CLEANUP_PERIOD;
-        }
+			cleanup = now + CLEANUP_PERIOD;
+		}
 
-        /* sleep */
-#ifdef WIN32
-        Sleep(1000);
-#else
-        sleep(1);
-#endif
-    }
+		rs_usleep(1000*1000);
+	}
 }
 
 
@@ -472,19 +462,10 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		mFiles[details.info.hash] = details;
 		delete (*it);
 
-		/* short sleep */
-#ifndef WINDOWS_SYS
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		usleep(1000); /* 1000 per second */
-
-#else
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-		Sleep(1);
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
+		rs_usleep(1000); /* 1000 per second */
 	}
-    load.clear() ;
+
+	load.clear();
 	return true;
 }
 

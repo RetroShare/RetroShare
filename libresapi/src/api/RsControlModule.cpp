@@ -1,11 +1,11 @@
 #include "RsControlModule.h"
 
 #include <sstream>
-#include <unistd.h>
 #include <cstdio>
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rsiface.h>
+#include "util/rssleep.h"
 
 #include "api/ApiServer.h"
 #include "api/Operators.h"
@@ -55,11 +55,16 @@ bool RsControlModule::processShouldExit()
     return mProcessShouldExit;
 }
 
-bool RsControlModule::askForPassword(const std::string &title, const std::string &key_details, bool /* prev_is_bad */, std::string &password, bool& cancelled)
+bool RsControlModule::askForPassword(const std::string &title,
+                                     const std::string &key_details,
+                                     bool /* prev_is_bad */,
+                                     std::string &password, bool& cancelled)
 {
-	cancelled = false ;
-    {
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
+	cancelled = false;
+
+	{
+		RS_STACK_MUTEX(mDataMtx);
+
         if(mFixedPassword != "")
         {
             password = mFixedPassword;
@@ -76,19 +81,22 @@ bool RsControlModule::askForPassword(const std::string &title, const std::string
     bool wait = true;
     while(wait)
     {
-        usleep(5*1000);
+		rs_usleep(5*1000);
 
-        RsStackMutex stack(mDataMtx); // ********** LOCKED **********
-        wait = mWantPassword;
-        if(!wait && mPassword != "")
-        {
-            password = mPassword;
-            mPassword = "";
-            mWantPassword = false;
-            mStateTokenServer->replaceToken(mStateToken);
-            return true;
-        }
+		{
+			RS_STACK_MUTEX(mDataMtx);
+			wait = mWantPassword;
+			if(!wait && mPassword != "")
+			{
+				password = mPassword;
+				mPassword = "";
+				mWantPassword = false;
+				mStateTokenServer->replaceToken(mStateToken);
+				return true;
+			}
+		}
     }
+
     return false;
 }
 
@@ -135,7 +143,7 @@ void RsControlModule::run()
         bool wait_for_account_select = (initResult != RS_INIT_HAVE_ACCOUNT);
         while(wait_for_account_select && !processShouldExit())
         {
-            usleep(5*1000);
+			rs_usleep(5*1000);
             RsStackMutex stack(mDataMtx); // ********** LOCKED **********
             wait_for_account_select = mLoadPeerId.isNull();
             auto_login = mAutoLoginNextTime;
@@ -191,10 +199,7 @@ void RsControlModule::run()
     std::cerr << "RsControlModule: Retroshare is up and running. Enjoy!" << std::endl;
     setRunState(RUNNING_OK);
 
-    while(!processShouldExit())
-    {
-        usleep(5*1000);
-    }
+	while(!processShouldExit()) rs_usleep(5*1000);
 
     std::cerr << "RsControlModule: stopping Retroshare..." << std::endl;
     RsControl::instance() -> rsGlobalShutDown();

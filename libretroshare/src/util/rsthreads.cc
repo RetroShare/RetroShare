@@ -25,7 +25,7 @@
  */
 
 #include "rsthreads.h"
-#include <unistd.h>    // for usleep()
+#include "rssleep.h"
 #include <errno.h>     // for errno
 #include <iostream>
 #include <time.h>
@@ -231,7 +231,7 @@ void RsQueueThread::data_tick()
         THREAD_DEBUG << "RsQueueThread::data_tick() no work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
     }
-    usleep(mLastSleep * 1000); // mLastSleep msec
+	rs_usleep(mLastSleep * 1000); // mLastSleep msec
 }
 
 void RsMutex::unlock()

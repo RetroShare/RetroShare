@@ -24,6 +24,7 @@
  */
 #include "util/rsdir.h"
 #include "util/rsprint.h"
+#include "util/rssleep.h"
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "hash_cache.h"
@@ -105,8 +106,7 @@ void HashStorage::data_tick()
 #ifdef HASHSTORAGE_DEBUG
             std::cerr << "nothing to hash. Sleeping for " << st << " us" << std::endl;
 #endif
-
-            usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
+			rs_usleep(st);	// when no files to hash, just wait for 2 secs. This avoids a dramatic loop.
 
             if(st > MAX_INACTIVITY_SLEEP_TIME)
             {

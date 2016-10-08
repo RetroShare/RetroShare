@@ -27,9 +27,9 @@
 
 #include "rsserver/p3face.h"
 #include "retroshare/rsplugin.h"
+#include "util/rssleep.h"
 
 #include "tcponudp/tou.h"
-#include <unistd.h>
 
 #include "pqi/authssl.h"
 #include <sys/time.h>
@@ -132,13 +132,9 @@ RsServer::~RsServer()
 
 
         /* Thread Fn: Run the Core */
-void 	RsServer::data_tick()
+void RsServer::data_tick()
 {
-#ifndef WINDOWS_SYS
-    usleep((int) (mTimeDelta * 1000000));
-#else
-    Sleep((int) (mTimeDelta * 1000));
-#endif
+	rs_usleep((int) (mTimeDelta * 1000000));
 
     double ts = getCurrentTS();
     double delta = ts - mLastts;

@@ -24,6 +24,7 @@
  */
 #include "util/folderiterator.h"
 #include "rsserver/p3face.h"
+#include "util/rssleep.h"
 
 #include "directory_storage.h"
 #include "directory_updater.h"
@@ -78,7 +79,7 @@ void LocalDirectoryUpdater::data_tick()
         mSharedDirectories->updateTimeStamps() ;
         mLastTSUpdateTime = now ;
     }
-    usleep(10*1000*1000);
+	rs_usleep(10*1000*1000);
 }
 
 void LocalDirectoryUpdater::forceUpdate()

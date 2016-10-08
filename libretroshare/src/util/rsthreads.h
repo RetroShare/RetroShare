@@ -255,8 +255,8 @@ public:
 	 * Subclasses must implement this method, it will be called in a loop once
 	 * the thread is started, so repetitive work (like checking if data is
 	 * available on a socket) should be done here, at the end of this method
-	 * usleep(...) or similar function should be called or the CPU will be used
-	 * as much as possible also if there is nothing to do.
+	 * @see rs_usleep(...) or similar function should be called or the CPU will
+	 * be used as much as possible also if there is nothing to do.
 	 */
 	virtual void data_tick() = 0;
 
