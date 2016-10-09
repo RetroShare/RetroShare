@@ -536,8 +536,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
     for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
-		std::string fname;
-		dirIt.d_name(fname);
+        std::string fname = dirIt.file_name();
 		std::string fullname = mBaseDirectory + "/" + fname;
 #ifdef FIM_DEBUG
 		std::cerr << "calling stats on " << fullname <<std::endl;
