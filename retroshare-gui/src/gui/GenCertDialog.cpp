@@ -149,6 +149,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.node_input,       SIGNAL(textChanged(QString)), this, SLOT(updateCheckLabels()));
 	connect(ui.reuse_existing_node_CB, SIGNAL(toggled(bool)), this, SLOT(updateCheckLabels()));
 
+	connect(ui.cbUseBob, SIGNAL(clicked(bool)), this, SLOT(useBobChecked(bool)));;
+
 	entropy_timer = new QTimer ;
 	entropy_timer->start(20) ;
 	QObject::connect(entropy_timer,SIGNAL(timeout()),this,SLOT(grabMouse())) ;
@@ -240,7 +242,7 @@ void GenCertDialog::mouseMoveEvent(QMouseEvent *e)
 
 void GenCertDialog::setupState()
 {
-	bool adv_state    = ui.adv_checkbox->isChecked();
+	bool adv_state = ui.adv_checkbox->isChecked();
 
     if(!adv_state)
     {
@@ -300,6 +302,7 @@ void GenCertDialog::setupState()
 	ui.hiddenaddr_label->setVisible(hidden_state);
 	ui.hiddenport_label->setVisible(hidden_state);
 	ui.hiddenport_spinBox->setVisible(hidden_state);
+	ui.cbUseBob->setVisible(hidden_state);
 
     if(mEntropyOk && mAllFieldsOk)
 	{
@@ -379,7 +382,22 @@ void GenCertDialog::updateCheckLabels()
 	else
 		ui.randomness_check_LB->setPixmap(QPixmap(IMAGE_BAD)) ;
 
-    setupState();
+	setupState();
+}
+
+void GenCertDialog::useBobChecked(bool checked)
+{
+	if (checked) {
+		ui.hiddenaddr_input->setPlaceholderText(tr("I2P instance address with BOB enabled"));
+		ui.hiddenaddr_label->setText(tr("I2P instance address"));
+
+		ui.hiddenport_spinBox->setEnabled(false);
+	} else {
+		ui.hiddenaddr_input->setPlaceholderText(tr("hidden service address"));
+		ui.hiddenaddr_label->setText(tr("hidden address"));
+
+		ui.hiddenport_spinBox->setEnabled(true);
+	}
 }
 
 bool GenCertDialog::importIdentity()
@@ -454,15 +472,13 @@ void GenCertDialog::genPerson()
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
-		if (!RsInit::SetHiddenLocation(hl, port))	/* parses it */
-		{
-			/* Message Dialog */
-			QMessageBox::warning(this,
-				tr("Invalid hidden node"),
-			tr("Please enter a valid address of the form: 31769173498.onion:7800 or [52 characters].b32.i2p"),
-			QMessageBox::Ok);
-			return;
-		}
+		bool useBob    = ui.cbUseBob->isChecked();
+
+		if (useBob && hl.empty())
+			hl = "127.0.0.1";
+
+		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
+
 		isHiddenLoc = true;
 	}
 
