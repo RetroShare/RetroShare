@@ -42,6 +42,7 @@ public:
 	const QString idtype() const { return _idtype; }
 	const QString nickname() const { return _nickname; }
 	const QString gxsId() const { return _gxsId; }
+	const QImage avatar() const { return _avatar; }
 
 signals:
 	void addButtonClicked();
