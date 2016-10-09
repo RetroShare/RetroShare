@@ -31,6 +31,7 @@
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "pqi/p3dhtmgr.h" // Only need it for constants.
+#include "services/p3i2pbob.h"
 #include "tcponudp/tou.h"
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"
@@ -128,8 +129,8 @@ std::string textPeerConnectState(peerConnectState &state)
  */
 
 
-p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
-	:mPeerMgr(peerMgr), mNetMgr(netMgr), mLinkMtx("p3LinkMgr"),mStatusChanged(false)
+p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr, p3I2pBob *i2pBob)
+ : mI2pBob(i2pBob), mPeerMgr(peerMgr), mNetMgr(netMgr), mLinkMtx("p3LinkMgr"), mStatusChanged(false)
 {
 
 	{
@@ -2203,11 +2204,16 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
 
 bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, time_t age)
 {
-    RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-    return locked_CheckPotentialAddr(addr,age) ;
+	return locked_CheckPotentialAddr(addr,age) ;
 }
 
+p3I2pBob *p3LinkMgrIMPL::getI2PBOB()
+{
+	RS_STACK_MUTEX(mLinkMtx);
+	return mI2pBob;
+}
 
 void  printConnectState(std::ostream &out, peerConnectState &peer)
 {

@@ -105,6 +105,23 @@ public:
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port);
 	virtual bool isProxyAddress(const uint32_t type, const sockaddr_storage &addr);
 
+	bool startUpBOBConnection();
+	bool startUpBOBConnectionBlocking();
+	bool shutdownBOBConnection();
+	bool shutdownBOBConnectionBlocking();
+	bool bobGetNewKeys();
+	bool bobGetNewKeysBlocking();
+
+	bool bobIsEnabled();
+	bool bobIsUp();
+	bool bobIsDown();
+
+	void getBOBSettings(bobSettings *settings);
+	void setBOBSettings(const bobSettings *settings);
+
+	std::string keyToBase32Addr(const std::string &key);
+	void getBOBStates(bobStates *bs);
+
 	virtual void getIPServersList(std::list<std::string>& ip_servers);
 	virtual void allowServerIPDetermination(bool);
 	virtual bool getAllowServerIPDetermination();

@@ -38,6 +38,8 @@
 #include "retroshare/rsinit.h"
 #include "retroshare/rsfiles.h"
 
+#include <services/p3i2pbob.h>
+
 #include "pgp/rscertificate.h"
 
 #include <iostream>
@@ -543,7 +545,72 @@ bool p3Peers::isProxyAddress(const uint32_t type, const sockaddr_storage& addr)
 	if(!getProxyServer(type, string_addr, port, status))
         return false ;
 
-    return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
+	return sockaddr_storage_iptostring(addr)==string_addr && sockaddr_storage_port(addr)==port ;
+}
+
+bool p3Peers::startUpBOBConnection()
+{
+	return mLinkMgr->getI2PBOB()->startUpBOBConnection();
+}
+
+bool p3Peers::startUpBOBConnectionBlocking()
+{
+	return mLinkMgr->getI2PBOB()->startUpBOBConnectionBlocking();
+}
+
+bool p3Peers::shutdownBOBConnection()
+{
+	return mLinkMgr->getI2PBOB()->shutdownBOBConnection();
+}
+
+bool p3Peers::shutdownBOBConnectionBlocking()
+{
+	return mLinkMgr->getI2PBOB()->shutdownBOBConnectionBlocking();
+}
+
+bool p3Peers::bobGetNewKeys()
+{
+	return mLinkMgr->getI2PBOB()->getNewKeys();
+}
+
+bool p3Peers::bobGetNewKeysBlocking()
+{
+	return mLinkMgr->getI2PBOB()->getNewKeysBlocking();
+}
+
+bool p3Peers::bobIsEnabled()
+{
+	return mLinkMgr->getI2PBOB()->isEnabled();
+}
+
+bool p3Peers::bobIsUp()
+{
+	return mLinkMgr->getI2PBOB()->isUp();
+}
+
+bool p3Peers::bobIsDown()
+{
+	return mLinkMgr->getI2PBOB()->isDown();
+}
+
+void p3Peers::getBOBSettings(bobSettings *settings)
+{
+	mLinkMgr->getI2PBOB()->getBOBSettings(settings);
+}
+
+void p3Peers::setBOBSettings(const bobSettings *settings)
+{
+	mLinkMgr->getI2PBOB()->setBOBSettings(settings);
+}
+
+std::string p3Peers::keyToBase32Addr(const std::string &key)
+{
+	return mLinkMgr->getI2PBOB()->keyToBase32Addr(key);
+}
+
+void p3Peers::getBOBStates(bobStates *bs)
+{
+	mLinkMgr->getI2PBOB()->getStates(bs);
 }
 
 bool p3Peers::isKeySupported(const RsPgpId& id)

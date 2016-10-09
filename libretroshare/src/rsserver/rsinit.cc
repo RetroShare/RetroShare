@@ -868,6 +868,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "retroshare/rsgxsflags.h"
 
 #include "pgp/pgpauxutils.h"
+#include "services/p3i2pbob.h"
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
@@ -1038,15 +1039,15 @@ int RsServer::StartupRetroShare()
 				AuthGPG::getAuthGPG()->getGPGOwnName(),
 				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
-	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
+	mI2pBob = new p3I2pBob(mPeerMgr);
+	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr, mI2pBob);
 
 	/* Setup Notify Early - So we can use it. */
 	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
-		
-		
+			
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
 	//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
@@ -1257,12 +1258,6 @@ int RsServer::StartupRetroShare()
 	//ftserver->setSharedDirectories(fileList);
 
 	rsFiles = ftserver;
-
-
-	/* create Cache Services */
-	std::string config_dir = rsAccounts->PathAccountDirectory();
-	std::string localcachedir = config_dir + "/cache/local";
-	std::string remotecachedir = config_dir + "/cache/remote";
 
 	std::vector<std::string> plugins_directories ;
 
@@ -1670,6 +1665,7 @@ int RsServer::StartupRetroShare()
 	//mConfigMgr->addConfiguration("photo.cfg", photo_ns);
 	//mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
+	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pBob);
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
@@ -1715,7 +1711,6 @@ int RsServer::StartupRetroShare()
 	{
 		mPeerMgr->setOwnNetworkMode(RS_NET_MODE_EXT);
 		mPeerMgr->setOwnVisState(RS_VS_DISC_FULL, RS_VS_DHT_FULL);
-
 	}
 
 	if (rsInitConfig->hiddenNodeSet)
@@ -1733,10 +1728,11 @@ int RsServer::StartupRetroShare()
 	/* startup (stuff dependent on Ids/peers is after this point) */
 	/**************************************************************************/
 
+	if (mI2pBob->isEnabled())
+		mI2pBob->startUpBOBConnection();
+
 	pqih->init_listener();
 	mNetMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
-
-
 
 	/**************************************************************************/
 	/* load caches and secondary data */
@@ -1764,8 +1760,10 @@ int RsServer::StartupRetroShare()
 	/* Start up Threads */
 	/**************************************************************************/
 
-#ifdef RS_ENABLE_GXS
+	// BOB needs some time to set up everything - start it early
+	startServiceThread(mI2pBob, "I2P-BOB");
 
+#ifdef RS_ENABLE_GXS
 	// Must Set the GXS pointers before starting threads.
     rsIdentity = mGxsIdService;
     rsGxsCircles = mGxsCircles;

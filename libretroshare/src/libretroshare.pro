@@ -144,7 +144,10 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		serialiser/rspluginitems.h \
-    util/rsinitedptr.h
+    util/rsinitedptr.h \
+    services/p3i2pbob.h \
+    pqi/pqissli2pbob.h \
+    util/radix32.h
 
 HEADERS += $$PUBLIC_HEADERS
 
@@ -538,7 +541,9 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-			ft/ftturtlefiletransferitem.cc 
+			ft/ftturtlefiletransferitem.cc \ 
+    services/p3i2pbob.cc \
+    pqi/pqissli2pbob.cpp
 
 SOURCES += crypto/chacha20.cpp \
 			  crypto/hashstream.cc
