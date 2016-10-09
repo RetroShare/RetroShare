@@ -603,7 +603,8 @@ void GenCertDialog::genPerson()
 	}
 
 	//generate a random ssl password
-	std::string sslPasswd = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+	std::string sslPasswd;
+	RSRandom::random_alphaNumericString(sslPasswd, RsInit::getSslPwdLen());
 
 	/* GenerateSSLCertificate - selects the PGP Account */
 	//RsInit::SelectGPGAccount(PGPId);

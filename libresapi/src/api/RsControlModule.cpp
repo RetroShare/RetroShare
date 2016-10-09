@@ -424,7 +424,8 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     if(hidden_port)
         RsInit::SetHiddenLocation(hidden_address, hidden_port);
 
-    std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+	std::string ssl_password;
+	RSRandom::random_alphaNumericString(ssl_password, RsInit::getSslPwdLen());
 
     /* GenerateSSLCertificate - selects the PGP Account */
     //RsInit::SelectGPGAccount(PGPId);

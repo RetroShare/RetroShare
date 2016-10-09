@@ -3772,8 +3772,8 @@ void p3IdService::generateDummy_UnknownPGP()
 	// FAKE DATA.
 	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
 	id.mPgpIdHash = Sha1CheckSum::random() ;
-	id.mPgpIdSign = RSRandom::random_alphaNumericString(20) ;
-	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;
+	RSRandom::random_alphaNumericString(id.mPgpIdSign, 20);
+	RSRandom::random_alphaNumericString(id.mMeta.mGroupName, 10);
 
 	uint32_t dummyToken = 0;
 	createGroup(dummyToken, id);
@@ -3788,7 +3788,7 @@ void p3IdService::generateDummy_UnknownPseudo()
 
 	// FAKE DATA.
 	id.mMeta.mGroupFlags = 0;
-	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;
+	RSRandom::random_alphaNumericString(id.mMeta.mGroupName, 10);
 
 	uint32_t dummyToken = 0;
 	createGroup(dummyToken, id);

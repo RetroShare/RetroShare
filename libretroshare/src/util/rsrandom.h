@@ -21,39 +21,36 @@
  
 #pragma once
 
-// RSRandom contains a random number generator that is
-// - thread safe
-// - system independant
-// - fast
-// - NOT CRYPTOGRAPHICALLY SAFE
-// - DO NOT USE FOR ANYTHING REQUIRING STRONG RANDOMNESS
-//
-// The implementation is adapted from the Mersenne Twister page of Wikipedia.
-//
-// 		http://en.wikipedia.org/wiki/Mersenne_twister
-
 #include <vector>
 #include <util/rsthreads.h>
 
+/**
+ * Provide a random number generator that is:
+ * - thread safe
+ * - cross platform
+ * - fast
+ * - NOT CRYPTOGRAPHICALLY SAFE
+ * - DO NOT USE FOR ANYTHING REQUIRING STRONG RANDOMNESS
+ *
+ * The implementation is adapted from the Mersenne Twister page of Wikipedia.
+ * http://en.wikipedia.org/wiki/Mersenne_twister
+ */
 class RSRandom
 {
-	public:
-		static uint32_t random_u32() ;
-		static uint64_t random_u64() ;
-		static float 	 random_f32() ;
-		static double	 random_f64() ;
+public:
+	static uint32_t random_u32();
+	static uint64_t random_u64();
+	static float random_f32();
+	static double random_f64();
+	static void random_alphaNumericString(std::string &str, uint32_t length);
+	static void random_bytes(unsigned char *data, uint32_t length);
 
-		static bool     seed(uint32_t s) ;
+	static void seed(uint32_t s);
 
-		static std::string random_alphaNumericString(uint32_t length) ; 
-		static void random_bytes(unsigned char *data,uint32_t length) ; 
+private:
+	static RsMutex rndMtx;
+	static uint32_t index;
+	static std::vector<uint32_t> MT;
 
-	private:
-		static RsMutex rndMtx ;
-
-		static const uint32_t N = 1024;
-
-		static void locked_next_state() ;
-		static uint32_t index ;
-		static std::vector<uint32_t> MT ;
+	static void locked_next_state();
 };
