@@ -115,8 +115,8 @@ public:
     // hash stuff
 
     bool getDirHashFromIndex(const DirectoryStorage::EntryIndex& index,RsFileHash& hash) const ;
-    bool getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
-    bool getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const ;
+    bool getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) ;
+    bool getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) ;
 
     // file/dir access and modification
     bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
@@ -146,7 +146,7 @@ public:
     int searchBoolExp(RsRegularExpression::Expression * exp, std::list<DirectoryStorage::EntryIndex> &results) const ;
     int searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const ;		// does a logical OR between items of the list of terms
 
-    bool check(std::string& error_string) const	;// checks consistency of storage.
+    bool check(std::string& error_string)	;// checks consistency of storage.
 
     void print() const;
 

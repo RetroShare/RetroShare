@@ -77,7 +77,7 @@ void HashStorage::data_tick()
 {
     FileHashJob job;
     RsFileHash hash;
-    uint64_t size ;
+    uint64_t size = 0;
 
     {
         bool empty ;

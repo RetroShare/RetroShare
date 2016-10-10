@@ -399,7 +399,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleFileHash,TurtleHashInfo>				_incoming_file_hashes ;		
 
 		/// stores file info for each file we provide.
-		std::map<TurtleFileHash,RsTurtleClientService *>					_outgoing_file_hashes ;		
+        std::map<TurtleTunnelId,RsTurtleClientService *>	_outgoing_tunnel_client_services ;
 
 		/// local tunnels, stored by ids (Either transiting or ending).
 		std::map<TurtleTunnelId,TurtleTunnel > 				_local_tunnels ;				
@@ -408,7 +408,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleVirtualPeerId,TurtleTunnelId>			_virtual_peers ;				
 
 		/// Hashes marked to be deleted.
-		std::vector<TurtleFileHash>								_hashes_to_remove ;			
+        std::set<TurtleFileHash>								_hashes_to_remove ;
 
 		/// List of client services that have regitered.
 		std::list<RsTurtleClientService*>						_registered_services ;

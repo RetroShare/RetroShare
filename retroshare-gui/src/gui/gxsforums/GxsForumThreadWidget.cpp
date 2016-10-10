@@ -517,8 +517,7 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->addSeparator();
 
-	QTextCursor cursor = ui->postText->cursorForPosition(point);
-	if(ImageUtil::checkImage(cursor))
+	if(ui->postText->checkImage(point))
 	{
 		ui->actionSave_image->setData(point);
 		contextMnu->addAction(ui->actionSave_image);

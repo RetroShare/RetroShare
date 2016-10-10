@@ -224,7 +224,7 @@ int p3FileDatabase::tick()
 
         mLastRemoteDirSweepTS = now;
 
-        // This is a hash to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
+        // This is a hack to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
         // so the first notify is ignored, and no other notify will happen next.
 
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
@@ -239,7 +239,7 @@ void p3FileDatabase::startThreads()
 #ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Starting directory watcher thread..." ;
 #endif
-	mLocalDirWatcher->start("fs dir watcher");
+    mLocalDirWatcher->start("fs dir watcher");
 #ifdef DEBUG_P3FILELISTS
     P3FILELISTS_DEBUG() << "Done." << std::endl;
 #endif
@@ -445,10 +445,14 @@ void p3FileDatabase::cleanup()
 
                 // now, in order to avoid empty seats, just move the last one here, and update indexes
 
-                mRemoteDirectories[i] = mRemoteDirectories.back();
-                mRemoteDirectories.pop_back();
+                while(i < mRemoteDirectories.size() && mRemoteDirectories[i] == NULL)
+                {
+                    mRemoteDirectories[i] = mRemoteDirectories.back();
+                    mRemoteDirectories.pop_back();
+                }
 
-                mFriendIndexMap[mRemoteDirectories[i]->peerId()] = i;
+                if(i < mRemoteDirectories.size() && mRemoteDirectories[i] != NULL)	// this test is needed in the case we have deleted the last element
+                    mFriendIndexMap[mRemoteDirectories[i]->peerId()] = i;
 
                 mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED ;
             }
@@ -458,7 +462,7 @@ void p3FileDatabase::cleanup()
         for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
         {
             // Check if a remote directory exists for that friend, possibly creating the index.
-			locked_getFriendIndex(*it) ;
+            locked_getFriendIndex(*it) ;
         }
 
         // cancel existing requests for which the peer is offline
@@ -638,8 +642,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
             convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
-	else
-		return false;
+    else
+        return false;
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -1121,7 +1125,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
         {
-            P3FILELISTS_ERROR() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#ifdef DEBUG_P3FILELISTS
+            P3FILELISTS_DEBUG() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#endif
             return;
         }
 

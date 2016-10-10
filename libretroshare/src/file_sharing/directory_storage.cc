@@ -242,6 +242,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.hash.clear() ;
         d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
         d.min_age = now - dir_entry->dir_most_recent_time ;
+        d.age     = now - dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
         d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
@@ -636,6 +637,17 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
             std::cerr << "  not pushing subdir " << hash << ", array position=" << i << " indx=" << dir->subdirs[i] << ": permission denied for this peer." << std::endl;
 #endif
 
+    // now count the files that do not have a null hash (meaning the hash has indeed been computed)
+
+    uint32_t allowed_subfiles = 0 ;
+
+    for(uint32_t i=0;i<dir->subfiles.size();++i)
+    {
+        const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
+        if(file != NULL && !file->file_hash.isNull())
+            allowed_subfiles++ ;
+    }
+
     unsigned char *section_data = NULL;
     uint32_t section_size = 0;
     uint32_t section_offset = 0;
@@ -654,7 +666,7 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     // serialise number of subdirs and number of subfiles
 
     if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subdirs.size()  )) return false ;
-    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)dir->subfiles.size()    )) return false ;
+    if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)allowed_subfiles        )) return false ;
 
     // serialise subdirs entry indexes
 
@@ -671,9 +683,9 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
         const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
 
-        if(file == NULL)
+        if(file == NULL || file->file_hash.isNull())
         {
-            std::cerr << "(EE) cannot reach file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
+            std::cerr << "(II) skipping unhashed or Null file entry " << dir->subfiles[i] << " to get/send file info." << std::endl;
             continue ;
         }
 
@@ -726,6 +738,7 @@ void RemoteDirectoryStorage::checkSave()
     {
         save(mFileName);
         mLastSavedTime = now ;
+        mChanged = false ;
     }
 }
 
@@ -746,9 +759,11 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,most_recent_time)) return false ;
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,dir_modtime     )) return false ;
 
+#ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     std::cerr << "  dir name           : \"" << dir_name << "\"" << std::endl;
     std::cerr << "  most recent time   : " << most_recent_time << std::endl;
     std::cerr << "  modification time  : " << dir_modtime << std::endl;
+#endif
 
     // serialise number of subdirs and number of subfiles
 
@@ -757,8 +772,10 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,n_subdirs  )) return false ;
     if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,n_subfiles )) return false ;
 
+#ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     std::cerr << "  number of subdirs  : " << n_subdirs << std::endl;
     std::cerr << "  number of files    : " << n_subfiles << std::endl;
+#endif
 
     // serialise subdirs entry indexes
 
@@ -803,8 +820,9 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     }
 
     RS_STACK_MUTEX(mDirStorageMtx) ;
-
+#ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     std::cerr << "  updating dir entry..." << std::endl;
+#endif
 
     // First create the entries for each subdir and each subfile, if needed.
     if(!mFileHierarchy->updateDirEntry(indx,dir_name,most_recent_time,dir_modtime,subdirs_hashes,subfiles_array))

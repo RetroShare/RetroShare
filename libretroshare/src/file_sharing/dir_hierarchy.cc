@@ -61,8 +61,6 @@ InternalFileHierarchyStorage::InternalFileHierarchyStorage() : mRoot(0)
     de->dir_hash=RsFileHash() ; // null hash is root by convention.
 
     mNodes.push_back(de) ;
-
-#warning not very elegant. We should remove the leading /
     mDirHashes[de->dir_hash] = 0 ;
 }
 
@@ -75,24 +73,43 @@ bool InternalFileHierarchyStorage::getDirHashFromIndex(const DirectoryStorage::E
 
     return true;
 }
-bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const
+bool InternalFileHierarchyStorage::getIndexFromDirHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index)
 {
-    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mDirHashes.find(hash) ;
+    std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = mDirHashes.find(hash) ;
 
     if(it == mDirHashes.end())
         return false;
 
     index = it->second;
+
+    // make sure the hash actually points to some existing file. If not, remove it. This is a lazy update of dir hashes: when we need them, we check them.
+    if(!checkIndex(index, FileStorageNode::TYPE_DIR) || static_cast<DirEntry*>(mNodes[index])->dir_hash != hash)
+    {
+        std::cerr << "(II) removing non existing hash from dir hash list: " << hash << std::endl;
+
+        mDirHashes.erase(it) ;
+        return false ;
+    }
     return true;
 }
-bool InternalFileHierarchyStorage::getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index) const
+bool InternalFileHierarchyStorage::getIndexFromFileHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& index)
 {
-    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(hash) ;
+    std::map<RsFileHash,DirectoryStorage::EntryIndex>::iterator it = mFileHashes.find(hash) ;
 
     if(it == mFileHashes.end())
         return false;
 
     index = it->second;
+
+    // make sure the hash actually points to some existing file. If not, remove it. This is a lazy update of file hashes: when we need them, we check them.
+    if(!checkIndex(it->second, FileStorageNode::TYPE_FILE) || static_cast<FileEntry*>(mNodes[index])->file_hash != hash)
+    {
+        std::cerr << "(II) removing non existing hash from file hash list: " << hash << std::endl;
+
+        mFileHashes.erase(it) ;
+        return false ;
+    }
+
     return true;
 }
 
@@ -171,7 +188,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
 
         de->row = mNodes.size();
         de->parent_index = indx;
-        de->dir_modtime = it->second;
+        de->dir_modtime = 0;// forces parsing.it->second;
         de->dir_parent_path = d.dir_parent_path + "/" + d.dir_name ;
         de->dir_hash = createDirHash(de->dir_name,de->dir_parent_path) ;
 
@@ -226,7 +243,7 @@ bool InternalFileHierarchyStorage::removeDirectory(DirectoryStorage::EntryIndex 
             parent_dir.subdirs[i] = parent_dir.subdirs.back() ;
             parent_dir.subdirs.pop_back();
 
-			recursRemoveDirectory(indx) ;
+            recursRemoveDirectory(indx) ;
 #ifdef DEBUG_DIRECTORY_STORAGE
             print();
             std::string err ;
@@ -566,12 +583,25 @@ time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectorySto
     DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
 
     time_t largest_modf_time = d.dir_modtime ;
+    bool unfinished_files_present = false ;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
-        largest_modf_time = std::max(largest_modf_time,static_cast<FileEntry*>(mNodes[d.subfiles[i]])->file_modtime) ;
+    {
+        FileEntry *f = static_cast<FileEntry*>(mNodes[d.subfiles[i]]) ;
+
+        if(!f->file_hash.isNull())
+            largest_modf_time = std::max(largest_modf_time, f->file_modtime) ;	// only account for hashed files, since we never send unhashed files to friends.
+        else
+            unfinished_files_present = true ;
+    }
 
     for(uint32_t i=0;i<d.subdirs.size();++i)
         largest_modf_time = std::max(largest_modf_time,recursUpdateLastModfTime(d.subdirs[i])) ;
+
+    // now if some files are not hashed in this directory, reduce the recurs time by 1, so that the TS wil be updated when all hashes are ready.
+
+    if(unfinished_files_present && largest_modf_time > 0)
+        largest_modf_time-- ;
 
     d.dir_most_recent_time = largest_modf_time ;
 
@@ -633,12 +663,12 @@ DirectoryStorage::EntryIndex InternalFileHierarchyStorage::getSubDirIndex(Direct
 
 bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results)
 {
-    std::map<RsFileHash,DirectoryStorage::EntryIndex>::const_iterator it = mFileHashes.find(hash);
+    DirectoryStorage::EntryIndex indx ;
 
-    if( it != mFileHashes.end() )
+    if(getIndexFromFileHash(hash,indx))
     {
         results.clear();
-        results.push_back(it->second) ;
+        results.push_back(indx) ;
         return true ;
     }
     else
@@ -699,10 +729,11 @@ int InternalFileHierarchyStorage::searchTerms(const std::list<std::string>& term
     return 0 ;
 }
 
-bool InternalFileHierarchyStorage::check(std::string& error_string) const	// checks consistency of storage.
+bool InternalFileHierarchyStorage::check(std::string& error_string) // checks consistency of storage.
 {
     // recurs go through all entries, check that all
 
+    error_string = "";
     std::vector<uint32_t> hits(mNodes.size(),0) ;	// count hits of children. Should be 1 for all in the end. Otherwise there's an error.
     hits[0] = 1 ;	// because 0 is never the child of anyone
 
@@ -710,47 +741,59 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) const	// che
         if(mNodes[i] != NULL && mNodes[i]->type() == FileStorageNode::TYPE_DIR)
         {
             // stamp the kids
-            const DirEntry& de = *static_cast<DirEntry*>(mNodes[i]) ;
+            DirEntry& de = *static_cast<DirEntry*>(mNodes[i]) ;
 
-            for(uint32_t j=0;j<de.subdirs.size();++j)
+            for(uint32_t j=0;j<de.subdirs.size();)
             {
                 if(de.subdirs[j] >= mNodes.size())
                 {
-                    error_string = "Node child out of tab!" ;
-                    return false ;
+                    error_string += " - Node child dir out of tab!" ;
+                    de.subdirs[j] = de.subdirs.back() ;
+                    de.subdirs.pop_back();
                 }
-                if(hits[de.subdirs[j]] != 0)
+                else if(hits[de.subdirs[j]] != 0)
                 {
-                    error_string = "Double hit on a single node" ;
-                    return false;
+                    error_string += " - Double hit on a single node dir." ;
+                    de.subdirs[j] = de.subdirs.back() ;
+                    de.subdirs.pop_back();
                 }
-                hits[de.subdirs[j]] = 1;
+                else
+                {
+                    hits[de.subdirs[j]] = 1;
+                    ++j ;
+                }
             }
-            for(uint32_t j=0;j<de.subfiles.size();++j)
+            for(uint32_t j=0;j<de.subfiles.size();)
             {
                 if(de.subfiles[j] >= mNodes.size())
                 {
-                    error_string = "Node child out of tab!" ;
-                    return false ;
+                    error_string += " - Node child file out of tab!" ;
+                    de.subfiles[j] = de.subfiles.back() ;
+                    de.subfiles.pop_back();
                 }
-                if(hits[de.subfiles[j]] != 0)
+                else if(hits[de.subfiles[j]] != 0)
                 {
-                    error_string = "Double hit on a single node" ;
-                    return false;
+                    error_string += " - Double hit on a single node file." ;
+                    de.subfiles[j] = de.subfiles.back() ;
+                    de.subfiles.pop_back();
                 }
-                hits[de.subfiles[j]] = 1;
+                else
+                {
+                    hits[de.subfiles[j]] = 1;
+                    ++j ;
+                }
             }
-
         }
 
     for(uint32_t i=0;i<hits.size();++i)
         if(hits[i] == 0 && mNodes[i] != NULL)
         {
-            error_string = "Orphean node!" ;
-            return false;
+            error_string += " - Orphean node!" ;
+            delete mNodes[i] ;
+            mNodes[i] = NULL ;
         }
 
-    return true;
+    return error_string.empty();;
 }
 
 void InternalFileHierarchyStorage::print() const

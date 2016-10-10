@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include <QDir>
 #include <QDesktopServices>
+#include <QDir>
 #include <QPainter>
+#include <QTextDocumentFragment>
 
 #include "RSTextBrowser.h"
 #include "RSImageBlockWidget.h"
@@ -19,7 +20,7 @@ RSTextBrowser::RSTextBrowser(QWidget *parent) :
 	mImageBlockWidget = NULL;
 	mLinkClickActive = true;
 
-	highliter = new RsSyntaxHighlighter(this);
+	highlighter = new RsSyntaxHighlighter(this);
 
 	connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 }
@@ -73,6 +74,23 @@ void RSTextBrowser::paintEvent(QPaintEvent *event)
 
 		painter.drawText(QRect(QPoint(), vieportWidget->size()), Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap, mPlaceholderText);
 	}
+#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
+	QPainter painter(viewport());
+	QPen pen = painter.pen();
+	pen.setWidth(2);
+	pen.setColor(QColor(qRgba(255,0,0,128)));
+	painter.setPen(pen);
+	painter.drawRect(mCursorRectStart);
+	pen.setColor(QColor(qRgba(0,255,0,128)));
+	painter.setPen(pen);
+	painter.drawRect(mCursorRectLeft);
+	pen.setColor(QColor(qRgba(0,0,255,128)));
+	painter.setPen(pen);
+	painter.drawRect(mCursorRectRight);
+	pen.setColor(QColor(qRgba(0,0,0,128)));
+	painter.setPen(pen);
+	painter.drawRect(mCursorRectEnd);
+#endif
 }
 
 QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
@@ -103,6 +121,11 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 	if (mImageBlockWidget)
 		mImageBlockWidget->show();
 
+	return getBlockedImage();
+}
+
+QPixmap RSTextBrowser::getBlockedImage()
+{
 	return QPixmap(":/images/imageblocked_24.png");
 }
 
@@ -158,4 +181,62 @@ void RSTextBrowser::resetImagesStatus(bool load)
 void RSTextBrowser::activateLinkClick(bool active)
 {
 	mLinkClickActive = active;
+}
+
+/**
+ * @brief RSTextBrowser::checkImage
+ * @param pos where to check if image is shown in viewport coordinate
+ * @param imageStr return html source of cursor
+ * @return True if an image is under cursor
+ */
+bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
+{
+	//Get text cursor under pos. But if pos is under text browser end line this return last cursor.
+	QTextCursor cursor = cursorForPosition(pos);
+	//First get rect of cursor (could be at left or right of image)
+	QRect cursorRectStart = cursorRect(cursor);
+	//Second get text
+	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);//To get character just before
+	QRect cursorRectLeft = cursorRect(cursor);
+	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+	QRect cursorRectRight = cursorRect(cursor);
+	imageStr = cursor.selection().toHtml();
+#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
+	mCursorRectStart = cursorRectStart;
+	mCursorRectLeft = cursorRectLeft;
+	mCursorRectRight = cursorRectRight;
+
+	std::cerr << "cursorRect LTRB :" << cursorRectStart.left() << ";" << cursorRectStart.top() << ";" << cursorRectStart.right() << ";" << cursorRectStart.bottom() << std::endl;
+	std::cerr << "cursorRectLeft  :" << cursorRectLeft.left() << ";" << cursorRectLeft.top() << ";" << cursorRectLeft.right() << ";" << cursorRectLeft.bottom() << std::endl;
+	std::cerr << "cursorRectRight :" << cursorRectRight.left() << ";" << cursorRectRight.top() << ";" << cursorRectRight.right() << ";" << cursorRectRight.bottom() << std::endl;
+	std::cerr << "pos XY          :" << pos.x() << ";" << pos.y() << std::endl;
+#endif
+	QRect cursorRectEnd = cursorRectStart;
+	//Finally set left with right of precedent character.
+	if (cursorRectEnd.top() < cursorRectLeft.bottom())
+	{
+		cursorRectEnd.setLeft(cursorRectLeft.right());
+	} else {
+		//Image on new line
+		cursorRectEnd.setLeft(0);
+	}
+	//And set Right with left of next character.
+	if (cursorRectEnd.bottom() > cursorRectRight.top())
+	{
+		cursorRectEnd.setRight(cursorRectRight.left());
+	} else {
+		//New line after Image.
+	}
+#ifdef RSTEXTBROWSER_CHECKIMAGE_DEBUG
+	mCursorRectEnd = cursorRectEnd;
+
+	std::cerr << "final cursorRect:" << cursorRectEnd.left() << ";" << cursorRectEnd.top() << ";" << cursorRectEnd.right() << ";" << cursorRectEnd.bottom() << std::endl;
+	viewport()->update();
+#endif
+	//If pos is on text rect
+	if (cursorRectEnd.contains(pos))
+	{
+		return imageStr.indexOf("base64,") != -1;
+	}
+	return false;
 }

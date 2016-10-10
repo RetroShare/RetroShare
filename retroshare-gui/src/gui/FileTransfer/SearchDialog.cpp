@@ -738,8 +738,8 @@ void SearchDialog::showAdvSearchDialog(bool show)
     if (advSearchDialog == 0 && show)
     {
         advSearchDialog = new AdvancedSearchDialog();
-        connect(advSearchDialog, SIGNAL(search(Expression*)),
-                this, SLOT(advancedSearch(Expression*)));
+        connect(advSearchDialog, SIGNAL(search(RsRegularExpression::Expression*)),
+                this, SLOT(advancedSearch(RsRegularExpression::Expression*)));
     }
     if (show) {
         advSearchDialog->show();
