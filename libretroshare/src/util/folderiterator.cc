@@ -63,7 +63,11 @@ void FolderIterator::next()
 {
     while(readdir())
     {
-        mFileName = ent->d_name ;
+#ifdef WINDOWS_SYS
+	   ConvertUtf16ToUtf8(fileInfo.cFileName, mFileName) ;
+#else
+	   mFileName = ent->d_name ;
+#endif
 
         if(mFileName == "." || mFileName == "..")
             continue ;
