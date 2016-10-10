@@ -37,13 +37,6 @@ void RSRandom::seed(uint32_t s)
 {
 	RS_STACK_MUTEX(rndMtx);
 
-	static bool first_time_resize = true;
-	if (first_time_resize) // because MT might not be already resized
-	{
-		MT.resize(RS_RANDOM_STATE_SIZE, 0);
-		first_time_resize = false;
-	}
-
 	MT[0]= s & 0xffffffffUL;
 	for (uint32_t j=1; j<RS_RANDOM_STATE_SIZE; j++ )
 		MT[j] = (1812433253UL * (MT[j-1] ^ (MT[j-1] >> 30)) + j) & 0xffffffffUL;

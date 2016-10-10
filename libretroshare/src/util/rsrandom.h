@@ -26,11 +26,10 @@
 
 /**
  * Provide a random number generator that is:
- * - thread safe
- * - cross platform
- * - fast
- * - NOT CRYPTOGRAPHICALLY SAFE
- * - DO NOT USE FOR ANYTHING REQUIRING STRONG RANDOMNESS
+ * - Thread safe
+ * - Cross platform
+ * - Fast
+ * - Cryptographically safe
  *
  * The implementation is adapted from the Mersenne Twister page of Wikipedia.
  * http://en.wikipedia.org/wiki/Mersenne_twister
