@@ -65,14 +65,7 @@ AccountDetails::AccountDetails()
 	return;
 }
 
-RsAccountsDetail::RsAccountsDetail()
-:mAccountsLocked(false), mPreferredId(""), mBaseDirectory("")
-{
-	mAccounts.clear();
-	mUnsupportedKeys.clear();
-	return;
-}
-
+RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false) {}
 
 bool RsAccountsDetail::loadAccounts()
 {
@@ -890,31 +883,36 @@ bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 }
 
 
-bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
+bool RsAccountsDetail::GeneratePGPCertificate( const std::string& name,
+                                               const std::string& email,
+                                               const std::string& passwd,
+                                               RsPgpId &pgpId,
+                                               const int keynumbits,
+                                               std::string &errString)
 {
-	return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
+	return AuthGPG::getAuthGPG()->
+	        GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 		// PGP Support Functions.
 void RsAccountsDetail::getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)
 {
 	unsupported_keys = mUnsupportedKeys;
-	return;
 }
 
 bool RsAccountsDetail::exportIdentity(const std::string& fname,const RsPgpId& id)
 {
-	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
+	return AuthGPG::getAuthGPG()->exportGPGKeyPair(fname,id);
 }
 
 bool RsAccountsDetail::importIdentity(const std::string& fname,RsPgpId& id,std::string& import_error)
 {
-	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
+	return AuthGPG::getAuthGPG()->importGPGKeyPair(fname,id,import_error);
 }
 
 bool RsAccountsDetail::importIdentityFromString(const std::string &data, RsPgpId &imported_pgp_id, std::string &import_error)
 {
-    return AuthGPG::getAuthGPG()->importProfileFromString(data, imported_pgp_id, import_error);
+	return AuthGPG::getAuthGPG()->importGPGKeyPairFromString(data, imported_pgp_id, import_error);
 }
 
 bool RsAccountsDetail::copyGnuPGKeyrings()

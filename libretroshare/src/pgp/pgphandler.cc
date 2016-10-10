@@ -401,8 +401,8 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 
 	// Now the real thing
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+	RS_STACK_MUTEX(pgphandlerMtx); // lock access to PGP memory structures.
+	RsStackFileLock flck(_pgp_lock_filename); (void) flck; // lock access to PGP directory.
 
 	// 1 - generate keypair - RSA-2048
 	//
@@ -1326,9 +1326,12 @@ bool PGPHandler::decryptTextFromFile(const RsPgpId&,std::string& text,const std:
 	return (bool)res ;
 }
 
-bool PGPHandler::SignDataBin(const RsPgpId& id,const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,bool use_raw_signature, std::string reason /* = "" */)
+bool PGPHandler::SignDataBin( const RsPgpId& id, const void *data,
+                              const uint32_t len, unsigned char *sign,
+                              unsigned int *signlen, bool use_raw_signature,
+                              const std::string& reason /* = "" */)
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RS_STACK_MUTEX(pgphandlerMtx);
 	// need to find the key and to decrypt it.
 	
 	const ops_keydata_t *key = locked_getSecretKey(id) ;
@@ -1421,7 +1424,7 @@ ops_secret_key_t *secret_key = NULL ;
 
 bool PGPHandler::privateSignCertificate(const RsPgpId& ownId,const RsPgpId& id_of_key_to_sign) 
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RS_STACK_MUTEX(pgphandlerMtx); // lock access to PGP memory structures.
 
 	ops_keydata_t *key_to_sign = const_cast<ops_keydata_t*>(locked_getPublicKey(id_of_key_to_sign,true)) ;
 
@@ -1591,7 +1594,7 @@ bool PGPHandler::VerifySignBin(const void *literal_data, uint32_t literal_data_l
 
 void PGPHandler::setAcceptConnexion(const RsPgpId& id,bool b)
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RS_STACK_MUTEX(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
 	std::map<RsPgpId,PGPCertificateInfo>::iterator res = _public_keyring_map.find(id) ;
 
@@ -1604,16 +1607,18 @@ void PGPHandler::setAcceptConnexion(const RsPgpId& id,bool b)
 	}
 }
 
-bool PGPHandler::getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&)) const
+bool PGPHandler::getGPGFilteredList(std::list<RsPgpId>& list, bool (*filter)(const PGPCertificateInfo&)) const
 {
-	RsStackMutex mtx(pgphandlerMtx) ;	// lock access to PGP directory.
-	list.clear() ;
+	list.clear();
 
-	for(std::map<RsPgpId,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin());it!=_public_keyring_map.end();++it)
-		if( filter == NULL || (*filter)(it->second) )
-			list.push_back(RsPgpId(it->first)) ;
+	{
+		RS_STACK_MUTEX(pgphandlerMtx);	// lock access to PGP directory.
+		for(auto it(_public_keyring_map.begin()); it!=_public_keyring_map.end(); ++it)
+			if( filter == NULL || (*filter)(it->second) )
+				list.push_back(RsPgpId(it->first));
+	}
 
-	return true ;
+	return true;
 }
 
 bool PGPHandler::isGPGId(const RsPgpId &id)

@@ -108,6 +108,4 @@ void RsServer::rsGlobalShutDown()
 //         if(mPhoto) mPhoto->join();
 //         if(mWire) mWire->join();
 // #endif
-
-	AuthGPG::exit();
 }

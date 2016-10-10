@@ -260,7 +260,7 @@ public:
 	 */
 	virtual void data_tick() = 0;
 
-	/// Provided for compatibility @see RsThread::fullstop()
+	/// @deprecated Provided for compatibility @see RsThread::fullstop()
 	inline void join() { fullstop(); }
 
 private:

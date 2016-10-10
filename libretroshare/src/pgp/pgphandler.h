@@ -86,7 +86,10 @@ class PGPHandler
 		bool exportPublicKey(const RsPgpId& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
 
 		bool parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) ;
-		bool SignDataBin(const RsPgpId& id, const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, bool make_raw_signature=false, std::string reason = "") ;
+		bool SignDataBin( const RsPgpId& id, const void *data,
+		                  uint32_t len, unsigned char *sign,
+		                  unsigned int *signlen, bool make_raw_signature=false,
+		                  const std::string& reason = "");
 		bool VerifySignBin(const void *data, uint32_t data_len, unsigned char *sign, unsigned int sign_len, const PGPFingerprintType& withfingerprint) ;
 		bool privateSignCertificate(const RsPgpId& own_id,const RsPgpId& id_of_key_to_sign) ;
 
