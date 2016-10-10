@@ -78,7 +78,7 @@ AuthGPG &AuthGPG::instance() // static method
 {
 	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
 
-	std::string pgp_dir = rsAccounts->PathPGPDirectory();
+	std::string pgp_dir = RsAccountsDetail::instance().PathPGPDirectory();
 	static AuthGPG inst( pgp_dir + "/retroshare_public_keyring.gpg",
 	                     pgp_dir + "/retroshare_secret_keyring.gpg",
 	                     pgp_dir + "/retroshare_trustdb.gpg",
@@ -92,8 +92,8 @@ AuthGPG::AuthGPG( const std::string& path_to_public_keyring,
                   const std::string& path_to_trustdb,
                   const std::string& pgp_lock_file ) :
     p3Config(),
-    PGPHandler(path_to_public_keyring, path_to_secret_keyring,
-               path_to_trustdb, pgp_lock_file),
+    PGPHandler( path_to_public_keyring, path_to_secret_keyring,
+                path_to_trustdb, pgp_lock_file),
     gpgMtxService("AuthGPG-service"), gpgMtxData("AuthGPG-data"),
     _force_sync_database(false), mCount(0)
 { start("AuthGPG"); }

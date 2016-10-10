@@ -53,13 +53,16 @@ class AccountDetails
 		std::string mLocation;
 		bool mIsHiddenLoc;
 		bool mFirstRun;
-
 };
 
 class RsAccountsDetail
 {
-	public:
-		RsAccountsDetail();
+public:
+	static RsAccountsDetail& instance()
+	{
+		static RsAccountsDetail mRsAccounts;
+		return mRsAccounts;
+	}
 
 	// These functions are externally accessible via RsAccounts namespace.
 
@@ -131,7 +134,9 @@ class RsAccountsDetail
 		bool storePreferredAccount();
 		bool loadPreferredAccount();
 
-	private:
+private:
+	RsAccountsDetail();
+
 		bool checkPreferredId();
 
 		bool defaultBaseDirectory();
@@ -152,7 +157,3 @@ class RsAccountsDetail
 
 		std::map<std::string,std::vector<std::string> > mUnsupportedKeys ;
 };
-
-// Global singleton declaration of data.
-extern RsAccountsDetail *rsAccounts;
-

@@ -412,7 +412,7 @@ bool HashStorage::try_load_import_old_hash_cache()
 {
     // compute file name
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+	std::string base_dir = RsAccountsDetail::instance().PathAccountDirectory();
     std::string old_cache_filename = base_dir + "/" + "file_cache.bin" ;
 
     // check for unencrypted

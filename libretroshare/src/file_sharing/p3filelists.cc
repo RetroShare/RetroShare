@@ -56,7 +56,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 {
     // make sure the base directory exists
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+	std::string base_dir = RsAccountsDetail::instance().PathAccountDirectory();
 
     if(base_dir.empty())
         throw std::runtime_error("Cannot create base directory to store/access file sharing files.") ;

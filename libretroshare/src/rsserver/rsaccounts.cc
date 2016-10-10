@@ -52,18 +52,10 @@
 
 #include <openssl/ssl.h>
 
-// Global singleton declaration of data.
-RsAccountsDetail *rsAccounts;
-
 /* Uses private class - so must be hidden */
 static bool checkAccount(std::string accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
-AccountDetails::AccountDetails()
-  :mSslId(""), mAccountDir(""), mPgpId(""), mPgpName(""), mPgpEmail(""),
-    mLocation(""), mIsHiddenLoc(false), mFirstRun(false)
-{
-	return;
-}
+AccountDetails::AccountDetails() : mIsHiddenLoc(false), mFirstRun(false) {}
 
 RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false) {}
 
@@ -678,7 +670,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 		std::cerr << "issuerName: " << account.mPgpId << " id: " << account.mSslId << std::endl;
 #endif
 
-		if(! rsAccounts->GetPGPLoginDetails(account.mPgpId, account.mPgpName, account.mPgpEmail))
+		if(! RsAccountsDetail::instance().GetPGPLoginDetails(account.mPgpId, account.mPgpName, account.mPgpEmail))
 			return false ;
 
 		if(!AuthGPG::getAuthGPG()->haveSecretKey(account.mPgpId))
@@ -1251,79 +1243,92 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
  ********************************************************************************/
 
         // Directories.
-std::string RsAccounts::ConfigDirectory() { return rsAccounts->PathBaseDirectory(); }
+std::string RsAccounts::ConfigDirectory() { return RsAccountsDetail::instance().PathBaseDirectory(); }
 std::string RsAccounts::DataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
-std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
-std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
+std::string RsAccounts::PGPDirectory() { return RsAccountsDetail::instance().PathPGPDirectory(); }
+std::string RsAccounts::AccountDirectory() { return RsAccountsDetail::instance().PathAccountDirectory(); }
 
 // PGP Accounts.
-int     RsAccounts::GetPGPLogins(std::list<RsPgpId> &pgpIds)
-{
-	return rsAccounts->GetPGPLogins(pgpIds);
-}
+int RsAccounts::GetPGPLogins(std::list<RsPgpId> &pgpIds)
+{ return RsAccountsDetail::instance().GetPGPLogins(pgpIds); }
 
-int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
-{
-	return rsAccounts->GetPGPLoginDetails(id, name, email);
-}
+int RsAccounts::GetPGPLoginDetails( const RsPgpId& id, std::string &name,
+                                    std::string &email )
+{ return RsAccountsDetail::instance().GetPGPLoginDetails(id, name, email); }
 
-bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
+bool RsAccounts::GeneratePGPCertificate( const std::string& name,
+                                         const std::string& email,
+                                         const std::string& passwd,
+                                         RsPgpId& pgpId, int keynumbits,
+                                         std::string& errString )
 {
-	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
+	return RsAccountsDetail::instance().GeneratePGPCertificate(name, email, passwd, pgpId,
+	                                          keynumbits, errString);
 }
 
 // PGP Support Functions.
-bool    RsAccounts::ExportIdentity(const std::string& fname,const RsPgpId& pgp_id)
+bool RsAccounts::ExportIdentity(const std::string& fname, const RsPgpId& pgp_id)
 {
-	return rsAccounts->exportIdentity(fname,pgp_id);
+	return RsAccountsDetail::instance().exportIdentity(fname,pgp_id);
 }
 
-bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error)
+bool RsAccounts::ImportIdentity( const std::string& fname,
+                                 RsPgpId& imported_pgp_id,
+                                 std::string& import_error)
 {
-	return rsAccounts->importIdentity(fname,imported_pgp_id,import_error);
+	return RsAccountsDetail::instance().importIdentity(fname,imported_pgp_id,import_error);
 }
 
-bool    RsAccounts::ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error)
+bool RsAccounts::ImportIdentityFromString( const std::string& data,
+                                           RsPgpId& imported_pgp_id,
+                                           std::string& import_error )
 {
-    return rsAccounts->importIdentityFromString(data,imported_pgp_id,import_error);
+	return RsAccountsDetail::instance().importIdentityFromString(data, imported_pgp_id, import_error);
 }
 
-void    RsAccounts::GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)
+void RsAccounts::GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)
 {
-	return rsAccounts->getUnsupportedKeys(unsupported_keys);
+	return RsAccountsDetail::instance().getUnsupportedKeys(unsupported_keys);
 }
 
-bool    RsAccounts::CopyGnuPGKeyrings() 
+bool RsAccounts::CopyGnuPGKeyrings()
 {
-	return rsAccounts->copyGnuPGKeyrings();
+	return RsAccountsDetail::instance().copyGnuPGKeyrings();
 }
 
 // Rs Accounts
-bool    RsAccounts::SelectAccount(const RsPeerId &id)
+bool RsAccounts::SelectAccount(const RsPeerId &id)
 {
-	return rsAccounts->selectId(id);
+	return RsAccountsDetail::instance().selectId(id);
 }
 
-bool    RsAccounts::GetPreferredAccountId(RsPeerId &id)
+bool RsAccounts::GetPreferredAccountId(RsPeerId &id)
 {
-	return rsAccounts->getPreferredAccountId(id);
+	return RsAccountsDetail::instance().getPreferredAccountId(id);
 }
 
-bool    RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)
+bool RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)
 {
-	return rsAccounts->getAccountIds(ids);
+	return RsAccountsDetail::instance().getAccountIds(ids);
 }
 
-bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
-		RsPgpId &pgpId, std::string &pgpName,
-		std::string &pgpEmail, std::string &location)
+bool RsAccounts::GetAccountDetails(const RsPeerId& id, RsPgpId& pgpId,
+                                   std::string& pgpName, std::string& pgpEmail,
+                                   std::string& location )
 {
-	return rsAccounts->getAccountDetails(id, pgpId, pgpName, pgpEmail, location);
+	return RsAccountsDetail::instance().getAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool RsAccounts::GenerateSSLCertificate( const RsPgpId& pgp_id,
+                                         const std::string& org,
+                                         const std::string& loc,
+                                         const std::string& country,
+                                         const bool ishiddenloc,
+                                         const std::string& passwd,
+                                         RsPeerId& sslId,
+                                         std::string& errString)
 {
-	return rsAccounts->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
+	return RsAccountsDetail::instance().GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
 }
 
 /*********************************************************************************

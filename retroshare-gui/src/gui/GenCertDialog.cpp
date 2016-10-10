@@ -323,7 +323,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		//haveGPGKeys = (ui.genPGPuser->count() != 0)?true:false;
 		if (haveGPGKeys) {
 			QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
-			if (!rsAccounts->selectAccountByString(data.toString().toStdString())) {
+			if (!RsAccountsDetail::instance().selectAccountByString(data.toString().toStdString())) {
 				ui.no_node_label->setText(tr("No node is associated with the profile named") + " " + ui.genPGPuser->currentText() + ". " +tr("Please create a node for it by providing a node name."));
 				ui.no_node_label->setVisible(true);
 			} else {

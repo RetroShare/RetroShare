@@ -508,25 +508,23 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	AuthSSL::AuthSSLInit();
     AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
 
-	rsAccounts = new RsAccountsDetail() ;
-
 	// first check config directories, and set bootstrap values.
-	if(!rsAccounts->setupBaseDirectory(opt_base_dir))
+	if(!RsAccountsDetail::instance().setupBaseDirectory(opt_base_dir))
 		return RS_INIT_BASE_DIR_ERROR ; 
 
 	// Setup PGP stuff.
-	std::string pgp_dir = rsAccounts->PathPGPDirectory();
+	std::string pgp_dir = RsAccountsDetail::instance().PathPGPDirectory();
 
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
 	// load Accounts.
-	if (!rsAccounts->loadAccounts()) return RS_INIT_NO_KEYRING;
+	if (!RsAccountsDetail::instance().loadAccounts()) return RS_INIT_NO_KEYRING;
 
 	// choose alternative account.
 	if(prefUserString != "")
 	{
-		if (!rsAccounts->selectAccountByString(prefUserString))
+		if (!RsAccountsDetail::instance().selectAccountByString(prefUserString))
 		{
 			std::cerr << "Invalid User name/GPG id/SSL id: not found in list";
 			std::cerr << std::endl;
@@ -536,7 +534,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	/* check that we have selected someone */
 	RsPeerId preferredId;
-	bool existingUser = rsAccounts->getPreferredAccountId(preferredId);
+	bool existingUser = RsAccountsDetail::instance().getPreferredAccountId(preferredId);
 
 	if (existingUser)
 	{
@@ -615,7 +613,7 @@ bool     RsInit::LoadPassword(const std::string& inPwd)
  */
 int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-	if (!rsAccounts->lockPreferredAccount())
+	if (!RsAccountsDetail::instance().lockPreferredAccount())
 	{
 		return 3; // invalid PreferredAccount.
 	}
@@ -624,7 +622,7 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 
 	// Logic that used to be external to RsInit...
 	RsPeerId accountId;
-	if (!rsAccounts->getPreferredAccountId(accountId))
+	if (!RsAccountsDetail::instance().getPreferredAccountId(accountId))
 	{
 		retVal = 3; // invalid PreferredAccount;
 	}
@@ -632,14 +630,14 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
-	if (retVal == 0 && !rsAccounts->getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+	if (retVal == 0 && !RsAccountsDetail::instance().getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
 		retVal = 3; // invalid PreferredAccount;
 		
-	if (retVal == 0 && !rsAccounts->SelectPGPAccount(pgpId))
+	if (retVal == 0 && !RsAccountsDetail::instance().SelectPGPAccount(pgpId))
 		retVal = 3; // PGP Error.
 	
 	if(retVal == 0)
-		retVal = LockConfigDirectory(rsAccounts->PathAccountDirectory(), lockFilePath);
+		retVal = LockConfigDirectory(RsAccountsDetail::instance().PathAccountDirectory(), lockFilePath);
 
 	if(retVal == 0 && LoadCertificates(autoLoginNT) != 1)
 	{
@@ -649,7 +647,7 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 
 	if(retVal != 0)
 	{
-		rsAccounts->unlockPreferredAccount();
+		RsAccountsDetail::instance().unlockPreferredAccount();
 	}
 
 	return retVal;
@@ -668,20 +666,20 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
 	RsPeerId preferredId;
-	if (!rsAccounts->getPreferredAccountId(preferredId))
+	if (!RsAccountsDetail::instance().getPreferredAccountId(preferredId))
 	{
 		std::cerr << "No Account Selected" << std::endl;
 		return 0;
 	}
 		
 	
-	if (rsAccounts->PathCertFile() == "")
+	if (RsAccountsDetail::instance().PathCertFile() == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
 	  return 0;
 	}
 
-	if (rsAccounts->PathKeyFile() == "")
+	if (RsAccountsDetail::instance().PathKeyFile() == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
 	  return 0;
@@ -701,9 +699,9 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		}
 	}
 
-	std::cerr << "rsAccounts->PathKeyFile() : " << rsAccounts->PathKeyFile() << std::endl;
+	std::cerr << "rsAccounts->PathKeyFile() : " << RsAccountsDetail::instance().PathKeyFile() << std::endl;
 
-    if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts->PathCertFile().c_str(), rsAccounts->PathKeyFile().c_str(), rsInitConfig->passwd.c_str(), rsAccounts->LocationName()))
+	if(0 == AuthSSL::getAuthSSL() -> InitAuth(RsAccountsDetail::instance().PathCertFile().c_str(), RsAccountsDetail::instance().PathKeyFile().c_str(), rsInitConfig->passwd.c_str(), RsAccountsDetail::instance().LocationName()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -725,14 +723,14 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	rsInitConfig->gxs_passwd = rsInitConfig->passwd;
 	rsInitConfig->passwd = "";
 	
-	rsAccounts->storePreferredAccount();      
+	RsAccountsDetail::instance().storePreferredAccount();
 	return 1;
 }
 
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
-	if (!rsAccounts->getPreferredAccountId(preferredId))
+	if (!RsAccountsDetail::instance().getPreferredAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
 		return 0;
@@ -966,7 +964,7 @@ int RsServer::StartupRetroShare()
 	std::cerr << "set the debugging to crashMode." << std::endl;
 	if ((!rsInitConfig->haveLogFile) && (!rsInitConfig->outStderr))
 	{
-		std::string crashfile = rsAccounts->PathAccountDirectory();
+		std::string crashfile = RsAccountsDetail::instance().PathAccountDirectory();
 		crashfile +=  "/" + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
@@ -978,7 +976,7 @@ int RsServer::StartupRetroShare()
 	}
 
 	/* check account directory */
-	if (!rsAccounts->checkAccountDirectory())
+	if (!RsAccountsDetail::instance().checkAccountDirectory())
 	{
 		std::cerr << "RsServer::StartupRetroShare() - Fatal Error....." << std::endl;
 		std::cerr << "checkAccount failed!" << std::endl;
@@ -990,8 +988,8 @@ int RsServer::StartupRetroShare()
 	// Load up Certificates, and Old Configuration (if present)
 	std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
-	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
-	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
+	std::string emergencySaveDir = RsAccountsDetail::instance().PathAccountDirectory();
+	std::string emergencyPartialsDir = RsAccountsDetail::instance().PathAccountDirectory();
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";
@@ -1005,13 +1003,13 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "Load Configuration" << std::endl;
 
-	mConfigMgr = new p3ConfigMgr(rsAccounts->PathAccountDirectory());
+	mConfigMgr = new p3ConfigMgr(RsAccountsDetail::instance().PathAccountDirectory());
 	mGeneralConfig = new p3GeneralConfig();
 
 	// Get configuration options from rsAccounts.
 	bool isHiddenNode   = false;
 	bool isFirstTimeRun = false;
-	rsAccounts->getAccountOptions(isHiddenNode, isFirstTimeRun);
+	RsAccountsDetail::instance().getAccountOptions(isHiddenNode, isFirstTimeRun);
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -1084,12 +1082,12 @@ int RsServer::StartupRetroShare()
 #define BITDHT_FILTERED_IP_FILENAME  	"bdfilter.txt"
 
 
-	std::string bootstrapfile = rsAccounts->PathAccountDirectory();
+	std::string bootstrapfile = RsAccountsDetail::instance().PathAccountDirectory();
 	if (bootstrapfile != "")
 		bootstrapfile += "/";
 	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
 
-    std::string filteredipfile = rsAccounts->PathAccountDirectory();
+	std::string filteredipfile = RsAccountsDetail::instance().PathAccountDirectory();
     if (filteredipfile != "")
         filteredipfile += "/";
     filteredipfile += BITDHT_FILTERED_IP_FILENAME;
@@ -1104,7 +1102,7 @@ int RsServer::StartupRetroShare()
 	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
-		std::string installfile = rsAccounts->PathDataDirectory();
+		std::string installfile = RsAccountsDetail::instance().PathDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
@@ -1232,7 +1230,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
     ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-    ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
+	ftserver->setConfigDirectory(RsAccountsDetail::instance().PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
 
@@ -1247,19 +1245,19 @@ int RsServer::StartupRetroShare()
 
 
 	/* create Cache Services */
-	std::string config_dir = rsAccounts->PathAccountDirectory();
+	std::string config_dir = RsAccountsDetail::instance().PathAccountDirectory();
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 
 	std::vector<std::string> plugins_directories ;
 
 #ifdef __APPLE__
-	plugins_directories.push_back(rsAccounts->PathDataDirectory()) ;
+	plugins_directories.push_back(RsAccountsDetail::instance().PathDataDirectory()) ;
 #endif
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string(PLUGIN_DIR)) ;
 #endif
-	std::string extensions_dir = rsAccounts->PathBaseDirectory() + "/extensions6/" ;
+	std::string extensions_dir = RsAccountsDetail::instance().PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
 
 	if(!RsDirUtil::checkCreateDirectory(extensions_dir))
@@ -1303,7 +1301,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-	std::string currGxsDir = rsAccounts->PathAccountDirectory() + "/gxs";
+	std::string currGxsDir = RsAccountsDetail::instance().PathAccountDirectory() + "/gxs";
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
