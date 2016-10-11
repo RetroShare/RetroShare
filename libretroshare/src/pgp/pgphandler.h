@@ -59,13 +59,11 @@ class PGPCertificateInfo
 
 class PGPHandler
 {
-	public:
-		PGPHandler(	const std::string& path_to_public_keyring, 
-						const std::string& path_to_secret_keyring, 
-						const std::string& path_to_trust_database, 
-						const std::string& pgp_lock_file) ;
-
-		virtual ~PGPHandler() ;
+public:
+	PGPHandler( const std::string& pubring, const std::string& secring,
+	            const std::string& trustdb,
+	            const std::string& pgp_lock_filename );
+	virtual ~PGPHandler();
 
 		/**
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
@@ -131,7 +129,7 @@ class PGPHandler
 		bool isGPGSigned(const RsPgpId &id);
 		bool isGPGAccepted(const RsPgpId &id);
 
-		static void setPassphraseCallback(PassphraseCallback cb) ;
+		static bool setPassphraseCallback(PassphraseCallback cb);
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
 
 		// Gets info about the key. Who are the signers, what's the owner's name, etc.

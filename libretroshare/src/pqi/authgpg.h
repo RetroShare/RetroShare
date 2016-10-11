@@ -99,6 +99,11 @@ public:
 
 class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 {
+private:
+	AuthGPG( const std::string& pubring, const std::string& secring,
+	         const std::string& trustdb, const std::string& pgp_lock_filename );
+	~AuthGPG() { fullstop(); }
+
 public:
 	/**
 	 * Return the only existing instance of AuthGPG.
@@ -178,9 +183,6 @@ public:
 		virtual bool addService(AuthGPGService *service) ;
 
 	protected:
-		AuthGPG(const std::string& path_to_pubring, const std::string& path_to_secring,const std::string& path_to_trustdb,const std::string& pgp_lock_file);
-		~AuthGPG() { fullstop(); }
-
 		/*****************************************************************/
 		/***********************  p3config  ******************************/
 		/* Key Functions to be overloaded for Full Configuration */

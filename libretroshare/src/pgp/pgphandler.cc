@@ -87,20 +87,25 @@ ops_parse_cb_return_t cb_get_passphrase(const ops_parser_content_t *content_,ops
 
 	return OPS_RELEASE_MEMORY;
 }
-void PGPHandler::setPassphraseCallback(PassphraseCallback cb)
+bool PGPHandler::setPassphraseCallback(PassphraseCallback cb)
 {
-	_passphrase_callback = cb ;
+	_passphrase_callback = cb;
+	return true;
 }
 
-PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,const std::string& trustdb,const std::string& pgp_lock_filename)
-	: pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),_secring_path(secring),_trustdb_path(trustdb),_pgp_lock_filename(pgp_lock_filename)
+PGPHandler::PGPHandler( const std::string& pubring, const std::string& secring,
+                        const std::string& trustdb,
+                        const std::string& pgp_lock_filename ) :
+    pgphandlerMtx(std::string("PGPHandler")), _pubring_path(pubring),
+    _secring_path(secring), _trustdb_path(trustdb),
+    _pgp_lock_filename(pgp_lock_filename)
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RS_STACK_MUTEX(pgphandlerMtx);
 
 	_pubring_changed = false ;
 	_trustdb_changed = false ;
 
-	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
+	RsStackFileLock flck(_pgp_lock_filename); (void) flck;// lock access to PGP directory.
 
 	if(_passphrase_callback == NULL)
 		std::cerr << "WARNING: before created a PGPHandler, you need to init the passphrase callback using PGPHandler::setPassphraseCallback()" << std::endl;

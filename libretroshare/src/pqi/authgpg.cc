@@ -74,30 +74,23 @@ std::string pgp_pwd_callback( void * /*hook*/, const char *uid_title,
 	return password;
 }
 
+AuthGPG::AuthGPG( const std::string& pubring, const std::string& secring,
+                  const std::string& trustdb,
+                  const std::string& pgp_lock_filename) : p3Config(),
+    PGPHandler(pubring, secring, trustdb, pgp_lock_filename),
+    gpgMtxService("AuthGPG-service"), gpgMtxData("AuthGPG-data"),
+    _force_sync_database(false), mCount(0) { start("AuthGPG"); }
+
 AuthGPG &AuthGPG::instance() // static method
 {
-	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
-
-	std::string pgp_dir = RsAccountsDetail::instance().PathPGPDirectory();
-	static AuthGPG inst( pgp_dir + "/retroshare_public_keyring.gpg",
-	                     pgp_dir + "/retroshare_secret_keyring.gpg",
-	                     pgp_dir + "/retroshare_trustdb.gpg",
-	                     pgp_dir + "/lock" );
-
-	return inst;
+	const static bool hc = setPassphraseCallback(pgp_pwd_callback); (void) hc;
+	static AuthGPG singleton(
+	            RsAccountsDetail::instance().PathPGPDirectory() + "/retroshare_public_keyring.gpg",
+	            RsAccountsDetail::instance().PathPGPDirectory() + "/retroshare_secret_keyring.gpg",
+	            RsAccountsDetail::instance().PathPGPDirectory() + "/retroshare_trustdb.gpg",
+	            RsAccountsDetail::instance().PathPGPDirectory() + "/lock" );
+	return singleton;
 }
-
-AuthGPG::AuthGPG( const std::string& path_to_public_keyring,
-                  const std::string& path_to_secret_keyring,
-                  const std::string& path_to_trustdb,
-                  const std::string& pgp_lock_file ) :
-    p3Config(),
-    PGPHandler( path_to_public_keyring, path_to_secret_keyring,
-                path_to_trustdb, pgp_lock_file),
-    gpgMtxService("AuthGPG-service"), gpgMtxData("AuthGPG-data"),
-    _force_sync_database(false), mCount(0)
-{ start("AuthGPG"); }
-
 
 /* You can initialise Retroshare with
  * (a) load existing certificate.
