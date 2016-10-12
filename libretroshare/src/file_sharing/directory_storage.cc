@@ -174,10 +174,10 @@ int DirectoryStorage::searchHash(const RsFileHash& hash, std::list<EntryIndex> &
     return mFileHierarchy->searchHash(hash,results);
 }
 
-void DirectoryStorage::load(const std::string& local_file_name)
+bool DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy->load(local_file_name);
+    return mFileHierarchy->load(local_file_name);
 }
 void DirectoryStorage::save(const std::string& local_file_name)
 {

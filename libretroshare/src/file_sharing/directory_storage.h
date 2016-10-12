@@ -152,7 +152,7 @@ class DirectoryStorage
         void cleanup();
 
     protected:
-		void load(const std::string& local_file_name) ;
+        bool load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
 
     private:

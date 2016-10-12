@@ -1144,7 +1144,9 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
     }
     catch(read_error& e)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "Error while reading: " << e.what() << std::endl;
+#endif
 
         if(buffer != NULL)
             free(buffer) ;
