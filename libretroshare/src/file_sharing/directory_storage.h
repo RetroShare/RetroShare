@@ -133,7 +133,7 @@ class DirectoryStorage
         // Sets the subdirectory/subfiles list of entry indx the supplied one, possible adding and removing directories (resp.files). New directories are set empty with
         // just a name and need to be updated later on. New files are returned in a list so that they can be sent to hash cache.
         //
-        bool updateSubDirectoryList(const EntryIndex& indx, const std::map<std::string, time_t> &subdirs) ;
+        bool updateSubDirectoryList(const EntryIndex& indx, const std::map<std::string, time_t> &subdirs, const RsFileHash &random_hash_salt) ;
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
         bool removeDirectory(const EntryIndex& indx) ;
 
@@ -152,7 +152,7 @@ class DirectoryStorage
         void cleanup();
 
     protected:
-		void load(const std::string& local_file_name) ;
+        bool load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
 
     private:

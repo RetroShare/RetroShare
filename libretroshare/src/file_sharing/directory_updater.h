@@ -41,6 +41,9 @@ public:
     void forceUpdate();
     bool inDirectoryCheck() const ;
 
+    void setHashSalt(const RsFileHash& hash) { mHashSalt = hash; }
+    const RsFileHash& hashSalt() const { return mHashSalt; }
+
     void setFileWatchPeriod(int seconds) ;
     uint32_t fileWatchPeriod() const ;
 
@@ -59,6 +62,8 @@ protected:
 private:
     HashStorage *mHashCache ;
     LocalDirectoryStorage *mSharedDirectories ;
+
+    RsFileHash mHashSalt ;
 
     time_t mLastSweepTime;
     time_t mLastTSUpdateTime;
