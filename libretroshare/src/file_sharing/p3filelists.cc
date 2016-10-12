@@ -326,7 +326,14 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+    {
+        RsTlvKeyValue kv;
 
+        kv.key = WATCH_HASH_SALT_SS;
+        kv.value = mLocalDirWatcher->hashSalt().toStdString();
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -373,6 +380,11 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             {
                 setWatchEnabled(kit->value == "YES") ;
             }
+            else if(kit->key == WATCH_HASH_SALT_SS)
+            {
+                std::cerr << "Initing directory watcher with saved secret salt..." << std::endl;
+                mLocalDirWatcher->setHashSalt(RsFileHash(kit->value)) ;
+            }
             delete *it ;
             continue ;
         }
@@ -398,6 +410,14 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
         delete *it ;
     }
+    if(mLocalDirWatcher->hashSalt().isNull())
+    {
+        std::cerr << "(WW) Initialising directory watcher salt to some random value " << std::endl;
+        mLocalDirWatcher->setHashSalt(RsFileHash::random()) ;
+
+        IndicateConfigChanged();
+    }
+
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
@@ -642,8 +662,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
             convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
-    else
-        return false;
+        else
+            return false;
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;

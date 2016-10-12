@@ -127,10 +127,10 @@ bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update
 bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
 bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
-bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
+bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs,const RsFileHash& hash_salt)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
+    bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs,hash_salt) ;
     locked_check() ;
     return res ;
 }
