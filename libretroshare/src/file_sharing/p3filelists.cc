@@ -621,29 +621,30 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     }
 }
 
-bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const
+bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
+                                       FileSearchFlags flags ) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
+	RS_STACK_MUTEX(mFLSMtx);
 
-    result = NULL ;
+	result = NULL;
 
-    if (ref == NULL)
-        if(flags & RS_FILE_HINTS_LOCAL)
-        {
-            if(row != 0)
-                return false ;
+	if (ref == NULL)
+	{
+		if(flags & RS_FILE_HINTS_LOCAL)
+		{
+			if(row != 0) return false;
 
-            convertEntryIndexToPointer(0,0,result);
+			convertEntryIndexToPointer(0,0,result);
 
-            return true ;
-        }
-        else if((uint32_t)row < mRemoteDirectories.size())
-        {
-            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
-            return true;
-        }
-    else
-        return false;
+			return true;
+		}
+		else if((uint32_t)row < mRemoteDirectories.size())
+		{
+			convertEntryIndexToPointer(mRemoteDirectories[row]->root(), row+1, result);
+			return true;
+		}
+		else return false;
+	}
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -667,8 +668,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
 
     return res;
 }
-// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 
+// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;

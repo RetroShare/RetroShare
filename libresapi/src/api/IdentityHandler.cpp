@@ -29,7 +29,7 @@ private:
     std::vector<RsGxsId> mIds;
     StateToken mStateToken;
 protected:
-    virtual void gxsDoWork(Request &req, Response &resp)
+	virtual void gxsDoWork(Request& /*req*/, Response &resp)
     {
         resp.mDataStream.getStreamToMember();
         for(std::vector<RsGxsId>::iterator vit = mIds.begin(); vit != mIds.end(); ++vit)

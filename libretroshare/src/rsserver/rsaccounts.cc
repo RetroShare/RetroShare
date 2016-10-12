@@ -1059,7 +1059,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 		X509_print_ex(bio_out, x509, nmflag, reqflag);
 
-		BIO_flush(bio_out);
+		(void) BIO_flush(bio_out);
 		BIO_free(bio_out);
 
 		/* Save cert to file */
