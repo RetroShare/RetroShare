@@ -543,7 +543,7 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags 
 {
     return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
-uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
+uint32_t ftServer::getType(void *ref, FileSearchFlags /*flags*/)
 {
     return mFileDatabase->getType(ref) ;
 }
