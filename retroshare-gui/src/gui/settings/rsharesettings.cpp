@@ -802,7 +802,7 @@ bool RshareSettings::getRetroShareProtocol()
 		}
 		desktop.close();
 		if (lines.contains("Exec=" + getAppPathForProtocol()))
-			if (lines.contains("MimeType=x-scheme-handler/retroshare"))
+			if (lines.contains("MimeType=x-scheme-handler/retroshare;"))
 				return true;
 	}
 #else
