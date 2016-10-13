@@ -326,7 +326,14 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+    {
+        RsTlvKeyValue kv;
 
+        kv.key = WATCH_HASH_SALT_SS;
+        kv.value = mLocalDirWatcher->hashSalt().toStdString();
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -373,6 +380,11 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             {
                 setWatchEnabled(kit->value == "YES") ;
             }
+            else if(kit->key == WATCH_HASH_SALT_SS)
+            {
+                std::cerr << "Initing directory watcher with saved secret salt..." << std::endl;
+                mLocalDirWatcher->setHashSalt(RsFileHash(kit->value)) ;
+            }
             delete *it ;
             continue ;
         }
@@ -398,6 +410,14 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
         delete *it ;
     }
+    if(mLocalDirWatcher->hashSalt().isNull())
+    {
+        std::cerr << "(WW) Initialising directory watcher salt to some random value " << std::endl;
+        mLocalDirWatcher->setHashSalt(RsFileHash::random()) ;
+
+        IndicateConfigChanged();
+    }
+
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
@@ -621,29 +641,29 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     }
 }
 
-bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const
+bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
+                                       FileSearchFlags flags ) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
+	RS_STACK_MUTEX(mFLSMtx);
 
-    result = NULL ;
+	result = NULL;
 
-    if (ref == NULL)
-        if(flags & RS_FILE_HINTS_LOCAL)
-        {
-            if(row != 0)
-                return false ;
+	if (ref == NULL)
+	{
+		if(flags & RS_FILE_HINTS_LOCAL)
+		{
+			if(row != 0) return false;
 
-            convertEntryIndexToPointer(0,0,result);
-
-            return true ;
-        }
-        else if((uint32_t)row < mRemoteDirectories.size())
-        {
-            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
-            return true;
-        }
-    else
-        return false;
+			convertEntryIndexToPointer(0,0,result);
+			return true;
+		}
+		else if((uint32_t)row < mRemoteDirectories.size())
+		{
+			convertEntryIndexToPointer(mRemoteDirectories[row]->root(), row+1, result);
+			return true;
+		}
+		else return false;
+	}
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -667,8 +687,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
 
     return res;
 }
-// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 
+// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;

@@ -55,7 +55,7 @@ void LocalDirectoryUpdater::setEnabled(bool b)
         return ;
 
     if(b)
-		start("fs dir updater") ;
+        start("fs dir updater") ;
     else
         shutdown();
 
@@ -88,17 +88,23 @@ void LocalDirectoryUpdater::forceUpdate()
 
 void LocalDirectoryUpdater::sweepSharedDirectories()
 {
+    if(mHashSalt.isNull())
+    {
+        std::cerr << "(EE) no salt value in LocalDirectoryUpdater. Is that a bug?" << std::endl;
+        return ;
+    }
+
     RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage] LocalDirectoryUpdater::sweep()" << std::endl;
 #endif
 
-	// recursive update algorithm works that way:
-	// 	- the external loop starts on the shared directory list and goes through sub-directories
+    // recursive update algorithm works that way:
+    // 	- the external loop starts on the shared directory list and goes through sub-directories
     // 	- at the same time, it updates the local list of shared directories.  A single sweep is performed over the whole directory structure.
-	// 	- the information that is costly to compute (the hash) is store externally into a separate structure.
-	// 	- doing so, changing directory names or moving files between directories does not cause a re-hash of the content. 
-	//
+    // 	- the information that is costly to compute (the hash) is store externally into a separate structure.
+    // 	- doing so, changing directory names or moving files between directories does not cause a re-hash of the content.
+    //
     std::list<SharedDirInfo> shared_directory_list ;
     mSharedDirectories->getSharedDirectoryList(shared_directory_list);
 
@@ -109,7 +115,7 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
-    mSharedDirectories->updateSubDirectoryList(mSharedDirectories->root(),sub_dir_list) ;
+    mSharedDirectories->updateSubDirectoryList(mSharedDirectories->root(),sub_dir_list,mHashSalt) ;
 
     // now for each of them, go recursively and match both files and dirs
 
@@ -177,7 +183,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
        // update file and dir lists for current directory.
 
-       mSharedDirectories->updateSubDirectoryList(indx,subdirs) ;
+       mSharedDirectories->updateSubDirectoryList(indx,subdirs,mHashSalt) ;
 
        std::map<std::string,DirectoryStorage::FileTS> new_files ;
        mSharedDirectories->updateSubFilesList(indx,subfiles,new_files) ;

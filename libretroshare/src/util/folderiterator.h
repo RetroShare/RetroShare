@@ -39,8 +39,6 @@ public:
     bool readdir();
     void next();
 
-#warning this one should go, as it reports the same information than file_name()
-    bool d_name(std::string& dest);
     bool closedir();
 
     const std::string& file_name() ;

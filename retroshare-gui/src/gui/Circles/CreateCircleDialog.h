@@ -41,6 +41,7 @@ public:
 
 	void editNewId(bool isExternal);
 	void editExistingId(const RsGxsGroupId &circleId, const bool &clearList = true, bool readonly=true);
+	void addMember(const QString &keyId, const QString &idtype, const QString &nickname, const QIcon &icon);
 	void addMember(const QString &keyId, const QString &idtype, const QString &nickname);
 	void addMember(const RsGxsIdGroup &idGroup);
 	void addCircle(const RsGxsCircleDetails &cirDetails);

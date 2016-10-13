@@ -149,7 +149,7 @@ bool InternalFileHierarchyStorage::isIndexValid(DirectoryStorage::EntryIndex e) 
     return e < mNodes.size() && mNodes[e] != NULL ;
 }
 
-bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
+bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs,const RsFileHash& random_hash_seed)
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
         return false;
@@ -190,7 +190,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
         de->parent_index = indx;
         de->dir_modtime = 0;// forces parsing.it->second;
         de->dir_parent_path = d.dir_parent_path + "/" + d.dir_name ;
-        de->dir_hash = createDirHash(de->dir_name,de->dir_parent_path) ;
+        de->dir_hash = createDirHash(de->dir_name,d.dir_hash,random_hash_seed) ;
 
         mDirHashes[de->dir_hash] = mNodes.size() ;
 
@@ -201,7 +201,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
     return true;
 }
 
-RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string &/*dir_name*/, const std::string &/*dir_parent_path*/)
+RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string& dir_name, const RsFileHash& dir_parent_hash, const RsFileHash& random_hash_salt)
 {
     // What we need here: a unique identifier
     // - that cannot be bruteforced to find the real directory name and path
@@ -215,7 +215,19 @@ RsFileHash InternalFileHierarchyStorage::createDirHash(const std::string &/*dir_
     // Option 3: just compute something random, but then we need to store it so as to not
     // confuse friends when restarting.
 
-    return RsFileHash::random();
+    RsTemporaryMemory mem(dir_name.size() + 2*RsFileHash::SIZE_IN_BYTES) ;
+
+    memcpy( mem,                             random_hash_salt.toByteArray(),RsFileHash::SIZE_IN_BYTES) ;
+    memcpy(&mem[  RsFileHash::SIZE_IN_BYTES], dir_parent_hash.toByteArray(),RsFileHash::SIZE_IN_BYTES) ;
+    memcpy(&mem[2*RsFileHash::SIZE_IN_BYTES],dir_name.c_str(),              dir_name.size()) ;
+
+    RsFileHash res = RsDirUtil::sha1sum( mem,mem.size() ) ;
+
+#ifdef DEBUG_DIRECTORY_STORAGE
+    std::cerr << "Creating new dir hash for dir " << dir_name << ", parent dir hash=" << dir_parent_hash << " seed=[hidden]" << " result is " << res << std::endl;
+#endif
+
+    return res ;
 }
 
 bool InternalFileHierarchyStorage::removeDirectory(DirectoryStorage::EntryIndex indx)	// no reference here! Very important. Otherwise, the messign we do inside can change the value of indx!!
@@ -1132,7 +1144,9 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
     }
     catch(read_error& e)
     {
+#ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "Error while reading: " << e.what() << std::endl;
+#endif
 
         if(buffer != NULL)
             free(buffer) ;

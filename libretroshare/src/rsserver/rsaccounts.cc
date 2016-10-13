@@ -536,8 +536,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
     for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
-		std::string fname;
-		dirIt.d_name(fname);
+        std::string fname = dirIt.file_name();
 		std::string fullname = mBaseDirectory + "/" + fname;
 #ifdef FIM_DEBUG
 		std::cerr << "calling stats on " << fullname <<std::endl;
@@ -1060,7 +1059,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 		X509_print_ex(bio_out, x509, nmflag, reqflag);
 
-		BIO_flush(bio_out);
+		(void) BIO_flush(bio_out);
 		BIO_free(bio_out);
 
 		/* Save cert to file */

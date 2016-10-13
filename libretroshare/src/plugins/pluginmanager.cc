@@ -147,8 +147,7 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 
         for(;dirIt.isValid();dirIt.next())
 		{
-			std::string fname;
-			dirIt.d_name(fname);
+            std::string fname = dirIt.file_name();
 
 			char lc = plugin_directories[i][plugin_directories[i].length()-1] ; // length cannot be 0 here.
 
