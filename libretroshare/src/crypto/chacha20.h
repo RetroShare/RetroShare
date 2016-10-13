@@ -1,0 +1,74 @@
+/*
+ * RetroShare C++ File sharing default variables
+ *
+ *      crypto/chacha20.h
+ *
+ * Copyright 2016 by Mr.Alice
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare.project@gmail.com".
+ *
+ */
+
+namespace librs
+{
+	namespace crypto
+	{
+        /*!
+         * \brief chacha20_encrypt
+         *          Performs in place encryption/decryption of the supplied data, using chacha20, using the supplied key and nonce.
+         *
+         * \param key           	secret encryption key. *Should never* be re-used.
+         * \param block_counter		any integer. 0 is fine.
+         * \param nonce 			acts as an initialzation vector. /!\ it is extremely important to make sure that this nounce *is* everytime different. Using a purely random value is fine.
+         * \param data				data that gets encrypted/decrypted in place
+         * \param size				size of the data.
+         */
+        static void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12], uint8_t *data, uint32_t size) ;
+
+        /*!
+         * \brief poly1305_tag
+         *           Computes an authentication tag for the supplied data, using the given secret key.
+         * \param key				secret key. *Should not* be used multiple times.
+         * \param message			message to generate a tag for
+         * \param size				size of the message
+         * \param tag				place where the tag is stored.
+         */
+
+        static void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]);
+
+        /*!
+         * \brief AEAD_chacha20_poly1305
+         * 			 Provides in-place authenticated encryption using the AEAD construction as described in RFC7539.
+         * 			The data is first encrypted in place then 16-padded and concatenated to its size, than concatenated to the
+         * 			16-padded AAD (additional authenticated data) and its size, authenticated using poly1305.
+         *
+         * \param key			key that is used to derive a one time secret key for poly1305 and that is also used to encrypt the data
+         * \param nonce			nonce. *Should be unique* in order to make the ply1305 key unique.
+         * \param data			data that is encrypted.
+         * \param size			size of the data
+         * \param tag			generated poly1305 tag.
+         */
+        static void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint8_t *aad_size,uint8_t tag[16]) ;
+
+        /*!
+         * \brief perform_tests
+         *          Tests all methods in this class, using the tests supplied in RFC7539
+         */
+
+        static void perform_tests() ;
+	}
+}
