@@ -75,11 +75,6 @@ class pqistreamer: public PQInterface
 		virtual int     getQueueSize(bool in); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
         
-            	// mutex protected versions of RateInterface calls.
-            	virtual void setRate(bool b,float f) ;
-            	virtual void setMaxRate(bool b,float f) ;
-            	virtual float getRate(bool b) ;
-
     protected:
         		virtual int reset() ;
 

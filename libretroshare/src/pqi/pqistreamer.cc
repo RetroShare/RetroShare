@@ -210,22 +210,6 @@ RsItem *pqistreamer::GetItem()
 	return osr;
 }
 
-float pqistreamer::getRate(bool b)
-{
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-    	return RateInterface::getRate(b) ;
-}
-void pqistreamer::setMaxRate(bool b,float f)
-{
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-    	RateInterface::setMaxRate(b,f) ;
-}
-void pqistreamer::setRate(bool b,float f)
-{
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-    	RateInterface::setRate(b,f) ;
-}
-
 void pqistreamer::updateRates()
 {
     // now update rates both ways.
