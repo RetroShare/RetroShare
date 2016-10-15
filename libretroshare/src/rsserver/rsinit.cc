@@ -1810,16 +1810,6 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 
-	// create loopback device, and add to pqisslgrp.
-
-	SearchModule *mod = new SearchModule();
-	pqiloopback *ploop = new pqiloopback(ownId);
-
-	mod -> peerid = ownId;
-	mod -> pqi = ploop;
-
-	pqih->AddSearchModule(mod);
-
 	/* Setup GUI Interfaces. */
 
 	// rsDisc & RsMsgs done already.

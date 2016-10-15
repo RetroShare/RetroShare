@@ -218,7 +218,8 @@ class PQInterface: public RateInterface
 		 */
 		virtual int tick() { return 0; }
 		virtual int status() { return 0; }
-		virtual const RsPeerId& PeerId() { return peerId; }
+
+        inline const RsPeerId& PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
 		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,

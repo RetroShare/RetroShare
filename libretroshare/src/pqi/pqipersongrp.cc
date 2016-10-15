@@ -388,14 +388,12 @@ bool pqipersongrp::getCryptoParams(const RsPeerId& id,RsPeerCryptoParams& params
 {
 	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
 
-	std::map<RsPeerId, SearchModule *>::iterator it = mods.find(id) ;
+    std::map<RsPeerId, pqiperson *>::iterator it = mods.find(id) ;
 
 	if(it == mods.end())
 		return false ;
 
-	return it->second->pqi->getCryptoParams(params) ;
-
-	//return locked_getCryptoParams(id,params) ;
+    return it->second->getCryptoParams(params) ;
 }
 
 int     pqipersongrp::addPeer(const RsPeerId& id)
@@ -407,32 +405,27 @@ int     pqipersongrp::addPeer(const RsPeerId& id)
 #ifdef PGRP_DEBUG
 #endif
 
-	SearchModule *sm = NULL;
+    pqiperson *sm = NULL;
 
 	{ 
 		// The Mutex is required here as pqiListener is not thread-safe.
 		RsStackMutex stack(pqilMtx); /******* LOCKED MUTEX **********/
-		pqiperson *pqip = locked_createPerson(id, pqil);
-	
-		// attach to pqihandler
-		sm = new SearchModule();
-		sm -> peerid = id;
-		sm -> pqi = pqip;
+        sm = locked_createPerson(id, pqil);
 	
 		// reset it to start it working.
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::addPeer() => reset() called to initialise new person");
-		pqip -> reset();
-		pqip -> listen();
+        sm->reset();
+        sm->listen();
 
 	} /* UNLOCKED */
 
-	return AddSearchModule(sm);
+    return AddPerson(sm);
 }
 
 
 int     pqipersongrp::removePeer(const RsPeerId& id)
 {
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 
 #ifdef PGRP_DEBUG
 	std::cerr << "pqipersongrp::removePeer() id: " << id;
@@ -444,13 +437,11 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 	it = mods.find(id);
 	if (it != mods.end())
 	{
-		SearchModule *mod = it->second;
-		pqiperson *p = (pqiperson *) mod -> pqi;
-		p -> stoplistening();
+        it->second->stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
-		p -> reset();
-		p -> fullstopthreads();
-		delete p;
+        it->second -> reset();
+        it->second -> fullstopthreads();
+        delete it->second;
 		mods.erase(it);
 	}
 	else
@@ -463,7 +454,7 @@ int     pqipersongrp::removePeer(const RsPeerId& id)
 
 int pqipersongrp::tagHeartbeatRecvd(const RsPeerId& id)
 {
-        std::map<RsPeerId, SearchModule *>::iterator it;
+        std::map<RsPeerId, pqiperson *>::iterator it;
 
 #ifdef PGRP_DEBUG
         std::cerr << " pqipersongrp::tagHeartbeatRecvd() id: " << id;
@@ -475,10 +466,8 @@ int pqipersongrp::tagHeartbeatRecvd(const RsPeerId& id)
         it = mods.find(id);
         if (it != mods.end())
         {
-                SearchModule *mod = it->second;
-                pqiperson *p = (pqiperson *) mod -> pqi;
-		p->receiveHeartbeat();
-		return 1;
+            it->second->receiveHeartbeat();
+            return 1;
         }
         return 0;
 }
@@ -509,15 +498,14 @@ int     pqipersongrp::connectPeer(const RsPeerId& id
 #endif
 		return 0;
 	}
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 	it = mods.find(id);
 	if (it == mods.end())
 	{
 		return 0;
 	}
 	/* get the connect attempt details from the p3connmgr... */
-	SearchModule *mod = it->second;
-	pqiperson *p = (pqiperson *) mod -> pqi;
+    pqiperson *p = it->second;
 
 #ifdef WINDOWS_SYS
 	///////////////////////////////////////////////////////////
