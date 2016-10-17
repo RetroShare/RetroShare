@@ -46,6 +46,7 @@ const int ftserverzone = 29539;
 
 #include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3servicecontrol.h"
 
 #include "serialiser/rsfiletransferitems.h"
 #include "serialiser/rsserviceids.h"

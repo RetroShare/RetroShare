@@ -311,7 +311,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  const RsServiceInfo serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
                                  PgpAuxUtils *pgpUtils, bool grpAutoSync,bool msgAutoSync)
-                                 : p3ThreadedService(), p3Config(), mTransactionN(0),
+                                 : p3Config(), mTransactionN(0),
                                    mObserver(nxsObs), mDataStore(gds),
                                    mServType(servType), mTransactionTimeOut(TRANSAC_TIMEOUT),
                                    mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
@@ -325,6 +325,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
 	addSerialType(new RsNxsSerialiser(mServType));
 	mOwnId = mNetMgr->getOwnId();
     mUpdateCounter = 0;
+    mLastDataTick = 0;
 }
 
 RsGxsNetService::~RsGxsNetService()
@@ -395,6 +396,12 @@ int RsGxsNetService::tick()
     {
         mLastCleanRejectedMessages = now ;
         cleanRejectedMessages() ;
+    }
+
+    if(mLastDataTick < now)
+    {
+        tick_transactions() ;
+        mLastDataTick = now ;
     }
     return 1;
 }
@@ -1849,13 +1856,8 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransacItem *item)
         return false;
 }
 
-void RsGxsNetService::data_tick()
+void RsGxsNetService::tick_transactions()
 {
-    static const double timeDelta = 0.5;
-
-        //Start waiting as nothing to do in runup
-        usleep((int) (timeDelta * 1000 * 1000)); // timeDelta sec
-
         if(mUpdateCounter >= 120) // 60 seconds
         {
             updateServerSyncTS();

@@ -43,6 +43,7 @@
 #include "util/rsstring.h"
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
+#include "pqi/p3servicecontrol.h"
 
 #include "rsserver/rsloginhandler.h"
 #include "rsserver/rsaccounts.h"
@@ -1232,10 +1233,13 @@ int RsServer::StartupRetroShare()
 
 	/**************************** BITDHT ***********************************/
 
-	p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr);
-	rsServiceControl = serviceCtrl;
+    p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr);
+    rsServiceControl = serviceCtrl;
 
     pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
+
+    pqih->addService(serviceCtrl,true);
+
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */

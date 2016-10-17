@@ -31,6 +31,7 @@
 #include <map>
 
 #include "retroshare/rsservicecontrol.h"
+#include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiservicemonitor.h"
@@ -58,7 +59,7 @@ std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter);
 
 class ServiceControlSerialiser ;
 
-class p3ServiceControl: public RsServiceControl, public pqiMonitor, public p3Config
+class p3ServiceControl: public RsServiceControl, public p3Service, public pqiMonitor, public p3Config
 {
 public:
 
@@ -70,8 +71,9 @@ public:
          * checks and update all added configurations
          * @see rsserver
          */
-        void	tick();
+        virtual int	tick();
 
+        virtual RsServiceInfo getServiceInfo();
         /**
          * provided so that services don't need linkMgr, and can get all info
 	 * from ServiceControl.

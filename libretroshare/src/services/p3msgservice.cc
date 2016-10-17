@@ -33,6 +33,7 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/authgpg.h"
 #include "pqi/p3cfgmgr.h"
+#include "pqi/p3servicecontrol.h"
 
 #include "gxs/gxssecurity.h"
 

@@ -24,6 +24,7 @@
  */
 
 #include "pqi/pqiservice.h"
+#include "pqi/p3servicecontrol.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 
@@ -43,6 +44,12 @@ bool pqiService::send(RsRawItem *item)
 	return mServiceServer->sendItem(item);
 }
 
+#warning this should be made adaptive
+void pqiService::data_tick()
+{
+    tick();
+    usleep(0.5*1000*1000) ;
+}
 
 p3ServiceServer::p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl) : mPublisher(pub), mServiceControl(ctrl), srvMtx("p3ServiceServer") 
 {
@@ -81,6 +88,9 @@ int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 	// This doesn't need to be in Mutex.
 	mServiceControl->registerService(info, defaultOn);
 
+    if(defaultOn)
+        ts->start();
+
 	return 1;
 }
 
@@ -104,6 +114,7 @@ int p3ServiceServer::removeService(pqiService *ts)
 		return -1;
 	}
 
+    it->second->shutdown();
 	services.erase(it);
 
 	return 1;

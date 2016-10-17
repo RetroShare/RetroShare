@@ -190,6 +190,7 @@
 #include "services/p3idservice.h"
 #include "turtle/p3turtle.h"
 #include "gxs/rsgixs.h"
+#include "pqi/p3servicecontrol.h"
 #include "retroshare/rspeers.h"
 
 #include "p3grouter.h"

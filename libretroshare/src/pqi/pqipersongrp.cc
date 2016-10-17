@@ -162,34 +162,10 @@ int	pqipersongrp::tick()
 
 	int i = 0;
 
-#ifdef TO_BE_REMOVED
-    if (tickServiceSend())
-	{
-		i = 1;
-#ifdef PGRP_DEBUG
-                std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
-#endif
-	}
-	if (pqihandler::tick()) /* does Send/Recv */
-	{
-		i = 1;
-#ifdef PGRP_DEBUG
-                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
-#endif
-	}
-	if (tickServiceRecv())
-	{
-		i = 1;
-#ifdef PGRP_DEBUG
-                std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
-#endif
-    }
-#endif
-
 	if(pqihandler::tick())
 		i=1;
 
-    p3ServiceServer::tick();
+    //p3ServiceServer::tick();
 
 	return i;
 }

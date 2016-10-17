@@ -55,6 +55,7 @@
 #include "util/rsprint.h"
 #include "util/rsrandom.h"
 #include "pqi/pqinetwork.h"
+#include "pqi/p3servicecontrol.h"
 
 #ifdef TUNNEL_STATISTICS
 static std::vector<int> TS_tunnel_length(8,0) ;

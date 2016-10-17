@@ -1148,7 +1148,22 @@ bool p3ServiceControl::isPeerConnected(const uint32_t serviceId, const RsPeerId 
 /****************************************************************************/
 /****************************************************************************/
 
-void	p3ServiceControl::tick()
+const std::string SERVICE_CONTROL_APP_NAME = "service control";
+const uint16_t SERVICE_CONTROL_APP_MAJOR_VERSION	= 	1;
+const uint16_t SERVICE_CONTROL_APP_MINOR_VERSION  = 	0;
+const uint16_t SERVICE_CONTROL_MIN_MAJOR_VERSION  = 	1;
+const uint16_t SERVICE_CONTROL_MIN_MINOR_VERSION	=	0;
+
+RsServiceInfo p3ServiceControl::getServiceInfo()
+{
+    return RsServiceInfo(RS_SERVICE_TYPE_SERVICE_CONTROL,
+        SERVICE_CONTROL_APP_NAME,
+        SERVICE_CONTROL_APP_MAJOR_VERSION,
+        SERVICE_CONTROL_APP_MINOR_VERSION,
+        SERVICE_CONTROL_MIN_MAJOR_VERSION,
+        SERVICE_CONTROL_MIN_MINOR_VERSION);
+}
+int p3ServiceControl::tick()
 {
 	notifyAboutFriends();
 	notifyServices();
@@ -1157,6 +1172,7 @@ void	p3ServiceControl::tick()
 	std::cerr << "p3ServiceControl::tick()";
 	std::cerr << std::endl;
 #endif
+    return 0;
 }
 
 // configuration.

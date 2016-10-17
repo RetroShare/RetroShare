@@ -36,6 +36,7 @@
 #include "retroshare/rsstatus.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
+#include "pqi/p3servicecontrol.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3historymgr.h"
 #include "rsserver/p3face.h"
