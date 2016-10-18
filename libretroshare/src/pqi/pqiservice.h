@@ -60,7 +60,7 @@ class RsRawItem;
 class p3ServiceServerIface;
 class p3ServiceControl;
 
-class pqiService: public RsTickingThread
+class pqiService: public RsVariableRateTickingThread
 {
 protected:
 
@@ -71,10 +71,8 @@ protected:
 
     /* from RsTickingThread */
 
-    virtual void data_tick() ;	// does the actual job of calling overloaded pqiService::tick()
-
 public:
-    void 	setServiceServer(p3ServiceServerIface *server);
+    void setServiceServer(p3ServiceServerIface *server);
     //
     virtual bool	recv(RsRawItem *) = 0;
     virtual bool	send(RsRawItem *item);

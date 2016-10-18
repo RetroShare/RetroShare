@@ -26,11 +26,16 @@
 
 #include "rsthreads.h"
 #include <unistd.h>    // for usleep()
+#include <sys/time.h>    // for usleep()
 #include <errno.h>    // for errno
 #include <iostream>
 #include <time.h>
 
 int __attribute__((weak)) pthread_setname_np(pthread_t __target_thread, const char *__buf) ;
+
+static const double DEFAULT_MIN_TIME_DELTA = 0.05; // 25;
+static const double DEFAULT_MAX_TIME_DELTA = 0.2;
+static const double DEFAULT_KICK_LIMIT     = 0.15;
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
@@ -225,6 +230,91 @@ void RsTickingThread::runloop()
         data_tick();
     }
 }
+
+RsVariableRateTickingThread::RsVariableRateTickingThread()
+{
+    mKickLimit    = DEFAULT_KICK_LIMIT ;
+    mMinTimeDelta = DEFAULT_MIN_TIME_DELTA ;
+    mMaxTimeDelta = DEFAULT_MAX_TIME_DELTA ;
+}
+
+//#define	DEBUG_RS_VARIABLE_RATE_TICKING_THREAD 1
+
+double RsVariableRateTickingThread::getCurrentTS()
+{
+
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+#endif
+        return cts;
+}
+
+void RsVariableRateTickingThread::data_tick()
+{
+#ifndef WINDOWS_SYS
+    usleep((int) (mTimeDelta * 1000000));
+#else
+    Sleep((int) (mTimeDelta * 1000));
+#endif
+
+    double ts = getCurrentTS();
+    double delta = ts - mLastts;
+
+    /* for the fast ticked stuff */
+    if (delta > mTimeDelta)
+    {
+#ifdef	DEBUG_RS_VARIABLE_RATE_TICKING_THREAD
+        std::cerr << "Delta: " << delta << std::endl;
+        std::cerr << "Time Delta: " << mTimeDelta << std::endl;
+        std::cerr << "Avg Tick Rate: " << mAvgTickRate << std::endl;
+#endif
+
+        mLastts = ts;
+
+        /******************************** RUN SERVER *****************/
+
+        int moreToTick = tick();
+
+#ifdef	DEBUG_RS_VARIABLE_RATE_TICKING_THREAD
+        std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << ", tickrate = " << mTimeDelta << std::endl;
+#endif
+
+        /******************************** RUN SERVER *****************/
+
+        /* adjust tick rate depending on whether there is more.*/
+
+        mAvgTickRate = 0.2 * mTimeDelta + 0.8 * mAvgTickRate;
+
+        if(0 < moreToTick)
+        {
+            mTimeDelta = 0.9 * mAvgTickRate;
+
+            if (mTimeDelta > mKickLimit)
+            {
+                /* force next tick in one sec
+                     * if we are reading data.
+                     */
+                mTimeDelta = mKickLimit;
+                mAvgTickRate = mKickLimit;
+            }
+        }
+        else
+            mTimeDelta = 1.1 * mAvgTickRate;
+
+        /* limiter */
+        if (mTimeDelta < mMinTimeDelta)
+            mTimeDelta = mMinTimeDelta;
+        else if (mTimeDelta > mMaxTimeDelta)
+            mTimeDelta = mMaxTimeDelta;
+    }
+}
+
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
     :mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)

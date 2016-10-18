@@ -44,13 +44,6 @@ bool pqiService::send(RsRawItem *item)
 	return mServiceServer->sendItem(item);
 }
 
-#warning this should be made adaptive
-void pqiService::data_tick()
-{
-    tick();
-    usleep(0.5*1000*1000) ;
-}
-
 p3ServiceServer::p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl) : mPublisher(pub), mServiceControl(ctrl), srvMtx("p3ServiceServer") 
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/

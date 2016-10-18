@@ -54,32 +54,13 @@ int rsserverzone = 101;
 #include <sys/timeb.h>
 #endif
 
-static double getCurrentTS()
-{
-
-#ifndef WINDOWS_SYS
-        struct timeval cts_tmp;
-        gettimeofday(&cts_tmp, NULL);
-        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
-#else
-        struct _timeb timebuf;
-        _ftime( &timebuf);
-        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
-#endif
-        return cts;
-}
 
 // These values should be tunable from the GUI, to offer a compromise between speed and CPU use.
 // In some cases (VOIP) it's likely that we will need to set them temporarily to a very low 
 // value, in order to favor a fast feedback
 
-const double RsServer::minTimeDelta = 0.05; // 25;
-const double RsServer::maxTimeDelta = 0.2;
-const double RsServer::kickLimit = 0.15;
-
-
 RsServer::RsServer()
-	: coreMutex("RsServer")
+    : coreMutex("RsServer")
 {
 	// This is needed asap.
 	//
@@ -132,131 +113,46 @@ RsServer::~RsServer()
 
 
         /* Thread Fn: Run the Core */
-void 	RsServer::data_tick()
+int	RsServer::tick()
 {
-#ifndef WINDOWS_SYS
-    usleep((int) (mTimeDelta * 1000000));
-#else
-    Sleep((int) (mTimeDelta * 1000));
-#endif
+    int moreToTick ;
 
-    double ts = getCurrentTS();
-    double delta = ts - mLastts;
-    
-    /* for the fast ticked stuff */
-    if (delta > mTimeDelta)
     {
+        RS_STACK_MUTEX(coreMutex) ;
+        moreToTick = pqih->tick();
+    }
+
+    /* tick the Managers */
+    mPeerMgr->tick();
+    mLinkMgr->tick();
+    mNetMgr->tick();
+
+    time_t ts = time(NULL) ;
+
+    /* now we have the slow ticking stuff */
+    /* stuff ticked once a second (but can be slowed down) */
+    if ((int) ts > mLastSec)
+    {
+        mLastSec = (int) ts;
+
+        // Every second! (UDP keepalive).
+        //tou_tick_stunkeepalive();
+
+        // every five loops (> 5 secs)
+        if (mLoop % 5 == 0)
+        {
+            // Update All Every 5 Seconds.
+            // These Update Functions do the locking themselves.
 #ifdef	DEBUG_TICK
-        std::cerr << "Delta: " << delta << std::endl;
-        std::cerr << "Time Delta: " << mTimeDelta << std::endl;
-        std::cerr << "Avg Tick Rate: " << mAvgTickRate << std::endl;
+            std::cerr << "RsServer::run() Updates()" << std::endl;
 #endif
-
-        mLastts = ts;
-
-        /******************************** RUN SERVER *****************/
-        lockRsCore();
-
-        int moreToTick = pqih->tick();
-
-#ifdef	DEBUG_TICK
-        std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;
-#endif
-
-        unlockRsCore();
-
-        /* tick the Managers */
-        mPeerMgr->tick();
-        mLinkMgr->tick();
-        mNetMgr->tick();
-        /******************************** RUN SERVER *****************/
-
-        /* adjust tick rate depending on whether there is more.
-             */
-
-        mAvgTickRate = 0.2 * mTimeDelta + 0.8 * mAvgTickRate;
-
-        if (1 == moreToTick)
-        {
-            mTimeDelta = 0.9 * mAvgTickRate;
-            if (mTimeDelta > kickLimit)
-            {
-                /* force next tick in one sec
-                     * if we are reading data.
-                     */
-                mTimeDelta = kickLimit;
-                mAvgTickRate = kickLimit;
-            }
-        }
-        else
-        {
-            mTimeDelta = 1.1 * mAvgTickRate;
+            mConfigMgr->tick(); /* saves stuff */
         }
 
-        /* limiter */
-        if (mTimeDelta < minTimeDelta)
-        {
-            mTimeDelta = minTimeDelta;
-        }
-        else if (mTimeDelta > maxTimeDelta)
-        {
-            mTimeDelta = maxTimeDelta;
-        }
-
-        /* Fast Updates */
-
-
-        /* now we have the slow ticking stuff */
-        /* stuff ticked once a second (but can be slowed down) */
-        if ((int) ts > mLastSec)
-        {
-            mLastSec = (int) ts;
-
-            // Every second! (UDP keepalive).
-            //tou_tick_stunkeepalive();
-
-            // every five loops (> 5 secs)
-            if (mLoop % 5 == 0)
-            {
-                //	update_quick_stats();
-
-                // Update All Every 5 Seconds.
-                // These Update Functions do the locking themselves.
-#ifdef	DEBUG_TICK
-                std::cerr << "RsServer::run() Updates()" << std::endl;
-#endif
-
-                mConfigMgr->tick(); /* saves stuff */
-
-            }
-
-            // every 60 loops (> 1 min)
-            if (++mLoop >= 60)
-            {
-                mLoop = 0;
-
-                /* force saving FileTransferStatus TODO */
-                //ftserver->saveFileTransferStatus();
-
-                /* see if we need to resave certs */
-                //AuthSSL::getAuthSSL()->CheckSaveCertificates();
-
-                /* hour loop */
-                if (++mMin >= 60)
-                {
-                    mMin = 0;
-                }
-            }
-
-            /* Tick slow services */
-            if(rsPlugins)
-                rsPlugins->slowTickPlugins((time_t)ts);
-
-            // slow update tick as well.
-            // update();
-        } // end of slow tick.
-
-    } // end of only once a second.
+        /* Tick slow services */
+        if(rsPlugins)
+            rsPlugins->slowTickPlugins((time_t)ts);
+    }
 
 #ifdef	DEBUG_TICK
     double endCycleTs = getCurrentTS();
@@ -270,4 +166,6 @@ void 	RsServer::data_tick()
         rslog(RSL_ALERT, rsserverzone, out);
     }
 #endif
+
+    return moreToTick ;
 }

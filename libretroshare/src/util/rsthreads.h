@@ -280,10 +280,36 @@ public:
     void fullstop();
     void join() { fullstop() ; }	// used for compatibility
 
+protected:
     virtual void data_tick() =0;
 
 private:
     virtual void runloop() ; /* called once the thread is started. Should be overloaded by subclasses. */
+};
+
+class RsVariableRateTickingThread: public RsTickingThread
+{
+public:
+    RsVariableRateTickingThread() ;
+
+    static double getCurrentTS();
+
+    // Should return 1 if there is more work to do, 0 otherwise. The ticking speed is going to be
+    // updated according to this.
+
+    virtual int tick() = 0 ;
+
+protected:
+    virtual void data_tick() ;
+
+private:
+    double mTimeDelta ;
+    double mLastts ;
+    double mAvgTickRate ;
+
+    double mMinTimeDelta ;
+    double mMaxTimeDelta ;
+    double mKickLimit ;
 };
 
 class RsSingleJobThread: public RsThread
