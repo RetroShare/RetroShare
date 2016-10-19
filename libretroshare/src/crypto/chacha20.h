@@ -62,7 +62,18 @@ namespace librs
          * \param size			size of the data
          * \param tag			generated poly1305 tag.
          */
-        static void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint8_t *aad_size,uint8_t tag[16]) ;
+        static void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16]) ;
+
+        /*!
+         * \brief constant_time_memcmp
+         * 			Provides a constant time comparison of two memory chunks. The implementation comes from the FreeBSD implementation.
+         *
+         * \param m1    memory block 1
+         * \param m2	memory block 2
+         * \param size  common size of m1 and m2
+         * \return
+         */
+        static bool constant_time_memcmp(const uint8_t *m1,const uint8_t *m2,uint32_t size) ;
 
         /*!
          * \brief perform_tests

@@ -35,6 +35,7 @@ class RsTurtleItem: public RsItem
 	public:
 		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 
+#warning we need some consts here
 		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
 		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 

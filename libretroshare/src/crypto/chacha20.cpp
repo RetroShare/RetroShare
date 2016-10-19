@@ -307,18 +307,18 @@ static void print(const chacha20_state& s)
 
 static void add(chacha20_state& s,const chacha20_state& t) { for(uint32_t i=0;i<16;++i) s.c[i] += t.c[i] ; }
 
-static uint8_t read16bits(char s)
-{
-    if(s >= '0' && s <= '9')
-        return s - '0' ;
-    else if(s >= 'a' && s <= 'f')
-        return s - 'a' + 10 ;
-    else if(s >= 'A' && s <= 'F')
-        return s - 'A' + 10 ;
-    else
-        throw std::runtime_error("Not an hex string!") ;
-}
-
+// static uint8_t read16bits(char s)
+// {
+//     if(s >= '0' && s <= '9')
+//         return s - '0' ;
+//     else if(s >= 'a' && s <= 'f')
+//         return s - 'a' + 10 ;
+//     else if(s >= 'A' && s <= 'F')
+//         return s - 'A' + 10 ;
+//     else
+//         throw std::runtime_error("Not an hex string!") ;
+// }
+// 
 // static uint256_32 create_256bit_int(const std::string& s)
 // {
 //     uint256_32 r(0,0,0,0,0,0,0,0) ;
@@ -429,6 +429,12 @@ void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]
     tag[ 4] = (acc.b[1] >> 0) & 0xff ; tag[ 5] = (acc.b[1] >> 8) & 0xff ; tag[ 6] = (acc.b[1] >>16) & 0xff ; tag[ 7] = (acc.b[1] >>24) & 0xff ;
     tag[ 8] = (acc.b[2] >> 0) & 0xff ; tag[ 9] = (acc.b[2] >> 8) & 0xff ; tag[10] = (acc.b[2] >>16) & 0xff ; tag[11] = (acc.b[2] >>24) & 0xff ;
     tag[12] = (acc.b[3] >> 0) & 0xff ; tag[13] = (acc.b[3] >> 8) & 0xff ; tag[14] = (acc.b[3] >>16) & 0xff ; tag[15] = (acc.b[3] >>24) & 0xff ;
+}
+
+void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16])
+{
+#warning this part is not implemented yet.
+    memset(tag,0xff,16) ;
 }
 
 void perform_tests()
