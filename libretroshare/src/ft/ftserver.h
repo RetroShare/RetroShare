@@ -225,8 +225,9 @@ public:
     virtual bool sendSingleChunkCRC(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
 
     static void deriveEncryptionKey(const RsFileHash& hash, uint8_t *key);
-    static bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
-    static bool decryptItem(RsTurtleGenericTunnelItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericDataItem *& decrypted_item);
+
+    bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
+    bool decryptItem(RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
 
     /*************** Internal Transfer Fns *************************/
     virtual int tick();

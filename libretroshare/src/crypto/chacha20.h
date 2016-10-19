@@ -37,7 +37,7 @@ namespace librs
          * \param data				data that gets encrypted/decrypted in place
          * \param size				size of the data.
          */
-        static void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12], uint8_t *data, uint32_t size) ;
+        void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12], uint8_t *data, uint32_t size) ;
 
         /*!
          * \brief poly1305_tag
@@ -48,7 +48,7 @@ namespace librs
          * \param tag				place where the tag is stored.
          */
 
-        static void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]);
+        void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]);
 
         /*!
          * \brief AEAD_chacha20_poly1305
@@ -62,24 +62,26 @@ namespace librs
          * \param size			size of the data
          * \param tag			generated poly1305 tag.
          */
-        static void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16]) ;
+        bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16]) ;
 
         /*!
          * \brief constant_time_memcmp
-         * 			Provides a constant time comparison of two memory chunks. The implementation comes from the FreeBSD implementation.
+         * 			Provides a constant time comparison of two memory chunks. Calls CRYPTO_memcmp.
          *
          * \param m1    memory block 1
          * \param m2	memory block 2
          * \param size  common size of m1 and m2
          * \return
+         * 			false  if the two chunks are different
+         * 			true   if the two chunks are different
          */
-        static bool constant_time_memcmp(const uint8_t *m1,const uint8_t *m2,uint32_t size) ;
+        bool constant_time_memory_compare(const uint8_t *m1,const uint8_t *m2,uint32_t size) ;
 
         /*!
          * \brief perform_tests
          *          Tests all methods in this class, using the tests supplied in RFC7539
          */
 
-        static void perform_tests() ;
+        void perform_tests() ;
 	}
 }

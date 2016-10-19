@@ -1014,13 +1014,13 @@ void ftServer::deriveEncryptionKey(const RsFileHash& hash, uint8_t *key)
     SHA256_Final (key, &sha_ctx);
 }
 
+static const uint32_t ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE = 12 ;
+static const uint32_t ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE    = 16 ;
+static const uint32_t ENCRYPTED_FT_HEADER_SIZE                =  4 ;
+static const uint32_t ENCRYPTED_FT_EDATA_SIZE                 =  4 ;
+
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {
-    static const uint32_t ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE = 12 ;
-    static const uint32_t ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE    = 16 ;
-    static const uint32_t ENCRYPTED_FT_HEADER_SIZE                =  4 ;
-    static const uint32_t ENCRYPTED_FT_EDATA_SIZE                 =  4 ;
-
     uint8_t initialization_vector[ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE] ;
 
     RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
@@ -1088,9 +1088,59 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 
 // Decrypts the given item using aead-chacha20-poly1305
 
-bool ftServer::decryptItem(RsTurtleGenericTunnelItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericDataItem *& decrypted_item)
+bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
 {
-    decrypted_item = NULL ;
+    uint8_t encryption_key[32] ;
+    deriveEncryptionKey(hash,encryption_key) ;
+
+    uint8_t *edata = (uint8_t*)encrypted_item->data_bytes ;
+    uint32_t offset = 0;
+
+    if(encrypted_item->data_size < ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE) return false ;
+
+    if(edata[0] != 0xae) return false ;
+    if(edata[1] != 0xad) return false ;
+    if(edata[2] != 0x00) return false ;
+    if(edata[3] != 0x01) return false ;
+
+    offset += ENCRYPTED_FT_HEADER_SIZE ;
+    uint32_t aad_offset = offset ;
+    uint32_t aad_size = ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
+
+    uint8_t *initialization_vector = &edata[offset] ;
+
+    std::cerr << "ftServer::decrypting ft item." << std::endl;
+    std::cerr << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_item->data_size)) << "(...)" << std::endl;
+    std::cerr << "  hash            : " << hash << std::endl;
+    std::cerr << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
+    std::cerr << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+
+    offset += ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
+
+    uint32_t edata_size = 0 ;
+    edata_size += ((uint32_t)edata[offset+0]) <<  0 ;
+    edata_size += ((uint32_t)edata[offset+1]) <<  8 ;
+    edata_size += ((uint32_t)edata[offset+2]) << 16 ;
+    edata_size += ((uint32_t)edata[offset+3]) << 24 ;
+
+    offset += ENCRYPTED_FT_EDATA_SIZE ;
+    uint32_t clear_item_offset = offset ;
+
+    uint32_t authentication_tag_offset = offset + edata_size ;
+    std::cerr << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
+
+    if(!librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset]))
+        return false;
+
+    std::cerr << "  authen. result  : ok" << std::endl;
+    std::cerr << "  decrypted daya  : ok" << RsUtil::BinToHex(&edata[clear_item_offset],std::min(50u,edata_size)) << "(...)" << std::endl;
+
+    decrypted_item = deserialiseItem(&edata[clear_item_offset],edata_size) ;
+
+    if(decrypted_item == NULL)
+        return false ;
+
+    return true ;
 }
 
 // Dont delete the item. The client (p3turtle) is doing it after calling this.

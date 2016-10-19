@@ -28,9 +28,12 @@
 #include <string>
 #include <stdio.h>
 #include <string.h>
+#include <openssl/crypto.h>
 
 #include <iostream>
 #include <stdlib.h>
+
+#pragma once
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}
 
@@ -431,10 +434,16 @@ void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]
     tag[12] = (acc.b[3] >> 0) & 0xff ; tag[13] = (acc.b[3] >> 8) & 0xff ; tag[14] = (acc.b[3] >>16) & 0xff ; tag[15] = (acc.b[3] >>24) & 0xff ;
 }
 
-void AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16])
+bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16])
 {
 #warning this part is not implemented yet.
     memset(tag,0xff,16) ;
+    return false;
+}
+
+bool constant_time_memory_compare(const uint8_t *m1,const uint8_t *m2,uint32_t size)
+{
+    return !CRYPTO_memcmp(m1,m2,size) ;
 }
 
 void perform_tests()
@@ -658,7 +667,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xa8,0x06,0x1d,0xc1,0x30,0x51,0x36,0xc6,0xc2,0x2b,0x8b,0xaf,0x0c,0x01,0x27,0xa9 };
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #001     OK" << std::endl;
@@ -676,7 +685,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #002     OK" << std::endl;
@@ -695,7 +704,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x36,0xe5,0xf6,0xb5,0xc5,0xe0,0x60,0x70,0xf0,0xef,0xca,0x96,0x22,0x7a,0x86,0x3e };
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #003     OK" << std::endl;
@@ -714,7 +723,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xf3,0x47,0x7e,0x7c,0xd9,0x54,0x17,0xaf,0x89,0xa6,0xb8,0x79,0x4c,0x31,0x0c,0xf0 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #004     OK" << std::endl;
@@ -731,7 +740,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x45,0x41,0x66,0x9a,0x7e,0xaa,0xee,0x61,0xe7,0x08,0xdc,0x7c,0xbc,0xc5,0xeb,0x62 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #005     OK" << std::endl;
@@ -749,7 +758,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #006     OK" << std::endl;
@@ -767,7 +776,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #007     OK" << std::endl;
 
@@ -786,7 +795,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #008     OK" << std::endl;
 
@@ -805,7 +814,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #009     OK" << std::endl;
 
@@ -822,7 +831,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xfa,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #010     OK" << std::endl;
 
@@ -843,7 +852,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #011     OK" << std::endl;
 
@@ -863,7 +872,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x13,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(!memcmp(tag,test_tag,16)) ;
+        assert(constant_time_memory_compare(tag,test_tag,16)) ;
     }
 }
 
