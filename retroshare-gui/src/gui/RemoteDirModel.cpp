@@ -497,7 +497,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 	}
 	return QVariant();
 }
-QVariant FlatStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& details,int coln) const
+QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& details,int coln) const
 {
 	/*
 	 * Person:  name,  id, 0, 0;
