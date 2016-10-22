@@ -143,13 +143,13 @@ public:
         ok &= getRawUInt32(data, rssize, &offset, &item->mServiceId);
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->mServiceName);
 
-    uint8_t v ;
+        uint8_t v;
         ok &= getRawUInt8(data, rssize, &offset, &v) ;
 
-    if(v != 0 && v != 1)
-        ok = false ;
-    else
-        item->mDefaultAllowed = (bool)v;
+        if (v != 0 && v != 1)
+            ok = false;
+        else
+            item->mDefaultAllowed = (bool)v ;
 
         uint32_t tmp ;
         ok &= getRawUInt32(data, rssize, &offset, &tmp);

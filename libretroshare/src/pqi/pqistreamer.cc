@@ -161,20 +161,19 @@ pqistreamer::~pqistreamer()
 	if (mRsSerialiser)
 		delete mRsSerialiser;
 
-    free_pend_locked();
+	free_pend_locked() ;
 
 	// clean up incoming.
-    while(!mIncoming.empty())
+	while (!mIncoming.empty())
 	{
 		RsItem *i = mIncoming.front();
-        mIncoming.pop_front();
-        --mIncomingSize ;
+		mIncoming.pop_front() ;
+		--mIncomingSize;
 		delete i;
-    }
+	}
 
-  
-    if(mIncomingSize != 0)
-        std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl;
+	if (mIncomingSize != 0)
+		std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl ;
 	return;
 }
 

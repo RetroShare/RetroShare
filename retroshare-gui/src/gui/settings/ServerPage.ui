@@ -10,7 +10,7 @@
     <height>568</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="ServerPageVLayout">
    <property name="leftMargin">
     <number>6</number>
    </property>
@@ -26,15 +26,15 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tabNetConf">
       <attribute name="title">
        <string>Network Configuration</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
+      <layout class="QGridLayout" name="tabNetConfGLayout">
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="netConfHLayout">
          <item>
           <layout class="QHBoxLayout">
            <property name="spacing">
@@ -63,7 +63,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="label_localAddress">
                <property name="text">
                 <string>Local Address</string>
                </property>
@@ -84,7 +84,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_14">
+              <widget class="QLabel" name="label_totalDownloadRate">
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -97,7 +97,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_15">
+              <widget class="QLabel" name="label_totalUploadRate">
                <property name="font">
                 <font>
                  <weight>50</weight>
@@ -145,7 +145,7 @@
               <widget class="QLineEdit" name="localAddress"/>
              </item>
              <item row="2" column="1">
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="localPortLabel">
                <property name="text">
                 <string>Port:</string>
                </property>
@@ -171,7 +171,7 @@
               <widget class="QLineEdit" name="extAddress"/>
              </item>
              <item row="3" column="1">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="extPortLabel">
                <property name="text">
                 <string>Port:</string>
                </property>
@@ -249,7 +249,7 @@
               </widget>
              </item>
              <item row="3" column="3">
-              <layout class="QGridLayout" name="_6">
+              <layout class="QGridLayout" name="gLayout_ext">
                <property name="leftMargin">
                 <number>6</number>
                </property>
@@ -285,7 +285,7 @@
               </layout>
              </item>
              <item row="2" column="3">
-              <layout class="QGridLayout" name="_4">
+              <layout class="QGridLayout" name="gLayout_netLimited">
                <property name="leftMargin">
                 <number>6</number>
                </property>
@@ -346,7 +346,7 @@
               </widget>
              </item>
              <item row="1" column="3">
-              <layout class="QGridLayout" name="_5">
+              <layout class="QGridLayout" name="gLayout_upnp">
                <property name="leftMargin">
                 <number>6</number>
                </property>
@@ -379,7 +379,7 @@
               </layout>
              </item>
              <item row="0" column="3">
-              <layout class="QGridLayout" name="_7">
+              <layout class="QGridLayout" name="gLayout_hiddenMode">
                <property name="leftMargin">
                 <number>6</number>
                </property>
@@ -403,7 +403,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLabel" name="hiddenMode_LB">
+                <widget class="QLabel" name="textlabel_hiddenMode">
                  <property name="font">
                   <font>
                    <weight>75</weight>
@@ -427,16 +427,16 @@
         </layout>
        </item>
        <item row="1" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <layout class="QHBoxLayout" name="ipAddressHLayout">
          <item>
-          <widget class="QLabel" name="label_7">
+          <widget class="QLabel" name="ipAddressLabel">
            <property name="text">
             <string>Known / Previous IPs:</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer">
+          <spacer name="ipAddressHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -511,13 +511,12 @@ behind a firewall or a VPN.</string>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
-      <zorder></zorder>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabIPFilters">
       <attribute name="title">
        <string>IP Filters</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+      <layout class="QVBoxLayout" name="tabIPFiltersVLayout">
        <item>
         <widget class="QCheckBox" name="denyAll_CB">
          <property name="text">
@@ -526,7 +525,7 @@ behind a firewall or a VPN.</string>
         </widget>
        </item>
        <item>
-        <widget class="QTabWidget" name="tabWidget">
+        <widget class="QTabWidget" name="ipTabWidget">
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -701,13 +700,13 @@ behind a firewall or a VPN.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="manualInputGBox">
          <property name="title">
           <string>Manual input</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_10">
+         <layout class="QVBoxLayout" name="manualInputGBoxVLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <layout class="QHBoxLayout" name="ipinputHLayout">
             <item>
              <widget class="QLineEdit" name="ipInput_LE">
               <property name="sizePolicy">
@@ -771,23 +770,23 @@ behind a firewall or a VPN.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="HiddenTAB">
+     <widget class="QWidget" name="tabHiddenConf">
       <attribute name="title">
        <string>Hidden Service Configuration</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
+      <layout class="QVBoxLayout" name="tabHiddenConfVLayout">
        <item>
-        <widget class="QGroupBox" name="torpage_outgoing">
+        <widget class="QGroupBox" name="hiddenpage_outgoing">
          <property name="title">
           <string>Outgoing Connections</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <layout class="QVBoxLayout" name="hiddenpage_outgoingVLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <layout class="QHBoxLayout" name="torSocksHLayout">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <layout class="QHBoxLayout" name="hiddenpage_proxyHLayout_tor">
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="hiddenpage_proxyLabel_tor">
                 <property name="text">
                  <string>Tor Socks Proxy</string>
                 </property>
@@ -812,7 +811,7 @@ behind a firewall or a VPN.</string>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout" name="hiddenpage_proxyOKHLayout_tor">
               <item>
                <widget class="QLabel" name="iconlabel_tor_outgoing">
                 <property name="maximumSize">
@@ -830,7 +829,7 @@ behind a firewall or a VPN.</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="label_tor_outgoing">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -844,7 +843,7 @@ behind a firewall or a VPN.</string>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15">
+           <layout class="QHBoxLayout" name="i2pHLayout">
             <property name="topMargin">
              <number>0</number>
             </property>
@@ -852,9 +851,9 @@ behind a firewall or a VPN.</string>
              <number>0</number>
             </property>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <layout class="QHBoxLayout" name="hiddenpage_proxyHLayout_i2p">
               <item>
-               <widget class="QLabel" name="label_6">
+               <widget class="QLabel" name="hiddenpage_proxyLabel_i2p">
                 <property name="text">
                  <string>I2P Socks Proxy</string>
                 </property>
@@ -879,7 +878,7 @@ behind a firewall or a VPN.</string>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_18">
+             <layout class="QHBoxLayout" name="hiddenpage_proxyOKHLayout_i2p">
               <item>
                <widget class="QLabel" name="iconlabel_i2p_outgoing">
                 <property name="text">
@@ -891,7 +890,7 @@ behind a firewall or a VPN.</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="label_i2p_outgoing">
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -905,7 +904,7 @@ behind a firewall or a VPN.</string>
            </layout>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit">
+           <widget class="QPlainTextEdit" name="hiddenpageOutHelpPlainTextEdit">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -943,9 +942,9 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
          <property name="title">
           <string>Incoming Service Connections</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="hiddenpage_incomingVLayout">
           <item>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="incomingAddressGLayout">
             <item row="0" column="2">
              <widget class="QSpinBox" name="hiddenpage_localPort">
               <property name="minimum">
@@ -957,7 +956,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
              </widget>
             </item>
             <item row="0" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <layout class="QHBoxLayout" name="testIncomingHLayout">
               <item>
                <widget class="QPushButton" name="testIncoming_PB">
                 <property name="toolTip">
@@ -988,7 +987,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="label_10">
+             <widget class="QLabel" name="l_localAddress">
               <property name="text">
                <string>Local Address</string>
               </property>
@@ -1009,7 +1008,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
              </widget>
             </item>
             <item row="1" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="incomingTestResultHLayout">
               <item>
                <widget class="QLabel" name="iconlabel_service_incoming">
                 <property name="maximumSize">
@@ -1041,9 +1040,9 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QVBoxLayout" name="hiddenpage_configurationVLayout">
             <item>
-             <widget class="QLabel" name="label_12">
+             <widget class="QLabel" name="l_hiddenpage_configuration">
               <property name="text">
                <string>Expected Configuration:</string>
               </property>
@@ -1083,7 +1082,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
            </layout>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit_2">
+           <widget class="QPlainTextEdit" name="hiddenpageInHelpPlainTextEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1117,7 +1116,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
+        <spacer name="mainVSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

@@ -250,18 +250,19 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	else
 		ok = false ;
 
-    // receipt item is optional.
+	// Receipt item is optional.
 
-    if(offset < pktsize)
-    {
-        item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset) ;
-        if(item->receipt_item != NULL)
-            offset += item->receipt_item->serial_size() ;
-        else
-            ok = false ;
-    }
-    else
-        item->receipt_item = NULL ;
+	if (offset < pktsize)
+	{ //
+		item->receipt_item = deserialise_RsGRouterSignedReceiptItem(&((uint8_t*)data)[offset],pktsize - offset);
+		if (item->receipt_item != NULL)
+			offset += item->receipt_item->serial_size();
+		else //
+			ok = false;
+	}
+	else //
+		item->receipt_item = NULL;
+
 
 
 	if (offset != rssize || !ok)

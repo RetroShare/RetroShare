@@ -1397,7 +1397,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
     if(!item)
         return ;
 
-	time_t now = time(NULL) ;
+    time_t now = time(NULL);
 
     // check the hash. If anything goes wrong (in the chunking for instance) the hash will not match
 

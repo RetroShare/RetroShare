@@ -284,22 +284,19 @@ RsTurtleRegExpSearchRequestItem::RsTurtleRegExpSearchRequestItem(void *data,uint
 	uint32_t n =0 ;
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 
-        if(ok)
-        expr._tokens.resize(n) ;
+	if(ok) expr._tokens.resize(n) ;
 
 	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt8(data,pktsize,&offset,&expr._tokens[i]) ;
 
 	ok &= getRawUInt32(data,pktsize,&offset,&n) ;
 
-        if(ok)
-        expr._ints.resize(n) ;
+	if(ok) expr._ints.resize(n) ;
 
 	for(uint32_t i=0;i<n && ok;++i) ok &= getRawUInt32(data,pktsize,&offset,&expr._ints[i]) ;
 
-    ok &= getRawUInt32(data,pktsize,&offset,&n) ;
+	ok &= getRawUInt32(data,pktsize,&offset,&n);
 
-    if(ok)
-	expr._strings.resize(n) ;
+	if (ok) expr._strings.resize(n);
 
 	for(uint32_t i=0;i<n && ok;++i) ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, expr._strings[i]); 	
 

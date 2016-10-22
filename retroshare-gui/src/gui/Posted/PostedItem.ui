@@ -322,7 +322,6 @@
       </item>
      </layout>
      <zorder>titleLabel</zorder>
-     <zorder></zorder>
     </widget>
    </item>
    <item>

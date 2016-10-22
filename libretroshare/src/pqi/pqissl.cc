@@ -1624,10 +1624,10 @@ int 	pqissl::readdata(void *data, int len)
 #ifdef PQISSL_DEBUG
 	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
 #endif
-    // safety check.  Apparently this avoids some SIGSEGV.
-    //
-    if(ssl_connection == NULL)
-        return -1;
+	// Safety check.  Apparently this avoids some SIGSEGV.
+	//
+	if (ssl_connection == NULL)
+		return -1 ;
 
 	// There is a do, because packets can be splitted into multiple ssl buffers
 	// when they are larger than 16384 bytes. Such packets have to be read in 

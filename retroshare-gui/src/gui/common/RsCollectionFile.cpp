@@ -270,7 +270,7 @@ bool RsCollectionFile::checkFile(const QString& fileName, bool showError)
 		if(c == '\t' || c == '\n' || c == '\b' || c == '\r')
 			continue ;
 
-			if(n == max_size || file.atEnd())
+		if (n == max_size || file.atEnd())
 			for(int i=0;i<n-1;++i)
 				current[i] = current[i+1] ;
 

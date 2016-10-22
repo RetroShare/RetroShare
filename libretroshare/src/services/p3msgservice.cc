@@ -1645,8 +1645,8 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 {
 	mis.msgflags = 0;
 
-    if (msg->msgFlags & RS_MSG_FLAGS_DISTANT)
-        mis.msgflags |= RS_MSG_DISTANT;
+	if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
+		mis.msgflags |= RS_MSG_DISTANT ;
 
 	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
 		mis.msgflags |= RS_MSG_SIGNED ;

@@ -554,7 +554,7 @@ void FeedReaderMessageWidget::updateCurrentMessage()
 {
 	mTimer->stop();
 
-	long todo; // show link somewhere
+#warning FeedReaderMessageWidget.cpp TODO thunder2: show link somewhere
 
 	std::string msgId = currentMsgId();
 

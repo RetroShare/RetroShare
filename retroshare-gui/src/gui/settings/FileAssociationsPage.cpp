@@ -326,7 +326,7 @@ FileAssociationsPage::addNewItemToTable(int row, int column,
 void
 FileAssociationsPage::testButtonClicked()
 {
-    AddFileAssociationDialog afad(this);// = new AddFileAssotiationDialog();
+    AddFileAssociationDialog afad(true, this);// = new AddFileAssotiationDialog();
 
 //  commented code below is a test for
 //       AddFileAssotiationDialog::loadSystemDefaultCommand(QString ft) method

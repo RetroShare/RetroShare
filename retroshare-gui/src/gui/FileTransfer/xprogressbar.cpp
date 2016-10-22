@@ -253,7 +253,7 @@ void xProgressBar::paint()
 					//loop through all chunks represented by the pixel at position i and count the completed chunks
 					//if no incomplete chunk is encountered in this range, continue to count the row of completed chunks
 					//to see whether more than 1 pixel can be drawn at once.
-					for(j=first_chunk_in_pixel;((j<=last_chunk_in_pixel) || (all_done && (j<ss)));++j)
+					for(j=first_chunk_in_pixel;((j<=last_chunk_in_pixel) || (all_done && (j<(int)ss)));++j)
 						if (_pinfo.cmap[j])
 							++c;
 						else

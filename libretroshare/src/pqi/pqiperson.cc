@@ -578,9 +578,9 @@ int pqiperson::gatherStatistics(std::list<RSTrafficClue>& out_lst,
 {
 	RS_STACK_MUTEX(mPersonMtx);
 
-    // get the rate from the active one.
-    if ((!active) || (activepqi == NULL))
-        return 0;
+	// Get the rate from the active one.
+	if( (!active) || (activepqi == NULL) )
+		return 0 ;
 
 	return activepqi->gatherStatistics(out_lst, in_lst);
 }

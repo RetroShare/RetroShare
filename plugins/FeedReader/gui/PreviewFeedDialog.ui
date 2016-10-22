@@ -575,7 +575,6 @@
   <zorder>titleFrame</zorder>
   <zorder>splitter</zorder>
   <zorder>buttonBox</zorder>
-  <zorder>transformationInfoScrollArea</zorder>
  </widget>
  <customwidgets>
   <customwidget>

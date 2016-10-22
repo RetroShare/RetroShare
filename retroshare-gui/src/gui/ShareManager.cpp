@@ -308,10 +308,10 @@ void ShareManager::removeShareDirectory()
     {
         if ((QMessageBox::question(this, tr("Warning!"),tr("Do you really want to stop sharing this directory ?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
         {
-			for(uint32_t i=row;i+1<mDirInfos.size();++i)
-				mDirInfos[i] = mDirInfos[i+1] ;
+            for(uint32_t i=row;i+1<mDirInfos.size();++i)
+                mDirInfos[i] = mDirInfos[i+1] ;
 
-			mDirInfos.pop_back() ;
+            mDirInfos.pop_back() ;
             load();
         }
     }
@@ -356,11 +356,8 @@ void ShareManager::showShareDialog()
     load();
 }
 
-void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+void ShareManager::shareddirListCurrentCellChanged(int /*currentRow*/, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/)
 {
-    Q_UNUSED(currentColumn);
-    Q_UNUSED(previousRow);
-    Q_UNUSED(previousColumn);
 }
 
 void ShareManager::dragEnterEvent(QDragEnterEvent *event)

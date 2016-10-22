@@ -296,8 +296,8 @@ namespace
 				const char* desc,
 				bool mandatory)
 		:  longName_(l),
-		value_(&v),
 		valueName_(valueName),
+		value_(&v),
 		initialValue_(v),
 		description_(desc),
 		mandatory_(mandatory)
@@ -310,9 +310,9 @@ namespace
 				const char* desc,
 				bool mandatory)
 		:  shortName_(1,s),
+		valueName_(valueName),
 		value_(&v),
 		initialValue_(v),
-		valueName_(valueName),
 		description_(desc),
 		mandatory_(mandatory)
 	{

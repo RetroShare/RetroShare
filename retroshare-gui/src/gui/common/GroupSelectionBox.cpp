@@ -98,7 +98,7 @@ GroupSelectionDialog::~GroupSelectionDialog()
 {
     delete mBox ;
 }
-GroupSelectionDialog::GroupSelectionDialog(QWidget *parent)
+GroupSelectionDialog::GroupSelectionDialog(QWidget* /*parent*/)
 {
     mBox = new GroupSelectionBox(this) ;
 

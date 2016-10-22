@@ -45,10 +45,10 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mGroupId = groupId;
 
-    if(!mGroupId.isNull())
-        ui.groupId_LE->setText(QString::fromStdString(mGroupId.toStdString())) ;
-    else
-        ui.groupId_LE->setText(tr("To be defined")) ;
+	if (!mGroupId.isNull())
+		ui.groupId_LE->setText(QString::fromStdString(mGroupId.toStdString()));
+	else
+		ui.groupId_LE->setText(tr("To be defined"));
 
 	/* Initialize friends list */
 	ui.friendList->setHeaderText(tr("Friends"));

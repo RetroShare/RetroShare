@@ -154,8 +154,8 @@ bool RSButtonOnText::eventFilter(QObject *obj, QEvent *event)
 		}
 	}
 
-    if(!guard)
-        std::cerr << "BIG FAT WARNING from RSButtonOnText::eventFilter(): i was deleted in my own event handler. This is bad practice. Please make a patch and use deleteLater to delay deletion." << std::endl;
+	if (!guard)
+		std::cerr << "BIG FAT WARNING from RSButtonOnText::eventFilter(): i was deleted in my own event handler. This is bad practice. Please make a patch and use deleteLater to delay deletion." << std::endl ;
 
 	// pass the event on to the parent class
 	return QWidget::eventFilter(obj, event);

@@ -203,22 +203,22 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setGroupId(forumId);
 
-    ui->threadTreeWidget->installEventFilter(this);
+	ui->threadTreeWidget->installEventFilter(this) ;
 
-    ui->postText->clear();
-    ui->by_label->setId(RsGxsId());
-    ui->time_label->clear() ;
-    ui->lineRight->hide() ;
-    ui->lineLeft->hide() ;
-    ui->by_text_label->hide() ;
-    ui->by_label->hide() ;
-    ui->postText->setImageBlockWidget(ui->imageBlockWidget);
-    ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
+	ui->postText->clear() ;
+	ui->by_label->setId(RsGxsId()) ;
+	ui->time_label->clear();
+	ui->lineRight->hide();
+	ui->lineLeft->hide();
+	ui->by_text_label->hide();
+	ui->by_label->hide();
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
 
-    ui->subscribeToolButton->setToolTip(tr("<p>Subscribing to the forum will gather \
-                                           available posts from your subscribed friends, and make the \
-                                           forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
-    ui->threadTreeWidget->enableColumnCustomize(true);
+	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
+	                                        available posts from your subscribed friends, and make the \
+	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
+	                                        ui->threadTreeWidget->enableColumnCustomize(true);
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -1379,12 +1379,12 @@ void GxsForumThreadWidget::insertMessage()
 
 	/* blank text, incase we get nothing */
 	ui->postText->clear();
-    ui->by_label->setId(RsGxsId());
-    ui->time_label->clear() ;
-    ui->lineRight->hide() ;
-    ui->lineLeft->hide() ;
-    ui->by_text_label->hide() ;
-    ui->by_label->hide() ;
+	ui->by_label->setId(RsGxsId()) ;
+	ui->time_label->clear();
+	ui->lineRight->hide();
+	ui->lineLeft->hide();
+	ui->by_text_label->hide();
+	ui->by_label->hide();
 
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
@@ -1441,28 +1441,27 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	}
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
-    ui->by_label->setId(msg.mMeta.mAuthorId) ;
+	ui->by_label->setId(msg.mMeta.mAuthorId);
+	ui->lineRight->show();
+	ui->lineLeft->show();
+	ui->by_text_label->show();
+	ui->by_label->show();
 
-    ui->lineRight->show() ;
-    ui->lineLeft->show() ;
-    ui->by_text_label->show() ;
-    ui->by_label->show() ;
+	if(redacted)
+	{
+		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
+		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
+		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
+		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
 
-    if(redacted)
-    {
-	QString extraTxt = tr("<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-	extraTxt += tr("<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
-	extraTxt += tr("<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-    	extraTxt += tr("<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
-        
-	ui->postText->setHtml(extraTxt);
-    }
-    else
-    {
-	QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-	ui->postText->setHtml(extraTxt);
-    }
-    //ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+		ui->postText->setHtml(extraTxt) ;
+	}
+	else
+	{
+		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+		ui->postText->setHtml(extraTxt);
+	}
+	// ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 }
 
 void GxsForumThreadWidget::previousMessage()

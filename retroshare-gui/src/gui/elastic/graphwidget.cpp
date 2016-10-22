@@ -284,8 +284,8 @@ static void convolveWithGaussian(double *forceMap,unsigned int S,int /*s*/)
 	unsigned long nn[2] = {S,S};
 	fourn(&forceMap[-1],&nn[-1],2,1) ;
 
-    for(unsigned int i=0;i<S;++i)
-        for(unsigned int j=0;j<S;++j)
+	for (unsigned int i=0;i<S;++i)
+		for (unsigned int j=0;j<S;++j)
 		{
 			float a = forceMap[2*(i+S*j)]*bf[2*(i+S*j)] - forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)+1] ;
 			float b = forceMap[2*(i+S*j)]*bf[2*(i+S*j)+1] + forceMap[2*(i+S*j)+1]*bf[2*(i+S*j)] ;

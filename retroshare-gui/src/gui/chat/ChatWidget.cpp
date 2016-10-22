@@ -693,10 +693,10 @@ static bool caseInsensitiveCompare(QString a, QString b)
 void ChatWidget::completeNickname(bool reverse)
 {
 	// Find lobby we belong to
-    ChatLobbyInfo lobby ;
+	ChatLobbyInfo lobby;
 
-    if(! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
-        return ;
+	if (! rsMsgs->getChatLobbyInfo(chatId.toLobbyId(),lobby))
+		return;
 
 	QTextCursor cursor = ui->chatTextEdit->textCursor();
 
@@ -1096,8 +1096,7 @@ void ChatWidget::updateStatusTyping()
 
 void ChatWidget::updateLenOfChatTextEdit()
 {
-    if(sendingBlocked)
-        return;
+	if(sendingBlocked) return;
 
 	QTextEdit *chatWidget = ui->chatTextEdit;
 	QString text;
