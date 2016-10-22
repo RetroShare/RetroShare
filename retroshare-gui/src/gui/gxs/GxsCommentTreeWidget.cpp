@@ -418,19 +418,21 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
 
-        GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL);
+		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL) ;
 		QString text;
 
 		{
-				QDateTime qtime;
-				qtime.setTime_t(comment.mMeta.mPublishTs);
+			QDateTime qtime ;
+			qtime.setTime_t(comment.mMeta.mPublishTs) ;
 
-				text = qtime.toString("yyyy-MM-dd hh:mm:ss");
-				item->setText(PCITEM_COLUMN_DATE, text);
+			text = qtime.toString("yyyy-MM-dd hh:mm:ss") ;
+			item->setText(PCITEM_COLUMN_DATE, text) ;
+			item->setToolTip(PCITEM_COLUMN_DATE, text) ;
 		}
 
 		text = QString::fromUtf8(comment.mComment.c_str());
 		item->setText(PCITEM_COLUMN_COMMENT, text);
+		item->setToolTip(PCITEM_COLUMN_COMMENT, text);
 
 		RsGxsId authorId = comment.mMeta.mAuthorId;
 		item->setId(authorId, PCITEM_COLUMN_AUTHOR, false);
