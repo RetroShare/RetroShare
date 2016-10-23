@@ -790,9 +790,10 @@ QString RetroShareLink::toString() const
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 	url.setQuery(urlQuery);
+	return url.toString(QUrl::EncodeSpaces | QUrl::EncodeUnicode);
+#else
+	return url.toString().replace(" ","%20");//Seems to be already done with Qt4 but to be sure.
 #endif
-
-	return url.toString();
 }
 
 QString RetroShareLink::niceName() const
