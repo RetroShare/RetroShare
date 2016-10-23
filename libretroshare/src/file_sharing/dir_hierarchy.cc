@@ -189,7 +189,7 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
         de->row = mNodes.size();
         de->parent_index = indx;
         de->dir_modtime = 0;// forces parsing.it->second;
-        de->dir_parent_path = d.dir_parent_path + "/" + d.dir_name ;
+		de->dir_parent_path = RsDirUtil::makePath(d.dir_parent_path, d.dir_name) ;
         de->dir_hash = createDirHash(de->dir_name,d.dir_hash,random_hash_seed) ;
 
         mDirHashes[de->dir_hash] = mNodes.size() ;
@@ -446,7 +446,7 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
 
             mNodes[dir_index] = de ;
 
-            de->dir_parent_path = d.dir_parent_path + "/" + dir_name ;
+			de->dir_parent_path = RsDirUtil::makePath(d.dir_parent_path, dir_name) ;
             de->dir_hash        = subdirs_hash[i];
 
             mDirHashes[subdirs_hash[i]] = dir_index ;
@@ -696,7 +696,7 @@ public:
     inline virtual uint64_t           file_size()       const { return mFe.file_size ; }
     inline virtual const RsFileHash&  file_hash()       const { return mFe.file_hash ; }
     inline virtual time_t             file_modtime()    const { return mFe.file_modtime ; }
-    inline virtual std::string        file_parent_path()const { return mDe.dir_parent_path + "/" + mDe.dir_name ; }
+	inline virtual std::string        file_parent_path()const { return RsDirUtil::makePath(mDe.dir_parent_path, mDe.dir_name) ; }
     inline virtual uint32_t           file_popularity() const { NOT_IMPLEMENTED() ; return 0; }
 
 private:

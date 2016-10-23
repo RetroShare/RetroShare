@@ -244,7 +244,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.min_age = now - dir_entry->dir_most_recent_time ;
         d.age     = now - dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
-        d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
+		d.path    = RsDirUtil::makePath(dir_entry->dir_parent_path, dir_entry->dir_name) ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
 
         if(indx == 0)
@@ -268,7 +268,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         const InternalFileHierarchyStorage::DirEntry *parent_dir_entry = mFileHierarchy->getDirEntry(file_entry->parent_index);
 
         if(parent_dir_entry != NULL)
-            d.path = parent_dir_entry->dir_parent_path + "/" + parent_dir_entry->dir_name + "/" ;
+			d.path = RsDirUtil::makePath(parent_dir_entry->dir_parent_path, parent_dir_entry->dir_name) ;
         else
             d.path = "" ;
     }
