@@ -33,6 +33,8 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include "crypto/chacha20.h"
+
 #pragma once
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}

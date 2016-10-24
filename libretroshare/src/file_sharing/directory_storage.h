@@ -53,7 +53,7 @@ class DirectoryStorage
 
         virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(RsRegularExpression::Expression * exp, std::list<EntryIndex> &results) const ;
-        virtual int searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const ;
+        virtual int searchHash(const RsFileHash& hash, const RsFileHash &real_hash, EntryIndex &results) const ;
 
         // gets/sets the various time stamps:
         //

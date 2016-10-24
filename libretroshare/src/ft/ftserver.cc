@@ -730,6 +730,31 @@ bool ftServer::shareDownloadDirectory(bool share)
 	/**********************     Data Flow     **********************/
 	/***************************************************************/
 
+bool ftServer::sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTurtleGenericTunnelItem *item)
+{
+    // first, we look for the encrypted hash map
+#warning code needed here
+    if(true)
+    {
+        // we don't encrypt
+        mTurtleRouter->sendTurtleData(peerId,item) ;
+    }
+    else
+    {
+        // we encrypt the item
+
+        RsTurtleGenericDataItem *encrypted_item ;
+
+        if(!encryptItem(item, hash, encrypted_item))
+            return false ;
+
+        delete item ;
+
+        mTurtleRouter->sendTurtleData(peerId,encrypted_item) ;
+    }
+    return true ;
+}
+
 	/* Client Send */
 bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
@@ -743,7 +768,7 @@ bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, u
 		item->chunk_offset = offset ;
 		item->chunk_size = chunksize ;
 
-		mTurtleRouter->sendTurtleData(peerId,item) ;
+        sendTurtleItem(peerId,hash,item) ;
 	}
 	else
     {
@@ -776,8 +801,8 @@ bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const RsFileHash& hash
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleFileMapRequestItem *item = new RsTurtleFileMapRequestItem ;
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
+        sendTurtleItem(peerId,hash,item) ;
+    }
 	else
 	{
 		/* create a packet */
@@ -806,8 +831,8 @@ bool ftServer::sendChunkMap(const RsPeerId& peerId,const RsFileHash& hash,const 
 	{
 		RsTurtleFileMapItem *item = new RsTurtleFileMapItem ;
 		item->compressed_map = map ;
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
+        sendTurtleItem(peerId,hash,item) ;
+    }
 	else
 	{
 		/* create a packet */
@@ -838,8 +863,8 @@ bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const RsFileHash
 		RsTurtleChunkCrcRequestItem *item = new RsTurtleChunkCrcRequestItem;
 		item->chunk_number = chunk_number ;
 
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
+        sendTurtleItem(peerId,hash,item) ;
+    }
 	else
 	{
 		/* create a packet */
@@ -870,8 +895,8 @@ bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const RsFileHash& hash,
 		item->chunk_number = chunk_number ;
 		item->check_sum = crc ;
 
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
+        sendTurtleItem(peerId,hash,item) ;
+    }
 	else
 	{
 		/* create a packet */
@@ -941,8 +966,8 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 			}
 			memcpy(item->chunk_data,&(((uint8_t *) data)[offset]),chunk) ;
 
-			mTurtleRouter->sendTurtleData(peerId,item) ;
-		}
+            sendTurtleItem(peerId,hash,item) ;
+        }
 		else
 		{
 			RsFileTransferDataItem *rfd = new RsFileTransferDataItem();
@@ -1143,6 +1168,19 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     return true ;
 }
 
+bool ftServer::findRealHash(const RsFileHash& hash, RsFileHash& real_hash)
+{
+    std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
+
+    if(it != mEncryptedHashes.end())
+    {
+        real_hash = it->second ;
+        return true ;
+    }
+    else
+        return false ;
+}
+
 // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //
 void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
@@ -1150,6 +1188,31 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 											const RsPeerId& virtual_peer_id,
 											RsTurtleGenericTunnelItem::Direction direction) 
 {
+    if(i->PacketSubType() == RS_TURTLE_SUBTYPE_GENERIC_DATA)
+    {
+        std::cerr << "Received encrypted data item. Trying to decrypt" << std::endl;
+
+        RsFileHash real_hash ;
+
+        if(!findRealHash(hash,real_hash))
+        {
+            std::cerr << "(EE) Cannot find real hash for encrypted data item with H(H(F))=" << hash << ". This is unexpected." << std::endl;
+            return ;
+        }
+
+        RsTurtleGenericTunnelItem *decrypted_item ;
+        if(!decryptItem(dynamic_cast<RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
+        {
+            std::cerr << "(EE) decryption error." << std::endl;
+            return ;
+        }
+
+        receiveTurtleData(decrypted_item, real_hash, virtual_peer_id,direction) ;
+
+        delete decrypted_item ;
+        return ;
+    }
+
 	switch(i->PacketSubType())
 	{
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST: 		

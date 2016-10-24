@@ -242,6 +242,20 @@ protected:
     int handleIncoming() ;
     bool handleCacheData() ;
 
+    /*!
+     * \brief sendTurtleItem
+     * 			Sends the given item into a turtle tunnel, possibly encrypting it if the type of tunnel requires it, which is known from the hash itself.
+     * \param peerId Peer id to send to (this is a virtual peer id from turtle service)
+     * \param hash   hash of the file. If the item needs to be encrypted
+     * \param item	 item to send.
+     * \return
+     * 			true if everything goes right
+     */
+    bool sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTurtleGenericTunnelItem *item);
+
+    // fnds out what is the real hash of encrypted hash hash
+    bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
+
 private:
 
     /**** INTERNAL FUNCTIONS ***/
@@ -266,6 +280,8 @@ private:
     std::string mConfigPath;
     std::string mDownloadPath;
     std::string mPartialsPath;
+
+    std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
 };
 
 

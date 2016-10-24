@@ -168,10 +168,11 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
     return mFileHierarchy->updateHash(index,hash);
 }
 
-int DirectoryStorage::searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const
+int DirectoryStorage::searchHash(const RsFileHash& hash, const RsFileHash& real_hash, EntryIndex& result) const
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->searchHash(hash,results);
+#warning code needed here
+    return mFileHierarchy->searchHash(hash,result);
 }
 
 void DirectoryStorage::load(const std::string& local_file_name)

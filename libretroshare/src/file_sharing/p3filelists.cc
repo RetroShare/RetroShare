@@ -979,15 +979,19 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
 
     if(hintflags & RS_FILE_HINTS_LOCAL)
     {
-        std::list<EntryIndex> res;
-        mLocalSharedDirs->searchHash(hash,res) ;
+        RsFileHash real_hash ;
+        EntryIndex indx;
 
-        if(res.empty())
+        if(!mLocalSharedDirs->searchHash(hash,real_hash,indx))
             return false;
 
-        EntryIndex indx = *res.begin() ; // no need to report duplicates
-
         mLocalSharedDirs->getFileInfo(indx,info) ;
+
+        if(!real_hash.isNull())
+        {
+            info.hash = real_hash ;
+            info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
+        }
 
         return true;
     }
