@@ -74,22 +74,22 @@ public:
 		// The following regular expressions for finding URLs in
 		// plain text are borrowed from https://regex101.com/r/eR9yG2/4
 		//Modified to: (Adding \s to stop when query have space char else don't stop at end.)
-		// (([\s]+)?(([a-z0-9.+-]+):)((\/\/)(\/|(((([^\/:@?&#\s]+)(:([^\/@?&#\s]+))?)@)?([^:\/?&#\s]+)(:([1-9][0-9]*))?)(?=[\/#$?]))))(([^#?\s]+)?(\?([^#\s]+))?(#([^\s]+))?([\s])?)
-		// regAddress               .||    .|   || |             .| |            . .   .|            .|               ..|         .../regPath    .|  |       . .|          .|     ./
-		//  regBefo/eChar           .||    .|   || |             .| |            . .   .|            .|               ..|         ...  regPathnam/|  |       . .regHash    /regEnd/har
-		//          regScheme       /regGrp5|   || |             .| |            . .   .|            .|               ..|         ../             regSearch  . /
-		//                            |regS/ash || |             .| |            . .   .|            .|               ..|         ..                 regQuery/
-		//                                  regFileAuthHost      .| |            . .   .|            .|               ..|         ./
-		//                                      regAuthHost      .| |            . .   .|            .|               ./regPosLk  /
-		//                                       regUserPass     .| |            . .   /regHost      /regPort         /
-		//                                         regUser       /| |            . .
-		//                                                        regGrp12	     .	/
-		//                                                          regPassCharse/
+		// ((?<=\s)(([a-z0-9.+-]+):)((\/\/)(\/|(((([^\/:@?&#\s]+)(:([^\/@?&#\s]+))?)@)?([^:\/?&#\s]+)(:([1-9][0-9]*))?)(?=[\/#$?]))))(([^#?\s]+)?(\?([^#\s]+))?(#([^\s]+))?([\s])?)
+		// regAddress              .||    .|   || |             .| |            . .   .|            .|               ..|         .../regPath    .|  |       . .|          .|     ./
+		//  regBef/reChar          .||    .|   || |             .| |            . .   .|            .|               ..|         ...  regPathnam/|  |       . .regHash    /regEnd/har
+		//          regScheme      /regGrp5|   || |             .| |            . .   .|            .|               ..|         ../             regSearch  . /
+		//                           |regS/ash || |             .| |            . .   .|            .|               ..|         ..                 regQuery/
+		//                                 regFileAuthHost      .| |            . .   .|            .|               ..|         ./
+		//                                     regAuthHost      .| |            . .   .|            .|               ./regPosLk  /
+		//                                      regUserPass     .| |            . .   /regHost      /regPort         /
+		//                                        regUser       /| |            . .
+		//                                                       regGrp12	     .	/
+		//                                                         regPassCharse/
 		//
 		// to get all group captured.
 		// Test patern: " https://user:password@example.com:8080/./api/api/../users/./get/22iohoife.extension?return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3#test "
 
-		QString regBeforeChar = "([\\s]+)?";//2nd Group: " "
+		QString regBeforeChar = ""; //"(?<=\\s)";//WARNING, Look Behind not supported by Qt
 		QStringList regSchemes;
 		//	  regSchemes.append("news:");
 		//	  regSchemes.append("telnet:");
@@ -101,33 +101,33 @@ public:
 		//	  regSchemes.append("webcal:");
 		regSchemes.append("retroshare:");
 
-		QString regScheme = "(?:" + regSchemes.join(")|(?:") + ")";//3rd Group: "https:" //4th group inside
+		QString regScheme = "(?:" + regSchemes.join(")|(?:") + ")";//2nd Group: "https:" //3rd group inside
 
-		QString regSlash = "(\\/\\/)";//6th Group: "//"
+		QString regSlash = "(\\/\\/)";//5th Group: "//"
 
-		QString regUser = "([^\\/:@?&#\\s]+)";//11th Group: "user"
-		QString regPassCharset = "([^\\/@?&#\\s]+)";//13th Group "password"
-		QString regGrp12 = "(:" + regPassCharset + ")?"; // 12th Group: ":password"
-		QString regUserPass = "((" + regUser + regGrp12 + ")@)?"; //9th Group: "user:password@" with 10th inside
+		QString regUser = "([^\\/:@?&#\\s]+)";//10th Group: "user"
+		QString regPassCharset = "([^\\/@?&#\\s]+)";//12th Group "password"
+		QString regGrp12 = "(:" + regPassCharset + ")?"; // 11th Group: ":password"
+		QString regUserPass = "((" + regUser + regGrp12 + ")@)?"; //8th Group: "user:password@" with 9th inside
 
-		QString regHost = "([^:\\/?&#\\s]+)"; //14th Group: "example.com"
-		QString regPort = "(:([1-9][0-9]*))?"; //15th Group: ":8080" with 16th inside
+		QString regHost = "([^:\\/?&#\\s]+)"; //13th Group: "example.com"
+		QString regPort = "(:([1-9][0-9]*))?"; //14th Group: ":8080" with 15th inside
 
-		QString regAuthHost = regUserPass + regHost + regPort; //8th Group: "user:password@example.com:8080"
+		QString regAuthHost = regUserPass + regHost + regPort; //7th Group: "user:password@example.com:8080"
 		QString regPosLk = ""; //Positive Lookahead
 
-		QString regFileAuthHost = "(\\/|" + regAuthHost + regPosLk + ")"; //7th Group: "user:password@example.com:8080" Could be "/" with "file:///"
-		QString regGrp5 = "(" + regSlash + regFileAuthHost + ")"; //5th Group: "//user:password@example.com:8080"
+		QString regFileAuthHost = "(\\/|" + regAuthHost + regPosLk + ")"; //6th Group: "user:password@example.com:8080" Could be "/" with "file:///"
+		QString regGrp5 = "(" + regSlash + regFileAuthHost + ")"; //4th Group: "//user:password@example.com:8080"
 		QString regAddress = "(" + regBeforeChar + regScheme + regGrp5 + ")"; //1rst Group: "https://user:password@example.com:8080"
 
-		QString regPathName = "([^#?\\s]+)?"; //18th Group: "/./api/api/../users/./get/22iohoife.extension"
+		QString regPathName = "([^#?\\s]+)?"; //17th Group: "/./api/api/../users/./get/22iohoife.extension"
 
-		QString regQuery = "([^#\\s]+)"; //20th Group: "return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3"
-		QString regSearch = "(\\?" + regQuery + ")?"; //19th Group: "?return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3"
+		QString regQuery = "([^#\\s]+)"; //19th Group: "return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3"
+		QString regSearch = "(\\?" + regQuery + ")?"; //18th Group: "?return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3"
 
-		QString regHash = "(#([^\\s]+))?"; //21th Group: "#test" 22th inside
-		QString regEndChar = "";//"([\\s])?"; //23th Group: " "
-		QString regPath = "(" + regPathName + regSearch + regHash + regEndChar +")"; //17th Group: "/./api/api/../users/./get/22iohoife.extension?return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3#test"
+		QString regHash = "(#([^\\s]+))?"; //20th Group: "#test" 21th inside
+		QString regEndChar = "";//"([\\s])?"; //22th Group: " "
+		QString regPath = "(" + regPathName + regSearch + regHash + regEndChar +")"; //16th Group: "/./api/api/../users/./get/22iohoife.extension?return=name&return=email&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3&a[]=3#test"
 
 		QString regUrlPath = regAddress + regPath;
 
