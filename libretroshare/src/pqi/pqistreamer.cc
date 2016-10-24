@@ -92,8 +92,11 @@ static double getCurrentTS()
 }
 
 pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-    :PQInterface(id), mStreamerMtx("pqistreamer"), mIncomingMtx("pqistreamer incoming"),
-	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
+    :PQInterface(id),
+      mStreamerMtx("pqistreamer"),
+      mIncomingMtx("pqistreamer incoming"),
+      mOutgoingMtx("pqistreamer outgoing"),
+    mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss),
 	mPkt_wpending(NULL), mPkt_wpending_size(0),
 	mTotalRead(0), mTotalSent(0),
 	mCurrRead(0), mCurrSent(0),
@@ -113,6 +116,7 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 
     mAvgLastUpdate = time(NULL);
     mCurrSentTS = mCurrReadTS = getCurrentTS();
+    mOutPktsSize = 0;
 
     mIncomingSize = 0 ;
 
@@ -191,8 +195,8 @@ int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 	}
 #endif
 
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-	
+    RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
 	return queue_outpqi_locked(si,out_size);
 }
 
@@ -310,7 +314,7 @@ int 	pqistreamer::tick_send(uint32_t timeout)
 
 int	pqistreamer::status()
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+//	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 
 #ifdef DEBUG_PQISTREAMER
@@ -330,6 +334,7 @@ int	pqistreamer::status()
 void pqistreamer::locked_storeInOutputQueue(void *ptr,int,int)
 {
 	mOutPkts.push_back(ptr);
+    mOutPktsSize++ ;
 }
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
@@ -365,7 +370,8 @@ int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 
 	if (mRsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
-		locked_storeInOutputQueue(ptr,pktsize,pqi->priority_level()) ;
+        RsStackMutex stack(mOutgoingMtx); /**** LOCKED MUTEX ****/
+        locked_storeInOutputQueue(ptr,pktsize,pqi->priority_level()) ;
 
 		if (!(mBio_flags & BIN_FLAGS_NO_DELETE))
 		{
@@ -494,7 +500,8 @@ int	pqistreamer::handleoutgoing_locked()
     if (!(mBio->isactive()))
     {
 	    /* if we are not active - clear anything in the queues. */
-	    locked_clear_out_queue() ;
+        RsStackMutex stack(mOutgoingMtx); /**** LOCKED MUTEX ****/
+        locked_clear_out_queue() ;
 #ifdef DEBUG_PACKET_SLICING 
         	std::cerr << "(II) Switching off packet slicing." << std::endl;
 #endif
@@ -567,7 +574,10 @@ int	pqistreamer::handleoutgoing_locked()
 		{
             		int desired_packet_size = mAcceptsPacketSlicing?PQISTREAM_OPTIMAL_PACKET_SIZE:(getRsPktMaxSize());
                     
-			dta = locked_pop_out_data(desired_packet_size,slice_size,slice_starts,slice_ends,slice_packet_id) ;
+                    {
+                        RsStackMutex stack(mOutgoingMtx); /**** LOCKED MUTEX ****/
+                        dta = locked_pop_out_data(desired_packet_size,slice_size,slice_starts,slice_ends,slice_packet_id) ;
+                    }
 
 			if(!dta)
 				break ;
@@ -1247,12 +1257,19 @@ void pqistreamer::allocate_rpend_locked()
 
 int pqistreamer::reset()
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    {
+        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 #ifdef DEBUG_PQISTREAMER
-	std::cerr << "pqistreamer::reset()" << std::endl;
+        std::cerr << "pqistreamer::reset()" << std::endl;
 #endif
-	free_pend_locked();
-    
+        free_pend_locked();
+    }
+
+    {
+        RsStackMutex stack(mOutgoingMtx); /**** LOCKED MUTEX ****/
+        // clean up outgoing. (cntrl packets)
+        locked_clear_out_queue() ;
+    }
     return 1 ;
 }
 
@@ -1287,9 +1304,6 @@ void pqistreamer::free_pend_locked()
 		free(it->second.mem) ;
 
 	mPartialPackets.clear() ;
-    
-	// clean up outgoing. (cntrl packets)
-	locked_clear_out_queue() ;
 }
 
 int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std::list<RSTrafficClue>& inqueue_lst)
@@ -1307,8 +1321,8 @@ int     pqistreamer::getQueueSize(bool in)
     }
     else
     {
-        RS_STACK_MUTEX(mStreamerMtx); /**** LOCKED MUTEX ****/
-        return locked_out_queue_size();
+        RS_STACK_MUTEX(mOutgoingMtx); /**** LOCKED MUTEX ****/
+        return mOutPktsSize;
     }
 }
 
@@ -1321,18 +1335,9 @@ void    pqistreamer::getRates(RsBwRates &rates)
         rates.mQueueIn = mIncomingSize;
     }
     {
-        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-        rates.mQueueOut = locked_out_queue_size();
+        RS_STACK_MUTEX(mOutgoingMtx); /**** LOCKED MUTEX ****/
+        rates.mQueueOut = mOutPktsSize ;
     }
-}
-
-int pqistreamer::locked_out_queue_size() const
-{
-	// Warning: because out_pkt is a list, calling size
-	//	is O(n) ! Makign algorithms pretty inefficient. We should record how many
-	//	items get stored and discarded to have a proper size value at any time
-	//
-	return mOutPkts.size() ; 
 }
 
 void pqistreamer::locked_clear_out_queue()
@@ -1347,6 +1352,7 @@ void pqistreamer::locked_clear_out_queue()
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 	}
+    mOutPktsSize = 0 ;
 }
 
 int pqistreamer::locked_compute_out_pkt_size() const
@@ -1380,6 +1386,7 @@ void *pqistreamer::locked_pop_out_data(uint32_t /*max_slice_size*/, uint32_t &si
 	{
 		res = *(mOutPkts.begin()); 
 		mOutPkts.pop_front();
+        mOutPktsSize-- ;
 #ifdef DEBUG_TRANSFERS
 		std::cerr << "pqistreamer::locked_pop_out_data() getting next pkt from mOutPkts queue";
 		std::cerr << std::endl;
