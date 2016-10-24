@@ -42,6 +42,7 @@
 #include "util/rsdebug.h"         // for pqioutput, PQL_ALERT, PQL_DEBUG_ALL
 #include "util/rsmemory.h"        // for rs_malloc
 #include "util/rsprint.h"         // for BinToHex
+#include "util/rsthreads.h"       // for RS_STACK_MUTEX
 #include "util/rsstring.h"        // for rs_sprintf_append, rs_sprintf
 
 static struct RsLog::logInfo pqistreamerzoneInfo = {RsLog::Default, "pqistreamer"};
@@ -91,7 +92,7 @@ static double getCurrentTS()
 }
 
 pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
-	:PQInterface(id), mStreamerMtx("pqistreamer"),
+    :PQInterface(id), mStreamerMtx("pqistreamer"), mIncomingMtx("pqistreamer incoming"),
 	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
 	mPkt_wpending(NULL), mPkt_wpending_size(0),
 	mTotalRead(0), mTotalSent(0),
@@ -136,28 +137,32 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
 
 pqistreamer::~pqistreamer()
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    {
+        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 #ifdef DEBUG_PQISTREAMER
-    	std::cerr << "Closing pqistreamer." << std::endl;
+        std::cerr << "Closing pqistreamer." << std::endl;
 #endif
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Destruction!");
+        pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Destruction!");
 
-	if (mBio_flags & BIN_FLAGS_NO_CLOSE)
-	{
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Not Closing BinInterface!");
-	}
-	else if (mBio)
-	{
-		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Deleting BinInterface!");
+        if (mBio_flags & BIN_FLAGS_NO_CLOSE)
+        {
+            pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Not Closing BinInterface!");
+        }
+        else if (mBio)
+        {
+            pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Deleting BinInterface!");
 
-		delete mBio;
-	}
+            delete mBio;
+        }
 
-	/* clean up serialiser */
-	if (mRsSerialiser)
-		delete mRsSerialiser;
+        /* clean up serialiser */
+        if (mRsSerialiser)
+            delete mRsSerialiser;
 
-    free_pend_locked();
+        free_pend_locked();
+    }
+
+    RS_STACK_MUTEX(mIncomingMtx);
 
 	// clean up incoming.
     while(!mIncoming.empty())
@@ -166,12 +171,11 @@ pqistreamer::~pqistreamer()
         mIncoming.pop_front();
         --mIncomingSize ;
 		delete i;
-    }
 
-  
-    if(mIncomingSize != 0)
-        std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl;
-	return;
+        if(mIncomingSize != 0)
+            std::cerr << "(EE) inconsistency after deleting pqistreamer queue. Remaining items: " << mIncomingSize << std::endl;
+    }
+    return;
 }
 
 
@@ -198,7 +202,7 @@ RsItem *pqistreamer::GetItem()
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::GetItem()");
 #endif
 
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+    RsStackMutex stack(mIncomingMtx); /**** LOCKED MUTEX ****/
 
 	if(mIncoming.empty())
 		return NULL; 
@@ -392,7 +396,9 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
 #ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem_locked()");
 #endif
-	// timestamp last received packet.
+    RS_STACK_MUTEX(mIncomingMtx) ;
+
+    // timestamp last received packet.
 	mLastIncomingTs = time(NULL);
 
 	// Use overloaded Contact function 
@@ -1294,22 +1300,30 @@ int     pqistreamer::gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,std
 }
 int     pqistreamer::getQueueSize(bool in)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
 	if (in)
+    {
+        RS_STACK_MUTEX(mIncomingMtx); /**** LOCKED MUTEX ****/
         return mIncomingSize;
+    }
     else
+    {
+        RS_STACK_MUTEX(mStreamerMtx); /**** LOCKED MUTEX ****/
         return locked_out_queue_size();
+    }
 }
 
 void    pqistreamer::getRates(RsBwRates &rates)
 {
 	RateInterface::getRates(rates);
 
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
-    rates.mQueueIn = mIncomingSize;
-	rates.mQueueOut = locked_out_queue_size();
+    {
+        RS_STACK_MUTEX(mIncomingMtx); /**** LOCKED MUTEX ****/
+        rates.mQueueIn = mIncomingSize;
+    }
+    {
+        RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+        rates.mQueueOut = locked_out_queue_size();
+    }
 }
 
 int pqistreamer::locked_out_queue_size() const

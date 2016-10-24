@@ -99,6 +99,7 @@ class pqistreamer: public PQInterface
             	
 	protected:
 		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
+        RsMutex mIncomingMtx ; // Protects mIncoming only. This is helpful to avoid locking the whole structure when feeding/reading the list.
 
 		// Binary Interface for IO, initialisated at startup.
 		BinInterface *mBio;
