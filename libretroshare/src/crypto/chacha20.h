@@ -57,12 +57,16 @@ namespace librs
          * 			16-padded AAD (additional authenticated data) and its size, authenticated using poly1305.
          *
          * \param key			key that is used to derive a one time secret key for poly1305 and that is also used to encrypt the data
-         * \param nonce			nonce. *Should be unique* in order to make the ply1305 key unique.
+         * \param nonce			nonce. *Should be unique* in order to make the poly1305 key unique.
          * \param data			data that is encrypted.
          * \param size			size of the data
          * \param tag			generated poly1305 tag.
+         * \param encrypt		true to encrypt, false to decrypt and check the tag.
+         * \return
+         * 			always true for encryption.
+         * 			authentication result for decryption. data is *always* xored to the cipher stream whatever the authentication result is.
          */
-        bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16]) ;
+        bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt_or_decrypt) ;
 
         /*!
          * \brief constant_time_memcmp

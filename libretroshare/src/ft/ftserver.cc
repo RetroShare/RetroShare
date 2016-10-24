@@ -1077,7 +1077,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
     uint8_t encryption_key[32] ;
     deriveEncryptionKey(hash,encryption_key) ;
 
-    librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset]) ;
+    librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
 
     std::cerr << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
     std::cerr << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
@@ -1129,7 +1129,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     uint32_t authentication_tag_offset = offset + edata_size ;
     std::cerr << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
 
-    if(!librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset]))
+    if(!librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false))
         return false;
 
     std::cerr << "  authen. result  : ok" << std::endl;

@@ -387,27 +387,40 @@ void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12]
     }
 }
 
-void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16])
+struct poly1305_state
 {
-    uint256_32 r( 0,0,0,0,
+    uint256_32 r ;
+    uint256_32 s ;
+    uint256_32 p ;
+    uint256_32 a ;
+};
+
+static void poly1305_init(poly1305_state& s,uint8_t key[32])
+{
+    s.r =   uint256_32( 0,0,0,0,
             ((uint32_t)key[12] << 0) + ((uint32_t)key[13] << 8) + ((uint32_t)key[14] << 16) + ((uint32_t)key[15] << 24),
             ((uint32_t)key[ 8] << 0) + ((uint32_t)key[ 9] << 8) + ((uint32_t)key[10] << 16) + ((uint32_t)key[11] << 24),
             ((uint32_t)key[ 4] << 0) + ((uint32_t)key[ 5] << 8) + ((uint32_t)key[ 6] << 16) + ((uint32_t)key[ 7] << 24),
             ((uint32_t)key[ 0] << 0) + ((uint32_t)key[ 1] << 8) + ((uint32_t)key[ 2] << 16) + ((uint32_t)key[ 3] << 24)
             );
 
-    r.poly1305clamp();
+    s.r.poly1305clamp();
 
-    uint256_32 s( 0,0,0,0,
+    s.s = uint256_32( 0,0,0,0,
             ((uint32_t)key[28] << 0) + ((uint32_t)key[29] << 8) + ((uint32_t)key[30] << 16) + ((uint32_t)key[31] << 24),
             ((uint32_t)key[24] << 0) + ((uint32_t)key[25] << 8) + ((uint32_t)key[26] << 16) + ((uint32_t)key[27] << 24),
             ((uint32_t)key[20] << 0) + ((uint32_t)key[21] << 8) + ((uint32_t)key[22] << 16) + ((uint32_t)key[23] << 24),
             ((uint32_t)key[16] << 0) + ((uint32_t)key[17] << 8) + ((uint32_t)key[18] << 16) + ((uint32_t)key[19] << 24)
             );
 
-    uint256_32   p(0,0,0,0x3,0xffffffff,0xffffffff,0xffffffff,0xfffffffb) ;
-    uint256_32 acc(0,0,0,  0,         0,         0,         0,         0) ;
+    s.p = uint256_32(0,0,0,0x3,0xffffffff,0xffffffff,0xffffffff,0xfffffffb) ;
+    s.a = uint256_32(0,0,0,  0,         0,         0,         0,         0) ;
+}
 
+// Warning: each call will automatically *pad* the data to a multiple of 16 bytes.
+//
+static void poly1305_add(poly1305_state& s,uint8_t *message,uint32_t size)
+{
     for(uint32_t i=0;i<(size+15)/16;++i)
     {
         uint256_32 block ;
@@ -418,32 +431,99 @@ void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16]
 
         block.b[j/4] += 0x01 << (8*(j& 0x3));
 
-        acc += block ;
-        acc *= r ;
+        s.a += block ;
+        s.a *= s.r ;
 
         uint256_32 q,rst;
-        quotient(acc,p,q,rst) ;
-        acc = rst ;
+        quotient(s.a,s.p,q,rst) ;
+        s.a = rst ;
     }
-
-    acc += s ;
-
-    tag[ 0] = (acc.b[0] >> 0) & 0xff ; tag[ 1] = (acc.b[0] >> 8) & 0xff ; tag[ 2] = (acc.b[0] >>16) & 0xff ; tag[ 3] = (acc.b[0] >>24) & 0xff ;
-    tag[ 4] = (acc.b[1] >> 0) & 0xff ; tag[ 5] = (acc.b[1] >> 8) & 0xff ; tag[ 6] = (acc.b[1] >>16) & 0xff ; tag[ 7] = (acc.b[1] >>24) & 0xff ;
-    tag[ 8] = (acc.b[2] >> 0) & 0xff ; tag[ 9] = (acc.b[2] >> 8) & 0xff ; tag[10] = (acc.b[2] >>16) & 0xff ; tag[11] = (acc.b[2] >>24) & 0xff ;
-    tag[12] = (acc.b[3] >> 0) & 0xff ; tag[13] = (acc.b[3] >> 8) & 0xff ; tag[14] = (acc.b[3] >>16) & 0xff ; tag[15] = (acc.b[3] >>24) & 0xff ;
 }
 
-bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16])
+static void poly1305_finish(poly1305_state& s,uint8_t tag[16])
 {
-#warning this part is not implemented yet.
-    memset(tag,0xff,16) ;
-    return false;
+    s.a += s.s ;
+
+    tag[ 0] = (s.a.b[0] >> 0) & 0xff ; tag[ 1] = (s.a.b[0] >> 8) & 0xff ; tag[ 2] = (s.a.b[0] >>16) & 0xff ; tag[ 3] = (s.a.b[0] >>24) & 0xff ;
+    tag[ 4] = (s.a.b[1] >> 0) & 0xff ; tag[ 5] = (s.a.b[1] >> 8) & 0xff ; tag[ 6] = (s.a.b[1] >>16) & 0xff ; tag[ 7] = (s.a.b[1] >>24) & 0xff ;
+    tag[ 8] = (s.a.b[2] >> 0) & 0xff ; tag[ 9] = (s.a.b[2] >> 8) & 0xff ; tag[10] = (s.a.b[2] >>16) & 0xff ; tag[11] = (s.a.b[2] >>24) & 0xff ;
+    tag[12] = (s.a.b[3] >> 0) & 0xff ; tag[13] = (s.a.b[3] >> 8) & 0xff ; tag[14] = (s.a.b[3] >>16) & 0xff ; tag[15] = (s.a.b[3] >>24) & 0xff ;
+}
+
+void poly1305_tag(uint8_t key[32],uint8_t *message,uint32_t size,uint8_t tag[16])
+{
+    poly1305_state s;
+
+    poly1305_init  (s,key);
+    poly1305_add   (s,message,size);
+    poly1305_finish(s,tag);
+}
+
+static void poly1305_key_gen(uint8_t key[32], uint8_t nonce[12], uint8_t generated_key[32])
+{
+    uint32_t counter = 0 ;
+
+    chacha20_state s(key,counter,nonce);
+    apply_20_rounds(s) ;
+
+    for(uint32_t k=0;k<16;++k)
+        for(uint32_t i=0;i<4;++i)
+            generated_key[k*4 + i] = (s.c[k] >> 8*i) & 0xff ;
 }
 
 bool constant_time_memory_compare(const uint8_t *m1,const uint8_t *m2,uint32_t size)
 {
     return !CRYPTO_memcmp(m1,m2,size) ;
+}
+
+bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt)
+{
+    // encrypt + tag. See RFC7539-2.8
+
+    uint8_t session_key[32];
+    poly1305_key_gen(key,nonce,session_key);
+
+    uint8_t lengths_vector[16] ;
+    for(uint32_t i=0;i<8;++i)
+    {
+       lengths_vector[0+i] = ( aad_size >> i) & 0xff ;
+       lengths_vector[8+i] = (data_size >> i) & 0xff ;
+    }
+
+    if(encrypt)
+    {
+       chacha20_encrypt(session_key,1,nonce,data,data_size);
+
+       poly1305_state pls ;
+
+       poly1305_init(pls,session_key);
+
+       poly1305_add(pls,aad,aad_size);		// add and pad the aad
+       poly1305_add(pls,data,data_size);	// add and pad the cipher text
+       poly1305_add(pls,lengths_vector,16);	// add the lengths
+
+       poly1305_finish(pls,tag);
+       return true ;
+    }
+    else
+    {
+       poly1305_state pls ;
+       uint8_t computed_tag[16];
+
+       poly1305_init(pls,session_key);
+
+       poly1305_add(pls,aad,aad_size);		// add and pad the aad
+       poly1305_add(pls,data,data_size);	// add and pad the cipher text
+       poly1305_add(pls,lengths_vector,16);	// add the lengths
+
+       poly1305_finish(pls,computed_tag);
+
+       // decrypt
+
+       chacha20_encrypt(session_key,1,nonce,data,data_size);
+
+       return constant_time_memory_compare(tag,computed_tag,16) ;
+    }
 }
 
 void perform_tests()
