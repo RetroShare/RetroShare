@@ -286,8 +286,12 @@ static void quarter_round(uint32_t& a,uint32_t& b,uint32_t& c,uint32_t& d)
     c += d ; b ^= c; rotl(b,7)  ; //b <<<=7 ;
 }
 
+static void add(chacha20_state& s,const chacha20_state& t) { for(uint32_t i=0;i<16;++i) s.c[i] += t.c[i] ; }
+
 static void apply_20_rounds(chacha20_state& s)
 {
+    chacha20_state t(s) ;
+
     for(uint32_t i=0;i<10;++i)
     {
         quarter_round(s.c[ 0],s.c[ 4],s.c[ 8],s.c[12]) ;
@@ -299,9 +303,10 @@ static void apply_20_rounds(chacha20_state& s)
         quarter_round(s.c[ 2],s.c[ 7],s.c[ 8],s.c[13]) ;
         quarter_round(s.c[ 3],s.c[ 4],s.c[ 9],s.c[14]) ;
     }
+
+    add(s,t) ;
 }
 
-#ifdef DEBUG_CHACHA20
 static void print(const chacha20_state& s)
 {
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[0 ],s.c[1 ],s.c[2 ],s.c[3 ]) ;
@@ -309,9 +314,6 @@ static void print(const chacha20_state& s)
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[8 ],s.c[9 ],s.c[10],s.c[11]) ;
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[12],s.c[13],s.c[14],s.c[15]) ;
 }
-#endif
-
-static void add(chacha20_state& s,const chacha20_state& t) { for(uint32_t i=0;i<16;++i) s.c[i] += t.c[i] ; }
 
 // static uint8_t read16bits(char s)
 // {
@@ -373,15 +375,12 @@ void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12]
     for(uint32_t i=0;i<size/64 + 1;++i)
     {
         chacha20_state s(key,block_counter+i,nonce) ;
-        chacha20_state t(s) ;
 
 #ifdef DEBUG_CHACHA20
         fprintf(stdout,"Block %d:\n",i) ;
         print(s) ;
 #endif
-
         apply_20_rounds(s) ;
-        add(s,t) ;
 
 #ifdef DEBUG_CHACHA20
         fprintf(stdout,"Cipher %d:\n",i) ;
@@ -473,7 +472,7 @@ static void poly1305_key_gen(uint8_t key[32], uint8_t nonce[12], uint8_t generat
     chacha20_state s(key,counter,nonce);
     apply_20_rounds(s) ;
 
-    for(uint32_t k=0;k<16;++k)
+    for(uint32_t k=0;k<8;++k)
         for(uint32_t i=0;i<4;++i)
             generated_key[k*4 + i] = (s.c[k] >> 8*i) & 0xff ;
 }
@@ -490,16 +489,17 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
     uint8_t session_key[32];
     poly1305_key_gen(key,nonce,session_key);
 
-    uint8_t lengths_vector[16] ;
-    for(uint32_t i=0;i<8;++i)
+    uint8_t lengths_vector[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ;
+
+    for(uint32_t i=0;i<4;++i)
     {
-       lengths_vector[0+i] = ( aad_size >> i) & 0xff ;
-       lengths_vector[8+i] = (data_size >> i) & 0xff ;
+       lengths_vector[0+i] = ( aad_size >> (8*i)) & 0xff ;
+       lengths_vector[8+i] = (data_size >> (8*i)) & 0xff ;
     }
 
     if(encrypt)
     {
-       chacha20_encrypt(session_key,1,nonce,data,data_size);
+       chacha20_encrypt(key,1,nonce,data,data_size);
 
        poly1305_state pls ;
 
@@ -527,7 +527,7 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
 
        // decrypt
 
-       chacha20_encrypt(session_key,1,nonce,data,data_size);
+       chacha20_encrypt(key,1,nonce,data,data_size);
 
        return constant_time_memory_compare(tag,computed_tag,16) ;
     }
@@ -563,7 +563,6 @@ bool perform_tests()
     uint8_t nounce[12] = { 0x00,0x00,0x00,0x09,0x00,0x00,0x00,0x4a,0x00,0x00,0x00,0x00 } ;
 
     chacha20_state s(key,1,nounce) ;
-    chacha20_state t(s) ;
 
 #ifdef DEBUG_CHACHA20
     print(s) ;
@@ -572,14 +571,9 @@ bool perform_tests()
     apply_20_rounds(s) ;
 
 #ifdef DEBUG_CHACHA20
-    print(s) ;
-#endif
-    add(t,s) ;
-
-#ifdef DEBUG_CHACHA20
     fprintf(stdout,"\n") ;
 
-    print(t) ;
+    print(s) ;
 #endif
 
     uint32_t check_vals[16] = {
@@ -590,7 +584,7 @@ bool perform_tests()
     };
 
     for(uint32_t i=0;i<16;++i)
-          if(t.c[i] != check_vals[i])
+          if(s.c[i] != check_vals[i])
                 return false ;
 
     std::cerr << " OK" << std::endl;
@@ -771,12 +765,10 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16))) return false ;
     }
-
-    std::cerr << "  RFC7539 poly1305 test vector #001     OK" << std::endl;
+    std::cerr << "  RFC7539 - 2.5                         OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #1
     //
-
     {
         uint8_t key[32] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
         uint8_t tag[16] ;
@@ -789,12 +781,10 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-
-    std::cerr << "  RFC7539 poly1305 test vector #002     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #001     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #2
     //
-
     {
         uint8_t key[32] = {  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
                                     0x36,0xe5,0xf6,0xb5,0xc5,0xe0,0x60,0x70,0xf0,0xef,0xca,0x96,0x22,0x7a,0x86,0x3e } ;
@@ -808,12 +798,10 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-
-    std::cerr << "  RFC7539 poly1305 test vector #003     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #002     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #3
     //
-
     {
         uint8_t key[32] = {  0x36,0xe5,0xf6,0xb5,0xc5,0xe0,0x60,0x70,0xf0,0xef,0xca,0x96,0x22,0x7a,0x86,0x3e,
                                     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
@@ -827,8 +815,8 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
+    std::cerr << "  RFC7539 poly1305 test vector #003     OK" << std::endl;
 
-    std::cerr << "  RFC7539 poly1305 test vector #004     OK" << std::endl;
     // RFC7539 - Poly1305 test vector #4
     //
     {
@@ -844,8 +832,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-
-    std::cerr << "  RFC7539 poly1305 test vector #005     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #004     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #5
     //
@@ -862,8 +849,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-
-    std::cerr << "  RFC7539 poly1305 test vector #006     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #005     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #6
     //
@@ -880,7 +866,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-    std::cerr << "  RFC7539 poly1305 test vector #007     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #006     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #7
     //
@@ -899,7 +885,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-    std::cerr << "  RFC7539 poly1305 test vector #008     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #007     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #8
     //
@@ -918,7 +904,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-    std::cerr << "  RFC7539 poly1305 test vector #009     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #008     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #9
     //
@@ -935,7 +921,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-    std::cerr << "  RFC7539 poly1305 test vector #010     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #009     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #10
     //
@@ -956,7 +942,7 @@ bool perform_tests()
 
         if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
-    std::cerr << "  RFC7539 poly1305 test vector #011     OK" << std::endl;
+    std::cerr << "  RFC7539 poly1305 test vector #010     OK" << std::endl;
 
     // RFC7539 - Poly1305 test vector #11
     //
@@ -976,6 +962,67 @@ bool perform_tests()
 
         if(!constant_time_memory_compare(tag,test_tag,16)) return false ;
     }
+    std::cerr << "  RFC7539 poly1305 test vector #011     OK" << std::endl;
+
+    // RFC7539 - 2.6.2
+    //
+    {
+        uint8_t key[32] = { 0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,
+                            0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9a,0x9b,0x9c,0x9d,0x9e,0x9f };
+
+        uint8_t session_key[32] ;
+        uint8_t test_session_key[32] = { 0x8a,0xd5,0xa0,0x8b,0x90,0x5f,0x81,0xcc,0x81,0x50,0x40,0x27,0x4a,0xb2,0x94,0x71,
+                                         0xa8,0x33,0xb6,0x37,0xe3,0xfd,0x0d,0xa5,0x08,0xdb,0xb8,0xe2,0xfd,0xd1,0xa6,0x46 };
+
+        uint8_t nonce[12] = { 0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07 };
+
+        poly1305_key_gen(key,nonce,session_key) ;
+
+        if(!constant_time_memory_compare(session_key,test_session_key,32)) return false ;
+    }
+    std::cerr << "  RFC7539 - 2.6.2                       OK" << std::endl;
+
+    // RFC7539 - 2.8.2
+    //
+    {
+        uint8_t msg[7*16+2] = {
+            0x4c,0x61,0x64,0x69,0x65,0x73,0x20,0x61,0x6e,0x64,0x20,0x47,0x65,0x6e,0x74,0x6c,
+            0x65,0x6d,0x65,0x6e,0x20,0x6f,0x66,0x20,0x74,0x68,0x65,0x20,0x63,0x6c,0x61,0x73,
+            0x73,0x20,0x6f,0x66,0x20,0x27,0x39,0x39,0x3a,0x20,0x49,0x66,0x20,0x49,0x20,0x63,
+            0x6f,0x75,0x6c,0x64,0x20,0x6f,0x66,0x66,0x65,0x72,0x20,0x79,0x6f,0x75,0x20,0x6f,
+            0x6e,0x6c,0x79,0x20,0x6f,0x6e,0x65,0x20,0x74,0x69,0x70,0x20,0x66,0x6f,0x72,0x20,
+            0x74,0x68,0x65,0x20,0x66,0x75,0x74,0x75,0x72,0x65,0x2c,0x20,0x73,0x75,0x6e,0x73,
+            0x63,0x72,0x65,0x65,0x6e,0x20,0x77,0x6f,0x75,0x6c,0x64,0x20,0x62,0x65,0x20,0x69,
+            0x74,0x2e } ;
+
+        uint8_t test_msg[7*16+2] = {
+            0xd3,0x1a,0x8d,0x34,0x64,0x8e,0x60,0xdb,0x7b,0x86,0xaf,0xbc,0x53,0xef,0x7e,0xc2,
+            0xa4,0xad,0xed,0x51,0x29,0x6e,0x08,0xfe,0xa9,0xe2,0xb5,0xa7,0x36,0xee,0x62,0xd6,
+            0x3d,0xbe,0xa4,0x5e,0x8c,0xa9,0x67,0x12,0x82,0xfa,0xfb,0x69,0xda,0x92,0x72,0x8b,
+            0x1a,0x71,0xde,0x0a,0x9e,0x06,0x0b,0x29,0x05,0xd6,0xa5,0xb6,0x7e,0xcd,0x3b,0x36,
+            0x92,0xdd,0xbd,0x7f,0x2d,0x77,0x8b,0x8c,0x98,0x03,0xae,0xe3,0x28,0x09,0x1b,0x58,
+            0xfa,0xb3,0x24,0xe4,0xfa,0xd6,0x75,0x94,0x55,0x85,0x80,0x8b,0x48,0x31,0xd7,0xbc,
+            0x3f,0xf4,0xde,0xf0,0x8e,0x4b,0x7a,0x9d,0xe5,0x76,0xd2,0x65,0x86,0xce,0xc6,0x4b,
+            0x61,0x16 };
+
+        uint8_t   aad[12] = { 0x50,0x51,0x52,0x53,0xc0,0xc1,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7 };
+        uint8_t nonce[12] = { 0x07,0x00,0x00,0x00,0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47 };
+
+        uint8_t key[32] = { 0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,
+                            0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9a,0x9b,0x9c,0x9d,0x9e,0x9f };
+        uint8_t tag[16] ;
+        uint8_t test_tag[16] = { 0x1a,0xe1,0x0b,0x59,0x4f,0x09,0xe2,0x6a,0x7e,0x90,0x2e,0xcb,0xd0,0x60,0x06,0x91 };
+
+        librs::crypto::AEAD_chacha20_poly1305(key,nonce,msg,7*16+2,aad,12,tag,true) ;
+
+        if(!constant_time_memory_compare(msg,test_msg,7*16+2)) return false ;
+        if(!constant_time_memory_compare(tag,test_tag,16)) return false ;
+
+        bool res = librs::crypto::AEAD_chacha20_poly1305(key,nonce,msg,7*16+2,aad,12,tag,false) ;
+
+        if(!res) return false ;
+    }
+    std::cerr << "  RFC7539 - 2.8.2305                    OK" << std::endl;
 
     return true;
 }

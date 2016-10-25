@@ -462,6 +462,7 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
     FileInfo info ;
     bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info);
 
+#warning need code here => turn H(H) into real hash
     if( (!res) && FileDetails(hash,RS_FILE_HINTS_DOWNLOAD,info))
     {
         // This file is currently being downloaded. Let's look if we already have a chunk or not. If not, no need to
