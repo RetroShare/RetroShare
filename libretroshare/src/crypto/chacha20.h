@@ -23,6 +23,8 @@
  *
  */
 
+#include <stdint.h>
+
 namespace librs
 {
 	namespace crypto
@@ -77,15 +79,17 @@ namespace librs
          * \param size  common size of m1 and m2
          * \return
          * 			false  if the two chunks are different
-         * 			true   if the two chunks are different
+         * 			true   if the two chunks are identical
          */
         bool constant_time_memory_compare(const uint8_t *m1,const uint8_t *m2,uint32_t size) ;
 
         /*!
          * \brief perform_tests
          *          Tests all methods in this class, using the tests supplied in RFC7539
+         * \return
+         * 			true is all tests pass
          */
 
-        void perform_tests() ;
+        bool perform_tests() ;
 	}
 }

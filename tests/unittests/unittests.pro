@@ -271,6 +271,10 @@ INCLUDEPATH += ../librssimulator/
 
 SOURCES +=  unittests.cc \
 
+################################## Crypto ##################################
+
+SOURCES += libretroshare/crypto/chacha20_test.cc
+
 ################################ Serialiser ################################
 HEADERS +=  libretroshare/serialiser/support.h \
 	libretroshare/serialiser/rstlvutil.h \

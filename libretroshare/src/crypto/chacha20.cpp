@@ -22,7 +22,6 @@
  * Please report all bugs and problems to "retroshare.project@gmail.com".
  *
  */
-#include <assert.h>
 #include <stdexcept>
 #include <stdint.h>
 #include <string>
@@ -34,8 +33,6 @@
 #include <stdlib.h>
 
 #include "crypto/chacha20.h"
-
-#pragma once
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}
 
@@ -164,14 +161,16 @@ struct uint256_32
                 }
         *this = r;
 
-        assert(!(b[0] & 0xffffffff00000000)) ;
-        assert(!(b[1] & 0xffffffff00000000)) ;
-        assert(!(b[2] & 0xffffffff00000000)) ;
-        assert(!(b[3] & 0xffffffff00000000)) ;
-        assert(!(b[4] & 0xffffffff00000000)) ;
-        assert(!(b[5] & 0xffffffff00000000)) ;
-        assert(!(b[6] & 0xffffffff00000000)) ;
-        assert(!(b[7] & 0xffffffff00000000)) ;
+#ifdef DEBUG_CHACHA20
+        if(!(!(b[0] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[1] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[2] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[3] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[4] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[5] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[6] & 0xffffffff00000000))) throw() ;
+        if(!(!(b[7] & 0xffffffff00000000))) throw() ;
+#endif
     }
 
     static void print(const uint256_32& s)
@@ -302,6 +301,7 @@ static void apply_20_rounds(chacha20_state& s)
     }
 }
 
+#ifdef DEBUG_CHACHA20
 static void print(const chacha20_state& s)
 {
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[0 ],s.c[1 ],s.c[2 ],s.c[3 ]) ;
@@ -309,6 +309,7 @@ static void print(const chacha20_state& s)
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[8 ],s.c[9 ],s.c[10],s.c[11]) ;
     fprintf(stdout,"%08x %08x %08x %08x\n",s.c[12],s.c[13],s.c[14],s.c[15]) ;
 }
+#endif
 
 static void add(chacha20_state& s,const chacha20_state& t) { for(uint32_t i=0;i<16;++i) s.c[i] += t.c[i] ; }
 
@@ -374,14 +375,18 @@ void chacha20_encrypt(uint8_t key[32], uint32_t block_counter, uint8_t nonce[12]
         chacha20_state s(key,block_counter+i,nonce) ;
         chacha20_state t(s) ;
 
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"Block %d:\n",i) ;
         print(s) ;
+#endif
 
         apply_20_rounds(s) ;
         add(s,t) ;
 
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"Cipher %d:\n",i) ;
         print(s) ;
+#endif
 
         for(uint32_t k=0;k<64;++k)
             if(k+64*i < size)
@@ -528,13 +533,11 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
     }
 }
 
-void perform_tests()
+bool perform_tests()
 {
-    std::cerr << "Testing Chacha20" << std::endl;
-
     // RFC7539 - 2.1.1
 
-    std::cerr << "  quarter round..." ;
+    std::cerr << "  quarter round                        " ;
 
     uint32_t a = 0x11111111 ;
     uint32_t b = 0x01020304 ;
@@ -543,16 +546,16 @@ void perform_tests()
 
     quarter_round(a,b,c,d) ;
 
-    assert(a == 0xea2a92f4) ;
-    assert(b == 0xcb1cf8ce) ;
-    assert(c == 0x4581472e) ;
-    assert(d == 0x5881c4bb) ;
+    if(!(a == 0xea2a92f4)) return false ;
+    if(!(b == 0xcb1cf8ce)) return false ;
+    if(!(c == 0x4581472e)) return false ;
+    if(!(d == 0x5881c4bb)) return false ;
 
-    std::cerr << " - OK" << std::endl;
+    std::cerr << " OK" << std::endl;
 
     // RFC7539 - 2.3.2
 
-    std::cerr << "  RFC7539 - 2.3.2..." ;
+    std::cerr << "  RFC7539 - 2.3.2                      " ;
 
     uint8_t key[32]    = { 0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b, \
                             0x0c,0x0d,0x0e,0x0f,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17, \
@@ -562,24 +565,39 @@ void perform_tests()
     chacha20_state s(key,1,nounce) ;
     chacha20_state t(s) ;
 
+#ifdef DEBUG_CHACHA20
     print(s) ;
-
-    fprintf(stdout,"\n") ;
+#endif
 
     apply_20_rounds(s) ;
 
+#ifdef DEBUG_CHACHA20
     print(s) ;
+#endif
     add(t,s) ;
 
+#ifdef DEBUG_CHACHA20
     fprintf(stdout,"\n") ;
 
     print(t) ;
+#endif
 
-    std::cerr << " - OK" << std::endl;
+    uint32_t check_vals[16] = {
+        0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3,
+        0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3,
+        0x466482d2, 0x09aa9f07, 0x05d7c214, 0xa2028bd9,
+        0xd19c12b5, 0xb94e16de, 0xe883d0cb, 0x4e3c50a2
+    };
+
+    for(uint32_t i=0;i<16;++i)
+          if(t.c[i] != check_vals[i])
+                return false ;
+
+    std::cerr << " OK" << std::endl;
 
     // RFC7539 - 2.4.2
 
-    std::cerr << "  RFC7539 - 2.4.2..." ;
+    std::cerr << "  RFC7539 - 2.4.2                      " ;
 
     uint8_t nounce2[12] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x4a,0x00,0x00,0x00,0x00 } ;
 
@@ -596,7 +614,7 @@ void perform_tests()
 
     chacha20_encrypt(key,1,nounce2,plaintext,7*16+2) ;
 
-#ifdef PRINT_RESULTS
+#ifdef DEBUG_CHACHA20
     fprintf(stdout,"CipherText: \n") ;
 
     for(uint32_t k=0;k<7*16+2;++k)
@@ -621,9 +639,10 @@ void perform_tests()
     };
 
     for(uint32_t i=0;i<7*16+2;++i)
-        assert(check_cipher_text[i] == plaintext[i] );
+        if(!(check_cipher_text[i] == plaintext[i] ))
+            return false;
 
-    std::cerr << " - OK" << std::endl;
+    std::cerr << " OK" << std::endl;
 
     // sums/diffs of numbers
 
@@ -631,7 +650,7 @@ void perform_tests()
     {
         uint256_32 a = uint256_32::random() ;
         uint256_32 b = uint256_32::random() ;
-#ifdef PRINT_RESULTS
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"Adding ") ;
         uint256_32::print(a) ;
         fprintf(stdout,"\n    to ") ;
@@ -639,25 +658,26 @@ void perform_tests()
 #endif
 
         uint256_32 c(a) ;
-        assert(c == a) ;
+        if(!(c == a) )
+           return false;
 
         c += b  ;
 
-#ifdef PRINT_RESULTS
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"\n found ") ;
         uint256_32::print(c) ;
 #endif
 
         c -= b ;
 
-#ifdef PRINT_RESULTS
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"\n subst ") ;
         uint256_32::print(c) ;
         fprintf(stdout,"\n") ;
 #endif
 
-        assert(a == a) ;
-        assert(c == a) ;
+        if(!(a == a)) return false ;
+        if(!(c == a)) return false ;
     }
     std::cerr << "  Sums / diffs of 256bits numbers       OK" << std::endl;
 
@@ -687,7 +707,7 @@ void perform_tests()
         atcmbtcmatdpbtd -= atd ;
         atcmbtcmatdpbtd += btd ;
 
-        assert(atcmbtcmatdpbtd == ambtcmd);
+        if(!(atcmbtcmatdpbtd == ambtcmd)) return false ;
     }
     std::cerr << "  (a-b)*(c-d) == ac-bc-ad+bd on random  OK" << std::endl;
 
@@ -704,7 +724,7 @@ void perform_tests()
 
         x.b[0] += r ;
 
-        assert(x == y) ;
+        if(!(x == y) ) return false ;
     }
     std::cerr << "  left/right shifting                   OK" << std::endl;
 
@@ -726,7 +746,7 @@ void perform_tests()
         }
 
         quotient(n1,p1,q1,r1) ;
-#ifdef PRINT_RESULTS
+#ifdef DEBUG_CHACHA20
         fprintf(stdout,"result: q=") ; chacha20::uint256_32::print(q1) ; fprintf(stdout," r=") ; chacha20::uint256_32::print(r1) ; fprintf(stdout,"\n") ;
 #endif
 
@@ -734,7 +754,7 @@ void perform_tests()
         q1 *= p1 ;
         q1 += r1 ;
 
-        assert(q1 == n1) ;
+        if(!(q1 == n1)) return false ;
     }
     std::cerr << "  Quotient/modulo on random numbers     OK" << std::endl;
 
@@ -749,7 +769,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xa8,0x06,0x1d,0xc1,0x30,0x51,0x36,0xc6,0xc2,0x2b,0x8b,0xaf,0x0c,0x01,0x27,0xa9 };
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16))) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #001     OK" << std::endl;
@@ -767,7 +787,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #002     OK" << std::endl;
@@ -786,7 +806,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x36,0xe5,0xf6,0xb5,0xc5,0xe0,0x60,0x70,0xf0,0xef,0xca,0x96,0x22,0x7a,0x86,0x3e };
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #003     OK" << std::endl;
@@ -805,7 +825,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xf3,0x47,0x7e,0x7c,0xd9,0x54,0x17,0xaf,0x89,0xa6,0xb8,0x79,0x4c,0x31,0x0c,0xf0 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #004     OK" << std::endl;
@@ -822,7 +842,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x45,0x41,0x66,0x9a,0x7e,0xaa,0xee,0x61,0xe7,0x08,0xdc,0x7c,0xbc,0xc5,0xeb,0x62 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #005     OK" << std::endl;
@@ -840,7 +860,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
 
     std::cerr << "  RFC7539 poly1305 test vector #006     OK" << std::endl;
@@ -858,7 +878,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #007     OK" << std::endl;
 
@@ -877,7 +897,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #008     OK" << std::endl;
 
@@ -896,7 +916,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #009     OK" << std::endl;
 
@@ -913,7 +933,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0xfa,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #010     OK" << std::endl;
 
@@ -934,7 +954,7 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!(constant_time_memory_compare(tag,test_tag,16)) ) return false ;
     }
     std::cerr << "  RFC7539 poly1305 test vector #011     OK" << std::endl;
 
@@ -954,8 +974,10 @@ void perform_tests()
 
         uint8_t test_tag[16] = { 0x13,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 } ;
 
-        assert(constant_time_memory_compare(tag,test_tag,16)) ;
+        if(!constant_time_memory_compare(tag,test_tag,16)) return false ;
     }
+
+    return true;
 }
 
 }
