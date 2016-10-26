@@ -73,13 +73,14 @@ void ApiLocalConnectionHandler::handlePendingRequests()
 	{
 		if(mLocalSocket->canReadLine())
 		{
-            readPath:
+readPath:
 			QString rString(mLocalSocket->readLine());
 			rString = rString.simplified();
 			if (!rString.isEmpty())
 			{
 				if(rString.startsWith("PUT", Qt::CaseInsensitive)) reqMeth = resource_api::Request::PUT;
 				else if (rString.startsWith("DELETE", Qt::CaseInsensitive)) reqMeth = resource_api::Request::DELETE_AA;
+				else reqMeth = resource_api::Request::GET;
 				if(rString.contains(' ')) rString = rString.split(' ')[1];
 
 				reqPath = rString.toStdString();

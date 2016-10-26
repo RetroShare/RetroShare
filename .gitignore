@@ -10,3 +10,5 @@ Makefile*
 *~
 Thumbs.db
 *.pro.user
+.kdev4
+*.kdev4

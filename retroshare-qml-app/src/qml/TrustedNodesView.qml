@@ -19,10 +19,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.4
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
+import "jsonpath.js" as JSONPath
 
 Item
 {
-	function refreshData() { rsApi.request("/peers", "") }
+	function refreshData() { rsApi.request("/peers/*", "") }
 
 	onFocusChanged: focus && refreshData()
 
@@ -45,7 +46,11 @@ Item
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
 		model: jsonModel.model
-		delegate: Text { text: model.name }
+		delegate: Text
+		{
+		    text: model.name
+			onTextChanged: color = JSONPath.jsonPath(JSON.parse(jsonModel.json), "$.data[?(@.pgp_id=='"+model.pgp_id+"')].locations[*].is_online").reduce(function(cur,acc){return cur || acc}, false) ? "lime" : "darkslategray"
+	    }
 	}
 
 	Button
@@ -53,6 +58,6 @@ Item
 		id: bottomButton
 		text: "Add Trusted Node"
 		anchors.bottom: parent.bottom
-		onClicked: swipeView.currentIndex = addTrustedNodeView.SwipeView.index
+		onClicked: swipeView.currentIndex = 3
 	}
 }

@@ -27,19 +27,30 @@ Item
 
 	ColumnLayout
 	{
-		id: colLayout
-		anchors.top: parent.top
-		anchors.bottom: rowLayout.top
+		anchors.fill: parent
 
-
-		TextField { id: myKeyField }
-		TextField { id: otherKeyField }
-	}
-
-	RowLayout
-	{
-		id: rowLayout
-		anchors.top: colLayout.bottom
+		Button
+		{
+			id: bottomButton
+			text: "Add trusted node"
+			onClicked:
+			{
+				console.log("retroshare addtrusted: ", otherKeyField.text)
+				var jsonData =
+				{
+					cert_string: otherKeyField.text,
+					flags:
+					{
+						allow_direct_download: true,
+						allow_push: false,
+						require_whitelist: false,
+					}
+				}
+				console.log("retroshare addtrusted jsonData: ", JSON.stringify(jsonData))
+				//rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
+				rsApi.request("PUT /peers", JSON.stringify(jsonData))
+			}
+		}
 
 		Button
 		{
@@ -60,29 +71,8 @@ Item
 				otherKeyField.paste()
 			}
 		}
-	}
 
-	Button
-	{
-		id: bottomButton
-		text: "Add trusted node"
-		anchors.bottom: parent.bottom
-		onClicked:
-		{
-			console.log("retroshare addtrusted: ", otherKeyField.text)
-			var jsonData =
-			{
-				cert_string: otherKeyField.text,
-				flags:
-				{
-					allow_direct_download: true,
-					allow_push: false,
-					require_whitelist: false,
-				}
-			}
-			console.log("retroshare addtrusted jsonData: ", JSON.stringify(jsonData))
-			//rsApi.request("/peers/examine_cert/", JSON.stringify({ cert_string: otherKeyField.text }))
-			rsApi.request("PUT /peers", JSON.stringify(jsonData))
-		}
+		TextField { id: myKeyField }
+		TextField { id: otherKeyField }
 	}
 }

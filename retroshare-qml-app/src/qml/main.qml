@@ -17,7 +17,7 @@
  */
 
 import QtQuick 2.2
-import QtQuick.Controls 2.0
+import QtQuick.Controls 1.4
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 ApplicationWindow
@@ -25,30 +25,34 @@ ApplicationWindow
 	id: mainWindow
 	visible: true
 	title: qsTr("RSChat")
+	width: 400
+	height: 400
 
 	Rectangle
 	{
 		id: mainView
-		anchors.fill: parent;
-
+		anchors.fill: parent
 		states:
 			[
-			State
-			{
-				name: "waiting_account_select";
-				PropertyChanges { target: swipeView; currentIndex: locationsView.SwipeView.index }
-			},
-			State
-			{
-				name: "running_ok"
-				//PropertyChanges { target: swipeView; currentIndex: contactsView.SwipeView.index }
-			},
-			State
-			{
-				name: "running_ok_no_full_control"
-				//PropertyChanges { target: swipeView; currentIndex: contactsView.SwipeView.index }
-			}
-		    ]
+			    State
+			    {
+					name: "waiting_account_select"
+					PropertyChanges { target: swipeView; currentIndex: 0 }
+					PropertyChanges { target: locationsTab; enabled: true }
+				},
+				State
+				{
+					name: "running_ok"
+					PropertyChanges { target: swipeView; currentIndex: 1 }
+					PropertyChanges { target: locationsTab; enabled: false }
+				},
+				State
+				{
+					name: "running_ok_no_full_control"
+					PropertyChanges { target: swipeView; currentIndex: 1 }
+					PropertyChanges { target: locationsTab; enabled: false }
+				}
+		]
 
 		LibresapiLocalClient
 		{
@@ -64,53 +68,42 @@ ApplicationWindow
 			}
 		}
 
-		SwipeView
+		TabView
 		{
 			id: swipeView
 			anchors.fill: parent
 			visible: true
 			currentIndex: 0
 
-			Locations
+			Tab
 			{
-				id: locationsView
-				visible: true
-				qParent: swipeView
+				title:"Locations"
+				id: locationsTab
+				Locations { onVisibleChanged: focus = visible }
 			}
 
-			TrustedNodesView { id: trustedNodesView }
-
-			Contacts
+			Tab
 			{
-				id: contactsView
-				visible: true
+				title: "Trusted Nodes"
+				TrustedNodesView { onVisibleChanged: focus = visible }
 			}
 
-			Rectangle
+			Tab
 			{
-				color: "red"
-				width: 100
-				height: 100
+				title: "Contacts"
+				Contacts { onVisibleChanged: focus = visible }
 			}
 
-			Rectangle
+			Tab
 			{
-				color: "green"
-				width: 100
-				height: 100
+				title: "Add Node"
+				AddTrustedNode { onVisibleChanged: focus = visible }
 			}
 
-			Rectangle
+			Tab
 			{
-				color: "blue"
-				width: 100
-				height: 100
-			}
-
-			AddTrustedNode
-			{
-				id: addTrustedNodeView
-				visible: true
+				title: "Blue"
+				Rectangle { color: "blue"; anchors.fill: parent }
 			}
 		}
 	}

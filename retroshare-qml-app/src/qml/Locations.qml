@@ -27,6 +27,7 @@ Item
 	property var qParent
 	property bool attemptLogin: false
 	property string password
+	property string sslid
 
 	states:
 	[
@@ -34,7 +35,7 @@ Item
 		{
 			name: "selectLocation"
 			PropertyChanges { target: locationsListView; visible: true }
-			PropertyChanges	{ target: bottomButton; visible: true }
+			PropertyChanges { target: bottomButton; visible: true }
 			PropertyChanges { target: loginView; visible: false }
 		},
 		State
@@ -67,7 +68,8 @@ Item
 				onSubmit:
 				{
 					locationView.password = password
-					rsApi.request("/control/login/", JSON.stringify({id: locationsListView.currentItem.sslid}))
+					console.log("locationView.sslid: ", locationView.sslid)
+					rsApi.request("/control/login/", JSON.stringify({id: locationView.sslid}))
 					locationView.attemptLogin = true
 					busyIndicator.running = true
 					attemptTimer.start()
@@ -148,10 +150,10 @@ Item
 		delegate: Button
 		{
 		    text: model.name
-			property string sslid: model.id
 			onClicked:
 			{
 				loginView.login = text
+				locationView.sslid = model.id
 				locationView.state = "login"
 			}
 	    }
