@@ -824,7 +824,6 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 		std::string temp_val;
 		size_t i = 0;
 		bool found_digit = false;
-		bool found_first_valid_char = false;
 
 		for (; i < str.length(); i++)
 		{
@@ -894,7 +893,6 @@ static Value DeserializeValue(std::string& str, bool* had_error, std::stack<Stac
 				if (std::isdigit(str[i]))
 					found_digit = true;
 
-				found_first_valid_char = true;
 				temp_val += str[i];
 			}
 		}

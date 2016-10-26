@@ -62,9 +62,9 @@ QStringList GuiExprElement::relOptionsList;
 
 QMap<int, ExprSearchType> GuiExprElement::TermsIndexMap;
 
-QMap<int, LogicalOperator> GuiExprElement::logicalOpIndexMap;
-QMap<int, StringOperator> GuiExprElement::strConditionIndexMap;
-QMap<int, RelOperator> GuiExprElement::relConditionIndexMap;
+QMap<int, RsRegularExpression::LogicalOperator> GuiExprElement::logicalOpIndexMap;
+QMap<int, RsRegularExpression::StringOperator> GuiExprElement::strConditionIndexMap;
+QMap<int, RsRegularExpression::RelOperator> GuiExprElement::relConditionIndexMap;
 
 QMap<int, QString> GuiExprElement::logicalOpStrMap;
 QMap<int, QString> GuiExprElement::termsStrMap;
@@ -141,9 +141,9 @@ void GuiExprElement::initialiseOptionsLists()
     GuiExprElement::relOptionsList.append(RANGE);
 
     // now the maps
-    GuiExprElement::logicalOpIndexMap[GuiExprElement::AND_INDEX] = AndOp;
-    GuiExprElement::logicalOpIndexMap[GuiExprElement::OR_INDEX] = OrOp;
-    GuiExprElement::logicalOpIndexMap[GuiExprElement::XOR_INDEX] = XorOp;
+    GuiExprElement::logicalOpIndexMap[GuiExprElement::AND_INDEX] = RsRegularExpression::AndOp;
+    GuiExprElement::logicalOpIndexMap[GuiExprElement::OR_INDEX] = RsRegularExpression::OrOp;
+    GuiExprElement::logicalOpIndexMap[GuiExprElement::XOR_INDEX] = RsRegularExpression::XorOp;
     
     GuiExprElement::TermsIndexMap[GuiExprElement::NAME_INDEX] = NameSearch;
     GuiExprElement::TermsIndexMap[GuiExprElement::PATH_INDEX] = PathSearch;
@@ -153,9 +153,9 @@ void GuiExprElement::initialiseOptionsLists()
     GuiExprElement::TermsIndexMap[GuiExprElement::SIZE_INDEX] = SizeSearch;
     GuiExprElement::TermsIndexMap[GuiExprElement::POP_INDEX] = PopSearch;
     
-    GuiExprElement::strConditionIndexMap[GuiExprElement::CONTAINS_INDEX] = ContainsAnyStrings;
-    GuiExprElement::strConditionIndexMap[GuiExprElement::CONTALL_INDEX] = ContainsAllStrings;
-    GuiExprElement::strConditionIndexMap[GuiExprElement::IS_INDEX] = EqualsString;
+    GuiExprElement::strConditionIndexMap[GuiExprElement::CONTAINS_INDEX] = RsRegularExpression::ContainsAnyStrings;
+    GuiExprElement::strConditionIndexMap[GuiExprElement::CONTALL_INDEX] = RsRegularExpression::ContainsAllStrings;
+    GuiExprElement::strConditionIndexMap[GuiExprElement::IS_INDEX] = RsRegularExpression::EqualsString;
     
 /*  W A R N I N G !!!!
     the cb elements correspond to their inverse rel op counterparts in rsexpr.h due to the nature of 
@@ -166,12 +166,12 @@ void GuiExprElement::initialiseOptionsLists()
     files where the condition is greater than the file size i.e. files whose size is less than or equal to the condition 
     Therefore we invert the mapping of rel conditions here to match the behaviour of the impl.
 */    
-    GuiExprElement::relConditionIndexMap[GuiExprElement::LT_INDEX] = GreaterEquals;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::LTE_INDEX] = Greater;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::EQUAL_INDEX] = Equals;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::GTE_INDEX] = Smaller;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::GT_INDEX] = SmallerEquals;
-    GuiExprElement::relConditionIndexMap[GuiExprElement::RANGE_INDEX] = InRange;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::LT_INDEX] = RsRegularExpression::GreaterEquals;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::LTE_INDEX] = RsRegularExpression::Greater;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::EQUAL_INDEX] = RsRegularExpression::Equals;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::GTE_INDEX] = RsRegularExpression::Smaller;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::GT_INDEX] = RsRegularExpression::SmallerEquals;
+    GuiExprElement::relConditionIndexMap[GuiExprElement::RANGE_INDEX] = RsRegularExpression::InRange;
 
     // the string to index map
     GuiExprElement::termsStrMap[GuiExprElement::NAME_INDEX] = NAME;
@@ -260,7 +260,7 @@ QString ExprOpElement::toString()
 }
 
 
-LogicalOperator ExprOpElement::getLogicalOperator()
+RsRegularExpression::LogicalOperator ExprOpElement::getLogicalOperator()
 {
     return GuiExprElement::logicalOpIndexMap[cb->currentIndex()];
 }
@@ -313,12 +313,12 @@ QString ExprConditionElement::toString()
     return GuiExprElement::relConditionStrMap[cb->currentIndex()];
 }
 
-RelOperator ExprConditionElement::getRelOperator()
+RsRegularExpression::RelOperator ExprConditionElement::getRelOperator()
 {
     return GuiExprElement::relConditionIndexMap[cb->currentIndex()];
 }
 
-StringOperator ExprConditionElement::getStringOperator()
+RsRegularExpression::StringOperator ExprConditionElement::getStringOperator()
 {
     return GuiExprElement::strConditionIndexMap[cb->currentIndex()];
 }

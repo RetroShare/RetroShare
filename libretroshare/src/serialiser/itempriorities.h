@@ -76,6 +76,11 @@ const uint8_t QOS_PRIORITY_RS_DISC_PGP_LIST       		= 2 ; // same priority.
 const uint8_t QOS_PRIORITY_RS_DISC_SERVICES    			= 2 ;
 const uint8_t QOS_PRIORITY_RS_DISC_PGP_CERT    			= 1 ;
 
+// File database
+//
+const uint8_t QOS_PRIORITY_RS_FAST_SYNC_REQUEST         = 7 ;
+const uint8_t QOS_PRIORITY_RS_SLOW_SYNC_REQUEST         = 3 ;
+
 // Heartbeat.
 //
 const uint8_t QOS_PRIORITY_RS_HEARTBEAT_PULSE 			= 8 ;

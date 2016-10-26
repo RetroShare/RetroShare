@@ -195,7 +195,7 @@ bool GxsIdChooser::isInConstraintSet(const RsGxsId& id) const
             
             return mConstraintIdsSet.find(id) != mConstraintIdsSet.end() ;
 }
-void GxsIdChooser::setEntryEnabled(int indx,bool enabled)
+void GxsIdChooser::setEntryEnabled(int indx,bool /*enabled*/)
 {
     removeItem(indx) ;
     

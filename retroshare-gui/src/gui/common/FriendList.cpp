@@ -510,6 +510,7 @@ static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, Elided
 
     if (!widget) {
         widget = new QWidget;
+        widget->setAttribute(Qt::WA_TranslucentBackground);
         nameLabel = new ElidedLabel(widget);
         textLabel = new ElidedLabel(widget);
 

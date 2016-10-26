@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru">
+<TS version="2.1" language="ru">
 <context>
     <name>AWidget</name>
     <message>
@@ -560,7 +560,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-23"/>
         <source>On List Ite&amp;m</source>
-        <translation type="unfinished"></translation>
+        <translation>Отдельным списком</translation>
     </message>
     <message>
         <location line="+81"/>
@@ -660,7 +660,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>Disable SysTray ToolTip</source>
-        <translation type="unfinished"></translation>
+        <translation>Трэй без подсказки</translation>
     </message>
     <message>
         <location line="-95"/>
@@ -1058,7 +1058,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Ban this person (Sets negative opinion)</source>
-        <translation type="unfinished"></translation>
+        <translation>Забанить этого пользователя (устанавливает негативную репутацию)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1068,12 +1068,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Sort by Name</source>
-        <translation type="unfinished">Сортировать по имени</translation>
+        <translation>Сортировать по имени</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sort by Activity</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по последней активности</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -1310,7 +1310,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+1"/>
         <source>Anonymous IDs accepted</source>
-        <translation type="unfinished"></translation>
+        <translation>Анонимные ID разрешены</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1556,27 +1556,27 @@ Double click lobbies to enter and chat.</source>
     <message>
         <location line="-769"/>
         <source>Distant Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаленный чат</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Кого угодно</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Contacts</source>
-        <translation type="unfinished">Контакты</translation>
+        <translation>Контакты</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Nobody</source>
-        <translation type="unfinished"></translation>
+        <translation>Никого</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accept encrypted distant chat from</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить шифрованный удаленный чат от</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1631,7 +1631,7 @@ Double click lobbies to enter and chat.</source>
     <message>
         <location line="+7"/>
         <source>Send as plain text by default</source>
-        <translation type="unfinished"></translation>
+        <translation>Посылать как простой текст</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -1775,7 +1775,7 @@ Double click lobbies to enter and chat.</source>
     <message>
         <location line="+1"/>
         <source>UserName</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя пользователя</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -2028,17 +2028,17 @@ Double click lobbies to enter and chat.</source>
     <message>
         <location line="+51"/>
         <source>Quote</source>
-        <translation type="unfinished">Цитата</translation>
+        <translation>Цитата</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Quotes the selected text</source>
-        <translation type="unfinished"></translation>
+        <translation>Цитировать выбранный текст</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Drop Placemark</source>
-        <translation type="unfinished"></translation>
+        <translation>Поставить метку</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2048,23 +2048,23 @@ Double click lobbies to enter and chat.</source>
     <message>
         <location line="+9"/>
         <source>Save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить изображение</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Send as PlainText</source>
-        <translation type="unfinished"></translation>
+        <translation>Послать как простой текст</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Send as plain text without font.</source>
-        <translation type="unfinished"></translation>
+        <translation>Послать как простой текст без шрифта</translation>
     </message>
     <message>
         <location line="+12"/>
         <location line="+3"/>
         <source>Don&apos;t replace tag with Emote Icon.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не заметь текст смайлами</translation>
     </message>
     <message>
         <location filename="../gui/chat/ChatWidget.cpp" line="+1077"/>
@@ -2075,13 +2075,15 @@ Double click lobbies to enter and chat.</source>
         <location line="+40"/>
         <source>It remains %1 characters
 after HTML conversion.</source>
-        <translation type="unfinished"></translation>
+        <translation> %1 символов
+после конвертирования в HTML.</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Warning: This message is too big of %1 characters
 after HTML conversion.</source>
-        <translation type="unfinished"></translation>
+        <translation>Внимание: Это сообщение слишком большое,  %1 символов
+после конвертирования в HTML.</translation>
     </message>
     <message>
         <location line="+341"/>
@@ -2441,7 +2443,7 @@ after HTML conversion.</source>
     <message>
         <location line="+32"/>
         <source>Use this certificate to make friends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Используемый сертификат:</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2659,7 +2661,7 @@ after HTML conversion.</source>
     <message>
         <location line="+54"/>
         <source>Please, paste your friend&apos;s Retroshare certificate into the box below</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста введите сертификат вашего друга в поле внизу</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -2784,7 +2786,7 @@ after HTML conversion.</source>
     <message>
         <location line="+20"/>
         <source>Email</source>
-        <translation type="unfinished">Email</translation>
+        <translation>Email</translation>
     </message>
     <message>
         <location line="+79"/>
@@ -3211,7 +3213,7 @@ resources.</source>
     <message>
         <location line="-1396"/>
         <source>The text below is your Retroshare certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Последущий текст это ваш сертификат RetroShare. Вы должны передать его вашему другу</translation>
     </message>
     <message>
         <location line="+1432"/>
@@ -3881,7 +3883,7 @@ p, li { white-space: pre-wrap; }
         <location line="-103"/>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="+74"/>
         <source>Invited Members</source>
-        <translation type="unfinished"></translation>
+        <translation>Приглашенные Пользователи</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -3891,7 +3893,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+81"/>
         <source>Known People</source>
-        <translation type="unfinished"></translation>
+        <translation>Известные Пользователи</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -3906,7 +3908,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+99"/>
         <source>Name:</source>
-        <translation type="unfinished">Имя:</translation>
+        <translation>Имя:</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -3916,7 +3918,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Contact author:</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификатор Автора</translation>
     </message>
     <message>
         <location line="+13"/>
@@ -3926,12 +3928,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+7"/>
         <source>[Circle Admin]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Администратор Круга]</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Distribution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Достпно:</translation>
     </message>
     <message>
         <location line="+31"/>
@@ -3946,7 +3948,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Private</source>
-        <translation type="unfinished">Частный</translation>
+        <translation>Частный</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -3956,7 +3958,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Only visible to members of:</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступно только кругу:</translation>
     </message>
     <message>
         <location filename="../gui/Circles/CreateCircleDialog.cpp" line="+66"/>
@@ -4051,28 +4053,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-689"/>
         <source>Circle name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя Круга</translation>
     </message>
     <message>
         <location line="+43"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Close</source>
-        <translation type="unfinished">Закрыть</translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location line="+19"/>
         <location line="+6"/>
         <source>Create New Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Новый Круг</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>Create</source>
-        <translation type="unfinished">Создать</translation>
+        <translation>Создать</translation>
     </message>
     <message>
         <location line="+633"/>
@@ -4082,12 +4084,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+92"/>
         <source>Add Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить члена</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Remove Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить члена</translation>
     </message>
 </context>
 <context>
@@ -4101,12 +4103,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+26"/>
         <source>Group Name:</source>
-        <translation type="unfinished">Имя группы:</translation>
+        <translation>Имя группы:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Group ID:</source>
-        <translation type="unfinished"></translation>
+        <translation>ID Группы</translation>
     </message>
     <message>
         <source>Group Name</source>
@@ -4120,7 +4122,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/groups/CreateGroup.cpp" line="-32"/>
         <source>To be defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Должно быть задано</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -4367,12 +4369,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+103"/>
         <source>No compatible ID for this forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет совместимого ID для этого форума</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>None of your identities is allowed to post in this forum. This could be due to the forum being limited to a circle that contains none of your identities, or forum flags requiring a PGP-signed identity.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ни один из ваших идентификаторов не имеет прав для отправки сообщений в этот форум. Возможно доступ к форуму ограничен кругом в котором вы не состоите, или форум требует наличие подписанного ID.</translation>
     </message>
     <message>
         <location filename="../gui/gxsforums/CreateGxsForumMsg.ui" line="+18"/>
@@ -4679,7 +4681,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+14"/>
         <source>No peer found in DHT</source>
-        <translation type="unfinished"></translation>
+        <translation>Не найдено пиров в DHT</translation>
     </message>
 </context>
 <context>
@@ -4934,7 +4936,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+18"/>
         <source>Copy %1 to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать %1 в буфер обмена</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -5190,7 +5192,7 @@ Do you want to reject this message?</source>
     <message>
         <location line="+14"/>
         <source>Relays</source>
-        <translation type="unfinished"></translation>
+        <translation>Реле</translation>
     </message>
     <message>
         <location line="+65"/>
@@ -5981,7 +5983,7 @@ at least one peer was not added to a group</source>
     <message>
         <location line="+19"/>
         <source>Select file for importing your friendlist from</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите файл из которого импортировать список друзей</translation>
     </message>
     <message>
         <source>Select file for importing yoour friendlist from</source>
@@ -6714,7 +6716,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <location line="+15"/>
         <source>Register retroshare:// as URL protocol</source>
-        <translation type="unfinished"></translation>
+        <translation>Заргеистрировать retroshare:// как URI протокол</translation>
     </message>
     <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
@@ -6743,7 +6745,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <location line="+3"/>
         <source>!!!The RetroShare&apos;s desktop file is missing or wrong!!!</source>
-        <translation type="unfinished"></translation>
+        <translation>!!!Ярлык RetroShare отсутствует или поврежден!!!</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6768,12 +6770,12 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <location filename="../gui/settings/GeneralPage.cpp" line="+64"/>
         <source>You have enough right.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас достаточно прав.</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>You don&apos;t have enough right. Run RetroShare as Admin to change this setting.</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас недостаточно прав. Запустите RetroShare от имени администратора для изменения этих настроек.</translation>
     </message>
     <message>
         <location line="+47"/>
@@ -7037,7 +7039,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Identity Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя идентификатора</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7057,17 +7059,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Stored data size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер сохраненных данных</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Receive time (secs ago)</source>
-        <translation type="unfinished"></translation>
+        <translation>Время получения (просшло секунд)</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sending time (secs ago)</source>
-        <translation type="unfinished"></translation>
+        <translation>Время отправки (прошло секунд)</translation>
     </message>
     <message>
         <source>Data size</source>
@@ -7094,7 +7096,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statistics/GlobalRouterStatistics.cpp" line="+124"/>
         <source>Details</source>
-        <translation type="unfinished">Подробности</translation>
+        <translation>Подробности</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -7127,7 +7129,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+83"/>
         <source>[Unknown identity]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Неизвестный идентификатор]</translation>
     </message>
     <message>
         <location line="-97"/>
@@ -7148,7 +7150,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/GroupChooser.cpp" line="+52"/>
         <source>[Unknown]</source>
-        <translation type="unfinished">[Неизвестный]</translation>
+        <translation>[Неизвестный]</translation>
     </message>
 </context>
 <context>
@@ -7286,12 +7288,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+34"/>
         <source>Share channel publish permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Дать разрешение публиковать в канал</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>You can allow your friends to publish in your channel, or send the publish permissions to another Retroshare instance of yours. Select the friends which you want to be allowed to publish in this channel. Note: it is currently not possible to revoke channel publish permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы можете разрешить вашим друзьям писать в канал или разрешать другим пользователям писать в канал. Выберите друзей которым вы хотите разрешить писать в канал. Имейте ввиду: на данный момент невозможно отменить разрешения записи в канал.</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -7367,17 +7369,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Sort by Posts</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по сообщениям</translation>
     </message>
     <message>
         <location line="+161"/>
         <source>You are admin (modify names and description using Edit menu)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы администратор (изменяйте название и описание используя меню Редактировать)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You have been granted as publisher (you can post here!)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вам разрешено публиковать</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupTreeWidget.ui" line="+47"/>
@@ -7735,12 +7737,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/GxsChannelPostItem.ui" line="+199"/>
         <source>New Comment:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый Коментарий</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Comment Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Значение Коментария</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -7911,27 +7913,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+106"/>
         <source>Public</source>
-        <translation type="unfinished">Публичный</translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Restricted to members of circle &quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Только для членов круга &quot; </translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Restricted to members of circle </source>
-        <translation type="unfinished"></translation>
+        <translation>Только для членов круга</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Your eyes only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только для вас</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>You and your friend nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Для вас и ваших друзей</translation>
     </message>
     <message>
         <location line="+200"/>
@@ -7956,18 +7958,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+152"/>
         <source>Administrator:</source>
-        <translation type="unfinished"></translation>
+        <translation>Администратор:</translation>
     </message>
     <message>
         <location line="+56"/>
         <location line="+27"/>
         <source>unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Distribution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Распространение:</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -8321,7 +8323,7 @@ before you can comment</source>
     <message>
         <location line="+266"/>
         <source>Save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить изображение</translation>
     </message>
     <message>
         <location line="-360"/>
@@ -8450,7 +8452,7 @@ before you can comment</source>
     <message>
         <location line="+23"/>
         <source>This message was obtained from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Это сообщение получено от %1</translation>
     </message>
     <message>
         <location line="+191"/>
@@ -8460,58 +8462,58 @@ before you can comment</source>
     <message>
         <location line="+14"/>
         <source>Anonymous/unknown node IDs reputation threshold set to 0.4</source>
-        <translation type="unfinished"></translation>
+        <translation>Порог для агонимных/неизвестных id установлен в 0.4</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Anonymous IDs reputation threshold set to 0.4</source>
-        <translation type="unfinished"></translation>
+        <translation>Порог для анонимных ID установлен в 0.4</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Message routing info kept for 10 days</source>
-        <translation type="unfinished"></translation>
+        <translation>Маршрут сообщения хранится 10 дней</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>[unknown]</source>
-        <translation type="unfinished"></translation>
+        <translation>[неизвестно]</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Public</source>
-        <translation type="unfinished">Публичный</translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Restricted to members of circle &quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>ограничено для членов круга &quot;</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Restricted to members of circle </source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничено для членов круга</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Only friends nodes in group </source>
-        <translation type="unfinished"></translation>
+        <translation>Только ноды друзей в группе</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Your eyes only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только для вас</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Distribution</source>
-        <translation type="unfinished">Распределение</translation>
+        <translation>Распределение</translation>
     </message>
     <message>
         <location line="+4"/>
         <location line="+3"/>
         <source>Anti-spam</source>
-        <translation type="unfinished"></translation>
+        <translation>Анти-спам</translation>
     </message>
     <message>
         <location line="+161"/>
@@ -8841,29 +8843,29 @@ before you can comment</source>
     <message>
         <location line="+23"/>
         <source>Spam-protection</source>
-        <translation type="unfinished"></translation>
+        <translation>Защита от спама</translation>
     </message>
     <message>
         <location line="+158"/>
         <source>Comments:</source>
-        <translation type="unfinished">Комментарии:</translation>
+        <translation>Комментарии:</translation>
     </message>
     <message>
         <location line="+7"/>
         <location line="+9"/>
         <location line="+33"/>
         <source>TextLabel</source>
-        <translation type="unfinished">Текстовая метка</translation>
+        <translation>Текстовая метка</translation>
     </message>
     <message>
         <location line="-14"/>
         <source>Distribution:</source>
-        <translation type="unfinished"></translation>
+        <translation>Распространение:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Anti Spam:</source>
-        <translation type="unfinished"></translation>
+        <translation>Анти-Спам:</translation>
     </message>
     <message>
         <location line="-162"/>
@@ -8879,23 +8881,23 @@ before you can comment</source>
         <location line="+107"/>
         <location line="+246"/>
         <source>Restricted to circle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничено кругом:</translation>
     </message>
     <message>
         <location line="-240"/>
         <source>Limited to your friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Только для ваших другей</translation>
     </message>
     <message>
         <location line="+57"/>
         <location line="+11"/>
         <source>Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешено</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Disallowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрещено</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -8907,12 +8909,12 @@ before you can comment</source>
         <location line="-378"/>
         <location line="+381"/>
         <source>PGP signature required</source>
-        <translation type="unfinished"></translation>
+        <translation>Необзодима PGP подпись</translation>
     </message>
     <message>
         <location line="-245"/>
         <source>Only friends nodes in group </source>
-        <translation type="unfinished"></translation>
+        <translation>Только ноды друзей в группе</translation>
     </message>
     <message>
         <location line="+156"/>
@@ -8922,7 +8924,7 @@ before you can comment</source>
     <message>
         <location line="+87"/>
         <source>PGP signature from known ID required</source>
-        <translation type="unfinished"></translation>
+        <translation>Необходима PGP подпись от известного ID</translation>
     </message>
     <message>
         <location line="+106"/>
@@ -8986,7 +8988,7 @@ before you can comment</source>
     <message>
         <location line="+3"/>
         <source>Restricted to Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничено кругом</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -8996,7 +8998,7 @@ before you can comment</source>
     <message>
         <location line="+193"/>
         <source>Posts permissions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешения:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9006,17 +9008,17 @@ before you can comment</source>
     <message>
         <location line="+4"/>
         <source>All allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Defavor unsigned IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить неподписанные ID</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Defavor unsigned IDs and IDs from unknown nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить неподписанные и неизвестные ID</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9098,7 +9100,7 @@ before you can comment</source>
     <message>
         <location line="+4"/>
         <source>Share publish permissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Поделиться правами на запись</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -9217,42 +9219,42 @@ before you can comment</source>
     <message>
         <location filename="../gui/statistics/TurtleRouterDialog.cpp" line="+306"/>
         <source>Authenticated tunnels:</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторизованные туннели:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Tunnel ID: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>ID туннеля: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>from: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>от: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>to: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>к: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>status: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>статус: %1</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>total sent: %1 bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>всего отправленно: %1 байт</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>total recv: %1 bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>всего получено: %1 байт</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Unknown Peer</source>
-        <translation type="unfinished">Неизвестный пир</translation>
+        <translation>Неизвестный пир</translation>
     </message>
 </context>
 <context>
@@ -9605,7 +9607,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+11"/>
         <source>Owner node ID :</source>
-        <translation>ID владельца узла</translation>
+        <translation>ID владельца узла:</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -9615,17 +9617,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+40"/>
         <source>Owner node name :</source>
-        <translation>Имя владельца узла</translation>
+        <translation>Имя владельца узла:</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Identity name :</source>
-        <translation>Псевдоним</translation>
+        <translation>Псевдоним:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Identity ID :</source>
-        <translation>ID личности</translation>
+        <translation>ID личности:</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -9726,7 +9728,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+16"/>
         <source>Overall:</source>
-        <translation>Общая</translation>
+        <translation>Общая:</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDetailsDialog.cpp" line="+103"/>
@@ -9836,17 +9838,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+32"/>
         <source>Create new circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новы круг</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Persons</source>
-        <translation type="unfinished"></translation>
+        <translation>Участники</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Person</source>
-        <translation type="unfinished"></translation>
+        <translation>Участник</translation>
     </message>
     <message>
         <location line="+264"/>
@@ -9865,27 +9867,27 @@ p, li { white-space: pre-wrap; }
         <location line="+43"/>
         <location filename="../gui/Identity/IdDialog.cpp" line="-1445"/>
         <source>Circles</source>
-        <translation type="unfinished">Круги</translation>
+        <translation>Круги</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Circle name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя круга</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Membership</source>
-        <translation type="unfinished">Членство</translation>
+        <translation>Членство</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Public Circles</source>
-        <translation type="unfinished">Публичные Круги</translation>
+        <translation>Публичные Круги</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Personal Circles</source>
-        <translation type="unfinished">Личные Круги</translation>
+        <translation>Личные Круги</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9911,12 +9913,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-384"/>
         <source>Owner node ID :</source>
-        <translation>ID владельца узла</translation>
+        <translation>ID владельца узла :</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Identity name :</source>
-        <translation>Псевдоним</translation>
+        <translation>Псевдоним :</translation>
     </message>
     <message>
         <location line="-274"/>
@@ -9941,12 +9943,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+14"/>
         <source>Identity ID :</source>
-        <translation>ID личности</translation>
+        <translation>ID личности :</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Owner node name :</source>
-        <translation>Имя владельца узла</translation>
+        <translation>Имя владельца узла :</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9956,7 +9958,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+61"/>
         <source>Send Invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Пригласить</translation>
     </message>
     <message>
         <location line="+42"/>
@@ -9996,7 +9998,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+16"/>
         <source>Overall:</source>
-        <translation>Общая</translation>
+        <translation>Общая: </translation>
     </message>
     <message>
         <source>Owned by you</source>
@@ -10010,12 +10012,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>ID</source>
-        <translation type="unfinished"></translation>
+        <translation>ID</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Search ID</source>
-        <translation type="unfinished"></translation>
+        <translation>Искомый ID</translation>
     </message>
     <message>
         <location line="+1148"/>
@@ -10033,22 +10035,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-1252"/>
         <source>My own identities</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои идентификаторы</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>My contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои контакты</translation>
     </message>
     <message>
         <location line="+81"/>
         <source>Owned by myself</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Linked to my node</source>
-        <translation type="unfinished"></translation>
+        <translation>Связанные с моей нодой</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -10058,162 +10060,162 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+132"/>
         <source>Other circles</source>
-        <translation type="unfinished"></translation>
+        <translation>Другие круги</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Circles I belong to</source>
-        <translation type="unfinished"></translation>
+        <translation>Круги со мной</translation>
     </message>
     <message>
         <location line="+113"/>
         <source>Circle ID: </source>
-        <translation type="unfinished"></translation>
+        <translation>ID круга:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Visibility: </source>
-        <translation type="unfinished"></translation>
+        <translation>Видимость:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Private (only visible to invited members)</source>
-        <translation type="unfinished"></translation>
+        <translation>Частный (видим только членам)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Only visible to full members of circle </source>
-        <translation type="unfinished"></translation>
+        <translation>Видим только полноценным членам круга</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Public</source>
-        <translation type="unfinished">Публичный</translation>
+        <translation>Публичный</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Your role: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ваша роль:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Administrator (Can edit invite list, and request membership).</source>
-        <translation type="unfinished"></translation>
+        <translation>Администратор (Может редактировать лист приглашений и запросов членства).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>User (Can only request membership).</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователь (Может запросить членство).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Distribution: </source>
-        <translation type="unfinished"></translation>
+        <translation>Распространение:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>subscribed (Receive/forward membership requests from others and invite list).</source>
-        <translation type="unfinished"></translation>
+        <translation>подписан (получает/передает запросы членства от других).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unsubscribed (Only receive invite list).</source>
-        <translation type="unfinished"></translation>
+        <translation>неподписанный (получает только праглашения).</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Your status: </source>
-        <translation type="unfinished"></translation>
+        <translation>Ваш статус:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Full member (you have access to data limited to this circle)</source>
-        <translation type="unfinished"></translation>
+        <translation>Полноценный член (вы имеете доступ к данным достпным этому кругу)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Not a member (do not have access to data limited to this circle)</source>
-        <translation type="unfinished"></translation>
+        <translation>Не член (нет доступа к данным доступным кругу)</translation>
     </message>
     <message>
         <location line="+94"/>
         <source>Unknown ID :</source>
-        <translation type="unfinished"></translation>
+        <translation>Незивестный ID :</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Identity ID: </source>
-        <translation type="unfinished"></translation>
+        <translation>ID идентификатора:</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Status: </source>
-        <translation type="unfinished">Статус:</translation>
+        <translation>Статус:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Full member</source>
-        <translation type="unfinished"></translation>
+        <translation>Полноценный член</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Invited by admin</source>
-        <translation type="unfinished"></translation>
+        <translation>Пригглашен администратором</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Subscription request pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Запрошена подписка</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>unknown</source>
-        <translation type="unfinished">Неизвестно</translation>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Invited</source>
-        <translation type="unfinished"></translation>
+        <translation>Приглашен</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Subscription pending</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожидание подписки</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Member</source>
-        <translation type="unfinished"></translation>
+        <translation>Член</translation>
     </message>
     <message>
         <location line="+278"/>
         <source>Edit Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Круг</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>See details</source>
-        <translation type="unfinished"></translation>
+        <translation>Смотреть детали</translation>
     </message>
     <message>
         <location line="+37"/>
         <source>Request subscription</source>
-        <translation type="unfinished"></translation>
+        <translation>Запросить подписку</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Accept circle invitation</source>
-        <translation type="unfinished"></translation>
+        <translation>ПРинять приглашение в круг</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Quit this circle</source>
-        <translation type="unfinished"></translation>
+        <translation>Покинуть круг</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Cancel subscribe request</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить запрос подписки</translation>
     </message>
     <message>
         <location line="+40"/>
@@ -10221,17 +10223,17 @@ p, li { white-space: pre-wrap; }
         <location line="+26"/>
         <location line="+2"/>
         <source>for identity </source>
-        <translation type="unfinished"></translation>
+        <translation>для идентификатора</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Revoke this member</source>
-        <translation type="unfinished"></translation>
+        <translation>Выгнать члена</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Grant membership</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешить членство</translation>
     </message>
     <message>
         <location line="+291"/>
@@ -10245,24 +10247,24 @@ These identities will soon be not supported anymore.</source>
         <location line="+33"/>
         <location line="+224"/>
         <source>[Unknown node]</source>
-        <translation type="unfinished"></translation>
+        <translation>[Неизвестная нода]</translation>
     </message>
     <message>
         <location line="-219"/>
         <location line="+1"/>
         <source>Unverified signature from node </source>
-        <translation type="unfinished"></translation>
+        <translation>Неподтвержденная подпись от ноды</translation>
     </message>
     <message>
         <location line="+4"/>
         <location line="+1"/>
         <source>Unchecked signature</source>
-        <translation type="unfinished"></translation>
+        <translation>Нероверенная подпись</translation>
     </message>
     <message>
         <location line="+186"/>
         <source> [unverified]</source>
-        <translation type="unfinished"></translation>
+        <translation>[неподтверждено]</translation>
     </message>
     <message>
         <location line="+59"/>
@@ -10292,27 +10294,27 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+339"/>
         <source>Add to Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в контакты</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Remove from Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из контактов</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Set positive opinion</source>
-        <translation type="unfinished"></translation>
+        <translation>Позитивное мнение</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set neutral opinion</source>
-        <translation type="unfinished"></translation>
+        <translation>Нейтральное мнение</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Set negative opinion</source>
-        <translation type="unfinished"></translation>
+        <translation>Негативное мнение</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -10327,22 +10329,22 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+30"/>
         <source>Hi,&lt;br&gt;I want to be friends with you on RetroShare.&lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Привет,&lt;br&gt;Я хочу дружить с тобой в RetroShare.&lt;br&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>You have a friend invite</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы получили предложение дружбы</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Respond now:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ответить сейчас:</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Thanks, &lt;br&gt;</source>
-        <translation type="unfinished">Спасибо, &lt;br&gt;</translation>
+        <translation>Спасибо, &lt;br&gt;</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="-521"/>
@@ -10404,7 +10406,7 @@ These identities will soon be not supported anymore.</source>
     <message>
         <location line="+75"/>
         <source>Distant chat refused with this person.</source>
-        <translation>В удалённом чате с этим человеком отказано</translation>
+        <translation>В удалённом чате с этим человеком отказано.</translation>
     </message>
     <message>
         <location filename="../gui/Identity/IdDialog.ui" line="-38"/>
@@ -10694,17 +10696,17 @@ These identities will soon be not supported anymore.</source>
         <location filename="../util/imageutil.cpp" line="+35"/>
         <location line="+6"/>
         <source>Save image</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить изображение</translation>
     </message>
     <message>
         <location line="-6"/>
         <source>Cannot save the image, invalid filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно сохранить изображение, не верное имя файла</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Not an image</source>
-        <translation type="unfinished"></translation>
+        <translation>Не является изображением</translation>
     </message>
 </context>
 <context>
@@ -11120,12 +11122,12 @@ RetroShare безопасно приостановит доступ диска �
     <message>
         <location line="-822"/>
         <source>Address list:</source>
-        <translation type="unfinished"></translation>
+        <translation>Список адресов</translation>
     </message>
     <message>
         <location line="+109"/>
         <source>Recommend this friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Рекомендовать этого друга</translation>
     </message>
     <message>
         <location line="+479"/>
@@ -11235,17 +11237,17 @@ RetroShare безопасно приостановит доступ диска �
     <message>
         <location line="+29"/>
         <source>All addresses (mixed)</source>
-        <translation type="unfinished"></translation>
+        <translation>Все адреса (смешано)</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>All people</source>
-        <translation type="unfinished"></translation>
+        <translation>Все люди</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>My contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои контакты</translation>
     </message>
     <message>
         <location line="+263"/>
@@ -11631,22 +11633,22 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="+30"/>
         <source>Everyone</source>
-        <translation type="unfinished"></translation>
+        <translation>Все</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Contacts</source>
-        <translation type="unfinished">Контакты</translation>
+        <translation>Контакты</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Nobody</source>
-        <translation type="unfinished"></translation>
+        <translation>Никто</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Accept encrypted distant messages from</source>
-        <translation type="unfinished"></translation>
+        <translation>Принимать зашифрованное сообщение от  </translation>
     </message>
     <message>
         <location line="+10"/>
@@ -12382,7 +12384,7 @@ Do you want to save message ?</source>
     <message>
         <location line="+300"/>
         <source>This message goes to a distant person.</source>
-        <translation type="unfinished"></translation>
+        <translation>Это сообщение будет отправлено удаленному участнику.</translation>
     </message>
     <message>
         <location line="+456"/>
@@ -12448,12 +12450,12 @@ Do you want to save message ?</source>
     <message>
         <location line="+1"/>
         <source>Spoiler</source>
-        <translation type="unfinished"></translation>
+        <translation>Спойлер</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select text to hide, then push this button</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите текст который нужно скрыть, затем нажмите эту кнопку</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -13466,7 +13468,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+6"/>
         <source>Below is the node&apos;s PGP key. It identifies the node and all its locations. A &quot;Retroshare certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ниже указан PGP ключ ноды, он определяет ноду и все её местоположения, &quot;Сертификат RetroShare&quot; который может быть использован для создания дружбы находится на вкладки &quot;детали&quot; в каждой отдельной локации</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -13481,12 +13483,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+10"/>
         <source>Options</source>
-        <translation type="unfinished">Параметры</translation>
+        <translation>Параметры</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>These options apply to all locations of the same node:</source>
-        <translation type="unfinished"></translation>
+        <translation>Эти опции применяются для всех локаций этой ноды</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13496,7 +13498,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать как прямой источник, если возможно</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13506,7 +13508,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Auto-download recommended files from this node</source>
-        <translation type="unfinished">Авто-загрузка рекомендованных файлов с этого узла</translation>
+        <translation>Авто-загрузка рекомендованных файлов с этого узла</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -13516,23 +13518,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Require white list clearance</source>
-        <translation type="unfinished">Требуется разрешение белого списка</translation>
+        <translation>Требуется разрешение белого списка</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Max upload speed (0=unlimited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальная скорость отдачи (0 - неограничено)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Max download speed (0=unlimited)</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальная скорость скачивания (0 - неограничено)</translation>
     </message>
     <message>
         <location line="+14"/>
         <location line="+10"/>
         <source> kB/s</source>
-        <translation type="unfinished"></translation>
+        <translation> kB/s</translation>
     </message>
     <message>
         <location filename="../gui/connect/PGPKeyDialog.cpp" line="+78"/>
@@ -13802,37 +13804,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/People/PeopleDialog.cpp" line="+449"/>
         <source>Chat with this person</source>
-        <translation type="unfinished">Начать чат</translation>
+        <translation>Начать чат</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Chat with this person as...</source>
-        <translation type="unfinished">Инициировать чат с этим человеком от имени...</translation>
+        <translation>Инициировать чат с этим человеком от имени...</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>Send message to this person</source>
-        <translation type="unfinished"></translation>
+        <translation>Послать сообщение</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Person details</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Distant chat cannot work</source>
-        <translation type="unfinished">Удалённый чат не может работать</translation>
+        <translation>Удалённый чат не может работать</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Distant chat refused with this person.</source>
-        <translation type="unfinished">В удалённом чате с этим человеком отказано</translation>
+        <translation>В удалённом чате с этим человеком отказано.</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Error code</source>
-        <translation type="unfinished">Код ошибки</translation>
+        <translation>Код ошибки</translation>
     </message>
 </context>
 <context>
@@ -13840,22 +13842,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/PeoplePage.ui" line="+17"/>
         <source>Identities handling</source>
-        <translation type="unfinished"></translation>
+        <translation>Обработка идентификаторов</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>ban all identities of a node when more than</source>
-        <translation type="unfinished"></translation>
+        <translation>Банить все идентификаторы ноды если более чем 1</translation>
     </message>
     <message>
         <location line="+20"/>
         <source> of them have a negative opinion</source>
-        <translation type="unfinished"></translation>
+        <translation> из них имеет негативную репутацию</translation>
     </message>
     <message>
         <location filename="../gui/settings/PeoplePage.h" line="+42"/>
         <source>People</source>
-        <translation type="unfinished">Участники</translation>
+        <translation>Участники</translation>
     </message>
 </context>
 <context>
@@ -14402,7 +14404,7 @@ malicious behavior of crafted plugins.</source>
     <message>
         <location filename="../gui/chat/PopupDistantChatDialog.cpp" line="+111"/>
         <source>Chat remotely closed. Please close this window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Чат закрыт другой стороной. Пожалуйста закройте это окно.</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -14659,12 +14661,12 @@ malicious behavior of crafted plugins.</source>
     <message>
         <location line="-100"/>
         <source>New Comment:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый коментарий:</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Comment Value</source>
-        <translation type="unfinished"></translation>
+        <translation>Значение Комантария</translation>
     </message>
     <message>
         <location line="+70"/>
@@ -15196,12 +15198,12 @@ and open the Make Friend Wizard.
     <message>
         <location line="+171"/>
         <source>Warning: Retroshare is about to ask your system to open this file. </source>
-        <translation type="unfinished"></translation>
+        <translation>Внимание: RetroShare собирается запросить открытие этого файла системой.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Before you do so, please make sure that this file does not contain malicious executable code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Перед тем как это делать убедитесь в том что файл не содержит вредоносного кода.</translation>
     </message>
     <message>
         <location line="+248"/>
@@ -15316,17 +15318,17 @@ and open the Make Friend Wizard.
     <message>
         <location line="+7"/>
         <source>Posted not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Не найдено</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Posted message not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение не найдено</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Posted messages not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщения не найдены</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -15645,7 +15647,8 @@ Reported error is:
         <location line="+3"/>
         <source>
 Security: no anonymous IDs</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Безопасность: Анонимные ID запрещены</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="-149"/>
@@ -16349,7 +16352,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     <message>
         <location line="+8"/>
         <source>File Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Путь к файлу</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -16621,7 +16624,7 @@ Reducing image to %1x%2 pixels?</source>
         <location filename="../gui/settings/rsharesettings.cpp" line="+823"/>
         <location line="+14"/>
         <source>Registry Access Error. Maybe you need Administrator right.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка доуступа к реестру, возможно необходимы права администратора.</translation>
     </message>
 </context>
 <context>
@@ -18120,7 +18123,7 @@ Select the Friends with which you want to Share your Channel.</source>
     <message>
         <location line="+1"/>
         <source>Lobby</source>
-        <translation type="unfinished"></translation>
+        <translation>Лоби</translation>
     </message>
 </context>
 <context>
@@ -19704,12 +19707,12 @@ Try to be patient!</source>
     <message>
         <location line="+48"/>
         <source>Anonymous tunnels</source>
-        <translation type="unfinished"></translation>
+        <translation>Анонимный туннели</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Authenticated tunnels</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторизованные туннели</translation>
     </message>
     <message>
         <location line="+68"/>

@@ -206,27 +206,25 @@ void p3BanList::autoFigureOutBanRanges()
 {
     RS_STACK_MUTEX(mBanMtx) ;
 
-    bool changed = false ;
-
     // clear automatic ban ranges
 
-    for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanRanges.begin());it!=mBanRanges.end();)
+	for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanRanges.begin());
+	    it!=mBanRanges.end(); )
+	{
         if(it->second.reason == RSBANLIST_REASON_AUTO_RANGE)
         {
             std::map<sockaddr_storage,BanListPeer>::iterator it2=it ;
             ++it2 ;
             mBanRanges.erase(it) ;
             it=it2 ;
-
-            changed = true ;
         }
-        else
-            ++it;
+		else ++it;
+	}
 
     IndicateConfigChanged();
 
-    if(!mAutoRangeIps)
-        return ;
+	if(!mAutoRangeIps) return;
+
 #ifdef DEBUG_BANLIST
     std::cerr << "Automatically figuring out IP ranges from banned IPs." << std::endl;
 #endif

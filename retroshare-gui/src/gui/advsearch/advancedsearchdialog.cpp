@@ -119,9 +119,9 @@ void AdvancedSearchDialog::prepareSearch()
 }
 
 
-Expression * AdvancedSearchDialog::getRsExpr()
+RsRegularExpression::Expression * AdvancedSearchDialog::getRsExpr()
 {
-    Expression * wholeExpression;
+    RsRegularExpression::Expression * wholeExpression;
 
     // process the special case: first expression
     wholeExpression = expressions->at(0)->getRsExpression();
@@ -131,7 +131,7 @@ Expression * AdvancedSearchDialog::getRsExpr()
     for (int i = 1; i < expressions->size(); ++i) {
         // extract the expression information and compound it with the
         // first expression
-        wholeExpression = new CompoundExpression(expressions->at(i)->getOperator(),
+        wholeExpression = new RsRegularExpression::CompoundExpression(expressions->at(i)->getOperator(),
                                                  wholeExpression,
                                                  expressions->at(i)->getRsExpression());
     } 

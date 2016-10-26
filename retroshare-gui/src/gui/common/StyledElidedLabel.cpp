@@ -25,19 +25,24 @@
 
 /** Constructor */
 StyledElidedLabel::StyledElidedLabel(QWidget *parent)
-    : ElidedLabel(parent)
+    : ElidedLabel(parent), _lastFactor(-1)
 {
 }
 
 StyledElidedLabel::StyledElidedLabel(const QString &text, QWidget *parent)
-    : ElidedLabel(text, parent)
+    : ElidedLabel(text, parent), _lastFactor(-1)
 {
 }
 
 void StyledElidedLabel::setFontSizeFactor(int factor)
 {
-	QFont f = font();
-	qreal fontSize = factor * f.pointSizeF() / 100;
-	f.setPointSizeF(fontSize);
-	setFont(f);
+	int newFactor = factor;
+	if (factor > 0) {
+		if (_lastFactor > 0) newFactor = 100 + factor - _lastFactor;
+		_lastFactor = factor;
+		QFont f = font();
+		qreal fontSize = newFactor * f.pointSizeF() / 100;
+		f.setPointSizeF(fontSize);
+		setFont(f);
+	}
 }

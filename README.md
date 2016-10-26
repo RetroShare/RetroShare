@@ -12,11 +12,11 @@ Build Status
 
 Compilation on Windows
 ----------------------------
-Follow this file : [WindowsMSys2_InstallGuide.txt](https://github.com/RetroShare/RetroShare/blob/master/WindowsMSys2_InstallGuide.txt)
+Follow this file : [WindowsMSys2_InstallGuide.md](https://github.com/RetroShare/RetroShare/blob/master/WindowsMSys2_InstallGuide.md)
 
 Compilation on MacOSX
 ----------------------------
-Follow this file : [MacOS_X_InstallGuide.txt](https://github.com/RetroShare/RetroShare/blob/master/MacOS_X_InstallGuide.txt)
+Follow this file : [MacOS_X_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/MacOS_X_InstallGuide.md)
 
 Compilation on Linux
 ----------------------------
@@ -66,6 +66,11 @@ Compilation on Linux
 
          /usr/bin/RetroShare06
          /usr/bin/RetroShare06-nogui
+
+5. Uninstall:
+   ```bash
+   sudo make uninstall
+   ```
 
 Compile only retroshare-nogui
 -----------------------------

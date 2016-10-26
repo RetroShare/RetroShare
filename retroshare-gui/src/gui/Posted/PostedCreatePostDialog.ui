@@ -13,8 +13,17 @@
   <property name="windowTitle">
    <string>Submit Post</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <property name="margin">
+  <layout class="QGridLayout" name="PostedCreatePostDialogGLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -31,14 +40,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QFrame" name="frame">
+    <widget class="QFrame" name="mainFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="mainFrameGLayout">
       <item row="0" column="0" colspan="3">
        <widget class="StyledLabel" name="info_label">
         <property name="palette">
@@ -120,7 +129,7 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="3">
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="titleGLayout">
         <item row="0" column="1">
          <widget class="QLineEdit" name="titleEdit"/>
         </item>
@@ -144,9 +153,9 @@
        </layout>
       </item>
       <item row="2" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="signedHLayout">
         <item>
-         <spacer name="spacer_2">
+         <spacer name="signedHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -162,7 +171,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="signedLabel">
           <property name="text">
            <string>Signed by: </string>
           </property>
@@ -183,12 +192,12 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextEdit" name="notesTextEdit"/>
+         <widget class="MimeTextEdit" name="notesTextEdit"/>
         </item>
        </layout>
       </item>
       <item row="4" column="0">
-       <spacer name="horizontalSpacer">
+       <spacer name="buttonHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -236,6 +245,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
@@ -246,9 +260,7 @@
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

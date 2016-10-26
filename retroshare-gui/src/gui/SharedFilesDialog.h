@@ -22,6 +22,7 @@
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
+#include <set>
 #include "RsAutoUpdatePage.h"
 #include "ui_SharedFilesDialog.h"
 
@@ -51,7 +52,6 @@ protected slots:
   virtual void spawnCustomPopupMenu(QPoint point) = 0;
 
 private slots:
-
 	/* For handling the model updates */
   void  preModDirectories(bool local) ;
   void  postModDirectories(bool local) ;
@@ -93,6 +93,11 @@ protected:
   /** Qt Designer generated object */
   Ui::SharedFilesDialog ui;
   virtual void processSettings(bool bLoad) = 0;
+
+  void recursRestoreExpandedItems(const QModelIndex& index,const std::string& path,const std::set<std::string>& exp,const std::set<std::string>& sel);
+  void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp, std::set<std::string>& sel);
+  void saveExpandedPathsAndSelection(std::set<std::string>& paths, std::set<std::string>& selected_indexes) ;
+  void restoreExpandedPathsAndSelection(const std::set<std::string>& paths, const std::set<std::string>& selected_indexes) ;
 
 protected:
   //now context menu are created again every time theu are called ( in some
@@ -191,6 +196,7 @@ class RemoteSharedFilesDialog : public SharedFilesDialog
 
 	private slots:
 		void downloadRemoteSelected();
+        void expanded(const QModelIndex& indx);
 };
 
 #endif

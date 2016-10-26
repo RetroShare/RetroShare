@@ -56,7 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
-#include <gxstunnel/p3gxstunnel.h>
+#include "gxstunnel/p3gxstunnel.h"
+#include "file_sharing/p3filelists.h"
 
 #define ENABLE_GROUTER
 
@@ -804,7 +805,6 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 #include <unistd.h>
 //#include <getopt.h>
 
-#include "dbase/cachestrapper.h"
 #include "ft/ftserver.h"
 #include "ft/ftcontroller.h"
 
@@ -1239,12 +1239,10 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-	ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
-	ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
+    ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
+    ftserver->setConfigDirectory(rsAccounts->PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
-	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
-	//CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
 	/* setup any extra bits (Default Paths) */
 	ftserver->setPartialsDirectory(emergencyPartialsDir);
@@ -1288,7 +1286,6 @@ int RsServer::StartupRetroShare()
 	// These are needed to load plugins: plugin devs might want to know the place of
 	// cache directories, get pointers to cache strapper, or access ownId()
 	//
-	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
 	mPluginsManager->setServiceControl(serviceCtrl) ;
 
 //	std::cerr << "rsinitconf (core 1) = " << (void*)rsInitConfig<<std::endl;
@@ -1499,22 +1496,25 @@ int RsServer::StartupRetroShare()
 	pqih->addService(gr,true) ;
 #endif
 
-	p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
+    p3FileDatabase *fdb = new p3FileDatabase(serviceCtrl) ;
+    p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr,true);
-	pqih -> addService(ftserver,true);
+    pqih -> addService(fdb,true);
+    pqih -> addService(ftserver,true);
 
         mGxsTunnels = new p3GxsTunnelService(mGxsIdService) ;
         mGxsTunnels->connectToTurtleRouter(tr) ;
         rsGxsTunnel = mGxsTunnels;
-        
+
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
+    ftserver->connectToFileDatabase(fdb) ;
+    chatSrv->connectToGxsTunnelService(mGxsTunnels) ;
     gr->connectToTurtleRouter(tr) ;
 #ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
@@ -1619,10 +1619,6 @@ int RsServer::StartupRetroShare()
 	mLinkMgr->addMonitor(serviceCtrl);
 	mLinkMgr->addMonitor(serviceInfo);
 
-	// NOTE these were added in ftServer (was added twice).
-	//mLinkMgr->addMonitor(mCacheStrapper);
-	//mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
-
 	// Services that have been changed to pqiServiceMonitor
 	serviceCtrl->registerServiceMonitor(msgSrv, msgSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
@@ -1678,12 +1674,6 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "(2) Load configuration files" << std::endl;
 
-	/* NOTE: CacheStrapper's load causes Cache Files to be
-	 * loaded into all the CacheStores/Sources. This happens
-	 * after all the other configurations have happened.
-	 */
-
-	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->loadConfiguration();
 
 	/**************************************************************************/

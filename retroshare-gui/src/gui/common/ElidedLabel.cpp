@@ -52,7 +52,9 @@ ElidedLabel::ElidedLabel(const QString &text, QWidget *parent)
   , mElided(false)
   , mOnlyPlainText(false)
   , mContent(text)
+  , mTextColor(QColor())
 {
+	setStyleSheet("background-color: rgba(0,0,0,0%)");
 	mRectElision = QRect();
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
@@ -62,7 +64,9 @@ ElidedLabel::ElidedLabel(QWidget *parent)
   , mElided(false)
   , mOnlyPlainText(false)
   , mContent("")
+  , mTextColor(QColor())
 {
+	setStyleSheet("background-color: rgba(0,0,0,0%)");
 	mRectElision = QRect();
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 }
@@ -94,7 +98,7 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 	QFontMetrics fontMetrics = painter.fontMetrics();
 	QRect cr = contentsRect();
 	cr.adjust(margin(), margin(), -margin(), -margin());
-	
+
 	bool didElide = false;
 	QChar ellipsisChar(0x2026);//= "…"
 	int lineSpacing = fontMetrics.lineSpacing();
@@ -224,4 +228,12 @@ void ElidedLabel::mousePressEvent(QMouseEvent *ev)
 		return; // eat event
 	}
 	QLabel::mousePressEvent(ev);
+}
+
+void ElidedLabel::setTextColor(const QColor &color)
+{
+	QPalette tmpPalette = palette();
+	tmpPalette.setColor(foregroundRole(), color);
+	setPalette(tmpPalette);
+	mTextColor = color;
 }

@@ -353,9 +353,9 @@ SOURCES += libretroshare/gxs/data_service/rsdataservice_test.cc \
 ################################ dbase #####################################
 
 
-SOURCES += libretroshare/dbase/fisavetest.cc \
-	libretroshare/dbase/fitest2.cc \
-	libretroshare/dbase/searchtest.cc \
+#SOURCES += libretroshare/dbase/fisavetest.cc \
+#	libretroshare/dbase/fitest2.cc \
+#	libretroshare/dbase/searchtest.cc \
 
 #	libretroshare/dbase/ficachetest.cc \
 #	libretroshare/dbase/fimontest.cc \

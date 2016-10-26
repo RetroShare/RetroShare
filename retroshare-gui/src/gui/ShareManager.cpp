@@ -148,7 +148,7 @@ void ShareManager::load()
 
 		  GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,(*it).shareflags);
 
-		  listWidget->setRowHeight(row, 32);
+          listWidget->setRowHeight(row, 32 * QFontMetricsF(font()).height()/14.0);
 		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
 		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
@@ -157,7 +157,7 @@ void ShareManager::load()
 		  //connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
     }
 
-	 listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132) ;
+     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
 
     //ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 
@@ -282,6 +282,7 @@ void ShareManager::editShareDirectory()
                 ShareDialog sharedlg (it->filename, this);
                 sharedlg.setWindowTitle(tr("Edit Shared Folder"));
                 sharedlg.exec();
+                load();
                 break;
             }
         }
@@ -318,6 +319,7 @@ void ShareManager::showShareDialog()
 {
     ShareDialog sharedlg ("", this);
     sharedlg.exec();
+    load();
 }
 
 void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -387,4 +389,6 @@ void ShareManager::dropEvent(QDropEvent *event)
 
 	event->setDropAction(Qt::CopyAction);
 	event->accept();
+
+    load();
 }

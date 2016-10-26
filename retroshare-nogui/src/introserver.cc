@@ -290,11 +290,10 @@ int RsIntroServer::checkForNewCerts()
 	mCertCheckTime = now;
         struct stat64 buf;
 
-	while(dirIt.readdir())
+    for(;dirIt.isValid();dirIt.next())
 	{
 		/* check entry type */
-		std::string fname;
-		dirIt.d_name(fname);
+        std::string fname = dirIt.file_name();
 		std::string fullname = mCertLoadPath + "/" + fname;
 #ifdef RSIS_DEBUG
 		std::cerr << "calling stats on " << fullname <<std::endl;

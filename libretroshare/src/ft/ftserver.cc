@@ -31,6 +31,7 @@
 #include "retroshare/rspeers.h"
 const int ftserverzone = 29539;
 
+#include "file_sharing/p3filelists.h"
 #include "ft/ftturtlefiletransferitem.h"
 #include "ft/ftserver.h"
 #include "ft/ftextralist.h"
@@ -42,11 +43,6 @@ const int ftserverzone = 29539;
 #include "turtle/p3turtle.h"
 #include "pqi/p3notify.h"
 #include "rsserver/p3face.h"
-
-
-// Includes CacheStrapper / FiMonitor / FiStore for us.
-
-#include "ft/ftdbase.h"
 
 #include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
@@ -64,15 +60,11 @@ static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priorit
 	/* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
         :       p3Service(),
-	 	mPeerMgr(pm),
-                mServiceCtrl(sc),
-		mCacheStrapper(NULL),
-		mFiStore(NULL), mFiMon(NULL),
+        mPeerMgr(pm), mServiceCtrl(sc),
+        mFileDatabase(NULL),
 		mFtController(NULL), mFtExtra(NULL),
 		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
-	mCacheStrapper = new ftCacheStrapper(sc, getServiceInfo().mServiceType);
-
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
 
@@ -145,33 +137,25 @@ void ftServer::SetupFtServer()
 	mFtDataplex = new ftDataMultiplex(ownId, this, mFtSearch);
 
 	/* make Controller */
-	mFtController = new ftController(mCacheStrapper, mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
+    mFtController = new ftController(mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
 	std::string tmppath = ".";
 	mFtController->setPartialsDirectory(tmppath);
 	mFtController->setDownloadDirectory(tmppath);
 
-
-	/* Make Cache Source/Store */
-	mFiStore = new ftFiStore(mCacheStrapper, mFtController, mPeerMgr, ownId, remotecachedir);
-	mFiMon = new ftFiMonitor(mCacheStrapper,localcachedir, ownId,mConfigPath);
-
-	/* now add the set to the cachestrapper */
-	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
-	mCacheStrapper -> addCachePair(cp);
-
 	/* complete search setup */
-	mFtSearch->addSearchMode(mCacheStrapper, RS_FILE_HINTS_CACHE);
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
-	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
-	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
 	mServiceCtrl->registerServiceMonitor(mFtController, getServiceInfo().mServiceType);
-	mServiceCtrl->registerServiceMonitor(mCacheStrapper, getServiceInfo().mServiceType);
 
 	return;
 }
 
+void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
+{
+    mFileDatabase = fdb ;
+    mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_REMOTE);
+}
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
 	mTurtleRouter = fts ;
@@ -193,7 +177,7 @@ void    ftServer::StartupThreads()
 	/* startup Monitor Thread */
 	/* startup the FileMonitor (after cache load) */
 	/* start it up */
-	mFiMon->start("ft monitor");
+    mFileDatabase->startThreads();
 
 	/* Controller thread */
 	mFtController->start("ft ctrl");
@@ -210,9 +194,6 @@ void ftServer::StopThreads()
 	/* stop Controller thread */
 	mFtController->join();
 
-	/* stop Monitor Thread */
-	mFiMon->join();
-
 	/* self contained threads */
 	/* stop ExtraList Thread */
 	mFtExtra->join();
@@ -223,23 +204,14 @@ void ftServer::StopThreads()
 	delete (mFtController);
 	mFtController = NULL;
 
-	delete (mFiMon);
-	mFiMon = NULL;
-
 	delete (mFtExtra);
 	mFtExtra = NULL;
-}
 
-CacheStrapper *ftServer::getCacheStrapper()
-{
-	return mCacheStrapper;
+    /* stop Monitor Thread */
+    mFileDatabase->stopThreads();
+    delete mFileDatabase;
+    mFileDatabase = NULL ;
 }
-
-CacheTransfer *ftServer::getCacheTransfer()
-{
-	return mFtController;
-}
-
 
 /***************************************************************/
 /********************** RsFiles Interface **********************/
@@ -256,11 +228,6 @@ bool	ftServer::ResumeTransfers()
 	return true;
 }
 
-bool ftServer::checkHash(const RsFileHash& /*hash*/, std::string& /*error_string*/)
-{
-    return true ;
-}
-
 bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data)
 {
     return mFtDataplex->getFileData(hash, offset, requested_size,data);
@@ -268,20 +235,12 @@ bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& re
 
 bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
-	return mFtController->alreadyHaveFile(hash, info);
+    return mFileDatabase->search(hash, RS_FILE_HINTS_LOCAL, info);
 }
 
 bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
 {
-	std::string error_string ;
-
-	if(!checkHash(hash,error_string))
-	{
-        RsServer::notify()->notifyErrorMsg(0,0,"Error handling hash \""+hash.toStdString()+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
-		return false ;
-	}
-
-   std::cerr << "Requesting " << fname << std::endl ;
+    std::cerr << "Requesting " << fname << std::endl ;
 
 	if(!mFtController->FileRequest(fname, hash, size, dest, flags, srcIds))
 		return false ;
@@ -335,14 +294,6 @@ bool ftServer::FileClearCompleted()
 {
 	return mFtController->FileClearCompleted();
 }
-void ftServer::setMinPrioritizedTransfers(uint32_t s)
-{
-	mFtController->setMinPrioritizedTransfers(s) ;
-}
-uint32_t ftServer::getMinPrioritizedTransfers()
-{
-	return mFtController->getMinPrioritizedTransfers() ;
-}
 void ftServer::setQueueSize(uint32_t s)
 {
 	mFtController->setQueueSize(s) ;
@@ -381,7 +332,12 @@ bool ftServer::FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& 
 	return mFtController->getFileDownloadChunksDetails(hash,info);
 }
 
-	/* Directory Handling */
+void ftServer::requestDirUpdate(void *ref)
+{
+    mFileDatabase->requestDirUpdate(ref) ;
+}
+
+    /* Directory Handling */
 void ftServer::setDownloadDirectory(std::string path)
 {
 	mFtController->setDownloadDirectory(path);
@@ -402,16 +358,18 @@ std::string ftServer::getPartialsDirectory()
 	return mFtController->getPartialsDirectory();
 }
 
+/***************************************************************/
+/************************* Other Access ************************/
+/***************************************************************/
 
-	/***************************************************************/
-	/************************* Other Access ************************/
-	/***************************************************************/
+bool ftServer::copyFile(const std::string& source, const std::string& dest)
+{
+    return mFtController->copyFile(source, dest);
+}
 
 void ftServer::FileDownloads(std::list<RsFileHash> &hashs)
 {
     mFtController->FileDownloads(hashs);
-	/* this only contains downloads.... not completed */
-	//return mFtDataplex->FileDownloads(hashs);
 }
 
 bool ftServer::FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& cmap)
@@ -438,7 +396,7 @@ bool ftServer::FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, Fi
 			// file, we skip the call to fileDetails() for efficiency reasons.
 			//
 			FileInfo info2 ;
-			if( (!(info.transfer_info_flags & RS_FILE_REQ_CACHE)) && mFtController->FileDetails(hash, info2))
+            if(mFtController->FileDetails(hash, info2))
 				info.fname = info2.fname ;
 
 			return true ;
@@ -539,12 +497,11 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 	return res ;
 }
 
-	/***************************************************************/
-	/******************* ExtraFileList Access **********************/
-	/***************************************************************/
+/***************************************************************/
+/******************* ExtraFileList Access **********************/
+/***************************************************************/
 
-bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size,
-						uint32_t period, TransferRequestFlags flags)
+bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags)
 {
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
@@ -564,161 +521,87 @@ bool ftServer::ExtraFileStatus(std::string localpath, FileInfo &info)
 	return mFtExtra->hashExtraFileDone(localpath, info);
 }
 
-bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size,
-                                std::string destpath)
+bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath)
 {
 	return mFtExtra->moveExtraFile(fname, hash, size, destpath);
 }
 
-
-	/***************************************************************/
-	/******************** Directory Listing ************************/
-	/***************************************************************/
+/***************************************************************/
+/******************** Directory Listing ************************/
+/***************************************************************/
 
 int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)
 {
-#ifdef SERVER_DEBUG
-	std::cerr << "ftServer::RequestDirDetails(uid:" << uid;
-	std::cerr << ", path:" << path << ", ...) -> mFiStore";
-	std::cerr << std::endl;
-
-	if (!mFiStore)
-	{
-		std::cerr << "mFiStore not SET yet = FAIL";
-		std::cerr << std::endl;
-	}
-#endif
-	if(uid == mServiceCtrl->getOwnId())
-		return mFiMon->RequestDirDetails(path, details);
-	else
-		return mFiStore->RequestDirDetails(uid, path, details);
+    return mFileDatabase->RequestDirDetails(uid, path, details);
 }
 
+bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags)
+{
+    return mFileDatabase->findChildPointer(ref,row,result,flags) ;
+}
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
-#ifdef SERVER_DEBUG
-	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
-	std::cerr << ", flags:" << flags << ", ...) -> mFiStore";
-	std::cerr << std::endl;
-
-	if (!mFiStore)
-	{
-		std::cerr << "mFiStore not SET yet = FAIL";
-		std::cerr << std::endl;
-	}
-
-#endif
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->RequestDirDetails(ref, details, flags);
-	else
-		return mFiStore->RequestDirDetails(ref, details, flags);
+    return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
-uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
+uint32_t ftServer::getType(void *ref, FileSearchFlags /*flags*/)
 {
-#ifdef SERVER_DEBUG
-	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
-	std::cerr << ", flags:" << flags << ", ...) -> mFiStore";
-	std::cerr << std::endl;
-
-	if (!mFiStore)
-	{
-		std::cerr << "mFiStore not SET yet = FAIL";
-		std::cerr << std::endl;
-	}
-
-#endif
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->getType(ref);
-	else
-		return mFiStore->getType(ref);
+    return mFileDatabase->getType(ref) ;
 }
-	/***************************************************************/
-	/******************** Search Interface *************************/
-	/***************************************************************/
-
+/***************************************************************/
+/******************** Search Interface *************************/
+/***************************************************************/
 
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags)
 {
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchKeywords(keywords, results,flags,RsPeerId());
-	else
-		return mFiStore->SearchKeywords(keywords, results,flags);
-	return 0 ;
+    return mFileDatabase->SearchKeywords(keywords, results,flags,RsPeerId());
 }
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
-#ifdef SERVER_DEBUG
-	std::cerr << "ftServer::SearchKeywords()";
-	std::cerr << std::endl;
-
-	if (!mFiStore)
-	{
-		std::cerr << "mFiStore not SET yet = FAIL";
-		std::cerr << std::endl;
-	}
-
-#endif
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchKeywords(keywords, results,flags,peer_id);
-	else
-		return mFiStore->SearchKeywords(keywords, results,flags);
+    return mFileDatabase->SearchKeywords(keywords, results,flags,peer_id);
 }
 
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
+int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
 {
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchBoolExp(exp,results,flags,RsPeerId()) ;
-	else
-		return mFiStore->searchBoolExp(exp, results);
-	return 0 ;
+    return mFileDatabase->SearchBoolExp(exp, results,flags,RsPeerId());
 }
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
+int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
-	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchBoolExp(exp,results,flags,peer_id) ;
-	else
-		return mFiStore->searchBoolExp(exp, results);
+    return mFileDatabase->SearchBoolExp(exp,results,flags,peer_id) ;
 }
-
 
 	/***************************************************************/
 	/*************** Local Shared Dir Interface ********************/
 	/***************************************************************/
 
-bool    ftServer::ConvertSharedFilePath(std::string path, std::string &fullpath)
+bool ftServer::ConvertSharedFilePath(std::string path, std::string &fullpath)
 {
-	return mFiMon->convertSharedFilePath(path, fullpath);
+    return mFileDatabase->convertSharedFilePath(path, fullpath);
 }
 
 void    ftServer::updateSinceGroupPermissionsChanged()
 {
-	mFiMon->forceDirListsRebuildAndSend();
+    mFileDatabase->forceSyncWithPeers();
 }
 void    ftServer::ForceDirectoryCheck()
 {
-	mFiMon->forceDirectoryCheck();
+    mFileDatabase->forceDirectoryCheck();
 	return;
 }
 
 bool    ftServer::InDirectoryCheck()
 {
-	return mFiMon->inDirectoryCheck();
-}
-
-bool ftServer::copyFile(const std::string& source, const std::string& dest)
-{
-	return mFtController->copyFile(source, dest);
+    return mFileDatabase->inDirectoryCheck();
 }
 
 bool	ftServer::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
-	mFiMon->getSharedDirectories(dirs);
+    mFileDatabase->getSharedDirectories(dirs);
 	return true;
 }
 
 bool	ftServer::setSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
-	mFiMon->setSharedDirectories(dirs);
+    mFileDatabase->setSharedDirectories(dirs);
 	return true;
 }
 
@@ -728,7 +611,7 @@ bool 	ftServer::addSharedDirectory(const SharedDirInfo& dir)
 	_dir.filename = RsDirUtil::convertPathToUnix(_dir.filename);
 
 	std::list<SharedDirInfo> dirList;
-	mFiMon->getSharedDirectories(dirList);
+    mFileDatabase->getSharedDirectories(dirList);
 
 	// check that the directory is not already in the list.
 	for(std::list<SharedDirInfo>::const_iterator it(dirList.begin());it!=dirList.end();++it)
@@ -738,13 +621,13 @@ bool 	ftServer::addSharedDirectory(const SharedDirInfo& dir)
 	// ok then, add the shared directory.
 	dirList.push_back(_dir);
 
-	mFiMon->setSharedDirectories(dirList);
+    mFileDatabase->setSharedDirectories(dirList);
 	return true;
 }
 
 bool ftServer::updateShareFlags(const SharedDirInfo& info)
 {
-	mFiMon->updateShareFlags(info);
+    mFileDatabase->updateShareFlags(info);
 
 	return true ;
 }
@@ -761,7 +644,7 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	std::cerr << std::endl;
 #endif
 
-	mFiMon->getSharedDirectories(dirList);
+    mFileDatabase->getSharedDirectories(dirList);
 
 #ifdef SERVER_DEBUG
 	for(it = dirList.begin(); it != dirList.end(); ++it)
@@ -776,12 +659,7 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	if(it == dirList.end())
 	{
-#ifdef SERVER_DEBUG
-		std::cerr << "ftServer::removeSharedDirectory()";
-		std::cerr << " Cannot Find Directory... Fail";
-		std::cerr << std::endl;
-#endif
-
+        std::cerr << "(EE) ftServer::removeSharedDirectory(): Cannot Find Directory... Fail" << std::endl;
 		return false;
 	}
 
@@ -793,44 +671,20 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 #endif
 
 	dirList.erase(it);
-	mFiMon->setSharedDirectories(dirList);
+    mFileDatabase->setSharedDirectories(dirList);
 
 	return true;
 }
-void	ftServer::setWatchPeriod(int minutes) 
-{
-	mFiMon->setWatchPeriod(minutes*60) ;
-}
-int ftServer::watchPeriod() const
-{
-	return mFiMon->watchPeriod()/60 ;
-}
+bool     ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
+int      ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
 
-void	ftServer::setRememberHashFiles(bool b) 
-{
-	mFiMon->setRememberHashCache(b) ;
-}
-bool ftServer::rememberHashFiles() const
-{
-	return mFiMon->rememberHashCache() ;
-}
-void	ftServer::setRememberHashFilesDuration(uint32_t days) 
-{
-	mFiMon->setRememberHashCacheDuration(days) ;
-}
-uint32_t ftServer::rememberHashFilesDuration() const 
-{
-	return mFiMon->rememberHashCacheDuration() ;
-}
-void   ftServer::clearHashCache() 
-{
-	mFiMon->clearHashCache() ;
-}
+void ftServer::setWatchEnabled(bool b)                      { mFileDatabase->setWatchEnabled(b) ; }
+void ftServer::setWatchPeriod(int minutes)                  { mFileDatabase->setWatchPeriod(minutes*60) ; }
 
 bool ftServer::getShareDownloadDirectory()
 {
 	std::list<SharedDirInfo> dirList;
-	mFiMon->getSharedDirectories(dirList);
+    mFileDatabase->getSharedDirectories(dirList);
 
 	std::string dir = mFtController->getDownloadDirectory();
 
@@ -844,7 +698,8 @@ bool ftServer::getShareDownloadDirectory()
 
 bool ftServer::shareDownloadDirectory(bool share)
 {
-	if (share) {
+    if (share)
+    {
 		/* Share */
 		SharedDirInfo inf ;
 		inf.filename = mFtController->getDownloadDirectory();
@@ -852,48 +707,22 @@ bool ftServer::shareDownloadDirectory(bool share)
 
 		return addSharedDirectory(inf);
 	}
-
-	/* Unshare */
-	std::string dir = mFtController->getDownloadDirectory();
-	return removeSharedDirectory(dir);
+    else
+    {
+        /* Unshare */
+        std::string dir = mFtController->getDownloadDirectory();
+        return removeSharedDirectory(dir);
+    }
 }
 
 	/***************************************************************/
 	/****************** End of RsFiles Interface *******************/
 	/***************************************************************/
 
-
-	/***************************************************************/
-	/**************** Config Interface *****************************/
-	/***************************************************************/
-
-/* Key Functions to be overloaded for Full Configuration */
-RsSerialiser *ftServer::setupSerialiser()
-{
-	RsSerialiser *rss = new RsSerialiser ;
-	rss->addSerialType(new RsFileTransferSerialiser) ;
-
-	//rss->addSerialType(new RsGeneralConfigSerialiser());
-
-	return rss ;
-}
-
-bool ftServer::saveList(bool &/*cleanup*/, std::list<RsItem *>& /*list*/)
-{
-
-	return true;
-}
-
-bool    ftServer::loadList(std::list<RsItem *>& /*load*/)
-{
-	return true;
-}
-
-bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
-{
-	return true;
-}
-
+//bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
+//{
+//	return true;
+//}
 
 	/***************************************************************/
 	/**********************     Data Flow     **********************/
@@ -1257,9 +1086,6 @@ int	ftServer::tick()
 	if(handleIncoming())
 		moreToTick = true;	
 
-	if(handleCacheData())
-		moreToTick = true;	
-
 	static time_t last_law_priority_tasks_handling_time = 0 ;
 	time_t now = time(NULL) ;
 
@@ -1273,45 +1099,6 @@ int	ftServer::tick()
 	}
 
 	return moreToTick;
-}
-
-bool ftServer::handleCacheData()
-{
-	std::list<std::pair<RsPeerId, RsCacheData> > cacheUpdates;
-	std::list<std::pair<RsPeerId, RsCacheData> >::iterator it;
-	int i=0 ;
-
-#ifdef SERVER_DEBUG_CACHE
-	std::cerr << "handleCacheData() " << std::endl;
-#endif
-	mCacheStrapper->getCacheUpdates(cacheUpdates);
-	for(it = cacheUpdates.begin(); it != cacheUpdates.end(); ++it)
-	{
-		/* construct reply */
-		RsFileTransferCacheItem *ci = new RsFileTransferCacheItem();
-
-		/* id from incoming */
-		ci -> PeerId(it->first);
-
-		ci -> file.hash = (it->second).hash;
-		ci -> file.name = (it->second).name;
-		ci -> file.path = ""; // (it->second).path;
-		ci -> file.filesize = (it->second).size;
-		ci -> cacheType  = (it->second).cid.type;
-		ci -> cacheSubId =  (it->second).cid.subid;
-
-#ifdef SERVER_DEBUG_CACHE
-		std::string out2 = "Outgoing CacheStrapper Update -> RsCacheItem:\n";
-		ci -> print_string(out2);
-		std::cerr << out2 << std::endl;
-#endif
-
-		sendItem(ci);
-
-		i++;
-	}
-
-	return i>0 ;
 }
 
 int ftServer::handleIncoming()
@@ -1411,42 +1198,6 @@ int ftServer::handleIncoming()
 					}
 				}
 				break ;
-
-			case RS_PKT_SUBTYPE_FT_CACHE_ITEM:
-				{
-					RsFileTransferCacheItem *ci = dynamic_cast<RsFileTransferCacheItem*>(item) ;
-					if (ci)
-					{
-#ifdef SERVER_DEBUG_CACHE
-						std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::endl;
-#endif
-						/* these go to the CacheStrapper! */
-						RsCacheData data;
-						data.pid = ci->PeerId();
-						data.cid = CacheId(ci->cacheType, ci->cacheSubId);
-						data.path = ci->file.path;
-						data.name = ci->file.name;
-						data.hash = ci->file.hash;
-						data.size = ci->file.filesize;
-						data.recvd = time(NULL) ;
-
-						mCacheStrapper->recvCacheResponse(data, time(NULL));
-					}
-				}
-				break ;
-
-//			case RS_PKT_SUBTYPE_FT_CACHE_REQUEST:
-//				{
-//					// do nothing
-//					RsFileTransferCacheRequestItem *cr = dynamic_cast<RsFileTransferCacheRequestItem*>(item) ;
-//					if (cr)
-//					{
-//#ifdef SERVER_DEBUG_CACHE
-//						std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::endl;
-//#endif
-//					}
-//				}
-//				break ;
 		}
 
 		delete item ;
@@ -1465,7 +1216,7 @@ int ftServer::handleIncoming()
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 {
 	/* add all the subbits to config mgr */
-	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
+    cfgmgr->addConfiguration("ft_database.cfg", mFileDatabase);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
 

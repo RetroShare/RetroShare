@@ -53,6 +53,7 @@ class ElidedLabel : public QLabel
 	Q_PROPERTY(QString text READ text WRITE setText)
 	Q_PROPERTY(bool isElided READ isElided)
 	Q_PROPERTY(bool isOnlyPlainText READ isOnlyPlainText WRITE setOnlyPlainText)
+	Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor)
 
 public:
 	ElidedLabel(const QString &text, QWidget *parent = 0);
@@ -61,6 +62,9 @@ public:
 	const QString & text() const { return mContent; }
 	bool isElided() const { return mElided; }
 	bool isOnlyPlainText() const { return mOnlyPlainText; }
+
+	QColor textColor() const { return mTextColor; }
+	void setTextColor(const QColor &color);
 
 public slots:
 	void setText(const QString &text);
@@ -79,6 +83,7 @@ private:
 	bool mOnlyPlainText;
 	QString mContent;
 	QRect mRectElision;
+	QColor mTextColor;
 };
 
 #endif // ELIDEDLABEL_H

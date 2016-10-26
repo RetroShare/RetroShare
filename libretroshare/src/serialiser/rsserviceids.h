@@ -49,6 +49,7 @@ const uint16_t RS_SERVICE_TYPE_TUNNEL         = 0x0015;
 const uint16_t RS_SERVICE_TYPE_HEARTBEAT      = 0x0016;
 const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER  = 0x0017;
 const uint16_t RS_SERVICE_TYPE_GROUTER        = 0x0018;
+const uint16_t RS_SERVICE_TYPE_FILE_DATABASE  = 0x0019;
 
 const uint16_t RS_SERVICE_TYPE_SERVICEINFO    = 0x0020;
 /* Bandwidth Control */

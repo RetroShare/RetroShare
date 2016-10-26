@@ -35,8 +35,8 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 {
 	_layout = new QHBoxLayout(this) ;
 
-	setMinimumSize(128,32) ;
-	setMaximumSize(128,32) ;
+    setMinimumSize(128 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0) ;
+    setMaximumSize(128 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0) ;
 	setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
 	_icons[INDEX_GROUP_BROWSABLE] = new QIcon(FLAGS_GROUP_BROWSABLE_ICON) ;
@@ -58,7 +58,7 @@ GroupFlagsWidget::GroupFlagsWidget(QWidget *parent,FileStorageFlags flags)
 		_buttons[i] = new QPushButton(this) ;
 		_buttons[i]->setCheckable(true) ;
 		_buttons[i]->setChecked(flags & _flags[i]) ;
-		_buttons[i]->setIconSize(QSize(32,32));
+        _buttons[i]->setIconSize(QSize(32 * QFontMetricsF(font()).height()/14.0,32 * QFontMetricsF(font()).height()/14.0));
 		update_button_state(_buttons[i]->isChecked(),i) ;
 		_layout->addWidget(_buttons[i]) ;
 	}

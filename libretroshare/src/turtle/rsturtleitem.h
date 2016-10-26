@@ -102,7 +102,7 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 		RsTurtleRegExpSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST) {} 
 		RsTurtleRegExpSearchRequestItem(void *data,uint32_t size) ;
 
-		LinearizedExpression expr ;	// Reg Exp in linearised mode
+        RsRegularExpression::LinearizedExpression expr ;	// Reg Exp in linearised mode
 
 		virtual RsTurtleSearchRequestItem *clone() const { return new RsTurtleRegExpSearchRequestItem(*this) ; }
 		virtual void performLocalSearch(std::list<TurtleFileInfo>&) const ;

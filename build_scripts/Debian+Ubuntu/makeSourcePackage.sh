@@ -20,6 +20,12 @@ dist=""
 # This is the key for "Cyril Soler <csoler@sourceforge.net>"
 gpgkey="0932399B"
 
+date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1 | sed -e s/-//g`
+time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
+hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
+
+rev=${date}.${hhsh}
+
 while [ ${#} -gt 0 ]; do
     case ${1} in
         "-rev") shift
@@ -53,12 +59,6 @@ fi
 echo Attempting to get revision number...
 ccount=`git rev-list --count --all`
 ccount=`expr $ccount + 8613 - 8267`
-
-date=`git log --pretty=format:"%ai" | head -1 | cut -d\  -f1 | sed -e s/-//g`
-time=`git log --pretty=format:"%aD" | head -1 | cut -d\  -f5 | sed -e s/://g`
-hhsh=`git log --pretty=format:"%H" | head -1 | cut -c1-8`
-
-rev=${date}.${hhsh}
 
 echo "  "Using PGP key id   : ${gpgkey}
 echo "  "Using distributions: ${dist}
@@ -137,7 +137,8 @@ for i in ${dist}; do
         cp ../control.xenial debian/control
     elif test "${i}" = "stretch" ; then
         cp ../control.${i} debian/control
-        cp ../rules.${i} debian/rules
+    elif test "${i}" = "jessie" ; then
+        cp ../control.${i} debian/control
     else
         cp ../debian/control debian/control
     fi
