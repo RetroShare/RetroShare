@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <openssl/crypto.h>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
 
 #include <iostream>
 #include <stdlib.h>
@@ -38,6 +40,8 @@
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}
 
+//#define DEBUG_CHACHA20
+
 namespace librs {
 namespace crypto {
 
@@ -47,9 +51,9 @@ namespace crypto {
  */
 struct uint256_32
 {
-    uint64_t b[8] ;
+    uint32_t b[8] ;
 
-    uint256_32() { memset(&b[0],0,8*sizeof(uint64_t)) ; }
+    uint256_32() { memset(&b[0],0,8*sizeof(uint32_t)) ; }
 
     uint256_32(uint32_t b7,uint32_t b6,uint32_t b5,uint32_t b4,uint32_t b3,uint32_t b2,uint32_t b1,uint32_t b0)
     {
@@ -87,33 +91,26 @@ struct uint256_32
     //
     void operator +=(const uint256_32& u)
     {
-        b[0] += u.b[0];
-        b[1] += u.b[1] + (b[0]>>32);
-        b[2] += u.b[2] + (b[1]>>32);
-        b[3] += u.b[3] + (b[2]>>32);
-        b[4] += u.b[4] + (b[3]>>32);
-        b[5] += u.b[5] + (b[4]>>32);
-        b[6] += u.b[6] + (b[5]>>32);
-        b[7] += u.b[7] + (b[6]>>32);
+        uint64_t v(0) ;
 
-        b[0] = (uint32_t) b[0];
-        b[1] = (uint32_t) b[1];
-        b[2] = (uint32_t) b[2];
-        b[3] = (uint32_t) b[3];
-        b[4] = (uint32_t) b[4];
-        b[5] = (uint32_t) b[5];
-        b[6] = (uint32_t) b[6];
-        b[7] = (uint32_t) b[7];
+        v += (uint64_t)b[0] + (uint64_t)u.b[0] ; b[0] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[1] + (uint64_t)u.b[1] ; b[1] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[2] + (uint64_t)u.b[2] ; b[2] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[3] + (uint64_t)u.b[3] ; b[3] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[4] + (uint64_t)u.b[4] ; b[4] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[5] + (uint64_t)u.b[5] ; b[5] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[6] + (uint64_t)u.b[6] ; b[6] = (uint32_t)v ; v >>= 32;
+        v += (uint64_t)b[7] + (uint64_t)u.b[7] ; b[7] = (uint32_t)v ;
     }
     void operator -=(const uint256_32& u)
     {
         *this += ~u ;
-        ++(*this) ;
+        ++*this ;
     }
     void operator++()
     {
         for(int i=0;i<8;++i)
-            if( (++b[i]) &= 0xffffffff)
+            if( ++b[i] )
                 break ;
     }
 
@@ -132,14 +129,14 @@ struct uint256_32
     {
         uint256_32 r(*this) ;
 
-        r.b[0] = (~b[0]) & 0xffffffff ;
-        r.b[1] = (~b[1]) & 0xffffffff ;
-        r.b[2] = (~b[2]) & 0xffffffff ;
-        r.b[3] = (~b[3]) & 0xffffffff ;
-        r.b[4] = (~b[4]) & 0xffffffff ;
-        r.b[5] = (~b[5]) & 0xffffffff ;
-        r.b[6] = (~b[6]) & 0xffffffff ;
-        r.b[7] = (~b[7]) & 0xffffffff ;
+        r.b[0] = ~b[0] ;
+        r.b[1] = ~b[1] ;
+        r.b[2] = ~b[2] ;
+        r.b[3] = ~b[3] ;
+        r.b[4] = ~b[4] ;
+        r.b[5] = ~b[5] ;
+        r.b[6] = ~b[6] ;
+        r.b[7] = ~b[7] ;
 
         return r ;
     }
@@ -161,7 +158,7 @@ struct uint256_32
             for(int j=0;j<8;++j)
                 if(i+j < 8)
                 {
-                    uint64_t s = u.b[j]*b[i] ;
+                    uint64_t s = (uint64_t)u.b[j]*(uint64_t)b[i] ;
 
                     uint256_32 partial ;
                     partial.b[i+j] = (s & 0xffffffff) ;
@@ -172,17 +169,6 @@ struct uint256_32
                     r += partial;
                 }
         *this = r;
-
-#ifdef DEBUG_CHACHA20
-        if(!(!(b[0] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[1] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[2] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[3] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[4] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[5] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[6] & 0xffffffff00000000))) throw() ;
-        if(!(!(b[7] & 0xffffffff00000000))) throw() ;
-#endif
     }
 
     static void print(const uint256_32& s)
@@ -217,7 +203,7 @@ struct uint256_32
 
         if(p > 0)
             for(int i=7;i>=0;--i)
-                b[i] = (i>=p)?b[i-p]:0 ;
+                b[i] = (i>=(int)p)?b[i-p]:0 ;
 
         uint32_t r = 0 ;
 
@@ -235,14 +221,14 @@ struct uint256_32
         uint32_t r ;
         uint32_t r1 ;
 
-        r1 = (b[0] >> 31) ; b[0] = (b[0] << 1) & 0xffffffff;             r = r1 ;
-        r1 = (b[1] >> 31) ; b[1] = (b[1] << 1) & 0xffffffff; b[1] += r ; r = r1 ;
-        r1 = (b[2] >> 31) ; b[2] = (b[2] << 1) & 0xffffffff; b[2] += r ; r = r1 ;
-        r1 = (b[3] >> 31) ; b[3] = (b[3] << 1) & 0xffffffff; b[3] += r ; r = r1 ;
-        r1 = (b[4] >> 31) ; b[4] = (b[4] << 1) & 0xffffffff; b[4] += r ; r = r1 ;
-        r1 = (b[5] >> 31) ; b[5] = (b[5] << 1) & 0xffffffff; b[5] += r ; r = r1 ;
-        r1 = (b[6] >> 31) ; b[6] = (b[6] << 1) & 0xffffffff; b[6] += r ; r = r1 ;
-                            b[7] = (b[7] << 1) & 0xffffffff; b[7] += r ;
+        r1 = (b[0] >> 31) ; b[0] <<= 1;             r = r1 ;
+        r1 = (b[1] >> 31) ; b[1] <<= 1; b[1] += r ; r = r1 ;
+        r1 = (b[2] >> 31) ; b[2] <<= 1; b[2] += r ; r = r1 ;
+        r1 = (b[3] >> 31) ; b[3] <<= 1; b[3] += r ; r = r1 ;
+        r1 = (b[4] >> 31) ; b[4] <<= 1; b[4] += r ; r = r1 ;
+        r1 = (b[5] >> 31) ; b[5] <<= 1; b[5] += r ; r = r1 ;
+        r1 = (b[6] >> 31) ; b[6] <<= 1; b[6] += r ; r = r1 ;
+                            b[7] <<= 1; b[7] += r ;
     }
     void rshift()
     {
@@ -538,6 +524,37 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
     }
 }
 
+bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uint32_t data_size, uint8_t tag[16], bool encrypt)
+{
+    // encrypt + tag. See RFC7539-2.8
+
+    if(encrypt)
+    {
+       chacha20_encrypt(key,1,nonce,data,data_size);
+
+       uint8_t computed_tag[EVP_MAX_MD_SIZE];
+       unsigned int md_size ;
+       HMAC(EVP_sha256(),key,32,data,data_size,computed_tag,&md_size) ;
+
+       memcpy(tag,computed_tag,16) ;
+
+       return true ;
+    }
+    else
+    {
+       uint8_t computed_tag[EVP_MAX_MD_SIZE];
+       unsigned int md_size ;
+       HMAC(EVP_sha256(),key,32,data,data_size,computed_tag,&md_size) ;
+
+       // decrypt
+
+       chacha20_encrypt(key,1,nonce,data,data_size);
+
+       return constant_time_memory_compare(tag,computed_tag,16) ;
+    }
+}
+
+
 bool perform_tests()
 {
     // RFC7539 - 2.1.1
@@ -647,6 +664,7 @@ bool perform_tests()
 
     { uint256_32 uu(0,0,0,0,0,0,0,0         ) ; ++uu ;  if(!(uu == uint256_32(0,0,0,0,0,0,0,1))) return false ; }
     { uint256_32 uu(0,0,0,0,0,0,0,0xffffffff) ; ++uu ;  if(!(uu == uint256_32(0,0,0,0,0,0,1,0))) return false ; }
+    { uint256_32 uu(0,0,0,0,0,0,0,0) ; uu = ~uu;++uu ;  if(!(uu == uint256_32(0,0,0,0,0,0,0,0))) return false ; }
 
     std::cerr << "  operator++ on 256bits numbers         OK" << std::endl;
 
@@ -684,7 +702,19 @@ bool perform_tests()
 
         if(!(a == a)) return false ;
         if(!(c == a)) return false ;
+
+        uint256_32 vv(0,0,0,0,0,0,0,1) ;
+        vv -= a ;
+        vv += a ;
+
+        if(!(vv == uint256_32(0,0,0,0,0,0,0,1))) return false ;
+
     }
+    uint256_32 vv(0,0,0,0,0,0,0,0) ;
+    uint256_32 ww(0,0,0,0,0,0,0,1) ;
+    vv -= ww ;
+    if(!(vv == ~uint256_32(0,0,0,0,0,0,0,0))) return false;
+
     std::cerr << "  Sums / diffs of 256bits numbers       OK" << std::endl;
 
     // check that (a-b)*(c-d) = ac - bc - ad + bd
@@ -753,7 +783,7 @@ bool perform_tests()
 
         quotient(n1,p1,q1,r1) ;
 #ifdef DEBUG_CHACHA20
-        fprintf(stdout,"result: q=") ; chacha20::uint256_32::print(q1) ; fprintf(stdout," r=") ; chacha20::uint256_32::print(r1) ; fprintf(stdout,"\n") ;
+        fprintf(stdout,"result: q=") ; uint256_32::print(q1) ; fprintf(stdout," r=") ; uint256_32::print(r1) ; fprintf(stdout,"\n") ;
 #endif
 
         uint256_32 res(q1) ;
@@ -1164,16 +1194,22 @@ bool perform_tests()
         uint8_t received_tag[16] ;
 
         {
-            RsScopeTimer s("AEAD") ;
+            RsScopeTimer s("AEAD1") ;
             chacha20_encrypt(key, 1, nonce, ten_megabyte_data,SIZE) ;
 
-            std::cerr << "  Chacha20 encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+            std::cerr << "  Chacha20 encryption speed     : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
         {
-            RsScopeTimer s("AEAD") ;
+            RsScopeTimer s("AEAD2") ;
             AEAD_chacha20_poly1305(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
-            std::cerr << "  AEAD encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+            std::cerr << "  AEAD/poly1305 encryption speed: " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
+        }
+        {
+            RsScopeTimer s("AEAD3") ;
+            AEAD_chacha20_sha256(key,nonce,ten_megabyte_data,SIZE,received_tag,true) ;
+
+            std::cerr << "  AEAD/sha256 encryption speed  : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }
 
         free(ten_megabyte_data) ;

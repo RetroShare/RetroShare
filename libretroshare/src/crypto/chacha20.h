@@ -59,9 +59,11 @@ namespace librs
          * 			16-padded AAD (additional authenticated data) and its size, authenticated using poly1305.
          *
          * \param key			key that is used to derive a one time secret key for poly1305 and that is also used to encrypt the data
-         * \param nonce			nonce. *Should be unique* in order to make the poly1305 key unique.
-         * \param data			data that is encrypted.
+         * \param nonce			nonce. *Should be unique* in order to make the chacha20 stream cipher unique.
+         * \param data			data that is encrypted/decrypted in place.
          * \param size			size of the data
+         * \param aad           additional authenticated data. Can be used to authenticate the nonce.
+         * \param aad_size
          * \param tag			generated poly1305 tag.
          * \param encrypt		true to encrypt, false to decrypt and check the tag.
          * \return
@@ -70,6 +72,22 @@ namespace librs
          */
         bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt_or_decrypt) ;
 
+        /*!
+         * \brief AEAD_chacha20_sha256
+         * 			 Provides authenticated encryption using a simple construction that associates chacha20 encryption with HMAC authentication using
+         *          the same 32 bytes key. The authenticated tag is the 16 first bytes of the sha256 HMAC.
+         *
+         * \param key           encryption/authentication key
+         * \param nonce         nonce. *Should be unique* in order to make chacha20 stream cipher unique.
+         * \param data          data that is encrypted/decrypted in place
+         * \param data_size     size of data to encrypt/authenticate
+         * \param tag           16 bytes authentication tag result
+         * \param encrypt		true to encrypt, false to decrypt and check the tag.
+         * \return
+         * 			always true for encryption.
+         * 			authentication result for decryption. data is *always* xored to the cipher stream whatever the authentication result is.
+         */
+        bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t tag[16],bool encrypt);
         /*!
          * \brief constant_time_memcmp
          * 			Provides a constant time comparison of two memory chunks. Calls CRYPTO_memcmp.
