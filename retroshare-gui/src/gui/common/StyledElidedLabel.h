@@ -34,6 +34,9 @@ public:
 	StyledElidedLabel(const QString &text, QWidget *parent = NULL);
 
 	void setFontSizeFactor(int factor);
+
+private:
+	int _lastFactor;
 };
 
 #endif
