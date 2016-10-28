@@ -243,15 +243,16 @@
 // A small value for MAX_REQLIST_SIZE is likely to help messages to propagate in a chaotic network, but will also slow them down.
 // A small SYNC_PERIOD fasten message propagation, but is likely to overload the server side of transactions (e.g. overload outqueues).
 //
-#define GIXS_CUT_OFF                                         0
-#define SYNC_PERIOD                                         60
-#define MAX_REQLIST_SIZE                                    20  // No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
-#define TRANSAC_TIMEOUT                                   2000  // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
-#define SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE           3600  // force re-update if there happens to be a large delay between our server side TS and the client side TS of friends
-#define REJECTED_MESSAGE_RETRY_DELAY                   24*3600  // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
-#define GROUP_STATS_UPDATE_DELAY                           240  // update unsubscribed group statistics every 3 mins
-#define GROUP_STATS_UPDATE_NB_PEERS                          2  // number of peers to which the group stats are asked
-#define MAX_ALLOWED_GXS_MESSAGE_SIZE                    199000  // 200,000 bytes including signature and headers
+static const uint32_t GIXS_CUT_OFF                            =            0;
+static const uint32_t SYNC_PERIOD                             =           60;
+static const uint32_t MAX_REQLIST_SIZE                        =           20; // No more than 20 items per msg request list => creates smaller transactions that are less likely to be cancelled.
+static const uint32_t TRANSAC_TIMEOUT                         =         2000; // In seconds. Has been increased to avoid epidemic transaction cancelling due to overloaded outqueues.
+static const uint32_t SECURITY_DELAY_TO_FORCE_CLIENT_REUPDATE =         3600; // force re-update if there happens to be a large delay between our server side TS and the client side TS of friends
+static const uint32_t REJECTED_MESSAGE_RETRY_DELAY            =      24*3600; // re-try rejected messages every 24hrs. Most of the time this is because the peer's reputation has changed.
+static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; // update unsubscribed group statistics every 3 mins
+static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
+static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
+static const uint32_t GXS_NET_SERVICE_SYNC_DELAY              =   31*24*3600; // this is the delay after which we do not request messages.
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
@@ -576,15 +577,6 @@ void RsGxsNetService::syncWithPeers()
 
     sit = peers.begin();
 
-    // Jan. 26, 2016. This has been disabled, since GXS has been fixed, groups will not re-ask for data. So even if outqueues are filled up by multiple
-    // attempts of the same request, the transfer will eventually end up. The code for NxsBandwidthRecorder should be kept for a while, 
-    // just in case.
-    
-    // float sending_probability = NxsBandwidthRecorder::computeCurrentSendingProbability() ;
-#ifdef NXS_NET_DEBUG_2
-    std::cerr << "  syncWithPeers(): Sending probability = " << sending_probability << std::endl;
-#endif
-
     // Synchronise group msg for groups which we're subscribed to
     // For each peer and each group, we send to the peer the time stamp of the most
     // recent modification the peer has sent. If the peer has more recent messages he will send them, because its latest 
@@ -594,7 +586,6 @@ void RsGxsNetService::syncWithPeers()
     for(; sit != peers.end(); ++sit)
     {
         const RsPeerId& peerId = *sit;
-
 
         // now see if you have an updateTS so optimise whether you need
         // to get a new list of peer data
@@ -643,7 +634,8 @@ void RsGxsNetService::syncWithPeers()
             msg->clear();
             msg->PeerId(peerId);
             msg->updateTS = updateTS;
-            
+            msg->createdSinceTS = std::max(0,(int)time(NULL) - (int)GXS_NET_SERVICE_SYNC_DELAY);	// compute now minus one month
+
             if(encrypt_to_this_circle_id.isNull()) 
                 msg->grpId = grpId;
             else
@@ -3090,7 +3082,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
                     GixsReputation rep;
                     mReputations->getReputation(grpSyncItem->authorId, rep);
 
-                    if(rep.score >= GIXS_CUT_OFF)
+                    if(rep.score >= (int)GIXS_CUT_OFF)
                     {
                         addGroupItemToList(tr, grpId, transN, reqList);
 #ifdef NXS_NET_DEBUG_0
@@ -4231,52 +4223,59 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
+    {
 	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
-	    {
-		    RsGxsMsgMetaData* m = *vit;
+            if(item->createdSinceTS < (*vit)->mPublishTs)
+            {
+                RsGxsMsgMetaData* m = *vit;
 
-		    RsNxsSyncMsgItem* mItem = new RsNxsSyncMsgItem(mServType);
-		    mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
-		    mItem->grpId = m->mGroupId;
-		    mItem->msgId = m->mMsgId;
-		    mItem->authorId = m->mAuthorId;
-		    mItem->PeerId(peer);
-		    mItem->transactionNumber = transN;
+                RsNxsSyncMsgItem* mItem = new RsNxsSyncMsgItem(mServType);
+                mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+                mItem->grpId = m->mGroupId;
+                mItem->msgId = m->mMsgId;
+                mItem->authorId = m->mAuthorId;
+                mItem->PeerId(peer);
+                mItem->transactionNumber = transN;
 
-		    if(!should_encrypt_to_this_circle_id.isNull())
-		    {
+                if(!should_encrypt_to_this_circle_id.isNull())
+                {
 #ifdef NXS_NET_DEBUG_7
-			    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << ". Transaction will be encrypted for group " << should_encrypt_to_this_circle_id << std::endl;
+                    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << ". Transaction will be encrypted for group " << should_encrypt_to_this_circle_id << std::endl;
 #endif
-			    RsNxsItem *encrypted_item = NULL ;
-			    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
+                    RsNxsItem *encrypted_item = NULL ;
+                    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
 
-			    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId,m->mGroupId, encrypted_item,status))
-			    {
-				    itemL.push_back(encrypted_item) ;
-				    delete mItem ;
-			    }
-			    else
-			    {
-				    // Something's not ready (probably the circle content. We could put on a vetting list, but actually the client will re-ask the list asap. 
+                    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId,m->mGroupId, encrypted_item,status))
+                    {
+                        itemL.push_back(encrypted_item) ;
+                        delete mItem ;
+                    }
+                    else
+                    {
+                        // Something's not ready (probably the circle content. We could put on a vetting list, but actually the client will re-ask the list asap.
 
-				    std::cerr << "  (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << ". Dropping the whole list." << std::endl;
+                        std::cerr << "  (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << ". Dropping the whole list." << std::endl;
 
-				    for(std::list<RsNxsItem*>::const_iterator it(itemL.begin());it!=itemL.end();++it)
-					    delete *it ;
+                        for(std::list<RsNxsItem*>::const_iterator it(itemL.begin());it!=itemL.end();++it)
+                            delete *it ;
 
-				    itemL.clear() ;
-				    break ;
-			    }
-		    }
-		    else
-		    {
+                        itemL.clear() ;
+                        break ;
+                    }
+                }
+                else
+                {
 #ifdef NXS_NET_DEBUG_7
-			    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << " in clear." << std::endl;
+                    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << " in clear." << std::endl;
 #endif
-			    itemL.push_back(mItem);
-		    }
-	    }   
+                    itemL.push_back(mItem);
+                }
+            }
+#ifdef NXS_NET_DEBUG_0
+            else
+                GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
+#endif
+    }
 #ifdef NXS_NET_DEBUG_0
     else
 	    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  vetting forbids sending. Nothing will be sent." << itemL.size() << " items." << std::endl;

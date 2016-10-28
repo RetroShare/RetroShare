@@ -363,7 +363,7 @@ public:
 
     RsGxsGroupId grpId;
     uint8_t flag;
-    uint32_t createdSince;
+    uint32_t createdSinceTS;
     uint32_t updateTS; // time of last update
     std::string syncHash;
 };

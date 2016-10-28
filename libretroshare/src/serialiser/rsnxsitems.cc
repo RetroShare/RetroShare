@@ -371,7 +371,7 @@ bool RsNxsSyncMsgReqItem::serialise(void *data, uint32_t& size) const
 
     ok &= setRawUInt32(data, size, &offset, transactionNumber);
     ok &= setRawUInt8(data, size, &offset, flag);
-    ok &= setRawUInt32(data, size, &offset, createdSince);
+    ok &= setRawUInt32(data, size, &offset, createdSinceTS);
     ok &= SetTlvString(data, size, &offset, TLV_TYPE_STR_HASH_SHA1, syncHash);
     ok &= grpId.serialise(data, size, offset);
     ok &= setRawUInt32(data, size, &offset, updateTS);
@@ -779,7 +779,7 @@ RsNxsSyncMsgReqItem* RsNxsSerialiser::deserialNxsSyncMsgReqItem(void *data, uint
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    ok &= getRawUInt32(data, *size, &offset, &(item->createdSince));
+    ok &= getRawUInt32(data, *size, &offset, &(item->createdSinceTS));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
     ok &= item->grpId.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &(item->updateTS));
@@ -1099,7 +1099,7 @@ void RsNxsSyncMsgReqItem::clear()
 {
     grpId.clear();
     flag = 0;
-    createdSince = 0;
+    createdSinceTS = 0;
     syncHash.clear();
     updateTS = 0;
 }
@@ -1181,7 +1181,7 @@ std::ostream& RsNxsSyncMsgReqItem::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "GrpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    out << "createdSince: " << createdSince << std::endl;
+    out << "createdSince: " << createdSinceTS << std::endl;
     printIndent(out , int_Indent);
     out << "syncHash: " << syncHash << std::endl;
     printIndent(out , int_Indent);
