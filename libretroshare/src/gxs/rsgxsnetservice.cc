@@ -1350,8 +1350,8 @@ class StoreHere
 {
 public:
 
-    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm, RsGxsServerGrpUpdateItem*& sgm)
-            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mServerGrpUpdateItem(sgm)
+    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm, RsGxsNetService::ServerMsgMap& smm,RsGxsNetService::GrpConfigMap& gcm, RsGxsServerGrpUpdateItem*& sgm)
+            : mClientGrpMap(cgm), mClientMsgMap(cmm), mServerMsgMap(smm), mServerGrpUpdateItem(sgm), m
     {}
 
     void operator() (RsItem* item)
@@ -1360,9 +1360,12 @@ public:
         RsGxsGrpUpdateItem* gui;
         RsGxsServerGrpUpdateItem* gsui;
         RsGxsServerMsgUpdateItem* msui;
+        RsGxsGrpConfigItem* mgci;
 
         if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item)) != NULL)
             mClientMsgMap.insert(std::make_pair(mui->peerId, mui));
+        else if((mgci = dynamic_cast<RsGxsGrpConfigItem*>(item)) != NULL)
+            mGrpConfigMap.insert(std::make_pair(mgci->grpId, mgci));
         else if((gui = dynamic_cast<RsGxsGrpUpdateItem*>(item)) != NULL)
             mClientGrpMap.insert(std::make_pair(gui->peerId, gui));
         else if((msui = dynamic_cast<RsGxsServerMsgUpdateItem*>(item)) != NULL)
@@ -1389,6 +1392,8 @@ private:
     RsGxsNetService::ClientGrpMap& mClientGrpMap;
     RsGxsNetService::ClientMsgMap& mClientMsgMap;
     RsGxsNetService::ServerMsgMap& mServerMsgMap;
+    RsGxsNetService::GrpConfigMap& mGrpConfigMap;
+
     RsGxsServerGrpUpdateItem*& mServerGrpUpdateItem;
 
 };
@@ -1443,6 +1448,7 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
     std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap>());
     std::transform(mClientMsgUpdateMap.begin(), mClientMsgUpdateMap.end(), std::back_inserter(save), get_second<ClientMsgMap>());
     std::transform(mServerMsgUpdateMap.begin(), mServerMsgUpdateMap.end(), std::back_inserter(save), get_second<ServerMsgMap>());
+    std::transform(mServerGrpConfigMap.begin(), mServerGrpConfigMap.end(), std::back_inserter(save), get_second<GrpConfigMap>());
 
     save.push_back(mGrpServerUpdateItem);
 

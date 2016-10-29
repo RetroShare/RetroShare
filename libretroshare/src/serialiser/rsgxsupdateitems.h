@@ -38,13 +38,33 @@
 #endif
 
 #include "gxs/rsgxsdata.h"
+#include "serialiser/rstlvidset.h"
 
 
-const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE_deprecated  = 0x0002;
-const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x0003;
-const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x0004;
-const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x0008;
+const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x01;
+const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE_deprecated  = 0x02;
+const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
+const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
+const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
+
+class RsGxsGrpConfigItem : public RsItem {
+public:
+    RsGxsGrpConfigItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
+    virtual ~RsGxsGrpConfigItem() {}
+
+    virtual void clear() {}
+    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out;}
+
+    RsGxsGroupId grpId ;
+    uint32_t     msg_keep_delay ;
+    uint32_t     msg_send_delay ;
+    uint32_t     msg_req_delay ;
+
+    RsTlvPeerIdSet suppliers;
+    uint32_t max_visible_count ;
+    time_t update_TS ;
+};
 
 class RsGxsGrpUpdateItem : public RsItem {
 public:
@@ -129,27 +149,33 @@ private:
 
     /* for RS_PKT_SUBTYPE_GRP_UPDATE_ITEM */
 
-    virtual uint32_t sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item);
-    virtual bool serialiseGxsGrpUpdate(RsGxsGrpUpdateItem *item, void *data, uint32_t *size);
-    virtual RsGxsGrpUpdateItem* deserialGxsGrpUpddate(void *data, uint32_t *size);
+    uint32_t sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item);
+    bool serialiseGxsGrpUpdate(RsGxsGrpUpdateItem *item, void *data, uint32_t *size);
+    RsGxsGrpUpdateItem* deserialGxsGrpUpddate(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_GRP_SERVER_UPDATE_ITEM */
 
-    virtual uint32_t sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item);
-    virtual bool serialiseGxsServerGrpUpdate(RsGxsServerGrpUpdateItem *item, void *data, uint32_t *size);
-    virtual RsGxsServerGrpUpdateItem* deserialGxsServerGrpUpddate(void *data, uint32_t *size);
+    uint32_t sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item);
+    bool serialiseGxsServerGrpUpdate(RsGxsServerGrpUpdateItem *item, void *data, uint32_t *size);
+    RsGxsServerGrpUpdateItem* deserialGxsServerGrpUpddate(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_GXS_MSG_UPDATE_ITEM */
 
-    virtual uint32_t sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item);
-    virtual bool serialiseGxsMsgUpdate(RsGxsMsgUpdateItem *item, void *data, uint32_t *size);
-    virtual RsGxsMsgUpdateItem* deserialGxsMsgUpdate(void *data, uint32_t *size);
+    uint32_t sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item);
+    bool serialiseGxsMsgUpdate(RsGxsMsgUpdateItem *item, void *data, uint32_t *size);
+    RsGxsMsgUpdateItem* deserialGxsMsgUpdate(void *data, uint32_t *size);
 
     /* for RS_PKT_SUBTYPE_GXS_SERVER_UPDATE_ITEM */
 
-    virtual uint32_t sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item);
-    virtual bool serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem *item, void *data, uint32_t *size);
-    virtual RsGxsServerMsgUpdateItem* deserialGxsServerMsgUpdate(void *data, uint32_t *size);
+    uint32_t sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item);
+    bool serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem *item, void *data, uint32_t *size);
+    RsGxsServerMsgUpdateItem* deserialGxsServerMsgUpdate(void *data, uint32_t *size);
+
+    /* for RS_PKT_SUBTYPE_GXS_CONFIG */
+
+    uint32_t sizeGxsGrpConfig(RsGxsGrpConfigItem* item);
+    bool serialiseGxsGrpConfig(RsGxsGrpConfigItem *item, void *data, uint32_t *size);
+    RsGxsGrpConfigItem* deserialGxsGrpConfig(void *data, uint32_t *size);
 
 private:
 

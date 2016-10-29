@@ -545,13 +545,13 @@ public:
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
+    typedef std::map<RsGxsGroupId, RsGxsGrpConfigItem*> GrpConfigMap;
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
     ServerMsgMap mServerMsgUpdateMap;
     ClientGrpMap mClientGrpUpdateMap;
-
-    std::map<RsGxsGroupId,RsGroupNetworkStatsRecord> mGroupNetworkStats ;
+    GrpConfigMap mServerGrpConfigMap;
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
     RsServiceInfo mServiceInfo;
