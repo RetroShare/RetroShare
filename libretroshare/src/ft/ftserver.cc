@@ -250,6 +250,26 @@ bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uin
 	return true ;
 }
 
+bool ftServer::activateTunnels(const RsFileHash& hash,TransferRequestFlags flags,bool onoff)
+{
+    RsFileHash hash_of_hash ;
+
+    encryptHash(hash,hash_of_hash) ;
+    mEncryptedHashes.insert(std::make_pair(hash_of_hash,hash)) ;
+
+    if(onoff)
+    {
+        if(flags & RS_FILE_REQ_ENCRYPTED)   mTurtleRouter->monitorTunnels(hash_of_hash,this,true) ;
+        if(flags & RS_FILE_REQ_UNENCRYPTED) mTurtleRouter->monitorTunnels(hash,this,true) ;
+    }
+    else
+    {
+        mTurtleRouter->stopMonitoringTunnels(hash_of_hash);
+        mTurtleRouter->stopMonitoringTunnels(hash);
+    }
+    return true ;
+}
+
 bool ftServer::setDestinationName(const RsFileHash& hash,const std::string& name)
 {
 	return mFtController->setDestinationName(hash,name);
@@ -462,7 +482,12 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
     FileInfo info ;
     bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info);
 
-#warning need code here => turn H(H) into real hash
+    if(info.transfer_info_flags & RS_FILE_REQ_ENCRYPTED)
+    {
+        std::cerr << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
+        mEncryptedHashes[info.hash] = hash ;
+    }
+#warning needs to tweak for swarming with encrypted FT
     if( (!res) && FileDetails(hash,RS_FILE_HINTS_DOWNLOAD,info))
     {
         // This file is currently being downloaded. Let's look if we already have a chunk or not. If not, no need to
@@ -1188,6 +1213,12 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     if(decrypted_item == NULL)
         return false ;
 
+    return true ;
+}
+
+bool ftServer::encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash)
+{
+    hash_of_hash = RsDirUtil::sha1sum(hash.toByteArray(),hash.SIZE_IN_BYTES);
     return true ;
 }
 

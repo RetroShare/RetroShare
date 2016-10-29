@@ -217,6 +217,8 @@ public:
     /*************** Data Transfer Interface ***********************/
     /***************************************************************/
 public:
+    virtual bool activateTunnels(const RsFileHash& hash,TransferRequestFlags flags,bool onoff);
+
     virtual bool sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
     virtual bool sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
     virtual bool sendChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client) ;
@@ -255,6 +257,7 @@ protected:
 
     // fnds out what is the real hash of encrypted hash hash
     bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
+    bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
 private:
 

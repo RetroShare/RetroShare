@@ -237,6 +237,7 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		ftServer *mFtServer ;
 		p3ServiceControl *mServiceCtrl;
 		uint32_t mFtServiceId;
+        uint32_t mDefaultEncryptionPolicy ;
 
         uint32_t cnt ;
 		RsMutex ctrlMutex;

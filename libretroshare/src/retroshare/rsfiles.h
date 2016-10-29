@@ -43,6 +43,9 @@ const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
 const uint32_t RS_FILE_CTRL_START	 		= 0x00000200;
 const uint32_t RS_FILE_CTRL_FORCE_CHECK	= 0x00000400;
 
+const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT     = 0x00000001 ;
+const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE = 0x00000002 ;
+
 const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
 const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;
 const uint32_t RS_FILE_RATE_STANDARD	 = 0x00000003;
@@ -79,6 +82,7 @@ const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000180 );// OR 
 //
 const TransferRequestFlags RS_FILE_REQ_ANONYMOUS_ROUTING   ( 0x00000040 ); // Use to ask turtle router to download the file.
 const TransferRequestFlags RS_FILE_REQ_ENCRYPTED           ( 0x00000080 ); // Asks for end-to-end encryption of file at the level of ftServer
+const TransferRequestFlags RS_FILE_REQ_UNENCRYPTED         ( 0x00000100 ); // Asks for no end-to-end encryption of file at the level of ftServer
 const TransferRequestFlags RS_FILE_REQ_ASSUME_AVAILABILITY ( 0x00000200 ); // Assume full source availability. Used for cache files.
 const TransferRequestFlags RS_FILE_REQ_CACHE_deprecated    ( 0x00000400 ); // Old stuff used for cache files. Not used anymore.
 const TransferRequestFlags RS_FILE_REQ_EXTRA               ( 0x00000800 );
@@ -86,7 +90,7 @@ const TransferRequestFlags RS_FILE_REQ_MEDIA               ( 0x00001000 );
 const TransferRequestFlags RS_FILE_REQ_BACKGROUND          ( 0x00002000 ); // To download slowly.
 const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// disable searching for potential direct sources.
 
-// const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS 
+// const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS
 // 																	 | RS_FILE_HINTS_NETWORK_WIDE_GROUPS | RS_FILE_HINTS_BROWSABLE_GROUPS ;
 
 /* Callback Codes */
@@ -142,6 +146,8 @@ class RsFiles
 		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
 		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
+        virtual void setDefaultEncryptionPolicy(uint32_t policy)=0 ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
+        virtual uint32_t defaultEncryptionPolicy()=0 ;
 
 		/***
 		 * Control of Downloads Priority.

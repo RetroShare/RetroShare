@@ -94,7 +94,7 @@ ftFileControl::ftFileControl(std::string fname,
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
 	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
 {
-	return;
+    return;
 }
 
 ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
@@ -113,7 +113,8 @@ ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t f
 {
 	_max_active_downloads = 5 ; // default queue size
 	_min_prioritized_transfers = 3 ;
-	/* TODO */
+    mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE;
+    /* TODO */
     cnt = 0 ;
 }
 
@@ -580,7 +581,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mTurtle->monitorTunnels(_queue[pos]->mHash,mFtServer,true) ;
+            mFtServer->activateTunnels(_queue[pos]->mHash,_queue[pos]->mFlags,true);
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
@@ -589,8 +590,8 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mCreator->closeFile() ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->stopMonitoringTunnels(_queue[pos]->mHash) ;
-	}
+            mFtServer->activateTunnels(_queue[pos]->mHash,_queue[pos]->mFlags,false);
+    }
 }
 
 bool ftController::FlagFileComplete(const RsFileHash& hash)
@@ -835,7 +836,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		mDownloads.erase(it);
 
 		if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-			mTurtle->stopMonitoringTunnels(hash_to_suppress) ;
+            mFtServer->activateTunnels(hash_to_suppress,flags,false);
 
 	} /******* UNLOCKED ********/
 
@@ -977,6 +978,17 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	FileInfo info;
 	if(alreadyHaveFile(hash, info))
 		return false ;
+
+    if(mDefaultEncryptionPolicy == RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT)
+    {
+        flags |=  RS_FILE_REQ_ENCRYPTED ;
+        flags &= ~RS_FILE_REQ_UNENCRYPTED ;
+    }
+    else
+    {
+        flags |=  RS_FILE_REQ_ENCRYPTED ;
+        flags |=  RS_FILE_REQ_UNENCRYPTED ;
+    }
 
 	if(size == 0)	// we treat this special case because
 	{
@@ -1174,7 +1186,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
   // We check that flags are consistent.  
   
   	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-        mTurtle->monitorTunnels(hash,mFtServer,true) ;
+        mFtServer->activateTunnels(hash,flags,true);
 
     bool assume_availability = false;
 
@@ -1275,7 +1287,7 @@ bool ftController::setChunkStrategy(const RsFileHash& hash,FileChunksInfo::Chunk
 
 bool 	ftController::FileCancel(const RsFileHash& hash)
 {
-	rsTurtle->stopMonitoringTunnels(hash) ;
+    mFtServer->activateTunnels(hash,TransferRequestFlags(0),false);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileCancel" << std::endl;
@@ -1813,6 +1825,7 @@ const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
+const std::string default_encryption_policy("DEFAULT_ENCRYPTION_POLICY");
 
 
 	/* p3Config Interface */
@@ -2102,7 +2115,26 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		setPartialsDirectory(mit->second);
 	}
 
-	if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
+    if (configMap.end() != (mit = configMap.find(default_encryption_policy)))
+    {
+        if(mit->second == "STRICT")
+        {
+            mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT ;
+            std::cerr << "Note: loading default value for encryption policy: STRICT" << std::endl;
+        }
+        else if(mit->second == "PERMISSIVE")
+        {
+            mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE ;
+            std::cerr << "Note: loading default value for encryption policy: PERMISSIVE" << std::endl;
+        }
+        else
+        {
+            std::cerr << "(EE) encryption policy not recognized: \"" << mit->second << "\"" << std::endl;
+            mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE ;
+        }
+    }
+
+    if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
 	{
 		if(mit->second == "STREAMING")
 		{

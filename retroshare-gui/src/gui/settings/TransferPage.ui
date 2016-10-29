@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>356</height>
+    <width>741</width>
+    <height>372</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -46,6 +46,13 @@
            <widget class="QLabel" name="label_6">
             <property name="text">
              <string>Max. tunnel req. forwarded per second:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>End-to-end encryption:</string>
             </property>
            </widget>
           </item>
@@ -133,6 +140,20 @@
             <property name="value">
              <number>20</number>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="_e2e_encryption_CB">
+            <item>
+             <property name="text">
+              <string>Accepted</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Enforced</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

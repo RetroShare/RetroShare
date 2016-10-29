@@ -53,7 +53,6 @@ class DirectoryStorage
 
         virtual int searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const ;
         virtual int searchBoolExp(RsRegularExpression::Expression * exp, std::list<EntryIndex> &results) const ;
-        virtual int searchHash(const RsFileHash& hash, const RsFileHash &real_hash, EntryIndex &results) const ;
 
         // gets/sets the various time stamps:
         //
@@ -217,6 +216,19 @@ public:
     bool convertSharedFilePath(const std::string& path_with_virtual_name,std::string& fullpath) ;
 
     /*!
+     * \brief searchHash
+     * 				Looks into local database of shared files for the given hash. Also looks for files such that the hash of the hash
+     * 				matches the given hash, and returns the real hash.
+     * \param hash			hash to look for
+     * \param real_hash		hash such that H(real_hash) = hash, or null hash if not found.
+     * \param results		Entry index of the file that is found
+     * \return
+     * 						true is a file is found
+     * 						false otherwise.
+     */
+    virtual int searchHash(const RsFileHash& hash, RsFileHash &real_hash, EntryIndex &results) const ;
+
+    /*!
      * \brief updateTimeStamps
      * 			Checks recursive TS and update the if needed.
      */
@@ -261,6 +273,7 @@ public:
     bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
+        bool locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const;
         std::string locked_getVirtualPath(EntryIndex indx) const ;
         std::string locked_getVirtualDirName(EntryIndex indx) const ;
 
@@ -268,6 +281,7 @@ private:
         std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
         std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
+        std::map<RsFileHash,RsFileHash> mEncryptedHashes;	// map such that hash(it->second) = it->first
         std::string mFileName;
 
         bool mTSChanged ;

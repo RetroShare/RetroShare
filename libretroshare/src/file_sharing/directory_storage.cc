@@ -168,13 +168,6 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
     return mFileHierarchy->updateHash(index,hash);
 }
 
-int DirectoryStorage::searchHash(const RsFileHash& hash, const RsFileHash& real_hash, EntryIndex& result) const
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-#warning code needed here
-    return mFileHierarchy->searchHash(hash,result);
-}
-
 void DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -295,6 +288,32 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
+
+bool LocalDirectoryStorage::locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const
+{
+    std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
+
+    if(it == mEncryptedHashes.end())
+        return false ;
+
+    real_hash = it->second ;
+    return true ;
+}
+
+int LocalDirectoryStorage::searchHash(const RsFileHash& hash, RsFileHash& real_hash, EntryIndex& result) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    if(locked_findRealHash(hash,real_hash) && mFileHierarchy->searchHash(real_hash,result))
+        return true ;
+
+    if(mFileHierarchy->searchHash(hash,result))
+    {
+        real_hash.clear();
+        return true ;
+    }
+    return false ;
+}
 
 void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
 {
