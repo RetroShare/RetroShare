@@ -289,6 +289,10 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
 
+RsFileHash LocalDirectoryStorage::makeEncryptedHash(const RsFileHash& hash)
+{
+    return RsDirUtil::sha1sum(hash.toByteArray(),hash.SIZE_IN_BYTES);
+}
 bool LocalDirectoryStorage::locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const
 {
     std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
@@ -454,7 +458,15 @@ void LocalDirectoryStorage::updateTimeStamps()
 #endif
     }
 }
+bool LocalDirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
+{
+    {
+        RS_STACK_MUTEX(mDirStorageMtx) ;
 
+        mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
+    }
+    return mFileHierarchy->updateHash(index,hash);
+}
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
 {
     /**** MUST ALREADY BE LOCKED ****/
