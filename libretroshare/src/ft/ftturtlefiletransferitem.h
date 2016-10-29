@@ -44,8 +44,8 @@ class RsTurtleFileRequestItem: public RsTurtleGenericTunnelItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };
 
 class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
@@ -64,8 +64,8 @@ class RsTurtleFileDataItem: public RsTurtleGenericTunnelItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };
 
 class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem			
@@ -78,8 +78,8 @@ class RsTurtleFileMapRequestItem: public RsTurtleGenericTunnelItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };
 
 class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem			
@@ -96,8 +96,8 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 												
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };
 
 class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
@@ -113,8 +113,8 @@ class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem
 												
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };
 
 class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
@@ -130,6 +130,6 @@ class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem
 		Sha1CheckSum check_sum ;
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const;
+        virtual uint32_t serial_size() const;
 };

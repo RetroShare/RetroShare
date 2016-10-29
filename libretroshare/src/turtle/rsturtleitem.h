@@ -35,9 +35,8 @@ class RsTurtleItem: public RsItem
 	public:
 		RsTurtleItem(uint8_t turtle_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TURTLE,turtle_subtype) {}
 
-#warning we need some consts here
-		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
-		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
+        virtual bool serialize(void *data,uint32_t& size) const = 0 ;	// Isn't it better that items can serialize themselves ?
+        virtual uint32_t serial_size() const = 0 ; 							// deserialise is handled using a constructor
 
 		virtual void clear() {} 
 };
@@ -64,8 +63,8 @@ class RsTurtleSearchResultItem: public RsTurtleItem
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;
-		virtual uint32_t serial_size() ;
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 class RsTurtleSearchRequestItem: public RsTurtleItem
@@ -93,8 +92,8 @@ class RsTurtleStringSearchRequestItem: public RsTurtleSearchRequestItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
@@ -110,8 +109,8 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleSearchRequestItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 /***********************************************************************************/
@@ -132,8 +131,8 @@ class RsTurtleOpenTunnelItem: public RsTurtleItem
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 class RsTurtleTunnelOkItem: public RsTurtleItem
@@ -148,8 +147,8 @@ class RsTurtleTunnelOkItem: public RsTurtleItem
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 /***********************************************************************************/
@@ -209,8 +208,8 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 	protected:
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
+        virtual bool serialize(void *data,uint32_t& size) const ;
+        virtual uint32_t serial_size() const ;
 };
 
 /***********************************************************************************/

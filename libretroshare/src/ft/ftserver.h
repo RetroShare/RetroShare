@@ -135,7 +135,8 @@ public:
     virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() ;
     virtual uint32_t freeDiskSpaceLimit() const ;
     virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
-
+    virtual void setDefaultEncryptionPolicy(uint32_t policy) ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
+    virtual uint32_t defaultEncryptionPolicy() ;
 
     /***
          * Control of Downloads Priority.

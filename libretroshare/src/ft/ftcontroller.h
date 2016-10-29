@@ -140,9 +140,11 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 
         bool 	setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s);
 		void 	setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s);
-		FileChunksInfo::ChunkStrategy	defaultChunkStrategy();
+        void 	setDefaultEncryptionPolicy(uint32_t s);
+        FileChunksInfo::ChunkStrategy	defaultChunkStrategy();
 		uint32_t freeDiskSpaceLimit() const ;
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
+        uint32_t defaultEncryptionPolicy();
 
         bool 	FileCancel(const RsFileHash& hash);
         bool 	FileControl(const RsFileHash& hash, uint32_t flags);

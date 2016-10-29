@@ -2167,7 +2167,18 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 	return true;
 }
 
-void ftController::setFreeDiskSpaceLimit(uint32_t size_in_mb) 
+void ftController::setDefaultEncryptionPolicy(uint32_t p)
+{
+    RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+    mDefaultEncryptionPolicy = p ;
+    IndicateConfigChanged();
+}
+uint32_t ftController::defaultEncryptionPolicy()
+{
+    RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+    return mDefaultEncryptionPolicy ;
+}
+void ftController::setFreeDiskSpaceLimit(uint32_t size_in_mb)
 {
 	RsDiscSpace::setFreeSpaceLimit(size_in_mb) ;
 

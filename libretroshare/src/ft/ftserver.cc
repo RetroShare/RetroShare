@@ -294,6 +294,14 @@ void ftServer::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {
 	mFtController->setDefaultChunkStrategy(s) ;
 }
+uint32_t ftServer::defaultEncryptionPolicy()
+{
+    return mFtController->defaultEncryptionPolicy() ;
+}
+void ftServer::setDefaultEncryptionPolicy(uint32_t s)
+{
+    mFtController->setDefaultEncryptionPolicy(s) ;
+}
 FileChunksInfo::ChunkStrategy ftServer::defaultChunkStrategy() 
 {
 	return mFtController->defaultChunkStrategy() ;
