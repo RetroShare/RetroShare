@@ -27,8 +27,8 @@
 #include "pqi/pqithreadstreamer.h"
 #include <unistd.h>
 
-#define DEFAULT_STREAMER_TIMEOUT	  10000 // 10 ms.
-#define DEFAULT_STREAMER_SLEEP		   1000 // 1 ms.
+#define DEFAULT_STREAMER_TIMEOUT	   2000 // 2 ms.
+#define DEFAULT_STREAMER_SLEEP		   8000 // 8 ms.
 #define DEFAULT_STREAMER_IDLE_SLEEP	1000000 // 1 sec
 
 //#define PQISTREAMER_DEBUG
