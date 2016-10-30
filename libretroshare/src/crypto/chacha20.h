@@ -81,13 +81,16 @@ namespace librs
          * \param nonce         nonce. *Should be unique* in order to make chacha20 stream cipher unique.
          * \param data          data that is encrypted/decrypted in place
          * \param data_size     size of data to encrypt/authenticate
+         * \param aad           additional authenticated data. Can be used to authenticate the nonce.
+         * \param aad_size
          * \param tag           16 bytes authentication tag result
          * \param encrypt		true to encrypt, false to decrypt and check the tag.
          * \return
          * 			always true for encryption.
          * 			authentication result for decryption. data is *always* xored to the cipher stream whatever the authentication result is.
          */
-        bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t tag[16],bool encrypt);
+        bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt_or_decrypt) ;
+
         /*!
          * \brief constant_time_memcmp
          * 			Provides a constant time comparison of two memory chunks. Calls CRYPTO_memcmp.

@@ -24,6 +24,7 @@
  */
 #include <stdexcept>
 #include <stdint.h>
+#include <assert.h>
 #include <string>
 #include <stdio.h>
 #include <string.h>
@@ -524,7 +525,7 @@ bool AEAD_chacha20_poly1305(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uin
     }
 }
 
-bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uint32_t data_size, uint8_t tag[16], bool encrypt)
+bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12],uint8_t *data,uint32_t data_size,uint8_t *aad,uint32_t aad_size,uint8_t tag[16],bool encrypt)
 {
     // encrypt + tag. See RFC7539-2.8
 
@@ -534,7 +535,16 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uin
 
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
-       HMAC(EVP_sha256(),key,32,data,data_size,computed_tag,&md_size) ;
+
+       HMAC_CTX hmac_ctx ;
+       HMAC_CTX_init(&hmac_ctx) ;
+
+       HMAC_Init(&hmac_ctx,key,32,EVP_sha256()) ;
+       HMAC_Update(&hmac_ctx,aad,aad_size) ;
+       HMAC_Update(&hmac_ctx,data,data_size) ;
+       HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
+
+       assert(md_size >= 16);
 
        memcpy(tag,computed_tag,16) ;
 
@@ -544,7 +554,14 @@ bool AEAD_chacha20_sha256(uint8_t key[32], uint8_t nonce[12], uint8_t *data, uin
     {
        uint8_t computed_tag[EVP_MAX_MD_SIZE];
        unsigned int md_size ;
-       HMAC(EVP_sha256(),key,32,data,data_size,computed_tag,&md_size) ;
+
+       HMAC_CTX hmac_ctx ;
+       HMAC_CTX_init(&hmac_ctx) ;
+
+       HMAC_Init(&hmac_ctx,key,32,EVP_sha256()) ;
+       HMAC_Update(&hmac_ctx,aad,aad_size) ;
+       HMAC_Update(&hmac_ctx,data,data_size) ;
+       HMAC_Final(&hmac_ctx,computed_tag,&md_size) ;
 
        // decrypt
 
@@ -1207,7 +1224,7 @@ bool perform_tests()
         }
         {
             RsScopeTimer s("AEAD3") ;
-            AEAD_chacha20_sha256(key,nonce,ten_megabyte_data,SIZE,received_tag,true) ;
+            AEAD_chacha20_sha256(key,nonce,ten_megabyte_data,SIZE,aad,12,received_tag,true) ;
 
             std::cerr << "  AEAD/sha256 encryption speed  : " << SIZE / (1024.0*1024.0) / s.duration() << " MB/s" << std::endl;
         }

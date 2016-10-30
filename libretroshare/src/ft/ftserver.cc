@@ -495,29 +495,27 @@ void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeer
 #ifdef SERVER_DEBUG
     FTSERVER_DEBUG() << "adding virtual peer. Direction=" << dir << ", hash=" << hash << ", vpid=" << virtual_peer_id << std::endl;
 #endif
-    if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+    RsFileHash real_hash ;
+
     {
-        RsFileHash real_hash ;
         if(findRealHash(hash,real_hash))
         {
-#ifdef SERVER_DEBUG
-            FTSERVER_DEBUG() << "  direction is SERVER. Adding file source for end-to-end encrypted tunnel for real hash " << real_hash << ", virtual peer id = " << virtual_peer_id << std::endl;
-#endif
-            {
-                RS_STACK_MUTEX(srvMutex) ;
-                mEncryptedPeerIds[virtual_peer_id] = hash ;
-            }
-            mFtController->addFileSource(real_hash,virtual_peer_id) ;
+            RS_STACK_MUTEX(srvMutex) ;
+            mEncryptedPeerIds[virtual_peer_id] = hash ;
         }
         else
-        {
+            real_hash = hash;
+    }
+
+    if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+    {
 #ifdef SERVER_DEBUG
-            FTSERVER_DEBUG() << "  direction is SERVER. Adding file source for unencrypted tunnel" << std::endl;
+        FTSERVER_DEBUG() << "  direction is SERVER. Adding file source for end-to-end encrypted tunnel for real hash " << real_hash << ", virtual peer id = " << virtual_peer_id << std::endl;
 #endif
-            mFtController->addFileSource(hash,virtual_peer_id) ;
-        }
+        mFtController->addFileSource(real_hash,virtual_peer_id) ;
     }
 }
+
 void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
 {
     RsFileHash real_hash ;
@@ -538,7 +536,8 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
     if(info.transfer_info_flags & RS_FILE_REQ_ENCRYPTED)
     {
         std::cerr << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
-        mEncryptedHashes[info.hash] = hash ;
+        RS_STACK_MUTEX(srvMutex) ;
+        mEncryptedHashes[hash] = info.hash;
     }
 #warning needs to tweak for swarming with encrypted FT
     if( (!res) && FileDetails(hash,RS_FILE_HINTS_DOWNLOAD,info))
@@ -1147,7 +1146,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
     std::cerr << "ftServer::Encrypting ft item." << std::endl;
     std::cerr << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
 
-    uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + clear_item->serial_size() + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
+    uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + clear_item->serial_size() + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
 
     std::cerr << "  clear part size : " << clear_item->serial_size() << std::endl;
     std::cerr << "  total item size : " << total_data_size << std::endl;
@@ -1199,7 +1198,7 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
     if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305)
         librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
     else if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256)
-        librs::crypto::AEAD_chacha20_sha256(encryption_key,initialization_vector,&edata[aad_offset],edata_size+ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE+ENCRYPTED_FT_EDATA_SIZE, &edata[authentication_tag_offset],true) ;
+        librs::crypto::AEAD_chacha20_sha256  (encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],true) ;
     else
         return false ;
 
@@ -1247,6 +1246,12 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     edata_size += ((uint32_t)edata[offset+2]) << 16 ;
     edata_size += ((uint32_t)edata[offset+3]) << 24 ;
 
+    if(edata_size + ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE != encrypted_item->data_size)
+    {
+        std::cerr << "  ERROR: encrypted data size is " << edata_size << ", should be " << encrypted_item->data_size - (ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE ) << std::endl;
+        return false ;
+    }
+
     offset += ENCRYPTED_FT_EDATA_SIZE ;
     uint32_t clear_item_offset = offset ;
 
@@ -1258,7 +1263,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305)
         result = librs::crypto::AEAD_chacha20_poly1305(encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
     else if(edata[2] == ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256)
-        result = librs::crypto::AEAD_chacha20_sha256(encryption_key,initialization_vector,&edata[aad_offset],edata_size+ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE+ENCRYPTED_FT_EDATA_SIZE, &edata[authentication_tag_offset],false) ;
+        result = librs::crypto::AEAD_chacha20_sha256  (encryption_key,initialization_vector,&edata[clear_item_offset],edata_size, &edata[aad_offset],aad_size, &edata[authentication_tag_offset],false) ;
     else
         return false ;
 
