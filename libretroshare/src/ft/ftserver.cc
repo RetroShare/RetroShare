@@ -57,6 +57,11 @@ const int ftserverzone = 29539;
  * #define SERVER_DEBUG_CACHE 1
  ***/
 
+#define SERVER_DEBUG       1
+
+#define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
+#define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
+
 static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
 
 	/* Setup */
@@ -259,8 +264,18 @@ bool ftServer::activateTunnels(const RsFileHash& hash,TransferRequestFlags flags
 
     if(onoff)
     {
-        if(flags & RS_FILE_REQ_ENCRYPTED)   mTurtleRouter->monitorTunnels(hash_of_hash,this,true) ;
-        if(flags & RS_FILE_REQ_UNENCRYPTED) mTurtleRouter->monitorTunnels(hash,this,true) ;
+        std::cerr << "Activating tunnels for hash " << hash << std::endl;
+
+        if(flags & RS_FILE_REQ_ENCRYPTED)
+        {
+            std::cerr << "  flags require end-to-end encryption. Requesting hash of hash " << hash_of_hash << std::endl;
+            mTurtleRouter->monitorTunnels(hash_of_hash,this,true) ;
+        }
+        if(flags & RS_FILE_REQ_UNENCRYPTED)
+        {
+            std::cerr << "  flags require no end-to-end encryption. Requesting hash " << hash << std::endl;
+            mTurtleRouter->monitorTunnels(hash,this,true) ;
+        }
     }
     else
     {
@@ -477,12 +492,42 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 
 void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) 
 {
-	if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
-		mFtController->addFileSource(hash,virtual_peer_id) ;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "adding virtual peer. Direction=" << dir << ", hash=" << hash << ", vpid=" << virtual_peer_id << std::endl;
+#endif
+    if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+    {
+        RsFileHash real_hash ;
+        if(findRealHash(hash,real_hash))
+        {
+#ifdef SERVER_DEBUG
+            FTSERVER_DEBUG() << "  direction is SERVER. Adding file source for end-to-end encrypted tunnel for real hash " << real_hash << ", virtual peer id = " << virtual_peer_id << std::endl;
+#endif
+            {
+                RS_STACK_MUTEX(srvMutex) ;
+                mEncryptedPeerIds[virtual_peer_id] = hash ;
+            }
+            mFtController->addFileSource(real_hash,virtual_peer_id) ;
+        }
+        else
+        {
+#ifdef SERVER_DEBUG
+            FTSERVER_DEBUG() << "  direction is SERVER. Adding file source for unencrypted tunnel" << std::endl;
+#endif
+            mFtController->addFileSource(hash,virtual_peer_id) ;
+        }
+    }
 }
 void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) 
 {
-	mFtController->removeFileSource(hash,virtual_peer_id) ;
+    RsFileHash real_hash ;
+    if(findRealHash(hash,real_hash))
+        mFtController->removeFileSource(real_hash,virtual_peer_id) ;
+    else
+        mFtController->removeFileSource(hash,virtual_peer_id) ;
+
+    RS_STACK_MUTEX(srvMutex) ;
+    mEncryptedPeerIds.erase(virtual_peer_id) ;
 }
 
 bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id)
@@ -520,7 +565,7 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 		std::cerr << "   peer  = " << peer_id << std::endl;
 		std::cerr << "   flags = " << info.storage_permission_flags << std::endl;
 		std::cerr << "   local = " << rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info) << std::endl;
-		std::cerr << "   groups= " ; for(std::list<std::string>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it) std::cerr << (*it) << ", " ; std::cerr << std::endl;
+        std::cerr << "   groups= " ; for(std::list<RsNodeGroupId>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it) std::cerr << (*it) << ", " ; std::cerr << std::endl;
 		std::cerr << "   clear = " << rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups) << std::endl;
 	}
 #endif
@@ -766,16 +811,18 @@ bool ftServer::shareDownloadDirectory(bool share)
 
 bool ftServer::sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTurtleGenericTunnelItem *item)
 {
-    // first, we look for the encrypted hash map
-#warning code needed here
-    if(true)
-    {
-        // we don't encrypt
-        mTurtleRouter->sendTurtleData(peerId,item) ;
-    }
-    else
+    // we cannot look in the encrypted hash map, since the same hash--on this side of the FT--can be used with both
+    // encrypted and unencrypted peers ids. So the information comes from the virtual peer Id.
+
+    RsFileHash encrypted_hash;
+
+    if(findEncryptedHash(peerId,encrypted_hash))
     {
         // we encrypt the item
+
+#ifdef SERVER_DEBUG
+        FTSERVER_DEBUG() << "Sending turtle item to peer ID " << peerId << " using encrypted tunnel." << std::endl;
+#endif
 
         RsTurtleGenericDataItem *encrypted_item ;
 
@@ -786,6 +833,14 @@ bool ftServer::sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTu
 
         mTurtleRouter->sendTurtleData(peerId,encrypted_item) ;
     }
+    else
+    {
+#ifdef SERVER_DEBUG
+        FTSERVER_DEBUG() << "Sending turtle item to peer ID " << peerId << " using non uncrypted tunnel." << std::endl;
+#endif
+        mTurtleRouter->sendTurtleData(peerId,item) ;
+    }
+
     return true ;
 }
 
@@ -1230,8 +1285,24 @@ bool ftServer::encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash)
     return true ;
 }
 
+bool ftServer::findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash)
+{
+    RS_STACK_MUTEX(srvMutex);
+
+    std::map<RsPeerId,RsFileHash>::const_iterator it = mEncryptedPeerIds.find(virtual_peer_id) ;
+
+    if(it != mEncryptedPeerIds.end())
+    {
+        encrypted_hash = it->second ;
+        return true ;
+    }
+    else
+        return false ;
+}
+
 bool ftServer::findRealHash(const RsFileHash& hash, RsFileHash& real_hash)
 {
+    RS_STACK_MUTEX(srvMutex);
     std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
 
     if(it != mEncryptedHashes.end())
@@ -1391,9 +1462,6 @@ int ftServer::handleIncoming()
 	int nhandled = 0 ;
 
 	RsItem *item = NULL ;
-#ifdef SERVER_DEBUG
-	std::cerr << "ftServer::handleIncoming() " << std::endl;
-#endif
 
 	while(NULL != (item = recvItem()))
 	{

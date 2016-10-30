@@ -1825,7 +1825,7 @@ const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
-const std::string default_encryption_policy("DEFAULT_ENCRYPTION_POLICY");
+const std::string default_encryption_policy_ss("DEFAULT_ENCRYPTION_POLICY");
 
 
 	/* p3Config Interface */
@@ -1872,6 +1872,8 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		case FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE:configMap[default_chunk_strategy_ss] =  "PROGRESSIVE" ;
 																		break ;
 	}
+
+    configMap[default_encryption_policy_ss] = (mDefaultEncryptionPolicy==RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE)?"PERMISSIVE":"STRICT" ;
 
 	rs_sprintf(s, "%lu", RsDiscSpace::freeSpaceLimit());
 	configMap[free_space_limit_ss] = s ;
@@ -2115,7 +2117,7 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		setPartialsDirectory(mit->second);
 	}
 
-    if (configMap.end() != (mit = configMap.find(default_encryption_policy)))
+    if (configMap.end() != (mit = configMap.find(default_encryption_policy_ss)))
     {
         if(mit->second == "STRICT")
         {

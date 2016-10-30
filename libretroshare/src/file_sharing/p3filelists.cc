@@ -628,6 +628,7 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
     result = NULL ;
 
     if (ref == NULL)
+    {
         if(flags & RS_FILE_HINTS_LOCAL)
         {
             if(row != 0)
@@ -642,8 +643,9 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
             convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
             return true;
         }
-    else
-        return false;
+        else
+            return false;
+    }
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;

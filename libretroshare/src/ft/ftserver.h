@@ -258,6 +258,7 @@ protected:
 
     // fnds out what is the real hash of encrypted hash hash
     bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
+    bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
     bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
 private:
@@ -286,6 +287,7 @@ private:
     std::string mPartialsPath;
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
+    std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
 };
 
 
