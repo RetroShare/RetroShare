@@ -157,6 +157,7 @@ public:
     virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info);
     virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) ;
     virtual bool FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& map) ;
+    virtual bool isEncryptedSource(const RsPeerId& virtual_peer_id) ;
 
 
     /***

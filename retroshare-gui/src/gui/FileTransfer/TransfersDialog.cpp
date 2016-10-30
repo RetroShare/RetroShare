@@ -1387,7 +1387,12 @@ QString TransfersDialog::getPeerName(const RsPeerId& id) const
 	// connect mgr). In such a case their id can suitably hold for a name.
 	//
 	if(res == "")
+    {
+        if(rsFiles->isEncryptedSource(id))
+        return tr("Anonymous end-to-end encrypted tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
+            else
         return tr("Anonymous tunnel 0x")+QString::fromStdString(id.toStdString()).left(8) ;
+    }
 	else
 		return res ;
 }

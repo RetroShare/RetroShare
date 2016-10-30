@@ -247,7 +247,9 @@ bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 
 bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
 {
-    std::cerr << "Requesting " << fname << std::endl ;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "Requesting " << fname << std::endl ;
+#endif
 
 	if(!mFtController->FileRequest(fname, hash, size, dest, flags, srcIds))
 		return false ;
@@ -264,16 +266,22 @@ bool ftServer::activateTunnels(const RsFileHash& hash,TransferRequestFlags flags
 
     if(onoff)
     {
-        std::cerr << "Activating tunnels for hash " << hash << std::endl;
+#ifdef SERVER_DEBUG
+        FTSERVER_DEBUG() << "Activating tunnels for hash " << hash << std::endl;
+#endif
 
         if(flags & RS_FILE_REQ_ENCRYPTED)
         {
-            std::cerr << "  flags require end-to-end encryption. Requesting hash of hash " << hash_of_hash << std::endl;
+#ifdef SERVER_DEBUG
+            FTSERVER_DEBUG() << "  flags require end-to-end encryption. Requesting hash of hash " << hash_of_hash << std::endl;
+#endif
             mTurtleRouter->monitorTunnels(hash_of_hash,this,true) ;
         }
         if(flags & RS_FILE_REQ_UNENCRYPTED)
         {
-            std::cerr << "  flags require no end-to-end encryption. Requesting hash " << hash << std::endl;
+#ifdef SERVER_DEBUG
+            FTSERVER_DEBUG() << "  flags require no end-to-end encryption. Requesting hash " << hash << std::endl;
+#endif
             mTurtleRouter->monitorTunnels(hash,this,true) ;
         }
     }
@@ -459,11 +467,11 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 	uint32_t rstype = getRsItemId(data);
 
 #ifdef SERVER_DEBUG
-	std::cerr << "p3turtle: deserialising packet: " << std::endl ;
+    FTSERVER_DEBUG() << "p3turtle: deserialising packet: " << std::endl ;
 #endif
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
 	{
-		std::cerr << "  Wrong type !!" << std::endl ;
+        FTSERVER_ERROR() << "  Wrong type !!" << std::endl ;
 		return NULL; /* wrong type */
 	}
 
@@ -484,13 +492,20 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
     }
     catch(std::exception& e)
     {
-        std::cerr << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
+        FTSERVER_ERROR() << "(EE) deserialisation error in " << __PRETTY_FUNCTION__ << ": " << e.what() << std::endl;
         
         return NULL ;
     }
 }
 
-void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) 
+bool ftServer::isEncryptedSource(const RsPeerId& virtual_peer_id)
+{
+    RS_STACK_MUTEX(srvMutex) ;
+
+    return  mEncryptedPeerIds.find(virtual_peer_id) != mEncryptedPeerIds.end();
+}
+
+void ftServer::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir)
 {
 #ifdef SERVER_DEBUG
     FTSERVER_DEBUG() << "adding virtual peer. Direction=" << dir << ", hash=" << hash << ", vpid=" << virtual_peer_id << std::endl;
@@ -535,7 +550,10 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 
     if(info.transfer_info_flags & RS_FILE_REQ_ENCRYPTED)
     {
-        std::cerr << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
+#ifdef SERVER_DEBUG
+        FTSERVER_DEBUG() << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
+#endif
+
         RS_STACK_MUTEX(srvMutex) ;
         mEncryptedHashes[hash] = info.hash;
     }
@@ -555,17 +573,20 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
                 }
     }
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer: performing local hash search for hash " << hash << std::endl;
+    FTSERVER_DEBUG() << "ftServer: performing local hash search for hash " << hash << std::endl;
 
 	if(res)
 	{
-		std::cerr << "Found hash: " << std::endl;
-		std::cerr << "   hash  = " << hash << std::endl;
-		std::cerr << "   peer  = " << peer_id << std::endl;
-		std::cerr << "   flags = " << info.storage_permission_flags << std::endl;
-		std::cerr << "   local = " << rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info) << std::endl;
-        std::cerr << "   groups= " ; for(std::list<RsNodeGroupId>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it) std::cerr << (*it) << ", " ; std::cerr << std::endl;
-		std::cerr << "   clear = " << rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups) << std::endl;
+        FTSERVER_DEBUG() << "Found hash: " << std::endl;
+        FTSERVER_DEBUG() << "   hash  = " << hash << std::endl;
+        FTSERVER_DEBUG() << "   peer  = " << peer_id << std::endl;
+        FTSERVER_DEBUG() << "   flags = " << info.storage_permission_flags << std::endl;
+        FTSERVER_DEBUG() << "   local = " << rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info) << std::endl;
+        FTSERVER_DEBUG() << "   groups= " ;
+        for(std::list<RsNodeGroupId>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it)
+            FTSERVER_DEBUG() << (*it) << ", " ;
+        FTSERVER_DEBUG() << std::endl;
+        FTSERVER_DEBUG() << "   clear = " << rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups) << std::endl;
 	}
 #endif
 
@@ -720,34 +741,27 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	std::list<SharedDirInfo>::iterator it;
 
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::removeSharedDirectory(" << dir << ")";
-	std::cerr << std::endl;
+    FTSERVER_DEBUG() << "ftServer::removeSharedDirectory(" << dir << ")" << std::endl;
 #endif
 
     mFileDatabase->getSharedDirectories(dirList);
 
 #ifdef SERVER_DEBUG
 	for(it = dirList.begin(); it != dirList.end(); ++it)
-	{
-		std::cerr << "ftServer::removeSharedDirectory()";
-		std::cerr << " existing: " << (*it).filename;
-		std::cerr << std::endl;
-	}
+        FTSERVER_DEBUG() << " existing: " << (*it).filename << std::endl;
 #endif
 
 	for(it = dirList.begin();it!=dirList.end() && (*it).filename != dir;++it) ;
 
 	if(it == dirList.end())
 	{
-        std::cerr << "(EE) ftServer::removeSharedDirectory(): Cannot Find Directory... Fail" << std::endl;
+        FTSERVER_ERROR() << "(EE) ftServer::removeSharedDirectory(): Cannot Find Directory... Fail" << std::endl;
 		return false;
 	}
 
 
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::removeSharedDirectory()";
-	std::cerr << " Updating Directories";
-	std::cerr << std::endl;
+    FTSERVER_DEBUG() << " Updating Directories" << std::endl;
 #endif
 
 	dirList.erase(it);
@@ -847,7 +861,7 @@ bool ftServer::sendTurtleItem(const RsPeerId& peerId,const RsFileHash& hash,RsTu
 bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendDataRequest() to peer " << peerId << " for hash " << hash << ", offset=" << offset << ", chunk size="<< chunksize << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendDataRequest() to peer " << peerId << " for hash " << hash << ", offset=" << offset << ", chunk size="<< chunksize << std::endl;
 #endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
@@ -884,7 +898,7 @@ bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, u
 bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const RsFileHash& hash,bool is_client)
 {
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendChunkMapRequest() to peer " << peerId << " for hash " << hash << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendChunkMapRequest() to peer " << peerId << " for hash " << hash << std::endl;
 #endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
@@ -913,7 +927,7 @@ bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const RsFileHash& hash
 bool ftServer::sendChunkMap(const RsPeerId& peerId,const RsFileHash& hash,const CompressedChunkMap& map,bool is_client)
 {
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendChunkMap() to peer " << peerId << " for hash " << hash << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendChunkMap() to peer " << peerId << " for hash " << hash << std::endl;
 #endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
@@ -944,7 +958,7 @@ bool ftServer::sendChunkMap(const RsPeerId& peerId,const RsFileHash& hash,const 
 bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const RsFileHash& hash,uint32_t chunk_number)
 {
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendSingleCRCRequest() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendSingleCRCRequest() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
 #endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
@@ -975,7 +989,7 @@ bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const RsFileHash
 bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendSingleCRC() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendSingleCRC() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
 #endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
@@ -1015,12 +1029,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 	uint32_t chunk;
 
 #ifdef SERVER_DEBUG
-	std::cerr << "ftServer::sendData() to " << peerId << std::endl;
-	std::cerr << "hash: " << hash;
-	std::cerr << " offset: " << baseoffset;
-	std::cerr << " chunk: " << chunksize;
-	std::cerr << " data: " << data;
-	std::cerr << std::endl;
+    FTSERVER_DEBUG() << "ftServer::sendData() to " << peerId << ", hash: " << hash << " offset: " << baseoffset << " chunk: " << chunksize << " data: " << data << std::endl;
 #endif
 
 	while(tosend > 0)
@@ -1080,12 +1089,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 
 			/* print the data pointer */
 #ifdef SERVER_DEBUG
-			std::cerr << "ftServer::sendData() Packet: " << std::endl;
-			std::cerr << " offset: " << rfd->fd.file_offset;
-			std::cerr << " chunk: " << chunk;
-			std::cerr << " len: " << rfd->fd.binData.bin_len;
-			std::cerr << " data: " << rfd->fd.binData.bin_data;
-			std::cerr << std::endl;
+            FTSERVER_DEBUG() << "ftServer::sendData() Packet: " << " offset: " << rfd->fd.file_offset << " chunk: " << chunk << " len: " << rfd->fd.binData.bin_len << " data: " << rfd->fd.binData.bin_data << std::endl;
 #endif
 		}
 
@@ -1143,13 +1147,17 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 
     RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
 
-    std::cerr << "ftServer::Encrypting ft item." << std::endl;
-    std::cerr << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "ftServer::Encrypting ft item." << std::endl;
+    FTSERVER_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+#endif
 
     uint32_t total_data_size = ENCRYPTED_FT_HEADER_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_EDATA_SIZE + clear_item->serial_size() + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE  ;
 
-    std::cerr << "  clear part size : " << clear_item->serial_size() << std::endl;
-    std::cerr << "  total item size : " << total_data_size << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "  clear part size : " << clear_item->serial_size() << std::endl;
+    FTSERVER_DEBUG() << "  total item size : " << total_data_size << std::endl;
+#endif
 
     encrypted_item = new RsTurtleGenericDataItem ;
     encrypted_item->data_bytes = rs_malloc( total_data_size ) ;
@@ -1184,7 +1192,9 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
     uint32_t ser_size = (uint32_t)((int)total_data_size - (int)offset);
     clear_item->serialize(&edata[offset], ser_size);
 
-    std::cerr << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "  clear item      : " << RsUtil::BinToHex(&edata[offset],std::min(50,(int)total_data_size-(int)offset)) << "(...)" << std::endl;
+#endif
 
     uint32_t clear_item_offset = offset ;
     offset += edata_size ;
@@ -1202,9 +1212,11 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
     else
         return false ;
 
-    std::cerr << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
-    std::cerr << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
-    std::cerr << "  final item      : " << RsUtil::BinToHex(&edata[0],std::min(50u,total_data_size)) << "(...)" << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
+    FTSERVER_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
+    FTSERVER_DEBUG() << "  final item      : " << RsUtil::BinToHex(&edata[0],std::min(50u,total_data_size)) << "(...)" << std::endl;
+#endif
 
     return true ;
 }
@@ -1232,11 +1244,13 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 
     uint8_t *initialization_vector = &edata[offset] ;
 
-    std::cerr << "ftServer::decrypting ft item." << std::endl;
-    std::cerr << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_item->data_size)) << "(...)" << std::endl;
-    std::cerr << "  hash            : " << hash << std::endl;
-    std::cerr << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
-    std::cerr << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "ftServer::decrypting ft item." << std::endl;
+    FTSERVER_DEBUG() << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_item->data_size)) << "(...)" << std::endl;
+    FTSERVER_DEBUG() << "  hash            : " << hash << std::endl;
+    FTSERVER_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
+    FTSERVER_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) << std::endl;
+#endif
 
     offset += ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE ;
 
@@ -1248,7 +1262,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 
     if(edata_size + ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE != encrypted_item->data_size)
     {
-        std::cerr << "  ERROR: encrypted data size is " << edata_size << ", should be " << encrypted_item->data_size - (ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE ) << std::endl;
+        FTSERVER_ERROR() << "  ERROR: encrypted data size is " << edata_size << ", should be " << encrypted_item->data_size - (ENCRYPTED_FT_EDATA_SIZE + ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE + ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE + ENCRYPTED_FT_HEADER_SIZE ) << std::endl;
         return false ;
     }
 
@@ -1256,7 +1270,9 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     uint32_t clear_item_offset = offset ;
 
     uint32_t authentication_tag_offset = offset + edata_size ;
-    std::cerr << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "  authen. tag     : " << RsUtil::BinToHex(&edata[authentication_tag_offset],ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE) << std::endl;
+#endif
 
     bool result ;
 
@@ -1267,12 +1283,14 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
     else
         return false ;
 
-    std::cerr << "  authen. result  : " << result << std::endl;
-    std::cerr << "  decrypted daya  : " << RsUtil::BinToHex(&edata[clear_item_offset],std::min(50u,edata_size)) << "(...)" << std::endl;
+#ifdef SERVER_DEBUG
+    FTSERVER_DEBUG() << "  authen. result  : " << result << std::endl;
+    FTSERVER_DEBUG() << "  decrypted daya  : " << RsUtil::BinToHex(&edata[clear_item_offset],std::min(50u,edata_size)) << "(...)" << std::endl;
+#endif
 
     if(!result)
     {
-        std::cerr << "(EE) decryption/authentication went wrong." << std::endl;
+        FTSERVER_ERROR() << "(EE) decryption/authentication went wrong." << std::endl;
         return false ;
     }
 
@@ -1328,20 +1346,22 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 {
     if(i->PacketSubType() == RS_TURTLE_SUBTYPE_GENERIC_DATA)
     {
-        std::cerr << "Received encrypted data item. Trying to decrypt" << std::endl;
+#ifdef SERVER_DEBUG
+        FTSERVER_DEBUG() << "Received encrypted data item. Trying to decrypt" << std::endl;
+#endif
 
         RsFileHash real_hash ;
 
         if(!findRealHash(hash,real_hash))
         {
-            std::cerr << "(EE) Cannot find real hash for encrypted data item with H(H(F))=" << hash << ". This is unexpected." << std::endl;
+            FTSERVER_ERROR() << "(EE) Cannot find real hash for encrypted data item with H(H(F))=" << hash << ". This is unexpected." << std::endl;
             return ;
         }
 
         RsTurtleGenericTunnelItem *decrypted_item ;
         if(!decryptItem(dynamic_cast<RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
         {
-            std::cerr << "(EE) decryption error." << std::endl;
+            FTSERVER_ERROR() << "(EE) decryption error." << std::endl;
             return ;
         }
 
@@ -1359,7 +1379,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 				if (item)
 				{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::receiveTurtleData(): received file data request for " << hash << " from peer " << virtual_peer_id << std::endl;
+                    FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received file data request for " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 					getMultiplexer()->recvDataRequest(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size) ;
 				}
@@ -1372,7 +1392,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 				if (item)
 				{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::receiveTurtleData(): received file data for " << hash << " from peer " << virtual_peer_id << std::endl;
+                    FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received file data for " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 					getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
@@ -1388,7 +1408,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 				if (item)
 				{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::receiveTurtleData(): received chunk map for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+                    FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received chunk map for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 					getMultiplexer()->recvChunkMap(virtual_peer_id,hash,item->compressed_map,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 				}
@@ -1399,7 +1419,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 			{
 				//RsTurtleFileMapRequestItem *item = dynamic_cast<RsTurtleFileMapRequestItem *>(i) ;
 #ifdef SERVER_DEBUG
-				std::cerr << "ftServer::receiveTurtleData(): received chunkmap request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+                FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received chunkmap request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 				getMultiplexer()->recvChunkMapRequest(virtual_peer_id,hash,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 			}
@@ -1411,7 +1431,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 				if (item)
 				{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+                    FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received single chunk CRC for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 					getMultiplexer()->recvSingleChunkCRC(virtual_peer_id,hash,item->chunk_number,item->check_sum) ;
 				}
@@ -1424,14 +1444,14 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 				if (item)
 				{
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+                    FTSERVER_DEBUG() << "ftServer::receiveTurtleData(): received single chunk CRC request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
 #endif
 					getMultiplexer()->recvSingleChunkCRCRequest(virtual_peer_id,hash,item->chunk_number) ;
 				}
 			}
 			break ;
 		default:
-			std::cerr << "WARNING: Unknown packet type received: sub_id=" << reinterpret_cast<void*>(i->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
+            FTSERVER_ERROR() << "WARNING: Unknown packet type received: sub_id=" << reinterpret_cast<void*>(i->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
 	}
 }
 
@@ -1480,7 +1500,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;
 #endif
 						mFtDataplex->recvDataRequest(f->PeerId(), f->file.hash,  f->file.filesize, f->fileoffset, f->chunksize);
 					}
@@ -1493,7 +1513,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received data for hash " << f->fd.file.hash << ", offset=" << f->fd.file_offset << ", chunk size=" << f->fd.binData.bin_len << std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received data for hash " << f->fd.file.hash << ", offset=" << f->fd.file_offset << ", chunk size=" << f->fd.binData.bin_len << std::endl;
 #endif
 						mFtDataplex->recvData(f->PeerId(), f->fd.file.hash,  f->fd.file.filesize, f->fd.file_offset, f->fd.binData.bin_len, f->fd.binData.bin_data);
 
@@ -1510,7 +1530,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received chunkmap request for hash " << f->hash << ", client=" << f->is_client << std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received chunkmap request for hash " << f->hash << ", client=" << f->is_client << std::endl;
 #endif
 						mFtDataplex->recvChunkMapRequest(f->PeerId(), f->hash,f->is_client) ;
 					}
@@ -1523,7 +1543,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << /*", map=" << f->compressed_map <<*/ std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << /*", map=" << f->compressed_map <<*/ std::endl;
 #endif
 						mFtDataplex->recvChunkMap(f->PeerId(), f->hash,f->compressed_map,f->is_client) ;
 					}
@@ -1536,7 +1556,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << std::endl;
 #endif
 						mFtDataplex->recvSingleChunkCRCRequest(f->PeerId(), f->hash,f->chunk_number) ;
 					}
@@ -1549,7 +1569,7 @@ int ftServer::handleIncoming()
 					if (f)
 					{
 #ifdef SERVER_DEBUG
-						std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << ", checksum = " << f->check_sum << std::endl;
+                        FTSERVER_DEBUG() << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << ", checksum = " << f->check_sum << std::endl;
 #endif
 						mFtDataplex->recvSingleChunkCRC(f->PeerId(), f->hash,f->chunk_number,f->check_sum);
 					}

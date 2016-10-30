@@ -166,6 +166,7 @@ class RsFiles
         virtual void FileDownloads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
+        virtual bool isEncryptedSource(const RsPeerId& virtual_peer_id) =0;
 
 		/// Gives chunk details about the downloaded file with given hash.
 		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) = 0 ;
