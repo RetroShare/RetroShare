@@ -700,7 +700,7 @@ bool	ftServer::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 	return true;
 }
 
-bool	ftServer::setSharedDirectories(std::list<SharedDirInfo> &dirs)
+bool	ftServer::setSharedDirectories(const std::list<SharedDirInfo>& dirs)
 {
     mFileDatabase->setSharedDirectories(dirs);
 	return true;

@@ -202,7 +202,7 @@ public:
     virtual std::string getPartialsDirectory();
 
     virtual bool	getSharedDirectories(std::list<SharedDirInfo> &dirs);
-    virtual bool	setSharedDirectories(std::list<SharedDirInfo> &dirs);
+    virtual bool	setSharedDirectories(const std::list<SharedDirInfo> &dirs);
     virtual bool 	addSharedDirectory(const SharedDirInfo& dir);
     virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
     virtual bool 	removeSharedDirectory(std::string dir);

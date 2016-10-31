@@ -1,3 +1,5 @@
+#include <QLayout>
+#include <QDialogButtonBox>
 #include <retroshare/rspeers.h>
 #include "GroupSelectionBox.h"
 #include "GroupDefs.h"
@@ -17,7 +19,6 @@ GroupSelectionBox::GroupSelectionBox(QWidget *parent)
 	// Fill with available groups
 	fillGroups();
 }
-
 void GroupSelectionBox::fillGroups()
 {
     std::list<RsNodeGroupId> selectedIds;
@@ -78,3 +79,39 @@ void GroupSelectionBox::selectedGroupNames(QList<QString> &groupNames) const
 		}
 	}
 }
+
+std::list<RsNodeGroupId> GroupSelectionDialog::selectGroups(const std::list<RsNodeGroupId>& default_groups)
+{
+    GroupSelectionDialog gsd(NULL) ;
+
+    gsd.mBox->setSelectedGroupIds(default_groups) ;
+
+    gsd.exec();
+
+    std::list<RsNodeGroupId> selected_groups ;
+    gsd.mBox->selectedGroupIds(selected_groups);
+
+    return selected_groups ;
+}
+
+GroupSelectionDialog::~GroupSelectionDialog()
+{
+    delete mBox ;
+}
+GroupSelectionDialog::GroupSelectionDialog(QWidget *parent)
+{
+    mBox = new GroupSelectionBox(this) ;
+
+    QLayout *l = new QVBoxLayout ;
+    setLayout(l) ;
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+    l->addWidget(mBox) ;
+    l->addWidget(buttonBox) ;
+    l->update() ;
+}
+

@@ -34,7 +34,8 @@
 #include "ShareManager.h"
 #include "ShareDialog.h"
 #include "settings/rsharesettings.h"
-#include <gui/common/GroupFlagsWidget.h>
+#include "gui/common/GroupFlagsWidget.h"
+#include "gui/common/GroupSelectionBox.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
 #include "util/QtVersion.h"
@@ -65,18 +66,16 @@ ShareManager::ShareManager()
 
     Settings->loadWidgetInformation(this);
 
-    connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( showShareDialog() ) );
-    connect(ui.editButton, SIGNAL(clicked( bool ) ), this , SLOT( editShareDirectory() ) );
-    connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
+    connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShare() ) );
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
+    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
     connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
     connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
 
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(updateGroups()));
+    connect(ui.shareddirList, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(doubleClickedCell(int,int)));
 
-    ui.editButton->setEnabled(false);
-    ui.removeButton->setEnabled(false);
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(reload()));
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
@@ -90,6 +89,33 @@ ShareManager::ShareManager()
     setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
+void ShareManager::doubleClickedCell(int row,int column)
+{
+    if(column == COLUMN_PATH)
+    {
+        QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Choose directory"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+
+        if(!dirname.isNull())
+        {
+            std::string new_name( dirname.toUtf8() );
+
+            for(uint32_t i=0;i<mDirInfos.size();++i)
+                if(mDirInfos[row].filename == new_name)
+                    return ;
+
+            mDirInfos[row].filename = new_name ;
+            load();
+        }
+    }
+    else if(column == COLUMN_GROUPS)
+    {
+        std::list<RsNodeGroupId> selected_groups = GroupSelectionDialog::selectGroups(std::list<RsNodeGroupId>()) ;
+
+        mDirInfos[row].parent_groups = selected_groups ;
+        load();
+    }
+}
+
 ShareManager::~ShareManager()
 {
     _instance = NULL;
@@ -97,11 +123,21 @@ ShareManager::~ShareManager()
     Settings->saveWidgetInformation(this);
 }
 
+void ShareManager::cancel()
+{
+    close();
+}
 void ShareManager::applyAndClose()
 {
-//	std::cerr << "ShareManager:::close(): updating!" << std::endl;
+    // This is the only place where we change things.
 
-	updateFlags() ;
+    std::list<SharedDirInfo> infos ;
+
+    for(uint32_t i=0;i<mDirInfos.size();++i)
+        infos.push_back(mDirInfos[i]) ;
+
+    rsFiles->setSharedDirectories(infos) ;
+
 	close() ;
 }
 
@@ -121,6 +157,17 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint /*point*/ )
     contextMnu.exec(QCursor::pos());
 }
 
+void ShareManager::reload()
+{
+    std::list<SharedDirInfo> dirs ;
+    rsFiles->getSharedDirectories(dirs) ;
+
+    for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+        mDirInfos.push_back(*it) ;
+
+    load();
+}
+
 /** Loads the settings for this page */
 void ShareManager::load()
 {
@@ -128,44 +175,40 @@ void ShareManager::load()
         return ;
 
     isLoading = true;
-//    std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
-
-    std::list<SharedDirInfo>::const_iterator it;
-    std::list<SharedDirInfo> dirs;
-    rsFiles->getSharedDirectories(dirs);
 
     /* get a link to the table */
     QTableWidget *listWidget = ui.shareddirList;
 
     /* set new row count */
-    listWidget->setRowCount(dirs.size());
+    listWidget->setRowCount(mDirInfos.size());
 
-    int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
+    for(uint32_t row=0;row<mDirInfos.size();++row)
     {
-        listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
-        listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8((*it).virtualname.c_str())));
+        listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8(mDirInfos[row].filename.c_str())));
+        listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8(mDirInfos[row].virtualname.c_str())));
 
-		  GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,(*it).shareflags);
+        GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,mDirInfos[row].shareflags);
 
-          listWidget->setRowHeight(row, 32 * QFontMetricsF(font()).height()/14.0);
-		  listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
+        listWidget->setRowHeight(row, 32 * QFontMetricsF(font()).height()/14.0);
+        listWidget->setCellWidget(row, COLUMN_SHARE_FLAGS, widget);
 
-		  listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
-		  listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
+        listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
+        listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
+        listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
-		  //connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
+        connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
+
+        listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
+        listWidget->item(row,COLUMN_GROUPS)->setToolTip(tr("Double click to select which groups of friends can see the files")) ;
+        listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the cirtual file name")) ;
     }
 
-     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
-
-    //ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
+    listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
 
     listWidget->update(); /* update display */
     update();
 
     isLoading = false ;
-    updateGroups();
 }
 
 void ShareManager::showYourself()
@@ -173,6 +216,7 @@ void ShareManager::showYourself()
     if(_instance == NULL)
         _instance = new ShareManager() ;
 
+    _instance->reload() ;
     _instance->show() ;
     _instance->activateWindow();
 }
@@ -184,7 +228,7 @@ void ShareManager::showYourself()
    }
 
    if (update_local) {
-       _instance->load();
+       _instance->reload();
    }
 }
 
@@ -193,101 +237,77 @@ void ShareManager::updateFlags()
     if(isLoading)
         return ;
 
-	isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
-	 							// what has changed => fail!
+    isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
+    // what has changed => fail!
 
-   // std::cerr << "Updating flags" << std::endl;
+    for(int row=0;row<ui.shareddirList->rowCount();++row)
+    {
+        FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
 
-    std::list<SharedDirInfo>::iterator it;
-    std::list<SharedDirInfo> dirs;
-    rsFiles->getSharedDirectories(dirs);
-
-	 std::map<QString, FileStorageFlags> mapped_flags ;
-
-	 for(int row=0;row<ui.shareddirList->rowCount();++row)
-	 {
-		 QString dirpath = ui.shareddirList->item(row,COLUMN_PATH)->text() ;
-		 FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
-
-		 mapped_flags[dirpath] = flags ;
-
-//		 std::cerr << "Getting new flags " << flags << " for path " << dirpath.toStdString() << std::endl;
-	 }
-
-	 for(std::list<SharedDirInfo>::iterator it(dirs.begin());it!=dirs.end();++it)
-	 {
-		 FileStorageFlags newf = mapped_flags[QString::fromUtf8((*it).filename.c_str())] ;
-
-		 if( (*it).shareflags != newf )
-		 {
-			 (*it).shareflags = newf ;
-			 rsFiles->updateShareFlags(*it) ;	// modifies the flags
-
-//			 std::cerr << "Updating flags to " << newf << " for dir " << (*it).filename << std::endl ;
-		 }
-	 }
+        mDirInfos[row].shareflags = flags ;
+    }
 
     isLoading = false ;	// re-enable GUI load
-	 load() ;				// update the GUI.
+    load() ;				// update the GUI.
 }
 
-void ShareManager::updateGroups()
+// void ShareManager::updateFromWidget()
+// {
+//     mDirInfos.clear();
+//
+//     for(uint32_t i=0;i<ui.shareddirList.rows();++i)
+//     {
+//         SharedDirInfo sdi ;
+//         sdi.filename       = ui.shareddirList->item(i,COLUMN_PATH)->text().toUtf8() ;
+//         sdi.virtualname    = ui.shareddirList->item(i,COLUMN_VIRTUALNAME)->text().toUtf8() ;
+//         sdi.shareflags     = dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->item(i,COLUMN_SHARE_FLAGS))->flags();
+//         sdi.parent_groups  = std::list<RsNodeGroupId>();//ui.shareddirList->item(i,COLUMN_GROUPS)->text();
+//     }
+// }
+
+QString ShareManager::getGroupString(const std::list<RsNodeGroupId>& groups)
 {
-    if(isLoading)
-        return ;
+    int n = 0;
+    QString group_string ;
 
-//    std::cerr << "Updating groups" << std::endl;
-
-    std::list<SharedDirInfo>::iterator it;
-    std::list<SharedDirInfo> dirs;
-    rsFiles->getSharedDirectories(dirs);
-
-    int row=0 ;
-    for(it = dirs.begin(); it != dirs.end(); ++it,++row)
+    for (std::list<RsNodeGroupId>::const_iterator it(groups.begin());it!=groups.end();++it,++n)
     {
-        QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_GROUPS);
+        if (n>0)
+            group_string += ", " ;
 
-        QString group_string;
-        int n = 0;
-        for (std::list<RsNodeGroupId>::const_iterator it2((*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2,++n)
-        {
-            if (n>0)
-                group_string += ", " ;
-
-            RsGroupInfo groupInfo;
-            rsPeers->getGroupInfo(*it2, groupInfo);
-            group_string += GroupDefs::name(groupInfo);
-        }
-
-        item->setText(group_string);
+        RsGroupInfo groupInfo;
+        rsPeers->getGroupInfo(*it, groupInfo);
+        group_string += GroupDefs::name(groupInfo);
     }
+
+    return group_string ;
 }
 
-void ShareManager::editShareDirectory()
-{
-    /* id current dir */
-    int row = ui.shareddirList->currentRow();
-    QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_PATH);
-
-    if (item) {
-        std::string filename = item->text().toUtf8().constData();
-
-        std::list<SharedDirInfo> dirs;
-        rsFiles->getSharedDirectories(dirs);
-
-        std::list<SharedDirInfo>::const_iterator it;
-        for (it = dirs.begin(); it != dirs.end(); ++it) {
-            if (it->filename == filename) {
-                /* file name found, show dialog */
-                ShareDialog sharedlg (it->filename, this);
-                sharedlg.setWindowTitle(tr("Edit Shared Folder"));
-                sharedlg.exec();
-                load();
-                break;
-            }
-        }
-    }
-}
+// void ShareManager::editShareDirectory()
+// {
+//     /* id current dir */
+//     int row = ui.shareddirList->currentRow();
+//     QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_PATH);
+//
+//     if (item) {
+//         std::string filename = item->text().toUtf8().constData();
+//
+//         std::list<SharedDirInfo> dirs;
+//         rsFiles->getSharedDirectories(dirs);
+//
+//         std::list<SharedDirInfo>::const_iterator it;
+//         for (it = dirs.begin(); it != dirs.end(); ++it) {
+//             if (it->filename == filename) {
+//                 /* file name found, show dialog */
+//                 ShareDialog sharedlg (it->filename, this);
+//                 sharedlg.setWindowTitle(tr("Edit Shared Folder"));
+//                 sharedlg.exec();
+//                 load();
+//                 break;
+//             }
+//         }
+//     }
+// }
 
 void ShareManager::removeShareDirectory()
 {
@@ -301,7 +321,9 @@ void ShareManager::removeShareDirectory()
     {
         if ((QMessageBox::question(this, tr("Warning!"),tr("Do you really want to stop sharing this directory ?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
         {
-            rsFiles->removeSharedDirectory( qdir->text().toUtf8().constData());
+            for(uint32_t i=row;i+1<mDirInfos.size();++i)
+                mDirInfos[i] = mDirInfos[i+1] ;
+
             load();
         }
     }
@@ -313,6 +335,30 @@ void ShareManager::showEvent(QShowEvent *event)
     {
         load();
     }
+}
+
+void ShareManager::addShare()
+{
+    QString fname = QFileDialog::getExistingDirectory(NULL,tr("Choose a directory to share"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+
+    if(fname.isNull())
+        return;
+
+    std::string dir_name ( fname.toUtf8() );
+
+    // check that the directory does not already exist
+
+    for(uint32_t i=0;i<mDirInfos.size();++i)
+        if(mDirInfos[i].filename == dir_name)
+            return ;
+
+    mDirInfos.push_back(SharedDirInfo());
+    mDirInfos.back().filename = dir_name ;
+    mDirInfos.back().virtualname = std::string();
+    mDirInfos.back().shareflags = DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_ANONYMOUS_SEARCH;
+    mDirInfos.back().parent_groups.clear();
+
+    load();
 }
 
 void ShareManager::showShareDialog()
@@ -327,14 +373,6 @@ void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentCo
     Q_UNUSED(currentColumn);
     Q_UNUSED(previousRow);
     Q_UNUSED(previousColumn);
-
-    if (currentRow >= 0) {
-        ui.editButton->setEnabled(true);
-        ui.removeButton->setEnabled(true);
-    } else {
-        ui.editButton->setEnabled(false);
-        ui.removeButton->setEnabled(false);
-    }
 }
 
 void ShareManager::dragEnterEvent(QDragEnterEvent *event)

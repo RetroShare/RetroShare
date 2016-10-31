@@ -101,7 +101,7 @@ struct SharedDirInfo
 {
 	std::string filename ;
 	std::string virtualname ;
-	FileStorageFlags shareflags ;		// DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | ...
+    FileStorageFlags shareflags ;		// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
     std::list<RsNodeGroupId> parent_groups ;
 };
 
@@ -217,8 +217,9 @@ class RsFiles
 		virtual std::string getDownloadDirectory() = 0;
 		virtual std::string getPartialsDirectory() = 0;
 
-		virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
-		virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
+        virtual bool    getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
+        virtual bool    setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
+        virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
 
