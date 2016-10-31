@@ -10,9 +10,9 @@
 #define FLAGS_ANONYMOUS_DL_ON            ":icons/anonymous_blue_128.png"
 #define FLAGS_ANONYMOUS_DL_OFF           ":icons/blank_blue_128.png"
 
-#define INDEX_BROWSABLE     0
-#define INDEX_ANON_SEARCH   1
-#define INDEX_ANON_DL       2
+#define INDEX_ANON_SEARCH   0
+#define INDEX_ANON_DL       1
+#define INDEX_BROWSABLE     2
 
 /*QString GroupFlagsWidget::_tooltips_on[4] = {
     QObject::tr("Directory is visible to friends"),
@@ -96,15 +96,15 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
 {
   QString tip_on, tip_off;
   switch (button_id) {
-    case 0:
-      tip_on = tr("Directory is visible to friends");
-      tip_off = tr("Directory is NOT visible to friends");
+    case 2:
+      tip_on = tr("Directory is visible to some friends (see list at right)");
+      tip_off = tr("Directory is NOT visible to any friend");
       break;
-    case 1:
+    case 0:
       tip_on = tr("Directory can be searched anonymously");
       tip_off = tr("Directory cannot be searched anonymously");
       break;
-    case 2:
+    case 1:
       tip_on = tr("Files can be downloaded anonymously");
       tip_off = tr("Files cannot be downloaded anonymously");
       break;

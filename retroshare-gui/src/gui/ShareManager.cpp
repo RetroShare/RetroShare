@@ -80,8 +80,8 @@ ShareManager::ShareManager()
     QHeaderView* header = ui.shareddirList->horizontalHeader();
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
 
-    //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
-    //header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);
+//    header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::ResizeToContents);
+//    header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::ResizeToContents);
 
     header->setHighlightSections(false);
 
@@ -109,7 +109,7 @@ void ShareManager::doubleClickedCell(int row,int column)
     }
     else if(column == COLUMN_GROUPS)
     {
-        std::list<RsNodeGroupId> selected_groups = GroupSelectionDialog::selectGroups(std::list<RsNodeGroupId>()) ;
+        std::list<RsNodeGroupId> selected_groups = GroupSelectionDialog::selectGroups(mDirInfos[row].parent_groups) ;
 
         mDirInfos[row].parent_groups = selected_groups ;
         load();
@@ -194,13 +194,19 @@ void ShareManager::load()
 
         listWidget->setItem(row, COLUMN_GROUPS, new QTableWidgetItem()) ;
         listWidget->item(row,COLUMN_GROUPS)->setBackgroundColor(QColor(183,236,181)) ;
-        listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
         connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
 
         listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
         listWidget->item(row,COLUMN_GROUPS)->setToolTip(tr("Double click to select which groups of friends can see the files")) ;
-        listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the cirtual file name")) ;
+        listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the name that friends will see")) ;
+
+        listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
+
+        QFont font = listWidget->item(row,COLUMN_GROUPS)->font();
+        font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
+        listWidget->item(row,COLUMN_GROUPS)->setTextColor( (mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE)? (Qt::black):(Qt::lightGray)) ;
+        listWidget->item(row,COLUMN_GROUPS)->setFont(font);
     }
 
     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
@@ -251,22 +257,11 @@ void ShareManager::updateFlags()
     load() ;				// update the GUI.
 }
 
-// void ShareManager::updateFromWidget()
-// {
-//     mDirInfos.clear();
-//
-//     for(uint32_t i=0;i<ui.shareddirList.rows();++i)
-//     {
-//         SharedDirInfo sdi ;
-//         sdi.filename       = ui.shareddirList->item(i,COLUMN_PATH)->text().toUtf8() ;
-//         sdi.virtualname    = ui.shareddirList->item(i,COLUMN_VIRTUALNAME)->text().toUtf8() ;
-//         sdi.shareflags     = dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->item(i,COLUMN_SHARE_FLAGS))->flags();
-//         sdi.parent_groups  = std::list<RsNodeGroupId>();//ui.shareddirList->item(i,COLUMN_GROUPS)->text();
-//     }
-// }
-
 QString ShareManager::getGroupString(const std::list<RsNodeGroupId>& groups)
 {
+    if(groups.empty())
+        return tr("[Everyone]") ;
+
     int n = 0;
     QString group_string ;
 
@@ -282,32 +277,6 @@ QString ShareManager::getGroupString(const std::list<RsNodeGroupId>& groups)
 
     return group_string ;
 }
-
-// void ShareManager::editShareDirectory()
-// {
-//     /* id current dir */
-//     int row = ui.shareddirList->currentRow();
-//     QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_PATH);
-//
-//     if (item) {
-//         std::string filename = item->text().toUtf8().constData();
-//
-//         std::list<SharedDirInfo> dirs;
-//         rsFiles->getSharedDirectories(dirs);
-//
-//         std::list<SharedDirInfo>::const_iterator it;
-//         for (it = dirs.begin(); it != dirs.end(); ++it) {
-//             if (it->filename == filename) {
-//                 /* file name found, show dialog */
-//                 ShareDialog sharedlg (it->filename, this);
-//                 sharedlg.setWindowTitle(tr("Edit Shared Folder"));
-//                 sharedlg.exec();
-//                 load();
-//                 break;
-//             }
-//         }
-//     }
-// }
 
 void ShareManager::removeShareDirectory()
 {
