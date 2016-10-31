@@ -34,6 +34,7 @@
 #include "util/HandleRichText.h"
 
 static QHash<QString, QString> Smileys;
+static QVector<QString> order;
 
 void Emoticons::load()
 {
@@ -115,6 +116,7 @@ void Emoticons::load()
             } else {
                 Smileys.insert(smcode, smfile);
             }
+			order.append(smcode);
         }
     }
 
@@ -174,15 +176,15 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     x = 0;
     y = 0;
 
-    QHashIterator<QString, QString> i(Smileys);
+	QVectorIterator<QString> i(order);
     while(i.hasNext())
     {
-        i.next();
+		QString key = i.next();
         QPushButton *smButton = new QPushButton("", smWidget);
         smButton->setGeometry(x*buttonWidth, y*buttonHeight, buttonWidth, buttonHeight);
         smButton->setIconSize(QSize(buttonWidth, buttonHeight));
-        smButton->setIcon(QPixmap(i.value()));
-        smButton->setToolTip(i.key());
+		smButton->setIcon(QPixmap(Smileys.value(key)));
+		smButton->setToolTip(key);
         smButton->setStyleSheet("QPushButton:hover {border: 3px solid white; border-radius: 2px;}");
         smButton->setFlat(true);
         ++x;
