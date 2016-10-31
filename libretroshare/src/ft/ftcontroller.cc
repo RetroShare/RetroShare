@@ -1611,7 +1611,7 @@ bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 	info.queue_position = it->second->mQueuePosition ;
 
 	if(it->second->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-		info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;	// file being downloaded anonymously are always anonymously available.
+        info.storage_permission_flags |= DIR_FLAGS_ANONYMOUS_DOWNLOAD ;	// file being downloaded anonymously are always anonymously available.
 
 	/* get list of sources from transferModule */
     std::list<RsPeerId> peerIds;

@@ -656,7 +656,7 @@ int MenuListShared::getEntryDesc(int idx, std::string &desc)
 	for (it = dirs.begin(); (i < idx) && (it != dirs.end()); it++, i++);
 	if (it != dirs.end())
 	{
-		bool networkwide = (it->shareflags & DIR_FLAGS_NETWORK_WIDE_OTHERS);
+		bool networkwide = (it->shareflags & DIR_FLAGS_ANONYMOUS_DOWNLOAD);
 		bool browsable = (it->shareflags & DIR_FLAGS_BROWSABLE_OTHERS);
 		if (networkwide && browsable)
 		{
@@ -759,7 +759,7 @@ uint32_t MenuListSharedTogglePublic::op_basic(std::string key)
 		return MENU_OP_ERROR;
 	}
 
-	mls->toggleFlagSelected(DIR_FLAGS_NETWORK_WIDE_OTHERS);
+	mls->toggleFlagSelected(DIR_FLAGS_ANONYMOUS_DOWNLOAD);
 
 	return MENU_OP_INSTANT;
 }

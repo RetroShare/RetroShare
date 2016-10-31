@@ -216,10 +216,9 @@ QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 {
 	char str[11] = "-  -  -" ;
 
-	if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 	str[0] = 'B' ;
-	//if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[3] = 'N' ;
-	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) 	str[3] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[6] = 'N' ;
+    if(flags & DIR_FLAGS_BROWSABLE) 	     str[0] = 'B' ;
+    if(flags & DIR_FLAGS_ANONYMOUS_SEARCH) 	 str[3] = 'S' ;
+	if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) str[6] = 'N' ;
 
 	return QString(str) ;
 }
