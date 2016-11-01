@@ -42,7 +42,9 @@
 #include <QTimer>
 
 #define ICON_STATUS_UNKNOWN ":/images/ledoff1.png"
+#define ICON_STATUS_WORKING ":/images/yellowled.png"
 #define ICON_STATUS_OK      ":/images/ledon1.png"
+#define ICON_STATUS_ERROR   ":/images/redled.png"
 
 #define COLUMN_RANGE   0
 #define COLUMN_STATUS  1
@@ -50,10 +52,15 @@
 #define COLUMN_REASON  3
 #define COLUMN_COMMENT 4
 
+///
+/// \brief hiddenServiceIncomingTab index of hidden serice incoming tab
+///
+const static uint32_t hiddenServiceIncomingTab = 2;
+
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-	: ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+    : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -88,9 +95,26 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.filteredIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedBlackListIP(int,int,int,int)));
     QObject::connect(ui.whiteListIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedWhiteListIP(int,int,int,int)));
 
-   QTimer *timer = new QTimer(this);
-   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-   timer->start(1000);
+	QObject::connect(ui.pbBobStart,   SIGNAL(clicked()), this, SLOT(startBOB()));
+	QObject::connect(ui.pbBobStop,    SIGNAL(clicked()), this, SLOT(stopBOB()));
+	QObject::connect(ui.pbBobGenAddr, SIGNAL(clicked()), this, SLOT(getNewKey()));
+	QObject::connect(ui.pbBobLoadKey, SIGNAL(clicked()), this, SLOT(loadKey()));
+	QObject::connect(ui.cb_enableBob, SIGNAL(toggled(bool)), this, SLOT(enableBob(bool)));
+
+	QObject::connect(ui.sbBobLengthIn,    SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+	QObject::connect(ui.sbBobLengthOut,   SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+	QObject::connect(ui.sbBobQuantityIn,  SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+	QObject::connect(ui.sbBobQuantityOut, SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+	QObject::connect(ui.sbBobVarianceIn,  SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+	QObject::connect(ui.sbBobVarianceOut, SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
+
+	// These two spin boxes are used for the same thing - keep them in sync!
+	QObject::connect(ui.hiddenpage_proxyPort_i2p,   SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortNormal(int)));
+	QObject::connect(ui.hiddenpage_proxyPort_i2p_2, SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortBob(int)));
+
+	QTimer *timer = new QTimer(this);
+	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+	timer->start(1000);
 
 	//load();
 	updateStatus();
@@ -105,13 +129,15 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
 		ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-	ui.hiddenpage_incoming->setVisible(false);
+	ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, false);
+	ui.gbBob->setEnabled(false);
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
 #endif
 }
+
 void ServerPage::checkIpRange(const QString& ipstr)
 {
     QColor color;
@@ -216,6 +242,11 @@ void ServerPage::load()
     }
     mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
 
+	rsPeers->getBOBSettings(&mBobSettings);
+
+	loadCommon();
+	updateStatus();
+
     if (mIsHiddenNode)
     {
 		mHiddenType = detail.hiddenType;
@@ -224,7 +255,7 @@ void ServerPage::load()
 		return;
 	}
 
-        loadFilteredIps() ;
+	loadFilteredIps() ;
 
     ui.netModeComboBox->show() ;
     ui.textlabel_upnp->show();
@@ -307,21 +338,6 @@ void ServerPage::load()
 		ui.ipAddressList->clear();
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
-
-	/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
-	std::string proxyaddr;
-    uint16_t proxyport;
-    uint32_t status ;
-	// Tor
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
-	// I2P
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
-
-	updateOutProxyIndicator();
 }
 
 void ServerPage::toggleAutoIncludeFriends(bool b)
@@ -482,7 +498,6 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
 
 }
 
-
 void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
 void ServerPage::setGroupIpLimit(int n) { rsBanList->setAutoRangeLimit(n) ; }
 
@@ -543,7 +558,6 @@ bool ServerPage::removeCurrentRowFromBlackList(sockaddr_storage& collected_addr,
     rsBanList->removeIpRange(collected_addr,masked_bytes,RSBANLIST_TYPE_BLACKLIST);
     return true ;
 }
-
 
 bool ServerPage::removeCurrentRowFromWhiteList(sockaddr_storage& collected_addr,int &masked_bytes)
 {
@@ -660,6 +674,48 @@ void ServerPage::updateStatus()
 		return ;
 
     loadFilteredIps() ;
+
+	// update bob
+	// reload settings in case of new keys
+	rsPeers->getBOBSettings(&mBobSettings);
+	QString addr = QString::fromStdString(mBobSettings.addr);
+	if (ui.leBobB32Addr->text() != addr) {
+		ui.leBobB32Addr->setText(addr);
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+
+		ui.hiddenpage_serviceAddress->setText(addr);
+	}
+
+	bobStates bs;
+	rsPeers->getBOBStates(&bs);
+	switch (bs.cs) {
+	case csStarted:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
+
+		enableBobElements(false);
+		break;
+	case csStarting:
+	case csClosing:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_WORKING));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
+
+		enableBobElements(false);
+		break;
+	case csError:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_ERROR));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken"));
+
+		enableBobElements(false);
+		break;
+	case csClosed:
+	default:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
+
+		enableBobElements(true);
+		break;
+	}
 
 	if (mIsHiddenNode)
 	{
@@ -922,7 +978,7 @@ void ServerPage::loadHiddenNode()
 	ui.label_dynDNS->setVisible(false);
 	ui.dynDNS      ->setVisible(false);
 
-	ui.hiddenpage_incoming->setVisible(true);
+	ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, true);
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -962,21 +1018,6 @@ void ServerPage::loadHiddenNode()
 	ui.hiddenpage_servicePort -> setValue(detail.hiddenNodePort);
 	/* in I2P there is no port - there is only the address */
 	ui.hiddenpage_servicePort->setEnabled(detail.hiddenType != RS_HIDDEN_TYPE_I2P);
-
-	/* out proxy settings */
-	std::string proxyaddr;
-	uint16_t proxyport;
-	uint32_t status ;
-	// Tor
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
-	// I2P
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
-	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
-	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
-
-	updateOutProxyIndicator();
 
 	QString expected = "";
 	switch (mHiddenType) {
@@ -1139,6 +1180,7 @@ void ServerPage::saveAddressesHiddenNode()
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
+
 void ServerPage::updateOutProxyIndicator()
 {
     QTcpSocket socket ;
@@ -1169,6 +1211,20 @@ void ServerPage::updateOutProxyIndicator()
 	{
 		ui.iconlabel_i2p_outgoing->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
 		ui.iconlabel_i2p_outgoing->setToolTip(tr("I2P proxy is not enabled")) ;
+	}
+
+	// I2P - BOB
+	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(), 2827);
+	if(socket.waitForConnected(500))
+	{
+		socket.disconnectFromHost();
+		ui.iconlabel_i2p_outgoing_2->setPixmap(QPixmap(ICON_STATUS_OK)) ;
+		ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is running and accessible")) ;
+	}
+	else
+	{
+		ui.iconlabel_i2p_outgoing_2->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+		ui.iconlabel_i2p_outgoing_2->setToolTip(tr("BOB is not accessible! Is it running?")) ;
 	}
 }
 
@@ -1215,7 +1271,158 @@ void ServerPage::updateInProxyIndicator()
     connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;
     manager->get( QNetworkRequest(url) ) ;
 
-    QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy) ;
+	QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy) ;
+}
+
+void ServerPage::startBOB()
+{
+	rsPeers->startUpBOBConnection();
+	updateStatus();
+}
+
+void ServerPage::stopBOB()
+{
+	rsPeers->shutdownBOBConnection();
+	updateStatus();
+}
+
+void ServerPage::getNewKey()
+{
+	rsPeers->bobGetNewKeys();
+	updateStatus();
+}
+
+void ServerPage::loadKey()
+{
+	mBobSettings.keys = ui.pteBobServerKey->toPlainText().toStdString();
+	mBobSettings.addr = rsPeers->keyToBase32Addr(mBobSettings.keys);
+	rsPeers->setBOBSettings(&mBobSettings);
+}
+
+void ServerPage::enableBob(bool checked)
+{
+	mBobSettings.enableBob = checked;
+	rsPeers->setBOBSettings(&mBobSettings);
+
+	setUpBobElements();
+}
+
+int8_t fitRange(int i, int min, int max) {
+	if (i < min)
+		i = min;
+	else if (i > max)
+		i = max;
+
+	return (int8_t)i;
+}
+
+void ServerPage::tunnelSettingsChanged(int)
+{
+	int li, lo, qi, qo, vi, vo;
+	li = ui.sbBobLengthIn->value();
+	lo = ui.sbBobLengthOut->value();
+	qi = ui.sbBobQuantityIn->value();
+	qo = ui.sbBobQuantityOut->value();
+	vi = ui.sbBobVarianceIn->value();
+	vo = ui.sbBobVarianceOut->value();
+
+	mBobSettings.inLength    = fitRange(li, 0, 7);
+	mBobSettings.outLength   = fitRange(lo, 0, 7);
+	mBobSettings.inQuantity  = fitRange(qi, 1, 16);
+	mBobSettings.outQuantity = fitRange(qo, 1, 16);
+	mBobSettings.inVariance  = fitRange(vi, -1, 2);
+	mBobSettings.outVariance = fitRange(vo, -1, 2);
+
+	rsPeers->setBOBSettings(&mBobSettings);
+}
+
+void ServerPage::syncI2PProxyPortNormal(int i)
+{
+	ui.hiddenpage_proxyPort_i2p_2->setValue(i);
+}
+
+void ServerPage::syncI2PProxyPortBob(int i)
+{
+	ui.hiddenpage_proxyPort_i2p->setValue(i);
+}
+
+void ServerPage::loadCommon()
+{
+	/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
+	/* out proxy settings */
+	std::string proxyaddr;
+	uint16_t proxyport;
+	uint32_t status ;
+
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_tor -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyPort_tor -> setValue(proxyport);
+
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, proxyaddr, proxyport, status);
+	ui.hiddenpage_proxyAddress_i2p -> setText(QString::fromStdString(proxyaddr));
+	ui.hiddenpage_proxyAddress_i2p_2->setText(QString::fromStdString(proxyaddr)); // this one is for bob tab
+	ui.hiddenpage_proxyPort_i2p -> setValue(proxyport);
+	ui.hiddenpage_proxyPort_i2p_2->setValue(proxyport); // this one is for bob tab
+
+	updateOutProxyIndicator();
+
+	ui.cb_enableBob->setChecked(mBobSettings.enableBob);
+}
+
+void ServerPage::setUpBobElements()
+{
+	ui.gbBob->setEnabled(mBobSettings.enableBob);
+	if (mBobSettings.enableBob) {
+		ui.hiddenpage_proxyAddress_i2p->setEnabled(false);
+		ui.hiddenpage_proxyPort_i2p->setEnabled(false);
+
+		ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.addr));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+
+		// cast to int to avoid problems
+		int li, lo, qi, qo, vi, vo;
+		li = mBobSettings.inLength;
+		lo = mBobSettings.outLength;
+		qi = mBobSettings.inQuantity;
+		qo = mBobSettings.outQuantity;
+		vi = mBobSettings.inVariance;
+		vo = mBobSettings.outVariance;
+
+		ui.sbBobLengthIn   ->setValue(li);
+		ui.sbBobLengthOut  ->setValue(lo);
+		ui.sbBobQuantityIn ->setValue(qi);
+		ui.sbBobQuantityOut->setValue(qo);
+		ui.sbBobVarianceIn ->setValue(vi);
+		ui.sbBobVarianceOut->setValue(vo);
+	} else {
+		ui.hiddenpage_proxyAddress_i2p->setEnabled(true);
+		ui.hiddenpage_proxyPort_i2p->setEnabled(true);
+	}
+}
+
+void ServerPage::enableBobElements(bool enable)
+{
+	if (enable) {
+		ui.pbBobGenAddr->setEnabled(true);
+		ui.pbBobGenAddr->setToolTip(tr("request a new server key"));
+
+		ui.pbBobLoadKey->setEnabled(true);
+		ui.pbBobLoadKey->setToolTip(tr("load server key from base64"));
+
+		ui.cb_enableBob->setEnabled(true);
+		ui.cb_enableBob->setToolTip(tr(""));
+	} else {
+		ui.pbBobGenAddr->setEnabled(false);
+		ui.pbBobGenAddr->setToolTip(tr("stop BOB tunnel first to generate a new key"));
+
+		ui.pbBobLoadKey->setEnabled(false);
+		ui.pbBobLoadKey->setToolTip(tr("stop BOB tunnel first to load a key"));
+
+		ui.cb_enableBob->setEnabled(false);
+		ui.cb_enableBob->setToolTip(tr("stop BOB tunnel first to disable BOB"));
+	}
 }
 
 void ServerPage::handleNetworkReply(QNetworkReply *reply)
