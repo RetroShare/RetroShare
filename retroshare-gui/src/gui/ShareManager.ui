@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
+    <width>1210</width>
     <height>334</height>
    </rect>
   </property>
@@ -111,7 +111,7 @@
            </column>
            <column>
             <property name="text">
-             <string>Share flags</string>
+             <string>Access</string>
             </property>
             <property name="toolTip">
              <string comment="If activated, the share is anonymously accessible to anybody"/>
@@ -119,7 +119,7 @@
            </column>
            <column>
             <property name="text">
-             <string>Groups</string>
+             <string>Visibility</string>
             </property>
             <property name="toolTip">
              <string comment="If checked, the share is browsable by your friends"/>

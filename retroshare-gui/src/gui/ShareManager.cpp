@@ -160,6 +160,8 @@ void ShareManager::reload()
     std::list<SharedDirInfo> dirs ;
     rsFiles->getSharedDirectories(dirs) ;
 
+    mDirInfos.clear();
+
     for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
         mDirInfos.push_back(*it) ;
 

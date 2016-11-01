@@ -223,9 +223,15 @@ QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 
 	return QString(str) ;
 }
-QString RetroshareDirModel::getGroupsString(const std::list<RsNodeGroupId>& group_ids)
+QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::list<RsNodeGroupId>& group_ids)
 {
-	QString groups_str ;
+    if(!(flags & DIR_FLAGS_BROWSABLE))
+        return QString();
+
+    if(group_ids.empty())
+        return tr("[Everyone]") ;
+
+    QString groups_str = tr("Only ");
 	RsGroupInfo group_info ;
 
     for(std::list<RsNodeGroupId>::const_iterator it(group_ids.begin());it!=group_ids.end();)
@@ -399,16 +405,9 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
                 return  misc::userFriendlyDuration(details.min_age);
 			case 3:
-                return getFlagsIcon(details.flags);//getFlagsString(details.flags);
-//			case 4:
-//				{
-//					QString ind("");
-//					if (ageIndicator != IND_ALWAYS)
-//						ind = getAgeIndicatorString(details);
-//					return ind;
-//				}
+                return QVariant();
 			case 4:
-				return getGroupsString(details.parent_groups) ;
+                return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("FILE");
@@ -430,9 +429,9 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
 				return misc::userFriendlyDuration(details.min_age);
 			case 3:
-                return QVariant();//getFlagsString(details.flags);
+                return QVariant();
 			case 4: 
-				return getGroupsString(details.parent_groups) ;
+                return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("DIR");
@@ -710,12 +709,12 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				if (RemoteMode)
 					return tr("Friend");
 				else
-					return tr("Share Flags");
+                    return tr("Access");
 			case 4:
 				if (RemoteMode)
 					return tr("What's new");
 				else
-					return tr("Groups");
+                    return tr("Visibility");
 		}
 		return QString("Column %1").arg(section);
 	}

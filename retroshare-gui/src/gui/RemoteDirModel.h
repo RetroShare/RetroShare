@@ -94,7 +94,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(FileStorageFlags f) ;
-        static QString getGroupsString(const std::list<RsNodeGroupId> &) ;
+        static QString getGroupsString(FileStorageFlags flags, const std::list<RsNodeGroupId> &) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 //		void getAgeIndicatorRec(const DirDetails &details, QString &ret) const;
         static const QIcon& getFlagsIcon(FileStorageFlags flags) ;
