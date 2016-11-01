@@ -269,7 +269,6 @@ bool ftServer::activateTunnels(const RsFileHash& hash,TransferRequestFlags flags
 #ifdef SERVER_DEBUG
         FTSERVER_DEBUG() << "Activating tunnels for hash " << hash << std::endl;
 #endif
-
         if(flags & RS_FILE_REQ_ENCRYPTED)
         {
 #ifdef SERVER_DEBUG
@@ -277,7 +276,7 @@ bool ftServer::activateTunnels(const RsFileHash& hash,TransferRequestFlags flags
 #endif
             mTurtleRouter->monitorTunnels(hash_of_hash,this,true) ;
         }
-        if(flags & RS_FILE_REQ_UNENCRYPTED)
+        if((flags & RS_FILE_REQ_UNENCRYPTED) && (mFtController->defaultEncryptionPolicy() != RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT))
         {
 #ifdef SERVER_DEBUG
             FTSERVER_DEBUG() << "  flags require no end-to-end encryption. Requesting hash " << hash << std::endl;
@@ -597,6 +596,12 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
                         break ;
                     }
         }
+    }
+
+    if(mFtController->defaultEncryptionPolicy() == RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT && hash == real_hash)
+    {
+        std::cerr << "(WW) rejecting file transfer for hash " << hash << " because the hash is not encrypted and encryption policy requires it." << std::endl;
+        return false ;
     }
 
 #ifdef SERVER_DEBUG
