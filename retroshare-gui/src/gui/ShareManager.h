@@ -58,6 +58,7 @@ private slots:
     void shareddirListCostumPopupMenu( QPoint point );
     void addShare();
     void doubleClickedCell(int,int);
+    void handleCellChange(int row,int column);
 
     void showShareDialog();
     //void editShareDirectory();

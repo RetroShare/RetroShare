@@ -70,9 +70,8 @@ ShareManager::ShareManager()
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
     connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
-    connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
-
     connect(ui.shareddirList, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(doubleClickedCell(int,int)));
+    connect(ui.shareddirList, SIGNAL(cellChanged(int,int)), this, SLOT(handleCellChange(int,int)));
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(reload()));
 
@@ -85,6 +84,26 @@ ShareManager::ShareManager()
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     reload();
+}
+
+void ShareManager::handleCellChange(int row,int column)
+{
+    if(isLoading)
+        return ;
+
+    if(column == COLUMN_VIRTUALNAME)
+    {
+        // check if the thing already exists
+
+        for(uint32_t i=0;i<mDirInfos.size();++i)
+            if(i != (uint32_t)row && (mDirInfos[row].virtualname == std::string(ui.shareddirList->item(i,COLUMN_VIRTUALNAME)->text().toUtf8())))
+            {
+                ui.shareddirList->item(row,COLUMN_VIRTUALNAME)->setText(QString::fromUtf8(mDirInfos[row].virtualname.c_str())) ;
+                return ;
+            }
+
+        mDirInfos[row].virtualname = std::string(ui.shareddirList->item(row,COLUMN_VIRTUALNAME)->text().toUtf8()) ;
+    }
 }
 
 void ShareManager::doubleClickedCell(int row,int column)
