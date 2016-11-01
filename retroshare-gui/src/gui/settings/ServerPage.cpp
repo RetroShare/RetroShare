@@ -486,7 +486,7 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
 void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
 void ServerPage::setGroupIpLimit(int n) { rsBanList->setAutoRangeLimit(n) ; }
 
-void ServerPage::ipFilterContextMenu(const QPoint& point)
+void ServerPage::ipFilterContextMenu(const QPoint& /*point*/)
 {
     QMenu contextMenu(this) ;
     int row = ui.filteredIpsTable->currentRow();
@@ -604,7 +604,7 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
     if(item == NULL)
         return ;
 
-    bool status = item->data(Qt::UserRole).toBool();
+    //bool status = item->data(Qt::UserRole).toBool();
 
     contextMenu.addAction(tr("Remove"),this,SLOT(removeWhiteListedIp()));
 

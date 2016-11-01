@@ -246,7 +246,7 @@ void TerminalApiClient::data_tick()
 
         if(!ask_for_password && runstate == "waiting_account_select"
                 && last_char >= '0' && last_char <= '9'
-                && (last_char-'0') < accounts.size())
+		        && static_cast<uint32_t>(last_char-'0') < accounts.size())
         {
             std::string acc = accounts[last_char-'0'];
             JsonStream reqs;

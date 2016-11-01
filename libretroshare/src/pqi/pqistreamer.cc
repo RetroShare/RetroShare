@@ -76,6 +76,19 @@ static uint8_t PACKET_SLICING_PROBE_BYTES[8] =  { 0x02, 0xaa, 0xbb, 0xcc, 0x00, 
 	#include "util/rsprint.h"
 #endif
 
+static double getCurrentTS()
+{
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+#endif
+        return cts;
+}
 
 pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(id), mStreamerMtx("pqistreamer"),
@@ -97,7 +110,9 @@ pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bi
     mAcceptsPacketSlicing = false ; // by default. Will be turned into true when everyone's ready.
     mLastSentPacketSlicingProbe = 0 ;
 
-    mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
+    mAvgLastUpdate = time(NULL);
+    mCurrSentTS = mCurrReadTS = getCurrentTS();
+
     mIncomingSize = 0 ;
 
     mStatisticsTimeStamp = 0 ;
@@ -540,7 +555,7 @@ int	pqistreamer::handleoutgoing_locked()
         	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
 		time_t now = time(NULL) ;
         
-        	if((!mAcceptsPacketSlicing) && now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
+            if(now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
         	{
 #ifdef DEBUG_PACKET_SLICING
                 	std::cerr << "(II) Inserting packet slicing probe in traffic" << std::endl;
@@ -1099,7 +1114,7 @@ float   pqistreamer::outTimeSlice_locked()
 // very simple..... 
 int     pqistreamer::outAllowedBytes_locked()
 {
-	int t = time(NULL); // get current timestep.
+    double t = getCurrentTS() ; // Grabs today's time in sec, with ms accuracy. Allows a much more accurate allocation of bw
 
 	/* allow a lot if not bandwidthLimited */
 	if (!mBio->bandwidthLimited())
@@ -1109,17 +1124,18 @@ int     pqistreamer::outAllowedBytes_locked()
 		return PQISTREAM_ABS_MAX;
 	}
 
-	int dt = t - mCurrSentTS;
-	// limiter -> for when currSentTs -> 0.
-	if (dt > 5)
-		dt = 5;
+    double dt = t - mCurrSentTS;
 
-	int maxout = (int) (getMaxRate(false) * 1000.0);
-	mCurrSent -= dt * maxout;
+    // limiter -> for when currSentTs -> 0.
+    if (dt > 5)
+        dt = 5;
+
+    double maxout = getMaxRate(false) * 1024.0;
+
+    mCurrSent -= int(dt * maxout);
+
 	if (mCurrSent < 0)
-	{
 		mCurrSent = 0;
-	}
 
 	mCurrSentTS = t;
 
@@ -1137,7 +1153,7 @@ int     pqistreamer::outAllowedBytes_locked()
 
 int     pqistreamer::inAllowedBytes_locked()
 {
-	int t = time(NULL); // get current timestep.
+    double t = getCurrentTS(); // in secs, with a ms accuracy
 
 	/* allow a lot if not bandwidthLimited */
 	if (!mBio->bandwidthLimited())
@@ -1147,17 +1163,18 @@ int     pqistreamer::inAllowedBytes_locked()
 		return PQISTREAM_ABS_MAX;
 	}
 
-	int dt = t - mCurrReadTS;
+    double dt = t - mCurrReadTS;
+
 	// limiter -> for when currReadTs -> 0.
 	if (dt > 5)
 		dt = 5;
 
-	int maxin = (int) (getMaxRate(true) * 1000.0);
-	mCurrRead -= dt * maxin;
+    double maxin = getMaxRate(true) * 1024.0;
+
+    mCurrRead -= int(dt * maxin);
+
 	if (mCurrRead < 0)
-	{
 		mCurrRead = 0;
-	}
 
 	mCurrReadTS = t;
 

@@ -728,14 +728,13 @@ bool ftController::completeFile(const RsFileHash& hash)
 	std::string path;
 	std::string name;
 	uint64_t    size = 0;
-    uint32_t    state = 0;
     uint32_t    period = 0;
 	TransferRequestFlags flags ;
 	TransferRequestFlags extraflags ;
 	uint32_t    completeCount = 0;
 
 	{
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+		RS_STACK_MUTEX(ctrlMutex);
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController:completeFile(" << hash << ")";
@@ -817,7 +816,6 @@ bool ftController::completeFile(const RsFileHash& hash)
 		name    = fc->mName;
 		//hash    = fc->mHash;
 		size    = fc->mSize;
-		state   = fc->mState;
 		period  = 30 * 24 * 3600; /* 30 days */
 		extraflags.clear() ;
 
@@ -838,7 +836,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
             mFtServer->activateTunnels(hash_to_suppress,flags,false);
 
-	} /******* UNLOCKED ********/
+	} // UNLOCK: RS_STACK_MUTEX(ctrlMutex);
 
 
 	/******************** NO Mutex from Now ********************

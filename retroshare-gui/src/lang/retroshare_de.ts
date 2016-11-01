@@ -402,7 +402,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+20"/>
         <source>Description:</source>
-        <translation>Beschreibung</translation>
+        <translation>Beschreibung:</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -514,7 +514,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Choose the language used in RetroShare</source>
-        <translation>Wähle die Sprache, die RetroShare verwendet</translation>
+        <translation>Wähle die Sprache, die RetroShare verwenden soll</translation>
     </message>
     <message>
         <location line="+41"/>
@@ -771,7 +771,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <message>
         <location filename="../gui/common/AvatarWidget.cpp" line="+157"/>
         <source>Click to change your avatar</source>
-        <translation>Klick zum Ändern deines Avatars</translation>
+        <translation>Klicke zum Ändern deines Avatars</translation>
     </message>
 </context>
 <context>
@@ -1417,7 +1417,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
         <translation>Keine Lobby ausgewählt. 
-Wähle links eine Lobby aus, um Details anzuzeigen.
+Wähle links eine Lobby aus, um die Details anzusehen.
 Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
@@ -1630,7 +1630,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     <message>
         <location line="+7"/>
         <source>Send as plain text by default</source>
-        <translation type="unfinished"></translation>
+        <translation>Sende einen standart Klartext</translation>
     </message>
     <message>
         <location line="+10"/>

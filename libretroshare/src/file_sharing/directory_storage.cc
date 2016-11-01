@@ -127,10 +127,10 @@ bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update
 bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
 bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
-bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs)
+bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs,const RsFileHash& hash_salt)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs) ;
+    bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs,hash_salt) ;
     locked_check() ;
     return res ;
 }
@@ -168,10 +168,10 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
     return mFileHierarchy->updateHash(index,hash);
 }
 
-void DirectoryStorage::load(const std::string& local_file_name)
+bool DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy->load(local_file_name);
+    return mFileHierarchy->load(local_file_name);
 }
 void DirectoryStorage::save(const std::string& local_file_name)
 {
@@ -238,7 +238,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.min_age = now - dir_entry->dir_most_recent_time ;
         d.age     = now - dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
-        d.path    = dir_entry->dir_parent_path + "/" + dir_entry->dir_name ;
+		d.path    = RsDirUtil::makePath(dir_entry->dir_parent_path, dir_entry->dir_name) ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
 
         if(indx == 0)
@@ -262,7 +262,7 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         const InternalFileHierarchyStorage::DirEntry *parent_dir_entry = mFileHierarchy->getDirEntry(file_entry->parent_index);
 
         if(parent_dir_entry != NULL)
-            d.path = parent_dir_entry->dir_parent_path + "/" + parent_dir_entry->dir_name + "/" ;
+			d.path = RsDirUtil::makePath(parent_dir_entry->dir_parent_path, parent_dir_entry->dir_name) ;
         else
             d.path = "" ;
     }
@@ -770,6 +770,7 @@ void RemoteDirectoryStorage::checkSave()
     {
         save(mFileName);
         mLastSavedTime = now ;
+        mChanged = false ;
     }
 }
 

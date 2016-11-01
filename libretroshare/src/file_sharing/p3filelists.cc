@@ -224,7 +224,7 @@ int p3FileDatabase::tick()
 
         mLastRemoteDirSweepTS = now;
 
-        // This is a hash to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
+        // This is a hack to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
         // so the first notify is ignored, and no other notify will happen next.
 
         RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
@@ -326,7 +326,14 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+    {
+        RsTlvKeyValue kv;
 
+        kv.key = WATCH_HASH_SALT_SS;
+        kv.value = mLocalDirWatcher->hashSalt().toStdString();
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
     /* Add KeyValue to saveList */
     sList.push_back(rskv);
 
@@ -373,6 +380,11 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             {
                 setWatchEnabled(kit->value == "YES") ;
             }
+            else if(kit->key == WATCH_HASH_SALT_SS)
+            {
+                std::cerr << "Initing directory watcher with saved secret salt..." << std::endl;
+                mLocalDirWatcher->setHashSalt(RsFileHash(kit->value)) ;
+            }
             delete *it ;
             continue ;
         }
@@ -397,6 +409,14 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
         delete *it ;
     }
+    if(mLocalDirWatcher->hashSalt().isNull())
+    {
+        std::cerr << "(WW) Initialising directory watcher salt to some random value " << std::endl;
+        mLocalDirWatcher->setHashSalt(RsFileHash::random()) ;
+
+        IndicateConfigChanged();
+    }
+
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
@@ -620,12 +640,9 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     }
 }
 
-bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) const
+bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
+                                       FileSearchFlags flags ) const
 {
-    RS_STACK_MUTEX(mFLSMtx) ;
-
-    result = NULL ;
-
     if (ref == NULL)
     {
         if(flags & RS_FILE_HINTS_LOCAL)
@@ -668,8 +685,8 @@ bool p3FileDatabase::findChildPointer(void *ref, int row, void *& result, FileSe
 
     return res;
 }
-// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 
+// This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
@@ -1130,7 +1147,9 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
 
         if(!mLocalSharedDirs->getIndexFromDirHash(item->entry_hash,entry_index))
         {
-            P3FILELISTS_ERROR() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#ifdef DEBUG_P3FILELISTS
+            P3FILELISTS_DEBUG() << "  (EE) Cannot find entry index for hash " << item->entry_hash << ": cannot respond to sync request." << std::endl;
+#endif
             return;
         }
 

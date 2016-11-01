@@ -95,7 +95,7 @@ public:
     int parentRow(DirectoryStorage::EntryIndex e);
     bool isIndexValid(DirectoryStorage::EntryIndex e) const;
     bool getChildIndex(DirectoryStorage::EntryIndex e,int row,DirectoryStorage::EntryIndex& c) const;
-    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs);
+    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx, const std::map<std::string,time_t>& subdirs, const RsFileHash &random_hash_seed);
     bool removeDirectory(DirectoryStorage::EntryIndex indx)	;
     bool checkIndex(DirectoryStorage::EntryIndex indx,uint8_t type) const;
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files);
@@ -153,7 +153,7 @@ public:
 private:
     void recursPrint(int depth,DirectoryStorage::EntryIndex node) const;
     static bool nodeAccessError(const std::string& s);
-    static RsFileHash createDirHash(const std::string& dir_name,const std::string& dir_parent_path) ;
+    static RsFileHash createDirHash(const std::string& dir_name, const RsFileHash &dir_parent_hash, const RsFileHash &random_hash_salt) ;
 
     // Allocates a new entry in mNodes, possible re-using an empty slot and returns its index.
 

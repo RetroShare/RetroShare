@@ -76,7 +76,7 @@ void HashStorage::data_tick()
 {
     FileHashJob job;
     RsFileHash hash;
-    uint64_t size ;
+    uint64_t size = 0;
 
     {
         bool empty ;
@@ -270,7 +270,7 @@ void HashStorage::clean()
 #endif
 
     for(std::map<std::string,HashStorageInfo>::iterator it(mFiles.begin());it!=mFiles.end();)
-        if(it->second.time_stamp + duration < (uint64_t)now)
+		if((uint64_t)(it->second.time_stamp + duration) < (uint64_t)now)
         {
 #ifdef HASHSTORAGE_DEBUG
             std::cerr << "  Entry too old: " << it->first << ", ts=" << it->second.time_stamp << std::endl ;

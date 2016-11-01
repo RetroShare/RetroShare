@@ -1691,7 +1691,7 @@ void RsGenExchange::processMsgMetaChanges()
     {
         MsgLocMetaData& m = mit->second;
 
-        int32_t value, mask;
+		int32_t value, mask;
         bool ok = true;
         bool changed = false;
 
@@ -1717,7 +1717,7 @@ void RsGenExchange::processMsgMetaChanges()
                     {
                         RsGxsMsgMetaData* meta = *(msgMetaV.begin());
                         value = (meta->mMsgStatus & ~mask) | (mask & value);
-                        changed = (meta->mMsgStatus != value);
+						changed = (static_cast<int64_t>(meta->mMsgStatus) != value);
                         m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
                         delete meta;
                         ok = true;
@@ -2822,10 +2822,8 @@ void RsGenExchange::processRecvdMessages()
 		    mNetService->rejectMessage(*it) ;
 }
 
-bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData *grpMeta)
-{
-    return true;
-}
+bool RsGenExchange::acceptNewGroup(const RsGxsGrpMetaData* /*grpMeta*/ )
+{ return true; }
 
 void RsGenExchange::processRecvdGroups()
 {

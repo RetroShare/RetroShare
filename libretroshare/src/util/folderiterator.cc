@@ -63,7 +63,11 @@ void FolderIterator::next()
 {
     while(readdir())
     {
-        d_name(mFileName);
+#ifdef WINDOWS_SYS
+	   ConvertUtf16ToUtf8(fileInfo.cFileName, mFileName) ;
+#else
+	   mFileName = ent->d_name ;
+#endif
 
         if(mFileName == "." || mFileName == "..")
             continue ;
@@ -143,25 +147,6 @@ bool FolderIterator::readdir()
     ent = ::readdir(handle);
     return ent != NULL;
 #endif
-}
-
-bool FolderIterator::d_name(std::string& dest)
-{
-    if(!validity)
-        return false;
-
-#ifdef WINDOWS_SYS
-    if(! ConvertUtf16ToUtf8(fileInfo.cFileName, dest)) {
-        validity = false;
-        return false;
-    }
-#else
-    if(ent == 0)
-        return false;
-    dest = ent->d_name;
-#endif
-
-    return true;
 }
 
 time_t FolderIterator::dir_modtime() const { return mFolderModTime ; }

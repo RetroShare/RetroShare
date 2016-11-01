@@ -59,7 +59,7 @@ void GxsMessageFramePostWidget::groupIdChanged()
 	fillComplete();
 }
 
-QString GxsMessageFramePostWidget::groupName(bool withUnreadCount)
+QString GxsMessageFramePostWidget::groupName(bool /*withUnreadCount*/)
 {
 	QString name = groupId().isNull () ? tr("No name") : mGroupName;
 

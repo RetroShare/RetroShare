@@ -54,7 +54,7 @@
 #define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
 #define IMAGE_PEERS         	":/icons/png/keyring.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-#define IMAGE_CIRCLES           ":/icons/png/circles.png"
+//#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 /******
  * #define FRIENDS_DEBUG 1
