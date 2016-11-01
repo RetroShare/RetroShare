@@ -546,42 +546,68 @@ void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualP
 bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id)
 {
     FileInfo info ;
-    bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info);
+    RsFileHash real_hash ;
+    bool found = false ;
 
-    if(info.transfer_info_flags & RS_FILE_REQ_ENCRYPTED)
+    if(FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
     {
+        if(info.transfer_info_flags & RS_FILE_REQ_ENCRYPTED)
+        {
 #ifdef SERVER_DEBUG
-        FTSERVER_DEBUG() << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
+            FTSERVER_DEBUG() << "handleTunnelRequest: openning encrypted FT tunnel for H(H(F))=" << hash << " and H(F)=" << info.hash << std::endl;
 #endif
 
-        RS_STACK_MUTEX(srvMutex) ;
-        mEncryptedHashes[hash] = info.hash;
-    }
-#warning needs to tweak for swarming with encrypted FT
-    if( (!res) && FileDetails(hash,RS_FILE_HINTS_DOWNLOAD,info))
-    {
-        // This file is currently being downloaded. Let's look if we already have a chunk or not. If not, no need to
-        // share the file!
+            RS_STACK_MUTEX(srvMutex) ;
+            mEncryptedHashes[hash] = info.hash;
 
-        FileChunksInfo info2 ;
-        if(rsFiles->FileDownloadChunksDetails(hash, info2))
-            for(uint32_t i=0;i<info2.chunks.size();++i)
-                if(info2.chunks[i] == FileChunksInfo::CHUNK_DONE)
-                {
-                    res = true ;
-                    break ;
-                }
+            real_hash = info.hash ;
+        }
+        else
+            real_hash = hash ;
+
+        found = true ;
     }
+    else	// try to see if we're already swarming the file
+    {
+        {
+            RS_STACK_MUTEX(srvMutex) ;
+            std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
+
+            if(it != mEncryptedHashes.end())
+                real_hash = it->second ;
+            else
+                real_hash = hash ;
+        }
+
+        if(FileDetails(real_hash,RS_FILE_HINTS_DOWNLOAD,info))
+        {
+            // This file is currently being downloaded. Let's look if we already have a chunk or not. If not, no need to
+            // share the file!
+
+            FileChunksInfo info2 ;
+            if(rsFiles->FileDownloadChunksDetails(hash, info2))
+                for(uint32_t i=0;i<info2.chunks.size();++i)
+                    if(info2.chunks[i] == FileChunksInfo::CHUNK_DONE)
+                    {
+                        found = true ;
+
+                        if(info.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
+                            info.storage_permission_flags = DIR_FLAGS_ANONYMOUS_DOWNLOAD ; // this is to allow swarming
+
+                        break ;
+                    }
+        }
+    }
+
 #ifdef SERVER_DEBUG
     FTSERVER_DEBUG() << "ftServer: performing local hash search for hash " << hash << std::endl;
 
-	if(res)
+    if(found)
 	{
         FTSERVER_DEBUG() << "Found hash: " << std::endl;
-        FTSERVER_DEBUG() << "   hash  = " << hash << std::endl;
+        FTSERVER_DEBUG() << "   hash  = " << real_hash << std::endl;
         FTSERVER_DEBUG() << "   peer  = " << peer_id << std::endl;
         FTSERVER_DEBUG() << "   flags = " << info.storage_permission_flags << std::endl;
-        FTSERVER_DEBUG() << "   local = " << rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info) << std::endl;
         FTSERVER_DEBUG() << "   groups= " ;
         for(std::list<RsNodeGroupId>::const_iterator it(info.parent_groups.begin());it!=info.parent_groups.end();++it)
             FTSERVER_DEBUG() << (*it) << ", " ;
@@ -593,9 +619,9 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 	// The call to computeHashPeerClearance() return a combination of RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE
 	// This is an additional computation cost, but the way it's written here, it's only called when res is true.
 	//
-	res = res && (RS_FILE_HINTS_NETWORK_WIDE & rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups)) ;
+    found = found && (RS_FILE_HINTS_NETWORK_WIDE & rsPeers->computePeerPermissionFlags(peer_id,info.storage_permission_flags,info.parent_groups)) ;
 
-	return res ;
+    return found ;
 }
 
 /***************************************************************/
