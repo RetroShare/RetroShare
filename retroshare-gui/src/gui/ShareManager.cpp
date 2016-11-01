@@ -62,7 +62,6 @@ ShareManager::ShareManager()
     ui.headerFrame->setHeaderText(tr("Share Manager"));
 
     isLoading = false;
-    load();
 
     Settings->loadWidgetInformation(this);
 
@@ -80,13 +79,12 @@ ShareManager::ShareManager()
     QHeaderView* header = ui.shareddirList->horizontalHeader();
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_PATH, QHeaderView::Stretch);
 
-//    header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::ResizeToContents);
-//    header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::ResizeToContents);
-
     header->setHighlightSections(false);
 
     setAcceptDrops(true);
     setAttribute(Qt::WA_DeleteOnClose, true);
+
+    reload();
 }
 
 void ShareManager::doubleClickedCell(int row,int column)
@@ -240,20 +238,11 @@ void ShareManager::showYourself()
 
 void ShareManager::updateFlags()
 {
-    if(isLoading)
-        return ;
-
-    isLoading = true ;	// stops GUI update. Otherwise each call to rsFiles->updateShareFlags() modifies the GUI that we count on to check
-    // what has changed => fail!
-
     for(int row=0;row<ui.shareddirList->rowCount();++row)
     {
         FileStorageFlags flags = (dynamic_cast<GroupFlagsWidget*>(ui.shareddirList->cellWidget(row,COLUMN_SHARE_FLAGS)))->flags() ;
-
         mDirInfos[row].shareflags = flags ;
     }
-
-    isLoading = false ;	// re-enable GUI load
     load() ;				// update the GUI.
 }
 

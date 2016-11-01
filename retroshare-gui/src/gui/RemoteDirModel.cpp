@@ -30,6 +30,7 @@
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>
 #include <gui/common/GroupDefs.h>
+#include <gui/gxs/GxsIdDetails.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -270,8 +271,55 @@ QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) con
 	return ret;
 }
 
+const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
+{
+    static QIcon *static_icons[8] = {NULL};
+
+    int n=0;
+    if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) n += 1 ;
+    if(flags & DIR_FLAGS_ANONYMOUS_SEARCH  ) n += 2 ;
+    if(flags & DIR_FLAGS_BROWSABLE         ) n += 4 ;
+    n-= 1;
+
+    if(static_icons[n] == NULL)
+    {
+        QList<QIcon> icons ;
+
+        if(flags & DIR_FLAGS_ANONYMOUS_SEARCH)
+            icons.push_back(QIcon(":icons/search_red_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD)
+            icons.push_back(QIcon(":icons/anonymous_blue_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        if(flags & DIR_FLAGS_BROWSABLE)
+            icons.push_back(QIcon(":icons/browsable_green_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        QPixmap pix ;
+        GxsIdDetails::GenerateCombinedPixmap(pix, icons, 128);
+
+        static_icons[n] = new QIcon(pix);
+
+        std::cerr << "Generated icon for flags " << std::hex << flags << std::endl;
+    }
+    return *static_icons[n] ;
+}
+
 QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) const
 {
+    if(coln == 3)
+    {
+        if(details.type == DIR_TYPE_PERSON) return QVariant() ;
+
+        return getFlagsIcon(details.flags) ;
+    }
+
+
 	if(coln > 0)
 		return QVariant() ;
 
@@ -351,7 +399,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
                 return  misc::userFriendlyDuration(details.min_age);
 			case 3:
-				return getFlagsString(details.flags);
+                return getFlagsIcon(details.flags);//getFlagsString(details.flags);
 //			case 4:
 //				{
 //					QString ind("");
@@ -382,7 +430,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
 				return misc::userFriendlyDuration(details.min_age);
 			case 3:
-				return getFlagsString(details.flags);
+                return QVariant();//getFlagsString(details.flags);
 			case 4: 
 				return getGroupsString(details.parent_groups) ;
 

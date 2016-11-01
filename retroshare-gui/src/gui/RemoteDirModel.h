@@ -97,6 +97,7 @@ class RetroshareDirModel : public QAbstractItemModel
         static QString getGroupsString(const std::list<RsNodeGroupId> &) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 //		void getAgeIndicatorRec(const DirDetails &details, QString &ret) const;
+        static const QIcon& getFlagsIcon(FileStorageFlags flags) ;
 
 		virtual QVariant displayRole(const DirDetails&,int) const = 0 ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const =0;
