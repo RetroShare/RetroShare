@@ -144,6 +144,8 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
 	connect(ui.exportIdentity_PB, SIGNAL(clicked()), this, SLOT(exportIdentity()));
 
+	connect(ui.cbUseBob, SIGNAL(clicked(bool)), this, SLOT(useBobChecked(bool)));
+
 	//ui.genName->setFocus(Qt::OtherFocusReason);
 
 //	QObject *obj = QCoreApplication::eventFilter() ;
@@ -422,6 +424,23 @@ void GenCertDialog::updateUiSetup()
 
 }
 
+void GenCertDialog::useBobChecked(bool checked)
+{
+	if (checked) {
+		ui.hiddenaddr_input->setPlaceholderText(tr("I2P address with BOB enabled"));
+		ui.hiddenaddr_label->setText(tr("I2P address"));
+		ui.label_hiddenaddr->setText(tr("Please enter the IP for I2P and enable BOB."));
+
+		ui.hiddenport_spinBox->setEnabled(false);
+	} else {
+		ui.hiddenaddr_input->setPlaceholderText(tr("hidden service address"));
+		ui.hiddenaddr_label->setText(tr("hidden address"));
+		ui.label_hiddenaddr->setText(tr("<html><head/><body><p>This can be a Tor Onion address of the form: xa76giaf6ifda7ri63i263.onion <br/>or an I2P address in the form: [52 characters].b32.i2p </p><p>In order to get one, you must configure either Tor or I2P to create a new hidden service / server tunnel. If you do not yet have one, you can still go on, and make it right later in RetroShare's Options-&gt;Network-&gt;Hidden Service configuration panel.</p></body></html>"));
+
+		ui.hiddenport_spinBox->setEnabled(true);
+	}
+}
+
 void GenCertDialog::exportIdentity()
 {
 	QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("RetroShare profile files (*.asc)")) ;
@@ -502,7 +521,12 @@ void GenCertDialog::genPerson()
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
-		if (!RsInit::SetHiddenLocation(hl, port))	/* parses it */
+		bool useBob    = ui.cbUseBob->isChecked();
+
+		if (useBob && hl.empty())
+			hl = "127.0.0.1";
+
+		if (!RsInit::SetHiddenLocation(hl, port, useBob))	/* parses it */
 		{
 			/* Message Dialog */
 			QMessageBox::warning(this,

@@ -121,6 +121,8 @@ class RsInitConfig
 		std::string hiddenNodeAddress;
 		uint16_t    hiddenNodePort;
 
+		bool        hiddenNodeI2PBOB;
+
 		/* Logging */
 		bool haveLogFile;
 		bool outStderr;
@@ -790,12 +792,13 @@ void RsInit::setAutoLogin(bool autoLogin){
 }
 
 /* Setup Hidden Location; */
-bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
+bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port, bool useBob)
 {
 	/* parse the bugger (todo) */
 	rsInitConfig->hiddenNodeSet = true;
 	rsInitConfig->hiddenNodeAddress = hiddenaddress;
 	rsInitConfig->hiddenNodePort = port;
+	rsInitConfig->hiddenNodeI2PBOB = useBob;
 	return true;
 }
 
@@ -1715,7 +1718,47 @@ int RsServer::StartupRetroShare()
 
 	if (rsInitConfig->hiddenNodeSet)
 	{
-		mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
+		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
+
+		if (rsInitConfig->hiddenNodeI2PBOB) {
+			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
+
+			// call this once to setup everything needed
+//			mPeerMgr->forceHiddenNode();
+
+			sockaddr_storage i2pInstance;
+			sockaddr_storage_ipv4_aton(i2pInstance, rsInitConfig->hiddenNodeAddress.c_str());
+			mPeerMgr->setProxyServerAddress(RS_HIDDEN_TYPE_I2P, i2pInstance);
+
+			bobSettings bs;
+			// trigger update of proxy addr in BOB
+			mI2pBob->getBOBSettings(&bs);
+			mI2pBob->setBOBSettings(&bs);
+
+			// start bob to receive new keys
+			mI2pBob->start("I2P-BOB gen key");
+
+			if (mI2pBob->getNewKeysBlocking()) {
+				std::cout << "RsServer::StartupRetroShare received keys" << std::endl;
+
+				// setup hidden node
+				mI2pBob->getBOBSettings(&bs);
+				mPeerMgr->setupHiddenNode(bs.addr, rsInitConfig->hiddenNodePort);
+
+				// enable bob
+				bs.enableBob = true;
+				mI2pBob->setBOBSettings(&bs);
+			} else {
+				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
+				/// TODO add notify for failed bob setup
+			}
+
+			// stop thread again
+			mI2pBob->fullstop();
+		} else {
+			mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
+		}
+		std::cout << "RsServer::StartupRetroShare hidden location set up" << std::endl;
 	}
 	else if (isHiddenNode)
 	{
@@ -1723,6 +1766,15 @@ int RsServer::StartupRetroShare()
 	}
 
 	mNetMgr -> checkNetAddress();
+
+	if (rsInitConfig->hiddenNodeSet && rsInitConfig->hiddenNodeI2PBOB) {
+		// newly created location
+		// mNetMgr->checkNetAddress() will setup a port for us
+		// trigger update for BOB
+		bobSettings bs;
+		mI2pBob->getBOBSettings(&bs);
+		mI2pBob->setBOBSettings(&bs);
+	}
 
 	/**************************************************************************/
 	/* startup (stuff dependent on Ids/peers is after this point) */

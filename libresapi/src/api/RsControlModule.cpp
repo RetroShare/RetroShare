@@ -414,8 +414,10 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
         }
     }
 
-    if(hidden_port)
-        RsInit::SetHiddenLocation(hidden_address, hidden_port);
+	if(hidden_port) {
+		/// TODO add bob to webui
+		RsInit::SetHiddenLocation(hidden_address, hidden_port, false);
+	}
 
     std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
 
