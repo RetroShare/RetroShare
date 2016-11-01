@@ -229,7 +229,7 @@ QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::li
         return QString();
 
     if(group_ids.empty())
-        return tr("[Everyone]") ;
+        return tr("[All friend nodes]") ;
 
     QString groups_str = tr("Only ");
 	RsGroupInfo group_info ;

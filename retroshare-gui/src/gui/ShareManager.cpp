@@ -270,7 +270,7 @@ void ShareManager::updateFlags()
 QString ShareManager::getGroupString(const std::list<RsNodeGroupId>& groups)
 {
     if(groups.empty())
-        return tr("[Everyone]") ;
+        return tr("[All friend nodes]") ;
 
     int n = 0;
     QString group_string ;
