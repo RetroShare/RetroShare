@@ -219,7 +219,7 @@ public:
     /*************** Data Transfer Interface ***********************/
     /***************************************************************/
 public:
-    virtual bool activateTunnels(const RsFileHash& hash,TransferRequestFlags flags,bool onoff);
+    virtual bool activateTunnels(const RsFileHash& hash,uint32_t default_encryption_policy,TransferRequestFlags flags,bool onoff);
 
     virtual bool sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
     virtual bool sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize);

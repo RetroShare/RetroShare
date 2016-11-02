@@ -581,7 +581,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mFtServer->activateTunnels(_queue[pos]->mHash,_queue[pos]->mFlags,true);
+            mFtServer->activateTunnels(_queue[pos]->mHash,mDefaultEncryptionPolicy,_queue[pos]->mFlags,true);
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
@@ -590,7 +590,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 		_queue[pos]->mCreator->closeFile() ;
 
 		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mFtServer->activateTunnels(_queue[pos]->mHash,_queue[pos]->mFlags,false);
+            mFtServer->activateTunnels(_queue[pos]->mHash,mDefaultEncryptionPolicy,_queue[pos]->mFlags,false);
     }
 }
 
@@ -834,7 +834,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		mDownloads.erase(it);
 
 		if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mFtServer->activateTunnels(hash_to_suppress,flags,false);
+            mFtServer->activateTunnels(hash_to_suppress,mDefaultEncryptionPolicy,flags,false);
 
 	} // UNLOCK: RS_STACK_MUTEX(ctrlMutex);
 
@@ -1188,7 +1188,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
   // We check that flags are consistent.  
   
   	if(flags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-        mFtServer->activateTunnels(hash,flags,true);
+        mFtServer->activateTunnels(hash,mDefaultEncryptionPolicy,flags,true);
 
     bool assume_availability = false;
 
@@ -1289,7 +1289,7 @@ bool ftController::setChunkStrategy(const RsFileHash& hash,FileChunksInfo::Chunk
 
 bool 	ftController::FileCancel(const RsFileHash& hash)
 {
-    mFtServer->activateTunnels(hash,TransferRequestFlags(0),false);
+    mFtServer->activateTunnels(hash,mDefaultEncryptionPolicy,TransferRequestFlags(0),false);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileCancel" << std::endl;
