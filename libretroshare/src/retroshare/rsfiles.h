@@ -76,7 +76,8 @@ const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY              ( 0x01000000 );
 
 const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE           ( 0x00000080 );// anonymously shared over network
 const FileSearchFlags RS_FILE_HINTS_BROWSABLE              ( 0x00000100 );// browsable by friends
-const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000180 );// OR of the last two flags. Used to filter out.
+const FileSearchFlags RS_FILE_HINTS_SEARCHABLE             ( 0x00000200 );// browsable by friends
+const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000380 );// OR of the last tree flags. Used to filter out.
 
 // Flags used when requesting a transfer
 //

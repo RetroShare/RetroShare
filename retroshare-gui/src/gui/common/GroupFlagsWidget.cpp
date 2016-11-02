@@ -96,16 +96,20 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
 {
   QString tip_on, tip_off;
   switch (button_id) {
-    case 2:
-      tip_on = tr("Directory is visible to some friends (see list at right)");
-      tip_off = tr("Directory is NOT visible to any friend");
+    case INDEX_BROWSABLE:
+      tip_on = tr("Directory content is visible to friend nodes (see list at right)");
+      tip_off = tr("Directory content is NOT visible to friend nodes");
       break;
-    case 0:
+    case INDEX_ANON_SEARCH:
       tip_on = tr("Directory can be searched anonymously");
       tip_off = tr("Directory cannot be searched anonymously");
       break;
-    case 1:
-      tip_on = tr("Files can be downloaded anonymously");
+    case INDEX_ANON_DL:
+      if(_buttons[INDEX_ANON_SEARCH]->isChecked())
+          tip_on = tr("Files can be accessed using anonymous tunnels");
+      else
+          tip_on = tr("Files can be accessed using anonymous & end-to-end encrypted tunnels");
+
       tip_off = tr("Files cannot be downloaded anonymously");
       break;
     default:

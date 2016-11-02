@@ -1379,12 +1379,14 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 	}
 
 	bool network_wide = (share_flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
-    bool browsable    = (share_flags &          DIR_FLAGS_BROWSABLE) && found ;
+    bool browsable    = (share_flags & DIR_FLAGS_BROWSABLE) && found ;
+    bool searchable   = (share_flags & DIR_FLAGS_ANONYMOUS_SEARCH) ;
 
 	FileSearchFlags final_flags ;
 
 	if(network_wide) final_flags |= RS_FILE_HINTS_NETWORK_WIDE ;
 	if(browsable   ) final_flags |= RS_FILE_HINTS_BROWSABLE ;
+    if(searchable  ) final_flags |= RS_FILE_HINTS_SEARCHABLE ;
 
 	return final_flags ;
 }
