@@ -57,8 +57,6 @@ const int ftserverzone = 29539;
  * #define SERVER_DEBUG_CACHE 1
  ***/
 
-#define SERVER_DEBUG       1
-
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
