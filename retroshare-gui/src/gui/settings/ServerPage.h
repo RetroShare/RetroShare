@@ -98,6 +98,8 @@ private slots:
 	void enableBob(bool checked);
 	void tunnelSettingsChanged(int);
 
+	void toggleAdvancedSettings(bool checked);
+
 	void syncI2PProxyPortNormal(int i);
 	void syncI2PProxyPortBob(int i);
 

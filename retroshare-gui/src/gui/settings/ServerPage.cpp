@@ -101,6 +101,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.pbBobLoadKey, SIGNAL(clicked()), this, SLOT(loadKey()));
 	QObject::connect(ui.cb_enableBob, SIGNAL(toggled(bool)), this, SLOT(enableBob(bool)));
 
+	QObject::connect(ui.cbBobAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSettings(bool)));
+
 	QObject::connect(ui.sbBobLengthIn,    SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
 	QObject::connect(ui.sbBobLengthOut,   SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
 	QObject::connect(ui.sbBobQuantityIn,  SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
@@ -131,6 +133,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, false);
 	ui.gbBob->setEnabled(false);
+	ui.gbBobAdvanced->setEnabled(false);
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
@@ -1334,6 +1337,11 @@ void ServerPage::tunnelSettingsChanged(int)
 	mBobSettings.outVariance = fitRange(vo, -1, 2);
 
 	rsPeers->setBOBSettings(&mBobSettings);
+}
+
+void ServerPage::toggleAdvancedSettings(bool checked)
+{
+	ui.gbBobAdvanced->setEnabled(checked);
 }
 
 void ServerPage::syncI2PProxyPortNormal(int i)
