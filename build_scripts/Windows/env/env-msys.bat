@@ -1,5 +1,5 @@
 :: Usage:
-:: call find-in-path.bat [reinstall|clean]
+:: call env-msys.bat [reinstall|clean]
 
 :: Initialize environment
 call "%~dp0env.bat"
@@ -12,5 +12,4 @@ exit /B %ERRORLEVEL%
 
 :error_env
 echo Failed to initialize environment.
-endlocal
 exit /B 1

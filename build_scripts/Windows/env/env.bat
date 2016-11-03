@@ -7,13 +7,16 @@ set EnvToolsPath=%EnvRootPath%\tools
 set EnvTempPath=%EnvRootPath%\tmp
 set EnvDownloadPath=%EnvRootPath%\download
 
-set EnvCurlExe=%EnvToolsPath%\curl.exe
+::set EnvCurlExe=%EnvToolsPath%\curl.exe
+set EnvWgetExe=%EnvToolsPath%\wget.exe
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
 set EnvJomExe=%EnvToolsPath%\jom.exe
 set EnvSedExe=%EnvToolsPath%\sed.exe
 set EnvCutExe=%EnvToolsPath%\cut.exe
 set EnvDependsExe=%EnvToolsPath%\depends.exe
 set EnvMakeNSISExe=%EnvToolsPath%\NSIS\makensis.exe
+set EnvCEchoExe=%EnvToolsPath%\cecho.exe
+set cecho=call "%ToolsPath%\cecho.bat"
 
 :: Create folders
 if not exist "%EnvRootPath%" mkdir "%EnvRootPath%"
@@ -25,5 +28,4 @@ exit /B %ERRORLEVEL%
 
 :error_env
 echo Failed to initialize environment.
-endlocal
 exit /B 1
