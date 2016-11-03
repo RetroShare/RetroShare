@@ -55,13 +55,13 @@ protected:
 private slots:
     /** Create the context popup menu and it's submenus */
     void shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
-    void shareddirListCostumPopupMenu( QPoint point );
+    void shareddirListCustomPopupMenu( QPoint point );
     void addShare();
     void doubleClickedCell(int,int);
     void handleCellChange(int row,int column);
+	void editShareDirectory();
 
     void showShareDialog();
-    //void editShareDirectory();
     void removeShareDirectory();
     void updateFlags();
     void applyAndClose() ;

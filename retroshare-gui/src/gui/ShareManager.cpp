@@ -69,7 +69,7 @@ ShareManager::ShareManager()
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(applyAndClose()));
     connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
-    connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
+    connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCustomPopupMenu(QPoint)));
     connect(ui.shareddirList, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(doubleClickedCell(int,int)));
     connect(ui.shareddirList, SIGNAL(cellChanged(int,int)), this, SLOT(handleCellChange(int,int)));
 
@@ -104,6 +104,14 @@ void ShareManager::handleCellChange(int row,int column)
 
         mDirInfos[row].virtualname = std::string(ui.shareddirList->item(row,COLUMN_VIRTUALNAME)->text().toUtf8()) ;
     }
+}
+
+void ShareManager::editShareDirectory()
+{
+    QTableWidget *listWidget = ui.shareddirList;
+    int row = listWidget -> currentRow();
+
+    doubleClickedCell(row,COLUMN_PATH) ;
 }
 
 void ShareManager::doubleClickedCell(int row,int column)
@@ -158,7 +166,7 @@ void ShareManager::applyAndClose()
 	close() ;
 }
 
-void ShareManager::shareddirListCostumPopupMenu( QPoint /*point*/ )
+void ShareManager::shareddirListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
@@ -300,9 +308,10 @@ void ShareManager::removeShareDirectory()
     {
         if ((QMessageBox::question(this, tr("Warning!"),tr("Do you really want to stop sharing this directory ?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
         {
-            for(uint32_t i=row;i+1<mDirInfos.size();++i)
-                mDirInfos[i] = mDirInfos[i+1] ;
+			for(uint32_t i=row;i+1<mDirInfos.size();++i)
+				mDirInfos[i] = mDirInfos[i+1] ;
 
+			mDirInfos.pop_back() ;
             load();
         }
     }
