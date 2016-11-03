@@ -596,9 +596,11 @@ bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_i
 		}
 	}
 
-	if(mFtController->defaultEncryptionPolicy() == RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT && hash == real_hash)
+	if(found && mFtController->defaultEncryptionPolicy() == RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT && hash == real_hash)
 	{
+#ifdef SERVER_DEBUG
 		std::cerr << "(WW) rejecting file transfer for hash " << hash << " because the hash is not encrypted and encryption policy requires it." << std::endl;
+#endif
 		return false ;
 	}
 
