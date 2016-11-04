@@ -1725,17 +1725,17 @@ int RsServer::StartupRetroShare()
 	{
 		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
 
-		if (rsInitConfig->hiddenNodeI2PBOB) {
-			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
 
-			// call this once to setup everything needed
-//			mPeerMgr->forceHiddenNode();
+		if (rsInitConfig->hiddenNodeI2PBOB) {
+
+			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
 
 			// add i2p proxy
 			sockaddr_storage i2pInstance;
 			sockaddr_storage_ipv4_aton(i2pInstance, rsInitConfig->hiddenNodeAddress.c_str());
 			mPeerMgr->setProxyServerAddress(RS_HIDDEN_TYPE_I2P, i2pInstance);
 
+			/*
 			// trigger update of proxy addr in BOB
 			taskTicket *tt = rsAutoProxyMonitor::getTicket();
 			tt->async = false;
@@ -1774,9 +1774,22 @@ int RsServer::StartupRetroShare()
 
 			// stop thread again
 			mI2pBob->fullstop();
+			*/
+			std::string addr; // will be set by auto proxy service
+			uint16_t port = rsInitConfig->hiddenNodePort;
+			autoProxy->initialSetup(autoProxyType::I2PBOB, addr, port);
+
+			if (!addr.empty()) {
+				mPeerMgr->setupHiddenNode(addr, port);
+			} else {
+				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
+				/// TODO add notify for failed bob setup
+			}
+
 		} else {
 			mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
 		}
+
 		std::cout << "RsServer::StartupRetroShare hidden location set up" << std::endl;
 	}
 	else if (isHiddenNode)

@@ -112,6 +112,15 @@ bool rsAutoProxyMonitor::isEnabled(autoProxyType::autoProxyType_enum t)
 	return s->isEnabled();
 }
 
+void rsAutoProxyMonitor::initialSetup(autoProxyType::autoProxyType_enum t, std::__cxx11::string &addr, uint16_t &port)
+{
+	autoProxyService *s = lookUpService(t);
+	if (s == NULL)
+		return;
+
+	s->initialSetup(addr, port);
+}
+
 void rsAutoProxyMonitor::task(taskTicket *ticket)
 {
 	// sanity checks

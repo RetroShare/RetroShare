@@ -233,6 +233,50 @@ bool p3I2pBob::getNewKeysBlocking()
 	return true;
 }
 
+bool p3I2pBob::isEnabled()
+{
+	RS_STACK_MUTEX(mLock);
+	return mSetting.enableBob;
+}
+
+void p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
+{
+	// first start thread
+	start("I2P-BOB gen key");
+
+	// update config
+	{
+		RS_STACK_MUTEX(mLock);
+		if (!mConfigLoaded) {
+			finalizeSettings_locked();
+			mConfigLoaded = true;
+		} else {
+			updateSettings_locked();
+		}
+	}
+
+	// request keys
+	{
+		RS_STACK_MUTEX(mLock);
+		mTask = ctGetKeys;
+	}
+
+	// wait for keys
+	for(;;) {
+		doSleep(sleepTimeWait);
+		RS_STACK_MUTEX(mLock);
+		// wait for tast change
+		if (mTask != ctGetKeys)
+			break;
+	}
+
+	addr = mSetting.addr;
+
+	// last stop thread
+	fullstop();
+}
+
+
 void p3I2pBob::processTask(taskTicket *ticket)
 {
 	bool data = !!ticket->data;
@@ -241,6 +285,9 @@ void p3I2pBob::processTask(taskTicket *ticket)
 	switch (ticket->task) {
 	case autoProxyTask::start:
 	case autoProxyTask::stop:
+		if (!isEnabled()) {
+			rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::disabled);
+		}
 	case autoProxyTask::receiveKey:
 	    {
 		    RS_STACK_MUTEX(mLock);
@@ -270,10 +317,7 @@ void p3I2pBob::processTask(taskTicket *ticket)
 		}
 
 		// get settings
-	    {
-		    RS_STACK_MUTEX(mLock);
-			*((struct bobSettings *)ticket->data) = mSetting;
-	    }
+		getBOBSettings((struct bobSettings *)ticket->data);
 
 		// finish task
 		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
@@ -286,11 +330,8 @@ void p3I2pBob::processTask(taskTicket *ticket)
 			break;
 		}
 
-		// get settings
-	    {
-		    RS_STACK_MUTEX(mLock);
-			mSetting = *((struct bobSettings *)ticket->data);
-	    }
+		// set settings
+		setBOBSettings((struct bobSettings *)ticket->data);
 
 		// finish task
 		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
@@ -306,12 +347,6 @@ void p3I2pBob::processTask(taskTicket *ticket)
 		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTask unknown task");
 		break;
 	}
-}
-
-bool p3I2pBob::isEnabled()
-{
-	RS_STACK_MUTEX(mLock);
-	return mSetting.enableBob;
 }
 
 bool p3I2pBob::isUp()
@@ -338,43 +373,6 @@ bool p3I2pBob::isClosingDown()
 	return mState == csClosing;
 }
 
-/*
-void p3I2pBob::getBOBSettings(bobSettings *settings)
-{
-	if (settings == NULL)
-		return;
-
-	RS_STACK_MUTEX(mLock);
-	*settings = mSetting;
-
-}
-
-void p3I2pBob::setBOBSettings(const bobSettings *settings)
-{
-	if (settings == NULL)
-		return;
-
-	RS_STACK_MUTEX(mLock);
-	mSetting = *settings;
-
-	IndicateConfigChanged();
-
-	// Note:
-	// We don't take care of updating a running BOB session here
-	// This can be done manually by stoping and restarting the session
-
-	// Note2:
-	// In case there is no config yet to load
-	// finalize settings here instead
-	if (!mConfigLoaded) {
-		finalizeSettings_locked();
-		mConfigLoaded = true;
-	} else {
-		updateSettings_locked();
-	}
-}
-*/
-
 std::string p3I2pBob::keyToBase32Addr(const std::string &key)
 {
 	std::string copy(key);
@@ -395,17 +393,6 @@ std::string p3I2pBob::keyToBase32Addr(const std::string &key)
 	out.append(".b32.i2p");
 
 	return out;
-}
-
-void p3I2pBob::getStates(bobStates *bs)
-{
-	if (bs == NULL)
-		return;
-
-	RS_STACK_MUTEX(mLock);
-	bs->cs = mState;
-	bs->ct = mTask;
-	bs->bs = mBOBState;
 }
 
 bool inline isAnswerOk(const std::string &answer) {
@@ -806,6 +793,52 @@ bool p3I2pBob::loadList(std::list<RsItem *> &load)
 }
 
 #undef getKVSUInt
+
+void p3I2pBob::getBOBSettings(bobSettings *settings)
+{
+	if (settings == NULL)
+		return;
+
+	RS_STACK_MUTEX(mLock);
+	*settings = mSetting;
+
+}
+
+void p3I2pBob::setBOBSettings(const bobSettings *settings)
+{
+	if (settings == NULL)
+		return;
+
+	RS_STACK_MUTEX(mLock);
+	mSetting = *settings;
+
+	IndicateConfigChanged();
+
+	// Note:
+	// We don't take care of updating a running BOB session here
+	// This can be done manually by stoping and restarting the session
+
+	// Note2:
+	// In case there is no config yet to load
+	// finalize settings here instead
+	if (!mConfigLoaded) {
+		finalizeSettings_locked();
+		mConfigLoaded = true;
+	} else {
+		updateSettings_locked();
+	}
+}
+
+void p3I2pBob::getStates(bobStates *bs)
+{
+	if (bs == NULL)
+		return;
+
+	RS_STACK_MUTEX(mLock);
+	bs->cs = mState;
+	bs->ct = mTask;
+	bs->bs = mBOBState;
+}
 
 std::string p3I2pBob::executeCommand(const std::string &command)
 {

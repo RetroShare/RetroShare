@@ -28,7 +28,7 @@ namespace autoProxyTask {
 
 namespace autoProxyStatus {
     enum autoProxyStatus_enum {
-		notRunning,
+		disabled,
 		offline,
 		online,
 		ok,
@@ -62,8 +62,9 @@ public:
 
 class autoProxyService {
 public:
-	virtual void processTask(taskTicket *ticket) = 0;
 	virtual bool isEnabled() = 0;
+	virtual void initialSetup(std::string &addr, uint16_t &port) = 0;
+	virtual void processTask(taskTicket *ticket) = 0;
 };
 
 class rsAutoProxyMonitor : autoProxyCallback
@@ -79,6 +80,8 @@ public:
 	void stopAll();
 	void stopAllRSShutdown();
 	bool isEnabled(autoProxyType::autoProxyType_enum t);
+	// use this when creating a new node
+	void initialSetup(autoProxyType::autoProxyType_enum t, std::string &addr, uint16_t &port);
 
 	///
 	/// \brief task Sends a task to all requested services
@@ -109,7 +112,6 @@ public:
 	/// Otherwise the caller must take care of cleaning up
 	///
 	void task(taskTicket *ticket);
-
 
 	// usefull helpers
 	static void taskError(taskTicket *t);

@@ -190,25 +190,21 @@ protected:
 //	bool startUpBOBConnectionBlocking();
 //	bool shutdownBOBConnection();
 //	bool shutdownBOBConnectionBlocking();
-	bool getNewKeys();
-	bool getNewKeysBlocking();
+//	bool getNewKeys();
+//	bool getNewKeysBlocking();
 
 	// autoProxyService interface
 public:
-	void processTask(taskTicket *ticket);
 	bool isEnabled();
+	void initialSetup(std::string &addr, uint16_t &);
+	void processTask(taskTicket *ticket);
 
 	bool isUp();
 	bool isStartingUp();
 	bool isDown();
 	bool isClosingDown();
 
-//	void getBOBSettings(bobSettings *settings);
-//	void setBOBSettings(const bobSettings *settings);
-
 	static std::string keyToBase32Addr(const std::string &key);
-
-	void getStates(bobStates *bs);
 
 	// RsTickingThread interface
 public:
@@ -226,6 +222,10 @@ protected:
 
 private:
 	// helpers
+	void getBOBSettings(bobSettings *settings);
+	void setBOBSettings(const bobSettings *settings);
+	void getStates(bobStates *bs);
+
 	std::string executeCommand(const std::string &command);
 	bool connectI2P();
 	bool disconnectI2P();
