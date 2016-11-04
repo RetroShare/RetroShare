@@ -122,6 +122,7 @@ public:
     bool findSubDirectory(DirectoryStorage::EntryIndex e,const std::string& s) const ;	// returns true when s is the name of a sub-directory in the given entry e
 
     uint32_t mRoot ;
+    std::list<uint32_t > mFreeNodes ;	// keeps a list of free nodes in order to make insert effcieint
     std::vector<FileStorageNode*> mNodes;// uses pointers to keep information about valid/invalid objects.
 
     void compress() ;					// use empty space in the vector, mostly due to deleted entries. This is a complicated operation, mostly due to
@@ -158,6 +159,10 @@ private:
     // Allocates a new entry in mNodes, possible re-using an empty slot and returns its index.
 
     DirectoryStorage::EntryIndex allocateNewIndex();
+
+    // Deletes an existing entry in mNodes, and keeps record of the indices that get freed.
+
+    void deleteNode(DirectoryStorage::EntryIndex);
 
     // Removes the given subdirectory from the parent node and all its pendign subdirs. Files are kept, and will go during the cleaning
     // phase. That allows to keep file information when moving them around.
