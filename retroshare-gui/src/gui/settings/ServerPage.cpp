@@ -689,18 +689,6 @@ void ServerPage::updateStatus()
     loadFilteredIps() ;
 
 	// update bob
-	// reload settings in case of new keys
-	{
-		bobSettings bs;
-		taskTicket *tt = rsAutoProxyMonitor::getTicket();
-		tt->async = false;
-		tt->data = &bs;
-		tt->task = autoProxyTask::getSettings;
-		tt->types.push_back(autoProxyType::I2PBOB);
-		rsAutoProxyMonitor::instance()->task(tt);
-		delete(tt);
-		mBobSettings = bs;
-	}
 	QString addr = QString::fromStdString(mBobSettings.addr);
 	if (ui.leBobB32Addr->text() != addr) {
 		ui.leBobB32Addr->setText(addr);
@@ -1332,11 +1320,12 @@ void ServerPage::stopBOB()
 void ServerPage::getNewKey()
 {
 	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	bobSettings *bs = new bobSettings();
+	tt->cb = this;
+	tt->data = bs;
 	tt->task = autoProxyTask::receiveKey;
 	tt->types.push_back(autoProxyType::I2PBOB);
 	rsAutoProxyMonitor::instance()->task(tt);
-	// ticket copied and no data attached to it
-	delete(tt);
 
 	updateStatus();
 }
@@ -1420,6 +1409,26 @@ void ServerPage::syncI2PProxyPortNormal(int i)
 void ServerPage::syncI2PProxyPortBob(int i)
 {
 	ui.hiddenpage_proxyPort_i2p->setValue(i);
+}
+
+void ServerPage::taskFinished(taskTicket *ticket)
+{
+	if (ticket->task == autoProxyTask::receiveKey) {
+		bobSettings *s = NULL;
+		switch (ticket->types.front()) {
+		case autoProxyType::I2PBOB:
+			// update settings
+			s = (struct bobSettings *)ticket->data;
+			mBobSettings = *s;
+			delete s;
+			s = NULL;
+			ticket->data = NULL;
+			break;
+		default:
+			break;
+		}
+	}
+	delete ticket;
 }
 
 void ServerPage::loadCommon()

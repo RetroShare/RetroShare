@@ -42,7 +42,7 @@ class QNetworkReply;
 class QNetworkAccessManager;
 class BanListPeer;
 
-class ServerPage: public ConfigPage
+class ServerPage: public ConfigPage, public autoProxyCallback
 {
     Q_OBJECT
 
@@ -103,6 +103,10 @@ private slots:
 
 	void syncI2PProxyPortNormal(int i);
 	void syncI2PProxyPortBob(int i);
+
+	// autoProxyCallback interface
+public:
+	void taskFinished(taskTicket *ticket);
 
 private:
 	void loadCommon();
