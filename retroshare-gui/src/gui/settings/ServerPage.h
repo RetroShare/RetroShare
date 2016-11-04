@@ -35,7 +35,8 @@
     #include <winsock2.h>
 #endif
 
-#include <services/p3i2pbob.h>
+#include <services/autoproxy/rsautoproxymonitor.h>
+#include <services/autoproxy/p3i2pbob.h>
 
 class QNetworkReply;
 class QNetworkAccessManager;

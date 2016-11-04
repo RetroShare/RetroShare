@@ -245,7 +245,17 @@ void ServerPage::load()
     }
     mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
 
-	rsPeers->getBOBSettings(&mBobSettings);
+	{
+		bobSettings bs;
+		taskTicket *tt = rsAutoProxyMonitor::getTicket();
+		tt->async = false;
+		tt->data = &bs;
+		tt->task = autoProxyTask::getSettings;
+		tt->types.push_back(autoProxyType::I2PBOB);
+		rsAutoProxyMonitor::instance()->task(tt);
+		delete(tt);
+		mBobSettings = bs;
+	}
 
 	loadCommon();
 	updateStatus();
@@ -680,7 +690,17 @@ void ServerPage::updateStatus()
 
 	// update bob
 	// reload settings in case of new keys
-	rsPeers->getBOBSettings(&mBobSettings);
+	{
+		bobSettings bs;
+		taskTicket *tt = rsAutoProxyMonitor::getTicket();
+		tt->async = false;
+		tt->data = &bs;
+		tt->task = autoProxyTask::getSettings;
+		tt->types.push_back(autoProxyType::I2PBOB);
+		rsAutoProxyMonitor::instance()->task(tt);
+		delete(tt);
+		mBobSettings = bs;
+	}
 	QString addr = QString::fromStdString(mBobSettings.addr);
 	if (ui.leBobB32Addr->text() != addr) {
 		ui.leBobB32Addr->setText(addr);
@@ -690,7 +710,15 @@ void ServerPage::updateStatus()
 	}
 
 	bobStates bs;
-	rsPeers->getBOBStates(&bs);
+	{
+		taskTicket *tt = rsAutoProxyMonitor::getTicket();
+		tt->async = false;
+		tt->data = &bs;
+		tt->task = autoProxyTask::status;
+		tt->types.push_back(autoProxyType::I2PBOB);
+		rsAutoProxyMonitor::instance()->task(tt);
+		delete(tt);
+	}
 	switch (bs.cs) {
 	case csStarted:
 		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
@@ -1279,33 +1307,66 @@ void ServerPage::updateInProxyIndicator()
 
 void ServerPage::startBOB()
 {
-	rsPeers->startUpBOBConnection();
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->task = autoProxyTask::start;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	// ticket copied and no data attached to it
+	delete(tt);
+
 	updateStatus();
 }
 
 void ServerPage::stopBOB()
 {
-	rsPeers->shutdownBOBConnection();
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->task = autoProxyTask::stop;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	// ticket copied and no data attached to it
+	delete(tt);
+
 	updateStatus();
 }
 
 void ServerPage::getNewKey()
 {
-	rsPeers->bobGetNewKeys();
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->task = autoProxyTask::receiveKey;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	// ticket copied and no data attached to it
+	delete(tt);
+
 	updateStatus();
 }
 
 void ServerPage::loadKey()
 {
 	mBobSettings.keys = ui.pteBobServerKey->toPlainText().toStdString();
-	mBobSettings.addr = rsPeers->keyToBase32Addr(mBobSettings.keys);
-	rsPeers->setBOBSettings(&mBobSettings);
+	mBobSettings.addr = p3I2pBob::keyToBase32Addr(mBobSettings.keys);
+
+	bobSettings bs = mBobSettings;
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->async = false;
+	tt->data = &bs;
+	tt->task = autoProxyTask::setSettings;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	delete(tt);
 }
 
 void ServerPage::enableBob(bool checked)
 {
 	mBobSettings.enableBob = checked;
-	rsPeers->setBOBSettings(&mBobSettings);
+	bobSettings bs = mBobSettings;
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->async = false;
+	tt->data = &bs;
+	tt->task = autoProxyTask::setSettings;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	delete(tt);
 
 	setUpBobElements();
 }
@@ -1336,7 +1397,14 @@ void ServerPage::tunnelSettingsChanged(int)
 	mBobSettings.inVariance  = fitRange(vi, -1, 2);
 	mBobSettings.outVariance = fitRange(vo, -1, 2);
 
-	rsPeers->setBOBSettings(&mBobSettings);
+	bobSettings bs = mBobSettings;
+	taskTicket *tt = rsAutoProxyMonitor::getTicket();
+	tt->async = false;
+	tt->data = &bs;
+	tt->task = autoProxyTask::setSettings;
+	tt->types.push_back(autoProxyType::I2PBOB);
+	rsAutoProxyMonitor::instance()->task(tt);
+	delete(tt);
 }
 
 void ServerPage::toggleAdvancedSettings(bool checked)
