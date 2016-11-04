@@ -47,7 +47,8 @@ p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
  : RsTickingThread(), p3Config(),
    mState(csClosed), mTask(ctIdle),
    mBOBState(bsCleared), mPeerMgr(peerMgr),
-   mConfigLoaded(false), mSocket(0), mLock("I2P-BOB")
+   mConfigLoaded(false), mSocket(0),
+   mProcessing(NULL), mLock("I2P-BOB")
 {
 	// set defaults
 	mSetting.enableBob   = kDefaultBOBEnable;
@@ -63,6 +64,7 @@ p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
 	mCommands.clear();
 }
 
+/*
 bool p3I2pBob::startUpBOBConnection()
 {
 	RS_STACK_MUTEX(mLock);
@@ -174,6 +176,7 @@ bool p3I2pBob::shutdownBOBConnectionBlocking()
 	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "shutdownBOBConnectionBlocking done");
 	return true;
 }
+*/
 
 bool p3I2pBob::getNewKeys()
 {
@@ -230,6 +233,81 @@ bool p3I2pBob::getNewKeysBlocking()
 	return true;
 }
 
+void p3I2pBob::processTask(taskTicket *ticket)
+{
+	bool data = !!ticket->data;
+
+	// check wether we can process the task immediately or have to queue it
+	switch (ticket->task) {
+	case autoProxyTask::start:
+	case autoProxyTask::stop:
+	case autoProxyTask::receiveKey:
+	    {
+		    RS_STACK_MUTEX(mLock);
+			mPending.push(ticket);
+	    }
+		break;
+	case autoProxyTask::status:
+		// check if everything needed is set
+		if (!data) {
+			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::status autoProxyTask::status data is missing");
+			rsAutoProxyMonitor::taskError(ticket);
+			break;
+		}
+
+		// get states
+		getStates((struct bobStates*)ticket->data);
+
+		// finish task
+		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		break;
+	case autoProxyTask::getSettings:
+		// check if everything needed is set
+		if (!data) {
+			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::getSettings data is missing");
+			rsAutoProxyMonitor::taskError(ticket);
+			break;
+		}
+
+		// get settings
+	    {
+		    RS_STACK_MUTEX(mLock);
+			*((struct bobSettings *)ticket->data) = mSetting;
+	    }
+
+		// finish task
+		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		break;
+	case autoProxyTask::setSettings:
+		// check if everything needed is set
+		if (!data) {
+			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::setSettings data is missing");
+			rsAutoProxyMonitor::taskError(ticket);
+			break;
+		}
+
+		// get settings
+	    {
+		    RS_STACK_MUTEX(mLock);
+			mSetting = *((struct bobSettings *)ticket->data);
+	    }
+
+		// finish task
+		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		break;
+	case autoProxyTask::reloadConfig:
+	{
+		RS_STACK_MUTEX(mLock);
+		updateSettings_locked();
+	}
+		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		break;
+	default:
+		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTask unknown task");
+		break;
+	}
+}
+
 bool p3I2pBob::isEnabled()
 {
 	RS_STACK_MUTEX(mLock);
@@ -260,6 +338,7 @@ bool p3I2pBob::isClosingDown()
 	return mState == csClosing;
 }
 
+/*
 void p3I2pBob::getBOBSettings(bobSettings *settings)
 {
 	if (settings == NULL)
@@ -294,6 +373,7 @@ void p3I2pBob::setBOBSettings(const bobSettings *settings)
 		updateSettings_locked();
 	}
 }
+*/
 
 std::string p3I2pBob::keyToBase32Addr(const std::string &key)
 {
@@ -344,6 +424,29 @@ void p3I2pBob::data_tick()
 		std::stringstream ss;
 		ss << "data_tick mState: " << mState << " mTask: " << mTask << " mBOBState: " << mBOBState;
 		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, ss.str());
+	}
+
+	{
+		RS_STACK_MUTEX(mLock);
+		if (mProcessing == NULL && !mPending.empty()) {
+			mProcessing = mPending.front();
+			mPending.pop();
+
+			switch (mProcessing->task) {
+			case autoProxyTask::start:
+				mTask = ctRun;
+				break;
+			case autoProxyTask::stop:
+				mTask = ctIdle;
+				break;
+			case autoProxyTask::receiveKey:
+				mTask = ctGetKeys;
+				break;
+			default:
+				rslog(RsLog::Debug_Alert, &i2pBobLogInfo, "p3I2pBob::data_tick unknown task");
+				break;
+			}
+		}
 	}
 
 	sleepTime += stateMachineController();
@@ -477,6 +580,10 @@ int p3I2pBob::stateMachineController()
 					// not expected to fail
 					disconnectI2P();
 
+				// finish task
+				rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::offline);
+				mProcessing = NULL;
+
 				// nothing to do -> sleep long
 				return sleepFactorSlow;
 			} else {
@@ -529,6 +636,10 @@ int p3I2pBob::stateMachineController()
 					// not expected to fail
 					disconnectI2P();
 
+				// finish task
+				rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::online);
+				mProcessing = NULL;
+
 				// nothing to do -> sleep long
 				return sleepFactorSlow;
 			} else {
@@ -576,6 +687,17 @@ int p3I2pBob::stateMachineController()
 				if (mSocket != 0)
 					// not expected to fail
 					disconnectI2P();
+
+				// finish task
+				if (mProcessing->cb && mProcessing->data) {
+					*((struct bobSettings *)mProcessing->data) = mSetting;
+					rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::ok);
+				} else {
+					// no big deal
+					delete mProcessing;
+					rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController getKeys: no callback or data set");
+				}
+				mProcessing = NULL;
 
 				// nothing to do -> sleep long
 				return sleepFactorSlow;

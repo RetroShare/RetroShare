@@ -17,7 +17,7 @@ class FakeLinkMgr: public p3LinkMgrIMPL
 {
 	public:
 		FakeLinkMgr(const RsPeerId& own_id,const std::list<RsPeerId>& friends, bool peersOnline)
-		    : p3LinkMgrIMPL(NULL, NULL, NULL), mOwnId(own_id), mFriends()
+			: p3LinkMgrIMPL(NULL,NULL), mOwnId(own_id), mFriends()
 		{
 			std::list<RsPeerId>::const_iterator it;
 			for(it = friends.begin(); it != friends.end(); it++)

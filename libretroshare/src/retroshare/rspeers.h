@@ -42,10 +42,6 @@
 class RsPeers;
 extern RsPeers *rsPeers;
 
-/* declare bob structs forward */
-struct bobSettings;
-struct bobStates;
-
 /* TODO: 2015/12/31 As for type safetyness all those constant must be declared as enum!
  * C++ now supports typed enum so there is no ambiguity in serialization size
  */
@@ -381,24 +377,6 @@ public:
 
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;
-
-	// I2P BOB
-	virtual bool startUpBOBConnection() = 0;
-	virtual bool startUpBOBConnectionBlocking() = 0;
-	virtual bool shutdownBOBConnection() = 0;
-	virtual bool shutdownBOBConnectionBlocking() = 0;
-	virtual bool bobGetNewKeys() = 0;
-	virtual bool bobGetNewKeysBlocking() = 0;
-
-	virtual bool bobIsEnabled() = 0;
-	virtual bool bobIsUp() = 0;
-	virtual bool bobIsDown() = 0;
-
-	virtual void getBOBSettings(bobSettings *settings) = 0;
-	virtual void setBOBSettings(const bobSettings *settings) = 0;
-
-	virtual std::string keyToBase32Addr(const std::string &key) = 0;
-	virtual void getBOBStates(bobStates *bs) = 0;
 
 	virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 	virtual void allowServerIPDetermination(bool) = 0;

@@ -2,9 +2,11 @@
 #define P3I2PBOB_H
 
 #include <map>
+#include <queue>
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
 
@@ -177,28 +179,34 @@ struct bobStates {
 
 class p3PeerMgr;
 
-class p3I2pBob : public RsTickingThread, public p3Config
+class p3I2pBob : public RsTickingThread, public p3Config, public autoProxyService
 {
 public:
 	p3I2pBob(p3PeerMgr *peerMgr);
 
-	bool startUpBOBConnection();
-	bool startUpBOBConnectionBlocking();
-	bool shutdownBOBConnection();
-	bool shutdownBOBConnectionBlocking();
+protected:
+	friend class RsServer;
+//	bool startUpBOBConnection();
+//	bool startUpBOBConnectionBlocking();
+//	bool shutdownBOBConnection();
+//	bool shutdownBOBConnectionBlocking();
 	bool getNewKeys();
 	bool getNewKeysBlocking();
 
+	// autoProxyService interface
+public:
+	void processTask(taskTicket *ticket);
 	bool isEnabled();
+
 	bool isUp();
 	bool isStartingUp();
 	bool isDown();
 	bool isClosingDown();
 
-	void getBOBSettings(bobSettings *settings);
-	void setBOBSettings(const bobSettings *settings);
+//	void getBOBSettings(bobSettings *settings);
+//	void setBOBSettings(const bobSettings *settings);
 
-	std::string keyToBase32Addr(const std::string &key);
+	static std::string keyToBase32Addr(const std::string &key);
 
 	void getStates(bobStates *bs);
 
@@ -239,6 +247,9 @@ private:
 	int		mSocket;
 	sockaddr_storage mI2PProxyAddr;
 	std::map<bobState, bobStateInfo> mCommands;
+
+	std::queue<taskTicket *> mPending;
+	taskTicket *mProcessing;
 
 	// mutex
 	RsMutex mLock;

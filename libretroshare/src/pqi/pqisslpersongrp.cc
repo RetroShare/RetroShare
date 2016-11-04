@@ -24,7 +24,7 @@
  */
 
 #include "serialiser/rsserviceserialiser.h"
-#include "services/p3i2pbob.h"
+#include "services/autoproxy/rsautoproxymonitor.h"
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"
@@ -87,7 +87,7 @@ pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener
 
 			pqicSOCKSProxy = new pqiconnect(pqip, rss, pqis);
 		}
-		if (mLinkMgr->getI2PBOB()->isEnabled())
+		if (rsAutoProxyMonitor::instance()->isEnabled(autoProxyType::I2PBOB))
 		{
 			pqissli2pbob *pqis = new pqissli2pbob((pqissllistener *) listener, pqip, mLinkMgr);
 			RsSerialiser *rss  = new RsSerialiser();

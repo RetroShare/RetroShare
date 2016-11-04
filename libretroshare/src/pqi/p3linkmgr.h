@@ -135,7 +135,6 @@ class p3tunnel;
 class RsPeerGroupItem_deprecated;
 class RsGroupInfo;
 
-class p3I2pBob;
 class p3PeerMgr;
 class p3NetMgr;
 
@@ -181,8 +180,6 @@ virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
-
-virtual	p3I2pBob *getI2PBOB() = 0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -260,7 +257,7 @@ virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state); //
 /* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */
 /************************************************************************************************/
 
-	    p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr, p3I2pBob *i2pBob);
+        p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr);
         virtual ~p3LinkMgrIMPL();
 
 void 	tick();
@@ -277,9 +274,6 @@ int 	removeFriend(const RsPeerId &ssl_id);
 void 	printPeerLists(std::ostream &out);
 
 virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, time_t age);
-
-p3I2pBob *getI2PBOB();
-
 protected:
 	/* THESE CAN PROBABLY BE REMOVED */
 //bool	shutdown(); /* blocking shutdown call */
@@ -321,7 +315,6 @@ private:
 	//p3tunnel *mP3tunnel;
 	DNSResolver *mDNSResolver ;
 
-	p3I2pBob      *mI2pBob;
 	p3PeerMgrIMPL *mPeerMgr;
 	p3NetMgrIMPL  *mNetMgr;
 

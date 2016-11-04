@@ -45,7 +45,8 @@ const int p3facemsgzone = 11453;
 // TO SHUTDOWN THREADS.
 #ifdef RS_ENABLE_GXS
 
-#include "services/p3i2pbob.h"
+#include "services/autoproxy/rsautoproxymonitor.h"
+
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
@@ -90,11 +91,7 @@ void RsServer::rsGlobalShutDown()
 
 	mNetMgr->shutdown(); /* Handles UPnP */
 
-	// Properly shutdown BOB tunnel or you end
-	// up with stale ones.
-	// This can be called even when no connection
-	// was setup.
-	mI2pBob->shutdownBOBConnectionBlocking();
+	rsAutoProxyMonitor::instance()->stopAllRSShutdown();
 
     fullstop() ;
 

@@ -853,7 +853,10 @@ RsGRouter *rsGRouter = NULL ;
 		#include "upnp/upnphandler_miniupnp.h"
         #endif
 #endif
-	
+
+#include "services/autoproxy/p3i2pbob.h"
+#include "services/autoproxy/rsautoproxymonitor.h"
+
 #include "services/p3gxsreputation.h"
 #include "services/p3serviceinfo.h"
 #include "services/p3heartbeat.h"
@@ -871,7 +874,6 @@ RsGRouter *rsGRouter = NULL ;
 #include "retroshare/rsgxsflags.h"
 
 #include "pgp/pgpauxutils.h"
-#include "services/p3i2pbob.h"
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
@@ -1042,14 +1044,17 @@ int RsServer::StartupRetroShare()
 				AuthGPG::getAuthGPG()->getGPGOwnName(),
 				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
-	mI2pBob = new p3I2pBob(mPeerMgr);
-	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr, mI2pBob);
+	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 
 	/* Setup Notify Early - So we can use it. */
 	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
+
+	rsAutoProxyMonitor *autoProxy = rsAutoProxyMonitor::instance();
+	mI2pBob = new p3I2pBob(mPeerMgr);
+	autoProxy->addProxy(autoProxyType::I2PBOB, mI2pBob);
 			
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
@@ -1726,14 +1731,18 @@ int RsServer::StartupRetroShare()
 			// call this once to setup everything needed
 //			mPeerMgr->forceHiddenNode();
 
+			// add i2p proxy
 			sockaddr_storage i2pInstance;
 			sockaddr_storage_ipv4_aton(i2pInstance, rsInitConfig->hiddenNodeAddress.c_str());
 			mPeerMgr->setProxyServerAddress(RS_HIDDEN_TYPE_I2P, i2pInstance);
 
-			bobSettings bs;
 			// trigger update of proxy addr in BOB
-			mI2pBob->getBOBSettings(&bs);
-			mI2pBob->setBOBSettings(&bs);
+			taskTicket *tt = rsAutoProxyMonitor::getTicket();
+			tt->async = false;
+			tt->task = autoProxyTask::reloadConfig;
+			tt->types.push_back(autoProxyType::I2PBOB);
+			autoProxy->task(tt);
+			delete tt;
 
 			// start bob to receive new keys
 			mI2pBob->start("I2P-BOB gen key");
@@ -1741,13 +1750,23 @@ int RsServer::StartupRetroShare()
 			if (mI2pBob->getNewKeysBlocking()) {
 				std::cout << "RsServer::StartupRetroShare received keys" << std::endl;
 
+				// request settings
+				bobSettings bs;
+//				tt->async = false;
+//				tt->data = &bs;
+//				tt->task = autoProxyTask::getSettings;
+//				tt->types.push_back(autoProxyType::I2PBOB);
+//				autoProxy->task(tt);
+				bs = mI2pBob->mSetting;
+
 				// setup hidden node
-				mI2pBob->getBOBSettings(&bs);
 				mPeerMgr->setupHiddenNode(bs.addr, rsInitConfig->hiddenNodePort);
 
 				// enable bob
 				bs.enableBob = true;
-				mI2pBob->setBOBSettings(&bs);
+//				tt->task = autoProxyTask::setSettings;
+//				autoProxy->task(tt);
+				mI2pBob->mSetting = bs;
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
 				/// TODO add notify for failed bob setup
@@ -1767,21 +1786,23 @@ int RsServer::StartupRetroShare()
 
 	mNetMgr -> checkNetAddress();
 
-	if (rsInitConfig->hiddenNodeSet && rsInitConfig->hiddenNodeI2PBOB) {
+	if (rsInitConfig->hiddenNodeSet) {
 		// newly created location
-		// mNetMgr->checkNetAddress() will setup a port for us
-		// trigger update for BOB
-		bobSettings bs;
-		mI2pBob->getBOBSettings(&bs);
-		mI2pBob->setBOBSettings(&bs);
+		// mNetMgr->checkNetAddress() will setup ports for us
+		// trigger updates for auto proxy services
+		taskTicket *tt = rsAutoProxyMonitor::getTicket();
+		tt->async = false;
+		tt->task = autoProxyTask::reloadConfig;
+		tt->types.push_back(autoProxyType::I2PBOB);
+		autoProxy->task(tt);
+		delete tt;
 	}
 
 	/**************************************************************************/
 	/* startup (stuff dependent on Ids/peers is after this point) */
 	/**************************************************************************/
 
-	if (mI2pBob->isEnabled())
-		mI2pBob->startUpBOBConnection();
+	autoProxy->startAll();
 
 	pqih->init_listener();
 	mNetMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
@@ -1812,7 +1833,7 @@ int RsServer::StartupRetroShare()
 	/* Start up Threads */
 	/**************************************************************************/
 
-	// BOB needs some time to set up everything - start it early
+	// auto proxy threads
 	startServiceThread(mI2pBob, "I2P-BOB");
 
 #ifdef RS_ENABLE_GXS
