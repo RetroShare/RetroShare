@@ -345,7 +345,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
     /* for each item, check it exists ....
      * - remove any that are dead (or flag?)
      */
-    static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
+    static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_PERMISSIONS_MASK;
 
 #ifdef  DEBUG_FILE_HIERARCHY
     P3FILELISTS_DEBUG() << "Load list" << std::endl;
@@ -400,7 +400,6 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             info.virtualname = fi->file.name;
             info.shareflags = FileStorageFlags(fi->flags) ;
             info.shareflags &= PERMISSION_MASK ;
-            info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
             for(std::set<RsNodeGroupId>::const_iterator itt(fi->parent_groups.ids.begin());itt!=fi->parent_groups.ids.end();++itt)
                 info.parent_groups.push_back(*itt) ;
@@ -644,26 +643,25 @@ void p3FileDatabase::requestDirUpdate(void *ref)
 bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
                                        FileSearchFlags flags ) const
 {
-	RS_STACK_MUTEX(mFLSMtx);
+    if (ref == NULL)
+    {
+        if(flags & RS_FILE_HINTS_LOCAL)
+        {
+            if(row != 0)
+                return false ;
 
-	result = NULL;
+            convertEntryIndexToPointer(0,0,result);
 
-	if (ref == NULL)
-	{
-		if(flags & RS_FILE_HINTS_LOCAL)
-		{
-			if(row != 0) return false;
-
-			convertEntryIndexToPointer(0,0,result);
-			return true;
-		}
-		else if((uint32_t)row < mRemoteDirectories.size())
-		{
-			convertEntryIndexToPointer(mRemoteDirectories[row]->root(), row+1, result);
-			return true;
-		}
-		else return false;
-	}
+            return true ;
+        }
+        else if((uint32_t)row < mRemoteDirectories.size())
+        {
+            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
+            return true;
+        }
+        else
+            return false;
+    }
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -999,15 +997,19 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
 
     if(hintflags & RS_FILE_HINTS_LOCAL)
     {
-        std::list<EntryIndex> res;
-        mLocalSharedDirs->searchHash(hash,res) ;
+        RsFileHash real_hash ;
+        EntryIndex indx;
 
-        if(res.empty())
+        if(!mLocalSharedDirs->searchHash(hash,real_hash,indx))
             return false;
 
-        EntryIndex indx = *res.begin() ; // no need to report duplicates
-
         mLocalSharedDirs->getFileInfo(indx,info) ;
+
+        if(!real_hash.isNull())
+        {
+            info.hash = real_hash ;
+            info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
+        }
 
         return true;
     }

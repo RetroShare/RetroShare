@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>737</width>
+    <width>1156</width>
     <height>402</height>
    </rect>
   </property>
@@ -86,7 +86,7 @@
       <item>
        <widget class="QPushButton" name="addShares_PB">
         <property name="text">
-         <string>Add Share</string>
+         <string>Configure shared directories</string>
         </property>
         <property name="icon">
          <iconset resource="images.qrc">

@@ -677,18 +677,9 @@ DirectoryStorage::EntryIndex InternalFileHierarchyStorage::getSubDirIndex(Direct
     return static_cast<DirEntry*>(mNodes[parent_index])->subdirs[dir_tab_index];
 }
 
-bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,std::list<DirectoryStorage::EntryIndex>& results)
+bool InternalFileHierarchyStorage::searchHash(const RsFileHash& hash,DirectoryStorage::EntryIndex& result)
 {
-    DirectoryStorage::EntryIndex indx ;
-
-    if(getIndexFromFileHash(hash,indx))
-    {
-        results.clear();
-        results.push_back(indx) ;
-        return true ;
-    }
-    else
-        return false;
+    return getIndexFromFileHash(hash,result);
 }
 
 class DirectoryStorageExprFileEntry: public RsRegularExpression::ExpFileEntry

@@ -43,6 +43,9 @@ const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
 const uint32_t RS_FILE_CTRL_START	 		= 0x00000200;
 const uint32_t RS_FILE_CTRL_FORCE_CHECK	= 0x00000400;
 
+const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT     = 0x00000001 ;
+const uint32_t RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE = 0x00000002 ;
+
 const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
 const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;
 const uint32_t RS_FILE_RATE_STANDARD	 = 0x00000003;
@@ -63,29 +66,32 @@ const uint32_t RS_FILE_PEER_OFFLINE 	 = 0x00002000;
 
 // Flags used when requesting info about transfers, mostly to filter out the result.
 //
-const FileSearchFlags RS_FILE_HINTS_CACHE_deprecated	    	 ( 0x00000001 );
-const FileSearchFlags RS_FILE_HINTS_EXTRA	 		    	 ( 0x00000002 );
-const FileSearchFlags RS_FILE_HINTS_LOCAL	 		    	 ( 0x00000004 );
-const FileSearchFlags RS_FILE_HINTS_REMOTE	 		     ( 0x00000008 );
-const FileSearchFlags RS_FILE_HINTS_DOWNLOAD		       	 ( 0x00000010 );
-const FileSearchFlags RS_FILE_HINTS_UPLOAD	 		     ( 0x00000020 );
-const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY	         ( 0x01000000 );
+const FileSearchFlags RS_FILE_HINTS_CACHE_deprecated       ( 0x00000001 );
+const FileSearchFlags RS_FILE_HINTS_EXTRA                  ( 0x00000002 );
+const FileSearchFlags RS_FILE_HINTS_LOCAL                  ( 0x00000004 );
+const FileSearchFlags RS_FILE_HINTS_REMOTE                 ( 0x00000008 );
+const FileSearchFlags RS_FILE_HINTS_DOWNLOAD               ( 0x00000010 );
+const FileSearchFlags RS_FILE_HINTS_UPLOAD                 ( 0x00000020 );
+const FileSearchFlags RS_FILE_HINTS_SPEC_ONLY              ( 0x01000000 );
 
-const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE          ( 0x00000080 );// anonymously shared over network
-const FileSearchFlags RS_FILE_HINTS_BROWSABLE             ( 0x00000100 );// browsable by friends
-const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK       ( 0x00000180 );// OR of the last two flags. Used to filter out.
+const FileSearchFlags RS_FILE_HINTS_NETWORK_WIDE           ( 0x00000080 );// anonymously shared over network
+const FileSearchFlags RS_FILE_HINTS_BROWSABLE              ( 0x00000100 );// browsable by friends
+const FileSearchFlags RS_FILE_HINTS_SEARCHABLE             ( 0x00000200 );// browsable by friends
+const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000380 );// OR of the last tree flags. Used to filter out.
 
 // Flags used when requesting a transfer
 //
 const TransferRequestFlags RS_FILE_REQ_ANONYMOUS_ROUTING   ( 0x00000040 ); // Use to ask turtle router to download the file.
+const TransferRequestFlags RS_FILE_REQ_ENCRYPTED           ( 0x00000080 ); // Asks for end-to-end encryption of file at the level of ftServer
+const TransferRequestFlags RS_FILE_REQ_UNENCRYPTED         ( 0x00000100 ); // Asks for no end-to-end encryption of file at the level of ftServer
 const TransferRequestFlags RS_FILE_REQ_ASSUME_AVAILABILITY ( 0x00000200 ); // Assume full source availability. Used for cache files.
-const TransferRequestFlags RS_FILE_REQ_CACHE_deprecated    ( 0x00000400 ); // Assume full source availability. Used for cache files.
+const TransferRequestFlags RS_FILE_REQ_CACHE_deprecated    ( 0x00000400 ); // Old stuff used for cache files. Not used anymore.
 const TransferRequestFlags RS_FILE_REQ_EXTRA               ( 0x00000800 );
-const TransferRequestFlags RS_FILE_REQ_MEDIA	              ( 0x00001000 );
-const TransferRequestFlags RS_FILE_REQ_BACKGROUND	          ( 0x00002000 ); // To download slowly.
+const TransferRequestFlags RS_FILE_REQ_MEDIA               ( 0x00001000 );
+const TransferRequestFlags RS_FILE_REQ_BACKGROUND          ( 0x00002000 ); // To download slowly.
 const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// disable searching for potential direct sources.
 
-// const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS 
+// const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS
 // 																	 | RS_FILE_HINTS_NETWORK_WIDE_GROUPS | RS_FILE_HINTS_BROWSABLE_GROUPS ;
 
 /* Callback Codes */
@@ -96,7 +102,7 @@ struct SharedDirInfo
 {
 	std::string filename ;
 	std::string virtualname ;
-	FileStorageFlags shareflags ;		// DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | ...
+    FileStorageFlags shareflags ;		// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
     std::list<RsNodeGroupId> parent_groups ;
 };
 
@@ -141,6 +147,8 @@ class RsFiles
 		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
 		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
+        virtual void setDefaultEncryptionPolicy(uint32_t policy)=0 ;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
+        virtual uint32_t defaultEncryptionPolicy()=0 ;
 
 		/***
 		 * Control of Downloads Priority.
@@ -159,6 +167,7 @@ class RsFiles
         virtual void FileDownloads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
 		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
+        virtual bool isEncryptedSource(const RsPeerId& virtual_peer_id) =0;
 
 		/// Gives chunk details about the downloaded file with given hash.
 		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) = 0 ;
@@ -209,8 +218,9 @@ class RsFiles
 		virtual std::string getDownloadDirectory() = 0;
 		virtual std::string getPartialsDirectory() = 0;
 
-		virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
-		virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
+        virtual bool    getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
+        virtual bool    setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
+        virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
 

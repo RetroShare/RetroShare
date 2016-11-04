@@ -30,6 +30,7 @@
 #include <gui/common/RsUrlHandler.h>
 #include <gui/common/FilesDefs.h>
 #include <gui/common/GroupDefs.h>
+#include <gui/gxs/GxsIdDetails.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -216,16 +217,21 @@ QString RetroshareDirModel::getFlagsString(FileStorageFlags flags)
 {
 	char str[11] = "-  -  -" ;
 
-	if(flags & DIR_FLAGS_BROWSABLE_GROUPS) 	str[0] = 'B' ;
-	//if(flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) str[3] = 'N' ;
-	if(flags & DIR_FLAGS_BROWSABLE_OTHERS) 	str[3] = 'B' ;
-	if(flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) str[6] = 'N' ;
+    if(flags & DIR_FLAGS_BROWSABLE) 	     str[0] = 'B' ;
+    if(flags & DIR_FLAGS_ANONYMOUS_SEARCH) 	 str[3] = 'S' ;
+	if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) str[6] = 'N' ;
 
 	return QString(str) ;
 }
-QString RetroshareDirModel::getGroupsString(const std::list<RsNodeGroupId>& group_ids)
+QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::list<RsNodeGroupId>& group_ids)
 {
-	QString groups_str ;
+    if(!(flags & DIR_FLAGS_BROWSABLE))
+        return QString();
+
+    if(group_ids.empty())
+        return tr("[All friend nodes]") ;
+
+    QString groups_str = tr("Only ");
 	RsGroupInfo group_info ;
 
     for(std::list<RsNodeGroupId>::const_iterator it(group_ids.begin());it!=group_ids.end();)
@@ -271,8 +277,55 @@ QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) con
 	return ret;
 }
 
+const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
+{
+    static QIcon *static_icons[8] = {NULL};
+
+    int n=0;
+    if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) n += 1 ;
+    if(flags & DIR_FLAGS_ANONYMOUS_SEARCH  ) n += 2 ;
+    if(flags & DIR_FLAGS_BROWSABLE         ) n += 4 ;
+    n-= 1;
+
+    if(static_icons[n] == NULL)
+    {
+        QList<QIcon> icons ;
+
+        if(flags & DIR_FLAGS_ANONYMOUS_SEARCH)
+            icons.push_back(QIcon(":icons/search_red_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD)
+            icons.push_back(QIcon(":icons/anonymous_blue_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        if(flags & DIR_FLAGS_BROWSABLE)
+            icons.push_back(QIcon(":icons/browsable_green_128.png")) ;
+        else
+            icons.push_back(QIcon(":icons/void_128.png")) ;
+
+        QPixmap pix ;
+        GxsIdDetails::GenerateCombinedPixmap(pix, icons, 128);
+
+        static_icons[n] = new QIcon(pix);
+
+        std::cerr << "Generated icon for flags " << std::hex << flags << std::endl;
+    }
+    return *static_icons[n] ;
+}
+
 QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) const
 {
+    if(coln == 3)
+    {
+        if(details.type == DIR_TYPE_PERSON) return QVariant() ;
+
+        return getFlagsIcon(details.flags) ;
+    }
+
+
 	if(coln > 0)
 		return QVariant() ;
 
@@ -352,16 +405,9 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
                 return  misc::userFriendlyDuration(details.min_age);
 			case 3:
-				return getFlagsString(details.flags);
-//			case 4:
-//				{
-//					QString ind("");
-//					if (ageIndicator != IND_ALWAYS)
-//						ind = getAgeIndicatorString(details);
-//					return ind;
-//				}
+                return QVariant();
 			case 4:
-				return getGroupsString(details.parent_groups) ;
+                return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("FILE");
@@ -383,9 +429,9 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 2:
 				return misc::userFriendlyDuration(details.min_age);
 			case 3:
-				return getFlagsString(details.flags);
+                return QVariant();
 			case 4: 
-				return getGroupsString(details.parent_groups) ;
+                return getGroupsString(details.flags,details.parent_groups) ;
 
 			default:
 				return tr("DIR");
@@ -663,12 +709,12 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				if (RemoteMode)
 					return tr("Friend");
 				else
-					return tr("Share Flags");
+                    return tr("Access");
 			case 4:
 				if (RemoteMode)
 					return tr("What's new");
 				else
-					return tr("Groups");
+                    return tr("Visibility");
 		}
 		return QString("Column %1").arg(section);
 	}

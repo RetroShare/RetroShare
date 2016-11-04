@@ -381,6 +381,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
 
+HEADERS += crypto/chacha20.h 
+
 HEADERS += directory_updater.h \
 				directory_list.h \
 				p3filelists.h
@@ -538,6 +540,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
 			ft/ftturtlefiletransferitem.cc 
+
+SOURCES += crypto/chacha20.cpp 
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \

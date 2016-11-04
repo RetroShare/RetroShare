@@ -350,9 +350,10 @@ bool    ftExtraList::search(const RsFileHash &hash, FileSearchFlags /*hintflags*
 
 	// Now setup the file storage flags so that the client can know how to handle permissions
 	//
-	info.storage_permission_flags = DIR_FLAGS_BROWSABLE_OTHERS ;
+#warning make sure this is right
+    info.storage_permission_flags = FileStorageFlags(0) ;//DIR_FLAGS_BROWSABLE_OTHERS ;
 
-	if(info.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING) info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;
+	if(info.transfer_info_flags & RS_FILE_REQ_ANONYMOUS_ROUTING) info.storage_permission_flags |= DIR_FLAGS_ANONYMOUS_DOWNLOAD ;
 
 	return true;
 }
