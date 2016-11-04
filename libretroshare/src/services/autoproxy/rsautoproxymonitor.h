@@ -57,13 +57,13 @@ struct taskTicket {
 
 class autoProxyCallback {
 public:
-	virtual void taskFinished(taskTicket *ticket) = 0;
+	virtual void taskFinished(taskTicket **ticket) = 0;
 };
 
 class autoProxyService {
 public:
 	virtual bool isEnabled() = 0;
-	virtual void initialSetup(std::string &addr, uint16_t &port) = 0;
+	virtual bool initialSetup(std::string &addr, uint16_t &port) = 0;
 	virtual void processTask(taskTicket *ticket) = 0;
 };
 
@@ -81,7 +81,7 @@ public:
 	void stopAllRSShutdown();
 	bool isEnabled(autoProxyType::autoProxyType_enum t);
 	// use this when creating a new node
-	void initialSetup(autoProxyType::autoProxyType_enum t, std::string &addr, uint16_t &port);
+	bool initialSetup(autoProxyType::autoProxyType_enum t, std::string &addr, uint16_t &port);
 
 	///
 	/// \brief task Sends a task to all requested services
@@ -111,7 +111,14 @@ public:
 	/// async call. In that case the service should delete the ticket and the attacked data.
 	/// Otherwise the caller must take care of cleaning up
 	///
+private:
 	void task(taskTicket *ticket);
+
+public:
+	static void taskAsync(autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb = NULL, void *data = NULL);
+	static void taskAsync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb = NULL, void *data = NULL);
+	static void taskSync (autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, void *data = NULL);
+	static void taskSync (std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, void *data = NULL);
 
 	// usefull helpers
 	static void taskError(taskTicket *t);
@@ -120,7 +127,7 @@ public:
 
 	// autoProxyCallback interface
 public:
-	void taskFinished(taskTicket *ticket);
+	void taskFinished(taskTicket **ticket);
 
 private:
 	rsAutoProxyMonitor();

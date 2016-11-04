@@ -1803,12 +1803,7 @@ int RsServer::StartupRetroShare()
 		// newly created location
 		// mNetMgr->checkNetAddress() will setup ports for us
 		// trigger updates for auto proxy services
-		taskTicket *tt = rsAutoProxyMonitor::getTicket();
-		tt->async = false;
-		tt->task = autoProxyTask::reloadConfig;
-		tt->types.push_back(autoProxyType::I2PBOB);
-		autoProxy->task(tt);
-		delete tt;
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
 	}
 
 	/**************************************************************************/

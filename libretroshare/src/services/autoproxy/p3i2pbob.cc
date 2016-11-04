@@ -64,182 +64,13 @@ p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
 	mCommands.clear();
 }
 
-/*
-bool p3I2pBob::startUpBOBConnection()
-{
-	RS_STACK_MUTEX(mLock);
-
-	// TODO better handling of this case
-	if (mBOBState != bsCleared) {
-		std::stringstream ss;
-		ss << "startUpBOBConnection mBOBState != cleared (mBOBState: " << mBOBState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-	if (mState != csClosed) {
-		std::stringstream ss;
-		ss << "startUpBOBConnection mState != closed (mState: " << mState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-
-	if (mTask == ctRun) {
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "startUpBOBConnection already starting up");
-		return true;
-	}
-
-	mTask = ctRun;
-
-	return true;
-}
-
-bool p3I2pBob::startUpBOBConnectionBlocking()
-{
-	// wait in case of closing
-	if (isClosingDown()) {
-		for(;;) {
-			doSleep(sleepTimeWait);
-			if (isDown())
-				break;
-		}
-	}
-
-	if (!startUpBOBConnection())
-		return false;
-
-	// wait for start up
-	for(;;) {
-		doSleep(sleepTimeWait);
-		RS_STACK_MUTEX(mLock);
-		// check for error, too
-		if (mState == csStarted || mState == csError)
-			break;
-	}
-
-	// in case of an error return false
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "startUpBOBConnectionBlocking done");
-	RS_STACK_MUTEX(mLock);
-	return mState == csStarted;
-}
-
-bool p3I2pBob::shutdownBOBConnection()
-{
-	RS_STACK_MUTEX(mLock);
-
-	// TODO better handling of this case
-	if (mBOBState != bsCleared) {
-		std::stringstream ss;
-		ss << "shutdownBOBConnection mBOBState != cleared (mBOBState: " << mBOBState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-	if (mState != csStarted) {
-		std::stringstream ss;
-		ss << "shutdownBOBConnection mState != started (mState: " << mState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-
-	if (mTask == ctIdle) {
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "shutdownBOBConnection already idling");
-		return true;
-	}
-
-	mTask = ctIdle;
-
-	return true;
-}
-
-bool p3I2pBob::shutdownBOBConnectionBlocking()
-{
-	// wait in case of start up
-	if (isStartingUp()) {
-		for(;;) {
-			doSleep(sleepTimeWait);
-			if (isUp())
-				break;
-		}
-	}
-
-	if (!shutdownBOBConnection())
-		return false;
-
-	// wait for shutdown
-	for(;;) {
-		doSleep(sleepTimeWait);
-		if (isDown())
-			break;
-	}
-
-	// both closed and error result in a closed connection
-	// always return true
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "shutdownBOBConnectionBlocking done");
-	return true;
-}
-*/
-
-bool p3I2pBob::getNewKeys()
-{
-	RS_STACK_MUTEX(mLock);
-
-	// TODO better handling of this case
-	if (mBOBState != bsCleared) {
-		std::stringstream ss;
-		ss << "getNewKeys mBOBState != cleared (mBOBState: " << mBOBState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-	if (mState != csClosed) {
-		std::stringstream ss;
-		ss << "getNewKeys mState != closed (mState: " << mState << ")";
-		rslog(RsLog::Warning, &i2pBobLogInfo, ss.str());
-		return false;
-	}
-
-	if (mTask == ctGetKeys) {
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "shutdownBOBConnection already getting new keys");
-		return true;
-	}
-
-	mTask = ctGetKeys;
-
-	return true;
-}
-
-bool p3I2pBob::getNewKeysBlocking()
-{
-	// wait in case of closing
-	if (isClosingDown()) {
-		for(;;) {
-			doSleep(sleepTimeWait);
-			if (isDown())
-				break;
-		}
-	}
-
-	if (!getNewKeys())
-		return false;
-
-	// wait for shutdown
-	for(;;) {
-		doSleep(sleepTimeWait);
-		RS_STACK_MUTEX(mLock);
-		// wait for tast change
-		if (mTask != ctGetKeys)
-			break;
-	}
-
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "getNewKeysBlocking done");
-	return true;
-}
-
 bool p3I2pBob::isEnabled()
 {
 	RS_STACK_MUTEX(mLock);
 	return mSetting.enableBob;
 }
 
-void p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
+bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 {
 	// first start thread
 	start("I2P-BOB gen key");
@@ -274,6 +105,8 @@ void p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 
 	// last stop thread
 	fullstop();
+
+	return true;
 }
 
 

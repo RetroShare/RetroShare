@@ -245,17 +245,7 @@ void ServerPage::load()
     }
     mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
 
-	{
-		bobSettings bs;
-		taskTicket *tt = rsAutoProxyMonitor::getTicket();
-		tt->async = false;
-		tt->data = &bs;
-		tt->task = autoProxyTask::getSettings;
-		tt->types.push_back(autoProxyType::I2PBOB);
-		rsAutoProxyMonitor::instance()->task(tt);
-		delete(tt);
-		mBobSettings = bs;
-	}
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &mBobSettings);
 
 	loadCommon();
 	updateStatus();
@@ -686,7 +676,7 @@ void ServerPage::updateStatus()
 	if(!isVisible())
 		return ;
 
-    loadFilteredIps() ;
+	loadFilteredIps() ;
 
 	// update bob
 	QString addr = QString::fromStdString(mBobSettings.addr);
@@ -698,15 +688,8 @@ void ServerPage::updateStatus()
 	}
 
 	bobStates bs;
-	{
-		taskTicket *tt = rsAutoProxyMonitor::getTicket();
-		tt->async = false;
-		tt->data = &bs;
-		tt->task = autoProxyTask::status;
-		tt->types.push_back(autoProxyType::I2PBOB);
-		rsAutoProxyMonitor::instance()->task(tt);
-		delete(tt);
-	}
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
+
 	switch (bs.cs) {
 	case csStarted:
 		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
@@ -1295,37 +1278,23 @@ void ServerPage::updateInProxyIndicator()
 
 void ServerPage::startBOB()
 {
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
-	tt->task = autoProxyTask::start;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
-	// ticket copied and no data attached to it
-	delete(tt);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::start);
 
 	updateStatus();
 }
 
 void ServerPage::stopBOB()
 {
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
-	tt->task = autoProxyTask::stop;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
-	// ticket copied and no data attached to it
-	delete(tt);
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::stop);
 
 	updateStatus();
 }
 
 void ServerPage::getNewKey()
 {
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
 	bobSettings *bs = new bobSettings();
-	tt->cb = this;
-	tt->data = bs;
-	tt->task = autoProxyTask::receiveKey;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
+
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::receiveKey, this, bs);
 
 	updateStatus();
 }
@@ -1335,27 +1304,14 @@ void ServerPage::loadKey()
 	mBobSettings.keys = ui.pteBobServerKey->toPlainText().toStdString();
 	mBobSettings.addr = p3I2pBob::keyToBase32Addr(mBobSettings.keys);
 
-	bobSettings bs = mBobSettings;
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
-	tt->async = false;
-	tt->data = &bs;
-	tt->task = autoProxyTask::setSettings;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
-	delete(tt);
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 }
 
 void ServerPage::enableBob(bool checked)
 {
 	mBobSettings.enableBob = checked;
-	bobSettings bs = mBobSettings;
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
-	tt->async = false;
-	tt->data = &bs;
-	tt->task = autoProxyTask::setSettings;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
-	delete(tt);
+
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 
 	setUpBobElements();
 }
@@ -1386,14 +1342,7 @@ void ServerPage::tunnelSettingsChanged(int)
 	mBobSettings.inVariance  = fitRange(vi, -1, 2);
 	mBobSettings.outVariance = fitRange(vo, -1, 2);
 
-	bobSettings bs = mBobSettings;
-	taskTicket *tt = rsAutoProxyMonitor::getTicket();
-	tt->async = false;
-	tt->data = &bs;
-	tt->task = autoProxyTask::setSettings;
-	tt->types.push_back(autoProxyType::I2PBOB);
-	rsAutoProxyMonitor::instance()->task(tt);
-	delete(tt);
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 }
 
 void ServerPage::toggleAdvancedSettings(bool checked)
@@ -1411,24 +1360,26 @@ void ServerPage::syncI2PProxyPortBob(int i)
 	ui.hiddenpage_proxyPort_i2p->setValue(i);
 }
 
-void ServerPage::taskFinished(taskTicket *ticket)
+void ServerPage::taskFinished(taskTicket **ticket)
 {
-	if (ticket->task == autoProxyTask::receiveKey) {
+	taskTicket *t = *ticket;
+	if (t->task == autoProxyTask::receiveKey) {
 		bobSettings *s = NULL;
-		switch (ticket->types.front()) {
+		switch (t->types.front()) {
 		case autoProxyType::I2PBOB:
 			// update settings
-			s = (struct bobSettings *)ticket->data;
+			s = (struct bobSettings *)t->data;
 			mBobSettings = *s;
 			delete s;
 			s = NULL;
-			ticket->data = NULL;
+			t->data = NULL;
 			break;
 		default:
 			break;
 		}
 	}
-	delete ticket;
+	delete t;
+	*ticket =  NULL;
 }
 
 void ServerPage::loadCommon()

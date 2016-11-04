@@ -112,26 +112,26 @@ bool rsAutoProxyMonitor::isEnabled(autoProxyType::autoProxyType_enum t)
 	return s->isEnabled();
 }
 
-void rsAutoProxyMonitor::initialSetup(autoProxyType::autoProxyType_enum t, std::__cxx11::string &addr, uint16_t &port)
+bool rsAutoProxyMonitor::initialSetup(autoProxyType::autoProxyType_enum t, std::string &addr, uint16_t &port)
 {
 	autoProxyService *s = lookUpService(t);
 	if (s == NULL)
-		return;
+		return false;
 
-	s->initialSetup(addr, port);
+	return s->initialSetup(addr, port);
 }
 
 void rsAutoProxyMonitor::task(taskTicket *ticket)
 {
 	// sanity checks
 	if (!ticket->async && ticket->types.size() > 1) {
-		std::cout << "rsAutoProxyMonitor::task synchronous call to multiple services. This can cause problems!" << std::endl;
+		std::cerr << "(WW) rsAutoProxyMonitor::task synchronous call to multiple services. This can cause problems!" << std::endl;
 	}
 	if (ticket->async && !ticket->cb && ticket->data) {
-		std::cout << "rsAutoProxyMonitor::task asynchronous call with data but no callback. This will likely causes memory leak!" << std::endl;
+		std::cerr << "(WW) rsAutoProxyMonitor::task asynchronous call with data but no callback. This will likely causes memory leak!" << std::endl;
 	}
 	if (ticket->types.size() > 1 && ticket->data) {
-		std::cout << "rsAutoProxyMonitor::task asynchronous call with data to multiple services. This will likely causes memory leak!" << std::endl;
+		std::cerr << "(WW) rsAutoProxyMonitor::task asynchronous call with data to multiple services. This will likely causes memory leak!" << std::endl;
 	}
 
 	std::vector<autoProxyType::autoProxyType_enum>::const_iterator it;
@@ -154,6 +154,49 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 	}
 }
 
+void rsAutoProxyMonitor::taskAsync(autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb, void *data)
+{
+	std::vector<autoProxyType::autoProxyType_enum> types;
+	types.push_back(type);
+	taskAsync(types, task, cb, data);
+}
+
+void rsAutoProxyMonitor::taskAsync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb, void *data)
+{
+	taskTicket *tt = getTicket();
+	tt->task = task;
+	tt->types = types;
+	if (cb)
+		tt->cb = cb;
+	if (data)
+		tt->data = data;
+
+	instance()->task(tt);
+	// tickets were copied, clean up
+	delete tt;
+}
+
+void rsAutoProxyMonitor::taskSync(autoProxyType::autoProxyType_enum type, autoProxyTask::autoProxyTask_enum task, void *data)
+{
+	std::vector<autoProxyType::autoProxyType_enum> types;
+	types.push_back(type);
+	taskSync(types, task, data);
+}
+
+void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, void *data)
+{
+	taskTicket *tt = getTicket();
+	tt->async = false;
+	tt->task = task;
+	tt->types = types;
+	if (data)
+		tt->data = data;
+
+	instance()->task(tt);
+	// call done, clean up
+	delete tt;
+}
+
 void rsAutoProxyMonitor::taskError(taskTicket *t)
 {
 	taskFinish(t, autoProxyStatus::error);
@@ -161,20 +204,29 @@ void rsAutoProxyMonitor::taskError(taskTicket *t)
 
 void rsAutoProxyMonitor::taskFinish(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status)
 {
+	bool cleanUp = false;
 	t->result = status;
 	if (t->cb) {
-		// callback takes care of deleting
-		t->cb->taskFinished(t);
-	} else {
-		// we must take care of deleting
-		if (t->async) {
-			if (t->data) {
-				std::cerr << "rsAutoProxyMonitor::taskFinish data set but no callback. Will try to delete void pointer" << std::endl;
-				delete t->data;
-				t->data = NULL;
-			}
-			delete t;
+		t->cb->taskFinished(&t);
+		if (t) {
+			// callack did not clean up properly
+			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish callback did not clean up!" << std::endl;
+			cleanUp = true;
 		}
+	} else if (t->async){
+		// async and no callback
+		// we must take care of deleting
+		cleanUp = true;
+	}
+
+	if (cleanUp) {
+		if (t->data) {
+			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish data set but no callback. Will try to delete void pointer" << std::endl;
+			delete t->data;
+			t->data = NULL;
+		}
+		delete t;
+		t = NULL;
 	}
 }
 
@@ -188,22 +240,24 @@ taskTicket *rsAutoProxyMonitor::getTicket()
 	return tt;
 }
 
-void rsAutoProxyMonitor::taskFinished(taskTicket *ticket)
+void rsAutoProxyMonitor::taskFinished(taskTicket **ticket)
 {
+	taskTicket *t = *ticket;
 	{
 		RS_STACK_MUTEX(mLock);
 		if (mRSShutDown) {
-			mProxies.erase(ticket->types.front());
+			mProxies.erase(t->types.front());
 		}
 	}
 
 	// clean up
-	if (ticket->data) {
+	if (t->data) {
 		std::cerr << "rsAutoProxyMonitor::taskFinished data set. Will try to delete void pointer" << std::endl;
-		delete ticket->data;
-		ticket->data = NULL;
+		delete t->data;
+		t->data = NULL;
 	}
-	delete ticket;
+	delete t;
+	*ticket = NULL;
 }
 
 autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType_enum t)

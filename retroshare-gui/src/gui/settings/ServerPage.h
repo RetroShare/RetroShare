@@ -106,7 +106,7 @@ private slots:
 
 	// autoProxyCallback interface
 public:
-	void taskFinished(taskTicket *ticket);
+	void taskFinished(taskTicket **ticket);
 
 private:
 	void loadCommon();

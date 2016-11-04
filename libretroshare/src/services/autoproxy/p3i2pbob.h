@@ -184,19 +184,10 @@ class p3I2pBob : public RsTickingThread, public p3Config, public autoProxyServic
 public:
 	p3I2pBob(p3PeerMgr *peerMgr);
 
-protected:
-	friend class RsServer;
-//	bool startUpBOBConnection();
-//	bool startUpBOBConnectionBlocking();
-//	bool shutdownBOBConnection();
-//	bool shutdownBOBConnectionBlocking();
-//	bool getNewKeys();
-//	bool getNewKeysBlocking();
-
 	// autoProxyService interface
 public:
 	bool isEnabled();
-	void initialSetup(std::string &addr, uint16_t &);
+	bool initialSetup(std::string &addr, uint16_t &);
 	void processTask(taskTicket *ticket);
 
 	bool isUp();
