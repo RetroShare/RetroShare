@@ -37,6 +37,7 @@
 
 #include "crypto/chacha20.h"
 #include "util/rsprint.h"
+#include "util/rsrandom.h"
 #include "util/rsscopetimer.h"
 
 #define rotl(x,n) { x = (x << n) | (x >> (-n & 31)) ;}
@@ -62,11 +63,11 @@ struct uint256_32
         b[4]=b4; b[5]=b5; b[6]=b6; b[7]=b7;
     }
 
-    static uint256_32 random()		// non cryptographically secure random. Just for testing.
+    static uint256_32 random()
     {
         uint256_32 r ;
         for(uint32_t i=0;i<8;++i)
-            r.b[i] = lrand48() & 0xffffffff ;
+            r.b[i] = RSRandom::random_u32();
 
         return r;
     }
