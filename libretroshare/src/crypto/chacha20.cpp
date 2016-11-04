@@ -791,11 +791,11 @@ bool perform_tests()
         uint256_32 n1 = uint256_32::random();
         uint256_32 p1 = uint256_32::random();
 
-        if(drand48() < 0.2)
+        if(RSRandom::random_f32() < 0.2)
         {
             p1.b[7] = 0 ;
 
-            if(drand48() < 0.1)
+            if(RSRandom::random_f32() < 0.1)
                 p1.b[6] = 0 ;
         }
 
