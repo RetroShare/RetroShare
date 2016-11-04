@@ -299,8 +299,7 @@ bool InternalFileHierarchyStorage::updateSubFilesList(const DirectoryStorage::En
             std::cerr << "[directory storage] removing non existing file " << f.file_name << " at index " << d.subfiles[i] << std::endl;
 #endif
 
-            delete mNodes[d.subfiles[i]] ;
-            mNodes[d.subfiles[i]] = NULL ;
+            deleteNode(d.subfiles[i]) ;
 
             d.subfiles[i] = d.subfiles[d.subfiles.size()-1] ;
             d.subfiles.pop_back();
@@ -374,23 +373,29 @@ bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex
     return true;
 }
 
+void InternalFileHierarchyStorage::deleteNode(uint32_t index)
+{
+    if(mNodes[index] != NULL)
+    {
+        delete mNodes[index] ;
+        mFreeNodes.push_back(index) ;
+        mNodes[index] = NULL ;
+    }
+}
+
 DirectoryStorage::EntryIndex InternalFileHierarchyStorage::allocateNewIndex()
 {
-    int found = -1;
-    for(uint32_t j=0;j<mNodes.size();++j)
-        if(mNodes[j] == NULL)
-        {
-            found = j;
-            break;
-        }
-
-    if(found < 0)
+    while(!mFreeNodes.empty())
     {
-        mNodes.push_back(NULL) ;
-        return mNodes.size()-1 ;
+        uint32_t index = mFreeNodes.front();
+        mFreeNodes.pop_front();
+
+        if(mNodes[index] == NULL)
+            return DirectoryStorage::EntryIndex(index) ;
     }
-    else
-        return found ;
+
+	mNodes.push_back(NULL) ;
+	return mNodes.size()-1 ;
 }
 
 bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<FileEntry>& subfiles_array)
@@ -534,8 +539,7 @@ bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryI
             std::cerr << "(EE) Cannot delete node of index " << it->second << " because it is not a file. Inconsistency error!" << std::endl;
             continue ;
         }
-        delete mNodes[it->second] ;
-        mNodes[it->second] = NULL ;
+        deleteNode(it->second) ;
     }
 
     // now update row and parent index for all subnodes
@@ -740,6 +744,8 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
     std::vector<uint32_t> hits(mNodes.size(),0) ;	// count hits of children. Should be 1 for all in the end. Otherwise there's an error.
     hits[0] = 1 ;	// because 0 is never the child of anyone
 
+    mFreeNodes.clear();
+
     for(uint32_t i=0;i<mNodes.size();++i)
         if(mNodes[i] != NULL && mNodes[i]->type() == FileStorageNode::TYPE_DIR)
         {
@@ -787,13 +793,15 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
                 }
             }
         }
+		else if(mNodes[i] == NULL)
+            mFreeNodes.push_back(i) ;
 
     for(uint32_t i=0;i<hits.size();++i)
         if(hits[i] == 0 && mNodes[i] != NULL)
         {
             error_string += " - Orphean node!" ;
-            delete mNodes[i] ;
-            mNodes[i] = NULL ;
+
+            deleteNode(i) ;
         }
 
     return error_string.empty();;
@@ -887,12 +895,9 @@ bool InternalFileHierarchyStorage::recursRemoveDirectory(DirectoryStorage::Entry
         recursRemoveDirectory(d.subdirs[i]);
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
-    {
-        delete mNodes[d.subfiles[i]] ;
-        mNodes[d.subfiles[i]] = NULL ;
-    }
-    delete mNodes[dir] ;
-    mNodes[dir] = NULL ;
+        deleteNode(d.subfiles[i]);
+
+    deleteNode(dir) ;
 
     mDirHashes.erase(hash) ;
 
@@ -1004,6 +1009,8 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
     unsigned char *buffer = NULL ;
     uint32_t buffer_size = 0 ;
     uint32_t buffer_offset = 0 ;
+
+    mFreeNodes.clear();
 
     try
     {

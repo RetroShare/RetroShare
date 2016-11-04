@@ -542,7 +542,7 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
 #ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << pid << ", with index " << it->second << std::endl;
 #endif
         }
 
@@ -569,7 +569,7 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
 #ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << pid << ", with index " << it->second << std::endl;
 #endif
         }
 
