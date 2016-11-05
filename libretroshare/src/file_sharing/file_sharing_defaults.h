@@ -28,7 +28,8 @@
 
 static const uint32_t DELAY_BETWEEN_DIRECTORY_UPDATES           = 600 ; // 10 minutes
 static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ   = 120 ; // 2 minutes
-static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE =  20 ; // 20 sec. Buy we only update for real if something has changed.
+static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE =  20 ; // 20 sec. But we only update for real if something has changed.
+static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP    =  60 ; // 60 sec.
 
 static const std::string HASH_CACHE_DURATION_SS = "HASH_CACHE_DURATION" ;	 // key string to store hash remembering time
 static const std::string WATCH_FILE_DURATION_SS = "WATCH_FILES_DELAY" ;		 // key to store delay before re-checking for new files
@@ -43,3 +44,8 @@ static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;    // 
 
 static const uint32_t MAX_DIR_SYNC_RESPONSE_DATA_SIZE              = 20000 ; // Maximum RsItem data size in bytes for serialised directory transmission
 static const uint32_t DEFAULT_HASH_STORAGE_DURATION_DAYS           = 30 ;    // remember deleted/inaccessible files for 30 days
+
+static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;			// Do not change this!
+static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;			// Do not change this!
+static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
+static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 600; 			// every 10 min

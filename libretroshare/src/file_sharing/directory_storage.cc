@@ -756,7 +756,9 @@ RemoteDirectoryStorage::RemoteDirectoryStorage(const RsPeerId& pid,const std::st
 {
     load(fname) ;
 
-    std::cerr << "Loaded remote directory for peer " << pid << std::endl;
+    mLastSweepTime = time(NULL) - (RSRandom::random_u32() % DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP) ;
+
+    std::cerr << "Loaded remote directory for peer " << pid << ", inited last sweep time to " << time(NULL) - mLastSweepTime << " secs ago." << std::endl;
 #ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     mFileHierarchy->print();
 #endif

@@ -194,8 +194,15 @@ public:
      */
     void checkSave() ;
 
+    /*!
+     * \brief lastSweepTime
+     * 			returns the last time a sweep has been done over the directory in order to check update TS.
+     * \return
+     */
+    time_t& lastSweepTime() { return mLastSweepTime ; }
 private:
     time_t mLastSavedTime ;
+    time_t mLastSweepTime ;
     bool mChanged ;
     std::string mFileName;
 };

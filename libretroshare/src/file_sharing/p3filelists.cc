@@ -46,11 +46,6 @@ static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED  = 0x0002 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED = 0x0004 ;
 
-static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;
-static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;
-static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
-static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 55 ; 			// every 55 secs, for debugging. Should be evey 10 minutes or so.
-
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     : mServCtrl(mpeers), mFLSMtx("p3FileLists")
 {
@@ -209,7 +204,7 @@ int p3FileDatabase::tick()
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(mRemoteDirectories[i] != NULL)
             {
-               if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+               if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end() && mRemoteDirectories[i]->lastSweepTime() + DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP < now)
                {
 #ifdef DEBUG_FILE_HIERARCHY
                   P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
@@ -217,6 +212,7 @@ int p3FileDatabase::tick()
 #endif
 
                   locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root(),0) ;
+                  mRemoteDirectories[i]->lastSweepTime() = now ;
                }
 
                mRemoteDirectories[i]->checkSave() ;
@@ -497,7 +493,6 @@ void p3FileDatabase::cleanup()
 #ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
 #endif
-
                 std::map<DirSyncRequestId,DirSyncRequestData>::iterator tmp(it);
                 ++tmp;
                 mPendingSyncRequests.erase(it) ;
