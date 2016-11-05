@@ -64,6 +64,10 @@ static const int   PQISTREAM_PACKET_SLICING_PROBE_DELAY	= 60;  		// send every 6
 
 static uint8_t PACKET_SLICING_PROBE_BYTES[8] =  { 0x02, 0xaa, 0xbb, 0xcc, 0x00, 0x00, 0x00,  0x08 } ;
 
+/* Change to true to disable packet slicing and/or packet grouping, if needed */
+#define DISABLE_PACKET_SLICING  false
+#define DISABLE_PACKET_GROUPING false
+
 /* This removes the print statements (which hammer pqidebug) */
 /***
 #define RSITEM_DEBUG 1
@@ -629,7 +633,7 @@ int	pqistreamer::handleoutgoing_locked()
 				++k ;
 			}
 		} 
-       		 while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PQISTREAM_OPTIMAL_PACKET_SIZE ) ;
+                 while(mPkt_wpending_size < (uint32_t)maxbytes && mPkt_wpending_size < PQISTREAM_OPTIMAL_PACKET_SIZE && !DISABLE_PACKET_GROUPING) ;
              
 #ifdef DEBUG_PQISTREAMER
 		if(k > 1)
@@ -787,7 +791,7 @@ start_packet_read:
 
 	    if(!memcmp(block,PACKET_SLICING_PROBE_BYTES,8))
 	    {
-		    mAcceptsPacketSlicing = true ;
+                    mAcceptsPacketSlicing = (true && !DISABLE_PACKET_SLICING);
 #ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "(II) Enabling packet slicing!" << std::endl;
 #endif
@@ -815,7 +819,7 @@ continue_packet:
 #endif
 		    is_partial_packet = true ;
             
-            		mAcceptsPacketSlicing = true ; // this is needed 
+                        mAcceptsPacketSlicing = (true && !DISABLE_PACKET_SLICING); // this is needed
 	    }
 	    else
 		    extralen = getRsItemSize(block) - blen;	// old style packet type
