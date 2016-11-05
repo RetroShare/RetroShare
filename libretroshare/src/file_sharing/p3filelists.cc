@@ -39,7 +39,7 @@
 #define P3FILELISTS_DEBUG() std::cerr << time(NULL)    << " : FILE_LISTS : " << __FUNCTION__ << " : "
 #define P3FILELISTS_ERROR() std::cerr << "***ERROR***" << " : FILE_LISTS : " << __FUNCTION__ << " : "
 
-#define DEBUG_P3FILELISTS 1
+//#define DEBUG_P3FILELISTS 1
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -1454,25 +1454,23 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,const RsFileHash& hash)
 {
     static uint64_t random_bias = RSRandom::random_u64();
-    uint64_t r = 0 ;
+
+    uint8_t mem[RsPeerId::SIZE_IN_BYTES + RsFileHash::SIZE_IN_BYTES];
+    memcpy(mem,peer_id.toByteArray(),RsPeerId::SIZE_IN_BYTES) ;
+    memcpy(&mem[RsPeerId::SIZE_IN_BYTES],hash.toByteArray(),RsFileHash::SIZE_IN_BYTES) ;
+
+    RsFileHash tmp = RsDirUtil::sha1sum(mem,RsPeerId::SIZE_IN_BYTES + RsFileHash::SIZE_IN_BYTES) ;
 
     // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,entry index) pair, in a way
     // that cannot be brute-forced or reverse-engineered, which explains the random bias and the usage of the hash, that is itself random.
 
-    for(uint32_t i=0;i<RsPeerId::SIZE_IN_BYTES;++i)
-    {
-        r ^= (0x011933ff92892a94 + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
-        r <<= 8 ;
-        r += 0xf392843890321808;
-    }
-    for(uint32_t i=0;i<RsFileHash::SIZE_IN_BYTES;++i)
-    {
-        r ^= (0x011933ff92892a94 + hash.toByteArray()[i] * 0x1001fff92ee640f9) ;
-        r <<= 8 ;
-        r += 0xf392843890321808;
-    }
+    uint64_t r = random_bias ^ *((uint64_t*)tmp.toByteArray()) ;
 
-    return r ^ random_bias;
+#ifdef DEBUG_P3FILELISTS
+    std::cerr << "Creating ID " << std::hex << r << std::dec << " from peer id " << peer_id << " and hash " << hash << std::endl;
+#endif
+
+    return r ;
 }
 
 bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
@@ -1522,7 +1520,7 @@ bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *r
     data.flags = item->flags;
 
 #ifdef DEBUG_P3FILELISTS
-    P3FILELISTS_DEBUG() << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
+    P3FILELISTS_DEBUG() << "  Pushing req " << std::hex << sync_req_id << std::dec <<  " in pending list with peer id " << data.peer_id << std::endl;
 #endif
 
     mPendingSyncRequests[sync_req_id] = data ;
