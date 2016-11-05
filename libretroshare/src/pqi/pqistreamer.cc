@@ -791,7 +791,7 @@ start_packet_read:
 
 	    if(!memcmp(block,PACKET_SLICING_PROBE_BYTES,8))
 	    {
-                    mAcceptsPacketSlicing = (true && !DISABLE_PACKET_SLICING);
+                    mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING;
 #ifdef DEBUG_PACKET_SLICING
 		    std::cerr << "(II) Enabling packet slicing!" << std::endl;
 #endif
@@ -819,7 +819,7 @@ continue_packet:
 #endif
 		    is_partial_packet = true ;
             
-                        mAcceptsPacketSlicing = (true && !DISABLE_PACKET_SLICING); // this is needed
+                        mAcceptsPacketSlicing = !DISABLE_PACKET_SLICING; // this is needed
 	    }
 	    else
 		    extralen = getRsItemSize(block) - blen;	// old style packet type
