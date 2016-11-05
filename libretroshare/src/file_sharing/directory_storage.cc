@@ -446,11 +446,13 @@ void LocalDirectoryStorage::updateTimeStamps()
         std::cerr << "Updating recursive TS for local shared dirs..." << std::endl;
 #endif
 
-        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
+        bool unfinished_files_below ;
+
+        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
         mTSChanged = false ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
-        std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+        std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago), unfinished files below=" << unfinished_files_below << std::endl;
 #else
 		// remove unused variable warning
 		// variable is only used for debugging

@@ -594,12 +594,12 @@ bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& ind
 
 // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 
-time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index)
+time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index,bool& unfinished_files_present)
 {
     DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
 
     time_t largest_modf_time = d.dir_modtime ;
-    bool unfinished_files_present = false ;
+    unfinished_files_present = false ;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
     {
@@ -612,7 +612,12 @@ time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectorySto
     }
 
     for(uint32_t i=0;i<d.subdirs.size();++i)
-        largest_modf_time = std::max(largest_modf_time,recursUpdateLastModfTime(d.subdirs[i])) ;
+    {
+        bool unfinished_files_below = false ;
+        largest_modf_time = std::max(largest_modf_time,recursUpdateLastModfTime(d.subdirs[i],unfinished_files_below)) ;
+
+        unfinished_files_present = unfinished_files_present || unfinished_files_below ;
+    }
 
     // now if some files are not hashed in this directory, reduce the recurs time by 1, so that the TS wil be updated when all hashes are ready.
 

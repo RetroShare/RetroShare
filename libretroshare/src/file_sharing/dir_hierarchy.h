@@ -110,7 +110,7 @@ public:
 
     // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 
-    time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index);
+    time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index, bool &unfinished_files_present);
 
     // hash stuff
 
