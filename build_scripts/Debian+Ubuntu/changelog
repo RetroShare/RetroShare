@@ -86,7 +86,7 @@ retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
   6e8e5d0 csoler   Sun,  9 Oct 2016 18:20:00 +0200 Merge pull request #529 from cavebeat/rus_patch
   3d9fb60 Phenom   Sun,  9 Oct 2016 12:37:09 +0200 Fix Missing ID-Avatars in Create Circle Menu
 
-   -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 5 Nov 2016 21:00:00 +0100
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 5 Nov 2016 21:00:00 +0100
 
 retroshare06 (0.6.1-1.20161008.9e1f21b9~xenial) xenial; urgency=low
 
