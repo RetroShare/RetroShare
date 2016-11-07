@@ -1725,62 +1725,32 @@ int RsServer::StartupRetroShare()
 	{
 		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
 
-
 		if (rsInitConfig->hiddenNodeI2PBOB) {
 
 			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
 
+			// we need a local port!
+			mNetMgr->checkNetAddress();
+
 			// add i2p proxy
+			// bob will use this address
 			sockaddr_storage i2pInstance;
 			sockaddr_storage_ipv4_aton(i2pInstance, rsInitConfig->hiddenNodeAddress.c_str());
 			mPeerMgr->setProxyServerAddress(RS_HIDDEN_TYPE_I2P, i2pInstance);
 
-			/*
-			// trigger update of proxy addr in BOB
-			taskTicket *tt = rsAutoProxyMonitor::getTicket();
-			tt->async = false;
-			tt->task = autoProxyTask::reloadConfig;
-			tt->types.push_back(autoProxyType::I2PBOB);
-			autoProxy->task(tt);
-			delete tt;
-
-			// start bob to receive new keys
-			mI2pBob->start("I2P-BOB gen key");
-
-			if (mI2pBob->getNewKeysBlocking()) {
-				std::cout << "RsServer::StartupRetroShare received keys" << std::endl;
-
-				// request settings
-				bobSettings bs;
-//				tt->async = false;
-//				tt->data = &bs;
-//				tt->task = autoProxyTask::getSettings;
-//				tt->types.push_back(autoProxyType::I2PBOB);
-//				autoProxy->task(tt);
-				bs = mI2pBob->mSetting;
-
-				// setup hidden node
-				mPeerMgr->setupHiddenNode(bs.addr, rsInitConfig->hiddenNodePort);
-
-				// enable bob
-				bs.enableBob = true;
-//				tt->task = autoProxyTask::setSettings;
-//				autoProxy->task(tt);
-				mI2pBob->mSetting = bs;
-			} else {
-				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
-				/// TODO add notify for failed bob setup
-			}
-
-			// stop thread again
-			mI2pBob->fullstop();
-			*/
 			std::string addr; // will be set by auto proxy service
-			uint16_t port = rsInitConfig->hiddenNodePort;
-			autoProxy->initialSetup(autoProxyType::I2PBOB, addr, port);
+			uint16_t port = rsInitConfig->hiddenNodePort; // unused by bob
 
-			if (!addr.empty()) {
+			bool r = autoProxy->initialSetup(autoProxyType::I2PBOB, addr, port);
+
+			if (r && !addr.empty()) {
 				mPeerMgr->setupHiddenNode(addr, port);
+
+				// now enable bob
+				bobSettings bs;
+				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &bs);
+				bs.enableBob = true;
+				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
 				/// TODO add notify for failed bob setup
@@ -1803,7 +1773,12 @@ int RsServer::StartupRetroShare()
 		// newly created location
 		// mNetMgr->checkNetAddress() will setup ports for us
 		// trigger updates for auto proxy services
-		rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
+		std::vector<autoProxyType::autoProxyType_enum> types;
+
+		// i2p bob need to rebuild its command map
+		types.push_back(autoProxyType::I2PBOB);
+
+		rsAutoProxyMonitor::taskSync(types, autoProxyTask::reloadConfig);
 	}
 
 	/**************************************************************************/

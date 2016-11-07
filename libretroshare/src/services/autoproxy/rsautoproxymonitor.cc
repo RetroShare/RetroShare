@@ -131,7 +131,7 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 		std::cerr << "(WW) rsAutoProxyMonitor::task asynchronous call with data but no callback. This will likely causes memory leak!" << std::endl;
 	}
 	if (ticket->types.size() > 1 && ticket->data) {
-		std::cerr << "(WW) rsAutoProxyMonitor::task asynchronous call with data to multiple services. This will likely causes memory leak!" << std::endl;
+		std::cerr << "(WW) rsAutoProxyMonitor::task call with data to multiple services. This will likely causes memory leak!" << std::endl;
 	}
 
 	std::vector<autoProxyType::autoProxyType_enum>::const_iterator it;
@@ -147,9 +147,9 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 			*tt = *ticket;
 			tt->types.clear();
 			tt->types.push_back(*it);
-			s->processTask(tt);
+			s->processTaskAsync(tt);
 		} else {
-			s->processTask(ticket);
+			s->processTaskSync(ticket);
 		}
 	}
 }
@@ -163,6 +163,12 @@ void rsAutoProxyMonitor::taskAsync(autoProxyType::autoProxyType_enum type, autoP
 
 void rsAutoProxyMonitor::taskAsync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, autoProxyCallback *cb, void *data)
 {
+	if (!isAsyncTask(task)) {
+		// Usually the services will reject this ticket.
+		// Just print a warning - maybe there is some special case where this is a good idea.
+		std::cerr << "(WW) rsAutoProxyMonitor::taskAsync called with a synchronous task!" << std::endl;
+	}
+
 	taskTicket *tt = getTicket();
 	tt->task = task;
 	tt->types = types;
@@ -185,6 +191,12 @@ void rsAutoProxyMonitor::taskSync(autoProxyType::autoProxyType_enum type, autoPr
 
 void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum> types, autoProxyTask::autoProxyTask_enum task, void *data)
 {
+	if (isAsyncTask(task)) {
+		// Usually the services will reject this ticket.
+		// Just print a warning - maybe there is some special case where this is a good idea.
+		std::cerr << "(WW) rsAutoProxyMonitor::taskSync called with an asynchronous task!" << std::endl;
+	}
+
 	taskTicket *tt = getTicket();
 	tt->async = false;
 	tt->task = task;
@@ -199,16 +211,17 @@ void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum>
 
 void rsAutoProxyMonitor::taskError(taskTicket *t)
 {
-	taskFinish(t, autoProxyStatus::error);
+	taskDone(t, autoProxyStatus::error);
 }
 
-void rsAutoProxyMonitor::taskFinish(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status)
+void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status)
 {
 	bool cleanUp = false;
+
 	t->result = status;
 	if (t->cb) {
-		t->cb->taskFinished(&t);
-		if (t) {
+		t->cb->taskFinished(t);
+		if (t != NULL) {
 			// callack did not clean up properly
 			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish callback did not clean up!" << std::endl;
 			cleanUp = true;
@@ -217,12 +230,15 @@ void rsAutoProxyMonitor::taskFinish(taskTicket *t, autoProxyStatus::autoProxySta
 		// async and no callback
 		// we must take care of deleting
 		cleanUp = true;
+		if(t->data) std::cerr << "(WW) rsAutoProxyMonitor::taskFinish async call with data attached to it but no callback set!" << std::endl;
 	}
 
 	if (cleanUp) {
 		if (t->data) {
 			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish data set but no callback. Will try to delete void pointer" << std::endl;
+#pragma GCC diagnostic ignored "-Wdelete-incomplete"
 			delete t->data;
+#pragma GCC diagnostic pop
 			t->data = NULL;
 		}
 		delete t;
@@ -240,24 +256,25 @@ taskTicket *rsAutoProxyMonitor::getTicket()
 	return tt;
 }
 
-void rsAutoProxyMonitor::taskFinished(taskTicket **ticket)
+void rsAutoProxyMonitor::taskFinished(taskTicket *&ticket)
 {
-	taskTicket *t = *ticket;
 	{
 		RS_STACK_MUTEX(mLock);
 		if (mRSShutDown) {
-			mProxies.erase(t->types.front());
+			mProxies.erase(ticket->types.front());
 		}
 	}
 
 	// clean up
-	if (t->data) {
+	if (ticket->data) {
 		std::cerr << "rsAutoProxyMonitor::taskFinished data set. Will try to delete void pointer" << std::endl;
-		delete t->data;
-		t->data = NULL;
+#pragma GCC diagnostic ignored "-Wdelete-incomplete"
+		delete ticket->data;
+#pragma GCC diagnostic pop
+		ticket->data = NULL;
 	}
-	delete t;
-	*ticket = NULL;
+	delete ticket;
+	ticket = NULL;
 }
 
 autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType_enum t)
@@ -269,4 +286,18 @@ autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType
 	}
 	std::cerr << "sAutoProxyMonitor::lookUpService no service for type " << t << " found!" << std::endl;
 	return NULL;
+}
+
+bool rsAutoProxyMonitor::isAsyncTask(autoProxyTask::autoProxyTask_enum t)
+{
+	switch (t) {
+	case autoProxyTask::start:
+	case autoProxyTask::stop:
+	case autoProxyTask::receiveKey:
+		return true;
+		break;
+	default:
+		break;
+	}
+	return false;
 }

@@ -16,9 +16,11 @@ namespace autoProxyType {
 
 namespace autoProxyTask {
     enum autoProxyTask_enum {
+		/* async tasks */
 		start,
 		stop,
 		receiveKey,
+		/* sync tasks */
 		status,
 		getSettings,
 		setSettings,
@@ -28,43 +30,96 @@ namespace autoProxyTask {
 
 namespace autoProxyStatus {
     enum autoProxyStatus_enum {
-		disabled,
-		offline,
-		online,
-		ok,
-		undefined,
-		error
+		undefined, ///< undefined - usually not yet set
+		disabled,  ///< used when a task cannot be done (e.g. a disabled service cannot be startet or stopped)
+		offline,   ///< proxy is not set up
+		online,    ///< proxy is set up
+		ok,        ///< generic ok
+		error      ///< generic error
 	};
 }
 
 struct taskTicket {
-	// task for which proxy/proxies
+	///
+	/// \brief types auto proxy service types that should get the ticket
+	///
 	std::vector<autoProxyType::autoProxyType_enum> types;
-	// what task
+
+	///
+	/// \brief task the task to satisfy
+	///
 	autoProxyTask::autoProxyTask_enum task;
 
-	// (optional) callback when done
+	///
+	/// \brief cb (optional) callback that gets called once the task is done
+	///
 	autoProxyCallback *cb;
-	// (optional) result
+
+	///
+	/// \brief result (optional) result
+	///
 	autoProxyStatus::autoProxyStatus_enum result;
-	// (optional) proxy type depended data
+
+	///
+	/// \brief data (optional) service dependent data
+	///
+	/// Needs to be allocated and cleaned by caller!
+	///
 	void *data;
-	// async call. will copy the ticket for each service.
-	// you can use async=false even for asynchronous function
-	// like get new keys as long as only one service is involved
+
+	///
+	/// \brief async is the call Asynchronous
+	///
+	/// Will create a copy of the ticket for each
+	/// service and delete the original ticket.
+	///
 	bool async;
 };
 
 class autoProxyCallback {
 public:
-	virtual void taskFinished(taskTicket **ticket) = 0;
+	///
+	/// \brief taskFinished called when a task is finished
+	/// \param ticket
+	///
+	/// Remove everything: ticket and attached data if any!
+	///
+	virtual void taskFinished(taskTicket *&ticket) = 0;
 };
 
 class autoProxyService {
 public:
+	///
+	/// \brief isEnabled must be provided to directly get a result without going through the ticket system
+	/// \return whether the auto proxy service is enabled or not
+	///
 	virtual bool isEnabled() = 0;
+
+	///
+	/// \brief initialSetup used when creating a node
+	/// \param addr new address for the hidden service
+	/// \param port new port for the hidden service
+	/// \return true on success
+	///
+	/// This function is used to do an initial setup when creating a new hidden node.
+	/// Nothing has been set up at this point to the auto proxy service must take care
+	/// of everything (e.g. starting (and stoping) of needed threads)
+	///
 	virtual bool initialSetup(std::string &addr, uint16_t &port) = 0;
-	virtual void processTask(taskTicket *ticket) = 0;
+
+	///
+	/// \brief processTaskAsync adds a ticket to the auto proxies task list
+	/// \param ticket
+	///
+	/// Don't call the callback in this function as this can cause dead locks!
+	///
+	virtual void processTaskAsync(taskTicket *ticket) = 0;
+
+	///
+	/// \brief processTaskSync taskTicket must be satisfied immediately
+	/// \param ticket
+	///
+	virtual void processTaskSync(taskTicket *ticket) = 0;
 };
 
 class rsAutoProxyMonitor : autoProxyCallback
@@ -72,8 +127,12 @@ class rsAutoProxyMonitor : autoProxyCallback
 public:
 	static rsAutoProxyMonitor *instance();
 
-	// add a new proxy service to the monitor
-	void addProxy(autoProxyType::autoProxyType_enum type, autoProxyService * service);
+	///
+	/// \brief addProxy adds a new auto proxy service to the monitor
+	/// \param type type of the new auto proxy service
+	/// \param service pointer to the service
+	///
+	void addProxy(autoProxyType::autoProxyType_enum type, autoProxyService *service);
 
 	// global functions
 	void startAll();
@@ -89,7 +148,8 @@ public:
 	///
 	/// There are two kind of tasks: asyn and sync.
 	/// All tasks that involve communication with the target program (e.g. I2P or Tor) are asynchronous.
-	/// All other task can be asynchronous or synchronous (e.g. getting settings)
+	/// All other task are synchronous (e.g. getting settings)
+	///
 	///
 	/// Synchronous:
 	/// When you want to get the settings from a service you can call task() with a ticket only listing
@@ -101,15 +161,22 @@ public:
 	///
 	///
 	/// Asynchronous:
-	/// When you want to start up all services or request all settings you can call task() with a list
+	/// When you want to start up all services or request new keys  for all services you can call task() with a list
 	/// of services and set async to true. When each service has fullfilled the resquest he will
 	/// use the callback. The original caller ticket will be copied and each call to the callback
-	/// will use its copy of the original ticket.
+	/// will use its copy of the original ticket. The attached data is not copied so each service gets
+	/// the same pointer!
+	///
 	///
 	/// Note:
 	/// Services should not delet or allocate anything unless no call back is provided and it is an
 	/// async call. In that case the service should delete the ticket and the attacked data.
-	/// Otherwise the caller must take care of cleaning up
+	/// Otherwise the caller must take care of cleaning up.
+	/// This class provides two wrappers to take care of this that should be used: taskError and taskDone
+	///
+	/// Note2:
+	/// This function is private so that each user must use the wrappers taskAsync and taskSync that include
+	/// more sanity checks
 	///
 private:
 	void task(taskTicket *ticket);
@@ -122,17 +189,18 @@ public:
 
 	// usefull helpers
 	static void taskError(taskTicket *t);
-	static void taskFinish(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status);
+	static void taskDone(taskTicket *t, autoProxyStatus::autoProxyStatus_enum status);
 	static taskTicket *getTicket();
 
 	// autoProxyCallback interface
 public:
-	void taskFinished(taskTicket **ticket);
+	void taskFinished(taskTicket *&ticket);
 
 private:
 	rsAutoProxyMonitor();
 
 	autoProxyService *lookUpService(autoProxyType::autoProxyType_enum t);
+	static bool isAsyncTask(autoProxyTask::autoProxyTask_enum t);
 
 	std::map<autoProxyType::autoProxyType_enum, autoProxyService*> mProxies;
 	bool mRSShutDown;

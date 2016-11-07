@@ -376,6 +376,7 @@ void GenCertDialog::updateUiSetup()
 	if (ui.adv_checkbox->isChecked())
 	{
 		ui.hidden_checkbox->show();
+		ui.cbUseBob->show();
 
 		if (ui.new_gpg_key_checkbox->isChecked())
 		{
@@ -408,6 +409,8 @@ void GenCertDialog::updateUiSetup()
 	}
 	else
 	{
+		ui.cbUseBob->hide();
+
 		ui.hiddenaddr_input->hide();
 		ui.hiddenaddr_label->hide();
 		ui.label_hiddenaddr->hide();
@@ -600,6 +603,7 @@ void GenCertDialog::genPerson()
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
 		ui.hidden_checkbox->hide();
+		ui.cbUseBob->hide();
 		ui.adv_checkbox->hide();
 		ui.keylength_label->hide();
 		ui.keylength_comboBox->hide();

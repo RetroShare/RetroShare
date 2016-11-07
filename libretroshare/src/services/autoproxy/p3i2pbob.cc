@@ -26,14 +26,14 @@ static const int8_t kDefaultQuantity  = 4;
 static const int8_t kDefaultVariance  = 0;
 
 /// Sleep duration for receiving loop
-static const useconds_t sleepTimeRecv = 10;  // times 1000 = 10ms
+static const useconds_t sleepTimeRecv = 10; // times 1000 = 10ms
 /// Sleep duration for everything else
-static const useconds_t sleepTimeWait = 100; // times 1000 = 100ms or 0.1s
-static const int sleepFactorDefault = 5;
-static const int sleepFactorFast    = 1;
-static const int sleepFactorSlow    = 10;
+static const useconds_t sleepTimeWait = 50; // times 1000 = 50ms or 0.05s
+static const int sleepFactorDefault = 10;   // 0.5s
+static const int sleepFactorFast    = 1;    // 0.05s
+static const int sleepFactorSlow    = 20;   // 1s
 
-static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Debug_All, "p3I2pBob"};
+static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Warning, "p3I2pBob"};
 
 void doSleep(useconds_t timeToSleepMS) {
 #ifndef WINDOWS_SYS
@@ -72,8 +72,7 @@ bool p3I2pBob::isEnabled()
 
 bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 {
-	// first start thread
-	start("I2P-BOB gen key");
+	std::cout << "p3I2pBob::initialSetup" << std::endl;
 
 	// update config
 	{
@@ -86,47 +85,73 @@ bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 		}
 	}
 
+	std::cout << "p3I2pBob::initialSetup config updated" << std::endl;
+
 	// request keys
-	{
-		RS_STACK_MUTEX(mLock);
-		mTask = ctGetKeys;
-	}
+	// p3I2pBob::stateMachineBOB expects mProcessing to be set therefore
+	// we create this fake ticket without a callback or data
+	// ticket gets deleted later by this service
+	taskTicket *fakeTicket = rsAutoProxyMonitor::getTicket();
+	fakeTicket->task = autoProxyTask::receiveKey;
+	processTaskAsync(fakeTicket);
+
+	std::cout << "p3I2pBob::initialSetup fakeTicket requested" << std::endl;
+
+	// now start thread
+	start("I2P-BOB gen key");
+
+	std::cout << "p3I2pBob::initialSetup thread started" << std::endl;
 
 	// wait for keys
 	for(;;) {
-		doSleep(sleepTimeWait);
+		doSleep(sleepTimeWait * sleepFactorDefault);
 		RS_STACK_MUTEX(mLock);
 		// wait for tast change
 		if (mTask != ctGetKeys)
 			break;
 	}
 
-	addr = mSetting.addr;
+	std::cout << "p3I2pBob::initialSetup got keys" << std::endl;
 
-	// last stop thread
+	// stop thread
 	fullstop();
+
+	std::cout << "p3I2pBob::initialSetup thread stopped" << std::endl;
+
+	{
+		RS_STACK_MUTEX(mLock);
+		addr = mSetting.addr;
+	}
+
+	std::cout << "p3I2pBob::initialSetup addr '" << addr << "'" << std::endl;
 
 	return true;
 }
 
+void p3I2pBob::processTaskAsync(taskTicket *ticket)
+{
+	switch (ticket->task) {
+	case autoProxyTask::start:
+	case autoProxyTask::stop:
+	case autoProxyTask::receiveKey:
+	{
+		RS_STACK_MUTEX(mLock);
+		mPending.push(ticket);
+	}
+		break;
+	default:
+		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTaskAsync unknown task");
+		rsAutoProxyMonitor::taskError(ticket);
+		break;
+	}
+}
 
-void p3I2pBob::processTask(taskTicket *ticket)
+void p3I2pBob::processTaskSync(taskTicket *ticket)
 {
 	bool data = !!ticket->data;
 
 	// check wether we can process the task immediately or have to queue it
 	switch (ticket->task) {
-	case autoProxyTask::start:
-	case autoProxyTask::stop:
-		if (!isEnabled()) {
-			rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::disabled);
-		}
-	case autoProxyTask::receiveKey:
-	    {
-		    RS_STACK_MUTEX(mLock);
-			mPending.push(ticket);
-	    }
-		break;
 	case autoProxyTask::status:
 		// check if everything needed is set
 		if (!data) {
@@ -139,7 +164,7 @@ void p3I2pBob::processTask(taskTicket *ticket)
 		getStates((struct bobStates*)ticket->data);
 
 		// finish task
-		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
 	case autoProxyTask::getSettings:
 		// check if everything needed is set
@@ -153,7 +178,7 @@ void p3I2pBob::processTask(taskTicket *ticket)
 		getBOBSettings((struct bobSettings *)ticket->data);
 
 		// finish task
-		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
 	case autoProxyTask::setSettings:
 		// check if everything needed is set
@@ -167,17 +192,18 @@ void p3I2pBob::processTask(taskTicket *ticket)
 		setBOBSettings((struct bobSettings *)ticket->data);
 
 		// finish task
-		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
 	case autoProxyTask::reloadConfig:
 	{
 		RS_STACK_MUTEX(mLock);
 		updateSettings_locked();
 	}
-		rsAutoProxyMonitor::taskFinish(ticket, autoProxyStatus::ok);
+		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
 	default:
-		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTask unknown task");
+		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTaskSync unknown task");
+		rsAutoProxyMonitor::taskError(ticket);
 		break;
 	}
 }
@@ -251,6 +277,15 @@ void p3I2pBob::data_tick()
 		if (mProcessing == NULL && !mPending.empty()) {
 			mProcessing = mPending.front();
 			mPending.pop();
+
+			if ((mProcessing->task == autoProxyTask::start || mProcessing->task == autoProxyTask::stop) && !mSetting.enableBob) {
+				// skip since we are not enabled
+				rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::disabled);
+				mProcessing = NULL;
+
+				// just return - data_tick() will be called again immediately
+				return;
+			}
 
 			switch (mProcessing->task) {
 			case autoProxyTask::start:
@@ -401,7 +436,7 @@ int p3I2pBob::stateMachineController()
 					disconnectI2P();
 
 				// finish task
-				rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::offline);
+				rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::offline);
 				mProcessing = NULL;
 
 				// nothing to do -> sleep long
@@ -457,7 +492,7 @@ int p3I2pBob::stateMachineController()
 					disconnectI2P();
 
 				// finish task
-				rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::online);
+				rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::online);
 				mProcessing = NULL;
 
 				// nothing to do -> sleep long
@@ -509,9 +544,11 @@ int p3I2pBob::stateMachineController()
 					disconnectI2P();
 
 				// finish task
-				if (mProcessing->cb && mProcessing->data) {
-					*((struct bobSettings *)mProcessing->data) = mSetting;
-					rsAutoProxyMonitor::taskFinish(mProcessing, autoProxyStatus::ok);
+				if (mProcessing->cb) {
+					if (mProcessing->data)
+						*((struct bobSettings *)mProcessing->data) = mSetting;
+
+					rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::ok);
 				} else {
 					// no big deal
 					delete mProcessing;

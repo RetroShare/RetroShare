@@ -188,7 +188,8 @@ public:
 public:
 	bool isEnabled();
 	bool initialSetup(std::string &addr, uint16_t &);
-	void processTask(taskTicket *ticket);
+	void processTaskAsync(taskTicket *ticket);
+	void processTaskSync(taskTicket *ticket);
 
 	bool isUp();
 	bool isStartingUp();

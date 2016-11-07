@@ -1360,26 +1360,25 @@ void ServerPage::syncI2PProxyPortBob(int i)
 	ui.hiddenpage_proxyPort_i2p->setValue(i);
 }
 
-void ServerPage::taskFinished(taskTicket **ticket)
+void ServerPage::taskFinished(taskTicket *&ticket)
 {
-	taskTicket *t = *ticket;
-	if (t->task == autoProxyTask::receiveKey) {
+	if (ticket->task == autoProxyTask::receiveKey) {
 		bobSettings *s = NULL;
-		switch (t->types.front()) {
+		switch (ticket->types.front()) {
 		case autoProxyType::I2PBOB:
 			// update settings
-			s = (struct bobSettings *)t->data;
+			s = (struct bobSettings *)ticket->data;
 			mBobSettings = *s;
 			delete s;
 			s = NULL;
-			t->data = NULL;
+			ticket->data = NULL;
 			break;
 		default:
 			break;
 		}
 	}
-	delete t;
-	*ticket =  NULL;
+	delete ticket;
+	ticket = NULL;
 }
 
 void ServerPage::loadCommon()
