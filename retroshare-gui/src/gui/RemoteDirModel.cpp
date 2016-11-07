@@ -55,6 +55,9 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 	setSupportedDragActions(Qt::CopyAction);
 #endif
 	treeStyle();
+
+    mLastPointer = (void*)intptr_t(0xffffffff) ;
+    mLastRemote = false ;
 }
 
 // QAbstractItemModel::setSupportedDragActions() was replaced by virtual QAbstractItemModel::supportedDragActions()
@@ -576,9 +579,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RetroshareDirModel::data(): " << index.internalPointer();
-	std::cerr << ": ";
-	std::cerr << std::endl;
+	std::cerr << "RetroshareDirModel::data(): " << index.internalPointer() << std::endl;
 #endif
 
 	if (!index.isValid())
@@ -963,9 +964,33 @@ void RetroshareDirModel::postMods()
 
 bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d) const
 {
+#ifdef RDM_DEBUG
+	std::cerr << "RequestDirDetails:: ref = " << ref << ", remote=" << remote << std::endl;
+#endif
+
+    // We look in cache and re-use the last result if the reference and remote are the same.
+
+    time_t now = time(NULL);
+
+    if(mLastPointer == ref && mLastRemote==remote && now < 2+mLastReq)
+    {
+        d = mLastDirDetails ;
+        return true ;
+    }
+
     FileSearchFlags flags = (remote) ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL;
 
-    return rsFiles->RequestDirDetails(ref, d, flags) ;
+    if(rsFiles->RequestDirDetails(ref, d, flags))
+	{
+		mLastReq = now ;
+		mLastPointer = ref ;
+		mLastRemote = remote ;
+		mLastDirDetails = d;
+
+		return true;
+	}
+
+    return false ;
 }
 //	const QMap<void*, DirDetailsVector>::const_iterator it = mCache.constFind(ref);
 //	if (it != mCache.constEnd()) {
