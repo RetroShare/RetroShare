@@ -198,62 +198,9 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	return (status == 0);
 
 	/******************** OSX KeyChain stuff *****************************/
-#else /* UNIX, but not HAS_GNOME_KEYRING or APPLE */
-
-#ifdef TODO_CODE_ROTTEN
-	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName(ssl_id).c_str(), "r");
-
-	if(helpFile == NULL){
-		std::cerr << "\nFailed to open help file\n" << std::endl;
-		return false;
-	}
-
-	/* decrypt help */
-
-	int c ;
-	std::string passwd ;
-	while( (c = getc(helpFile)) != EOF )
-		passwd += (char)c ;
-
-	const int DAT_LEN = passwd.length();
-	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
-	unsigned char* key_data  = (unsigned char*)RsInitConfig::load_cert.c_str();
-	unsigned char* indata = new unsigned char[DAT_LEN];
-	unsigned char* outdata = new unsigned char[DAT_LEN];
-
-	for(int i=0;i<DAT_LEN;++i)
-		indata[i] = passwd[i] ;
-
-	//	if(fscanf(helpFile, "%s", indata) != 1)
-	//	{
-	//		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
-	//		return false ;
-	//	}
-
-	RC4_KEY* key = new RC4_KEY;
-	RC4_set_key(key, KEY_DAT_LEN, key_data);
-
-	RC4(key, DAT_LEN, indata, outdata);
-
-	ssl_passwd.clear();
-	ssl_passwd.insert(0, (char*)outdata, DAT_LEN);
-
-
-	fclose(helpFile);
-
-
-	delete[] indata;
-	delete[] outdata;
-
-	if(key != NULL)
-		delete key;
-
-	return true;
-#endif //TODO_CODE_ROTTEN
 #endif // APPLE
-#endif	// HAS_GNOME_KEYRING
-	/******* WINDOWS BELOW *****/
-#else
+#endif // HAS_GNOME_KEYRING
+#else /******* WINDOWS BELOW *****/
 
 	/* try to load from file */
 	std::string entropy = getSSLPasswdFileName(ssl_id);
