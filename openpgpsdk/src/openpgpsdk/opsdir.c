@@ -1,6 +1,7 @@
 #include "opsdir.h"
+#ifdef WIN32
 #include "opsstring.h"
-
+#endif
 #include <fcntl.h>
 
 int ops_open(const char* filename, int flag, int pmode)

@@ -46,11 +46,6 @@ static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_LOCAL_DIRS_CHANGED  = 0x0002 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_DIRS_CHANGED = 0x0004 ;
 
-static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;
-static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;
-static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer.
-static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 55 ; 			// every 55 secs, for debugging. Should be evey 10 minutes or so.
-
 p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     : mServCtrl(mpeers), mFLSMtx("p3FileLists")
 {
@@ -209,7 +204,7 @@ int p3FileDatabase::tick()
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(mRemoteDirectories[i] != NULL)
             {
-               if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end())
+               if(online_peers.find(mRemoteDirectories[i]->peerId()) != online_peers.end() && mRemoteDirectories[i]->lastSweepTime() + DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP < now)
                {
 #ifdef DEBUG_FILE_HIERARCHY
                   P3FILELISTS_DEBUG() << "Launching recurs sweep of friend directory " << mRemoteDirectories[i]->peerId() << ". Content currently is:" << std::endl;
@@ -217,6 +212,7 @@ int p3FileDatabase::tick()
 #endif
 
                   locked_recursSweepRemoteDirectory(mRemoteDirectories[i],mRemoteDirectories[i]->root(),0) ;
+                  mRemoteDirectories[i]->lastSweepTime() = now ;
                }
 
                mRemoteDirectories[i]->checkSave() ;
@@ -345,7 +341,7 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
     /* for each item, check it exists ....
      * - remove any that are dead (or flag?)
      */
-    static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_BROWSABLE_OTHERS | DIR_FLAGS_NETWORK_WIDE_OTHERS | DIR_FLAGS_BROWSABLE_GROUPS | DIR_FLAGS_NETWORK_WIDE_GROUPS ;
+    static const FileStorageFlags PERMISSION_MASK = DIR_FLAGS_PERMISSIONS_MASK;
 
 #ifdef  DEBUG_FILE_HIERARCHY
     P3FILELISTS_DEBUG() << "Load list" << std::endl;
@@ -400,7 +396,6 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
             info.virtualname = fi->file.name;
             info.shareflags = FileStorageFlags(fi->flags) ;
             info.shareflags &= PERMISSION_MASK ;
-            info.shareflags &= ~DIR_FLAGS_NETWORK_WIDE_GROUPS ;	// disabling this flag for know, for consistency reasons
 
             for(std::set<RsNodeGroupId>::const_iterator itt(fi->parent_groups.ids.begin());itt!=fi->parent_groups.ids.end();++itt)
                 info.parent_groups.push_back(*itt) ;
@@ -498,7 +493,6 @@ void p3FileDatabase::cleanup()
 #ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing pending request " << std::hex << it->first << std::dec << " for peer " << it->second.peer_id << ", because peer is offline or request is too old." << std::endl;
 #endif
-
                 std::map<DirSyncRequestId,DirSyncRequestData>::iterator tmp(it);
                 ++tmp;
                 mPendingSyncRequests.erase(it) ;
@@ -543,7 +537,7 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
 #ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << pid << ", with index " << it->second << std::endl;
 #endif
         }
 
@@ -570,7 +564,7 @@ uint32_t p3FileDatabase::locked_getFriendIndex(const RsPeerId& pid)
             mUpdateFlags |= P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED ;
 
 #ifdef DEBUG_P3FILELISTS
-            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << *it << ", with index " << friend_index << std::endl;
+            P3FILELISTS_DEBUG() << "  adding missing remote dir entry for friend " << pid << ", with index " << it->second << std::endl;
 #endif
         }
 
@@ -644,26 +638,25 @@ void p3FileDatabase::requestDirUpdate(void *ref)
 bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
                                        FileSearchFlags flags ) const
 {
-	RS_STACK_MUTEX(mFLSMtx);
+    if (ref == NULL)
+    {
+        if(flags & RS_FILE_HINTS_LOCAL)
+        {
+            if(row != 0)
+                return false ;
 
-	result = NULL;
+            convertEntryIndexToPointer(0,0,result);
 
-	if (ref == NULL)
-	{
-		if(flags & RS_FILE_HINTS_LOCAL)
-		{
-			if(row != 0) return false;
-
-			convertEntryIndexToPointer(0,0,result);
-			return true;
-		}
-		else if((uint32_t)row < mRemoteDirectories.size())
-		{
-			convertEntryIndexToPointer(mRemoteDirectories[row]->root(), row+1, result);
-			return true;
-		}
-		else return false;
-	}
+            return true ;
+        }
+        else if((uint32_t)row < mRemoteDirectories.size())
+        {
+            convertEntryIndexToPointer(mRemoteDirectories[row]->root(),row+1,result);
+            return true;
+        }
+        else
+            return false;
+    }
 
     uint32_t fi;
     DirectoryStorage::EntryIndex e ;
@@ -999,15 +992,19 @@ bool p3FileDatabase::search(const RsFileHash &hash, FileSearchFlags hintflags, F
 
     if(hintflags & RS_FILE_HINTS_LOCAL)
     {
-        std::list<EntryIndex> res;
-        mLocalSharedDirs->searchHash(hash,res) ;
+        RsFileHash real_hash ;
+        EntryIndex indx;
 
-        if(res.empty())
+        if(!mLocalSharedDirs->searchHash(hash,real_hash,indx))
             return false;
 
-        EntryIndex indx = *res.begin() ; // no need to report duplicates
-
         mLocalSharedDirs->getFileInfo(indx,info) ;
+
+        if(!real_hash.isNull())
+        {
+            info.hash = real_hash ;
+            info.transfer_info_flags |= RS_FILE_REQ_ENCRYPTED ;
+        }
 
         return true;
     }
@@ -1457,25 +1454,23 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
 p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId& peer_id,const RsFileHash& hash)
 {
     static uint64_t random_bias = RSRandom::random_u64();
-    uint64_t r = 0 ;
+
+    uint8_t mem[RsPeerId::SIZE_IN_BYTES + RsFileHash::SIZE_IN_BYTES];
+    memcpy(mem,peer_id.toByteArray(),RsPeerId::SIZE_IN_BYTES) ;
+    memcpy(&mem[RsPeerId::SIZE_IN_BYTES],hash.toByteArray(),RsFileHash::SIZE_IN_BYTES) ;
+
+    RsFileHash tmp = RsDirUtil::sha1sum(mem,RsPeerId::SIZE_IN_BYTES + RsFileHash::SIZE_IN_BYTES) ;
 
     // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,entry index) pair, in a way
     // that cannot be brute-forced or reverse-engineered, which explains the random bias and the usage of the hash, that is itself random.
 
-    for(uint32_t i=0;i<RsPeerId::SIZE_IN_BYTES;++i)
-    {
-        r ^= (0x011933ff92892a94 + peer_id.toByteArray()[i] * 0x1001fff92ee640f9) ;
-        r <<= 8 ;
-        r += 0xf392843890321808;
-    }
-    for(uint32_t i=0;i<RsFileHash::SIZE_IN_BYTES;++i)
-    {
-        r ^= (0x011933ff92892a94 + hash.toByteArray()[i] * 0x1001fff92ee640f9) ;
-        r <<= 8 ;
-        r += 0xf392843890321808;
-    }
+    uint64_t r = random_bias ^ *((uint64_t*)tmp.toByteArray()) ;
 
-    return r ^ random_bias;
+#ifdef DEBUG_P3FILELISTS
+    std::cerr << "Creating ID " << std::hex << r << std::dec << " from peer id " << peer_id << " and hash " << hash << std::endl;
+#endif
+
+    return r ;
 }
 
 bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
@@ -1525,7 +1520,7 @@ bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *r
     data.flags = item->flags;
 
 #ifdef DEBUG_P3FILELISTS
-    P3FILELISTS_DEBUG() << "  Pushing req in pending list with peer id " << data.peer_id << std::endl;
+    P3FILELISTS_DEBUG() << "  Pushing req " << std::hex << sync_req_id << std::dec <<  " in pending list with peer id " << data.peer_id << std::endl;
 #endif
 
     mPendingSyncRequests[sync_req_id] = data ;

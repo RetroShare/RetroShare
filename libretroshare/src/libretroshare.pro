@@ -294,7 +294,7 @@ mac {
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
 		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-                DEFINES *= MINIUPNPC_VERSION=13
+		#DEFINES *= MINIUPNPC_VERSION=13
 
 		CONFIG += upnp_miniupnpc
                 CONFIG += c++11
@@ -304,7 +304,7 @@ mac {
 		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
-                QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
+		QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
 
 		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
 		#GPGME_DIR  = ../../../../gpgme-1.1.8
@@ -314,6 +314,7 @@ mac {
 
 		DEPENDPATH += . $$INC_DIR
 		INCLUDEPATH += . $$INC_DIR
+		INCLUDEPATH += ../../../.
 
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
 		LIBS += /usr/local/lib/libsqlcipher.a
@@ -378,6 +379,8 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftserver.h \
 			ft/fttransfermodule.h \
 			ft/ftturtlefiletransferitem.h 
+
+HEADERS += crypto/chacha20.h 
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -536,6 +539,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
 			ft/ftturtlefiletransferitem.cc 
+
+SOURCES += crypto/chacha20.cpp 
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \

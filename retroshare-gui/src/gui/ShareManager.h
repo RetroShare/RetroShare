@@ -26,6 +26,7 @@
 #include <QDialog>
 #include <QFileDialog>
 
+#include <retroshare/rsfiles.h>
 #include "ui_ShareManager.h"
 
 class ShareManager : public QDialog
@@ -54,15 +55,20 @@ protected:
 private slots:
     /** Create the context popup menu and it's submenus */
     void shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
-    void shareddirListCostumPopupMenu( QPoint point );
+    void shareddirListCustomPopupMenu( QPoint point );
+    void addShare();
+    void doubleClickedCell(int,int);
+    void handleCellChange(int row,int column);
+	void editShareDirectory();
 
     void showShareDialog();
-    void editShareDirectory();
     void removeShareDirectory();
     void updateFlags();
-    void updateGroups();
-	 void applyAndClose() ;
+    void applyAndClose() ;
+    void cancel() ;
+    void reload() ;
 
+    static QString getGroupString(const std::list<RsNodeGroupId>& groups);
 private:
     static ShareManager *_instance;
     bool isLoading;
@@ -72,6 +78,8 @@ private:
 
     /** Qt Designer generated object */
     Ui::ShareManager ui;
+
+    std::vector<SharedDirInfo> mDirInfos ;
 };
 
 #endif

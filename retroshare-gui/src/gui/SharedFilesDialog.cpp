@@ -25,8 +25,10 @@
 #include <QTreeView>
 #include <QClipboard>
 #include <QMenu>
+#include <QPainter>
 #include <QProcess>
 #include <QSortFilterProxyModel>
+#include <QStyledItemDelegate>
 
 #include "SharedFilesDialog.h"
 #include "settings/AddFileAssociationDialog.h"
@@ -112,6 +114,36 @@ protected:
 
 private:
     RetroshareDirModel *m_dirModel;
+};
+
+// This class allows to draw the item in the share flags column using an appropriate size
+
+class ShareFlagsItemDelegate: public QStyledItemDelegate
+{
+public:
+    ShareFlagsItemDelegate() {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        Q_ASSERT(index.isValid());
+
+        QStyleOptionViewItemV4 opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        // draw default item
+        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+        const QRect r = option.rect;
+
+        // get pixmap
+        QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
+        QPixmap pix = icon.pixmap(r.size());
+
+        // draw pixmap at center of item
+        const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+        painter->drawPixmap(r.topLeft() + p, pix);
+    }
 };
 
 /** Constructor */
@@ -220,7 +252,9 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this) ;
 	connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions())) ;
 
-	ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
+    ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
+
+    ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND,new ShareFlagsItemDelegate()) ;
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
@@ -232,6 +266,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
     connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
+    connect(ui.dirTreeView, SIGNAL(  doubleClicked(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
 
 	// load settings
 	processSettings(true);

@@ -1359,7 +1359,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 	// very simple algorithm.
 	//
 
-	bool found = false ;
+    bool found = directory_parent_groups.empty() ;	// by default, empty list means browsable by everyone.
 	RsPgpId pgp_id = getGPGId(peer_ssl_id) ;
 
     for(std::list<RsNodeGroupId>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
@@ -1378,13 +1378,15 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
         //		found = true ;
 	}
 
-	bool network_wide = (share_flags & DIR_FLAGS_NETWORK_WIDE_OTHERS) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
-	bool browsable    = (share_flags &    DIR_FLAGS_BROWSABLE_OTHERS) || ( (share_flags &    DIR_FLAGS_BROWSABLE_GROUPS) && found) ;
+	bool network_wide = (share_flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) ;//|| ( (share_flags & DIR_FLAGS_NETWORK_WIDE_GROUPS) && found) ;
+    bool browsable    = (share_flags & DIR_FLAGS_BROWSABLE) && found ;
+    bool searchable   = (share_flags & DIR_FLAGS_ANONYMOUS_SEARCH) ;
 
 	FileSearchFlags final_flags ;
 
 	if(network_wide) final_flags |= RS_FILE_HINTS_NETWORK_WIDE ;
 	if(browsable   ) final_flags |= RS_FILE_HINTS_BROWSABLE ;
+    if(searchable  ) final_flags |= RS_FILE_HINTS_SEARCHABLE ;
 
 	return final_flags ;
 }

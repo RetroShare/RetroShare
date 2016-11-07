@@ -169,7 +169,7 @@ if exist "%SourcePath%\libresapi\src\webui" (
 rem pack files
 title Pack - %SourceName%-%RsBuildConfig% [pack files]
 
-"%SevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
+"%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 
 title %COMSPEC%
 

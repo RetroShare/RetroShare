@@ -1729,7 +1729,7 @@ void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	std::cerr << "Performing rsFiles->search()" << std::endl ;
 #endif
 	// now, search!
-	rsFiles->SearchKeywords(words, initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE,PeerId());
+    rsFiles->SearchKeywords(words, initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SEARCHABLE,PeerId());
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << initialResults.size() << " matches found." << std::endl ;
@@ -1767,7 +1767,7 @@ void RsTurtleRegExpSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 		return ;
 
 	// now, search!
-	rsFiles->SearchBoolExp(exp,initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE,PeerId());
+    rsFiles->SearchBoolExp(exp,initialResults,RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SEARCHABLE,PeerId());
 
 	result.clear() ;
 

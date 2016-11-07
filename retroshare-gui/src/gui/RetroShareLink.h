@@ -208,6 +208,8 @@ class RSLinkClipboard
 		//
 		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, uint flag = RSLINK_PROCESS_NOTIFY_ALL);
 
+		static void parseText(QString text, QList<RetroShareLink> &links) ;
+
 	private:
 		static void parseClipboard(QList<RetroShareLink> &links) ;
 };

@@ -22,10 +22,9 @@ class GroupFlagsWidget: public QWidget
 		void updated() ;
 
 	protected slots:
-		void update_GN_button(bool) ;
-		void update_GB_button(bool) ;
-		void update_ON_button(bool) ;
-		void update_OB_button(bool) ;
+        void update_DL_button(bool) ;
+        void update_SR_button(bool) ;
+        void update_BR_button(bool) ;
 
 	signals:
 		void flagsChanged(FileStorageFlags) const ;

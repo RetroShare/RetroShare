@@ -1,4 +1,3 @@
-set CurPath=%~dp0
 set BuildPath=%EnvRootPath%\builds
 set DeployPath=%EnvRootPath%\deploy
 

@@ -54,10 +54,10 @@ void LocalDirectoryUpdater::setEnabled(bool b)
     if(mIsEnabled == b)
         return ;
 
-    if(b)
-        start("fs dir updater") ;
-    else
+    if(!b)
         shutdown();
+    else if(!isRunning())
+        start("fs dir updater") ;
 
     mIsEnabled = b ;
 }

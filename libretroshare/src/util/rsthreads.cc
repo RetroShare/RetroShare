@@ -30,7 +30,17 @@
 #include <iostream>
 #include <time.h>
 
+#ifdef __APPLE__
+int __attribute__((weak)) pthread_setname_np(const char *__buf) ;
+int RS_pthread_setname_np(pthread_t /*__target_thread*/, const char *__buf) {
+	return pthread_setname_np(__buf);
+}
+#else
 int __attribute__((weak)) pthread_setname_np(pthread_t __target_thread, const char *__buf) ;
+int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
+	return pthread_setname_np(__target_thread, __buf);
+}
+#endif
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
@@ -147,6 +157,11 @@ void RsTickingThread::fullstop()
 
 void RsThread::start(const std::string &threadName)
 {
+    if(isRunning())
+    {
+        std::cerr << "(EE) RsThread \"" << threadName << "\" is already running. Will not start twice!" << std::endl;
+        return ;
+    }
     pthread_t tid;
     void  *data = (void *)this ;
 
@@ -167,19 +182,21 @@ void RsThread::start(const std::string &threadName)
         // set name
 
         if(pthread_setname_np)
-		if(!threadName.empty()) 
-		{
-			// thread names are restricted to 16 characters including the terminating null byte
-			if(threadName.length() > 15)
-			{
+        {
+            if(!threadName.empty())
+            {
+                // thread names are restricted to 16 characters including the terminating null byte
+                if(threadName.length() > 15)
+                {
 #ifdef DEBUG_THREADS
-				THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
+                    THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
 #endif
-				pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
-			} else {
-				pthread_setname_np(mTid, threadName.c_str());
-			}
-		}
+                    RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
+                } else {
+                    RS_pthread_setname_np(mTid, threadName.c_str());
+                }
+            }
+        }
     }
     else
     {

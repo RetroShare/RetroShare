@@ -168,12 +168,6 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
     return mFileHierarchy->updateHash(index,hash);
 }
 
-int DirectoryStorage::searchHash(const RsFileHash& hash, std::list<EntryIndex> &results) const
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    return mFileHierarchy->searchHash(hash,results);
-}
-
 bool DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -294,6 +288,36 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
+
+RsFileHash LocalDirectoryStorage::makeEncryptedHash(const RsFileHash& hash)
+{
+    return RsDirUtil::sha1sum(hash.toByteArray(),hash.SIZE_IN_BYTES);
+}
+bool LocalDirectoryStorage::locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const
+{
+    std::map<RsFileHash,RsFileHash>::const_iterator it = mEncryptedHashes.find(hash) ;
+
+    if(it == mEncryptedHashes.end())
+        return false ;
+
+    real_hash = it->second ;
+    return true ;
+}
+
+int LocalDirectoryStorage::searchHash(const RsFileHash& hash, RsFileHash& real_hash, EntryIndex& result) const
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+
+    if(locked_findRealHash(hash,real_hash) && mFileHierarchy->searchHash(real_hash,result))
+        return true ;
+
+    if(mFileHierarchy->searchHash(hash,result))
+    {
+        real_hash.clear();
+        return true ;
+    }
+    return false ;
+}
 
 void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
 {
@@ -422,11 +446,13 @@ void LocalDirectoryStorage::updateTimeStamps()
         std::cerr << "Updating recursive TS for local shared dirs..." << std::endl;
 #endif
 
-        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0)) ;
+        bool unfinished_files_below ;
+
+        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
         mTSChanged = false ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
-        std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago)" << std::endl;
+        std::cerr << "LocalDirectoryStorage: global last modf time is " << last_modf_time << " (which is " << time(NULL) - last_modf_time << " secs ago), unfinished files below=" << unfinished_files_below << std::endl;
 #else
 		// remove unused variable warning
 		// variable is only used for debugging
@@ -434,7 +460,15 @@ void LocalDirectoryStorage::updateTimeStamps()
 #endif
     }
 }
+bool LocalDirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
+{
+    {
+        RS_STACK_MUTEX(mDirStorageMtx) ;
 
+        mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
+    }
+    return mFileHierarchy->updateHash(index,hash);
+}
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
 {
     /**** MUST ALREADY BE LOCKED ****/
@@ -724,7 +758,9 @@ RemoteDirectoryStorage::RemoteDirectoryStorage(const RsPeerId& pid,const std::st
 {
     load(fname) ;
 
-    std::cerr << "Loaded remote directory for peer " << pid << std::endl;
+    mLastSweepTime = time(NULL) - (RSRandom::random_u32() % DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP) ;
+
+    std::cerr << "Loaded remote directory for peer " << pid << ", inited last sweep time to " << time(NULL) - mLastSweepTime << " secs ago." << std::endl;
 #ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     mFileHierarchy->print();
 #endif

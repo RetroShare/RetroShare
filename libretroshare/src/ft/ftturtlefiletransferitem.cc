@@ -30,7 +30,7 @@
 #include <serialiser/itempriorities.h>
 #include <ft/ftturtlefiletransferitem.h>
 
-uint32_t RsTurtleFileRequestItem::serial_size()
+uint32_t RsTurtleFileRequestItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -42,7 +42,7 @@ uint32_t RsTurtleFileRequestItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleFileDataItem::serial_size()
+uint32_t RsTurtleFileDataItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -55,7 +55,7 @@ uint32_t RsTurtleFileDataItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleFileMapRequestItem::serial_size()
+uint32_t RsTurtleFileMapRequestItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -66,7 +66,7 @@ uint32_t RsTurtleFileMapRequestItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleFileMapItem::serial_size()
+uint32_t RsTurtleFileMapItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -80,7 +80,7 @@ uint32_t RsTurtleFileMapItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleChunkCrcItem::serial_size()
+uint32_t RsTurtleChunkCrcItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -91,7 +91,7 @@ uint32_t RsTurtleChunkCrcItem::serial_size()
 
 	return s ;
 }
-uint32_t RsTurtleChunkCrcRequestItem::serial_size()
+uint32_t RsTurtleChunkCrcRequestItem::serial_size() const
 {
 	uint32_t s = 0 ;
 
@@ -101,7 +101,7 @@ uint32_t RsTurtleChunkCrcRequestItem::serial_size()
 
 	return s ;
 }
-bool RsTurtleFileMapRequestItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleFileMapRequestItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;
@@ -134,7 +134,7 @@ bool RsTurtleFileMapRequestItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;
@@ -171,7 +171,7 @@ bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-bool RsTurtleChunkCrcRequestItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleChunkCrcRequestItem::serialize(void *data,uint32_t& pktsize) const
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "RsTurtleChunkCrcRequestItem::serialize(): serializing packet:" << std::endl ;
@@ -206,7 +206,7 @@ bool RsTurtleChunkCrcRequestItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-bool RsTurtleChunkCrcItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleChunkCrcItem::serialize(void *data,uint32_t& pktsize) const
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "RsTurtleChunkCrcRequestItem::serialize(): serializing packet:" << std::endl ;
@@ -345,7 +345,7 @@ RsTurtleChunkCrcRequestItem::RsTurtleChunkCrcRequestItem(void *data,uint32_t pkt
 		throw std::runtime_error("Unknown error while deserializing.") ;
 #endif
 }
-bool RsTurtleFileRequestItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleFileRequestItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;
@@ -459,7 +459,7 @@ RsTurtleFileDataItem::RsTurtleFileDataItem(void *data,uint32_t pktsize)
 #endif
 }
 
-bool RsTurtleFileDataItem::serialize(void *data,uint32_t& pktsize)
+bool RsTurtleFileDataItem::serialize(void *data,uint32_t& pktsize) const
 {
 	uint32_t tlvsize = serial_size();
 	uint32_t offset = 0;

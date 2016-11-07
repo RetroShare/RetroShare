@@ -135,6 +135,8 @@ for i in ${dist}; do
         cp ../control.precise debian/control
     elif test "${i}" = "xenial" ; then
         cp ../control.xenial debian/control
+    elif test "${i}" = "yakkety" ; then
+        cp ../control.yakkety debian/control
     elif test "${i}" = "stretch" ; then
         cp ../control.${i} debian/control
     elif test "${i}" = "jessie" ; then

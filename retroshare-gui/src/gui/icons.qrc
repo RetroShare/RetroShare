@@ -25,15 +25,16 @@
     <file>icons/settings/sound.svg</file>
     <file>icons/settings/webinterface.svg</file>
     <file>icons/add_user_256.png</file>
-    <file>icons/anonymous_blue_128.png</file>
-    <file>icons/anonymous_green_128.png</file>
     <file>icons/aol.png</file>
     <file>icons/avatar_128.png</file>
     <file>icons/avatar_grey_128.png</file>
-    <file>icons/blank_blue_128.png</file>
+    <file>icons/blank_red_128.png</file>
+    <file>icons/void_128.png</file>
     <file>icons/blank_green_128.png</file>
-    <file>icons/browsable_blue_128.png</file>
+    <file>icons/blank_blue_128.png</file>
     <file>icons/browsable_green_128.png</file>
+    <file>icons/search_red_128.png</file>
+    <file>icons/anonymous_blue_128.png</file>
     <file>icons/bullet_blue_128.png</file>
     <file>icons/bullet_green_128.png</file>
     <file>icons/bullet_grey_128.png</file>

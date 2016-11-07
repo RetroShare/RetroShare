@@ -171,34 +171,35 @@ win32 {
 ##################################### MacOS ######################################
 
 macx {
-    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    	CONFIG += ppc x86
-	QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+	# ENABLE THIS OPTION FOR Univeral Binary BUILD.
+	#CONFIG += ppc x86
+	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-        LIBS += -lssl -lcrypto -lz 
-        #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
-	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += -lssl -lcrypto -lz
+	#LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
+	for(lib, LIB_DIR):exists($$lib/libminiupnpc.a){ LIBS += $$lib/libminiupnpc.a}
 	LIBS += -framework CoreFoundation
 	LIBS += -framework Security
 
-        gxs {
-                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-		LIBS += ../../../lib/libsqlcipher.a
-                #LIBS += -lsqlite3
+	for(lib, LIB_DIR):LIBS += -L"$$lib"
+	for(bin, BIN_DIR):LIBS += -L"$$bin"
 
-        }
+	DEPENDPATH += . $$INC_DIR
+	INCLUDEPATH += . $$INC_DIR
 
+	#LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-    	INCLUDEPATH += .
+	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	LIBS += /usr/local/lib/libsqlcipher.a
+	#LIBS += -lsqlite3
+
 	#DEFINES* = MAC_IDLE # for idle feature
 	CONFIG -= uitools
-
-
 }
 
 ##################################### FreeBSD ######################################
@@ -270,6 +271,10 @@ INCLUDEPATH += ../../libretroshare/src/
 INCLUDEPATH += ../librssimulator/
 
 SOURCES +=  unittests.cc \
+
+################################## Crypto ##################################
+
+SOURCES += libretroshare/crypto/chacha20_test.cc
 
 ################################ Serialiser ################################
 HEADERS +=  libretroshare/serialiser/support.h \
