@@ -460,7 +460,12 @@ callback_cmd_get_secret_key(const ops_parser_content_t *content_,ops_parse_cb_in
 
 char *ops_get_passphrase(void)
     {
+#ifndef __ANDROID__
     return ops_malloc_passphrase(getpass("Passphrase: "));
+#else // __ANDROID__
+	return ops_malloc_passphrase("getpass not supported on android");
+#warning "getpass not supported on android"
+#endif // __ANDROID__
     }
 
 char *ops_malloc_passphrase(char *pp)

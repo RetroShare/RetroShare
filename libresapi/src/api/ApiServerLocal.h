@@ -24,6 +24,7 @@
 #include <retroshare/rsinit.h>
 #include <string>
 
+#include "ApiTypes.h"
 #include "ApiServer.h"
 
 namespace resource_api
@@ -34,15 +35,8 @@ class ApiLocalListener : public QObject
 	Q_OBJECT
 
 public:
-	ApiLocalListener(ApiServer* server, QObject *parent=0);
+	ApiLocalListener(ApiServer* server, const QString &listenPath, QObject *parent=0);
 	~ApiLocalListener() { mLocalServer.close(); }
-
-	const static QString& serverName()
-	{
-		const static QString sockPath(RsAccounts::AccountDirectory()
-		                              .append("/libresapi.sock").c_str());
-		return sockPath;
-	}
 
 public slots:
 	void handleConnection();
@@ -57,8 +51,22 @@ class ApiServerLocal : public QObject
 	Q_OBJECT
 
 public:
-	ApiServerLocal(ApiServer* server, QObject *parent=0);
+	ApiServerLocal(ApiServer* server, const QString& listenPath, QObject *parent=0);
 	~ApiServerLocal();
+
+	const static QString& loginServerPath()
+	{
+		const static QString sockPath(RsAccounts::ConfigDirectory()
+		                              .append("/libresapi.sock").c_str());
+		return sockPath;
+	}
+
+	const static QString& serverPath()
+	{
+		const static QString sockPath(RsAccounts::AccountDirectory()
+		                              .append("/libresapi.sock").c_str());
+		return sockPath;
+	}
 
 private:
 	QThread serverThread;
@@ -82,6 +90,7 @@ private:
 	QLocalSocket* mLocalSocket;
 	State mState;
 	std::string reqPath;
+	resource_api::Request::Method reqMeth;
 };
 
 } // namespace resource_api

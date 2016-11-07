@@ -26,11 +26,12 @@
  *
  */
 
+#include <sys/socket.h>
 #include "retroshare/rspeers.h"
+
 class p3LinkMgr;
 class p3PeerMgr;
 class p3NetMgr;
-struct sockaddr_storage;
 
 
 class p3Peers: public RsPeers 

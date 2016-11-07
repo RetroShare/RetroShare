@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/icons/star-2-128.png</file>
+        <file>qml/icons/settings-4-128.png</file>
+        <file>qml/icons/email-128.png</file>
+        <file>qml/icons/contacts-128.png</file>
+        <file>qml/PostedMsgDelegate.qml</file>
+        <file>qml/GxsService.qml</file>
+        <file>qml/GxsIdDelegate.qml</file>
+        <file>qml/GxsGroupDelegate.qml</file>
+        <file>qml/ForumMsgDelegate.qml</file>
+        <file>qml/ContactBox.qml</file>
+        <file>qml/ChannelMsgDelegate.qml</file>
+        <file>qml/ChannelGroupDelegate.qml</file>
+        <file>qml/ApplicationBar.qml</file>
+        <file>qml/AppButton.qml</file>
+        <file>qml/Locations.qml</file>
+        <file>qml/jsonpath.js</file>
+        <file>qml/JSONListModel.qml</file>
+        <file>qml/Contacts.qml</file>
+        <file>qml/AddTrustedNode.qml</file>
+        <file>qml/RsLoginPassView.qml</file>
+        <file>qml/TrustedNodesView.qml</file>
+    </qresource>
+</RCC>

@@ -24,9 +24,9 @@
  */
 
 #ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#include "util/rsmemory.h"
-#include <ws2tcpip.h>
+#	include "util/rswin.h"
+#	include "util/rsmemory.h"
+#	include <ws2tcpip.h>
 #endif // WINDOWS_SYS
 
 #include "pqi/pqinetwork.h"
@@ -271,12 +271,17 @@ int inet_aton(const char *name, struct in_addr *addr)
 
 #include <sys/types.h>
 #ifdef WINDOWS_SYS
-#include <winsock2.h>
-#include <iphlpapi.h>
-#pragma comment(lib, "IPHLPAPI.lib")
-#else // WINDOWS_SYS
-#include <ifaddrs.h>
-#include <net/if.h>
+#	include <winsock2.h>
+#	include <iphlpapi.h>
+#	pragma comment(lib, "IPHLPAPI.lib")
+#elif defined(__ANDROID__)
+#	include <string>
+#	include <QString>
+#	include <QHostAddress>
+#	include <QNetworkInterface>
+#else // not __ANDROID__ nor WINDOWS => Linux and other unixes
+#	include <ifaddrs.h>
+#	include <net/if.h>
 #endif // WINDOWS_SYS
 
 bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
@@ -317,7 +322,15 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 		}
 	}
 	free(adapter_addresses);
-#else // WINDOWS_SYS
+#elif defined(__ANDROID__)
+	foreach(QHostAddress qAddr, QNetworkInterface::allAddresses())
+	{
+		sockaddr_storage tmpAddr;
+		sockaddr_storage_clear(tmpAddr);
+		if(sockaddr_storage_ipv4_aton(tmpAddr, qAddr.toString().toStdString().c_str()))
+			addrs.push_back(tmpAddr);
+	}
+#else // not  WINDOWS_SYS not ANDROID => Linux and other unixes
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) 
 	{

@@ -243,7 +243,10 @@ bool GxsSecurity::checkPublicKey(const RsTlvPublicRSAKey &key)
 bool GxsSecurity::generateKeyPair(RsTlvPublicRSAKey& public_key,RsTlvPrivateRSAKey& private_key)
 {
 	// admin keys
-    RSA *rsa     = RSA_generate_key(2048, 65537, NULL, NULL);
+	BIGNUM *ebn = BN_new();
+	BN_set_word(ebn, 65537);
+	RSA *rsa     = RSA_new();
+	RSA_generate_key_ex(rsa, 2048, ebn, NULL);
     RSA *rsa_pub = RSAPublicKey_dup(rsa);
     
     public_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY ;

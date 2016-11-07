@@ -47,12 +47,12 @@ addons:
     project:
       name: "RetroShare/RetroShare"
       description: "RetroShare Build submitted via Travis CI"
-    build_command_prepend: "qmake CONFIG+=NO_SQLCIPHER; make clean"
+    build_command_prepend: "qmake CONFIG+=no_sqlcipher; make clean"
     build_command:   "make -j 4"
     branch_pattern: coverity_scan
 
 before_script:
-  - qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=NO_SQLCIPHER CONFIG+=tests
+  - qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=no_sqlcipher CONFIG+=tests
 
 script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make && tests/unittests/unittests >/dev/null 2>&1 ; fi

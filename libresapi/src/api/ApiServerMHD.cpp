@@ -211,30 +211,7 @@ public:
             req.mMethod = resource_api::Request::DELETE_AA;
         }
 
-        std::stack<std::string> stack;
-        std::string str;
-        for(std::string::reverse_iterator sit = path2.rbegin(); sit != path2.rend(); sit++)
-        {
-            if((*sit) != '/')
-            {
-                // add to front because we are traveling in reverse order
-                str = *sit + str;
-            }
-            else
-            {
-                if(str != "")
-                {
-                    stack.push(str);
-                    str.clear();
-                }
-            }
-        }
-        if(str != "")
-        {
-            stack.push(str);
-        }
-        req.mPath = stack;
-        req.mFullPath = path2;
+		req.setPath(path2);
 
         std::string result = mApiServer->handleRequest(req);
 

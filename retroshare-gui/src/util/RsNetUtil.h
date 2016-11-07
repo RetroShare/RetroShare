@@ -24,6 +24,7 @@
 
 #include <QString>
 #include <inttypes.h>
+#include <sys/socket.h>
 
 class RsNetUtil
 {

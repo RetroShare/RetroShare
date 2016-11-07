@@ -47,7 +47,7 @@ linux-* {
 
         #LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
-        contains(CONFIG, NO_SQLCIPHER) {
+        no_sqlcipher {
                 DEFINES *= NO_SQLCIPHER
                 PKGCONFIG *= sqlite3
         } else {

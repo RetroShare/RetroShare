@@ -1,12 +1,44 @@
-# To {dis,en}able libresapi via local socket (unix domain socket or windows named pipes)
-# {,un}comment the following line
-#CONFIG *= libresapilocalserver
+# To disable RetroShare-gui append the following
+# assignation to qmake command line "CONFIG+=no_retroshare_gui"
+CONFIG *= retroshare_gui
+no_retroshare_gui:CONFIG -= retroshare_gui
 
-# To {dis,en}able libresapi via HTTP (libmicrohttpd) {,un}comment the following line
+# To disable RetroShare-nogui append the following
+# assignation to qmake command line "CONFIG+=no_retroshare_nogui"
+CONFIG *= retroshare_nogui
+no_retroshare_nogui:CONFIG -= retroshare_nogui
+
+# To disable RetroShare plugins append the following
+# assignation to qmake command line "CONFIG+=no_retroshare_plugins"
+CONFIG *= retroshare_plugins
+no_retroshare_plugins:CONFIG -= retroshare_plugins
+
+# To enable RetroShare-android-service append the following assignation to
+# qmake command line "CONFIG+=retroshare_android_service"
+CONFIG *= no_retroshare_android_service
+retroshare_android_service:CONFIG -= no_retroshare_android_service
+
+# To enable libresapi via local socket (unix domain socket or windows named
+# pipes) append the following assignation to qmake command line
+#"CONFIG+=libresapilocalserver"
+CONFIG *= no_libresapilocalserver
+libresapilocalserver:CONFIG -= no_libresapilocalserver
+
+# To disable libresapi via HTTP (based on libmicrohttpd) append the following
+# assignation to qmake command line "CONFIG+=no_libresapihttpserver"
 CONFIG *= libresapihttpserver
+no_libresapihttpserver:CONFIG -= libresapihttpserver
 
-# Gxs is always enabled now.
-DEFINES *= RS_ENABLE_GXS
+# To disable SQLCipher support append the following assignation to qmake
+# command line "CONFIG+=no_sqlcipher"
+CONFIG *= sqlcipher
+no_sqlcipher:CONFIG -= sqlcipher
+
+# To disable GXS (General eXchange System) append the following
+# assignation to qmake command line "CONFIG+=no_rs_gxs"
+CONFIG *= rs_gxs
+no_rs_gxs:CONFIG -= rs_gxs
+
 
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
@@ -18,22 +50,21 @@ unix {
 }
 
 android-g++ {
-    DEFINES *= NO_SQLCIPHER
+    CONFIG *= no_libresapihttpserver no_sqlcipher upnp_libupnp
+    CONFIG -= libresapihttpserver sqlcipher upnp_miniupnpc
+    QT *= androidextras
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    INCLUDEPATH *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/include/
+    INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
     LIBS *= -L$$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/
-    LIBS *= -lssl -lcrypto -lsqlite3 -lupnp -lixml
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libbz2.so
+    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
     ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libupnp.so
-    ANDROID_EXTRA_LIBS *= $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libixml.so
-    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
-    message(LIBS: $$LIBS)
-    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
+#    message(LIBS: $$LIBS)
+#    message(ANDROID_EXTRA_LIBS: $$ANDROID_EXTRA_LIBS)
+#    message(ANDROID_PLATFORM: $$ANDROID_PLATFORM)
+#    message(ANDROID_PLATFORM_ROOT_PATH: $$ANDROID_PLATFORM_ROOT_PATH)
+#    message(NDK_TOOLCHAIN_PATH: $$NDK_TOOLCHAIN_PATH)
 }
 
 win32 {
@@ -95,6 +126,8 @@ unfinished {
 }
 
 wikipoos:DEFINES *= RS_USE_WIKI
-
+rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
-libresapihttpserver::DEFINES *= ENABLE_WEBUI
+libresapihttpserver:DEFINES *= ENABLE_WEBUI
+sqlcipher:DEFINES -= NO_SQLCIPHER
+no_sqlcipher:DEFINES *= NO_SQLCIPHER

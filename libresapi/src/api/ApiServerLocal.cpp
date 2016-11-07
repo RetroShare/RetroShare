@@ -21,9 +21,9 @@
 
 namespace resource_api{
 
-ApiServerLocal::ApiServerLocal(ApiServer* server, QObject *parent) :
+ApiServerLocal::ApiServerLocal(ApiServer* server, const QString &listenPath, QObject *parent) :
     QObject(parent), serverThread(this),
-    localListener(server) // Must have no parent to be movable to other thread
+    localListener(server, listenPath) // Must have no parent to be movable to other thread
 {
 	localListener.moveToThread(&serverThread);
 	serverThread.start();
@@ -31,15 +31,17 @@ ApiServerLocal::ApiServerLocal(ApiServer* server, QObject *parent) :
 
 ApiServerLocal::~ApiServerLocal() { serverThread.quit(); }
 
-ApiLocalListener::ApiLocalListener(ApiServer *server, QObject *parent) :
+ApiLocalListener::ApiLocalListener(ApiServer *server,
+                                   const QString &listenPath,
+                                   QObject *parent) :
     QObject(parent), mApiServer(server), mLocalServer(this)
 {
-	mLocalServer.removeServer(serverName());
+	mLocalServer.removeServer(listenPath);
 #if QT_VERSION >= 0x050000
 	mLocalServer.setSocketOptions(QLocalServer::UserAccessOption);
 #endif
 	connect(&mLocalServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-	mLocalServer.listen(serverName());
+	mLocalServer.listen(listenPath);
 }
 
 void ApiLocalListener::handleConnection()
@@ -71,16 +73,27 @@ void ApiLocalConnectionHandler::handlePendingRequests()
 	{
 		if(mLocalSocket->canReadLine())
 		{
-            readPath:
-			reqPath = mLocalSocket->readLine().constData();
-			mState = WAITING_DATA;
+readPath:
+			QString rString(mLocalSocket->readLine());
+			rString = rString.simplified();
+			if (!rString.isEmpty())
+			{
+				if(rString.startsWith("PUT", Qt::CaseInsensitive)) reqMeth = resource_api::Request::PUT;
+				else if (rString.startsWith("DELETE", Qt::CaseInsensitive)) reqMeth = resource_api::Request::DELETE_AA;
+				else reqMeth = resource_api::Request::GET;
+				if(rString.contains(' ')) rString = rString.split(' ')[1];
 
-			/* Because QLocalSocket is SOCK_STREAM some clients implementations
-			 * like the one based on QLocalSocket feel free to send the whole
-			 * request (PATH + DATA) in a single write(), causing readyRead()
-			 * signal being emitted only once, in that case we should continue
-			 * processing without waiting for readyRead() being fired again, so
-			 * we don't break here as there may be more lines to read */
+				reqPath = rString.toStdString();
+				mState = WAITING_DATA;
+
+				/* Because QLocalSocket is SOCK_STREAM some clients implementations
+				 * like the one based on QLocalSocket feel free to send the whole
+				 * request (PATH + DATA) in a single write(), causing readyRead()
+				 * signal being emitted only once, in that case we should continue
+				 * processing without waiting for readyRead() being fired again, so
+				 * we don't break here as there may be more lines to read */
+			}
+			else break;
 		}
 	}
 	case WAITING_DATA:
@@ -90,6 +103,7 @@ void ApiLocalConnectionHandler::handlePendingRequests()
 			resource_api::JsonStream reqJson;
 			reqJson.setJsonString(std::string(mLocalSocket->readLine().constData()));
 			resource_api::Request req(reqJson);
+			req.mMethod = reqMeth;
 			req.setPath(reqPath);
 			std::string resultString = mApiServer->handleRequest(req);
 			mLocalSocket->write(resultString.c_str(), resultString.length());

@@ -1,4 +1,3 @@
-/RetroShare.pro.user
 *.o
 *.sw?
 *.so
@@ -10,3 +9,6 @@ Makefile*
 *.sw?
 *~
 Thumbs.db
+*.pro.user
+.kdev4
+*.kdev4

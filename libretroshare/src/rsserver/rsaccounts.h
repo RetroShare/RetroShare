@@ -80,7 +80,13 @@ class RsAccountsDetail
          * @return path where global platform independent files are stored, like bdboot.txt or webinterface files
          */
         static std::string 	PathDataDirectory(bool check = true);
-		std::string 	PathBaseDirectory();
+
+		/**
+		 * @brief PathBaseDirectory
+		 * @return path where user data is stored ( on Linux and similar
+		 * systems it is usually something like /home/USERNAME/.retroshare ).
+		 */
+		static std::string PathBaseDirectory();
 
 		// PGP Path is only dependent on BaseDirectory.
 		std::string 	PathPGPDirectory();
@@ -134,7 +140,7 @@ class RsAccountsDetail
 	private:
 		bool checkPreferredId();
 
-		bool defaultBaseDirectory();
+		static bool defaultBaseDirectory();
 
 		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts, 
 			int& failing_accounts,
@@ -148,7 +154,7 @@ class RsAccountsDetail
 
 		std::map<RsPeerId, AccountDetails> mAccounts;
 		RsPeerId mPreferredId;
-		std::string mBaseDirectory;
+		static std::string mBaseDirectory;
 
 		std::map<std::string,std::vector<std::string> > mUnsupportedKeys ;
 };

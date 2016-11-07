@@ -26,11 +26,11 @@
 #include "ui_ServerPage.h"
 #include "RsAutoUpdatePage.h"
 #include <inttypes.h>
+#include <sys/socket.h>
 
 class QNetworkReply;
 class QNetworkAccessManager;
 class BanListPeer;
-struct sockaddr_storage;
 
 class ServerPage: public ConfigPage
 {
