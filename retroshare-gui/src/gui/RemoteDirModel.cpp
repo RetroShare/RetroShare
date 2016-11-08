@@ -56,7 +56,7 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 #endif
 	treeStyle();
 
-    mLastPointer = (void*)intptr_t(0xffffffff) ;
+    mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
     mLastRemote = false ;
 }
 
@@ -972,9 +972,9 @@ bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d)
 
     time_t now = time(NULL);
 
-    if(mLastPointer == ref && mLastRemote==remote && now < 2+mLastReq)
+    if(mDirDetails.ref == ref && mLastRemote==remote && now < 2+mLastReq)
     {
-        d = mLastDirDetails ;
+        d = mDirDetails ;
         return true ;
     }
 
@@ -983,9 +983,8 @@ bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d)
     if(rsFiles->RequestDirDetails(ref, d, flags))
 	{
 		mLastReq = now ;
-		mLastPointer = ref ;
 		mLastRemote = remote ;
-		mLastDirDetails = d;
+		mDirDetails = d;
 
 		return true;
 	}

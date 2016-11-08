@@ -153,8 +153,7 @@ class RetroshareDirModel : public QAbstractItemModel
 
         // This material attempts to keep last request in cache, with no search cost.
 
-        mutable DirDetails mLastDirDetails ;
-        mutable void *mLastPointer ;
+        mutable DirDetails mDirDetails ;
         mutable bool mLastRemote ;
         mutable time_t mLastReq;
 };
