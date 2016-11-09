@@ -39,8 +39,6 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60*24*31*4 // 4 months
-
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
@@ -128,7 +126,7 @@ public:
      */
     RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
                   RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy,
-                  uint32_t messageStorePeriod = DEFAULT_MSG_STORE_PERIOD);
+                  uint32_t messageStorePeriod = RS_GXS_DEFAULT_MSG_STORE_PERIOD);
 
     virtual ~RsGenExchange();
 

@@ -37,6 +37,7 @@
 #include "serialiser/rstlvkeys.h"
 #endif
 
+#include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
 #include "serialiser/rstlvidset.h"
 
@@ -50,20 +51,28 @@ const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
 
 class RsGxsGrpConfigItem : public RsItem {
 public:
-    RsGxsGrpConfigItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
+    RsGxsGrpConfigItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG)
+    {
+        msg_keep_delay = RS_GXS_DEFAULT_MSG_STORE_PERIOD ;
+        msg_send_delay = RS_GXS_DEFAULT_MSG_SEND_PERIOD ;
+        msg_req_delay = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
+
+        max_visible_count = 0 ;
+        update_TS = 0 ;
+    }
     virtual ~RsGxsGrpConfigItem() {}
 
     virtual void clear() {}
     virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out;}
 
     RsGxsGroupId grpId ;
-    uint32_t     msg_keep_delay ;
-    uint32_t     msg_send_delay ;
-    uint32_t     msg_req_delay ;
+    uint32_t     msg_keep_delay ;	// delay after which we discard the posts
+    uint32_t     msg_send_delay ;	// delay after which we dont send the posts anymore
+    uint32_t     msg_req_delay ;	// delay after which we dont get the posts from friends
 
-    RsTlvPeerIdSet suppliers;
-    uint32_t max_visible_count ;
-    time_t update_TS ;
+    RsTlvPeerIdSet suppliers;		// list of friends who feed this group
+    uint32_t max_visible_count ;	// max visible count reported by contributing friends
+    time_t update_TS ;				// last time the max visible count was updated.
 };
 
 class RsGxsGrpUpdateItem : public RsItem {

@@ -679,7 +679,7 @@ void RsGxsNetService::syncGrpStatistics()
     
     for(std::map<RsGxsGroupId,RsGxsGrpMetaData*>::const_iterator it(grpMeta.begin());it!=grpMeta.end();++it)
     {
-	    RsGroupNetworkStatsRecord& rec(mGroupNetworkStats[it->first]) ;
+	    RsGroupNetworkStatsRecord& rec(GrpConfigMap[it->first]) ;
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG__G(it->first) << "    group " << it->first ;
 #endif

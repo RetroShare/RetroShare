@@ -32,8 +32,13 @@
 
 /* data types used throughout Gxs from netservice to genexchange */
 
-typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
+typedef std::map<RsGxsGroupId,      std::vector<RsGxsMsgMetaData*> > GxsMsgMetaResult;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsGxsMsgMetaData*> > MsgRelatedMetaResult;
 
+// Default values that are used throughout GXS code
+
+static const uint32_t RS_GXS_DEFAULT_MSG_STORE_PERIOD = 86400 * 31 * 6 ;	// six months. Default time for which messages are keps in the database.
+static const uint32_t RS_GXS_DEFAULT_MSG_SEND_PERIOD  = 86400 * 31 * 1 ;	// one months. Default delay after which we don't send messages
+static const uint32_t RS_GXS_DEFAULT_MSG_REQ_PERIOD   = 86400 * 31 * 1 ;	// one months. Default Delay after which we don't request messages
 
 #endif // RSGXS_H
