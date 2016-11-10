@@ -18,6 +18,11 @@ no_retroshare_plugins:CONFIG -= retroshare_plugins
 CONFIG *= no_retroshare_android_service
 retroshare_android_service:CONFIG -= no_retroshare_android_service
 
+# To enable RetroShare-QML-app append the following assignation to
+# qmake command line "CONFIG+=retroshare_qml_app"
+CONFIG *= no_retroshare_qml_app
+retroshare_qml_app:CONFIG -= no_retroshare_qml_app
+
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
 #"CONFIG+=libresapilocalserver"
