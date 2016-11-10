@@ -542,10 +542,10 @@ private:
 
 public:
 
-    typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
-    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
-    typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
-    typedef std::map<RsGxsGroupId, RsGxsGrpConfigItem*> GrpConfigMap;
+    typedef std::map<RsPeerId,     RsGxsMsgUpdate>        ClientMsgMap;
+    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdate>  ServerMsgMap;
+    typedef std::map<RsPeerId,     RsGxsGrpUpdate>        ClientGrpMap;
+    typedef std::map<RsGxsGroupId, RsGxsGrpConfig>        GrpConfigMap;
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
@@ -553,7 +553,7 @@ private:
     ClientGrpMap mClientGrpUpdateMap;
     GrpConfigMap mServerGrpConfigMap;
 
-    RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
+    RsGxsServerGrpUpdate mGrpServerUpdate;
     RsServiceInfo mServiceInfo;
     
     std::map<RsGxsMessageId,time_t> mRejectedMessages;

@@ -49,94 +49,127 @@ const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
 
-class RsGxsGrpConfigItem : public RsItem {
+class RsGxsGrpConfig
+{
 public:
-    RsGxsGrpConfigItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG)
-    {
-        msg_keep_delay = RS_GXS_DEFAULT_MSG_STORE_PERIOD ;
-        msg_send_delay = RS_GXS_DEFAULT_MSG_SEND_PERIOD ;
-        msg_req_delay = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
+	RsGxsGrpConfig()
+	{
+		msg_keep_delay = RS_GXS_DEFAULT_MSG_STORE_PERIOD ;
+		msg_send_delay = RS_GXS_DEFAULT_MSG_SEND_PERIOD ;
+		msg_req_delay = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
 
-        max_visible_count = 0 ;
-        update_TS = 0 ;
-    }
+		max_visible_count = 0 ;
+		update_TS = 0 ;
+	}
+
+	RsGxsGroupId grpId ;
+	uint32_t     msg_keep_delay ;	// delay after which we discard the posts
+	uint32_t     msg_send_delay ;	// delay after which we dont send the posts anymore
+	uint32_t     msg_req_delay ;	// delay after which we dont get the posts from friends
+
+	RsTlvPeerIdSet suppliers;		// list of friends who feed this group
+	uint32_t max_visible_count ;	// max visible count reported by contributing friends
+	time_t update_TS ;				// last time the max visible count was updated.
+};
+
+class RsGxsGrpConfigItem : public RsItem, public RsGxsGrpConfig
+{
+public:
+    RsGxsGrpConfigItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG) {}
+    RsGxsGrpConfigItem(const RsGxsGrpConfig& m,uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_CONFIG),RsGxsGrpConfig(m) {}
     virtual ~RsGxsGrpConfigItem() {}
 
     virtual void clear() {}
     virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out;}
 
-    RsGxsGroupId grpId ;
-    uint32_t     msg_keep_delay ;	// delay after which we discard the posts
-    uint32_t     msg_send_delay ;	// delay after which we dont send the posts anymore
-    uint32_t     msg_req_delay ;	// delay after which we dont get the posts from friends
-
-    RsTlvPeerIdSet suppliers;		// list of friends who feed this group
-    uint32_t max_visible_count ;	// max visible count reported by contributing friends
-    time_t update_TS ;				// last time the max visible count was updated.
 };
 
-class RsGxsGrpUpdateItem : public RsItem {
+class RsGxsGrpUpdate
+{
 public:
-    RsGxsGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
-                                                   RS_PKT_SUBTYPE_GXS_GRP_UPDATE)
-    {clear();}
+    RsGxsGrpUpdate() { grpUpdateTS=0;}
+
+    RsPeerId peerID;
+    uint32_t grpUpdateTS;
+};
+
+class RsGxsGrpUpdateItem : public RsItem, public RsGxsGrpUpdate
+{
+public:
+    RsGxsGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
+    RsGxsGrpUpdateItem(const RsGxsGrpUpdate& u,uint16_t serv_type) : RsGxsGrpUpdate(u),RsItem(RS_PKT_VERSION_SERVICE, serv_type, RS_PKT_SUBTYPE_GXS_GRP_UPDATE) {clear();}
+
     virtual ~RsGxsGrpUpdateItem() {}
 
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-    RsPeerId peerId;
-    uint32_t grpUpdateTS;
 };
 
-class RsGxsServerGrpUpdateItem : public RsItem {
+class RsGxsServerGrpUpdate
+{
 public:
-    RsGxsServerGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
-                                                         RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE)
-        { clear();}
+    RsGxsServerGrpUpdate() { grpUpdateTS = 0 ; }
+
+	uint32_t grpUpdateTS;
+};
+
+class RsGxsServerGrpUpdateItem : public RsItem, public RsGxsServerGrpUpdate
+{
+public:
+    RsGxsServerGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) { clear();}
+    RsGxsServerGrpUpdateItem(const RsGxsServerGrpUpdate& u,uint16_t serv_type) : RsGxsServerGrpUpdate(u),RsItem(RS_PKT_VERSION_SERVICE, serv_type, RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE) {clear();}
+
     virtual ~RsGxsServerGrpUpdateItem() {}
 
         virtual void clear();
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-        uint32_t grpUpdateTS;
 };
 
-class RsGxsMsgUpdateItem : public RsItem
+class RsGxsMsgUpdate
 {
 public:
-    RsGxsMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE)
-    { clear();}
-    virtual ~RsGxsMsgUpdateItem() {}
-
-    virtual void clear();
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
     struct MsgUpdateInfo
     {
         MsgUpdateInfo(): time_stamp(0), message_count(0) {}
-        
+
         uint32_t time_stamp ;
         uint32_t message_count ;
     };
 
-    RsPeerId peerId;
+    RsPeerId peerID;
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
 
-class RsGxsServerMsgUpdateItem : public RsItem
+class RsGxsMsgUpdateItem : public RsItem, public RsGxsMsgUpdate
 {
 public:
-    RsGxsServerMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE,
-                                                         servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE)
-    { clear();}
+    RsGxsMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE) { clear();}
+    RsGxsMsgUpdateItem(const RsGxsMsgUpdate& m,uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE), RsGxsMsgUpdate(m) { clear();}
+
+    virtual ~RsGxsMsgUpdateItem() {}
+
+    virtual void clear();
+    virtual std::ostream &print(std::ostream &out, uint16_t indent);
+};
+
+class RsGxsServerMsgUpdate
+{
+public:
+    RsGxsServerMsgUpdate() { msgUpdateTS = 0 ;}
+
+	RsGxsGroupId grpId;
+	uint32_t msgUpdateTS; // local time stamp this group last received a new msg
+};
+
+class RsGxsServerMsgUpdateItem : public RsItem, public RsGxsServerMsgUpdate
+{
+public:
+    RsGxsServerMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE) { clear();}
+    RsGxsServerMsgUpdateItem(const RsGxsServerMsgUpdate& m,uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE),RsGxsServerMsgUpdate(m) { clear();}
     virtual ~RsGxsServerMsgUpdateItem() {}
 
-        virtual void clear();
-        virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-        RsGxsGroupId grpId;
-        uint32_t msgUpdateTS; // local time stamp this group last received a new msg
+	virtual void clear();
+	virtual std::ostream &print(std::ostream &out, uint16_t indent);
 };
 
 

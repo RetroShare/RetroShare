@@ -29,13 +29,13 @@
 void RsGxsGrpUpdateItem::clear()
 {
 	grpUpdateTS = 0;
-	peerId.clear();
+	peerID.clear();
 }
 std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
     printRsItemBase(out, "RsGxsGrpUpdateItem", indent);
     uint16_t int_Indent = indent + 2;
-    out << "peerId: " << peerId << std::endl;
+    out << "peerId: " << peerID << std::endl;
     printIndent(out, int_Indent);
     out << "grpUpdateTS: " << grpUpdateTS << std::endl;
     printIndent(out, int_Indent);
@@ -47,7 +47,7 @@ std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 void RsGxsMsgUpdateItem::clear()
 {
     msgUpdateInfos.clear();
-    peerId.clear();
+    peerID.clear();
 }
 
 std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
@@ -209,7 +209,7 @@ RsItem* RsGxsUpdateSerialiser::deserialise(void* data, uint32_t* size)
 uint32_t RsGxsUpdateSerialiser::sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item)
 {
 	uint32_t s = 8; // header size
-    s += item->peerId.serial_size();
+    s += item->peerID.serial_size();
     s += 4;	// mUpdateTS
     return s;
 }
@@ -250,7 +250,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsGrpUpdate(RsGxsGrpUpdateItem* item,
     /* RsGxsGrpUpdateItem */
 
 
-    ok &= item->peerId.serialise(data, *size, offset) ;
+    ok &= item->peerID.serialise(data, *size, offset) ;
     ok &= setRawUInt32(data, *size, &offset, item->grpUpdateTS);
 
     if(offset != tlvsize){
@@ -356,7 +356,7 @@ RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data, uin
     /* skip the header */
     offset += 8;
 
-    ok &= item->peerId.deserialise(data, *size, offset) ;
+    ok &= item->peerID.deserialise(data, *size, offset) ;
     ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
 
     if (offset != rssize)
@@ -449,7 +449,7 @@ RsGxsServerGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerGrpUpddate(voi
 uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 {
     uint32_t s = 8; // header size
-    s += item->peerId.serial_size() ;//GetTlvStringSize(item->peerId);
+    s += item->peerID.serial_size() ;//GetTlvStringSize(item->peerId);
 
     s += item->msgUpdateInfos.size() * (4 + 4 + RsGxsGroupId::serial_size());
     s += 4; // number of map items
@@ -495,7 +495,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
     /* RsGxsMsgUpdateItem */
 
 
-    ok &= item->peerId.serialise(data, *size, offset) ;
+    ok &= item->peerID.serialise(data, *size, offset) ;
 
     std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>::const_iterator cit(item->msgUpdateInfos.begin());
 
@@ -616,7 +616,7 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     /* skip the header */
     offset += 8;
 
-    ok &= item->peerId.deserialise(data, *size, offset) ;
+    ok &= item->peerID.deserialise(data, *size, offset) ;
     uint32_t numUpdateItems;
     ok &= getRawUInt32(data, *size, &offset, &(numUpdateItems));
     std::map<RsGxsGroupId, RsGxsMsgUpdateItem::MsgUpdateInfo>& msgUpdateInfos = item->msgUpdateInfos;
