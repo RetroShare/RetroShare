@@ -1262,7 +1262,7 @@ void ServerPage::updateInProxyIndicator()
 
 		const QString host = ui.hiddenpage_proxyAddress_i2p->text();
 		qint16 port = ui.hiddenpage_proxyPort_i2p->text().toInt();
-		QByteArray addr = QByteArray::fromStdString(ui.leBobB32Addr->text().toStdString());
+		QByteArray addr = ui.leBobB32Addr->text().toUtf8();
 		addr.push_back('\n');
 
 		mOngoingConnectivityCheck = 5; // timeout in sec

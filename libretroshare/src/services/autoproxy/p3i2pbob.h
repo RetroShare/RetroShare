@@ -191,11 +191,6 @@ public:
 	void processTaskAsync(taskTicket *ticket);
 	void processTaskSync(taskTicket *ticket);
 
-	bool isUp();
-	bool isStartingUp();
-	bool isDown();
-	bool isClosingDown();
-
 	static std::string keyToBase32Addr(const std::string &key);
 
 	// RsTickingThread interface

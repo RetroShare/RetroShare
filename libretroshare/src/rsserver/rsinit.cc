@@ -1726,7 +1726,6 @@ int RsServer::StartupRetroShare()
 		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
 
 		if (rsInitConfig->hiddenNodeI2PBOB) {
-
 			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
 
 			// we need a local port!
@@ -1755,7 +1754,6 @@ int RsServer::StartupRetroShare()
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
 				/// TODO add notify for failed bob setup
 			}
-
 		} else {
 			mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
 		}

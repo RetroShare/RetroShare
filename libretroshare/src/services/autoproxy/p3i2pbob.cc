@@ -29,9 +29,9 @@ static const int8_t kDefaultVariance  = 0;
 static const useconds_t sleepTimeRecv = 10; // times 1000 = 10ms
 /// Sleep duration for everything else
 static const useconds_t sleepTimeWait = 50; // times 1000 = 50ms or 0.05s
-static const int sleepFactorDefault = 10;   // 0.5s
-static const int sleepFactorFast    = 1;    // 0.05s
-static const int sleepFactorSlow    = 20;   // 1s
+static const int sleepFactorDefault   = 10; // 0.5s
+static const int sleepFactorFast      = 1;  // 0.05s
+static const int sleepFactorSlow      = 20; // 1s
 
 static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Warning, "p3I2pBob"};
 
@@ -208,30 +208,6 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	}
 }
 
-bool p3I2pBob::isUp()
-{
-	RS_STACK_MUTEX(mLock);
-	return mState == csStarted;
-}
-
-bool p3I2pBob::isStartingUp()
-{
-	RS_STACK_MUTEX(mLock);
-	return mState == csStarting;
-}
-
-bool p3I2pBob::isDown()
-{
-	RS_STACK_MUTEX(mLock);
-	return mState == csClosed || mState == csError;
-}
-
-bool p3I2pBob::isClosingDown()
-{
-	RS_STACK_MUTEX(mLock);
-	return mState == csClosing;
-}
-
 std::string p3I2pBob::keyToBase32Addr(const std::string &key)
 {
 	std::string copy(key);
@@ -275,6 +251,31 @@ void p3I2pBob::data_tick()
 	{
 		RS_STACK_MUTEX(mLock);
 		if (mProcessing == NULL && !mPending.empty()) {
+			// new task - check for prev. errors
+			if (mState == csError) {
+				if (mBOBState == bsCleared) {
+					// connection should be cleaned up
+					// ready for a new try
+
+					taskTicket *tt = mPending.front();
+					if (tt->task == autoProxyTask::stop) {
+						mPending.pop();
+
+						// error occured - connection is likely closes anyway
+						rsAutoProxyMonitor::taskDone(tt, autoProxyStatus::ok);
+
+						// just return - data_tick() will be called again immediately
+						return;
+					}
+					mState = csClosed;
+				} else {
+					// retry
+					// sleep would be nice but we are holding the mutex
+					// might block completly in case of really bad errors
+					return;
+				}
+			}
+
 			mProcessing = mPending.front();
 			mPending.pop();
 
@@ -318,7 +319,7 @@ int p3I2pBob::stateMachineBOB()
 
 	{
 		RS_STACK_MUTEX(mLock);
-		if (mBOBState == bsCleared || mState == csError || !mConfigLoaded) {
+		if (mBOBState == bsCleared || !mConfigLoaded) {
 			// we don't have work to do - sleep longer
 			return sleepFactorSlow;
 		}
@@ -364,6 +365,7 @@ int p3I2pBob::stateMachineBOB()
 		rslog(RsLog::Warning, &i2pBobLogInfo, "work reason '" + answer + "'");
 
 		// this error handling needs testing!
+		mState = csError;
 		switch (mBOBState) {
 		case bsGetnick:
 			// failed getting nick
@@ -387,7 +389,7 @@ int p3I2pBob::stateMachineBOB()
 			break;
 		default:
 			// try to recover
-			mBOBState = bsClear;
+			mBOBState = bsGetnick;
 			break;
 		}
 		return sleepFactorDefault;
@@ -446,6 +448,21 @@ int p3I2pBob::stateMachineController()
 				return sleepFactorFast;
 			}
 			break;
+		case csError:
+			if (mBOBState == bsCleared && mProcessing != NULL) {
+				// task was to close connection - this should be done now
+
+				// close tcp connection
+				if (mSocket != 0)
+					// not expected to fail
+					disconnectI2P();
+
+				// might be ok might be not
+				// just return an error
+				rsAutoProxyMonitor::taskError(mProcessing);
+				mProcessing = NULL;
+			}
+			break;
 		default:
 			// nothing to do -> sleep long
 			return sleepFactorSlow;
@@ -501,6 +518,22 @@ int p3I2pBob::stateMachineController()
 				// waiting for BOB tunnel set up
 				return sleepFactorFast;
 			}
+		case csError:
+			if (mBOBState == bsCleared && mProcessing != NULL) {
+				// task was to set up connection - this failed
+				mTask = ctIdle;
+
+				// close tcp connection
+				if (mSocket != 0)
+					// not expected to fail
+					disconnectI2P();
+
+				// might be ok might be not
+				// just return an error
+				rsAutoProxyMonitor::taskError(mProcessing);
+				mProcessing = NULL;
+			}
+			break;
 		default:
 			// nothing to do -> sleep long
 			return sleepFactorSlow;
@@ -562,6 +595,22 @@ int p3I2pBob::stateMachineController()
 				// waiting for BOB tunnel set up
 				return sleepFactorFast;
 			}
+		case csError:
+			if (mBOBState == bsCleared && mProcessing != NULL) {
+				// task was to get keys - this failed
+				mTask = ctIdle;
+
+				// close tcp connection
+				if (mSocket != 0)
+					// not expected to fail
+					disconnectI2P();
+
+				// might be ok might be not
+				// just return an error
+				rsAutoProxyMonitor::taskError(mProcessing);
+				mProcessing = NULL;
+			}
+			break;
 		default:
 			// work to do -> sleep short
 			return sleepFactorFast;
