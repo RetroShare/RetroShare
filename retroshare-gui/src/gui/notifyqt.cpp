@@ -487,6 +487,20 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 	emit chatLobbyTimeShift(shift) ;
 }
 
+void NotifyQt::notifyConnectionWithoutCert()
+{
+	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+#ifdef NOTIFY_DEBUG
+	std::cerr << "notifyQt: Received notifyConnectionWithoutCert" << std::endl;
+#endif
+	emit connectionWithoutCert();
+}
+
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 {
 	return ; // we say nothing. The help dialog of lobbies explains this already.

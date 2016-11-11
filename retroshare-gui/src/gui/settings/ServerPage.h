@@ -22,9 +22,8 @@
 #ifndef SERVERPAGE_H
 #define SERVERPAGE_H
 
-#include <retroshare-gui/configpage.h>
 #include "ui_ServerPage.h"
-#include "RsAutoUpdatePage.h"
+
 #include <inttypes.h>
 /* get OS-specific definitions for:
  * 	struct sockaddr_storage
@@ -37,6 +36,10 @@
 
 #include <services/autoproxy/rsautoproxymonitor.h>
 #include <services/autoproxy/p3i2pbob.h>
+
+#include <retroshare-gui/configpage.h>
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -104,6 +107,8 @@ private slots:
 	void syncI2PProxyPortNormal(int i);
 	void syncI2PProxyPortBob(int i);
 
+	void connectionWithoutCert();
+
 	// autoProxyCallback interface
 public:
 	void taskFinished(taskTicket *&ticket);
@@ -113,6 +118,8 @@ private:
 
 	void setUpBobElements();
 	void enableBobElements(bool enable);
+
+	void updateInProxyIndicatorResult(bool success);
 
     // ban list
     void addPeerToIPTable(QTableWidget *table, int row, const BanListPeer &blp);
@@ -129,6 +136,7 @@ private:
     Ui::ServerPage ui;
 
     QNetworkAccessManager *manager ;
+	int mOngoingConnectivityCheck;
 
 	bool mIsHiddenNode;
 	uint32_t mHiddenType;

@@ -21,6 +21,7 @@
 
 #include "ServerPage.h"
 
+#include <gui/notifyqt.h>
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "util/RsNetUtil.h"
@@ -62,15 +63,17 @@ const static uint32_t hiddenServiceIncomingTab = 2;
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-  connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
-  connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
-  connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-  connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
+	connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
+	connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
+	connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
+	connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
 
-  manager = NULL ;
+	connect(NotifyQt::getInstance(), SIGNAL(connectionWithoutCert()), this, SLOT(connectionWithoutCert()));
+
+	manager = NULL ;
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
@@ -719,6 +722,16 @@ void ServerPage::updateStatus()
 		break;
 	}
 
+	if (mOngoingConnectivityCheck > 0) {
+		mOngoingConnectivityCheck--;
+
+		if (mOngoingConnectivityCheck == 0) {
+			updateInProxyIndicatorResult(false);
+			mOngoingConnectivityCheck = -1;
+		}
+
+	}
+
 	if (mIsHiddenNode)
 	{
 		updateStatusHiddenNode();
@@ -1235,12 +1248,40 @@ void ServerPage::updateInProxyIndicator()
     // need to find a proper way to do this
 
     if(!mIsHiddenNode)
-        return ;
+		return ;
 
-    if(manager == NULL)
-        manager = new  QNetworkAccessManager(this);
+	//ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
+	//ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
+	QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
+	ui.iconlabel_service_incoming->setMovie(movie);
+	movie->start();
 
-    QNetworkProxy proxy ;
+	if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enableBob) {
+
+		QTcpSocket tcpSocket;
+
+		const QString host = ui.hiddenpage_proxyAddress_i2p->text();
+		qint16 port = ui.hiddenpage_proxyPort_i2p->text().toInt();
+		QByteArray addr = QByteArray::fromStdString(ui.leBobB32Addr->text().toStdString());
+		addr.push_back('\n');
+
+		mOngoingConnectivityCheck = 5; // timeout in sec
+
+		tcpSocket.connectToHost(host, port, QAbstractSocket::ReadWrite, QAbstractSocket::IPv4Protocol);
+		tcpSocket.write(addr); // write addr
+		tcpSocket.write(addr); // trigger connection error since RS expects a tls connection
+		tcpSocket.close();
+		tcpSocket.waitForDisconnected(5 * 1000);
+
+		return;
+	}
+
+	if(manager == NULL) {
+		manager = new  QNetworkAccessManager(this);
+		connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;
+	}
+
+	QNetworkProxy proxy ;
 
     proxy.setType(QNetworkProxy::Socks5Proxy);
 	switch (mHiddenType) {
@@ -1257,21 +1298,14 @@ void ServerPage::updateInProxyIndicator()
 	}
     proxy.setCapabilities(QNetworkProxy::HostNameLookupCapability | proxy.capabilities()) ;
 
-	//ui.iconlabel_tor_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
-	//ui.testIncomingTor_PB->setIcon(QIcon(":/loader/circleball-16.gif")) ;
-	QMovie *movie = new QMovie(":/images/loader/circleball-16.gif");
-	ui.iconlabel_service_incoming->setMovie(movie);
-	movie->start() ;
+	QNetworkProxy::setApplicationProxy(proxy) ;
 
-    QNetworkProxy::setApplicationProxy(proxy) ;
-
-	QUrl url("https://"+ui.hiddenpage_serviceAddress->text() + ":" + ui.hiddenpage_servicePort->text()) ;
+	QUrl url("https://"+ui.hiddenpage_serviceAddress->text() + ":" + ui.hiddenpage_servicePort->text());
 
 	std::cerr << "Setting proxy hostname+port to " << std::dec << ui.hiddenpage_proxyAddress_tor->text().toStdString() << ":" << ui.hiddenpage_proxyPort_tor->text().toInt() << std::endl;
     std::cerr << "Connecting to " << url.toString().toStdString() << std::endl;
 
-    connect(manager, SIGNAL(finished(QNetworkReply*)),this,SLOT(handleNetworkReply(QNetworkReply*))) ;
-    manager->get( QNetworkRequest(url) ) ;
+	manager->get( QNetworkRequest(url) ) ;
 
 	QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy) ;
 }
@@ -1381,6 +1415,14 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 	ticket = NULL;
 }
 
+void ServerPage::connectionWithoutCert()
+{
+	if (mOngoingConnectivityCheck > 0) {
+		mOngoingConnectivityCheck = -1;
+		updateInProxyIndicatorResult(true);
+	}
+}
+
 void ServerPage::loadCommon()
 {
 	/* HIDDEN PAGE SETTINGS - only Proxy (outgoing) */
@@ -1460,26 +1502,33 @@ void ServerPage::enableBobElements(bool enable)
 	}
 }
 
-void ServerPage::handleNetworkReply(QNetworkReply *reply)
+void ServerPage::updateInProxyIndicatorResult(bool success)
 {
-    int error = reply->error() ;
+	if (success) {
+		std::cerr <<"Connected!" << std::endl;
 
-    if(reply->isOpen() &&  error == QNetworkReply::SslHandshakeFailedError)
-    {
-        std::cerr <<"Connected!" << std::endl;
 		ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_OK)) ;
 		ui.iconlabel_service_incoming->setToolTip(tr("You are reachable through the hidden service.")) ;
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
-    }
-    else
-    {
-        std::cerr <<"Failed!" << std::endl;
+		//ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_OK)) ;
+	} else {
+		std::cerr <<"Failed!" << std::endl;
 
-        //ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
+		//ui.testIncomingTor_PB->setIcon(QIcon(ICON_STATUS_UNKNOWN)) ;
 		ui.iconlabel_service_incoming->setPixmap(QPixmap(ICON_STATUS_UNKNOWN)) ;
 		ui.iconlabel_service_incoming->setToolTip(tr("The proxy is not enabled or broken.\nAre all services up and running fine??\nAlso check your ports!")) ;
-    }
-
-    reply->close();
+	}
+	// delete movie
+	delete ui.iconlabel_service_incoming->movie();
 }
 
+void ServerPage::handleNetworkReply(QNetworkReply *reply)
+{
+	int error = reply->error() ;
+
+	if(reply->isOpen() &&  error == QNetworkReply::SslHandshakeFailedError)
+		updateInProxyIndicatorResult(true);
+	else
+		updateInProxyIndicatorResult(false);
+
+	reply->close();
+}
