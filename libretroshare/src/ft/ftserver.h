@@ -182,6 +182,7 @@ public:
     virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
+	virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) ;
 
     /***
          * Utility Functions

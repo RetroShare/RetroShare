@@ -700,6 +700,10 @@ int ftServer::SearchBoolExp(RsRegularExpression::Expression * exp, std::list<Dir
 {
 	return mFileDatabase->SearchBoolExp(exp,results,flags,peer_id) ;
 }
+int ftServer::getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats)
+{
+    return mFileDatabase->getSharedDirStatistics(pid,stats) ;
+}
 
 /***************************************************************/
 /*************** Local Shared Dir Interface ********************/

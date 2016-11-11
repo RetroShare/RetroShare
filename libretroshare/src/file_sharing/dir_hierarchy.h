@@ -82,7 +82,7 @@ public:
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
 
         time_t dir_modtime;
-        time_t dir_most_recent_time;	// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
+        time_t dir_most_recent_time;// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
         time_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
     };
 
@@ -109,6 +109,7 @@ public:
     bool setTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* ) ;
 
     // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
+    // Also keeps the high level statistics up to date.
 
     time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index, bool &unfinished_files_present);
 
@@ -151,6 +152,10 @@ public:
 
     void print() const;
 
+    // gets statistics about share files
+
+    void getStatistics(SharedDirStats& stats) const ;
+
 private:
     void recursPrint(int depth,DirectoryStorage::EntryIndex node) const;
     static bool nodeAccessError(const std::string& s);
@@ -163,6 +168,7 @@ private:
     // Deletes an existing entry in mNodes, and keeps record of the indices that get freed.
 
     void deleteNode(DirectoryStorage::EntryIndex);
+    void deleteFileNode(DirectoryStorage::EntryIndex);
 
     // Removes the given subdirectory from the parent node and all its pendign subdirs. Files are kept, and will go during the cleaning
     // phase. That allows to keep file information when moving them around.
@@ -184,5 +190,10 @@ private:
     // in very different ways.
     //
     std::map<RsFileHash,DirectoryStorage::EntryIndex> mDirHashes ;
+
+    // high level statistics on the full hierarchy. Should be kept up to date.
+
+    uint32_t mTotalFiles ;
+    uint64_t mTotalSize ;
 };
 

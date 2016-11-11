@@ -385,8 +385,27 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	{
         switch(coln)
 		{
-			case 0:
-				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
+		case 0: {
+			SharedDirStats stats ;
+			QString res ;
+
+			if(RemoteMode)
+			{
+				res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+				rsFiles->getSharedDirStatistics(details.id,stats) ;
+			}
+			else
+            {
+				res = tr("My files");
+				rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+            }
+
+            if(stats.total_number_of_files > 0)
+				res += " - " + QString::number(stats.total_number_of_files) + " files, " + misc::friendlyUnit(stats.total_shared_size) ;
+
+			return res ;
+		}
+
 			case 1:
 				return QString() ;
             case 2: if(!isNewerThanEpoque(details.min_age))

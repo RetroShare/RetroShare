@@ -127,6 +127,10 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void updateShareFlags(const SharedDirInfo& info) ;
         bool convertSharedFilePath(const std::string& path,std::string& fullpath);
 
+        // computes/gathers statistics about shared directories
+
+		int getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats);
+
         // interface for hash caching
 
         void setWatchPeriod(uint32_t seconds);
