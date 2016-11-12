@@ -151,6 +151,11 @@ class RetroshareDirModel : public QAbstractItemModel
 		mutable int nIndex;
 		mutable std::vector<RemoteIndex> indexSet;
 
+        // This material attempts to keep last request in cache, with no search cost.
+
+        mutable DirDetails mDirDetails ;
+        mutable bool mLastRemote ;
+        mutable time_t mLastReq;
 };
 
 // This class shows the classical hierarchical directory view of shared files

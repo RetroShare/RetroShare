@@ -681,6 +681,26 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
     return res;
 }
 
+// This function returns statistics about the entire directory
+
+int p3FileDatabase::getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& stats)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    if(pid == mOwnId)
+    {
+        mLocalSharedDirs->getStatistics(stats) ;
+        return true ;
+    }
+    else
+    {
+        uint32_t fi = locked_getFriendIndex(pid);
+        mRemoteDirectories[fi]->getStatistics(stats) ;
+
+        return true ;
+    }
+}
+
 // This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {

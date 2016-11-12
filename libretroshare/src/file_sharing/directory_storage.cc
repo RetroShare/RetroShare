@@ -168,6 +168,12 @@ bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash
     return mFileHierarchy->updateHash(index,hash);
 }
 
+void DirectoryStorage::getStatistics(SharedDirStats& stats)
+{
+    RS_STACK_MUTEX(mDirStorageMtx) ;
+    mFileHierarchy->getStatistics(stats);
+}
+
 bool DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;

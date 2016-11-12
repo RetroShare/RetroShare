@@ -55,6 +55,9 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 	setSupportedDragActions(Qt::CopyAction);
 #endif
 	treeStyle();
+
+    mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
+    mLastRemote = false ;
 }
 
 // QAbstractItemModel::setSupportedDragActions() was replaced by virtual QAbstractItemModel::supportedDragActions()
@@ -382,8 +385,27 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	{
         switch(coln)
 		{
-			case 0:
-				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
+		case 0: {
+			SharedDirStats stats ;
+			QString res ;
+
+			if(RemoteMode)
+			{
+				res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+				rsFiles->getSharedDirStatistics(details.id,stats) ;
+			}
+			else
+            {
+				res = tr("My files");
+				rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+            }
+
+            if(stats.total_number_of_files > 0)
+				res += " - " + QString::number(stats.total_number_of_files) + " files, " + misc::friendlyUnit(stats.total_shared_size) ;
+
+			return res ;
+		}
+
 			case 1:
 				return QString() ;
             case 2: if(!isNewerThanEpoque(details.min_age))
@@ -576,9 +598,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RetroshareDirModel::data(): " << index.internalPointer();
-	std::cerr << ": ";
-	std::cerr << std::endl;
+	std::cerr << "RetroshareDirModel::data(): " << index.internalPointer() << std::endl;
 #endif
 
 	if (!index.isValid())
@@ -963,9 +983,32 @@ void RetroshareDirModel::postMods()
 
 bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d) const
 {
+#ifdef RDM_DEBUG
+	std::cerr << "RequestDirDetails:: ref = " << ref << ", remote=" << remote << std::endl;
+#endif
+
+    // We look in cache and re-use the last result if the reference and remote are the same.
+
+    time_t now = time(NULL);
+
+    if(mDirDetails.ref == ref && mLastRemote==remote && now < 2+mLastReq)
+    {
+        d = mDirDetails ;
+        return true ;
+    }
+
     FileSearchFlags flags = (remote) ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL;
 
-    return rsFiles->RequestDirDetails(ref, d, flags) ;
+    if(rsFiles->RequestDirDetails(ref, d, flags))
+	{
+		mLastReq = now ;
+		mLastRemote = remote ;
+		mDirDetails = d;
+
+		return true;
+	}
+
+    return false ;
 }
 //	const QMap<void*, DirDetailsVector>::const_iterator it = mCache.constFind(ref);
 //	if (it != mCache.constEnd()) {

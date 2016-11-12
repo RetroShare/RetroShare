@@ -149,6 +149,10 @@ class DirectoryStorage
         bool getDirHashFromIndex(const EntryIndex& index,RsFileHash& hash) const ;	// constant cost
         bool getIndexFromDirHash(const RsFileHash& hash,EntryIndex& index) const ;	// log cost.
 
+        // gathers statistics from the internal directory structure
+
+        void getStatistics(SharedDirStats& stats) ;
+
         void print();
         void cleanup();
 

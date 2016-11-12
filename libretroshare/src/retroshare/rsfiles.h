@@ -106,6 +106,12 @@ struct SharedDirInfo
     std::list<RsNodeGroupId> parent_groups ;
 };
 
+struct SharedDirStats
+{
+    uint32_t total_number_of_files ;
+    uint64_t total_shared_size ;
+};
+
 class RsFiles
 {
 	public:
@@ -198,6 +204,7 @@ class RsFiles
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
+		virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) =0;
 
 		/***
 		 * Utility Functions.
