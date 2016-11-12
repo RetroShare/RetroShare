@@ -20,7 +20,7 @@ REQUIREMENTS
 
 Libraries/Tools:
 	* C/C++ Compiler. 	  	  (standard on Linux/cygwin)
-	* Qt >= 4.5.x 		  	    http://qt.nokia.com/downloads/downloads#lgpl
+	* Qt >= 4.5.x 		  	    https://download.qt.io/official_releases/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz
 	* OpenSSL       	      	http://www.openssl.org/source/openssl-0.9.8k.tar.gz
 	* MiniUPnP           	  	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
 	* gpgme 		              ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
