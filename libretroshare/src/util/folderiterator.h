@@ -59,9 +59,8 @@ private:
     DIR* handle;
     struct dirent* ent;
 #endif
-    void updateStatsInfo() ;
+    bool updateFileInfo(bool &should_skip) ;
 
-    bool mStatInfoOk ;
     time_t mFileModTime ;
     time_t mFolderModTime ;
     uint64_t mFileSize ;
