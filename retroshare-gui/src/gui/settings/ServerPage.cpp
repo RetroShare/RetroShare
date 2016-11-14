@@ -1267,7 +1267,7 @@ void ServerPage::updateInProxyIndicator()
 
 		mOngoingConnectivityCheck = 5; // timeout in sec
 
-		tcpSocket.connectToHost(host, port, QAbstractSocket::ReadWrite, QAbstractSocket::IPv4Protocol);
+		tcpSocket.connectToHost(host, port);
 		tcpSocket.write(addr); // write addr
 		tcpSocket.write(addr); // trigger connection error since RS expects a tls connection
 		tcpSocket.close();
