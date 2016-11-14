@@ -18,6 +18,10 @@ Compilation on MacOSX
 ----------------------------
 Follow this file : [MacOS_X_InstallGuide](https://github.com/RetroShare/RetroShare/blob/master/MacOS_X_InstallGuide.md)
 
+Compilation for Android
+---------------------------
+Follow this file : [README-Android](https://github.com/RetroShare/RetroShare/blob/master/README-Android.asciidoc)
+
 Compilation on Linux
 ----------------------------
 
