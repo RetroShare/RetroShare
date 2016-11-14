@@ -206,8 +206,6 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
     RS_STACK_MUTEX(mDirStorageMtx) ;
 
     d.children.clear() ;
-    time_t now = time(NULL) ;
-
     uint32_t type = mFileHierarchy->getType(indx) ;
 
     d.ref = (void*)(intptr_t)indx ;
@@ -241,8 +239,8 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
         d.type = DIR_TYPE_DIR;
         d.hash.clear() ;
         d.count   = dir_entry->subdirs.size() + dir_entry->subfiles.size();
-        d.min_age = now - dir_entry->dir_most_recent_time ;
-        d.age     = now - dir_entry->dir_modtime ;
+        d.max_mtime = dir_entry->dir_most_recent_time ;
+        d.mtime     = dir_entry->dir_modtime ;
         d.name    = dir_entry->dir_name;
 		d.path    = RsDirUtil::makePath(dir_entry->dir_parent_path, dir_entry->dir_name) ;
         d.parent  = (void*)(intptr_t)dir_entry->parent_index ;
@@ -259,10 +257,10 @@ bool DirectoryStorage::extractData(const EntryIndex& indx,DirDetails& d)
 
         d.type    = DIR_TYPE_FILE;
         d.count   = file_entry->file_size;
-        d.min_age = now - file_entry->file_modtime ;
+        d.max_mtime = file_entry->file_modtime ;
         d.name    = file_entry->file_name;
         d.hash    = file_entry->file_hash;
-        d.age     = now - file_entry->file_modtime;
+        d.mtime     = file_entry->file_modtime;
         d.parent  = (void*)(intptr_t)file_entry->parent_index ;
 
         const InternalFileHierarchyStorage::DirEntry *parent_dir_entry = mFileHierarchy->getDirEntry(file_entry->parent_index);

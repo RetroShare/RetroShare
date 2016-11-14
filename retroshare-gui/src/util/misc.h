@@ -152,6 +152,9 @@ class misc : public QObject
     // time duration like "1d 2h 10m".
     static QString userFriendlyDuration(qlonglong seconds);
 
+    // Computes the time shift between now and the given time, and prints it in a friendly way, accounting for possible negative shifts (time from the future!)
+	static QString timeRelativeToNow(uint32_t mtime);
+
     static QString userFriendlyUnit(double count, unsigned int decimal, double factor = 1000);
 
     static QString removeNewLine(const QString &text);

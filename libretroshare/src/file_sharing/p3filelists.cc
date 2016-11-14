@@ -733,9 +733,9 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         d.name = "root";
         d.hash.clear() ;
         d.path = "";
-        d.age = 0;
+        d.mtime = 0;
         d.flags.clear() ;
-        d.min_age = 0 ;
+        d.max_mtime = 0 ;
 
         if(flags & RS_FILE_HINTS_LOCAL)
         {
@@ -1054,7 +1054,7 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
             P3FILELISTS_ERROR() << "(EE) Cannot get dir details for entry " << (void*)(intptr_t)*rit << std::endl;
             continue ;
         }
-#ifdef P3FILELISTS_DEBUG
+#ifdef DEBUG_P3FILELISTS
         P3FILELISTS_DEBUG() << "Filtering candidate " << (void*)(intptr_t)(*rit) << ", flags=" << cdetails.flags << ", peer=" << peer_id ;
 #endif
 
@@ -1066,11 +1066,11 @@ int p3FileDatabase::filterResults(const std::list<EntryIndex>& firesults,std::li
             {
                 cdetails.id.clear() ;
                 results.push_back(cdetails);
-#ifdef P3FILELISTS_DEBUG
+#ifdef DEBUG_P3FILELISTS
                 std::cerr << ": kept" << std::endl ;
 #endif
             }
-#ifdef P3FILELISTS_DEBUG
+#ifdef DEBUG_P3FILELISTS
             else
                 std::cerr << ": discarded" << std::endl ;
 #endif
