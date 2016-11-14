@@ -957,7 +957,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
          </widget>
          <widget class="QWidget" name="hiddenServiceTabI2PBOB">
           <attribute name="title">
-           <string>Outgoing Automatic I2P/BOB</string>
+           <string>Automatic I2P/BOB</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
