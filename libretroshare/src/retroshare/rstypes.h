@@ -239,9 +239,9 @@ public:
     RsFileHash hash;
     std::string path;		// full path of the parent directory, when it is a file; full path of the dir otherwise.
 	uint64_t count;
-	uint32_t age;
+	uint32_t mtime;			// file/directory modification time, according to what the system reports
 	FileStorageFlags flags;
-	uint32_t min_age ;	// minimum age of files in this subtree
+	uint32_t max_mtime ;	// maximum modification time of the whole hierarchy below.
 
     std::vector<DirStub> children;
     std::list<RsNodeGroupId> parent_groups;	// parent groups for the shared directory

@@ -206,6 +206,15 @@ QString misc::userFriendlyDuration(qlonglong seconds)
     return tr("%1y %2d", "e.g: 2 years 2days ").arg(years).arg(days);
 }
 
+QString misc::timeRelativeToNow(uint32_t mtime)
+{
+	time_t now = time(NULL) ;
+	if(mtime > now)
+		return misc::userFriendlyDuration(mtime - (int)now) + " (ahead of now)";
+	else
+		return misc::userFriendlyDuration(now - (int)mtime) ;
+}
+
 QString misc::userFriendlyUnit(double count, unsigned int decimal, double factor)
 {
     if (count <= 0.0) {

@@ -93,7 +93,7 @@ class RSHumanReadableAgeDelegate: public RSHumanReadableDelegate
 			QStyleOptionViewItem opt(option) ;
 			setPainterOptions(painter,opt,index) ;
 
-			painter->drawText(opt.rect, Qt::AlignCenter, misc::userFriendlyDuration(index.data().toLongLong())) ;
+			painter->drawText(opt.rect, Qt::AlignCenter, misc::timeRelativeToNow(index.data().toLongLong())) ;
 		}
 };
 

@@ -68,9 +68,9 @@ Qt::DropActions RetroshareDirModel::supportedDragActions() const
 }
 #endif
 
-static bool isNewerThanEpoque(uint32_t age)
+static bool isNewerThanEpoque(uint32_t ts)
 {
-    return age < time(NULL) - 1000 ;	// this should be conservative enough
+    return ts > 0 ;	// this should be conservative enough
 }
 
 void FlatStyle_RDM::update()
@@ -251,12 +251,13 @@ QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::li
 	return groups_str ;
 }
 
+
 QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) const
 {
 	QString ret("");
 	QString nind = tr("NEW");
 //	QString oind = tr("OLD");
-    uint32_t age = details.min_age;
+    int32_t age = time(NULL) - details.max_mtime;
 
 	switch (ageIndicator) {
 		case IND_LAST_DAY:
@@ -334,7 +335,9 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 
 	if (details.type == DIR_TYPE_PERSON)
     {
-		if(details.min_age > ageIndicator)
+        time_t now = time(NULL) ;
+
+		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
 			return QIcon(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
 			return QIcon(":/images/folder_green.png");
@@ -347,7 +350,9 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 	}
 	else if (details.type == DIR_TYPE_DIR)
 	{
-		if(details.min_age > ageIndicator)
+        time_t now = time(NULL) ;
+
+		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
 			return QIcon(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
 			return QIcon(":/images/folder_green.png");
@@ -408,10 +413,11 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 			case 1:
 				return QString() ;
-            case 2: if(!isNewerThanEpoque(details.min_age))
+            case 2: if(!isNewerThanEpoque(details.max_mtime))
                         return QString();
                     else
-                        return misc::userFriendlyDuration(details.min_age);
+                		return misc::timeRelativeToNow(details.max_mtime);
+
 			default:
 				return QString() ;
 		}
@@ -425,7 +431,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 1:
 				return  misc::friendlyUnit(details.count);
 			case 2:
-                return  misc::userFriendlyDuration(details.min_age);
+                return  misc::timeRelativeToNow(details.max_mtime);
 			case 3:
                 return QVariant();
 			case 4:
@@ -449,7 +455,7 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 				}
 				return QString::number(details.count) + " " + tr("File");
 			case 2:
-				return misc::userFriendlyDuration(details.min_age);
+				return misc::timeRelativeToNow(details.max_mtime);
 			case 3:
                 return QVariant();
 			case 4: 
@@ -493,7 +499,7 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 		{
 			case 0: return QString::fromUtf8(details.name.c_str());
 			case 1: return misc::friendlyUnit(details.count);
-            case 2: return misc::userFriendlyDuration(details.min_age);
+            case 2: return misc::timeRelativeToNow(details.max_mtime);
 			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 			case 4: return computeDirectoryPath(details);
 			default:
@@ -519,7 +525,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case 1:
 				return QString();
 			case 2:
-				return details.min_age;
+				return details.max_mtime;
 			default:
 				return QString();
 		}
@@ -533,7 +539,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case 1:
 				return (qulonglong) details.count;
 			case 2:
-                return  details.min_age;
+                return  details.max_mtime;
 			case 3:
 				return getFlagsString(details.flags);
 			case 4:
@@ -556,7 +562,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 			case 1:
 				return (qulonglong) details.count;
 			case 2:
-				return details.min_age;
+				return details.max_mtime;
 			case 3:
 				return getFlagsString(details.flags);
 			default:
@@ -579,7 +585,7 @@ QVariant FlatStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 		{
 			case 0: return QString::fromUtf8(details.name.c_str());
 			case 1: return (qulonglong) details.count;
-            case 2: return  details.min_age;
+            case 2: return  details.max_mtime;
 			case 3: return QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
 
         case 4: {
@@ -620,7 +626,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	{
         if(details.type == DIR_TYPE_FILE && details.hash.isNull())
             return QVariant(QColor(Qt::green)) ;
-        else if(details.min_age > ageIndicator)
+        else if(ageIndicator != IND_ALWAYS && details.max_mtime + ageIndicator < time(NULL))
 			return QVariant(QColor(Qt::gray)) ;
         else if(RemoteMode)
         {
@@ -645,7 +651,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
         return decorationRole(details,coln) ;
 
     if(role == Qt::ToolTipRole)
-        if(!isNewerThanEpoque(details.min_age))
+        if(!isNewerThanEpoque(details.max_mtime))
             return tr("This node hasn't sent any directory information yet.") ;
 
     /*****************
@@ -921,7 +927,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
     switch(details.type)
 	{
     // we grey out a person that has never been updated. It's easy to spot these, since the min age of the directory is approx equal to time(NULL), which exceeds 40 years.
-    case DIR_TYPE_PERSON:return isNewerThanEpoque(details.min_age)? (Qt::ItemIsEnabled):(Qt::NoItemFlags) ;
+    case DIR_TYPE_PERSON:return isNewerThanEpoque(details.max_mtime)? (Qt::ItemIsEnabled):(Qt::NoItemFlags) ;
 	case DIR_TYPE_DIR:	 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
 	case DIR_TYPE_FILE:	 return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 	}
