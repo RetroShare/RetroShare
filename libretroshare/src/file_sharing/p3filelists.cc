@@ -476,8 +476,10 @@ void p3FileDatabase::cleanup()
         //
         for(std::set<RsPeerId>::const_iterator it(friend_set.begin());it!=friend_set.end();++it)
         {
-            // Check if a remote directory exists for that friend, possibly creating the index.
-            locked_getFriendIndex(*it) ;
+            // Check if a remote directory exists for that friend, possibly creating the index if the file does not but the friend is online.
+
+            if(rsPeers->isOnline(*it) || RsDirUtil::fileExists(makeRemoteFileName(*it)))
+				locked_getFriendIndex(*it) ;
         }
 
         // cancel existing requests for which the peer is offline
