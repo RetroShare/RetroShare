@@ -204,6 +204,8 @@ public:
      * \return
      */
     time_t& lastSweepTime() { return mLastSweepTime ; }
+
+    const std::string& filename() const { return mFileName ; }
 private:
     time_t mLastSavedTime ;
     time_t mLastSweepTime ;
