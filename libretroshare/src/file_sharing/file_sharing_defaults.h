@@ -31,6 +31,9 @@ static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORY_SYNC_REQ   = 120 ; // 2 min
 static const uint32_t DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE =  20 ; // 20 sec. But we only update for real if something has changed.
 static const uint32_t DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP    =  60 ; // 60 sec.
 
+static const uint32_t DELAY_BEFORE_DELETE_NON_EMPTY_REMOTE_DIR  = 60*24*86400 ; // delete non empty remoe directories after 60 days of inactivity
+static const uint32_t DELAY_BEFORE_DELETE_EMPTY_REMOTE_DIR      =  5*24*86400 ; // delete empty remote directories after 5 days of inactivity
+
 static const std::string HASH_CACHE_DURATION_SS = "HASH_CACHE_DURATION" ;	 // key string to store hash remembering time
 static const std::string WATCH_FILE_DURATION_SS = "WATCH_FILES_DELAY" ;		 // key to store delay before re-checking for new files
 static const std::string WATCH_FILE_ENABLED_SS  = "WATCH_FILES_ENABLED"; 	 // key to store ON/OFF flags for file whatch

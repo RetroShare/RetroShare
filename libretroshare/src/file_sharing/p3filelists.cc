@@ -440,10 +440,30 @@ void p3FileDatabase::cleanup()
             for(std::list<RsPeerId>::const_iterator it(friend_lst.begin());it!=friend_lst.end();++it)
                 friend_set.insert(*it) ;
         }
+        time_t now = time(NULL);
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
-            if(mRemoteDirectories[i] != NULL && friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end())
+            if(mRemoteDirectories[i] != NULL)
             {
+                time_t recurs_mod_time ;
+                mRemoteDirectories[i]->getDirectoryRecursModTime(0,recurs_mod_time) ;
+
+                time_t last_contact = 0 ;
+                RsPeerDetails pd ;
+                if(rsPeers->getPeerDetails(mRemoteDirectories[i]->peerId(),pd))
+                    last_contact = pd.lastConnect ;
+
+                // We remove directories in the following situations:
+                //	- the peer is not a friend
+                //  - the dir list is non empty but the peer is offline since more than 60 days
+                //  - the dir list is empty and the peer is ffline since more than 5 days
+
+                bool should_remove =  friend_set.find(mRemoteDirectories[i]->peerId()) == friend_set.end()
+                        			|| (recurs_mod_time == 0 && last_contact + DELAY_BEFORE_DELETE_EMPTY_REMOTE_DIR     < now )
+                        			|| (recurs_mod_time != 0 && last_contact + DELAY_BEFORE_DELETE_NON_EMPTY_REMOTE_DIR < now );
+
+                if(!should_remove)
+                    continue ;
 
 #ifdef DEBUG_P3FILELISTS
                 P3FILELISTS_DEBUG() << "  removing file list of non friend " << mRemoteDirectories[i]->peerId() << std::endl;
@@ -454,6 +474,10 @@ void p3FileDatabase::cleanup()
                 friend_set.erase(mRemoteDirectories[i]->peerId());
 
                 mFriendIndexMap.erase(mRemoteDirectories[i]->peerId());
+
+                // also remove the existing file
+
+                remove(mRemoteDirectories[i]->filename().c_str()) ;
 
                 delete mRemoteDirectories[i];
                 mRemoteDirectories[i] = NULL ;
@@ -486,8 +510,6 @@ void p3FileDatabase::cleanup()
 
         std::set<RsPeerId> online_peers ;
         mServCtrl->getPeersConnected(getServiceInfo().mServiceType, online_peers) ;
-
-        time_t now = time(NULL);
 
         for(std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.begin();it!=mPendingSyncRequests.end();)
             if(online_peers.find(it->second.peer_id) == online_peers.end() || it->second.request_TS + DELAY_BEFORE_DROP_REQUEST < now)
