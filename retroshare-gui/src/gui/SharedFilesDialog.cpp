@@ -183,7 +183,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
     // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
     // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
-    //set false because by default in qt5 is true and makes rs crash when sorting
+    //Ghibli: set false because by default in qt5 is true and makes rs crash when sorting, all this decided by Cyril not me :D it works
     tree_proxyModel->setDynamicSortFilter(false);
     flat_proxyModel->setDynamicSortFilter(false);
 
