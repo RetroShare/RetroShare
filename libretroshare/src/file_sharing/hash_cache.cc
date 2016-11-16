@@ -145,7 +145,9 @@ void HashStorage::data_tick()
 
         if(job.client->hash_confirm(job.client_param))
         {
+#ifdef HASHSTORAGE_DEBUG
             std::cerr << "Hashing file " << job.full_path << "..." ; std::cerr.flush();
+#endif
 
             std::string tmpout;
             rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
@@ -156,7 +158,9 @@ void HashStorage::data_tick()
             {
                 // store the result
 
+#ifdef HASHSTORAGE_DEBUG
                 std::cerr << "done."<< std::endl;
+#endif
 
                 RS_STACK_MUTEX(mHashMtx) ;
                 HashStorageInfo& info(mFiles[job.full_path]);

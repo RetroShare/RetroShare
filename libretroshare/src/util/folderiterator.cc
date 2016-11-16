@@ -16,8 +16,8 @@
 namespace librs { namespace util {
 
 
-FolderIterator::FolderIterator(const std::string& folderName)
-    : mFolderName(folderName)
+FolderIterator::FolderIterator(const std::string& folderName, bool allow_symlinks, bool allow_files_from_the_future)
+    : mFolderName(folderName),mAllowSymLinks(allow_symlinks),mAllowFilesFromTheFuture(allow_files_from_the_future)
 {
     is_open = false ;
     validity = false ;
@@ -112,6 +112,19 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 
    mFullPath = mFolderName + "/" + mFileName ;
 
+   if( ent->d_type == DT_LNK && !mAllowSymLinks)
+   {
+	   std::cerr << "(II) Skipping symbolic link " << mFullPath << std::endl;
+	   should_skip = true ;
+	   return true ;
+   }
+   else if( ent->d_type != DT_DIR && ent->d_type != DT_REG)
+   {
+	   std::cerr << "(II) Skipping file of unknown type " << ent->d_type << ": " << mFullPath << std::endl;
+	   should_skip = true ;
+	   return true ;
+   }
+
    struct stat64 buf ;
 
 #ifdef DEBUG_FOLDER_ITERATOR
@@ -127,6 +140,13 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 #endif
    {
 	  mFileModTime = buf.st_mtime ;
+
+      if(buf.st_mtime > time(NULL) && !mAllowFilesFromTheFuture)
+      {
+          std::cerr << "(II) skipping file with modification time in the future: " << mFullPath << std::endl;
+          should_skip = true ;
+          return true ;
+      }
 
 	  if (S_ISDIR(buf.st_mode))
 	  {

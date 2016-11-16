@@ -438,7 +438,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 
 bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::set<std::string> &keepFiles)
 {
-    for(librs::util::FolderIterator it(cleandir);it.isValid();it.next())
+    for(librs::util::FolderIterator it(cleandir,false);it.isValid();it.next())
         if(it.file_type() == librs::util::FolderIterator::TYPE_FILE && (keepFiles.end() == std::find(keepFiles.begin(), keepFiles.end(), it.file_name())))
             remove( (cleandir + "/" + it.file_name()).c_str() ) ;
 

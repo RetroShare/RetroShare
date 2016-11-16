@@ -138,7 +138,8 @@ void RsPluginManager::loadPlugins(const std::vector<std::string>& plugin_directo
 
 	for(uint32_t i=0;i<plugin_directories.size();++i)
 	{
-		librs::util::FolderIterator dirIt(plugin_directories[i]);
+		librs::util::FolderIterator dirIt(plugin_directories[i],true);
+
 		if(!dirIt.isValid())
 		{
 			std::cerr << "Plugin directory : " << plugin_directories[i] << " does not exist." << std::endl ;
