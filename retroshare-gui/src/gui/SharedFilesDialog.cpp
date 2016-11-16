@@ -183,8 +183,8 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
     // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
     // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
-    //tree_proxyModel->setDynamicSortFilter(true);
-    //flat_proxyModel->setDynamicSortFilter(true);
+    tree_proxyModel->setDynamicSortFilter(false);
+    flat_proxyModel->setDynamicSortFilter(false);
 
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
