@@ -16,8 +16,8 @@
 namespace librs { namespace util {
 
 
-FolderIterator::FolderIterator(const std::string& folderName,bool allow_symlinks)
-    : mFolderName(folderName),mAllowSymLinks(allow_symlinks)
+FolderIterator::FolderIterator(const std::string& folderName, bool allow_symlinks, bool allow_files_from_the_future)
+    : mFolderName(folderName),mAllowSymLinks(allow_symlinks),mAllowFilesFromTheFuture(allow_files_from_the_future)
 {
     is_open = false ;
     validity = false ;
@@ -140,6 +140,13 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 #endif
    {
 	  mFileModTime = buf.st_mtime ;
+
+      if(buf.st_mtime > time(NULL) && !mAllowFilesFromTheFuture)
+      {
+          std::cerr << "(II) skipping file with modification time in the future: " << mFullPath << std::endl;
+          should_skip = true ;
+          return true ;
+      }
 
 	  if (S_ISDIR(buf.st_mode))
 	  {

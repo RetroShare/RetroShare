@@ -22,7 +22,7 @@ namespace librs { namespace util {
 class FolderIterator
 {
 public:
-    FolderIterator(const std::string& folderName,bool allow_symlinks);
+    FolderIterator(const std::string& folderName,bool allow_symlinks,bool allow_files_from_the_future = true);
     ~FolderIterator();
 
     enum { TYPE_UNKNOWN = 0x00,
@@ -69,6 +69,7 @@ private:
     std::string mFullPath ;
     std::string mFolderName ;
     bool mAllowSymLinks;
+    bool mAllowFilesFromTheFuture;
 };
 
 
