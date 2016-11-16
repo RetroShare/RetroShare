@@ -32,6 +32,7 @@
 #include "retroshare/rstypes.h"
 #include <iostream>
 #include <iomanip>
+#include <time.h>
 
 
 /**********************************************************************
