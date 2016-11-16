@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "FileSearchHandler.h"
 
 #include <retroshare/rsexpr.h>

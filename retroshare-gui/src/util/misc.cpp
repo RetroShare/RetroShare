@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include <QByteArray>
 #include <QBuffer>
+#include <time.h>
 
 #include "misc.h"
 
