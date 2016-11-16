@@ -517,7 +517,8 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 	 */
 
 	/* check for the dir existance */
-	librs::util::FolderIterator dirIt(mBaseDirectory);
+	librs::util::FolderIterator dirIt(mBaseDirectory,false);
+
 	if (!dirIt.isValid())
 	{
 		std::cerr << "Cannot Open Base Dir - No Available Accounts" << std::endl;

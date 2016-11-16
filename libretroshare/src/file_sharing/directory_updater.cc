@@ -141,7 +141,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
     // make sure list of subfiles is the same
     // request all hashes to the hashcache
 
-    librs::util::FolderIterator dirIt(cumulated_path);
+    librs::util::FolderIterator dirIt(cumulated_path,false);
 
     time_t dir_local_mod_time ;
     if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
