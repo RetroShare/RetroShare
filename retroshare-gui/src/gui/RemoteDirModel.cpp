@@ -391,34 +391,46 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
         switch(coln)
 		{
 		case 0: {
-			SharedDirStats stats ;
-			QString res ;
+				SharedDirStats stats ;
+				QString res ;
 
-			if(RemoteMode)
-			{
-				res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
-				rsFiles->getSharedDirStatistics(details.id,stats) ;
+				if(RemoteMode)
+				{
+					res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+				}
+				else
+				{
+								res = tr("My files");
+				}
+				return res ;
 			}
-			else
-            {
-				res = tr("My files");
-				rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
-            }
+		case 1: {
+				SharedDirStats stats ;
+				QString res ;
 
-            if(stats.total_number_of_files > 0)
-				res += " - " + QString::number(stats.total_number_of_files) + " files, " + misc::friendlyUnit(stats.total_shared_size) ;
+				if(RemoteMode)
+				{
+					//res = QString::fromUtf8(rsPeers->getPeerName(details.id).c_str());
+					rsFiles->getSharedDirStatistics(details.id,stats) ;
+				}
+				else
+				{
+								//res = tr("My files");
+								rsFiles->getSharedDirStatistics(rsPeers->getOwnId(),stats) ;
+				}
 
-			return res ;
-		}
+				if(stats.total_number_of_files > 0)
+					res += QString::number(stats.total_number_of_files) + " files, " + misc::friendlyUnit(stats.total_shared_size) ;
 
-			case 1:
-				return QString() ;
-            case 2: if(!isNewerThanEpoque(details.max_mtime))
-                        return QString();
-                    else
-                		return misc::timeRelativeToNow(details.max_mtime);
+				return res ;
+			}
+		case 2: 	if(!isNewerThanEpoque(details.max_mtime))
+					return QString();
 
-			default:
+				else
+		        		return misc::timeRelativeToNow(details.max_mtime);
+
+		default:
 				return QString() ;
 		}
 	}
