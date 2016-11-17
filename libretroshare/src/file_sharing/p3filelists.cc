@@ -1448,7 +1448,10 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         RS_STACK_MUTEX(mFLSMtx) ;
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
-            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
+        {
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
+			mRemoteDirectories[fi]->lastSweepTime() = time(NULL) - DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP + 10 ;  // force re-sweep in 10 secs, so as to fasten updated
+        }
         else
             P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 
