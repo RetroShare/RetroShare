@@ -41,7 +41,7 @@ class RsTlvBinaryData ;
 class DirectoryStorage
 {
 	public:
-        DirectoryStorage(const RsPeerId& pid) ;
+        DirectoryStorage(const RsPeerId& pid, const std::string& fname) ;
         virtual ~DirectoryStorage() {}
 
         typedef uint32_t EntryIndex ;
@@ -156,6 +156,14 @@ class DirectoryStorage
         void print();
         void cleanup();
 
+		/*!
+		 * \brief checkSave
+		 * 			Checks the time of last saving, last modification time, and saves if needed.
+		 */
+		void checkSave() ;
+
+		const std::string& filename() const { return mFileName ; }
+
     protected:
         bool load(const std::string& local_file_name) ;
 		void save(const std::string& local_file_name) ;
@@ -173,6 +181,10 @@ class DirectoryStorage
         mutable RsMutex mDirStorageMtx ;
 
         InternalFileHierarchyStorage *mFileHierarchy ;
+
+		time_t mLastSavedTime ;
+		bool mChanged ;
+		std::string mFileName;
 };
 
 class RemoteDirectoryStorage: public DirectoryStorage
@@ -193,30 +205,19 @@ public:
     bool deserialiseUpdateDirEntry(const EntryIndex& indx,const RsTlvBinaryData& data) ;
 
     /*!
-     * \brief checkSave
-     * 			Checks the time of last saving, last modification time, and saves if needed.
-     */
-    void checkSave() ;
-
-    /*!
      * \brief lastSweepTime
      * 			returns the last time a sweep has been done over the directory in order to check update TS.
      * \return
      */
     time_t& lastSweepTime() { return mLastSweepTime ; }
-
-    const std::string& filename() const { return mFileName ; }
 private:
-    time_t mLastSavedTime ;
     time_t mLastSweepTime ;
-    bool mChanged ;
-    std::string mFileName;
 };
 
 class LocalDirectoryStorage: public DirectoryStorage
 {
 public:
-    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(own_id),mFileName(fname) {}
+    LocalDirectoryStorage(const std::string& fname,const RsPeerId& own_id) : DirectoryStorage(own_id,fname) {}
     virtual ~LocalDirectoryStorage() {}
 
     /*!
@@ -289,19 +290,18 @@ public:
     bool serialiseDirEntry(const EntryIndex& indx, RsTlvBinaryData& bindata, const RsPeerId &client_id) ;
 
 private:
-        static RsFileHash makeEncryptedHash(const RsFileHash& hash);
-        bool locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const;
-        std::string locked_getVirtualPath(EntryIndex indx) const ;
-        std::string locked_getVirtualDirName(EntryIndex indx) const ;
+	static RsFileHash makeEncryptedHash(const RsFileHash& hash);
+	bool locked_findRealHash(const RsFileHash& hash, RsFileHash& real_hash) const;
+	std::string locked_getVirtualPath(EntryIndex indx) const ;
+	std::string locked_getVirtualDirName(EntryIndex indx) const ;
 
-        bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
-        std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
+	bool locked_getFileSharingPermissions(const EntryIndex& indx, FileStorageFlags &flags, std::list<RsNodeGroupId>& parent_groups);
+	std::string locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const;
 
-        std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
-        std::map<RsFileHash,RsFileHash> mEncryptedHashes;	// map such that hash(it->second) = it->first
-        std::string mFileName;
+	std::map<std::string,SharedDirInfo> mLocalDirs ;	// map is better for search. it->first=it->second.filename
+	std::map<RsFileHash,RsFileHash> mEncryptedHashes;	// map such that hash(it->second) = it->first
 
-        bool mTSChanged ;
+	bool mTSChanged ;
 };
 
 
