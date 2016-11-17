@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <time.h>
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
