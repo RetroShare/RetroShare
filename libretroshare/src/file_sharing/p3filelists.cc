@@ -66,7 +66,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mRemoteDirectories.clear() ;	// we should load them!
     mOwnId = mpeers->getOwnId() ;
 
-    mLocalSharedDirs = new LocalDirectoryStorage("local_file_store.bin",mOwnId);
+    mLocalSharedDirs = new LocalDirectoryStorage(mFileSharingDir + "/" + LOCAL_SHARED_DIRS_FILE_NAME,mOwnId);
     mHashCache = new HashStorage(mFileSharingDir + "/" + HASH_CACHE_FILE_NAME) ;
 
     mLocalDirWatcher = new LocalDirectoryUpdater(mHashCache,mLocalSharedDirs) ;
@@ -219,6 +219,7 @@ int p3FileDatabase::tick()
             }
 
         mLastRemoteDirSweepTS = now;
+		mLocalSharedDirs->checkSave() ;
 
         // This is a hack to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
         // so the first notify is ignored, and no other notify will happen next.
@@ -1447,7 +1448,10 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         RS_STACK_MUTEX(mFLSMtx) ;
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
-            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 // notify the GUI if the hierarchy has changed
+        {
+            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
+			mRemoteDirectories[fi]->lastSweepTime() = time(NULL) - DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP + 10 ;  // force re-sweep in 10 secs, so as to fasten updated
+        }
         else
             P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 

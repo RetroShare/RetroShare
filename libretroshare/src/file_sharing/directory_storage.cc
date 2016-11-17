@@ -82,11 +82,14 @@ std::string DirectoryStorage::DirIterator::name()      const { const InternalFil
 /*                                                 Directory Storage                                              */
 /******************************************************************************************************************/
 
-DirectoryStorage::DirectoryStorage(const RsPeerId &pid)
-    : mPeerId(pid), mDirStorageMtx("Directory storage "+pid.toStdString())
+DirectoryStorage::DirectoryStorage(const RsPeerId &pid,const std::string& fname)
+    : mPeerId(pid), mDirStorageMtx("Directory storage "+pid.toStdString()),mLastSavedTime(0),mChanged(false),mFileName(fname)
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    mFileHierarchy = new InternalFileHierarchyStorage();
+	{
+		RS_STACK_MUTEX(mDirStorageMtx) ;
+		mFileHierarchy = new InternalFileHierarchyStorage();
+	}
+    load(fname) ;
 }
 
 DirectoryStorage::EntryIndex DirectoryStorage::root() const
@@ -131,22 +134,22 @@ bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs,hash_salt) ;
-    locked_check() ;
+    mChanged = true ;
     return res ;
 }
 bool DirectoryStorage::updateSubFilesList(const EntryIndex& indx,const std::map<std::string,FileTS>& subfiles,std::map<std::string,FileTS>& new_files)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->updateSubFilesList(indx,subfiles,new_files) ;
-    locked_check() ;
+    mChanged = true ;
     return res ;
 }
 bool DirectoryStorage::removeDirectory(const EntryIndex& indx)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->removeDirectory(indx);
+    mChanged = true ;
 
-    locked_check();
     return res ;
 }
 
@@ -160,11 +163,13 @@ void DirectoryStorage::locked_check()
 bool DirectoryStorage::updateFile(const EntryIndex& index,const RsFileHash& hash,const std::string& fname, uint64_t size,time_t modf_time)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
+    mChanged = true ;
     return mFileHierarchy->updateFile(index,hash,fname,size,modf_time);
 }
 bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
+    mChanged = true ;
     return mFileHierarchy->updateHash(index,hash);
 }
 
@@ -177,6 +182,7 @@ void DirectoryStorage::getStatistics(SharedDirStats& stats)
 bool DirectoryStorage::load(const std::string& local_file_name)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
+    mChanged = false ;
     return mFileHierarchy->load(local_file_name);
 }
 void DirectoryStorage::save(const std::string& local_file_name)
@@ -289,6 +295,19 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
     return mFileHierarchy->getIndexFromDirHash(hash,index) ;
 }
 
+void DirectoryStorage::checkSave()
+{
+    time_t now = time(NULL);
+
+    if(mChanged && mLastSavedTime + MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE < now)
+    {
+		locked_check();
+
+        save(mFileName);
+        mLastSavedTime = now ;
+        mChanged = false ;
+    }
+}
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
 /******************************************************************************************************************/
@@ -753,33 +772,20 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
     return true ;
 }
 
+
 /******************************************************************************************************************/
 /*                                           Remote Directory Storage                                              */
 /******************************************************************************************************************/
 
 RemoteDirectoryStorage::RemoteDirectoryStorage(const RsPeerId& pid,const std::string& fname)
-    : DirectoryStorage(pid),mLastSavedTime(0),mChanged(false),mFileName(fname)
+    : DirectoryStorage(pid,fname)
 {
-    load(fname) ;
-
     mLastSweepTime = time(NULL) - (RSRandom::random_u32() % DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP) ;
 
     std::cerr << "Loaded remote directory for peer " << pid << ", inited last sweep time to " << time(NULL) - mLastSweepTime << " secs ago." << std::endl;
 #ifdef DEBUG_REMOTE_DIRECTORY_STORAGE
     mFileHierarchy->print();
 #endif
-}
-
-void RemoteDirectoryStorage::checkSave()
-{
-    time_t now = time(NULL);
-
-    if(mChanged && mLastSavedTime + MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE < now)
-    {
-        save(mFileName);
-        mLastSavedTime = now ;
-        mChanged = false ;
-    }
 }
 
 bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,const RsTlvBinaryData& bindata)

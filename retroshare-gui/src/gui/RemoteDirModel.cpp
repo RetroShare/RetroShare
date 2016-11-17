@@ -622,9 +622,29 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
+    // First we take care of the cases that do not require requestDirDetails()
+
+	int coln = index.column();
+
+	if (role == Qt::SizeHintRole)
+		return QVariant();
+
+	if (role == Qt::TextAlignmentRole)
+	{
+		if(coln == 1)
+			return int( Qt::AlignRight | Qt::AlignVCenter);
+        else
+			return QVariant();
+	}
+
+	// This makes sorting a bit arbitrary, but prevents calling requestDirDetails(). The number of calls to sortRole is
+    // indeed sometimes very high and somewhat kills the GUI responsivness.
+    //
+	//if (role == SortRole)
+	//   return QVariant(index.row()) ;
+
 	/* get the data from the index */
 	void *ref = index.internalPointer();
-	int coln = index.column();
 
     DirDetails details ;
 
@@ -673,20 +693,6 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	  Qt::WhatsThisRole
 	  Qt::SizeHintRole
 	 ****************/
-
-	if (role == Qt::SizeHintRole)
-	{       
-		return QVariant(); // Use standard
-	} /* end of SizeHintRole */ 
-
-	if (role == Qt::TextAlignmentRole)
-	{
-		if(coln == 1)
-		{
-			return int( Qt::AlignRight | Qt::AlignVCenter);
-		}
-		return QVariant();
-	} /* end of TextAlignmentRole */
 
 	if (role == Qt::DisplayRole)
         return displayRole(details,coln) ;
