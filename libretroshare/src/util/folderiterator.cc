@@ -112,6 +112,8 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 
    mFullPath = mFolderName + "/" + mFileName ;
 
+#warning should we take care of symbolic links on windows?
+#ifndef WINDOWS_SYS
    if( ent->d_type == DT_LNK && !mAllowSymLinks)
    {
 	   std::cerr << "(II) Skipping symbolic link " << mFullPath << std::endl;
@@ -124,6 +126,7 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 	   should_skip = true ;
 	   return true ;
    }
+#endif
 
    struct stat64 buf ;
 
