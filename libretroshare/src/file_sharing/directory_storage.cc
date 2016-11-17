@@ -148,6 +148,7 @@ bool DirectoryStorage::removeDirectory(const EntryIndex& indx)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->removeDirectory(indx);
+    mChanged = true ;
 
     return res ;
 }
