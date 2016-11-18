@@ -809,8 +809,6 @@ void ServerPage::toggleUPnP()
 
 void ServerPage::saveAddresses()
 {
-	QString str;
-
 	bool saveAddr = false;
 
 	if (mIsHiddenNode)
@@ -1447,13 +1445,15 @@ void ServerPage::loadCommon()
 
 	ui.cb_enableBob->setChecked(mBobSettings.enableBob);
 }
-
+#include <QLineEdit>
 void ServerPage::setUpBobElements()
 {
 	ui.gbBob->setEnabled(mBobSettings.enableBob);
 	if (mBobSettings.enableBob) {
 		ui.hiddenpage_proxyAddress_i2p->setEnabled(false);
+		ui.hiddenpage_proxyAddress_i2p->setToolTip("Use I2P/BOB settings to change this value");
 		ui.hiddenpage_proxyPort_i2p->setEnabled(false);
+		ui.hiddenpage_proxyPort_i2p->setToolTip("Use I2P/BOB settings to change this value");
 
 		ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.addr));
 		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
@@ -1475,7 +1475,9 @@ void ServerPage::setUpBobElements()
 		ui.sbBobVarianceOut->setValue(vo);
 	} else {
 		ui.hiddenpage_proxyAddress_i2p->setEnabled(true);
+		ui.hiddenpage_proxyAddress_i2p->setToolTip(QString());
 		ui.hiddenpage_proxyPort_i2p->setEnabled(true);
+		ui.hiddenpage_proxyPort_i2p->setToolTip(QString());
 	}
 }
 
