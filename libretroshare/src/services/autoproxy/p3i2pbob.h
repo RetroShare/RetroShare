@@ -230,10 +230,11 @@ private:
 
 	// used variables
 	p3PeerMgr *mPeerMgr;
-	bool	mConfigLoaded;
-	int		mSocket;
+	bool mConfigLoaded;
+	int mSocket;
 	sockaddr_storage mI2PProxyAddr;
 	std::map<bobState, bobStateInfo> mCommands;
+	std::string mErrorMsg;
 
 	std::queue<taskTicket *> mPending;
 	taskTicket *mProcessing;

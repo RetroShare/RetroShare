@@ -201,6 +201,16 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	}
 		rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
 		break;
+	case autoProxyTask::getErrorInfo:
+		if (!data) {
+			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::getErrorInfo data is missing");
+			rsAutoProxyMonitor::taskError(ticket);
+		} else {
+			RS_STACK_MUTEX(mLock);
+			*(std::string *)ticket->data = mErrorMsg;
+			rsAutoProxyMonitor::taskDone(ticket, autoProxyStatus::ok);
+		}
+		break;
 	default:
 		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTaskSync unknown task");
 		rsAutoProxyMonitor::taskError(ticket);
@@ -256,6 +266,8 @@ void p3I2pBob::data_tick()
 				if (mBOBState == bsCleared) {
 					// connection should be cleaned up
 					// ready for a new try
+
+					mErrorMsg.clear();
 
 					taskTicket *tt = mPending.front();
 					if (tt->task == autoProxyTask::stop) {
@@ -361,8 +373,11 @@ int p3I2pBob::stateMachineBOB()
 			return sleepFactorDefault;
 		}
 
-		rslog(RsLog::Warning, &i2pBobLogInfo, "work FAILED to run command '" + currentState.command + "'");
-		rslog(RsLog::Warning, &i2pBobLogInfo, "work reason '" + answer + "'");
+		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB FAILED to run command '" + currentState.command + "'");
+		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB  '" + answer + "'");
+
+		mErrorMsg.append("FAILED to run command '" + currentState.command + "'" + '\n');
+		mErrorMsg.append("reason '" + answer + "'" + '\n');
 
 		// this error handling needs testing!
 		mState = csError;

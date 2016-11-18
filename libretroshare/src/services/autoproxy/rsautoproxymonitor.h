@@ -24,7 +24,8 @@ namespace autoProxyTask {
 		status,
 		getSettings,
 		setSettings,
-		reloadConfig
+		reloadConfig,
+		getErrorInfo
 	};
 }
 
