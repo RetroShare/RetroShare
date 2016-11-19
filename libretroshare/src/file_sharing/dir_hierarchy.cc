@@ -784,6 +784,12 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
     // recurs go through all entries, check that all
 
     error_string = "";
+    bool bDirOut = false;
+    bool bDirDouble = false;
+    bool bFileOut = false;
+    bool bFileDouble = false;
+    bool bOrphean = false;
+
     std::vector<uint32_t> hits(mNodes.size(),0) ;	// count hits of children. Should be 1 for all in the end. Otherwise there's an error.
     hits[0] = 1 ;	// because 0 is never the child of anyone
 
@@ -799,13 +805,13 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
             {
                 if(de.subdirs[j] >= mNodes.size())
                 {
-                    error_string += " - Node child dir out of tab!" ;
+                    if(!bDirOut){ error_string += " - Node child dir out of tab!"; bDirOut = true;}
                     de.subdirs[j] = de.subdirs.back() ;
                     de.subdirs.pop_back();
                 }
                 else if(hits[de.subdirs[j]] != 0)
                 {
-                    error_string += " - Double hit on a single node dir." ;
+                    if(!bDirDouble){ error_string += " - Double hit on a single node dir."; bDirDouble = true;}
                     de.subdirs[j] = de.subdirs.back() ;
                     de.subdirs.pop_back();
                 }
@@ -819,13 +825,13 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
             {
                 if(de.subfiles[j] >= mNodes.size())
                 {
-                    error_string += " - Node child file out of tab!" ;
+                    if(!bFileOut){ error_string += " - Node child file out of tab!"; bFileOut = true;}
                     de.subfiles[j] = de.subfiles.back() ;
                     de.subfiles.pop_back();
                 }
                 else if(hits[de.subfiles[j]] != 0)
                 {
-                    error_string += " - Double hit on a single node file." ;
+                    if(!bFileDouble){ error_string += " - Double hit on a single node file."; bFileDouble = true;}
                     de.subfiles[j] = de.subfiles.back() ;
                     de.subfiles.pop_back();
                 }
@@ -836,13 +842,13 @@ bool InternalFileHierarchyStorage::check(std::string& error_string) // checks co
                 }
             }
         }
-		else if(mNodes[i] == NULL)
+        else if( mNodes[i] == NULL )
             mFreeNodes.push_back(i) ;
 
     for(uint32_t i=0;i<hits.size();++i)
         if(hits[i] == 0 && mNodes[i] != NULL)
         {
-            error_string += " - Orphean node!" ;
+            if(!bOrphean){ error_string += " - Orphean node!"; bOrphean = true;}
 
             deleteNode(i) ;	// we don't care if it's a file or a dir.
         }
