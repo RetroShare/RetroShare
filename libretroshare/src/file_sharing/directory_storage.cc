@@ -300,13 +300,20 @@ void DirectoryStorage::checkSave()
     time_t now = time(NULL);
 
     if(mChanged && mLastSavedTime + MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE < now)
-    {
-		locked_check();
+	{
+	   {
+		  RS_STACK_MUTEX(mDirStorageMtx) ;
+		  locked_check();
+	   }
 
-        save(mFileName);
-        mLastSavedTime = now ;
-        mChanged = false ;
-    }
+	   save(mFileName);
+
+	   {
+		  RS_STACK_MUTEX(mDirStorageMtx) ;
+		  mLastSavedTime = now ;
+		  mChanged = false ;
+	   }
+	}
 }
 /******************************************************************************************************************/
 /*                                           Local Directory Storage                                              */
