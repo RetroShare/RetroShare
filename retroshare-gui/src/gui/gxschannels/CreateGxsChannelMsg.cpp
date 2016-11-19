@@ -26,9 +26,10 @@
 #include <QDir>
 #include <QMimeData>
 
-#include <gui/RetroShareLink.h>
 #include "CreateGxsChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
+#include "gui/RetroShareLink.h"
+#include "util/HandleRichText.h"
 #include "util/misc.h"
 
 #include <retroshare/rsfiles.h>
@@ -573,7 +574,9 @@ void CreateGxsChannelMsg::sendMsg()
 
 	/* construct message bits */
 	std::string subject = std::string(misc::removeNewLine(subjectEdit->text()).toUtf8());
-	std::string msg     = std::string(msgEdit->toPlainText().toUtf8());
+	QString text;
+	RsHtml::optimizeHtml(msgEdit, text);
+	std::string msg = text.toStdString();
 
 	std::list<RsGxsFile> files;
 
