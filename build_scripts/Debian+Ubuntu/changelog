@@ -1,5 +1,58 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  5b9b63e csoler      Sat, 19 Nov 2016 14:42:43 +0100 Merge pull request #575 from PhenomRetroShare/FixCrashOnCheckBigBigFileStorage
+  a8782f0 Phenom      Fri, 18 Nov 2016 23:04:32 +0100 Fix Crash when checking a big-big file storage.
+  4bdfc6e csoler      Fri, 18 Nov 2016 17:56:42 +0100 removed unused old file
+  6d0293c csoler      Thu, 17 Nov 2016 22:10:57 +0100 Merge pull request #573 from csoler/v0.6-FileListsOptim
+  bdc8086 csoler      Thu, 17 Nov 2016 21:27:37 +0100 added missing mChanged=true when removign a directory
+  deadb1f csoler      Thu, 17 Nov 2016 21:01:01 +0100 small optimization of RemoteDirModel::data()
+  5339e99 csoler      Thu, 17 Nov 2016 21:00:34 +0100 force re-sweep of remote directory that has been updated with new dir content to 10 sec
+  36755c4 csoler      Thu, 17 Nov 2016 19:03:53 +0100 added load/save of own file hierarchy
+  ff4e6f3 csoler      Thu, 17 Nov 2016 14:23:25 +0100 added missing time.h for windows compilation
+  1b9fe3b csoler      Thu, 17 Nov 2016 09:31:05 +0100 removed symbolic links handling from windows compilation
+  fe965d2 csoler      Wed, 16 Nov 2016 22:12:55 +0100 Merge pull request #572 from csoler/v0.6-FileListsOptim
+  ba78007 csoler      Wed, 16 Nov 2016 21:49:27 +0100 added parameter to disallow hashing files which time is in the future (as they severely perturbate the synchronisation process)
+  6272856 csoler      Wed, 16 Nov 2016 21:41:32 +0100 added param to folderIterator to skip/follow symbolic links
+  188f345 csoler      Wed, 16 Nov 2016 12:10:37 +0100 Merge pull request #571 from felisucoibi/master
+  999ab0b felisucoibi Wed, 16 Nov 2016 12:07:38 +0100 fix sorting crashing with qt5 in shared files of friends rev3
+  ee23c42 felisucoibi Wed, 16 Nov 2016 12:05:05 +0100 fix sorting crashing with qt5 in shared files of friends rev2
+  1757a7b felisucoibi Wed, 16 Nov 2016 12:02:54 +0100 fix sorting crashing with qt5 in shared files of friends
+  176999d csoler      Wed, 16 Nov 2016 11:47:02 +0100 Merge pull request #570 from felisucoibi/master
+  628177c felisucoibi Wed, 16 Nov 2016 11:22:23 +0100 fix for windows compile
+  ddff9f5 felisucoibi Wed, 16 Nov 2016 11:03:02 +0100 Improved total file size and a small bug with a comma in TB string of file size 2 CLEANED CODE
+  e3d832c thunder2    Wed, 16 Nov 2016 10:47:34 +0100 Added missing include time.h for Windows compile
+  cc452ae csoler      Tue, 15 Nov 2016 22:58:37 +0100 Merge pull request #569 from csoler/v0.6-FileListsOptim
+  608d0d0 csoler      Tue, 15 Nov 2016 21:33:39 +0100 auto-remove remote directories for friends offline for too long (depending on whether the dir is empty or not) and also remove unused dir files
+  99860c1 csoler      Tue, 15 Nov 2016 20:10:18 +0100 only allocate a remote directory entry if the peer is online, or the file already exists
+  de6f753 csoler      Tue, 15 Nov 2016 09:18:51 +0100 fixed compilation due to previous commit
+  aeb6834 csoler      Mon, 14 Nov 2016 22:03:47 +0100 Merge pull request #568 from csoler/v0.6-FileListsOptim
+  8c8cc88 csoler      Mon, 14 Nov 2016 21:58:58 +0100 fixed problems with negative time shifts in DirDetails causing multiple GUI bugs in File Lists and Search
+  d433713 csoler      Mon, 14 Nov 2016 14:10:49 +0100 fixed possible uninitialised memory read in folderiterator for windows, and changed file folderiterator.cc to unix format
+  fb30200 csoler      Mon, 14 Nov 2016 09:56:46 +0100 Merge pull request #567 from Reedych/patch-1
+  5fd11eb csoler      Mon, 14 Nov 2016 09:56:05 +0100 Merge pull request #565 from G10h4ck/master
+  baaa82a Reedych     Sun, 13 Nov 2016 01:39:54 +0700 Updated link for Qt
+  1773803 csoler      Sat, 12 Nov 2016 16:12:55 +0100 Merge pull request #562 from csoler/v0.6-FileListsOptim
+  c07dd83 csoler      Sat, 12 Nov 2016 15:53:17 +0100 merged upstream/master
+  5ef4e75 csoler      Fri, 11 Nov 2016 20:25:11 +0100 added count of total number of files and total file isze on top of shared directories
+  98183e1 Gio         Thu, 10 Nov 2016 11:45:41 +0100 Add some documentation for QML app and link android readme in main README
+  ae8fc61 Thunder     Wed,  9 Nov 2016 06:37:52 +0100 Merge pull request #564 from PhenomRetroShare/Fix_WindowsCompil
+  2827233 Phenom      Tue,  8 Nov 2016 19:47:17 +0100 Fix windows Compil with sys/socket.h
+  61131e4 csoler      Tue,  8 Nov 2016 19:56:07 +0100 simplified the remoteDirModel cache system a little bie
+  644c41e csoler      Mon,  7 Nov 2016 22:24:02 +0100 added a small trick to cache last request of RemoteDirModel::requestDirDetails
+  befeb44 csoler      Mon,  7 Nov 2016 20:55:02 +0100 Merge pull request #550 from G10h4ck/android
+  8ab3c7d Gio         Mon,  7 Nov 2016 14:37:23 +0100 Merge branch 'master' into android
+  beaf479 Gio         Mon,  7 Nov 2016 14:14:28 +0100 Remove rotten code in rsloginhandler autologin
+  461975f csoler      Mon,  7 Nov 2016 10:09:28 +0100 generally prevent threads to start twice, and fixed bug causing DirWatcher to be run twice
+  eb95c68 thunder2    Thu,  3 Nov 2016 08:32:15 +0100 Windows build environment: - Renamed folder build_libs to build-libs - Removed old file stripSVN.sh - Fixed some batch files - Switch from curl to wget - Added Qt environment - Added build.bat to build everything
+  0008572 csoler      Sun,  6 Nov 2016 19:15:05 +0100 Merge pull request #514 from PhenomRetroShare/Add_MacOSInTravisCI
+  7a58a87 Phenom      Sun,  4 Sep 2016 13:08:09 +0200 Add MacOS compilation test on Travis CI
+  c1b1e25 csoler      Sun,  6 Nov 2016 12:32:36 +0100 updated ubuntu changelog and added control file for ubuntu 16.10
+  17fb682 csoler      Sat,  5 Nov 2016 21:09:49 +0100 Merge pull request #559 from jolavillette/PacketSlicingGroupingFlags
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 19 Nov 2016 15:00:00 +0100
+
+retroshare06 (0.6.1-1.20161105.8cebb33d~xenial) xenial; urgency=low
+
   e4e3667 csoler   Sat,  5 Nov 2016 17:32:40 +0100 fixed bug that caused hierarchies that contain files being hashed to not send updates when the hash is finished
   390bdfe csoler   Sat,  5 Nov 2016 17:03:31 +0100 added request for sync on double click item for shared file lists
   a97fa1e csoler   Sat,  5 Nov 2016 16:07:30 +0100 fixed generation of pseudo-random request ids in p3filelists
