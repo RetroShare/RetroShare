@@ -45,6 +45,10 @@
  * #define RDM_DEBUG
  ****/
 
+static const uint32_t FLAT_VIEW_MAX_REFS_PER_SECOND       = 2000 ;
+static const uint32_t FLAT_VIEW_MAX_REFS_TABLE_SIZE       = 10000 ; //
+static const uint32_t FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES = 120 ;	// dont rebuild ref list more than every 2 mins.
+
 RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
          ageIndicator(IND_ALWAYS),
@@ -73,14 +77,7 @@ static bool isNewerThanEpoque(uint32_t ts)
     return ts > 0 ;	// this should be conservative enough
 }
 
-void FlatStyle_RDM::update()
-{
-	if(_needs_update)
-	{
-		preMods() ;
-		postMods() ;
-	}
-}
+
 void RetroshareDirModel::treeStyle()
 {
 	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
@@ -480,6 +477,25 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	return QVariant();
 } /* end of DisplayRole */
 
+FlatStyle_RDM::FlatStyle_RDM(bool mode)
+    : RetroshareDirModel(mode), _ref_mutex("Flat file list")
+{
+	_needs_update = true ;
+
+	{
+		RS_STACK_MUTEX(_ref_mutex) ;
+        _last_update = 0 ;
+	}
+}
+
+void FlatStyle_RDM::update()
+{
+	if(_needs_update)
+	{
+		preMods() ;
+		postMods() ;
+	}
+}
 QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 {
 	QString dir ;
@@ -1429,6 +1445,11 @@ TreeStyle_RDM::~TreeStyle_RDM()
 }
 void FlatStyle_RDM::postMods()
 {
+    time_t now = time(NULL);
+
+    if(_last_update + FLAT_VIEW_MIN_DELAY_BETWEEN_UPDATES > now)
+        return ;
+
     if(visible())
 	{
         emit layoutAboutToBeChanged();
@@ -1437,7 +1458,8 @@ void FlatStyle_RDM::postMods()
             RS_STACK_MUTEX(_ref_mutex) ;
             _ref_stack.clear() ;
             _ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
-            _needs_update = false ;
+            _ref_entries.clear();
+            _last_update = now;
         }
         QTimer::singleShot(100,this,SLOT(updateRefs())) ;
     }
@@ -1449,22 +1471,17 @@ void FlatStyle_RDM::updateRefs()
 {
 	if(RsAutoUpdatePage::eventsLocked())
 	{
-		_needs_update = true ;
+		QTimer::singleShot(5000,this,SLOT(updateRefs())) ;
 		return ;
 	}
 
     RetroshareDirModel::preMods() ;
 
 
-    static const uint32_t MAX_REFS_PER_SECOND = 2000 ;
 	uint32_t nb_treated_refs = 0 ;
 
     {
         RS_STACK_MUTEX(_ref_mutex) ;
-
-        _ref_entries.clear() ;
-
-        std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
 
         while(!_ref_stack.empty())
         {
@@ -1486,10 +1503,14 @@ void FlatStyle_RDM::updateRefs()
                 for(uint32_t i=0;i<details.children.size();++i)
                     _ref_stack.push_back(details.children[i].ref) ;
             }
-            if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
-            {															// the user and setup a timer to finish the job later.
-                _needs_update = true ;
 
+            // Limit the size of the table to display, otherwise it becomes impossible to Qt.
+
+            if(_ref_entries.size() > FLAT_VIEW_MAX_REFS_TABLE_SIZE)
+                return ;
+
+            if(++nb_treated_refs > FLAT_VIEW_MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to
+            {															// the user and setup a timer to finish the job later.
                 if(visible())
                     QTimer::singleShot(2000,this,SLOT(updateRefs())) ;
                 else
@@ -1497,10 +1518,7 @@ void FlatStyle_RDM::updateRefs()
                 break ;
             }
         }
-        std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;
-
-        if(_ref_stack.empty())
-            _needs_update = false ;
+        std::cerr << "reference tab contains " << std::dec << _ref_entries.size() << " files" << std::endl;
     }
 
     RetroshareDirModel::postMods() ;
