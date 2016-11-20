@@ -199,11 +199,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 	Q_OBJECT 
 
 	public:
-		FlatStyle_RDM(bool mode)
-            : RetroshareDirModel(mode), _ref_mutex("Flat file list")
-		{
-			_needs_update = true ;
-		}
+		FlatStyle_RDM(bool mode);
 
 		virtual ~FlatStyle_RDM() ;
 
@@ -233,6 +229,7 @@ class FlatStyle_RDM: public RetroshareDirModel
         std::vector<void *> _ref_entries ;// used to store the refs to display
 		std::vector<void *> _ref_stack ;		// used to store the refs to update
 		bool _needs_update ;
+        time_t _last_update ;
 };
 
 
