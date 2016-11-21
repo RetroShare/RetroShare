@@ -115,11 +115,14 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 
 #warning should we take care of symbolic links on windows?
 #ifndef WINDOWS_SYS
-   if( ent->d_type == DT_LNK && !mAllowSymLinks)
+   if( ent->d_type == DT_LNK)
    {
-	   std::cerr << "(II) Skipping symbolic link " << mFullPath << std::endl;
-	   should_skip = true ;
-	   return true ;
+	  if(!mAllowSymLinks)
+	  {
+		 std::cerr << "(II) Skipping symbolic link " << mFullPath << std::endl;
+		 should_skip = true ;
+		 return true ;
+	  }
    }
    else if( ent->d_type != DT_DIR && ent->d_type != DT_REG)
    {
