@@ -108,10 +108,10 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
     std::list<SharedDirInfo> shared_directory_list ;
     mSharedDirectories->getSharedDirectoryList(shared_directory_list);
 
-    std::map<std::string,time_t> sub_dir_list ;
+    std::set<std::string> sub_dir_list ;
 
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it)
-        sub_dir_list[(*real_dir_it).filename] = 0 ;
+        sub_dir_list.insert( (*real_dir_it).filename ) ;
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
@@ -150,12 +150,13 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         return;
     }
 
-    if(dirIt.dir_modtime() != dir_local_mod_time)
+    if(dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
+        											// we only want to detect when the directory has changed on the disk
     {
        // collect subdirs and subfiles
 
        std::map<std::string,DirectoryStorage::FileTS> subfiles ;
-       std::map<std::string,time_t> subdirs ;
+       std::set<std::string> subdirs ;
 
        for(;dirIt.isValid();dirIt.next())
        {
@@ -168,7 +169,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #endif
              break;
 
-          case librs::util::FolderIterator::TYPE_DIR:  	subdirs[dirIt.file_name()] = dirIt.file_modtime();
+          case librs::util::FolderIterator::TYPE_DIR:  	subdirs.insert(dirIt.file_name());
 #ifdef DEBUG_LOCAL_DIR_UPDATER
              std::cerr << "  adding sub-dir \"" << dirIt.file_name() << "\"" << std::endl;
 #endif

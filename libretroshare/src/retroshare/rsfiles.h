@@ -100,6 +100,18 @@ const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
 struct SharedDirInfo
 {
+	static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)
+	{
+		std::list<RsNodeGroupId>::const_iterator it1(l1.begin()) ;
+		std::list<RsNodeGroupId>::const_iterator it2(l2.begin()) ;
+
+		for(; (it1!=l1.end() && it2!=l2.end());++it1,++it2)
+			if(*it1 != *it2)
+				return false ;
+
+		return it1 == l1.end() && it2 == l2.end() ;
+	}
+
 	std::string filename ;
 	std::string virtualname ;
     FileStorageFlags shareflags ;		// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
