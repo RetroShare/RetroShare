@@ -152,14 +152,14 @@ bool InternalFileHierarchyStorage::isIndexValid(DirectoryStorage::EntryIndex e) 
     return e < mNodes.size() && mNodes[e] != NULL ;
 }
 
-bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,time_t>& subdirs,const RsFileHash& random_hash_seed)
+bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx, const std::set<std::string>& subdirs, const RsFileHash& random_hash_seed)
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
         return false;
 
     DirEntry& d(*static_cast<DirEntry*>(mNodes[indx])) ;
 
-    std::map<std::string,time_t> should_create(subdirs);
+    std::set<std::string> should_create(subdirs);
 
     for(uint32_t i=0;i<d.subdirs.size();)
         if(subdirs.find(static_cast<DirEntry*>(mNodes[d.subdirs[i]])->dir_name) == subdirs.end())
@@ -181,13 +181,13 @@ bool InternalFileHierarchyStorage::updateSubDirectoryList(const DirectoryStorage
             ++i;
         }
 
-    for(std::map<std::string,time_t>::const_iterator it(should_create.begin());it!=should_create.end();++it)
+    for(std::set<std::string>::const_iterator it(should_create.begin());it!=should_create.end();++it)
     {
 #ifdef DEBUG_DIRECTORY_STORAGE
         std::cerr << "[directory storage] adding new subdirectory " << it->first << " at index " << mNodes.size() << std::endl;
 #endif
 
-        DirEntry *de = new DirEntry(it->first) ;
+        DirEntry *de = new DirEntry(*it) ;
 
         de->row = mNodes.size();
         de->parent_index = indx;

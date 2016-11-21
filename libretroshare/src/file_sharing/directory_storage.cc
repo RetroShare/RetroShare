@@ -130,7 +130,7 @@ bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update
 bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
 bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
-bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx,const std::map<std::string,time_t>& subdirs,const RsFileHash& hash_salt)
+bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx, const std::set<std::string> &subdirs, const RsFileHash& hash_salt)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     bool res = mFileHierarchy->updateSubDirectoryList(indx,subdirs,hash_salt) ;
@@ -351,38 +351,63 @@ int LocalDirectoryStorage::searchHash(const RsFileHash& hash, RsFileHash& real_h
 
 void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
 {
-    RS_STACK_MUTEX(mDirStorageMtx) ;
+	std::set<std::string> dirs_with_new_virtualname ;
 
-    // Chose virtual name if not supplied, and remove duplicates.
+	{
+		RS_STACK_MUTEX(mDirStorageMtx) ;
 
-    std::set<std::string> virtual_names ;	// maps virtual to real name
-    std::list<SharedDirInfo> processed_list ;
+		// Chose virtual name if not supplied, and remove duplicates.
 
-    for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!= lst.end();++it)
-    {
-        int i=0;
-        std::string candidate_virtual_name = it->virtualname ;
+		std::set<std::string> virtual_names ;	// maps virtual to real name
+		std::list<SharedDirInfo> processed_list ;
 
-        if(candidate_virtual_name.empty())
-            candidate_virtual_name = RsDirUtil::getTopDir(it->filename);
+		for(std::list<SharedDirInfo>::const_iterator it(lst.begin());it!= lst.end();++it)
+		{
+			int i=0;
+			std::string candidate_virtual_name = it->virtualname ;
 
-        while(virtual_names.find(candidate_virtual_name) != virtual_names.end())
-            rs_sprintf_append(candidate_virtual_name, "-%d", ++i);
+			if(candidate_virtual_name.empty())
+				candidate_virtual_name = RsDirUtil::getTopDir(it->filename);
 
-        SharedDirInfo d(*it);
-        d.virtualname = candidate_virtual_name ;
-        processed_list.push_back(d) ;
+			while(virtual_names.find(candidate_virtual_name) != virtual_names.end())
+				rs_sprintf_append(candidate_virtual_name, "-%d", ++i);
 
-        virtual_names.insert(candidate_virtual_name) ;
-    }
+			SharedDirInfo d(*it);
+			d.virtualname = candidate_virtual_name ;
+			processed_list.push_back(d) ;
 
-    mLocalDirs.clear();
+			virtual_names.insert(candidate_virtual_name) ;
+		}
 
-    for(std::list<SharedDirInfo>::const_iterator it(processed_list.begin());it!=processed_list.end();++it)
-        mLocalDirs[it->filename] = *it;
+		// now for each member of the processed list, check if it is an existing shared directory that has been changed. If so, we need to update the dir TS of that directory
 
-    mTSChanged = true ;
+		std::map<std::string,SharedDirInfo> new_dirs ;
+
+		for(std::list<SharedDirInfo>::const_iterator it(processed_list.begin());it!=processed_list.end();++it)
+		{
+			std::map<std::string,SharedDirInfo>::iterator it2 = mLocalDirs.find(it->filename) ;
+
+			if(it2 != mLocalDirs.end() && it2->second.virtualname != it->virtualname)
+				dirs_with_new_virtualname.insert(it->filename) ;
+
+			new_dirs[it->filename] = *it;
+		}
+
+		mLocalDirs = new_dirs ;
+	}
+
+	mTSChanged = true ;
+
+    // now update the TS off-mutex.
+
+	for(DirIterator dirit(this,root());dirit;++dirit)
+		if(dirs_with_new_virtualname.find(dirit.name()) != dirs_with_new_virtualname.end())
+		{
+			std::cerr << "Updating TS of local dir \"" << dirit.name() << "\" with changed virtual name" << std::endl;
+			setDirectoryLocalModTime(*dirit,time(NULL));
+		}
 }
+
 void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -392,19 +417,6 @@ void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst
     for(std::map<std::string,SharedDirInfo>::iterator it(mLocalDirs.begin());it!=mLocalDirs.end();++it)
         lst.push_back(it->second) ;
 }
-
-static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)
-{
-    std::list<RsNodeGroupId>::const_iterator it1(l1.begin()) ;
-    std::list<RsNodeGroupId>::const_iterator it2(l2.begin()) ;
-
-    for(; (it1!=l1.end() && it2!=l2.end());++it1,++it2)
-        if(*it1 != *it2)
-            return false ;
-
-    return it1 == l1.end() && it2 == l2.end() ;
-}
-
 void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
 {
     bool changed = false ;
@@ -423,7 +435,7 @@ void LocalDirectoryStorage::updateShareFlags(const SharedDirInfo& info)
         // we compare the new info with the old one. If the two group lists have a different order, they will be seen as different. Not a big deal. We just
         // want to make sure that if they are different, flags get updated.
 
-        if(!sameLists(it->second.parent_groups,info.parent_groups) || it->second.filename != info.filename || it->second.shareflags != info.shareflags || it->second.virtualname != info.virtualname)
+        if(!SharedDirInfo::sameLists(it->second.parent_groups,info.parent_groups) || it->second.filename != info.filename || it->second.shareflags != info.shareflags || it->second.virtualname != info.virtualname)
         {
             it->second = info;
 

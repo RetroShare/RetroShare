@@ -95,7 +95,7 @@ public:
     int parentRow(DirectoryStorage::EntryIndex e);
     bool isIndexValid(DirectoryStorage::EntryIndex e) const;
     bool getChildIndex(DirectoryStorage::EntryIndex e,int row,DirectoryStorage::EntryIndex& c) const;
-    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx, const std::map<std::string,time_t>& subdirs, const RsFileHash &random_hash_seed);
+    bool updateSubDirectoryList(const DirectoryStorage::EntryIndex& indx, const std::set<std::string>& subdirs, const RsFileHash &random_hash_seed);
     bool removeDirectory(DirectoryStorage::EntryIndex indx)	;
     bool checkIndex(DirectoryStorage::EntryIndex indx,uint8_t type) const;
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files);
