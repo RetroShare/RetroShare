@@ -414,7 +414,7 @@ std::string ftServer::getPartialsDirectory()
 
 bool ftServer::copyFile(const std::string& source, const std::string& dest)
 {
-	return mFtController->copyFile(source, dest);
+	return RsDirUtil::copyFile(source, dest);
 }
 
 void ftServer::FileDownloads(std::list<RsFileHash> &hashs)

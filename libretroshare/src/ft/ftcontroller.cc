@@ -614,121 +614,6 @@ bool ftController::FlagFileComplete(const RsFileHash& hash)
 	return true;
 }
 
-bool ftController::moveFile(const std::string& source,const std::string& dest)
-{
-	// First try a rename
-	//
-
-#ifdef WINDOWS_SYS
-	std::wstring sourceW;
-	std::wstring destW;
-	librs::util::ConvertUtf8ToUtf16(source,sourceW);
-	librs::util::ConvertUtf8ToUtf16(dest,destW);
-
-	if( 0 != MoveFileW(sourceW.c_str(), destW.c_str()))
-#else
-	if (0 == rename(source.c_str(), dest.c_str()))
-#endif
-	{
-#ifdef CONTROL_DEBUG
-                std::cerr << "ftController::completeFile() renaming to: ";
-                std::cerr << dest;
-                std::cerr << std::endl;
-#endif
-
-		return true ;
-	}
-#ifdef CONTROL_DEBUG
-	std::cerr << "ftController::completeFile() FAILED mv to: ";
-	std::cerr << dest;
-	std::cerr << std::endl;
-	std::cerr << "trying copy" << std::endl ;
-#endif
-	// We could not rename, probably because we're dealing with different file systems.
-	// Let's copy then.
-
-#ifdef WINDOWS_SYS
-	if(CopyFileW(sourceW.c_str(), destW.c_str(), FALSE) == 0)
-#else
-	if(!copyFile(source,dest))
-#endif
-		return false ;
-
-	// copy was successfull, let's delete the original
-	std::cerr << "deleting original file " << source << std::endl ;
-
-#ifdef WINDOWS_SYS
-	if(0 != DeleteFileW(sourceW.c_str()))
-#else
-	if(0 == remove(source.c_str()))
-#endif
-		return true ;
-	else
-	{
-		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
-		return false ;
-	}
-}
-
-bool ftController::copyFile(const std::string& source,const std::string& dest)
-{
-	FILE *in = RsDirUtil::rs_fopen(source.c_str(),"rb") ;
-
-	if(in == NULL)
-	{
-		//RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
-		std::cerr << "******************** FT CONTROLLER ERROR ************************" << std::endl;
-		std::cerr << "Error while copying file " + dest + "\nCannot open input file "+source << std::endl;
-		std::cerr << "*****************************************************************" << std::endl;
-		return false ;
-	}
-
-	FILE *out = RsDirUtil::rs_fopen(dest.c_str(),"wb") ;
-
-	if(out == NULL)
-	{
-		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
-		fclose (in);
-		return false ;
-	}
-
-	size_t s=0;
-	size_t T=0;
-
-	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = rs_malloc(BUFF_SIZE) ;
-
-    	if(buffer == NULL)
-        {
-	    fclose (in);
-	    fclose (out);
-            return false ;
-        }
-	bool bRet = true;
-
-	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
-	{
-		size_t t = fwrite(buffer,1,s,out) ;
-		T += t ;
-
-		if(t != s)
-		{
-			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
-			bRet = false ;
-			break;
-		}
-	}
-
-	fclose(in) ;
-	fclose(out) ;
-
-	free(buffer) ;
-
-	return bRet ;
-}
-
-
-
 bool ftController::completeFile(const RsFileHash& hash)
 {
 	/* variables... so we can drop mutex later */
@@ -813,7 +698,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		// I don't know how the size can be zero, but believe me, this happens,
 		// and it causes an error on linux because then the file may not even exist.
 		//
-		if( fc->mSize > 0 && moveFile(fc->mCurrentPath,fc->mDestination) )
+		if( fc->mSize > 0 && RsDirUtil::moveFile(fc->mCurrentPath,fc->mDestination) )
 			fc->mCurrentPath = fc->mDestination;
 		else
 			fc->mState = ftFileControl::ERROR_COMPLETION;

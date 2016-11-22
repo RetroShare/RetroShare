@@ -175,9 +175,6 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		std::string getPartialsDirectory();
         bool 	FileDetails(const RsFileHash &hash, FileInfo &info);
 
-		bool moveFile(const std::string& source,const std::string& dest) ;
-		bool copyFile(const std::string& source,const std::string& dest) ;
-
 		/***************************************************************/
 		/********************** Cache Transfer *************************/
 		/***************************************************************/
