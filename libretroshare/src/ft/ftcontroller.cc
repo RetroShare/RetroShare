@@ -105,14 +105,13 @@ ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t f
 	mTurtle(NULL), 
 	mFtServer(NULL), 
 	mServiceCtrl(sc),
-	mFtServiceId(ftServiceId),
+	mFtServiceType(ftServiceId),
 	ctrlMutex("ftController"),
 	doneMutex("ftController"),
 	mFtActive(false),
 	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE) 
 {
 	_max_active_downloads = 5 ; // default queue size
-	_min_prioritized_transfers = 3 ;
     mDefaultEncryptionPolicy = RS_FILE_CTRL_ENCRYPTION_POLICY_PERMISSIVE;
     /* TODO */
     cnt = 0 ;
@@ -176,7 +175,7 @@ void ftController::addFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 	if(it != mDownloads.end())
 	{
 		it->second->mTransfer->addFileSource(peer_id);
-		setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, peer_id ));
+		setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, peer_id ));
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "... added." << std::endl ;
@@ -287,7 +286,7 @@ void ftController::searchForDirectSources()
                 for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); ++pit)
                     if(rsPeers->servicePermissionFlags(pit->peerId) & RS_NODE_PERM_DIRECT_DL)
                         if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
-                            setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, pit->peerId));
+                            setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceType, pit->peerId));
         }
 }
 
@@ -337,7 +336,10 @@ void ftController::checkDownloadQueue()
 {
 	// We do multiple things here:
 	//
+    // 0 - make sure all transfers have a consistent value for mDownloadQueue
+    //
 	// 1 - are there queued files ?
+    //
 	// 	YES
 	// 		1.1 - check for inactive files (see below).
 	// 				- select one inactive file
@@ -345,7 +347,7 @@ void ftController::checkDownloadQueue()
 	// 					- remove it from turtle handling
 	// 					- move the ftFileControl to queued list
 	// 					- set the queue priority to 1+largest in the queue.
-	// 		1.2 - pop from the queue the 1st file to come (according to priority)
+	// 		1.2 - pop from the queue the 1st file to come (according to availability of sources, then priority)
 	// 				- enable turtle router handling for this hash
 	// 				- reset counters
 	// 				- set the file as waiting
@@ -379,54 +381,72 @@ void ftController::checkDownloadQueue()
 	if(mDownloads.size() <= _max_active_downloads)
 		return ;
 
-	// Check for inactive transfers.
+    std::vector<ftFileControl*> inactive_transfers ;
+    std::vector<ftFileControl*> transfers_with_online_sources ;
+
+    std::set<RsPeerId> online_peers ;
+    mServiceCtrl->getPeersConnected(mFtServiceType,online_peers) ;
+
+	// Check for inactive transfers, and queued transfers with online sources.
 	//
 	time_t now = time(NULL) ;
-	uint32_t nb_moved = 0 ;	// don't move more files than the size of the queue.
 
-    for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
-		if(	it->second->mState != ftFileControl::QUEUED 
-                && (it->second->mState == ftFileControl::PAUSED
+    for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() ;++it)
+		if(	it->second->mState != ftFileControl::QUEUED  && (it->second->mState == ftFileControl::PAUSED
                     || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
-		{
+        {
+			inactive_transfers.push_back(it->second) ;
+        }
+		else if(it->second->mState == ftFileControl::QUEUED)
+        {
+            std::list<RsPeerId> srcs ;
+			it->second->mTransfer->getFileSources(srcs) ;
+
+            for(std::list<RsPeerId>::const_iterator it2(srcs.begin());it2!=srcs.end();++it2)
+                if(online_peers.find(*it2) != online_peers.end())
+                {
+                    transfers_with_online_sources.push_back(it->second) ;
+                    break ;
+                }
+        }
+
 #ifdef DEBUG_DWLQUEUE
-			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastActvTimeStamp()  << std::endl ;
+    std::cerr << "Identified " << inactive_transfers.size() << " inactive transfer, and " << transfers_with_online_sources.size() << " queued transfers with online sources." << std::endl;
 #endif
-			locked_bottomQueue(it->second->mQueuePosition) ;
+
+    // first swap as many queued transfers with online sources with inactive transfers
+    uint32_t i=0;
+
+    for(;i<inactive_transfers.size() && i<transfers_with_online_sources.size();++i)
+    {
 #ifdef DEBUG_DWLQUEUE
-			std::cerr << "  new position: " << it->second->mQueuePosition << std::endl ;
-			std::cerr << "  new state: " << it->second->mState << std::endl ;
+        std::cerr << "  Exchanging queue position of inactive transfer " << inactive_transfers[i]->mName << " at position " << inactive_transfers[i]->mQueuePosition << " with transfer at position " << transfers_with_online_sources[i]->mQueuePosition << " which has available sources." << std::endl;
 #endif
-			it->second->mTransfer->resetActvTimeStamp() ;	// very important!
-			++nb_moved ;
-		}
+		inactive_transfers[i]->mTransfer->resetActvTimeStamp() ;	// very important!
+		transfers_with_online_sources[i]->mTransfer->resetActvTimeStamp() ;	// very important!
 
-	// Check that at least _min_prioritized_transfers are assigned to non cache transfers
+        locked_swapQueue(inactive_transfers[i]->mQueuePosition,transfers_with_online_sources[i]->mQueuePosition);
+    }
 
-	std::cerr << "Asserting that at least " << _min_prioritized_transfers << " are dedicated to user transfers." << std::endl;
+    // now if some inactive transfers remain, put them at the end of the queue.
 
-	int user_transfers = 0 ;
-	std::vector<uint32_t> to_move_before ;	
-	std::vector<uint32_t> to_move_after ;
-
-	for(uint32_t p=0;p<_queue.size();++p)
+    for(;i<inactive_transfers.size();++i)
 	{
-		if(p < _min_prioritized_transfers)
-				++user_transfers ;									// count one more user file in the prioritized range.
-		else
-		{
-			if(to_move_after.size() + user_transfers >= _min_prioritized_transfers)	// we caught enough transfers to move back to the top of the queue.
-				break ;
-
-            to_move_after.push_back(p) ;
-		}
+#ifdef DEBUG_DWLQUEUE
+		std::cerr << "  - Inactive file " << inactive_transfers[i]->mName << " at position " << inactive_transfers[i]->mQueuePosition << " moved to end of the queue. mState=" << inactive_transfers[i]->mState << ", time lapse=" << now - it->second->mCreator->lastActvTimeStamp()  << std::endl ;
+#endif
+		locked_bottomQueue(inactive_transfers[i]->mQueuePosition) ;
+#ifdef DEBUG_DWLQUEUE
+		std::cerr << "  new position: " << inactive_transfers[i]->mQueuePosition << std::endl ;
+		std::cerr << "  new state: " << inactive_transfers[i]->mState << std::endl ;
+#endif
+		inactive_transfers[i]->mTransfer->resetActvTimeStamp() ;	// very important!
 	}
-	uint32_t to_move = (uint32_t)std::max(0,(int)_min_prioritized_transfers - (int)user_transfers) ;	// we move as many transfers as needed to get _min_prioritized_transfers user transfers.
 
-	std::cerr << "  collected " << to_move << " transfers to move." << std::endl;
+    // finally, do a full swab over the queue to make sure that the expected number of downloads is met.
 
-	for(uint32_t i=0;i<to_move && i < to_move_after.size() && i<to_move_before.size();++i)
-		locked_swapQueue(to_move_before[i],to_move_after[i]) ;
+    for(uint32_t i=0;i<mDownloadQueue.size();++i)
+        locked_checkQueueElement(i) ;
 }
 
 void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
@@ -437,37 +457,26 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 
 	switch(add_strategy)
 	{
+    default:
 		// Different strategies for files and cache files:
 		// 	- a min number of slots is reserved to user file transfer
 		// 	- cache files are always added after this slot.
 		//
-		case FT_FILECONTROL_QUEUE_ADD_END:			 _queue.push_back(ftfc) ;
-																 locked_checkQueueElement(_queue.size()-1) ;
+		case FT_FILECONTROL_QUEUE_ADD_END:			 mDownloadQueue.push_back(ftfc) ;
+																 locked_checkQueueElement(mDownloadQueue.size()-1) ;
 																 break ;
 	}
 }
 
 void ftController::locked_queueRemove(uint32_t pos)
 {
-	for(uint32_t p=pos;p<_queue.size()-1;++p)
+	for(uint32_t p=pos;p<mDownloadQueue.size()-1;++p)
 	{
-		_queue[p]=_queue[p+1] ;
+		mDownloadQueue[p]=mDownloadQueue[p+1] ;
 		locked_checkQueueElement(p) ;
 	}
-	_queue.pop_back();
+	mDownloadQueue.pop_back();
 }
-
-void ftController::setMinPrioritizedTransfers(uint32_t s)
-{
-	RsStackMutex mtx(ctrlMutex) ;
-	_min_prioritized_transfers = s ;
-}
-uint32_t ftController::getMinPrioritizedTransfers()
-{
-	RsStackMutex mtx(ctrlMutex) ;
-	return _min_prioritized_transfers ;
-}
-
 
 void ftController::setQueueSize(uint32_t s)
 {
@@ -481,7 +490,7 @@ void ftController::setQueueSize(uint32_t s)
 		std::cerr << "Settign new queue size to " << s << std::endl ;
 #endif
 		for(uint32_t p=std::min(s,old_s);p<=std::max(s,old_s);++p)
-			if(p < _queue.size())
+			if(p < mDownloadQueue.size())
 				locked_checkQueueElement(p);
 	}
 	else
@@ -521,7 +530,7 @@ void ftController::moveInQueue(const RsFileHash& hash,QueueMove mv)
 										locked_swapQueue(pos,pos-1) ;
 									break ;
 
-		case QUEUE_DOWN: 		if(pos < _queue.size()-1)
+		case QUEUE_DOWN: 		if(pos < mDownloadQueue.size()-1)
 										locked_swapQueue(pos,pos+1) ;
 									break ;
 		default:
@@ -531,28 +540,28 @@ void ftController::moveInQueue(const RsFileHash& hash,QueueMove mv)
 
 void ftController::locked_topQueue(uint32_t pos)
 {
-	ftFileControl *tmp=_queue[pos] ;
+	ftFileControl *tmp=mDownloadQueue[pos] ;
 
 	for(int p=pos;p>0;--p)
 	{
-		_queue[p]=_queue[p-1] ;
+		mDownloadQueue[p]=mDownloadQueue[p-1] ;
 		locked_checkQueueElement(p) ;
 	}
-	_queue[0]=tmp ;
+	mDownloadQueue[0]=tmp ;
 
 	locked_checkQueueElement(0) ;
 }
 void ftController::locked_bottomQueue(uint32_t pos)
 {
-	ftFileControl *tmp=_queue[pos] ;
+	ftFileControl *tmp=mDownloadQueue[pos] ;
 
-	for(uint32_t p=pos;p<_queue.size()-1;++p)
+	for(uint32_t p=pos;p<mDownloadQueue.size()-1;++p)
 	{
-		_queue[p]=_queue[p+1] ;
+		mDownloadQueue[p]=mDownloadQueue[p+1] ;
 		locked_checkQueueElement(p) ;
 	}
-	_queue[_queue.size()-1]=tmp ;
-	locked_checkQueueElement(_queue.size()-1) ;
+	mDownloadQueue[mDownloadQueue.size()-1]=tmp ;
+	locked_checkQueueElement(mDownloadQueue.size()-1) ;
 }
 void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
 {
@@ -561,9 +570,9 @@ void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
 	if(pos1==pos2)
 		return ;
 
-	ftFileControl *tmp = _queue[pos1] ;
-	_queue[pos1] = _queue[pos2] ;
-	_queue[pos2] = tmp;
+	ftFileControl *tmp = mDownloadQueue[pos1] ;
+	mDownloadQueue[pos1] = mDownloadQueue[pos2] ;
+	mDownloadQueue[pos2] = tmp;
 
 	locked_checkQueueElement(pos1) ;
 	locked_checkQueueElement(pos2) ;
@@ -571,26 +580,26 @@ void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
 
 void ftController::locked_checkQueueElement(uint32_t pos)
 {
-	_queue[pos]->mQueuePosition = pos ;
+	mDownloadQueue[pos]->mQueuePosition = pos ;
 
-	if(pos < _max_active_downloads && _queue[pos]->mState != ftFileControl::PAUSED)
+	if(pos < _max_active_downloads && mDownloadQueue[pos]->mState != ftFileControl::PAUSED)
 	{
-		if(_queue[pos]->mState == ftFileControl::QUEUED)
-			_queue[pos]->mTransfer->resetActvTimeStamp() ;
+		if(mDownloadQueue[pos]->mState == ftFileControl::QUEUED)
+			mDownloadQueue[pos]->mTransfer->resetActvTimeStamp() ;
 
-		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
+		mDownloadQueue[pos]->mState = ftFileControl::DOWNLOADING ;
 
-		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mFtServer->activateTunnels(_queue[pos]->mHash,mDefaultEncryptionPolicy,_queue[pos]->mFlags,true);
+		if(mDownloadQueue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
+            mFtServer->activateTunnels(mDownloadQueue[pos]->mHash,mDefaultEncryptionPolicy,mDownloadQueue[pos]->mFlags,true);
 	}
 
-	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
+	if(pos >= _max_active_downloads && mDownloadQueue[pos]->mState != ftFileControl::QUEUED && mDownloadQueue[pos]->mState != ftFileControl::PAUSED)
 	{
-		_queue[pos]->mState = ftFileControl::QUEUED ;
-		_queue[pos]->mCreator->closeFile() ;
+		mDownloadQueue[pos]->mState = ftFileControl::QUEUED ;
+		mDownloadQueue[pos]->mCreator->closeFile() ;
 
-		if(_queue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
-            mFtServer->activateTunnels(_queue[pos]->mHash,mDefaultEncryptionPolicy,_queue[pos]->mFlags,false);
+		if(mDownloadQueue[pos]->mFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
+            mFtServer->activateTunnels(mDownloadQueue[pos]->mHash,mDefaultEncryptionPolicy,mDownloadQueue[pos]->mFlags,false);
     }
 }
 
@@ -606,121 +615,6 @@ bool ftController::FlagFileComplete(const RsFileHash& hash)
 
 	return true;
 }
-
-bool ftController::moveFile(const std::string& source,const std::string& dest)
-{
-	// First try a rename
-	//
-
-#ifdef WINDOWS_SYS
-	std::wstring sourceW;
-	std::wstring destW;
-	librs::util::ConvertUtf8ToUtf16(source,sourceW);
-	librs::util::ConvertUtf8ToUtf16(dest,destW);
-
-	if( 0 != MoveFileW(sourceW.c_str(), destW.c_str()))
-#else
-	if (0 == rename(source.c_str(), dest.c_str()))
-#endif
-	{
-#ifdef CONTROL_DEBUG
-                std::cerr << "ftController::completeFile() renaming to: ";
-                std::cerr << dest;
-                std::cerr << std::endl;
-#endif
-
-		return true ;
-	}
-#ifdef CONTROL_DEBUG
-	std::cerr << "ftController::completeFile() FAILED mv to: ";
-	std::cerr << dest;
-	std::cerr << std::endl;
-	std::cerr << "trying copy" << std::endl ;
-#endif
-	// We could not rename, probably because we're dealing with different file systems.
-	// Let's copy then.
-
-#ifdef WINDOWS_SYS
-	if(CopyFileW(sourceW.c_str(), destW.c_str(), FALSE) == 0)
-#else
-	if(!copyFile(source,dest))
-#endif
-		return false ;
-
-	// copy was successfull, let's delete the original
-	std::cerr << "deleting original file " << source << std::endl ;
-
-#ifdef WINDOWS_SYS
-	if(0 != DeleteFileW(sourceW.c_str()))
-#else
-	if(0 == remove(source.c_str()))
-#endif
-		return true ;
-	else
-	{
-		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
-		return false ;
-	}
-}
-
-bool ftController::copyFile(const std::string& source,const std::string& dest)
-{
-	FILE *in = RsDirUtil::rs_fopen(source.c_str(),"rb") ;
-
-	if(in == NULL)
-	{
-		//RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
-		std::cerr << "******************** FT CONTROLLER ERROR ************************" << std::endl;
-		std::cerr << "Error while copying file " + dest + "\nCannot open input file "+source << std::endl;
-		std::cerr << "*****************************************************************" << std::endl;
-		return false ;
-	}
-
-	FILE *out = RsDirUtil::rs_fopen(dest.c_str(),"wb") ;
-
-	if(out == NULL)
-	{
-		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
-		fclose (in);
-		return false ;
-	}
-
-	size_t s=0;
-	size_t T=0;
-
-	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = rs_malloc(BUFF_SIZE) ;
-
-    	if(buffer == NULL)
-        {
-	    fclose (in);
-	    fclose (out);
-            return false ;
-        }
-	bool bRet = true;
-
-	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
-	{
-		size_t t = fwrite(buffer,1,s,out) ;
-		T += t ;
-
-		if(t != s)
-		{
-			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
-			bRet = false ;
-			break;
-		}
-	}
-
-	fclose(in) ;
-	fclose(out) ;
-
-	free(buffer) ;
-
-	return bRet ;
-}
-
-
 
 bool ftController::completeFile(const RsFileHash& hash)
 {
@@ -806,7 +700,7 @@ bool ftController::completeFile(const RsFileHash& hash)
 		// I don't know how the size can be zero, but believe me, this happens,
 		// and it causes an error on linux because then the file may not even exist.
 		//
-		if( fc->mSize > 0 && moveFile(fc->mCurrentPath,fc->mDestination) )
+		if( fc->mSize > 0 && RsDirUtil::moveFile(fc->mCurrentPath,fc->mDestination) )
 			fc->mCurrentPath = fc->mDestination;
 		else
 			fc->mState = ftFileControl::ERROR_COMPLETION;
@@ -1119,7 +1013,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 					std::cerr << std::endl;
 #endif
 					(dit->second)->mTransfer->addFileSource(*it);
-					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
+					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceType, *it));
 				}
 
 			if (srcIds.empty())
@@ -1214,7 +1108,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 		std::cerr << "ftController::FileRequest() adding peer: " << *it;
 		std::cerr << std::endl;
 #endif
-		setPeerState(tm, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
+		setPeerState(tm, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceType, *it));
 	}
 
 	/* add structures into the accessible data. Needs to be locked */
@@ -1738,7 +1632,6 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 #endif
 
 	for(it = mDownloads.begin(); it != mDownloads.end(); ++it)
-		if(it->second->mState == ftFileControl::DOWNLOADING)
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::statusChange() Updating Hash:";
@@ -1777,8 +1670,11 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 			}
 		}
 
-		// Now also look at turtle virtual peers.
+		// Now also look at turtle virtual peers, for ongoing downloads only.
 		//
+		if(it->second->mState != ftFileControl::DOWNLOADING)
+            continue ;
+
 		std::list<pqipeer> vlist ;
 		std::list<pqipeer>::const_iterator vit;
 		mTurtle->getSourceVirtualPeersList(it->first,vlist) ;
@@ -1822,7 +1718,6 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 }
 
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
-const std::string min_prioritized_downl_ss("MIN_PRORITIZED_DOWNLOADS");
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
@@ -1856,8 +1751,6 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 	/* basic control parameters */
 	std::string s ;
-	rs_sprintf(s, "%lu", getMinPrioritizedTransfers()) ;
-	configMap[min_prioritized_downl_ss] = s ;
 	rs_sprintf(s, "%lu", getQueueSize()) ;
 	configMap[active_downloads_size_ss] = s ;
 	configMap[download_dir_ss] = getDownloadDirectory();
@@ -2106,13 +1999,6 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		sscanf(mit->second.c_str(), "%d", &n);
 		std::cerr << "Note: loading active max downloads: " << n << std::endl;
 		setQueueSize(n);
-	}
-	if (configMap.end() != (mit = configMap.find(min_prioritized_downl_ss)))
-	{
-		int n=3 ;
-		sscanf(mit->second.c_str(), "%d", &n);
-		std::cerr << "Note: loading min prioritized downloads: " << n << std::endl;
-		setMinPrioritizedTransfers(n);
 	}
 	if (configMap.end() != (mit = configMap.find(partial_dir_ss)))
 	{
