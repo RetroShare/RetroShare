@@ -60,7 +60,7 @@ class RsHtml
 public:
 	RsHtml();
 
-	static void    initEmoticons(const QHash< QString, QString >& hash);
+	static void    initEmoticons(const QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > &hash);
 
 	QString formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor = Qt::white, qreal desiredContrast = 1.0, int desiredMinimumFontSize = 10);
 	static bool    findAnchors(const QString &text, QStringList& urls);

@@ -15,198 +15,247 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QHash>
-#include <QFile>
 #include <QApplication>
-#include <QWidget>
-#include <QFile>
-#include <QIcon>
 #include <QDesktopWidget>
+#include <QFile>
+#include <QGridLayout>
+#include <QHash>
+#include <QIcon>
 #include <QPushButton>
+#include <QTabWidget>
+#include <QWidget>
 
 #include <iostream>
 #include <math.h>
+
 #include "Emoticons.h"
 #include "util/HandleRichText.h"
 
-static QHash<QString, QString> Smileys;
-static QVector<QString> order;
+static QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > Smileys;
+static QVector<QString> grpOrdered;
 
 void Emoticons::load()
 {
-    QString sm_codes;
-    bool internalEmoticons = true;
+	QString sm_AllLines;
+	bool internalFiles = true;
 
-#if defined(Q_OS_WIN)
-    // first try external emoticons
-    QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-    if(sm_file.open(QIODevice::ReadOnly))
-    {
-        internalEmoticons = false;
-    } else {
-        // then embedded emotions
-        sm_file.setFileName(":/emojione/emotes.acs");
-        if(!sm_file.open(QIODevice::ReadOnly))
-        {
-            std::cout << "error opening ressource file" << std::endl ;
-            return ;
-        }
-    }
-#else
-    QFile sm_file(QString(":/emojione/emotes.acs"));
-    if(!sm_file.open(QIODevice::ReadOnly))
-    {
-        std::cout << "error opening ressource file" << std::endl ;
-        return ;
-    }
-#endif
+	// First try external emoticons
+	QFile sm_File(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
+	if(sm_File.open(QIODevice::ReadOnly))
+		internalFiles = false;
+	else
+	{
+		// Then embedded emotions
+		sm_File.setFileName(":/emojione/emotes.acs");
+		if(!sm_File.open(QIODevice::ReadOnly))
+		{
+			std::cout << "error opening ressource file" << std::endl;
+			return;
+		}
+	}
 
-    sm_codes = sm_file.readAll();
-    sm_file.close();
+	sm_AllLines = sm_File.readAll();
+	sm_File.close();
 
-    sm_codes.remove("\n");
-    sm_codes.remove("\r");
+	sm_AllLines.remove("\n");
+	sm_AllLines.remove("\r");
 
-    int i = 0;
-    QString smcode;
-    QString smfile;
-    while(i < sm_codes.length() && sm_codes[i] != '{')
-    {
-        ++i;
-    }
-    while (i < sm_codes.length()-2)
-    {
-        smcode = "";
-        smfile = "";
+	int i = 0 ;
+	QString smGroup;
+	QString smCode;
+	QString smFile;
+	while(i < sm_AllLines.length() && sm_AllLines[i] != '{')
+		++i ;//Ignore text before {
 
-        while(sm_codes[i] != '\"')
-        {
-            ++i;
-        }
-        ++i;
-        while (sm_codes[i] != '\"')
-        {
-            smcode += sm_codes[i];
-            ++i;
-        }
-        ++i;
+	while (i < sm_AllLines.length()-2)
+	{
+		// Type of lines:
+		// "Group"|":code:":"emojione/file.png";
+		smGroup = "";
+		smCode = "";
+		smFile = "";
 
-        while(sm_codes[i] != '\"')
-        {
-            ++i;
-        }
-        ++i;
-        while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
-        {
-            smfile += sm_codes[i];
-            ++i;
-        }
-        ++i;
-        if(!smcode.isEmpty() && !smfile.isEmpty()) {
-            while (smcode.right(1) == "|") {
-                smcode.remove(smcode.length() - 1, 1);
-            }
-   
-            if (internalEmoticons) {
-                Smileys.insert(smcode, ":/"+smfile);
-            } else {
-                Smileys.insert(smcode, smfile);
-            }
-			order.append(smcode);
-        }
-    }
+		//Reading Groupe (First into "")
+		while(sm_AllLines[i] != '\"')
+			++i; //Ignore text outside ""
 
-    // init <img> embedder
-    RsHtml::initEmoticons(Smileys);
+		++i; //'"'
+		while (sm_AllLines[i] != '\"')
+			smGroup += sm_AllLines[i++]; //Get group char by char
+
+		++i; //'"'
+
+		if (sm_AllLines[i] == '|')
+		{
+			//File in new format with group
+			++i; //'|'
+			//Reading Code (Second into "")
+			while(sm_AllLines[i] != '\"')
+				++i; //Ignore text outside ""
+
+			++i; //'"'
+			while (sm_AllLines[i] != '\"')
+				smCode += sm_AllLines[i++]; //Get code char by char
+
+			++i; //'"'
+		} else {
+			//Old file without group
+			++i; //':'
+			smCode = smGroup;
+			smGroup = "NULL";
+		}
+
+		//Reading File (Third into "")
+		while(sm_AllLines[i] != '\"')
+			++i; //Ignore text outside ""
+
+		++i; //'"'
+		while(sm_AllLines[i] != '\"' && sm_AllLines[i+1] != ';')
+			smFile += sm_AllLines[i++]; //Get file char by char
+
+		++i; //'"'
+		++i; //';'
+
+		if(!smGroup.isEmpty() && !smCode.isEmpty() && !smFile.isEmpty())
+		{
+			while (smCode.right(1) == "|")
+				smCode.remove(smCode.length() - 1, 1);
+
+			if (internalFiles)
+			{
+				smFile = ":/" + smFile;
+				if (smGroup.right(4).toLower() == ".png")
+					smGroup = ":/" + smGroup;
+			}
+
+			QVector<QString> ordered;
+			if (Smileys.contains(smGroup)) ordered = Smileys[smGroup].first;
+			ordered.append(smCode);
+			Smileys[smGroup].first = ordered;
+			Smileys[smGroup].second.insert(smCode, smFile);
+
+			if (!grpOrdered.contains(smGroup)) grpOrdered.append(smGroup);
+		}
+	}
+
+	// init <img> embedder
+	RsHtml::initEmoticons(Smileys);
 }
 
 void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
 {
-    QWidget *smWidget = new QWidget(parent, Qt::Popup);
+	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
+	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
+	smWidget->setWindowTitle("Emoticons") ;
 
-    const int buttonWidth = 26;
-    const int buttonHeight = 26;
+	//QTabWidget::setTabBarAutoHide(true) is from QT5.4, no way to hide TabBar before.
+	bool bOnlyOneGroup = (Smileys.count() == 1);
 
-    int rowCount = (int)sqrt((double)Smileys.size());
-    int countPerLine = (Smileys.size()/rowCount) + ((Smileys.size() % rowCount) ? 1 : 0);
+	QTabWidget *smTab = NULL;
+	if (! bOnlyOneGroup)
+	{
+		smTab =  new QTabWidget(smWidget);
+		QGridLayout *smGLayout = new QGridLayout(smWidget);
+		smGLayout->setContentsMargins(0,0,0,0);
+		smGLayout->addWidget(smTab);
+	}
 
-    smWidget->setAttribute( Qt::WA_DeleteOnClose);
-    smWidget->setWindowTitle("Emoticons");
-    smWidget->setBaseSize(countPerLine*buttonWidth, rowCount*buttonHeight);
+	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2;
+	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2;
+	int maxRowCount = 0;
+	int maxCountPerLine = 0;
 
-    //Warning: this part of code was taken from kadu instant messenger;
-    //         It was EmoticonSelector::alignTo(QWidget* w) function there
-    //         comments are Polish, I dont' know how does it work...
-    // oblicz pozycj� widgetu do kt�rego r�wnamy
-    // oblicz rozmiar selektora
-    QPoint pos = button->mapToGlobal(QPoint(0,0));
-    QSize e_size = smWidget->sizeHint();
-    // oblicz rozmiar pulpitu
-    QSize s_size = QApplication::desktop()->size();
-    // oblicz dystanse od widgetu do lewego brzegu i do prawego
-    int l_dist = pos.x();
-    int r_dist = s_size.width() - (pos.x() + button->width());
-    // oblicz pozycj� w zale�no�ci od tego czy po lewej stronie
-    // jest wi�cej miejsca czy po prawej
-    int x;
-    if (l_dist >= r_dist)
-        x = pos.x() - e_size.width();
-    else
-        x = pos.x() + button->width();
-    // oblicz pozycj� y - centrujemy w pionie
-    int y = pos.y() + button->height()/2 - e_size.height()/2;
-    // je�li wychodzi poza doln� kraw�d� to r�wnamy do niej
-    if (y + e_size.height() > s_size.height())
-        y = s_size.height() - e_size.height();
+	QVectorIterator<QString> grp(grpOrdered);
+	while(grp.hasNext())
+	{
+		QString groupName = grp.next();
+		QHash<QString,QString> group = Smileys.value(groupName).second;
 
-    if (above) {
-        y -= rowCount*buttonHeight;
-    }
+		QWidget *tabGrpWidget = NULL;
+		if (! bOnlyOneGroup)
+		{
+			tabGrpWidget = new QWidget(smTab);
+			if (groupName.right(4).toLower() == ".png")
+				smTab->addTab( tabGrpWidget, QIcon(groupName), "");
+			else
+				smTab->addTab( tabGrpWidget, groupName);
+		} else {
+			tabGrpWidget = smWidget;
+		}
 
-    // je�li wychodzi poza g�rn� kraw�d� to r�wnamy do niej
-    if (y < 0)
-        y = 0;
-    // ustawiamy selektor na wyliczonej pozycji
-    smWidget->move(x, y);
+		QGridLayout *tabGLayout = new QGridLayout(tabGrpWidget);
+		tabGLayout->setContentsMargins(0,0,0,0);
+		tabGLayout->setSpacing(0);
 
-    x = 0;
-    y = 0;
+		int rowCount = (int)sqrt((double)group.size());
+		int countPerLine = (group.size()/rowCount) + ((group.size() % rowCount) ? 1 : 0);
+		maxRowCount = qMax(maxRowCount, rowCount);
+		maxCountPerLine = qMax(maxCountPerLine, countPerLine);
 
-	QVectorIterator<QString> i(order);
-    while(i.hasNext())
-    {
-		QString key = i.next();
-        QPushButton *smButton = new QPushButton("", smWidget);
-        smButton->setGeometry(x*buttonWidth, y*buttonHeight, buttonWidth, buttonHeight);
-        smButton->setIconSize(QSize(buttonWidth, buttonHeight));
-		smButton->setIcon(QPixmap(Smileys.value(key)));
-		smButton->setToolTip(key);
-        smButton->setStyleSheet("QPushButton:hover {border: 3px solid white; border-radius: 2px;}");
-        smButton->setFlat(true);
-        ++x;
-        if(x >= countPerLine)
-        {
-            x = 0;
-            ++y;
-        }
-        QObject::connect(smButton, SIGNAL(clicked()), parent, slotAddMethod);
-        QObject::connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));
-    }
+		int lin = 0;
+		int col = 0;
+		QVector<QString> ordered = Smileys.value(groupName).first;
+		QVectorIterator<QString> it(ordered);
+		while(it.hasNext())
+		{
 
-    smWidget->show();
+			QString key = it.next();
+			QPushButton *button = new QPushButton("", tabGrpWidget);
+			button->setIconSize(QSize(buttonWidth, buttonHeight));
+			button->setFixedSize(QSize(buttonWidth, buttonHeight));
+			button->setIcon(QPixmap(group.value(key)));
+			button->setToolTip(key);
+			button->setStyleSheet("QPushButton:hover {border: 3px solid white; border-radius: 2px;}");
+			button->setFlat(true);
+			tabGLayout->addWidget(button,col,lin);
+			++lin;
+			if(lin >= countPerLine)
+			{
+				lin = 0;
+				++col;
+			}
+			QObject::connect(button, SIGNAL(clicked()), parent, slotAddMethod);
+			QObject::connect(button, SIGNAL(clicked()), smWidget, SLOT(close()));
+		}
+
+	}
+
+	//Get left up pos of button
+	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
+	//Get widget's size
+	QSize sizeWidget = smWidget->sizeHint();
+	//Get screen's size
+	QSize sizeScreen = QApplication::desktop()->size();
+
+	//Calculate left distance to screen start
+	int distToScreenLeft = butTopLeft.x();
+	//Calculate right distance to screen end
+	int distToRightScreen = sizeScreen.width() - (butTopLeft.x() + button->width());
+
+	//Calculate left position
+	int x;
+	if (distToScreenLeft >= distToRightScreen) //More distance in left than right in screen
+		x = butTopLeft.x() - sizeWidget.width(); //Place widget on left of button
+	else
+		x = butTopLeft.x() + button->width(); //Place widget on right of button
+
+	//Calculate top position
+	int y;
+	if (above) //Widget must be above the button
+		y = butTopLeft.y() + button->height() - sizeWidget.height();
+	else
+		y = butTopLeft.y() + button->height()/2 - sizeWidget.height()/2; //Centered on button height
+
+	if (y + sizeWidget.height() > sizeScreen.height()) //Widget will be too low
+		y = sizeScreen.height() - sizeWidget.height(); //Place widget bottom at screen bottom
+
+	if (y < 0) //Widget will be too high
+		y = 0; //Place widget top at screen top
+
+	smWidget->move(x, y) ;
+	smWidget->show() ;
 }
-
-//void Emoticons::formatText(QString &text)
-//{
-//    QHashIterator<QString, QString> i(Smileys);
-//    while(i.hasNext()) {
-//        i.next();
-//        foreach (QString code, i.key().split("|")) {
-//            text.replace(code, "<img src=\"" + i.value() + "\">");
-//        }
-//    }
-//}
