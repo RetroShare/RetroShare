@@ -394,7 +394,9 @@ void ftController::checkDownloadQueue()
     for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() ;++it)
 		if(	it->second->mState != ftFileControl::QUEUED  && (it->second->mState == ftFileControl::PAUSED
                     || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
-            inactive_transfers.push_back(it->second) ;
+        {
+			inactive_transfers.push_back(it->second) ;
+        }
 		else if(it->second->mState == ftFileControl::QUEUED)
         {
             std::list<RsPeerId> srcs ;
@@ -1624,10 +1626,10 @@ void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
     std::map<RsFileHash, ftFileControl*>::iterator it;
 	std::list<pqiServicePeer>::const_iterator pit;
 
-//#ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::statusChange()";
 	std::cerr << std::endl;
-//#endif
+#endif
 
 	for(it = mDownloads.begin(); it != mDownloads.end(); ++it)
 	{
