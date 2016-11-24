@@ -166,43 +166,47 @@ RsHtml::RsHtml()
 {
 }
 
-void RsHtml::initEmoticons(const QHash< QString, QString >& hash)
+void RsHtml::initEmoticons(const QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > >& hash)
 {
 	QString newRE;
-	for(QHash<QString,QString>::const_iterator it = hash.begin(); it != hash.end(); ++it)
-		foreach(QString smile, it.key().split("|")) {
-			if (smile.isEmpty()) {
-				continue;
-			}
-			defEmbedImg.smileys.insert(smile, it.value());
-			// add space around smileys
-			newRE += "(?:^|\\s)(" + QRegExp::escape(smile) + ")(?:$|\\s)|";
-			// explanations:
-			//	(?:^|\s)(*smiley*)(?:$|\s)
-			//
-			//	(?:^|\s) Non-capturing group
-			//		1st Alternative: ^
-			//			^ assert position at start of the string
-			//		2nd Alternative: \s
-			//			\s match any white space character [\r\n\t\f ]
-			//
-			//	1st Capturing group (*smiley*)
-			//		*smiley* matches the characters *smiley* literally (case sensitive)
-			//
-			//	(?:$|\s) Non-capturing group
-			//		1st Alternative: $
-			//			$ assert position at end of the string
-			//		2nd Alternative: \s
-			//			\s match any white space character [\r\n\t\f ]
+	for(QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > >::const_iterator groupit = hash.begin(); groupit != hash.end(); ++groupit) {
+		QHash<QString,QString> group = groupit.value().second;
+		for(QHash<QString,QString>::const_iterator it = group.begin(); it != group.end(); ++it)
+			foreach(QString smile, it.key().split("|")) {
+				if (smile.isEmpty()) {
+					continue;
+				}
+				defEmbedImg.smileys.insert(smile, it.value());
+				// add space around smileys
+				newRE += "(?:^|\\s)(" + QRegExp::escape(smile) + ")(?:$|\\s)|";
+				// explanations:
+				//	(?:^|\s)(*smiley*)(?:$|\s)
+				//
+				//	(?:^|\s) Non-capturing group
+				//		1st Alternative: ^
+				//			^ assert position at start of the string
+				//		2nd Alternative: \s
+				//			\s match any white space character [\r\n\t\f ]
+				//
+				//	1st Capturing group (*smiley*)
+				//		*smiley* matches the characters *smiley* literally (case sensitive)
+				//
+				//	(?:$|\s) Non-capturing group
+				//		1st Alternative: $
+				//			$ assert position at end of the string
+				//		2nd Alternative: \s
+				//			\s match any white space character [\r\n\t\f ]
 
-			/*
+				/*
 			 * TODO
 			 * a better version is:
 			 * (?<=^|\s)(*smile*)(?=$|\s) using the lookbehind/lookahead operator instead of non-capturing groups.
 			 * This solves the problem that spaces are matched, too (see workaround in RsHtml::embedHtml)
 			 * This is not supported by Qt4!
 			 */
-		}
+			}
+	}
+
 	newRE.chop(1);	// remove last |
 	defEmbedImg.myREs.append(QRegExp(newRE));
 }
