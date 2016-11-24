@@ -804,11 +804,13 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	return true;
 }
-bool     ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
-int      ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
+bool ftServer::watchEnabled()                      { return mFileDatabase->watchEnabled() ; }
+int  ftServer::watchPeriod() const                 { return mFileDatabase->watchPeriod()/60 ; }
+bool ftServer::followSymLinks() const              { return mFileDatabase->followSymLinks() ; }
 
-void ftServer::setWatchEnabled(bool b)                      { mFileDatabase->setWatchEnabled(b) ; }
-void ftServer::setWatchPeriod(int minutes)                  { mFileDatabase->setWatchPeriod(minutes*60) ; }
+void ftServer::setWatchEnabled(bool b)             { mFileDatabase->setWatchEnabled(b) ; }
+void ftServer::setWatchPeriod(int minutes)         { mFileDatabase->setWatchPeriod(minutes*60) ; }
+void ftServer::setFollowSymLinks(bool b)           { mFileDatabase->setFollowSymLinks(b) ; }
 
 bool ftServer::getShareDownloadDirectory()
 {

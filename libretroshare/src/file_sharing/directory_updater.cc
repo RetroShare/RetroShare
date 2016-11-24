@@ -43,6 +43,7 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
 
     mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
     mIsEnabled = false ;
+    mFollowSymLinks = FOLLOW_SYMLINKS_DEFAULT ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
@@ -119,29 +120,42 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
     // now for each of them, go recursively and match both files and dirs
 
+    std::set<std::string> existing_dirs ;
+
     for(DirectoryStorage::DirIterator stored_dir_it(mSharedDirectories,mSharedDirectories->root()) ; stored_dir_it;++stored_dir_it)
     {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
         std::cerr << "[directory storage]   recursing into " << stored_dir_it.name() << std::endl;
 #endif
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
                                                                             // are not necessarily in the same order.
     }
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
 #endif
 
+    if(mFollowSymLinks)
+	{
+		std::string real_path = RsDirUtil::removeSymLinks(cumulated_path) ;
+		if(existing_directories.end() != existing_directories.find(real_path))
+		{
+            std::cerr << "(EE) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
+			return ;
+		}
+		existing_directories.insert(real_path) ;
+	}
+
     // make sure list of subdirs is the same
     // make sure list of subfiles is the same
     // request all hashes to the hashcache
 
-    librs::util::FolderIterator dirIt(cumulated_path,false,false);	// disallow symbolic links and files from the future.
+    librs::util::FolderIterator dirIt(cumulated_path,mFollowSymLinks,false);	// disallow symbolic links and files from the future.
 
     time_t dir_local_mod_time ;
     if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
@@ -213,7 +227,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #ifdef DEBUG_LOCAL_DIR_UPDATER
         std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
 #endif
-        recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it) ;
+        recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories) ;
     }
 }
 
@@ -244,6 +258,15 @@ uint32_t LocalDirectoryUpdater::fileWatchPeriod() const
     return mDelayBetweenDirectoryUpdates ;
 }
 
+void LocalDirectoryUpdater::setFollowSymLinks(bool b)
+{
+    mFollowSymLinks = b ;
+}
+
+bool LocalDirectoryUpdater::followSymLinks() const
+{
+    return mFollowSymLinks ;
+}
 
 
 

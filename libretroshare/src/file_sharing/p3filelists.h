@@ -138,6 +138,9 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         void setWatchEnabled(bool b) ;
         bool watchEnabled() ;
 
+        bool followSymLinks() const;
+        void setFollowSymLinks(bool b) ;
+
         // interfact for directory parsing
 
 		void forceDirectoryCheck();              // Force re-sweep the directories and see what's changed

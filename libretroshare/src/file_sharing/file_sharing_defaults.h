@@ -37,6 +37,7 @@ static const uint32_t DELAY_BEFORE_DELETE_EMPTY_REMOTE_DIR      =  5*24*86400 ; 
 static const std::string HASH_CACHE_DURATION_SS = "HASH_CACHE_DURATION" ;	 // key string to store hash remembering time
 static const std::string WATCH_FILE_DURATION_SS = "WATCH_FILES_DELAY" ;		 // key to store delay before re-checking for new files
 static const std::string WATCH_FILE_ENABLED_SS  = "WATCH_FILES_ENABLED"; 	 // key to store ON/OFF flags for file whatch
+static const std::string FOLLOW_SYMLINKS_SS     = "FOLLOW_SYMLINKS"; 	 	 // dereference symbolic links, or just ignore them.
 static const std::string WATCH_HASH_SALT_SS     = "WATCH_HASH_SALT"; 	 	 // Salt that is used to hash directory names
 
 static const std::string FILE_SHARING_DIR_NAME       = "file_sharing" ;			 // hard-coded directory name to store friend file lists, hash cache, etc.
@@ -53,3 +54,5 @@ static const uint32_t NB_FRIEND_INDEX_BITS                    = 10 ;			// Do not
 static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;			// Do not change this!
 static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
 static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 600; 			// every 10 min
+
+static const bool FOLLOW_SYMLINKS_DEFAULT = true;

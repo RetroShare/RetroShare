@@ -215,6 +215,8 @@ public:
     virtual int watchPeriod() const ;
     virtual void setWatchEnabled(bool b) ;
     virtual bool watchEnabled() ;
+	virtual bool followSymLinks() const;
+	virtual void setFollowSymLinks(bool b);
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
