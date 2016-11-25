@@ -30,7 +30,7 @@
 #include "retroshare/rsgxsflags.h"
 
 #include "PopularityDefs.h"
-#include "RSItemDelegate.h"
+#include "RSElidedItemDelegate.h"
 #include "RSTreeWidgetItem.h"
 #include "gui/common/ElidedLabel.h"
 #include "gui/settings/rsharesettings.h"
@@ -89,7 +89,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	}
 
 	/* Add own item delegate */
-	RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
 	itemDelegate->setSpacing(QSize(0, 2));
 	ui->treeWidget->setItemDelegate(itemDelegate);
 

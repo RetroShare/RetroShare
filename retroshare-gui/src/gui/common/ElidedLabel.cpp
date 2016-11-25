@@ -179,7 +179,7 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 	QPoint lastPos(-1,-1);
 	//Now we know how many lines to redraw at good position
 	foreach (pair, lLines){
-		lastPos = pair.second + QPoint(0, iTransY);
+		lastPos = pair.second + QPoint(0+ cr.left(), iTransY + cr.top());
 		pair.first.draw(&painter, lastPos);
 	}
 
@@ -203,10 +203,10 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 				iTransX = 0;
 		}
 
-		painter.drawText(QPoint(iTransX, y + fontMetrics.ascent()), elidedLastLine);
+		painter.drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
 		//Draw button to get ToolTip
-		mRectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar)
-		                     , y
+		mRectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar) + cr.left()
+		                     , y + cr.top()
 		                     , fontMetrics.width(ellipsisChar)
 		                     , fontMetrics.height() - 1);
 		painter.drawRoundRect(mRectElision);
