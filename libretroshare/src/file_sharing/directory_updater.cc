@@ -145,7 +145,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 		std::string real_path = RsDirUtil::removeSymLinks(cumulated_path) ;
 		if(existing_directories.end() != existing_directories.find(real_path))
 		{
-            std::cerr << "(EE) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
+            std::cerr << "(WW) Directory " << cumulated_path << " has real path " << real_path << " which already belongs to another shared directory. Ignoring" << std::endl;
 			return ;
 		}
 		existing_directories.insert(real_path) ;
