@@ -104,7 +104,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui.pbBobLoadKey, SIGNAL(clicked()), this, SLOT(loadKey()));
 	QObject::connect(ui.cb_enableBob, SIGNAL(toggled(bool)), this, SLOT(enableBob(bool)));
 
-	QObject::connect(ui.cbBobAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleAdvancedSettings(bool)));
+	QObject::connect(ui.cbBobAdvanced, SIGNAL(toggled(bool)), this, SLOT(toggleBobAdvancedSettings(bool)));
 
 	QObject::connect(ui.sbBobLengthIn,    SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
 	QObject::connect(ui.sbBobLengthOut,   SIGNAL(valueChanged(int)), this, SLOT(tunnelSettingsChanged(int)));
@@ -116,6 +116,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	// These two spin boxes are used for the same thing - keep them in sync!
 	QObject::connect(ui.hiddenpage_proxyPort_i2p,   SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortNormal(int)));
 	QObject::connect(ui.hiddenpage_proxyPort_i2p_2, SIGNAL(valueChanged(int)), this, SLOT(syncI2PProxyPortBob(int)));
+
+	// These two line edits are used for the same thing - keep them in sync!
+	QObject::connect(ui.hiddenpage_proxyAddress_i2p,   SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrNormal(QString)));
+	QObject::connect(ui.hiddenpage_proxyAddress_i2p_2, SIGNAL(textChanged(QString)), this, SLOT(syncI2PProxyAddrBob(QString)));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -136,12 +140,17 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.hiddenServiceTab->setTabEnabled(hiddenServiceIncomingTab, false);
 	ui.gbBob->setEnabled(false);
-	ui.gbBobAdvanced->setEnabled(false);
+	ui.swBobAdvanced->setCurrentIndex(0);
+
+	ui.lBobB32Addr->hide();
+	ui.leBobB32Addr->hide();
+	ui.pbBobGenAddr->hide();
 
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
 #endif
+
 }
 
 void ServerPage::checkIpRange(const QString& ipstr)
@@ -216,8 +225,7 @@ void ServerPage::toggleTunnelConnection(bool b)
 }
 
 /** Saves the changes on this page */
-bool
-ServerPage::save(QString &/*errmsg*/)
+bool ServerPage::save(QString &/*errmsg*/)
 {
     Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked());
 
@@ -355,6 +363,7 @@ void ServerPage::toggleAutoIncludeDHT(bool b)
 {
     rsBanList->enableIPsFromDHT(b) ;
 }
+
 void ServerPage::toggleIpFiltering(bool b)
 {
     rsBanList->enableIPFiltering(b) ;
@@ -416,6 +425,7 @@ void ServerPage::loadFilteredIps()
     for(std::list<BanListPeer>::const_iterator it(lst.begin());it!=lst.end();++it,++row)
         addPeerToIPTable(ui.whiteListIpsTable,row,*it) ;
 }
+
 void ServerPage::updateSelectedBlackListIP(int row,int,int,int)
 {
     QTableWidgetItem *item = ui.filteredIpsTable->item(row,COLUMN_RANGE);
@@ -437,6 +447,7 @@ void ServerPage::updateSelectedBlackListIP(int row,int,int,int)
     ui.ipInputRange_SB->setValue(32 - 8*masked_bytes) ;
     ui.ipInputComment_LE->setText(ui.filteredIpsTable->item(row,COLUMN_COMMENT)->text()) ;
 }
+
 void ServerPage::updateSelectedWhiteListIP(int row, int,int,int)
 {
     QTableWidgetItem *item = ui.whiteListIpsTable->item(row,COLUMN_RANGE);
@@ -505,6 +516,7 @@ void ServerPage::addPeerToIPTable(QTableWidget *table,int row,const BanListPeer&
 }
 
 void ServerPage::toggleGroupIps(bool b) { rsBanList->enableAutoRange(b) ; }
+
 void ServerPage::setGroupIpLimit(int n) { rsBanList->setAutoRangeLimit(n) ; }
 
 void ServerPage::ipFilterContextMenu(const QPoint& /*point*/)
@@ -594,6 +606,7 @@ void ServerPage::moveToWhiteList0()
 
     rsBanList->addIpRange(addr,0,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
+
 void ServerPage::moveToWhiteList1()
 {
     sockaddr_storage addr ;
@@ -604,6 +617,7 @@ void ServerPage::moveToWhiteList1()
 
     rsBanList->addIpRange(addr,1,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
+
 void ServerPage::moveToWhiteList2()
 {
     sockaddr_storage addr ;
@@ -614,6 +628,7 @@ void ServerPage::moveToWhiteList2()
 
     rsBanList->addIpRange(addr,2,RSBANLIST_TYPE_WHITELIST, tr("Added by you").toStdString());
 }
+
 void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
 {
     QMenu contextMenu(this) ;
@@ -650,6 +665,7 @@ void ServerPage::ipWhiteListContextMenu(const QPoint& /* point */)
 
     contextMenu.exec(QCursor::pos()) ;
 }
+
 void ServerPage::removeBannedIp()
 {
     sockaddr_storage addr;
@@ -657,6 +673,7 @@ void ServerPage::removeBannedIp()
 
     removeCurrentRowFromBlackList(addr,bytes) ;
 }
+
 void ServerPage::removeWhiteListedIp()
 {
     sockaddr_storage addr;
@@ -688,17 +705,44 @@ void ServerPage::updateStatus()
 		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
 
 		ui.hiddenpage_serviceAddress->setText(addr);
+
+		if (!mBobSettings.keys.empty()) {
+			// we have an addr -> show fields
+			ui.lBobB32Addr->show();
+			ui.leBobB32Addr->show();
+
+			if (ui.cbBobAdvanced->checkState() == Qt::Checked) {
+				ui.pbBobGenAddr->show();
+			} else {
+				ui.pbBobGenAddr->hide();
+			}
+		} else {
+			// we don't have an addr -> hide fields
+			ui.lBobB32Addr->hide();
+			ui.leBobB32Addr->hide();
+			ui.pbBobGenAddr->hide();
+		}
 	}
+
+	QString bobSimpleText = QString();
+	bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3\n\n"
+	                        "When changing options (e.g. port) use the buttons at the bottom to stop and restart BOB.\n\n").
+	                     arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
+	                         ui.hiddenpage_proxyAddress_i2p_2->text(),
+	                         ui.hiddenpage_proxyPort_i2p_2->text()));
 
 	bobStates bs;
 	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
 
+	std::string errorString;
 	switch (bs.cs) {
 	case csStarted:
 		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
 		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
 
 		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB is working fine: tunnel established"));
 		break;
 	case csStarting:
 	case csClosing:
@@ -706,12 +750,20 @@ void ServerPage::updateStatus()
 		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
 
 		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB is processing a request: %1").arg(bs.cs == csStarting ? tr("staring up") : tr("shuting down")));
 		break;
 	case csError:
+		// get error msg from bob
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getErrorInfo, &errorString);
+
 		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_ERROR));
-		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken"));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
 
 		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB encountered an error:\n"));
+		bobSimpleText.append(QString::fromStdString(errorString));
 		break;
 	case csClosed:
 	default:
@@ -719,8 +771,12 @@ void ServerPage::updateStatus()
 		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
 
 		enableBobElements(true);
+
+		bobSimpleText.append(tr("BOB is inactive: tunnel closed"));
 		break;
 	}
+
+	ui.pteBobSimple->setPlainText(bobSimpleText);
 
 	if (mOngoingConnectivityCheck > 0) {
 		mOngoingConnectivityCheck--;
@@ -729,11 +785,9 @@ void ServerPage::updateStatus()
 			updateInProxyIndicatorResult(false);
 			mOngoingConnectivityCheck = -1;
 		}
-
 	}
 
-	if (mIsHiddenNode)
-	{
+	if (mIsHiddenNode) {
 		updateStatusHiddenNode();
 		return;
     }
@@ -811,8 +865,9 @@ void ServerPage::saveAddresses()
 {
 	bool saveAddr = false;
 
-	if (mIsHiddenNode)
-	{
+	saveCommon();
+
+	if (mIsHiddenNode) {
 		saveAddressesHiddenNode();
 		return;
 	}
@@ -885,32 +940,6 @@ void ServerPage::saveAddresses()
 
 	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
-
-	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr, new_proxyaddr;
-	uint16_t orig_proxyport, new_proxyport;
-	uint32_t status ;
-	// Tor
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
-
-	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
-	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
-
-	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
-	{
-		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
-	}
-
-	// I2P
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
-
-	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
-	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
-
-	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
-	{
-		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
-	}
 
 	load();
 }
@@ -1164,32 +1193,6 @@ void ServerPage::saveAddressesHiddenNode()
 		rsPeers->setHiddenNode(ownId, hiddenAddr, hiddenPort);
 	}
 
-	// HANDLE PROXY SERVER.
-	std::string orig_proxyaddr,new_proxyaddr;
-	uint16_t orig_proxyport, new_proxyport;
-	uint32_t status ;
-	// Tor
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport,status);
-
-	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
-	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
-
-	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
-	{
-		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
-	}
-
-	// I2P
-	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport,status);
-
-	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
-	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
-
-	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
-	{
-		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
-	}
-
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
@@ -1227,7 +1230,7 @@ void ServerPage::updateOutProxyIndicator()
 	}
 
 	// I2P - BOB
-	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p->text(), 2827);
+	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 2827);
 	if(socket.waitForConnected(500))
 	{
 		socket.disconnectFromHost();
@@ -1377,9 +1380,17 @@ void ServerPage::tunnelSettingsChanged(int)
 	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 }
 
-void ServerPage::toggleAdvancedSettings(bool checked)
+void ServerPage::toggleBobAdvancedSettings(bool checked)
 {
-	ui.gbBobAdvanced->setEnabled(checked);
+	ui.swBobAdvanced->setCurrentIndex(checked ? 1 : 0);
+
+	if (!mBobSettings.keys.empty()) {
+		if (checked) {
+			ui.pbBobGenAddr->show();
+		} else {
+			ui.pbBobGenAddr->hide();
+		}
+	}
 }
 
 void ServerPage::syncI2PProxyPortNormal(int i)
@@ -1390,6 +1401,24 @@ void ServerPage::syncI2PProxyPortNormal(int i)
 void ServerPage::syncI2PProxyPortBob(int i)
 {
 	ui.hiddenpage_proxyPort_i2p->setValue(i);
+
+	// update port
+	saveBob();
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
+}
+
+void ServerPage::syncI2PProxyAddrNormal(QString t)
+{
+	ui.hiddenpage_proxyAddress_i2p_2->setText(t);
+}
+
+void ServerPage::syncI2PProxyAddrBob(QString t)
+{
+	ui.hiddenpage_proxyAddress_i2p->setText(t);
+
+	// update addr
+	saveBob();
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::reloadConfig);
 }
 
 void ServerPage::taskFinished(taskTicket *&ticket)
@@ -1444,8 +1473,48 @@ void ServerPage::loadCommon()
 	updateOutProxyIndicator();
 
 	ui.cb_enableBob->setChecked(mBobSettings.enableBob);
+
+	if (!mBobSettings.keys.empty()) {
+		ui.lBobB32Addr->show();
+		ui.leBobB32Addr->show();
+	}
 }
-#include <QLineEdit>
+
+void ServerPage::saveCommon()
+{
+	// HANDLE PROXY SERVER.
+	std::string orig_proxyaddr, new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status ;
+	// Tor
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_TOR, orig_proxyaddr, orig_proxyport, status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_tor -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_tor -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport)) {
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, new_proxyaddr, new_proxyport);
+	}
+
+	saveBob();
+}
+
+void ServerPage::saveBob()
+{
+	std::string orig_proxyaddr, new_proxyaddr;
+	uint16_t orig_proxyport, new_proxyport;
+	uint32_t status;
+	// I2P
+	rsPeers->getProxyServer(RS_HIDDEN_TYPE_I2P, orig_proxyaddr, orig_proxyport, status);
+
+	new_proxyaddr = ui.hiddenpage_proxyAddress_i2p -> text().toStdString();
+	new_proxyport = ui.hiddenpage_proxyPort_i2p -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport)) {
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
+	}
+}
+
 void ServerPage::setUpBobElements()
 {
 	ui.gbBob->setEnabled(mBobSettings.enableBob);

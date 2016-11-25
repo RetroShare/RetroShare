@@ -102,10 +102,13 @@ private slots:
 	void enableBob(bool checked);
 	void tunnelSettingsChanged(int);
 
-	void toggleAdvancedSettings(bool checked);
+	void toggleBobAdvancedSettings(bool checked);
 
 	void syncI2PProxyPortNormal(int i);
 	void syncI2PProxyPortBob(int i);
+
+	void syncI2PProxyAddrNormal(QString);
+	void syncI2PProxyAddrBob(QString);
 
 	void connectionWithoutCert();
 
@@ -115,6 +118,8 @@ public:
 
 private:
 	void loadCommon();
+	void saveCommon();
+	void saveBob();
 
 	void setUpBobElements();
 	void enableBobElements(bool enable);
