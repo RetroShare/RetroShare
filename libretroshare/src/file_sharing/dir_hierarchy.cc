@@ -31,7 +31,7 @@
 
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
-//#include "rsexpr.h"
+#include "file_sharing_defaults.h"
 
 //#define DEBUG_DIRECTORY_STORAGE 1
 
@@ -958,6 +958,13 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
     uint32_t buffer_size = 0 ;
     uint32_t buffer_offset = 0 ;
 
+    unsigned char *tmp_section_data = (unsigned char*)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
+
+    if(!tmp_section_data)
+        return false;
+
+    uint32_t tmp_section_size = FL_BASE_TMP_SECTION_SIZE ;
+
     try
     {
         // Write some header
@@ -972,58 +979,52 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
             {
                 const FileEntry& fe(*static_cast<const FileEntry*>(mNodes[i])) ;
 
-                unsigned char *file_section_data = NULL ;
                 uint32_t file_section_offset = 0 ;
-                uint32_t file_section_size = 0;
 
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX  ,(uint32_t)fe.parent_index)) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ROW           ,(uint32_t)fe.row         )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,(uint32_t)i              )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,fe.file_name             )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,fe.file_size             )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,fe.file_hash             )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(file_section_data,file_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,(uint32_t)fe.file_modtime)) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX  ,(uint32_t)fe.parent_index)) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_ROW           ,(uint32_t)fe.row         )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX   ,(uint32_t)i              )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_NAME     ,fe.file_name             )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SIZE     ,fe.file_size             )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_FILE_SHA1_HASH,fe.file_hash             )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,file_section_offset,FILE_LIST_IO_TAG_MODIF_TS      ,(uint32_t)fe.file_modtime)) throw std::runtime_error("Write error") ;
 
-                if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY,file_section_data,file_section_offset)) throw std::runtime_error("Write error") ;
-
-                free(file_section_data) ;
+                if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_FILE_ENTRY,tmp_section_data,file_section_offset)) throw std::runtime_error("Write error") ;
             }
             else if(mNodes[i] != NULL && mNodes[i]->type() == FileStorageNode::TYPE_DIR)
             {
                 const DirEntry& de(*static_cast<const DirEntry*>(mNodes[i])) ;
 
-                unsigned char *dir_section_data = NULL ;
                 uint32_t dir_section_offset = 0 ;
-                uint32_t dir_section_size = 0;
 
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX   ,(uint32_t)de.parent_index      )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ROW            ,(uint32_t)de.row               )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,(uint32_t)i                    )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,de.dir_name                    )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_DIR_HASH       ,de.dir_hash                    )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,de.dir_parent_path             )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)de.dir_modtime       )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_UPDATE_TS      ,(uint32_t)de.dir_update_time   )) throw std::runtime_error("Write error") ;
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)de.dir_most_recent_time  )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_PARENT_INDEX   ,(uint32_t)de.parent_index      )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_ROW            ,(uint32_t)de.row               )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_ENTRY_INDEX    ,(uint32_t)i                    )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_NAME      ,de.dir_name                    )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_DIR_HASH       ,de.dir_hash                    )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_FILE_SIZE      ,de.dir_parent_path             )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_MODIF_TS       ,(uint32_t)de.dir_modtime       )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_UPDATE_TS      ,(uint32_t)de.dir_update_time   )) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_RECURS_MODIF_TS,(uint32_t)de.dir_most_recent_time  )) throw std::runtime_error("Write error") ;
 
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subdirs.size())) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subdirs.size())) throw std::runtime_error("Write error") ;
 
                 for(uint32_t j=0;j<de.subdirs.size();++j)
-                    if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subdirs[j])) throw std::runtime_error("Write error") ;
+                    if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subdirs[j])) throw std::runtime_error("Write error") ;
 
-                if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subfiles.size())) throw std::runtime_error("Write error") ;
+                if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subfiles.size())) throw std::runtime_error("Write error") ;
 
                 for(uint32_t j=0;j<de.subfiles.size();++j)
-                    if(!FileListIO::writeField(dir_section_data,dir_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subfiles[j])) throw std::runtime_error("Write error") ;
+                    if(!FileListIO::writeField(tmp_section_data,tmp_section_size,dir_section_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t)de.subfiles[j])) throw std::runtime_error("Write error") ;
 
-                if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY,dir_section_data,dir_section_offset)) throw std::runtime_error("Write error") ;
-
-                free(dir_section_data) ;
+                if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIR_ENTRY,tmp_section_data,dir_section_offset)) throw std::runtime_error("Write error") ;
             }
 
         bool res = FileListIO::saveEncryptedDataToFile(fname,buffer,buffer_offset) ;
 
         free(buffer) ;
+        free(tmp_section_data) ;
+
         return res ;
     }
     catch(std::exception& e)
@@ -1032,6 +1033,10 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
 
         if(buffer != NULL)
             free(buffer) ;
+
+        if(tmp_section_data != NULL)
+			free(tmp_section_data) ;
+
         return false;
     }
 }

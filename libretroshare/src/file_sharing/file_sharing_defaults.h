@@ -56,3 +56,5 @@ static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// 
 static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 600; 			// every 10 min
 
 static const bool FOLLOW_SYMLINKS_DEFAULT = true;
+
+static const uint32_t FL_BASE_TMP_SECTION_SIZE = 4096 ;
