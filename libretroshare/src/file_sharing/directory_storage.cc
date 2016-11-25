@@ -724,8 +724,12 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
             allowed_subfiles++ ;
     }
 
-    unsigned char *section_data = NULL;
-    uint32_t section_size = 0;
+    unsigned char *section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
+
+    if(!section_data)
+        return false ;
+
+    uint32_t section_size = FL_BASE_TMP_SECTION_SIZE;
     uint32_t section_offset = 0;
 
     // we need to send:
@@ -751,11 +755,16 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
     // serialise directory subfiles, with info for each of them
 
+	unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+
+    if(!file_section_data)
+        return false ;
+
+	uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE;
+
     for(uint32_t i=0;i<dir->subfiles.size();++i)
     {
-        unsigned char *file_section_data = NULL ;
         uint32_t file_section_offset = 0 ;
-        uint32_t file_section_size = 0;
 
         const InternalFileHierarchyStorage::FileEntry *file = mFileHierarchy->getFileEntry(dir->subfiles[i]) ;
 
@@ -774,12 +783,11 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
         if(!FileListIO::writeField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,file_section_data,file_section_offset)) return false ;
 
-        free(file_section_data) ;
-
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
         std::cerr << "  pushing subfile " << file->hash << ", array position=" << i << " indx=" << dir->subfiles[i] << std::endl;
 #endif
     }
+	free(file_section_data) ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
     std::cerr << "Serialised dir entry to send for entry index " << (void*)(intptr_t)indx << ". Data size is " << section_size << " bytes" << std::endl;
@@ -857,13 +865,16 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     // deserialise directory subfiles, with info for each of them
 
     std::vector<InternalFileHierarchyStorage::FileEntry> subfiles_array ;
+	unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+
+    if(!file_section_data)
+        return false ;
+
+	uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE;
 
     for(uint32_t i=0;i<n_subfiles;++i)
     {
         // Read the full data section for the file
-
-        unsigned char *file_section_data = NULL ;
-        uint32_t file_section_size = 0;
 
         if(!FileListIO::readField(section_data,section_size,section_offset,FILE_LIST_IO_TAG_REMOTE_FILE_ENTRY,file_section_data,file_section_size)) return false ;
 
@@ -879,10 +890,9 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
 
         f.file_modtime = modtime ;
 
-        free(file_section_data) ;
-
         subfiles_array.push_back(f) ;
     }
+	free(file_section_data) ;
 
     RS_STACK_MUTEX(mDirStorageMtx) ;
 #ifdef DEBUG_REMOTE_DIRECTORY_STORAGE

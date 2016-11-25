@@ -31,7 +31,7 @@
 
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
-//#include "rsexpr.h"
+#include "file_sharing_defaults.h"
 
 //#define DEBUG_DIRECTORY_STORAGE 1
 
@@ -958,14 +958,12 @@ bool InternalFileHierarchyStorage::save(const std::string& fname)
     uint32_t buffer_size = 0 ;
     uint32_t buffer_offset = 0 ;
 
-    static const uint32_t BASE_TMP_SECTION_SIZE = 1000 ;
-
-    unsigned char *tmp_section_data = (unsigned char*)rs_malloc(BASE_TMP_SECTION_SIZE) ;
+    unsigned char *tmp_section_data = (unsigned char*)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
 
     if(!tmp_section_data)
         return false;
 
-    uint32_t tmp_section_size = BASE_TMP_SECTION_SIZE ;
+    uint32_t tmp_section_size = FL_BASE_TMP_SECTION_SIZE ;
 
     try
     {
