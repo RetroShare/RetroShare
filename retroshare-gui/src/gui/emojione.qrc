@@ -1,5 +1,27 @@
 <RCC>
   <qresource prefix="/">
+    <file>emojione/1F33A.png</file>
+    <file>emojione/1F33B.png</file>
+    <file>emojione/1F33C.png</file>
+    <file>emojione/1F40A.png</file>
+    <file>emojione/1F34A.png</file>
+    <file>emojione/1F34B.png</file>
+    <file>emojione/1F34C.png</file>
+    <file>emojione/1F34D.png</file>
+    <file>emojione/1F34E.png</file>
+    <file>emojione/1F34F.png</file>
+    <file>emojione/1f32d.png</file>
+    <file>emojione/1f32e.png</file>
+    <file>emojione/1f32f.png</file>
+    <file>emojione/1F35F.png</file>
+    <file>emojione/people.png</file>
+    <file>emojione/people2.png</file>
+    <file>emojione/nature.png</file>
+    <file>emojione/food.png</file>
+    <file>emojione/travel.png</file>
+    <file>emojione/objects.png</file>
+    <file>emojione/symbols.png</file>
+    <file>emojione/activity.png</file>
     <file>emojione/00A9.png</file>
     <file>emojione/00AE.png</file>
     <file>emojione/1F525.png</file>
@@ -96,6 +118,8 @@
     <file>emojione/1F36A.png</file>
     <file>emojione/1F37A.png</file>
     <file>emojione/1F37B.png</file>
+    <file>emojione/1F40C.png</file>
+    <file>emojione/1F42F.png</file>
     <file>emojione/1F43A.png</file>
     <file>emojione/1F43B.png</file>
     <file>emojione/1F43C.png</file>
@@ -223,6 +247,7 @@
     <file>emojione/1F337.png</file>
     <file>emojione/1F338.png</file>
     <file>emojione/1F339.png</file>
+    <file>emojione/1F33D.png</file>
     <file>emojione/1F340.png</file>
     <file>emojione/1F341.png</file>
     <file>emojione/1F342.png</file>
@@ -526,6 +551,7 @@
     <file>emojione/2049.png</file>
     <file>emojione/2600.png</file>
     <file>emojione/2601.png</file>
+    <file>emojione/2604.png</file>
     <file>emojione/2611.png</file>
     <file>emojione/2614.png</file>
     <file>emojione/2615.png</file>
