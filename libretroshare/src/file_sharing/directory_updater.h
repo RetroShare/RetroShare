@@ -47,6 +47,9 @@ public:
     void setFileWatchPeriod(int seconds) ;
     uint32_t fileWatchPeriod() const ;
 
+    void setFollowSymLinks(bool b) ;
+    bool followSymLinks() const ;
+
     void setEnabled(bool b) ;
     bool isEnabled() const ;
 
@@ -56,7 +59,7 @@ protected:
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     virtual bool hash_confirm(uint32_t client_param) ;
 
-    void recursUpdateSharedDir(const std::string& cumulated_path,DirectoryStorage::EntryIndex indx);
+    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories);
     void sweepSharedDirectories();
 
 private:
@@ -70,5 +73,7 @@ private:
 
     uint32_t mDelayBetweenDirectoryUpdates;
     bool mIsEnabled ;
+    bool mFollowSymLinks;
+    bool mNeedsFullRebuild ;
 };
 

@@ -480,6 +480,21 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 }
 
 
+std::string RsDirUtil::removeSymLinks(const std::string& path)
+{
+#if defined(WINDOWS_SYS) || defined(__APPLE__)
+#warning (Mr.Alice): I don't know how to do this on windows/MacOS. See https://msdn.microsoft.com/en-us/library/windows/desktop/hh707084(v=vs.85).aspx
+    //if(!S_OK == PathCchCanonicalizeEx(tmp,...) ;
+    return path ;
+#else
+    char *tmp = canonicalize_file_name(path.c_str()) ;
+    std::string result(tmp) ;
+
+    free(tmp);
+    return result ;
+#endif
+}
+
 bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::set<std::string> &keepFiles)
 {
     for(librs::util::FolderIterator it(cleandir,false);it.isValid();it.next())

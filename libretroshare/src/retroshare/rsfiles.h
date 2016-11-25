@@ -247,6 +247,8 @@ class RsFiles
         virtual void setWatchEnabled(bool b) =0;
         virtual int watchPeriod() const =0;
         virtual bool watchEnabled() =0;
+        virtual bool followSymLinks() const=0;
+        virtual void setFollowSymLinks(bool b)=0 ;
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;

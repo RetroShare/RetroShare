@@ -91,6 +91,10 @@ bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
 
+// Removes all symbolic links along the path and computes the actual location of the file/dir passed as argument.
+
+std::string removeSymLinks(const std::string& path) ;
+
 bool    	cleanupDirectory(const std::string& dir, const std::set<std::string> &keepFiles);
 bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::string> &keepFiles);
 

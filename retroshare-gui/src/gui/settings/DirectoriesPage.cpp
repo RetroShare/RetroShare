@@ -68,6 +68,7 @@ bool DirectoriesPage::save(QString &/*errmsg*/)
     rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value());
 
 	rsFiles->shareDownloadDirectory(ui.shareDownloadDirectoryCB->isChecked());
+	rsFiles->setFollowSymLinks(ui.followSymLinks_CB->isChecked());
 
 	return true;
 }
@@ -83,6 +84,7 @@ void DirectoriesPage::load()
 
 	ui.incomingDir->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
 	ui.partialsDir->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
+	ui.followSymLinks_CB->setChecked(rsFiles->followSymLinks());
 }
 
 void DirectoriesPage::setIncomingDirectory()

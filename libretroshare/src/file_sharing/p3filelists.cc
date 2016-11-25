@@ -273,19 +273,22 @@ cleanup = true;
         mLocalSharedDirs->getSharedDirectoryList(dirList);
     }
 
-    for(std::list<SharedDirInfo>::iterator it = dirList.begin(); it != dirList.end(); ++it)
-    {
-        RsFileConfigItem *fi = new RsFileConfigItem();
+	{
+		RS_STACK_MUTEX(mFLSMtx) ;
+		for(std::list<SharedDirInfo>::iterator it = dirList.begin(); it != dirList.end(); ++it)
+		{
+			RsFileConfigItem *fi = new RsFileConfigItem();
 
-        fi->file.path = (*it).filename ;
-        fi->file.name = (*it).virtualname ;
-        fi->flags = (*it).shareflags.toUInt32() ;
+			fi->file.path = (*it).filename ;
+			fi->file.name = (*it).virtualname ;
+			fi->flags = (*it).shareflags.toUInt32() ;
 
-        for(std::list<RsNodeGroupId>::const_iterator it2( (*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2)
-            fi->parent_groups.ids.insert(*it2) ;
+			for(std::list<RsNodeGroupId>::const_iterator it2( (*it).parent_groups.begin());it2!=(*it).parent_groups.end();++it2)
+				fi->parent_groups.ids.insert(*it2) ;
 
-        sList.push_back(fi);
-    }
+			sList.push_back(fi);
+		}
+	}
 
     RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -314,7 +317,14 @@ cleanup = true;
 
         rskv->tlvkvs.pairs.push_back(kv);
     }
+	{
+        RsTlvKeyValue kv;
 
+        kv.key = FOLLOW_SYMLINKS_SS;
+        kv.value = followSymLinks()?"YES":"NO" ;
+
+        rskv->tlvkvs.pairs.push_back(kv);
+    }
     {
         RsTlvKeyValue kv;
 
@@ -372,6 +382,10 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
                 int t=0 ;
                 if(sscanf(kit->value.c_str(),"%d",&t) == 1)
                     setWatchPeriod(t);
+            }
+            else if(kit->key == FOLLOW_SYMLINKS_SS)
+            {
+                setFollowSymLinks(kit->value == "YES") ;
             }
             else if(kit->key == WATCH_FILE_ENABLED_SS)
             {
@@ -890,6 +904,17 @@ bool p3FileDatabase::inDirectoryCheck()
 {
     RS_STACK_MUTEX(mFLSMtx) ;
     return  mLocalDirWatcher->inDirectoryCheck();
+}
+void p3FileDatabase::setFollowSymLinks(bool b)
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    mLocalDirWatcher->setFollowSymLinks(b) ;
+    IndicateConfigChanged();
+}
+bool p3FileDatabase::followSymLinks() const
+{
+    RS_STACK_MUTEX(mFLSMtx) ;
+    return mLocalDirWatcher->followSymLinks() ;
 }
 void p3FileDatabase::setWatchEnabled(bool b)
 {

@@ -6,114 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>895</width>
+    <width>929</width>
     <height>549</height>
    </rect>
   </property>
-  <layout class="QGridLayout">
-   <property name="margin">
-    <number>6</number>
-   </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Incoming Directory</string>
-     </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="incomingDir">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="incomingButton">
-        <property name="minimumSize">
-         <size>
-          <width>31</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>31</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Browse</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Partials Directory</string>
-     </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="partialsDir">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="partialButton">
-        <property name="minimumSize">
-         <size>
-          <width>31</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>31</width>
-          <height>31</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Browse</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Shared Directories</string>
@@ -176,10 +74,119 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="QCheckBox" name="followSymLinks_CB">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tells Retroshare to follow the links. Loops and duplicate directories are automatically taken care of. If unchecked, Retroshare will just ignore symbolic links to both files and directories.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>follow symbolic links</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Incoming Directory</string>
+     </property>
+     <layout class="QGridLayout">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="incomingDir">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="incomingButton">
+        <property name="minimumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Browse</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Partials Directory</string>
+     </property>
+     <layout class="QGridLayout">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="partialsDir">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="partialButton">
+        <property name="minimumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>31</width>
+          <height>31</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Browse</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/directoryselect_24x24_shadow.png</normaloff>:/images/directoryselect_24x24_shadow.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
