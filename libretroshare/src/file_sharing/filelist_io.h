@@ -109,13 +109,26 @@ private:
 
     static bool checkSectionSize(unsigned char *& buff,uint32_t& buff_size,uint32_t offset,uint32_t S)
     {
+        // This tests avoids an infinite loop when growing new size
+
+        if(offset + S + SECTION_HEADER_MAX_SIZE > 0x8fffffff)
+            return false ;
+
         if(offset + S + SECTION_HEADER_MAX_SIZE > buff_size)
         {
-            buff = (unsigned char *)realloc(buff,offset + S + SECTION_HEADER_MAX_SIZE) ;
-            buff_size = offset + S + SECTION_HEADER_MAX_SIZE;
+            uint32_t new_size = (buff_size == 0)?512:buff_size ;
+
+            while(new_size < offset + S + SECTION_HEADER_MAX_SIZE)
+                new_size <<= 1 ;
+
+            buff = (unsigned char *)realloc(buff,new_size) ;
 
             if(!buff)
+            {
+                buff_size = 0 ;
                return false ;
+            }
+            buff_size = new_size ;
         }
         return true ;
     }

@@ -54,4 +54,4 @@ static const uint32_t NB_ENTRY_INDEX_BITS                     = 22 ;			// Do not
 static const uint32_t ENTRY_INDEX_BIT_MASK                    = 0x003fffff ;	// used for storing (EntryIndex,Friend) couples into a 32bits pointer. Depends on the two values just before. Dont change!
 static const uint32_t DELAY_BEFORE_DROP_REQUEST               = 600; 			// every 10 min
 
-static const uint32_t FL_BASE_TMP_SECTION_SIZE = 1000 ;
+static const uint32_t FL_BASE_TMP_SECTION_SIZE = 4096 ;
