@@ -44,6 +44,7 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
     mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
     mIsEnabled = false ;
     mFollowSymLinks = FOLLOW_SYMLINKS_DEFAULT ;
+    mNeedsFullRebuild = false ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
@@ -70,6 +71,8 @@ void LocalDirectoryUpdater::data_tick()
     if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
     {
         sweepSharedDirectories() ;
+
+		mNeedsFullRebuild = false ;
         mLastSweepTime = now;
         mSharedDirectories->notifyTSChanged() ;
     }
@@ -131,6 +134,7 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
         recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
                                                                             // are not necessarily in the same order.
     }
+
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
@@ -164,8 +168,8 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         return;
     }
 
-    if(dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
-        											// we only want to detect when the directory has changed on the disk
+    if(mNeedsFullRebuild || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
+																		// we only want to detect when the directory has changed on the disk
     {
        // collect subdirs and subfiles
 
@@ -260,7 +264,12 @@ uint32_t LocalDirectoryUpdater::fileWatchPeriod() const
 
 void LocalDirectoryUpdater::setFollowSymLinks(bool b)
 {
+    if(b != mFollowSymLinks)
+        mNeedsFullRebuild = true ;
+
     mFollowSymLinks = b ;
+
+    forceUpdate();
 }
 
 bool LocalDirectoryUpdater::followSymLinks() const

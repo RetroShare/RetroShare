@@ -74,5 +74,6 @@ private:
     uint32_t mDelayBetweenDirectoryUpdates;
     bool mIsEnabled ;
     bool mFollowSymLinks;
+    bool mNeedsFullRebuild ;
 };
 
