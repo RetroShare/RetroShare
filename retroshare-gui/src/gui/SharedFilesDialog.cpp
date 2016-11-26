@@ -880,10 +880,8 @@ void LocalSharedFilesDialog::openfolder()
 
 void  SharedFilesDialog::preModDirectories(bool local)
 {
-    //  (cyril) what is this for??
-	//	if (isRemote() == local) {
-	//	return;
-	//}
+	if (isRemote() == local)
+		return;
 
     std::cerr << "About to modify directories. Local=" << local << ". Temporarily disabling sorting" << std::endl;
 
@@ -988,9 +986,9 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 
 void  SharedFilesDialog::postModDirectories(bool local)
 {
-//    if (isRemote() == local) {
-//        return;
-//    }
+	if (isRemote() == local)
+		return;
+
     std::set<std::string> expanded_indexes,selected_indexes;
 
     saveExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
