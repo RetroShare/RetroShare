@@ -164,8 +164,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		smGLayout->addWidget(smTab);
 	}
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*1.2;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*1.2;
+	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.4;
+	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.4;
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
