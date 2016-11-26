@@ -1,5 +1,42 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  2a758dd csoler   Sat, 26 Nov 2016 19:19:15 +0100 changed shared files tree header when updating
+  aa4ecd7 csoler   Sat, 26 Nov 2016 18:58:02 +0100 added limit to calls of PreMods() in SharedFilesDialog so as to keep CPU load minimal when updating dirs from friends. Disabled sorting when new data comes.
+  d01644c csoler   Sat, 26 Nov 2016 11:26:02 +0100 added back the test for local/remote in SharedFilesDialog as it reduces the load anyway
+  4ef1b08 csoler   Sat, 26 Nov 2016 11:22:35 +0100 attempt to fix emoticons sizes on high DPI screens
+  3386238 csoler   Sat, 26 Nov 2016 11:03:31 +0100 improved preservation of directories when updating, and allow to temporarily disable sorting while an update is received
+  7aaf330 defnax   Sat, 26 Nov 2016 00:02:58 +0100 Added category icons for Smiley Groups Updated emotes file, sorted Emoticons.
+  c92c270 csoler   Fri, 25 Nov 2016 22:30:47 +0100 Merge pull request #584 from mr-alice/v0.6-FileLists
+  729c05a mr-alice Fri, 25 Nov 2016 21:09:34 +0100 merged with upstream code
+  d975a18 csoler   Fri, 25 Nov 2016 21:06:40 +0100 added doubling of buffer size in checkSectionSize when missing space. Used 1024 instead of 1000 as start size
+  2953957 mr-alice Fri, 25 Nov 2016 20:50:10 +0100 added full re-scan when symbolic links are (des)activated, since the directory time stamps will not trigger an update
+  3f3efca mr-alice Fri, 25 Nov 2016 20:33:27 +0100 removed canonicalize_file_name from MacOS compilation
+  5fbc263 csoler   Fri, 25 Nov 2016 20:05:23 +0100 applied removal of realloc to other files in file_sharing/ directory
+  0cb7778 csoler   Fri, 25 Nov 2016 18:52:04 +0100 removed all calls to realloc causing major slow down on windows where its implementation is extremely inefficient
+  5f69c9e mr-alice Thu, 24 Nov 2016 23:42:56 +0100 added an option to follow symbolic links or not, and anti-loop system during directories traversal
+  cf270d7 defnax   Thu, 24 Nov 2016 08:04:00 +0100 Merge pull request #583 from PhenomRetroShare/Add_GroupedEmoticons
+  1e1c19e csoler   Wed, 23 Nov 2016 20:30:06 +0100 Merge pull request #582 from mr-alice/v0.6-DLQueue
+  66c3259 mr-alice Wed, 23 Nov 2016 19:12:38 +0100 removed debug output
+  ae83651 Phenom   Wed, 23 Nov 2016 17:48:35 +0100 Add grouped emoticons.
+  fb70cb2 mr-alice Tue, 22 Nov 2016 23:39:09 +0100 removed duplicate copy/rename file methods from ftController
+  47b8258 mr-alice Tue, 22 Nov 2016 23:19:34 +0100 fixed the download queue, and allow queued files to start when sources get online and empty slots are present
+  69f503e defnax   Tue, 22 Nov 2016 13:26:29 +0100 Merge pull request #580 from sehraf/pr-improve-smiley
+  2faefe8 csoler   Mon, 21 Nov 2016 20:38:45 +0100 Merge pull request #581 from csoler/v0.6-FileListsOptim
+  172b513 csoler   Mon, 21 Nov 2016 16:14:11 +0100 added change in TS for shared directories when virtual name changes
+  2ffe3e3 sehraf   Mon, 21 Nov 2016 15:00:33 +0100 fix emoticons: make ':)' actually look like ':)' instead of ':D'
+  5d1f479 csoler   Mon, 21 Nov 2016 10:13:26 +0100 fixed bug preventing plugins loaded as symbolic links to be considered by folderIterator
+  5af5425 csoler   Mon, 21 Nov 2016 00:17:10 +0100 Merge pull request #579 from csoler/v0.6-FileListsOptim
+  da84b88 csoler   Sun, 20 Nov 2016 20:42:14 +0100 fixed constant updating of flat dir model. Had to limit to at most 10000 files to keep it interactive.
+  7b78a68 csoler   Sat, 19 Nov 2016 23:42:07 +0100 Merge pull request #577 from PhenomRetroShare/Fix_AnchorOnChannelMessage
+  9718385 csoler   Sat, 19 Nov 2016 20:15:53 +0100 added missing mutex probably causing crashes when saving directory storage
+  007825b Phenom   Sat, 19 Nov 2016 16:44:12 +0100 Fix Anchor on Channel Message
+  7a2f02e csoler   Sat, 19 Nov 2016 15:16:03 +0100 added missing control file for xenial
+  3c32bb6 csoler   Sat, 19 Nov 2016 15:03:47 +0100 updated ubuntu changelog
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 26 Nov 2016 15:00:00 +0100
+
+retroshare06 (0.6.1-1.20161119~87183853) xenial; urgency=low
+
   5b9b63e csoler      Sat, 19 Nov 2016 14:42:43 +0100 Merge pull request #575 from PhenomRetroShare/FixCrashOnCheckBigBigFileStorage
   a8782f0 Phenom      Fri, 18 Nov 2016 23:04:32 +0100 Fix Crash when checking a big-big file storage.
   4bdfc6e csoler      Fri, 18 Nov 2016 17:56:42 +0100 removed unused old file
