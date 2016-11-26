@@ -880,13 +880,23 @@ void LocalSharedFilesDialog::openfolder()
 
 void  SharedFilesDialog::preModDirectories(bool local)
 {
-	if (isRemote() == local) {
-		return;
-	}
+    //  (cyril) what is this for??
+	//	if (isRemote() == local) {
+	//	return;
+	//}
+
+    std::cerr << "About to modify directories. Local=" << local << ". Temporarily disabling sorting" << std::endl;
+
+    ui.dirTreeView->setSortingEnabled(false);
+
+    std::set<std::string> expanded_indexes,selected_indexes;
+    saveExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
 
 	/* Notify both models, only one is visible */
 	tree_model->preMods();
 	flat_model->preMods();
+
+    restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
 }
 
 void SharedFilesDialog::saveExpandedPathsAndSelection(std::set<std::string>& expanded_indexes, std::set<std::string>& selected_indexes)
@@ -978,9 +988,9 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 
 void  SharedFilesDialog::postModDirectories(bool local)
 {
-    if (isRemote() == local) {
-        return;
-    }
+//    if (isRemote() == local) {
+//        return;
+//    }
     std::set<std::string> expanded_indexes,selected_indexes;
 
     saveExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
@@ -993,13 +1003,15 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	flat_model->postMods();
 	ui.dirTreeView->update() ;
 
-    restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
-
     if (ui.filterPatternLineEdit->text().isEmpty() == false)
 		FilterItems();
 
+    ui.dirTreeView->setSortingEnabled(true);
+
+    restoreExpandedPathsAndSelection(expanded_indexes,selected_indexes) ;
+
 #ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "****** updated directories! ******" << std::endl;
+    std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
 #endif
 	QCoreApplication::flush();
 }
