@@ -74,6 +74,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
     mLastCleanupTime = 0 ;
+    mLastDataRecvTS = 0 ;
 
     // This is for the transmission of data
 
@@ -222,9 +223,11 @@ int p3FileDatabase::tick()
 		mLocalSharedDirs->checkSave() ;
 
         // This is a hack to make loaded directories show up in the GUI, because the GUI generally isn't ready at the time they are actually loaded up,
-        // so the first notify is ignored, and no other notify will happen next.
+        // so the first notify is ignored, and no other notify will happen next. We only do it if no data was received in the last 5 secs, in order to
+        // avoid syncing the GUI at every dir sync which kills performance.
 
-        RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+		if(mLastDataRecvTS + 5 < now && mLastDataRecvTS + 10 > now)
+			RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
     }
 
     return 0;
@@ -1392,6 +1395,8 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
     if(!item)
         return ;
 
+	time_t now = time(NULL) ;
+
     // check the hash. If anything goes wrong (in the chunking for instance) the hash will not match
 
     if(RsDirUtil::sha1sum((uint8_t*)item->directory_content_data.bin_data,item->directory_content_data.bin_len) != item->checksum)
@@ -1405,21 +1410,6 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
 #endif
 
     EntryIndex entry_index = DirectoryStorage::NO_INDEX;
-
-    // remove the original request from pending list
-
-    {
-        RS_STACK_MUTEX(mFLSMtx) ;
-
-        std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(item->request_id) ;
-
-        if(it == mPendingSyncRequests.end())
-        {
-            P3FILELISTS_ERROR() << "  request " << std::hex << item->request_id << std::dec << " cannot be found. ERROR!" << std::endl;
-            return ;
-        }
-        mPendingSyncRequests.erase(it) ;
-    }
 
     // find the correct friend entry
 
@@ -1463,7 +1453,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         std::cerr << "  Directory is up to date. Setting local TS." << std::endl;
 #endif
 
-        mRemoteDirectories[fi]->setDirectoryUpdateTime(entry_index,time(NULL)) ;
+        mRemoteDirectories[fi]->setDirectoryUpdateTime(entry_index,now) ;
     }
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
@@ -1472,12 +1462,16 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
 #endif
         RS_STACK_MUTEX(mFLSMtx) ;
 
-        RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
+        if(mLastDataRecvTS + 1 < now) // avoid notifying the GUI too often as it kills performance.
+		{
+			RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
+			mLastDataRecvTS = now;
+		}
+        std::cerr << "Performing update of directory index " << std::hex << entry_index << std::dec << " from friend " << item->PeerId() << std::endl;
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
         {
-            RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
-			mRemoteDirectories[fi]->lastSweepTime() = time(NULL) - DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP + 10 ;  // force re-sweep in 10 secs, so as to fasten updated
+			mRemoteDirectories[fi]->lastSweepTime() = now - DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP + 10 ;  // force re-sweep in 10 secs, so as to fasten updated
         }
         else
             P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
@@ -1487,6 +1481,23 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
         mRemoteDirectories[fi]->print();
 #endif
     }
+
+	// remove the original request from pending list in the end. doing this here avoids that a new request is added while the previous response is not treated.
+
+    {
+        RS_STACK_MUTEX(mFLSMtx) ;
+
+        std::map<DirSyncRequestId,DirSyncRequestData>::iterator it = mPendingSyncRequests.find(item->request_id) ;
+
+        if(it == mPendingSyncRequests.end())
+        {
+            P3FILELISTS_ERROR() << "  request " << std::hex << item->request_id << std::dec << " cannot be found. ERROR!" << std::endl;
+            return ;
+        }
+        mPendingSyncRequests.erase(it) ;
+    }
+
+
 }
 
 void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e,int depth)
