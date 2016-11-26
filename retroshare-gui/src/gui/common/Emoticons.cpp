@@ -164,8 +164,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		smGLayout->addWidget(smTab);
 	}
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2;
+	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*1.2;
+	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*1.2;
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
@@ -179,7 +179,12 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		if (! bOnlyOneGroup)
 		{
 			tabGrpWidget = new QWidget(smTab);
-			smTab->setIconSize(QSize(24,24));
+
+			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
+			//
+			QFontMetricsF fm(parent->font()) ;
+			smTab->setIconSize(QSize(32*fm.height()/14.0,32*fm.height()/14.0));
+
 			if (groupName.right(4).toLower() == ".png")
 				smTab->addTab( tabGrpWidget, QIcon(groupName), "");
 			else
