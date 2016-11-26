@@ -883,7 +883,9 @@ void  SharedFilesDialog::preModDirectories(bool local)
 	if (isRemote() == local)
 		return;
 
+#ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "About to modify directories. Local=" << local << ". Temporarily disabling sorting" << std::endl;
+#endif
 
     ui.dirTreeView->setSortingEnabled(false);
 

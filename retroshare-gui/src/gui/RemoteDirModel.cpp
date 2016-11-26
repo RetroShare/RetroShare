@@ -62,6 +62,7 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 
     mDirDetails.ref = (void*)intptr_t(0xffffffff) ;
     mLastRemote = false ;
+    mUpdating = false;
 }
 
 // QAbstractItemModel::setSupportedDragActions() was replaced by virtual QAbstractItemModel::supportedDragActions()
@@ -758,9 +759,15 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 		{
 			case 0:
 				if (RemoteMode)
-					return tr("Friends Directories");
+                    if(mUpdating)
+						return tr("Friends Directories [updating...]");
+					else
+						return tr("Friends Directories");
 				else
-					return tr("My Directories");
+                    if(mUpdating)
+						return tr("My Directories [updating...]");
+					else
+						return tr("My Directories");
 			case 1:
 				return tr("Size");
 			case 2:
@@ -981,6 +988,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 void RetroshareDirModel::preMods()
 {
     emit layoutAboutToBeChanged();
+    mUpdating = true ;
 #if QT_VERSION < 0x050000
 	reset();
 #else
@@ -997,6 +1005,7 @@ void RetroshareDirModel::preMods()
 void RetroshareDirModel::postMods()
 {
 //	emit layoutAboutToBeChanged();
+    mUpdating = false ;
 #if QT_VERSION >= 0x040600
 	beginResetModel();
 #endif

@@ -1458,7 +1458,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
     else if(item->flags & RsFileListsItem::FLAGS_SYNC_DIR_CONTENT)
     {
 #ifdef DEBUG_P3FILELISTS
-        std::cerr << "  Item contains directory data. Deserialising/Updating." << std::endl;
+        P3FILELISTS_DEBUG() << "  Item contains directory data. Deserialising/Updating." << std::endl;
 #endif
         RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1467,12 +1467,12 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem *sitem)
 			RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
 			mLastDataRecvTS = now;
 		}
-        std::cerr << "Performing update of directory index " << std::hex << entry_index << std::dec << " from friend " << item->PeerId() << std::endl;
+#ifdef DEBUG_P3FILELISTS
+        P3FILELISTS_DEBUG() << "Performing update of directory index " << std::hex << entry_index << std::dec << " from friend " << item->PeerId() << std::endl;
+#endif
 
         if(mRemoteDirectories[fi]->deserialiseUpdateDirEntry(entry_index,item->directory_content_data))
-        {
 			mRemoteDirectories[fi]->lastSweepTime() = now - DELAY_BETWEEN_REMOTE_DIRECTORIES_SWEEP + 10 ;  // force re-sweep in 10 secs, so as to fasten updated
-        }
         else
             P3FILELISTS_ERROR() << "(EE) Cannot deserialise dir entry. ERROR. "<< std::endl;
 

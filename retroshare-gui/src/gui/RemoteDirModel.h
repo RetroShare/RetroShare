@@ -156,6 +156,8 @@ class RetroshareDirModel : public QAbstractItemModel
         mutable DirDetails mDirDetails ;
         mutable bool mLastRemote ;
         mutable time_t mLastReq;
+
+        bool mUpdating ;
 };
 
 // This class shows the classical hierarchical directory view of shared files
