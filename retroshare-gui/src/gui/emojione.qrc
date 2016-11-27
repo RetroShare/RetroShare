@@ -1,5 +1,17 @@
 <RCC>
   <qresource prefix="/">
+    <file>emojione/1F5E1.png</file>
+    <file>emojione/1F6E1.png</file>
+    <file>emojione/1F38A.png</file>
+    <file>emojione/1F6BF.png</file>
+    <file>emojione/1F6C1.png</file>
+    <file>emojione/1F6CB.png</file>
+    <file>emojione/1F6CC.png</file>
+    <file>emojione/1F6CD.png</file>
+    <file>emojione/1F6CE.png</file>
+    <file>emojione/1F6CF.png</file>
+    <file>emojione/2602.png</file>
+    <file>emojione/2763.png</file>
     <file>emojione/1F33A.png</file>
     <file>emojione/1F33B.png</file>
     <file>emojione/1F33C.png</file>
@@ -416,6 +428,11 @@
     <file>emojione/1F598.png</file>
     <file>emojione/1F599.png</file>
     <file>emojione/1F59E.png</file>
+    <file>emojione/1F573.png</file>
+    <file>emojione/1F577.png</file>
+    <file>emojione/1F578.png</file>
+    <file>emojione/1F579.png</file>
+    <file>emojione/1F581.png</file>
     <file>emojione/1F600.png</file>
     <file>emojione/1F601.png</file>
     <file>emojione/1F602.png</file>
@@ -555,6 +572,7 @@
     <file>emojione/2611.png</file>
     <file>emojione/2614.png</file>
     <file>emojione/2615.png</file>
+    <file>emojione/2620.png</file>
     <file>emojione/2708.png</file>
     <file>emojione/2744.png</file>
     <file>emojione/2764.png</file>

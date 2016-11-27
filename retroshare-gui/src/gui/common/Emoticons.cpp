@@ -184,6 +184,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			//
 			QFontMetricsF fm(parent->font()) ;
 			smTab->setIconSize(QSize(32*fm.height()/14.0,32*fm.height()/14.0));
+			smTab->setMinimumWidth(400);
 
 			if (groupName.right(4).toLower() == ".png")
 				smTab->addTab( tabGrpWidget, QIcon(groupName), "");
