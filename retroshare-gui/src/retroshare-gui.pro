@@ -492,6 +492,7 @@ HEADERS +=  rshare.h \
             gui/common/RSTreeWidgetItem.h \
             gui/common/RSFeedWidget.h \
             gui/common/RSTabWidget.h \
+            gui/common/RSElidedItemDelegate.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
             gui/common/FilesDefs.h \
@@ -801,6 +802,7 @@ SOURCES +=  main.cpp \
             gui/common/RSTreeWidgetItem.cpp \
             gui/common/RSFeedWidget.cpp \
             gui/common/RSTabWidget.cpp \
+            gui/common/RSElidedItemDelegate.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/FilesDefs.cpp \

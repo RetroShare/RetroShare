@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="GxsForumThreadWidgetVLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -31,8 +31,8 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+     <widget class="QWidget" name="topWidget">
+      <layout class="QVBoxLayout" name="topVLayout">
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="minimumSize">
@@ -47,7 +47,7 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="toolBarFrameHLayout">
           <property name="leftMargin">
            <number>2</number>
           </property>
@@ -128,7 +128,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="toolBarHSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -347,21 +347,21 @@
           </widget>
          </item>
          <item row="0" column="6">
-          <widget class="Line" name="line_2">
+          <widget class="Line" name="lineLeft">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="8">
-          <widget class="Line" name="line">
+          <widget class="Line" name="lineRight">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="11">
-          <spacer name="horizontalSpacer_2">
+          <spacer name="postHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -470,8 +470,8 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="bottomWidget">
+      <layout class="QVBoxLayout" name="bottomVLayout">
        <item>
         <widget class="RSImageBlockWidget" name="imageBlockWidget" native="true">
          <property name="sizePolicy">

@@ -19,35 +19,36 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDateTime>
+#include <QKeyEvent>
+#include <QMessageBox>
 #include <QStandardItemModel>
 #include <QShortcut>
 #include <QTimer>
-#include <QDateTime>
-#include <QMessageBox>
-#include <QKeyEvent>
 
 #include "MessagesDialog.h"
-#include "msgs/MessageComposer.h"
-#include "msgs/MessageWidget.h"
-#include "msgs/TagsMenu.h"
-#include "msgs/MessageUserNotify.h"
-#include "settings/rsharesettings.h"
+
+#include "notifyqt.h"
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
-#include "common/RSItemDelegate.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
-#include "gui/gxs/GxsIdDetails.h"
+#include "common/RSElidedItemDelegate.h"
+#include "gxs/GxsIdTreeWidgetItem.h"
+#include "gxs/GxsIdDetails.h"
+#include "msgs/MessageComposer.h"
+#include "msgs/MessageInterface.h"
+#include "msgs/MessageUserNotify.h"
+#include "msgs/MessageWidget.h"
+#include "msgs/TagsMenu.h"
+#include "settings/rsharesettings.h"
+
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
 #include "util/QtVersion.h"
-#include "notifyqt.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
 #include <algorithm>
-
-#include "gui/msgs/MessageInterface.h"
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/folder-draft.png"
@@ -197,7 +198,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, ROLE_SORT);
     mMessageCompareRole->setRole(COLUMN_STAR, ROLE_SORT);
 
-    RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+    RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.messageTreeWidget->setItemDelegate(itemDelegate);
 
