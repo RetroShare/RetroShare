@@ -829,7 +829,9 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
     if(storage==NULL || !storage->extractData(e,d))
     {
-        P3FILELISTS_ERROR() << "(EE) request on index " << e << ", for directory ID=" << ((storage==NULL)?("[NULL]"):(storage->peerId().toStdString())) << " failed. This should not happen." << std::endl;
+#ifdef DEBUG_FILE_HIERARCHY
+        P3FILELISTS_DEBUG() << "(WW) request on index " << e << ", for directory ID=" << ((storage==NULL)?("[NULL]"):(storage->peerId().toStdString())) << " failed. This should not happen." << std::endl;
+#endif
         return false ;
     }
 
