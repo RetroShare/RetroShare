@@ -65,8 +65,8 @@ public:
     void processSettings(bool load);
     void addGroupToExpand(const RsNodeGroupId &groupId);
     bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
-    void addPeerToExpand(const std::string &gpgId);
-    bool getExpandedPeers(std::set<std::string> &peers) const;
+    void addPeerToExpand(const RsPgpId &gpgId);
+    bool getExpandedPeers(std::set<RsPgpId> &peers) const;
 
     std::string getSelectedGroupId() const;
 
@@ -120,8 +120,7 @@ private:
 
     bool groupsHasChanged;
     std::set<RsNodeGroupId> openGroups;
-#warning this would needs an ID, not a std::string.
-    std::set<std::string>   openPeers;
+    std::set<RsPgpId>   openPeers;
 
     /* Color definitions (for standard see qss.default) */
     QColor mTextColorGroup;

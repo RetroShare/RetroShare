@@ -57,7 +57,7 @@
 
 MessengerWindow* MessengerWindow::_instance = NULL;
 
-std::set<std::string> MessengerWindow::expandedPeers ;
+std::set<RsPgpId> MessengerWindow::expandedPeers ;
 std::set<RsNodeGroupId> MessengerWindow::expandedGroups ;
 
 /*static*/ void MessengerWindow::showYourself ()
@@ -99,7 +99,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
-        for (std::set<std::string>::iterator peerIt = expandedPeers.begin(); peerIt != expandedPeers.end(); ++peerIt) {
+        for (std::set<RsPgpId>::iterator peerIt = expandedPeers.begin(); peerIt != expandedPeers.end(); ++peerIt) {
             ui.friendList->addPeerToExpand(*peerIt);
         }
         expandedPeers.clear();

@@ -1196,7 +1196,7 @@ void FriendList::insertPeers()
                 gpgItem->setFont(i, gpgFont);
             }
 
-            if (openPeers.find(gpgId.toStdString()) != openPeers.end()) {
+            if (openPeers.find(gpgId) != openPeers.end()) {
                 gpgItem->setExpanded(true);
             }
         }
@@ -1253,14 +1253,14 @@ bool FriendList::getExpandedGroups(std::set<RsNodeGroupId> &groups) const
 /**
  * Returns a list with all gpg ids that are expanded
  */
-bool FriendList::getExpandedPeers(std::set<std::string> &peers) const
+bool FriendList::getExpandedPeers(std::set<RsPgpId> &peers) const
 {
     peers.clear();
     QTreeWidgetItemIterator it(ui->peerTreeWidget);
     while (*it) {
         QTreeWidgetItem *item = *it;
         if (item->type() == TYPE_GPG && item->isExpanded()) {
-            peers.insert(peers.end(), getRsId(item));
+            peers.insert(peers.end(), RsPgpId(getRsId(item)));
         }
         ++it;
     }
@@ -2282,7 +2282,7 @@ void FriendList::addGroupToExpand(const RsNodeGroupId &groupId)
  * Add a gpgId to the openPeers list. These peers
  * will be expanded, when they're added to the QTreeWidget
  */
-void FriendList::addPeerToExpand(const std::string &gpgId)
+void FriendList::addPeerToExpand(const RsPgpId& gpgId)
 {
     openPeers.insert(gpgId);
 }
