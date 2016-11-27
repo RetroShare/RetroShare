@@ -226,7 +226,7 @@ int p3FileDatabase::tick()
         // so the first notify is ignored, and no other notify will happen next. We only do it if no data was received in the last 5 secs, in order to
         // avoid syncing the GUI at every dir sync which kills performance.
 
-		if(mLastDataRecvTS + 5 < now && mLastDataRecvTS + 10 > now)
+		if(mLastDataRecvTS + 5 < now && mLastDataRecvTS + 20 > now)
 			RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);						 	 	 // notify the GUI if the hierarchy has changed
     }
 
