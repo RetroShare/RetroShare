@@ -35,7 +35,7 @@ public:
 
     void removeFocusRect(int column);
     void setSpacing(const QSize &spacing);
-
+    QSize spacing() const { return m_spacing; }
 private:
     QList<int> m_noFocusRect;
     QSize m_spacing;

@@ -30,7 +30,7 @@
 #include "GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
-#include "gui/common/RSItemDelegate.h"
+#include "gui/common/RSElidedItemDelegate.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -161,7 +161,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
 
 	/* Set own item delegate */
-	RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
 	itemDelegate->setSpacing(QSize(0, 2));
 	ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
@@ -208,8 +208,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->postText->clear();
     ui->by_label->setId(RsGxsId());
     ui->time_label->clear() ;
-    ui->line->hide() ;
-    ui->line_2->hide() ;
+    ui->lineRight->hide() ;
+    ui->lineLeft->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
     ui->postText->setImageBlockWidget(ui->imageBlockWidget);
@@ -963,7 +963,8 @@ void GxsForumThreadWidget::fillThreadProgress(int current, int count)
 {
 	// show fill progress
 	if (count) {
-		ui->progressBar->setValue(current * ui->progressBar->maximum() / count);
+		int max = ui->progressBar->maximum();
+		ui->progressBar->setValue(current * max / count);
 	}
 }
 
@@ -1380,8 +1381,8 @@ void GxsForumThreadWidget::insertMessage()
 	ui->postText->clear();
     ui->by_label->setId(RsGxsId());
     ui->time_label->clear() ;
-    ui->line->hide() ;
-    ui->line_2->hide() ;
+    ui->lineRight->hide() ;
+    ui->lineLeft->hide() ;
     ui->by_text_label->hide() ;
     ui->by_label->hide() ;
 
@@ -1442,8 +1443,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
     ui->by_label->setId(msg.mMeta.mAuthorId) ;
 
-    ui->line->show() ;
-    ui->line_2->show() ;
+    ui->lineRight->show() ;
+    ui->lineLeft->show() ;
     ui->by_text_label->show() ;
     ui->by_label->show() ;
 
