@@ -23,6 +23,7 @@
  *
  */
 
+#include "pqi/p3servicecontrol.h"
 #include "services/p3statusservice.h"
 #include "serialiser/rsstatusitems.h"
 #include "rsserver/p3face.h"

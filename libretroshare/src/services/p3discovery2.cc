@@ -25,6 +25,7 @@
 
 #include "services/p3discovery2.h"
 #include "pqi/p3peermgr.h"
+#include "pqi/p3servicecontrol.h"
 #include "util/rsversioninfo.h"
 
 #include "retroshare/rsiface.h"

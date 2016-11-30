@@ -23,6 +23,7 @@
  *
  */
 #include "serialiser/rsserviceids.h"
+#include "pqi/p3servicecontrol.h"
 
 #include "file_sharing/p3filelists.h"
 #include "file_sharing/directory_storage.h"

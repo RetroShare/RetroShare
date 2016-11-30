@@ -71,7 +71,7 @@ class RsGroupNetworkStatsRecord
  * Incoming transaction are in 3 different states
  *   1. START 2. RECEIVING 3. END
  */
-class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService,
+class RsGxsNetService : public RsNetworkExchangeService, public p3Service,
     public p3Config
 {
 public:
@@ -174,7 +174,7 @@ public:
     /*!
      * Processes transactions and job queue
      */
-    virtual void data_tick();
+    void tick_transactions();
 private:
 
     /*!
@@ -561,6 +561,8 @@ private:
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
     
     void debugDump();
+
+    time_t mLastDataTick ;
 };
 
 #endif // RSGXSNETSERVICE_H

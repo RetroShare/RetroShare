@@ -70,18 +70,15 @@ class pqistreamer: public PQInterface
 		virtual RsItem *GetItem();
 		virtual int     status();
 
-		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
+        // These methods below are used to display informationin the GUI.
+
+        time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
         
-            	// mutex protected versions of RateInterface calls.
-            	virtual void setRate(bool b,float f) ;
-            	virtual void setMaxRate(bool b,float f) ;
-            	virtual float getRate(bool b) ;
-
     protected:
-        		virtual int reset() ;
+        virtual int reset() ;
 
 		int tick_bio();
 		int tick_send(uint32_t timeout);
@@ -92,16 +89,17 @@ class pqistreamer: public PQInterface
 		// These methods are redefined in pqiQoSstreamer
 		//
 		virtual void locked_storeInOutputQueue(void *ptr, int size, int priority) ;
-		virtual int locked_out_queue_size() const ;
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const ;
 		virtual void *locked_pop_out_data(uint32_t max_slice_size,uint32_t& size,bool& starts,bool& ends,uint32_t& packet_id);
 		virtual int   locked_gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
 
-        	void updateRates() ;
+        void updateRates() ;
             	
 	protected:
 		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
+        RsMutex mIncomingMtx ; // Protects mIncoming only. This is helpful to avoid locking the whole structure when feeding/reading the list.
+        RsMutex mOutgoingMtx ; // Protects outgoing queue only. This is helpful to avoid locking the whole structure when feeding/reading the list.
 
 		// Binary Interface for IO, initialisated at startup.
 		BinInterface *mBio;
@@ -147,6 +145,7 @@ class pqistreamer: public PQInterface
 
 		// Temp Storage for transient data.....
 		std::list<void *> mOutPkts; // Cntrl / Search / Results queue
+        uint32_t mOutPktsSize ;
 		std::list<RsItem *> mIncoming;
 
         uint32_t mIncomingSize; // size of mIncoming. To avoid calling linear cost std::list::size()

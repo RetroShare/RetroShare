@@ -32,6 +32,7 @@
 #include "distributedchat.h"
 
 #include "pqi/p3historymgr.h"
+#include "pqi/p3servicecontrol.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsidentity.h"

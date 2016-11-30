@@ -32,7 +32,7 @@
 #include "util/rsthreads.h"
 
 #include "retroshare/rsservicecontrol.h"
-#include "pqi/p3servicecontrol.h"
+//#include "pqi/p3servicecontrol.h"
 
 // PQI Service, is a generic lower layer on which services can run on.
 // 
@@ -54,31 +54,37 @@
 //
 // DataType is defined in the serialiser directory.
 
+#include "util/rsthreads.h"
+
 class RsRawItem;
 class p3ServiceServerIface;
+class p3ServiceControl;
 
-
-class pqiService
+class pqiService: public RsVariableRateTickingThread
 {
-	protected:
+protected:
 
-	pqiService() // our type of packets.
-	:mServiceServer(NULL) { return; }
+    pqiService() // our type of packets.
+        :mServiceServer(NULL) { return; }
 
-virtual ~pqiService() { return; }
+    virtual ~pqiService() { return; }
 
-	public:
-void 	setServiceServer(p3ServiceServerIface *server);
-	// 
-virtual bool	recv(RsRawItem *) = 0;
-virtual bool	send(RsRawItem *item);
+    /* from RsTickingThread */
 
-virtual RsServiceInfo getServiceInfo() = 0;
+public:
+    void setServiceServer(p3ServiceServerIface *server);
+    //
+    virtual bool	recv(RsRawItem *) = 0;
+    virtual bool	send(RsRawItem *item);
 
-virtual int	tick() { return 0; }
+    virtual RsServiceInfo getServiceInfo() = 0;
 
-	private:
-	p3ServiceServerIface *mServiceServer; // const, no need for mutex.
+    // should be derived by actual services. Returns 1 if there is more to tick, 0 otherwise.
+
+    virtual int	tick() { return 0; }
+
+private:
+    p3ServiceServerIface *mServiceServer; // const, no need for mutex.
 };
 
 #include <map>

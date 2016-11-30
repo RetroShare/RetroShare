@@ -80,14 +80,14 @@ class RateInterface
 public:
 
 	RateInterface()
-	        :bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0),
-	          bwCapEnabled(false), bwCap_in(0), bwCap_out(0) { return; }
+            :bw_in(0), bw_out(0), bwMax_in(0), bwMax_out(0), bwCapEnabled(false), bwCap_in(0), bwCap_out(0),riMtx("RateInterface") {}
 
-	virtual	~RateInterface() { return; }
+    virtual	~RateInterface() {}
 
 	virtual void    getRates(RsBwRates &rates)
 	{
-		rates.mRateIn = bw_in;
+        RS_STACK_MUTEX(riMtx) ;
+        rates.mRateIn = bw_in;
 		rates.mRateOut = bw_out;
 		rates.mMaxRateIn = bwMax_in;
 		rates.mMaxRateOut = bwMax_out;
@@ -99,50 +99,43 @@ public:
 	virtual int     getQueueSize(bool /* in */) { return 0;}
 	virtual float	getRate(bool in)
 	{
-		if (in)
-			return bw_in;
-		return bw_out;
+        RS_STACK_MUTEX(riMtx) ;
+
+        return in?bw_in:bw_out;
 	}
 
 	virtual float	getMaxRate(bool in)
 	{
-		if (in)
-			return bwMax_in;
-		return bwMax_out;
+        RS_STACK_MUTEX(riMtx) ;
+        return in?bwMax_in:bwMax_out;
 	}
 
 	virtual void	setMaxRate(bool in, float val)
 	{
-		if (in)
+        RS_STACK_MUTEX(riMtx) ;
+
+        if (in)
 		{
 			bwMax_in = val;
-			if (bwCapEnabled)
-			{
-				if (bwMax_in > bwCap_in)
-				{
+
+            if (bwCapEnabled && bwMax_in > bwCap_in)
 					bwMax_in = bwCap_in;
-				}
-			}
 		}
 		else
 		{
 			bwMax_out = val;
-			if (bwCapEnabled)
-			{
-				if (bwMax_out > bwCap_out)
-				{
-					bwMax_out = bwCap_out;
-				}
-			}
-		}
 
-		return;
+            if (bwCapEnabled && bwMax_out > bwCap_out)
+					bwMax_out = bwCap_out;
+		}
 	}
 
 
 	virtual void	setRateCap(float val_in, float val_out)
 	{
-		if ((val_in == 0) && (val_out == 0))
+        RS_STACK_MUTEX(riMtx) ;
+
+        if ((val_in == 0) && (val_out == 0))
 		{
 #ifdef DEBUG_RATECAP
 			std::cerr << "RateInterface::setRateCap() Now disabled" << std::endl;
@@ -159,18 +152,15 @@ public:
 			bwCap_in = val_in;
 			bwCap_out = val_out;
 		}
-		return;
 	}
 
 protected:
 
 	virtual void	setRate(bool in, float val)
 	{
-		if (in)
-			bw_in = val;
-		else
-			bw_out = val;
-		return;
+        RS_STACK_MUTEX(riMtx) ;
+
+        (in?bw_in:bw_out) = val;
 	}
 
 private:
@@ -178,6 +168,7 @@ private:
 	bool    bwCapEnabled;
 	float   bwCap_in, bwCap_out;
 
+    RsMutex riMtx ;
 };
 
 
@@ -227,7 +218,8 @@ class PQInterface: public RateInterface
 		 */
 		virtual int tick() { return 0; }
 		virtual int status() { return 0; }
-		virtual const RsPeerId& PeerId() { return peerId; }
+
+        inline const RsPeerId& PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
 		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,

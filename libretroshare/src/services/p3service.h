@@ -53,124 +53,115 @@ std::string generateRandomServiceId();
 //TODO : encryption and upload / download rate implementation
 
 
-//	p3FastService(uint16_t type) 
-//	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
-
+// p3FastService has its own recvItem method, that can be derived in order to handle reveiced items immediately.
 
 class p3FastService: public pqiService
 {
-	protected:
+protected:
 
-	p3FastService() 
-	:pqiService(), 
-	srvMtx("p3FastService"), rsSerialiser(NULL)
-	{
-		rsSerialiser = new RsSerialiser();
-		return; 
-	}
+    p3FastService() :pqiService(), srvMtx("p3FastService"), rsSerialiser(NULL)
+    {
+        rsSerialiser = new RsSerialiser();
+        return;
+    }
 
-	public:
+public:
 
-virtual ~p3FastService() { delete rsSerialiser; return; }
+    virtual ~p3FastService() { delete rsSerialiser; return; }
 
-/*************** INTERFACE ******************************/
-int             sendItem(RsItem *);
-virtual int	tick() { return 0; }
-/*************** INTERFACE ******************************/
+    /*************** INTERFACE ******************************/
+    int             sendItem(RsItem *);
 
-	public:
-	// overloaded pqiService interface.
-virtual bool	recv(RsRawItem *);
+    // overloaded pqiService interface.
+    virtual bool	recv(RsRawItem *);
 
-	// called by recv().
-virtual bool	recvItem(RsItem *item) = 0;
+    // called by recv().
+    virtual bool	recvItem(RsItem *item) = 0;
 
 
-	protected:
-void 	addSerialType(RsSerialType *);
+protected:
+    void 	addSerialType(RsSerialType *);
 
-	RsMutex srvMtx; /* below locked by Mutex */
+    RsMutex srvMtx; /* below locked by Mutex */
 
-	RsSerialiser *rsSerialiser;
+    RsSerialiser *rsSerialiser;
 };
 
 
 class p3Service: public p3FastService
 {
-	protected:
+protected:
 
-	p3Service() 
-	:p3FastService()
-	{
-		return; 
-	}
+    p3Service()
+        :p3FastService()
+    {
+        return;
+    }
 
-	public:
+public:
 
-/*************** INTERFACE ******************************/
-        /* called from Thread/tick/GUI */
-//int             sendItem(RsItem *);
-RsItem *        recvItem();
-bool		receivedItems();
+    /*************** INTERFACE ******************************/
+    /* called from Thread/tick/GUI */
+    //int             sendItem(RsItem *);
+    RsItem *        recvItem();
+    bool		receivedItems();
 
-//virtual int	tick() { return 0; }
-/*************** INTERFACE ******************************/
+    /*************** INTERFACE ******************************/
 
-	public:
-	// overloaded p3FastService interface.
-virtual bool	recvItem(RsItem *item);
+public:
+    // overloaded p3FastService interface.
 
-	private:
+    virtual bool	recvItem(RsItem *item);
 
-	/* below locked by srvMtx Mutex */
-	std::list<RsItem *> recv_queue;
+private:
+
+    /* below locked by srvMtx Mutex */
+    std::list<RsItem *> recv_queue;
 };
 
 
 class nullService: public pqiService
 {
-	protected:
+protected:
 
-	nullService() 
-	:pqiService()
-	{
-		return; 
-	}
+    nullService()
+        :pqiService()
+    {
+        return;
+    }
 
-//virtual int	tick() 
+public:
+    // overloaded NULL pqiService interface.
+    virtual bool	recv(RsRawItem *item)
+    {
+        /* drop any items */
+        delete item;
+        return true;
+    }
 
-	public:
-	// overloaded NULL pqiService interface.
-virtual bool	recv(RsRawItem *item)
-	{
-		/* drop any items */
-		delete item;
-		return true;
-	}
-
-virtual bool	send(RsRawItem *item)
-	{
-		delete item;
-		return true;
-	}
+    virtual bool	send(RsRawItem *item)
+    {
+        delete item;
+        return true;
+    }
 
 };
 
 
-class p3ThreadedService: public p3Service, public RsTickingThread
-{
-	protected:
-
-	p3ThreadedService() 
-	:p3Service() { return; }
-
-	public:
-
-virtual ~p3ThreadedService() { return; }
-
-	private:
-
-};
+//class p3ThreadedService: public p3Service, public RsTickingThread
+//{
+//	protected:
+//
+//	p3ThreadedService()
+//	:p3Service() { return; }
+//
+//	public:
+//
+//virtual ~p3ThreadedService() { return; }
+//
+//	private:
+//
+//};
 
 
 #endif // P3_GENERIC_SERVICE_HEADER

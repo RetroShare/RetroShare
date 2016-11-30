@@ -56,6 +56,7 @@
 #include "rsserver/p3face.h"
 
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3servicecontrol.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"

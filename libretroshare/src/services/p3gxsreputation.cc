@@ -332,7 +332,7 @@ void p3GxsReputation::updateIdentityFlags()
     {
 	    RsIdentityDetails details;
 
-	    if(!rsIdentity->getIdDetails(*rit,details))
+        if(rsIdentity == NULL || !rsIdentity->getIdDetails(*rit,details))
 	    {
 #ifdef DEBUG_REPUTATION
 		    std::cerr << "  cannot obtain info for " << *rit << ". Will do it later." << std::endl;

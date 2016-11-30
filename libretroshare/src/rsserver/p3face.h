@@ -75,7 +75,7 @@ class RsPluginManager;
 //int InitRetroShare(int argc, char **argv, RsInit *config);
 //int LoadCertificates(RsInit *config);
 
-class RsServer: public RsControl, public RsTickingThread
+class RsServer: public RsControl, public RsVariableRateTickingThread
 {
 	public:
 		/****************************************/
@@ -89,20 +89,7 @@ class RsServer: public RsControl, public RsTickingThread
 		virtual ~RsServer();
 
 		/* Thread Fn: Run the Core */
-        virtual void data_tick();
-
-		/* locking stuff */
-		void    lockRsCore() 
-		{ 
-			//	std::cerr << "RsServer::lockRsCore()" << std::endl;
-			coreMutex.lock(); 
-		}
-
-		void    unlockRsCore() 
-		{ 
-			//	std::cerr << "RsServer::unlockRsCore()" << std::endl;
-			coreMutex.unlock(); 
-		}
+        virtual int tick();
 
 		static p3Notify *notify() { return dynamic_cast<RsServer*>(instance())->mNotify ; }
 

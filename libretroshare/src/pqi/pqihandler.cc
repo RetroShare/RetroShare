@@ -33,6 +33,7 @@
 #include <utility>                // for pair
 
 #include "pqi/pqi_base.h"         // for PQInterface, RsBwRates
+#include "pqi/pqiperson.h"         // for PQInterface, RsBwRates
 #include "retroshare/rsconfig.h"  // for RSTrafficClue
 #include "retroshare/rsids.h"     // for t_RsGenericIdType
 #include "retroshare/rspeers.h"   // for RsPeers, rsPeers
@@ -102,10 +103,10 @@ int	pqihandler::tick()
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		// tick all interfaces...
-		std::map<RsPeerId, SearchModule *>::iterator it;
+        std::map<RsPeerId, pqiperson *>::iterator it;
 		for(it = mods.begin(); it != mods.end(); ++it)
 		{
-			if (0 < ((it -> second) -> pqi) -> tick())
+            if (0 < (it -> second) -> tick())
 			{
 #ifdef DEBUG_TICK
 				std::cerr << "pqihandler::tick() moreToTick from mod()" << std::endl;
@@ -132,14 +133,14 @@ int	pqihandler::tick()
                 // every 5 secs, update the max rates for all modules
         
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-		for(std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
+        for(std::map<RsPeerId, pqiperson *>::iterator it = mods.begin(); it != mods.end(); ++it)
             	{
             		// This is rather inelegant, but pqihandler has searchModules that are dynamically allocated, so the max rates
             		// need to be updated from inside.
 	    		uint32_t maxUp,maxDn ;
             		rsPeers->getPeerMaximumRates(it->first,maxUp,maxDn);
                     
-                    	it->second->pqi->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up. 
+                        it->second->setRateCap(maxDn,maxUp);// mind the order! Dn first, than Up.
 		}
         
         	mLastRateCapUpdate = now ;
@@ -168,7 +169,7 @@ bool pqihandler::queueOutRsItem(RsItem *item)
 
 int	pqihandler::status()
 {
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	{ // for output
@@ -177,7 +178,7 @@ int	pqihandler::status()
 		// display all interfaces...
 		for(it = mods.begin(); it != mods.end(); ++it)
 		{
-			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.toStdString().c_str(), (void *) ((it -> second) -> pqi));
+            rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.toStdString().c_str(), (void *) (it -> second));
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
@@ -187,32 +188,34 @@ int	pqihandler::status()
 
 	// status all interfaces...
 	for(it = mods.begin(); it != mods.end(); ++it)
-	{
-		((it -> second) -> pqi) -> status();
-	}
+        (it -> second) -> status();
+
 	return 1;
 }
 
-bool	pqihandler::AddSearchModule(SearchModule *mod)
+bool	pqihandler::AddPerson(pqiperson *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	// if peerid used -> error.
-	std::map<RsPeerId, SearchModule *>::iterator it;
-	if (mod->peerid != mod->pqi->PeerId())
-	{
-		// ERROR!
-		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid != PeerId!");
-		return false;
-	}
+    std::map<RsPeerId, pqiperson *>::iterator it;
 
-	if (mod->peerid.isNull())
+// (cyril) WTF ??
+//
+//	if (mod->peerid != mod->PeerId())
+//	{
+//		// ERROR!
+//		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid != PeerId!");
+//		return false;
+//	}
+
+    if (mod->PeerId().isNull())
 	{
 		// ERROR!
 		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid == NULL");
 		return false;
 	}
 
-	if (mods.find(mod->peerid) != mods.end())
+    if (mods.find(mod->PeerId()) != mods.end())
 	{
 		// ERROR!
 		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR PeerId Module already exists!");
@@ -220,14 +223,14 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 	}
 
 	// store.
-	mods[mod->peerid] = mod;
+    mods[mod->PeerId()] = mod;
 	return true;
 }
 
-bool	pqihandler::RemoveSearchModule(SearchModule *mod)
+bool	pqihandler::RemovePerson(pqiperson *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
 		if (mod == it -> second)
@@ -243,7 +246,7 @@ bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 int	pqihandler::locked_HandleRsItem(RsItem *item, uint32_t& computed_size)
 {
 	computed_size = 0 ;
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone,
 	  "pqihandler::HandleRsItem()");
 
@@ -274,7 +277,7 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, uint32_t& computed_size)
 #endif
 
 		// if yes send on item.
-		((it -> second) -> pqi) -> SendItem(item,computed_size);
+        (it->second)->SendItem(item,computed_size);
 		return 1;
 }
 
@@ -292,11 +295,11 @@ int     pqihandler::ExtractTrafficInfo(std::list<RSTrafficClue>& out_lst,std::li
     in_lst.clear() ;
     out_lst.clear() ;
 
-    for( std::map<RsPeerId, SearchModule *>::iterator it = mods.begin(); it != mods.end(); ++it)
+    for( std::map<RsPeerId, pqiperson *>::iterator it = mods.begin(); it != mods.end(); ++it)
     {
         std::list<RSTrafficClue> ilst,olst ;
 
-        (it -> second)->pqi->gatherStatistics(olst,ilst) ;
+        it->second->gatherStatistics(olst,ilst) ;
 
         for(std::list<RSTrafficClue>::const_iterator it(ilst.begin());it!=ilst.end();++it) in_lst.push_back(*it) ;
         for(std::list<RSTrafficClue>::const_iterator it(olst.begin());it!=olst.end();++it) out_lst.push_back(*it) ;
@@ -318,13 +321,13 @@ int     pqihandler::ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRat
 	/* Lock once rates have been retrieved */
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
-		SearchModule *mod = (it -> second);
+        pqiperson *mod = (it -> second);
 
 		RsBwRates peerRates;
-		mod -> pqi -> getRates(peerRates);
+        mod -> getRates(peerRates);
 
 		total.mRateIn  += peerRates.mRateIn;
 		total.mRateOut += peerRates.mRateOut;
@@ -347,7 +350,7 @@ int     pqihandler::UpdateRates()
 	uint64_t t_now;
 #endif
 
-	std::map<RsPeerId, SearchModule *>::iterator it;
+    std::map<RsPeerId, pqiperson *>::iterator it;
 
 	float avail_in = getMaxRate(true);
 	float avail_out = getMaxRate(false);
@@ -374,8 +377,8 @@ int     pqihandler::UpdateRates()
 
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
-		SearchModule *mod = (it -> second);
-		float crate_in = mod -> pqi -> getRate(true);
+        pqiperson *mod = (it -> second);
+        float crate_in = mod -> getRate(true);
         
 #ifdef PQI_HDL_DEBUG_UR
         if(crate_in > 0.0)
@@ -387,7 +390,7 @@ int     pqihandler::UpdateRates()
 			++effectiveDownloadsSm;
 		}
 
-		float crate_out = mod -> pqi -> getRate(false);
+        float crate_out = mod -> getRate(false);
 		if ((crate_out > 0.01 * avail_out) || (crate_out > 0.1))
 		{
 			++effectiveUploadsSm;
@@ -511,21 +514,21 @@ int     pqihandler::UpdateRates()
 
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
-		SearchModule *mod = (it -> second);
+        pqiperson *mod = (it -> second);
         
-		mod -> pqi -> setMaxRate(true,   in_max_bw);
-		mod -> pqi -> setMaxRate(false, out_max_bw);
+        mod -> setMaxRate(true,   in_max_bw);
+        mod -> setMaxRate(false, out_max_bw);
 	}
 
 
 	//cap the rates
 	for(it = mods.begin(); it != mods.end(); ++it)
 	{
-		SearchModule *mod = (it -> second);
-		if (mod -> pqi -> getMaxRate(false) < max_out_effective)  mod -> pqi -> setMaxRate(false, max_out_effective);
-		if (mod -> pqi -> getMaxRate(false) > avail_out)          mod -> pqi -> setMaxRate(false, avail_out);
-		if (mod -> pqi -> getMaxRate(true)  < max_in_effective)   mod -> pqi -> setMaxRate(true,  max_in_effective);
-		if (mod -> pqi -> getMaxRate(true)  > avail_in)           mod -> pqi -> setMaxRate(true,  avail_in);
+        pqiperson *mod = (it -> second);
+        if (mod -> getMaxRate(false) < max_out_effective)  mod -> setMaxRate(false, max_out_effective);
+        if (mod -> getMaxRate(false) > avail_out)          mod -> setMaxRate(false, avail_out);
+        if (mod -> getMaxRate(true)  < max_in_effective)   mod -> setMaxRate(true,  max_in_effective);
+        if (mod -> getMaxRate(true)  > avail_in)           mod -> setMaxRate(true,  avail_in);
 	}
 
 	return 1;

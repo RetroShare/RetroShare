@@ -40,15 +40,7 @@ class RSTrafficClue;
 class RsBwRates;
 class RsItem;
 class RsRawItem;
-
-class SearchModule
-{
-	public:
-        	SearchModule() : pqi(NULL) {}
-            
-		RsPeerId peerid	;
-		PQInterface *pqi;
-};
+class pqiperson;
 
 // Presents a P3 Face to the world!
 // and funnels data through to a PQInterface.
@@ -64,8 +56,8 @@ class pqihandler: public P3Interface, public pqiPublisher
 			return SendRsRawItem(item);
 		}
 
-		bool	AddSearchModule(SearchModule *mod);
-		bool	RemoveSearchModule(SearchModule *mod);
+        bool	AddPerson(pqiperson *mod);
+        bool	RemovePerson(pqiperson *mod);
 
 		// Rest of P3Interface
 		virtual int 	tick();
@@ -73,9 +65,6 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		// Service Data Interface
 		virtual int     SendRsRawItem(RsRawItem *);
-#ifdef TO_BE_REMOVED
-		virtual RsRawItem *GetRsRawItem();
-#endif
 
 		// rate control.
 		//void	setMaxRate(const RsPeerId& pid,bool in, uint32_t val_kBs);
@@ -106,7 +95,7 @@ protected:
 
 		RsMutex coreMtx; /* MUTEX */
 
-		std::map<RsPeerId, SearchModule *> mods;
+        std::map<RsPeerId, pqiperson *> mods;
 
 		std::list<RsItem *> in_service;
 
