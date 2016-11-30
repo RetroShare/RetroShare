@@ -33,10 +33,90 @@
        <string>Network Configuration</string>
       </attribute>
       <layout class="QGridLayout" name="tabNetConfGLayout">
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="showDiscStatusBar">
+         <property name="text">
+          <string>Show Discovery information in statusbar</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QListWidget" name="IPServersLV">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="allowIpDeterminationCB">
+         <property name="toolTip">
+          <string>If you uncheck this, RetroShare can only determine your IP 
+when you connect to somebody. Leaving this checked helps 
+connecting when you have few friends. It also helps if you're 
+behind a firewall or a VPN.</string>
+         </property>
+         <property name="text">
+          <string>Allow RetroShare to ask my ip to these websites:</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="ipAddressHLayout">
+         <item>
+          <widget class="QLabel" name="ipAddressLabel">
+           <property name="text">
+            <string>Known / Previous IPs:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="ipAddressHSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="cleanKnownIPs_PB">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Clear</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QListWidget" name="ipAddressList">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>150</height>
+          </size>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="netConfHLayout">
          <item>
-          <layout class="QHBoxLayout">
+          <layout class="QHBoxLayout" name="netConfHLayout2">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -47,7 +127,7 @@
             <number>6</number>
            </property>
            <item>
-            <layout class="QVBoxLayout">
+            <layout class="QVBoxLayout" name="netConfLabelLayout">
              <item>
               <widget class="QLabel" name="label_netmode">
                <property name="text">
@@ -112,7 +192,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QGridLayout">
+            <layout class="QGridLayout" name="netConfValueLayout">
              <property name="spacing">
               <number>6</number>
              </property>
@@ -426,91 +506,12 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <layout class="QHBoxLayout" name="ipAddressHLayout">
-         <item>
-          <widget class="QLabel" name="ipAddressLabel">
-           <property name="text">
-            <string>Known / Previous IPs:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="ipAddressHSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="cleanKnownIPs_PB">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This clears the list of known addresses. This action is useful if for some reason your address list contains an invalid/irrelevant/expired address that you want to avoid passing to your friends as a contact address.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Clear</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="0">
-        <widget class="QListWidget" name="ipAddressList">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>150</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="showDiscStatusBar">
-         <property name="text">
-          <string>Show Discovery information in statusbar</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QCheckBox" name="allowIpDeterminationCB">
-         <property name="toolTip">
-          <string>If you uncheck this, RetroShare can only determine your IP 
-when you connect to somebody. Leaving this checked helps 
-connecting when you have few friends. It also helps if you're 
-behind a firewall or a VPN.</string>
-         </property>
-         <property name="text">
-          <string>Allow RetroShare to ask my ip to these websites:</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QListWidget" name="IPServersLV">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-        </widget>
-       </item>
       </layout>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
       <zorder>ipAddressList</zorder>
+      <zorder></zorder>
      </widget>
      <widget class="QWidget" name="tabIPFilters">
       <attribute name="title">
@@ -527,7 +528,7 @@ behind a firewall or a VPN.</string>
        <item>
         <widget class="QTabWidget" name="ipTabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tabWidgetPage1">
           <attribute name="title">
@@ -784,7 +785,7 @@ behind a firewall or a VPN.</string>
           </sizepolicy>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="hiddenServiceTabManual">
           <attribute name="title">
@@ -792,7 +793,7 @@ behind a firewall or a VPN.</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLabel" name="label_11">
+            <widget class="QLabel" name="hiddenpage_outHeader">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Outgoing Connctions&lt;/p&gt;&lt;p&gt;Configure your Tor and I2P SOCKS proxy here. &lt;br/&gt;If you prefer to use BOB to automatically manage I2P check the other tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
@@ -817,14 +818,14 @@ behind a firewall or a VPN.</string>
               <widget class="QLineEdit" name="hiddenpage_proxyAddress_tor"/>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="hiddenpage_proxyLabel_tor">
                <property name="text">
                 <string>Tor Socks Proxy</string>
                </property>
               </widget>
              </item>
              <item row="0" column="3">
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <layout class="QHBoxLayout" name="hiddenpage_proxyOKHLayout_tor">
                <item>
                 <widget class="QLabel" name="iconlabel_tor_outgoing">
                  <property name="maximumSize">
@@ -842,7 +843,7 @@ behind a firewall or a VPN.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_9">
+                <widget class="QLabel" name="label_tor_outgoing">
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though Tor. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -854,7 +855,7 @@ behind a firewall or a VPN.</string>
               </layout>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="hiddenpage_proxyLabel_i2p">
                <property name="text">
                 <string>I2P Socks Proxy</string>
                </property>
@@ -884,7 +885,7 @@ behind a firewall or a VPN.</string>
               </widget>
              </item>
              <item row="1" column="3">
-              <layout class="QHBoxLayout" name="horizontalLayout_18">
+              <layout class="QHBoxLayout" name="hiddenpage_proxyOKHLayout_i2p">
                <item>
                 <widget class="QLabel" name="iconlabel_i2p_outgoing">
                  <property name="text">
@@ -896,7 +897,7 @@ behind a firewall or a VPN.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="label_i2p_outgoing">
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This led is green when the port listen on the left is active on your computer. It does not&lt;/p&gt;&lt;p&gt;mean that your Retroshare traffic transits though I2P. It will do so only if &lt;/p&gt;&lt;p&gt;you connect to Hidden nodes, or if you are running a Hidden node yourself.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -941,7 +942,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer">
+            <spacer name="vspacerHiddenOut">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -1142,7 +1143,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
                    </widget>
                   </item>
                   <item>
-                   <spacer name="verticalSpacer_4">
+                   <spacer name="vspacerHiddenBob">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -1433,14 +1434,14 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="hiddenpage_inHeader">
              <property name="text">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Incoming Connection&lt;/p&gt;&lt;p&gt;Setup your hidden address (and port if needed)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QGridLayout" name="gridLayout">
+            <layout class="QGridLayout" name="incomingAddressGLayout">
              <item row="0" column="2">
               <widget class="QSpinBox" name="hiddenpage_localPort">
                <property name="minimum">
@@ -1452,7 +1453,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
               </widget>
              </item>
              <item row="0" column="3">
-              <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <layout class="QHBoxLayout" name="testIncomingHLayout">
                <item>
                 <widget class="QPushButton" name="testIncoming_PB">
                  <property name="toolTip">
@@ -1483,7 +1484,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="l_localAddress">
                <property name="text">
                 <string>Local Address</string>
                </property>
@@ -1536,9 +1537,9 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
+            <layout class="QVBoxLayout" name="hiddenpage_configurationVLayout">
              <item>
-              <widget class="QLabel" name="label_12">
+              <widget class="QLabel" name="l_hiddenpage_configuration">
                <property name="text">
                 <string>Expected Configuration:</string>
                </property>
@@ -1578,7 +1579,7 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
             </layout>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="plainTextEdit_2">
+            <widget class="QPlainTextEdit" name="hiddenpageInHelpPlainTextEdit">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -1611,7 +1612,7 @@ If you have issues connecting over Tor check the Tor logs too.</string>
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_2">
+            <spacer name="vspacerHiddenIn">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
