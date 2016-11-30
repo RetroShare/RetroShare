@@ -627,6 +627,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 
 	switch ((Page) currentId()) {
 	case Page_Intro:
+	case Page_WebMail:
 		break;
 	case Page_Text:
 		{

@@ -252,7 +252,7 @@ static bool getFavicon(CURLWrapper &CURL, const std::string &url, std::string &i
 				isContentType(contentType, "application/octet-stream") ||
 				isContentType(contentType, "text/plain")) {
 				if (!vicon.empty()) {
-					long todo; // check it
+#warning p3FeedReaderThread.cc TODO thunder2: check it
 					result = toBase64(vicon, icon);
 				}
 			}
@@ -1299,7 +1299,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processTransformation(const RsFeedRea
 
 RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::string> &xpathsToUse, const std::list<std::string> &xpathsToRemove, HTMLWrapper &html, std::string &errorString)
 {
-	long todo_fill_errorString;
+#warning p3FeedReaderThread.cc TODO thunder2: fill_errorString;
 
 	if (xpathsToUse.empty() && xpathsToRemove.empty()) {
 		return RS_FEED_ERRORSTATE_OK;
@@ -1410,7 +1410,7 @@ RsFeedReaderErrorState p3FeedReaderThread::processXPath(const std::list<std::str
 	RsFeedReaderErrorState result = RS_FEED_ERRORSTATE_OK;
 
 	/* process description */
-	long todo; // encoding
+#warning p3FeedReaderThread.cc TODO thunder2: encoding
 	HTMLWrapper html;
 	if (html.readHTML(description.c_str(), "")) {
 		xmlNodePtr root = html.getRootElement();

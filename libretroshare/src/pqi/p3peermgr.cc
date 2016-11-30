@@ -2561,7 +2561,7 @@ bool p3PeerMgrIMPL::removeGroup(const RsNodeGroupId& groupId)
                 std::cerr << "(EE) cannot remove standard group with ID " << groupId << std::endl;
                 return false ;
             }
-#warning we need to check that the local group is not used. Otherwise deleting it is going to cause problems!
+#warning csoler: we need to check that the local group is not used. Otherwise deleting it is going to cause problems!
 //            else if(!it->second.used_gxs_groups.empty())
 //            {
 //                std::cerr << "(EE) cannot remove standard group with ID " << groupId << " because it is used in the following groups: " << std::endl;
@@ -2619,8 +2619,8 @@ bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo>& groupInfoList)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-    for (std::map<RsNodeGroupId,RsGroupInfo> ::const_iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
-        groupInfoList.push_back(groupIt->second);
+	for(std::map<RsNodeGroupId,RsGroupInfo> ::const_iterator groupIt = groupList.begin(); groupIt != groupList.end(); ++groupIt)
+		groupInfoList.push_back(groupIt->second) ;
 
 	return true;
 }
@@ -2845,10 +2845,11 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 
 	const time_t now = time(NULL);
 
-    std::list<RsPgpId> pgpList;
+	std::list<RsPgpId> pgpList ;
 
-    if(!rsPeers->getGPGAcceptedList(pgpList))
-        return false;
+	if (!rsPeers->getGPGAcceptedList(pgpList))
+		return false ;
+
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	
@@ -2881,8 +2882,8 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
         }
 	}
 
-    for( std::list<RsPeerId>::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
-        removeFriend(*it, false);
+	for (std::list<RsPeerId>::iterator it = toRemove.begin(); it != toRemove.end(); ++it)
+		removeFriend(*it, false) ;
 
 	return true;
 }

@@ -42,7 +42,7 @@ public:
     //! if (onlyEdit == true), user woll not be able to change file type,
     //! only command (used for editing existing commands)
     AddFileAssociationDialog( bool onlyEdit = false, QWidget *parent = 0 ) ;
-    virtual ~AddFileAssociationDialog(){};
+    virtual ~AddFileAssociationDialog(){}
     void setFileType(QString ft);
     void setCommand(QString cmd);
 

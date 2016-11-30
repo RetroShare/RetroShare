@@ -327,7 +327,7 @@ bool rsa_sanity_check(RSA *rsa)
 }
 
 		
-#warning this code should be using GxsSecurity signature code. Not some own made signature call.
+#warning csoler: this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 {
@@ -375,7 +375,7 @@ bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 	return true;
 }
 
-#warning this code should be using GxsSecurity signature code. Not some own made signature call.
+#warning csoler: this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 {
@@ -432,7 +432,7 @@ bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 	return true;
 }
 
-#warning this code should be using GxsSecurity signature code. Not some own made signature call.
+#warning csoler: this code should be using GxsSecurity signature code. Not some own made signature call.
 
 bool	RsRecogn::signTagRequest(EVP_PKEY *signKey, RsGxsRecognReqItem *item)
 {

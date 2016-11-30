@@ -276,14 +276,14 @@ uint32_t PGPKeyParser::read_125Size(unsigned char *& data)
 	uint8_t b1 = *data ;
 	++data ;
 
-    if(b1 < 192) //192 Size is coded with One Char. See RFC4880
+	if (b1 < 192) //192 Size is coded with One Char. See RFC4880 https://tools.ietf.org/html/rfc4880#section-4.2.2.1
 		return b1 ;
 
 	uint8_t b2 = *data ;
 	++data ;
 
-    if(b1 < 224)//224 = 0xC0+0x20 Size is coded with Two Chars
-        return ((b1-192) << 8) + b2 + 192 ; // see RFC4880
+	if (b1 < 224)//224 = 0xC0+0x20 Size is coded with Two Chars
+		return ( (b1-192) << 8 ) + b2 + 192 ; // see RFC4880
 
 	if(b1 != 0xFF)// Else Coded with 4 Chars but first == 0xFF
 		throw std::runtime_error("GPG parsing error") ;

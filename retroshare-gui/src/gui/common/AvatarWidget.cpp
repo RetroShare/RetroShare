@@ -179,8 +179,8 @@ void AvatarWidget::refreshStatus()
     {
         uint32_t status = 0;
 
-    if(mId.isNotSet())
-        return ;
+        if (mId.isNotSet())
+            return;
 
         if (mFlag.isOwnId)
         {

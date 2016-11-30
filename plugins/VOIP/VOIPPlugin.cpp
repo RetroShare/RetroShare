@@ -156,8 +156,8 @@ ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) 
 
 p3Service *VOIPPlugin::p3_service() const
 {
-    if(mVOIP == NULL)
-        rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
+	if(mVOIP == NULL)
+		rsVOIP = mVOIP = new p3VOIP(mPlugInHandler,mVOIPNotify) ; // , 3600 * 24 * 30 * 6); // 6 Months
 
 	return mVOIP ;
 }

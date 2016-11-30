@@ -231,7 +231,7 @@ void ServerPage::load()
     ui.iconlabel_upnp->show();
     ui.label_nat->show();
 
-	ui.hiddenMode_LB->hide() ;
+	ui.textlabel_hiddenMode->hide() ;
 	ui.iconlabel_hiddenMode->hide() ;
 
 	/* set net mode */
@@ -888,7 +888,7 @@ void ServerPage::loadHiddenNode()
 	ui.iconlabel_upnp->hide();
 	ui.label_nat->hide();
 	
-	ui.hiddenMode_LB->show();
+	ui.textlabel_hiddenMode->show();
 	ui.iconlabel_hiddenMode->show() ;
 	ui.iconlabel_hiddenMode->setPixmap(QPixmap(":/images/ledon1.png"));
 

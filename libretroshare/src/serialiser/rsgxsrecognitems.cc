@@ -574,8 +574,8 @@ bool     RsGxsRecognSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 
 RsItem *RsGxsRecognSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
-    if(*pktsize < getRsPktBaseSize())
-        return NULL;
+	if (*pktsize < getRsPktBaseSize())
+		return NULL ;
 
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);

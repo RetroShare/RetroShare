@@ -361,8 +361,9 @@ uint32_t RsGxsDataAccess::requestStatus(uint32_t token)
 		if(mPublicToken.find(token) != mPublicToken.end())
 			return mPublicToken[token];
 	}
-    if(!checkRequestStatus(token, status, reqtype, anstype, ts))
-        return RsTokenService::GXS_REQUEST_V2_STATUS_FAILED ;
+
+	if (!checkRequestStatus(token, status, reqtype, anstype, ts))
+		return RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
 
 	return status;
 }

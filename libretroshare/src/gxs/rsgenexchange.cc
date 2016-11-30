@@ -2226,7 +2226,7 @@ void RsGenExchange::processMessageDelete()
 	}
 
 
-#warning TODO: notify for deleted messages
+#warning csoler: TODO: notify for deleted messages
 #ifdef SUSPENDED
 	std::list<RsGxsGroupId> grpDeleted;
 	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
@@ -2402,7 +2402,7 @@ void RsGenExchange::publishGrps()
 					    {
 						    RsTemporaryMemory metaData(mdSize);
 						    serialOk = grp->metaData->serialise(metaData, mdSize,RS_GXS_GRP_META_DATA_CURRENT_API_VERSION);
-#warning TODO: grp->meta should be renamed grp->public_meta !
+#warning csoler: TODO: grp->meta should be renamed grp->public_meta !
 						    grp->meta.setBinData(metaData, mdSize);
 					    }
 
@@ -2419,7 +2419,7 @@ void RsGenExchange::publishGrps()
 							    mDataAccess->updateGroupData(grp);
 						    else
 							    mDataAccess->addGroupData(grp);
-#warning this is bad: addGroupData/updateGroupData actially deletes grp. But it may be used below? grp should be a class object and not deleted manually!
+#warning csoler: this is bad: addGroupData/updateGroupData actially deletes grp. But it may be used below? grp should be a class object and not deleted manually!
 
                                                      groups_to_subscribe.push_back(grpId) ;
 					    }

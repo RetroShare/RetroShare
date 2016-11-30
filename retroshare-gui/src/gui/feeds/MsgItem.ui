@@ -7,10 +7,10 @@
     <x>0</x>
     <y>0</y>
     <width>643</width>
-    <height>140</height>
+    <height>146</height>
    </rect>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="MsgItemGLayout">
    <property name="leftMargin">
     <number>1</number>
    </property>
@@ -104,11 +104,20 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="frameGLayout">
       <item row="0" column="0">
-       <widget class="QFrame" name="frame_2">
-        <layout class="QGridLayout" name="gridLayout">
-         <property name="margin">
+       <widget class="QFrame" name="mainFrame">
+        <layout class="QGridLayout" name="mainFrameGLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="3">
@@ -151,7 +160,7 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <spacer>
+          <spacer name="mainFrameHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -196,7 +205,7 @@
           </widget>
          </item>
          <item row="2" column="1" colspan="3">
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <layout class="QHBoxLayout" name="buttonHLayout">
            <item>
             <widget class="QToolButton" name="replyButton">
              <property name="focusPolicy">
@@ -221,7 +230,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer">
+            <spacer name="buttonHSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -320,7 +329,7 @@
       </item>
       <item row="1" column="0">
        <widget class="QFrame" name="expandFrame">
-        <layout class="QVBoxLayout">
+        <layout class="QVBoxLayout" name="expandFrameVLayout">
          <item>
           <widget class="QLabel" name="msgLabel">
            <property name="sizePolicy">

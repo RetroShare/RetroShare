@@ -103,13 +103,12 @@ void RSPermissionMatrixWidget::mousePressEvent(QMouseEvent *e)
     {
         std::cerr << "Peer id: " << peer_id << ", service: " << service_id << std::endl;
 
-    // make sure the service is not globally disabled
+        // Make sure the service is not globally disabled
 
-    RsServicePermissions serv_perms ;
-    rsServiceControl->getServicePermissions(service_id,serv_perms) ;
+        RsServicePermissions serv_perms;
+        rsServiceControl->getServicePermissions(service_id,serv_perms);
 
-    if(!serv_perms.mDefaultAllowed)
-        return ;
+        if (!serv_perms.mDefaultAllowed) return;
 
         switchPermission(service_id,peer_id) ;
         update() ;
@@ -335,7 +334,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       int X = matrix_start_x + S*fCOL_SIZE/2 - 2 + i*S*fCOL_SIZE - text_width/2;
 
       int height_index = 0 ;
-      while(last_width[height_index] > X-5 && height_index < last_width.size()-1)
+      while(last_width[height_index] > X-5 && height_index < ((int)last_width.size()-1) )
           ++height_index ;
 
       int Y = S*fMATRIX_START_Y - S*fICON_SIZE_Y - 2 - line_height * height_index;

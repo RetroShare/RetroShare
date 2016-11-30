@@ -297,13 +297,13 @@ uint32_t RsChatLobbyConnectChallengeItem::serial_size()
 }
 uint32_t RsChatLobbyBouncingObject::serialized_size(bool include_signature)
 {
-    uint32_t s = 0 ;              // no header!
-    s += 8 ;                      // lobby_id
-    s += 8 ;                      // msg_id
-    s += GetTlvStringSize(nick) ; // nick
+	uint32_t s = 0;              // no header!
+	s += 8;                      // lobby_id
+	s += 8;                      // msg_id
+	s += GetTlvStringSize(nick); // nick
 
-    if(include_signature)
-        s += signature.TlvSize() ;    // signature
+	if (include_signature)
+		s += signature.TlvSize();  // signature
 
 	return s ;
 }

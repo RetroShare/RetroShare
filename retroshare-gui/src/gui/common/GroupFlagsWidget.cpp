@@ -153,7 +153,7 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QS
     else
         res += tr("No one can anonymously access/search these files.") ;
 
-	return res ;
+    return res ;
 }
 
 void GroupFlagsWidget::update_DL_button(bool b) { update_button_state(b,INDEX_ANON_DL    ) ; updated() ; }

@@ -386,10 +386,10 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 	if (details.type == DIR_TYPE_PERSON) /* Person */
 	{
-        switch(coln)
+		switch(coln)
 		{
 		case 0: {
-				SharedDirStats stats ;
+				//SharedDirStats stats ;
 				QString res ;
 
 				if(RemoteMode)
@@ -663,13 +663,13 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	/* get the data from the index */
 	void *ref = index.internalPointer();
 
-    DirDetails details ;
+	DirDetails details;
 
-    if (!requestDirDetails(ref, RemoteMode,details))
-        return QVariant();
+	if(!requestDirDetails(ref, RemoteMode,details))
+		return QVariant() ;
 
 	if (role == RetroshareDirModel::FileNameRole) /* end of FileNameRole */
-        return QString::fromUtf8(details.name.c_str());
+		return QString::fromUtf8(details.name.c_str()) ;
 
 	if (role == Qt::TextColorRole)
 	{
@@ -1327,7 +1327,7 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::getFilePaths()" << std::endl;
 #endif
-#warning make sure we atually output something here
+#warning mr-alice: make sure we atually output something here
 	if (RemoteMode)
 	{
 #ifdef RDM_DEBUG
@@ -1344,7 +1344,7 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
 #ifdef RDM_DEBUG
         std::cerr << "Constructed FilePath: " << path << std::endl;
 #endif
-#warning TERRIBLE COST here. Use a std::set!
+#warning mr-alice: TERRIBLE COST here. Use a std::set!
         if (fullpaths.end() == std::find(fullpaths.begin(), fullpaths.end(), path))
             fullpaths.push_back(path);
     }

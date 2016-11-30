@@ -113,7 +113,7 @@ bool FolderIterator::updateFileInfo(bool& should_skip)
 
    mFullPath = mFolderName + "/" + mFileName ;
 
-#warning should we take care of symbolic links on windows?
+#warning cyril soler: should we take care of symbolic links on windows?
 #ifndef WINDOWS_SYS
    if( ent->d_type == DT_LNK)
    {

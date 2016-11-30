@@ -1641,7 +1641,9 @@ void RsGxsNetService::recvNxsItemQueue()
 
             default:
                 if(ni->PacketSubType() != RS_PKT_SUBTYPE_NXS_ENCRYPTED_DATA_ITEM)
-			std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
+                {
+                    std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl ; break ;
+                }
             }
             delete item ;
         }
@@ -3291,8 +3293,8 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 	if(!grps.empty())
 		mDataStore->retrieveNxsGrps(grps, false, false);
-    else
-        return;
+	else
+		return;
 
 	NxsTransaction* newTr = new NxsTransaction();
 	newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -3304,7 +3306,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	RsPeerId peerId = tr->mTransaction->PeerId();
 	for(;mit != grps.end(); ++mit)
 	{
-#warning Should make sure that no private key information is sneaked in here for the grp
+#warning csoler: Should make sure that no private key information is sneaked in here for the grp
 		mit->second->PeerId(peerId); // set so it gets sent to right peer
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);

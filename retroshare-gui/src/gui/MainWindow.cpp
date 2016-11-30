@@ -330,11 +330,11 @@ MainWindow::~MainWindow()
 void MainWindow::initStackedPage()
 {
   /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
-  bool advancedMode = false;
-  std::string advsetting;
-  if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES")) {
-      advancedMode = true;
-  }
+  //bool advancedMode = false;
+  //std::string advsetting;
+  //if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES")) {
+  //    advancedMode = true;
+  //}
 
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > > notify;
 

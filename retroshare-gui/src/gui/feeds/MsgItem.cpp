@@ -85,12 +85,12 @@ void MsgItem::updateItemStatic()
 	if (!rsMail->getMessage(mMsgId, mi))
 		return;
 
-    /* get peer Id */
+	/* get peer Id  */
 
-    if(mi.msgflags & RS_MSG_SIGNED)
-        avatar->setGxsId(mi.rsgxsid_srcId);
-    else
-        avatar->setId(ChatId(mi.rspeerid_srcId));
+	if (mi.msgflags & RS_MSG_SIGNED)
+		avatar->setGxsId(mi.rsgxsid_srcId) ;
+	else
+		avatar->setId(ChatId(mi.rspeerid_srcId)) ;
 
 	QString title;
     QString srcName;

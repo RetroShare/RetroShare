@@ -812,7 +812,7 @@ void p3NetMgrIMPL::netExtCheck()
 					address_votes[tmpip].n++ ;
 
 					/* XXX HACK TO FIX */
-#warning "ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)"
+#warning drbob: ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)
 					mNetFlags.mExtAddrStableOk = true;
                     
 		    std::cerr << "ExtAddrFinder reported external address " << sockaddr_storage_iptostring(tmpip) << std::endl;

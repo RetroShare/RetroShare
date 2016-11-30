@@ -413,8 +413,8 @@ void MessageComposer::processSettings(bool bLoad)
         ui.contactsdockWidget->setVisible(Settings->value("ContactSidebar", true).toBool());
 
         // state of splitter
-        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
-        ui.splitter_2->restoreState(Settings->value("Splitter2").toByteArray());
+        ui.messageSplitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.centralwidgetHSplitter->restoreState(Settings->value("Splitter2").toByteArray());
         
         // state of filter combobox
         int index = Settings->value("ShowType", 0).toInt();
@@ -431,8 +431,8 @@ void MessageComposer::processSettings(bool bLoad)
         Settings->setValue("ContactSidebar", ui.contactsdockWidget->isVisible());
 
         // state of splitter
-        Settings->setValue("Splitter", ui.splitter->saveState());
-        Settings->setValue("Splitter2", ui.splitter_2->saveState());
+        Settings->setValue("Splitter", ui.messageSplitter->saveState());
+        Settings->setValue("Splitter2", ui.centralwidgetHSplitter->saveState());
         
         // state of filter combobox
         Settings->setValue("ShowType", ui.filterComboBox->currentIndex());
@@ -887,7 +887,7 @@ void MessageComposer::calculateTitle()
     setWindowTitle(tr("Compose") + ": " + misc::removeNewLine(ui.titleEdit->text()));
 }
 
-static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupInfos, std::list<RsPeerId> &checkSslIds, std::list<RsNodeGroupId> &checkGroupIds)
+/*static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupInfos, std::list<RsPeerId> &checkSslIds, std::list<RsNodeGroupId> &checkGroupIds)
 {
     checkGroupIds.clear();
 
@@ -973,6 +973,7 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
         checkGroupIds.push_back(groupInfoIt->id);
     }
 }
+*/
 
 MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 {
@@ -2634,10 +2635,11 @@ void MessageComposer::addRecommend()
 	if (sslIds.empty() && gxsIds.empty()) 
 		return;
 
-    for(std::set <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it)
-        addRecipient(CC, *it);
-    for (std::set<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
-        addRecipient(TO, *it);
+	for( std::set <RsPeerId>::iterator it = sslIds.begin(); it != sslIds.end(); ++it)
+		addRecipient(CC, *it) ;
+
+	for( std::set<RsGxsId>::const_iterator it = gxsIds.begin(); it != gxsIds.end(); ++it)
+		addRecipient(TO, *it) ;
 
 	QString text = buildRecommendHtml(sslIds);
 	ui.msgText->textCursor().insertHtml(text);

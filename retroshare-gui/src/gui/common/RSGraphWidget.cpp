@@ -151,10 +151,10 @@ void RSGraphWidget::setShowEntry(uint32_t entry,bool b)
 
 void RSGraphWidget::setSource(RSGraphSource *gs)
 {
-if(_source != NULL)
-    delete _source ;
+	if (_source != NULL)
+		delete _source;
 
-    _source = gs ;
+	_source = gs;
 }
 
 qint64 RSGraphSource::getTime() const

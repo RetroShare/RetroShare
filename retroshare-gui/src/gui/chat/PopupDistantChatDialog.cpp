@@ -167,7 +167,7 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const ChatId &/*id*/) const
+QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/) const
 {
     DistantChatPeerInfo tinfo;
 

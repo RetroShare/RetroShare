@@ -476,10 +476,10 @@ static  int initLib = 0;
 
 	mOwnCert = new sslcert(x509, mOwnId);
 
-    // new locations don't store the name in the cert
-    // if empty, use the external supplied value
-    if(mOwnCert->location == "")
-        mOwnCert->location = alternative_location_name;
+	// New locations don't store the name in the cert.
+	// If empty, use the external supplied  value.
+	if (mOwnCert->location == "")
+		mOwnCert->location = alternative_location_name ;
 
 	std::cerr << "Inited SSL context: " << std::endl;
 	std::cerr << "    Certificate: " << mOwnId << std::endl;

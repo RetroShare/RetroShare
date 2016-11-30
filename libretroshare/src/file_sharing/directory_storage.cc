@@ -755,12 +755,12 @@ bool LocalDirectoryStorage::serialiseDirEntry(const EntryIndex& indx,RsTlvBinary
 
     // serialise directory subfiles, with info for each of them
 
-	unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+    unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
 
     if(!file_section_data)
         return false ;
 
-	uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE;
+    uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE ;
 
     for(uint32_t i=0;i<dir->subfiles.size();++i)
     {
@@ -865,12 +865,12 @@ bool RemoteDirectoryStorage::deserialiseUpdateDirEntry(const EntryIndex& indx,co
     // deserialise directory subfiles, with info for each of them
 
     std::vector<InternalFileHierarchyStorage::FileEntry> subfiles_array ;
-	unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE);
+    unsigned char *file_section_data = (unsigned char *)rs_malloc(FL_BASE_TMP_SECTION_SIZE) ;
 
     if(!file_section_data)
         return false ;
 
-	uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE;
+    uint32_t file_section_size = FL_BASE_TMP_SECTION_SIZE ;
 
     for(uint32_t i=0;i<n_subfiles;++i)
     {
