@@ -114,8 +114,11 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
 
     std::set<std::string> sub_dir_list ;
 
+    // We re-check that each dir actually exists. It might have been removed from the disk.
+
     for(std::list<SharedDirInfo>::const_iterator real_dir_it(shared_directory_list.begin());real_dir_it!=shared_directory_list.end();++real_dir_it)
-        sub_dir_list.insert( (*real_dir_it).filename ) ;
+        if(RsDirUtil::checkDirectory( (*real_dir_it).filename ) )
+		        sub_dir_list.insert( (*real_dir_it).filename ) ;
 
     // make sure that entries in stored_dir_it are the same than paths in real_dir_it, and in the same order.
 
