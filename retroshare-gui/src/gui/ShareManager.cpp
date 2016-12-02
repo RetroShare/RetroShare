@@ -212,7 +212,11 @@ void ShareManager::load()
     for(uint32_t row=0;row<mDirInfos.size();++row)
     {
         listWidget->setItem(row, COLUMN_PATH, new QTableWidgetItem(QString::fromUtf8(mDirInfos[row].filename.c_str())));
-        listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8(mDirInfos[row].virtualname.c_str())));
+
+		if(mDirInfos[row].virtualname.empty())
+			listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(tr("[Unset] (Double click to change)"))) ;
+		else
+			listWidget->setItem(row, COLUMN_VIRTUALNAME, new QTableWidgetItem(QString::fromUtf8(mDirInfos[row].virtualname.c_str())));
 
         GroupFlagsWidget *widget = new GroupFlagsWidget(NULL,mDirInfos[row].shareflags);
 
@@ -224,9 +228,8 @@ void ShareManager::load()
 
         connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
 
-        listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
         listWidget->item(row,COLUMN_GROUPS)->setToolTip(tr("Double click to select which groups of friends can see the files")) ;
-        listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the name that friends will see")) ;
+		listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the name that friends will see.")) ;
 
         listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
@@ -234,6 +237,17 @@ void ShareManager::load()
         font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
         listWidget->item(row,COLUMN_GROUPS)->setTextColor( (mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE)? (Qt::black):(Qt::lightGray)) ;
         listWidget->item(row,COLUMN_GROUPS)->setFont(font);
+
+        if(QDir(QString::fromStdString(mDirInfos[row].filename)).exists())
+        {
+        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::black);
+			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
+        }
+        else
+        {
+        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::red);
+			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Directory does not exist! Double click to change shared directory path")) ;
+        }
     }
 
     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;
