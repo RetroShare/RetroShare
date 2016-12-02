@@ -44,7 +44,10 @@ LocalDirectoryUpdater::LocalDirectoryUpdater(HashStorage *hc,LocalDirectoryStora
     mDelayBetweenDirectoryUpdates = DELAY_BETWEEN_DIRECTORY_UPDATES;
     mIsEnabled = false ;
     mFollowSymLinks = FOLLOW_SYMLINKS_DEFAULT ;
-    mNeedsFullRebuild = false ;
+
+    // Can be left to false, but setting it to true will force to re-hash any file that has been left unhashed in the last session.
+
+    mNeedsFullRecheck = true ;
 }
 
 bool LocalDirectoryUpdater::isEnabled() const
@@ -72,7 +75,7 @@ void LocalDirectoryUpdater::data_tick()
     {
         sweepSharedDirectories() ;
 
-		mNeedsFullRebuild = false ;
+		mNeedsFullRecheck = false ;
         mLastSweepTime = now;
         mSharedDirectories->notifyTSChanged() ;
     }
@@ -171,7 +174,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
         return;
     }
 
-    if(mNeedsFullRebuild || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
+    if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
 																		// we only want to detect when the directory has changed on the disk
     {
        // collect subdirs and subfiles
@@ -268,7 +271,7 @@ uint32_t LocalDirectoryUpdater::fileWatchPeriod() const
 void LocalDirectoryUpdater::setFollowSymLinks(bool b)
 {
     if(b != mFollowSymLinks)
-        mNeedsFullRebuild = true ;
+        mNeedsFullRecheck = true ;
 
     mFollowSymLinks = b ;
 
