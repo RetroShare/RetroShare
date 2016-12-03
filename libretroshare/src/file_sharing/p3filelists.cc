@@ -99,6 +99,7 @@ void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared
 
         mLocalSharedDirs->setSharedDirectoryList(shared_dirs) ;
         mLocalDirWatcher->forceUpdate();
+
     }
 
     IndicateConfigChanged();
@@ -423,14 +424,6 @@ bool p3FileDatabase::loadList(std::list<RsItem *>& load)
 
         delete *it ;
     }
-    if(mLocalDirWatcher->hashSalt().isNull())
-    {
-        std::cerr << "(WW) Initialising directory watcher salt to some random value " << std::endl;
-        mLocalDirWatcher->setHashSalt(RsFileHash::random()) ;
-
-        IndicateConfigChanged();
-    }
-
 
     /* set directories */
     mLocalSharedDirs->setSharedDirectoryList(dirList);
@@ -547,6 +540,16 @@ void p3FileDatabase::cleanup()
 #endif
                 ++it ;
             }
+
+		// This is needed at least here, because loadList() might never have been called, if there is no config file present.
+
+		if(mLocalDirWatcher->hashSalt().isNull())
+		{
+			std::cerr << "(WW) Initialising directory watcher salt to some random value " << std::endl;
+			mLocalDirWatcher->setHashSalt(RsFileHash::random()) ;
+
+            IndicateConfigChanged();
+		}
     }
 }
 
