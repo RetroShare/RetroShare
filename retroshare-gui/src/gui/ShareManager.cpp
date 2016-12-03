@@ -32,7 +32,6 @@
 #include <retroshare/rspeers.h>
 
 #include "ShareManager.h"
-#include "ShareDialog.h"
 #include "settings/rsharesettings.h"
 #include "gui/common/GroupFlagsWidget.h"
 #include "gui/common/GroupSelectionBox.h"
@@ -109,9 +108,16 @@ void ShareManager::handleCellChange(int row,int column)
 void ShareManager::editShareDirectory()
 {
     QTableWidget *listWidget = ui.shareddirList;
-    int row = listWidget -> currentRow();
+    int row = listWidget->currentRow();
+    int col = listWidget->currentColumn();
 
-    doubleClickedCell(row,COLUMN_PATH) ;
+    if(col == COLUMN_VIRTUALNAME)
+    {
+        QModelIndex index = ui.shareddirList->model()->index(row,col,QModelIndex());
+        ui.shareddirList->edit(index);
+    }
+	else
+		doubleClickedCell(row,col) ;
 }
 
 void ShareManager::doubleClickedCell(int row,int column)
@@ -170,7 +176,18 @@ void ShareManager::shareddirListCustomPopupMenu( QPoint /*point*/ )
 {
     QMenu contextMnu( this );
 
-    QAction *editAct = new QAction(QIcon(IMAGE_EDIT), tr( "Edit" ), &contextMnu );
+    int col = ui.shareddirList->currentColumn();
+    QString edit_text ;
+
+    switch(col)
+    {
+    	case COLUMN_GROUPS: edit_text = tr("Change group visibility...") ; break ;
+		case COLUMN_PATH:   edit_text = tr("Choose directory to share...") ; break;
+		case COLUMN_VIRTUALNAME:   edit_text = tr("Choose visible name...") ; break;
+    default:
+		case COLUMN_SHARE_FLAGS:   return ;
+    }
+    QAction *editAct = new QAction(QIcon(IMAGE_EDIT), edit_text, &contextMnu );
     connect( editAct , SIGNAL( triggered() ), this, SLOT( editShareDirectory() ) );
 
     QAction *removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), &contextMnu );
@@ -360,13 +377,6 @@ void ShareManager::addShare()
     mDirInfos.back().shareflags = DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_ANONYMOUS_SEARCH;
     mDirInfos.back().parent_groups.clear();
 
-    load();
-}
-
-void ShareManager::showShareDialog()
-{
-    ShareDialog sharedlg ("", this);
-    sharedlg.exec();
     load();
 }
 

@@ -163,7 +163,6 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 	private slots:
 		void addShares();
 		void checkUpdate() ;
-		void editSharePermissions();
 		void playselectedfiles();
 		void openfile();
 		void openfolder();

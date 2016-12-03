@@ -351,7 +351,7 @@ HEADERS +=  rshare.h \
             gui/SearchTreeWidget.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
-            gui/ShareDialog.h \
+#            gui/ShareDialog.h \
 #            gui/SFListDelegate.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
@@ -595,7 +595,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FriendsDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
-            gui/ShareDialog.ui \
+#            gui/ShareDialog.ui \
             gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
@@ -715,7 +715,7 @@ SOURCES +=  main.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
-            gui/ShareDialog.cpp \
+#            gui/ShareDialog.cpp \
 #            gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \

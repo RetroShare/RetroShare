@@ -41,7 +41,6 @@
 #include "RetroShareLink.h"
 #include "ShareManager.h"
 #include "RemoteDirModel.h"
-#include "ShareDialog.h"
 #include "common/PeerDefs.h"
 #include "util/QtVersion.h"
 #include "gui/common/RsCollectionFile.h"
@@ -250,8 +249,6 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile())) ;
 	openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this) ;
 	connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder())) ;
-	editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this) ;
-	connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions())) ;
 
     ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
 
@@ -576,24 +573,6 @@ void RemoteSharedFilesDialog::downloadRemoteSelected()
 
 	QModelIndexList lst = getSelected() ;
 	model -> downloadSelected(lst) ;
-}
-
-void LocalSharedFilesDialog::editSharePermissions()
-{
-	std::list<SharedDirInfo> dirs;
-	rsFiles->getSharedDirectories(dirs);
-
-	std::list<SharedDirInfo>::const_iterator it;
-	for (it = dirs.begin(); it != dirs.end(); ++it) {
-		if (currentFile == currentFile) {
-			/* file name found, show dialog */
-			ShareDialog sharedlg (it->filename, this);
-			sharedlg.setWindowTitle(tr("Edit Shared Folder"));
-			sharedlg.exec();
-			break;
-		}
-	}
-
 }
 
 void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)

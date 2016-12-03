@@ -61,7 +61,6 @@ private slots:
     void handleCellChange(int row,int column);
 	void editShareDirectory();
 
-    void showShareDialog();
     void removeShareDirectory();
     void updateFlags();
     void applyAndClose() ;
