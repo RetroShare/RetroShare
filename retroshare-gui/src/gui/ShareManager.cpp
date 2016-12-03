@@ -262,7 +262,7 @@ void ShareManager::load()
         }
         else
         {
-        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::red);
+        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::lightGray);
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Directory does not exist! Double click to change shared directory path")) ;
         }
     }
