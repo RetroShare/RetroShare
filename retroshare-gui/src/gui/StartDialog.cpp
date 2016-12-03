@@ -35,12 +35,17 @@ StartDialog::StartDialog(QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
+#ifdef RS_AUTOLOGIN
+	connect(ui.autologin_checkbox, SIGNAL(clicked()), this, SLOT(notSecureWarning()));
+#else
+	ui.autologin_checkbox->setHidden(true);
+#endif
+
 	Settings->loadWidgetInformation(this);
 
 	ui.loadButton->setFocus();
 
 	connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
-	connect(ui.autologin_checkbox, SIGNAL(clicked()), this, SLOT(notSecureWarning()));
 
 	/* get all available pgp private certificates....
 	* mark last one as default.
@@ -115,6 +120,7 @@ bool StartDialog::requestedNewCert()
 	return reqNewCert;
 }
 
+#ifdef RS_AUTOLOGIN
 void StartDialog::notSecureWarning()
 {
 	/* some error msg */
@@ -130,3 +136,4 @@ void StartDialog::notSecureWarning()
 #endif
 #endif
 }
+#endif // RS_AUTOLOGIN
