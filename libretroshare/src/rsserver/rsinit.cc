@@ -725,6 +725,8 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		RsLoginHandler::enableAutoLogin(preferredId,rsInitConfig->passwd);
 		rsInitConfig->autoLogin = true ;
 	}
+#else
+	(void) autoLoginNT;
 #endif // RS_AUTOLOGIN
 
 	/* wipe out password */
