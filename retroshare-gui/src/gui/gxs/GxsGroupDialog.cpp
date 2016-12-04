@@ -347,7 +347,6 @@ void GxsGroupDialog::setupVisibility()
 	ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 	ui.commentsValueLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-	//ui.commentslabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
 
 	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
@@ -576,6 +575,9 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 
 	meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
+
+    meta.mGrpDistribution_MaxStorageAge = ui.keepLimit_SB->value() * 86400 ;
+    meta.mGrpDistribution_MaxRequestAge = ui.syncLimit_SB->value() * 86400 ;
 
 	if (!setCircleParameters(meta)){
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";

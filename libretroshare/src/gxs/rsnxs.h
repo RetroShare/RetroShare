@@ -65,9 +65,10 @@ public:
 
     /*!
      * Use this to set how far back synchronisation of messages should take place
-     * @param age the max age a sync item can to be allowed in a synchronisation
+     * @param age in seconds the max age a sync/store item can to be allowed in a synchronisation
      */
-    virtual void setSyncAge(uint32_t age) = 0;
+    virtual void setSyncAge(const RsGxsGroupId& id,uint32_t age_in_secs) = 0;
+    virtual void setKeepAge(const RsGxsGroupId& id,uint32_t age_in_secs) = 0;
 
     /*!
      * Initiates a search through the network

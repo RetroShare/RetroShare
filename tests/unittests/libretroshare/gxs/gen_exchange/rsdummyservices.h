@@ -15,7 +15,8 @@ public:
      RsDummyNetService(){ return;}
      virtual ~RsDummyNetService() { }
 
-     void setSyncAge(uint32_t age){}
+     void setSyncAge(const RsGxsGroupId& id,uint32_t age_in_secs){}
+     void setKeepAge(const RsGxsGroupId& id,uint32_t age_in_secs){}
 
      void requestGroupsOfPeer(const std::string& peerId){}
 

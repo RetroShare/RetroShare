@@ -4406,9 +4406,29 @@ void RsGxsNetService::pauseSynchronisation(bool /* enabled */)
 
 }
 
-void RsGxsNetService::setSyncAge(uint32_t /* age */)
+void RsGxsNetService::setSyncAge(const RsGxsGroupId &grpId, uint32_t age_in_secs)
 {
+	RS_STACK_MUTEX(mNxsMutex) ;
 
+    RsGxsGrpConfig& conf(mServerGrpConfigMap[grpId]) ;
+
+    if(conf.msg_req_delay != age_in_secs)
+    {
+    	conf.msg_req_delay = age_in_secs;
+        IndicateConfigChanged();
+    }
+}
+void RsGxsNetService::setKeepAge(const RsGxsGroupId &grpId, uint32_t age_in_secs)
+{
+	RS_STACK_MUTEX(mNxsMutex) ;
+
+    RsGxsGrpConfig& conf(mServerGrpConfigMap[grpId]) ;
+
+    if(conf.msg_keep_delay != age_in_secs)
+    {
+    	conf.msg_keep_delay = age_in_secs;
+        IndicateConfigChanged();
+    }
 }
 
 int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)

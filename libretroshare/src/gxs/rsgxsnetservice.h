@@ -103,11 +103,11 @@ public:
 
 
     /*!
-     * Use this to set how far back synchronisation of messages should take place
-     * @param age the max age a sync item can to be allowed in a synchronisation
+     * Use this to set how far back synchronisation and storage of messages should take place
+     * @param age the max age a sync/storage item can to be allowed in a synchronisation
      */
-    // NOT IMPLEMENTED
-    virtual void setSyncAge(uint32_t age);
+    virtual void setSyncAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
+    virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
