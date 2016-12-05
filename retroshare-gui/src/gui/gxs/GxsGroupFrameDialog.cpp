@@ -285,23 +285,29 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
-    QMenu *ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
-    ctxMenu2->addAction(tr("5 days"  ),this,SLOT(setStorePostDelay()))->setData(QVariant(  5 * 86400)) ;
-    ctxMenu2->addAction(tr("2 weeks" ),this,SLOT(setStorePostDelay()))->setData(QVariant( 15 * 86400)) ;
-    ctxMenu2->addAction(tr("1 month" ),this,SLOT(setStorePostDelay()))->setData(QVariant( 30 * 86400)) ;
-    ctxMenu2->addAction(tr("3 months"),this,SLOT(setStorePostDelay()))->setData(QVariant( 90 * 86400)) ;
-    ctxMenu2->addAction(tr("6 months"),this,SLOT(setStorePostDelay()))->setData(QVariant(180 * 86400)) ;
-    ctxMenu2->addAction(tr("1 year"  ),this,SLOT(setStorePostDelay()))->setData(QVariant(  0 * 86400)) ;
-    ctxMenu2->addAction(tr("Indefinitely")) ;
+    uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
+    uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
 
-	ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
-    ctxMenu2->addAction(tr("5 days"  ),this,SLOT(setSyncPostDelay()))->setData(QVariant(  5 * 86400)) ;
-    ctxMenu2->addAction(tr("2 weeks" ),this,SLOT(setSyncPostDelay()))->setData(QVariant( 15 * 86400)) ;
-    ctxMenu2->addAction(tr("1 month" ),this,SLOT(setSyncPostDelay()))->setData(QVariant( 30 * 86400)) ;
-    ctxMenu2->addAction(tr("3 months"),this,SLOT(setSyncPostDelay()))->setData(QVariant( 90 * 86400)) ;
-    ctxMenu2->addAction(tr("6 months"),this,SLOT(setSyncPostDelay()))->setData(QVariant(180 * 86400)) ;
-    ctxMenu2->addAction(tr("1 year"  ),this,SLOT(setSyncPostDelay()))->setData(QVariant(  0 * 86400)) ;
-    ctxMenu2->addAction(tr("Indefinitely")) ;
+    std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+    QAction *actnn = NULL;
+
+	QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
+	actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) actnn->setIcon(QIcon(":/images/start.png"));
+
+    ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+	actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) actnn->setIcon(QIcon(":/images/start.png"));
+	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) actnn->setIcon(QIcon(":/images/start.png"));
 
 	if (shareKeyType()) {
         action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
@@ -346,7 +352,7 @@ void GxsGroupFrameDialog::setStorePostsDelay()
 
     std::cerr << "Data is " << duration << std::endl;
 
- 	mInterface->setStoragePeriod(mGroupId,duration) ;
+ 	mInterface->setStoragePeriod(mGroupId,duration * 86400) ;
 }
 
 
@@ -364,7 +370,7 @@ void GxsGroupFrameDialog::setSyncPostsDelay()
 
     std::cerr << "Data is " << duration << std::endl;
 
- 	mInterface->setSyncPeriod(mGroupId,duration) ;
+ 	mInterface->setSyncPeriod(mGroupId,duration * 86400) ;
 }
 
 void GxsGroupFrameDialog::restoreGroupKeys(void)

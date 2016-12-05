@@ -1401,9 +1401,25 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 		    // Actual suppliers will come back automatically.  
 
 		    it->second.suppliers.ids.clear() ;
+
+            // also make sure that values stored for keep and req delays correspond to the canonical values
+
+            locked_checkDelay(it->second.msg_req_delay);
+            locked_checkDelay(it->second.msg_keep_delay);
     }
 
     return true;
+}
+
+void RsGxsNetService::locked_checkDelay(uint32_t& time_in_secs)
+{
+    if(time_in_secs <    1 * 86400) { time_in_secs =   0        ; return ; }
+    if(time_in_secs <=  10 * 86400) { time_in_secs =   5 * 86400; return ; }
+    if(time_in_secs <=  20 * 86400) { time_in_secs =  15 * 86400; return ; }
+    if(time_in_secs <=  60 * 86400) { time_in_secs =  30 * 86400; return ; }
+    if(time_in_secs <= 120 * 86400) { time_in_secs =  90 * 86400; return ; }
+    if(time_in_secs <= 250 * 86400) { time_in_secs = 180 * 86400; return ; }
+                                      time_in_secs = 365 * 86400;
 }
 
 #include <algorithm>
@@ -4410,6 +4426,8 @@ void RsGxsNetService::setSyncAge(const RsGxsGroupId &grpId, uint32_t age_in_secs
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+    locked_checkDelay(age_in_secs) ;
+
     RsGxsGrpConfig& conf(mServerGrpConfigMap[grpId]) ;
 
     if(conf.msg_req_delay != age_in_secs)
@@ -4421,6 +4439,8 @@ void RsGxsNetService::setSyncAge(const RsGxsGroupId &grpId, uint32_t age_in_secs
 void RsGxsNetService::setKeepAge(const RsGxsGroupId &grpId, uint32_t age_in_secs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
+
+    locked_checkDelay(age_in_secs) ;
 
     RsGxsGrpConfig& conf(mServerGrpConfigMap[grpId]) ;
 
@@ -4438,7 +4458,7 @@ uint32_t RsGxsNetService::getSyncAge(const RsGxsGroupId& grpId)
     GrpConfigMap::const_iterator it = mServerGrpConfigMap.find(grpId) ;
 
     if(it == mServerGrpConfigMap.end())
-        return mSYNC_PERIOD ;
+        return RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
     else
         return it->second.msg_keep_delay ;
 }

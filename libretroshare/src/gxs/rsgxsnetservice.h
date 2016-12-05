@@ -112,7 +112,7 @@ public:
     virtual uint32_t getSyncAge(const RsGxsGroupId& id);
     virtual uint32_t getKeepAge(const RsGxsGroupId& id,uint32_t default_value);
 
-    virtual uint32_t getDefaultSyncAge() { return mSYNC_PERIOD ; }
+    virtual uint32_t getDefaultSyncAge() { return RS_GXS_DEFAULT_MSG_REQ_PERIOD ; }
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -487,6 +487,7 @@ private:
 
 private:
 
+	static void locked_checkDelay(uint32_t& time_in_secs);
 
     /*** transactions ***/
 

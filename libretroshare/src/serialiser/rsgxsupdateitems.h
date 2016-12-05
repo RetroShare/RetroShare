@@ -56,7 +56,7 @@ public:
 	{
 		msg_keep_delay = RS_GXS_DEFAULT_MSG_STORE_PERIOD ;
 		msg_send_delay = RS_GXS_DEFAULT_MSG_SEND_PERIOD ;
-		msg_req_delay = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
+		msg_req_delay  = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
 
 		max_visible_count = 0 ;
 		update_TS = 0 ;
