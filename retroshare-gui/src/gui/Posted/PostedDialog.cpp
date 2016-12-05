@@ -64,8 +64,8 @@ QString PostedDialog::getHelpString() const
 	 <p>Links can be commented by subscribed users. A promotion system also gives the opportunity to  \
 	 enlight important links.</p> \
      <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
-     <p>Posted links get deleted after %1 months.</p>\
-     ").arg(QString::number(rsPosted->getStoragePeriod()));
+    <p>Posted links are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
+                ").arg(QString::number(rsPosted->getDefaultStoragePeriod()/86400)).arg(QString::number(rsPosted->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
 }

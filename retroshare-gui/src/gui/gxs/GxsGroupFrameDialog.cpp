@@ -285,14 +285,28 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
+    QMenu *ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+    ctxMenu2->addAction(tr("5 days"  ),this,SLOT(setStorePostDelay()))->setData(QVariant(  5 * 86400)) ;
+    ctxMenu2->addAction(tr("2 weeks" ),this,SLOT(setStorePostDelay()))->setData(QVariant( 15 * 86400)) ;
+    ctxMenu2->addAction(tr("1 month" ),this,SLOT(setStorePostDelay()))->setData(QVariant( 30 * 86400)) ;
+    ctxMenu2->addAction(tr("3 months"),this,SLOT(setStorePostDelay()))->setData(QVariant( 90 * 86400)) ;
+    ctxMenu2->addAction(tr("6 months"),this,SLOT(setStorePostDelay()))->setData(QVariant(180 * 86400)) ;
+    ctxMenu2->addAction(tr("1 year"  ),this,SLOT(setStorePostDelay()))->setData(QVariant(  0 * 86400)) ;
+    ctxMenu2->addAction(tr("Indefinitely")) ;
+
+	ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
+    ctxMenu2->addAction(tr("5 days"  ),this,SLOT(setSyncPostDelay()))->setData(QVariant(  5 * 86400)) ;
+    ctxMenu2->addAction(tr("2 weeks" ),this,SLOT(setSyncPostDelay()))->setData(QVariant( 15 * 86400)) ;
+    ctxMenu2->addAction(tr("1 month" ),this,SLOT(setSyncPostDelay()))->setData(QVariant( 30 * 86400)) ;
+    ctxMenu2->addAction(tr("3 months"),this,SLOT(setSyncPostDelay()))->setData(QVariant( 90 * 86400)) ;
+    ctxMenu2->addAction(tr("6 months"),this,SLOT(setSyncPostDelay()))->setData(QVariant(180 * 86400)) ;
+    ctxMenu2->addAction(tr("1 year"  ),this,SLOT(setSyncPostDelay()))->setData(QVariant(  0 * 86400)) ;
+    ctxMenu2->addAction(tr("Indefinitely")) ;
+
 	if (shareKeyType()) {
         action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
         action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
-
-    //if (!mGroupId.isNull() && isPublisher && !isAdmin) {
-    //	contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights" ), this, SLOT(restoreGroupKeys()));
-    //}
 
 	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
 		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
@@ -316,6 +330,41 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	}
 
 	contextMnu.exec(QCursor::pos());
+}
+
+void GxsGroupFrameDialog::setStorePostsDelay()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action || mGroupId.isNull())
+    {
+        std::cerr << "(EE) Cannot find action/group that called me! Group is " << mGroupId << ", action is " << (void*)action << "  " << __PRETTY_FUNCTION__ << std::endl;
+        return;
+    }
+
+    uint32_t duration = action->data().toUInt() ;
+
+    std::cerr << "Data is " << duration << std::endl;
+
+ 	mInterface->setStoragePeriod(mGroupId,duration) ;
+}
+
+
+void GxsGroupFrameDialog::setSyncPostsDelay()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action || mGroupId.isNull())
+    {
+        std::cerr << "(EE) Cannot find action/group that called me! Group is " << mGroupId << ", action is " << (void*)action << "  " << __PRETTY_FUNCTION__ << std::endl;
+        return;
+    }
+
+    uint32_t duration = action->data().toUInt() ;
+
+    std::cerr << "Data is " << duration << std::endl;
+
+ 	mInterface->setSyncPeriod(mGroupId,duration) ;
 }
 
 void GxsGroupFrameDialog::restoreGroupKeys(void)

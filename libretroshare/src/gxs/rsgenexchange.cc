@@ -1608,6 +1608,54 @@ void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 
 }
 
+uint32_t RsGenExchange::getDefaultSyncPeriod()
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getDefaultSyncAge();
+    else
+    {
+        std::cerr << "(EE) No network service available. Cannot get default sync period. " << std::endl;
+        return 0;
+    }
+}
+
+uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getSyncAge(grpId);
+    else
+        return mNetService->getDefaultSyncAge();
+}
+
+void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+        return mNetService->setKeepAge(grpId,age_in_secs) ;
+    else
+        std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
+
+uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getKeepAge(grpId,MESSAGE_STORE_PERIOD) ;
+    else
+        return MESSAGE_STORE_PERIOD;
+}
+void     RsGenExchange::setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+        return mNetService->setKeepAge(grpId,age_in_secs) ;
+    else
+        std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
+
 void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */

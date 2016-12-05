@@ -612,11 +612,6 @@ public:
     void updateGroupLastMsgTimeStamp(uint32_t& token, const RsGxsGroupId& grpId);
 
     /*!
-     * @return storage time of messages in months
-     */
-    int getStoragePeriod(){ return MESSAGE_STORE_PERIOD/(60*60*24*31);}
-
-    /*!
      * sets the msg status flag
      * @param token this is set to token value associated to this request
      * @param grpId Id of group whose subscribe file will be changed
@@ -646,6 +641,19 @@ public:
      * @param gid GroupId the TS is which is requested
      */
     bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+
+    /*!
+     * \brief getDefaultStoragePeriod. All times in seconds.
+     * \return
+     */
+    virtual uint32_t getDefaultStoragePeriod() { return MESSAGE_STORE_PERIOD; }
+
+    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) ;
+    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+
+    virtual uint32_t getDefaultSyncPeriod();
+    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
+    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 
 protected:
 
@@ -859,7 +867,6 @@ private:
 
     std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
     typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
-
 
     const uint32_t MESSAGE_STORE_PERIOD;
 

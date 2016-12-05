@@ -54,16 +54,8 @@ QString GxsForumsDialog::getHelpString() const
 			<p>Retroshare Forums look like internet forums, but they work in a decentralized way</p>    \
 			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
 			your friends. This automatically promotes interesting forums in the network.</p>            \
-            <p>Forum messages get deleted after %1 months.</p>\
-                ").arg(QString::number(rsGxsForums->getStoragePeriod()));
-
-                // not true anymore in v0.6
-                /*
-			<p>Forums are either Authenticated (<img src=\":/images/konv_message2.png\" width=\"12\"/>) \
-			or anonymous (<img src=\":/images/konversation.png\" width=\"12\"/>). The former            \
-			class is more resistant to spamming because posts are                                       \
-			cryptographically signed using a Retroshare pseudo-identity.</p>") ;
-                        */
+            <p>Forum messages are kept for %1 days and sync-ed over the last %2 days, unless you configure it otherwise.</p>\
+                ").arg(QString::number(rsGxsForums->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsForums->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;	
 }

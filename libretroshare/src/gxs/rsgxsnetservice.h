@@ -109,6 +109,11 @@ public:
     virtual void setSyncAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
     virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
 
+    virtual uint32_t getSyncAge(const RsGxsGroupId& id);
+    virtual uint32_t getKeepAge(const RsGxsGroupId& id,uint32_t default_value);
+
+    virtual uint32_t getDefaultSyncAge() { return mSYNC_PERIOD ; }
+
     /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers
