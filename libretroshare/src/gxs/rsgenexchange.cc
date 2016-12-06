@@ -1634,7 +1634,7 @@ uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
 void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
 {
 	if(mNetService != NULL)
-        return mNetService->setKeepAge(grpId,age_in_secs) ;
+        return mNetService->setSyncAge(grpId,age_in_secs) ;
     else
         std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
 }

@@ -1386,27 +1386,26 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
     
     time_t now = time(NULL);
     
-#warning Do we keep that?
     for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it)
-    {
-		    // At each reload, we reset the count of visible messages. It will be rapidely restored to its real value from friends.
+	{
+		// At each reload, we reset the count of visible messages. It will be rapidely restored to its real value from friends.
 
-		    it->second.max_visible_count = 0; // std::max(it2->second.message_count,gnsr.max_visible_count) ;
-            
-            	    // the update time stamp is randomised so as not to ask all friends at once about group statistics.
-            
-		    it->second.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
+		it->second.max_visible_count = 0; // std::max(it2->second.message_count,gnsr.max_visible_count) ;
 
-		    // Similarly, we remove all suppliers. 
-		    // Actual suppliers will come back automatically.  
+		// the update time stamp is randomised so as not to ask all friends at once about group statistics.
 
-		    it->second.suppliers.ids.clear() ;
+		it->second.update_TS = now - GROUP_STATS_UPDATE_DELAY + (RSRandom::random_u32()%(GROUP_STATS_UPDATE_DELAY/10)) ;
 
-            // also make sure that values stored for keep and req delays correspond to the canonical values
+		// Similarly, we remove all suppliers.
+		// Actual suppliers will come back automatically.
 
-            locked_checkDelay(it->second.msg_req_delay);
-            locked_checkDelay(it->second.msg_keep_delay);
-    }
+		it->second.suppliers.ids.clear() ;
+
+		// also make sure that values stored for keep and req delays correspond to the canonical values
+
+		locked_checkDelay(it->second.msg_req_delay);
+		locked_checkDelay(it->second.msg_keep_delay);
+	}
 
     return true;
 }
@@ -1440,6 +1439,13 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
+
+    // First, make sure that all IDs (which are needed twice) are consistent
+
+    for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it) it->second.grpId = it->first ;
+    for(ServerMsgMap::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it) it->second.grpId = it->first ;
+
+    std::cerr << "RsGxsNetService::saveList()..." << std::endl;
 
     // hardcore templates
     std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap,RsGxsGrpUpdateItem>(mServType));
