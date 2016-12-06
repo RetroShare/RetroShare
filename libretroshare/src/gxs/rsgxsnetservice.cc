@@ -252,7 +252,6 @@ static const uint32_t REJECTED_MESSAGE_RETRY_DELAY            =      24*3600; //
 static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; // update unsubscribed group statistics every 3 mins
 static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
-static const uint32_t GXS_NET_SERVICE_SYNC_DELAY              =   31*24*3600; // this is the delay after which we do not request messages.
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
@@ -622,11 +621,22 @@ void RsGxsNetService::syncWithPeers()
                     updateTS = cit2->second.time_stamp;
             }
 
+            // get sync params for this group
+
             RsNxsSyncMsgReqItem* msg = new RsNxsSyncMsgReqItem(mServType);
+
             msg->clear();
             msg->PeerId(peerId);
             msg->updateTS = updateTS;
-            msg->createdSinceTS = std::max(0,(int)time(NULL) - (int)GXS_NET_SERVICE_SYNC_DELAY);	// compute now minus one month
+
+            int req_delay = (int)mServerGrpConfigMap[grpId].msg_req_delay ;
+
+            // The last post will be set to TS 0 if the req delay is 0, which means "Indefinitly"
+
+            if(req_delay > 0)
+				msg->createdSinceTS = std::max(0,(int)time(NULL) - req_delay);
+			else
+				msg->createdSinceTS = 0 ;
 
             if(encrypt_to_this_circle_id.isNull()) 
                 msg->grpId = grpId;
@@ -4157,7 +4167,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 #endif
     }
 #ifdef NXS_NET_DEBUG_0
-    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Sending MSG meta data!" << std::endl;
+    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Sending MSG meta data created since TS=" << item->createdSinceTS << std::endl;
 #endif
 
     std::list<RsNxsItem*> itemL;
