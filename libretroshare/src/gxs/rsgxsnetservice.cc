@@ -4460,7 +4460,7 @@ uint32_t RsGxsNetService::getSyncAge(const RsGxsGroupId& grpId)
     if(it == mServerGrpConfigMap.end())
         return RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
     else
-        return it->second.msg_keep_delay ;
+        return it->second.msg_req_delay ;
 }
 uint32_t RsGxsNetService::getKeepAge(const RsGxsGroupId& grpId,uint32_t default_value)
 {
@@ -4471,7 +4471,7 @@ uint32_t RsGxsNetService::getKeepAge(const RsGxsGroupId& grpId,uint32_t default_
     if(it == mServerGrpConfigMap.end())
         return default_value ;
     else
-        return it->second.msg_req_delay ;
+        return it->second.msg_keep_delay ;
 }
 
 int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId)
