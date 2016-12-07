@@ -230,7 +230,7 @@ void RsGenExchange::tick()
 		}
 		else
 		{
-			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,mGixs);
+			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
 			mIntegrityCheck->start("gxs integrity");
 			mChecking = true;
 		}

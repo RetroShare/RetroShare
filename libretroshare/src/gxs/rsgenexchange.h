@@ -655,6 +655,7 @@ public:
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 
+    uint16_t serviceType() const { return mServType ; }
 protected:
 
     /** Notifications **/
@@ -826,8 +827,6 @@ private:
      * @param msgIdsNotify message notification map to be filtered
      */
     void removeDeleteExistingMessages(RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify);
-
-private:
 
     RsMutex mGenMtx;
     RsGxsDataAccess* mDataAccess;

@@ -115,8 +115,7 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGixs *gixs);
-
+	RsGxsIntegrityCheck(RsGeneralDataService* const dataService, RsGenExchange *genex, RsGixs *gixs);
 
 	bool check();
 	bool isDone();
@@ -128,6 +127,7 @@ public:
 private:
 
 	RsGeneralDataService* const mDs;
+    RsGenExchange *mGenExchangeClient;
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
