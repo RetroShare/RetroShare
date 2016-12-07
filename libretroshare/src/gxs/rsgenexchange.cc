@@ -181,9 +181,10 @@ void RsGenExchange::tick()
 				mLastClean = time(NULL);
 			}
 
-		}else
+		}
+        else
 		{
-			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, MESSAGE_STORE_PERIOD, 1);
+			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, this, 1);
 			mCleaning = true;
 		}
 	}

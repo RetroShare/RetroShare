@@ -35,8 +35,8 @@ static const uint32_t MAX_GXS_IDS_REQUESTS_NET   =  10 ; // max number of reques
 
 //#define GXSUTIL_DEBUG 1
 
-RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize)
-: mDs(dataService), MESSAGE_STORE_PERIOD(messageStorePeriod), CHUNK_SIZE(chunkSize)
+RsGxsMessageCleanUp::RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize)
+: mDs(dataService), mGenExchangeClient(genex), CHUNK_SIZE(chunkSize)
 {
 
 	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
@@ -72,6 +72,8 @@ bool RsGxsMessageCleanUp::clean()
 
 		req.clear();
 
+        uint32_t store_period = mGenExchangeClient->getStoragePeriod(grpId) ;
+
 		for(; mit != result.end(); ++mit)
 		{
 			std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
@@ -82,7 +84,7 @@ bool RsGxsMessageCleanUp::clean()
 				RsGxsMsgMetaData* meta = *vit;
 
 				// check if expired
-				bool remove = (meta->mPublishTs + MESSAGE_STORE_PERIOD) < now;
+				bool remove = (meta->mPublishTs + store_period) < now;
 
 				// check client does not want the message kept regardless of age
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);

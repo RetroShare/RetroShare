@@ -31,6 +31,7 @@
 #include "rsgds.h"
 
 class RsGixs ;
+class RsGenExchange ;
 
 /*!
  * Handy function for cleaning out meta result containers
@@ -73,7 +74,7 @@ public:
 	 * @param chunkSize
 	 * @param sleepPeriod
 	 */
-	RsGxsMessageCleanUp(RsGeneralDataService* const dataService, uint32_t messageStorePeriod, uint32_t chunkSize);
+	RsGxsMessageCleanUp(RsGeneralDataService* const dataService, RsGenExchange *genex, uint32_t chunkSize);
 
 	/*!
 	 * On construction this should be called to progress deletions
@@ -90,7 +91,8 @@ public:
 private:
 
 	RsGeneralDataService* const mDs;
-	const uint32_t MESSAGE_STORE_PERIOD, CHUNK_SIZE;
+    RsGenExchange *mGenExchangeClient;
+	uint32_t CHUNK_SIZE;
 	std::vector<RsGxsGrpMetaData*> mGrpMeta;
 };
 
