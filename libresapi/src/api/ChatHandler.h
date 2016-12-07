@@ -11,9 +11,10 @@ class RsIdentity;
 namespace resource_api
 {
 
-class UnreadMsgNotify{
+class UnreadMsgNotify
+{
 public:
-    virtual void notifyUnreadMsgCountChanged(const RsPeerId& peer, uint32_t count) = 0;
+	virtual void notifyUnreadMsgCountChanged(const RsPeerId& peer, uint32_t count) = 0;
 };
 
 class ChatHandler: public ResourceRouter, NotifyClient, Tickable
@@ -128,6 +129,9 @@ private:
     ResponseTask *handleReceiveStatus(Request& req, Response& resp);
     void handleSendStatus(Request& req, Response& resp);
     void handleUnreadMsgs(Request& req, Response& resp);
+	void handleInitiateDistantChatConnexion(Request& req, Response& resp);
+	void handleDistantChatStatus(Request& req, Response& resp);
+	void handleCloseDistantChatConnexion(Request& req, Response& resp);
 
     void getPlainText(const std::string& in, std::string &out, std::vector<Triple> &links);
     // last parameter is only used for lobbies!

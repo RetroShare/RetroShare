@@ -527,7 +527,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
 			util/rsscopetimer.h \
-			util/stacktrace.h
+            util/stacktrace.h \
+            util/rsdeprecate.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -540,7 +541,7 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/fttransfermodule.cc \
 			ft/ftturtlefiletransferitem.cc 
 
-SOURCES += crypto/chacha20.cpp 
+SOURCES += crypto/chacha20.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
