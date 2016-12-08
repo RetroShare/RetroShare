@@ -28,6 +28,8 @@ ApplicationWindow
 	width: 400
 	height: 400
 
+	property string activeChatId;
+
 	Rectangle
 	{
 		id: mainView
@@ -102,8 +104,13 @@ ApplicationWindow
 
 			Tab
 			{
-				title: "Blue"
-				Rectangle { color: "blue"; anchors.fill: parent }
+				title: "Chat"
+				ChatView
+				{
+					id: chatView
+					chatId: mainWindow.activeChatId
+					onVisibleChanged: focus = visible
+				}
 			}
 		}
 	}

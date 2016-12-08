@@ -4,13 +4,14 @@ QT += qml quick
 
 CONFIG += c++11
 
+HEADERS += libresapilocalclient.h
 SOURCES += main.cpp \
     libresapilocalclient.cpp
 
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+#QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
@@ -30,7 +31,3 @@ DEPENDPATH *= ../../libretroshare/src
 INCLUDEPATH *= ../../libretroshare/src
 PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 LIBS *= ../../libretroshare/src/lib/libretroshare.a
-
-HEADERS += \
-    libresapilocalclient.h \
-    debugutils.h

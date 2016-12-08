@@ -18,8 +18,8 @@
  */
 
 #include "libresapilocalclient.h"
-#include "debugutils.h"
-#include <QChar>
+
+#include <QJSEngine>
 
 
 void LibresapiLocalClient::openConnection(QString socketPath)
@@ -31,54 +31,35 @@ void LibresapiLocalClient::openConnection(QString socketPath)
 	mLocalSocket.connectToServer(socketPath);
 }
 
-int LibresapiLocalClient::request(const QString & path, const QString & jsonData)
+int LibresapiLocalClient::request( const QString& path, const QString& jsonData,
+                                   QJSValue callback )
 {
-	qDebug() << "LibresapiLocalClient::request()" << path << jsonData;
-    QByteArray data;
-    data.append(path); data.append('\n');
-    data.append(jsonData); data.append('\n');
-    mLocalSocket.write(data);
+	QByteArray data;
+	data.append(path); data.append('\n');
+	data.append(jsonData); data.append('\n');
+	callbackQueue.enqueue(callback);
+	mLocalSocket.write(data);
 
-    return 1;
+	return 1;
 }
 
 void LibresapiLocalClient::socketError(QLocalSocket::LocalSocketError)
 {
-	myDebug("error!!!!\n" + mLocalSocket.errorString());
+	qDebug() << "Socket Eerror!!" << mLocalSocket.errorString();
 }
 
 void LibresapiLocalClient::read()
 {
-	receivedBytes = mLocalSocket.readLine();
-
-	qDebug() << receivedBytes;
-
-	if(parseResponse()) // pensar en fer un buffer per parsejar, per evitar errors.
-		emit goodResponseReceived(QString(receivedBytes));
-	else
+	QString receivedMsg(mLocalSocket.readLine());
+	QJSValue callback(callbackQueue.dequeue());
+	if(callback.isCallable())
 	{
-		QString errMess = "The message was not understood!\n"
-		"It should be a JSON formatted text file\n"
-		"Its contents were:\n" + receivedBytes;
-		myDebug(errMess.replace(QChar('\n'), QChar::LineSeparator));
+		QJSValue params = callback.engine()->newObject();
+		params.setProperty("response", receivedMsg);
+
+		callback.call(QJSValueList { params });
 	}
-}
 
-bool LibresapiLocalClient::parseResponse()
-{
-    QJsonParseError error;
-    json = QJsonDocument::fromJson(receivedBytes, &error);
-    myDebug(QString(json.toJson()).replace(QChar('\n'), QChar::LineSeparator));
-
-    if(error.error == QJsonParseError::NoError){
-        return true;
-    }
-    myDebug(error.errorString());
-
-    return false;
-}
-
-const QJsonDocument & LibresapiLocalClient::getJson()
-{
-    return json;
+	emit goodResponseReceived(receivedMsg); /// @deprecated
+	emit responseReceived(receivedMsg);
 }

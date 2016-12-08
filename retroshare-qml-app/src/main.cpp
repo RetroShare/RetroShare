@@ -34,28 +34,28 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
+	QQmlApplicationEngine engine;
+
+	/// @deprecated
 	qmlRegisterType<LibresapiLocalClient>(
 	            "org.retroshare.qml_components.LibresapiLocalClient", 1, 0,
 	            "LibresapiLocalClient");
 
-    QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
-    sockPath.append("/libresapi.sock");
+	QString sockPath = QString::fromStdString(RsAccounts::ConfigDirectory());
+	sockPath.append("/libresapi.sock");
+
+	LibresapiLocalClient rsApi;
+	rsApi.openConnection(sockPath);
 
 	engine.rootContext()->setContextProperty("apiSocketPath", sockPath);
+	engine.rootContext()->setContextProperty("rsApi", &rsApi);
 	engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 
 	QFileInfo fileInfo(sockPath);
-
-#ifdef __ANDROID__
-    qDebug() << "Is main.cpp running as a service?" << QtAndroid::androidService().isValid();
-    qDebug() << "Is main.cpp running as an activity?" << QtAndroid::androidActivity().isValid();
-#endif
-
 	qDebug() << "QML APP:" << sockPath << fileInfo.exists() << fileInfo.lastModified().toString();
 
-    return app.exec();
+	return app.exec();
 }
