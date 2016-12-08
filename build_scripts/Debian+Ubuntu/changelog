@@ -1,5 +1,26 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  cf8dac2 csoler   Sat,  3 Dec 2016 21:00:16 +0100 fixed initialisation of random salt in directory updater when no config file is presen
+  eedeaeb csoler   Sat,  3 Dec 2016 15:13:04 +0100 used light grey instead of read to show missing directories
+  8adb91b csoler   Sat,  3 Dec 2016 15:04:57 +0100 removed compilation of ShareDialog that is unused, and cleanup the editing in ShareMan
+  6890669 defnax   Fri,  2 Dec 2016 23:00:57 +0100 update emotes file
+  a005fa0 csoler   Fri,  2 Dec 2016 19:36:34 +0100 display missing directories in red in share manager
+  ff271c6 csoler   Fri,  2 Dec 2016 19:02:41 +0100 force recheck of existing files at start, to possibly re-hash files that were not alre
+  d986216 csoler   Thu,  1 Dec 2016 23:27:15 +0100 remove non existing shared directories when not found on the disk
+  d7ef33e csoler   Wed, 30 Nov 2016 22:51:18 +0100 Merge pull request #544 from PhenomRetroShare/Fix_SomeWarnings
+  674b6de Phenom   Sat, 22 Oct 2016 23:48:19 +0200 Fix Some gcc warnings 383 to 208 lines
+  74aa55e defnax   Wed, 30 Nov 2016 08:12:46 +0100 Merge pull request #587 from dimqua/patch-1
+  d616df3 defnax   Wed, 30 Nov 2016 08:12:38 +0100 Merge pull request #586 from hunbernd/fix/external-emoticons
+  90abd2f dimqua   Tue, 29 Nov 2016 19:05:02 +0300 bdboot update
+  5fd1de0 hunbernd Mon, 28 Nov 2016 00:35:09 +0100 Fixed loading of external emoticons - path comparison was Linux specific, also it h
+  137d71c csoler   Sun, 27 Nov 2016 20:57:38 +0100 extended the window during which the GUI is told to tell that the update of shared di
+  6937d87 csoler   Sun, 27 Nov 2016 12:21:14 +0100 changed from std::string to RsPgpId to represent openned items in FriendList
+  f3d7948 csoler   Sun, 27 Nov 2016 12:20:32 +0100 turned one error into a warning in p3filelists.cc when requesting an unexisting ref
+  8b22924 defnax   Sun, 27 Nov 2016 18:00:26 +0100 Merge branch 'master' of https://github.com/RetroShare/RetroShare
+  cfd4afd defnax   Sun, 27 Nov 2016 17:59:15 +0100 Update emoticons file
+  5216636 defnax   Sun, 27 Nov 2016 16:42:45 +0100 Merge pull request #585 from PhenomRetroShare/Add_RSELidedItemDelegate
+  486c113 defnax   Sun, 27 Nov 2016 15:58:53 +0100 Changed smiley widget default width Update Emotes file
+  0f63921 defnax   Sun, 27 Nov 2016 00:11:21 +0100 Fixing icon size for smiley widget.
   2a758dd csoler   Sat, 26 Nov 2016 19:19:15 +0100 changed shared files tree header when updating
   aa4ecd7 csoler   Sat, 26 Nov 2016 18:58:02 +0100 added limit to calls of PreMods() in SharedFilesDialog so as to keep CPU load minimal when updating dirs from friends. Disabled sorting when new data comes.
   d01644c csoler   Sat, 26 Nov 2016 11:26:02 +0100 added back the test for local/remote in SharedFilesDialog as it reduces the load anyway

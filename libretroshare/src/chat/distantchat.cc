@@ -275,31 +275,30 @@ bool DistantChatService::initiateDistantChatConnexion(const RsGxsId& to_gxs_id, 
 
 bool DistantChatService::getDistantChatStatus(const DistantChatPeerId& tunnel_id, DistantChatPeerInfo& cinfo) 
 {
-    RsStackMutex stack(mDistantChatMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mDistantChatMtx);
 
-    RsGxsTunnelService::GxsTunnelInfo tinfo ;
+	RsGxsTunnelService::GxsTunnelInfo tinfo;
 
-    if(!mGxsTunnels->getTunnelInfo(RsGxsTunnelId(tunnel_id),tinfo))
-	    return false;
+	if(!mGxsTunnels->getTunnelInfo(RsGxsTunnelId(tunnel_id),tinfo)) return false;
 
-    cinfo.to_id  = tinfo.destination_gxs_id;
-    cinfo.own_id = tinfo.source_gxs_id;
-    cinfo.peer_id = tunnel_id;
+	cinfo.to_id  = tinfo.destination_gxs_id;
+	cinfo.own_id = tinfo.source_gxs_id;
+	cinfo.peer_id = tunnel_id;
 
-    switch(tinfo.tunnel_status)
-    {
-    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK : 		cinfo.status = RS_DISTANT_CHAT_STATUS_CAN_TALK;		
-	    						break ;
-    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN: 		cinfo.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;  		
-	    						break ;
-    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED: 	cinfo.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED ;	
-	    						break ;
-    default:
-    case  RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_UNKNOWN: 		cinfo.status = RS_DISTANT_CHAT_STATUS_UNKNOWN;			
-	    						break ;
-    }
+	switch(tinfo.tunnel_status)
+	{
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK :
+		cinfo.status = RS_DISTANT_CHAT_STATUS_CAN_TALK; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:
+		cinfo.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED:
+		cinfo.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_UNKNOWN:
+	default:
+		cinfo.status = RS_DISTANT_CHAT_STATUS_UNKNOWN; break;
+	}
 
-    return true ;
+	return true;
 }
 
 bool DistantChatService::closeDistantChatConnexion(const DistantChatPeerId &tunnel_id)

@@ -90,7 +90,7 @@ bool RsGxsMessageCleanUp::clean()
 				RsGxsMsgMetaData* meta = *vit;
 
 				// check if expired
-				bool remove = (meta->mPublishTs + store_period) < now;
+				bool remove = store_period > 0 && (meta->mPublishTs + store_period) < now;
 
 				// check client does not want the message kept regardless of age
 				remove &= !(meta->mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP);
