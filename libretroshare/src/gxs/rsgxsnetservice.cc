@@ -266,8 +266,8 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-//static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("cb98f4013f7b4ed4245e54ca7095925b")) ;	// use this to allow to this group id only, or "" for all IDs
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("cb98f4013f7b4ed4245e54ca7095925b")) ;	// use this to allow to this group id only, or "" for all IDs
+//static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
 static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
@@ -2474,29 +2474,11 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
                 if(msg)
                 {
                     if(grpId.isNull())
-                    {
                         grpId = msg->grpId;
-
-						GrpConfigMap::const_iterator it = mServerGrpConfigMap.find(grpId) ;
-
-						if(it == mServerGrpConfigMap.end())
-							max_sync_age = RS_GXS_DEFAULT_MSG_REQ_PERIOD ;
-						else
-                        {
-							max_sync_age = it->second.msg_req_delay ;
-
-                            if(max_sync_age == 0 || max_sync_age > it->second.msg_keep_delay)
-                                max_sync_age = it->second.msg_keep_delay ;
-                        }
-                    }
 
                     tr->mItems.pop_front();
 
-                    if(max_sync_age == 0 || msg->metaData->mPublishTs + max_sync_age > now)
-						msgs.push_back(msg);
-                    else
-                        std::cerr << "(WW) not storing message " << msg->metaData->mMsgId << " in group " << grpId << " because it is older than synchronisation limit. This message was probably sent by a friend node that does not accept sync limits already." << std::endl;
-
+					msgs.push_back(msg);
 #ifdef NXS_NET_DEBUG_0
                     GXSNETDEBUG_PG(tr->mTransaction->PeerId(),msg->grpId) << "    pushing grpId="<< msg->grpId << ", msgsId=" << msg->msgId << " to list of incoming messages" << std::endl;
 #endif

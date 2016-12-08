@@ -1629,7 +1629,7 @@ uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
 	if(mNetService != NULL)
         return mNetService->getSyncAge(grpId);
     else
-        return mNetService->getDefaultSyncAge();
+        return RS_GXS_DEFAULT_MSG_REQ_PERIOD;
 }
 
 void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
@@ -2722,6 +2722,14 @@ void RsGenExchange::processRecvdMessages()
 			    ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 
 		    msg->metaData = meta;
+
+            uint32_t max_sync_age = ( mNetService != NULL)?( mNetService->getSyncAge(msg->metaData->mGroupId)):RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+
+			if(max_sync_age != 0 && msg->metaData->mPublishTs + max_sync_age < time(NULL))
+            {
+				std::cerr << "(WW) not validating message " << msg->metaData->mMsgId << " in group " << msg->metaData->mGroupId << " because it is older than synchronisation limit. This message was probably sent by a friend node that does not accept sync limits already." << std::endl;
+                ok = false ;
+            }
 
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
