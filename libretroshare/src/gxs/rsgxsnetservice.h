@@ -407,6 +407,7 @@ private:
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
     bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
+	void locked_resetClientTS(const RsGxsGroupId& grpId);
 
     static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
     
