@@ -292,14 +292,11 @@ void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
 
 bool p3ChatService::isOnline(const RsPeerId& pid)
 {
-    // check if the id is a tunnel id or a peer id.
-    
-    DistantChatPeerInfo dcpinfo;
-
-    if(getDistantChatStatus(DistantChatPeerId(pid),dcpinfo))
-	    return dcpinfo.status == RS_DISTANT_CHAT_STATUS_CAN_TALK ;
-    else
-	    return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
+	// check if the id is a tunnel id or a peer id.
+	DistantChatPeerInfo dcpinfo;
+	if(getDistantChatStatus(DistantChatPeerId(pid),dcpinfo))
+		return dcpinfo.status == RS_DISTANT_CHAT_STATUS_CAN_TALK;
+	else return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
 }
 
 bool p3ChatService::sendChat(ChatId destination, std::string msg)
@@ -318,8 +315,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     }
     // destination is peer or distant
 #ifdef CHAT_DEBUG
-    std::cerr << "p3ChatService::sendChat()";
-    std::cerr << std::endl;
+	std::cerr << "p3ChatService::sendChat()" << std::endl;
 #endif
 
     RsPeerId vpid;
@@ -341,12 +337,12 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     message.online = true;
 
     if(!isOnline(vpid))
-    {
-        /* peer is offline, add to outgoing list */
-        {
-            RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-            privateOutgoingList.push_back(ci);
-        }
+	{
+		/* peer is offline, add to outgoing list */
+		{
+			RS_STACK_MUTEX(mChatMtx);
+			privateOutgoingList.push_back(ci);
+		}
 
         message.online = false;
         RsServer::notify()->notifyChatMessage(message);

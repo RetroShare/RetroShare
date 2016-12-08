@@ -1464,7 +1464,7 @@ RsGxsId p3GxsTunnelService::destinationGxsIdFromHash(const TurtleFileHash& sum)
 
 bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info)
 {
-    RsStackMutex stack(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
+	RS_STACK_MUTEX(mGxsTunnelMtx);
 
     std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::const_iterator it = _gxs_tunnel_contacts.find(tunnel_id) ;
 
