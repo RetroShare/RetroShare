@@ -18,6 +18,7 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 import org.retroshare.qml_components.LibresapiLocalClient 1.0
 
 Item
@@ -39,11 +40,7 @@ Item
 					contactsView.own_gxs_id = json.data[0].gxs_id
 					contactsView.own_nick = json.data[0].name
 				}
-				else
-				{
-					selectedOwnIdentityView.color = "red"
-					selectedOwnIdentityView.text = "You need to create a GXS identity to chat!"
-				}
+				else createIdentityDialog.visible = true
 		    })
 	}
 
@@ -71,6 +68,7 @@ Item
 				anchors.fill: parent
 				onClicked:
 				{
+					console.log("Contacts view onclicked:", model.name, model.gxs_id)
 					if(model.own) contactsView.own_gxs_id = model.gxs_id
 					else
 					{
@@ -104,5 +102,29 @@ Item
 		repeat: true
 		onTriggered: if(contactsView.visible) contactsView.refreshData()
 		Component.onCompleted: start()
+	}
+
+
+	Dialog
+	{
+		id: createIdentityDialog
+		visible: false
+		title: "You need to create a GXS identity to chat!"
+		standardButtons: StandardButton.Save
+
+		onAccepted: rsApi.request("/identity/create_identity", JSON.stringify({"name":identityNameTE.text, "pgp_linked": !psdnmCheckBox.checked }))
+
+		TextField
+		{
+			id: identityNameTE
+			width: 300
+		}
+
+		Row
+		{
+			anchors.top: identityNameTE.bottom
+			Text { text: "Pseudonymous: " }
+			CheckBox { id: psdnmCheckBox; checked: true; enabled: false }
+		}
 	}
 }
