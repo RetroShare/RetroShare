@@ -191,7 +191,7 @@ RsSerialType* init_item(RsNxsSyncMsgReqItem& rsgm)
     rsgm.clear();
 
     rsgm.flag = RsNxsSyncMsgItem::FLAG_USE_SYNC_HASH;
-    rsgm.createdSince = rand()%24232;
+    rsgm.createdSinceTS = rand()%24232;
     rsgm.transactionNumber = rand()%23;
     init_random(rsgm.grpId) ;
     randString(SHORT_STR, rsgm.syncHash);
@@ -251,7 +251,7 @@ bool operator==(const RsNxsSyncMsgReqItem& l, const RsNxsSyncMsgReqItem& r)
 {
 
     if(l.flag != r.flag) return false;
-    if(l.createdSince != r.createdSince) return false;
+    if(l.createdSinceTS != r.createdSinceTS) return false;
     if(l.syncHash != r.syncHash) return false;
     if(l.grpId != r.grpId) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
