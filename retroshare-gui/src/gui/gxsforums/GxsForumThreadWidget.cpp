@@ -647,20 +647,20 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 
 		if (!IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 			qf.setBold(false);
-			item->setTextColor(i, textColorNotSubscribed());
+			item->setForeground(i, textColorNotSubscribed());
 		} else if (unread || isNew) {
 			qf.setBold(true);
-			item->setTextColor(i, textColorUnread());
+			item->setForeground(i, textColorUnread());
 		} else if (myUnreadChilddren) {
 			qf.setBold(true);
-			item->setTextColor(i, textColorUnreadChildren());
+			item->setForeground(i, textColorUnreadChildren());
 		} else {
 			qf.setBold(false);
-			item->setTextColor(i, textColorRead());
+			item->setForeground(i, textColorRead());
 		}
 		if (missing) {
 			/* Missing message */
-			item->setTextColor(i, textColorMissing());
+			item->setForeground(i, textColorMissing());
 		}
 		item->setFont(i, qf);
 	}
