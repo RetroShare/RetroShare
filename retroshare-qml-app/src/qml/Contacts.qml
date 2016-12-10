@@ -33,15 +33,15 @@ Item
 	function refreshOwn()
 	{
 		rsApi.request("/identity/own", "", function(par)
-		    {
-			    var json = JSON.parse(par.response)
-			    if(json.data.length > 0)
-				{
-					contactsView.own_gxs_id = json.data[0].gxs_id
-					contactsView.own_nick = json.data[0].name
-				}
-				else createIdentityDialog.visible = true
-		    })
+		{
+			var json = JSON.parse(par.response)
+			if(json.data.length > 0)
+			{
+				contactsView.own_gxs_id = json.data[0].gxs_id
+				contactsView.own_nick = json.data[0].name
+			}
+			else createIdentityDialog.visible = true
+		})
 	}
 
 	onFocusChanged: focus && refreshData()

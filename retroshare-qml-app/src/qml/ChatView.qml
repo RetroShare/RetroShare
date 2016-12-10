@@ -7,11 +7,7 @@ Item
 	id: chatView
 	property string chatId
 
-	function refreshData()
-	{
-		rsApi.request("/statetokenservice/*")
-		rsApi.request("/chat/messages/"+ chatId, "", function(par) { console.log("Callback called! -> " + par.response ); chatModel.json = par.response })
-	}
+	function refreshData() { rsApi.request("/chat/messages/"+ chatId, "", function(par) { chatModel.json = par.response }) }
 
 	onFocusChanged: focus && refreshData()
 
@@ -84,7 +80,7 @@ Item
 	Timer
 	{
 		id: refreshTimer
-		interval: 500
+		interval: 800
 		repeat: true
 		onTriggered: if(chatView.visible) chatView.refreshData()
 		Component.onCompleted: start()
