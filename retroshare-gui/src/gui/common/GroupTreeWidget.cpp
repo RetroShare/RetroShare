@@ -22,6 +22,7 @@
 #include "ui_GroupTreeWidget.h"
 
 #include <QHBoxLayout>
+#include <QHeaderView>
 #include <QLabel>
 #include <QMenu>
 #include <QMovie>
@@ -39,8 +40,9 @@
 #include <stdint.h>
 
 #define COLUMN_NAME        0
-#define COLUMN_POPULARITY  1
-#define COLUMN_COUNT       2
+#define COLUMN_UNREAD      1
+#define COLUMN_POPULARITY  2
+#define COLUMN_COUNT       3
 #define COLUMN_DATA        COLUMN_NAME
 
 #define ROLE_ID              Qt::UserRole
@@ -49,10 +51,11 @@
 #define ROLE_POPULARITY      Qt::UserRole + 3
 #define ROLE_LASTPOST        Qt::UserRole + 4
 #define ROLE_POSTS           Qt::UserRole + 5
-#define ROLE_SEARCH_SCORE    Qt::UserRole + 6
-#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 7
-#define ROLE_COLOR           Qt::UserRole + 8
-#define ROLE_SAVED_ICON      Qt::UserRole + 9
+#define ROLE_UNREAD          Qt::UserRole + 6
+#define ROLE_SEARCH_SCORE    Qt::UserRole + 7
+#define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 8
+#define ROLE_COLOR           Qt::UserRole + 9
+#define ROLE_SAVED_ICON      Qt::UserRole + 10
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -72,6 +75,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	actionSortByPopularity = NULL;
 	actionSortByLastPost = NULL;
 	actionSortByPosts = NULL;
+	actionSortByUnread = NULL;
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
@@ -96,14 +100,18 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(COLUMN_COUNT);
 
-            int S = QFontMetricsF(font()).height();
+	int S = QFontMetricsF(font()).height() ;
+	int W = QFontMetricsF(font()).width("999") ;
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
+	header->setStretchLastSection(false);
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_NAME, QHeaderView::Stretch);
-    header->resizeSection(COLUMN_NAME, 10*S);
+	header->resizeSection(COLUMN_NAME, 10*S) ;
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_UNREAD, QHeaderView::Fixed);
+	header->resizeSection(COLUMN_UNREAD, W+4) ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
-    header->resizeSection(COLUMN_POPULARITY, 2*S);
+	header->resizeSection(COLUMN_POPULARITY, 2*S) ;
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
@@ -113,7 +121,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
 
-        ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6)) ;
+	ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6));
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -193,9 +201,15 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	const int SORTBY_POPULRITY = 2;
 	const int SORTBY_LASTPOST = 3;
 	const int SORTBY_POSTS = 4;
+	const int SORTBY_UNREAD = 5;
 
 	if (load) {
 		// load settings
+
+		// state of order
+		bool ascSort = settings->value("GroupAscSort", true).toBool();
+		actionSortAscending->setChecked(ascSort);
+		actionSortDescending->setChecked(!ascSort);
 
 		// state of sort
 		int sortby = settings->value("GroupSortBy").toInt();
@@ -220,9 +234,17 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 				actionSortByPosts->setChecked(true);
 			}
 			break;
+		case SORTBY_UNREAD:
+			if (actionSortByUnread) {
+				actionSortByUnread->setChecked(true);
+			}
+			break;
 		}
 	} else {
 		// save settings
+
+		// state of order
+		settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
 
 		// state of sort
 		int sortby = SORTBY_NAME;
@@ -232,6 +254,10 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 			sortby = SORTBY_POPULRITY;
 		} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
 			sortby = SORTBY_LASTPOST;
+		} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
+			sortby = SORTBY_POSTS;
+		} else if (actionSortByUnread && actionSortByUnread->isChecked()) {
+			sortby = SORTBY_UNREAD;
 		}
 		settings->setValue("GroupSortBy", sortby);
 	}
@@ -240,18 +266,17 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 {
 	displayMenu = new QMenu();
-//	QActionGroup *actionGroup = new QActionGroup(displayMenu);
-//
-//	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
-//	actionSortDescending->setCheckable(true);
-//	actionSortDescending->setActionGroup(actionGroup);
-//
-//	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
-//	actionSortAscending->setCheckable(true);
-//	actionSortAscending->setChecked(true); // set standard to sort ascending
-//	actionSortAscending->setActionGroup(actionGroup);
-//
-//	displayMenu->addSeparator();
+	QActionGroup *actionGroupAsc = new QActionGroup(displayMenu);
+
+	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+	actionSortDescending->setCheckable(true);
+	actionSortDescending->setActionGroup(actionGroupAsc);
+
+	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+	actionSortAscending->setCheckable(true);
+	actionSortAscending->setActionGroup(actionGroupAsc);
+
+	displayMenu->addSeparator();
 
 	QActionGroup *actionGroup = new QActionGroup(displayMenu);
 	actionSortByName = displayMenu->addAction(QIcon(), tr("Sort by Name"), this, SLOT(sort()));
@@ -270,6 +295,10 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 	actionSortByPosts = displayMenu->addAction(QIcon(), tr("Sort by Posts"), this, SLOT(sort()));
 	actionSortByPosts->setCheckable(true);
 	actionSortByPosts->setActionGroup(actionGroup);
+
+	actionSortByUnread = displayMenu->addAction(QIcon(), tr("Sort by Unread"), this, SLOT(sort()));
+	actionSortByUnread->setCheckable(true);
+	actionSortByUnread->setActionGroup(actionGroup);
 
 	toolButton->setMenu(displayMenu);
 }
@@ -454,6 +483,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 
 		item->setToolTip(COLUMN_NAME, tooltip);
+		item->setToolTip(COLUMN_UNREAD, tooltip);
 		item->setToolTip(COLUMN_POPULARITY, tooltip);
 
 		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
@@ -506,17 +536,17 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 	QLabel *waitLabel = NULL;
 	getNameWidget(ui->treeWidget, item, nameLabel, waitLabel);
 
-	QString name = item->data(COLUMN_DATA, ROLE_NAME).toString();
 	QFont font = nameLabel->font();
 
 	if (unreadCount) {
-		name = QString("(%1) ").arg(unreadCount) + name;
+		item->setData(COLUMN_DATA, ROLE_UNREAD, unreadCount);
+		item->setText(COLUMN_UNREAD, QString::number(unreadCount));
 		font.setBold(true);
 	} else {
+		item->setText(COLUMN_UNREAD, "");
 		font.setBold(false);
 	}
 
-	nameLabel->setText(name);
 	nameLabel->setFont(font);
 }
 
@@ -698,6 +728,8 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
 	} else if (actionSortByPosts && actionSortByPosts->isChecked()) {
 		compareRole->setRole(COLUMN_DATA, ROLE_POSTS);
+	} else if (actionSortByUnread && actionSortByUnread->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_UNREAD);
 	}
 
 	if (categoryItem) {

@@ -134,11 +134,12 @@ private:
 private:
 	QMenu *displayMenu;
 	QAction *actionSortAscending;
-//	QAction *actionSortDescending;
+	QAction *actionSortDescending;
 	QAction *actionSortByName;
 	QAction *actionSortByPopularity;
 	QAction *actionSortByLastPost;
 	QAction *actionSortByPosts;
+	QAction *actionSortByUnread;
 
 	RSTreeWidgetItemCompareRole *compareRole;
 
