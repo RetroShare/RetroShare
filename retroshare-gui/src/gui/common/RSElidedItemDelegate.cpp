@@ -69,7 +69,16 @@ void RSElidedItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
 		plainText = plainText.replace("\n",QChar(QChar::LineSeparator));
 		plainText = plainText.replace("\r",QChar(QChar::LineSeparator));
 
-		if (painter) painter->setFont(option.font);
+		if (painter) {
+			painter->setFont(option.font);
+			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
+			    ? QPalette::Normal : QPalette::Disabled;
+			if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
+				cg = QPalette::Inactive;
+			QColor textColor = option.palette.color(cg, QPalette::Text);
+			painter->setPen(textColor);
+		}
+
 		QTextLayout textLayout(plainText, option.font);
 		QTextOption to = textLayout.textOption();
 		to.setAlignment(option.displayAlignment);
