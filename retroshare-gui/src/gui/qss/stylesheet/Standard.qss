@@ -658,3 +658,26 @@ GenCertDialog QPushButton#genButton:disabled {
 	font: bold;
 	color: black;
 }
+
+ConnectFriendWizard QRadioButton {
+	font-size: 16px;
+}
+
+ConnectFriendWizard QPlainTextEdit#friendCertEdit {
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+}
+
+HomePage QPlainTextEdit#userCertEdit {
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+}
+
+HomePage QPlainTextEdit#friendCertEdit {
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+}
+

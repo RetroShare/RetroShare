@@ -1,5 +1,17 @@
 <RCC>
   <qresource prefix="/">
+    <file>emojione/1f325.png</file>
+    <file>emojione/1F30D.png</file>
+    <file>emojione/1F30E.png</file>
+    <file>emojione/1F30F.png</file>
+    <file>emojione/1F31A.png</file>
+    <file>emojione/1F31B.png</file>
+    <file>emojione/1F31C.png</file>
+    <file>emojione/1F31D.png</file>
+    <file>emojione/1F31E.png</file>
+    <file>emojione/1F31F.png</file>
+    <file>emojione/1f324.png</file>
+    <file>emojione/1f326.png</file>
     <file>emojione/1F35A.png</file>
     <file>emojione/1F35B.png</file>
     <file>emojione/1F35C.png</file>

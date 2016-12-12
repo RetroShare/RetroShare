@@ -60,6 +60,7 @@ class MessagesDialog;
 class SharedFilesDialog;
 class MessengerWindow;
 class PluginsPage;
+class HomePage;
 //class ChannelFeed;
 class BandwidthGraph;
 class MainPage;
@@ -132,6 +133,7 @@ public:
 //    NetworkDialog     *networkDialog;
 //    SearchDialog      *searchDialog;
 
+	 HomePage          *homePage;
 	 NewsFeed          *newsFeed;
 	 FriendsDialog     *friendsDialog;
 	 TransfersDialog   *transfersDialog;

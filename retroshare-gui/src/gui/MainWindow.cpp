@@ -39,6 +39,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "MessengerWindow.h"
+#include "HomePage.h"
 #include "NetworkDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
@@ -340,6 +341,8 @@ void MainWindow::initStackedPage()
 
   /* Create the Main pages and actions */
   QActionGroup *grp = new QActionGroup(this);
+
+  addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);

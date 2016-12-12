@@ -89,7 +89,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 //	setOption(HaveHelpButton, true);
 //	connect(this, SIGNAL(helpRequested()), this, SLOT(showHelp()));
 
-	setPixmap(QWizard::LogoPixmap, QPixmap(":/images/connect/connectFriendLogo.png"));
+	setPixmap(QWizard::LogoPixmap, QPixmap(":/icons/invite64.png"));
 
 // we have no good pictures for watermarks
 //	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/connectFriendWatermark.png"));
@@ -121,6 +121,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     body += "\n" + GetStartedDialog::GetCutBelowText();
     body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
+    ui->userFrame->hide();
+  
 	updateStylesheet();
 }
 

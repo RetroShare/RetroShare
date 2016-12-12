@@ -178,7 +178,14 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0" colspan="3">
+      <item row="2" column="3">
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="4">
        <widget class="StyledLabel" name="labelInstructions">
         <property name="palette">
          <palette>
@@ -258,13 +265,6 @@
         </property>
         <property name="wordWrap">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QPushButton" name="cancelButton">
-        <property name="text">
-         <string>Cancel</string>
         </property>
        </widget>
       </item>

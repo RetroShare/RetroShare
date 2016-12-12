@@ -335,6 +335,7 @@ HEADERS +=  rshare.h \
             control/eventtype.h \
             gui/QuickStartWizard.h \
             gui/StartDialog.h \
+            gui/HomePage.h\
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
             gui/linetypes.h \
@@ -581,6 +582,7 @@ HEADERS +=  rshare.h \
 #            gui/channels/ChannelUserNotify.h \
 
 FORMS +=    gui/StartDialog.ui \
+            gui/HomePage.ui\
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
             gui/QuickStartWizard.ui \
@@ -701,6 +703,7 @@ SOURCES +=  main.cpp \
             gui/AboutDialog.cpp \
             gui/QuickStartWizard.cpp \
             gui/StartDialog.cpp \
+            gui/HomePage.cpp\
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
             gui/mainpagestack.cpp \
