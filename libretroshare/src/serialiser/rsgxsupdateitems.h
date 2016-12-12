@@ -79,7 +79,6 @@ public:
 		update_TS = 0 ;
 	}
 
-	RsGxsGroupId grpId ;
 	uint32_t     msg_keep_delay ;	// delay after which we discard the posts
 	uint32_t     msg_send_delay ;	// delay after which we dont send the posts anymore
 	uint32_t     msg_req_delay ;	// delay after which we dont get the posts from friends
@@ -101,6 +100,8 @@ public:
 
 	virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ;
+
+	RsGxsGroupId grpId ;
 };
 
 class RsGxsGrpUpdate
@@ -108,7 +109,6 @@ class RsGxsGrpUpdate
 public:
     RsGxsGrpUpdate() { grpUpdateTS=0;}
 
-    RsPeerId peerID;
     uint32_t grpUpdateTS;
 };
 
@@ -125,6 +125,8 @@ public:
 
 	virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ;
+
+    RsPeerId peerID;
 };
 
 class RsGxsServerGrpUpdate
@@ -161,7 +163,6 @@ public:
         uint32_t message_count ;
     };
 
-    RsPeerId peerID;
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
 
@@ -178,6 +179,8 @@ public:
 
 	virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ;
+
+    RsPeerId peerID;
 };
 
 class RsGxsServerMsgUpdate
@@ -185,7 +188,6 @@ class RsGxsServerMsgUpdate
 public:
     RsGxsServerMsgUpdate() { msgUpdateTS = 0 ;}
 
-	RsGxsGroupId grpId;
 	uint32_t msgUpdateTS; // local time stamp this group last received a new msg
 };
 
@@ -201,6 +203,8 @@ public:
 
 	virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ;
+
+	RsGxsGroupId grpId;
 };
 
 

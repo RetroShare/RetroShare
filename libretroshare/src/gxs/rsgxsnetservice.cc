@@ -859,7 +859,6 @@ void RsGxsNetService::subscribeStatusChanged(const RsGxsGroupId& grpId,bool subs
     
     RsGxsServerMsgUpdate& item(mServerMsgUpdateMap[grpId]) ;
 
-	item.grpId = grpId ;			// just in case
 	item.msgUpdateTS = time(NULL) ;
     
     // We also update mGrpServerUpdateItem so as to trigger a new grp list exchange with friends (friends will send their known ClientTS which
@@ -1465,41 +1464,43 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
 
     RsItem* operator()(const typename UpdateMap::value_type& value) const
     {
-        return new ItemClass(value.second,mServType);
+        ItemClass *item = new ItemClass(value.second,mServType);
+        (*item).*ID_member = value.first ;
+        return item ;
     }
 
     uint16_t mServType ;
+    typename UpdateMap::key_type ItemClass::*ID_member ;
 };
 
-template <typename ID_class,typename UpdateMap>
-void clean_copy_value_into_item(ID_class id, UpdateMap& thismap,typename UpdateMap::iterator& iter, ID_class& dest)
-{
-	if(id.isNull())
-	{
-		std::cerr << "(EE) had to remove NULL value from ..." << std::endl;
-
-        typename UpdateMap::iterator tmp(iter) ;
-        ++tmp ;
-		thismap.erase(iter) ;
-        iter = tmp ;
-	}
-	else
-    {
-		dest = id ;
-        ++iter;
-    }
-}
+// void clean_copy_value_into_item(ID_class id, UpdateMap& thismap,typename UpdateMap::iterator& iter, ID_class& dest)
+// {
+// 	if(id.isNull())
+// 	{
+// 		std::cerr << "(EE) had to remove NULL value from ..." << std::endl;
+//
+//         typename UpdateMap::iterator tmp(iter) ;
+//         ++tmp ;
+// 		thismap.erase(iter) ;
+//         iter = tmp ;
+// 	}
+// 	else
+//     {
+// 		dest = id ;
+//         ++iter;
+//     }
+// }
 
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
-    // First, make sure that all IDs (which are needed twice) are consistent
-
-    for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();) clean_copy_value_into_item(it->first,mServerGrpConfigMap,it,it->second.grpId);
-    for(ServerMsgMap::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mServerMsgUpdateMap,it,it->second.grpId);
-    for(ClientGrpMap::iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();) clean_copy_value_into_item(it->first,mClientGrpUpdateMap,it,it->second.peerID);
-    for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mClientMsgUpdateMap,it,it->second.peerID);
+//    // First, make sure that all IDs (which are needed twice) are consistent
+//
+//    for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();) clean_copy_value_into_item(it->first,mServerGrpConfigMap,it,it->second.grpId);
+//    for(ServerMsgMap::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mServerMsgUpdateMap,it,it->second.grpId);
+//    for(ClientGrpMap::iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();) clean_copy_value_into_item(it->first,mClientGrpUpdateMap,it,it->second.peerID);
+//    for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mClientMsgUpdateMap,it,it->second.peerID);
 
     std::cerr << "RsGxsNetService::saveList()..." << std::endl;
 
@@ -1831,7 +1832,7 @@ void RsGxsNetService::debugDump()
 {
 #ifdef NXS_NET_DEBUG_0
 	RS_STACK_MUTEX(mNxsMutex) ;
-    time_t now = time(NULL) ;
+    //time_t now = time(NULL) ;
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
     
@@ -2020,9 +2021,8 @@ void RsGxsNetService::updateServerSyncTS()
 #endif
 
         // I keep the creation, but the data is not used yet.
-
-		RsGxsServerMsgUpdate& msui(mServerMsgUpdateMap[grpId]) ;
-		msui.grpId = grpMeta->mGroupId;
+#warning disabled this, but do we need it?
+		// RsGxsServerMsgUpdate& msui(mServerMsgUpdateMap[grpId]) ;
 
         // (cyril) I'm removing this, because the msgUpdateTS is updated when new messages are received by calling locked_stampMsgServerUpdateTS().
         //       mLastPost is actually updated somewhere when loading group meta data. It's not clear yet whether it is set to the latest publish time (wrong)
@@ -2039,8 +2039,8 @@ void RsGxsNetService::updateServerSyncTS()
         // }
 
 		// This is needed for group metadata updates to actually propagate: only a new grpUpdateTS will trigger the exchange of groups mPublishTs which
-        	// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
-        	// an update, all in rsgenexchange.cc, after group/update validation. It is therefore a local TS, that can be compared to grpUpdateTS (same machine).
+		// will then be compared and pssibly trigger a MetaData transmission. mRecvTS is upated when creating, receiving for the first time, or receiving
+		// an update, all in rsgenexchange.cc, after group/update validation. It is therefore a local TS, that can be compared to grpUpdateTS (same machine).
         
 		if(mGrpServerUpdate.grpUpdateTS < grpMeta->mRecvTS)
 		{
@@ -2451,11 +2451,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 #endif
 
             item.grpUpdateTS = updateTS;
-            item.peerID = peerFrom;
 
             IndicateConfigChanged();
-
-
         }
         else if(flag & RsNxsTransacItem::FLAG_TYPE_MSGS)
         {
@@ -2465,7 +2462,6 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
-            uint32_t max_sync_age = 0 ;
             time_t now = time(NULL) ;
 
             while(tr->mItems.size() > 0)
@@ -2556,8 +2552,6 @@ void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransacItem *nxsTrans, c
     RsGxsMsgUpdate& mui(mClientMsgUpdateMap[peerFrom]) ;
 
     // now update the peer's entry for this grp id
-
-    mui.peerID = peerFrom;
 
     if(mPartialMsgUpdates[peerFrom].find(grpId) != mPartialMsgUpdates[peerFrom].end())
     {
@@ -2965,7 +2959,6 @@ void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const 
 {
     RsGxsMsgUpdate& up(mClientMsgUpdateMap[pid]);
     
-	up.peerID = pid ;
     up.msgUpdateInfos[grpId].time_stamp = tm;
     up.msgUpdateInfos[grpId].message_count = std::max(n_messages, up.msgUpdateInfos[grpId].message_count) ;
 
@@ -3149,7 +3142,6 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
 #endif
         item.grpUpdateTS = tr->mTransaction->updateTS;
-        item.peerID = tr->mTransaction->PeerId();
 
         IndicateConfigChanged();
     }
@@ -4838,7 +4830,6 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 {
     RsGxsServerMsgUpdate& m(mServerMsgUpdateMap[gid]);
 
-	m.grpId = gid ;
 	m.msgUpdateTS = time(NULL) ;
 
     return true;
