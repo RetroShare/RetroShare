@@ -128,11 +128,10 @@ bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, time_t& grp_
 
 void RsGenExchange::data_tick()
 {
+	static const double timeDelta = 0.1; // slow tick in sec
 
-    static const double timeDelta = 0.1; // slow tick in sec
-
-        tick();
-    usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
+	tick();
+	usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
 }
 
 void RsGenExchange::tick()
@@ -2723,13 +2722,17 @@ void RsGenExchange::processRecvdMessages()
 
 		    msg->metaData = meta;
 
-            uint32_t max_sync_age = ( mNetService != NULL)?( mNetService->getSyncAge(msg->metaData->mGroupId)):RS_GXS_DEFAULT_MSG_REQ_PERIOD;
-
-			if(max_sync_age != 0 && msg->metaData->mPublishTs + max_sync_age < time(NULL))
-            {
-				std::cerr << "(WW) not validating message " << msg->metaData->mMsgId << " in group " << msg->metaData->mGroupId << " because it is older than synchronisation limit. This message was probably sent by a friend node that does not accept sync limits already." << std::endl;
-                ok = false ;
-            }
+            // (cyril) Normally we should discard posts that are older than the sync request. But that causes a problem because
+            // 	RsGxsNetService requests posts to sync by chunks of 20. So if the 20 are discarded, they will be re-synced next time, and the sync process
+            // 	will indefinitly loop on the same 20 posts. Since the posts are there already, keeping them is the least problematique way to fix this problem.
+            //
+			//      uint32_t max_sync_age = ( mNetService != NULL)?( mNetService->getSyncAge(msg->metaData->mGroupId)):RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+			//
+			//		if(max_sync_age != 0 && msg->metaData->mPublishTs + max_sync_age < time(NULL))
+			//      {
+			//			std::cerr << "(WW) not validating message " << msg->metaData->mMsgId << " in group " << msg->metaData->mGroupId << " because it is older than synchronisation limit. This message was probably sent by a friend node that does not accept sync limits already." << std::endl;
+			//          ok = false ;
+			//      }
 
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;

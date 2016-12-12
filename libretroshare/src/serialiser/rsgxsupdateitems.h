@@ -221,7 +221,10 @@ public:
 		RsGxsNetServiceItem *gitem = dynamic_cast<RsGxsNetServiceItem *>(item);
 
 		if (!gitem)
+        {
+            std::cerr << "(EE) trying to serialise/size an item that is not a RsGxsNetServiceItem!" << std::endl;
 			return 0;
+        }
 
 		return gitem->serial_size() ;
 	}
@@ -230,7 +233,10 @@ public:
 		RsGxsNetServiceItem *gitem = dynamic_cast<RsGxsNetServiceItem *>(item);
 
 		if (!gitem)
+        {
+            std::cerr << "(EE) trying to serialise an item that is not a RsGxsNetServiceItem!" << std::endl;
 			return false;
+        }
 
 		return gitem->serialise(data,*size) ;
 	}

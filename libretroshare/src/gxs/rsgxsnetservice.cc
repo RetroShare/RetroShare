@@ -224,13 +224,13 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
-#define NXS_NET_DEBUG_6 	1
+//#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 
 //#define NXS_FRAG
@@ -266,8 +266,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("cb98f4013f7b4ed4245e54ca7095925b")) ;	// use this to allow to this group id only, or "" for all IDs
-//static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
 static const uint32_t     service_to_print  = 0x215 ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
@@ -1460,7 +1459,7 @@ void RsGxsNetService::locked_checkDelay(uint32_t& time_in_secs)
 template <typename UpdateMap,class ItemClass>
 struct get_second : public std::unary_function<typename UpdateMap::value_type, RsItem*>
 {
-    get_second(uint16_t serv_type): mServType(serv_type) {}
+    get_second(uint16_t serv_type,typename UpdateMap::key_type ItemClass::*member): mServType(serv_type),ID_member(member) {}
 
     RsItem* operator()(const typename UpdateMap::value_type& value) const
     {
@@ -1473,42 +1472,17 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
     typename UpdateMap::key_type ItemClass::*ID_member ;
 };
 
-// void clean_copy_value_into_item(ID_class id, UpdateMap& thismap,typename UpdateMap::iterator& iter, ID_class& dest)
-// {
-// 	if(id.isNull())
-// 	{
-// 		std::cerr << "(EE) had to remove NULL value from ..." << std::endl;
-//
-//         typename UpdateMap::iterator tmp(iter) ;
-//         ++tmp ;
-// 		thismap.erase(iter) ;
-//         iter = tmp ;
-// 	}
-// 	else
-//     {
-// 		dest = id ;
-//         ++iter;
-//     }
-// }
-
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 
-//    // First, make sure that all IDs (which are needed twice) are consistent
-//
-//    for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();) clean_copy_value_into_item(it->first,mServerGrpConfigMap,it,it->second.grpId);
-//    for(ServerMsgMap::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mServerMsgUpdateMap,it,it->second.grpId);
-//    for(ClientGrpMap::iterator it(mClientGrpUpdateMap.begin());it!=mClientGrpUpdateMap.end();) clean_copy_value_into_item(it->first,mClientGrpUpdateMap,it,it->second.peerID);
-//    for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();) clean_copy_value_into_item(it->first,mClientMsgUpdateMap,it,it->second.peerID);
-
     std::cerr << "RsGxsNetService::saveList()..." << std::endl;
 
     // hardcore templates
-    std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap,RsGxsGrpUpdateItem>(mServType));
-    std::transform(mClientMsgUpdateMap.begin(), mClientMsgUpdateMap.end(), std::back_inserter(save), get_second<ClientMsgMap,RsGxsMsgUpdateItem>(mServType));
-    std::transform(mServerMsgUpdateMap.begin(), mServerMsgUpdateMap.end(), std::back_inserter(save), get_second<ServerMsgMap,RsGxsServerMsgUpdateItem>(mServType));
-    std::transform(mServerGrpConfigMap.begin(), mServerGrpConfigMap.end(), std::back_inserter(save), get_second<GrpConfigMap,RsGxsGrpConfigItem>(mServType));
+    std::transform(mClientGrpUpdateMap.begin(), mClientGrpUpdateMap.end(), std::back_inserter(save), get_second<ClientGrpMap,RsGxsGrpUpdateItem>(mServType,&RsGxsGrpUpdateItem::peerID));
+    std::transform(mClientMsgUpdateMap.begin(), mClientMsgUpdateMap.end(), std::back_inserter(save), get_second<ClientMsgMap,RsGxsMsgUpdateItem>(mServType,&RsGxsMsgUpdateItem::peerID));
+    std::transform(mServerMsgUpdateMap.begin(), mServerMsgUpdateMap.end(), std::back_inserter(save), get_second<ServerMsgMap,RsGxsServerMsgUpdateItem>(mServType,&RsGxsServerMsgUpdateItem::grpId));
+    std::transform(mServerGrpConfigMap.begin(), mServerGrpConfigMap.end(), std::back_inserter(save), get_second<GrpConfigMap,RsGxsGrpConfigItem>(mServType,&RsGxsGrpConfigItem::grpId));
 
     RsGxsServerGrpUpdateItem *it = new RsGxsServerGrpUpdateItem(mGrpServerUpdate,mServType) ;
 
