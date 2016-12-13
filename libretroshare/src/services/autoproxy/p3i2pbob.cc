@@ -772,6 +772,14 @@ void p3I2pBob::getStates(bobStates *bs)
 	bs->cs = mState;
 	bs->ct = mTask;
 	bs->bs = mBOBState;
+
+	// get tunnel name from command
+	if (mConfigLoaded) {
+		bobStateInfo &si = mCommands[bsSetnickS];
+		bs->tunnelName = si.command.substr(8);
+	} else {
+		bs->tunnelName.clear();
+	}
 }
 
 std::string p3I2pBob::executeCommand(const std::string &command)

@@ -724,15 +724,17 @@ void ServerPage::updateStatus()
 		}
 	}
 
+	bobStates bs;
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
+
 	QString bobSimpleText = QString();
-	bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3\n\n"
+	bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
 	                        "When changing options (e.g. port) use the buttons at the bottom to stop and restart BOB.\n\n").
 	                     arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
 	                         ui.hiddenpage_proxyAddress_i2p_2->text(),
-	                         ui.hiddenpage_proxyPort_i2p_2->text()));
-
-	bobStates bs;
-	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
+	                         ui.hiddenpage_proxyPort_i2p_2->text(),
+	                         bs.tunnelName.empty() ? tr("unknown") :
+	                                                 QString::fromStdString(bs.tunnelName)));
 
 	std::string errorString;
 	switch (bs.cs) {

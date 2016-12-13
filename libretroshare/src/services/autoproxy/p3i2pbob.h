@@ -170,11 +170,14 @@ struct bobSettings {
 ///
 /// \brief The bobStates struct
 /// This container struct is used to pass all states.
+/// Additionally, the tunnel name is included to to show it in the GUI.
 /// The advantage of a struct is that it can be forward declared.
 struct bobStates {
 	bobState bs;
 	controllerState cs;
 	controllerTask ct;
+
+	std::string tunnelName;
 };
 
 class p3PeerMgr;
