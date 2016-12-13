@@ -746,6 +746,22 @@ void GxsForumThreadWidget::insertGroupData()
 	calculateIconsAndFonts();
 }
 
+static QString getDurationString(uint32_t days)
+{
+    switch(days)
+    {
+    	case 0: return QObject::tr("Indefinitely") ;
+    	case 5: return QObject::tr("5 days") ;
+    	case 15: return QObject::tr("2 weeks") ;
+    	case 30: return QObject::tr("1 month") ;
+    	case 60: return QObject::tr("2 month") ;
+    	case 180: return QObject::tr("6 month") ;
+    	case 365: return QObject::tr("1 year") ;
+    default:
+        return QString::number(days)+" " + QObject::tr("days") ;
+    }
+}
+
 /*static*/ void GxsForumThreadWidget::loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &)
 {
     GxsForumThreadWidget *tw = dynamic_cast<GxsForumThreadWidget*>(object);
@@ -784,7 +800,9 @@ void GxsForumThreadWidget::insertGroupData()
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
-    
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
+    tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+
     QString distrib_string = tr("[unknown]");
     switch(group.mMeta.mCircleType)
     {
