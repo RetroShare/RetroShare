@@ -99,6 +99,8 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void groupTreeCustomPopupMenu(QPoint point);
 	void settingsChanged();
+    void setSyncPostsDelay();
+    void setStorePostsDelay();
 
 	void restoreGroupKeys();
 	void newGroup();

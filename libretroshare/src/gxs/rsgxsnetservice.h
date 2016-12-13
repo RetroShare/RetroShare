@@ -103,11 +103,16 @@ public:
 
 
     /*!
-     * Use this to set how far back synchronisation of messages should take place
-     * @param age the max age a sync item can to be allowed in a synchronisation
+     * Use this to set how far back synchronisation and storage of messages should take place
+     * @param age the max age a sync/storage item can to be allowed in a synchronisation
      */
-    // NOT IMPLEMENTED
-    virtual void setSyncAge(uint32_t age);
+    virtual void setSyncAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
+    virtual void setKeepAge(const RsGxsGroupId& grpId,uint32_t age_in_secs);
+
+    virtual uint32_t getSyncAge(const RsGxsGroupId& id);
+    virtual uint32_t getKeepAge(const RsGxsGroupId& id,uint32_t default_value);
+
+    virtual uint32_t getDefaultSyncAge() { return RS_GXS_DEFAULT_MSG_REQ_PERIOD ; }
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -402,6 +407,7 @@ private:
 
     bool locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item);
     bool locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item, bool &grp_is_known);
+	void locked_resetClientTS(const RsGxsGroupId& grpId);
 
     static RsGxsGroupId hashGrpId(const RsGxsGroupId& gid,const RsPeerId& pid) ;
     
@@ -482,6 +488,7 @@ private:
 
 private:
 
+	static void locked_checkDelay(uint32_t& time_in_secs);
 
     /*** transactions ***/
 
@@ -542,18 +549,18 @@ private:
 
 public:
 
-    typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
-    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
-    typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
+    typedef std::map<RsPeerId,     RsGxsMsgUpdate>        ClientMsgMap;
+    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdate>  ServerMsgMap;
+    typedef std::map<RsPeerId,     RsGxsGrpUpdate>        ClientGrpMap;
+    typedef std::map<RsGxsGroupId, RsGxsGrpConfig>        GrpConfigMap;
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
     ServerMsgMap mServerMsgUpdateMap;
     ClientGrpMap mClientGrpUpdateMap;
+    GrpConfigMap mServerGrpConfigMap;
 
-    std::map<RsGxsGroupId,RsGroupNetworkStatsRecord> mGroupNetworkStats ;
-
-    RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
+    RsGxsServerGrpUpdate mGrpServerUpdate;
     RsServiceInfo mServiceInfo;
     
     std::map<RsGxsMessageId,time_t> mRejectedMessages;

@@ -285,14 +285,34 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
+    uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
+    uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
+
+    std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
+    QAction *actnn = NULL;
+
+	QMenu *ctxMenu2 = contextMnu.addMenu(tr("Synchronise posts of last...")) ;
+    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_sync_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_sync_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+
+    ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
+    actnn = ctxMenu2->addAction(tr(" 5 days"     ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  5)) ; if(current_store_time ==  5) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 2 weeks"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 15)) ; if(current_store_time == 15) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+    actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+
 	if (shareKeyType()) {
         action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
         action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
-
-    //if (!mGroupId.isNull() && isPublisher && !isAdmin) {
-    //	contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights" ), this, SLOT(restoreGroupKeys()));
-    //}
 
 	if (getLinkType() != RetroShareLink::TYPE_UNKNOWN) {
 		action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyGroupLink()));
@@ -316,6 +336,70 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	}
 
 	contextMnu.exec(QCursor::pos());
+}
+
+void GxsGroupFrameDialog::setStorePostsDelay()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action || mGroupId.isNull())
+    {
+        std::cerr << "(EE) Cannot find action/group that called me! Group is " << mGroupId << ", action is " << (void*)action << "  " << __PRETTY_FUNCTION__ << std::endl;
+        return;
+    }
+
+    uint32_t duration = action->data().toUInt() ;
+
+    std::cerr << "Data is " << duration << std::endl;
+
+ 	mInterface->setStoragePeriod(mGroupId,duration * 86400) ;
+
+    // If the sync is larger, we reduce it. No need to sync more than we store. The machinery below also takes care of this.
+    //
+    uint32_t sync_period = mInterface->getSyncPeriod(mGroupId);
+
+    if(duration > 0)      // the >0 test is to discard the indefinitly test. Basically, if we store for less than indefinitly, the sync is reduced accordingly.
+    {
+        if(sync_period == 0 || sync_period > duration*86400)
+        {
+			mInterface->setSyncPeriod(mGroupId,duration * 86400) ;
+
+            std::cerr << "(II) auto adjusting sync period to " << duration<< " days as well." << std::endl;
+        }
+    }
+}
+
+
+void GxsGroupFrameDialog::setSyncPostsDelay()
+{
+    QAction *action = dynamic_cast<QAction*>(sender()) ;
+
+    if(!action || mGroupId.isNull())
+    {
+        std::cerr << "(EE) Cannot find action/group that called me! Group is " << mGroupId << ", action is " << (void*)action << "  " << __PRETTY_FUNCTION__ << std::endl;
+        return;
+    }
+
+    uint32_t duration = action->data().toUInt() ;
+
+    std::cerr << "Data is " << duration << std::endl;
+
+ 	mInterface->setSyncPeriod(mGroupId,duration * 86400) ;
+
+    // If the store is smaller, we increase it accordingly. No need to sync more than we store. The machinery below also takes care of this.
+    //
+    uint32_t store_period = mInterface->getStoragePeriod(mGroupId);
+
+    if(duration == 0)
+ 		mInterface->setStoragePeriod(mGroupId,duration * 86400) ;	// indefinite sync => indefinite storage
+    else
+    {
+        if(store_period != 0 && store_period < duration*86400)
+        {
+ 			mInterface->setStoragePeriod(mGroupId,duration * 86400) ;	// indefinite sync => indefinite storage
+            std::cerr << "(II) auto adjusting storage period to " << duration<< " days as well." << std::endl;
+        }
+    }
 }
 
 void GxsGroupFrameDialog::restoreGroupKeys(void)

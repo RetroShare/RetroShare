@@ -39,8 +39,6 @@
 #include "serialiser/rsnxsitems.h"
 #include "rsgxsutil.h"
 
-#define DEFAULT_MSG_STORE_PERIOD 60*60*24*31*4 // 4 months
-
 template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
@@ -128,7 +126,7 @@ public:
      */
     RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns,
                   RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy,
-                  uint32_t messageStorePeriod = DEFAULT_MSG_STORE_PERIOD);
+                  uint32_t messageStorePeriod = RS_GXS_DEFAULT_MSG_STORE_PERIOD);
 
     virtual ~RsGenExchange();
 
@@ -614,11 +612,6 @@ public:
     void updateGroupLastMsgTimeStamp(uint32_t& token, const RsGxsGroupId& grpId);
 
     /*!
-     * @return storage time of messages in months
-     */
-    int getStoragePeriod(){ return MESSAGE_STORE_PERIOD/(60*60*24*31);}
-
-    /*!
      * sets the msg status flag
      * @param token this is set to token value associated to this request
      * @param grpId Id of group whose subscribe file will be changed
@@ -649,6 +642,20 @@ public:
      */
     bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
 
+    /*!
+     * \brief getDefaultStoragePeriod. All times in seconds.
+     * \return
+     */
+    virtual uint32_t getDefaultStoragePeriod() { return MESSAGE_STORE_PERIOD; }
+
+    virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) ;
+    virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+
+    virtual uint32_t getDefaultSyncPeriod();
+    virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
+    virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+
+    uint16_t serviceType() const { return mServType ; }
 protected:
 
     /** Notifications **/
@@ -821,8 +828,6 @@ private:
      */
     void removeDeleteExistingMessages(RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify);
 
-private:
-
     RsMutex mGenMtx;
     RsGxsDataAccess* mDataAccess;
     RsGeneralDataService* mDataStore;
@@ -861,7 +866,6 @@ private:
 
     std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > mMsgPendingValidate;
     typedef std::vector<GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> > NxsMsgPendingVect;
-
 
     const uint32_t MESSAGE_STORE_PERIOD;
 

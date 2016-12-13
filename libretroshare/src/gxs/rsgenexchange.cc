@@ -128,11 +128,10 @@ bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, time_t& grp_
 
 void RsGenExchange::data_tick()
 {
+	static const double timeDelta = 0.1; // slow tick in sec
 
-    static const double timeDelta = 0.1; // slow tick in sec
-
-        tick();
-    usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
+	tick();
+	usleep((int) (timeDelta * 1000 *1000)); // timeDelta sec
 }
 
 void RsGenExchange::tick()
@@ -181,9 +180,10 @@ void RsGenExchange::tick()
 				mLastClean = time(NULL);
 			}
 
-		}else
+		}
+        else
 		{
-			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, MESSAGE_STORE_PERIOD, 1);
+			mMsgCleanUp = new RsGxsMessageCleanUp(mDataStore, this, 1);
 			mCleaning = true;
 		}
 	}
@@ -229,7 +229,7 @@ void RsGenExchange::tick()
 		}
 		else
 		{
-			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,mGixs);
+			mIntegrityCheck = new RsGxsIntegrityCheck(mDataStore,this,mGixs);
 			mIntegrityCheck->start("gxs integrity");
 			mChecking = true;
 		}
@@ -1608,6 +1608,54 @@ void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 
 }
 
+uint32_t RsGenExchange::getDefaultSyncPeriod()
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getDefaultSyncAge();
+    else
+    {
+        std::cerr << "(EE) No network service available. Cannot get default sync period. " << std::endl;
+        return 0;
+    }
+}
+
+uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getSyncAge(grpId);
+    else
+        return RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+}
+
+void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+        return mNetService->setSyncAge(grpId,age_in_secs) ;
+    else
+        std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
+
+uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
+{
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	if(mNetService != NULL)
+        return mNetService->getKeepAge(grpId,MESSAGE_STORE_PERIOD) ;
+    else
+        return MESSAGE_STORE_PERIOD;
+}
+void     RsGenExchange::setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+        return mNetService->setKeepAge(grpId,age_in_secs) ;
+    else
+        std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
+
 void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
 {
 	/* TODO APPLY MASK TO FLAGS */
@@ -2673,6 +2721,18 @@ void RsGenExchange::processRecvdMessages()
 			    ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 
 		    msg->metaData = meta;
+
+            // (cyril) Normally we should discard posts that are older than the sync request. But that causes a problem because
+            // 	RsGxsNetService requests posts to sync by chunks of 20. So if the 20 are discarded, they will be re-synced next time, and the sync process
+            // 	will indefinitly loop on the same 20 posts. Since the posts are there already, keeping them is the least problematique way to fix this problem.
+            //
+			//      uint32_t max_sync_age = ( mNetService != NULL)?( mNetService->getSyncAge(msg->metaData->mGroupId)):RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+			//
+			//		if(max_sync_age != 0 && msg->metaData->mPublishTs + max_sync_age < time(NULL))
+			//      {
+			//			std::cerr << "(WW) not validating message " << msg->metaData->mMsgId << " in group " << msg->metaData->mGroupId << " because it is older than synchronisation limit. This message was probably sent by a friend node that does not accept sync limits already." << std::endl;
+			//          ok = false ;
+			//      }
 
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "    deserialised info: grp id=" << meta->mGroupId << ", msg id=" << meta->mMsgId ;
