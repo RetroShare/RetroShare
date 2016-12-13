@@ -629,7 +629,13 @@ void RsGxsNetService::syncWithPeers()
             msg->PeerId(peerId);
             msg->updateTS = updateTS;
 
-            int req_delay = (int)mServerGrpConfigMap[grpId].msg_req_delay ;
+            int req_delay  = (int)mServerGrpConfigMap[grpId].msg_req_delay ;
+            int keep_delay = (int)mServerGrpConfigMap[grpId].msg_keep_delay ;
+
+            // If we store for less than we request, we request less, otherwise the posts will be deleted after being obtained.
+
+            if(keep_delay > 0 && req_delay > 0 && keep_delay < req_delay)
+                req_delay = keep_delay ;
 
             // The last post will be set to TS 0 if the req delay is 0, which means "Indefinitly"
 

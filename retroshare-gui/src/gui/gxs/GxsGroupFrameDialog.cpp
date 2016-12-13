@@ -353,6 +353,20 @@ void GxsGroupFrameDialog::setStorePostsDelay()
     std::cerr << "Data is " << duration << std::endl;
 
  	mInterface->setStoragePeriod(mGroupId,duration * 86400) ;
+
+    // If the sync is larger, we reduce it. No need to sync more than we store. The machinery below also takes care of this.
+    //
+    uint32_t sync_period = mInterface->getSyncPeriod(mGroupId);
+
+    if(duration > 0)      // the >0 test is to discard the indefinitly test. Basically, if we store for less than indefinitly, the sync is reduced accordingly.
+    {
+        if(sync_period == 0 || sync_period > duration*86400)
+        {
+			mInterface->setSyncPeriod(mGroupId,duration * 86400) ;
+
+            std::cerr << "(II) auto adjusting sync period to " << duration<< " days as well." << std::endl;
+        }
+    }
 }
 
 
@@ -371,6 +385,21 @@ void GxsGroupFrameDialog::setSyncPostsDelay()
     std::cerr << "Data is " << duration << std::endl;
 
  	mInterface->setSyncPeriod(mGroupId,duration * 86400) ;
+
+    // If the store is smaller, we increase it accordingly. No need to sync more than we store. The machinery below also takes care of this.
+    //
+    uint32_t store_period = mInterface->getStoragePeriod(mGroupId);
+
+    if(duration == 0)
+ 		mInterface->setStoragePeriod(mGroupId,duration * 86400) ;	// indefinite sync => indefinite storage
+    else
+    {
+        if(store_period != 0 && store_period < duration*86400)
+        {
+ 			mInterface->setStoragePeriod(mGroupId,duration * 86400) ;	// indefinite sync => indefinite storage
+            std::cerr << "(II) auto adjusting storage period to " << duration<< " days as well." << std::endl;
+        }
+    }
 }
 
 void GxsGroupFrameDialog::restoreGroupKeys(void)
