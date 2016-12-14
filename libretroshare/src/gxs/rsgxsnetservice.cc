@@ -200,6 +200,7 @@
 #include <sys/time.h>
 #include <math.h>
 #include <sstream>
+#include <typeinfo>
 
 #include "rsgxsnetservice.h"
 #include "gxssecurity.h"
