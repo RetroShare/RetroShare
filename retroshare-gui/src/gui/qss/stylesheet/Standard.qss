@@ -681,3 +681,8 @@ HomePage QPlainTextEdit#friendCertEdit {
 	background: white;
 }
 
+HomePage QFrame#addframe{
+	border: 2px solid #0099cc;
+	border-radius: 6px;
+	background: white;
+}

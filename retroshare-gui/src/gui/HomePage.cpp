@@ -24,6 +24,7 @@
 
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/connect/ConnectFriendWizard.h"
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -47,6 +48,8 @@ HomePage::HomePage(QWidget *parent) :
     ui->setupUi(this);
 
 		updateOwnCert();
+		
+	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
 		
     QAction *CopyAction = new QAction(QIcon(),tr("Copy your Cert to Clipboard"), this);
     connect(CopyAction, SIGNAL(triggered()), this, SLOT(copyCert()));
@@ -135,3 +138,11 @@ void HomePage::saveCert()
 	ts << ui->userCertEdit->document()->toPlainText();
 }
 
+/** Add a Friends Text Certificate */
+void HomePage::addFriend()
+{
+    ConnectFriendWizard connwiz (this);
+
+    connwiz.setStartId(ConnectFriendWizard::Page_Text);
+    connwiz.exec ();
+}
