@@ -136,13 +136,6 @@ class DirectoryStorage
         bool updateSubFilesList(const EntryIndex& indx, const std::map<std::string, FileTS> &subfiles, std::map<std::string, FileTS> &new_files) ;
         bool removeDirectory(const EntryIndex& indx) ;
 
-        // Updates relevant information for the file at the given index.
-
-        bool updateFile(const EntryIndex& index,const RsFileHash& hash, const std::string& fname,  uint64_t size, time_t modf_time) ;
-
-        // This is derived in LocalDirectoryStorage in order to also store H(H(F))
-        virtual bool updateHash(const EntryIndex& index,const RsFileHash& hash);
-
         // Returns the hash of the directory at the given index and reverse. This hash is set as random the first time it is used (when updating directories). It will be
         // used by the sync system to designate the directory without referring to index (index could be used to figure out the existance of hidden directories)
 
@@ -231,7 +224,7 @@ public:
     void updateShareFlags(const SharedDirInfo& info) ;
     bool convertSharedFilePath(const std::string& path_with_virtual_name,std::string& fullpath) ;
 
-    virtual bool updateHash(const EntryIndex& index,const RsFileHash& hash);
+    virtual bool updateHash(const EntryIndex& index, const RsFileHash& hash, bool update_internal_hierarchy);
     /*!
      * \brief searchHash
      * 				Looks into local database of shared files for the given hash. Also looks for files such that the hash of the hash

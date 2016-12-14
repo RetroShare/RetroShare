@@ -160,19 +160,6 @@ void DirectoryStorage::locked_check()
         std::cerr << "Check error: " << error << std::endl;
 }
 
-bool DirectoryStorage::updateFile(const EntryIndex& index,const RsFileHash& hash,const std::string& fname, uint64_t size,time_t modf_time)
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    mChanged = true ;
-    return mFileHierarchy->updateFile(index,hash,fname,size,modf_time);
-}
-bool DirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
-{
-    RS_STACK_MUTEX(mDirStorageMtx) ;
-    mChanged = true ;
-    return mFileHierarchy->updateHash(index,hash);
-}
-
 void DirectoryStorage::getStatistics(SharedDirStats& stats)
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -502,14 +489,18 @@ void LocalDirectoryStorage::updateTimeStamps()
 #endif
     }
 }
-bool LocalDirectoryStorage::updateHash(const EntryIndex& index,const RsFileHash& hash)
+bool LocalDirectoryStorage::updateHash(const EntryIndex& index, const RsFileHash& hash, bool update_internal_hierarchy)
 {
-    {
-        RS_STACK_MUTEX(mDirStorageMtx) ;
+	RS_STACK_MUTEX(mDirStorageMtx) ;
 
-        mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
-    }
-    return mFileHierarchy->updateHash(index,hash);
+	mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
+	mChanged = true ;
+
+#ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
+    std::cerr << "Updating index of hash " << hash << " update_internal=" << update_internal_hierarchy << std::endl;
+#endif
+
+	return (!update_internal_hierarchy)|| mFileHierarchy->updateHash(index,hash);
 }
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
 {

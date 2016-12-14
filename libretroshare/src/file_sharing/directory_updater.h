@@ -60,7 +60,7 @@ protected:
     virtual bool hash_confirm(uint32_t client_param) ;
 
     void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories);
-    void sweepSharedDirectories();
+    bool sweepSharedDirectories();
 
 private:
     HashStorage *mHashCache ;
