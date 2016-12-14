@@ -4,19 +4,103 @@
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
 #include "rsaccounts.h"
+
+bool RsLoginHandler::getSSLPassword( const RsPeerId& ssl_id,
+                                     bool enable_gpg_ask_passwd,
+                                     std::string& ssl_passwd )
+{
+
+#ifdef RS_AUTOLOGIN
+	// First, see if autologin is available
+	if(tryAutoLogin(ssl_id,ssl_passwd)) return true;
+#endif // RS_AUTOLOGIN
+
+	// If we're not expecting to enter a passwd (e.g. test for autologin before
+	// display of the login window), safely respond false.
+	if(!enable_gpg_ask_passwd) return false;
+
+	return getSSLPasswdFromGPGFile(ssl_id,ssl_passwd);
+}
+
+bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(
+        const RsPeerId& ssl_id, const std::string& ssl_passwd )
+{
+	// We want to pursue login with gpg passwd. Let's do it:
+	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
+	            getSSLPasswdFileName(ssl_id).c_str(), "r");
+
+	if(sslPassphraseFile != NULL)	// already have it.
+	{
+		fclose(sslPassphraseFile);
+		return true ;
+	}
+
+	bool ok = AuthGPG::getAuthGPG()->encryptTextToFile(
+	            ssl_passwd, getSSLPasswdFileName(ssl_id));
+
+	if (!ok) std::cerr << "Encrypting went wrong !" << std::endl;
+
+	return ok;
+}
+
+bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string& sslPassword)
+{
+	/* Let's read the password from an encrypted file, before check if there's
+	 * an ssl_passpharese_file that we can decrypt with PGP */
+	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
+	            getSSLPasswdFileName(ssl_id).c_str(), "r");
+
+	if (sslPassphraseFile == NULL)
+	{
+		std::cerr << "No password provided, and no sslPassphraseFile : "
+		          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
+		return 0;
+	}
+
+	fclose(sslPassphraseFile);
+
+	std::cerr << "opening sslPassphraseFile : "
+	          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
+
+	std::string plain;
+	if ( AuthGPG::getAuthGPG()->decryptTextFromFile(
+	         plain, getSSLPasswdFileName(ssl_id)) )
+	{
+		std::cerr << "Decrypting went ok !" << std::endl;
+		sslPassword = plain;
+
+		return sslPassword.length() > 0 ;
+	}
+	else
+	{
+		sslPassword = "";
+		std::cerr << "Error : decrypting went wrong !" << std::endl;
+
+		return false;
+	}
+}
+
+
+std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
+{
+	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
+}
+
+#ifdef RS_AUTOLOGIN
+
 #if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
-#include <gnome-keyring-1/gnome-keyring.h>
+#	include <gnome-keyring-1/gnome-keyring.h>
 
 GnomeKeyringPasswordSchema my_schema = {
-        GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
-        {
-                { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
-                { NULL, (GnomeKeyringAttributeType)0 }
-        },
-        NULL,
-        NULL,
-        NULL
-  };
+    GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
+    {
+        { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+        { NULL, (GnomeKeyringAttributeType)0 }
+    },
+    NULL,
+    NULL,
+    NULL
+};
 #endif
 
 
@@ -98,22 +182,6 @@ extern BOOL WINAPI CryptUnprotectData(
 
 #endif
 
-
-bool RsLoginHandler::getSSLPassword(const RsPeerId& ssl_id,bool enable_gpg_ask_passwd,std::string& ssl_passwd)
-{
-	// First, see if autologin is available
-	//
-	if(tryAutoLogin(ssl_id,ssl_passwd))
-		return true ;
-
-	// If we're not expecting to enter a passwd (e.g. test for autologin before
-	// display of the login window), safely respond false.
-	//
-	if(!enable_gpg_ask_passwd)
-		return false ;
-
-	return getSSLPasswdFromGPGFile(ssl_id,ssl_passwd) ;
-}
 
 bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd)
 {
@@ -587,79 +655,9 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 #endif
 }
 
-bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const RsPeerId& ssl_id,const std::string& ssl_passwd)
-{
-	// We want to pursue login with gpg passwd. Let's do it:
-	//
-	std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
-
-	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
-
-	if(sslPassphraseFile != NULL)	// already have it.
-	{
-		fclose(sslPassphraseFile) ;
-		return true ;
-	}
-
-	bool ok ;
-	std::string cipher ;
-
-	if(AuthGPG::getAuthGPG()->encryptTextToFile(ssl_passwd, getSSLPasswdFileName(ssl_id))) 
-	{
-		std::cerr << "Encrypting went ok !" << std::endl;
-		ok= true ;
-	}
-	else 
-	{
-		std::cerr << "Encrypting went wrong !" << std::endl;
-		ok= false ;
-	}
-	
-	return ok ;
-}
-
-bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string& sslPassword)
-{
-	// Let's read the password from an encrypted file
-	// Let's check if there's a ssl_passpharese_file that we can decrypt with PGP
-	//
-	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
-
-	if (sslPassphraseFile == NULL)
-	{
-		std::cerr << "No password provided, and no sslPassphraseFile : " << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
-		return 0;
-	} 
-	fclose(sslPassphraseFile);
-
-	std::cerr << "opening sslPassphraseFile : " << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
-	std::string plain ;
-
-	if (AuthGPG::getAuthGPG()->decryptTextFromFile(plain,getSSLPasswdFileName(ssl_id))) 
-	{
-		std::cerr << "Decrypting went ok !" << std::endl;
-		sslPassword = plain ;
-		std::cerr << "sslpassword: " << "******************** (length = " << sslPassword.length() << ")" << std::endl;
-
-		return sslPassword.length() > 0 ;
-	} 
-	else 
-	{
-		sslPassword = "" ;
-		std::cerr << "Error : decrypting went wrong !" << std::endl;
-
-		return false;
-	}
-}
-
-
-std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
-{
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
-}
-
 std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
 	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
 }
 
+#endif // RS_AUTOLOGIN

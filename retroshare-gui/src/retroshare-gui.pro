@@ -70,7 +70,8 @@ INCLUDEPATH *= retroshare-gui
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
-	CONFIG += link_pkgconfig
+    CONFIG += link_pkgconfig
+
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 
@@ -78,7 +79,6 @@ linux-* {
 
 	LIBS *= -rdynamic 
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
-	DEFINES *= HAS_GNOME_KEYRING
 }
 
 unix {

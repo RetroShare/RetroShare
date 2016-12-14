@@ -717,14 +717,17 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		return 0 ;
 	}
 
+#ifdef RS_AUTOLOGIN
 	if(autoLoginNT)
 	{
-		std::cerr << "RetroShare will AutoLogin next time";
-		std::cerr << std::endl;
+		std::cerr << "RetroShare will AutoLogin next time" << std::endl;
 
 		RsLoginHandler::enableAutoLogin(preferredId,rsInitConfig->passwd);
 		rsInitConfig->autoLogin = true ;
 	}
+#else
+	(void) autoLoginNT;
+#endif // RS_AUTOLOGIN
 
 	/* wipe out password */
 
@@ -733,10 +736,11 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	rsInitConfig->gxs_passwd = rsInitConfig->passwd;
 	rsInitConfig->passwd = "";
 	
-	rsAccounts->storePreferredAccount();      
+	rsAccounts->storePreferredAccount();
 	return 1;
 }
 
+#ifdef RS_AUTOLOGIN
 bool RsInit::RsClearAutoLogin()
 {
 	RsPeerId preferredId;
@@ -747,6 +751,7 @@ bool RsInit::RsClearAutoLogin()
 	}
 	return	RsLoginHandler::clearAutoLogin(preferredId);
 }
+#endif // RS_AUTOLOGIN
 
 
 bool RsInit::isPortable()

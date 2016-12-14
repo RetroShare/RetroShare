@@ -60,14 +60,16 @@ const int p3facemsgzone = 11453;
 /* RsIface Config */
 /* Config */
 
-void    RsServer::ConfigFinalSave()
+void RsServer::ConfigFinalSave()
 {
-	/* force saving of transfers TODO */
+	//TODO: force saving of transfers
 	//ftserver->saveFileTransferStatus();
-	if(!RsInit::getAutoLogin())
-		RsInit::RsClearAutoLogin();
 
-        //AuthSSL::getAuthSSL()->FinalSaveCertificates();
+#ifdef RS_AUTOLOGIN
+	if(!RsInit::getAutoLogin()) RsInit::RsClearAutoLogin();
+#endif // RS_AUTOLOGIN
+
+	//AuthSSL::getAuthSSL()->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
 }
 

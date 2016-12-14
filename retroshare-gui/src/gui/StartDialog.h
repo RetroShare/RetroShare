@@ -40,10 +40,12 @@ protected:
 private slots:
 	void loadPerson();
 
+#ifdef RS_AUTOLOGIN
 	/**
 	 * Warns the user that autologin is not secure
 	 */
 	void notSecureWarning();
+#endif // RS_AUTOLOGIN
 
 	void on_labelProfile_linkActivated(QString link);
 

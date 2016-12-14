@@ -151,7 +151,7 @@ HEADERS += $$PUBLIC_HEADERS
 
 ################################# Linux ##########################################
 linux-* {
-	CONFIG += link_pkgconfig
+    CONFIG += link_pkgconfig
 
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = $${QMAKE_CXX}
@@ -191,8 +191,6 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	DEFINES *= HAS_GNOME_KEYRING
-	PKGCONFIG *= gnome-keyring-1
 	PKGCONFIG *= libssl libupnp
 	PKGCONFIG *= libcrypto zlib
 	LIBS *= -lpthread -ldl
