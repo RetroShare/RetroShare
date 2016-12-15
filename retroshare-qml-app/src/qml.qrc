@@ -22,5 +22,6 @@
         <file>qml/AddTrustedNode.qml</file>
         <file>qml/RsLoginPassView.qml</file>
         <file>qml/TrustedNodesView.qml</file>
+        <file>qml/ChatView.qml</file>
     </qresource>
 </RCC>

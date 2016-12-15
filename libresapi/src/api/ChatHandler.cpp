@@ -837,6 +837,7 @@ void ChatHandler::handleLobbies(Request &/*req*/, Response &resp)
 {
     tick();
 
+	{
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
     resp.mDataStream.getStreamToMember();
     for(std::vector<Lobby>::iterator vit = mLobbies.begin(); vit != mLobbies.end(); ++vit)
@@ -854,6 +855,7 @@ void ChatHandler::handleLobbies(Request &/*req*/, Response &resp)
         resp.mDataStream.getStreamToMember() << *vit << makeKeyValueReference("unread_msg_count", unread_msgs);
     }
     resp.mStateToken = mLobbiesStateToken;
+	}
     resp.setOk();
 }
 
@@ -921,6 +923,12 @@ ResponseTask* ChatHandler::handleLobbyParticipants(Request &req, Response &resp)
 
 void ChatHandler::handleMessages(Request &req, Response &resp)
 {
+	/* G10h4ck: Whithout this the request processing won't happen, copied from
+	 * ChatHandler::handleLobbies, is this a work around or is the right whay of
+	 * doing it? */
+	tick();
+
+	{
     RS_STACK_MUTEX(mMtx); /********** LOCKED **********/
     ChatId id(req.mPath.top());
     // make response a list
@@ -941,6 +949,7 @@ void ChatHandler::handleMessages(Request &req, Response &resp)
 	}
     resp.mStateToken = mMsgStateToken;
     handlePaginationRequest(req, resp, mit->second);
+	}
 }
 
 void ChatHandler::handleSendMessage(Request &req, Response &resp)

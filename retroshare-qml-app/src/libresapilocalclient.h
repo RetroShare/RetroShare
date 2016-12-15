@@ -21,9 +21,8 @@
 #define LIBRESAPILOCALCLIENT_H
 
 #include <QLocalSocket>
-#include <QDir>
-#include <QJsonDocument>
-#include <QVector>
+#include <QQueue>
+#include <QJSValue>
 
 class LibresapiLocalClient : public QObject
 {
@@ -32,25 +31,27 @@ class LibresapiLocalClient : public QObject
 public:
 	LibresapiLocalClient() : mLocalSocket(this) {}
 
-	// potser abstreure el següent amb QUrl urlPath (path) i amb QJson jsonData.
-	Q_INVOKABLE int request(const QString & path, const QString & jsonData);
-	const QJsonDocument & getJson();
+	Q_INVOKABLE int request( const QString& path, const QString& jsonData = "",
+	                         QJSValue callback = QJSValue::NullValue);
 	Q_INVOKABLE void openConnection(QString socketPath);
 
 private:
 	QLocalSocket mLocalSocket;
-	QByteArray receivedBytes;
-	QJsonDocument json;
-	//QVector<QJsonDocument> responses;
-
-	bool parseResponse(); //std::string msg);
+	QQueue<QJSValue> callbackQueue;
 
 private slots:
 	void socketError(QLocalSocket::LocalSocketError error);
 	void read();
 
 signals:
-	void goodResponseReceived(const QString & msg);//, int requestId);
+	/// @deprecated @see LibresapiLocalClient::responseReceived instead
+	void goodResponseReceived(const QString & msg);
+
+	/**
+	 * @brief responseReceived emitted when a response is received
+	 * @param msg
+	 */
+	void responseReceived(const QString & msg);
 };
 
 #endif // LIBRESAPILOCALCLIENT_H
