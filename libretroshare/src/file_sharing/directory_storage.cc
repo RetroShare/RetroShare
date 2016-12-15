@@ -339,6 +339,7 @@ int LocalDirectoryStorage::searchHash(const RsFileHash& hash, RsFileHash& real_h
 void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo>& lst)
 {
 	std::set<std::string> dirs_with_new_virtualname ;
+    bool dirs_with_changed_flags = false ;
 
 	{
 		RS_STACK_MUTEX(mDirStorageMtx) ;
@@ -374,16 +375,21 @@ void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo
 		{
 			std::map<std::string,SharedDirInfo>::iterator it2 = mLocalDirs.find(it->filename) ;
 
-			if(it2 != mLocalDirs.end() && it2->second.virtualname != it->virtualname)
-				dirs_with_new_virtualname.insert(it->filename) ;
+			if(it2 != mLocalDirs.end())
+            {
+                if(it2->second.virtualname != it->virtualname)
+					dirs_with_new_virtualname.insert(it->filename) ;
+
+				if(!SharedDirInfo::sameLists((*it).parent_groups,it2->second.parent_groups) || (*it).shareflags != it2->second.shareflags)
+                    dirs_with_changed_flags = true ;
+            }
 
 			new_dirs[it->filename] = *it;
 		}
 
 		mLocalDirs = new_dirs ;
+		mTSChanged = true ;
 	}
-
-	mTSChanged = true ;
 
     // now update the TS off-mutex.
 
@@ -393,6 +399,9 @@ void LocalDirectoryStorage::setSharedDirectoryList(const std::list<SharedDirInfo
 			std::cerr << "Updating TS of local dir \"" << dirit.name() << "\" with changed virtual name" << std::endl;
 			setDirectoryLocalModTime(*dirit,time(NULL));
 		}
+
+    if(dirs_with_changed_flags)
+        setDirectoryLocalModTime(0,time(NULL)) ;
 }
 
 void LocalDirectoryStorage::getSharedDirectoryList(std::list<SharedDirInfo>& lst)
