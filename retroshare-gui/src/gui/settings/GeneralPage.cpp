@@ -32,8 +32,8 @@
 #include <gui/QuickStartWizard.h>
 
 /** Constructor */
-GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags)
-: ConfigPage(parent, flags)
+GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
+    ConfigPage(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -75,6 +75,13 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags)
 #endif
     }
     ui.useLocalServer->setEnabled(true);
+
+#ifdef RS_AUTOLOGIN
+	ui.autoLogin->setToolTip(tr("For security reasons the usage of auto-login is discouraged, you can enable it but you are on your own!"));
+#else // RS_AUTOLOGIN
+	ui.autoLogin->setEnabled(false);
+	ui.autoLogin->setToolTip(tr("Your RetroShare build has auto-login disabled."));
+#endif // RS_AUTOLOGIN
 }
 
 /** Destructor */
