@@ -73,11 +73,14 @@ void LocalDirectoryUpdater::data_tick()
 
     if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
     {
-        sweepSharedDirectories() ;
-
-		mNeedsFullRecheck = false ;
-        mLastSweepTime = now;
-        mSharedDirectories->notifyTSChanged() ;
+        if(sweepSharedDirectories())
+		{
+			mNeedsFullRecheck = false ;
+			mLastSweepTime = now;
+			mSharedDirectories->notifyTSChanged() ;
+		}
+        else
+            std::cerr << "(WW) sweepSharedDirectories() failed. Will do it again in a short time." << std::endl;
     }
 
     if(now > DELAY_BETWEEN_LOCAL_DIRECTORIES_TS_UPDATE + mLastTSUpdateTime)
@@ -93,12 +96,12 @@ void LocalDirectoryUpdater::forceUpdate()
     mLastSweepTime = 0;
 }
 
-void LocalDirectoryUpdater::sweepSharedDirectories()
+bool LocalDirectoryUpdater::sweepSharedDirectories()
 {
     if(mHashSalt.isNull())
     {
         std::cerr << "(EE) no salt value in LocalDirectoryUpdater. Is that a bug?" << std::endl;
-        return ;
+        return false;
     }
 
     RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
@@ -142,6 +145,7 @@ void LocalDirectoryUpdater::sweepSharedDirectories()
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+    return true ;
 }
 
 void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories)
@@ -221,8 +225,10 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
           RsFileHash hash ;
 
-          if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit) && dit.hash() != hash)
-             mSharedDirectories->updateHash(*dit,hash);
+          // mSharedDirectories des two things: store H(F), and compute H(H(F)), which is used in FT. The later is always needed.
+
+          if(mHashCache->requestHash(cumulated_path + "/" + dit.name(),dit.size(),dit.modtime(),hash,this,*dit))
+             mSharedDirectories->updateHash(*dit,hash,hash != dit.hash());
        }
     }
 #ifdef DEBUG_LOCAL_DIR_UPDATER
@@ -248,7 +254,7 @@ bool LocalDirectoryUpdater::inDirectoryCheck() const
 
 void LocalDirectoryUpdater::hash_callback(uint32_t client_param, const std::string &/*name*/, const RsFileHash &hash, uint64_t /*size*/)
 {
-    if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash))
+    if(!mSharedDirectories->updateHash(DirectoryStorage::EntryIndex(client_param),hash,true))
         std::cerr << "(EE) Cannot update file. Something's wrong." << std::endl;
 
     mSharedDirectories->notifyTSChanged() ;
