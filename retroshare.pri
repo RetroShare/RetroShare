@@ -151,5 +151,5 @@ sqlcipher:DEFINES -= NO_SQLCIPHER
 no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
-    warning(You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security)
+    warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
 }
