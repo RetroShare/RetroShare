@@ -33,7 +33,7 @@ static const int sleepFactorDefault   = 10; // 0.5s
 static const int sleepFactorFast      = 1;  // 0.05s
 static const int sleepFactorSlow      = 20; // 1s
 
-static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Warning, "p3I2pBob"};
+static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Debug_All, "p3I2pBob"};
 
 void doSleep(useconds_t timeToSleepMS) {
 #ifndef WINDOWS_SYS
@@ -312,6 +312,8 @@ void p3I2pBob::data_tick()
 				break;
 			default:
 				rslog(RsLog::Debug_Alert, &i2pBobLogInfo, "p3I2pBob::data_tick unknown task");
+				rsAutoProxyMonitor::taskError(mProcessing);
+				mProcessing = NULL;
 				break;
 			}
 		}

@@ -1440,6 +1440,10 @@ void ServerPage::taskFinished(taskTicket *&ticket)
 			break;
 		}
 	}
+
+	if (ticket->data)
+		std::cerr << "(WW) ServerPage::taskFinished data set. This should NOT happen - check the code!" << std::endl;
+
 	delete ticket;
 	ticket = NULL;
 }
