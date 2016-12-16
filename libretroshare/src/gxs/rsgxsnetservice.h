@@ -564,9 +564,12 @@ private:
     RsServiceInfo mServiceInfo;
     
     std::map<RsGxsMessageId,time_t> mRejectedMessages;
+
     std::vector<RsNxsGrp*> mNewGroupsToNotify ;
     std::vector<RsNxsMsg*> mNewMessagesToNotify ;
-    
+    std::set<RsGxsGroupId> mNewStatsToNotify ;
+    std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
+
     void debugDump();
 };
 
