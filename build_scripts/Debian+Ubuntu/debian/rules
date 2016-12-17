@@ -3,7 +3,7 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	cd src && qmake "CONFIG-=debug" "CONFIG+=release" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
+	cd src && qmake "CONFIG-=debug" "CONFIG+=release" "CONFIG+=rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib RetroShare.pro
 	touch $@
 
 
