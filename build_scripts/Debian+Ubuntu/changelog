@@ -1,5 +1,58 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  f8f040b csoler Fri, 16 Dec 2016 10:03:23 +0100 fixed deadlock due to cross-locking RsGxsNetService and RsGxsGenExchange (reported by sss)
+  1ef11a2 csoler Thu, 15 Dec 2016 23:21:11 +0100 Merge pull request #599 from G10h4ck/qml_app_chat
+  b857d9a csoler Thu, 15 Dec 2016 23:10:09 +0100 Merge pull request #605 from csoler/v0.6-FileListsOptim
+  8637cfa csoler Thu, 15 Dec 2016 23:07:40 +0100 added detection of flag change so that new TS is set on root of hierarchy and changes are made visible to friends at next update
+  c3443df csoler Thu, 15 Dec 2016 12:36:27 +0100 Merge pull request #603 from G10h4ck/master
+  3662a36 Gio    Thu, 15 Dec 2016 11:20:13 +0100 Coherent behaviour of general config with auto-login compile option
+  31b1583 csoler Thu, 15 Dec 2016 09:31:20 +0100 Merge pull request #601 from csoler/v0.6-FileListsOptim
+  08294de csoler Wed, 14 Dec 2016 22:58:49 +0100 removed unused updateHash() functions in directory_storage. Fixed a bug that caused H(H(F)) to not be recomputed at start, causing e2e encryption to fail in some cases.
+  81dffbe csoler Wed, 14 Dec 2016 16:45:45 +0100 Merge pull request #591 from G10h4ck/split_autologin
+  96b6cd3 defnax Wed, 14 Dec 2016 15:20:03 +0100 Added "Add friends Certificate" Button for Home View, for call easy the Text Page for Paste friends Cert faster.
+  f618abe Gio    Wed, 14 Dec 2016 14:25:43 +0100 Change the auto-login warning message accordign to Cyril suggestion
+  f3c4de2 csoler Wed, 14 Dec 2016 10:06:41 +0100 Merge pull request #598 from csoler/v0.6-GXS-LimitedSync2
+  a842202 csoler Wed, 14 Dec 2016 09:59:20 +0100 fixed compilation and set the default storage to 1year to comply with forum default
+  1202339 csoler Wed, 14 Dec 2016 00:09:54 +0100 Merge pull request #592 from csoler/v0.6-GXS-LimitedSync2
+  cbc8287 csoler Tue, 13 Dec 2016 22:46:30 +0100 used item disable to show current choice in sync/store menu since some systems dont show the menu icons
+  fca8d6f csoler Tue, 13 Dec 2016 21:52:11 +0100 added display of storage/sync in forum summary
+  5953e56 csoler Tue, 13 Dec 2016 21:12:34 +0100 added auto-consistency between store/sync periods
+  dd2a3c2 csoler Mon, 12 Dec 2016 22:52:55 +0100 fixed serialisation bug in new UpdateMap code, and removed debug info from RsGxsNetService
+  2e717d3 defnax Mon, 12 Dec 2016 21:16:56 +0100 Added Home Page View for easy see own Cert to Copy and Share to Friends Fixed Share Manager Label layout Update emotes file Set radio items font size to stylesheet file
+  0d94b68 csoler Mon, 12 Dec 2016 21:01:24 +0100 removed duplicate peerID/grpId in msg/grp update maps
+  4933cce csoler Sat, 10 Dec 2016 22:58:23 +0100 Merge pull request #595 from PhenomRetroShare/Add_UnreadColumnToGroupTreeWidget
+  f2898da csoler Sat, 10 Dec 2016 20:51:12 +0100 Merge pull request #596 from PhenomRetroShare/Fix_RSElidedItemDelegateTextColor
+  6c6b437 Gio    Sat, 10 Dec 2016 20:23:30 +0100 qml-app: Fix responsiveness of ChatView
+  803d1b6 Phenom Sat, 10 Dec 2016 19:52:46 +0100 Fix RSElidedItemDelegate text color.
+  8f452ee Phenom Sat, 10 Dec 2016 17:59:58 +0100 Add Unread column to GroupTreeWidget
+  478746f csoler Thu,  8 Dec 2016 23:53:28 +0100 moved incoming msg time check to RsGenExchange validation method
+  1fa20e1 Gio    Thu,  8 Dec 2016 21:57:26 +0100 Added a dialog to create GXS Identities
+  8b697eb csoler Thu,  8 Dec 2016 21:53:39 +0100 added check to prevent loading saving corrupted peer/grp ids in GXS update maps
+  c3aca0c Gio    Thu,  8 Dec 2016 15:56:23 +0100 Implement a working Distant Chat prototype in Qml
+  ae2accd csoler Thu,  8 Dec 2016 14:30:47 +0100 fixed cmpilation of unittests
+  ae37787 csoler Thu,  8 Dec 2016 09:17:56 +0100 merged with upstream/master
+  242338d csoler Thu,  8 Dec 2016 09:00:55 +0100 Merge pull request #593 from G10h4ck/libresapi_distant_chat
+  6c4497a csoler Wed,  7 Dec 2016 22:41:05 +0100 improved debug output in rsgxsutil. Added disabled code for removing old unused groups
+  d9416d3 csoler Wed,  7 Dec 2016 22:00:50 +0100 added proper use of storage time parameter in group msg cleanup
+  9eef412 Gio    Wed,  7 Dec 2016 20:09:14 +0100 Expose libresapi for distant chat
+  b03fe3d csoler Tue,  6 Dec 2016 23:28:28 +0100 fixed computation of max update time for sync
+  68f7fff csoler Tue,  6 Dec 2016 23:02:25 +0100 fixed saving bug in GrpConfigMap
+  a4c14c2 csoler Tue,  6 Dec 2016 22:17:03 +0100 improved serialisation methods in RsGxsNet items, and added serialisation for RsGrpConfigItem
+  661038d csoler Mon,  5 Dec 2016 23:42:44 +0100 added a function to check keep/req times for consistency
+  7afb91d csoler Mon,  5 Dec 2016 22:14:48 +0100 added machinery to allow to set/get sync and store periods for GXS groups
+  f8de12d csoler Mon,  5 Dec 2016 17:49:00 +0100 updated changelog
+  d2ef224 csoler Sun,  4 Dec 2016 23:26:48 +0100 added entry in rsgxsnetservice to change sync params
+  5612647 csoler Fri, 11 Nov 2016 00:10:01 +0100 added new GrpServerConfigMap to store additional data on groups for net service. Removed pointers to simplify the code
+  143829c csoler Wed,  9 Nov 2016 16:18:43 +0100 moved constants for GXS group management into rsgxs.h
+  f3a34bf csoler Sat, 29 Oct 2016 17:26:08 +0200 created a new item to hold/save per gxs group information (statistics, update delays)
+  c6d21e4 csoler Fri, 28 Oct 2016 22:55:01 +0200 changed old msg update default strategy to one month
+  bba1a71 csoler Fri, 28 Oct 2016 22:37:56 +0200 removed deprecated bandwidth recorder code in RsGxsNetService
+  7c35411 Gio    Sat,  3 Dec 2016 22:22:13 +0100 Suppress compiler warning about autologin parameter not used
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sat, 17 Dec 2016 13:00:00 +0100
+
+retroshare06 (0.6.1-1.20161205.f8de12d3~trusty) trusty; urgency=low
+
   cf8dac2 csoler   Sat,  3 Dec 2016 21:00:16 +0100 fixed initialisation of random salt in directory updater when no config file is presen
   eedeaeb csoler   Sat,  3 Dec 2016 15:13:04 +0100 used light grey instead of read to show missing directories
   8adb91b csoler   Sat,  3 Dec 2016 15:04:57 +0100 removed compilation of ShareDialog that is unused, and cleanup the editing in ShareMan
