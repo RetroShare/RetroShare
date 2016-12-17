@@ -240,7 +240,9 @@ bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 {
 	time_t now = time(NULL) ;
 
-	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || meta.mPublishTs + MESSAGE_STORE_PERIOD >= now ;
+    uint32_t store_limit =  (mNetService != NULL)?MESSAGE_STORE_PERIOD:mNetService->getKeepAge(grpId,MESSAGE_STORE_PERIOD) ;
+
+	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || store_limit == 0 || meta.mPublishTs + store_limit >= now ;
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,
