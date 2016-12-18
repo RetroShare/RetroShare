@@ -52,7 +52,7 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
-qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RsBuildConfig% version_detail_bash_script"
+qmake "%SourcePath%\RetroShare.pro" -r "CONFIG+=%RsBuildConfig% version_detail_bash_script rs_autologin"
 if errorlevel 1 goto error
 
 echo.
