@@ -339,7 +339,7 @@ bool RsGxsIntegrityCheck::check()
 		    // Note: we could time_stamp even in the case where the id is not cached. Anyway, it's not really a problem here, since IDs have a high chance of
 		    // behing eventually stamped.
 
-		    mGixs->timeStampKey(gxs_ids[n]) ;
+		    mGixs->timeStampKey(gxs_ids[n],"Used in service (Integrity check)") ;
 	    }
 
 	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;

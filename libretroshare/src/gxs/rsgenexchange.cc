@@ -470,8 +470,8 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len, authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
-                    	mGixs->timeStampKey(grpMeta.mAuthorId) ;
-			signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
+					mGixs->timeStampKey(grpMeta.mAuthorId,"Creation of group author signature for GrpId" + grpMeta.mGroupId.toStdString()) ;
+					signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
                 }
                 else
                 	id_ret = SIGN_FAIL;
@@ -638,7 +638,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 		    if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, authorKey, sign))
 		    {
 			    id_ret = SIGN_SUCCESS;
-			    mGixs->timeStampKey(msgMeta.mAuthorId) ;
+			    mGixs->timeStampKey(msgMeta.mAuthorId,"Creating author signature in group " + msgMeta.mGroupId.toStdString() + ", msg " + msgMeta.mMsgId.toStdString()) ;
 			    signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
 		    }
 		    else
@@ -855,7 +855,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 		    {
 			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
 			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-			    mGixs->timeStampKey(metaData.mAuthorId) ;
+			    mGixs->timeStampKey(metaData.mAuthorId,"Validation of author signature. Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString()) ;
 		    }
 		    else
 		    {
@@ -986,7 +986,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #ifdef GEN_EXCH_DEBUG
 				    std::cerr << "  key ID validation result: " << idValidate << std::endl;
 #endif
-				    mGixs->timeStampKey(metaData.mAuthorId) ;
+				    mGixs->timeStampKey(metaData.mAuthorId,"Group author signature validation. GrpId=" + metaData.mGroupId.toStdString()) ;
 			    }
 			    else
 			    {
@@ -3145,7 +3145,7 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	// also check this is the latest published group
 	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
 
-    mGixs->timeStampKey(newGrp.metaData->mAuthorId) ;
+    mGixs->timeStampKey(newGrp.metaData->mAuthorId,"Validation of signature for updated grp " + oldGrpMeta.mGroupId.toStdString()) ;
     return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }
 

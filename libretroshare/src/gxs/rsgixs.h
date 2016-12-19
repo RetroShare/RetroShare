@@ -125,7 +125,7 @@ public:
     virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
-    virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
+    virtual void timeStampKey(const RsGxsId& key_id,const std::string& reason) = 0 ;
 
     // Key related interface - used for validating msgs and groups.
     /*!

@@ -467,7 +467,7 @@ private:
 	void cleanUnusedKeys() ;
 	void slowIndicateConfigChanged() ;
 
-	virtual void timeStampKey(const RsGxsId& id) ;
+	virtual void timeStampKey(const RsGxsId& id,const std::string& reason) ;
 	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
 	std::string genRandomId(int len = 20);
@@ -507,10 +507,19 @@ private:
 
 private:
 
+    struct keyTSInfo
+    {
+        keyTSInfo() : TS(0) {}
+
+        time_t TS ;
+        std::map<std::string,time_t> usage_map ;
+    };
+	friend class IdCacheEntryCleaner;
+
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
 	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
-	std::map<RsGxsId,time_t> mKeysTS ;
+	std::map<RsGxsId,keyTSInfo> mKeysTS ;
 
 	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
 	std::set<RsGxsId> mContacts;
