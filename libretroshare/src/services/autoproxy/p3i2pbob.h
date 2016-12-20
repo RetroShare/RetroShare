@@ -141,6 +141,7 @@ enum bobState {
 	bsStart,
 	bsStop,
 	bsClear,
+	bsList, // chain head for 'list' command
 	bsQuit
 };
 
@@ -238,6 +239,7 @@ private:
 	sockaddr_storage mI2PProxyAddr;
 	std::map<bobState, bobStateInfo> mCommands;
 	std::string mErrorMsg;
+	std::string mTunnelName;
 
 	std::queue<taskTicket *> mPending;
 	taskTicket *mProcessing;

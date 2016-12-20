@@ -362,6 +362,14 @@ int p3I2pBob::stateMachineBOB()
 			key = answer.substr(3, answer.length()-3);
 			mSetting.keys = key;
 			IndicateConfigChanged();
+			break;
+		case bsList:
+			if (answer.find(mTunnelName) == std::string::npos) {
+				rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB status check: tunnel down!");
+				// reset controller state
+				//mState = csClosed;
+			}
+			break;
 		default:
 			break;
 		}
@@ -774,14 +782,7 @@ void p3I2pBob::getStates(bobStates *bs)
 	bs->cs = mState;
 	bs->ct = mTask;
 	bs->bs = mBOBState;
-
-	// get tunnel name from command
-	if (mConfigLoaded) {
-		bobStateInfo &si = mCommands[bsSetnickS];
-		bs->tunnelName = si.command.substr(8);
-	} else {
-		bs->tunnelName.clear();
-	}
+	bs->tunnelName = mTunnelName;
 }
 
 std::string p3I2pBob::executeCommand(const std::string &command)
@@ -898,6 +899,7 @@ void p3I2pBob::finalizeSettings_locked()
 	RSRandom::random_bytes(tmp.data(), len);
 	const std::string location = Radix32::encode(tmp.data(), len);
 	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using suffix " + location);
+	mTunnelName = "RetroShare-" + location;
 
 	const std::string setnick    = "setnick RetroShare-" + location;
 	const std::string getnick    = "getnick RetroShare-" + location;
@@ -921,6 +923,7 @@ void p3I2pBob::finalizeSettings_locked()
 	const std::string start      = "start";
 	const std::string stop       = "stop";
 	const std::string clear      = "clear";
+	const std::string list       = "list";
 	const std::string quit       = "quit";
 
 	// setup state machine
@@ -956,6 +959,9 @@ void p3I2pBob::finalizeSettings_locked()
 	mCommands[bsSetnickN] = {setnick, bsNewkeysN};
 	mCommands[bsNewkeysN] = {newkeys, bsGetkeys};
 	mCommands[bsGetkeys]  = {getkeys, bsClear};
+
+	// list chain
+	mCommands[bsList] = {list, bsQuit};
 }
 
 void p3I2pBob::updateSettings_locked()
