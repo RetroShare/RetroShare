@@ -656,6 +656,8 @@ public:
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 
     uint16_t serviceType() const { return mServType ; }
+    uint16_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }
+
 protected:
 
     /** Notifications **/

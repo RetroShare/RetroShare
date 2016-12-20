@@ -184,7 +184,7 @@ public:
     // Cyril: Reputation details. At some point we might want to merge information
     // between the two into a single global score. Since the old reputation system
     // is not finished yet, I leave this in place. We should decide what to do with it.
-    
+#warning (cyril) possibly remove this old reputation field.
     GxsReputation mReputation_oldSystem;		// this is the old "mReputation" field, which apparently is not used.
     RsReputations::ReputationInfo mReputation;
 
@@ -193,6 +193,7 @@ public:
 
     // last usage
     time_t mLastUsageTS ;
+    std::map<std::string,time_t> mUseCases ;
 };
 
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1269</width>
-    <height>911</height>
+    <height>1040</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -591,6 +591,18 @@ p, li { white-space: pre-wrap; }
               <string>Your opinion:</string>
              </property>
             </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Usage statistics</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QTextBrowser" name="usageStatistics_TB"/>
            </item>
           </layout>
          </widget>

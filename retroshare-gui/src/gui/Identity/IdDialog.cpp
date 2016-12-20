@@ -1849,6 +1849,24 @@ void IdDialog::insertIdDetails(uint32_t token)
         default:
             std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
 	}
+
+    // now fill in usage cases
+
+	RsIdentityDetails det ;
+	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
+
+    QString usage_txt ;
+    std::map<time_t,std::string> rmap ;
+    for(std::map<std::string,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
+        rmap.insert(std::make_pair(it->second,it->first)) ;
+
+    for(std::map<time_t,std::string>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + QString::fromStdString(it->second) + "<br/>" ;
+
+    if(usage_txt.isNull())
+        usage_txt = tr("<b>[Unused]</b>") ;
+
+    ui->usageStatistics_TB->setText(usage_txt) ;
 }
 
 void IdDialog::modifyReputation()

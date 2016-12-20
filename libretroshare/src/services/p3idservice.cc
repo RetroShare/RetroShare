@@ -279,10 +279,24 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
     keyTSInfo& info(mKeysTS[gxs_id]) ;
 
     info.TS = now ;
-    info.usage_map[now] = reason ;
+    info.usage_map[reason] = now;
 
     while(info.usage_map.size() > GXS_MAX_KEY_TS_USAGE_MAP_SIZE)
-        info.usage_map.erase(info.usage_map.begin());
+    {
+        // This is very costly, but normally the outerloop should never be rolled more than once.
+
+        std::map<std::string,time_t>::iterator best_it ;
+        time_t best_time = now+1;
+
+        for(std::map<std::string,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+            if(it->second < best_time)
+            {
+                best_time = it->second ;
+                best_it = it;
+            }
+
+        info.usage_map.erase(best_it) ;
+    }
 
     slowIndicateConfigChanged() ;
 }
@@ -566,7 +580,16 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
                 rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
 
             details = data.details;
-            details.mLastUsageTS = locked_getLastUsageTS(id) ;
+
+			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
+
+			if(it == mKeysTS.end())
+				details.mLastUsageTS = 0 ;
+            else
+            {
+				details.mLastUsageTS = it->second.TS ;
+				details.mUseCases = it->second.usage_map ;
+            }
 
             // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
             if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
