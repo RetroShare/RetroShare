@@ -855,7 +855,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 		    {
 			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
 			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-			    mGixs->timeStampKey(metaData.mAuthorId,"Validation of author signature. Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString()) ;
+			    mGixs->timeStampKey(metaData.mAuthorId,"Validation of author signature, service: " + rsServiceControl->getServiceName(serviceFullType()) + ". Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString()) ;
 		    }
 		    else
 		    {
@@ -909,7 +909,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
-                mGixs->requestKey(metaData.mAuthorId, peers);
+                mGixs->requestKey(metaData.mAuthorId, peers,"Validation of author signature, service: " + rsServiceControl->getServiceName(serviceFullType()) + ". Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString());
                 
 #ifdef GEN_EXCH_DEBUG
                 std::cerr << ", Key missing. Retry later." << std::endl;
@@ -1004,7 +1004,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #endif
 			    std::list<RsPeerId> peers;
 			    peers.push_back(grp->PeerId());
-			    mGixs->requestKey(metaData.mAuthorId, peers);
+			    mGixs->requestKey(metaData.mAuthorId, peers,"Group author signature validation. GrpId=" + metaData.mGroupId.toStdString());
 			    return VALIDATE_FAIL_TRY_LATER;
 		    }
 	    }

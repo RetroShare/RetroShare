@@ -220,7 +220,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     // network pre-request key to allow message authentication.
 
-    mGixs->requestKey(obj->signature.keyId,peer_list);
+    mGixs->requestKey(obj->signature.keyId,peer_list,"Needed for chat lobby "+RsUtil::NumberToString(obj->lobby_id,true));
 
     uint32_t size = obj->signed_serial_size() ;
     RsTemporaryMemory memory(size) ;
@@ -238,7 +238,7 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
 
     uint32_t error_status ;
 
-    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,error_status))
+    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,"Chat lobby "+RsUtil::NumberToString(obj->lobby_id,true),error_status))
     {
 	    bool res = false ;
 

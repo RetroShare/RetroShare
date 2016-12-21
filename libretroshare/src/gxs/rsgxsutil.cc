@@ -323,7 +323,7 @@ bool RsGxsIntegrityCheck::check()
 
 	    if(!mGixs->haveKey(gxs_ids[n].first))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
 	    { 
-		    mGixs->requestKey(gxs_ids[n].first,connected_friends);
+		    mGixs->requestKey(gxs_ids[n].first,connected_friends,"Author in group " + gxs_ids[n].second.toStdString() + " of service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\"") ;
 
 		    ++nb_requested_not_in_cache ;
 #ifdef DEBUG_GXSUTIL
@@ -336,7 +336,7 @@ bool RsGxsIntegrityCheck::check()
 		    GXSUTIL_DEBUG() << "  ... already in cache" << std::endl;
 #endif
 	    }
-		mGixs->timeStampKey(gxs_ids[n].first,"Author in group " + gxs_ids[n].second.toStdString() + " of service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())) ;
+		mGixs->timeStampKey(gxs_ids[n].first,"Author in group " + gxs_ids[n].second.toStdString() + " of service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\"") ;
 
 	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;
 	    gxs_ids.pop_back() ;

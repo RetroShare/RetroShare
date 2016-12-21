@@ -523,7 +523,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     // also time_stamp the key that this group represents
 
-                    timeStampKey(RsGxsId(*git),"Group info changed") ;
+                    timeStampKey(RsGxsId(*git),"Group meta data changed") ;
 
                     ++git;
                 }
@@ -789,7 +789,7 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const std::string& info)
 {
     if(id.isNull())
     {
@@ -815,7 +815,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
 
             {
-                RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+                RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
                 mIdsNotPresent.erase(id) ;
             }
             return true;
@@ -832,6 +832,10 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
 
             return true ;
         }
+    }
+    {
+		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
+		mKeysTS[id].usage_map["Requested to friends: "+info] = time(NULL) ;
     }
 
     return cache_request_load(id, peers);
@@ -929,10 +933,10 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,"own GXS id") ;
+    timeStampKey(own_gxs_id,"Own GXS id") ;
     return true ;
 }
-bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error)
+bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error)
 {
     // RsIdentityDetails details ;
     // getIdDetails(signature.keyId,details);
@@ -966,7 +970,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
     }
     signing_error = RS_GIXS_ERROR_NO_ERROR ;
 
-    timeStampKey(signature.keyId,"Used in signature checking." ) ;
+    timeStampKey(signature.keyId,"Used in signature checking: "+info_string ) ;
     return true ;
 }
 bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
@@ -2531,7 +2535,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers);
+					requestKey(*vit, nullpeers,"Cache test in p3IdService");
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
