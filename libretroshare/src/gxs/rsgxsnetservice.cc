@@ -1954,7 +1954,7 @@ void RsGxsNetService::updateServerSyncTS()
         
 	for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator mit = gxsMap.begin();mit != gxsMap.end(); ++mit)
 	{
-		const RsGxsGroupId& grpId = mit->first;
+		//const RsGxsGroupId& grpId = mit->first;
 
         	// Check if the group is subscribed and restricted to a circle. If the circle has changed, update the
         	// global TS to reflect that change to clients who may be able to see/subscribe to that particular group.
@@ -2450,7 +2450,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
-            time_t now = time(NULL) ;
+            //time_t now = time(NULL) ;
 
             while(tr->mItems.size() > 0)
             {
@@ -2798,7 +2798,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #ifdef NXS_NET_DEBUG_1
         GXSNETDEBUG_PG(item->PeerId(),grpId) << "  msg ID = " << msgId ;
 #endif
-        if(reqListSize >= MAX_REQLIST_SIZE)
+        if(reqListSize >= (int)MAX_REQLIST_SIZE)
         {
 #ifdef NXS_NET_DEBUG_1
             GXSNETDEBUG_PG(item->PeerId(),grpId) << ". reqlist too big. Pruning out this item for now." << std::endl;
@@ -2807,7 +2807,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             continue ;	// we should actually break, but we need to print some debug info.
         }
 
-        if(reqListSize < MAX_REQLIST_SIZE && msgIdSet.find(msgId) == msgIdSet.end())
+        if(reqListSize < (int)MAX_REQLIST_SIZE && msgIdSet.find(msgId) == msgIdSet.end())
         {
 
             // if reputation is in reputations cache then proceed

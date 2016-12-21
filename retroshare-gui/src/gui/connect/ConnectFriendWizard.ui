@@ -320,7 +320,7 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="2">
-        <widget class="QPlainTextEdit" name="friendCertEdit">
+        <widget class="RSPlainTextEdit" name="friendCertEdit">
          <property name="font">
           <font>
            <family>Courier New</family>
@@ -1559,6 +1559,11 @@ resources.</string>
    <extends>QWizardPage</extends>
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSPlainTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>gui/common/RSPlainTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
