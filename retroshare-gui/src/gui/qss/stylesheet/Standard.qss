@@ -664,8 +664,7 @@ ConnectFriendWizard QRadioButton {
 }
 
 ConnectFriendWizard QPlainTextEdit#friendCertEdit {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
+	border: none;
 	background: white;
 }
 
@@ -675,13 +674,13 @@ HomePage QPlainTextEdit#userCertEdit {
 	background: white;
 }
 
-HomePage QPlainTextEdit#friendCertEdit {
+HomePage QFrame#addframe{
 	border: 2px solid #0099cc;
 	border-radius: 6px;
 	background: white;
 }
 
-HomePage QFrame#addframe{
+ConnectFriendWizard QFrame#friendFrame {
 	border: 2px solid #0099cc;
 	border-radius: 6px;
 	background: white;
