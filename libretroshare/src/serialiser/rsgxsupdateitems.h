@@ -96,7 +96,7 @@ public:
     virtual ~RsGxsGrpConfigItem() {}
 
     virtual void clear() {}
-    virtual std::ostream &print(std::ostream &out, uint16_t indent) { return out;}
+    virtual std::ostream &print(std::ostream &out, uint16_t /*indent*/) { return out;}
 
 	virtual bool serialise(void *data,uint32_t& size) const ;
 	virtual uint32_t serial_size() const ;

@@ -209,8 +209,8 @@ QString misc::userFriendlyDuration(qlonglong seconds)
 
 QString misc::timeRelativeToNow(uint32_t mtime)
 {
-    if(mtime == 0)
-        return QString();
+	if( mtime == 0)
+		return QString() ;
 
 	time_t now = time(NULL) ;
 	if(mtime > now)
