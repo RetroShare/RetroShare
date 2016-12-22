@@ -18,21 +18,12 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.4
-import org.retroshare.qml_components.LibresapiLocalClient 1.0
 import "jsonpath.js" as JSONPath
 
 Item
 {
-	function refreshData() { rsApi.request("/peers/*", "") }
-
+	function refreshData() { rsApi.request("/peers/*", "", function(par) { jsonModel.json = par.response }) }
 	onFocusChanged: focus && refreshData()
-
-	LibresapiLocalClient
-	{
-		id: rsApi
-		onGoodResponseReceived: jsonModel.json = msg
-		Component.onCompleted: { openConnection(apiSocketPath) }
-	}
 
 	JSONListModel
 	{
@@ -46,11 +37,33 @@ Item
 		anchors.top: parent.top
 		anchors.bottom: bottomButton.top
 		model: jsonModel.model
-		delegate: Text
+		delegate: Item
 		{
-		    text: model.name
-			onTextChanged: color = JSONPath.jsonPath(JSON.parse(jsonModel.json), "$.data[?(@.pgp_id=='"+model.pgp_id+"')].locations[*].is_online").reduce(function(cur,acc){return cur || acc}, false) ? "lime" : "darkslategray"
-	    }
+			height: 50
+			Row
+			{
+				height: 30
+				Text
+				{
+					text: model.name
+					onTextChanged: color = JSONPath.jsonPath(JSON.parse(jsonModel.json), "$.data[?(@.pgp_id=='"+model.pgp_id+"')].locations[*].is_online").reduce(function(cur,acc){return cur || acc}, false) ? "lime" : "darkslategray"
+				}
+
+				Rectangle
+				{
+					height: parent.height
+					width: parent.height
+					color: "red"
+
+					MouseArea
+					{
+						height: parent.height
+						width: parent.height
+						onClicked: rsApi.request("/peers/"+model.pgp_id+"/delete")
+					}
+				}
+			}
+		}
 	}
 
 	Button
