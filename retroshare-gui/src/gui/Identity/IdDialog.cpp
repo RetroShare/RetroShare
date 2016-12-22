@@ -1864,7 +1864,7 @@ void IdDialog::insertIdDetails(uint32_t token)
         usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + QString::fromStdString(it->second) + "<br/>" ;
 
     if(usage_txt.isNull())
-        usage_txt = tr("<b>[Unused]</b>") ;
+        usage_txt = tr("<b>[No record in current session]</b>") ;
 
     ui->usageStatistics_TB->setText(usage_txt) ;
 }
