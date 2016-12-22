@@ -298,8 +298,14 @@
           <string>Paste certificate</string>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/paste.svg</normaloff>:/icons/svg/paste.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
          </property>
          <property name="toolButtonStyle">
           <enum>Qt::ToolButtonTextBesideIcon</enum>
