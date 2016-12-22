@@ -910,4 +910,6 @@ android-g++ {
     INCLUDEPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
     DEPENDPATH += $$NDK_TOOLCHAIN_PATH/sysroot/usr/include
     PRE_TARGETDEPS += $$NDK_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+
+    HEADERS += util/androiddebug.h
 }

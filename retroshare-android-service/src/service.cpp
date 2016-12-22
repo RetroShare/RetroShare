@@ -21,6 +21,7 @@
 
 #ifdef __ANDROID__
 #	include <QtAndroidExtras>
+#	include "util/androiddebug.h"
 #endif
 
 #include "retroshare/rsinit.h"
@@ -28,10 +29,15 @@
 #include "api/ApiServerLocal.h"
 #include "api/RsControlModule.h"
 
+
 using namespace resource_api;
 
 int main(int argc, char *argv[])
 {
+#ifdef __ANDROID__
+	AndroidStdIOCatcher dbg; (void) dbg;
+#endif
+
 	QCoreApplication a(argc, argv);
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);

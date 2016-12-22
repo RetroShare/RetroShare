@@ -743,10 +743,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 {
 	std::string dataDirectory;
 
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-
-  #ifdef __APPLE__
+#ifdef __APPLE__
 	/* NOTE: OSX also qualifies as BSD... so this #ifdef must be before the BSD check. */
 
 	/* For OSX, applications are Bundled in a directory...
@@ -767,7 +764,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
     	dataDirectory += "/Contents/Resources";
 	std::cerr << "getRetroshareDataDirectory() OSX: " << dataDirectory;
 
-  #elif (defined(BSD) && (BSD >= 199103))
+#elif (defined(BSD) && (BSD >= 199103))
 	/* For BSD, the default is LOCALBASE which will be set
 	 * before compilation via the ports/pkg-src mechanisms.
 	 * For compilation without ports/pkg-src it is set to
@@ -775,17 +772,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	 */
 	dataDirectory = "/usr/local/share/retroshare";
 	std::cerr << "getRetroshareDataDirectory() BSD: " << dataDirectory;
-
-  #else
-	/* For Linux, the data directory is set in libretroshare.pro  */
-	#ifndef DATA_DIR
-		#error DATA_DIR variable not set. Cannot compile.
-	#endif
-	dataDirectory = DATA_DIR;
-	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory << std::endl;
-
-  #endif
-#else
+#elif defined(WINDOWS_SYS)
 //	if (RsInitConfig::portable)
 //	{
 //		/* For Windows Portable, files must be in the data directory */
@@ -805,21 +792,29 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
+
+#elif defined(DATA_DIR)
+	dataDirectory = DATA_DIR;
+	// For all other OS the data directory must be set in libretroshare.pro
+#else
+#	error "For your target OS automatic data dir discovery is not supported, cannot compile if DATA_DIR variable not set."
 #endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	if (!check)
+	{
+		std::cerr << "getRetroshareDataDirectory() unckecked: " << dataDirectory << std::endl;
 		return dataDirectory;
+	}
 
 	/* Make sure the directory exists, else return emptyString */
 	if (!RsDirUtil::checkDirectory(dataDirectory))
 	{
-		std::cerr << "Data Directory not Found: " << dataDirectory << std::endl;
+		std::cerr << "getRetroshareDataDirectory() not found: " << dataDirectory << std::endl;
 		dataDirectory = "";
 	}
 	else
 	{
-		std::cerr << "Data Directory Found: " << dataDirectory << std::endl;
+		std::cerr << "getRetroshareDataDirectory() found: " << dataDirectory << std::endl;
 	}
 
 	return dataDirectory;
