@@ -996,12 +996,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
+	uint32_t reputation_level = rsIdentity->overallReputationLevel(msg.mMeta.mAuthorId) ;
 
-	bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
+    bool redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_ALL || (redacted?(GxsIdDetails::ICON_TYPE_REDACTED):0));
 	item->moveToThread(ui->threadTreeWidget->thread());
-
 
 	if(redacted)
 		item->setText(COLUMN_THREAD_TITLE, tr("[ ... Redacted message ... ]"));
@@ -1431,7 +1431,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    bool redacted = rsIdentity->isBanned(msg.mMeta.mAuthorId) ;
+    uint32_t overall_reputation = rsIdentity->overallReputationLevel(msg.mMeta.mAuthorId) ;
+    bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 

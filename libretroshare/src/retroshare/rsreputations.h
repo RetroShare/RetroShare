@@ -36,17 +36,27 @@ public:
         
 	// This is the interface file for the reputation system
 	//
-	enum Opinion    { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
-    	enum Assessment { ASSESSMENT_BAD = 0, ASSESSMENT_OK = 1 } ;
+	enum Opinion         { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
+
+	enum ReputationLevel {  REPUTATION_LOCALLY_NEGATIVE  = 0x00, // local opinion is positive
+		                    REPUTATION_REMOTELY_NEGATIVE = 0x01, // local opinion is neutral and friends are positive in average
+		                    REPUTATION_NEUTRAL           = 0x02, // no reputation information ;
+		                    REPUTATION_REMOTELY_POSITIVE = 0x03, // local opinion is neutral and friends are negative in average
+		                    REPUTATION_LOCALLY_POSITIVE  = 0x04  // local opinion is negative
+						 };
 
 	struct ReputationInfo
 	{
-        	ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL), mOverallReputationScore(REPUTATION_THRESHOLD_DEFAULT), mFriendAverage(REPUTATION_THRESHOLD_DEFAULT),mAssessment(ASSESSMENT_OK){}
+		ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL), mFriendAverageScore(REPUTATION_THRESHOLD_DEFAULT),mOverallReputationLevel(REPUTATION_NEUTRAL){}
             
 		RsReputations::Opinion mOwnOpinion ;
-		float mOverallReputationScore ;
-		float mFriendAverage ;
-     		RsReputations::Assessment mAssessment;	// this should help clients in taking decisions
+
+		uint32_t mFriendsPositiveVotes ;
+		uint32_t mFriendsNegativeVotes ;
+
+		float mFriendAverageScore ;
+
+		RsReputations::ReputationLevel mOverallReputationLevel;	// this should help clients in taking decisions
 	};
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;

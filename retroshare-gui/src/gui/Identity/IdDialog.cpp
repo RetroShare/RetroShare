@@ -1392,7 +1392,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 	RsIdentityDetails idd ;
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
-	bool isBanned = idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD;
+
+	bool isBanned = idd.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE;
 	uint32_t item_flags = 0 ;
 
 	/* do filtering */
@@ -1462,7 +1463,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
+    item->setData(RSID_COL_VOTES,Qt::DisplayRole, idd.mReputation.mOverallReputationLevel);
 
     if(isOwnId)
     {
@@ -1836,10 +1837,24 @@ void IdDialog::insertIdDetails(uint32_t token)
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
-    ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+    QString frep_string ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive, ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative, ") ;
 
-    ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
-     ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
+        frep_string = tr("No votes from friends, ") ;
+
+    ui->neighborNodesOpinion_TF->setText(frep_string) ;
+
+    switch(info.mOverallReputationLevel)
+    {
+    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
+    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive, according to your friends")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative, according to your friends")) ; break ;
+    default:
+    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
+    }
     
     switch(info.mOwnOpinion)
 	{

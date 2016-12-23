@@ -69,10 +69,10 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
                                                                                             
 	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
 
 	void updateReputation();
 
@@ -80,12 +80,15 @@ public:
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
-    	float mFriendAverage ;
-	float mReputation;
-        
-    RsPgpId mOwnerNode;
+	float mFriendAverage ;
+    uint32_t mFriendsPositive ;		// number of positive vites from friends
+    uint32_t mFriendsNegative ;		// number of negative vites from friends
+
+	float mReputationScore;
+
+	RsPgpId mOwnerNode;
     
-    	uint32_t mIdentityFlags;
+	uint32_t mIdentityFlags;
 };
 
 

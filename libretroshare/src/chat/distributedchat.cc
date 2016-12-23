@@ -138,7 +138,7 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
         return false ;
     }
     
-    if(rsIdentity->isBanned(cli->signature.keyId))
+    if(rsIdentity->overallReputationLevel(cli->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
         std::cerr << "(WW) Received lobby msg/item from banned identity " << cli->signature.keyId << ". Dropping it." << std::endl;
         return false ;
@@ -647,7 +647,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 	time_t now = time(NULL) ;
 
-    if(rsIdentity->isBanned(item->signature.keyId))
+    if(rsIdentity->overallReputationLevel(item->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
         std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
         return ;

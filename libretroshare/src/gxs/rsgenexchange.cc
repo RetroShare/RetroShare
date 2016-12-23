@@ -880,20 +880,13 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			else 
 			{
 
-				// now check reputation of the message author
-				float reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
-                
-                			if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
-                			else if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
-                            	else
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
-                            
-				if(details.mReputation.mOverallReputationScore < reputation_threshold)
+				// now check reputation of the message author. The reputation will need to be at least as high as this value for the msg to validate.
+                // At validation step, we accept all messages, except the ones signed by locally rejected identities.
+
+				if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 				{
 #ifdef GEN_EXCH_DEBUG	
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationScore <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationLevel <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
 #endif
 					idValidate = false ;
 				}
@@ -903,7 +896,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 #endif
 			}
 
-		}
+				}
 	    }
             else
             {

@@ -264,10 +264,9 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
-	ui->neighborNodesOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f));
-
-	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore-1.0f) +" ("+
-	 ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+#warning (csoler) Do we need to do this? This code is apparently not used.
+	ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverageScore));
+	ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationLevel));
     
     switch(info.mOwnOpinion)
 	{

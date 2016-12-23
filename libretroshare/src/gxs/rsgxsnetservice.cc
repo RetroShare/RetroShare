@@ -2810,16 +2810,13 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         if(reqListSize < MAX_REQLIST_SIZE && msgIdSet.find(msgId) == msgIdSet.end())
         {
 
-            // if reputation is in reputations cache then proceed
-            // or if there isn't an author (note as author requirement is
-            // enforced at service level, if no author is needed then reputation
-            // filtering is optional)
             bool noAuthor = syncItem->authorId.isNull();
 
 #ifdef NXS_NET_DEBUG_1
             GXSNETDEBUG_PG(item->PeerId(),grpId) << ", reqlist size=" << reqListSize << ", message not present." ;
 #endif
             // grp meta must be present if author present
+            
             if(!noAuthor && grpMeta == NULL)
             {
 #ifdef NXS_NET_DEBUG_1
@@ -2828,7 +2825,14 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 continue;
             }
             
-            if(rsIdentity && rsIdentity->isBanned(syncItem->authorId))
+            // The algorithm on request of message is:
+            //
+            //  - always re-check for author ban level
+            //  - if author is locally banned, do not download.
+            //  - if author is not locally banned, download, whatever friends' opinion might be.
+            
+#warning Update the code below to correctly send/recv dependign on reputation
+        	if(rsIdentity && rsIdentity->overallReputationLevel(syncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -2844,7 +2848,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 continue ;
             }
                 
-            
+#ifdef TO_BE_REMOVED
             if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
             {
                 GixsReputation rep;
@@ -2859,17 +2863,20 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 // at genexchange side of things
                 if(rep.score >= (int)grpMeta->mReputationCutOff || noAuthor)
                 {
-#ifdef NXS_NET_DEBUG_1
-                    GXSNETDEBUG_PG(item->PeerId(),grpId) << ", passed! Adding message to req list." << std::endl;
 #endif
-                    RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
-                    msgItem->grpId = grpId;
-                    msgItem->msgId = msgId;
-                    msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
-                    msgItem->transactionNumber = transN;
-                    msgItem->PeerId(peerFrom);
-                    reqList.push_back(msgItem);
-                    ++reqListSize ;
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(item->PeerId(),grpId) << ", passed! Adding message to req list." << std::endl;
+#endif
+			RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
+			msgItem->grpId = grpId;
+			msgItem->msgId = msgId;
+			msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
+			msgItem->transactionNumber = transN;
+			msgItem->PeerId(peerFrom);
+			reqList.push_back(msgItem);
+			++reqListSize ;
+            
+#ifdef TO_BE_REMOVED
                 }
 #ifdef NXS_NET_DEBUG_1
                 else
@@ -2889,6 +2896,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 entry.mMsgId = syncItem->msgId;
                 toVet.push_back(entry);
             }
+#endif
         }
 #ifdef NXS_NET_DEBUG_1
         else
@@ -3061,13 +3069,14 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
         // FIXTESTS global variable rsReputations not available in unittests!
     
-    if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->isBanned(grpSyncItem->authorId))
-	{
+#warning Update the code below to correctly send/recv dependign on reputation
+		if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		{
 #ifdef NXS_NET_DEBUG_0
-                GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
 #endif
-    		continue ;            
-	}
+			continue ;
+		}
         
         if( (mGrpAutoSync && !haveItem) || latestVersion)
         {

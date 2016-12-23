@@ -795,8 +795,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     if(it == mReputations.end())
     {
         info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
-        info.mOverallReputationScore = RsReputations::REPUTATION_THRESHOLD_DEFAULT ;
-        info.mFriendAverage = REPUTATION_THRESHOLD_DEFAULT ;
+        info.mFriendAverageScore = REPUTATION_THRESHOLD_DEFAULT ;
+        info.mFriendsNegativeVotes = 0 ;
+        info.mFriendsPositiveVotes = 0 ;
 
         owner_id = ownerNode ;
     }
@@ -805,8 +806,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
         Reputation& rep(it->second) ;
 
         info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
-        info.mOverallReputationScore = rep.mReputation ;
-        info.mFriendAverage = rep.mFriendAverage ;
+        info.mFriendAverageScore = rep.mFriendAverage ;
+        info.mFriendsNegativeVotes = rep.mFriendsNegative ;
+        info.mFriendsPositiveVotes = rep.mFriendsPositive ;
 
         if(rep.mOwnerNode.isNull())
             rep.mOwnerNode = ownerNode ;
@@ -814,33 +816,67 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
         owner_id = rep.mOwnerNode ;
     }
 
+    // now compute overall score and reputation
+
+    // 0 - check for own opinion. If positive or negative, it decides on the result
+
+    if(info.mOwnOpinion == RsReputations::OPINION_NEGATIVE)
+    {
+    	// own opinion is always read in priority
+
+        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+        return true ;
+    }
+     if(info.mOwnOpinion == RsReputations::OPINION_POSITIVE)
+    {
+    	// own opinion is always read in priority
+
+        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_POSITIVE ;
+        return true ;
+    }
+
+    // 1 - check for banned PGP ids.
+
     std::map<RsPgpId,BannedNodeInfo>::iterator it2 ;
 
     if(!owner_id.isNull() && (it2 = mBannedPgpIds.find(owner_id))!=mBannedPgpIds.end())
     {
+        // Check if current identity is present in the list of known identities for this banned node.
+
         if(it2->second.known_identities.find(gxsid) == it2->second.known_identities.end())
         {
             it2->second.known_identities.insert(gxsid) ;
             it2->second.last_activity_TS = now ;
+
+            // if so, update
+
             mBannedNodesProxyNeedsUpdate = true ;
         }
 
-        info.mAssessment = RsReputations::ASSESSMENT_BAD ;
 #ifdef DEBUG_REPUTATION2
         std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned (found in banned nodes list)." << std::endl;
 #endif
+        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+        return true ;
     }
-    else if(mPerNodeBannedIdsProxy.find(gxsid) != mPerNodeBannedIdsProxy.end())
+    // also check the proxy
+
+	if(mPerNodeBannedIdsProxy.find(gxsid) != mPerNodeBannedIdsProxy.end())
     {
 #ifdef DEBUG_REPUTATION2
         std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned (found in proxy)." << std::endl;
 #endif
-        info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+        return true;
     }
-    else if(info.mOverallReputationScore <= mAutoBanIdentitiesLimit)
-        info.mAssessment = RsReputations::ASSESSMENT_BAD ;
+    // 2 - now, our own opinion is neutral, which means we rely on what our friends tell
+
+    if(info.mFriendsPositiveVotes > info.mFriendsNegativeVotes)
+        info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_POSITIVE ;
+    else if(info.mFriendsPositiveVotes < info.mFriendsNegativeVotes)
+        info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_NEGATIVE ;
     else
-        info.mAssessment = RsReputations::ASSESSMENT_OK ;
+        info.mOverallReputationLevel = RsReputations::REPUTATION_NEUTRAL ;
 
 #ifdef DEBUG_REPUTATION2
         std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", owner node=" << owner_id << ", overall score=" << info.mAssessment << std::endl;
@@ -887,7 +923,7 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
 #ifdef DEBUG_REPUTATION
     std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
 #endif
-    return info.mAssessment == RsReputations::ASSESSMENT_BAD ;
+    return info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
 }
 
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
@@ -1292,11 +1328,22 @@ void Reputation::updateReputation()
 
     int friend_total = 0;
 
+    mFriendsNegative = 0 ;
+    mFriendsPositive = 0 ;
+
     // accounts for all friends. Neutral opinions count for 1-1=0
     // because the average is performed over only accessible peers (not the total number) we need to shift to 1
 
     for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+    {
+    	if(it->second == RsReputations::OPINION_NEGATIVE)
+            ++mFriendsNegative ;
+
+    	if(it->second == RsReputations::OPINION_POSITIVE)
+            ++mFriendsPositive ;
+
 	    friend_total += it->second - 1;
+    }
 
     if(mOpinions.empty())	// includes the case of no friends!
 	    mFriendAverage = 1.0f ;
@@ -1351,9 +1398,9 @@ void Reputation::updateReputation()
     // now compute a bias for PGP-signed ids.
     
     if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-	    mReputation = mFriendAverage ;
+	    mReputationScore = mFriendAverage ;
     else
-	    mReputation = (float)mOwnOpinion ;
+	    mReputationScore = (float)mOwnOpinion ;
 }
 
 void p3GxsReputation::debug_print()
@@ -1366,7 +1413,7 @@ void p3GxsReputation::debug_print()
 
     for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
     {
-        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputation
+        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputationScore
                   << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago." << std::endl;
 #ifdef DEBUG_REPUTATION2
         for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)

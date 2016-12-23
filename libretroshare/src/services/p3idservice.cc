@@ -607,15 +607,12 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
     return false;
 }
 
-bool p3IdService::isBanned(const RsGxsId &id)
+RsReputations::ReputationLevel p3IdService::overallReputationLevel(const RsGxsId &id)
 {
     RsIdentityDetails det ;
     getIdDetails(id,det) ;
 
-#ifdef DEBUG_REPUTATION
-    std::cerr << "isIdentityBanned(): returning " << (det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
-#endif
-    return det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD ;
+    return det.mReputation.mOverallReputationLevel ;
 }
 
 bool p3IdService::isOwnId(const RsGxsId& id)
@@ -810,7 +807,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
 
-        if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
+        if(info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
         {
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
 
