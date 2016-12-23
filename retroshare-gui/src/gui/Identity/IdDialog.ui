@@ -492,7 +492,7 @@
            <item row="9" column="0">
             <widget class="QLabel" name="neighborNodesOpinion_LB">
              <property name="text">
-              <string>Neighbor nodes:</string>
+              <string>Friend votes:</string>
              </property>
             </widget>
            </item>

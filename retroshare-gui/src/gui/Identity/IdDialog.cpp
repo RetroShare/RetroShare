@@ -26,6 +26,8 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QStyledItemDelegate>
+#include <QPainter>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -104,6 +106,12 @@
 #define IMAGE_ADMIN                ":/icons/bullet_blue_128.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 
+#define REPUTATION_LOCALLY_POSITIVE_ICON      ":/icons/bullet_green_yellow_star_128.png"
+#define REPUTATION_REMOTELY_POSITIVE_ICON     ":/icons/bullet_green_128.png"
+#define REPUTATION_NEUTRAL_ICON               ":/icons/bullet_grey_128.png"
+#define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/yellow_biohazard64.png"
+#define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/red_biohazard64.png"
+
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
 
@@ -127,6 +135,54 @@ class TreeWidgetItem : public QTreeWidgetItem {
                 }
   }
 };
+
+// This class allows to draw the item in the share flags column using an appropriate size
+
+class ReputationItemDelegate: public QStyledItemDelegate
+{
+public:
+    ReputationItemDelegate() {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        Q_ASSERT(index.isValid());
+
+        QStyleOptionViewItemV4 opt = option;
+        initStyleOption(&opt, index);
+        // disable default icon
+        opt.icon = QIcon();
+        // draw default item
+        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+        const QRect r = option.rect;
+
+        // get pixmap
+        unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+
+        if(icon_index > 4)
+            return ;
+
+        QIcon icon ;
+
+        switch(icon_index)
+        {
+        case RsReputations::REPUTATION_LOCALLY_NEGATIVE: icon = QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON) ; break ;
+        case RsReputations::REPUTATION_LOCALLY_POSITIVE: icon = QIcon(REPUTATION_LOCALLY_POSITIVE_ICON) ; break ;
+        case RsReputations::REPUTATION_REMOTELY_POSITIVE: icon = QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
+        case RsReputations::REPUTATION_REMOTELY_NEGATIVE: icon = QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
+        case RsReputations::REPUTATION_NEUTRAL: icon = QIcon(REPUTATION_NEUTRAL_ICON) ; break ;
+        default:
+            return ; // dont draw anything
+        }
+
+        QPixmap pix = icon.pixmap(r.size());
+
+        // draw pixmap at center of item
+        const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+        painter->drawPixmap(r.topLeft() + p, pix);
+    }
+};
+
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
     RsGxsUpdateBroadcastPage(rsIdentity, parent),
@@ -142,12 +198,15 @@ IdDialog::IdDialog(QWidget *parent) :
     
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(0, tr("My own identities"));
+	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));
+	allItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	contactsItem = new QTreeWidgetItem();
 	contactsItem->setText(0, tr("My contacts"));
+	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	ui->treeWidget_membership->clear();
     
@@ -318,6 +377,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 7 * fontWidth);
 	
+    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate()) ;
+
 	//QHeaderView_setSectionResizeMode(ui->idTreeWidget->header(), QHeaderView::ResizeToContents);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
@@ -1463,7 +1524,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, idd.mReputation.mOverallReputationLevel);
+    item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
 
     if(isOwnId)
     {
@@ -1838,11 +1899,11 @@ void IdDialog::insertIdDetails(uint32_t token)
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
     QString frep_string ;
-    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive, ") ;
-    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative, ") ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
 
     if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
-        frep_string = tr("No votes from friends, ") ;
+        frep_string = tr("No votes from friends") ;
 
     ui->neighborNodesOpinion_TF->setText(frep_string) ;
 
