@@ -485,7 +485,7 @@
            <item row="8" column="1">
             <widget class="QCheckBox" name="autoBanIdentities_CB">
              <property name="text">
-              <string>Auto-Ban all identities from this node</string>
+              <string>Auto-Ban all identities signed by the same node</string>
              </property>
             </widget>
            </item>

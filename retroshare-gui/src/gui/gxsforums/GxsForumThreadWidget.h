@@ -108,7 +108,7 @@ private slots:
 	void downloadAllFiles();
 
 	void changedViewBox();
-    	void flagpersonasbad();
+	void flagperson();
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
@@ -173,7 +173,9 @@ private:
 	uint32_t mTokenTypeMessageData;
 	uint32_t mTokenTypeReplyMessage;
 	uint32_t mTokenTypeReplyForumMessage;
-	uint32_t mTokenTypeBanAuthor;
+	uint32_t mTokenTypeNegativeAuthor;
+	uint32_t mTokenTypePositiveAuthor;
+	uint32_t mTokenTypeNeutralAuthor;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;

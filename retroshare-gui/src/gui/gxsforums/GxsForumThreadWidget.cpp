@@ -61,6 +61,9 @@
 #define IMAGE_DOWNLOADALL    ":/images/startall.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_BIOHAZARD      ":/icons/yellow_biohazard64.png"
+#define IMAGE_POSITIVE_OPINION ":/icons/png/thumbs-up.png"
+#define IMAGE_NEUTRAL_OPINION ":/icons/png/thumbs-neutral.png"
+#define IMAGE_NEGATIVE_OPINION ":/icons/png/thumbs-down.png"
 
 #define VIEW_LAST_POST	0
 #define VIEW_THREADED	1
@@ -100,7 +103,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mTokenTypeMessageData = nextTokenType();
 	mTokenTypeReplyMessage = nextTokenType();
 	mTokenTypeReplyForumMessage = nextTokenType();
-    mTokenTypeBanAuthor = nextTokenType();
+    mTokenTypeNegativeAuthor = nextTokenType();
+    mTokenTypeNeutralAuthor = nextTokenType();
+    mTokenTypePositiveAuthor = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -421,9 +426,20 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
 
-    QAction *flagasbadAct = new QAction(QIcon(IMAGE_BIOHAZARD), tr("Ban this author"), &contextMnu);
-    flagasbadAct->setToolTip(tr("This will block/hide messages from this person, and notify neighbor nodes.")) ;
-    connect(flagasbadAct, SIGNAL(triggered()), this, SLOT(flagpersonasbad()));
+    QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
+    flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
+    flagaspositiveAct->setData(mTokenTypePositiveAuthor) ;
+    connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
+
+    QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion to this author"), &contextMnu);
+    flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
+    flagasneutralAct->setData(mTokenTypeNeutralAuthor) ;
+    connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
+
+    QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
+    flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
+    flagasnegativeAct->setData(mTokenTypeNegativeAuthor) ;
+    connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
 	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
@@ -504,7 +520,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(collapseAll);
 
     contextMnu.addSeparator();
-    contextMnu.addAction(flagasbadAct);
+    contextMnu.addAction(flagaspositiveAct);
+    contextMnu.addAction(flagasneutralAct);
+    contextMnu.addAction(flagasnegativeAct);
     contextMnu.addSeparator();
     contextMnu.addAction(replyauthorAct);
 
@@ -1012,6 +1030,17 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole, reputation_level) ;
+
+    QString rep_tooltip_str ;
+    switch(reputation_level)
+    {
+    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ; break;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: rep_tooltip_str = tr("You have not set an opinion for this person,\n and your friends vote negatively: Spam regulation \nprevents the message to be forwarded to your friends.") ; break;
+    	case RsReputations::REPUTATION_NEUTRAL:  rep_tooltip_str = tr("You have not set an opinion for this person,\n and neither have your friends: Spam regulation\nprevents the message to be forwarded to your friends.") ; break;
+    default:
+    	rep_tooltip_str = tr("Message will be forwarded to your friends.") ; break;
+    }
+    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,rep_tooltip_str) ;
 
 	//msg.mMeta.mChildTs Was not updated when received new child
 	// so do it here.
@@ -1832,7 +1861,7 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 	return header;
 }
 
-void GxsForumThreadWidget::flagpersonasbad()
+void GxsForumThreadWidget::flagperson()
 {
     // no need to use the token system for that, since we just need to find out the author's name, which is in the item.
     
@@ -1840,6 +1869,8 @@ void GxsForumThreadWidget::flagpersonasbad()
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
+
+    uint32_t token_type = qobject_cast<QAction*>(sender())->data().toUInt();
 
 	// Get Message ... then complete replyMessageData().
 	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
@@ -1857,7 +1888,7 @@ void GxsForumThreadWidget::flagpersonasbad()
 	vect.push_back(postId.second);
 
 	uint32_t token;
-	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeBanAuthor);
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, token_type);
 }
 
 void GxsForumThreadWidget::replytomessage()
@@ -2296,7 +2327,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			return;
 		}
         
-		if (req.mUserType == mTokenTypeBanAuthor) {
+		if (req.mUserType == mTokenTypeNegativeAuthor) {
 			loadMsgData_BanAuthor(req.mToken);
 			return;
 		}
