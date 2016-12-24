@@ -50,11 +50,11 @@ class GxsIdDetails : public QObject
 	Q_OBJECT
 
 public:
-    static const int ICON_TYPE_AVATAR  = 0x0001 ;
-    static const int ICON_TYPE_PGP     = 0x0002 ;
-    static const int ICON_TYPE_RECOGN  = 0x0004 ;
-    static const int ICON_TYPE_ALL     = 0x0007 ;
-    static const int ICON_TYPE_REDACTED= 0x0008 ;
+    static const int ICON_TYPE_AVATAR     = 0x0001 ;
+    static const int ICON_TYPE_PGP        = 0x0002 ;
+    static const int ICON_TYPE_RECOGN     = 0x0004 ;
+    static const int ICON_TYPE_REPUTATION = 0x0008 ;
+    static const int ICON_TYPE_ALL        = 0x000f ;
 
 	GxsIdDetails();
 	virtual ~GxsIdDetails();
@@ -76,6 +76,7 @@ public:
 	static QString getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details);
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
+	static QIcon getReputationIcon(RsReputations::ReputationLevel icon_index);
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 

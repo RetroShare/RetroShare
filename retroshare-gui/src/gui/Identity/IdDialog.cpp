@@ -106,12 +106,6 @@
 #define IMAGE_ADMIN                ":/icons/bullet_blue_128.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 
-#define REPUTATION_LOCALLY_POSITIVE_ICON      ":/icons/bullet_green_yellow_star_128.png"
-#define REPUTATION_REMOTELY_POSITIVE_ICON     ":/icons/bullet_green_128.png"
-#define REPUTATION_NEUTRAL_ICON               ":/icons/bullet_grey_128.png"
-#define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/yellow_biohazard64.png"
-#define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/red_biohazard64.png"
-
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
 
@@ -162,18 +156,7 @@ public:
         if(icon_index > 4)
             return ;
 
-        QIcon icon ;
-
-        switch(icon_index)
-        {
-        case RsReputations::REPUTATION_LOCALLY_NEGATIVE: icon = QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON) ; break ;
-        case RsReputations::REPUTATION_LOCALLY_POSITIVE: icon = QIcon(REPUTATION_LOCALLY_POSITIVE_ICON) ; break ;
-        case RsReputations::REPUTATION_REMOTELY_POSITIVE: icon = QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
-        case RsReputations::REPUTATION_REMOTELY_NEGATIVE: icon = QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
-        case RsReputations::REPUTATION_NEUTRAL: icon = QIcon(REPUTATION_NEUTRAL_ICON) ; break ;
-        default:
-            return ; // dont draw anything
-        }
+        QIcon icon = GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel(icon_index));
 
         QPixmap pix = icon.pixmap(r.size());
 
@@ -198,7 +181,7 @@ IdDialog::IdDialog(QWidget *parent) :
     
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(0, tr("My own identities"));
-	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
+	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);	// this is in order to prevent displaying a reputaiton icon next to these items.
 
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));

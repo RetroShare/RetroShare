@@ -40,8 +40,7 @@ class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 	Q_OBJECT
 
 public:
-    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask=GxsIdDetails::ICON_TYPE_ALL,QTreeWidget *parent = NULL);
-    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidgetItem *parent);
+    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent = NULL);
 
 	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
 	bool getId(RsGxsId &id);
