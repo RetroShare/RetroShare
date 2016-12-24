@@ -53,6 +53,7 @@
 #define REPUTATION_NEUTRAL_ICON               ":/icons/bullet_grey_128.png"
 #define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/yellow_biohazard64.png"
 #define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/red_biohazard64.png"
+#define REPUTATION_VOID                       ":/icons/void_128.png"
 
 #define TIMER_INTERVAL              500
 #define MAX_ATTEMPTS                10
@@ -65,6 +66,35 @@ const int kRecognTagType_Dev_Contributor 	= 2;
 const int kRecognTagType_Dev_Translator 	= 3;
 const int kRecognTagType_Dev_Patcher     	= 4;
 const int kRecognTagType_Dev_Developer	 	= 5;
+
+
+void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	Q_ASSERT(index.isValid());
+
+	QStyleOptionViewItemV4 opt = option;
+	initStyleOption(&opt, index);
+	// disable default icon
+	opt.icon = QIcon();
+	// draw default item
+	QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+	const QRect r = option.rect;
+
+	// get pixmap
+	unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+
+	if(icon_index > mMaxLevelToDisplay)
+		return ;
+
+	QIcon icon = GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel(icon_index),0xff);
+
+	QPixmap pix = icon.pixmap(r.size());
+
+	// draw pixmap at center of item
+	const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+	painter->drawPixmap(r.topLeft() + p, pix);
+}
 
 /* The global object */
 GxsIdDetails *GxsIdDetails::mInstance = NULL ;
@@ -964,8 +994,11 @@ QString nickname ;
 	return comment;
 }
 
-QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index)
+QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index,uint32_t min_reputation)
 {
+    if(icon_index >= min_reputation)
+        return QIcon(REPUTATION_VOID);
+
 	switch(icon_index)
 	{
 	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON) ; break ;
@@ -979,7 +1012,7 @@ QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index)
 	}
 }
 
-void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types)
+void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types,uint32_t minimal_required_reputation)
 {
     QPixmap pix ;
 
@@ -989,10 +1022,9 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
         icons.push_back(QIcon(IMAGE_BANNED)) ;
         return ;
     }
-    
 
 	if(icon_types & ICON_TYPE_REPUTATION)
-        icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel)) ;
+        icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation)) ;
 
     if(icon_types & ICON_TYPE_AVATAR)
     {

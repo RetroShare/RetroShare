@@ -67,13 +67,14 @@
 #define VIEW_FLAT       2
 
 /* Thread constants */
-#define COLUMN_THREAD_COUNT    6
-#define COLUMN_THREAD_TITLE    0
-#define COLUMN_THREAD_READ     1
-#define COLUMN_THREAD_DATE     2
-#define COLUMN_THREAD_AUTHOR   3
-#define COLUMN_THREAD_SIGNED   4
-#define COLUMN_THREAD_CONTENT  5
+#define COLUMN_THREAD_TITLE        0
+#define COLUMN_THREAD_READ         1
+#define COLUMN_THREAD_DATE         2
+#define COLUMN_THREAD_DISTRIBUTION 3
+#define COLUMN_THREAD_AUTHOR       4
+#define COLUMN_THREAD_SIGNED       5
+#define COLUMN_THREAD_CONTENT      6
+#define COLUMN_THREAD_COUNT        7
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like msgid and parentid
 
@@ -136,6 +137,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
+
+    ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new ReputationItemDelegate(RsReputations::REPUTATION_NEUTRAL)) ;
 
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
@@ -1000,7 +1003,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
     bool redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
 
-	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_REPUTATION | GxsIdDetails::ICON_TYPE_AVATAR );
+	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
 
 	if(redacted)
@@ -1008,6 +1011,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
+    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole, reputation_level) ;
 
 	//msg.mMeta.mChildTs Was not updated when received new child
 	// so do it here.
@@ -1096,7 +1100,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 
 QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId &msgId)
 {
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_REPUTATION | GxsIdDetails::ICON_TYPE_AVATAR);
+    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
     
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId.toStdString()));

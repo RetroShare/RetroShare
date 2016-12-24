@@ -130,42 +130,6 @@ class TreeWidgetItem : public QTreeWidgetItem {
   }
 };
 
-// This class allows to draw the item in the share flags column using an appropriate size
-
-class ReputationItemDelegate: public QStyledItemDelegate
-{
-public:
-    ReputationItemDelegate() {}
-
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-    {
-        Q_ASSERT(index.isValid());
-
-        QStyleOptionViewItemV4 opt = option;
-        initStyleOption(&opt, index);
-        // disable default icon
-        opt.icon = QIcon();
-        // draw default item
-        QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
-
-        const QRect r = option.rect;
-
-        // get pixmap
-        unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
-
-        if(icon_index > 4)
-            return ;
-
-        QIcon icon = GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel(icon_index));
-
-        QPixmap pix = icon.pixmap(r.size());
-
-        // draw pixmap at center of item
-        const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
-        painter->drawPixmap(r.topLeft() + p, pix);
-    }
-};
-
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
     RsGxsUpdateBroadcastPage(rsIdentity, parent),
@@ -360,7 +324,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 7 * fontWidth);
 	
-    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate()) ;
+    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
 
 	//QHeaderView_setSectionResizeMode(ui->idTreeWidget->header(), QHeaderView::ResizeToContents);
 
