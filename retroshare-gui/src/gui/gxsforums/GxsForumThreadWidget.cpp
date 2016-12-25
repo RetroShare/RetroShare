@@ -227,6 +227,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	                                        available posts from your subscribed friends, and make the \
 	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 	                                        ui->threadTreeWidget->enableColumnCustomize(true);
+
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -815,8 +816,8 @@ static QString getDurationString(uint32_t days)
     tw->ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 
     QString anti_spam_features1 ;
-    if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown node IDs reputation threshold set to 0.4");
-    else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous IDs reputation threshold set to 0.4");
+    if(IS_GROUP_PGP_KNOWN_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown posts forwarded if reputation is positive");
+    else if(IS_GROUP_PGP_AUTHED(tw->mSignFlags)) anti_spam_features1 = tr("Anonymous posts forwarded if reputation is positive");
             
     tw->mForumDescription = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
     tw->mForumDescription += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
@@ -2105,6 +2106,8 @@ void GxsForumThreadWidget::loadGroupData(const uint32_t &token)
 
         mStateHelper->setActive(mTokenTypeGroupData, true);
 
+		// Don't show the distribution column if the forum has no anti-spam
+		ui->threadTreeWidget->setColumnHidden(COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
         ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
     }
 	else
