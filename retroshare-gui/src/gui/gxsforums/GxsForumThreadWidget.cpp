@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QPainter>
 
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
@@ -61,6 +62,9 @@
 #define IMAGE_DOWNLOADALL    ":/images/startall.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_BIOHAZARD      ":/icons/yellow_biohazard64.png"
+#define IMAGE_WARNING_YELLOW ":/icons/warning_yellow_128.png"
+#define IMAGE_WARNING_RED    ":/icons/warning_red_128.png"
+#define IMAGE_VOID           ":/icons/void_128.png"
 #define IMAGE_POSITIVE_OPINION ":/icons/png/thumbs-up.png"
 #define IMAGE_NEUTRAL_OPINION ":/icons/png/thumbs-neutral.png"
 #define IMAGE_NEGATIVE_OPINION ":/icons/png/thumbs-down.png"
@@ -91,6 +95,45 @@
 #define ROLE_THREAD_SORT            Qt::UserRole + 6
 
 #define ROLE_THREAD_COUNT           4
+
+class DistributionItemDelegate: public QStyledItemDelegate
+{
+public:
+    DistributionItemDelegate() {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+	{
+		Q_ASSERT(index.isValid());
+
+		QStyleOptionViewItemV4 opt = option;
+		initStyleOption(&opt, index);
+		// disable default icon
+		opt.icon = QIcon();
+		// draw default item
+		QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+		const QRect r = option.rect;
+
+		QIcon icon ;
+
+		// get pixmap
+		unsigned int warning_level = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+
+        switch(warning_level)
+        {
+        default:
+        case 0: icon = QIcon(IMAGE_VOID); break;
+        case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
+        case 2: icon = QIcon(IMAGE_WARNING_RED); break;
+        }
+
+		QPixmap pix = icon.pixmap(r.size());
+
+		// draw pixmap at center of item
+		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+};
 
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
@@ -143,7 +186,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
-    ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new ReputationItemDelegate(RsReputations::REPUTATION_NEUTRAL)) ;
+    ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
 	connect(ui->postText, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuTextBrowser(QPoint)));
@@ -1018,9 +1061,18 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
-	uint32_t reputation_level = rsIdentity->overallReputationLevel(msg.mMeta.mAuthorId) ;
+    RsIdentityDetails iddetails ;
 
-    bool redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
+    RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL ;
+    bool redacted = false ;
+
+    if(!rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails))
+        std::cerr << "(WW) Cannot grab identity details for " << msg.mMeta.mAuthorId.toStdString() << std::endl;
+    else
+    {
+		reputation_level = iddetails.mReputation.mOverallReputationLevel ;
+		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
+    }
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1030,18 +1082,27 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	else
 		item->setText(COLUMN_THREAD_TITLE, QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
-    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole, reputation_level) ;
-
     QString rep_tooltip_str ;
-    switch(reputation_level)
+    uint32_t rep_warning_level ;
+
+    if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ; break;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: rep_tooltip_str = tr("You have not set an opinion for this person,\n and your friends vote negatively: Spam regulation \nprevents the message to be forwarded to your friends.") ; break;
-    	case RsReputations::REPUTATION_NEUTRAL:  rep_tooltip_str = tr("You have not set an opinion for this person,\n and neither have your friends: Spam regulation\nprevents the message to be forwarded to your friends.") ; break;
-    default:
-    	rep_tooltip_str = tr("Message will be forwarded to your friends.") ; break;
+        rep_warning_level = 2 ;
+    	rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ;
     }
+    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(mForumGroup.mMeta.mSignFlags,iddetails.mFlags))
+    {
+        rep_warning_level = 1 ;
+    	rep_tooltip_str = tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.") ;
+    }
+    else
+    {
+        rep_warning_level = 0 ;
+    	rep_tooltip_str = tr("Message will be forwarded to your friends.") ;
+    }
+
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,rep_tooltip_str) ;
+    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole,rep_warning_level) ;
 
 	//msg.mMeta.mChildTs Was not updated when received new child
 	// so do it here.

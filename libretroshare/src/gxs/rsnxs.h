@@ -34,6 +34,8 @@
 #include <map>
 
 #include "services/p3service.h"
+#include "retroshare/rsreputations.h"
+#include "retroshare/rsidentity.h"
 #include "rsgds.h"
 
 /*!
@@ -159,6 +161,50 @@ public:
      * \return
      */
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
+
+    /*!
+     * \brief minReputationForForwardingMessages
+     * 				Encodes the policy for sending/requesting messages depending on anti-spam settings.
+     *
+     * \param group_sign_flags	Sign flags from the group meta data
+     * \param identity_flags	Flags of the identity
+     * \return
+     */
+    static RsReputations::ReputationLevel minReputationForRequestingMessages(uint32_t /* group_sign_flags */, uint32_t /* identity_flags */)
+	{
+		// We always request messages, except if the author identity is locally banned.
+
+		return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+	}
+    static RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags, uint32_t identity_flags)
+	{
+		// If anti-spam is enabled, do not send messages from authors with bad reputation. The policy is to only forward messages if the reputation of the author is at least
+		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative) :
+		//
+		//                  | Anonymous          Signed          Signed+Known
+		//       -----------+-----------------------------------------------------
+		//       NONE       |    RN                RN                 RN
+		//       GPG_AUTHED |    RP                RN                 RN
+		//       GPG_KNOWN  |    RP                RP                 RN
+		//
+
+		if(identity_flags & RS_IDENTITY_FLAGS_PGP_KNOWN)
+			return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+		else if(identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED)
+		{
+			if(group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)
+				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+			else
+				return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+		}
+		else
+		{
+			if( (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) || (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
+				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+			else
+				return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+		}
+	}
 };
 
 #endif // RSGNP_H

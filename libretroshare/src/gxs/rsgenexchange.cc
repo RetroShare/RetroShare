@@ -1614,6 +1614,10 @@ uint32_t RsGenExchange::getDefaultSyncPeriod()
     }
 }
 
+RsReputations::ReputationLevel RsGenExchange::minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_sign_flags)
+{
+	return RsNetworkExchangeService::minReputationForForwardingMessages(group_sign_flags,identity_sign_flags);
+}
 uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
 {
 	RS_STACK_MUTEX(mGenMtx) ;

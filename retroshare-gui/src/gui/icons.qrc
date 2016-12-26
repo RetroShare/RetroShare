@@ -216,6 +216,8 @@
 		<file>icons/user-offline_64.png</file>
 		<file>icons/user-online_64.png</file>
 		<file>icons/void_128.png</file>
+		<file>icons/warning_red_128.png</file>
+		<file>icons/warning_yellow_128.png</file>
 		<file>icons/yahoo.png</file>
 		<file>icons/yandex.png</file>
 		<file>icons/yellow_biohazard64.png</file>

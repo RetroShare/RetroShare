@@ -27,6 +27,7 @@
 #ifndef RSGXSIFACE_H_
 #define RSGXSIFACE_H_
 
+#include "retroshare/rsreputations.h"
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
@@ -181,6 +182,8 @@ public:
     virtual uint32_t getDefaultSyncPeriod() = 0;
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) = 0;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) = 0;
+
+    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags)=0;
 };
 
 

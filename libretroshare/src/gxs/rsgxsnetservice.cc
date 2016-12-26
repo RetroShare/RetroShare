@@ -4210,17 +4210,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
-        RsReputations::ReputationLevel min_rep_for_anonymous ;
-        RsReputations::ReputationLevel min_rep_for_unknown_signed ;
-
-		min_rep_for_anonymous      = (grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG      )?RsReputations::REPUTATION_REMOTELY_POSITIVE: RsReputations::REPUTATION_REMOTELY_NEGATIVE;
-		min_rep_for_unknown_signed = (grpMeta->mSignFlags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)?RsReputations::REPUTATION_REMOTELY_POSITIVE: RsReputations::REPUTATION_REMOTELY_NEGATIVE;
-
 	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
 		{
 			RsGxsMsgMetaData* m = *vit;
-
-			// if anti-spam is enabled, do not send messages from authors with bad reputation
 
             RsIdentityDetails details ;
 
@@ -4229,21 +4221,14 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
                 std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author is not accessible (unknown/not cached)" << std::endl;
                 continue ;
             }
-            if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED) && details.mReputation.mOverallReputationLevel < min_rep_for_anonymous)
-			{
-//#ifdef NXS_NET_DEBUG_0
-				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is anonymous has reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
-//#endif
-				continue ;
-			}
-            if(!(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) && details.mReputation.mOverallReputationLevel < min_rep_for_unknown_signed)
-			{
-//#ifdef NXS_NET_DEBUG_0
-				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is signed by unknown key, and has reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
-//#endif
-				continue ;
-			}
 
+            if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+			{
+//#ifdef NXS_NET_DEBUG_0
+				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+//#endif
+				continue ;
+			}
 			// Check publish TS
 
 			if(item->createdSinceTS > (*vit)->mPublishTs)

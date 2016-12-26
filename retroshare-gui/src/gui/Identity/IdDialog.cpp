@@ -1857,9 +1857,9 @@ void IdDialog::insertIdDetails(uint32_t token)
     switch(info.mOverallReputationLevel)
     {
     	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive, according to your friends")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative, according to your friends")) ; break ;
+    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
     default:
     	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
     }

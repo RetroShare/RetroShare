@@ -27,6 +27,7 @@
  */
 
 #include "retroshare/rsgxsiface.h"
+#include "retroshare/rsreputations.h"
 #include "rsgxsflags.h"
 
 /*!
@@ -236,6 +237,10 @@ public:
         mGxs->setSyncPeriod(grpId,age_in_secs);
     }
 
+    RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags)
+    {
+        return mGxs->minReputationForForwardingMessages(group_sign_flags,identity_flags);
+    }
 private:
 
     RsGxsIface* mGxs;
