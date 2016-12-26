@@ -968,6 +968,8 @@ void ConnectFriendWizard::cleanFriendCert()
 	if (cert.empty()) {
 		ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
 		ui->friendCertCleanLabel->setToolTip("");
+		ui->friendCertCleanLabel->setStyleSheet("");
+
 	} else {
 		std::string cleanCert;
 		int error_code;
@@ -979,6 +981,7 @@ void ConnectFriendWizard::cleanFriendCert()
 				QTextCursor textCursor = ui->friendCertEdit->textCursor();
 				ui->friendCertEdit->setPlainText(QString::fromUtf8(cleanCert.c_str()));
 				ui->friendCertEdit->setTextCursor(textCursor);
+				ui->friendCertCleanLabel->setStyleSheet("");
 				connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 			}
 		} else {
@@ -994,7 +997,8 @@ void ConnectFriendWizard::cleanFriendCert()
 					errorMsg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
 					break ;
 				default:
-					errorMsg = tr("Unknown error. Your cert is probably not even a certificate.") ;
+					errorMsg = tr("Fake certificate: take any real certificate, and replace some of the letters randomly") ;
+					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
 				}
 			}
 		}
@@ -1002,6 +1006,7 @@ void ConnectFriendWizard::cleanFriendCert()
 
 	ui->friendCertCleanLabel->setPixmap(certValid ? QPixmap(":/images/accepted16.png") : QPixmap(":/images/delete.png"));
 	ui->friendCertCleanLabel->setToolTip(errorMsg);
+	ui->friendCertCleanLabel->setText(errorMsg);
 
 	ui->TextPage->setComplete(certValid);
 }

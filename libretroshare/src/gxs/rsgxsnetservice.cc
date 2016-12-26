@@ -2448,7 +2448,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
-            time_t now = time(NULL) ;
+            //time_t now = time(NULL) ;
 
             while(tr->mItems.size() > 0)
             {

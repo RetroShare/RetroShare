@@ -81,7 +81,7 @@
        </property>
        <property name="icon">
         <iconset resource="icons.qrc">
-         <normaloff>:/icons/png/network.png</normaloff>:/icons/png/network.png</iconset>
+         <normaloff>:/icons/svg/share.svg</normaloff>:/icons/svg/share.svg</iconset>
        </property>
        <property name="iconSize">
         <size>

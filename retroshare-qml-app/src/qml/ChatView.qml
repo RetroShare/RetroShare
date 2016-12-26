@@ -66,14 +66,7 @@ Item
 		onClicked:
 		{
 			var jsonData = {"chat_id":chatView.chatId, "msg":msgComposer.text}
-			sendRsApi.request("/chat/send_message", JSON.stringify(jsonData))
-		}
-
-		LibresapiLocalClient
-		{
-			id: sendRsApi
-			onGoodResponseReceived: { msgComposer.text = ""; console.log(msg)}
-			Component.onCompleted: { openConnection(apiSocketPath) }
+			rsApi.request("/chat/send_message", JSON.stringify(jsonData), function(par) { msgComposer.text = ""; console.log(msg) })
 		}
 	}
 

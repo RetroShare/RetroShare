@@ -171,6 +171,7 @@
 		<file>icons/svg/newsfeed-notify.svg</file>
 		<file>icons/svg/newsfeed.svg</file>
 		<file>icons/svg/options.svg</file>
+		<file>icons/svg/paste.svg</file>
 		<file>icons/svg/people-notify.svg</file>
 		<file>icons/svg/people.svg</file>
 		<file>icons/svg/person.svg</file>
@@ -188,6 +189,7 @@
 		<file>icons/svg/send-message-blocked.svg</file>
 		<file>icons/svg/send-message.svg</file>
 		<file>icons/svg/settings.svg</file>
+		<file>icons/svg/share.svg</file>
 		<file>icons/svg/smiley.svg</file>
 		<file>icons/svg/speaker_mute.svg</file>
 		<file>icons/svg/speaker.svg</file>

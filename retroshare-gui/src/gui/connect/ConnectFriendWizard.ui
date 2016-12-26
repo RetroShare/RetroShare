@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>691</width>
-    <height>522</height>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,10 +82,10 @@
   </widget>
   <widget class="ConnectFriendPage" name="TextPage">
    <property name="title">
-    <string>Text certificate</string>
+    <string>RetroShare certificate</string>
    </property>
    <property name="subTitle">
-    <string>Use text representation of the PGP certificates.</string>
+    <string>Please paste below your friend's Retroshare certificate</string>
    </property>
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Text</string>
@@ -278,83 +278,76 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="friendCertLabel">
-      <property name="text">
-       <string>Please, paste your friend's Retroshare certificate into the box below</string>
-      </property>
+     <widget class="QFrame" name="friendFrame">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QToolButton" name="userCertPasteButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>20</horstretch>
+           <verstretch>20</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Paste Cert of your friend from Clipboard</string>
+         </property>
+         <property name="text">
+          <string>Paste certificate</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/svg/paste.svg</normaloff>:/icons/svg/paste.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="friendCertCleanLabel">
+         <property name="pixmap">
+          <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="RSPlainTextEdit" name="friendCertEdit">
+         <property name="font">
+          <font>
+           <family>Courier New</family>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's PGP key. Do not paste your friend's PGP key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+         <property name="placeholderText">
+          <string>Please, paste your friend's Retroshare certificate into the box below</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QPlainTextEdit" name="friendCertEdit">
-        <property name="font">
-         <font>
-          <family>Courier New</family>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This box expects your friend's Retroshare certificate. WARNING: this is different from your friend's PGP key. Do not paste your friend's PGP key here (not even a part of it). It's not going to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="lineWrapMode">
-         <enum>QPlainTextEdit::NoWrap</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QToolButton" name="userCertPasteButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>20</horstretch>
-            <verstretch>20</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Paste Cert of your friend from Clipboard</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="friendCertCleanLabel">
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
     </item>
    </layout>
   </widget>
@@ -1572,6 +1565,11 @@ resources.</string>
    <extends>QWizardPage</extends>
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSPlainTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>gui/common/RSPlainTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
