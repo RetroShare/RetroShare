@@ -34,9 +34,11 @@
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/Identity/IdDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 #include "CreateGxsForumMsg.h"
+#include "gui/MainWindow.h"
 #include "gui/msgs/MessageComposer.h"
 #include "util/DateTime.h"
 #include "gui/common/UIStateHelper.h"
@@ -55,19 +57,19 @@
 //#define DEBUG_FORUMS
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE        ":/images/mail_new.png"
-#define IMAGE_MESSAGEREPLY   ":/images/mail_reply.png"
-#define IMAGE_MESSAGEREMOVE  ":/images/mail_delete.png"
-#define IMAGE_DOWNLOAD       ":/images/start.png"
-#define IMAGE_DOWNLOADALL    ":/images/startall.png"
-#define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_BIOHAZARD      ":/icons/yellow_biohazard64.png"
-#define IMAGE_WARNING_YELLOW ":/icons/warning_yellow_128.png"
-#define IMAGE_WARNING_RED    ":/icons/warning_red_128.png"
-#define IMAGE_WARNING_UNKNOWN":/icons/bullet_grey_128.png"
-#define IMAGE_VOID           ":/icons/void_128.png"
+#define IMAGE_MESSAGE          ":/images/mail_new.png"
+#define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
+#define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
+#define IMAGE_DOWNLOAD         ":/images/start.png"
+#define IMAGE_DOWNLOADALL      ":/images/startall.png"
+#define IMAGE_COPYLINK         ":/images/copyrslink.png"
+#define IMAGE_BIOHAZARD        ":/icons/yellow_biohazard64.png"
+#define IMAGE_WARNING_YELLOW   ":/icons/warning_yellow_128.png"
+#define IMAGE_WARNING_RED      ":/icons/warning_red_128.png"
+#define IMAGE_WARNING_UNKNOWN  ":/icons/bullet_grey_128.png"
+#define IMAGE_VOID             ":/icons/void_128.png"
 #define IMAGE_POSITIVE_OPINION ":/icons/png/thumbs-up.png"
-#define IMAGE_NEUTRAL_OPINION ":/icons/png/thumbs-neutral.png"
+#define IMAGE_NEUTRAL_OPINION  ":/icons/png/thumbs-neutral.png"
 #define IMAGE_NEGATIVE_OPINION ":/icons/png/thumbs-down.png"
 
 #define VIEW_LAST_POST	0
@@ -122,10 +124,10 @@ public:
 
         switch(warning_level)
         {
-        default:
         case 0: icon = QIcon(IMAGE_VOID); break;
         case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
         case 2: icon = QIcon(IMAGE_WARNING_RED); break;
+        default:
         case 3: icon = QIcon(IMAGE_WARNING_UNKNOWN); break;
         }
 
@@ -143,14 +145,15 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
 	ui->setupUi(this);
 
-	mTokenTypeGroupData = nextTokenType();
-	mTokenTypeInsertThreads = nextTokenType();
-	mTokenTypeMessageData = nextTokenType();
-	mTokenTypeReplyMessage = nextTokenType();
-	mTokenTypeReplyForumMessage = nextTokenType();
-    mTokenTypeNegativeAuthor = nextTokenType();
-    mTokenTypeNeutralAuthor = nextTokenType();
-    mTokenTypePositiveAuthor = nextTokenType();
+	mTokenTypeGroupData          = nextTokenType();
+	mTokenTypeInsertThreads      = nextTokenType();
+	mTokenTypeMessageData        = nextTokenType();
+	mTokenTypeReplyMessage       = nextTokenType();
+	mTokenTypeReplyForumMessage  = nextTokenType();
+	mTokenTypeShowAuthorInPeople = nextTokenType();
+    mTokenTypeNegativeAuthor     = nextTokenType();
+    mTokenTypeNeutralAuthor      = nextTokenType();
+    mTokenTypePositiveAuthor     = nextTokenType();
 
 	setUpdateWhenInvisible(true);
 
@@ -509,6 +512,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
+	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show in people tab"), &contextMnu);
+	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
+
 	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		QList<QTreeWidgetItem*> rows;
 		QList<QTreeWidgetItem*> rowsRead;
@@ -566,10 +572,13 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(collapseAll);
 
     contextMnu.addSeparator();
-    contextMnu.addAction(flagaspositiveAct);
-    contextMnu.addAction(flagasneutralAct);
-    contextMnu.addAction(flagasnegativeAct);
-    contextMnu.addSeparator();
+
+    QMenu *submenu1 = contextMnu.addMenu(tr("Reputation")) ;
+    submenu1->addAction(flagaspositiveAct);
+    submenu1->addAction(flagasneutralAct);
+    submenu1->addAction(flagasnegativeAct);
+    contextMnu.addAction(showinpeopleAct);
+
     contextMnu.addAction(replyauthorAct);
 
 	contextMnu.exec(QCursor::pos());
@@ -1748,6 +1757,17 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 	}
 }
 
+void GxsForumThreadWidget::showInPeopleTab()
+{
+	if (groupId().isNull() || mThreadId.isNull()) {
+		QMessageBox::information(this, tr("RetroShare"),tr("You cant act on the author to a non-existant Message"));
+		return;
+	}
+
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+	requestMsgData_ShowAuthorInPeople(postId) ;
+}
+
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -2013,6 +2033,18 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 	}
 }
 
+void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
+{
+	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
+	{
+		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << std::endl;
+		return;
+	}
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+	requestMsgData_ShowAuthorInPeople(postId);
+}
+
 void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
@@ -2266,6 +2298,24 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeReplyMessage);
 }
 
+void GxsForumThreadWidget::requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgIdPair& msgId)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+#ifdef DEBUG_FORUMS
+    std::cerr << "GxsForumThreadWidget::requestMsgData_ReplyMessage(" << msgId.first << "," << msgId.second << ")";
+    std::cerr << std::endl;
+#endif
+
+	GxsMsgReq msgIds;
+	std::vector<RsGxsMessageId> &vect = msgIds[msgId.first];
+	vect.push_back(msgId.second);
+
+	uint32_t token;
+	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeShowAuthorInPeople);
+}
+
 void GxsForumThreadWidget::requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId)
 {
 	RsTokReqOptions opts;
@@ -2335,6 +2385,42 @@ void GxsForumThreadWidget::loadMsgData_ReplyForumMessage(const uint32_t &token)
 	}
 }
 
+void GxsForumThreadWidget::loadMsgData_ShowAuthorInPeople(const uint32_t &token)
+{
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
+	std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsForumMsg> msgs;
+	if (rsGxsForums->getMsgData(token, msgs))
+	{
+		if (msgs.size() != 1)
+		{
+			std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Wrong number of answers";
+			std::cerr << std::endl;
+			return;
+		}
+
+		if(msgs[0].mMeta.mAuthorId.isNull())
+		{
+			std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+			std::cerr << std::endl;
+		}
+
+		/* window will destroy itself! */
+		IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+		if (!idDialog)
+			return ;
+
+		MainWindow::showWindow(MainWindow::People);
+		idDialog->navigate(RsGxsId(msgs[0].mMeta.mAuthorId));
+	}
+	else
+		std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+}
+
 void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
 {
 #ifdef DEBUG_FORUMS
@@ -2399,6 +2485,11 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			return;
 		}
         
+		if (req.mUserType == mTokenTypeShowAuthorInPeople) {
+			loadMsgData_ShowAuthorInPeople(req.mToken);
+			return;
+		}
+
 		if (req.mUserType == mTokenTypeNegativeAuthor) {
 			loadMsgData_BanAuthor(req.mToken);
 			return;

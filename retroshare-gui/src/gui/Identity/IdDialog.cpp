@@ -1941,6 +1941,22 @@ void IdDialog::modifyReputation()
 	return;
 }
 	
+void IdDialog::navigate(const RsGxsId& gxs_id)
+{
+    std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
+
+    // in order to do this, we just select the correct ID in the ID list
+
+    QList<QTreeWidgetItem*> select = ui->idTreeWidget->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly | Qt::MatchRecursive | Qt::MatchWrap,RSID_COL_KEYID) ;
+
+    if(select.empty())
+    {
+        std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
+        return ;
+    }
+    ui->idTreeWidget->setCurrentItem(*select.begin(),true);
+
+}
 void IdDialog::updateDisplay(bool complete)
 {
 	/* Update identity list */

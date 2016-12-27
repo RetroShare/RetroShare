@@ -352,7 +352,6 @@ void MainWindow::initStackedPage()
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
 #endif
 
-  IdDialog *idDialog = NULL;
   addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
 
 //#ifdef RS_USE_CIRCLES
@@ -878,6 +877,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Friends:
 			 _instance->ui->stackPages->setCurrentPage( _instance->friendsDialog );
 			 break;
+		 case People:
+			 _instance->ui->stackPages->setCurrentPage( _instance->idDialog );
+			 break;
 		 case ChatLobby:
 			 _instance->ui->stackPages->setCurrentPage( _instance->chatLobbyDialog );
 			 break;
@@ -974,6 +976,8 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->friendsDialog->networkDialog;
 		case Friends:
 			return _instance->friendsDialog;
+		case People:
+			return _instance->idDialog;
 		case ChatLobby:
 			return _instance->chatLobbyDialog;
 		case Transfers:
