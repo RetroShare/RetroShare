@@ -472,7 +472,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
-    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply with private message"), &contextMnu);
+    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(replytomessage()));
 
     QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
@@ -480,7 +480,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     flagaspositiveAct->setData(mTokenTypePositiveAuthor) ;
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion to this author"), &contextMnu);
+    QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
     flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
     flagasneutralAct->setData(mTokenTypeNeutralAuthor) ;
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
@@ -512,7 +512,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(QIcon(":/images/message-mail.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
 	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -573,7 +573,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
     contextMnu.addSeparator();
 
-    QMenu *submenu1 = contextMnu.addMenu(tr("Reputation")) ;
+    QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
     submenu1->addAction(flagaspositiveAct);
     submenu1->addAction(flagasneutralAct);
     submenu1->addAction(flagasnegativeAct);
@@ -1953,24 +1953,24 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 
 void GxsForumThreadWidget::flagperson()
 {
-    // no need to use the token system for that, since we just need to find out the author's name, which is in the item.
-    
+	// no need to use the token system for that, since we just need to find out the author's name, which is in the item.
+
 	if (groupId().isNull() || mThreadId.isNull()) {
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
-    uint32_t token_type = qobject_cast<QAction*>(sender())->data().toUInt();
+	uint32_t token_type = qobject_cast<QAction*>(sender())->data().toUInt();
 
 	// Get Message ... then complete replyMessageData().
 	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-    
-    	RsTokReqOptions opts;
+
+	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 #ifdef DEBUG_FORUMS
-    std::cerr << "GxsForumThreadWidget::requestMsgData_BanAuthor(" << postId.first << "," << postId.second << ")";
-    std::cerr << std::endl;
+	std::cerr << "GxsForumThreadWidget::requestMsgData_BanAuthor(" << postId.first << "," << postId.second << ")";
+	std::cerr << std::endl;
 #endif
 
 	GxsMsgReq msgIds;
@@ -2421,7 +2421,7 @@ void GxsForumThreadWidget::loadMsgData_ShowAuthorInPeople(const uint32_t &token)
 		std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
 }
 
-void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
+void GxsForumThreadWidget::loadMsgData_SetAuthorOpinion(const uint32_t &token,RsReputations::Opinion opinion)
 {
 #ifdef DEBUG_FORUMS
     std::cerr << "GxsForumThreadWidget::loadMsgData_BanAuthor()";
@@ -2439,7 +2439,8 @@ void GxsForumThreadWidget::loadMsgData_BanAuthor(const uint32_t &token)
 		}
 
 		std::cerr << "  banning author id " << msgs[0].mMeta.mAuthorId << std::endl;
-	rsReputations->setOwnOpinion(msgs[0].mMeta.mAuthorId,RsReputations::OPINION_NEGATIVE) ;
+
+		rsReputations->setOwnOpinion(msgs[0].mMeta.mAuthorId,opinion) ;
 	}
 	else
 	{
@@ -2490,8 +2491,18 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			return;
 		}
 
+		if (req.mUserType == mTokenTypePositiveAuthor) {
+			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_POSITIVE);
+			return;
+		}
+
 		if (req.mUserType == mTokenTypeNegativeAuthor) {
-			loadMsgData_BanAuthor(req.mToken);
+			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_NEGATIVE);
+			return;
+		}
+
+		if (req.mUserType == mTokenTypeNeutralAuthor) {
+			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_NEUTRAL);
 			return;
 		}
 	}

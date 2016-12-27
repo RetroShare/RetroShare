@@ -155,7 +155,7 @@ private:
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 	void loadMsgData_ReplyForumMessage(const uint32_t &token);
 	void loadMsgData_ShowAuthorInPeople(const uint32_t &token);
-	void loadMsgData_BanAuthor(const uint32_t &token);
+	void loadMsgData_SetAuthorOpinion(const uint32_t &token, RsReputations::Opinion opinion);
 
 private:
 	RsGxsGroupId mLastForumID;
