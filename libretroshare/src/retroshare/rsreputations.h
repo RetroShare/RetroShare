@@ -42,7 +42,8 @@ public:
 		                    REPUTATION_REMOTELY_NEGATIVE = 0x01, // local opinion is neutral and friends are positive in average
 		                    REPUTATION_NEUTRAL           = 0x02, // no reputation information ;
 		                    REPUTATION_REMOTELY_POSITIVE = 0x03, // local opinion is neutral and friends are negative in average
-		                    REPUTATION_LOCALLY_POSITIVE  = 0x04  // local opinion is negative
+		                    REPUTATION_LOCALLY_POSITIVE  = 0x04, // local opinion is negative
+		                    REPUTATION_UNKNOWN           = 0x05  // missing info
 						 };
 
 	struct ReputationInfo

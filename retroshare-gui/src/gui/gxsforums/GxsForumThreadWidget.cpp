@@ -64,6 +64,7 @@
 #define IMAGE_BIOHAZARD      ":/icons/yellow_biohazard64.png"
 #define IMAGE_WARNING_YELLOW ":/icons/warning_yellow_128.png"
 #define IMAGE_WARNING_RED    ":/icons/warning_red_128.png"
+#define IMAGE_WARNING_UNKNOWN":/icons/bullet_grey_128.png"
 #define IMAGE_VOID           ":/icons/void_128.png"
 #define IMAGE_POSITIVE_OPINION ":/icons/png/thumbs-up.png"
 #define IMAGE_NEUTRAL_OPINION ":/icons/png/thumbs-neutral.png"
@@ -125,6 +126,7 @@ public:
         case 0: icon = QIcon(IMAGE_VOID); break;
         case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
         case 2: icon = QIcon(IMAGE_WARNING_RED); break;
+        case 3: icon = QIcon(IMAGE_WARNING_UNKNOWN); break;
         }
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -1066,13 +1068,13 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL ;
     bool redacted = false ;
 
-    if(!rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails))
-        std::cerr << "(WW) Cannot grab identity details for " << msg.mMeta.mAuthorId.toStdString() << std::endl;
-    else
+    if(rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails))
     {
 		reputation_level = iddetails.mReputation.mOverallReputationLevel ;
 		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     }
+    else
+        reputation_level = RsReputations::REPUTATION_UNKNOWN ;
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
@@ -1085,7 +1087,12 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     QString rep_tooltip_str ;
     uint32_t rep_warning_level ;
 
-    if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+    if(reputation_level == RsReputations::REPUTATION_UNKNOWN)
+    {
+        rep_warning_level = 3 ;
+    	rep_tooltip_str = tr("Information for this identity is currently missing.") ;
+    }
+    else if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
         rep_warning_level = 2 ;
     	rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ;
