@@ -1,0 +1,12 @@
+[submodule "plugins/Lua4RS"]
+	path = plugins/Lua4RS
+	url = git@github.com:sehraf/Lua4RS.git
+[submodule "plugins/ExportImport"]
+	path = plugins/ExportImport
+	url = git@github.com:sehraf/ExportImport.git
+[submodule "plugins/RsSocialCompass"]
+	path = plugins/RsSocialCompass
+	url = git@github.com:chozabu/RsSocialCompass.git
+[submodule "plugins/FriendMap"]
+	path = plugins/FriendMap
+	url = git@github.com:chozabu/FriendMap.git
