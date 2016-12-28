@@ -120,6 +120,11 @@ public:
     virtual float nodeAutoBanIdentitiesLimit() ;
     virtual void setNodeAutoBanIdentitiesLimit(float f) ;
 
+	uint32_t thresholdForRemotelyNegativeReputation();
+	uint32_t thresholdForRemotelyPositiveReputation();
+	void setThresholdForRemotelyNegativeReputation(uint32_t thresh);
+	void setThresholdForRemotelyPositiveReputation(uint32_t thresh);
+
     /***** overloaded from p3Service *****/
     virtual int   tick();
     virtual int   status();
@@ -185,6 +190,9 @@ private:
     std::set<RsGxsId> mPerNodeBannedIdsProxy ;
     //uint32_t mPgpAutoBanThreshold ;
     bool mBannedNodesProxyNeedsUpdate ;
+
+    uint32_t mMinVotesForRemotelyPositive ;
+    uint32_t mMinVotesForRemotelyNegative ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

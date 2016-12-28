@@ -42,7 +42,8 @@ bool PeoplePage::save(QString &/*errmsg*/)
     else
         rsReputations->setNodeAutoPositiveOpinionForContacts(false) ;
 
-    rsReputations->setNodeAutoBanIdentitiesLimit(ui.autoBanIdentitiesLimit_SB->value());
+    rsReputations->setThresholdForRemotelyPositiveReputation(ui.thresholdForPositive_SB->value());
+    rsReputations->setThresholdForRemotelyNegativeReputation(ui.thresholdForNegative_SB->value());
 
     return true;
 }
@@ -51,8 +52,10 @@ bool PeoplePage::save(QString &/*errmsg*/)
 void PeoplePage::load()
 {
     bool auto_positive_contacts = rsReputations->nodeAutoPositiveOpinionForContacts() ;
-    float node_auto_ban_identities_limit = rsReputations->nodeAutoBanIdentitiesLimit();
+    uint32_t threshold_for_positive = rsReputations->thresholdForRemotelyPositiveReputation();
+    uint32_t threshold_for_negative = rsReputations->thresholdForRemotelyNegativeReputation();
 
     ui.autoPositiveOpinion_CB->setChecked(auto_positive_contacts);
-    ui.autoBanIdentitiesLimit_SB->setValue(node_auto_ban_identities_limit);
+    ui.thresholdForPositive_SB->setValue(threshold_for_positive);
+    ui.thresholdForNegative_SB->setValue(threshold_for_negative);
 }

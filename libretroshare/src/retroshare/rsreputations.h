@@ -73,8 +73,13 @@ public:
     virtual float nodeAutoBanIdentitiesLimit() =0;
     virtual void setNodeAutoBanIdentitiesLimit(float f) =0;
 
-        // This one is a proxy designed to allow fast checking of a GXS id.
-        // it basically returns true if assessment is not ASSESSMENT_OK
+	virtual uint32_t thresholdForRemotelyNegativeReputation()=0;
+	virtual uint32_t thresholdForRemotelyPositiveReputation()=0;
+	virtual void setThresholdForRemotelyNegativeReputation(uint32_t thresh)=0;
+	virtual void setThresholdForRemotelyPositiveReputation(uint32_t thresh)=0;
+
+	// This one is a proxy designed to allow fast checking of a GXS id.
+	// it basically returns true if assessment is not ASSESSMENT_OK
         
     virtual bool isIdentityBanned(const RsGxsId& id) =0;
 

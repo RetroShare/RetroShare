@@ -141,6 +141,9 @@ static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update 
 static const uint32_t REPUTATION_INFO_KEEP_DELAY          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
 static const uint32_t BANNED_NODES_INACTIVITY_KEEP        = 86400*60; // remove all info about banned nodes after 2 months of inactivity
 
+static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE = 1;	// min difference in votes that makes friends opinion globally positive
+static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE = 1;	// min difference in votes that makes friends opinion globally negative
+
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
 	mReputationMtx("p3GxsReputation"), mLinkMgr(lm) 
@@ -159,6 +162,8 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 
     mAutoBanIdentitiesLimit = REPUTATION_ASSESSMENT_THRESHOLD_X1;
     mAutoSetPositiveOptionToContacts = true;	// default
+    mMinVotesForRemotelyPositive = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE;
+    mMinVotesForRemotelyNegative = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE;
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -871,9 +876,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     }
     // 2 - now, our own opinion is neutral, which means we rely on what our friends tell
 
-    if(info.mFriendsPositiveVotes > info.mFriendsNegativeVotes)
+    if(info.mFriendsPositiveVotes >= info.mFriendsNegativeVotes + mMinVotesForRemotelyPositive)
         info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_POSITIVE ;
-    else if(info.mFriendsPositiveVotes < info.mFriendsNegativeVotes)
+    else if(info.mFriendsPositiveVotes + mMinVotesForRemotelyNegative <= info.mFriendsNegativeVotes)
         info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_NEGATIVE ;
     else
         info.mOverallReputationLevel = RsReputations::REPUTATION_NEUTRAL ;
@@ -883,6 +888,36 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 #endif
 
     return true ;
+}
+
+uint32_t p3GxsReputation::thresholdForRemotelyNegativeReputation()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    return mMinVotesForRemotelyNegative ;
+}
+uint32_t p3GxsReputation::thresholdForRemotelyPositiveReputation()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    return mMinVotesForRemotelyPositive ;
+}
+void p3GxsReputation::setThresholdForRemotelyPositiveReputation(uint32_t thresh)
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    if(mMinVotesForRemotelyPositive == thresh || thresh==0)
+        return ;
+
+    mMinVotesForRemotelyPositive = thresh ;
+    IndicateConfigChanged();
+}
+
+void p3GxsReputation::setThresholdForRemotelyNegativeReputation(uint32_t thresh)
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    if(mMinVotesForRemotelyNegative == thresh || thresh==0)
+        return ;
+
+    mMinVotesForRemotelyNegative = thresh ;
+    IndicateConfigChanged();
 }
 
 void p3GxsReputation::banNode(const RsPgpId& id,bool b)
