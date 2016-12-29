@@ -183,7 +183,6 @@ private:
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
     std::set<RsGxsId> mPerNodeBannedIdsProxy ;
-    //uint32_t mPgpAutoBanThreshold ;
     bool mBannedNodesProxyNeedsUpdate ;
 
     uint32_t mMinVotesForRemotelyPositive ;

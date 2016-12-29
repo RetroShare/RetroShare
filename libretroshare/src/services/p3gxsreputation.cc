@@ -160,7 +160,6 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mLastBannedNodesUpdate = 0 ;
     mBannedNodesProxyNeedsUpdate = false;
 
-    mAutoBanIdentitiesLimit = REPUTATION_ASSESSMENT_THRESHOLD_X1;
     mAutoSetPositiveOptionToContacts = true;	// default
     mMinVotesForRemotelyPositive = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE;
     mMinVotesForRemotelyNegative = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE;
@@ -1085,10 +1084,6 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	rs_sprintf(kv.value, "%d", mMinVotesForRemotelyNegative);
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-    kv.key = "AUTO_BAN_IDENTITIES_THRESHOLD" ;
-    rs_sprintf(kv.value, "%f", mAutoBanIdentitiesLimit);
-    vitem->tlvkvs.pairs.push_back(kv) ;
-
     kv.key = "AUTO_POSITIVE_CONTACTS" ;
     kv.value = mAutoSetPositiveOptionToContacts?"YES":"NO";
     vitem->tlvkvs.pairs.push_back(kv) ;
@@ -1166,17 +1161,6 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 					    std::cerr << "Setting mMinVotesForRemotelyNegative threshold to " << val << std::endl ;
 				    }
 			    };
-                if(kit->key == "AUTO_BAN_IDENTITIES_THRESHOLD")
-                {
-                    float val ;
-
-                    if (sscanf(kit->value.c_str(), "%f", &val) == 1)
-                    {
-                        mAutoBanIdentitiesLimit = val ;
-                        std::cerr << "Setting AutoBanIdentity threshold to " << val << std::endl ;
-                        mLastBannedNodesUpdate = 0 ;	// force update
-                    }
-                };
                 if(kit->key == "AUTO_POSITIVE_CONTACTS")
                 {
                     mAutoSetPositiveOptionToContacts = (kit->value == "YES");
