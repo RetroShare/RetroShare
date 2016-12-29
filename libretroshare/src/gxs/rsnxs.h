@@ -179,30 +179,30 @@ public:
     static RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags, uint32_t identity_flags)
 	{
 		// If anti-spam is enabled, do not send messages from authors with bad reputation. The policy is to only forward messages if the reputation of the author is at least
-		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative) :
+		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative, O=neutral) :
 		//
 		//                  | Anonymous          Signed          Signed+Known
 		//       -----------+-----------------------------------------------------
-		//       NONE       |    RN                RN                 RN
-		//       GPG_AUTHED |    RP                RN                 RN
-		//       GPG_KNOWN  |    RP                RP                 RN
+		//       NONE       |     O                 O                  O
+		//       GPG_AUTHED |    RP                 O                  O
+		//       GPG_KNOWN  |    RP                RP                  O
 		//
 
 		if(identity_flags & RS_IDENTITY_FLAGS_PGP_KNOWN)
-			return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+			return RsReputations::REPUTATION_NEUTRAL;
 		else if(identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
 			if(group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)
 				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+				return RsReputations::REPUTATION_NEUTRAL;
 		}
 		else
 		{
 			if( (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) || (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
 				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+				return RsReputations::REPUTATION_NEUTRAL;
 		}
 	}
 };
