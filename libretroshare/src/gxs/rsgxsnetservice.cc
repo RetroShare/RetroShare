@@ -4208,6 +4208,10 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
+    time_t now = time(NULL) ;
+
+    uint32_t max_send_delay = mServerGrpConfigMap[item->grpId].msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
+
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
 	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
@@ -4231,7 +4235,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 			}
 			// Check publish TS
 
-			if(item->createdSinceTS > (*vit)->mPublishTs)
+			if(item->createdSinceTS > (*vit)->mPublishTs || (*vit)->mPublishTs + max_send_delay < now)
 			{
 #ifdef NXS_NET_DEBUG_0
 				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
