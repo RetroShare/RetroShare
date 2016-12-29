@@ -65,13 +65,8 @@ public:
 
     // parameters
 
-    // virtual void setNodeAutoBanThreshold(uint32_t n) =0;
-    // virtual uint32_t nodeAutoBanThreshold() =0;
-
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) =0;
     virtual bool nodeAutoPositiveOpinionForContacts() =0;
-    virtual float nodeAutoBanIdentitiesLimit() =0;
-    virtual void setNodeAutoBanIdentitiesLimit(float f) =0;
 
 	virtual uint32_t thresholdForRemotelyNegativeReputation()=0;
 	virtual uint32_t thresholdForRemotelyPositiveReputation()=0;

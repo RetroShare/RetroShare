@@ -261,27 +261,6 @@ bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     return mAutoSetPositiveOptionToContacts ;
 }
-float p3GxsReputation::nodeAutoBanIdentitiesLimit()
-{
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-    return mAutoBanIdentitiesLimit - 1.0f;
-}
-void p3GxsReputation::setNodeAutoBanIdentitiesLimit(float f)
-{
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-
-    if(f < -1.0 || f >= 0.0)
-    {
-        std::cerr << "(EE) Unexpected value for auto ban identities limit: " << f << std::endl;
-        return ;
-    }
-    if(f != mAutoBanIdentitiesLimit)
-    {
-        mLastBannedNodesUpdate = 0 ;
-        mAutoBanIdentitiesLimit = f+1.0 ;
-        IndicateConfigChanged() ;
-    }
-}
 
 int	p3GxsReputation::status()
 {
@@ -1097,9 +1076,14 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
     
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 	RsTlvKeyValue kv;
-//	kv.key = "AUTO_BAN_NODES_THRESHOLD" ;
-//	rs_sprintf(kv.value, "%d", mPgpAutoBanThreshold);
-//	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = "AUTO_REMOTELY_POSITIVE_THRESHOLD" ;
+	rs_sprintf(kv.value, "%d", mMinVotesForRemotelyPositive);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = "AUTO_REMOTELY_NEGATIVE_THRESHOLD" ;
+	rs_sprintf(kv.value, "%d", mMinVotesForRemotelyNegative);
+	vitem->tlvkvs.pairs.push_back(kv) ;
 
     kv.key = "AUTO_BAN_IDENTITIES_THRESHOLD" ;
     rs_sprintf(kv.value, "%f", mAutoBanIdentitiesLimit);
@@ -1164,16 +1148,24 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	    if(vitem)
 		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
 		    {
-//			    if(kit->key == "AUTO_BAN_NODES_THRESHOLD")
-//			    {
-//				    int val ;
-//				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
-//				    {
-//					    mPgpAutoBanThreshold = val ;
-//					    std::cerr << "Setting AutoBanNode threshold to " << val << std::endl ;
-//					    mLastBannedNodesUpdate = 0 ;	// force update
-//				    }
-//			    };
+			    if(kit->key == "AUTO_REMOTELY_POSITIVE_THRESHOLD")
+			    {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+					    mMinVotesForRemotelyPositive = val ;
+					    std::cerr << "Setting mMinVotesForRemotelyPositive threshold to " << val << std::endl ;
+				    }
+			    };
+				if(kit->key == "AUTO_REMOTELY_NEGATIVE_THRESHOLD")
+			    {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+					    mMinVotesForRemotelyNegative = val ;
+					    std::cerr << "Setting mMinVotesForRemotelyNegative threshold to " << val << std::endl ;
+				    }
+			    };
                 if(kit->key == "AUTO_BAN_IDENTITIES_THRESHOLD")
                 {
                     float val ;

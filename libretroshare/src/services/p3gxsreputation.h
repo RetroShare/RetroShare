@@ -112,13 +112,8 @@ public:
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
 
-    //virtual void setNodeAutoBanThreshold(uint32_t n) ;
-    //virtual uint32_t nodeAutoBanThreshold() ;
-
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
-    virtual float nodeAutoBanIdentitiesLimit() ;
-    virtual void setNodeAutoBanIdentitiesLimit(float f) ;
 
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
