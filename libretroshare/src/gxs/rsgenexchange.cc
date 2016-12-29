@@ -86,14 +86,14 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   CREATE_FAIL(0),
   CREATE_SUCCESS(1),
   CREATE_FAIL_TRY_LATER(2),
-  SIGN_MAX_ATTEMPTS(5),
+  SIGN_MAX_WAITING_TIME(60),
   SIGN_FAIL(0),
   SIGN_SUCCESS(1),
   SIGN_FAIL_TRY_LATER(2),
   VALIDATE_FAIL(0),
   VALIDATE_SUCCESS(1),
   VALIDATE_FAIL_TRY_LATER(2),
-  VALIDATE_MAX_ATTEMPTS(5)
+  VALIDATE_MAX_WAITING_TIME(60)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -1478,7 +1478,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 		std::cerr << std::endl;
 #endif
 
-    		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
+    		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId,time(NULL));
     		mReceivedGrps.push_back(gpsi);
     	}
     	else
@@ -1923,7 +1923,9 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 void RsGenExchange::publishMsgs()
 {
 
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	time_t now = time(NULL);
 
 	// stick back msgs pending signature
 	typedef std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
@@ -1992,21 +1994,19 @@ void RsGenExchange::publishMsgs()
 				// sign attempt
 				if(pit == mMsgPendingSign.end())
 				{
-					GxsPendingItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token);
+					GxsPendingItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token,time(NULL));
 					mMsgPendingSign.insert(std::make_pair(token, gsi));
 				}
 				else
 				{
 					// remove from attempts queue if over sign
 					// attempts limit
-					if(pit->second.mAttempts == SIGN_MAX_ATTEMPTS)
+					if(pit->second.mFirstTryTS + SIGN_MAX_WAITING_TIME < now)
 					{
+						std::cerr << "Pending signature grp=" << pit->second.mItem->meta.mGroupId << ", msg=" << pit->second.mItem->meta.mMsgId << ", has exceeded validation time limit. The author's key can probably not be obtained. This is unexpected." << std::endl;
+
 						mMsgPendingSign.erase(token);
 						tryLater = false;
-					}
-					else
-					{
-						++pit->second.mAttempts;
 					}
 				}
 
@@ -2653,28 +2653,22 @@ void RsGenExchange::processRecvdMessages()
     {
 	    RS_STACK_MUTEX(mGenMtx) ;
 
+        time_t now = time(NULL);
+
 #ifdef GEN_EXCH_DEBUG
 	    if(!mMsgPendingValidate.empty())
 		    std::cerr << "processing received messages" << std::endl;
 #endif
 	    NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
 
-#ifdef GEN_EXCH_DEBUG
-	    if(!mMsgPendingValidate.empty())
-		    std::cerr << "  pending validation" << std::endl;
-#endif
 	    for(; pend_it != mMsgPendingValidate.end();)
 	    {
 		    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
 
-#ifdef GEN_EXCH_DEBUG
-		    std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
-#endif
-		    if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+		    if(gpsi.mFirstTryTS + VALIDATE_MAX_WAITING_TIME < now)
 		    {
-#ifdef GEN_EXCH_DEBUG
-			    std::cerr << " = max! deleting." << std::endl;
-#endif
+				std::cerr << "Pending validation grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", has exceeded validation time limit. The author's key can probably not be obtained. This is unexpected." << std::endl;
+
 			    delete gpsi.mItem;
 			    pend_it = mMsgPendingValidate.erase(pend_it);
 		    }
@@ -2836,16 +2830,12 @@ void RsGenExchange::processRecvdMessages()
 
 			    // first check you haven't made too many attempts
 
-			    NxsMsgPendingVect::iterator vit = std::find(
-			                            mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
+			    NxsMsgPendingVect::iterator vit = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
 
 			    if(vit == mMsgPendingValidate.end())
 			    {
-				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id,time(NULL));
 				    mMsgPendingValidate.push_back(item);
-			    }else
-			    {
-				    vit->mAttempts++;
 			    }
 		    }
 	    }
@@ -2978,18 +2968,16 @@ void RsGenExchange::processRecvdGroups()
 				std::cerr << "  failed to validate incoming grp, trying again. grpId: " << grp->grpId << std::endl;
 #endif
 
-        		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+        		if(gpsi.mFirstTryTS + VALIDATE_MAX_WAITING_TIME < time(NULL))
         		{
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "  max attempts " << VALIDATE_MAX_ATTEMPTS << " reached. Will delete group " << grp->grpId << std::endl;
+				std::cerr << "  validation time got group " << grp->grpId << " exceeded maximum. Will delete group " << std::endl;
 #endif
         			delete grp;
         			erase = true;
         		}
         		else
-        		{
         			erase = false;
-        		}
         	}
         }
         else
