@@ -45,7 +45,7 @@ public:
   ~MessagesDialog();
 
   virtual QIcon iconPixmap() const { return QIcon(IMAGE_MESSAGES) ; } //MainPage
-  virtual QString pageName() const { return tr("Messages") ; } //MainPage
+  virtual QString pageName() const { return tr("Mail") ; } //MainPage
   virtual QString helpText() const { return ""; } //MainPage
 
   virtual UserNotify *getUserNotify(QObject *parent);
