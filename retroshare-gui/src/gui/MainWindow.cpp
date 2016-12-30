@@ -367,7 +367,7 @@ void MainWindow::initStackedPage()
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
-	addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
+	addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->stackPages), &MainWindow::doQuit, SLOT(doQuit()));
 
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
