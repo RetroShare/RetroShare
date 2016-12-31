@@ -117,7 +117,7 @@ public:
      */
 
     virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) = 0 ;
-    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) = 0 ;
+    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error) = 0 ;
 
     virtual bool encryptData(const uint8_t *clear_data,uint32_t clear_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) = 0 ;
     virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& clear_data,uint32_t& clear_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) = 0 ;
@@ -125,7 +125,7 @@ public:
     virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
-    virtual void timeStampKey(const RsGxsId& key_id) = 0 ;
+    virtual void timeStampKey(const RsGxsId& key_id,const std::string& reason) = 0 ;
 
     // Key related interface - used for validating msgs and groups.
     /*!
@@ -149,7 +149,7 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers,const std::string& info) = 0;
     virtual bool requestPrivateKey(const RsGxsId &id) = 0;
 
 

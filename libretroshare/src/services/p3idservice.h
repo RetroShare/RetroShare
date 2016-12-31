@@ -274,7 +274,7 @@ public:
 
 	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
 	virtual bool isARegularContact(const RsGxsId& id) ;
-	virtual bool isBanned(const RsGxsId& id) ;
+    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id);
 	virtual time_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
@@ -287,7 +287,7 @@ public:
 	virtual bool isOwnId(const RsGxsId& key_id) ;
 
 	virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) ;
-	virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error) ;
+	virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error) ;
 
 	virtual bool encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) ;
 	virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) ;
@@ -298,7 +298,7 @@ public:
 	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
 	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
-    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers);
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers, const std::string &info);
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
 
@@ -467,7 +467,7 @@ private:
 	void cleanUnusedKeys() ;
 	void slowIndicateConfigChanged() ;
 
-	virtual void timeStampKey(const RsGxsId& id) ;
+	virtual void timeStampKey(const RsGxsId& id,const std::string& reason) ;
 	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
 	std::string genRandomId(int len = 20);
@@ -507,10 +507,19 @@ private:
 
 private:
 
+    struct keyTSInfo
+    {
+        keyTSInfo() : TS(0) {}
+
+        time_t TS ;
+        std::map<std::string,time_t> usage_map ;
+    };
+	friend class IdCacheEntryCleaner;
+
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
 	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
-	std::map<RsGxsId,time_t> mKeysTS ;
+	std::map<RsGxsId,keyTSInfo> mKeysTS ;
 
 	// keep a list of regular contacts. This is useful to sort IDs, and allow some services to priviledged ids only.
 	std::set<RsGxsId> mContacts;

@@ -36,17 +36,28 @@ public:
         
 	// This is the interface file for the reputation system
 	//
-	enum Opinion    { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
-    	enum Assessment { ASSESSMENT_BAD = 0, ASSESSMENT_OK = 1 } ;
+	enum Opinion         { OPINION_NEGATIVE = 0, OPINION_NEUTRAL = 1, OPINION_POSITIVE = 2 } ;
+
+	enum ReputationLevel {  REPUTATION_LOCALLY_NEGATIVE  = 0x00, // local opinion is positive
+		                    REPUTATION_REMOTELY_NEGATIVE = 0x01, // local opinion is neutral and friends are positive in average
+		                    REPUTATION_NEUTRAL           = 0x02, // no reputation information ;
+		                    REPUTATION_REMOTELY_POSITIVE = 0x03, // local opinion is neutral and friends are negative in average
+		                    REPUTATION_LOCALLY_POSITIVE  = 0x04, // local opinion is negative
+		                    REPUTATION_UNKNOWN           = 0x05  // missing info
+						 };
 
 	struct ReputationInfo
 	{
-        	ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL), mOverallReputationScore(REPUTATION_THRESHOLD_DEFAULT), mFriendAverage(REPUTATION_THRESHOLD_DEFAULT),mAssessment(ASSESSMENT_OK){}
+		ReputationInfo() : mOwnOpinion(OPINION_NEUTRAL), mFriendAverageScore(REPUTATION_THRESHOLD_DEFAULT),mOverallReputationLevel(REPUTATION_NEUTRAL){}
             
 		RsReputations::Opinion mOwnOpinion ;
-		float mOverallReputationScore ;
-		float mFriendAverage ;
-     		RsReputations::Assessment mAssessment;	// this should help clients in taking decisions
+
+		uint32_t mFriendsPositiveVotes ;
+		uint32_t mFriendsNegativeVotes ;
+
+		float mFriendAverageScore ;
+
+		RsReputations::ReputationLevel mOverallReputationLevel;	// this should help clients in taking decisions
 	};
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
@@ -54,16 +65,16 @@ public:
 
     // parameters
 
-    // virtual void setNodeAutoBanThreshold(uint32_t n) =0;
-    // virtual uint32_t nodeAutoBanThreshold() =0;
-
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) =0;
     virtual bool nodeAutoPositiveOpinionForContacts() =0;
-    virtual float nodeAutoBanIdentitiesLimit() =0;
-    virtual void setNodeAutoBanIdentitiesLimit(float f) =0;
 
-        // This one is a proxy designed to allow fast checking of a GXS id.
-        // it basically returns true if assessment is not ASSESSMENT_OK
+	virtual uint32_t thresholdForRemotelyNegativeReputation()=0;
+	virtual uint32_t thresholdForRemotelyPositiveReputation()=0;
+	virtual void setThresholdForRemotelyNegativeReputation(uint32_t thresh)=0;
+	virtual void setThresholdForRemotelyPositiveReputation(uint32_t thresh)=0;
+
+	// This one is a proxy designed to allow fast checking of a GXS id.
+	// it basically returns true if assessment is not ASSESSMENT_OK
         
     virtual bool isIdentityBanned(const RsGxsId& id) =0;
 

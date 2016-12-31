@@ -86,14 +86,14 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   CREATE_FAIL(0),
   CREATE_SUCCESS(1),
   CREATE_FAIL_TRY_LATER(2),
-  SIGN_MAX_ATTEMPTS(5),
+  SIGN_MAX_WAITING_TIME(60),
   SIGN_FAIL(0),
   SIGN_SUCCESS(1),
   SIGN_FAIL_TRY_LATER(2),
   VALIDATE_FAIL(0),
   VALIDATE_SUCCESS(1),
   VALIDATE_FAIL_TRY_LATER(2),
-  VALIDATE_MAX_ATTEMPTS(5)
+  VALIDATE_MAX_WAITING_TIME(60)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -472,8 +472,8 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len, authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
-                    	mGixs->timeStampKey(grpMeta.mAuthorId) ;
-			signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
+					mGixs->timeStampKey(grpMeta.mAuthorId,"Creation of group author signature for GrpId" + grpMeta.mGroupId.toStdString()) ;
+					signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
                 }
                 else
                 	id_ret = SIGN_FAIL;
@@ -640,7 +640,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 		    if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, authorKey, sign))
 		    {
 			    id_ret = SIGN_SUCCESS;
-			    mGixs->timeStampKey(msgMeta.mAuthorId) ;
+			    mGixs->timeStampKey(msgMeta.mAuthorId,"Creating author signature in group " + msgMeta.mGroupId.toStdString() + ", msg " + msgMeta.mMsgId.toStdString()) ;
 			    signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
 		    }
 		    else
@@ -857,7 +857,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 		    {
 			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
 			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-			    mGixs->timeStampKey(metaData.mAuthorId) ;
+			    mGixs->timeStampKey(metaData.mAuthorId,"Validation of author signature, service: " + rsServiceControl->getServiceName(serviceFullType()) + ". Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString()) ;
 		    }
 		    else
 		    {
@@ -882,20 +882,13 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 			else 
 			{
 
-				// now check reputation of the message author
-				float reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
-                
-                			if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
-                			else if( (signFlag & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG) && !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM;
-                            	else
-				    reputation_threshold = RsReputations::REPUTATION_THRESHOLD_DEFAULT;
-                            
-				if(details.mReputation.mOverallReputationScore < reputation_threshold)
+				// now check reputation of the message author. The reputation will need to be at least as high as this value for the msg to validate.
+                // At validation step, we accept all messages, except the ones signed by locally rejected identities.
+
+				if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 				{
 #ifdef GEN_EXCH_DEBUG	
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationScore <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationLevel <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
 #endif
 					idValidate = false ;
 				}
@@ -905,13 +898,13 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 #endif
 			}
 
-		}
+				}
 	    }
             else
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
-                mGixs->requestKey(metaData.mAuthorId, peers);
+                mGixs->requestKey(metaData.mAuthorId, peers,"Validation of author signature, service: " + rsServiceControl->getServiceName(serviceFullType()) + ". Grp="+metaData.mGroupId.toStdString()+", msg="+metaData.mMsgId.toStdString());
                 
 #ifdef GEN_EXCH_DEBUG
                 std::cerr << ", Key missing. Retry later." << std::endl;
@@ -988,7 +981,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #ifdef GEN_EXCH_DEBUG
 				    std::cerr << "  key ID validation result: " << idValidate << std::endl;
 #endif
-				    mGixs->timeStampKey(metaData.mAuthorId) ;
+				    mGixs->timeStampKey(metaData.mAuthorId,"Group author signature validation. GrpId=" + metaData.mGroupId.toStdString()) ;
 			    }
 			    else
 			    {
@@ -1006,7 +999,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #endif
 			    std::list<RsPeerId> peers;
 			    peers.push_back(grp->PeerId());
-			    mGixs->requestKey(metaData.mAuthorId, peers);
+			    mGixs->requestKey(metaData.mAuthorId, peers,"Group author signature validation. GrpId=" + metaData.mGroupId.toStdString());
 			    return VALIDATE_FAIL_TRY_LATER;
 		    }
 	    }
@@ -1485,7 +1478,7 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
 		std::cerr << std::endl;
 #endif
 
-    		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
+    		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId,time(NULL));
     		mReceivedGrps.push_back(gpsi);
     	}
     	else
@@ -1623,6 +1616,10 @@ uint32_t RsGenExchange::getDefaultSyncPeriod()
     }
 }
 
+RsReputations::ReputationLevel RsGenExchange::minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_sign_flags)
+{
+	return RsNetworkExchangeService::minReputationForForwardingMessages(group_sign_flags,identity_sign_flags);
+}
 uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
@@ -1926,7 +1923,9 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
 void RsGenExchange::publishMsgs()
 {
 
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
+
+	time_t now = time(NULL);
 
 	// stick back msgs pending signature
 	typedef std::map<uint32_t, GxsPendingItem<RsGxsMsgItem*, uint32_t> > PendSignMap;
@@ -1995,21 +1994,19 @@ void RsGenExchange::publishMsgs()
 				// sign attempt
 				if(pit == mMsgPendingSign.end())
 				{
-					GxsPendingItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token);
+					GxsPendingItem<RsGxsMsgItem*, uint32_t> gsi(msgItem, token,time(NULL));
 					mMsgPendingSign.insert(std::make_pair(token, gsi));
 				}
 				else
 				{
 					// remove from attempts queue if over sign
 					// attempts limit
-					if(pit->second.mAttempts == SIGN_MAX_ATTEMPTS)
+					if(pit->second.mFirstTryTS + SIGN_MAX_WAITING_TIME < now)
 					{
+						std::cerr << "Pending signature grp=" << pit->second.mItem->meta.mGroupId << ", msg=" << pit->second.mItem->meta.mMsgId << ", has exceeded validation time limit. The author's key can probably not be obtained. This is unexpected." << std::endl;
+
 						mMsgPendingSign.erase(token);
 						tryLater = false;
-					}
-					else
-					{
-						++pit->second.mAttempts;
 					}
 				}
 
@@ -2656,28 +2653,22 @@ void RsGenExchange::processRecvdMessages()
     {
 	    RS_STACK_MUTEX(mGenMtx) ;
 
+        time_t now = time(NULL);
+
 #ifdef GEN_EXCH_DEBUG
 	    if(!mMsgPendingValidate.empty())
 		    std::cerr << "processing received messages" << std::endl;
 #endif
 	    NxsMsgPendingVect::iterator pend_it = mMsgPendingValidate.begin();
 
-#ifdef GEN_EXCH_DEBUG
-	    if(!mMsgPendingValidate.empty())
-		    std::cerr << "  pending validation" << std::endl;
-#endif
 	    for(; pend_it != mMsgPendingValidate.end();)
 	    {
 		    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair>& gpsi = *pend_it;
 
-#ifdef GEN_EXCH_DEBUG
-		    std::cerr << "    grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", attempts=" << gpsi.mAttempts ;
-#endif
-		    if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+		    if(gpsi.mFirstTryTS + VALIDATE_MAX_WAITING_TIME < now)
 		    {
-#ifdef GEN_EXCH_DEBUG
-			    std::cerr << " = max! deleting." << std::endl;
-#endif
+				std::cerr << "Pending validation grp=" << gpsi.mId.first << ", msg=" << gpsi.mId.second << ", has exceeded validation time limit. The author's key can probably not be obtained. This is unexpected." << std::endl;
+
 			    delete gpsi.mItem;
 			    pend_it = mMsgPendingValidate.erase(pend_it);
 		    }
@@ -2839,16 +2830,12 @@ void RsGenExchange::processRecvdMessages()
 
 			    // first check you haven't made too many attempts
 
-			    NxsMsgPendingVect::iterator vit = std::find(
-			                            mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
+			    NxsMsgPendingVect::iterator vit = std::find(mMsgPendingValidate.begin(), mMsgPendingValidate.end(), id);
 
 			    if(vit == mMsgPendingValidate.end())
 			    {
-				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id);
+				    GxsPendingItem<RsNxsMsg*, RsGxsGrpMsgIdPair> item(msg, id,time(NULL));
 				    mMsgPendingValidate.push_back(item);
-			    }else
-			    {
-				    vit->mAttempts++;
 			    }
 		    }
 	    }
@@ -2981,18 +2968,16 @@ void RsGenExchange::processRecvdGroups()
 				std::cerr << "  failed to validate incoming grp, trying again. grpId: " << grp->grpId << std::endl;
 #endif
 
-        		if(gpsi.mAttempts == VALIDATE_MAX_ATTEMPTS)
+        		if(gpsi.mFirstTryTS + VALIDATE_MAX_WAITING_TIME < time(NULL))
         		{
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "  max attempts " << VALIDATE_MAX_ATTEMPTS << " reached. Will delete group " << grp->grpId << std::endl;
+				std::cerr << "  validation time got group " << grp->grpId << " exceeded maximum. Will delete group " << std::endl;
 #endif
         			delete grp;
         			erase = true;
         		}
         		else
-        		{
         			erase = false;
-        		}
         	}
         }
         else
@@ -3147,7 +3132,7 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	// also check this is the latest published group
 	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
 
-    mGixs->timeStampKey(newGrp.metaData->mAuthorId) ;
+    mGixs->timeStampKey(newGrp.metaData->mAuthorId,"Validation of signature for updated grp " + oldGrpMeta.mGroupId.toStdString()) ;
     return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }
 

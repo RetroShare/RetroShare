@@ -139,7 +139,7 @@ bool RsGxsIntegrityCheck::check()
     GxsMsgReq msgIds;
     GxsMsgReq grps;
 
-    std::set<RsGxsId> used_gxs_ids ;
+    std::map<RsGxsId,RsGxsGroupId> used_gxs_ids ;
     std::set<RsGxsGroupId> subscribed_groups ;
 
     // compute hash and compare to stored value, if it fails then simply add it
@@ -171,8 +171,8 @@ bool RsGxsIntegrityCheck::check()
 					    GXSUTIL_DEBUG() << "TimeStamping group authors' key ID " << grp->metaData->mAuthorId << " in group ID " << grp->grpId << std::endl;
 #endif
 
-					if(rsIdentity!=NULL && !rsIdentity->isBanned(grp->metaData->mAuthorId))
-						used_gxs_ids.insert(grp->metaData->mAuthorId) ;
+					if(rsIdentity!=NULL && rsIdentity->overallReputationLevel(grp->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+						used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId,grp->grpId)) ;
 				    }
 			    }
 		    }
@@ -269,8 +269,8 @@ bool RsGxsIntegrityCheck::check()
 #ifdef DEBUG_GXSUTIL
 			    GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
-			    if(rsIdentity!=NULL && !rsIdentity->isBanned(msg->metaData->mAuthorId))
-				    used_gxs_ids.insert(msg->metaData->mAuthorId) ;
+			    if(rsIdentity!=NULL && rsIdentity->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,msg->metaData->mGroupId)) ;
 		    }
 
 		    delete msg;
@@ -297,9 +297,9 @@ bool RsGxsIntegrityCheck::check()
     std::list<RsPeerId> connected_friends ;
     rsPeers->getOnlineList(connected_friends) ;
 
-    std::vector<RsGxsId> gxs_ids ;
+    std::vector<std::pair<RsGxsId,RsGxsGroupId> > gxs_ids ;
 
-    for(std::set<RsGxsId>::const_iterator it(used_gxs_ids.begin());it!=used_gxs_ids.end();++it)
+    for(std::map<RsGxsId,RsGxsGroupId>::const_iterator it(used_gxs_ids.begin());it!=used_gxs_ids.end();++it)
     {
 	    gxs_ids.push_back(*it) ;
 #ifdef DEBUG_GXSUTIL
@@ -321,9 +321,9 @@ bool RsGxsIntegrityCheck::check()
 	    GXSUTIL_DEBUG() << "    requesting ID " << gxs_ids[n] ;
 #endif
 
-	    if(!mGixs->haveKey(gxs_ids[n]))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
+	    if(!mGixs->haveKey(gxs_ids[n].first))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
 	    { 
-		    mGixs->requestKey(gxs_ids[n],connected_friends);
+		    mGixs->requestKey(gxs_ids[n].first,connected_friends,"Author in service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\" (group ID " + gxs_ids[n].second.toStdString() + ")" ) ;
 
 		    ++nb_requested_not_in_cache ;
 #ifdef DEBUG_GXSUTIL
@@ -335,12 +335,8 @@ bool RsGxsIntegrityCheck::check()
 #ifdef DEBUG_GXSUTIL
 		    GXSUTIL_DEBUG() << "  ... already in cache" << std::endl;
 #endif
-
-		    // Note: we could time_stamp even in the case where the id is not cached. Anyway, it's not really a problem here, since IDs have a high chance of
-		    // behing eventually stamped.
-
-		    mGixs->timeStampKey(gxs_ids[n]) ;
 	    }
+		mGixs->timeStampKey(gxs_ids[n].first,"Author in service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\" (group ID " + gxs_ids[n].second.toStdString() + ")");
 
 	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;
 	    gxs_ids.pop_back() ;

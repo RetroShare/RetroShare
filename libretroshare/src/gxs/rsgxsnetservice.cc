@@ -1954,8 +1954,6 @@ void RsGxsNetService::updateServerSyncTS()
         
 	for(std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator mit = gxsMap.begin();mit != gxsMap.end(); ++mit)
 	{
-		//const RsGxsGroupId& grpId = mit->first;
-
         	// Check if the group is subscribed and restricted to a circle. If the circle has changed, update the
         	// global TS to reflect that change to clients who may be able to see/subscribe to that particular group.
         
@@ -2810,16 +2808,13 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         if(reqListSize < (int)MAX_REQLIST_SIZE && msgIdSet.find(msgId) == msgIdSet.end())
         {
 
-            // if reputation is in reputations cache then proceed
-            // or if there isn't an author (note as author requirement is
-            // enforced at service level, if no author is needed then reputation
-            // filtering is optional)
             bool noAuthor = syncItem->authorId.isNull();
 
 #ifdef NXS_NET_DEBUG_1
             GXSNETDEBUG_PG(item->PeerId(),grpId) << ", reqlist size=" << reqListSize << ", message not present." ;
 #endif
             // grp meta must be present if author present
+            
             if(!noAuthor && grpMeta == NULL)
             {
 #ifdef NXS_NET_DEBUG_1
@@ -2828,7 +2823,13 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 continue;
             }
             
-            if(rsIdentity && rsIdentity->isBanned(syncItem->authorId))
+            // The algorithm on request of message is:
+            //
+            //  - always re-check for author ban level
+            //  - if author is locally banned, do not download.
+            //  - if author is not locally banned, download, whatever friends' opinion might be.
+            
+        	if(rsIdentity && rsIdentity->overallReputationLevel(syncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -2844,7 +2845,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 continue ;
             }
                 
-            
+#ifdef TO_BE_REMOVED
             if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
             {
                 GixsReputation rep;
@@ -2859,17 +2860,20 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 // at genexchange side of things
                 if(rep.score >= (int)grpMeta->mReputationCutOff || noAuthor)
                 {
-#ifdef NXS_NET_DEBUG_1
-                    GXSNETDEBUG_PG(item->PeerId(),grpId) << ", passed! Adding message to req list." << std::endl;
 #endif
-                    RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
-                    msgItem->grpId = grpId;
-                    msgItem->msgId = msgId;
-                    msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
-                    msgItem->transactionNumber = transN;
-                    msgItem->PeerId(peerFrom);
-                    reqList.push_back(msgItem);
-                    ++reqListSize ;
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(item->PeerId(),grpId) << ", passed! Adding message to req list." << std::endl;
+#endif
+			RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
+			msgItem->grpId = grpId;
+			msgItem->msgId = msgId;
+			msgItem->flag = RsNxsSyncMsgItem::FLAG_REQUEST;
+			msgItem->transactionNumber = transN;
+			msgItem->PeerId(peerFrom);
+			reqList.push_back(msgItem);
+			++reqListSize ;
+            
+#ifdef TO_BE_REMOVED
                 }
 #ifdef NXS_NET_DEBUG_1
                 else
@@ -2889,6 +2893,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 entry.mMsgId = syncItem->msgId;
                 toVet.push_back(entry);
             }
+#endif
         }
 #ifdef NXS_NET_DEBUG_1
         else
@@ -3061,13 +3066,14 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
         // FIXTESTS global variable rsReputations not available in unittests!
     
-    if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->isBanned(grpSyncItem->authorId))
-	{
+#warning Update the code below to correctly send/recv dependign on reputation
+		if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		{
 #ifdef NXS_NET_DEBUG_0
-                GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
 #endif
-    		continue ;            
-	}
+			continue ;
+		}
         
         if( (mGrpAutoSync && !haveItem) || latestVersion)
         {
@@ -4202,59 +4208,83 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
+    time_t now = time(NULL) ;
+
+    uint32_t max_send_delay = mServerGrpConfigMap[item->grpId].msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
+
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
 	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
-            if(item->createdSinceTS < (*vit)->mPublishTs)
+		{
+			RsGxsMsgMetaData* m = *vit;
+
+            RsIdentityDetails details ;
+
+            if(!rsIdentity->getIdDetails(m->mAuthorId,details))
             {
-                RsGxsMsgMetaData* m = *vit;
-
-                RsNxsSyncMsgItem* mItem = new RsNxsSyncMsgItem(mServType);
-                mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
-                mItem->grpId = m->mGroupId;
-                mItem->msgId = m->mMsgId;
-                mItem->authorId = m->mAuthorId;
-                mItem->PeerId(peer);
-                mItem->transactionNumber = transN;
-
-                if(!should_encrypt_to_this_circle_id.isNull())
-                {
-#ifdef NXS_NET_DEBUG_7
-                    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << ". Transaction will be encrypted for group " << should_encrypt_to_this_circle_id << std::endl;
-#endif
-                    RsNxsItem *encrypted_item = NULL ;
-                    uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
-
-                    if(encryptSingleNxsItem(mItem, grpMeta->mCircleId,m->mGroupId, encrypted_item,status))
-                    {
-                        itemL.push_back(encrypted_item) ;
-                        delete mItem ;
-                    }
-                    else
-                    {
-                        // Something's not ready (probably the circle content. We could put on a vetting list, but actually the client will re-ask the list asap.
-
-                        std::cerr << "  (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << ". Dropping the whole list." << std::endl;
-
-                        for(std::list<RsNxsItem*>::const_iterator it(itemL.begin());it!=itemL.end();++it)
-                            delete *it ;
-
-                        itemL.clear() ;
-                        break ;
-                    }
-                }
-                else
-                {
-#ifdef NXS_NET_DEBUG_7
-                    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << " in clear." << std::endl;
-#endif
-                    itemL.push_back(mItem);
-                }
+                std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author is not accessible (unknown/not cached)" << std::endl;
+                continue ;
             }
+
+            if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+			{
+//#ifdef NXS_NET_DEBUG_0
+				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+//#endif
+				continue ;
+			}
+			// Check publish TS
+
+			if(item->createdSinceTS > (*vit)->mPublishTs || (*vit)->mPublishTs + max_send_delay < now)
+			{
 #ifdef NXS_NET_DEBUG_0
-            else
-                GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
+				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
 #endif
+				continue ;
+			}
+
+			RsNxsSyncMsgItem* mItem = new RsNxsSyncMsgItem(mServType);
+			mItem->flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
+			mItem->grpId = m->mGroupId;
+			mItem->msgId = m->mMsgId;
+			mItem->authorId = m->mAuthorId;
+			mItem->PeerId(peer);
+			mItem->transactionNumber = transN;
+
+			if(!should_encrypt_to_this_circle_id.isNull())
+			{
+#ifdef NXS_NET_DEBUG_7
+				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << ". Transaction will be encrypted for group " << should_encrypt_to_this_circle_id << std::endl;
+#endif
+				RsNxsItem *encrypted_item = NULL ;
+				uint32_t status = RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN ;
+
+				if(encryptSingleNxsItem(mItem, grpMeta->mCircleId,m->mGroupId, encrypted_item,status))
+				{
+					itemL.push_back(encrypted_item) ;
+					delete mItem ;
+				}
+				else
+				{
+					// Something's not ready (probably the circle content. We could put on a vetting list, but actually the client will re-ask the list asap.
+
+					std::cerr << "  (EE) Cannot encrypt msg meta data. MsgId=" << mItem->msgId << ", grpId=" << mItem->grpId << ", circleId=" << should_encrypt_to_this_circle_id << ". Dropping the whole list." << std::endl;
+
+					for(std::list<RsNxsItem*>::const_iterator it(itemL.begin());it!=itemL.end();++it)
+						delete *it ;
+
+					itemL.clear() ;
+					break ;
+				}
+			}
+			else
+			{
+#ifdef NXS_NET_DEBUG_7
+				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "    sending info item for msg id " << mItem->msgId << " in clear." << std::endl;
+#endif
+				itemL.push_back(mItem);
+			}
+		}
     }
 #ifdef NXS_NET_DEBUG_0
     else

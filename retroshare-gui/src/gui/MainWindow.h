@@ -51,6 +51,7 @@ class GxsChannelDialog ;
 class GxsForumsDialog ;
 class PostedDialog;
 class FriendsDialog;
+class IdDialog;
 class ChatLobbyWidget;
 class ChatDialog;
 class NetworkDialog;
@@ -103,6 +104,7 @@ public:
         Links              = 10,  /** Links page. */
 #endif
         Posted             = 11,  /** Posted links */
+        People             = 12   /** People page. */
     };
 
     /** Create main window */
@@ -137,6 +139,7 @@ public:
 	 NewsFeed          *newsFeed;
 	 FriendsDialog     *friendsDialog;
 	 TransfersDialog   *transfersDialog;
+  	 IdDialog          *idDialog ;
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
 	 SharedFilesDialog *sharedfilesDialog;
