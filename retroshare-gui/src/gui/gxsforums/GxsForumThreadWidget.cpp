@@ -1072,18 +1072,18 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
-    RsIdentityDetails iddetails ;
+	RsIdentityDetails iddetails;
 
-    RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL ;
-    bool redacted = false ;
+	RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL;
+	bool redacted = false;
 
-    if(rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails))
-    {
-		reputation_level = iddetails.mReputation.mOverallReputationLevel ;
-		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
-    }
-    else
-        reputation_level = RsReputations::REPUTATION_UNKNOWN ;
+	if( rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails) )
+	{
+		reputation_level = iddetails.mReputation.mOverallReputationLevel;
+		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+	}
+	else
+		reputation_level = RsReputations::REPUTATION_UNKNOWN;
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());
