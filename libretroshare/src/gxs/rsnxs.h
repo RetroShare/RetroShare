@@ -181,11 +181,16 @@ public:
 		// If anti-spam is enabled, do not send messages from authors with bad reputation. The policy is to only forward messages if the reputation of the author is at least
 		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative, O=neutral) :
 		//
-		//                  | Anonymous          Signed          Signed+Known
-		//       -----------+-----------------------------------------------------
-		//       NONE       |     O                 O                  O
-		//       GPG_AUTHED |    RP                 O                  O
-		//       GPG_KNOWN  |    RP                RP                  O
+		//
+		//                            +----------------------------------------------------+
+		//                            |                Identity flags                      |
+		//                            +----------------------------------------------------+
+		//                            | Anonymous          Signed          Signed+Known    |
+		//  +-------------+-----------+----------------------------------------------------+
+		//  |             |NONE       |     O                 O                  O         |
+		//  | Forum flags |GPG_AUTHED |    RP                 O                  O         |
+		//  |             |GPG_KNOWN  |    RP                RP                  O         |
+		//  +-------------+-----------+----------------------------------------------------+
 		//
 
 		if(identity_flags & RS_IDENTITY_FLAGS_PGP_KNOWN)
