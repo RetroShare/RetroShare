@@ -758,7 +758,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	}
 }
 
-int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uint32_t& signFlag, RsTlvSecurityKeySet& grpKeySet)
+int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uint32_t& /*signFlag*/, RsTlvSecurityKeySet& grpKeySet)
 {
     bool needIdentitySign = false;
     bool needPublishSign = false;
