@@ -4235,7 +4235,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 			}
 			// Check publish TS
 
-			if(item->createdSinceTS > (*vit)->mPublishTs || (*vit)->mPublishTs + max_send_delay < now)
+			if(item->createdSinceTS > (*vit)->mPublishTs || ((max_send_delay > 0) && (*vit)->mPublishTs + max_send_delay < now))
 			{
 #ifdef NXS_NET_DEBUG_0
 				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
