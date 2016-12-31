@@ -1347,13 +1347,13 @@ void Reputation::updateReputation()
 
     for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
     {
-    	if(it->second == RsReputations::OPINION_NEGATIVE)
+        if( it->second == RsReputations::OPINION_NEGATIVE)
             ++mFriendsNegative ;
 
-    	if(it->second == RsReputations::OPINION_POSITIVE)
+        if( it->second == RsReputations::OPINION_POSITIVE)
             ++mFriendsPositive ;
 
-	    friend_total += it->second - 1;
+        friend_total += it->second - 1 ;
     }
 
     if(mOpinions.empty())	// includes the case of no friends!

@@ -996,18 +996,17 @@ QString nickname ;
 
 QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index,uint32_t min_reputation)
 {
-    if(icon_index >= min_reputation)
-        return QIcon(REPUTATION_VOID);
+	if( icon_index >= min_reputation )                  return QIcon(REPUTATION_VOID) ;
 
 	switch(icon_index)
 	{
-	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON) ; break ;
-	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON) ; break ;
-	case RsReputations::REPUTATION_REMOTELY_POSITIVE: return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
-	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
-	case RsReputations::REPUTATION_NEUTRAL: return QIcon(REPUTATION_NEUTRAL_ICON) ; break ;
-	default:
-        std::cerr << "Asked for unidentified icon index " << icon_index << std::endl;
+		case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON)  ; break ;
+		case RsReputations::REPUTATION_LOCALLY_POSITIVE:  return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON)  ; break ;
+		case RsReputations::REPUTATION_REMOTELY_POSITIVE: return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
+		case RsReputations::REPUTATION_REMOTELY_NEGATIVE: return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
+		case RsReputations::REPUTATION_NEUTRAL:           return QIcon(REPUTATION_NEUTRAL_ICON)           ; break ;
+		default:
+			std::cerr << "Asked for unidentified icon index " << icon_index << std::endl;
 		return QIcon(); // dont draw anything
 	}
 }
