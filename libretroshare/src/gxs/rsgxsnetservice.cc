@@ -2031,7 +2031,7 @@ void RsGxsNetService::updateServerSyncTS()
 		if(mGrpServerUpdate.grpUpdateTS < grpMeta->mRecvTS)
 		{
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpId << ". This is probably because an update has been received." << std::endl;
+			GXSNETDEBUG__G(grpMeta->mGroupId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpMeta->mGroupId << ". This is probably because an update has been received." << std::endl;
 #endif
 			mGrpServerUpdate.grpUpdateTS = grpMeta->mRecvTS;
 			change = true;
@@ -4750,7 +4750,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 #ifdef NXS_NET_DEBUG_3
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  PeerId : " << item->PeerId() << std::endl;
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  GrpId: " << item->grpId << std::endl;
-	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->key.keyId << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->private_key.keyId << std::endl;
 #endif
 
 	// Get the meta data for this group Id
@@ -4778,7 +4778,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	bool publi = (item->private_key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->private_key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
 #ifdef NXS_NET_DEBUG_3
-	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->private_key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->private_key.endTS << std::endl;
 #endif
 
 	if(!(!admin && publi))
