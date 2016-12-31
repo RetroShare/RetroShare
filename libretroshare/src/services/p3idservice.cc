@@ -128,8 +128,9 @@ RsIdentity *rsIdentity = NULL;
 
 /* delays */
 
-#define CACHETEST_PERIOD	        60
+#define CACHETEST_PERIOD	            60
 #define DELAY_BETWEEN_CONFIG_UPDATES   300
+#define GXS_MAX_KEY_TS_USAGE_MAP_SIZE    5
 
 #define OWNID_RELOAD_DELAY		10
 
@@ -255,23 +256,47 @@ void p3IdService::slowIndicateConfigChanged()
 }
 time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
 {
-    std::map<RsGxsId,time_t>::const_iterator it = mKeysTS.find(gxs_id) ;
+    std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(gxs_id) ;
 
     if(it == mKeysTS.end())
         return 0 ;
     else
-        return it->second ;
+        return it->second.TS ;
 }
-void p3IdService::timeStampKey(const RsGxsId& gxs_id)
+void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
 {
     if(rsReputations->isIdentityBanned(gxs_id) )
     {
         std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
         return ;
     }
+    std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
 
     RS_STACK_MUTEX(mIdMtx) ;
-    mKeysTS[gxs_id] = time(NULL) ;
+
+    time_t now = time(NULL) ;
+
+    keyTSInfo& info(mKeysTS[gxs_id]) ;
+
+    info.TS = now ;
+    info.usage_map[reason] = now;
+
+    while(info.usage_map.size() > GXS_MAX_KEY_TS_USAGE_MAP_SIZE)
+    {
+        // This is very costly, but normally the outerloop should never be rolled more than once.
+
+        std::map<std::string,time_t>::iterator best_it ;
+        time_t best_time = now+1;
+
+        for(std::map<std::string,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+            if(it->second < best_time)
+            {
+                best_time = it->second ;
+                best_it = it;
+            }
+
+        info.usage_map.erase(best_it) ;
+    }
 
     slowIndicateConfigChanged() ;
 }
@@ -286,7 +311,7 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
         if( (lii = dynamic_cast<RsGxsIdLocalInfoItem*>(*it)) != NULL)
         {
             for(std::map<RsGxsId,time_t>::const_iterator it2 = lii->mTimeStamps.begin();it2!=lii->mTimeStamps.end();++it2)
-                mKeysTS.insert(*it2) ;
+                mKeysTS[it2->first].TS = it2->second;
 
             mContacts = lii->mContacts ;
         }
@@ -307,7 +332,10 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
     RS_STACK_MUTEX(mIdMtx) ;
     cleanup = true ;
     RsGxsIdLocalInfoItem *item = new RsGxsIdLocalInfoItem ;
-    item->mTimeStamps = mKeysTS ;
+
+    for(std::map<RsGxsId,keyTSInfo>::const_iterator it(mKeysTS.begin());it!=mKeysTS.end();++it)
+		item->mTimeStamps[it->first] = it->second.TS;
+
     item->mContacts = mContacts ;
 
     items.push_back(item) ;
@@ -317,7 +345,7 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 class IdCacheEntryCleaner
 {
 public:
-    IdCacheEntryCleaner(const std::map<RsGxsId,time_t>& last_usage_TSs) : mLastUsageTS(last_usage_TSs) {}
+    IdCacheEntryCleaner(const std::map<RsGxsId,p3IdService::keyTSInfo>& last_usage_TSs) : mLastUsageTS(last_usage_TSs) {}
 
     bool processEntry(RsGxsIdCache& entry)
     {
@@ -338,11 +366,11 @@ public:
             return true ;
         }
 
-        std::map<RsGxsId,time_t>::const_iterator it = mLastUsageTS.find(gxs_id) ;
+        std::map<RsGxsId,p3IdService::keyTSInfo>::const_iterator it = mLastUsageTS.find(gxs_id) ;
 
         bool no_ts = (it == mLastUsageTS.end()) ;
 
-        time_t last_usage_ts = no_ts?0:(it->second);
+        time_t last_usage_ts = no_ts?0:(it->second.TS);
         time_t max_keep_time ;
 
         if(no_ts)
@@ -370,7 +398,7 @@ public:
     }
 
     std::list<RsGxsId> ids_to_delete ;
-    const std::map<RsGxsId,time_t>& mLastUsageTS;
+    const std::map<RsGxsId,p3IdService::keyTSInfo>& mLastUsageTS;
 };
 
 void p3IdService::cleanUnusedKeys()
@@ -495,7 +523,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     // also time_stamp the key that this group represents
 
-                    timeStampKey(RsGxsId(*git)) ;
+                    timeStampKey(RsGxsId(*git),"Group meta data changed") ;
 
                     ++git;
                 }
@@ -552,7 +580,16 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
                 rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
 
             details = data.details;
-            details.mLastUsageTS = locked_getLastUsageTS(id) ;
+
+			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
+
+			if(it == mKeysTS.end())
+				details.mLastUsageTS = 0 ;
+            else
+            {
+				details.mLastUsageTS = it->second.TS ;
+				details.mUseCases = it->second.usage_map ;
+            }
 
             // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
             if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)
@@ -570,15 +607,12 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
     return false;
 }
 
-bool p3IdService::isBanned(const RsGxsId &id)
+RsReputations::ReputationLevel p3IdService::overallReputationLevel(const RsGxsId &id)
 {
     RsIdentityDetails det ;
     getIdDetails(id,det) ;
 
-#ifdef DEBUG_REPUTATION
-    std::cerr << "isIdentityBanned(): returning " << (det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
-#endif
-    return det.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD ;
+    return det.mReputation.mOverallReputationLevel ;
 }
 
 bool p3IdService::isOwnId(const RsGxsId& id)
@@ -752,7 +786,7 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const std::string& info)
 {
     if(id.isNull())
     {
@@ -773,12 +807,12 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         RsReputations::ReputationInfo info ;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
 
-        if(info.mAssessment == RsReputations::ASSESSMENT_BAD)
+        if(info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
         {
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
 
             {
-                RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+                RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
                 mIdsNotPresent.erase(id) ;
             }
             return true;
@@ -795,6 +829,10 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
 
             return true ;
         }
+    }
+    {
+		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
+		mKeysTS[id].usage_map["Requested to friends: "+info] = time(NULL) ;
     }
 
     return cache_request_load(id, peers);
@@ -892,10 +930,10 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id) ;
+    timeStampKey(own_gxs_id,"Own GXS id") ;
     return true ;
 }
-bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,uint32_t& signing_error)
+bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error)
 {
     // RsIdentityDetails details ;
     // getIdDetails(signature.keyId,details);
@@ -929,7 +967,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
     }
     signing_error = RS_GIXS_ERROR_NO_ERROR ;
 
-    timeStampKey(signature.keyId) ;
+    timeStampKey(signature.keyId,"Used in signature checking: "+info_string ) ;
     return true ;
 }
 bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
@@ -957,7 +995,7 @@ bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id) ;
+    timeStampKey(encryption_key_id,"Used to encrypt data") ;
 
     return true ;
 }
@@ -989,7 +1027,7 @@ bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(key_id) ;
+    timeStampKey(key_id,"Used to decrypt data") ;
 
     return true ;
 }
@@ -2399,7 +2437,8 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 
                     // This prevents automatic deletion to get rid of them.
                     // In other words, own ids are always used.
-                    mKeysTS[RsGxsId(item->meta.mGroupId)] = time(NULL) ;
+
+                    mKeysTS[RsGxsId(item->meta.mGroupId)].TS = time(NULL) ;
 				}
 				delete item ;
             }
@@ -2493,7 +2532,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers);
+					requestKey(*vit, nullpeers,"Cache test in p3IdService");
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -2691,7 +2730,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         std::cerr << std::endl;
         return SERVICE_CREATE_FAIL;
     }
-    mKeysTS[RsGxsId(item->meta.mGroupId)] = time(NULL) ;
+    mKeysTS[RsGxsId(item->meta.mGroupId)].TS = time(NULL) ;
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
 
@@ -2851,7 +2890,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
         {
             mOwnIds.push_back(gxsId);
-            mKeysTS[gxsId] = time(NULL) ;
+            mKeysTS[gxsId].TS = time(NULL) ;
         }
     }
 

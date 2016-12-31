@@ -62,6 +62,7 @@ public:
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+    void navigate(const RsGxsId& gxs_id) ; // shows the info about this particular ID
 protected:
 	virtual void updateDisplay(bool complete);
 

@@ -29,6 +29,7 @@
 #include <QVariant>
 #include <QIcon>
 #include <QString>
+#include <QStyledItemDelegate>
 
 #include <retroshare/rsidentity.h>
 
@@ -45,16 +46,31 @@ enum GxsIdDetailsType
 
 typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &data);
 
+// This class allows to draw the item in a reputation column using an appropriate size. The max_level_to_display parameter allows to replace
+// the icon by an empty icon when needed. This allows to keep the focus on the critical icons only.
+
+class ReputationItemDelegate: public QStyledItemDelegate
+{
+public:
+    ReputationItemDelegate(RsReputations::ReputationLevel max_level_to_display) : mMaxLevelToDisplay(max_level_to_display) {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+    uint32_t mMaxLevelToDisplay ;
+};
+
+
 class GxsIdDetails : public QObject
 {
 	Q_OBJECT
 
 public:
-    static const int ICON_TYPE_AVATAR  = 0x0001 ;
-    static const int ICON_TYPE_PGP     = 0x0002 ;
-    static const int ICON_TYPE_RECOGN  = 0x0004 ;
-    static const int ICON_TYPE_ALL     = 0x0007 ;
-    static const int ICON_TYPE_REDACTED= 0x0008 ;
+    static const int ICON_TYPE_AVATAR     = 0x0001 ;
+    static const int ICON_TYPE_PGP        = 0x0002 ;
+    static const int ICON_TYPE_RECOGN     = 0x0004 ;
+    static const int ICON_TYPE_REPUTATION = 0x0008 ;
+    static const int ICON_TYPE_ALL        = 0x000f ;
 
 	GxsIdDetails();
 	virtual ~GxsIdDetails();
@@ -67,7 +83,13 @@ public:
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
-    static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types=ICON_TYPE_ALL);
+
+    /*!
+     * \brief getIcons
+     * 			Returns the list of icons to display along with the ID name. The types of icons to show is a compound of the ICON_TYPE_* flags.
+     * 			If reputation is needed and exceeds the minimal reputation, an empty/void icon is showsn . This allow to only show reputation for IDs for which a problem exists.
+     */
+    static void getIcons(const RsIdentityDetails &details, QList<QIcon> &icons, uint32_t icon_types=ICON_TYPE_ALL, uint32_t minimal_required_reputation=0xff);
 
 	static QString getEmptyIdText();
 	static QString getLoadingText(const RsGxsId &id);
@@ -76,6 +98,7 @@ public:
 	static QString getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details);
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
+	static QIcon getReputationIcon(RsReputations::ReputationLevel icon_index, uint32_t min_reputation);
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 

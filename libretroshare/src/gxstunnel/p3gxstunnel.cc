@@ -937,7 +937,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
         std::cerr << "(SS) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
         return ;
     }
-    mGixs->timeStampKey(item->signature.keyId) ;
+    mGixs->timeStampKey(item->signature.keyId,"Used to validate GXS tunnel DH half-key.") ;
 
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "  Signature checks! Sender's ID = " << senders_id << std::endl;

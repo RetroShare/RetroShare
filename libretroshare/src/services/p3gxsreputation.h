@@ -69,10 +69,10 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
                                                                                             
 	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputation(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
 
 	void updateReputation();
 
@@ -80,12 +80,15 @@ public:
 	int32_t mOwnOpinion;
 	time_t  mOwnOpinionTs;
 
-    	float mFriendAverage ;
-	float mReputation;
-        
-    RsPgpId mOwnerNode;
+	float mFriendAverage ;
+    uint32_t mFriendsPositive ;		// number of positive vites from friends
+    uint32_t mFriendsNegative ;		// number of negative vites from friends
+
+	float mReputationScore;
+
+	RsPgpId mOwnerNode;
     
-    	uint32_t mIdentityFlags;
+	uint32_t mIdentityFlags;
 };
 
 
@@ -109,13 +112,13 @@ public:
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
 
-    //virtual void setNodeAutoBanThreshold(uint32_t n) ;
-    //virtual uint32_t nodeAutoBanThreshold() ;
-
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
-    virtual float nodeAutoBanIdentitiesLimit() ;
-    virtual void setNodeAutoBanIdentitiesLimit(float f) ;
+
+	uint32_t thresholdForRemotelyNegativeReputation();
+	uint32_t thresholdForRemotelyPositiveReputation();
+	void setThresholdForRemotelyNegativeReputation(uint32_t thresh);
+	void setThresholdForRemotelyPositiveReputation(uint32_t thresh);
 
     /***** overloaded from p3Service *****/
     virtual int   tick();
@@ -180,8 +183,10 @@ private:
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
     std::set<RsGxsId> mPerNodeBannedIdsProxy ;
-    //uint32_t mPgpAutoBanThreshold ;
     bool mBannedNodesProxyNeedsUpdate ;
+
+    uint32_t mMinVotesForRemotelyPositive ;
+    uint32_t mMinVotesForRemotelyNegative ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

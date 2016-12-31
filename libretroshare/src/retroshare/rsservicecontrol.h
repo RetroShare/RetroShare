@@ -108,6 +108,7 @@ class RsServiceControl
 virtual ~RsServiceControl() { return; }
 
 virtual bool getOwnServices(RsPeerServiceInfo &info) = 0;
+virtual std::string getServiceName(uint32_t service_id) = 0;
 
 virtual bool getServicesAllowed(const RsPeerId &peerId, RsPeerServiceInfo &info) = 0;
 virtual bool getServicesProvided(const RsPeerId &peerId, RsPeerServiceInfo &info) = 0;

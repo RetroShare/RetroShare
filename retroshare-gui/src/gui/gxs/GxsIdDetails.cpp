@@ -48,6 +48,13 @@
 #define IMAGE_DEV_PATCHER        ":/images/tags/dev-patcher.png"
 #define IMAGE_DEV_DEVELOPER      ":/images/tags/developer.png"
 
+#define REPUTATION_LOCALLY_POSITIVE_ICON      ":/icons/bullet_green_yellow_star_128.png"
+#define REPUTATION_REMOTELY_POSITIVE_ICON     ":/icons/bullet_green_128.png"
+#define REPUTATION_NEUTRAL_ICON               ":/icons/bullet_grey_128.png"
+#define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/yellow_biohazard64.png"
+#define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/red_biohazard64.png"
+#define REPUTATION_VOID                       ":/icons/void_128.png"
+
 #define TIMER_INTERVAL              500
 #define MAX_ATTEMPTS                10
 #define MAX_PROCESS_COUNT_PER_TIMER 50
@@ -59,6 +66,35 @@ const int kRecognTagType_Dev_Contributor 	= 2;
 const int kRecognTagType_Dev_Translator 	= 3;
 const int kRecognTagType_Dev_Patcher     	= 4;
 const int kRecognTagType_Dev_Developer	 	= 5;
+
+
+void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	Q_ASSERT(index.isValid());
+
+	QStyleOptionViewItemV4 opt = option;
+	initStyleOption(&opt, index);
+	// disable default icon
+	opt.icon = QIcon();
+	// draw default item
+	QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+	const QRect r = option.rect;
+
+	// get pixmap
+	unsigned int icon_index = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+
+	if(icon_index > mMaxLevelToDisplay)
+		return ;
+
+	QIcon icon = GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel(icon_index),0xff);
+
+	QPixmap pix = icon.pixmap(r.size());
+
+	// draw pixmap at center of item
+	const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+	painter->drawPixmap(r.topLeft() + p, pix);
+}
 
 /* The global object */
 GxsIdDetails *GxsIdDetails::mInstance = NULL ;
@@ -904,7 +940,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if(rsIdentity->isBanned(details.mId)) 
+	if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 	    return tr("[Banned]") ;
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -923,7 +959,7 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-	bool banned = rsIdentity->isBanned(details.mId) ;
+	bool banned = (details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
@@ -958,17 +994,38 @@ QString nickname ;
 	return comment;
 }
 
-void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types)
+QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index,uint32_t min_reputation)
+{
+    if(icon_index >= min_reputation)
+        return QIcon(REPUTATION_VOID);
+
+	switch(icon_index)
+	{
+	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON) ; break ;
+	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON) ; break ;
+	case RsReputations::REPUTATION_REMOTELY_POSITIVE: return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
+	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
+	case RsReputations::REPUTATION_NEUTRAL: return QIcon(REPUTATION_NEUTRAL_ICON) ; break ;
+	default:
+        std::cerr << "Asked for unidentified icon index " << icon_index << std::endl;
+		return QIcon(); // dont draw anything
+	}
+}
+
+void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icons,uint32_t icon_types,uint32_t minimal_required_reputation)
 {
     QPixmap pix ;
 
-    if(rsIdentity->isBanned(details.mId))
+    if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
         icons.clear() ;
         icons.push_back(QIcon(IMAGE_BANNED)) ;
         return ;
     }
-    
+
+	if(icon_types & ICON_TYPE_REPUTATION)
+        icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation)) ;
+
     if(icon_types & ICON_TYPE_AVATAR)
     {
         if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))

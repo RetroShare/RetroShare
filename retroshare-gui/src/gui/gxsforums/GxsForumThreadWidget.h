@@ -80,7 +80,8 @@ private slots:
 
 	void replyMessageData(const RsGxsForumMsg &msg);
 	void replyForumMessageData(const RsGxsForumMsg &msg);
-	
+	void showAuthorInPeople(const RsGxsForumMsg& msg);
+
 	void saveImage();
 
 
@@ -94,6 +95,7 @@ private slots:
 	void markMsgAsUnreadChildren();
 
 	void copyMessageLink();
+	void showInPeopleTab();
 
 	/* handle splitter */
 	void togglethreadview();
@@ -108,7 +110,7 @@ private slots:
 	void downloadAllFiles();
 
 	void changedViewBox();
-    	void flagpersonasbad();
+	void flagperson();
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
@@ -145,13 +147,15 @@ private:
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
 	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
-	void loadMessageData(const uint32_t &token);
 	void requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &msgId);
-	void loadMsgData_ReplyMessage(const uint32_t &token);
-	
+	void requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
+
+	void loadMessageData(const uint32_t &token);
+	void loadMsgData_ReplyMessage(const uint32_t &token);
 	void loadMsgData_ReplyForumMessage(const uint32_t &token);
-  void loadMsgData_BanAuthor(const uint32_t &token);
+	void loadMsgData_ShowAuthorInPeople(const uint32_t &token);
+	void loadMsgData_SetAuthorOpinion(const uint32_t &token, RsReputations::Opinion opinion);
 
 private:
 	RsGxsGroupId mLastForumID;
@@ -173,7 +177,10 @@ private:
 	uint32_t mTokenTypeMessageData;
 	uint32_t mTokenTypeReplyMessage;
 	uint32_t mTokenTypeReplyForumMessage;
-	uint32_t mTokenTypeBanAuthor;
+	uint32_t mTokenTypeShowAuthorInPeople;
+	uint32_t mTokenTypeNegativeAuthor;
+	uint32_t mTokenTypePositiveAuthor;
+	uint32_t mTokenTypeNeutralAuthor;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;

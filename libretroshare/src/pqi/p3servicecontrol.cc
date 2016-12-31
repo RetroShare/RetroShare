@@ -362,6 +362,20 @@ void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 	mUpdatedSet.clear();
 }
 
+std::string p3ServiceControl::getServiceName(uint32_t service_id)
+{
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+	std::map<uint32_t, RsServiceInfo>::const_iterator it = mOwnServices.find(service_id) ;
+
+    if(it == mOwnServices.end())
+    {
+        std::cerr << "(EE) Cannot find own service for ID = " << std::hex << service_id << std::dec << std::endl;
+        return std::string();
+    }
+
+    return it->second.mServiceName;
+}
 
 bool p3ServiceControl::getOwnServices(RsPeerServiceInfo &info)
 {

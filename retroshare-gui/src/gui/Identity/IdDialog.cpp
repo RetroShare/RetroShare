@@ -26,6 +26,8 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QStyledItemDelegate>
+#include <QPainter>
 
 #include "IdDialog.h"
 #include "ui_IdDialog.h"
@@ -127,6 +129,7 @@ class TreeWidgetItem : public QTreeWidgetItem {
                 }
   }
 };
+
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent) :
     RsGxsUpdateBroadcastPage(rsIdentity, parent),
@@ -142,12 +145,15 @@ IdDialog::IdDialog(QWidget *parent) :
     
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(0, tr("My own identities"));
+	ownItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);	// this is in order to prevent displaying a reputaiton icon next to these items.
 
 	allItem = new QTreeWidgetItem();
 	allItem->setText(0, tr("All"));
+	allItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	contactsItem = new QTreeWidgetItem();
 	contactsItem->setText(0, tr("My contacts"));
+	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	ui->treeWidget_membership->clear();
     
@@ -318,6 +324,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 7 * fontWidth);
 	
+    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
+
 	//QHeaderView_setSectionResizeMode(ui->idTreeWidget->header(), QHeaderView::ResizeToContents);
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
@@ -1392,7 +1400,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	bool isOwnId = (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 	RsIdentityDetails idd ;
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
-	bool isBanned = idd.mReputation.mAssessment == RsReputations::ASSESSMENT_BAD;
+
+	bool isBanned = idd.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE;
 	uint32_t item_flags = 0 ;
 
 	/* do filtering */
@@ -1462,7 +1471,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
-    item->setData(RSID_COL_VOTES,Qt::DisplayRole, QString::number(idd.mReputation.mOverallReputationScore - 1.0f,'f',3));
+    item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
 
     if(isOwnId)
     {
@@ -1836,10 +1845,24 @@ void IdDialog::insertIdDetails(uint32_t token)
     RsReputations::ReputationInfo info ;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
-    ui->neighborNodesOpinion_TF->setText(QString::number(info.mFriendAverage - 1.0f));
+    QString frep_string ;
+    if(info.mFriendsPositiveVotes > 0) frep_string += QString::number(info.mFriendsPositiveVotes) + tr(" positive ") ;
+    if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
 
-    ui->overallOpinion_TF->setText(QString::number(info.mOverallReputationScore - 1.0f) +" ("+
-     ((info.mAssessment == RsReputations::ASSESSMENT_OK)? tr("OK") : tr("Banned")) +")" ) ;
+    if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
+        frep_string = tr("No votes from friends") ;
+
+    ui->neighborNodesOpinion_TF->setText(frep_string) ;
+
+    switch(info.mOverallReputationLevel)
+    {
+    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
+    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
+    default:
+    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
+    }
     
     switch(info.mOwnOpinion)
 	{
@@ -1849,6 +1872,24 @@ void IdDialog::insertIdDetails(uint32_t token)
         default:
             std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
 	}
+
+    // now fill in usage cases
+
+	RsIdentityDetails det ;
+	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
+
+    QString usage_txt ;
+    std::map<time_t,std::string> rmap ;
+    for(std::map<std::string,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
+        rmap.insert(std::make_pair(it->second,it->first)) ;
+
+    for(std::map<time_t,std::string>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + QString::fromStdString(it->second) + "<br/>" ;
+
+    if(usage_txt.isNull())
+        usage_txt = tr("<b>[No record in current session]</b>") ;
+
+    ui->usageStatistics_TB->setText(usage_txt) ;
 }
 
 void IdDialog::modifyReputation()
@@ -1900,6 +1941,22 @@ void IdDialog::modifyReputation()
 	return;
 }
 	
+void IdDialog::navigate(const RsGxsId& gxs_id)
+{
+    std::cerr << "IdDialog::navigate to " << gxs_id.toStdString() << std::endl;
+
+    // in order to do this, we just select the correct ID in the ID list
+
+    QList<QTreeWidgetItem*> select = ui->idTreeWidget->findItems(QString::fromStdString(gxs_id.toStdString()),Qt::MatchExactly | Qt::MatchRecursive | Qt::MatchWrap,RSID_COL_KEYID) ;
+
+    if(select.empty())
+    {
+        std::cerr << "Cannot find item with ID " << gxs_id << " in ID list." << std::endl;
+        return ;
+    }
+    ui->idTreeWidget->setCurrentItem(*select.begin(),true);
+
+}
 void IdDialog::updateDisplay(bool complete)
 {
 	/* Update identity list */

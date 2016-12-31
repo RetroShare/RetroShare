@@ -61,37 +61,36 @@ std::ostream &operator<<(std::ostream &out, const RsGxsForumMsg &msg);
 
 class RsGxsForums: public RsGxsIfaceHelper
 {
-	public:
+public:
 
 	RsGxsForums(RsGxsIface *gxs)
-	:RsGxsIfaceHelper(gxs)  { return; }
-virtual ~RsGxsForums() { return; }
+	    :RsGxsIfaceHelper(gxs)  { return; }
+	virtual ~RsGxsForums() { return; }
 
 	/* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
-virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
-//Not currently used
-//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
+	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
+	//Not currently used
+	//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
 
-        //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+	//////////////////////////////////////////////////////////////////////////////
+	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
 
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+	//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
+	//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
 
-//virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+	//virtual bool groupRestoreKeys(const std::string &groupId);
+	//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
-virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
-virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
-
-/*!
+	virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
+	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
+	/*!
  * To update forum group with new information
  * @param token the token used to check completion status of update
  * @param group group to be updated, groupId element must be set or will be rejected
  * @return false groupId not set, true if set and accepted (still check token for completion)
  */
-virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
+	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
 
 };
 

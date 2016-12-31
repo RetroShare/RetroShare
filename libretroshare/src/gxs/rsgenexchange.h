@@ -43,16 +43,9 @@ template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
 public:
-	GxsPendingItem(GxsItem item, Identity id) :
-		mItem(item), mId(id), mAttempts(0)
+	GxsPendingItem(GxsItem item, Identity id,time_t ts) :
+		mItem(item), mId(id), mFirstTryTS(ts)
 	{}
-
-	GxsPendingItem(const GxsPendingItem& gpsi)
-	{
-		this->mItem = gpsi.mItem;
-		this->mId = gpsi.mId;
-		this->mAttempts = gpsi.mAttempts;
-	}
 
 	bool operator==(const Identity& id)
 	{
@@ -61,7 +54,7 @@ public:
 
 	GxsItem mItem;
 	Identity mId;
-	uint8_t mAttempts;
+	time_t mFirstTryTS;
 };
 
 class GxsGrpPendingSign
@@ -656,6 +649,9 @@ public:
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 
     uint16_t serviceType() const { return mServType ; }
+    uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }
+
+    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags);
 protected:
 
     /** Notifications **/
@@ -880,9 +876,9 @@ private:
 
 private:
 
-    const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
+    const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_WAITING_TIME;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
-    const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_ATTEMPTS;
+    const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_WAITING_TIME;
 
 private:
 

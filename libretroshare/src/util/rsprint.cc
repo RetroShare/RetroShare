@@ -36,9 +36,13 @@
 #include <sys/timeb.h>
 #endif
 
-std::string RsUtil::NumberToString(uint64_t n)
+std::string RsUtil::NumberToString(uint64_t n,bool hex)
 {
     std::ostringstream os ;
+
+    if(hex)
+        os << std::hex ;
+
     os << n ;
     os.flush() ;
     
