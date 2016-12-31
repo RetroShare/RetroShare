@@ -19,9 +19,9 @@ namespace GXS_SERV {
     /** START privacy **/
 
     static const uint32_t FLAG_PRIVACY_MASK       = 0x0000000f;
-    static const uint32_t FLAG_PRIVACY_PRIVATE    = 0x00000001; // pub key encrypted
-    static const uint32_t FLAG_PRIVACY_RESTRICTED = 0x00000002; // publish private key needed to publish
-    static const uint32_t FLAG_PRIVACY_PUBLIC     = 0x00000004; // anyone can publish, publish key pair not needed
+    static const uint32_t FLAG_PRIVACY_PRIVATE    = 0x00000001; // pub key encrypted. No-one can read unless he has the key to decrypt the publish key.
+    static const uint32_t FLAG_PRIVACY_RESTRICTED = 0x00000002; // publish private key needed to publish. Typical usage: channels.
+    static const uint32_t FLAG_PRIVACY_PUBLIC     = 0x00000004; // anyone can publish, publish key pair not needed. Typical usage: forums.
 
     /** END privacy **/
 
@@ -30,11 +30,11 @@ namespace GXS_SERV {
     /** START author authentication flags **/
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_MASK           = 0x0000ff00;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_NONE           = 0x00000000;
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG            = 0x00000100;
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG            = 0x00000100;   // Anti-spam feature. Allows to ask higher reputation to anonymous IDs
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN    = 0x00000400;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES = 0x00000800;	// not used anymore
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN      = 0x00001000;
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN      = 0x00001000;   // Anti-spam feature. Allows to ask higher reputation to unknown IDs and anonymous IDs
 
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_MASK       = 0x000000ff;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  = 0x00000001;
@@ -45,16 +45,16 @@ namespace GXS_SERV {
     /** START msg authentication flags **/
 
     static const uint8_t MSG_AUTHEN_MASK               = 0x0f;
-    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN  = 0x01;
-    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;
-    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN   = 0x04;
-    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN  = 0x08;
+    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN  = 0x01;  // means: new threads need to be signed by the publish signature of the group
+    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;  // means: all messages need to be signed by the publish signature of the group
+    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN   = 0x04;  // means: new threads need to be signed by the author of the message
+    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN  = 0x08;  // means: all messages need to be signed by the author of the message
 
     /** END msg authentication flags **/
 
     /** START group options flag **/
 
-    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;
+    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;	// means: the group needs to be signed by a specific author stored in GroupMeta.mAuthorId
 
     /** END group options flag **/
 

@@ -159,16 +159,13 @@ RsServiceInfo p3GxsCircles::getServiceInfo()
 
 uint32_t p3GxsCircles::circleAuthenPolicy()
 {
-
 	uint32_t policy = 0;
 	uint8_t flag = 0;
 
-
-	//flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
-	//flag = GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
-	//flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
-	//flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
+
+    flags |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
