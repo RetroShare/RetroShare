@@ -45,24 +45,25 @@ namespace GXS_SERV {
     /** START msg authentication flags **/
 
     static const uint8_t MSG_AUTHEN_MASK               = 0x0f;
-    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN  = 0x01;  // means: new threads need to be signed by the publish signature of the group
-    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;  // means: all messages need to be signed by the publish signature of the group
-    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN   = 0x04;  // means: new threads need to be signed by the author of the message
-    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN  = 0x08;  // means: all messages need to be signed by the author of the message
+    static const uint8_t MSG_AUTHEN_ROOT_PUBLISH_SIGN  = 0x01;  // means: new threads need to be signed by the publish signature of the group. Typical use: posts in channels.
+    static const uint8_t MSG_AUTHEN_CHILD_PUBLISH_SIGN = 0x02;  // means: all messages need to be signed by the publish signature of the group. Typical use: channels were comments are restricted to the publisher.
+    static const uint8_t MSG_AUTHEN_ROOT_AUTHOR_SIGN   = 0x04;  // means: new threads need to be signed by the author of the message. Typical use: forums, since posts are signed.
+    static const uint8_t MSG_AUTHEN_CHILD_AUTHOR_SIGN  = 0x08;  // means: all messages need to be signed by the author of the message. Typical use: forums since response to posts are signed, and signed comments in channels.
 
     /** END msg authentication flags **/
 
     /** START group options flag **/
 
-    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;	// means: the group needs to be signed by a specific author stored in GroupMeta.mAuthorId
+    static const uint8_t GRP_OPTION_AUTHEN_AUTHOR_SIGN = 0x01;	// means: the group options (serialised grp data) needs to be signed by a specific author stored in GroupMeta.mAuthorId
+    															// note that it is always signed by the *admin* (means the creator) of the group. This author signature is just an option here.
 
     /** END group options flag **/
 
     /** START Subscription Flags. (LOCAL) **/
 
-    static const uint32_t GROUP_SUBSCRIBE_ADMIN          = 0x01;
-    static const uint32_t GROUP_SUBSCRIBE_PUBLISH        = 0x02;
-    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED     = 0x04;
+    static const uint32_t GROUP_SUBSCRIBE_ADMIN          = 0x01;// means: you have the admin key for this group
+    static const uint32_t GROUP_SUBSCRIBE_PUBLISH        = 0x02;// means: you have the publish key for thiss group. Typical use: publish key in channels are shared with specific friends.
+    static const uint32_t GROUP_SUBSCRIBE_SUBSCRIBED     = 0x04;// means: you are subscribed to a group, which makes you a source for this group to your friend nodes.
     static const uint32_t GROUP_SUBSCRIBE_NOT_SUBSCRIBED = 0x08;
 
     /*!
@@ -82,11 +83,11 @@ namespace GXS_SERV {
      * NOTE: RsGxsCommentService uses 0x000f0000.
      */
     static const uint32_t GXS_MSG_STATUS_GEN_MASK    = 0x0000ffff;
-    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;
-    static const uint32_t GXS_MSG_STATUS_GUI_UNREAD  = 0x00000002;
-    static const uint32_t GXS_MSG_STATUS_GUI_NEW     = 0x00000004;
-    static const uint32_t GXS_MSG_STATUS_KEEP        = 0x00000008;
-    static const uint32_t GXS_MSG_STATUS_DELETE      = 0x00000020;
+    static const uint32_t GXS_MSG_STATUS_UNPROCESSED = 0x00000001;	// Flags to store the read/process status of group messages.
+    static const uint32_t GXS_MSG_STATUS_GUI_UNREAD  = 0x00000002;	// The actual meaning may depend on the type of service.
+    static const uint32_t GXS_MSG_STATUS_GUI_NEW     = 0x00000004;	//
+    static const uint32_t GXS_MSG_STATUS_KEEP        = 0x00000008;	//
+    static const uint32_t GXS_MSG_STATUS_DELETE      = 0x00000020;	//
 
     /** END GXS Msg status flags **/
 
