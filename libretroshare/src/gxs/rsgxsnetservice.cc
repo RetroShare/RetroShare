@@ -4218,20 +4218,25 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 		{
 			RsGxsMsgMetaData* m = *vit;
 
-            RsIdentityDetails details ;
+            // Check reputation
 
-            if(!rsIdentity->getIdDetails(m->mAuthorId,details))
-            {
-                std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author is not accessible (unknown/not cached)" << std::endl;
-                continue ;
-            }
-
-            if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+            if(!m->mAuthorId.isNull())
 			{
-//#ifdef NXS_NET_DEBUG_0
-				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
-//#endif
-				continue ;
+				RsIdentityDetails details ;
+
+				if(!rsIdentity->getIdDetails(m->mAuthorId,details))
+				{
+					std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author (" << m->mAuthorId << ") is not accessible (unknown/not cached)" << std::endl;
+					continue ;
+				}
+
+				if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+				{
+					//#ifdef NXS_NET_DEBUG_0
+					std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+					//#endif
+					continue ;
+				}
 			}
 			// Check publish TS
 
