@@ -888,14 +888,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 				if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 				{
 #ifdef GEN_EXCH_DEBUG	
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationLevel <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation level (" << details.mReputation.mOverallReputationLevel <<") indicate that you banned this ID." << std::endl;
 #endif
 					idValidate = false ;
 				}
-#ifdef GEN_EXCH_DEBUG	
-				else
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
-#endif
 			}
 
 				}
@@ -2907,7 +2903,7 @@ void RsGenExchange::processRecvdGroups()
         if(deserialOk && acceptNewGroup(meta))
         {
 #ifdef GEN_EXCH_DEBUG
-            	std::cerr << "  processing validation for group " << meta->mGroupId << ", attempts number " << gpsi.mAttempts << std::endl;
+            	std::cerr << "  processing validation for group " << meta->mGroupId << ", original attempt time: " << time(NULL) - gpsi.mFirstTryTS << " seconds ago" << std::endl;
 #endif
         	grp->metaData = meta;
         	uint8_t ret = validateGrp(grp);
