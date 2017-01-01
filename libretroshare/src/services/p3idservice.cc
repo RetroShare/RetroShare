@@ -270,7 +270,9 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
         std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
         return ;
     }
+#ifdef DEBUG_IDS
     std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+#endif
 
     RS_STACK_MUTEX(mIdMtx) ;
 
