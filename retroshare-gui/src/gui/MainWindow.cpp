@@ -345,7 +345,8 @@ void MainWindow::initStackedPage()
   addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
   addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
   addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-  
+  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -359,11 +360,11 @@ void MainWindow::initStackedPage()
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
 
-  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+  
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
-  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
+  
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   // NEXT TO ITEM SHOULD BE HERE NOT IN ANOTHER PLACE BUT I DON'T KNOW HOW TO PUT THEM HERE
   addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->stackPages), &MainWindow::showSettings, SLOT(showSettings()));
