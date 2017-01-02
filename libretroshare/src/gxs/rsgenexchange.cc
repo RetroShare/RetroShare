@@ -2752,6 +2752,8 @@ void RsGenExchange::processRecvdMessages()
 			    if(mit != grpMetas.end())
 			    {
 				    grpMeta = mit->second;
+					GxsSecurity::createPublicKeysFromPrivateKeys(grpMeta->keys);	// make sure we have the public keys that correspond to the private ones, as it happens. Most of the time this call does nothing.
+
 				    validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
 
 #ifdef GEN_EXCH_DEBUG
@@ -3124,6 +3126,8 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	}
 
 	RsTlvKeySignature adminSign = mit->second;
+
+	GxsSecurity::createPublicKeysFromPrivateKeys(oldGrpMeta.keys);	// make sure we have the public keys that correspond to the private ones, as it happens. Most of the time this call does nothing.
 
 	std::map<RsGxsId, RsTlvPublicRSAKey>& keys = oldGrpMeta.keys.public_keys;
 	std::map<RsGxsId, RsTlvPublicRSAKey>::iterator keyMit = keys.find(RsGxsId(oldGrpMeta.mGroupId));
