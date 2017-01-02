@@ -57,7 +57,7 @@ public:
     ~FriendsDialog ();
 
     virtual QIcon iconPixmap() const { return QIcon(IMAGE_NETWORK) ; } //MainPage
-    virtual QString pageName() const { return tr("Network") ; } //MainPage
+    virtual QString pageName() const { return tr("Friends") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
     virtual UserNotify *getUserNotify(QObject *parent);
