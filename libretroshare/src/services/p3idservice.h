@@ -212,7 +212,6 @@ private:
     void init(const RsGxsIdGroupItem *item, const RsTlvPublicRSAKey& in_pub_key, const RsTlvPrivateRSAKey& in_priv_key,const std::list<RsRecognTag> &tagList);
 };
 
-
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
@@ -298,7 +297,7 @@ public:
 	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
 	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
-    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers, const std::string &info);
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers, const RsIdentityUsage &info);
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
 
@@ -467,7 +466,7 @@ private:
 	void cleanUnusedKeys() ;
 	void slowIndicateConfigChanged() ;
 
-	virtual void timeStampKey(const RsGxsId& id,const std::string& reason) ;
+	virtual void timeStampKey(const RsGxsId& id, const RsIdentityUsage& reason) ;
 	time_t locked_getLastUsageTS(const RsGxsId& gxs_id);
 
 	std::string genRandomId(int len = 20);
@@ -512,7 +511,7 @@ private:
         keyTSInfo() : TS(0) {}
 
         time_t TS ;
-        std::map<std::string,time_t> usage_map ;
+        std::map<RsIdentityUsage,time_t> usage_map ;
     };
 	friend class IdCacheEntryCleaner;
 

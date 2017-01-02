@@ -125,7 +125,7 @@ public:
     virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
-    virtual void timeStampKey(const RsGxsId& key_id,const std::string& reason) = 0 ;
+    virtual void timeStampKey(const RsGxsId& key_id,const RsIdentityUsage& reason) = 0 ;
 
     // Key related interface - used for validating msgs and groups.
     /*!
@@ -149,7 +149,7 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers,const std::string& info) = 0;
+    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers,const RsIdentityUsage& info) = 0;
     virtual bool requestPrivateKey(const RsGxsId &id) = 0;
 
 

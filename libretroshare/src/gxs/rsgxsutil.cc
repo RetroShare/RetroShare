@@ -139,7 +139,7 @@ bool RsGxsIntegrityCheck::check()
     GxsMsgReq msgIds;
     GxsMsgReq grps;
 
-    std::map<RsGxsId,RsGxsGroupId> used_gxs_ids ;
+    std::map<RsGxsId,RsIdentityUsage> used_gxs_ids ;
     std::set<RsGxsGroupId> subscribed_groups ;
 
     // compute hash and compare to stored value, if it fails then simply add it
@@ -172,7 +172,7 @@ bool RsGxsIntegrityCheck::check()
 #endif
 
 					if(rsIdentity!=NULL && rsIdentity->overallReputationLevel(grp->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-						used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId,grp->grpId)) ;
+						used_gxs_ids.insert(std::make_pair(grp->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE,grp->grpId))) ;
 				    }
 			    }
 		    }
@@ -270,7 +270,7 @@ bool RsGxsIntegrityCheck::check()
 			    GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
 			    if(rsIdentity!=NULL && rsIdentity->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,msg->metaData->mGroupId)) ;
+				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
 		    }
 
 		    delete msg;
@@ -297,9 +297,9 @@ bool RsGxsIntegrityCheck::check()
     std::list<RsPeerId> connected_friends ;
     rsPeers->getOnlineList(connected_friends) ;
 
-    std::vector<std::pair<RsGxsId,RsGxsGroupId> > gxs_ids ;
+    std::vector<std::pair<RsGxsId,RsIdentityUsage> > gxs_ids ;
 
-    for(std::map<RsGxsId,RsGxsGroupId>::const_iterator it(used_gxs_ids.begin());it!=used_gxs_ids.end();++it)
+    for(std::map<RsGxsId,RsIdentityUsage>::const_iterator it(used_gxs_ids.begin());it!=used_gxs_ids.end();++it)
     {
 	    gxs_ids.push_back(*it) ;
 #ifdef DEBUG_GXSUTIL
@@ -323,7 +323,7 @@ bool RsGxsIntegrityCheck::check()
 
 	    if(!mGixs->haveKey(gxs_ids[n].first))	// checks if we have it already in the cache (conservative way to ensure that we atually have it)
 	    { 
-		    mGixs->requestKey(gxs_ids[n].first,connected_friends,"Author in service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\" (group ID " + gxs_ids[n].second.toStdString() + ")" ) ;
+		    mGixs->requestKey(gxs_ids[n].first,connected_friends,gxs_ids[n].second);
 
 		    ++nb_requested_not_in_cache ;
 #ifdef DEBUG_GXSUTIL
@@ -336,7 +336,7 @@ bool RsGxsIntegrityCheck::check()
 		    GXSUTIL_DEBUG() << "  ... already in cache" << std::endl;
 #endif
 	    }
-		mGixs->timeStampKey(gxs_ids[n].first,"Author in service \"" + rsServiceControl->getServiceName(mGenExchangeClient->serviceFullType())+"\" (group ID " + gxs_ids[n].second.toStdString() + ")");
+		mGixs->timeStampKey(gxs_ids[n].first,gxs_ids[n].second);
 
 	    gxs_ids[n] = gxs_ids[gxs_ids.size()-1] ;
 	    gxs_ids.pop_back() ;

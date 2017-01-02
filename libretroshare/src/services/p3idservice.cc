@@ -263,14 +263,16 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
     else
         return it->second.TS ;
 }
-void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
+void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& reason)
 {
     if(rsReputations->isIdentityBanned(gxs_id) )
     {
         std::cerr << "(II) p3IdService:timeStampKey(): refusing to time stamp key " << gxs_id << " because it is banned." << std::endl;
         return ;
     }
+#ifdef DEBUG_IDS
     std::cerr << "(II) time stamping key " << gxs_id << " for the following reason: " << reason << std::endl;
+#endif
 
     RS_STACK_MUTEX(mIdMtx) ;
 
@@ -786,7 +788,7 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const std::string& info)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& info)
 {
     if(id.isNull())
     {
@@ -2262,6 +2264,9 @@ bool p3IdService::cache_load_for_token(uint32_t token)
             for(std::map<RsGxsId,std::list<RsPeerId> >::const_iterator itt(mPendingCache.begin());itt!=mPendingCache.end();++itt)
                 if(!itt->second.empty())
                     mergeIds(mIdsNotPresent,itt->first,itt->second) ;
+				else
+                    std::cerr << "(WW) empty list of peers to request ID " << itt->first << ": cannot request" << std::endl;
+
 
 			mPendingCache.clear();
 
