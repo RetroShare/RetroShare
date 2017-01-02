@@ -162,39 +162,6 @@ class RsRecognTagDetails
 	bool is_pending;
 };
 
-class RsIdentityDetails
-{
-public:
-    RsIdentityDetails()
-            : mFlags(0), mLastUsageTS(0) { return; }
-
-    RsGxsId mId;
-
-    // identity details.
-    std::string mNickname;
-    
-    uint32_t mFlags ;
-
-    // PGP Stuff.
-    RsPgpId mPgpId;
-
-    // Recogn details.
-    std::list<RsRecognTag> mRecognTags;
-
-    // Cyril: Reputation details. At some point we might want to merge information
-    // between the two into a single global score. Since the old reputation system
-    // is not finished yet, I leave this in place. We should decide what to do with it.
-    RsReputations::ReputationInfo mReputation;
-
-    // avatar
-    RsGxsImage mAvatar ;
-
-    // last usage
-    time_t mLastUsageTS ;
-    std::map<std::string,time_t> mUseCases ;
-};
-
-
 class RsIdOpinion
 {
 	public:
@@ -224,10 +191,14 @@ public:
                    MESSAGE_AUTHOR_SIGNATURE_VALIDATION  = 0x06,
                    GROUP_AUTHOR_KEEP_ALIVE              = 0x07, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
                    MESSAGE_AUTHOR_KEEP_ALIVE            = 0x08, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
-                   CHAT_LOBBY_MSG_VALIDATION            = 0x09  // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
+                   CHAT_LOBBY_MSG_VALIDATION            = 0x09, // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
+                   GLOBAL_ROUTER_SIGNATURE_CHECK        = 0x0a, // Global router message validation
+                   GLOBAL_ROUTER_SIGNATURE_CREATION     = 0x0b, // Global router message signature
+                   GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c, //
+                   GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d  //
                  } ;
 
-    RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string())
+    RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string())
     	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment) {}
 
     uint16_t 		mServiceId;		// Id of the service using that identity
@@ -238,6 +209,39 @@ public:
 	uint64_t        mAdditionalId; 	// Some additional ID. Can be used for e.g. chat lobbies.
     std::string 	mComment ;		// additional comment to be used mainly for debugging, but not GUI display
 };
+
+class RsIdentityDetails
+{
+public:
+    RsIdentityDetails()
+            : mFlags(0), mLastUsageTS(0) { return; }
+
+    RsGxsId mId;
+
+    // identity details.
+    std::string mNickname;
+
+    uint32_t mFlags ;
+
+    // PGP Stuff.
+    RsPgpId mPgpId;
+
+    // Recogn details.
+    std::list<RsRecognTag> mRecognTags;
+
+    // Cyril: Reputation details. At some point we might want to merge information
+    // between the two into a single global score. Since the old reputation system
+    // is not finished yet, I leave this in place. We should decide what to do with it.
+    RsReputations::ReputationInfo mReputation;
+
+    // avatar
+    RsGxsImage mAvatar ;
+
+    // last usage
+    time_t mLastUsageTS ;
+    std::map<RsIdentityUsage,time_t> mUseCases ;
+};
+
 
 
 

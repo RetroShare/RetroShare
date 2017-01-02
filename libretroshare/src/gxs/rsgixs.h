@@ -117,7 +117,7 @@ public:
      */
 
     virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) = 0 ;
-    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error) = 0 ;
+    virtual bool validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const RsIdentityUsage& info,uint32_t& signing_error) = 0 ;
 
     virtual bool encryptData(const uint8_t *clear_data,uint32_t clear_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) = 0 ;
     virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& clear_data,uint32_t& clear_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) = 0 ;

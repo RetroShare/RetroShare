@@ -287,10 +287,10 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& rea
     {
         // This is very costly, but normally the outerloop should never be rolled more than once.
 
-        std::map<std::string,time_t>::iterator best_it ;
+        std::map<RsIdentityUsage,time_t>::iterator best_it ;
         time_t best_time = now+1;
 
-        for(std::map<std::string,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+        for(std::map<RsIdentityUsage,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
             if(it->second < best_time)
             {
                 best_time = it->second ;
@@ -788,7 +788,7 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& info)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& use_info)
 {
     if(id.isNull())
     {
@@ -834,7 +834,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
     }
     {
 		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-		mKeysTS[id].usage_map["Requested to friends: "+info] = time(NULL) ;
+		mKeysTS[id].usage_map[use_info] = time(NULL) ;
     }
 
     return cache_request_load(id, peers);
@@ -935,7 +935,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
     timeStampKey(own_gxs_id,"Own GXS id") ;
     return true ;
 }
-bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error)
+bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const RsIdentityUsage& info,uint32_t& signing_error)
 {
     // RsIdentityDetails details ;
     // getIdDetails(signature.keyId,details);
@@ -969,7 +969,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
     }
     signing_error = RS_GIXS_ERROR_NO_ERROR ;
 
-    timeStampKey(signature.keyId,"Used in signature checking: "+info_string ) ;
+    timeStampKey(signature.keyId,info);
     return true ;
 }
 bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)

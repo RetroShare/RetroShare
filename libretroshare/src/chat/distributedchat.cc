@@ -237,8 +237,9 @@ bool DistributedChatService::checkSignature(RsChatLobbyBouncingObject *obj,const
     }
 
     uint32_t error_status ;
+    RsIdentityUsage use_info(RS_SERVICE_TYPE_CHAT,RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION,RsGxsGroupId(),RsGxsMessageId(),obj->lobby_id) ;
 
-    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,"Chat lobby "+RsUtil::NumberToString(obj->lobby_id,true),error_status))
+    if(!mGixs->validateData(memory,obj->signed_serial_size(),obj->signature,false,use_info,error_status))
     {
 	    bool res = false ;
 

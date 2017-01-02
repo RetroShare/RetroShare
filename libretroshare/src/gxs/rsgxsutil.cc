@@ -270,7 +270,7 @@ bool RsGxsIntegrityCheck::check()
 			    GXSUTIL_DEBUG() << "TimeStamping message authors' key ID " << msg->metaData->mAuthorId << " in message " << msg->msgId << ", group ID " << msg->grpId<< std::endl;
 #endif
 			    if(rsIdentity!=NULL && rsIdentity->overallReputationLevel(msg->metaData->mAuthorId) > RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,std::make_pair(msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
+				    used_gxs_ids.insert(std::make_pair(msg->metaData->mAuthorId,RsIdentityUsage(mGenExchangeClient->serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE,msg->metaData->mGroupId,msg->metaData->mMsgId))) ;
 		    }
 
 		    delete msg;
