@@ -1855,6 +1855,9 @@ void IdDialog::insertIdDetails(uint32_t token)
         frep_string = tr("No votes from friends") ;
 
     ui->neighborNodesOpinion_TF->setText(frep_string) ;
+    
+    ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
+    ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
     switch(info.mOverallReputationLevel)
     {
