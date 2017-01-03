@@ -33,6 +33,7 @@
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "util/radix64.h"
+#include "util/rsdir.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
 
@@ -525,7 +526,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     // also time_stamp the key that this group represents
 
-                    timeStampKey(RsGxsId(*git),"Group meta data changed") ;
+                    timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
 
                     ++git;
                 }
@@ -932,7 +933,8 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,"Own GXS id") ;
+    timeStampKey(own_gxs_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
+
     return true ;
 }
 bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const RsIdentityUsage& info,uint32_t& signing_error)
@@ -997,7 +999,7 @@ bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id,"Used to encrypt data") ;
+    timeStampKey(encryption_key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
 
     return true ;
 }
@@ -1029,7 +1031,7 @@ bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(key_id,"Used to decrypt data") ;
+    timeStampKey(key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION)) ;
 
     return true ;
 }
@@ -2537,7 +2539,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers,"Cache test in p3IdService");
+					requestKey(*vit, nullpeers,RsIdentityUsage(serviceType(),RsIdentityUsage::UNKNOWN_USAGE));
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -4115,6 +4117,13 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 			std::cerr << std::endl;
 			break;
 	}
+}
+
+RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid,uint64_t additional_id,const std::string& comment)
+    	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment)
+{
+	// This is a hack, since it will hash also mHash, but because it is initialized to 0, and only computed in the constructor here, it should be ok.
+	mHash = RsDirUtil::sha1sum(reinterpret_cast<uint8_t*>(this),sizeof(RsIdentityUsage)) ;
 }
 
 

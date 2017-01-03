@@ -1879,17 +1879,27 @@ void IdDialog::insertIdDetails(uint32_t token)
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
 
     QString usage_txt ;
-    std::map<time_t,std::string> rmap ;
-    for(std::map<std::string,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
+    std::map<time_t,RsIdentityUsage> rmap ;
+    for(std::map<RsIdentityUsage,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
         rmap.insert(std::make_pair(it->second,it->first)) ;
 
-    for(std::map<time_t,std::string>::const_iterator it(rmap.begin());it!=rmap.end();++it)
-        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + QString::fromStdString(it->second) + "<br/>" ;
+    for(std::map<time_t,RsIdentityUsage>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + createUsageString(it->second) + "<br/>" ;
 
     if(usage_txt.isNull())
         usage_txt = tr("<b>[No record in current session]</b>") ;
 
     ui->usageStatistics_TB->setText(usage_txt) ;
+}
+
+QString IdDialog::createUsageString(const RsIdentityUsage& u) const
+{
+    switch(u.mUsageCode)
+    {
+#warning TODO! Add the different strings and translations here.
+    default:
+    	return QString("Undone yet");
+    }
 }
 
 void IdDialog::modifyReputation()

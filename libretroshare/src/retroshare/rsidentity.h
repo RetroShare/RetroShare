@@ -195,11 +195,16 @@ public:
                    GLOBAL_ROUTER_SIGNATURE_CHECK        = 0x0a, // Global router message validation
                    GLOBAL_ROUTER_SIGNATURE_CREATION     = 0x0b, // Global router message signature
                    GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c, //
-                   GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d  //
+                   GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d, //
+                   IDENTITY_DATA_UPDATE                 = 0x0e, // Group update on that identity data. Can be avatar, name, etc.
+                   IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x0f, // Any signature verified for that identity
+                   IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x10, // Any signature made by that identity
+		           IDENTITY_GENERIC_ENCRYPTION          = 0x11,
+		           IDENTITY_GENERIC_DECRYPTION          = 0x12,
+		           CIRCLE_MEMBERSHIP_CHECK              = 0x13
                  } ;
 
-    RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string())
-    	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment) {}
+    explicit RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string());
 
     uint16_t 		mServiceId;		// Id of the service using that identity
     UsageCode		mUsageCode; 	// Specific code to use. Will allow forming the correct translated message in the GUI if necessary.
@@ -208,6 +213,12 @@ public:
 	RsGxsMessageId  mMsgId;		   	// Message ID using the identity
 	uint64_t        mAdditionalId; 	// Some additional ID. Can be used for e.g. chat lobbies.
     std::string 	mComment ;		// additional comment to be used mainly for debugging, but not GUI display
+
+    bool operator<(const RsIdentityUsage& u) const
+    {
+        return mHash < u.mHash ;
+    }
+    RsFileHash mHash ;
 };
 
 class RsIdentityDetails
