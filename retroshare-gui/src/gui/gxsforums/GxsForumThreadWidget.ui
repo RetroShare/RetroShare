@@ -240,7 +240,14 @@
          </column>
          <column>
           <property name="text">
+           <string/>
+          </property>
+          <property name="toolTip">
            <string>Distribution</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
           </property>
          </column>
          <column>
@@ -556,6 +563,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

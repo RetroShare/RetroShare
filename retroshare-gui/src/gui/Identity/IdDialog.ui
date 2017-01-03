@@ -243,10 +243,17 @@
          </column>
          <column>
           <property name="text">
-           <string>Reputation</string>
+           <string/>
+          </property>
+          <property name="toolTip">
+           <string>Votes</string>
           </property>
           <property name="textAlignment">
            <set>AlignLeading|AlignVCenter</set>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
           </property>
          </column>
         </widget>

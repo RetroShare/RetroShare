@@ -51,8 +51,8 @@
 #define REPUTATION_LOCALLY_POSITIVE_ICON      ":/icons/bullet_green_yellow_star_128.png"
 #define REPUTATION_REMOTELY_POSITIVE_ICON     ":/icons/bullet_green_128.png"
 #define REPUTATION_NEUTRAL_ICON               ":/icons/bullet_grey_128.png"
-#define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/yellow_biohazard64.png"
-#define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/red_biohazard64.png"
+#define REPUTATION_REMOTELY_NEGATIVE_ICON     ":/icons/biohazard_yellow.png"
+#define REPUTATION_LOCALLY_NEGATIVE_ICON      ":/icons/biohazard_red.png"
 #define REPUTATION_VOID                       ":/icons/void_128.png"
 
 #define TIMER_INTERVAL              500
