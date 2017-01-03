@@ -6,6 +6,8 @@
 		<file>icons/aol.png</file>
 		<file>icons/avatar_128.png</file>
 		<file>icons/avatar_grey_128.png</file>
+		<file>icons/biohazard_red.png</file>
+		<file>icons/biohazard_yellow.png</file>
 		<file>icons/blank_blue_128.png</file>
 		<file>icons/blank_green_128.png</file>
 		<file>icons/blank_red_128.png</file>
@@ -23,6 +25,7 @@
 		<file>icons/chat_red_128.png</file>
 		<file>icons/circles_128.png</file>
 		<file>icons/circles_new_128.png</file>
+		<file>icons/flag-green.png</file>		
 		<file>icons/friends_128.png</file>
 		<file>icons/global_switch_off_128.png</file>
 		<file>icons/global_switch_on_128.png</file>
@@ -106,7 +109,6 @@
 		<file>icons/posted_128.png</file>
 		<file>icons/posted_red_128.png</file>
 		<file>icons/quit_128.png</file>
-		<file>icons/red_biohazard64.png</file>
 		<file>icons/search_red_128.png</file>
 		<file>icons/security_high_128.png</file>
 		<file>icons/security_low_128.png</file>
@@ -222,6 +224,5 @@
 		<file>icons/warning_yellow_128.png</file>
 		<file>icons/yahoo.png</file>
 		<file>icons/yandex.png</file>
-		<file>icons/yellow_biohazard64.png</file>
 	</qresource>
 </RCC>
