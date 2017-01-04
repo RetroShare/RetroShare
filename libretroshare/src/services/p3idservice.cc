@@ -33,6 +33,7 @@
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "util/radix64.h"
+#include "util/rsdir.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
 
@@ -263,7 +264,7 @@ time_t p3IdService::locked_getLastUsageTS(const RsGxsId& gxs_id)
     else
         return it->second.TS ;
 }
-void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
+void p3IdService::timeStampKey(const RsGxsId& gxs_id, const RsIdentityUsage& reason)
 {
     if(rsReputations->isIdentityBanned(gxs_id) )
     {
@@ -287,10 +288,10 @@ void p3IdService::timeStampKey(const RsGxsId& gxs_id, const std::string& reason)
     {
         // This is very costly, but normally the outerloop should never be rolled more than once.
 
-        std::map<std::string,time_t>::iterator best_it ;
+        std::map<RsIdentityUsage,time_t>::iterator best_it ;
         time_t best_time = now+1;
 
-        for(std::map<std::string,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
+        for(std::map<RsIdentityUsage,time_t>::iterator it(info.usage_map.begin());it!=info.usage_map.end();++it)
             if(it->second < best_time)
             {
                 best_time = it->second ;
@@ -525,7 +526,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     // also time_stamp the key that this group represents
 
-                    timeStampKey(RsGxsId(*git),"Group meta data changed") ;
+                    timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
 
                     ++git;
                 }
@@ -788,7 +789,7 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
-bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const std::string& info)
+bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& use_info)
 {
     if(id.isNull())
     {
@@ -834,7 +835,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
     }
     {
 		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-		mKeysTS[id].usage_map["Requested to friends: "+info] = time(NULL) ;
+		mKeysTS[id].usage_map[use_info] = time(NULL) ;
     }
 
     return cache_request_load(id, peers);
@@ -932,10 +933,11 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,"Own GXS id") ;
+    timeStampKey(own_gxs_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
+
     return true ;
 }
-bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const std::string& info_string,uint32_t& signing_error)
+bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTlvKeySignature& signature,bool force_load,const RsIdentityUsage& info,uint32_t& signing_error)
 {
     // RsIdentityDetails details ;
     // getIdDetails(signature.keyId,details);
@@ -969,7 +971,7 @@ bool p3IdService::validateData(const uint8_t *data,uint32_t data_size,const RsTl
     }
     signing_error = RS_GIXS_ERROR_NO_ERROR ;
 
-    timeStampKey(signature.keyId,"Used in signature checking: "+info_string ) ;
+    timeStampKey(signature.keyId,info);
     return true ;
 }
 bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& error_status)
@@ -997,7 +999,7 @@ bool p3IdService::encryptData(const uint8_t *decrypted_data,uint32_t decrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id,"Used to encrypt data") ;
+    timeStampKey(encryption_key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
 
     return true ;
 }
@@ -1029,7 +1031,7 @@ bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_d
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(key_id,"Used to decrypt data") ;
+    timeStampKey(key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION)) ;
 
     return true ;
 }
@@ -2264,6 +2266,9 @@ bool p3IdService::cache_load_for_token(uint32_t token)
             for(std::map<RsGxsId,std::list<RsPeerId> >::const_iterator itt(mPendingCache.begin());itt!=mPendingCache.end();++itt)
                 if(!itt->second.empty())
                     mergeIds(mIdsNotPresent,itt->first,itt->second) ;
+				else
+                    std::cerr << "(WW) empty list of peers to request ID " << itt->first << ": cannot request" << std::endl;
+
 
 			mPendingCache.clear();
 
@@ -2534,7 +2539,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers,"Cache test in p3IdService");
+					requestKey(*vit, nullpeers,RsIdentityUsage(serviceType(),RsIdentityUsage::UNKNOWN_USAGE));
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -4112,6 +4117,13 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 			std::cerr << std::endl;
 			break;
 	}
+}
+
+RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid,uint64_t additional_id,const std::string& comment)
+    	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment)
+{
+	// This is a hack, since it will hash also mHash, but because it is initialized to 0, and only computed in the constructor here, it should be ok.
+	mHash = RsDirUtil::sha1sum(reinterpret_cast<uint8_t*>(this),sizeof(RsIdentityUsage)) ;
 }
 
 

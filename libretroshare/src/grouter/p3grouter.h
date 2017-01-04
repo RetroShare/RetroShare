@@ -32,6 +32,7 @@
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rstypes.h"
 #include "retroshare/rstypes.h"
+#include "retroshare/rsidentity.h"
 
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
@@ -254,7 +255,7 @@ private:
 
     // signs an item with the given key.
     bool signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& id) ;
-    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item, const std::string &info, uint32_t &error_status) ;
+    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item, const RsIdentityUsage::UsageCode &info, uint32_t &error_status) ;
     bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
 

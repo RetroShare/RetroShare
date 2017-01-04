@@ -1090,7 +1090,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 						rsPeers->getOnlineList(peers) ;
 					}
 
-					mIdentities->requestKey(pit->first, peers,"Membership status check in Circle "+cache.mCircleName+" ("+cache.mCircleId.toStdString()+")");
+					mIdentities->requestKey(pit->first, peers,RsIdentityUsage(serviceType(),RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
 					//isUnprocessedPeers = true;
 				}
 			}

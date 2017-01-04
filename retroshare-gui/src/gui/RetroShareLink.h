@@ -76,6 +76,7 @@ class RetroShareLink
 		RetroShareLink(const QUrl& url);
 		RetroShareLink(const QString& url);
 
+#warning these methods should be static and return a created link
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
 		bool createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		bool createPerson(const RsPgpId &id);

@@ -119,6 +119,7 @@ private slots:
 
 private:
 	void processSettings(bool load);
+	QString createUsageString(const RsIdentityUsage& u) const;
 
 	void requestIdDetails();
 	void insertIdDetails(uint32_t token);
