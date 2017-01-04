@@ -37,7 +37,8 @@ Choose only w64-i686 if you want only compilation in 32b architecture.
        pacman -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc  
        pacman -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3  
        pacman -S mingw-w64-i686-speex mingw-w64-x86_64-speex  
-       pacman -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv  
+       pacman -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp
+       pacman -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv
        pacman -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg  
        pacman -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd  
        pacman -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt  

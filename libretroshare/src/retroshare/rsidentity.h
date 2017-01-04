@@ -162,6 +162,65 @@ class RsRecognTagDetails
 	bool is_pending;
 };
 
+class RsIdOpinion
+{
+	public:
+	RsGxsId id;
+	int rating;
+};
+	
+
+class RsIdentityParameters
+{
+	public:
+	RsIdentityParameters(): isPgpLinked(false) { return; }
+	bool isPgpLinked;
+    std::string nickname;
+    RsGxsImage mImage ;
+};
+
+class RsIdentityUsage
+{
+public:
+    enum UsageCode { UNKNOWN_USAGE                      = 0x00,
+                   GROUP_ADMIN_SIGNATURE_CREATION       = 0x01,	// These 2 are normally not normal GXS identities, but nothing prevents it to happen either.
+                   GROUP_ADMIN_SIGNATURE_VALIDATION     = 0x02,
+                   GROUP_AUTHOR_SIGNATURE_CREATION      = 0x03, // not typically used, since most services do not require group author signatures
+                   GROUP_AUTHOR_SIGNATURE_VALIDATION    = 0x04,
+                   MESSAGE_AUTHOR_SIGNATURE_CREATION    = 0x05, // most common use case. Messages are signed by authors in e.g. forums.
+                   MESSAGE_AUTHOR_SIGNATURE_VALIDATION  = 0x06,
+                   GROUP_AUTHOR_KEEP_ALIVE              = 0x07, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+                   MESSAGE_AUTHOR_KEEP_ALIVE            = 0x08, // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+                   CHAT_LOBBY_MSG_VALIDATION            = 0x09, // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
+                   GLOBAL_ROUTER_SIGNATURE_CHECK        = 0x0a, // Global router message validation
+                   GLOBAL_ROUTER_SIGNATURE_CREATION     = 0x0b, // Global router message signature
+                   GXS_TUNNEL_DH_SIGNATURE_CHECK        = 0x0c, //
+                   GXS_TUNNEL_DH_SIGNATURE_CREATION     = 0x0d, //
+                   IDENTITY_DATA_UPDATE                 = 0x0e, // Group update on that identity data. Can be avatar, name, etc.
+                   IDENTITY_GENERIC_SIGNATURE_CHECK     = 0x0f, // Any signature verified for that identity
+                   IDENTITY_GENERIC_SIGNATURE_CREATION  = 0x10, // Any signature made by that identity
+		           IDENTITY_GENERIC_ENCRYPTION          = 0x11,
+		           IDENTITY_GENERIC_DECRYPTION          = 0x12,
+		           CIRCLE_MEMBERSHIP_CHECK              = 0x13
+                 } ;
+
+    explicit RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string());
+
+    uint16_t 		mServiceId;		// Id of the service using that identity
+    UsageCode		mUsageCode; 	// Specific code to use. Will allow forming the correct translated message in the GUI if necessary.
+    RsGxsGroupId 	mGrpId;	  		// Group ID using the identity
+
+	RsGxsMessageId  mMsgId;		   	// Message ID using the identity
+	uint64_t        mAdditionalId; 	// Some additional ID. Can be used for e.g. chat lobbies.
+    std::string 	mComment ;		// additional comment to be used mainly for debugging, but not GUI display
+
+    bool operator<(const RsIdentityUsage& u) const
+    {
+        return mHash < u.mHash ;
+    }
+    RsFileHash mHash ;
+};
+
 class RsIdentityDetails
 {
 public:
@@ -172,7 +231,7 @@ public:
 
     // identity details.
     std::string mNickname;
-    
+
     uint32_t mFlags ;
 
     // PGP Stuff.
@@ -191,26 +250,10 @@ public:
 
     // last usage
     time_t mLastUsageTS ;
-    std::map<std::string,time_t> mUseCases ;
+    std::map<RsIdentityUsage,time_t> mUseCases ;
 };
 
 
-class RsIdOpinion
-{
-	public:
-	RsGxsId id;
-	int rating;
-};
-	
-
-class RsIdentityParameters
-{
-	public:
-	RsIdentityParameters(): isPgpLinked(false) { return; }
-	bool isPgpLinked;
-    std::string nickname;
-    RsGxsImage mImage ;
-};
 
 
 class RsIdentity: public RsGxsIfaceHelper

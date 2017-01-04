@@ -57,6 +57,7 @@ If you have error in linking, run this:
 For VOIP Plugin: 
 
        $brew install speex
+       $brew install speexdsp
        $brew install homebrew/science/opencv
        $brew install ffmpeg
 

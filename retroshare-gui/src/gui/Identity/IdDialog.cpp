@@ -46,6 +46,7 @@
 #include <retroshare/rspeers.h>
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
+#include "retroshare/rsservicecontrol.h"
 #include <iostream>
 #include <algorithm>
 
@@ -1884,17 +1885,105 @@ void IdDialog::insertIdDetails(uint32_t token)
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
 
     QString usage_txt ;
-    std::map<time_t,std::string> rmap ;
-    for(std::map<std::string,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
+    std::map<time_t,RsIdentityUsage> rmap ;
+    for(std::map<RsIdentityUsage,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
         rmap.insert(std::make_pair(it->second,it->first)) ;
 
-    for(std::map<time_t,std::string>::const_iterator it(rmap.begin());it!=rmap.end();++it)
-        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + QString::fromStdString(it->second) + "<br/>" ;
+    for(std::map<time_t,RsIdentityUsage>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+        usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + createUsageString(it->second) + "<br/>" ;
 
     if(usage_txt.isNull())
         usage_txt = tr("<b>[No record in current session]</b>") ;
 
     ui->usageStatistics_TB->setText(usage_txt) ;
+}
+
+QString IdDialog::createUsageString(const RsIdentityUsage& u) const
+{
+    QString service_name;
+    RetroShareLink::enumType service_type = RetroShareLink::TYPE_UNKNOWN;
+
+    switch(u.mServiceId)
+    {
+    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL ; break ;
+    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM   ; break ;
+    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED  ; break ;
+    case RS_SERVICE_TYPE_CHAT:      	service_name = tr("Chat") ;  break ;
+    default:
+        service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
+    }
+
+    switch(u.mUsageCode)
+    {
+	case RsIdentityUsage::UNKNOWN_USAGE:
+        	return tr("[Unknown]") ;
+	case RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION:       // These 2 are normally not normal GXS identities, but nothing prevents it to happen either.
+        	return tr("Admin signature in service %1").arg(service_name);
+    case RsIdentityUsage::GROUP_ADMIN_SIGNATURE_VALIDATION:
+        	return tr("Admin signature verification in service %1").arg(service_name);
+    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION:      // not typically used, since most services do not require group author signatures
+        	return tr("Creation of author signature in service %1").arg(service_name);
+    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
+    case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION:    // most common use case. Messages are signed by authors in e.g. forums.
+    case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE:               // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+        break ;
+    case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
+    case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+	{
+		RetroShareLink l;
+		l.createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message/vote/comment"));
+		return tr("%1 in %2 tab").arg(l.toHtml()).arg(service_name) ;
+	}
+    case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
+    {
+        // there is no link for chat lobby yet.
+		return tr("Message in chat lobby %1").arg(u.mAdditionalId) ;
+    }
+    case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation
+    {
+		return tr("Distant message signature validation.");
+    }
+    case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CREATION:      // Global router message signature
+    {
+		return tr("Distant message signature creation.");
+    }
+    case RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CHECK:         //
+    {
+		return tr("Signature validation in distant tunnel system.");
+    }
+    case RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CREATION:      //
+    {
+		return tr("Signature in distant tunnel system.");
+    }
+    case RsIdentityUsage::IDENTITY_DATA_UPDATE:                  // Group update on that identity data. Can be avatar, name, etc.
+    {
+		return tr("Update of identity data.");
+    }
+    case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CHECK:      // Any signature verified for that identity
+    {
+		return tr("Generic signature validation.");
+    }
+    case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION:   // Any signature made by that identity
+    {
+		return tr("Generic signature.");
+    }
+	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION:
+    {
+		return tr("Generic encryption.");
+    }
+	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION:
+    {
+		return tr("Generic decryption.");
+    }
+	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:
+    {
+		return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
+    }
+
+#warning TODO! Add the different strings and translations here.
+	default:
+		return QString("Undone yet");
+    }
 }
 
 void IdDialog::modifyReputation()
