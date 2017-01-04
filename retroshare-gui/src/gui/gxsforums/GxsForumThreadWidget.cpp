@@ -224,8 +224,11 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
+
 	ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
 	ttheader->resizeSection (COLUMN_THREAD_TITLE, 440);
+	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150);
 
 	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
@@ -1072,18 +1075,18 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
-    RsIdentityDetails iddetails ;
+	RsIdentityDetails iddetails;
 
-    RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL ;
-    bool redacted = false ;
+	RsReputations::ReputationLevel reputation_level = RsReputations::REPUTATION_NEUTRAL;
+	bool redacted = false;
 
-    if(rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails))
-    {
-		reputation_level = iddetails.mReputation.mOverallReputationLevel ;
-		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
-    }
-    else
-        reputation_level = RsReputations::REPUTATION_UNKNOWN ;
+	if( rsIdentity->getIdDetails(msg.mMeta.mAuthorId,iddetails) )
+	{
+		reputation_level = iddetails.mReputation.mOverallReputationLevel;
+		redacted = (reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+	}
+	else
+		reputation_level = RsReputations::REPUTATION_UNKNOWN;
 
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR );
 	item->moveToThread(ui->threadTreeWidget->thread());

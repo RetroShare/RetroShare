@@ -2031,7 +2031,7 @@ void RsGxsNetService::updateServerSyncTS()
 		if(mGrpServerUpdate.grpUpdateTS < grpMeta->mRecvTS)
 		{
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG__G(grpId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpId << ". This is probably because an update has been received." << std::endl;
+			GXSNETDEBUG__G(grpMeta->mGroupId) << "  updated msgUpdateTS to last RecvTS = " << time(NULL) - grpMeta->mRecvTS << " secs ago for group "<< grpMeta->mGroupId << ". This is probably because an update has been received." << std::endl;
 #endif
 			mGrpServerUpdate.grpUpdateTS = grpMeta->mRecvTS;
 			change = true;
@@ -4218,24 +4218,29 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 		{
 			RsGxsMsgMetaData* m = *vit;
 
-            RsIdentityDetails details ;
+            // Check reputation
 
-            if(!rsIdentity->getIdDetails(m->mAuthorId,details))
-            {
-                std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author is not accessible (unknown/not cached)" << std::endl;
-                continue ;
-            }
-
-            if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+            if(!m->mAuthorId.isNull())
 			{
-//#ifdef NXS_NET_DEBUG_0
-				std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
-//#endif
-				continue ;
+				RsIdentityDetails details ;
+
+				if(!rsIdentity->getIdDetails(m->mAuthorId,details))
+				{
+					std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ " not sending grp message ID " << (*vit)->mMsgId << ", because the identity of the author (" << m->mAuthorId << ") is not accessible (unknown/not cached)" << std::endl;
+					continue ;
+				}
+
+				if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
+				{
+					//#ifdef NXS_NET_DEBUG_0
+					std::cerr << /* GXSNETDEBUG_PG(item->PeerId(),item->grpId) << */ "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+					//#endif
+					continue ;
+				}
 			}
 			// Check publish TS
 
-			if(item->createdSinceTS > (*vit)->mPublishTs || (*vit)->mPublishTs + max_send_delay < now)
+			if(item->createdSinceTS > (*vit)->mPublishTs || ((max_send_delay > 0) && (*vit)->mPublishTs + max_send_delay < now))
 			{
 #ifdef NXS_NET_DEBUG_0
 				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
@@ -4750,7 +4755,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 #ifdef NXS_NET_DEBUG_3
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  PeerId : " << item->PeerId() << std::endl;
 	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  GrpId: " << item->grpId << std::endl;
-	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->key.keyId << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  Got key Item: " << item->private_key.keyId << std::endl;
 #endif
 
 	// Get the meta data for this group Id
@@ -4778,7 +4783,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	bool publi = (item->private_key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) && (item->private_key.keyFlags & RSTLV_KEY_TYPE_FULL) ;
 
 #ifdef NXS_NET_DEBUG_3
-	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->key.endTS << std::endl;
+	GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "    Key id = " << item->private_key.keyId << "  admin=" << admin << ", publish=" << publi << " ts=" << item->private_key.endTS << std::endl;
 #endif
 
 	if(!(!admin && publi))

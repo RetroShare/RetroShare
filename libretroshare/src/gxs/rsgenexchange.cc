@@ -758,7 +758,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 	}
 }
 
-int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uint32_t& signFlag, RsTlvSecurityKeySet& grpKeySet)
+int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uint32_t& /*signFlag*/, RsTlvSecurityKeySet& grpKeySet)
 {
     bool needIdentitySign = false;
     bool needPublishSign = false;
@@ -799,41 +799,52 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
     RsGxsMsgMetaData& metaData = *(msg->metaData);
 
     if(needPublishSign)
-    {
-        RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_PUBLISH];
+	{
+		RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_PUBLISH];
 
-        std::map<RsGxsId, RsTlvPublicRSAKey>& keys = grpKeySet.public_keys;
-        std::map<RsGxsId, RsTlvPublicRSAKey>::iterator mit = keys.begin();
+		std::map<RsGxsId, RsTlvPublicRSAKey>& keys = grpKeySet.public_keys;
+		std::map<RsGxsId, RsTlvPublicRSAKey>::iterator mit = keys.begin();
 
-        RsGxsId keyId;
-        for(; mit != keys.end() ; ++mit)
-    {
-        RsTlvPublicRSAKey& key = mit->second;
+		RsGxsId keyId;
+		for(; mit != keys.end() ; ++mit)
+		{
+			RsTlvPublicRSAKey& key = mit->second;
 
-        if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC_deprecated)
-        {
-            keyId = key.keyId;
-            std::cerr << "WARNING: old style publish key with flags " << key.keyFlags << std::endl;
-            std::cerr << "         this cannot be fixed, but RS will deal with it." << std::endl;
-            break ;
-        }
-        if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) // we might have the private key, but we still should be able to check the signature
-        {
-            keyId = key.keyId;
-            break;
-        }
-    }
+			if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC_deprecated)
+			{
+				keyId = key.keyId;
+				std::cerr << "WARNING: old style publish key with flags " << key.keyFlags << std::endl;
+				std::cerr << "         this cannot be fixed, but RS will deal with it." << std::endl;
+				break ;
+			}
+			if(key.keyFlags & RSTLV_KEY_DISTRIB_PUBLISH) // we might have the private key, but we still should be able to check the signature
+			{
+				keyId = key.keyId;
+				break;
+			}
+		}
 
-        if(!keyId.isNull())
-        {
-            RsTlvPublicRSAKey& key = keys[keyId];
-            publishValidate &= GxsSecurity::validateNxsMsg(*msg, sign, key);
-        }
-        else
-        {
-            publishValidate = false;
-        }
-    }
+		if(!keyId.isNull())
+		{
+			RsTlvPublicRSAKey& key = keys[keyId];
+			publishValidate &= GxsSecurity::validateNxsMsg(*msg, sign, key);
+		}
+		else
+		{
+            std::cerr << "(EE) public publish key not found in group that require publish key validation. This should not happen! msgId=" << metaData.mMsgId << ", grpId=" << metaData.mGroupId << std::endl;
+            std::cerr << "(EE) public keys available for this group are: " << std::endl;
+
+            for(std::map<RsGxsId, RsTlvPublicRSAKey>::const_iterator it(grpKeySet.public_keys.begin());it!=grpKeySet.public_keys.end();++it)
+				std::cerr << "(EE) " << it->first << std::endl;
+
+            std::cerr << "(EE) private keys available for this group are: " << std::endl;
+
+            for(std::map<RsGxsId, RsTlvPrivateRSAKey>::const_iterator it(grpKeySet.private_keys.begin());it!=grpKeySet.private_keys.end();++it)
+				std::cerr << "(EE) " << it->first << std::endl;
+
+			publishValidate = false;
+		}
+	}
     else
     {
     	publishValidate = true;
@@ -888,14 +899,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 				if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 				{
 #ifdef GEN_EXCH_DEBUG	
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation score (" << details.mReputation.mOverallReputationLevel <<") is below the accepted threshold (" << reputation_threshold << ")" << std::endl;
+					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation level (" << details.mReputation.mOverallReputationLevel <<") indicate that you banned this ID." << std::endl;
 #endif
 					idValidate = false ;
 				}
-#ifdef GEN_EXCH_DEBUG	
-				else
-					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", accepted. Reputation score (" << details.mReputation.mOverallReputationScore <<") is above accepted threshold (" << reputation_threshold << ")" << std::endl;
-#endif
 			}
 
 				}
@@ -2745,6 +2752,8 @@ void RsGenExchange::processRecvdMessages()
 			    if(mit != grpMetas.end())
 			    {
 				    grpMeta = mit->second;
+					GxsSecurity::createPublicKeysFromPrivateKeys(grpMeta->keys);	// make sure we have the public keys that correspond to the private ones, as it happens. Most of the time this call does nothing.
+
 				    validateReturn = validateMsg(msg, grpMeta->mGroupFlags, grpMeta->mSignFlags, grpMeta->keys);
 
 #ifdef GEN_EXCH_DEBUG
@@ -2907,7 +2916,7 @@ void RsGenExchange::processRecvdGroups()
         if(deserialOk && acceptNewGroup(meta))
         {
 #ifdef GEN_EXCH_DEBUG
-            	std::cerr << "  processing validation for group " << meta->mGroupId << ", attempts number " << gpsi.mAttempts << std::endl;
+            	std::cerr << "  processing validation for group " << meta->mGroupId << ", original attempt time: " << time(NULL) - gpsi.mFirstTryTS << " seconds ago" << std::endl;
 #endif
         	grp->metaData = meta;
         	uint8_t ret = validateGrp(grp);
@@ -3117,6 +3126,8 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	}
 
 	RsTlvKeySignature adminSign = mit->second;
+
+	GxsSecurity::createPublicKeysFromPrivateKeys(oldGrpMeta.keys);	// make sure we have the public keys that correspond to the private ones, as it happens. Most of the time this call does nothing.
 
 	std::map<RsGxsId, RsTlvPublicRSAKey>& keys = oldGrpMeta.keys.public_keys;
 	std::map<RsGxsId, RsTlvPublicRSAKey>::iterator keyMit = keys.find(RsGxsId(oldGrpMeta.mGroupId));

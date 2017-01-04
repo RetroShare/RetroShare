@@ -386,7 +386,7 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
             std::cerr << std::endl;
             std::cerr << "RsNxsMsg :";
             std::cerr << std::endl;
-            msg.print(std::cerr, 10);
+            const_cast<RsNxsMsg*>(&msg)->print(std::cerr, 10);
             std::cerr << std::endl;
     #endif
 
@@ -788,8 +788,7 @@ bool GxsSecurity::decrypt(uint8_t *& out, uint32_t & outlen, const uint8_t *in, 
 	else
 	{
 #ifdef GXS_SECURITY_DEBUG
-		std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
-			<< std::endl;
+		std::cerr << "GxsSecurity(): Could not generate RSA private key " << key.keyId << std::endl;
 #endif
 		return false;
 	}
@@ -1019,7 +1018,7 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 	std::cerr << std::endl;
 	std::cerr << "RsNxsGrp :";
 	std::cerr << std::endl;
-	grp.print(std::cerr, 10);
+	const_cast<RsNxsGrp*>(&grp)->print(std::cerr, 10);
 	std::cerr << std::endl;
 #endif
 

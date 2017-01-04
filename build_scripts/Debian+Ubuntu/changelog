@@ -1,5 +1,72 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  5469eb1 defnax   Tue,  3 Jan 2017 16:43:31 +0100 Added display labels to show positive and negative votes
+  0ba28a2 defnax   Tue,  3 Jan 2017 01:37:16 +0100 Removed Column text for Votes, Distribution replaced by icon. Set column header to "ResizeToContents" to not use much space Added new Bio hazard icons to look same like other ones
+  00613d4 csoler   Mon,  2 Jan 2017 14:00:23 +0100 made sure we have the public keys for msg validation, as only the private key is available when we are admin/publisher of a group
+  a962330 csoler   Sun,  1 Jan 2017 21:28:14 +0100 fixed compilation in GxsSecurity with debug flags
+  e883a32 csoler   Sun,  1 Jan 2017 21:10:14 +0100 added more debug info in msg validation code
+  bb7d829 csoler   Sun,  1 Jan 2017 20:54:00 +0100 fixed compilaiton in debug mode for rsgenexchange
+  a261094 csoler   Sun,  1 Jan 2017 20:22:54 +0100 removed debug output form p3idservice
+  1a9f191 csoler   Sun,  1 Jan 2017 18:22:01 +0100 Merge pull request #617 from csoler/v0.6-Circles2
+  a6ec626 csoler   Sun,  1 Jan 2017 18:07:02 +0100 fixed wrong icon in GxsIdChooser
+  f07ebbf csoler   Sun,  1 Jan 2017 17:51:03 +0100 fixed circle authentication policy
+  e312848 csoler   Sun,  1 Jan 2017 17:50:09 +0100 added documentation of flags in GXS msg authentication  policy
+  fcf8a35 csoler   Sun,  1 Jan 2017 17:49:34 +0100 check that author id is not null before complaining that it does not exist
+  c71cf7a csoler   Sun,  1 Jan 2017 17:47:24 +0100 removed timestamping of key that was in the wrong place
+  97957bd csoler   Sat, 31 Dec 2016 18:20:28 +0100 fixed update problem due to forgetting that delay=0 means no time constraints
+  b1923dd csoler   Sat, 31 Dec 2016 17:47:15 +0100 fixed compilation
+  6c49b3d csoler   Sat, 31 Dec 2016 16:43:52 +0100 Merge pull request #616 from PhenomRetroShare/Fix_SomeNewWarnings
+  41386c6 Phenom   Sat, 31 Dec 2016 15:17:51 +0100 Fix some new warnings
+  e2dfadf csoler   Sat, 31 Dec 2016 14:23:37 +0100 started documentation of GXS flags. Fixed a bug in p3gxscircles authentication policy
+  85e6f61 csoler   Sat, 31 Dec 2016 13:48:17 +0100 Merge pull request #612 from csoler/v0.6-Reputations
+  f8ac391 csoler   Sat, 31 Dec 2016 13:42:29 +0100 better documentation of anti-spam policy
+  924e3bf csoler   Thu, 29 Dec 2016 21:54:50 +0100 changed anti-spam policy to require a minimum of NEUTRAL to forward posts of trusted people
+  057e3eb csoler   Thu, 29 Dec 2016 18:10:21 +0100 extended GXS sync limit to sending instead of just requesting, in order to make backward compatibility less painful
+  9d82a3f csoler   Thu, 29 Dec 2016 15:24:31 +0100 replace mNbAttempts in signature and validation of posts by a timeout, which allows to wait for missing keys more robustly
+  3a45bac csoler   Thu, 29 Dec 2016 15:12:58 +0100 removed unused autoBanIdentitiesLimit variable
+  f3f0fce csoler   Thu, 29 Dec 2016 10:34:57 +0100 added load/save of new thresholds in p3gxsreputation. Removed some unused variables
+  fb73391 csoler   Wed, 28 Dec 2016 18:58:49 +0100 added two fields in settings/people to setup the thresholds to decide between neutral and remotely positive/negative reputation
+  da881e1 csoler   Tue, 27 Dec 2016 21:13:37 +0100 fixed setting of author reputation from forum thread menu
+  3a92124 csoler   Tue, 27 Dec 2016 20:42:47 +0100 added method to show a given post author into the people tab
+  6473782 csoler   Tue, 27 Dec 2016 17:17:23 +0100 added an icon for when information is missing for an ID in forum distribution
+  5ed879c csoler   Mon, 26 Dec 2016 17:00:21 +0100 added small debug output in GxsForumThreadWidget
+  d8233bb csoler   Mon, 26 Dec 2016 16:59:52 +0100 merged updatream/master
+  742a764 csoler   Mon, 26 Dec 2016 15:59:53 +0100 added display of warning for non forwarded posts
+  811d084 csoler   Sun, 25 Dec 2016 23:43:29 +0100 only show distribution column if anti-spam is enabled
+  c80d3ec csoler   Sun, 25 Dec 2016 23:12:07 +0100 added check for reputation before sending message ids
+  b34ab44 csoler   Sat, 24 Dec 2016 17:29:53 +0100 added menu entries to vote for/against a forum poster
+  d423745 csoler   Sat, 24 Dec 2016 15:04:08 +0100 added column to show distribution data and moved ReputationItemDelegate to GxsIdDetails
+  c100775 defnax   Sat, 24 Dec 2016 14:40:56 +0100 Changed Share icon on Home View
+  873c0e6 csoler   Sat, 24 Dec 2016 14:13:02 +0100 added display of reputation in forums
+  e5e5909 csoler   Fri, 23 Dec 2016 22:53:57 +0100 added proper display of reputation as an icon in IDDialog
+  72fb8f1 csoler   Fri, 23 Dec 2016 17:52:02 +0100 changed the reputation system to output a level that differentiate your own opinion to your friends opinion
+  36453dd csoler   Thu, 22 Dec 2016 22:20:07 +0100 Merge pull request #609 from G10h4ck/android_debug
+  8647761 defnax   Thu, 22 Dec 2016 17:10:51 +0100 Changed Paste icon
+  1b032e0 Gio      Thu, 22 Dec 2016 13:49:13 +0100 qml-app: remove deprecated usage of LibresapiLocalClient in ChatView
+  2c10e20 Gio      Thu, 22 Dec 2016 13:47:44 +0100 qml-app: Added button to deny friendship
+  3de3bec Gio      Thu, 22 Dec 2016 13:47:08 +0100 Cleanup #ifdef mess in RsAccountsDetail::PathDataDirectory()
+  06a1020 Gio      Thu, 22 Dec 2016 00:33:34 +0100 Add workaround to see debug messages from native code in android service
+  8b9038a csoler   Thu, 22 Dec 2016 11:21:49 +0100 improved display/wording of usage statstics in People
+  0a3ec97 csoler   Thu, 22 Dec 2016 00:14:16 +0100 added statistics info for key requests
+  83302e0 csoler   Wed, 21 Dec 2016 23:19:20 +0100 Merge pull request #607 from PhenomRetroShare/Fix_Compilation
+  40cf768 Phenom   Wed, 21 Dec 2016 21:23:54 +0100 Fix compilation and some new warnings.
+  aca36a3 defnax   Wed, 21 Dec 2016 19:07:57 +0100 Improving the Certificate Page for Connect Wizard: Added place holder text for Cert Field renamed some strings Improved layout for easy paste key and display the errors.
+  d3051ef csoler   Wed, 21 Dec 2016 00:34:07 +0100 added display of usage statistics for GXS identities
+  f3e699a csoler   Tue, 20 Dec 2016 14:08:47 +0100 fixed typo causing publishTest to fail in some cases
+  8de9ee8 csoler   Mon, 19 Dec 2016 23:28:57 +0100 made friendly time unit returns empty string when time is 0. Fixes 46y display in search dialog
+  9d8690b csoler   Mon, 19 Dec 2016 21:46:55 +0100 Merge pull request #606 from csoler/v0.6-GXS-LimitedSync2
+  948b88b csoler   Mon, 19 Dec 2016 21:40:04 +0100 fixed bug caused by calling clear in constructor which would reset the TS in GXS when saving...
+  c9511c4 defnax   Mon, 19 Dec 2016 20:52:24 +0100 update emotes strings
+  ef0850e csoler   Mon, 19 Dec 2016 20:44:15 +0100 added recording system for usage cases of GXS ids
+  0cbe83e thunder2 Sun, 18 Dec 2016 12:30:27 +0100 Added auto-login as default in Windows build script
+  ed61d72 csoler   Sat, 17 Dec 2016 19:10:13 +0100 fixed compilaiton
+  330cc98 csoler   Sat, 17 Dec 2016 18:14:44 +0100 fixed test of max age when receiving posts
+  4dc284a csoler   Sat, 17 Dec 2016 14:15:51 +0100 added auto-login default on ubuntu
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Tue, 03 Jan 2017 23:00:00 +0100
+
+retroshare06 (0.6.1-1.20161217.4dc284a3~vivid) vivid; urgency=low
+
   f8f040b csoler Fri, 16 Dec 2016 10:03:23 +0100 fixed deadlock due to cross-locking RsGxsNetService and RsGxsGenExchange (reported by sss)
   1ef11a2 csoler Thu, 15 Dec 2016 23:21:11 +0100 Merge pull request #599 from G10h4ck/qml_app_chat
   b857d9a csoler Thu, 15 Dec 2016 23:10:09 +0100 Merge pull request #605 from csoler/v0.6-FileListsOptim

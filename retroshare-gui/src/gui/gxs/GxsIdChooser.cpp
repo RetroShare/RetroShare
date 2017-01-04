@@ -160,7 +160,7 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 		break;
 
 	case GXS_ID_DETAILS_TYPE_DONE:
-		GxsIdDetails::getIcons(details, icons);
+		GxsIdDetails::getIcons(details, icons, GxsIdDetails::ICON_TYPE_AVATAR);
 		break;
         
 	case GXS_ID_DETAILS_TYPE_BANNED:

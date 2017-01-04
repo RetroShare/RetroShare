@@ -59,7 +59,7 @@ public:
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;
-    uint32_t    mGroupFlags;
+    uint32_t    mGroupFlags;  // Combination of FLAGS_PRIVACY_PRIVATE | FLAGS_PRIVACY_RESTRICTED | FLAGS_PRIVACY_PUBLIC
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.
