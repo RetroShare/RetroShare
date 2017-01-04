@@ -1900,16 +1900,18 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 {
-    RetroShareLink::enumType service_type ;
+    QString service_name;
+    RetroShareLink::enumType service_type = RetroShareLink::TYPE_UNKNOWN;
+
     switch(u.mServiceId)
     {
-    case RS_SERVICE_GXS_TYPE_CHANNELS: service_type = RetroShareLink::TYPE_CHANNEL ; break ;
-    case RS_SERVICE_GXS_TYPE_FORUMS:   service_type = RetroShareLink::TYPE_FORUM ; break ;
-    case RS_SERVICE_GXS_TYPE_POSTED:   service_type = RetroShareLink::TYPE_POSTED ; break ;
+    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL ; break ;
+    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM   ; break ;
+    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED  ; break ;
+    case RS_SERVICE_TYPE_CHAT:      	service_name = tr("Chat") ;  break ;
     default:
-		service_type = RetroShareLink::TYPE_UNKNOWN ; break ;
+        service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
-    QString service_name = QString::fromStdString(rsServiceControl->getServiceName(uint32_t(u.mServiceId)<< 8)) ;
 
     switch(u.mUsageCode)
     {
@@ -1929,8 +1931,8 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
 	{
 		RetroShareLink l;
-		l.createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("here"));
-		return tr("Message author validation %1").arg(l.toHtml()) ;
+		l.createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message/vote/comment"));
+		return tr("%1 in %2 tab").arg(l.toHtml()).arg(service_name) ;
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
