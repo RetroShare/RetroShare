@@ -44,7 +44,7 @@ Compilation on Linux
    * Arch Linux
    ```bash
    pacman -S base-devel libgnome-keyring libmicrohttpd libupnp libxslt \
-       libxss opencv qt4 speex sqlcipher
+       libxss opencv qt4 speex speexdsp sqlcipher
    ```
 
 2. Checkout the source code

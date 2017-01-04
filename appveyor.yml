@@ -100,6 +100,7 @@ install:
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"
+  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
   - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
