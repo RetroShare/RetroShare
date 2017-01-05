@@ -47,8 +47,7 @@ bool AuthorPending::expired() const
 	return time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
 
-bool AuthorPending::getAuthorRep(GixsReputation& rep,
-                                 const RsGxsId& authorId, const RsPeerId& peerId)
+bool AuthorPending::getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& peerId)
 {
 	if(mRep->haveReputation(authorId))
 	{

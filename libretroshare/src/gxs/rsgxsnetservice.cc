@@ -2779,8 +2779,6 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
     const RsPeerId peerFrom = tr->mTransaction->PeerId();
 
-    MsgAuthorV toVet;
-
     std::list<RsPeerId> peers;
     peers.push_back(tr->mTransaction->PeerId());
     bool reqListSizeExceeded = false ;
@@ -2845,22 +2843,6 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
                 continue ;
             }
                 
-#ifdef TO_BE_REMOVED
-            if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
-            {
-                GixsReputation rep;
-
-#ifdef NXS_NET_DEBUG_1
-                GXSNETDEBUG_PG(item->PeerId(),grpId) << ", author Id=" << syncItem->authorId << ". Reputation: " ;
-#endif
-                if(!noAuthor)
-                    mReputations->getReputation(syncItem->authorId, rep);
-
-                // if author is required for this message, it will simply get dropped
-                // at genexchange side of things
-                if(rep.score >= (int)grpMeta->mReputationCutOff || noAuthor)
-                {
-#endif
 #ifdef NXS_NET_DEBUG_1
 			GXSNETDEBUG_PG(item->PeerId(),grpId) << ", passed! Adding message to req list." << std::endl;
 #endif
@@ -2872,42 +2854,11 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 			msgItem->PeerId(peerFrom);
 			reqList.push_back(msgItem);
 			++reqListSize ;
-            
-#ifdef TO_BE_REMOVED
-                }
-#ifdef NXS_NET_DEBUG_1
-                else
-                    GXSNETDEBUG_PG(item->PeerId(),grpId) << ", failed!" << std::endl;
-#endif
-            }
-            else
-            {
-#ifdef NXS_NET_DEBUG_1
-                GXSNETDEBUG_PG(item->PeerId(),grpId) << ", no author/no reputation. Pushed to Vetting list." << std::endl;
-#endif
-                // preload for speed
-                mReputations->loadReputation(syncItem->authorId, peers);
-                MsgAuthEntry entry;
-                entry.mAuthorId = syncItem->authorId;
-                entry.mGrpId = syncItem->grpId;
-                entry.mMsgId = syncItem->msgId;
-                toVet.push_back(entry);
-            }
-#endif
         }
 #ifdef NXS_NET_DEBUG_1
         else
             GXSNETDEBUG_PG(item->PeerId(),grpId) << ". already here." << std::endl;
 #endif
-    }
-
-    if(!toVet.empty())
-    {
-#ifdef NXS_NET_DEBUG_1
-        GXSNETDEBUG_PG(item->PeerId(),grpId) << "  Vetting list: " << toVet.size() << " elements." << std::endl;
-#endif
-        MsgRespPending* mrp = new MsgRespPending(mReputations, tr->mTransaction->PeerId(), toVet, cutoff);
-        mPendingResp.push_back(mrp);
     }
 
     if(!reqList.empty())
@@ -3046,7 +2997,6 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 
     uint32_t transN = locked_getTransactionId();
 
-    GrpAuthorV toVet;
     std::list<RsPeerId> peers;
     peers.push_back(tr->mTransaction->PeerId());
 
@@ -3076,55 +3026,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		}
         
         if( (mGrpAutoSync && !haveItem) || latestVersion)
-        {
-            // determine if you need to check reputation
-            bool checkRep = !grpSyncItem->authorId.isNull();
-
-            // check if you have reputation, if you don't then
-            // place in holding pen
-            if(checkRep)
-            {
-                if(mReputations->haveReputation(grpSyncItem->authorId))
-                {
-                    GixsReputation rep;
-                    mReputations->getReputation(grpSyncItem->authorId, rep);
-
-                    if(rep.score >= (int)GIXS_CUT_OFF)
-                    {
-                        addGroupItemToList(tr, grpId, transN, reqList);
-#ifdef NXS_NET_DEBUG_0
-                        GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId)<< "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": allowed." << std::endl;
-#endif
-                    }
-#ifdef NXS_NET_DEBUG_0
-                    else
-                        GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId)<< "  reputation cut off: limit=" << GIXS_CUT_OFF << " value=" << rep.score << ": you shall not pass." << std::endl;
-#endif
-                }
-                else
-                {
-                    // preload reputation for later
-                    mReputations->loadReputation(grpSyncItem->authorId, peers);
-                    GrpAuthEntry entry;
-                    entry.mAuthorId = grpSyncItem->authorId;
-                    entry.mGrpId = grpSyncItem->grpId;
-                    toVet.push_back(entry);
-                }
-            }
-            else
-            {
-                addGroupItemToList(tr, grpId, transN, reqList);
-            }
-        }
+			addGroupItemToList(tr, grpId, transN, reqList);
     }
-
-    if(!toVet.empty())
-    {
-        RsPeerId peerId = tr->mTransaction->PeerId();
-        GrpRespPending* grp = new GrpRespPending(mReputations, peerId, toVet);
-        mPendingResp.push_back(grp);
-    }
-
 
     if(!reqList.empty())
         locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);

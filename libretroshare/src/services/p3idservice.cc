@@ -34,6 +34,7 @@
 #include "util/rsstring.h"
 #include "util/radix64.h"
 #include "util/rsdir.h"
+#include "crypto/hashstream.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
 
@@ -612,6 +613,7 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
 RsReputations::ReputationLevel p3IdService::overallReputationLevel(const RsGxsId &id)
 {
+#warning some IDs might be deleted but the reputation should still say they are banned.
     RsIdentityDetails det ;
     getIdDetails(id,det) ;
 
@@ -4122,8 +4124,29 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid,const RsGxsMessageId& mid,uint64_t additional_id,const std::string& comment)
     	: mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mAdditionalId(additional_id),mComment(comment)
 {
+#ifdef DEBUG_IDS
 	// This is a hack, since it will hash also mHash, but because it is initialized to 0, and only computed in the constructor here, it should be ok.
-	mHash = RsDirUtil::sha1sum(reinterpret_cast<uint8_t*>(this),sizeof(RsIdentityUsage)) ;
+    std::cerr << "New identity usage: " << std::endl;
+    std::cerr << "  service=" << std::hex << service << std::endl;
+    std::cerr << "  code   =" << std::hex << code << std::endl;
+    std::cerr << "  grpId  =" << std::hex << gid << std::endl;
+    std::cerr << "  msgId  =" << std::hex << mid << std::endl;
+    std::cerr << "  add id =" << std::hex << additional_id << std::endl;
+    std::cerr << "  commnt =\"" << std::hex << comment << "\"" << std::endl;
+#endif
+
+    librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
+
+    hs << (uint32_t)service ;
+    hs << (uint8_t)code ;
+    hs << gid ;
+    hs << mid ;
+    hs << (uint64_t)additional_id ;
+    hs << comment ;
+
+	mHash = hs.hash();
+
+    std::cerr << "  hash   =\"" << std::hex << mHash << "\"" << std::endl;
 }
 
 
