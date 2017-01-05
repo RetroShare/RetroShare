@@ -1314,6 +1314,11 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
+    	/**** Reputation system ****/
+
+    	p3GxsReputation *mReputations = new p3GxsReputation(mLinkMgr) ;
+    	rsReputations = mReputations ;
+
 #ifdef RS_ENABLE_GXS
 
 	std::string currGxsDir = rsAccounts->PathAccountDirectory() + "/gxs";
@@ -1384,11 +1389,7 @@ int RsServer::StartupRetroShare()
 
     mPosted->setNetworkExchangeService(posted_ns) ;
 
-    	/**** Reputation system ****/
-    
-    	p3GxsReputation *mReputations = new p3GxsReputation(mLinkMgr) ;
-    	rsReputations = mReputations ;
-        
+
         /**** Wiki GXS service ****/
 
 #ifdef RS_USE_WIKI

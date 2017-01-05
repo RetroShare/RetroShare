@@ -206,7 +206,7 @@ public:
 
     explicit RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCode& code,const RsGxsGroupId& gid=RsGxsGroupId(),const RsGxsMessageId& mid=RsGxsMessageId(),uint64_t additional_id=0,const std::string& comment = std::string());
 
-    uint16_t 		mServiceId;		// Id of the service using that identity
+    uint16_t 		mServiceId;		// Id of the service using that identity, as understood by rsServiceControl
     UsageCode		mUsageCode; 	// Specific code to use. Will allow forming the correct translated message in the GUI if necessary.
     RsGxsGroupId 	mGrpId;	  		// Group ID using the identity
 

@@ -959,6 +959,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
     
 	if (rit == mReputations.end())
 	{
+#warning we should set the owner node id here.
 		mReputations[gxsid] = Reputation(gxsid);
 		rit = mReputations.find(gxsid);
 	}
