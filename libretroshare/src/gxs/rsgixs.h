@@ -172,8 +172,7 @@ class GixsReputation
 		int score;
 };
 
-
-class RsGixsReputation 
+class RsGixsReputation
 {
 public:
 	// get Reputation.
@@ -181,7 +180,6 @@ public:
     virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers) = 0;
     virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
 };
-
 
 /*** This Class pulls all the GXS Interfaces together ****/
 
