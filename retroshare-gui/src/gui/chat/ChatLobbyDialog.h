@@ -81,6 +81,7 @@ protected slots:
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
     void sendMessage();
     void banParticipant();
+	void voteParticipant();
 
 private:
 	void updateParticipantsList();
@@ -109,6 +110,7 @@ private:
 
     QAction *muteAct;
     QAction *banAct;
+	QAction *voteAct;
     QAction *distantChatAct;
     QAction *actionSortByName;
     QAction *actionSortByActivity;

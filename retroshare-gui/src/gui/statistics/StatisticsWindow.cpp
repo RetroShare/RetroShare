@@ -124,9 +124,6 @@ void StatisticsWindow::initStackedPage()
   QActionGroup *grp = new QActionGroup(this);
   QAction *action;
   
-  ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
-                   action = createPageAction(QIcon(IMAGE_DHT), tr("DHT"), grp));
-
   ui->stackPages->add(bwdlg = new BwCtrlWindow(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_BANDWIDTH), tr("Bandwidth"), grp));
                    
@@ -139,6 +136,9 @@ void StatisticsWindow::initStackedPage()
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
+  ui->stackPages->add(dhtw = new DhtWindow(ui->stackPages),
+                   action = createPageAction(QIcon(IMAGE_DHT), tr("DHT"), grp));
+
    /*std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
 	 {
