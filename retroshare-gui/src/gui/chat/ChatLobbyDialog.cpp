@@ -87,7 +87,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
-    banAct = new QAction(QIcon(":/icons/yellow_biohazard64.png"), tr("Ban this person (Sets negative opinion)"), this);
+    banAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
+	voteAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
     
@@ -107,6 +108,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
     connect(banAct, SIGNAL(triggered()), this, SLOT(banParticipant()));
+	connect(voteAct, SIGNAL(triggered()), this, SLOT(voteParticipant()));
     
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
@@ -221,11 +223,13 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(actionSortByName);
     contextMnu.addSeparator();
     contextMnu.addAction(muteAct);
+	contextMnu.addAction(voteAct);
     contextMnu.addAction(banAct);
 
 	muteAct->setCheckable(true);
 	muteAct->setEnabled(false);
 	muteAct->setChecked(false);
+	voteAct->setEnabled(false);
 	banAct->setEnabled(false);
 
     if (selectedItems.size())
@@ -237,6 +241,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
         {
             muteAct->setEnabled(true);
 	    banAct->setEnabled(true);
+		voteAct->setEnabled(true);
 
             QList<QTreeWidgetItem*>::iterator item;
             for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
@@ -288,6 +293,35 @@ void ChatLobbyDialog::banParticipant()
     }
 }
 
+void ChatLobbyDialog::voteParticipant()
+{
+    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+
+    if (selectedItems.isEmpty()) {
+	    return;
+    }
+
+    QList<QTreeWidgetItem*>::iterator item;
+    for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
+
+	    RsGxsId nickname;
+	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(nickname) ;
+
+	    RsGxsId gxs_id;
+	    rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
+
+	    // This test avoids to mute/ban your own identity
+
+	    if (gxs_id!=nickname)
+        {
+            std::cerr << "Giving negative opinion to GXS id " << nickname << std::endl;
+		    rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_POSITIVE);
+            
+	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
+           
+        }
+    }
+}
 
 void ChatLobbyDialog::init()
 {
