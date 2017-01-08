@@ -39,6 +39,7 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
+#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -228,22 +229,6 @@ int	p3GxsReputation::tick()
 	return 0;
 }
 
-// void p3GxsReputation::setNodeAutoBanThreshold(uint32_t n)
-// {
-//     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-//
-//     if(n != mPgpAutoBanThreshold)
-//     {
-// 	    mLastBannedNodesUpdate = 0 ;
-// 	    mPgpAutoBanThreshold = n ;
-//             IndicateConfigChanged() ;
-//     }
-// }
-// uint32_t p3GxsReputation::nodeAutoBanThreshold()
-// {
-//     return mPgpAutoBanThreshold ;
-// }
-
 void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
@@ -277,9 +262,6 @@ class ZeroInitCnt
 
 void p3GxsReputation::updateBannedNodesProxy()
 {
-//#ifdef DEBUG_REPUTATION
-//    std::cerr << "Updating PGP ban list based on signed GxsIds to ban. Ban threshold = " << mPgpAutoBanThreshold << std::endl;
-//#endif
     // This function keeps the Banned GXS id proxy up to date.
     //
 
@@ -305,7 +287,7 @@ void p3GxsReputation::updateIdentityFlags()
 #endif
 
 	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
-            if( (rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) && (mPerNodeBannedIdsProxy.find(rit->first) == mPerNodeBannedIdsProxy.end()))
+            if( (!(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_UP_TO_DATE)) && (mPerNodeBannedIdsProxy.find(rit->first) == mPerNodeBannedIdsProxy.end()))
 			    to_update.push_back(rit->first) ;
     }
 
@@ -333,7 +315,7 @@ void p3GxsReputation::updateIdentityFlags()
                 std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
                 continue ;
             }
-            it->second.mIdentityFlags = 0 ;
+            it->second.mIdentityFlags = 0 ;		// resets the NEEDS_UPDATE flag. All other flags set later on.
 
             if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
             {
@@ -934,7 +916,7 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
         return false ;
 
 #ifdef DEBUG_REPUTATION
-    std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
+    std::cerr << "isIdentityBanned(): returning " << (info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE) << " for GXS id " << id << std::endl;
 #endif
     return info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
 }
@@ -993,7 +975,6 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	reputation.updateReputation();
 
 	mUpdated.insert(std::make_pair(now, gxsid));
-	mUpdatedReputations.insert(gxsid);
 	mReputationsUpdated = true;	
 	mLastBannedNodesUpdate = 0 ;	// for update of banned nodes
     
@@ -1051,6 +1032,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
 		item->mIdentityFlags = rit->second.mIdentityFlags;
         item->mOwnerNodeId = rit->second.mOwnerNode;
+        item->mLastUsedTS = rit->second.mLastUsedTS;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -1129,6 +1111,10 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	    if (set)
 		    loadReputationSet(set, peerSet);
 
+	    RsGxsReputationSetItem_deprecated3 *set2 = dynamic_cast<RsGxsReputationSetItem_deprecated3 *>(*it);
+
+        if(set2)
+		    loadReputationSet_deprecated3(set2, peerSet);
 
         RsGxsReputationBannedNodeSetItem *itm2 = dynamic_cast<RsGxsReputationBannedNodeSetItem*>(*it) ;
 
@@ -1177,6 +1163,57 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
     loadList.clear() ;
     return true;
 }
+bool p3GxsReputation::loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet)
+{
+    {
+        RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+        std::map<RsGxsId, Reputation>::iterator rit;
+
+        if(item->mGxsId.isNull())	// just a protection against potential errors having put 00000 into ids.
+            return false ;
+
+        /* find matching Reputation */
+        RsGxsId gxsId(item->mGxsId);
+        rit = mReputations.find(gxsId);
+        if (rit != mReputations.end())
+        {
+            std::cerr << "ERROR";
+            std::cerr << std::endl;
+        }
+
+        Reputation &reputation = mReputations[gxsId];
+
+        // install opinions.
+        std::map<RsPeerId, uint32_t>::const_iterator oit;
+        for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); ++oit)
+        {
+            // expensive ... but necessary.
+            RsPeerId peerId(oit->first);
+            if (peerSet.end() != peerSet.find(peerId))
+                reputation.mOpinions[peerId] = safe_convert_uint32t_to_opinion(oit->second);
+        }
+
+        reputation.mOwnOpinion = item->mOwnOpinion;
+        reputation.mOwnOpinionTs = item->mOwnOpinionTS;
+        reputation.mOwnerNode = item->mOwnerNodeId;
+        reputation.mIdentityFlags = item->mIdentityFlags & (~REPUTATION_IDENTITY_FLAG_UP_TO_DATE);
+        reputation.mLastUsedTS = time(NULL);
+
+        // if dropping entries has changed the score -> must update.
+
+        reputation.updateReputation() ;
+
+        mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
+    }
+#ifdef DEBUG_REPUTATION
+    RsReputations::ReputationInfo info ;
+    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info) ;
+    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", overall level: " << info.mOverallReputationLevel << std::endl;
+#endif
+    return true;
+}
+
 
 bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<RsPeerId> &peerSet)
 {
@@ -1212,12 +1249,10 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
         reputation.mOwnOpinion = item->mOwnOpinion;
         reputation.mOwnOpinionTs = item->mOwnOpinionTS;
         reputation.mOwnerNode = item->mOwnerNodeId;
-        reputation.mIdentityFlags = item->mIdentityFlags | REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE;
+        reputation.mIdentityFlags = item->mIdentityFlags;
+        reputation.mLastUsedTS = item->mLastUsedTS;
 
         // if dropping entries has changed the score -> must update.
-
-        //float old_reputation = reputation.mReputation ;
-        //mUpdatedReputations.insert(gxsId) ;
 
         reputation.updateReputation() ;
 
@@ -1226,7 +1261,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 #ifdef DEBUG_REPUTATION
     RsReputations::ReputationInfo info ;
     getReputationInfo(item->mGxsId,item->mOwnerNodeId,info) ;
-    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", assessment: " << ((info.mAssessment==ASSESSMENT_BAD)?"BAD":"OK") << std::endl;
+    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", level: " << info.mOverallReputationLevel << std::endl;
 #endif
     return true;
 }
@@ -1426,7 +1461,7 @@ void p3GxsReputation::debug_print()
     for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
     {
         std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputationScore
-                  << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago." << std::endl;
+                  << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago, last needed: " << now - it->second.mLastUsedTS << " secs ago." << std::endl;
 #ifdef DEBUG_REPUTATION2
         for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
             std::cerr << "    " << it2->first << ": " << it2->second << std::endl;

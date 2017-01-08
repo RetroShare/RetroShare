@@ -32,7 +32,7 @@
 #include <map>
 #include <set>
 
-#define REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE  0x0100
+#define REPUTATION_IDENTITY_FLAG_UP_TO_DATE    0x0100
 #define REPUTATION_IDENTITY_FLAG_PGP_LINKED    0x0001
 #define REPUTATION_IDENTITY_FLAG_PGP_KNOWN     0x0002
 
@@ -69,10 +69,10 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
                                                                                             
 	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
 
 	void updateReputation();
 
@@ -89,6 +89,8 @@ public:
 	RsPgpId mOwnerNode;
     
 	uint32_t mIdentityFlags;
+
+    time_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
 };
 
 
@@ -148,7 +150,7 @@ private:
     // internal update of data. Takes care of cleaning empty boxes.
     void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
-
+	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);
     int  sendPackets();
     void cleanup();
     void sendReputationRequests();
@@ -176,9 +178,6 @@ private:
     std::map<RsPeerId, ReputationConfig> mConfig;
     std::map<RsGxsId, Reputation> mReputations;
     std::multimap<time_t, RsGxsId> mUpdated;
-
-    // set of Reputations to send to p3IdService.
-    std::set<RsGxsId> mUpdatedReputations;
 
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
