@@ -143,7 +143,6 @@ private:
     bool SendReputations(RsGxsReputationRequestItem *request);
     bool RecvReputations(RsGxsReputationUpdateItem *item);
     bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
-    void updateActiveFriends() ;
 
     void updateBannedNodesProxy();
 
@@ -161,13 +160,12 @@ private:
 private:
     RsMutex mReputationMtx;
 
-    time_t mLastActiveFriendsUpdate;
+    time_t mLastCleanUp;
     time_t mRequestTime;
     time_t mStoreTime;
     time_t mLastBannedNodesUpdate ;
         time_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
-    uint32_t mAverageActiveFriends ;
 
     float mAutoBanIdentitiesLimit ;
     bool mAutoSetPositiveOptionToContacts;
