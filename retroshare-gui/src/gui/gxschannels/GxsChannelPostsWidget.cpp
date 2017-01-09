@@ -33,6 +33,7 @@
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
 #include <algorithm>
+#include "util/DateTime.h"
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
@@ -266,6 +267,10 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		ui->infoDescription->clear();
 	} else {
 		ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+		
+		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+		
+		
 		ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
         
         	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
