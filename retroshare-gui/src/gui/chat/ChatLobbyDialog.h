@@ -80,8 +80,7 @@ protected slots:
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
     void sendMessage();
-    void banParticipant();
-	void voteParticipant();
+	void voteParticipant(int vote);
 
 private:
 	void updateParticipantsList();
@@ -109,8 +108,9 @@ private:
     std::set<RsGxsId> mutedParticipants;
 
     QAction *muteAct;
+	QAction *votePositiveAct;
+	QAction *voteNeutralAct;
     QAction *banAct;
-	QAction *voteAct;
     QAction *distantChatAct;
     QAction *actionSortByName;
     QAction *actionSortByActivity;
