@@ -179,6 +179,7 @@ public:
     virtual bool haveReputation(const RsGxsId &id) = 0;
     virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers) = 0;
     virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
+    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id) = 0;
 };
 
 /*** This Class pulls all the GXS Interfaces together ****/

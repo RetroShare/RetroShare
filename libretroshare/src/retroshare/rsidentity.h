@@ -303,7 +303,6 @@ public:
      * \param id
      * \return
      */
-    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id)=0;
     virtual time_t getLastUsageTS(const RsGxsId &id) =0;
 
     // Specific RsIdentity Functions....

@@ -611,15 +611,6 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
     return false;
 }
 
-RsReputations::ReputationLevel p3IdService::overallReputationLevel(const RsGxsId &id)
-{
-#warning some IDs might be deleted but the reputation should still say they are banned.
-    RsIdentityDetails det ;
-    getIdDetails(id,det) ;
-
-    return det.mReputation.mOverallReputationLevel ;
-}
-
 bool p3IdService::isOwnId(const RsGxsId& id)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/

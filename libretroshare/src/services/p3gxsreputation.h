@@ -32,9 +32,9 @@
 #include <map>
 #include <set>
 
-#define REPUTATION_IDENTITY_FLAG_UP_TO_DATE    0x0100
-#define REPUTATION_IDENTITY_FLAG_PGP_LINKED    0x0001
-#define REPUTATION_IDENTITY_FLAG_PGP_KNOWN     0x0002
+static const uint32_t  REPUTATION_IDENTITY_FLAG_UP_TO_DATE    = 0x0100;	// This flag means that the static info has been initialised from p3IdService. Normally such a call should happen once.
+static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_LINKED    = 0x0001;
+static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_KNOWN     = 0x0002;
 
 #include "serialiser/rsgxsreputationitems.h"
 
@@ -113,6 +113,7 @@ public:
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
+    virtual ReputationLevel overallReputationLevel(const RsGxsId& id);
 
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
@@ -155,7 +156,7 @@ private:
     void sendReputationRequests();
     int  sendReputationRequest(RsPeerId peerid);
     void debug_print() ;
-    void updateIdentityFlags();
+    void updateStaticIdentityFlags();
 
 private:
     RsMutex mReputationMtx;
@@ -184,6 +185,9 @@ private:
 
     uint32_t mMinVotesForRemotelyPositive ;
     uint32_t mMinVotesForRemotelyNegative ;
+
+    bool mChanged ; // slow version of IndicateConfigChanged();
+    time_t mLastReputationConfigSaved ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

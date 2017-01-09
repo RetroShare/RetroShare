@@ -273,7 +273,6 @@ public:
 
 	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
 	virtual bool isARegularContact(const RsGxsId& id) ;
-    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id);
 	virtual time_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
