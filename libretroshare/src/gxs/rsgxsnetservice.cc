@@ -1966,6 +1966,8 @@ void RsGxsNetService::updateServerSyncTS()
                         time_t circle_msg_server_ts ;
                 
                         // This call needs to be off-mutex, because of self-restricted circles.
+                        // Normally we should update as a function of MsgServerUpdateTS and the mRecvTS of the circle, not the global grpServerTS.
+                        // But grpServerTS is easier to get since it does not require a db access. So we trade the real call for this cheap and conservative call.
                         
                         if(mCircles->getLocalCircleServerUpdateTS(mit->second->mCircleId,circle_group_server_ts,circle_msg_server_ts))
                         {
@@ -3739,10 +3741,7 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item)
 {
     // Do we have new updates for this peer?
-
-    // This is one of the few places where we compare a local time stamp (mGrpServerUpdateItem->grpUpdateTS) to a peer's time stamp.
-    // Because this is the global modification time for groups, async-ed computers will eventually figure out that their data needs
-    // to be synced.
+    // The received TS is in our own clock, but send to us by the friend.
     
 #ifdef NXS_NET_DEBUG_0
 	GXSNETDEBUG_P_(item->PeerId()) << "  local modification time stamp: " << std::dec<< time(NULL) - mGrpServerUpdate.grpUpdateTS << " secs ago. Update sent: " <<
