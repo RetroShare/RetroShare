@@ -36,7 +36,6 @@
 #include "gui/common/ElidedLabel.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
-#include "util/DateTime.h"
 
 #include <stdint.h>
 
@@ -478,11 +477,10 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 			tooltip += "\n" + tr("You have been granted as publisher (you can post here!)");
 
 		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
+		{
 			tooltip += "\n" + QString::number(itemInfo.max_visible_posts) + " messages available" ;
-        // if(itemInfo.max_visible_posts)  // wtf? this=0 when there are some posts definitely exist - lastpost is recent
-		    tooltip += "\n" + tr("Last Post") + ": "  + DateTime::formatLongDateTime(itemInfo.lastpost) ;
-		if(!IS_GROUP_SUBSCRIBED(itemInfo.subscribeFlags))
 			tooltip += "\n" + tr("Subscribe to download and read messages") ;
+		}
 
 		item->setToolTip(COLUMN_NAME, tooltip);
 		item->setToolTip(COLUMN_UNREAD, tooltip);
