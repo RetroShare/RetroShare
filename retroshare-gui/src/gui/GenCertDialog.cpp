@@ -376,7 +376,6 @@ void GenCertDialog::updateUiSetup()
 	if (ui.adv_checkbox->isChecked())
 	{
 		ui.hidden_checkbox->show();
-		ui.cbUseBob->show();
 
 		if (ui.new_gpg_key_checkbox->isChecked())
 		{
@@ -397,6 +396,8 @@ void GenCertDialog::updateUiSetup()
 			ui.label_hiddenaddr->show();
 			ui.hiddenport_label->show();
 			ui.hiddenport_spinBox->show();
+
+			ui.cbUseBob->show();
 		}
 		else
 		{
@@ -405,6 +406,8 @@ void GenCertDialog::updateUiSetup()
 			ui.label_hiddenaddr->hide();
 			ui.hiddenport_label->hide();
 			ui.hiddenport_spinBox->hide();
+
+			ui.cbUseBob->hide();
 		}
 	}
 	else
@@ -432,7 +435,9 @@ void GenCertDialog::useBobChecked(bool checked)
 	if (checked) {
 		ui.hiddenaddr_input->setPlaceholderText(tr("I2P address with BOB enabled"));
 		ui.hiddenaddr_label->setText(tr("I2P address"));
-		ui.label_hiddenaddr->setText(tr("Please enter the IP for I2P and enable BOB."));
+		ui.label_hiddenaddr->setText(tr("Please enter the IP for I2P and enable BOB. (visit <a href=\"http://127.0.0.1:7657/configclients\">http://127.0.0.1:7657/configclients</a> or for i2pd edit i2pd.conf)"));
+		ui.label_hiddenaddr->setTextInteractionFlags(Qt::TextBrowserInteraction);
+		ui.label_hiddenaddr->setOpenExternalLinks(true);
 
 		ui.hiddenport_spinBox->setEnabled(false);
 	} else {
