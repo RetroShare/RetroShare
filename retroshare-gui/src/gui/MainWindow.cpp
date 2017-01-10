@@ -366,9 +366,7 @@ void MainWindow::initStackedPage()
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
   
   addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
-  // NEXT TO ITEM SHOULD BE HERE NOT IN ANOTHER PLACE BUT I DON'T KNOW HOW TO PUT THEM HERE
-  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->stackPages), &MainWindow::showSettings, SLOT(showSettings()));
-  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->stackPages), &MainWindow::doQuit, SLOT(doQuit()));
+
 
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
@@ -436,9 +434,9 @@ void MainWindow::initStackedPage()
   /** Add icon on Action bar */
  // addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
   //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
-  //addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
-  //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
-  //addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
+  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
+  addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
+  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
 
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
