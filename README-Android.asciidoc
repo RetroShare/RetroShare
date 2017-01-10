@@ -78,9 +78,28 @@ WARNING: SQLCipher is not supported yet on RetroShare for Android. This poses a 
 
 WARNING: Some versions of QtCreator try to find the Android SDK in +/opt/android/sdk+. A workaround to this is to make a symbolic link there pointing to your SDK installation path, like +mkdir -p /opt/android/sdk && ln -s /home/user/android-sdk-linux /opt/android/sdk+ 
 
+== Quircks
+
+On some Android devices like +Huawei ALE-L21+ background applications are
+killed when screen is turned off unless they are in the _protected app_ list.
+At moment seems apps developers don't have a way to have the application
+_protected_ by default, unless the phone vendor decide the app is _popular_ so
+the user have to enable _protection_ for RetroShare manually on those mobile
+phones. +
+
+{empty} +
+To enable enable _protection_: +Android menu -> Settings -> Privacy & security 
+-> Protected apps -> RetroShare+ +
+{empty} +
+
+Other devices may offer similar _features_ please report them.
+
+
 == Furter Readings
 
 - link:http://doc.qt.io/qt-5/android-support.html[]
 - link:https://developer.android.com/ndk/guides/libs.html[]
 - link:retroshare://forum?name=Compiling%20nogui%20for%20android&id=8fd22bd8f99754461e7ba1ca8a727995&msgid=4e0f92330600bba9cf978f384f4b7b2f2ca64eff[]
 - link:retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136[]
+- link:https://groups.google.com/forum/#!topic/android-developers/srATPaL0aRU[]
+- link:https://stackoverflow.com/questions/31638986/protected-apps-setting-on-huawei-phones-and-how-to-handle-it[]
