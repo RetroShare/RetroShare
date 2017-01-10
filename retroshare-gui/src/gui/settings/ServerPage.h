@@ -96,6 +96,7 @@ private slots:
 
 	// i2p bob
 	void startBOB();
+	void restartBOB();
 	void stopBOB();
 	void getNewKey();
 	void loadKey();
@@ -120,6 +121,7 @@ private:
 	void loadCommon();
 	void saveCommon();
 	void saveBob();
+	void updateStatusBob();
 
 	void setUpBobElements();
 	void enableBobElements(bool enable);
@@ -146,6 +148,7 @@ private:
 	bool mIsHiddenNode;
 	uint32_t mHiddenType;
 	bobSettings mBobSettings;
+	bool mBobAccessible; // keeps track wether bob is accessable or not to en/disable the corresponding buttons
 };
 
 #endif // !SERVERPAGE_H

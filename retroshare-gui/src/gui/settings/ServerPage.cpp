@@ -99,6 +99,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     QObject::connect(ui.whiteListIpsTable,SIGNAL(currentCellChanged(int,int,int,int)),this,SLOT(updateSelectedWhiteListIP(int,int,int,int)));
 
 	QObject::connect(ui.pbBobStart,   SIGNAL(clicked()), this, SLOT(startBOB()));
+	QObject::connect(ui.pbBobRestart, SIGNAL(clicked()), this, SLOT(restartBOB()));
 	QObject::connect(ui.pbBobStop,    SIGNAL(clicked()), this, SLOT(stopBOB()));
 	QObject::connect(ui.pbBobGenAddr, SIGNAL(clicked()), this, SLOT(getNewKey()));
 	QObject::connect(ui.pbBobLoadKey, SIGNAL(clicked()), this, SLOT(loadKey()));
@@ -698,88 +699,9 @@ void ServerPage::updateStatus()
 
 	loadFilteredIps() ;
 
-	// update bob
-	QString addr = QString::fromStdString(mBobSettings.addr);
-	if (ui.leBobB32Addr->text() != addr) {
-		ui.leBobB32Addr->setText(addr);
-		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+	updateStatusBob();
 
-		ui.hiddenpage_serviceAddress->setText(addr);
-
-		if (!mBobSettings.keys.empty()) {
-			// we have an addr -> show fields
-			ui.lBobB32Addr->show();
-			ui.leBobB32Addr->show();
-
-			if (ui.cbBobAdvanced->checkState() == Qt::Checked) {
-				ui.pbBobGenAddr->show();
-			} else {
-				ui.pbBobGenAddr->hide();
-			}
-		} else {
-			// we don't have an addr -> hide fields
-			ui.lBobB32Addr->hide();
-			ui.leBobB32Addr->hide();
-			ui.pbBobGenAddr->hide();
-		}
-	}
-
-	bobStates bs;
-	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
-
-	QString bobSimpleText = QString();
-	bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
-	                        "When changing options (e.g. port) use the buttons at the bottom to stop and restart BOB.\n\n").
-	                     arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
-	                         ui.hiddenpage_proxyAddress_i2p_2->text(),
-	                         ui.hiddenpage_proxyPort_i2p_2->text(),
-	                         bs.tunnelName.empty() ? tr("unknown") :
-	                                                 QString::fromStdString(bs.tunnelName)));
-
-	std::string errorString;
-	switch (bs.cs) {
-	case csStarted:
-		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
-		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
-
-		enableBobElements(false);
-
-		bobSimpleText.append(tr("BOB is working fine: tunnel established"));
-		break;
-	case csStarting:
-	case csClosing:
-		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_WORKING));
-		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
-
-		enableBobElements(false);
-
-		bobSimpleText.append(tr("BOB is processing a request: %1").arg(bs.cs == csStarting ? tr("staring up") : tr("shuting down")));
-		break;
-	case csError:
-		// get error msg from bob
-		rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getErrorInfo, &errorString);
-
-		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_ERROR));
-		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
-
-		enableBobElements(false);
-
-		bobSimpleText.append(tr("BOB encountered an error:\n"));
-		bobSimpleText.append(QString::fromStdString(errorString));
-		break;
-	case csClosed:
-	default:
-		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
-		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
-
-		enableBobElements(true);
-
-		bobSimpleText.append(tr("BOB is inactive: tunnel closed"));
-		break;
-	}
-
-	ui.pteBobSimple->setPlainText(bobSimpleText);
-
+	// this is used by BOB
 	if (mOngoingConnectivityCheck > 0) {
 		mOngoingConnectivityCheck--;
 
@@ -1233,7 +1155,7 @@ void ServerPage::updateOutProxyIndicator()
 
 	// I2P - BOB
 	socket.connectToHost(ui.hiddenpage_proxyAddress_i2p_2->text(), 2827);
-	if(socket.waitForConnected(500))
+	if(true == (mBobAccessible = socket.waitForConnected(500)))
 	{
 		socket.disconnectFromHost();
 		ui.iconlabel_i2p_outgoing_2->setPixmap(QPixmap(ICON_STATUS_OK)) ;
@@ -1315,6 +1237,14 @@ void ServerPage::updateInProxyIndicator()
 
 void ServerPage::startBOB()
 {
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::start);
+
+	updateStatus();
+}
+
+void ServerPage::restartBOB()
+{
+	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::stop);
 	rsAutoProxyMonitor::taskAsync(autoProxyType::I2PBOB, autoProxyTask::start);
 
 	updateStatus();
@@ -1518,6 +1448,120 @@ void ServerPage::saveBob()
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport)) {
 		rsPeers->setProxyServer(RS_HIDDEN_TYPE_I2P, new_proxyaddr, new_proxyport);
+	}
+}
+
+void ServerPage::updateStatusBob()
+{
+	QString addr = QString::fromStdString(mBobSettings.addr);
+	if (ui.leBobB32Addr->text() != addr) {
+		ui.leBobB32Addr->setText(addr);
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+
+		ui.hiddenpage_serviceAddress->setText(addr);
+
+		if (!mBobSettings.keys.empty()) {
+			// we have an addr -> show fields
+			ui.lBobB32Addr->show();
+			ui.leBobB32Addr->show();
+
+			if (ui.cbBobAdvanced->checkState() == Qt::Checked) {
+				ui.pbBobGenAddr->show();
+			} else {
+				ui.pbBobGenAddr->hide();
+			}
+		} else {
+			// we don't have an addr -> hide fields
+			ui.lBobB32Addr->hide();
+			ui.leBobB32Addr->hide();
+			ui.pbBobGenAddr->hide();
+		}
+	}
+
+	bobStates bs;
+	rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::status, &bs);
+
+	QString bobSimpleText = QString();
+	bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
+	                        "When changing options (e.g. port) use the buttons at the bottom to restart BOB.\n\n").
+	                     arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
+	                         ui.hiddenpage_proxyAddress_i2p_2->text(),
+	                         ui.hiddenpage_proxyPort_i2p_2->text(),
+	                         bs.tunnelName.empty() ? tr("unknown") :
+	                                                 QString::fromStdString(bs.tunnelName)));
+
+	// update BOB UI based on state
+	std::string errorString;
+	switch (bs.cs) {
+	case csStarted:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_OK));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is running"));
+
+		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB is working fine: tunnel established"));
+
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobRestart->setEnabled(true);
+		ui.pbBobStop->setEnabled(true);
+		break;
+	case csStarting:
+	case csClosing:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_WORKING));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is processing a request"));
+
+		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB is processing a request: %1").arg(bs.cs == csStarting ? tr("staring up") : tr("shuting down")));
+
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(false);
+		break;
+	case csError:
+		// get error msg from bob
+		rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::getErrorInfo, &errorString);
+
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_ERROR));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB is broken\n") + QString::fromStdString(errorString));
+
+		enableBobElements(false);
+
+		bobSimpleText.append(tr("BOB encountered an error:\n"));
+		bobSimpleText.append(QString::fromStdString(errorString));
+
+		ui.pbBobStart->setEnabled(true);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(false);
+		break;
+	case csClosed:
+	default:
+		ui.iconlabel_i2p_bob->setPixmap(QPixmap(ICON_STATUS_UNKNOWN));
+		ui.iconlabel_i2p_bob->setToolTip(tr("BOB tunnel is not running"));
+
+		enableBobElements(true);
+
+		bobSimpleText.append(tr("BOB is inactive: tunnel closed"));
+
+		ui.pbBobStart->setEnabled(true);
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobStop->setEnabled(false);
+		break;
+	}
+	ui.pteBobSimple->setPlainText(bobSimpleText);
+
+	// disable elements when BOB is not accessible
+	if (!mBobAccessible) {
+		ui.pbBobStart->setEnabled(false);
+		ui.pbBobStart->setToolTip("BOB is not accessible");
+		ui.pbBobRestart->setEnabled(false);
+		ui.pbBobRestart->setToolTip("BOB is not accessible");
+		ui.pbBobStop->setEnabled(false);
+		ui.pbBobStop->setToolTip("BOB is not accessible");
+	} else {
+		ui.pbBobStart->setToolTip("");
+		ui.pbBobRestart->setToolTip("");
+		ui.pbBobStop->setToolTip("");
 	}
 }
 

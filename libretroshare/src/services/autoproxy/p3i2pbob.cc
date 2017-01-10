@@ -466,8 +466,8 @@ int p3I2pBob::stateMachineController()
 				rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::offline);
 				mProcessing = NULL;
 
-				// nothing to do -> sleep long
-				return sleepFactorSlow;
+				// done
+				return sleepFactorDefault;
 			} else {
 				// waiting for BOB tunnel clearing
 				return sleepFactorFast;
@@ -537,8 +537,8 @@ int p3I2pBob::stateMachineController()
 				rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::online);
 				mProcessing = NULL;
 
-				// nothing to do -> sleep long
-				return sleepFactorSlow;
+				// done
+				return sleepFactorDefault;
 			} else {
 				// waiting for BOB tunnel set up
 				return sleepFactorFast;
@@ -614,8 +614,8 @@ int p3I2pBob::stateMachineController()
 				}
 				mProcessing = NULL;
 
-				// nothing to do -> sleep long
-				return sleepFactorSlow;
+				// done
+				return sleepFactorDefault;
 			} else {
 				// waiting for BOB tunnel set up
 				return sleepFactorFast;

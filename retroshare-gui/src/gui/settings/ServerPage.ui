@@ -1385,6 +1385,13 @@ You can connect to Hidden Nodes, even if you are running a standard Node, so why
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="pbBobRestart">
+                  <property name="text">
+                   <string>Restart</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="pbBobStop">
                   <property name="text">
                    <string>Stop</string>
