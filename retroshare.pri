@@ -50,6 +50,11 @@ rs_autologin:CONFIG -= no_rs_autologin
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
+# To disable Deprecated Warning append the following
+# assignation to qmake command line "CONFIG+=rs_nodeprecatedwarning"
+CONFIG *= no_rs_nodeprecatedwarning
+rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
+
 
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
@@ -152,4 +157,10 @@ no_sqlcipher:DEFINES *= NO_SQLCIPHER
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+}
+
+rs_nodeprecatedwarning {
+    QMAKE_CXXFLAGS += -Wno-deprecated
+    QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+    warning("QMAKE: You have disable deprecated warnings.")
 }
