@@ -40,6 +40,7 @@ static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_KNOWN     = 0x0002;
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsreputations.h"
+#include "gxs/rsgixs.h"
 #include "services/p3service.h"
 
 
@@ -100,7 +101,7 @@ public:
   * 
   */
 
-class p3GxsReputation: public p3Service, public p3Config, public RsReputations /* , public pqiMonitor */
+class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
     p3GxsReputation(p3LinkMgr *lm);

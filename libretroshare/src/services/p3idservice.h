@@ -303,9 +303,11 @@ public:
 	/**************** RsGixsReputation Implementation ****************/
 
 	// get Reputation.
+#ifdef TO_BE_REMOVED
 	virtual bool haveReputation(const RsGxsId &id);
 	virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
 	virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
+#endif
 
 
 protected:

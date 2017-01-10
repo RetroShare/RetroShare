@@ -435,10 +435,10 @@ void p3GxsReputation::cleanup()
 
 			for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();++it)
 			{
-				bool is_a_contact = rsIdentity->isARegularContact(*it) ;
+				bool is_a_contact = rsIdentity->isARegularContact(it->first) ;
 
 				if(mAutoSetPositiveOptionToContacts && is_a_contact && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-					should_set_to_positive.push_back(*rit) ;
+					should_set_to_positive.push_back(it->first) ;
 			}
 		}
 

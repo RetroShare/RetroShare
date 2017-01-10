@@ -3139,6 +3139,9 @@ void RsGxsNetService::runVetting()
     
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef TO_BE_REMOVED
+    // Author response vetting is disabled since not used, as the reputations are currently not async-ed anymore.
+
 	std::vector<AuthorPending*>::iterator vit = mPendingResp.begin();
 
 	for(; vit != mPendingResp.end(); )
@@ -3169,6 +3172,7 @@ void RsGxsNetService::runVetting()
 		}
 
 	}
+#endif
 
 
 	// now lets do circle vetting

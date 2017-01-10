@@ -1030,6 +1030,7 @@ bool p3IdService::decryptData(const uint8_t *encrypted_data,uint32_t encrypted_d
 }
 
 
+#ifdef TO_BE_REMOVED
 /********************************************************************************/
 /******************* RsGixsReputation     ***************************************/
 /********************************************************************************/
@@ -1083,6 +1084,7 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
     }
     return false;
 }
+#endif
 
 #if 0
 class RegistrationRequest
