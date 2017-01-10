@@ -750,7 +750,7 @@ RsReputations::ReputationLevel p3GxsReputation::overallReputationLevel(const RsG
     return info.mOverallReputationLevel ;
 }
 
-bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info)
+bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info, bool stamp)
 {
     if(gxsid.isNull())
         return false ;
@@ -760,7 +760,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 #ifdef DEBUG_REPUTATION2
-    std::cerr << "getReputationInfo() for " << gxsid << std::endl;
+    std::cerr << "getReputationInfo() for " << gxsid << ", stamp = " << stamp << std::endl;
 #endif
     std::map<RsGxsId,Reputation>::iterator it = mReputations.find(gxsid) ;
     RsPgpId owner_id ;
@@ -787,7 +787,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
             rep.mOwnerNode = ownerNode ;
 
         owner_id = rep.mOwnerNode ;
-        rep.mLastUsedTS = now ;
+
+        if(stamp)
+			rep.mLastUsedTS = now ;
 
 		mChanged = true ;
     }
@@ -1274,7 +1276,7 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
     }
 #ifdef DEBUG_REPUTATION
     RsReputations::ReputationInfo info ;
-    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info) ;
+    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info,false) ;
     std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", level: " << info.mOverallReputationLevel << std::endl;
 #endif
     return true;
@@ -1468,19 +1470,38 @@ void p3GxsReputation::debug_print()
 {
     std::cerr << "Reputations database: " << std::endl;
     std::cerr << "  GXS ID data: " << std::endl;
+    std::cerr << std::dec ;
 
+std::map<RsGxsId,Reputation> rep_copy;
+
+{
+		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    rep_copy = mReputations ;
+}
     time_t now = time(NULL) ;
 
-    for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
+    for(std::map<RsGxsId,Reputation>::const_iterator it(rep_copy.begin());it!=rep_copy.end();++it)
     {
-        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputationScore
-                  << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago, last needed: " << now - it->second.mLastUsedTS << " secs ago." << std::endl;
+        RsReputations::ReputationInfo info ;
+        getReputationInfo(it->first,RsPgpId(),info,false) ;
+        uint32_t lev = info.mOverallReputationLevel;
+
+        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion
+                  << ", PGP id=" << it->second.mOwnerNode
+                  << ", flags=" << std::setfill('0') << std::setw(4) << std::hex << it->second.mIdentityFlags << std::dec
+                  << ", Friend pos/neg: " << it->second.mFriendsPositive << "/" << it->second.mFriendsNegative
+                  << ", reputation lev: [" << lev
+                  << "], last own update: " << std::setfill(' ') << std::setw(10) << now - it->second.mOwnOpinionTs << " secs ago"
+                  << ", last needed: " << std::setfill(' ') << std::setw(10) << now - it->second.mLastUsedTS << " secs ago, "
+		          << std::endl;
+
 #ifdef DEBUG_REPUTATION2
         for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
             std::cerr << "    " << it2->first << ": " << it2->second << std::endl;
 #endif
     }
 
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     std::cerr << "  Banned RS nodes by ID: " << std::endl;
 
     for(std::map<RsPgpId,BannedNodeInfo>::const_iterator it(mBannedPgpIds.begin());it!=mBannedPgpIds.end();++it)
