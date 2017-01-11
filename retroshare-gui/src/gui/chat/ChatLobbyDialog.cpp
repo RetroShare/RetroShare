@@ -239,7 +239,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     votePositiveAct->setEnabled(false);
     voteNeutralAct->setEnabled(false);
     banAct->setEnabled(false);
-    showinpeopleAct->setEnabled(false);
+    showinpeopleAct->setEnabled(true);
 
     if (selectedItems.size())
     {
@@ -252,7 +252,6 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
             votePositiveAct->setEnabled(true);
             voteNeutralAct->setEnabled(true);
             banAct->setEnabled(true);
-            showinpeopleAct->setEnabled(true);
 
             QList<QTreeWidgetItem*>::iterator item;
             for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
@@ -312,12 +311,8 @@ void ChatLobbyDialog::showInPeopleTab()
     QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
     if (selectedItems.count()!=1)
         return;
-    QList<QTreeWidgetItem*>::iterator item;
     RsGxsId nickname;
-    for (item = selectedItems.begin(); item != selectedItems.end(); ++item)
-    {
-        dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(nickname) ;
-    }
+    dynamic_cast<GxsIdRSTreeWidgetItem*>(*selectedItems.begin())->getId(nickname);
     IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
     if (!idDialog)
         return ;
