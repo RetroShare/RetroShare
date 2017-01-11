@@ -4146,7 +4146,9 @@ RsIdentityUsage::RsIdentityUsage(uint16_t service,const RsIdentityUsage::UsageCo
 
 	mHash = hs.hash();
 
+#ifdef DEBUG_IDS
     std::cerr << "  hash   =\"" << std::hex << mHash << "\"" << std::endl;
+#endif
 }
 
 
