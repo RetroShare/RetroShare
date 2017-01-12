@@ -222,7 +222,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 	QMenu contextMnu(this);
 
     contextMnu.addAction(distantChatAct);
-    contextMnu.addAction(sendMessageAct);
+	contextMnu.addAction(sendMessageAct);
     contextMnu.addSeparator();
     contextMnu.addAction(actionSortByActivity);
     contextMnu.addAction(actionSortByName);
@@ -233,40 +233,33 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(banAct);
 	contextMnu.addAction(showinpeopleAct);
 
+	distantChatAct->setEnabled(false);
+	sendMessageAct->setEnabled(false);
 	muteAct->setCheckable(true);
     muteAct->setEnabled(false);
     muteAct->setChecked(false);
     votePositiveAct->setEnabled(false);
     voteNeutralAct->setEnabled(false);
     banAct->setEnabled(false);
-    showinpeopleAct->setEnabled(true);
-
-    if (selectedItems.size())
+    if(selectedItems.count()==1)
     {
+		sendMessageAct->setEnabled(true);
+		showinpeopleAct->setEnabled(true);
         RsGxsId nickName;
         rsMsgs->getIdentityForChatLobby(lobbyId, nickName);
-
-        if(selectedItems.count()>1 || (RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName))
-        {
-            muteAct->setEnabled(true);
-            votePositiveAct->setEnabled(true);
-            voteNeutralAct->setEnabled(true);
-            banAct->setEnabled(true);
-
-            QList<QTreeWidgetItem*>::iterator item;
-            for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
-
-                RsGxsId gxsid ;
-                if ( dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(gxsid) && isParticipantMuted(gxsid))
-                {
-                    muteAct->setChecked(true);
-                    break;
-                }
-            }
-        }
-    distantChatAct->setEnabled(selectedItems.count()==1 && RsGxsId(selectedItems.front()->text(COLUMN_ID).toStdString())!=nickName) ;
+		if(RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName)
+		{
+			distantChatAct->setEnabled(true);
+            RsGxsId gxsid ;
+			dynamic_cast<GxsIdRSTreeWidgetItem*>(*selectedItems.begin())->getId(gxsid);
+			votePositiveAct->setEnabled(rsIdentity->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
+			voteNeutralAct->setEnabled((rsIdentity->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsIdentity->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
+			banAct->setEnabled(rsIdentity->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+			muteAct->setEnabled(true);
+            if(isParticipantMuted(gxsid))
+                muteAct->setChecked(true);
+		}
     }
-
 	contextMnu.exec(QCursor::pos());
 }
 
