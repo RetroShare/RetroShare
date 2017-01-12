@@ -289,6 +289,9 @@ public:
     virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
     virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
 
+    virtual void setDeleteBannedNodesThreshold(uint32_t days) =0;
+    virtual uint32_t deleteBannedNodesThreshold() =0;
+
     virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
                                 const std::string &tag, RsRecognTagDetails &details) = 0;
     virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,

@@ -139,8 +139,8 @@ static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputat
 static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
 static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
-static const uint32_t REPUTATION_INFO_KEEP_DELAY          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
-static const uint32_t BANNED_NODES_INACTIVITY_KEEP        = 86400*60; // remove all info about banned nodes after 2 months of inactivity
+static const uint32_t REPUTATION_INFO_KEEP_DELAY_DEFAULT          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
+static const uint32_t BANNED_NODES_INACTIVITY_KEEP_DEFAULT        = 86400*60; // remove all info about banned nodes after 2 months of inactivity
 
 static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE = 1;	// min difference in votes that makes friends opinion globally positive
 static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE = 1;	// min difference in votes that makes friends opinion globally negative
@@ -255,6 +255,23 @@ bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     return mAutoSetPositiveOptionToContacts ;
+}
+
+void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
+{
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    if(mMaxPreventReloadBannedIds != days/86400)
+    {
+        mMaxPreventReloadBannedIds = days/86400 ;
+        IndicateConfigChanged();
+    }
+}
+uint32_t p3GxsReputation::rememberDeletedNodesThreshold()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    return mMaxPreventReloadBannedIds/86400;
 }
 
 int	p3GxsReputation::status()
@@ -379,10 +396,10 @@ void p3GxsReputation::cleanup()
 
             // Delete slots that havn't been used for a while. The else below is here for debug display purposes, and not harmful since both conditions lead the same effect.
 
-            else if(it->second.mLastUsedTS + REPUTATION_INFO_KEEP_DELAY < now)
+            else if(it->second.mLastUsedTS + REPUTATION_INFO_KEEP_DELAY_DEFAULT < now)
             {
 #ifdef DEBUG_REPUTATION
-                std::cerr << "  ID " << it->first << ": no request for reputation for more than " << REPUTATION_INFO_KEEP_DELAY/86400 << " days => deleting." << std::endl;
+                std::cerr << "  ID " << it->first << ": no request for reputation for more than " << REPUTATION_INFO_KEEP_DELAY_DEFAULT/86400 << " days => deleting." << std::endl;
 #endif
                 should_delete = true ;
             }
@@ -410,7 +427,7 @@ void p3GxsReputation::cleanup()
         RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
         for(std::map<RsPgpId,BannedNodeInfo>::iterator it(mBannedPgpIds.begin());it!=mBannedPgpIds.end();)
-            if(it->second.last_activity_TS + BANNED_NODES_INACTIVITY_KEEP < now)
+            if(it->second.last_activity_TS + BANNED_NODES_INACTIVITY_KEEP_DEFAULT < now)
             {
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  Removing all info about banned node " << it->first << " by lack of activity." << std::endl;
@@ -1084,6 +1101,10 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
     kv.value = mAutoSetPositiveOptionToContacts?"YES":"NO";
     vitem->tlvkvs.pairs.push_back(kv) ;
 
+    kv.key = "MAX_PREVENT_RELOAD_BANNED_IDS" ;
+	rs_sprintf(kv.value, "%d", mMaxPreventReloadBannedIds) ;
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
     savelist.push_back(vitem) ;
 
 	return true;
@@ -1170,6 +1191,15 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
                     std::cerr << "Setting AutoPositiveContacts to " << kit->value << std::endl ;
                     mLastBannedNodesUpdate = 0 ;	// force update
                 }
+                if(kit->key == "MAX_PREVENT_RELOAD_BANNED_IDS" )
+                {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+						mMaxPreventReloadBannedIds = val ;
+					    std::cerr << "Setting mMaxPreventReloadBannedIds threshold to " << val << std::endl ;
+				    }
+				}
             }
 
 	    delete (*it);

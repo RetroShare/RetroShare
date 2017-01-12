@@ -266,6 +266,9 @@ public:
 	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
 	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
+    virtual void setDeleteBannedNodesThreshold(uint32_t days) ;
+    virtual uint32_t deleteBannedNodesThreshold() ;
+
 	virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 	                            const std::string &tag, RsRecognTagDetails &details);
 	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
@@ -536,6 +539,7 @@ private:
 	time_t mLastConfigUpdate ;
 
 	bool mOwnIdsLoaded ;
+    uint32_t mMaxKeepKeysBanned ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

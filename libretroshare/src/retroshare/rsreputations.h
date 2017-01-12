@@ -74,6 +74,9 @@ public:
 	virtual void setThresholdForRemotelyNegativeReputation(uint32_t thresh)=0;
 	virtual void setThresholdForRemotelyPositiveReputation(uint32_t thresh)=0;
 
+    virtual void setRememberDeletedNodesThreshold(uint32_t days) =0;
+    virtual uint32_t rememberDeletedNodesThreshold() =0;
+
 	// This one is a proxy designed to allow fast checking of a GXS id.
 	// it basically returns true if assessment is not ASSESSMENT_OK
         

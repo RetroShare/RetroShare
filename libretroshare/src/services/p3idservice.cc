@@ -62,7 +62,8 @@
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
-static const time_t MAX_KEEP_KEYS_BANNED       =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
+static const time_t MAX_KEEP_KEYS_BANNED_DEFAULT =     2 * 86400 ; // get rid of banned ids after 1 days. That gives a chance to un-ban someone before he gets definitely kicked out
+
 static const time_t MAX_KEEP_KEYS_DEFAULT      =     5 * 86400 ; // default for unsigned identities: 5 days
 static const time_t MAX_KEEP_KEYS_SIGNED       =     8 * 86400 ; // signed identities by unknown key
 static const time_t MAX_KEEP_KEYS_SIGNED_KNOWN =    30 * 86400 ; // signed identities by known node keys
@@ -164,6 +165,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
     mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
     mLastConfigUpdate = 0 ;
     mOwnIdsLoaded = false ;
+    mMaxKeepKeysBanned = MAX_KEEP_KEYS_BANNED_DEFAULT;
 
 	// Kick off Cache Testing, + Others.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
@@ -320,12 +322,45 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
             mContacts = lii->mContacts ;
         }
 
+	    RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
+	    if(vitem)
+		    for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
+		    {
+			    if(kit->key == "REMOVE_BANNED_IDENTITIES_DELAY")
+			    {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+					    mMaxKeepKeysBanned = val ;
+					    std::cerr << "Setting mMaxKeepKeysBanned threshold to " << val << std::endl ;
+				    }
+			    };
+            }
+
         delete *it ;
     }
 
     items.clear() ;
     return true ;
 }
+
+void p3IdService::setDeleteBannedNodesThreshold(uint32_t days)
+{
+    RsStackMutex stack(mIdMtx); /****** LOCKED MUTEX *******/
+    if(mMaxKeepKeysBanned != days*86400)
+    {
+        mMaxKeepKeysBanned = days*86400 ;
+        IndicateConfigChanged();
+    }
+}
+uint32_t p3IdService::deleteBannedNodesThreshold()
+{
+    RsStackMutex stack(mIdMtx); /****** LOCKED MUTEX *******/
+
+    return mMaxKeepKeysBanned/86400;
+}
+
 
 bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 {
@@ -343,13 +378,23 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
     item->mContacts = mContacts ;
 
     items.push_back(item) ;
+
+    RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+
+	kv.key = "REMOVE_BANNED_IDENTITIES_DELAY" ;
+	rs_sprintf(kv.value, "%d", mMaxKeepKeysBanned);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+    items.push_back(vitem) ;
+
     return true ;
 }
 
 class IdCacheEntryCleaner
 {
 public:
-    IdCacheEntryCleaner(const std::map<RsGxsId,p3IdService::keyTSInfo>& last_usage_TSs) : mLastUsageTS(last_usage_TSs) {}
+    IdCacheEntryCleaner(const std::map<RsGxsId,p3IdService::keyTSInfo>& last_usage_TSs,uint32_t m) : mLastUsageTS(last_usage_TSs),mMaxKeepKeysBanned(m) {}
 
     bool processEntry(RsGxsIdCache& entry)
     {
@@ -380,7 +425,7 @@ public:
         if(no_ts)
             max_keep_time = 0 ;
         else if(is_id_banned)
-            max_keep_time = MAX_KEEP_KEYS_BANNED ;
+            max_keep_time = mMaxKeepKeysBanned ;
         else if(is_known_id)
             max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
         else if(is_signed_id)
@@ -403,6 +448,7 @@ public:
 
     std::list<RsGxsId> ids_to_delete ;
     const std::map<RsGxsId,p3IdService::keyTSInfo>& mLastUsageTS;
+    uint32_t mMaxKeepKeysBanned ;
 };
 
 void p3IdService::cleanUnusedKeys()
@@ -422,7 +468,7 @@ void p3IdService::cleanUnusedKeys()
         }
 
         // grab at most 10 identities to delete. No need to send too many requests to the token queue at once.
-        IdCacheEntryCleaner idcec(mKeysTS) ;
+        IdCacheEntryCleaner idcec(mKeysTS,mMaxKeepKeysBanned) ;
 
         mKeyCache.applyToAllCachedEntries(idcec,&IdCacheEntryCleaner::processEntry);
 

@@ -119,6 +119,9 @@ public:
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
 
+    virtual void setRememberDeletedNodesThreshold(uint32_t days) ;
+    virtual uint32_t rememberDeletedNodesThreshold() ;
+
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
 	void setThresholdForRemotelyNegativeReputation(uint32_t thresh);
@@ -186,6 +189,7 @@ private:
 
     uint32_t mMinVotesForRemotelyPositive ;
     uint32_t mMinVotesForRemotelyNegative ;
+    uint32_t mMaxPreventReloadBannedIds ;
 
     bool mChanged ; // slow version of IndicateConfigChanged();
     time_t mLastReputationConfigSaved ;
