@@ -266,12 +266,12 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		ui->infoPosts->clear();
 		ui->infoDescription->clear();
 	} else {
-		ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
-		
-		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-		
-		
-		ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+        ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+		if(group.mMeta.mLastPost==0)
+            ui->infoLastPost->setText(tr("Never"));
+        else
+            ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+        ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
         
         	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
         
