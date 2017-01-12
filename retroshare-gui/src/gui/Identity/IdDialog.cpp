@@ -110,24 +110,29 @@
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
 #define CIRCLE_MEMBERSHIP_CATEGORIES 1
 
+static const uint32_t SortRole = Qt::UserRole+1 ;
+
 // quick solution for RSID_COL_VOTES sorting
-class TreeWidgetItem : public QTreeWidgetItem {
+class TreeWidgetItem : public QTreeWidgetItem
+{
   public:
   TreeWidgetItem(int type=Type): QTreeWidgetItem(type) {}
   TreeWidgetItem(QTreeWidget *tree): QTreeWidgetItem(tree) {}
   TreeWidgetItem(const QStringList& strings): QTreeWidgetItem (strings) {}
-  bool operator< (const QTreeWidgetItem& other ) const {
+
+  bool operator< (const QTreeWidgetItem& other ) const
+  {
     int column = treeWidget()->sortColumn();
-    const QVariant v1 = data(column, Qt::DisplayRole);
-    const QVariant v2 = other.data(column, Qt::DisplayRole);
-    double value1 = v1.toDouble();
-    double value2 = v2.toDouble();
-      if (value1 != value2) {
-          return value1 < value2;
-                }
-      else {
-           return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
-                }
+
+    if(column == RSID_COL_VOTES)
+    {
+    const unsigned int v1 = data(column, SortRole).toUInt();
+    const unsigned int v2 = other.data(column, SortRole).toUInt();
+
+	return v1 < v2;
+    }
+    else
+        return data(column,Qt::DisplayRole).toString() < other.data(column,Qt::DisplayRole).toString();
   }
 };
 
@@ -1475,6 +1480,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
     item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
+    item->setData(RSID_COL_VOTES,SortRole, idd.mReputation.mOverallReputationLevel);
 
     if(isOwnId)
     {
@@ -1984,6 +1990,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	default:
 		return QString("Undone yet");
     }
+    return QString("Unknown");
 }
 
 void IdDialog::modifyReputation()
