@@ -39,7 +39,6 @@
 /****
  * #define DEBUG_REPUTATION		1
  ****/
-#define DEBUG_REPUTATION		1
 
 /************ IMPLEMENTATION NOTES *********************************
  * 
@@ -370,8 +369,8 @@ void p3GxsReputation::cleanup()
 	// remove opinions from friends that havn't been seen online for more than the specified delay
 
 #ifdef DEBUG_REPUTATION
-#endif
 	std::cerr << "p3GxsReputation::cleanup() " << std::endl;
+#endif
 	time_t now = time(NULL) ;
 
     // We should keep opinions about identities that do not exist anymore, but only rely on the usage TS. That will in particular avoid asking p3idservice about deleted
