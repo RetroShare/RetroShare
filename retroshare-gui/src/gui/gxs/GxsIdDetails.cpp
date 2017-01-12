@@ -991,12 +991,9 @@ QString nickname ;
 	else
         comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
 	
-	if(details.mReputation.mFriendsPositiveVotes || details.mReputation.mFriendsNegativeVotes)
-	{
-		comment += "<br/>Votes:";
-		if(details.mReputation.mFriendsPositiveVotes > 0) comment += " <b>+" + QString::number(details.mReputation.mFriendsPositiveVotes) + "</b>";
-		if(details.mReputation.mFriendsNegativeVotes > 0) comment += " <b>-" + QString::number(details.mReputation.mFriendsNegativeVotes) + "</b>";
-    }
+	if(details.mReputation.mFriendsPositiveVotes > 0) comment += "<br/><b>+" + QString::number(details.mReputation.mFriendsPositiveVotes) + "</b>";
+    if(details.mReputation.mFriendsNegativeVotes > 0) comment += "<br/><b>-" + QString::number(details.mReputation.mFriendsNegativeVotes) + "</b>";
+    
 	return comment;
 }
 
