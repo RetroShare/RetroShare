@@ -2740,9 +2740,11 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
         return ;
     }
 
+#ifdef TO_REMOVE
     int cutoff = 0;
     if(grpMeta != NULL)
         cutoff = grpMeta->mReputationCutOff;
+#endif
 
     GxsMsgReq reqIds;
     reqIds[grpId] = std::vector<RsGxsMessageId>();
@@ -2829,7 +2831,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             //  - if author is locally banned, do not download.
             //  - if author is not locally banned, download, whatever friends' opinion might be.
             
-        	if(rsIdentity && rsIdentity->overallReputationLevel(syncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+        	if(mReputations->overallReputationLevel(syncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -3019,7 +3021,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         // FIXTESTS global variable rsReputations not available in unittests!
     
 #warning Update the code below to correctly send/recv dependign on reputation
-		if(!grpSyncItem->authorId.isNull() && rsIdentity && rsIdentity->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		if(!grpSyncItem->authorId.isNull() && mReputations->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 		{
 #ifdef NXS_NET_DEBUG_0
 			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
@@ -3139,6 +3141,9 @@ void RsGxsNetService::runVetting()
     
 	RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef TO_BE_REMOVED
+    // Author response vetting is disabled since not used, as the reputations are currently not async-ed anymore.
+
 	std::vector<AuthorPending*>::iterator vit = mPendingResp.begin();
 
 	for(; vit != mPendingResp.end(); )
@@ -3169,6 +3174,7 @@ void RsGxsNetService::runVetting()
 		}
 
 	}
+#endif
 
 
 	// now lets do circle vetting

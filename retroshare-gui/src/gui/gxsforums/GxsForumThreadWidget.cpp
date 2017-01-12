@@ -1547,7 +1547,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    uint32_t overall_reputation = rsIdentity->overallReputationLevel(msg.mMeta.mAuthorId) ;
+    uint32_t overall_reputation = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId) ;
     bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);

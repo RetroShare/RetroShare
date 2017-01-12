@@ -1984,7 +1984,7 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,const RsIden
 {
     try
     {
-        if(rsIdentity->overallReputationLevel(item->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+        if(rsReputations->overallReputationLevel(item->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
         {
             std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
             return false ;

@@ -22,6 +22,7 @@
 #include "PeoplePage.h"
 #include "rsharesettings.h"
 #include "retroshare/rsreputations.h"
+#include "retroshare/rsidentity.h"
 
 PeoplePage::PeoplePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -44,6 +45,8 @@ bool PeoplePage::save(QString &/*errmsg*/)
 
     rsReputations->setThresholdForRemotelyPositiveReputation(ui.thresholdForPositive_SB->value());
     rsReputations->setThresholdForRemotelyNegativeReputation(ui.thresholdForNegative_SB->value());
+    rsReputations->setRememberDeletedNodesThreshold(ui.preventReloadingBannedIdentitiesFor_SB->value());
+    rsIdentity->setDeleteBannedNodesThreshold(ui.deleteBannedIdentitiesAfter_SB->value());
 
     return true;
 }
@@ -58,4 +61,6 @@ void PeoplePage::load()
     ui.autoPositiveOpinion_CB->setChecked(auto_positive_contacts);
     ui.thresholdForPositive_SB->setValue(threshold_for_positive);
     ui.thresholdForNegative_SB->setValue(threshold_for_negative);
+    ui.deleteBannedIdentitiesAfter_SB->setValue(rsIdentity->deleteBannedNodesThreshold());
+    ui.preventReloadingBannedIdentitiesFor_SB->setValue(rsReputations->rememberDeletedNodesThreshold());
 }

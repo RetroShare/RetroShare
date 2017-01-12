@@ -110,14 +110,14 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenF
 
 void GxsIdRSTreeWidgetItem::updateBannedState()
 {
-    if(mBannedState != (rsIdentity->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE))
+    if(mBannedState != (rsReputations->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE))
         forceUpdate() ;
 }
 
 void GxsIdRSTreeWidgetItem::forceUpdate()
 {
 	mIdFound = false;
-	mBannedState = (rsIdentity->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+	mBannedState = (rsReputations->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 
 	startProcess();
 }
@@ -163,7 +163,7 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 
 		    if(mId.isNull())
 			    return RSTreeWidgetItem::data(column, role);
-		    else if(rsIdentity->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		    else if(rsReputations->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
 			    pix = QImage(BANNED_IMAGE) ;
 		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
 			    pix = GxsIdDetails::makeDefaultIcon(mId);
