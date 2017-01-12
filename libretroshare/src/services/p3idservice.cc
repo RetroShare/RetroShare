@@ -421,12 +421,18 @@ public:
 
         time_t last_usage_ts = no_ts?0:(it->second.TS);
         time_t max_keep_time ;
+        bool should_check = true ;
 
         if(no_ts)
             max_keep_time = 0 ;
-        else if(is_id_banned)
-            max_keep_time = mMaxKeepKeysBanned ;
-        else if(is_known_id)
+		else if(is_id_banned)
+        {
+			if(mMaxKeepKeysBanned == 0)
+				should_check = false ;
+			else
+				max_keep_time = mMaxKeepKeysBanned ;
+        }
+		else if(is_known_id)
             max_keep_time = MAX_KEEP_KEYS_SIGNED_KNOWN ;
         else if(is_signed_id)
             max_keep_time = MAX_KEEP_KEYS_SIGNED ;
@@ -435,7 +441,7 @@ public:
 
         std::cerr << ". Max keep = " << max_keep_time/86400 << " days. Unused for " << (now - last_usage_ts + 86399)/86400 << " days " ;
 
-        if(now > last_usage_ts + max_keep_time)
+        if(should_check && now > last_usage_ts + max_keep_time)
         {
             std::cerr << " => delete " << std::endl;
             ids_to_delete.push_back(gxs_id) ;

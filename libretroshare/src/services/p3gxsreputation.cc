@@ -166,6 +166,7 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 
     mLastReputationConfigSaved = 0;
     mChanged = false ;
+    mMaxPreventReloadBannedIds = BANNED_NODES_INACTIVITY_KEEP_DEFAULT;
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -261,9 +262,9 @@ void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-    if(mMaxPreventReloadBannedIds != days/86400)
+    if(mMaxPreventReloadBannedIds != days*86400)
     {
-        mMaxPreventReloadBannedIds = days/86400 ;
+        mMaxPreventReloadBannedIds = days*86400 ;
         IndicateConfigChanged();
     }
 }
@@ -383,6 +384,14 @@ void p3GxsReputation::cleanup()
 		for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
         {
             bool should_delete = false ;
+
+            if(it->second.mOwnOpinion == RsReputations::OPINION_NEGATIVE && mMaxPreventReloadBannedIds != 0 && it->second.mOwnOpinionTs + mMaxPreventReloadBannedIds < now)
+            {
+#ifdef DEBUG_REPUTATION
+                std::cerr << "  ID " << it->first << ": own is negative for more than " << mMaxPreventReloadBannedIds/86400 << " days. Reseting it!" << std::endl;
+#endif
+                mChanged = true ;
+            }
 
             // Delete slots with basically no information
 

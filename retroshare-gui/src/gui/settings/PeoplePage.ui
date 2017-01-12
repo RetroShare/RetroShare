@@ -14,7 +14,7 @@
    <item>
     <widget class="QGroupBox" name="generalGroupBox">
      <property name="title">
-      <string>Identities handling</string>
+      <string>Reputation</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -41,7 +41,7 @@
            <string>Difference in votes to make friends globally negative:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -80,7 +80,7 @@
            <string>Difference in votes to make friends globally positive:</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -90,10 +90,10 @@
            <enum>Qt::RightToLeft</enum>
           </property>
           <property name="text">
-           <string>Delete banned identities after:</string>
+           <string>Delete banned identities after (0 means indefinitely):</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -103,15 +103,18 @@
            <enum>Qt::RightToLeft</enum>
           </property>
           <property name="text">
-           <string>Prevent re-loading previously banned identities for:</string>
+           <string>Reset reputation of banned identities after (0 means never):</string>
           </property>
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item row="2" column="2">
          <widget class="QSpinBox" name="deleteBannedIdentitiesAfter_SB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Banned identities are not stamped and therefore lose activity. They get deleted automatically after a finit period of time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="suffix">
            <string> days</string>
           </property>
@@ -125,6 +128,9 @@
         </item>
         <item row="3" column="2">
          <widget class="QSpinBox" name="preventReloadingBannedIdentitiesFor_SB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to prevent deleted banned IDs to come back because they are used in e.g. forums or channels, banned identities are kept in a list for some time. After that, they are &amp;quot;cleared&amp;quot; from the banning list, and will be downloaded again as unbanned if used in forus, chat rooms, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="suffix">
            <string> days</string>
           </property>
