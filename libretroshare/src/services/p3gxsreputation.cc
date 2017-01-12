@@ -166,7 +166,7 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 
     mLastReputationConfigSaved = 0;
     mChanged = false ;
-    mMaxPreventReloadBannedIds = BANNED_NODES_INACTIVITY_KEEP_DEFAULT;
+    mMaxPreventReloadBannedIds = 0 ; // default is "never"
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
