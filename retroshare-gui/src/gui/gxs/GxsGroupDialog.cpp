@@ -416,10 +416,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     ui.nameline->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
     ui.popline->setText(QString::number( mGrpMeta.mPop)) ;
     ui.postsline->setText(QString::number(mGrpMeta.mVisibleMsgCount));
-    if(mGrpMeta.mLastPost==0)
-        ui.lastpostline->setText(tr("Never"));
-    else
-        ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
+    ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
