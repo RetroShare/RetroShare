@@ -428,11 +428,10 @@ protected:
 
 public:
     /*!
-     * Assigns a token value to passed integer
-     * The status of the token can still be queried from request status feature
-     * @warning the token space is shared with RsGenExchange backend, so do not
-     * modify tokens except does you have created by calling generatePublicToken()
-     * @return  token
+	 * Generate a new token, the status of the token can be queried from request
+	 * status feature.
+	 * @attention the token space is shared with RsGenExchange backend.
+	 * @return Generated token
      */
     uint32_t generatePublicToken();
 
@@ -486,7 +485,7 @@ public:
 	 * This allows the client service to acknowledge that their grps has \n
 	 * been created/modified and retrieve the create/modified grp ids
 	 * @param token the token related to modification/create request
-	 * @param msgIds vector of ids of groups created/modified
+	 * @param grpId ids of created/modified group
 	 * @return true if token exists false otherwise
 	 */
     bool acknowledgeTokenGrp(const uint32_t& token, RsGxsGroupId& grpId);
