@@ -959,6 +959,29 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
     return info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
 }
 
+bool p3GxsReputation::getOwnOpinion(const RsGxsId& gxsid, RsReputations::Opinion& opinion)
+{
+#ifdef DEBUG_REPUTATION
+    std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
+#endif
+    if(gxsid.isNull())
+    {
+        std::cerr << "  ID " << gxsid << " is rejected. Look for a bug in calling method." << std::endl;
+        return false ;
+    }
+
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(gxsid);
+
+    if(rit != mReputations.end())
+        opinion = RsReputations::Opinion(rit->second.mOwnOpinion) ;
+    else
+        opinion = RsReputations::OPINION_NEUTRAL ;
+
+    return true;
+}
+
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
 {
 #ifdef DEBUG_REPUTATION
