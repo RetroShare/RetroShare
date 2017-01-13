@@ -234,17 +234,16 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 	contextMnu.addAction(showinpeopleAct);
 
 	distantChatAct->setEnabled(false);
-	sendMessageAct->setEnabled(false);
+	sendMessageAct->setEnabled(selectedItems.count()==1);
 	muteAct->setCheckable(true);
     muteAct->setEnabled(false);
     muteAct->setChecked(false);
     votePositiveAct->setEnabled(false);
     voteNeutralAct->setEnabled(false);
     banAct->setEnabled(false);
+	showinpeopleAct->setEnabled(selectedItems.count()==1);
     if(selectedItems.count()==1)
     {
-		sendMessageAct->setEnabled(true);
-		showinpeopleAct->setEnabled(true);
         RsGxsId nickName;
         rsMsgs->getIdentityForChatLobby(lobbyId, nickName);
 		if(RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName)
