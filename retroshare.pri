@@ -60,6 +60,12 @@ rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 CONFIG *= no_rs_nocppwarning
 rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 
+# To enable GXS mail append the following assignation to qmake command line
+# "CONFIG+=rs_gxs_mail"
+CONFIG *= no_rs_gxs_mail
+rs_gxs_mail:CONFIG -= no_rs_gxs_mail
+
+
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
 	isEmpty(BIN_DIR)  { BIN_DIR  = "$${PREFIX}/bin" }
