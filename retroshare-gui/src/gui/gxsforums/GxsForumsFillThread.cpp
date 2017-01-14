@@ -193,8 +193,10 @@ void GxsForumsFillThread::run()
 	}
 
 	/* process messages */
-	while (msgs.size()) {
-		while (threadList.size() > 0) {
+	while (msgs.size())
+    {
+		while (!threadList.empty())
+        {
 			if (wasStopped()) {
 				break;
 			}

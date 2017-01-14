@@ -32,14 +32,15 @@
 #include <map>
 #include <set>
 
-#define REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE  0x0100
-#define REPUTATION_IDENTITY_FLAG_PGP_LINKED    0x0001
-#define REPUTATION_IDENTITY_FLAG_PGP_KNOWN     0x0002
+static const uint32_t  REPUTATION_IDENTITY_FLAG_UP_TO_DATE    = 0x0100;	// This flag means that the static info has been initialised from p3IdService. Normally such a call should happen once.
+static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_LINKED    = 0x0001;
+static const uint32_t  REPUTATION_IDENTITY_FLAG_PGP_KNOWN     = 0x0002;
 
 #include "serialiser/rsgxsreputationitems.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rsreputations.h"
+#include "gxs/rsgixs.h"
 #include "services/p3service.h"
 
 
@@ -69,10 +70,10 @@ class Reputation
 {
 public:
 	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
                                                                                             
 	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE){ }
+        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
 
 	void updateReputation();
 
@@ -89,6 +90,8 @@ public:
 	RsPgpId mOwnerNode;
     
 	uint32_t mIdentityFlags;
+
+    time_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
 };
 
 
@@ -98,7 +101,7 @@ public:
   * 
   */
 
-class p3GxsReputation: public p3Service, public p3Config, public RsReputations /* , public pqiMonitor */
+class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
     p3GxsReputation(p3LinkMgr *lm);
@@ -106,14 +109,19 @@ public:
 
     /***** Interface for RsReputations *****/
     virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info) ;
+    virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) ;
+    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) ;
     virtual bool isIdentityBanned(const RsGxsId& id) ;
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
+    virtual ReputationLevel overallReputationLevel(const RsGxsId& id);
 
     virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
     virtual bool nodeAutoPositiveOpinionForContacts() ;
+
+    virtual void setRememberDeletedNodesThreshold(uint32_t days) ;
+    virtual uint32_t rememberDeletedNodesThreshold() ;
 
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
@@ -141,31 +149,29 @@ private:
     bool SendReputations(RsGxsReputationRequestItem *request);
     bool RecvReputations(RsGxsReputationUpdateItem *item);
     bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
-    void updateActiveFriends() ;
 
     void updateBannedNodesProxy();
 
     // internal update of data. Takes care of cleaning empty boxes.
     void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
-
+	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);
     int  sendPackets();
     void cleanup();
     void sendReputationRequests();
     int  sendReputationRequest(RsPeerId peerid);
     void debug_print() ;
-    void updateIdentityFlags();
+    void updateStaticIdentityFlags();
 
 private:
     RsMutex mReputationMtx;
 
-    time_t mLastActiveFriendsUpdate;
+    time_t mLastCleanUp;
     time_t mRequestTime;
     time_t mStoreTime;
     time_t mLastBannedNodesUpdate ;
         time_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
-    uint32_t mAverageActiveFriends ;
 
     float mAutoBanIdentitiesLimit ;
     bool mAutoSetPositiveOptionToContacts;
@@ -177,9 +183,6 @@ private:
     std::map<RsGxsId, Reputation> mReputations;
     std::multimap<time_t, RsGxsId> mUpdated;
 
-    // set of Reputations to send to p3IdService.
-    std::set<RsGxsId> mUpdatedReputations;
-
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
     std::set<RsGxsId> mPerNodeBannedIdsProxy ;
@@ -187,6 +190,10 @@ private:
 
     uint32_t mMinVotesForRemotelyPositive ;
     uint32_t mMinVotesForRemotelyNegative ;
+    uint32_t mMaxPreventReloadBannedIds ;
+
+    bool mChanged ; // slow version of IndicateConfigChanged();
+    time_t mLastReputationConfigSaved ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

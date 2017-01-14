@@ -61,7 +61,9 @@ public:
 	};
 
 	virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) =0;
-    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info) =0;
+	virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) =0;
+    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) =0;
+    virtual ReputationLevel overallReputationLevel(const RsGxsId& id)=0;
 
     // parameters
 
@@ -72,6 +74,9 @@ public:
 	virtual uint32_t thresholdForRemotelyPositiveReputation()=0;
 	virtual void setThresholdForRemotelyNegativeReputation(uint32_t thresh)=0;
 	virtual void setThresholdForRemotelyPositiveReputation(uint32_t thresh)=0;
+
+    virtual void setRememberDeletedNodesThreshold(uint32_t days) =0;
+    virtual uint32_t rememberDeletedNodesThreshold() =0;
 
 	// This one is a proxy designed to allow fast checking of a GXS id.
 	// it basically returns true if assessment is not ASSESSMENT_OK

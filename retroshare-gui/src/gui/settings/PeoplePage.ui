@@ -14,7 +14,7 @@
    <item>
     <widget class="QGroupBox" name="generalGroupBox">
      <property name="title">
-      <string>Identities handling</string>
+      <string>Reputation</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -34,15 +34,21 @@
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
           <property name="text">
-           <string>Difference in votes to make friends globally negative:</string>
+           <string>Difference in votes (+/-) to rate an ID negatively:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item row="1" column="2">
          <widget class="QSpinBox" name="thresholdForNegative_SB">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The default value of -0.6 needs 3 to 4 friends to set a negative opinion in order for that identity to be banned at your own node. This is a pretty conservative value. If you want to more easily get rid of banned identities, set the value to e.g. -0.2&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When an identity receives more negative votes than positive votes, it switches from &amp;quot;Neutral&amp;quot; to &amp;quot;Negative (according to your friends)&amp;quot;. By default, a one-vote difference is enough, but you can make this harder to happen by selecting a higher number here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="minimum">
            <number>1</number>
@@ -55,7 +61,7 @@
         <item row="0" column="2">
          <widget class="QSpinBox" name="thresholdForPositive_SB">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The default value of -0.6 needs 3 to 4 friends to set a negative opinion in order for that identity to be banned at your own node. This is a pretty conservative value. If you want to more easily get rid of banned identities, set the value to e.g. -0.2&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When an identity receives more positive votes than negative votes, it switches from &amp;quot;Neutral&amp;quot; to &amp;quot;Positive (according to your friends)&amp;quot;. By default, a one-vote difference is enough, but you can make this harder to happen by selecting a higher number here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="minimum">
            <number>1</number>
@@ -63,12 +69,79 @@
           <property name="maximum">
            <number>100</number>
           </property>
+          <property name="value">
+           <number>1</number>
+          </property>
          </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_2">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
           <property name="text">
-           <string>Difference in votes to make friends globally positive:</string>
+           <string>Difference in votes (+/-) to rate an ID positively:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Delete banned identities after (0 means indefinitely):</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="layoutDirection">
+           <enum>Qt::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string>Reset reputation of banned identities after (0 means never):</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="deleteBannedIdentitiesAfter_SB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Banned identities are not stamped and therefore lose activity. They get deleted automatically after a finit period of time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="suffix">
+           <string> days</string>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="value">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QSpinBox" name="preventReloadingBannedIdentitiesFor_SB">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to prevent deleted banned IDs to come back because they are used in e.g. forums or channels, banned identities are kept in a list for some time. After that, they are &amp;quot;cleared&amp;quot; from the banning list, and will be downloaded again as unbanned if used in forus, chat rooms, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="suffix">
+           <string> days</string>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="value">
+           <number>60</number>
           </property>
          </widget>
         </item>
