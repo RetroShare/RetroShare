@@ -106,7 +106,11 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 	{
-		Q_ASSERT(index.isValid());
+		if(!index.isValid())
+        {
+            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+            return ;
+        }
 
 		QStyleOptionViewItemV4 opt = option;
 		initStyleOption(&opt, index);
@@ -121,6 +125,8 @@ public:
 
 		// get pixmap
 		unsigned int warning_level = qvariant_cast<unsigned int>(index.data(Qt::DecorationRole));
+
+        std::cerr << "Drawing item with warning level " << warning_level << std::endl;
 
         switch(warning_level)
         {
@@ -1357,49 +1363,45 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 
 	int index = 0;
 	QTreeWidgetItem *threadItem;
-	QList<QTreeWidgetItem *>::iterator newThread;
+
+    // store new items in a map, so as to all
+    std::map<QString,QTreeWidgetItem*> newThreadMap ;
+
+	for(QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread)
+        newThreadMap[(*newThread)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString()] = *newThread ;
 
 	// delete not existing
-	while (index < ui->threadTreeWidget->topLevelItemCount()) {
+	while (index < ui->threadTreeWidget->topLevelItemCount())
+    {
 		threadItem = ui->threadTreeWidget->topLevelItem(index);
 
-		// search existing new thread
-		int found = -1;
-		for (newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
-			if (threadItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*newThread)->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
-		if (found >= 0) {
-			++index;
-		} else {
+        if(newThreadMap.find(threadItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString()) == newThreadMap.end())
 			delete(ui->threadTreeWidget->takeTopLevelItem(index));
-		}
+        else
+			++index;
 	}
 
 	// iterate all new threads
-	for (newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
+	for (QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
 		// search existing thread
-		int found = -1;
-		int count = ui->threadTreeWidget->topLevelItemCount();
-		for (index = 0; index < count; ++index) {
-			threadItem = ui->threadTreeWidget->topLevelItem(index);
-			if (threadItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*newThread)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
+        QList<QTreeWidgetItem*> items_found = ui->threadTreeWidget->findItems((*newThread)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString(),Qt::MatchExactly,COLUMN_THREAD_DATA);
+		QTreeWidgetItem *threadItem = NULL ;
 
-		if (found >= 0) {
+        if(!items_found.empty())
+		{
+            if(items_found.size() != 1)
+                std::cerr << "(EE) weird. Found multiple tree items for msg ID " << (*newThread)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() << std::endl;
+
+            threadItem = *items_found.begin();
+
 			// set child data
 			copyItem(threadItem, *newThread);
 
 			// fill recursive
 			fillChildren(threadItem, *newThread, expandNewMessages, itemToExpand);
-		} else {
+		}
+        else
+        {
 			// add new thread
 			ui->threadTreeWidget->addTopLevelItem (*newThread);
 			threadItem = *newThread;
