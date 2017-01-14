@@ -110,6 +110,8 @@ namespace rs_nxs_test
 		bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
 		bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
+		virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId&) { return RsReputations::REPUTATION_NEUTRAL ; }
+
 	private:
 
 		RepMap mRepMap;

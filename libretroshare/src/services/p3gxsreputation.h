@@ -109,6 +109,7 @@ public:
 
     /***** Interface for RsReputations *****/
     virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
+    virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) ;
     virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) ;
     virtual bool isIdentityBanned(const RsGxsId& id) ;
 

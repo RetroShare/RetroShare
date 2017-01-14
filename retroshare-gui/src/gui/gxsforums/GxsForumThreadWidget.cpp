@@ -574,15 +574,40 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     contextMnu.addAction(expandAll);
 	contextMnu.addAction(collapseAll);
 
-    contextMnu.addSeparator();
+	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
-    QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
-    submenu1->addAction(flagaspositiveAct);
-    submenu1->addAction(flagasneutralAct);
-    submenu1->addAction(flagasnegativeAct);
-    contextMnu.addAction(showinpeopleAct);
+    if(selectedItems.size() == 1)
+	{
+		QTreeWidgetItem *item = *selectedItems.begin();
+		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 
-    contextMnu.addAction(replyauthorAct);
+        RsGxsId author_id;
+        if(gxsIdItem && gxsIdItem->getId(author_id))
+		{
+			std::cerr << "Author is: " << author_id << std::endl;
+
+			contextMnu.addSeparator();
+
+			RsReputations::Opinion op ;
+
+            if(!rsIdentity->isOwnId(author_id) && rsReputations->getOwnOpinion(author_id,op))
+			{
+				QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
+
+                if(op != RsReputations::OPINION_POSITIVE)
+					submenu1->addAction(flagaspositiveAct);
+
+                if(op != RsReputations::OPINION_NEUTRAL)
+					submenu1->addAction(flagasneutralAct);
+
+                if(op != RsReputations::OPINION_NEGATIVE)
+					submenu1->addAction(flagasnegativeAct);
+			}
+
+			contextMnu.addAction(showinpeopleAct);
+			contextMnu.addAction(replyauthorAct);
+		}
+	}
 
 	contextMnu.exec(QCursor::pos());
 }
