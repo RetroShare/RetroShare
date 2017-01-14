@@ -42,12 +42,18 @@ public:
 
 public:
 
-    /** S: RsTokenService **/
+	/** S: RsTokenService
+	 * TODO: cleanup
+	 * In the following methods @param uint32_t ansType is of no use, it is
+	 * deprecated and should be removed as soon as possible as it is cause of
+	 * many confusions, instead use const RsTokReqOptions::mReqType &opts to
+	 * specify the kind of data you are interested in.
+	 */
 
     /*!
      * Use this to request group related information
      * @param token The token returned for the request, store this value to pool for request completion
-     * @param ansType The type of result (e.g. group data, meta, ids)
+	 * @param ansType @deprecated unused @see S: RsTokenService notice
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds group id to request info for
      * @return
@@ -57,7 +63,7 @@ public:
     /*!
      * Use this to request all group related info
      * @param token The token returned for the request, store this value to pool for request completion
-     * @param ansType The type of result (e.g. group data, meta, ids)
+	 * @param ansType @deprecated unused @see S: RsTokenService notice
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
@@ -66,7 +72,7 @@ public:
     /*!
      * Use this to get msg information (id, meta, or data), store token value to poll for request completion
      * @param token The token returned for the request
-     * @param ansType The type of result wanted
+	 * @param ansType @deprecated unused @see S: RsTokenService notice
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
@@ -76,7 +82,7 @@ public:
     /*!
      * Use this to get message information (id, meta, or data), store token value to poll for request completion
      * @param token The token returned for the request
-     * @param ansType The type of result wanted
+	 * @param ansType @deprecated unused @see S: RsTokenService notice
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds The ids of the groups to get, this retrieve all the msgs info for each grpId in list, if group Id list is empty \n
      * all messages for all groups are retrieved
@@ -87,7 +93,7 @@ public:
     /*!
      * For requesting msgs related to a given msg id within a group
      * @param token The token returned for the request
-     * @param ansType The type of result wanted
+	 * @param ansType @deprecated unused @see S: RsTokenService notice
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
@@ -274,7 +280,7 @@ private:
      * @param ansType
      * @param opts
      */
-    void setReq(GxsRequest* req,const uint32_t &token, const uint32_t& ansType, const RsTokReqOptions &opts) const;
+	void setReq(GxsRequest* req, uint32_t token, uint32_t ansType, const RsTokReqOptions& opts) const;
 
     /*!
      * Remove request for request queue

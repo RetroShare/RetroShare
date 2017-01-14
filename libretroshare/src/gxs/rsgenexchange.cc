@@ -1292,20 +1292,19 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				RsGxsGrpItem* gItem = dynamic_cast<RsGxsGrpItem*>(item);
 				if (gItem)
 				{
-                    gItem->meta = *((*lit)->metaData);
+					gItem->meta = *((*lit)->metaData);
 
-            RsGroupNetworkStats sts ;
-
-            if(mNetService != NULL && mNetService->getGroupNetworkStats(gItem->meta.mGroupId,sts))
-        {
-                gItem->meta.mPop = sts.mSuppliers ;
-        gItem->meta.mVisibleMsgCount  = sts.mMaxVisibleCount;
-        }
-            else
-        {
-                gItem->meta.mPop = 0 ;
-        gItem->meta.mVisibleMsgCount = 0 ;
-        }
+					RsGroupNetworkStats sts ;
+					if(mNetService && mNetService->getGroupNetworkStats(gItem->meta.mGroupId,sts))
+					{
+						gItem->meta.mPop = sts.mSuppliers;
+						gItem->meta.mVisibleMsgCount  = sts.mMaxVisibleCount;
+					}
+					else
+					{
+						gItem->meta.mPop = 0;
+						gItem->meta.mVisibleMsgCount = 0;
+					}
 					grpItem.push_back(gItem);
 				}
 				else

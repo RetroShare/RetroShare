@@ -162,5 +162,8 @@ rs_autologin {
 rs_nodeprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
+    DEFINES *= RS_NO_WARN_DEPRECATED
     warning("QMAKE: You have disable deprecated warnings.")
 }
+
+rs_gxs_mail:DEFINES *= RS_GXS_MAIL
