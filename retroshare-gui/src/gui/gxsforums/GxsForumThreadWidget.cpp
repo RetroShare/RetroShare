@@ -1149,7 +1149,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
         rep_warning_level = 0 ;
     	rep_tooltip_str = tr("Message will be forwarded to your friends.") ;
     }
-    std::cerr << "Inserting post from ID " << msg.mMeta.mAuthorId << ", group flags=" << std::hex << mForumGroup.mMeta.mSignFlags << " Identity flags = " << iddetails.mFlags << ": warning level = " << rep_warning_level << std::dec << std::endl;
 
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,rep_tooltip_str) ;
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole,rep_warning_level) ;
