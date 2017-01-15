@@ -85,8 +85,9 @@
 #define COLUMN_THREAD_SIGNED       5
 #define COLUMN_THREAD_CONTENT      6
 #define COLUMN_THREAD_COUNT        7
+#define COLUMN_THREAD_MSGID        8
 
-#define COLUMN_THREAD_DATA     0 // column for storing the userdata like msgid and parentid
+#define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
 #define ROLE_THREAD_MSGID           Qt::UserRole
 #define ROLE_THREAD_STATUS          Qt::UserRole + 1
@@ -106,7 +107,11 @@ public:
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 	{
-		Q_ASSERT(index.isValid());
+		if(!index.isValid())
+        {
+            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+            return ;
+        }
 
 		QStyleOptionViewItemV4 opt = option;
 		initStyleOption(&opt, index);
@@ -574,15 +579,40 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     contextMnu.addAction(expandAll);
 	contextMnu.addAction(collapseAll);
 
-    contextMnu.addSeparator();
+	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
-    QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
-    submenu1->addAction(flagaspositiveAct);
-    submenu1->addAction(flagasneutralAct);
-    submenu1->addAction(flagasnegativeAct);
-    contextMnu.addAction(showinpeopleAct);
+    if(selectedItems.size() == 1)
+	{
+		QTreeWidgetItem *item = *selectedItems.begin();
+		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 
-    contextMnu.addAction(replyauthorAct);
+        RsGxsId author_id;
+        if(gxsIdItem && gxsIdItem->getId(author_id))
+		{
+			std::cerr << "Author is: " << author_id << std::endl;
+
+			contextMnu.addSeparator();
+
+			RsReputations::Opinion op ;
+
+            if(!rsIdentity->isOwnId(author_id) && rsReputations->getOwnOpinion(author_id,op))
+			{
+				QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
+
+                if(op != RsReputations::OPINION_POSITIVE)
+					submenu1->addAction(flagaspositiveAct);
+
+                if(op != RsReputations::OPINION_NEUTRAL)
+					submenu1->addAction(flagasneutralAct);
+
+                if(op != RsReputations::OPINION_NEGATIVE)
+					submenu1->addAction(flagasnegativeAct);
+			}
+
+			contextMnu.addAction(showinpeopleAct);
+			contextMnu.addAction(replyauthorAct);
+		}
+	}
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -652,7 +682,7 @@ void GxsForumThreadWidget::changedThread()
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
 	} else {
-		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString());
+		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
 	}
 
 	if (mFillThread) {
@@ -1018,7 +1048,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 				while ((item = *itemIterator) != NULL) {
 					++itemIterator;
 
-					if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == thread->mFocusMsgId) {
+					if (item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString() == thread->mFocusMsgId) {
 						ui->threadTreeWidget->setCurrentItem(item);
 						ui->threadTreeWidget->setFocus();
 						break;
@@ -1123,7 +1153,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
         rep_warning_level = 0 ;
     	rep_tooltip_str = tr("Message will be forwarded to your friends.") ;
     }
-    std::cerr << "Inserting post from ID " << msg.mMeta.mAuthorId << ", group flags=" << std::hex << mForumGroup.mMeta.mSignFlags << " Identity flags = " << iddetails.mFlags << ": warning level = " << rep_warning_level << std::dec << std::endl;
 
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,rep_tooltip_str) ;
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole,rep_warning_level) ;
@@ -1196,7 +1225,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
 	}
 
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
+	item->setData(COLUMN_THREAD_MSGID,Qt::DisplayRole, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
 //#TODO
 #if 0
 	if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
@@ -1218,7 +1247,7 @@ QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId 
     GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
     
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId.toStdString()));
+	item->setData(COLUMN_THREAD_MSGID,Qt::DisplayRole, QString::fromStdString(msgId.toStdString()));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);
         
 	item->setId(RsGxsId(), COLUMN_THREAD_AUTHOR, false); // fixed up columnId()
@@ -1326,6 +1355,10 @@ static void copyItem(QTreeWidgetItem *item, const QTreeWidgetItem *newItem)
 	for (i = 0; i < ROLE_THREAD_COUNT; ++i) {
 		item->setData(COLUMN_THREAD_DATA, Qt::UserRole + i, newItem->data(COLUMN_THREAD_DATA, Qt::UserRole + i));
 	}
+
+    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole,newItem->data(COLUMN_THREAD_DISTRIBUTION,Qt::DecorationRole));
+    item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,   newItem->data(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole   ));
+    item->setData(COLUMN_THREAD_MSGID,       Qt::DisplayRole,   newItem->data(COLUMN_THREAD_MSGID,       Qt::DisplayRole   ));
 }
 
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
@@ -1336,49 +1369,49 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 
 	int index = 0;
 	QTreeWidgetItem *threadItem;
-	QList<QTreeWidgetItem *>::iterator newThread;
+
+    // store new items in a map, so as to allow a fast search
+
+    std::map<QString,QTreeWidgetItem*> newThreadMap ;
+
+	for(QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread)
+        newThreadMap[(*newThread)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()] = *newThread ;
 
 	// delete not existing
-	while (index < ui->threadTreeWidget->topLevelItemCount()) {
+	while (index < ui->threadTreeWidget->topLevelItemCount())
+    {
 		threadItem = ui->threadTreeWidget->topLevelItem(index);
 
-		// search existing new thread
-		int found = -1;
-		for (newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
-			if (threadItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*newThread)->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
-		if (found >= 0) {
-			++index;
-		} else {
+        if(newThreadMap.find(threadItem->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()) == newThreadMap.end())
 			delete(ui->threadTreeWidget->takeTopLevelItem(index));
-		}
+        else
+			++index;
 	}
 
-	// iterate all new threads
-	for (newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
-		// search existing thread
-		int found = -1;
-		int count = ui->threadTreeWidget->topLevelItemCount();
-		for (index = 0; index < count; ++index) {
-			threadItem = ui->threadTreeWidget->topLevelItem(index);
-			if (threadItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*newThread)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
+    // (csoler) QTreeWidget::findItems apparently does not always work so I need to make the search manually, which I do using a map for efficiency reasons.
+    std::map<QString,QTreeWidgetItem*> oldThreadMap ;
+    for(uint32_t i=0;i<ui->threadTreeWidget->topLevelItemCount();++i)
+        oldThreadMap[ui->threadTreeWidget->topLevelItem(i)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()] = ui->threadTreeWidget->topLevelItem(i) ;
 
-		if (found >= 0) {
+	// iterate all new threads
+	for (QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
+		// search existing thread
+        std::cerr << "Makign a search for string \"" << (*newThread)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString() << "\"" << std::endl;
+
+        std::map<QString,QTreeWidgetItem*>::const_iterator it = oldThreadMap.find((*newThread)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()) ;
+
+        if(it != oldThreadMap.end())
+		{
+            threadItem = it->second ;
+
 			// set child data
 			copyItem(threadItem, *newThread);
 
 			// fill recursive
 			fillChildren(threadItem, *newThread, expandNewMessages, itemToExpand);
-		} else {
+		}
+        else
+        {
 			// add new thread
 			ui->threadTreeWidget->addTopLevelItem (*newThread);
 			threadItem = *newThread;
@@ -1410,51 +1443,42 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 	QTreeWidgetItem *childItem;
 	QTreeWidgetItem *newChildItem;
 
+    std::map<QString,QTreeWidgetItem*> newParentItemMap, parentItemMap ;
+
+	for(index = 0; index < newParentItem->childCount(); ++index)  newParentItemMap[newParentItem->child(index)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()] = newParentItem->child(index);
+	for(index = 0; index <    parentItem->childCount(); ++index)     parentItemMap[   parentItem->child(index)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()] =    parentItem->child(index);
+
 	// delete not existing
-	while (index < parentItem->childCount()) {
+	while (index < parentItem->childCount())
+    {
 		childItem = parentItem->child(index);
 
-		// search existing new child
-		int found = -1;
-		int count = newParentItem->childCount();
-		for (newIndex = 0; newIndex < count; ++newIndex) {
-			newChildItem = newParentItem->child(newIndex);
-			if (newChildItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == childItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
-		if (found >= 0) {
-			++index;
-		} else {
+        if(newParentItemMap.find(childItem->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()) == newParentItemMap.end())
 			delete(parentItem->takeChild (index));
-		}
-	}
+        else
+			++index;
+    }
 
 	// iterate all new children
-	for (newIndex = 0; newIndex < newCount; ++newIndex) {
+	for (newIndex = 0; newIndex < newParentItem->childCount(); ++newIndex)
+    {
 		newChildItem = newParentItem->child(newIndex);
 
 		// search existing child
-		int found = -1;
-		int count = parentItem->childCount();
-		for (index = 0; index < count; ++index) {
-			childItem = parentItem->child(index);
-			if (childItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == newChildItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
-				// found it
-				found = index;
-				break;
-			}
-		}
 
-		if (found >= 0) {
+		std::map<QString,QTreeWidgetItem*>::const_iterator it = parentItemMap.find(newChildItem->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()) ;
+
+        if(it != parentItemMap.end())
+        {
 			// set child data
-			copyItem(childItem, newChildItem);
+			copyItem(it->second, newChildItem);
 
 			// fill recursive
-			fillChildren(childItem, newChildItem, expandNewMessages, itemToExpand);
-		} else {
+			fillChildren(it->second, newChildItem, expandNewMessages, itemToExpand);
+            childItem = it->second;
+		}
+        else
+        {
 			// add new child
 			childItem = newParentItem->takeChild(newIndex);
 			parentItem->addChild(childItem);
@@ -1550,7 +1574,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    uint32_t overall_reputation = rsIdentity->overallReputationLevel(msg.mMeta.mAuthorId) ;
+    uint32_t overall_reputation = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId) ;
     bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
@@ -1728,7 +1752,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 
 		if (status != statusNew) // is it different?
 		{
-			std::string msgId = (*row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
+			std::string msgId = (*row)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString();
 
 			// NB: MUST BE PART OF ACTIVE THREAD--- OR ELSE WE MUST STORE GROUPID SOMEWHERE!.
 			// LIKE THIS BELOW...
@@ -1867,7 +1891,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 	while ((item = *itemIterator) != NULL) {
 		++itemIterator;
 
-		if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString() == msgIdString) {
+		if (item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString() == msgIdString) {
 			ui->threadTreeWidget->setCurrentItem(item);
 			ui->threadTreeWidget->setFocus();
 			return true;

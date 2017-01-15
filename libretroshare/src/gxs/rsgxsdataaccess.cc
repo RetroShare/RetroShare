@@ -28,31 +28,7 @@
 #include "rsgxsdataaccess.h"
 #include "retroshare/rsgxsflags.h"
 
-// This bit will be filled out over time.
-#define RS_TOKREQOPT_MSG_VERSIONS	0x0001		// MSGRELATED: Returns All MsgIds with OrigMsgId = MsgId.
-#define RS_TOKREQOPT_MSG_ORIGMSG	0x0002		// MSGLIST: All Unique OrigMsgIds in a Group.
-#define RS_TOKREQOPT_MSG_LATEST		0x0004		// MSGLIST: All Latest MsgIds in Group. MSGRELATED: Latest MsgIds for Input Msgs.
-
-#define RS_TOKREQOPT_MSG_THREAD		0x0010		// MSGRELATED: All Msgs in Thread. MSGLIST: All Unique Thread Ids in Group.
-#define RS_TOKREQOPT_MSG_PARENT		0x0020		// MSGRELATED: All Children Msgs.
-
-#define RS_TOKREQOPT_MSG_AUTHOR		0x0040		// MSGLIST: Messages from this AuthorId
-
-
-// Status Filtering... should it be a different Option Field.
-#define RS_TOKREQOPT_GROUP_UPDATED	0x0100		// GROUPLIST: Groups that have been updated.
-#define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
-#define RS_TOKREQOPT_MSG_UPDATED	0x0200		// MSGLIST: Msg that have been updated from specified groups.
-
-// Read Status.
-#define RS_TOKREQOPT_READ		0x0001
-#define RS_TOKREQOPT_UNREAD		0x0002
-
-#define RS_TOKREQ_ANSTYPE_LIST		0x0001
-#define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
-#define RS_TOKREQ_ANSTYPE_DATA		0x0003
-
-
+// TODO CLEANUP: This should be an enum defined in rstokenservice.h
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FAILED = 0;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PENDING = 1;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
@@ -65,10 +41,8 @@
  * #define DATA_DEBUG	1
  **********/
 
-RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
- : mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0)
-{
-}
+RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds) :
+    mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0) {}
 
 
 bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,

@@ -266,6 +266,9 @@ public:
 	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
 	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
+    virtual void setDeleteBannedNodesThreshold(uint32_t days) ;
+    virtual uint32_t deleteBannedNodesThreshold() ;
+
 	virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
 	                            const std::string &tag, RsRecognTagDetails &details);
 	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
@@ -273,7 +276,6 @@ public:
 
 	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
 	virtual bool isARegularContact(const RsGxsId& id) ;
-    virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id);
 	virtual time_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
@@ -304,9 +306,11 @@ public:
 	/**************** RsGixsReputation Implementation ****************/
 
 	// get Reputation.
+#ifdef TO_BE_REMOVED
 	virtual bool haveReputation(const RsGxsId &id);
 	virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
 	virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
+#endif
 
 
 protected:
@@ -535,6 +539,7 @@ private:
 	time_t mLastConfigUpdate ;
 
 	bool mOwnIdsLoaded ;
+    uint32_t mMaxKeepKeysBanned ;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

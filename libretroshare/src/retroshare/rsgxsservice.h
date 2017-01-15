@@ -11,22 +11,17 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
 
 /*!
- * The aim of this class is to abstract
- * how changes are represented so
- * they can be determined outside the
- * client API without explcitly
- * enumerating all possible changes
- * at the interface
+ * The aim of this class is to abstract how changes are represented so they can
+ * be determined outside the client API without explcitly enumerating all
+ * possible changes at the interface
  */
-class RsGxsNotify
+struct RsGxsNotify
 {
-public:
+	enum NotifyType
+	{ TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
 
-	enum NotifyType { TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
-
-    virtual ~RsGxsNotify() {return; }
-    virtual NotifyType getType() = 0;
-
+	virtual ~RsGxsNotify() {}
+	virtual NotifyType getType() = 0;
 };
 
 /*!

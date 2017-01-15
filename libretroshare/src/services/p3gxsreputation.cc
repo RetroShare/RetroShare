@@ -130,7 +130,7 @@ static const uint32_t LOWER_LIMIT                         = 0;        // used to
 static const uint32_t UPPER_LIMIT                         = 2;        // used to filter valid Opinion values from serialized data
 static const int      kMaximumPeerAge                     = 180;      // half a year.
 static const int      kMaximumSetSize                     = 100;      // max set of updates to send at once.
-static const int      ACTIVE_FRIENDS_UPDATE_PERIOD        = 600 ;     // 10 minutes
+static const int      CLEANUP_PERIOD        = 600 ;     // 10 minutes
 static const int      ACTIVE_FRIENDS_ONLINE_DELAY         = 86400*7 ; // 1 week.
 static const int      kReputationRequestPeriod            = 600;      // 10 mins
 static const int      kReputationStoreWait                = 180;      // 3 minutes.
@@ -138,11 +138,12 @@ static const float    REPUTATION_ASSESSMENT_THRESHOLD_X1  = 0.5f ;    // reputat
 static const uint32_t PGP_AUTO_BAN_THRESHOLD_DEFAULT      = 2 ;       // above this, auto ban any GXS id signed by this node
 static const uint32_t IDENTITY_FLAGS_UPDATE_DELAY         = 100 ;     // 
 static const uint32_t BANNED_NODES_UPDATE_DELAY           = 313 ;     // update approx every 5 mins. Chosen to not be a multiple of IDENTITY_FLAGS_UPDATE_DELAY
-static const uint32_t REPUTATION_INFO_KEEP_DELAY          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
-static const uint32_t BANNED_NODES_INACTIVITY_KEEP        = 86400*60; // remove all info about banned nodes after 2 months of inactivity
+static const uint32_t REPUTATION_INFO_KEEP_DELAY_DEFAULT          = 86400*35; // remove old reputation info 5 days after last usage limit, in case the ID would come back..
+static const uint32_t BANNED_NODES_INACTIVITY_KEEP_DEFAULT        = 86400*60; // remove all info about banned nodes after 2 months of inactivity
 
 static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE = 1;	// min difference in votes that makes friends opinion globally positive
 static const uint32_t REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE = 1;	// min difference in votes that makes friends opinion globally negative
+static const uint32_t MIN_DELAY_BETWEEN_REPUTATION_CONFIG_SAVE = 61 ; // never save more often than once a minute.
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	:p3Service(), p3Config(),
@@ -154,15 +155,17 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
     mRequestTime = 0;
     mStoreTime = 0;
     mReputationsUpdated = false;
-    mLastActiveFriendsUpdate = time(NULL) - 0.5*ACTIVE_FRIENDS_UPDATE_PERIOD;	// avoids doing it too soon since the TS from rsIdentity needs to be loaded already
         mLastIdentityFlagsUpdate = time(NULL) - 3;
-    mAverageActiveFriends = 0 ;
     mLastBannedNodesUpdate = 0 ;
     mBannedNodesProxyNeedsUpdate = false;
 
     mAutoSetPositiveOptionToContacts = true;	// default
     mMinVotesForRemotelyPositive = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_POSITIVE;
     mMinVotesForRemotelyNegative = REPUTATION_DEFAULT_MIN_VOTES_FOR_REMOTELY_NEGATIVE;
+
+    mLastReputationConfigSaved = 0;
+    mChanged = false ;
+    mMaxPreventReloadBannedIds = 0 ; // default is "never"
 }
 
 const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
@@ -188,34 +191,33 @@ int	p3GxsReputation::tick()
 
 	time_t now = time(NULL);
 
-	if(mLastActiveFriendsUpdate + ACTIVE_FRIENDS_UPDATE_PERIOD < now)
+	if(mLastCleanUp + CLEANUP_PERIOD < now)
 	{
-		updateActiveFriends() ;
-                cleanup() ;
-                
-		mLastActiveFriendsUpdate = now ;
+		cleanup() ;
+
+		mLastCleanUp = now ;
 	}
 
-        // no more than once per 5 second chunk.
-        
-        if(now > IDENTITY_FLAGS_UPDATE_DELAY+mLastIdentityFlagsUpdate)
-        {
-            updateIdentityFlags() ;
-            mLastIdentityFlagsUpdate = now ;
-        }
-        if(now > BANNED_NODES_UPDATE_DELAY+mLastBannedNodesUpdate)	// 613 is not a multiple of 100, to avoid piling up work
-        {
-            updateIdentityFlags() ;	// needed before updateBannedNodesList!
-            updateBannedNodesProxy();
-            mLastBannedNodesUpdate = now ;
-        }
+	// no more than once per 5 second chunk.
 
-        if(mBannedNodesProxyNeedsUpdate)
-        {
-            updateBannedNodesProxy();
-            mBannedNodesProxyNeedsUpdate = false ;
-        }
-        
+	if(now > IDENTITY_FLAGS_UPDATE_DELAY+mLastIdentityFlagsUpdate)
+	{
+		updateStaticIdentityFlags() ;
+		mLastIdentityFlagsUpdate = now ;
+	}
+	if(now > BANNED_NODES_UPDATE_DELAY+mLastBannedNodesUpdate)	// 613 is not a multiple of 100, to avoid piling up work
+	{
+		updateStaticIdentityFlags() ;	// needed before updateBannedNodesList!
+		updateBannedNodesProxy();
+		mLastBannedNodesUpdate = now ;
+	}
+
+	if(mBannedNodesProxyNeedsUpdate)
+	{
+		updateBannedNodesProxy();
+		mBannedNodesProxyNeedsUpdate = false ;
+	}
+
 #ifdef DEBUG_REPUTATION
 	static time_t last_debug_print = time(NULL) ;
 
@@ -225,24 +227,16 @@ int	p3GxsReputation::tick()
 		debug_print() ;
 	}
 #endif
+
+    if(mChanged && now > mLastReputationConfigSaved + MIN_DELAY_BETWEEN_REPUTATION_CONFIG_SAVE)
+    {
+        IndicateConfigChanged() ;
+        mLastReputationConfigSaved = now ;
+        mChanged = false ;
+    }
+
 	return 0;
 }
-
-// void p3GxsReputation::setNodeAutoBanThreshold(uint32_t n)
-// {
-//     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-//
-//     if(n != mPgpAutoBanThreshold)
-//     {
-// 	    mLastBannedNodesUpdate = 0 ;
-// 	    mPgpAutoBanThreshold = n ;
-//             IndicateConfigChanged() ;
-//     }
-// }
-// uint32_t p3GxsReputation::nodeAutoBanThreshold()
-// {
-//     return mPgpAutoBanThreshold ;
-// }
 
 void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
 {
@@ -251,7 +245,9 @@ void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
     if(b != mAutoSetPositiveOptionToContacts)
     {
         mLastIdentityFlagsUpdate = 0 ;
+        mLastCleanUp = 0 ;
         mAutoSetPositiveOptionToContacts = b ;
+
         IndicateConfigChanged() ;
     }
 }
@@ -259,6 +255,23 @@ bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     return mAutoSetPositiveOptionToContacts ;
+}
+
+void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
+{
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    if(mMaxPreventReloadBannedIds != days*86400)
+    {
+        mMaxPreventReloadBannedIds = days*86400 ;
+        IndicateConfigChanged();
+    }
+}
+uint32_t p3GxsReputation::rememberDeletedNodesThreshold()
+{
+    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+    return mMaxPreventReloadBannedIds/86400;
 }
 
 int	p3GxsReputation::status()
@@ -277,9 +290,6 @@ class ZeroInitCnt
 
 void p3GxsReputation::updateBannedNodesProxy()
 {
-//#ifdef DEBUG_REPUTATION
-//    std::cerr << "Updating PGP ban list based on signed GxsIds to ban. Ban threshold = " << mPgpAutoBanThreshold << std::endl;
-//#endif
     // This function keeps the Banned GXS id proxy up to date.
     //
 
@@ -292,8 +302,12 @@ void p3GxsReputation::updateBannedNodesProxy()
             mPerNodeBannedIdsProxy.insert(*it) ;
 }
 
-void p3GxsReputation::updateIdentityFlags()
+void p3GxsReputation::updateStaticIdentityFlags()
 {
+    // This function is the *only* place where rsIdentity is called. Normally the cross calls between p3IdService and p3GxsReputations should only
+    // happen one way: from rsIdentity to rsReputations. Still, reputations need to keep track of some identity flags. It's very important to make sure that
+    // rsIdentity is not called inside a mutex-protected zone, because normally calls happen in the other way.
+
     std::list<RsGxsId> to_update ;
 
     // we need to gather the list to be used in a non locked frame
@@ -305,11 +319,11 @@ void p3GxsReputation::updateIdentityFlags()
 #endif
 
 	    for( std::map<RsGxsId, Reputation>::iterator rit = mReputations.begin();rit!=mReputations.end();++rit)
-            if( (rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE) && (mPerNodeBannedIdsProxy.find(rit->first) == mPerNodeBannedIdsProxy.end()))
+        {
+            if( (!(rit->second.mIdentityFlags & REPUTATION_IDENTITY_FLAG_UP_TO_DATE)) && (mPerNodeBannedIdsProxy.find(rit->first) == mPerNodeBannedIdsProxy.end()))
 			    to_update.push_back(rit->first) ;
+        }
     }
-
-    std::list<RsGxsId> should_set_to_positive ;
 
     for(std::list<RsGxsId>::const_iterator rit(to_update.begin());rit!=to_update.end();++rit)
     {
@@ -322,8 +336,6 @@ void p3GxsReputation::updateIdentityFlags()
 #endif
 		    continue ;
 	    }
-        bool is_a_contact = rsIdentity->isARegularContact(*rit) ;
-
         {
             RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
             std::map<RsGxsId,Reputation>::iterator it = mReputations.find(*rit) ;
@@ -333,7 +345,7 @@ void p3GxsReputation::updateIdentityFlags()
                 std::cerr << "  Weird situation: item " << *rit << " has been deleted from the list??" << std::endl;
                 continue ;
             }
-            it->second.mIdentityFlags = 0 ;
+            it->second.mIdentityFlags = REPUTATION_IDENTITY_FLAG_UP_TO_DATE ;		// resets the NEEDS_UPDATE flag. All other flags set later on.
 
             if(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
             {
@@ -342,20 +354,14 @@ void p3GxsReputation::updateIdentityFlags()
             }
             if(details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN ) it->second.mIdentityFlags |= REPUTATION_IDENTITY_FLAG_PGP_KNOWN ;
 
-            if(mAutoSetPositiveOptionToContacts && is_a_contact && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-                should_set_to_positive.push_back(*rit) ;
-
 #ifdef DEBUG_REPUTATION
             std::cerr << "  updated flags for " << *rit << " to " << std::hex << it->second.mIdentityFlags << std::dec << std::endl;
 #endif
 
             it->second.updateReputation() ;
-            IndicateConfigChanged();
+            mChanged = true ;
         }
     }
-
-    for(std::list<RsGxsId>::const_iterator it(should_set_to_positive.begin());it!=should_set_to_positive.end();++it)
-        setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
 }
 
 void p3GxsReputation::cleanup()
@@ -363,56 +369,73 @@ void p3GxsReputation::cleanup()
 	// remove opinions from friends that havn't been seen online for more than the specified delay
 
 #ifdef DEBUG_REPUTATION
-#endif
 	std::cerr << "p3GxsReputation::cleanup() " << std::endl;
-
-    // Remove opinions about identities that do not exist anymore. That will in particular avoid asking p3idservice about deleted
-    // identities, which would cause an excess of hits to the database. We do it in two steps to avoid a deadlock when calling rsIdentity from here.
-    // Also, neutral opinions for banned PGP linked nodes are kept, so as to be able to not request them again.
-
-	bool updated = false ;
+#endif
 	time_t now = time(NULL) ;
 
-	std::list<RsGxsId> ids_to_check_for_last_usage_ts;
+    // We should keep opinions about identities that do not exist anymore, but only rely on the usage TS. That will in particular avoid asking p3idservice about deleted
+    // identities, which would cause an excess of hits to the database. We do it in two steps to avoid a deadlock when calling rsIdentity from here.
+    // Also, neutral opinions for banned PGP linked nodes are kept, so as to be able to not request them again.
 
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 		for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();)
+        {
+            bool should_delete = false ;
+
+            if(it->second.mOwnOpinion == RsReputations::OPINION_NEGATIVE && mMaxPreventReloadBannedIds != 0 && it->second.mOwnOpinionTs + mMaxPreventReloadBannedIds < now)
+            {
+#ifdef DEBUG_REPUTATION
+                std::cerr << "  ID " << it->first << ": own is negative for more than " << mMaxPreventReloadBannedIds/86400 << " days. Reseting it!" << std::endl;
+#endif
+                mChanged = true ;
+            }
+
+            // Delete slots with basically no information
+
             if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL && (it->second.mOwnerNode.isNull()))
-			{
+            {
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
 #endif
+                should_delete = true ;
+            }
+
+            // Delete slots that havn't been used for a while. The else below is here for debug display purposes, and not harmful since both conditions lead the same effect.
+
+            else if(it->second.mLastUsedTS + REPUTATION_INFO_KEEP_DELAY_DEFAULT < now)
+            {
+#ifdef DEBUG_REPUTATION
+                std::cerr << "  ID " << it->first << ": no request for reputation for more than " << REPUTATION_INFO_KEEP_DELAY_DEFAULT/86400 << " days => deleting." << std::endl;
+#endif
+                should_delete = true ;
+            }
+#ifdef DEBUG_REPUTATION
+            else
+				std::cerr << "  ID " << it->first << ": flags=" << std::hex << it->second.mIdentityFlags << std::dec << ". Last used: " << (now - it->second.mLastUsedTS)/86400 << " days ago: kept." << std::endl;
+#endif
+
+			if(should_delete)
+			{
                 std::map<RsGxsId,Reputation>::iterator tmp(it) ;
 				++tmp ;
 				mReputations.erase(it) ;
 				it = tmp ;
-				updated = true ;
+                mChanged = true ;
 			}
 			else
-			{
-				ids_to_check_for_last_usage_ts.push_back(it->first) ;
 				++it;
-			}
+        }
 	}
 
-	for(std::list<RsGxsId>::const_iterator it(ids_to_check_for_last_usage_ts.begin());it!=ids_to_check_for_last_usage_ts.end();++it)
-		if(rsIdentity->getLastUsageTS(*it) + REPUTATION_INFO_KEEP_DELAY < now)
-		{
-#ifdef DEBUG_REPUTATION
-			std::cerr << "  Identity " << *it << " has a last usage TS of " << now - rsIdentity->getLastUsageTS(*it) << " secs ago: deleting it." << std::endl;
-#endif
-			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-			mReputations.erase(*it) ;
-			updated = true ;
-		}
+    // Clean up of the banned PGP ids.
 
     {
         RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
         for(std::map<RsPgpId,BannedNodeInfo>::iterator it(mBannedPgpIds.begin());it!=mBannedPgpIds.end();)
-            if(it->second.last_activity_TS + BANNED_NODES_INACTIVITY_KEEP < now)
+            if(it->second.last_activity_TS + BANNED_NODES_INACTIVITY_KEEP_DEFAULT < now)
             {
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  Removing all info about banned node " << it->first << " by lack of activity." << std::endl;
@@ -422,47 +445,31 @@ void p3GxsReputation::cleanup()
                 mBannedPgpIds.erase(it) ;
                 it = tmp ;
 
-                updated = true ;
+                mChanged = true ;
             }
             else
                 ++it ;
     }
 
-	if(updated)
-		IndicateConfigChanged() ;
-}
+    // update opinions based on flags and contact information
+	{
+        std::list<RsGxsId> should_set_to_positive ;
 
-void p3GxsReputation::updateActiveFriends()
-{
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+		{
+			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-    // keep track of who is recently connected.  That will give a value to average friend
-    // for this, we count all friends that have been online in the last week.
- 
-    time_t now = time(NULL) ;
-    
-    std::list<RsPeerId> idList ;
-    mLinkMgr->getFriendList(idList) ;
+			for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();++it)
+			{
+				bool is_a_contact = rsIdentity->isARegularContact(it->first) ;
 
-    mAverageActiveFriends = 0 ;
-#ifdef DEBUG_REPUTATION
-    std::cerr << "  counting recently online peers." << std::endl;
-#endif
+				if(mAutoSetPositiveOptionToContacts && is_a_contact && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+					should_set_to_positive.push_back(it->first) ;
+			}
+		}
 
-    for(std::list<RsPeerId>::const_iterator it(idList.begin());it!=idList.end();++it)
-    {
-	    RsPeerDetails details ;
-#ifdef DEBUG_REPUTATION
-        	std::cerr << "    "  << *it << ": last seen " << now - details.lastConnect << " secs ago" << std::endl;
-#endif
-            
-	    if(rsPeers->getPeerDetails(*it, details) && now < details.lastConnect + ACTIVE_FRIENDS_ONLINE_DELAY)
-	                    ++mAverageActiveFriends ;
-    }
-#ifdef DEBUG_REPUTATION
-    std::cerr << "  new count: " << mAverageActiveFriends << std::endl;
-#endif
-
+		for(std::list<RsGxsId>::const_iterator it(should_set_to_positive.begin());it!=should_set_to_positive.end();++it)
+			setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
+	}
 }
 
 const float RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM = 1.4f ;
@@ -760,7 +767,15 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
  * Opinion
  ****/
 
-bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info)
+RsReputations::ReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id)
+{
+    ReputationInfo info ;
+    getReputationInfo(id,RsPgpId(),info) ;
+
+    return info.mOverallReputationLevel ;
+}
+
+bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info, bool stamp)
 {
     if(gxsid.isNull())
         return false ;
@@ -770,7 +785,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 #ifdef DEBUG_REPUTATION2
-    std::cerr << "getReputationInfo() for " << gxsid << std::endl;
+    std::cerr << "getReputationInfo() for " << gxsid << ", stamp = " << stamp << std::endl;
 #endif
     std::map<RsGxsId,Reputation>::iterator it = mReputations.find(gxsid) ;
     RsPgpId owner_id ;
@@ -793,10 +808,15 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
         info.mFriendsNegativeVotes = rep.mFriendsNegative ;
         info.mFriendsPositiveVotes = rep.mFriendsPositive ;
 
-        if(rep.mOwnerNode.isNull())
+        if(rep.mOwnerNode.isNull() && !ownerNode.isNull())
             rep.mOwnerNode = ownerNode ;
 
         owner_id = rep.mOwnerNode ;
+
+        if(stamp)
+			rep.mLastUsedTS = now ;
+
+		mChanged = true ;
     }
 
     // now compute overall score and reputation
@@ -934,9 +954,32 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
         return false ;
 
 #ifdef DEBUG_REPUTATION
-    std::cerr << "isIdentityBanned(): returning " << (info.mAssessment == RsReputations::ASSESSMENT_BAD) << " for GXS id " << id << std::endl;
+    std::cerr << "isIdentityBanned(): returning " << (info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE) << " for GXS id " << id << std::endl;
 #endif
     return info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+}
+
+bool p3GxsReputation::getOwnOpinion(const RsGxsId& gxsid, RsReputations::Opinion& opinion)
+{
+#ifdef DEBUG_REPUTATION
+    std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
+#endif
+    if(gxsid.isNull())
+    {
+        std::cerr << "  ID " << gxsid << " is rejected. Look for a bug in calling method." << std::endl;
+        return false ;
+    }
+
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(gxsid);
+
+    if(rit != mReputations.end())
+        opinion = RsReputations::Opinion(rit->second.mOwnOpinion) ;
+    else
+        opinion = RsReputations::OPINION_NEUTRAL ;
+
+    return true;
 }
 
 bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
@@ -993,7 +1036,6 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	reputation.updateReputation();
 
 	mUpdated.insert(std::make_pair(now, gxsid));
-	mUpdatedReputations.insert(gxsid);
 	mReputationsUpdated = true;	
 	mLastBannedNodesUpdate = 0 ;	// for update of banned nodes
     
@@ -1051,6 +1093,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		item->mOwnOpinionTS = rit->second.mOwnOpinionTs;
 		item->mIdentityFlags = rit->second.mIdentityFlags;
         item->mOwnerNodeId = rit->second.mOwnerNode;
+        item->mLastUsedTS = rit->second.mLastUsedTS;
 
 		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
@@ -1087,6 +1130,10 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 
     kv.key = "AUTO_POSITIVE_CONTACTS" ;
     kv.value = mAutoSetPositiveOptionToContacts?"YES":"NO";
+    vitem->tlvkvs.pairs.push_back(kv) ;
+
+    kv.key = "MAX_PREVENT_RELOAD_BANNED_IDS" ;
+	rs_sprintf(kv.value, "%d", mMaxPreventReloadBannedIds) ;
     vitem->tlvkvs.pairs.push_back(kv) ;
 
     savelist.push_back(vitem) ;
@@ -1129,6 +1176,13 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	    if (set)
 		    loadReputationSet(set, peerSet);
 
+	    RsGxsReputationSetItem_deprecated3 *set2 = dynamic_cast<RsGxsReputationSetItem_deprecated3 *>(*it);
+
+        if(set2)
+        {
+            std::cerr << "(II) reading and converting old format ReputationSetItem." << std::endl;
+		    loadReputationSet_deprecated3(set2, peerSet);
+        }
 
         RsGxsReputationBannedNodeSetItem *itm2 = dynamic_cast<RsGxsReputationBannedNodeSetItem*>(*it) ;
 
@@ -1168,6 +1222,15 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
                     std::cerr << "Setting AutoPositiveContacts to " << kit->value << std::endl ;
                     mLastBannedNodesUpdate = 0 ;	// force update
                 }
+                if(kit->key == "MAX_PREVENT_RELOAD_BANNED_IDS" )
+                {
+				    int val ;
+				    if (sscanf(kit->value.c_str(), "%d", &val) == 1)
+				    {
+						mMaxPreventReloadBannedIds = val ;
+					    std::cerr << "Setting mMaxPreventReloadBannedIds threshold to " << val << std::endl ;
+				    }
+				}
             }
 
 	    delete (*it);
@@ -1177,6 +1240,57 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
     loadList.clear() ;
     return true;
 }
+bool p3GxsReputation::loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet)
+{
+    {
+        RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+        std::map<RsGxsId, Reputation>::iterator rit;
+
+        if(item->mGxsId.isNull())	// just a protection against potential errors having put 00000 into ids.
+            return false ;
+
+        /* find matching Reputation */
+        RsGxsId gxsId(item->mGxsId);
+        rit = mReputations.find(gxsId);
+        if (rit != mReputations.end())
+        {
+            std::cerr << "ERROR";
+            std::cerr << std::endl;
+        }
+
+        Reputation &reputation = mReputations[gxsId];
+
+        // install opinions.
+        std::map<RsPeerId, uint32_t>::const_iterator oit;
+        for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); ++oit)
+        {
+            // expensive ... but necessary.
+            RsPeerId peerId(oit->first);
+            if (peerSet.end() != peerSet.find(peerId))
+                reputation.mOpinions[peerId] = safe_convert_uint32t_to_opinion(oit->second);
+        }
+
+        reputation.mOwnOpinion = item->mOwnOpinion;
+        reputation.mOwnOpinionTs = item->mOwnOpinionTS;
+        reputation.mOwnerNode = item->mOwnerNodeId;
+        reputation.mIdentityFlags = item->mIdentityFlags & (~REPUTATION_IDENTITY_FLAG_UP_TO_DATE);
+        reputation.mLastUsedTS = time(NULL);
+
+        // if dropping entries has changed the score -> must update.
+
+        reputation.updateReputation() ;
+
+        mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
+    }
+#ifdef DEBUG_REPUTATION
+    RsReputations::ReputationInfo info ;
+    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info) ;
+    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", overall level: " << info.mOverallReputationLevel << std::endl;
+#endif
+    return true;
+}
+
 
 bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<RsPeerId> &peerSet)
 {
@@ -1212,12 +1326,10 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
         reputation.mOwnOpinion = item->mOwnOpinion;
         reputation.mOwnOpinionTs = item->mOwnOpinionTS;
         reputation.mOwnerNode = item->mOwnerNodeId;
-        reputation.mIdentityFlags = item->mIdentityFlags | REPUTATION_IDENTITY_FLAG_NEEDS_UPDATE;
+        reputation.mIdentityFlags = item->mIdentityFlags;
+        reputation.mLastUsedTS = item->mLastUsedTS;
 
         // if dropping entries has changed the score -> must update.
-
-        //float old_reputation = reputation.mReputation ;
-        //mUpdatedReputations.insert(gxsId) ;
 
         reputation.updateReputation() ;
 
@@ -1225,8 +1337,8 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
     }
 #ifdef DEBUG_REPUTATION
     RsReputations::ReputationInfo info ;
-    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info) ;
-    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", assessment: " << ((info.mAssessment==ASSESSMENT_BAD)?"BAD":"OK") << std::endl;
+    getReputationInfo(item->mGxsId,item->mOwnerNodeId,info,false) ;
+    std::cerr << item->mGxsId << " : own: " << info.mOwnOpinion << ", owner node: " << item->mOwnerNodeId << ", level: " << info.mOverallReputationLevel << std::endl;
 #endif
     return true;
 }
@@ -1418,21 +1530,39 @@ void Reputation::updateReputation()
 void p3GxsReputation::debug_print()
 {
     std::cerr << "Reputations database: " << std::endl;
-    std::cerr << "  Average number of peers: " << mAverageActiveFriends << std::endl;
     std::cerr << "  GXS ID data: " << std::endl;
+    std::cerr << std::dec ;
 
+std::map<RsGxsId,Reputation> rep_copy;
+
+{
+		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+    rep_copy = mReputations ;
+}
     time_t now = time(NULL) ;
 
-    for(std::map<RsGxsId,Reputation>::const_iterator it(mReputations.begin());it!=mReputations.end();++it)
+    for(std::map<RsGxsId,Reputation>::const_iterator it(rep_copy.begin());it!=rep_copy.end();++it)
     {
-        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion << ", Friend average: " << it->second.mFriendAverage << ", global_score: " << it->second.mReputationScore
-                  << ", last own update: " << now - it->second.mOwnOpinionTs << " secs ago." << std::endl;
+        RsReputations::ReputationInfo info ;
+        getReputationInfo(it->first,RsPgpId(),info,false) ;
+        uint32_t lev = info.mOverallReputationLevel;
+
+        std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion
+                  << ", PGP id=" << it->second.mOwnerNode
+                  << ", flags=" << std::setfill('0') << std::setw(4) << std::hex << it->second.mIdentityFlags << std::dec
+                  << ", Friend pos/neg: " << it->second.mFriendsPositive << "/" << it->second.mFriendsNegative
+                  << ", reputation lev: [" << lev
+                  << "], last own update: " << std::setfill(' ') << std::setw(10) << now - it->second.mOwnOpinionTs << " secs ago"
+                  << ", last needed: " << std::setfill(' ') << std::setw(10) << now - it->second.mLastUsedTS << " secs ago, "
+		          << std::endl;
+
 #ifdef DEBUG_REPUTATION2
         for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it2(it->second.mOpinions.begin());it2!=it->second.mOpinions.end();++it2)
             std::cerr << "    " << it2->first << ": " << it2->second << std::endl;
 #endif
     }
 
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     std::cerr << "  Banned RS nodes by ID: " << std::endl;
 
     for(std::map<RsPgpId,BannedNodeInfo>::const_iterator it(mBannedPgpIds.begin());it!=mBannedPgpIds.end();++it)

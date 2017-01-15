@@ -238,11 +238,12 @@ void RsGenExchange::tick()
 
 bool RsGenExchange::messagePublicationTest(const RsGxsMsgMetaData& meta)
 {
-	time_t now = time(NULL) ;
+	time_t st = MESSAGE_STORE_PERIOD;
+	if(mNetService) st = mNetService->getKeepAge(meta.mGroupId, st);
+	time_t storageTimeLimit = meta.mPublishTs + st;
 
-    uint32_t store_limit =  (mNetService == NULL)?MESSAGE_STORE_PERIOD:mNetService->getKeepAge(meta.mGroupId,MESSAGE_STORE_PERIOD) ;
-
-	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP || store_limit == 0 || meta.mPublishTs + store_limit >= now ;
+	return meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_KEEP ||
+	        storageTimeLimit == 0 || storageTimeLimit >= time(NULL);
 }
 
 bool RsGenExchange::acknowledgeTokenMsg(const uint32_t& token,

@@ -50,7 +50,7 @@ GxsIsolatedServiceTester::GxsIsolatedServiceTester(const RsPeerId &ownId, const 
         mTestNs = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_TEST, mTestDs, nxsMgr,
                         mTestService, mTestService->getServiceInfo(),
-                        mGxsIdService, mGxsCircles);
+                        NULL, mGxsCircles);
 
 	node->AddService(mTestNs);
 

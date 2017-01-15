@@ -1345,8 +1345,8 @@ int RsServer::StartupRetroShare()
         // create GXS ID service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
-			mGxsIdService, mGxsIdService->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,mGxsIdService,
+			mGxsIdService, mGxsIdService->getServiceInfo(),
+			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
             false,false); // don't synchronise group automatic (need explicit group request)
                         // don't sync messages at all.
@@ -1365,7 +1365,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,mGxsIdService,
+			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils,
 	            	true,	// synchronise group automatic 
                     	true); 	// sync messages automatic, since they contain subscription requests.
@@ -1384,7 +1384,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* posted_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_POSTED, posted_ds, nxsMgr, 
 			mPosted, mPosted->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,mGxsIdService,
+			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mPosted->setNetworkExchangeService(posted_ns) ;
@@ -1420,7 +1420,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
-			mGxsIdService, mGxsCircles,mGxsIdService,
+			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsForums->setNetworkExchangeService(gxsforums_ns) ;
@@ -1436,7 +1436,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
                         mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mGxsIdService, mGxsCircles,mGxsIdService,
+			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
 
     mGxsChannels->setNetworkExchangeService(gxschannels_ns) ;

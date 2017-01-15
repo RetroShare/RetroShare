@@ -62,7 +62,7 @@ bool rs_nxs_test::RsNxsSimpleDummyReputation::loadReputation(const RsGxsId& id,
 
 bool rs_nxs_test::RsNxsSimpleDummyReputation::getReputation(const RsGxsId& id,
 		GixsReputation& rep) {
-	rep.score = 5;
+	rep.reputation_level = 5;
 	return true;
 }
 

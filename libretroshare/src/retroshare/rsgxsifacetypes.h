@@ -34,26 +34,11 @@ class RsGxsGrpMetaData;
 class RsGxsMsgMetaData;
 
 
-class RsGroupMetaData
+struct RsGroupMetaData
 {
-public:
-
-    RsGroupMetaData()
-    {
-            mGroupFlags = 0;
-            mSignFlags = 0;
-            mSubscribeFlags = 0;
-
-            mPop = 0;
-            mVisibleMsgCount = 0;
-            mLastPost = 0;
-
-            mGroupStatus = 0;
-            mCircleType = 0;
-            mAuthenFlags = 0;
-
-            mPublishTs = 0;
-    }
+	RsGroupMetaData() : mGroupFlags(0), mSignFlags(0), mPublishTs(0),
+	    mCircleType(0), mAuthenFlags(0), mSubscribeFlags(0), mPop(0),
+	    mVisibleMsgCount(0), mLastPost(0), mGroupStatus(0) {}
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
 
@@ -90,19 +75,9 @@ public:
 
 
 
-class RsMsgMetaData
+struct RsMsgMetaData
 {
-
-public:
-
-    RsMsgMetaData()
-    {
-            mPublishTs = 0;
-            mMsgFlags = 0;
-
-            mMsgStatus = 0;
-            mChildTs = 0;
-    }
+	RsMsgMetaData() : mPublishTs(0), mMsgFlags(0), mMsgStatus(0), mChildTs(0) {}
 
     void operator =(const RsGxsMsgMetaData& rGxsMeta);
 
