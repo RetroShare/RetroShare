@@ -81,9 +81,7 @@ protected slots:
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
     void sendMessage();
-	void voteParticipantPositive();
-	void voteParticipantNeutral();
-    void voteParticipantNegative();
+	void voteParticipant();
 
 private:
 	void updateParticipantsList();
@@ -113,7 +111,7 @@ private:
     QAction *muteAct;
     QAction *votePositiveAct;
     QAction *voteNeutralAct;
-    QAction *banAct;
+    QAction *voteNegativeAct;
     QAction *distantChatAct;
     QAction *actionSortByName;
     QAction *actionSortByActivity;
