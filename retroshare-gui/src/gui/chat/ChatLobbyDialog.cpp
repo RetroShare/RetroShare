@@ -251,9 +251,9 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 			distantChatAct->setEnabled(true);
             RsGxsId gxsid ;
 			dynamic_cast<GxsIdRSTreeWidgetItem*>(*selectedItems.begin())->getId(gxsid);
-			votePositiveAct->setEnabled(rsIdentity->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
-			voteNeutralAct->setEnabled((rsIdentity->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsIdentity->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
-			banAct->setEnabled(rsIdentity->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+			votePositiveAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
+			voteNeutralAct->setEnabled((rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
+			banAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);
 			muteAct->setEnabled(true);
             if(isParticipantMuted(gxsid))
                 muteAct->setChecked(true);
