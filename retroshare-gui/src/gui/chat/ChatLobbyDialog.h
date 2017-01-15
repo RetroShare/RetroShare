@@ -54,6 +54,7 @@ private slots:
 	void inviteFriends() ;
 	void leaveLobby() ;
 	void filterChanged(const QString &text);
+    void showInPeopleTab();
 
 signals:
 	void lobbyLeave(ChatLobbyId) ;
@@ -80,7 +81,9 @@ protected slots:
     void distantChatParticipant();
     void participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item, int column);
     void sendMessage();
-    void banParticipant();
+	void voteParticipantPositive();
+	void voteParticipantNeutral();
+    void voteParticipantNegative();
 
 private:
 	void updateParticipantsList();
@@ -108,13 +111,16 @@ private:
     std::set<RsGxsId> mutedParticipants;
 
     QAction *muteAct;
+    QAction *votePositiveAct;
+    QAction *voteNeutralAct;
     QAction *banAct;
     QAction *distantChatAct;
     QAction *actionSortByName;
     QAction *actionSortByActivity;
     QWidgetAction *checkableAction;
     QAction *sendMessageAct;
-
+    QAction *showinpeopleAct;
+	
     GxsIdChooser *ownIdChooser ;
 };
 
