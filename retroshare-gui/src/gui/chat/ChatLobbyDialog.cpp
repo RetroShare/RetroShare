@@ -277,7 +277,7 @@ void ChatLobbyDialog::voteParticipant()
         return ;
     }
 
-    RsReputations::Opinion op(act->data().toUInt()) ;
+	RsReputations::Opinion op = RsReputations::Opinion(act->data().toUInt()) ;
 
     for (item = selectedItems.begin(); item != selectedItems.end(); ++item)
 	{

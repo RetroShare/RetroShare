@@ -27,6 +27,7 @@
 #include <QMenu>
 #include <QPainter>
 #include <QProcess>
+#include <QMessageBox>
 #include <QSortFilterProxyModel>
 #include <QStyledItemDelegate>
 
@@ -583,6 +584,8 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
     QList<RetroShareLink> urls ;
 
+    bool has_unhashed_files = false;
+
     for (int i = 0, n = dirVec.size(); i < n; ++i)
     {
         const DirDetails& details = dirVec[i];
@@ -600,6 +603,12 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                 if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)
                     continue;
 
+                if(details.hash.isNull())
+                {
+                    has_unhashed_files = true;
+                    continue;
+                }
+
                 RetroShareLink link;
                 if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
                     urls.push_back(link) ;
@@ -608,6 +617,11 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
         }
         else
         {
+            if(details.hash.isNull())
+			{
+				has_unhashed_files = true;
+				continue;
+			}
             RetroShareLink link;
             if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
                 urls.push_back(link) ;
@@ -615,6 +629,9 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
         }
     }
     RSLinkClipboard::copyLinks(urls) ;
+
+    if(has_unhashed_files)
+        QMessageBox::warning(NULL,tr("Some files have been omitted"),tr("Some files have been ommitted because their hash is not available yet.")) ;
 }
 
 void SharedFilesDialog::copyLink()

@@ -1010,16 +1010,6 @@ void RetroshareDirModel::postMods()
 	beginResetModel();
 #endif
 
-//	QModelIndexList piList = persistentIndexList();
-//	QModelIndexList empty;
-//	for (int i = 0; i < piList.size(); ++i) {
-//		empty.append(QModelIndex());
-//	}
-//	changePersistentIndexList(piList, empty);
-
-	/* Clear caches */
-    //mCache.clear();
-
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
@@ -1059,30 +1049,6 @@ bool RetroshareDirModel::requestDirDetails(void *ref, bool remote,DirDetails& d)
 
     return false ;
 }
-//	const QMap<void*, DirDetailsVector>::const_iterator it = mCache.constFind(ref);
-//	if (it != mCache.constEnd()) {
-//		/* Details found in cache */
-//		return &it.value();
-//	}
-//
-//#warning this is terrible! A vector in a std::map will keep being copied and create a lot of CPU overload. Use a pointer instead.
-//	/* Get details from the lib */
-//
-//	if (rsFiles->RequestDirDetails(ref, details, flags)) {
-//		/* Convert std::list to std::vector for fast access with index */
-//		std::list<DirStub>::const_iterator childIt;
-//		for (childIt = details.children.begin(); childIt != details.children.end(); ++childIt) {
-//			details.childrenVector.push_back(*childIt);
-//		}
-//
-//		/* Add to cache, must cast to none const */
-//		const QMap<void*, DirDetailsVector>::iterator it1 = ((QMap<void*, DirDetailsVector>*) &mCache)->insert(ref, details);
-//		return &it1.value();
-//	}
-//
-//	/* No details found */
-//	return NULL;
-//}
 
 void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndexList &list)
 {

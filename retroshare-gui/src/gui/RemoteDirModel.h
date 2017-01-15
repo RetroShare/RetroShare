@@ -146,7 +146,6 @@ class RetroshareDirModel : public QAbstractItemModel
 		};
 
 		bool RemoteMode;
-		QMap<void*, DirDetailsVector> mCache;
 
 		mutable int nIndex;
 		mutable std::vector<RemoteIndex> indexSet;
