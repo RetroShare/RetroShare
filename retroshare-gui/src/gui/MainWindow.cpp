@@ -343,8 +343,9 @@ void MainWindow::initStackedPage()
   QActionGroup *grp = new QActionGroup(this);
 
   addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
-
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+  addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
+  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
 
 #ifdef RS_USE_NEW_PEOPLE_DIALOG
@@ -359,12 +360,13 @@ void MainWindow::initStackedPage()
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
 //#endif
 
-  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
-  addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+  
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
-  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+
 
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
@@ -430,7 +432,7 @@ void MainWindow::initStackedPage()
 #endif
 
   /** Add icon on Action bar */
-  addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
+ // addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
   //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
   addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
   addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));

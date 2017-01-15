@@ -35,7 +35,7 @@ public:
 	~ChatLobbyWidget();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CHATLOBBY) ; } //MainPage
-	virtual QString pageName() const { return tr("Chat Lobbies") ; } //MainPage
+	virtual QString pageName() const { return tr("Chat") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 	virtual UserNotify *getUserNotify(QObject *parent); //MainPage

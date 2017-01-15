@@ -48,6 +48,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 #include "gui/SoundManager.h"
+#include "gui/Identity/IdDialog.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -87,10 +88,13 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     ui.participantsList->setColumnHidden(COLUMN_ID,true);
 
     muteAct = new QAction(QIcon(), tr("Mute participant"), this);
-    banAct = new QAction(QIcon(":/icons/yellow_biohazard64.png"), tr("Ban this person (Sets negative opinion)"), this);
+    banAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
+    voteNeutralAct = new QAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
+    votePositiveAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
     distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
     sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
-    
+    showinpeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
+	
     QActionGroup *sortgrp = new QActionGroup(this);
     actionSortByName = new QAction(QIcon(), tr("Sort by Name"), this);
     actionSortByName->setCheckable(true);
@@ -106,8 +110,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
     connect(distantChatAct, SIGNAL(triggered()), this, SLOT(distantChatParticipant()));
     connect(sendMessageAct, SIGNAL(triggered()), this, SLOT(sendMessage()));
-    connect(banAct, SIGNAL(triggered()), this, SLOT(banParticipant()));
-    
+    connect(votePositiveAct, SIGNAL(triggered()), this, SLOT(voteParticipant(1)));
+    connect(voteNeutralAct, SIGNAL(triggered()), this, SLOT(voteParticipant(0)));
+    connect(banAct, SIGNAL(triggered()), this, SLOT(voteParticipant(-1)));
+    connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
+
     connect(actionSortByName, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     connect(actionSortByActivity, SIGNAL(triggered()), this, SLOT(sortParcipants()));
     
@@ -221,12 +228,18 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
     contextMnu.addAction(actionSortByName);
     contextMnu.addSeparator();
     contextMnu.addAction(muteAct);
+    contextMnu.addAction(votePositiveAct);
+    contextMnu.addAction(voteNeutralAct);
     contextMnu.addAction(banAct);
+	contextMnu.addAction(showinpeopleAct);
 
 	muteAct->setCheckable(true);
-	muteAct->setEnabled(false);
-	muteAct->setChecked(false);
-	banAct->setEnabled(false);
+    muteAct->setEnabled(false);
+    muteAct->setChecked(false);
+    votePositiveAct->setEnabled(false);
+    voteNeutralAct->setEnabled(false);
+    banAct->setEnabled(false);
+    showinpeopleAct->setEnabled(false);
 
     if (selectedItems.size())
     {
@@ -236,7 +249,10 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
         if(selectedItems.count()>1 || (RsGxsId(selectedItems.at(0)->text(COLUMN_ID).toStdString())!=nickName))
         {
             muteAct->setEnabled(true);
-	    banAct->setEnabled(true);
+            votePositiveAct->setEnabled(true);
+            voteNeutralAct->setEnabled(true);
+            banAct->setEnabled(true);
+            showinpeopleAct->setEnabled(true);
 
             QList<QTreeWidgetItem*>::iterator item;
             for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
@@ -258,7 +274,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 /**
  * @brief Called when the "ban" menu is selected. Sets a negative reputation on the selected user.
  */
-void ChatLobbyDialog::banParticipant()
+void ChatLobbyDialog::voteParticipant(int vote)
 {
     QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
 
@@ -279,15 +295,35 @@ void ChatLobbyDialog::banParticipant()
 
 	    if (gxs_id!=nickname)
         {
-            std::cerr << "Giving negative opinion to GXS id " << nickname << std::endl;
-		    rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_NEGATIVE);
-            
-	    dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
-           
+            switch(vote)
+            {
+                case 1: rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_POSITIVE);
+                case -1: rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_NEGATIVE);
+                default: rsReputations->setOwnOpinion(nickname, RsReputations::OPINION_NEUTRAL);
+            }
+            std::cerr << "Giving " << vote << " opinion to GXS id " << nickname << std::endl;
+            dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
         }
     }
 }
 
+void ChatLobbyDialog::showInPeopleTab()
+{
+    QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+    if (selectedItems.count()!=1)
+        return;
+    QList<QTreeWidgetItem*>::iterator item;
+    RsGxsId nickname;
+    for (item = selectedItems.begin(); item != selectedItems.end(); ++item)
+    {
+        dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->getId(nickname) ;
+    }
+    IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+    if (!idDialog)
+        return ;
+    MainWindow::showWindow(MainWindow::People);
+    idDialog->navigate(nickname);
+}
 
 void ChatLobbyDialog::init()
 {
