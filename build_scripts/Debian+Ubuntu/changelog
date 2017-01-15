@@ -1,5 +1,42 @@
 retroshare06 (0.6.1-1.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  5c296b9 csoler Sun, 15 Jan 2017 09:57:06 +0100 removed warning when peer list is empty in cache_load of identities
+  233c38d csoler Sat, 14 Jan 2017 20:45:53 +0100 Merge pull request #641 from csoler/v0.6-Reputations
+  dd40877 csoler Sat, 14 Jan 2017 19:08:14 +0100 removed debug info
+  318a372 csoler Sat, 14 Jan 2017 19:04:14 +0100 fixed reloading of distribution icons when opinion is changed over an ID in forums. Improved efficiency of forum loading in general.
+  25680d5 csoler Sat, 14 Jan 2017 17:29:37 +0100 removed quadratic cost in forum thread fill
+  7308695 csoler Sat, 14 Jan 2017 11:02:02 +0100 fixed reloading of GXS id icon when banned/unbanned in forums
+  57f22e9 csoler Sat, 14 Jan 2017 10:51:14 +0100 removed costly size() call in QList
+  1435222 csoler Sat, 14 Jan 2017 10:19:31 +0100 fixed compilation in tests
+  c4695e3 csoler Fri, 13 Jan 2017 22:41:54 +0100 fixed compilation of unittests
+  df94de9 csoler Fri, 13 Jan 2017 18:31:50 +0100 disallow to ban your own identity in forums, and make opinions show up as a function ofwhat the ID opinion already is
+  17cf660 csoler Fri, 13 Jan 2017 16:35:42 +0100 improved settings->People text fields and tooltip
+  e4960e0 csoler Fri, 13 Jan 2017 10:24:28 +0100 Merge pull request #642 from G10h4ck/ccleanup
+  3c800c4 csoler Thu, 12 Jan 2017 22:54:38 +0100 fixed enabled 0 in settings->People fields
+  cdd3973 Gio. Mazzurco Thu, 12 Jan 2017 22:28:58 +0100 Documentation and code cleanup
+  19819b9 csoler Thu, 12 Jan 2017 22:14:41 +0100 removed debug info
+  d7e0682 csoler Thu, 12 Jan 2017 21:59:44 +0100 fixed sorting by reputation in IdDialog
+  3c07d50 csoler Thu, 12 Jan 2017 21:27:02 +0100 set auto-reset of banned nodes to "never" by default
+  70a92a1 csoler Thu, 12 Jan 2017 21:14:36 +0100 various small fixes in reputation/identity cleaning
+  bd7f6ac csoler Thu, 12 Jan 2017 20:39:49 +0100 added to parameters in options to fix the time banned ids are kept in list and prevented to re-download
+  a7f0fff csoler Tue, 10 Jan 2017 23:05:00 +0100 made sure reputations are not stamped when requested for debugging/printing
+  e329815 csoler Tue, 10 Jan 2017 21:59:27 +0100 Merge pull request #621 from G10h4ck/ccleanup
+  a810ae9 csoler Tue, 10 Jan 2017 21:44:37 +0100 use rsReputations instead of rsIdentity for reputation calls. Suspended reputation vetting code which is not needed anymore
+  2f1d907 csoler Tue, 10 Jan 2017 20:10:28 +0100 removed debug info
+  3057533 csoler Tue, 10 Jan 2017 20:06:40 +0100 Merge pull request #608 from PhenomRetroShare/Add_NoDeprecatedWarningFlag
+  4838916 csoler Tue, 10 Jan 2017 19:24:51 +0100 Merge pull request #622 from G10h4ck/android_quircks
+  8d8453f csoler Mon,  9 Jan 2017 23:47:51 +0100 removed the reputation calls through rsIdentity. Improved the logic of updating static identity flags in p3gxsreputations
+  2ed9830 csoler Mon,  9 Jan 2017 15:49:12 +0100 fixed 2 comments in GXS net service
+  2fc8d22 csoler Sun,  8 Jan 2017 22:00:54 +0100 changed cleaning strategy of p3gxsreputations to be based on last activity of the reputation system rather than the identity system
+  b6a3f53 csoler Sun,  8 Jan 2017 11:14:18 +0100 changed the needsUpdate flag so that unset/default needs update, and added code to read old reputation set item class
+  0dd3a31 csoler Sun,  8 Jan 2017 11:10:33 +0100 added last used TS in reputation items
+  e895b6b csoler Thu,  5 Jan 2017 23:32:27 +0100 Merge pull request #626 from csoler/v0.6-Reputations
+  d631758 csoler Thu,  5 Jan 2017 23:07:59 +0100 added hashstream class to hash content of RsIdentityUsage and fix duplication of identity usage statistics
+
+ -- Retroshare Dev Team <contact@retroshare.net>  Sun, 15 Jan 2017 12:00:00 +0100
+
+retroshare06 (0.6.1-1.20170103.f79706a1~trusty) trusty; urgency=low
+
   5469eb1 defnax   Tue,  3 Jan 2017 16:43:31 +0100 Added display labels to show positive and negative votes
   0ba28a2 defnax   Tue,  3 Jan 2017 01:37:16 +0100 Removed Column text for Votes, Distribution replaced by icon. Set column header to "ResizeToContents" to not use much space Added new Bio hazard icons to look same like other ones
   00613d4 csoler   Mon,  2 Jan 2017 14:00:23 +0100 made sure we have the public keys for msg validation, as only the private key is available when we are admin/publisher of a group
