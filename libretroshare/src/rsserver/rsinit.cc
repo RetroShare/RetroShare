@@ -82,6 +82,10 @@
 #include "tcponudp/udpstunner.h"
 #endif // RS_USE_DHT_STUNNER
 
+#ifdef RS_GXS_MAIL
+#	include "services/p3gxsmails.h"
+#endif
+
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
@@ -1483,8 +1487,21 @@ int RsServer::StartupRetroShare()
         pqih->addService(gxschannels_ns, true);
         //pqih->addService(photo_ns, true);
 
-        // remove pword from memory
-        rsInitConfig->gxs_passwd = "";
+#	ifdef RS_GXS_MAIL
+	RsGeneralDataService* gxsmail_ds = new RsDataService(
+	            currGxsDir + "/", "gxsmails_db", RS_SERVICE_TYPE_GXS_MAIL,
+	            NULL, rsInitConfig->gxs_passwd );
+	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, mGxsIdService);
+	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
+	            RS_SERVICE_TYPE_GXS_MAIL, gxschannels_ds, nxsMgr, mGxsMails,
+	            mGxsMails->getServiceInfo(), mGxsIdService, mGxsCircles,
+	            mGxsIdService, pgpAuxUtils );
+	mGxsMails->setNetworkExchangeService(gxsmails_ns);
+	pqih->addService(gxsmails_ns, true);
+#	endif // RS_GXS_MAIL
+
+	// remove pword from memory
+	rsInitConfig->gxs_passwd = "";
 
 #endif // RS_ENABLE_GXS.
 
@@ -1803,6 +1820,11 @@ int RsServer::StartupRetroShare()
 
 	//createThread(*photo_ns);
 	//createThread(*wire_ns);
+
+#	ifdef RS_GXS_MAIL
+	startServiceThread(mGxsMails, "gxs mail");
+	startServiceThread(gxsmails_ns, "gxs mail ns");
+#	endif // RS_GXS_MAIL
 
 #endif // RS_ENABLE_GXS
 
