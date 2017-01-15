@@ -2313,8 +2313,10 @@ bool p3IdService::cache_load_for_token(uint32_t token)
             for(std::map<RsGxsId,std::list<RsPeerId> >::const_iterator itt(mPendingCache.begin());itt!=mPendingCache.end();++itt)
                 if(!itt->second.empty())
                     mergeIds(mIdsNotPresent,itt->first,itt->second) ;
+#ifdef DEBUG_IDS
 				else
                     std::cerr << "(WW) empty list of peers to request ID " << itt->first << ": cannot request" << std::endl;
+#endif
 
 
 			mPendingCache.clear();
