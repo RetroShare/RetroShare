@@ -44,7 +44,7 @@ struct RsGroupMetaData
 
     RsGxsGroupId mGroupId;
     std::string mGroupName;
-    uint32_t    mGroupFlags;  // Combination of FLAGS_PRIVACY_PRIVATE | FLAGS_PRIVACY_RESTRICTED | FLAGS_PRIVACY_PUBLIC
+	uint32_t    mGroupFlags;  // Combination of FLAG_PRIVACY_PRIVATE | FLAG_PRIVACY_RESTRICTED | FLAG_PRIVACY_PUBLIC
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.

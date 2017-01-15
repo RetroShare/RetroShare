@@ -28,17 +28,17 @@
 
 #include "retroshare/rstokenservice.h"
 #include "gxs/rsgds.h"
+#include "util/rsdeprecate.h"
 
-class GxsRequest
+struct GxsRequest
 {
-public:
+	GxsRequest() : token(0), reqTime(0), ansType(0), reqType(0), status(0) {}
 	virtual ~GxsRequest() {}
 
-public:
 	uint32_t token;
 	uint32_t reqTime;
 
-	uint32_t ansType;
+	RS_DEPRECATED uint32_t ansType; /// G10h4ck: This is of no use
 	uint32_t reqType;
 	RsTokReqOptions Options;
 

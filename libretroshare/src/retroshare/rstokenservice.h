@@ -31,6 +31,7 @@
 #include <list>
 
 #include "retroshare/rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
 
 // TODO CLEANUP: GXS_REQUEST_TYPE_* should be an inner enum of RsTokReqOptions
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
@@ -57,9 +58,12 @@
 #define RS_TOKREQOPT_MSG_AUTHOR		0x0040		// MSGLIST: Messages from this AuthorId
 
 
-/* TODO CLEANUP: RS_TOKREQ_ANSTYPE_* values are not used by RsTokenService or
- * its implementation, and may be arbitrarly defined by each GXS client, should
- * be removed from here */
+/* TODO CLEANUP: RS_TOKREQ_ANSTYPE_* values are meaningless and not used by
+ * RsTokenService or its implementation, and may be arbitrarly defined by each
+ * GXS client as they are of no usage, their use is deprecated */
+#ifndef RS_NO_WARN_DEPRECATED
+#	warning RS_TOKREQ_ANSTYPE_* macros are deprecated!
+#endif
 #define RS_TOKREQ_ANSTYPE_LIST      0x0001
 #define RS_TOKREQ_ANSTYPE_SUMMARY   0x0002
 #define RS_TOKREQ_ANSTYPE_DATA      0x0003
@@ -76,23 +80,31 @@ struct RsTokReqOptions
 	    mMsgFlagMask(0), mMsgFlagFilter(0), mReqType(0), mSubscribeFilter(0),
 	    mSubscribeMask(0), mBefore(0), mAfter(0) {}
 
-uint32_t mOptions;
+	/**
+	 * Can be one or multiple RS_TOKREQOPT_*
+	 * TODO: cleanup this should be made with proper flags instead of macros
+	 */
+	uint32_t mOptions;
 
-// Request specific matches with Group / Message Status.
-// Should be usable with any Options... applied afterwards.
-uint32_t mStatusFilter;
-uint32_t mStatusMask;
+	// Request specific matches with Group / Message Status.
+	// Should be usable with any Options... applied afterwards.
+	uint32_t mStatusFilter;
+	uint32_t mStatusMask;
 
-// use
-uint32_t mMsgFlagMask, mMsgFlagFilter;
+	// use
+	uint32_t mMsgFlagMask, mMsgFlagFilter;
 
-uint32_t mReqType;
+	/**
+	 * Must be one of GXS_REQUEST_TYPE_*
+	 * TODO: cleanup this should be made an enum instead of macros
+	 */
+	uint32_t mReqType;
 
-uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
+	uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
-// Time range... again applied after Options.
-time_t   mBefore;
-time_t   mAfter;
+	// Time range... again applied after Options.
+	time_t   mBefore;
+	time_t   mAfter;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);

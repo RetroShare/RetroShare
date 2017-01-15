@@ -658,7 +658,6 @@ bool RsGxsCircleCache::addLocalFriend(const RsPgpId &pgpId)
 bool p3GxsCircles::request_CircleIdList()
 {
 	/* trigger request to load missing ids into cache */
-	std::list<RsGxsGroupId> groupIds;
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::request_CircleIdList()";
 	std::cerr << std::endl;
@@ -672,7 +671,7 @@ bool p3GxsCircles::request_CircleIdList()
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
 	GxsTokenQueue::queueRequest(token, CIRCLEREQ_CIRCLE_LIST);	
-	return 1;
+	return true;
 }
 
 
