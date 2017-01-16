@@ -1396,7 +1396,9 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 	// iterate all new threads
 	for (QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {
 		// search existing thread
+#ifdef DEBUG_FORUMS
         std::cerr << "Makign a search for string \"" << (*newThread)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString() << "\"" << std::endl;
+#endif
 
         std::map<QString,QTreeWidgetItem*>::const_iterator it = oldThreadMap.find((*newThread)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()) ;
 
