@@ -256,8 +256,8 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 			votePositiveAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
 			voteNeutralAct->setEnabled((rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
 			voteNegativeAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);
-
-			muteAct->setChecked(!isParticipantMuted(gxsid));
+			muteAct->setEnabled(true);
+			muteAct->setChecked(isParticipantMuted(gxsid));
 		}
     }
 	contextMnu.exec(QCursor::pos());
