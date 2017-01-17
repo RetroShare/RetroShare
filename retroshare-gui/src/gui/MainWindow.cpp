@@ -344,8 +344,6 @@ void MainWindow::initStackedPage()
 
   addPage(homePage = new HomePage(ui->stackPages), grp, NULL);
 
-  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
-
 //#ifdef RS_USE_CIRCLES
 //  CirclesDialog *circlesDialog = NULL;
 //  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
@@ -357,6 +355,7 @@ void MainWindow::initStackedPage()
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
   addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
