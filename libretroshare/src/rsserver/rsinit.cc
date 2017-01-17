@@ -1494,8 +1494,8 @@ int RsServer::StartupRetroShare()
 	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, mGxsIdService);
 	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_MAIL, gxschannels_ds, nxsMgr, mGxsMails,
-	            mGxsMails->getServiceInfo(), mGxsIdService, mGxsCircles,
-	            mGxsIdService, pgpAuxUtils );
+	            mGxsMails->getServiceInfo(), mReputations, mGxsCircles,
+	            mGxsIdService, pgpAuxUtils);
 	mGxsMails->setNetworkExchangeService(gxsmails_ns);
 	pqih->addService(gxsmails_ns, true);
 #	endif // RS_GXS_MAIL
