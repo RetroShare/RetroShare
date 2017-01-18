@@ -42,6 +42,7 @@ bool ForumPage::save(QString &/*errmsg*/)
 	Settings->setForumMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
 	Settings->setForumExpandNewMessages(ui.expandNewMessages->isChecked());
 	Settings->setForumLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
+	Settings->setForumLoadEmoticons(ui.loadEmoticons->isChecked());
 
 	ui.groupFrameSettingsWidget->saveSettings(GroupFrameSettings::Forum);
 
@@ -54,6 +55,7 @@ void ForumPage::load()
 	ui.setMsgToReadOnActivate->setChecked(Settings->getForumMsgSetToReadOnActivate());
 	ui.expandNewMessages->setChecked(Settings->getForumExpandNewMessages());
 	ui.loadEmbeddedImages->setChecked(Settings->getForumLoadEmbeddedImages());
+	ui.loadEmoticons->setChecked(Settings->getForumLoadEmoticons());
 
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Forum);
 }

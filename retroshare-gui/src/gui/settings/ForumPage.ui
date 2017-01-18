@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
+    <width>507</width>
     <height>340</height>
    </rect>
   </property>
@@ -35,6 +35,16 @@
        <widget class="QCheckBox" name="loadEmbeddedImages">
         <property name="text">
          <string>Load embedded images</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="loadEmoticons">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option is costly and it's in the dev's plans to improve it. In the mean time it's disabled by default. If you enable it and long forum posts take a while to display, then disable it again. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Load emoticons (costly)</string>
         </property>
        </widget>
       </item>
