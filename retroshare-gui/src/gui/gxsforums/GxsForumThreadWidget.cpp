@@ -31,6 +31,7 @@
 #include "GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
+#include "gui/settings/rsharesettings.h"
 #include "gui/common/RSElidedItemDelegate.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
@@ -1622,7 +1623,11 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	}
 	else
 	{
-		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+        uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+        if(Settings->getForumLoadEmoticons())
+            flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+
+		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()),flags);
 		ui->postText->setHtml(extraTxt);
 	}
 	// ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));

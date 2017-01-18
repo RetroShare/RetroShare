@@ -1004,13 +1004,17 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag 
 {
 	if (textEdit->toHtml() == QTextDocument(textEdit->toPlainText()).toHtml()) {
 		text = textEdit->toPlainText();
-//		std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
+		//std::cerr << "Optimized text to " << text.length() << " bytes , instead of " << textEdit->toHtml().length() << std::endl;
 		return;
 	}
 
 	text = textEdit->toHtml();
 
+		//std::cerr << "Optimized text from " << text.length() << " bytes , into " ;
+
 	optimizeHtml(text, flag);
+
+        //std::cerr << text.length() << " bytes" << std::endl;
 }
 
 /**

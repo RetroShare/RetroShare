@@ -1041,12 +1041,18 @@ bool RshareSettings::getForumLoadEmbeddedImages()
 {
 	return valueFromGroup("Forum", "LoadEmbeddedImages", false).toBool();
 }
-
+bool RshareSettings::getForumLoadEmoticons()
+{
+	return valueFromGroup("Forum", "LoadEmoticons", false).toBool();
+}
 void RshareSettings::setForumLoadEmbeddedImages(bool value)
 {
 	setValueToGroup("Forum", "LoadEmbeddedImages", value);
 }
-
+void RshareSettings::setForumLoadEmoticons(bool value)
+{
+	setValueToGroup("Forum", "LoadEmoticons", value);
+}
 /* Channel */
 bool RshareSettings::getChannelLoadThread()
 {

@@ -305,6 +305,8 @@ public:
 	void setForumExpandNewMessages(bool value);
 	bool getForumLoadEmbeddedImages();
 	void setForumLoadEmbeddedImages(bool value);
+	bool getForumLoadEmoticons();
+	void setForumLoadEmoticons(bool value);
 
 	/* Channel */
 	bool getChannelLoadThread();
