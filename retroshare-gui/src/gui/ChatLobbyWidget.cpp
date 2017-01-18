@@ -171,8 +171,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     int S = QFontMetricsF(font()).height();
     QString help_str = tr("\
-                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
-	                      <p>Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      \
+                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                              \
+	                      <p>Chat rooms work pretty much like IRC.                                      \
 	                      They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
 	                      <p>A chat lobby can be public (your friends see it) or private (your friends can't see it, unless you           \
                           invite them with <img src=\":/images/add_24x24.png\" width=%2/>). \
@@ -181,10 +181,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                      <p>The list at left shows                                                                                     \
 	                      chat lobbies your friends are participating in. You can either                                 \
 		  <ul>                                                                                                            \
-			  <li>Right click to create a new chat lobby</li>                                                              \
+			  <li>Right click to create a new chat room</li>                                                              \
 		     <li>Double click a chat lobby to enter, chat, and show it to your friends</li>                      \
 	                      </ul> \
-	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!\
+	                      Note: For the chat rooms to work properly, your computer needs be on time.  So check your system clock!\
 	                      </p>                                      \
 	                      "
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
