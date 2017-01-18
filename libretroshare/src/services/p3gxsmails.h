@@ -81,7 +81,7 @@ private:
 	 */
 	bool inline supersedePreferredGroup(const RsGxsGroupId& potentialGrId)
 	{
-		std::cout << "supersedePreferredGroup(const RsGxsGroupId& potentialGrId) " << preferredGroupId << " <? " << potentialGrId << std::endl;
+		//std::cout << "supersedePreferredGroup(const RsGxsGroupId& potentialGrId) " << preferredGroupId << " <? " << potentialGrId << std::endl;
 		if(preferredGroupId < potentialGrId)
 		{
 			preferredGroupId = potentialGrId;

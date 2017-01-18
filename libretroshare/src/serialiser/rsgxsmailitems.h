@@ -23,9 +23,8 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
 
-// TODO: move to rsserviceids.h
-const uint16_t RS_SERVICE_TYPE_GXS_MAIL = 0x0230;
 
 enum GxsMailSubtypes
 {
@@ -132,6 +131,7 @@ struct RsGxsMailGroupItem : RsGxsGrpItem
 	{
 		meta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 		meta.mGroupName = "Mail";
+		meta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
 	}
 
 	void clear() {}
@@ -177,7 +177,6 @@ struct RsGxsMailSerializer : RsSerialType
 		default: return 0;
 		}
 
-		std::cout << "RsGxsMailSerializer::size() " << item->PacketSubType() << " return " << s << std::endl;
 		return s;
 	}
 

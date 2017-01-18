@@ -1493,11 +1493,12 @@ int RsServer::StartupRetroShare()
 	            NULL, rsInitConfig->gxs_passwd );
 	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, mGxsIdService);
 	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
-	            RS_SERVICE_TYPE_GXS_MAIL, gxschannels_ds, nxsMgr, mGxsMails,
+	            RS_SERVICE_TYPE_GXS_MAIL, gxsmail_ds, nxsMgr, mGxsMails,
 	            mGxsMails->getServiceInfo(), mReputations, mGxsCircles,
 	            mGxsIdService, pgpAuxUtils);
 	mGxsMails->setNetworkExchangeService(gxsmails_ns);
 	pqih->addService(gxsmails_ns, true);
+	mConfigMgr->addConfiguration("gxs_mail.cfg", gxsmails_ns);
 #	endif // RS_GXS_MAIL
 
 	// remove pword from memory
