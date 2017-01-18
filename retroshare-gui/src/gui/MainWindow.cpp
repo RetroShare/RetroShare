@@ -19,14 +19,15 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QMessageBox>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
 #include <QColorDialog>
 #include <QDesktopServices>
+#include <QIcon>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QStatusBar>
+#include <QString>
 #include <QUrl>
+#include <QtDebug>
 
 #ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
@@ -223,8 +224,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     if (!state.isEmpty()) restoreState(state);
 
     /** StatusBar section ********/
+    statusBar()->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
+
     /* initialize combobox in status bar */
     statusComboBox = new QComboBox(statusBar());
+    statusComboBox->setVisible(Settings->valueFromGroup("StatusBar", "ShowStatus", QVariant(true)).toBool());
     statusComboBox->setFocusPolicy(Qt::ClickFocus);
     initializeStatusObject(statusComboBox, true);
 
@@ -237,32 +241,39 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addWidget(widget);
 
     peerstatus = new PeerStatus();
+    peerstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowPeer", QVariant(true)).toBool());
     statusBar()->addWidget(peerstatus);
 
     natstatus = new NATStatus();
+    natstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowNAT", QVariant(true)).toBool());
     statusBar()->addWidget(natstatus);
     
     dhtstatus = new DHTStatus();
+    dhtstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDHT", QVariant(true)).toBool());
     statusBar()->addWidget(dhtstatus);
 
     hashingstatus = new HashingStatus();
+    hashingstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(hashingstatus, 1);
 
     discstatus = new DiscStatus();
+    discstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowDisc", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(discstatus);
 
     ratesstatus = new RatesStatus();
+    ratesstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowRate", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(ratesstatus);
 
     opModeStatus = new OpModeStatus();
+    opModeStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowOpMode", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(opModeStatus);
 
     soundStatus = new SoundStatus();
-    soundStatus->setHidden(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
+    soundStatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowSound", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(soundStatus);
 
     toasterDisable = new ToasterDisable();
-    toasterDisable->setHidden(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+    toasterDisable->setVisible(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
     statusBar()->addPermanentWidget(toasterDisable);
 
     sysTrayStatus = new SysTrayStatus();
@@ -309,6 +320,7 @@ MainWindow::~MainWindow()
     Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
     Settings->setValueToGroup("MainWindow", "State", saveState());
 
+    delete statusComboBox;
     delete peerstatus;
     delete natstatus;
     delete dhtstatus;
@@ -1477,6 +1489,45 @@ void MainWindow::processLastArgs()
 //{
 //    ServicePermissionDialog::showYourself();
 //}
+QComboBox *MainWindow::statusComboBoxInstance()
+{
+	return statusComboBox;
+}
+
+PeerStatus *MainWindow::peerstatusInstance()
+{
+	return peerstatus;
+}
+
+NATStatus *MainWindow::natstatusInstance()
+{
+	return natstatus;
+}
+
+DHTStatus *MainWindow::dhtstatusInstance()
+{
+	return dhtstatus;
+}
+
+HashingStatus *MainWindow::hashingstatusInstance()
+{
+	return hashingstatus;
+}
+
+DiscStatus *MainWindow::discstatusInstance()
+{
+	return discstatus;
+}
+
+RatesStatus *MainWindow::ratesstatusInstance()
+{
+	return ratesstatus;
+}
+
+OpModeStatus *MainWindow::opModeStatusInstance()
+{
+	return opModeStatus;
+}
 
 SoundStatus *MainWindow::soundStatusInstance()
 {
