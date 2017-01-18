@@ -173,6 +173,14 @@ public:
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
+    QComboBox *statusComboBoxInstance();
+    PeerStatus *peerstatusInstance();
+    NATStatus *natstatusInstance();
+    DHTStatus *dhtstatusInstance();
+    HashingStatus *hashingstatusInstance();
+    DiscStatus *discstatusInstance();
+    RatesStatus *ratesstatusInstance();
+    OpModeStatus *opModeStatusInstance();
     SoundStatus *soundStatusInstance();
     ToasterDisable *toasterDisableInstance();
     SysTrayStatus *sysTrayStatusInstance();

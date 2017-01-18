@@ -19,15 +19,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QStyleFactory>
-#include <QFileInfo>
+#include <QCheckBox>
 #include <QDir>
+#include <QFileInfo>
+#include <QGroupBox>
+#include <QStatusBar>
+#include <QStyleFactory>
 
 #include "lang/languagesupport.h"
 #include <rshare.h>
 #include "AppearancePage.h"
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
+#include "gui/statusbar/peerstatus.h"
+#include "gui/statusbar/natstatus.h"
+#include "gui/statusbar/dhtstatus.h"
+#include "gui/statusbar/hashingstatus.h"
+#include "gui/statusbar/discstatus.h"
+#include "gui/statusbar/ratesstatus.h"
+#include "gui/statusbar/OpModeStatus.h"
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
@@ -41,11 +51,21 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	MainWindow *pMainWindow = MainWindow::getInstance();
 	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
-	connect(ui.checkBoxStatusCompactMode, SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
-	connect(ui.checkBoxHideSoundStatus, SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(), SLOT(setHidden(bool)));
+
+	connect(ui.grpStatus,                 SIGNAL(toggled(bool)), pMainWindow->statusBar(), SLOT(setVisible(bool)));
+	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), pMainWindow, SLOT(toggleStatusToolTip(bool)));
+	connect(ui.checkBoxHideStatusStatus,  SIGNAL(toggled(bool)), pMainWindow->statusComboBoxInstance(), SLOT(setHidden(bool)));
+	connect(ui.checkBoxHidePeerStatus,    SIGNAL(toggled(bool)), pMainWindow->peerstatusInstance(),     SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideNATStatus,     SIGNAL(toggled(bool)), pMainWindow->natstatusInstance(),      SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideDHTStatus,     SIGNAL(toggled(bool)), pMainWindow->dhtstatusInstance(),      SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideHashingStatus, SIGNAL(toggled(bool)), pMainWindow->hashingstatusInstance(),  SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideDiscStatus,    SIGNAL(toggled(bool)), pMainWindow->discstatusInstance(),     SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideRateStatus,    SIGNAL(toggled(bool)), pMainWindow->ratesstatusInstance(),    SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideOpModeStatus,  SIGNAL(toggled(bool)), pMainWindow->opModeStatusInstance(),   SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideSoundStatus,   SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(),    SLOT(setHidden(bool)));
 	connect(ui.checkBoxHideToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setHidden(bool)));
 	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
-	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), pMainWindow, SLOT(toggleStatusToolTip(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -139,12 +159,21 @@ bool AppearancePage::save(QString &errmsg)
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
 
+	Settings->setValueToGroup("StatusBar", "ShowStatusBar", QVariant(ui.grpStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
+	Settings->setValueToGroup("StatusBar", "DisableSysTrayToolTip", QVariant(ui.checkBoxDisableSysTrayToolTip->isChecked()));
+	MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked());
+	Settings->setValueToGroup("StatusBar", "HideStatus", QVariant(ui.checkBoxHideStatusStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HidePeer", QVariant(ui.checkBoxHidePeerStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideNAT", QVariant(ui.checkBoxHideNATStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideDHT", QVariant(ui.checkBoxHideDHTStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideHashing", QVariant(ui.checkBoxHideHashingStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideDisc", QVariant(ui.checkBoxHideDiscStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideRate", QVariant(ui.checkBoxHideRateStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideOpMode", QVariant(ui.checkBoxHideOpModeStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideSound", QVariant(ui.checkBoxHideSoundStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "HideToaster", QVariant(ui.checkBoxHideToasterDisable->isChecked()));
 	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "DisableSysTrayToolTip", QVariant(ui.checkBoxDisableSysTrayToolTip->isChecked()));
-	MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked());
 
 	return true;
 }
@@ -227,11 +256,20 @@ void AppearancePage::load()
             ui.cmboListItemSize->setCurrentIndex(5);
     }
 
+	ui.grpStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(false)).toBool());
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
-	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
-	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
-	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 	ui.checkBoxDisableSysTrayToolTip->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
+	ui.checkBoxHideStatusStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideStatus", QVariant(true)).toBool());
+	ui.checkBoxHidePeerStatus->setChecked(Settings->valueFromGroup("StatusBar", "HidePeer", QVariant(true)).toBool());
+	ui.checkBoxHideNATStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideNAT", QVariant(true)).toBool());
+	ui.checkBoxHideDHTStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideDHT", QVariant(true)).toBool());
+	ui.checkBoxHideHashingStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideHashing", QVariant(true)).toBool());
+	ui.checkBoxHideDiscStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideDisc", QVariant(true)).toBool());
+	ui.checkBoxHideRateStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideRate", QVariant(true)).toBool());
+	ui.checkBoxHideOpModeStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideOpMode", QVariant(true)).toBool());
+	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(true)).toBool());
+	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(true)).toBool());
+	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 }
 
