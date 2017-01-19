@@ -3890,16 +3890,14 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 #endif
 		return false;
 	}
-
-	if(circleType == GXS_CIRCLE_TYPE_PUBLIC)
+	else if(circleType == GXS_CIRCLE_TYPE_PUBLIC || circleType == GXS_CIRCLE_TYPE_UNKNOWN)	// this complies with the fact that p3IdService does not initialise the circle type.
 	{
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId)<< "  PUBLIC_CIRCLE, can send"<< std::endl;
 #endif
 		return true;
 	}
-
-	if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
+	else if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
 	{
 #ifdef NXS_NET_DEBUG_4
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId)<< "  EXTERNAL_CIRCLE, will be sent encrypted."<< std::endl;
@@ -3907,8 +3905,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
         	should_encrypt = true ;
         	return true ;
 	}
-
-	if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
+	else if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 	{
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  YOUREYESONLY, checking further" << std::endl;
@@ -3922,8 +3919,11 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 		GXSNETDEBUG_PG(sslId,grpMeta.mGroupId)<< "  YOUREYESONLY, checking further"<< std::endl;
 #endif
 	}
-
-	return true;
+    else
+    {
+        std::cerr << "(EE) unknown value found in circle type for group " << grpMeta.mGroupId << ": " << (int)circleType << ": this is probably a bug in the design of the group creation." << std::endl;
+		return false;
+    }
 }
 
 bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& grpMeta, RsGxsCircleId& should_encrypt_id)
@@ -4281,19 +4281,16 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 #endif
         return false;
     }
-
-    if(circleType == GXS_CIRCLE_TYPE_PUBLIC)
+    else if(circleType == GXS_CIRCLE_TYPE_PUBLIC || circleType == GXS_CIRCLE_TYPE_UNKNOWN) // this complies with the fact that p3IdService does not initialise the circle type.
     {
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: PUBLIC => returning true" << std::endl;
 #endif
         return true;
     }
-
-    const RsGxsCircleId& circleId = grpMeta.mCircleId;
-
-    if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
+    else if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
     {
+		const RsGxsCircleId& circleId = grpMeta.mCircleId;
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   Circle type: EXTERNAL => returning true. Msgs ids list will be encrypted." << std::endl;
 #endif
@@ -4338,8 +4335,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 
         return true ;
     }
-
-    if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
+    else if(circleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
     {
 #ifdef NXS_NET_DEBUG_4
         GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  YOUREYESONLY, checking further" << std::endl;
@@ -4350,8 +4346,11 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 #endif
         return res ;
     }
-
-    return false;
+    else
+    {
+        std::cerr << "(EE) unknown value found in circle type for group " << grpMeta.mGroupId << ": " << (int)circleType << ": this is probably a bug in the design of the group creation." << std::endl;
+		return false;
+    }
 }
 
 /** inherited methods **/

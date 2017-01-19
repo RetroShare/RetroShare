@@ -33,11 +33,13 @@ typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 class RsGxsGrpMetaData;
 class RsGxsMsgMetaData;
 
-
 struct RsGroupMetaData
 {
+	// (csoler) The correct default value to be used in mCircleType is GXS_CIRCLE_TYPE_PUBLIC, which is defined in rsgxscircles.h,
+    // but because of a loop in the includes, I cannot include it here. So I replaced with its current value 0x0001.
+
 	RsGroupMetaData() : mGroupFlags(0), mSignFlags(0), mPublishTs(0),
-	    mCircleType(0), mAuthenFlags(0), mSubscribeFlags(0), mPop(0),
+	    mCircleType(0x0001), mAuthenFlags(0), mSubscribeFlags(0), mPop(0),
 	    mVisibleMsgCount(0), mLastPost(0), mGroupStatus(0) {}
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);

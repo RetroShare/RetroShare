@@ -690,6 +690,7 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
     RsGxsIdGroup id;
 
     id.mMeta.mGroupName = params.nickname;
+    id.mMeta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC ;
     id.mImage = params.mImage;
 
     if (params.isPgpLinked)
@@ -712,6 +713,7 @@ bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
     std::cerr << "p3IdService::updateIdentity()";
     std::cerr << std::endl;
 #endif
+    group.mMeta.mCircleType = GXS_CIRCLE_TYPE_PUBLIC ;
 
     updateGroup(token, group);
 
