@@ -646,6 +646,7 @@ public:
     virtual uint32_t getDefaultSyncPeriod();
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) ;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
+	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
     uint16_t serviceType() const { return mServType ; }
     uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }

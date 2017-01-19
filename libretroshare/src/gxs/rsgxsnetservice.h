@@ -161,6 +161,7 @@ public:
     
     virtual bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) ;
+    virtual bool removeGroups(const std::list<RsGxsGroupId>& groups);
 
     /* p3Config methods */
 public:
