@@ -34,7 +34,9 @@ ChatToaster::ChatToaster(const RsPeerId &peer_id, const QString &message) : QWid
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	//ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+    // emoticons disabled because they kill performance.
+	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_CLEANSTYLE));
     ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(mPeerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatarWidget->setId(ChatId(mPeerId));

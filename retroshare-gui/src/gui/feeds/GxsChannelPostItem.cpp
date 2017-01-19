@@ -199,7 +199,9 @@ QString GxsChannelPostItem::getTitleLabel()
 
 QString GxsChannelPostItem::getMsgLabel()
 {
-	return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+	//return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+    // Disabled, because emoticon replacement kills performance.
+	return QString::fromUtf8(mPost.mMsg.c_str());
 }
 
 QString GxsChannelPostItem::groupName()
@@ -359,9 +361,10 @@ void GxsChannelPostItem::fill()
 		/* subject */
 		ui->titleLabel->setText(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
 
-		// fill first 4 lines of message
-		ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-		
+		// fill first 4 lines of message. (csoler) Disabled the replacement of smileys and links, because the cost is too crazy
+		//ui->subjectLabel->setText(RsHtml().formatText(NULL, RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		ui->subjectLabel->setText(RsStringUtil::CopyLines(QString::fromUtf8(mPost.mMsg.c_str()), 4)) ;
+
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
 

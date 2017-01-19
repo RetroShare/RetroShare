@@ -43,6 +43,7 @@ extern RsIdentity *rsIdentity;
 
 
 // GroupFlags: Only one so far:
+#warning THIS FLAG OVERLAPS THE FLAGS FOR mGroupFlags. This is an error that should be fixed.
 #define RSGXSID_GROUPFLAG_REALID  0x0001
 
 // THESE ARE FLAGS FOR INTERFACE.
