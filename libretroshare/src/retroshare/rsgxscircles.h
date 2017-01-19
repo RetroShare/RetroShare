@@ -52,6 +52,7 @@ typedef RsPgpId RsPgpId;
 // The meaning of the different circle types is:
 //
 //	
+static const uint32_t GXS_CIRCLE_TYPE_UNKNOWN           = 0x0000 ;	// not known. Is treated as public.
 static const uint32_t GXS_CIRCLE_TYPE_PUBLIC            = 0x0001 ;	// not restricted to a circle
 static const uint32_t GXS_CIRCLE_TYPE_EXTERNAL          = 0x0002 ;	// restricted to an external circle, made of RsGxsId
 static const uint32_t GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY = 0x0003 ;	// restricted to a subset of friend nodes of a given RS node given by a RsPgpId list

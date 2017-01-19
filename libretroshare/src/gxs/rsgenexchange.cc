@@ -1554,15 +1554,88 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 	mNotifications.push_back(gc);
 }
 
+bool RsGenExchange::checkGroupMetaConsistency(const RsGroupMetaData& meta)
+{
+    std::cerr << "Checking group consistency:" << std::endl;
+
+    if(meta.mGroupName.empty())
+    {
+        std::cerr << "(EE) cannot create a group with no name." << std::endl;
+        return false;
+    }
+
+    if(meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_PUBLIC && meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_RESTRICTED && meta.mGroupFlags != GXS_SERV::FLAG_PRIVACY_PRIVATE)
+    {
+        std::cerr << "(EE) mGroupFlags has incorrect value " << std::hex << meta.mGroupFlags << std::dec << ". A value among GXS_SERV::FLAG_PRIVACY_{PUBLIC,RESTRICTED,PRIVATE} is expected." << std::endl;
+        return false ;
+    }
+
+    if(meta.mCircleType < GXS_CIRCLE_TYPE_PUBLIC || meta.mCircleType > GXS_CIRCLE_TYPE_YOUR_EYES_ONLY)
+    {
+        std::cerr << "(EE) mCircleType has incorrect value " << std::hex << meta.mCircleType << std::dec << ". A single value among GXS_CIRCLE_TYPE_{PUBLIC,EXTERNAL,YOUR_FRIENDS_ONLY,LOCAL,EXT_SELF,YOUR_EYES_ONLY} is expected." << std::endl;
+        return false ;
+    }
+
+    if(meta.mCircleType == GXS_CIRCLE_TYPE_EXTERNAL)
+    {
+		if(!meta.mInternalCircle.isNull())
+        {
+            std::cerr << "(EE) Group circle type is EXTERNAL, but an internal circle ID " << meta.mInternalCircle << " was supplied. This is an error." << std::endl;
+            return false ;
+        }
+		if(meta.mCircleId.isNull())
+        {
+            std::cerr << "(EE) Group circle type is EXTERNAL, but no external circle ID was supplied. meta.mCircleId is indeed empty. This is an error." << std::endl;
+            return false ;
+        }
+    }
+
+    if(meta.mCircleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
+    {
+        if(!meta.mCircleId.isNull())
+        {
+            std::cerr << "(EE) Group circle type is YOUR_FRIENDS_ONLY, but an external circle ID " << meta.mCircleId << " was supplied. This is an error." << std::endl;
+            return false ;
+        }
+		if(meta.mInternalCircle.isNull())
+        {
+            std::cerr << "(EE) Group circle type is YOUR_FRIENDS_ONLY, but no internal circle ID was supplied. meta.mInternalCircle is indeed empty. This is an error." << std::endl;
+            return false ;
+        }
+    }
+
+    if(meta.mCircleType == GXS_CIRCLE_TYPE_EXT_SELF)
+    {
+        if(!meta.mCircleId.isNull())
+        {
+            std::cerr << "(EE) Group circle type is EXT_SELF, but an external circle ID " << meta.mCircleId << " was supplied. This is an error." << std::endl;
+            return false ;
+        }
+		if(!meta.mInternalCircle.isNull())
+        {
+            std::cerr << "(EE) Group circle type is EXT_SELF, but an internal circle ID " << meta.mInternalCircle << " was supplied. This is an error." << std::endl;
+            return false ;
+        }
+    }
+
+    std::cerr << "Group is clean." << std::endl;
+    return true ;
+}
+
 void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 {
+    if(!checkGroupMetaConsistency(grpItem->meta))
+    {
+        std::cerr << "(EE) Cannot publish group. Some information was not supplied." << std::endl;
+       return ;
+    }
 
 	RS_STACK_MUTEX(mGenMtx) ;
     token = mDataAccess->generatePublicToken();
     GxsGrpPendingSign ggps(grpItem, token);
     mGrpsToPublish.push_back(ggps);
 
-#ifdef GEN_EXCH_DEBUG	
+#ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::publishGroup() token: " << token;
     std::cerr << std::endl;
 #endif
@@ -1572,6 +1645,12 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 
 void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
+    if(!checkGroupMetaConsistency(grpItem->meta))
+    {
+        std::cerr << "(EE) Cannot update group. Some information was not supplied." << std::endl;
+       return ;
+    }
+
 					RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
         mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));

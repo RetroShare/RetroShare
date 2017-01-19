@@ -689,6 +689,8 @@ private:
 
     void publishMsgs();
 
+	bool checkGroupMetaConsistency(const RsGroupMetaData& meta);
+
     /*!
      * processes msg local meta changes
      */
