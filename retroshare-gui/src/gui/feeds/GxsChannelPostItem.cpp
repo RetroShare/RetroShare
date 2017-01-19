@@ -199,7 +199,9 @@ QString GxsChannelPostItem::getTitleLabel()
 
 QString GxsChannelPostItem::getMsgLabel()
 {
-	return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+	//return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+    // Disabled, because emoticon replacement kills performance.
+	return QString::fromUtf8(mPost.mMsg.c_str());
 }
 
 QString GxsChannelPostItem::groupName()
