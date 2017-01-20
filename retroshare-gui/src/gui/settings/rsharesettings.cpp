@@ -514,6 +514,16 @@ void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
 	setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
+bool RshareSettings::getChatDoNotSendIsTyping()
+{
+	return valueFromGroup("Chat", "DoNotSendIsTyping", false).toBool();
+}
+
+void RshareSettings::setChatDoNotSendIsTyping(bool bValue)
+{
+	setValueToGroup("Chat", "DoNotSendIsTyping", bValue);
+}
+
 bool RshareSettings::getChatSendAsPlainTextByDef()
 {
 	return valueFromGroup("Chat", "SendAsPlainTextByDef", false).toBool();

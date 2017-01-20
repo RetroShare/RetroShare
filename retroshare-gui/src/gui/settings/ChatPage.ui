@@ -271,6 +271,13 @@
               </item>
              </layout>
             </item>
+            <item>
+             <widget class="QCheckBox" name="DontSendTyping">
+              <property name="text">
+               <string>Do not send typing notifications</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>

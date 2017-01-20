@@ -210,6 +210,9 @@ public:
 	bool getChatSendMessageWithCtrlReturn();
 	void setChatSendMessageWithCtrlReturn(bool bValue);
 
+	bool getChatDoNotSendIsTyping();
+	void setChatDoNotSendIsTyping(bool bValue);
+
 	bool getChatSendAsPlainTextByDef();
 	void setChatSendAsPlainTextByDef(bool bValue);
 
