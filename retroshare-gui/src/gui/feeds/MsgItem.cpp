@@ -177,7 +177,9 @@ void MsgItem::updateItemStatic()
 
 void MsgItem::fillExpandFrame()
 {
-	msgLabel->setText(RsHtml().formatText(NULL, mMsg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    // emoticons disabled because of crazy cost.
+	//msgLabel->setText(RsHtml().formatText(NULL, mMsg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	msgLabel->setText(RsHtml().formatText(NULL, mMsg, RSHTML_FORMATTEXT_EMBED_LINKS));
 }
 
 void MsgItem::updateItem()
