@@ -40,7 +40,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->setupUi(this);
 
 	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/chat-lobbies.png"));
-	ui->headerFrame->setHeaderText(tr("Create Chat Lobby"));
+	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;
     rsMsgs->getDefaultIdentityForChatLobby(default_identity) ;
@@ -48,7 +48,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
     ui->idChooser_CB->loadIds(IDCHOOSER_ID_REQUIRED, default_identity);
 
 #if QT_VERSION >= 0x040700
-	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible lobby name here"));
+	ui->lobbyName_LE->setPlaceholderText(tr("Put a sensible chat room name here"));
 	ui->lobbyTopic_LE->setPlaceholderText(tr("Set a descriptive topic here"));
 #endif
 
@@ -149,7 +149,7 @@ void CreateLobbyDialog::createLobby()
     
     ChatLobbyId id = rsMsgs->createChatLobby(lobby_name,gxs_id, lobby_topic, shareList, lobby_flags);
 
-    std::cerr << "gui: Created chat lobby " << std::hex << id << std::dec << std::endl ;
+    std::cerr << "gui: Created chat room " << std::hex << id << std::dec << std::endl ;
 
     // open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;
