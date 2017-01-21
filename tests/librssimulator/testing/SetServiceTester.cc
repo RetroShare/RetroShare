@@ -97,7 +97,7 @@ SetPacket &SetServiceTester::examinePacket(uint32_t idx)
 	return mPackets[idx];
 }
 
-bool SetServiceTester::injectPacket(const SetPacket &pkt)
+bool SetServiceTester::injectPacket(const SetPacket &/*pkt*/)
 {
 	std::cerr << "SetServiceTester::injectPacket() Incomplete";
 	std::cerr << std::endl;

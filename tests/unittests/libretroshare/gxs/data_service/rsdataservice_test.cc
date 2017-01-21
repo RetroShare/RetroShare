@@ -124,7 +124,7 @@ void test_groupStoreAndRetrieve(){
 
     grpMetaR.clear();
 
-    EXPECT_TRUE(grpMatch);
+    EXPECT_TRUE(grpMatch && grpMetaMatch);
     tearDown();
 }
 
@@ -225,12 +225,12 @@ void test_messageStoresAndRetrieve()
     std::vector<RsNxsMsg*>& result0 = msgResult[grpId0];
     std::vector<RsNxsMsg*>& result1 = msgResult[grpId1];
     std::vector<RsGxsMsgMetaData*>& resultMeta0 = msgMetaResult[grpId0];
-    std::vector<RsGxsMsgMetaData*>& resultMeta1 = msgMetaResult[grpId1];
+    //std::vector<RsGxsMsgMetaData*>& resultMeta1 = msgMetaResult[grpId1];
 
 
 
     bool msgGrpId0_Match = true, msgGrpId1_Match = true;
-    bool msgMetaGrpId0_Match = true, msgMetaGrpId1_Match = true;
+    bool msgMetaGrpId0_Match = true/*, msgMetaGrpId1_Match = true*/;
 
     // MSG test, selective retrieval
     for(std::vector<RsNxsMsg*>::size_type i = 0; i < result0.size(); i++)

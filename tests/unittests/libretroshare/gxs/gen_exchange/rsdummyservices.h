@@ -15,18 +15,18 @@ public:
      RsDummyNetService(){ return;}
      virtual ~RsDummyNetService() { }
 
-     void setSyncAge(const RsGxsGroupId& id,uint32_t age_in_secs){}
-     void setKeepAge(const RsGxsGroupId& id,uint32_t age_in_secs){}
+     void setSyncAge(const RsGxsGroupId& /*id*/,uint32_t /*age_in_secs*/){}
+     void setKeepAge(const RsGxsGroupId& /*id*/,uint32_t /*age_in_secs*/){}
 
-     void requestGroupsOfPeer(const std::string& peerId){}
+     void requestGroupsOfPeer(const std::string& /*peerId*/){}
 
-     void requestMessagesOfPeer(const std::string& peerId, const std::string& grpId){}
+     void requestMessagesOfPeer(const std::string& /*peerId*/, const std::string& /*grpId*/){}
 
-     void pauseSynchronisation(bool enabled) {}
+     void pauseSynchronisation(bool /*enabled*/) {}
 
-     int requestMsg(const std::string& msgId, uint8_t hops){ return 0;}
+     int requestMsg(const std::string& /*msgId*/, uint8_t /*hops*/){ return 0;}
 
-     int requestGrp(const std::list<std::string>& grpId, uint8_t hops) { return 0;}
+     int requestGrp(const std::list<std::string>& /*grpId*/, uint8_t /*hops*/) { return 0;}
 };
 
 
@@ -44,7 +44,7 @@ public:
 
     std::string msgData;
 
-    std::ostream &print(std::ostream &out, uint16_t indent = 0){ return out; }
+    std::ostream &print(std::ostream &out, uint16_t /*indent*/ = 0){ return out; }
     void clear() { msgData.clear(); }
 
 };
@@ -59,7 +59,7 @@ public:
 
     std::string grpData;
     void clear() { grpData.clear(); }
-    std::ostream &print(std::ostream &out, uint16_t indent = 0){ return out; }
+    std::ostream &print(std::ostream &out, uint16_t /*indent*/ = 0){ return out; }
 };
 
 
@@ -108,7 +108,7 @@ public:
      * @param
      * @param dummyId This is is the only id thats exists in this dummy interface
      */
-    RsGixsDummy(const RsGxsId& incomingId, const RsGxsId& outgoingId){}
+    RsGixsDummy(const RsGxsId& /*incomingId*/, const RsGxsId& /*outgoingId*/){}
 
     virtual ~RsGixsDummy(){}
 
@@ -130,14 +130,14 @@ public:
      * @param keyref the keyref of key that is being checked for
      * @return true if available, false otherwise
      */
-    bool haveKey(const RsGxsId &id){ return false;}
+    bool haveKey(const RsGxsId &/*id*/){ return false;}
 
     /*!
      * Use to query whether private key member of the given key reference is available
      * @param keyref the KeyRef of the key being checked for
      * @return true if private key is held here, false otherwise
      */
-    bool havePrivateKey(const RsGxsId &id){ return false; }
+    bool havePrivateKey(const RsGxsId &/*id*/){ return false; }
 
     // The fetchKey has an optional peerList.. this is people that had the msg with the signature.
     // These same people should have the identity - so we ask them first.
@@ -146,8 +146,8 @@ public:
      * @param keyref the KeyRef of the key being requested
      * @return will
      */
-    bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers){ return false ;}
-    bool requestPrivateKey(const RsGxsId &id){ return false;}
+    bool requestKey(const RsGxsId &/*id*/, const std::list<RsPeerId> &/*peers*/){ return false ;}
+    bool requestPrivateKey(const RsGxsId &/*id*/){ return false;}
 
 
     /*!
@@ -156,8 +156,8 @@ public:
      * @return a pointer to a valid profile if successful, otherwise NULL
      *
      */
-    bool  getKey(const RsGxsId &id, RsTlvPublicRSAKey& key){ return false; }
-    bool  getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey& key){ return false; }	// For signing outgoing messages.
+    bool  getKey(const RsGxsId &/*id*/, RsTlvPublicRSAKey& /*key*/){ return false; }
+    bool  getPrivateKey(const RsGxsId &/*id*/, RsTlvPrivateRSAKey& /*key*/){ return false; }	// For signing outgoing messages.
 
 private:
 

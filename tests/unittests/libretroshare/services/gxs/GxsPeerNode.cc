@@ -33,11 +33,11 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 	mTestNs(NULL)
 { 
 	// extract bits we need.
-	p3PeerMgr *peerMgr = getPeerMgr();
-	p3LinkMgr *linkMgr = getLinkMgr();
-	p3NetMgr  *netMgr = getNetMgr();
+	//p3PeerMgr *peerMgr = getPeerMgr();
+	//p3LinkMgr *linkMgr = getLinkMgr();
+	//p3NetMgr  *netMgr = getNetMgr();
 	RsNxsNetMgr *nxsMgr = getNxsNetMgr();
-	p3ServiceControl *serviceCtrl = getServiceControl();	
+	//p3ServiceControl *serviceCtrl = getServiceControl();
 
 	// Create Service for Testing.
 	// Specific Testing service here.
@@ -165,7 +165,7 @@ GxsPeerNode::~GxsPeerNode()
 	RsDirUtil::cleanupDirectory(mGxsDir, filesToKeep);
 }
 	
-bool GxsPeerNode::checkTestServiceAllowedGroups(const RsPeerId &peerId)
+bool GxsPeerNode::checkTestServiceAllowedGroups(const RsPeerId &/*peerId*/)
 {
 #ifdef USER_NETSERVICE_WRAPPER
 	std::vector<RsGxsGroupId> groups;
@@ -178,7 +178,7 @@ bool GxsPeerNode::checkTestServiceAllowedGroups(const RsPeerId &peerId)
 }
 
 	
-bool GxsPeerNode::checkCircleServiceAllowedGroups(const RsPeerId &peerId)
+bool GxsPeerNode::checkCircleServiceAllowedGroups(const RsPeerId &/*peerId*/)
 {
 #ifdef USER_NETSERVICE_WRAPPER
 	std::vector<RsGxsGroupId> groups;
