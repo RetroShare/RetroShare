@@ -163,6 +163,14 @@ public:
     virtual bool stampMsgServerUpdateTS(const RsGxsGroupId& gid) =0;
 
     /*!
+     * \brief removeGroups
+     * 			Removes time stamp information from the list of groups. This allows to re-sync them if suppliers are present.
+     * \param groups		list of groups to remove from the update maps
+     * \return 				true if nothing bad happens.
+     */
+    virtual bool removeGroups(const std::list<RsGxsGroupId>& groups)=0;
+
+    /*!
      * \brief minReputationForForwardingMessages
      * 				Encodes the policy for sending/requesting messages depending on anti-spam settings.
      *

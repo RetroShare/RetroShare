@@ -63,8 +63,8 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 //#define GEN_EXCH_DEBUG	1
 
-#define MSG_CLEANUP_PERIOD     60*59 // 59 minutes
-#define INTEGRITY_CHECK_PERIOD 60*31 // 31 minutes
+static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
+static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
 
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
@@ -81,7 +81,7 @@ RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService
   mLastClean((int)time(NULL) - (int)(RSRandom::random_u32() % MSG_CLEANUP_PERIOD)),	// this helps unsynchronising the checks for the different services
   mMsgCleanUp(NULL),
   mChecking(false),
-  mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD)),	// this helps unsynchronising the checks for the different services
+  mLastCheck((int)time(NULL) - (int)(RSRandom::random_u32() % INTEGRITY_CHECK_PERIOD) + 120),	// this helps unsynchronising the checks for the different services, with 2 min security to avoid checking right away before statistics come up.
   mIntegrityCheck(NULL),
   CREATE_FAIL(0),
   CREATE_SUCCESS(1),
@@ -211,6 +211,11 @@ void RsGenExchange::tick()
                                         	std::cerr << "    " << *it << std::endl;
 #endif
 					mNotifications.push_back(gc);
+
+                    // also notify the network exchange service that these groups no longer exist.
+
+                    if(mNetService)
+                        mNetService->removeGroups(grpIds) ;
 				}
 
 				if (!msgIds.empty()) {
@@ -1716,6 +1721,11 @@ uint32_t RsGenExchange::getSyncPeriod(const RsGxsGroupId& grpId)
         return mNetService->getSyncAge(grpId);
     else
         return RS_GXS_DEFAULT_MSG_REQ_PERIOD;
+}
+
+bool     RsGenExchange::getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats)
+{
+	return (!mNetService) || mNetService->getGroupNetworkStats(grpId,stats) ;
 }
 
 void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs)
