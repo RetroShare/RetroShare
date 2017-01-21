@@ -13,7 +13,7 @@ RsServiceInfo GenExchangeTestService::getServiceInfo()
 	return info;
 }
 
-void GenExchangeTestService::notifyChanges(std::vector<RsGxsNotify *> &changes)
+void GenExchangeTestService::notifyChanges(std::vector<RsGxsNotify *> &/*changes*/)
 {
     return;
 }
@@ -23,7 +23,7 @@ void GenExchangeTestService::publishDummyGrp(uint32_t &token, RsDummyGrp *grp)
     publishGroup(token, grp);
 }
 
-void GenExchangeTestService::updateDummyGrp(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta, RsDummyGrp *group)
+void GenExchangeTestService::updateDummyGrp(uint32_t &token, RsGxsGroupUpdateMeta &/*updateMeta*/, RsDummyGrp *group)
 {
     //updateGroup(token, updateMeta, group);
     updateGroup(token, group);

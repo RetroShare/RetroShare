@@ -40,7 +40,7 @@ bool AuthorPending::expired() const
 	return time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
 
-bool AuthorPending::getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& peerId)
+bool AuthorPending::getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& /*peerId*/)
 {
     rep.id = authorId ;
     rep.reputation_level = mRep->overallReputationLevel(authorId);
@@ -96,7 +96,7 @@ bool MsgRespPending::accepted()
 			GixsReputation rep;
                         if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
-				if(rep.reputation_level >= mCutOff)
+				if(rep.reputation_level >= (uint32_t)mCutOff)
 				{
 					entry.mPassedVetting = true;
 					count++;
@@ -131,7 +131,7 @@ bool GrpRespPending::accepted()
 
                         if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
-				if(rep.reputation_level >= mCutOff)
+				if(rep.reputation_level >= (uint32_t)mCutOff)
 				{
 					entry.mPassedVetting = true;
 					count++;

@@ -104,7 +104,7 @@ void GxsPairServiceTester::PrintCapturedPackets()
 	std::cerr << "#Packets: " << getPacketCount();
 	std::cerr << std::endl;
 
-	for(int i = 0; i < getPacketCount(); i++)
+	for(uint32_t i = 0; i < getPacketCount(); i++)
 	{
 		SetPacket &pkt = examinePacket(i);
 

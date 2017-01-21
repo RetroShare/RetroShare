@@ -45,7 +45,7 @@ uint32_t RsGxsTestSerialiser::size(RsItem *item)
 	{
 		return sizeGxsTestMsgItem(msg_item);
 	}
-	return NULL;
+	return 0;
 }
 
 bool RsGxsTestSerialiser::serialise(RsItem *item, void *data, uint32_t *size)

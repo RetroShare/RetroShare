@@ -44,7 +44,7 @@ namespace rs_nxs_test
 		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) ;
 		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) ;
-		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& /*gid*/,time_t& /*grp_server_update_TS*/,time_t& /*msg_server_update_TS*/) { return true ; }
 	};
 
 	/*!
@@ -71,9 +71,9 @@ namespace rs_nxs_test
 		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id,bool& should_encrypt);
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 		virtual bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
-		virtual bool recipients(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, std::list<RsGxsId>& idlist) { return true ;}
-		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) { return allowed(circleId) ; }
-		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) { return true ; }
+		virtual bool recipients(const RsGxsCircleId &/*circleId*/, const RsGxsGroupId& /*destination_group*/, std::list<RsGxsId>& /*idlist*/) { return true ;}
+		virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& /*destination_group*/, const RsGxsId& /*id*/) { return allowed(circleId) ; }
+		virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& /*gid*/,time_t& /*grp_server_update_TS*/,time_t& /*msg_server_update_TS*/) { return true ; }
 	private:
 
 		bool allowed(const RsGxsCircleId& circleId);
@@ -130,7 +130,7 @@ namespace rs_nxs_test
 
 		}
 		const RsPeerId& getOwnId()  { return mOwnId; }
-		void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers)
+		void getOnlineList(const uint32_t /*serviceId*/, std::set<RsPeerId>& ssl_peers)
 		{
 			RsPeerId::std_list::iterator lit = mPeers.begin();
 
