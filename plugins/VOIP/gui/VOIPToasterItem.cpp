@@ -55,7 +55,9 @@ VOIPToasterItem::VOIPToasterItem(const RsPeerId &peer_id, const QString &msg, co
 	connect(closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	textLabel->setText(RsHtml().formatText(NULL, msg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+    // emoticons disabled because of crazy cost
+	//textLabel->setText(RsHtml().formatText(NULL, msg, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
+	textLabel->setText(RsHtml().formatText(NULL, msg, RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
 	//toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(mPeerId).c_str()));
 	avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	avatarWidget->setId(ChatId(mPeerId));
