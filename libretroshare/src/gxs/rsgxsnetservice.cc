@@ -4150,7 +4150,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 				if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
 				{
 #ifdef NXS_NET_DEBUG_0
-					std::cerr << GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+					GXSNETDEBUG_PG(item->PeerId(),item->grpId) << " not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
 #endif
 					continue ;
 				}
