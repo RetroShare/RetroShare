@@ -225,12 +225,12 @@
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
 
  ***/
-#define NXS_NET_DEBUG_0 	1
+//#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
 //#define NXS_NET_DEBUG_4 	1
-#define NXS_NET_DEBUG_5 	1
+//#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 
@@ -4762,11 +4762,15 @@ bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
+#ifdef NXS_NET_DEBUG_0
 	GXSNETDEBUG___ << "Removing group information from deleted groups:" << std::endl;
+#endif
 
     for(std::list<RsGxsGroupId>::const_iterator git(groups.begin());git!=groups.end();++git)
     {
+#ifdef NXS_NET_DEBUG_0
 		GXSNETDEBUG__G(*git) << "  deleting info for group " << *git << std::endl;
+#endif
 
         GrpConfigMap::iterator it = mServerGrpConfigMap.find(*git) ;
 
