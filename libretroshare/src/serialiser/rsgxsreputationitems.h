@@ -91,9 +91,9 @@ public:
 
     virtual ~RsGxsReputationSetItem_deprecated3() {}
     virtual void clear() {}
-    std::ostream &print(std::ostream &out, uint16_t indent = 0) { return out;}
+    std::ostream &print(std::ostream &out, uint16_t /*indent*/ = 0) { return out;}
 
-    virtual bool serialise(void *data,uint32_t& size) const { return false ;}
+    virtual bool serialise(void */*data*/,uint32_t& /*size*/) const { return false ;}
     virtual uint32_t serial_size() const { return 0;}
 
     RsGxsId mGxsId;

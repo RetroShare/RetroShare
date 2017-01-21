@@ -14,53 +14,54 @@ rs_nxs_test::RsNxsSimpleDummyCircles::RsNxsSimpleDummyCircles() {
 }
 
 bool rs_nxs_test::RsNxsSimpleDummyCircles::isLoaded(
-		const RsGxsCircleId& circleId) {
+		const RsGxsCircleId& /*circleId*/) {
 	return true;
 }
 
 bool rs_nxs_test::RsNxsSimpleDummyCircles::loadCircle(
-		const RsGxsCircleId& circleId) {
+		const RsGxsCircleId& /*circleId*/) {
 	return true;
 }
 
-int rs_nxs_test::RsNxsSimpleDummyCircles::canSend(const RsGxsCircleId& circleId,
-		const RsPgpId& id, bool &should_encrypt) {
+int rs_nxs_test::RsNxsSimpleDummyCircles::canSend(const RsGxsCircleId& /*circleId*/,
+		const RsPgpId& /*id*/, bool &/*should_encrypt*/) {
 	return true;
 }
 
 int rs_nxs_test::RsNxsSimpleDummyCircles::canReceive(
-		const RsGxsCircleId& circleId, const RsPgpId& id) {
+		const RsGxsCircleId& /*circleId*/, const RsPgpId& /*id*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId &destination_group, const RsGxsId& id)
+bool rs_nxs_test::RsNxsSimpleDummyCircles::isRecipient(const RsGxsCircleId &/*circleId*/, const RsGxsGroupId &/*destination_group*/, const RsGxsId& /*id*/)
 {
 	return true ;
 }
             
 bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(
-		const RsGxsCircleId& circleId, std::list<RsPgpId>& friendlist) {
+		const RsGxsCircleId& /*circleId*/, std::list<RsPgpId>& /*friendlist*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId &destination_group, std::list<RsGxsId>& friendlist) {
+bool rs_nxs_test::RsNxsSimpleDummyCircles::recipients(const RsGxsCircleId& /*circleId*/, const RsGxsGroupId &/*destination_group*/, std::list<RsGxsId>& /*friendlist*/) {
 	return true;
 }
+
 rs_nxs_test::RsNxsSimpleDummyReputation::RsNxsSimpleDummyReputation(
-		RepMap& repMap, bool cached) {
+		RepMap& /*repMap*/, bool /*cached*/) {
 }
 
 bool rs_nxs_test::RsNxsSimpleDummyReputation::haveReputation(
-		const RsGxsId& id) {
+		const RsGxsId& /*id*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyReputation::loadReputation(const RsGxsId& id,
-		const std::list<RsPeerId>& peers) {
+bool rs_nxs_test::RsNxsSimpleDummyReputation::loadReputation(const RsGxsId& /*id*/,
+		const std::list<RsPeerId>& /*peers*/) {
 	return true;
 }
 
-bool rs_nxs_test::RsNxsSimpleDummyReputation::getReputation(const RsGxsId& id,
+bool rs_nxs_test::RsNxsSimpleDummyReputation::getReputation(const RsGxsId& /*id*/,
 		GixsReputation& rep) {
 	rep.reputation_level = 5;
 	return true;
@@ -84,17 +85,17 @@ bool rs_nxs_test::RsNxsDelayedDummyCircles::loadCircle(
 	return allowed(circleId);
 }
 
-int rs_nxs_test::RsNxsDelayedDummyCircles::canSend(const RsGxsCircleId& circleId, const RsPgpId& id, bool &should_encrypt) {
+int rs_nxs_test::RsNxsDelayedDummyCircles::canSend(const RsGxsCircleId& circleId, const RsPgpId& /*id*/, bool &/*should_encrypt*/) {
 	return allowed(circleId);
 }
 
 int rs_nxs_test::RsNxsDelayedDummyCircles::canReceive(
-		const RsGxsCircleId& circleId, const RsPgpId& id) {
+		const RsGxsCircleId& circleId, const RsPgpId& /*id*/) {
 	return allowed(circleId);
 }
 
 bool rs_nxs_test::RsNxsDelayedDummyCircles::recipients(
-		const RsGxsCircleId& circleId, std::list<RsPgpId>& friendlist) {
+		const RsGxsCircleId& circleId, std::list<RsPgpId>& /*friendlist*/) {
 	return allowed(circleId);
 }
 

@@ -334,7 +334,8 @@ void GenExchangeTest::init(RsGroupMetaData& grpMetaData) const
     randString(SHORT_STR, grpMetaData.mServiceString);
 
 
-    grpMetaData.mGroupFlags = randNum();
+    grpMetaData.mGroupFlags = randNum() & (0x00000007);//See GXS_SERV::FLAG_PRIVACY_XXX values /libretroshare/src/retroshare/rsgxsflags.h:21
+    if (grpMetaData.mGroupFlags == 0) grpMetaData.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PRIVATE;
     grpMetaData.mLastPost = randNum();
     grpMetaData.mGroupStatus = randNum();
     grpMetaData.mVisibleMsgCount = randNum();
@@ -595,7 +596,7 @@ bool operator ==(const RsDummyMsg& lMsg, const RsDummyMsg& rMsg)
     return true;
 }
 
-bool operator ==(const RsGxsGrpItem& lGrp, const RsGxsGrpItem& rGrp)
+bool operator ==(const RsGxsGrpItem& /*lGrp*/, const RsGxsGrpItem& /*rGrp*/)
 {
 	return false;
 }

@@ -141,7 +141,7 @@ TEST(libretroshare_serialiser, test_RsTlvBase)
 		uint16_t data5[6 + 20];
 		uint32_t pos =0;
 		uint32_t* offset = &pos;
-		uint32_t pre_pos = pos;
+		//uint32_t pre_pos = pos;
 		SetTlvString((void*)data5, sizeof(data5), offset, TLV_TYPE_STR_NAME, teststring);
 		uint32_t tlvsize = GetTlvStringSize(teststring);
 		EXPECT_TRUE(tlvsize == *offset);

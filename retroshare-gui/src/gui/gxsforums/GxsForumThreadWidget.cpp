@@ -1389,10 +1389,10 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 			++index;
 	}
 
-    // (csoler) QTreeWidget::findItems apparently does not always work so I need to make the search manually, which I do using a map for efficiency reasons.
-    std::map<QString,QTreeWidgetItem*> oldThreadMap ;
-    for(uint32_t i=0;i<ui->threadTreeWidget->topLevelItemCount();++i)
-        oldThreadMap[ui->threadTreeWidget->topLevelItem(i)->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString()] = ui->threadTreeWidget->topLevelItem(i) ;
+	//(csoler) QTreeWidget::findItems apparently does not always work so I need to make the search manually, which I do using a map for efficiency reasons.
+	std::map<QString,QTreeWidgetItem*> oldThreadMap;
+	for(int i=0; i<ui->threadTreeWidget->topLevelItemCount(); ++i)
+		oldThreadMap[ui->threadTreeWidget->topLevelItem(i)->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString()] = ui->threadTreeWidget->topLevelItem(i);
 
 	// iterate all new threads
 	for (QList<QTreeWidgetItem *>::iterator newThread = threadList.begin (); newThread != threadList.end (); ++newThread) {

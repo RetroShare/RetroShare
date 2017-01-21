@@ -18,7 +18,7 @@ class RsSharedPtr
 {
 public:
 
-	RsSharedPtr() : mShared(NULL), mCount(NULL) {}
+	RsSharedPtr() : mShared(NULL), mCount(NULL), mSharedPtrMutex(NULL){}
 
 	RsSharedPtr(T* shared)
 	: mShared(shared), mCount(new int(0)), mSharedPtrMutex(new RsMutex("SharedMutex"))
@@ -96,8 +96,8 @@ private:
 
 private:
 
-	int* mCount;
 	T* mShared;
+	int* mCount;
 	RsMutex* mSharedPtrMutex;
 
 };

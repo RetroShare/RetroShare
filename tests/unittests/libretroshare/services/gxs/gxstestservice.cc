@@ -54,7 +54,7 @@ RsServiceInfo GxsTestService::getServiceInfo()
 }
 
 
-uint32_t GxsTestService::testAuthenPolicy(uint32_t testMode)
+uint32_t GxsTestService::testAuthenPolicy(uint32_t /*testMode*/)
 {
 	uint32_t policy = 0;
 	uint8_t flag = 0;
@@ -304,7 +304,7 @@ std::ostream &operator<<(std::ostream &out, const RsTestMsg &msg)
 
 
         // Overloaded from RsTickEvent for Event callbacks.
-void GxsTestService::handle_event(uint32_t event_type, const std::string &elabel)
+void GxsTestService::handle_event(uint32_t event_type, const std::string &/*elabel*/)
 {
 	std::cerr << "GxsTestService::handle_event(" << event_type << ")";
 	std::cerr << std::endl;

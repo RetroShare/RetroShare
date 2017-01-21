@@ -93,7 +93,7 @@ TEST(libretroshare_gxs, GxsSecurity)
 
 	// Check that decrypted data is equal to original data.
 	//
-	EXPECT_TRUE((int)data_len == outlen2) ;
+	EXPECT_TRUE(data_len == outlen2) ;
 	EXPECT_TRUE(!memcmp(data,out2,outlen2)) ;
 }
 
