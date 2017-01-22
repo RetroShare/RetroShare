@@ -53,7 +53,8 @@ private slots:
 	void runEmailClient();
 	void copyCert();
 	void saveCert();
-  void addFriend();
+	void recommendFriends();
+	void addFriend();
 
 private:
 	Ui::HomePage *ui;
