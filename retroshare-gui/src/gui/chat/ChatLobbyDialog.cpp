@@ -178,7 +178,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     unsubscribeButton->setMaximumSize(QSize(2.4*S,2.4*S)) ;
 	unsubscribeButton->setText(QString()) ;
 	unsubscribeButton->setAutoRaise(true) ;
-	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
+	unsubscribeButton->setToolTip(tr("Leave this chat room (Unsubscribe)"));
 
 	{
 	QIcon icon ;
@@ -314,7 +314,7 @@ void ChatLobbyDialog::init()
     {
         title = QString::fromUtf8(linfo.lobby_name.c_str());
 
-        QString msg = tr("Welcome to lobby %1").arg(RsHtml::plainText(linfo.lobby_name));
+        QString msg = tr("Welcome to chat room %1").arg(RsHtml::plainText(linfo.lobby_name));
         _lobby_name = QString::fromUtf8(linfo.lobby_name.c_str()) ;
         if (!linfo.lobby_topic.empty()) {
             msg += "\n" + tr("Topic: %1").arg(RsHtml::plainText(linfo.lobby_topic));
@@ -480,9 +480,9 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         QString notifyMsg = name + ": " + editor.toPlainText();
 
         if(notifyMsg.length() > 30)
-            MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
         else
-            MainWindow::displayLobbySystrayMsg(tr("Lobby chat") + ": " + _lobby_name, notifyMsg);
+            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
     }
 
 	// also update peer list.
@@ -790,12 +790,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
     {
     case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
         qsParticipant=gxs_id;
-        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
+        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerLeft(id()) ;
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
         qsParticipant=gxs_id;
-        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
+        ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the room.").arg(RsHtml::plainText(name)), ChatWidget::MSGTYPE_SYSTEM);
         emit peerJoined(id()) ;
         break;
     case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
@@ -827,10 +827,10 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const RsGxsId& gxs_id, c
     }
         break;
     case RS_CHAT_LOBBY_EVENT_KEEP_ALIVE:
-        //std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in lobby " << getPeerId() << std::endl;
+        //std::cerr << "Received keep alive packet from " << nickname.toStdString() << " in chat room " << getPeerId() << std::endl;
         break;
     default:
-        std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
+        std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled chat room event type " << event_type << std::endl;
     }
 
     if (!qsParticipant.isNull())
@@ -854,7 +854,7 @@ bool ChatLobbyDialog::canClose()
 	}
     */
 
-	if (QMessageBox::Yes == QMessageBox::question(this, tr("Unsubscribe to lobby"), tr("Do you want to unsubscribe to this chat lobby?"), QMessageBox::Yes | QMessageBox::No)) {
+	if (QMessageBox::Yes == QMessageBox::question(this, tr("Unsubscribe from chat room"), tr("Do you want to unsubscribe to this chat room?"), QMessageBox::Yes | QMessageBox::No)) {
 		return true;
 	}
 
