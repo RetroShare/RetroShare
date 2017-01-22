@@ -431,12 +431,25 @@ unsigned short RsCertificate::loc_port_us() const
 	return (int)ipv4_internal_ip_and_port[4]*256 + (int)ipv4_internal_ip_and_port[5] ;
 }
 
-bool RsCertificate::cleanCertificate(const std::string& input,std::string& output,Format& format,int& error_code)
+bool RsCertificate::cleanCertificate(const std::string& input,std::string& output,Format& format,int& error_code,bool check_content)
 {
 	if(cleanCertificate(input,output,error_code))
 	{
 		format = RS_CERTIFICATE_RADIX ;
-		return true ;
+
+        if(!check_content)
+            return true ;
+
+        try
+        {
+			RsCertificate c(input) ;
+            return true ;
+        }
+        catch(uint32_t err_code)
+        {
+            error_code = err_code ;
+            return false;
+        }
 	}
 
 	return false ;
