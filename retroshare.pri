@@ -55,6 +55,10 @@ no_rs_gxs:CONFIG -= rs_gxs
 CONFIG *= no_rs_nodeprecatedwarning
 rs_nodeprecatedwarning:CONFIG -= no_rs_nodeprecatedwarning
 
+# To disable Cpp #Warning append the following
+# assignation to qmake command line "CONFIG+=rs_nocppwarning"
+CONFIG *= no_rs_nocppwarning
+rs_nocppwarning:CONFIG -= no_rs_nocppwarning
 
 unix {
 	isEmpty(PREFIX)   { PREFIX   = "/usr" }
@@ -164,6 +168,12 @@ rs_nodeprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     DEFINES *= RS_NO_WARN_DEPRECATED
     warning("QMAKE: You have disable deprecated warnings.")
+}
+
+rs_nocppwarning {
+    QMAKE_CXXFLAGS += -Wno-cpp
+    DEFINES *= RS_NO_WARN_CPP
+    warning("QMAKE: You have disable cpp warnings.")
 }
 
 rs_gxs_mail:DEFINES *= RS_GXS_MAIL

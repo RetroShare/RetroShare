@@ -2973,9 +2973,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genReqGrpTransaction(): " << std::endl;
 #endif
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
-
     std::list<RsNxsSyncGrpItem*> grpItemL;
+    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
 
     for(std::list<RsNxsItem*>::iterator lit = tr->mItems.begin(); lit != tr->mItems.end(); ++lit)
     {
@@ -2993,7 +2992,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     }
 
     if (grpItemL.empty())
-        return;
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+        // Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+#endif
+
+        if(item.grpUpdateTS != tr->mTransaction->updateTS)
+        {
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+        }
+		return;
+	}
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -3038,16 +3053,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     if(!reqList.empty())
         locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
     else
-    {
-        RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+		// Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
 
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
 #endif
-        item.grpUpdateTS = tr->mTransaction->updateTS;
 
-        IndicateConfigChanged();
-    }
+		if(item.grpUpdateTS != tr->mTransaction->updateTS)
+		{
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+		}
+	}
+
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
@@ -4793,6 +4815,7 @@ bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
     }
 
 	IndicateConfigChanged();
+    return true ;
 }
 
 bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
