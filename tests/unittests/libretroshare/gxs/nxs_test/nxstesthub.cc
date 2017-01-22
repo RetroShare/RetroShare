@@ -149,7 +149,7 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
         meta->mChildTs = 0;
         meta->recvTS = 0;
         meta->validated = false;
-		bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
+		meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 		toStore.insert(std::make_pair(msg, meta));
 	}
 
@@ -168,7 +168,7 @@ void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<R
 	{
 		RsNxsGrp* grp = *it;
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-		bool ok = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+		meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
 		toStore.insert(std::make_pair(grp, meta));
 	}
 

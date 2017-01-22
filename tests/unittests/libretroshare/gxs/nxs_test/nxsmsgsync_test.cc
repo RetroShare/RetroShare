@@ -129,12 +129,12 @@ RsNxsNetMgr* rs_nxs_test::NxsMsgSync::getDummyNetManager(
 	return mNxsNetMgrs[peerId];
 }
 
-RsGcxs* rs_nxs_test::NxsMsgSync::getDummyCircles(const RsPeerId& peerId) {
+RsGcxs* rs_nxs_test::NxsMsgSync::getDummyCircles(const RsPeerId& /*peerId*/) {
 	return mCircles;
 }
 
 RsGixsReputation* rs_nxs_test::NxsMsgSync::getDummyReputations(
-		const RsPeerId& peerId) {
+		const RsPeerId& /*peerId*/) {
 	return mRep;
 }
 

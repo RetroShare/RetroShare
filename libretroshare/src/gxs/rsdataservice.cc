@@ -1634,10 +1634,14 @@ bool RsDataService::locked_removeGroupEntries(const std::vector<RsGxsGroupId>& g
 
         const RsGxsGroupId& grpId = *vit;
         mDb->sqlDelete(GRP_TABLE_NAME, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+
+		// also remove the group meta from cache.
+		mGrpMetaDataCache.erase(*vit) ;
     }
 
     ret &= mDb->commitTransaction();
 
+    mGrpMetaDataCache_ContainsAllDatabase = false ;
     return ret;
 }
 uint32_t RsDataService::cacheSize() const {

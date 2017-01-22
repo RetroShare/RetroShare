@@ -188,20 +188,17 @@ bool RsGxsIntegrityCheck::check()
 		    grpsToDel.push_back(grp->grpId);
 	    }
 
-#ifdef TODO
-		if(!(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED))
+		if(!(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) && !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) && !(grp->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
         {
             RsGroupNetworkStats stats ;
             mGenExchangeClient->getGroupNetworkStats(grp->grpId,stats);
 
-            if(stats.mSuppliers == 0 && stats.mMaxVisibleCount == 0)
+            if(stats.mSuppliers == 0 && stats.mMaxVisibleCount == 0 && stats.mGrpAutoSync)
             {
-                GXSUTIL_DEBUG() << "Scheduling group \"" << grp->metaData->mGroupName << "\" ID=" << grp->grpId << " for deletion because it has no suppliers not any visible data at friends." << std::endl;
-#warning Should we do that here? What happens for groups that are normally empty such as identities?
+                GXSUTIL_DEBUG() << "Scheduling group \"" << grp->metaData->mGroupName << "\" ID=" << grp->grpId << " in service " << std::hex << mGenExchangeClient->serviceType() << std::dec << " for deletion because it has no suppliers not any visible data at friends." << std::endl;
 				grpsToDel.push_back(grp->grpId);
             }
         }
-#endif
 
 	    delete grp;
     }

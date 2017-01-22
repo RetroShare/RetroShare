@@ -112,18 +112,18 @@ bool test_StepThroughTlvStack(std::ostream &str, void *data, int size)
 {
 	uint32_t offset = 0;
 	uint32_t index = 0;
-	while (offset + 4 <= size)
+	while (offset + 4 <= (uint32_t)size)
 	{
-        	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[offset])  );
-        	uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[offset])  );
+		uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[offset]) );
+		uint16_t tlvsize = GetTlvSize( &(((uint8_t *) data)[offset]) );
 		str << "Tlv Entry[" << index << "] => Offset: " << offset;
 		str << " Type: " << tlvtype;
 		str << " Size: " << tlvsize;
 		str << std::endl;
 
-        	offset += tlvsize;
+		offset += tlvsize ;
 	}
-	EXPECT_TRUE(offset == size); /* we match up exactly */
+	EXPECT_TRUE(offset == (uint32_t)size); /* we match up exactly */
 	return 1;
 }
 

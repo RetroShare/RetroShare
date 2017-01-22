@@ -2311,6 +2311,8 @@ bool RsGxsNetService::getGroupNetworkStats(const RsGxsGroupId& gid,RsGroupNetwor
 
     stats.mSuppliers = it->second.suppliers.ids.size();
     stats.mMaxVisibleCount = it->second.max_visible_count ;
+    stats.mAllowMsgSync = mAllowMsgSync ;
+    stats.mGrpAutoSync = mGrpAutoSync ;
 
     return true ;
 }
@@ -2971,9 +2973,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genReqGrpTransaction(): " << std::endl;
 #endif
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
-
     std::list<RsNxsSyncGrpItem*> grpItemL;
+    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetaMap;
 
     for(std::list<RsNxsItem*>::iterator lit = tr->mItems.begin(); lit != tr->mItems.end(); ++lit)
     {
@@ -2991,7 +2992,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     }
 
     if (grpItemL.empty())
-        return;
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+        // Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+#endif
+
+        if(item.grpUpdateTS != tr->mTransaction->updateTS)
+        {
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+        }
+		return;
+	}
 
     mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
@@ -3036,16 +3053,23 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
     if(!reqList.empty())
         locked_pushGrpTransactionFromList(reqList, tr->mTransaction->PeerId(), transN);
     else
-    {
-        RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
+	{
+		// Normally the client grp updateTS is set after the transaction, but if no transaction is to happen, we have to set it here.
+		// Possible change: always do the update of the grpClientTS here. Needs to be tested...
+
+		RsGxsGrpUpdate& item (mClientGrpUpdateMap[tr->mTransaction->PeerId()]);
 
 #ifdef NXS_NET_DEBUG_0
-        GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "    reqList is empty, updating anyway ClientGrpUpdate TS for peer " << tr->mTransaction->PeerId() << " to: " << tr->mTransaction->updateTS << std::endl;
 #endif
-        item.grpUpdateTS = tr->mTransaction->updateTS;
 
-        IndicateConfigChanged();
-    }
+		if(item.grpUpdateTS != tr->mTransaction->updateTS)
+		{
+			item.grpUpdateTS = tr->mTransaction->updateTS;
+			IndicateConfigChanged();
+		}
+	}
+
 }
 
 void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
@@ -4046,7 +4070,12 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "handleRecvSyncMsg(): Received last update TS of group " << item->grpId << ", for peer " << peer << ", TS = " << time(NULL) - item->updateTS << " secs ago." ;
 #endif
 
-    if(grp_is_known)
+    // We update suppliers in two cases:
+    // Case 1: the grp is known because it is the hash of an existing group, but it's not yet in the server config map
+    // Case 2: the gtp is not known, possibly because it was deleted, but there's an entry in mServerGrpConfigMap due to statistics gathering. Still, statistics are only
+    // 		 gathered from known suppliers. So statistics never add new suppliers. These are only added here.
+
+    if(grp_is_known || mServerGrpConfigMap.find(item->grpId)!=mServerGrpConfigMap.end())
     {
 	    RsGxsGrpConfig & rec(mServerGrpConfigMap[item->grpId]) ;	// this creates it if needed. When the grp is unknown (and hashed) this will would create a unused entry
 	    rec.suppliers.ids.insert(peer) ;
@@ -4143,7 +4172,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 				if(details.mReputation.mOverallReputationLevel < minReputationForForwardingMessages(grpMeta->mSignFlags, details.mFlags))
 				{
 #ifdef NXS_NET_DEBUG_0
-					std::cerr << GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
+					GXSNETDEBUG_PG(item->PeerId(),item->grpId) << " not sending item ID " << (*vit)->mMsgId << ", because the author is flags " << std::hex << details.mFlags << std::dec << " and reputation level " << details.mReputation.mOverallReputationLevel << std::endl;
 #endif
 					continue ;
 				}
@@ -4724,7 +4753,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 
 	if(ret)
 	{
-#ifdef NXS_NET_DEBUG
+#ifdef NXS_NET_DEBUG_3
 		GXSNETDEBUG_PG(item->PeerId(),item->grpId)<< "  updated database with new publish keys." << std::endl;
 #endif
         mNewPublishKeysToNotify.insert(item->grpId) ;
@@ -4748,6 +4777,44 @@ bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& gro
     else
 	    msg_server_update_TS = it->second.msgUpdateTS ;
 
+    return true ;
+}
+
+bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+#ifdef NXS_NET_DEBUG_0
+	GXSNETDEBUG___ << "Removing group information from deleted groups:" << std::endl;
+#endif
+
+    for(std::list<RsGxsGroupId>::const_iterator git(groups.begin());git!=groups.end();++git)
+    {
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG__G(*git) << "  deleting info for group " << *git << std::endl;
+#endif
+
+        GrpConfigMap::iterator it = mServerGrpConfigMap.find(*git) ;
+
+        if(it != mServerGrpConfigMap.end())
+        {
+            it->second.suppliers.TlvClear();			// we dont erase the entry, because we want to keep the user-defined sync parameters.
+            it->second.max_visible_count = 0;
+        }
+
+        mServerMsgUpdateMap.erase(*git) ;
+
+        for(ClientMsgMap::iterator it(mClientMsgUpdateMap.begin());it!=mClientMsgUpdateMap.end();++it)
+            it->second.msgUpdateInfos.erase(*git) ;
+
+        // This last step is very important: it makes RS re-sync all groups after deleting, with every new peer. If may happen indeed that groups
+        // are deleted because there's no suppliers since the actual supplier friend is offline for too long. In this case, the group needs
+        // to re-appear when the friend who is a subscriber comes online again.
+
+        mClientGrpUpdateMap.clear();
+    }
+
+	IndicateConfigChanged();
     return true ;
 }
 
