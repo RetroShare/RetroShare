@@ -60,7 +60,7 @@ public:
     ~TransfersDialog();
 
     virtual QIcon iconPixmap() const { return QIcon(IMAGE_TRANSFERS) ; } //MainPage
-    virtual QString pageName() const { return tr("File sharing") ; } //MainPage
+    virtual QString pageName() const { return tr("Files") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
     virtual UserNotify *getUserNotify(QObject *parent);
