@@ -42,6 +42,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsbanlist.h>
+#include <retroshare/rsconfig.h>
 
 #include "ConnectProgressDialog.h"
 #include "gui/GetStartedDialog.h"
@@ -120,8 +121,17 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
     body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
-
-    ui->userFrame->hide();
+	
+	std::string advsetting;
+	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+	{ }
+	else
+		ui->userFrame->hide();
+	
+	unsigned int onlineCount = 0, friendCount = 0;
+    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
+	if(friendCount<30)
+		ui->makefriend_infolabel->hide();
   
 	updateStylesheet();
 }

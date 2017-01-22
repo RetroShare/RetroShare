@@ -1267,6 +1267,9 @@ resources.</string>
          <property name="readOnly">
           <bool>true</bool>
          </property>
+           <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. The signatures below cryptographically attest that owners of the listed keys recognise the current PGP key as authentic.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
         </widget>
        </item>
        <item row="7" column="0" colspan="2">
@@ -1309,6 +1312,9 @@ resources.</string>
         </item>
         <item>
          <widget class="QCheckBox" name="signGPGCheckBox">
+          <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. It helps them to decide whether to allow connections from that key based on your own trust. Signing a key is absolutely optional and cannot be undone, so do it wisely.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
           <property name="text">
            <string>Authenticate friend (Sign PGP Key)</string>
           </property>
@@ -1364,6 +1370,9 @@ resources.</string>
              <property name="text">
               <string>Can be used as direct source</string>
              </property>
+			<property name="toolTip">
+			 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+			</property>
             </widget>
            </item>
            <item>
@@ -1371,6 +1380,9 @@ resources.</string>
              <property name="text">
               <string>Auto-download recommended files</string>
              </property>
+			 <property name="toolTip">
+				<string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option allows you to automatically download a file that is recommended in an message coming from this node. This can be used for instance to send files between your own nodes. Applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+			 </property>
             </widget>
            </item>
            <item>
@@ -1378,6 +1390,9 @@ resources.</string>
              <property name="text">
               <string>Require whitelist clearance to connect</string>
              </property>
+			 <property name="toolTip">
+			  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Peers that have this option cannot connect if their connection address is not in the whitelist. This protects you from traffic forwarding attacks. When used, rejected peers will be reported by &amp;quot;security feed items&amp;quot; in the News Feed section. From there, you can whitelist/blacklist their IP. Applies to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+			 </property>
             </widget>
            </item>
           </layout>
