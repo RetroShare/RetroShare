@@ -114,7 +114,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->aolButton, SIGNAL(clicked()), this, SLOT(inviteAol()));
     connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
     connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
-
+	connect(ui->toggleadvancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvanced()));
     
     subject = tr("RetroShare Invitation");
     body = GetStartedDialog::GetInviteText();
@@ -124,9 +124,16 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
-	{ }
+	{
+		ui->toggleadvancedButton->setVisible(false);
+	}
 	else
-		ui->userFrame->hide();
+	{
+		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
+		
+		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
+		AdvancedVisible=false;
+	}
 	
 	unsigned int onlineCount = 0, friendCount = 0;
     rsPeers->getPeerCount (&friendCount, &onlineCount, false);
@@ -1284,4 +1291,20 @@ void ConnectFriendWizard::inviteYandex()
 void ConnectFriendWizard::runEmailClient2()
 {
 	sendMail("", subject, body );
+}
+
+void ConnectFriendWizard::toggleAdvanced()
+{
+	if(AdvancedVisible)
+	{
+		ui->horizontalLayout_13->hide();
+		ui->toggleadvancedButton->setText("Show advanced options");
+		AdvancedVisible=false;
+	}
+	else
+	{
+		ui->horizontalLayout_13->show();
+		ui->toggleadvancedButton->setText("Hide advanced options");
+		AdvancedVisible=true;
+	}
 }
