@@ -42,6 +42,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsbanlist.h>
+#include <retroshare/rsconfig.h>
 
 #include "ConnectProgressDialog.h"
 #include "gui/GetStartedDialog.h"
@@ -103,7 +104,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	
 	ui->fr_label->hide();
 	ui->requestinfolabel->hide();
-
+	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 	
@@ -113,15 +114,36 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     connect(ui->aolButton, SIGNAL(clicked()), this, SLOT(inviteAol()));
     connect(ui->yandexButton, SIGNAL(clicked()), this, SLOT(inviteYandex()));
     connect(ui->emailButton, SIGNAL(clicked()), this, SLOT(runEmailClient2()));
-
+	connect(ui->toggleadvancedButton, SIGNAL(clicked()), this, SLOT(toggleAdvanced()));
     
     subject = tr("RetroShare Invitation");
     body = GetStartedDialog::GetInviteText();
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
     body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+	
+	std::string advsetting;
+	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+	{
+		ui->toggleadvancedButton->setVisible(false);
+	}
+	else
+	{
+		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
+		
+		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
+		AdvancedVisible=false;
 
-    ui->userFrame->hide();
+		ui->emailLabel->hide(); // is it ever used?
+		ui->emailEdit->hide();
+		ui->trustLabel->hide();
+		ui->trustEdit->hide();
+	}
+	
+	unsigned int onlineCount = 0, friendCount = 0;
+    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
+	if(friendCount<30)
+		ui->makefriend_infolabel->hide();
   
 	updateStylesheet();
 }
@@ -1279,4 +1301,20 @@ void ConnectFriendWizard::inviteYandex()
 void ConnectFriendWizard::runEmailClient2()
 {
 	sendMail("", subject, body );
+}
+
+void ConnectFriendWizard::toggleAdvanced()
+{
+	if(AdvancedVisible)
+	{
+		ui->horizontalLayout_13->hide();
+		ui->toggleadvancedButton->setText("Show advanced options");
+		AdvancedVisible=false;
+	}
+	else
+	{
+		ui->horizontalLayout_13->show();
+		ui->toggleadvancedButton->setText("Hide advanced options");
+		AdvancedVisible=true;
+	}
 }

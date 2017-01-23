@@ -34,6 +34,7 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
+#include <retroshare/rsconfig.h>
 
 #include <retroshare/rshistory.h>
 #include <retroshare/rsmsgs.h>
@@ -131,7 +132,8 @@ ChatPage::save(QString &/*errmsg*/)
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
     Settings->setChatSendAsPlainTextByDef(ui.sendAsPlainTextByDef->isChecked());
     Settings->setChatLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
-
+    Settings->setChatDoNotSendIsTyping(ui.DontSendTyping->isChecked());	
+	
     Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
     Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
     Settings->setChatSearchWholeWords(ui.cbSearch_WholeWords->isChecked());
@@ -240,6 +242,13 @@ ChatPage::load()
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
     ui.sendAsPlainTextByDef->setChecked(Settings->getChatSendAsPlainTextByDef());
     ui.loadEmbeddedImages->setChecked(Settings->getChatLoadEmbeddedImages());
+    ui.DontSendTyping->setChecked(Settings->getChatDoNotSendIsTyping());
+
+	std::string advsetting;
+	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
+	{ }
+	else
+		ui.DontSendTyping->hide();
 
     ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
     ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());

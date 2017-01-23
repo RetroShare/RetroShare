@@ -1088,8 +1088,8 @@ void ChatWidget::updateStatusTyping()
 #ifdef ONLY_FOR_LINGUIST
 		tr("is typing...");
 #endif
-
-        rsMsgs->sendStatusString(chatId, "is typing...");
+		if(!Settings->getChatDoNotSendIsTyping())
+			rsMsgs->sendStatusString(chatId, "is typing...");
 		lastStatusSendTime = time(NULL) ;
 	}
 }
