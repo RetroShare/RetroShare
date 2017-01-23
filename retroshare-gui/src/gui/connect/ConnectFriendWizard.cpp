@@ -104,7 +104,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	
 	ui->fr_label->hide();
 	ui->requestinfolabel->hide();
-
+	
     connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->_options_GB,SLOT(setEnabled(bool))) ;
     connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 	
@@ -133,6 +133,11 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 		
 		ui->horizontalLayout_13->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
+
+		ui->emailLabel->hide(); // is it ever used?
+		ui->emailEdit->hide();
+		ui->trustLabel->hide();
+		ui->trustEdit->hide();
 	}
 	
 	unsigned int onlineCount = 0, friendCount = 0;
