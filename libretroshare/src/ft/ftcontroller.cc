@@ -876,7 +876,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
     // if policy is STRICT
     //	- disable clear, enforce encryption
     // else
-    //  - if not specified, use clear
+    //  - if not specified, use both
     //
     if(mDefaultEncryptionPolicy == RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT)
     {
@@ -884,7 +884,10 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
         flags &= ~RS_FILE_REQ_UNENCRYPTED ;
     }
     else if(!(flags & ( RS_FILE_REQ_ENCRYPTED |  RS_FILE_REQ_UNENCRYPTED )))
-            flags |= RS_FILE_REQ_UNENCRYPTED ;
+    {
+        flags |= RS_FILE_REQ_ENCRYPTED ;
+		flags |= RS_FILE_REQ_UNENCRYPTED ;
+    }
 
 	if(size == 0)	// we treat this special case because
 	{
