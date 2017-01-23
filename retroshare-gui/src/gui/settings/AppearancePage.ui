@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1160</width>
-    <height>567</height>
+    <height>608</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <layout class="QGridLayout">
+  <layout class="QGridLayout" name="AppearancePageGLayout">
    <property name="leftMargin">
     <number>6</number>
    </property>
@@ -43,7 +43,7 @@
      <property name="title">
       <string>Language</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_Language">
+     <layout class="QGridLayout" name="grpLanguageGLayout">
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="labelLanguage">
         <property name="text">
@@ -71,7 +71,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <spacer>
+       <spacer name="grpLanguageHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -103,7 +103,7 @@
      <property name="title">
       <string>Style</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_Style">
+     <layout class="QGridLayout" name="grpStyleGLayout">
       <item row="0" column="0">
        <widget class="QComboBox" name="cmboStyle">
         <property name="minimumSize">
@@ -118,7 +118,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <spacer>
+       <spacer name="grpStyleHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -144,7 +144,7 @@
      <property name="title">
       <string>Style Sheet</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_StyleSheet">
+     <layout class="QGridLayout" name="grpStyleSheetGLayout">
       <item row="0" column="0">
        <widget class="QComboBox" name="cmboStyleSheet">
         <property name="minimumSize">
@@ -156,7 +156,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <spacer>
+       <spacer name="grpStyleSheetHSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -172,7 +172,7 @@
     </widget>
    </item>
    <item row="8" column="0">
-    <spacer>
+    <spacer name="AppearancePageVSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -198,7 +198,7 @@
      <property name="title">
       <string>Tool Bar</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_ToolBar">
+     <layout class="QGridLayout" name="grpToolBarGLayout">
       <item row="4" column="0">
        <widget class="QFrame" name="frameAction">
         <property name="frameShape">
@@ -207,7 +207,7 @@
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="frameActionHLayout">
          <property name="leftMargin">
           <number>2</number>
          </property>
@@ -235,7 +235,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="frameActionHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -265,7 +265,7 @@
         <property name="frameShadow">
          <enum>QFrame::Plain</enum>
         </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="framePageHLayout">
          <property name="leftMargin">
           <number>2</number>
          </property>
@@ -293,7 +293,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="framePageHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -326,7 +326,7 @@
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
-        <layout class="QGridLayout" name="gridLayoutToolListStyle">
+        <layout class="QGridLayout" name="frameToolListStyleGLayout">
          <item row="2" column="0">
           <widget class="QComboBox" name="cmboTollButtonsStyle">
            <item>
@@ -456,8 +456,91 @@
      <property name="title">
       <string>Status Bar</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <layout class="QGridLayout" name="grpStatusGLayout">
+      <item row="4" column="2">
+       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
+        <property name="text">
+         <string>Show SysTray on Status Bar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="checkBoxShowToasterDisable">
+        <property name="text">
+         <string>Show Toaster Disable</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="checkBoxShowSoundStatus">
+        <property name="text">
+         <string>Show Sound Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QCheckBox" name="checkBoxShowOpModeStatus">
+        <property name="text">
+         <string>Show Operating Mode Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="checkBoxShowRateStatus">
+        <property name="text">
+         <string>Show Network Rate Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBoxShowDiscStatus">
+        <property name="text">
+         <string>Show Discovery Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBoxShowDHTStatus">
+        <property name="text">
+         <string>Show DHT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="checkBoxShowHashingStatus">
+        <property name="text">
+         <string>Show Hashing Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="checkBoxShowNATStatus">
+        <property name="text">
+         <string>Show NAT Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBoxShowPeerStatus">
+        <property name="text">
+         <string>Show Peer Status</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBoxShowStatusStatus">
+        <property name="text">
+         <string>Show Status ComboBox</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
        <widget class="QCheckBox" name="checkBoxStatusCompactMode">
         <property name="toolTip">
          <string>Remove surplus text in status bar.</string>
@@ -467,28 +550,7 @@
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxHideSoundStatus">
-        <property name="text">
-         <string>Hide Sound Status</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxHideToasterDisable">
-        <property name="text">
-         <string>Hide Toaster Disable</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="checkBoxShowSystrayOnStatus">
-        <property name="text">
-         <string>Show SysTray on Status Bar</string>
-        </property>
-       </widget>
-      </item>
-      <item>
+      <item row="0" column="1">
        <widget class="QCheckBox" name="checkBoxDisableSysTrayToolTip">
         <property name="text">
          <string>Disable SysTray ToolTip</string>

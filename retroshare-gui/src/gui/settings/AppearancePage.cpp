@@ -19,15 +19,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QStyleFactory>
-#include <QFileInfo>
+#include <QCheckBox>
 #include <QDir>
+#include <QFileInfo>
+#include <QGroupBox>
+#include <QStatusBar>
+#include <QStyleFactory>
 
 #include "lang/languagesupport.h"
 #include <rshare.h>
 #include "AppearancePage.h"
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
+#include "gui/statusbar/peerstatus.h"
+#include "gui/statusbar/natstatus.h"
+#include "gui/statusbar/dhtstatus.h"
+#include "gui/statusbar/hashingstatus.h"
+#include "gui/statusbar/discstatus.h"
+#include "gui/statusbar/ratesstatus.h"
+#include "gui/statusbar/OpModeStatus.h"
 #include "gui/statusbar/SoundStatus.h"
 #include "gui/statusbar/ToasterDisable.h"
 #include "gui/statusbar/SysTrayStatus.h"
@@ -41,11 +51,21 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 
 	MainWindow *pMainWindow = MainWindow::getInstance();
 	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
-	connect(ui.checkBoxStatusCompactMode, SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
-	connect(ui.checkBoxHideSoundStatus, SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(), SLOT(setHidden(bool)));
-	connect(ui.checkBoxHideToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setHidden(bool)));
-	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
+
+	connect(ui.grpStatus,                 SIGNAL(toggled(bool)), pMainWindow->statusBar(), SLOT(setVisible(bool)));
+	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), pMainWindow, SLOT(toggleStatusToolTip(bool)));
+	connect(ui.checkBoxShowStatusStatus,  SIGNAL(toggled(bool)), pMainWindow->statusComboBoxInstance(), SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowPeerStatus,    SIGNAL(toggled(bool)), pMainWindow->peerstatusInstance(),     SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowNATStatus,     SIGNAL(toggled(bool)), pMainWindow->natstatusInstance(),      SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowDHTStatus,     SIGNAL(toggled(bool)), pMainWindow->dhtstatusInstance(),      SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowHashingStatus, SIGNAL(toggled(bool)), pMainWindow->hashingstatusInstance(),  SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowDiscStatus,    SIGNAL(toggled(bool)), pMainWindow->discstatusInstance(),     SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowRateStatus,    SIGNAL(toggled(bool)), pMainWindow->ratesstatusInstance(),    SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowOpModeStatus,  SIGNAL(toggled(bool)), pMainWindow->opModeStatusInstance(),   SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowSoundStatus,   SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(),    SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setVisible(bool)));
+	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -139,12 +159,21 @@ bool AppearancePage::save(QString &errmsg)
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
 
+	Settings->setValueToGroup("StatusBar", "ShowStatusBar", QVariant(ui.grpStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
-	Settings->setValueToGroup("StatusBar", "HideSound", QVariant(ui.checkBoxHideSoundStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "HideToaster", QVariant(ui.checkBoxHideToasterDisable->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
 	Settings->setValueToGroup("StatusBar", "DisableSysTrayToolTip", QVariant(ui.checkBoxDisableSysTrayToolTip->isChecked()));
 	MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked());
+	Settings->setValueToGroup("StatusBar", "ShowStatus", QVariant(ui.checkBoxShowStatusStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowPeer", QVariant(ui.checkBoxShowPeerStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowNAT", QVariant(ui.checkBoxShowNATStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowDHT", QVariant(ui.checkBoxShowDHTStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowHashing", QVariant(ui.checkBoxShowHashingStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowDisc", QVariant(ui.checkBoxShowDiscStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowRate", QVariant(ui.checkBoxShowRateStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowOpMode", QVariant(ui.checkBoxShowOpModeStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowSound", QVariant(ui.checkBoxShowSoundStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowToaster", QVariant(ui.checkBoxShowToasterDisable->isChecked()));
+	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
 
 	return true;
 }
@@ -227,11 +256,20 @@ void AppearancePage::load()
             ui.cmboListItemSize->setCurrentIndex(5);
     }
 
+	ui.grpStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowStatusBar", QVariant(true)).toBool());
 	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
-	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
-	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
-	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 	ui.checkBoxDisableSysTrayToolTip->setChecked(Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool());
+	ui.checkBoxShowStatusStatus->  setChecked(Settings->valueFromGroup("StatusBar", "ShowStatus",  QVariant(true)).toBool());
+	ui.checkBoxShowPeerStatus->    setChecked(Settings->valueFromGroup("StatusBar", "ShowPeer",    QVariant(true)).toBool());
+	ui.checkBoxShowNATStatus->     setChecked(Settings->valueFromGroup("StatusBar", "ShowNAT",     QVariant(true)).toBool());
+	ui.checkBoxShowDHTStatus->     setChecked(Settings->valueFromGroup("StatusBar", "ShowDHT",     QVariant(true)).toBool());
+	ui.checkBoxShowHashingStatus-> setChecked(Settings->valueFromGroup("StatusBar", "ShowHashing", QVariant(true)).toBool());
+	ui.checkBoxShowDiscStatus->    setChecked(Settings->valueFromGroup("StatusBar", "Show eDisc",  QVariant(true)).toBool());
+	ui.checkBoxShowRateStatus->    setChecked(Settings->valueFromGroup("StatusBar", "ShowRate",    QVariant(true)).toBool());
+	ui.checkBoxShowOpModeStatus->  setChecked(Settings->valueFromGroup("StatusBar", "ShowOpMode",  QVariant(true)).toBool());
+	ui.checkBoxShowSoundStatus->   setChecked(Settings->valueFromGroup("StatusBar", "ShowSound",   QVariant(true)).toBool());
+	ui.checkBoxShowToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "ShowToaster", QVariant(true)).toBool());
+	ui.checkBoxShowSystrayOnStatus->setChecked(Settings->valueFromGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(false)).toBool());
 
 }
 
