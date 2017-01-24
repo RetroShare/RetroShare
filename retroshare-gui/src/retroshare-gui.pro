@@ -343,6 +343,7 @@ HEADERS +=  rshare.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
             gui/AboutDialog.h \
+            gui/AboutWidget.h \
             gui/NetworkView.h \
             gui/MessengerWindow.h \
             gui/FriendsDialog.h \
@@ -442,6 +443,7 @@ HEADERS +=  rshare.h \
             gui/settings/GeneralPage.h \
             gui/settings/PeoplePage.h \
             gui/settings/DirectoriesPage.h \
+            gui/settings/AboutPage.h \
             gui/settings/ServerPage.h \
             gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
@@ -586,6 +588,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/HomePage.ui\
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
+            gui/AboutWidget.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/common/AvatarDialog.ui \
@@ -632,6 +635,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
             gui/settings/ForumPage.ui \
+            gui/settings/AboutPage.ui \
             gui/settings/PluginsPage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
@@ -703,6 +707,7 @@ SOURCES +=  main.cpp \
             rshare.cpp \
             gui/notifyqt.cpp \
             gui/AboutDialog.cpp \
+            gui/AboutWidget.cpp \
             gui/QuickStartWizard.cpp \
             gui/StartDialog.cpp \
             gui/HomePage.cpp\
@@ -846,6 +851,7 @@ SOURCES +=  main.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/DirectoriesPage.cpp \
+            gui/settings/AboutPage.cpp \
             gui/settings/ServerPage.cpp \
             gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \

@@ -39,6 +39,7 @@
 #include "PeoplePage.h"
 #include "MessagePage.h"
 #include "ForumPage.h"
+#include "AboutPage.h"
 #include "PostedPage.h"
 #include "PluginsPage.h"
 #include "ServicePermissionsPage.h"
@@ -167,6 +168,7 @@ RSettingsWin::initStackedWidget()
 				addPage(cp) ;
 		}
 	}
+    addPage(new AboutPage() );
 
 	 // make the first page the default.
 
