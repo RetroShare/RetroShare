@@ -1170,7 +1170,7 @@ void ChatLobbyWidget::processSettings(bool bLoad)
 
     if (bLoad) {
         // load settings
-
+		ui.splitter->restoreState(Settings->value("splitter").toByteArray());
 		// state of the lists
 		Header->restoreState(Settings->value("lobbyList").toByteArray());
 
@@ -1179,7 +1179,7 @@ void ChatLobbyWidget::processSettings(bool bLoad)
 		setShowSubscribeColumn(Settings->value("showSubscribeColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED)).toBool());
 	} else {
 		// save settings
-
+		Settings->setValue("splitter", ui.splitter->saveState());
 		// state of the lists
 		Settings->setValue("lobbyList", Header->saveState());
 
