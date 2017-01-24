@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>915</height>
+    <width>722</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,7 +69,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="stabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="icon">
@@ -85,13 +85,20 @@
             <item>
              <widget class="QGroupBox" name="groupBox_4">
               <property name="title">
-               <string>Node info</string>
+               <string>Friend info</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_3">
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="statusline">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="1">
                 <widget class="RSTextBrowser" name="pgpfingerprint">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -122,13 +129,6 @@
                 <widget class="QLabel" name="label_status">
                  <property name="text">
                   <string>Status :</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLineEdit" name="statusline">
-                 <property name="readOnly">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -197,7 +197,17 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="label_name">
                  <property name="text">
-                  <string>PGP key :</string>
+                  <string>Name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QLineEdit" name="statusmessage"/>
+               </item>
+               <item row="7" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Status message:</string>
                  </property>
                 </widget>
                </item>
@@ -210,14 +220,14 @@
                <widget class="AvatarWidget" name="avatar">
                 <property name="minimumSize">
                  <size>
-                  <width>96</width>
-                  <height>96</height>
+                  <width>128</width>
+                  <height>128</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>96</width>
-                  <height>96</height>
+                  <width>128</width>
+                  <height>128</height>
                  </size>
                 </property>
                </widget>
@@ -252,7 +262,18 @@
             </property>
            </spacer>
           </item>
-          <item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tab_3">
+         <attribute name="icon">
+          <iconset resource="../images.qrc">
+           <normaloff>:/images/kcmsystem24.png</normaloff>:/images/kcmsystem24.png</iconset>
+         </attribute>
+         <attribute name="title">
+          <string>Advanced</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout_15">
+          <item row="0" column="0">
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
              <number>0</number>
@@ -403,52 +424,48 @@
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="tab_2">
+             <attribute name="title">
+              <string>Retroshare Certificate</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Use this certificate to make friends:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QTextEdit" name="userCertificateText"/>
+              </item>
+              <item row="2" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QCheckBox" name="_shouldAddSignatures_CB">
+                  <property name="text">
+                   <string>Include signatures</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_3">
-         <attribute name="icon">
-          <iconset resource="../images.qrc">
-           <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
-         </attribute>
-         <attribute name="title">
-          <string>Retroshare Certificate</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Use this certificate to make friends:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextEdit" name="userCertificateText"/>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QCheckBox" name="_shouldAddSignatures_CB">
-              <property name="text">
-               <string>Include signatures</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
           </item>
          </layout>
         </widget>
