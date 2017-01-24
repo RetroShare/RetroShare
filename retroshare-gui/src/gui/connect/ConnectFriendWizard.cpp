@@ -542,6 +542,18 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
+			
+			if(peerDetails.isHiddenNode)
+			{
+				ui->_addIPToWhiteList_CB_2->setEnabled(false) ;
+				ui->_require_WL_CB_2->setEnabled(false) ;
+				ui->_addIPToWhiteList_ComboBox_2->setEnabled(false) ;
+				ui->_addIPToWhiteList_ComboBox_2->addItem("(Hidden node)") ;
+				int S = QFontMetricsF(ui->ipEdit->font()).height() ;
+				ui->ipEdit->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
+				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
+				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
+			}
 		}
 		break;
 	case Page_FriendRequest:
