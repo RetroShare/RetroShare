@@ -415,7 +415,7 @@ void ConnectFriendWizard::initializePage(int id)
 		{
 			std::cerr << "Conclusion page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
-            ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_DIRECT_DL) ;
+            ui->_direct_transfer_CB_2  ->setChecked(false) ;
             ui->_allow_push_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_ALLOW_PUSH) ;
             ui->_require_WL_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_NODE_PERM_REQUIRE_WL) ;
 
@@ -426,7 +426,7 @@ void ConnectFriendWizard::initializePage(int id)
         {
             QString ipstring0 = QString::fromStdString(sockaddr_storage_iptostring(addr));
 
-            ui->_addIPToWhiteList_CB_2->setChecked(true) ;
+            ui->_addIPToWhiteList_CB_2->setChecked(false) ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0) ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/24") ;
             ui->_addIPToWhiteList_ComboBox_2->addItem(ipstring0+"/16") ;
