@@ -55,6 +55,7 @@ AboutWidget::AboutWidget(QWidget* parent)
     frame->setContentsMargins(0, 0, 0, 0);
     frame->setLayout(l);
     tWidget = NULL;
+    aWidget = NULL;
     installAWidget();
 
     updateTitle();
@@ -65,10 +66,14 @@ AboutWidget::AboutWidget(QWidget* parent)
 
 void AboutWidget::installAWidget() {
     assert(tWidget == NULL);
-    AWidget* aWidget = new AWidget();
+    aWidget = new AWidget();
     QVBoxLayout* l = (QVBoxLayout*)frame->layout();
     l->insertWidget(0, aWidget);
     l->setStretchFactor(aWidget, 100);
+    aWidget->setFocus();
+
+    delete tWidget ;
+    tWidget = NULL;
 }
 
 void AboutWidget::installTWidget() {
@@ -105,6 +110,9 @@ void AboutWidget::installTWidget() {
     connect(this, SIGNAL(si_levelChanged(QString)), levelLabel, SLOT(setText(QString)));
     tWidget->setFocus();
     tWidget->start();
+
+    delete aWidget ;
+    aWidget = NULL;
 }
 
 void AboutWidget::switchPages() {
@@ -142,21 +150,26 @@ void AboutWidget::updateTitle()
     }
 }
 
-void AboutWidget::keyPressEvent(QKeyEvent *e) {
-    if (e->key() == Qt::Key_T) {
-        switchPages();
-    } else if (tWidget!=NULL && (e->key() == Qt::Key_P || e->key() == Qt::Key_Pause)) {
-        tWidget->pause();
-    }
-    QWidget::keyPressEvent(e);
-}
+//void AboutWidget::keyPressEvent(QKeyEvent *e) {
+//    if(aWidget != NULL)
+//        aWidget->keyPressEvent(e) ;
+//}
 
 void AboutWidget::mousePressEvent(QMouseEvent *e)
 {
     QPoint globalPos = mapToGlobal(e->pos());
     QPoint framePos = frame->mapFromGlobal(globalPos);
+
     if (frame->contentsRect().contains(framePos)) {
-        switchPages();
+		{
+    	if(e->modifiers() & Qt::ControlModifier)
+			switchPages();
+        else
+        {
+            if(aWidget)
+                aWidget->switchState();
+        }
+        }
     }
     QWidget::mousePressEvent(e);
 }
@@ -165,6 +178,26 @@ void AboutWidget::on_help_button_clicked()
 {
     HelpDialog helpdlg (this);
     helpdlg.exec();
+}
+
+void AWidget::switchState()
+{
+		mState = 1 - mState ;
+
+		if(mState == 1)
+		{
+            mStep = 1 ;
+			initGoL();
+			drawBitField();
+
+			mTimerId = startTimer(50);
+		}
+        else
+            killTimer(mTimerId);
+
+
+        update();
+
 }
 
 void AWidget::resizeEvent(QResizeEvent *e)
@@ -179,8 +212,6 @@ void AWidget::initImages()
 
     image1 = QImage(width(),height(),QImage::Format_ARGB32);
     image1.fill(palette().color(QPalette::Background));
-
-    std::cerr << "width=" << width() << ", height=" << height() << std::endl;
 
     //QImage image(":/images/logo/logo_info.png");
     QPixmap image(":/images/logo/logo_splash.png");
@@ -204,32 +235,130 @@ void AWidget::initImages()
 //    setFixedSize(image1.size());
 
     image2 = image1 ;
+    mImagesReady = true ;
+
+    initGoL();
+    drawBitField();
+
+    update() ;
+}
+
+void AWidget::initGoL()
+{
+    int w = image1.width();
+    int h = image1.height();
+
+    int s = mStep ; // pixels per cell
+    int bw = w/s ;
+    int bh = h/s ;
+
+    bitfield1.clear();
+
+    bitfield1.resize(bw*bh,0);
+
+    for(int i=0;i<bw;++i)
+        for(int j=0;j<bh;++j)
+            if((image1.pixel((i+0.5)*s,(j+0.5)*s) & 0xff) < 20)
+                bitfield1[i+bw*j] = 1 ;
+}
+
+void AWidget::drawBitField()
+{
+    image2.fill(palette().color(QPalette::Background));
+    QPainter p(&image2) ;
+
+    p.setPen(QColor(200,200,200));
 
     int w = image1.width();
     int h = image1.height();
 
-    heightField1.clear();
-    heightField2.clear();
+    int s = mStep ; // pixels per cell
+    int bw = w/s ;
+    int bh = h/s ;
 
-    heightField1.resize(w*h);
-    heightField2.resize(w*h);
+    if(bitfield1.size() != (unsigned int)bw*bh)
+        initGoL();
 
-    mImagesReady = true ;
-    update() ;
+    if(mStep >= mMaxStep)
+	{
+		for(int i=0;i<=bh;++i) p.drawLine(0,i*s,bw*s,i*s) ;
+		for(int i=0;i<=bw;++i) p.drawLine(i*s,0,i*s,bh*s) ;
+	}
+
+    p.setPen(Qt::black);
+
+	for(int i=0;i<bw;++i)
+		for(int j=0;j<bh;++j)
+			if(bitfield1[i+bw*j] == 1)
+                p.fillRect(QRect(i*s+1,j*s+1,s-2,s-2),QBrush(QColor(50,50,50)));
+
+    p.end();
 }
 
 AWidget::AWidget() {
-//    setMouseTracking(true);
+    setMouseTracking(true);
 
 	density = 5;
     page = 0;
+    mMaxStep = QFontMetricsF(font()).width(' ') ;
+    mStep = 1 ;
+    mState = 0 ;
     mImagesReady = false ;
 
 //    startTimer(15);
 }
 
+void AWidget::computeNextState()
+{
+	int w = image1.width();
+	int h = image1.height();
 
-void AWidget::timerEvent(QTimerEvent* e) {
+	int s = mStep ; // pixels per cell
+	int bw = w/s ;
+	int bh = h/s ;
+
+    if(bitfield1.size() != (unsigned int)bw*bh)
+    {
+        initGoL();
+    }
+
+	bitfield2.clear();
+	bitfield2.resize(bw*bh,0);
+
+	for(int i=0;i<bw;++i)
+		for(int j=0;j<h;++j)
+			if(bitfield1[i+bw*j] == 1)
+				for(int k=-1;k<2;++k)
+					for(int l=-1;l<2;++l)
+						if(k!=0 || l!=0)
+							++bitfield2[ ((i+k+bw)%bw )+ ((j+l+bh)%bh )*bw];
+
+	for(int i=0;i<bh*bw;++i)
+		if(bitfield1[i] == 1)
+			if(bitfield2[i] == 2 || bitfield2[i] == 3)
+				bitfield1[i] = 1;
+			else
+				bitfield1[i] = 0;
+		else
+			if(bitfield2[i] == 3)
+				bitfield1[i] = 1 ;
+
+}
+
+
+void AWidget::timerEvent(QTimerEvent* e)
+{
+    if(mStep >= mMaxStep)
+		computeNextState();
+    else
+    {
+        initGoL();
+        mStep++ ;
+    }
+
+    drawBitField();
+
+#ifdef REMOVED
     drawWater((QRgb*)image1.bits(), (QRgb*)image2.bits());
     calcWater(page, density);
     page ^= 1;
@@ -241,6 +370,7 @@ void AWidget::timerEvent(QTimerEvent* e) {
         int y = 1 + r + qrand()%(image1.height()-2*r-1);
         addBlob(x, y, r, h);
     }
+#endif
 
     update();
     QObject::timerEvent(e);
@@ -249,15 +379,29 @@ void AWidget::timerEvent(QTimerEvent* e) {
 
 void AWidget::paintEvent(QPaintEvent* e)
 {
-    QWidget::paintEvent(e);
-    
-    if(!mImagesReady)
-        initImages();
+	QWidget::paintEvent(e);
 
-    QPainter p(this);
-    p.drawImage(0, 0, image1);
+	switch(mState)
+	{
+	default:
+	case 0:
+	{
+		if(!mImagesReady) initImages();
+		QPainter p(this);
+		p.drawImage(0, 0, image1);
+	}
+		break;
+
+	case 1:
+	{
+		QPainter p(this);
+		p.drawImage(0, 0, image2);
+	}
+		break;
+	}
 }
 
+#ifdef REMOVED
 void AWidget::mouseMoveEvent(QMouseEvent* e) {
     QPoint point = e->pos();
     addBlob(point.x() - 15,point.y(), 5, 400);
@@ -274,11 +418,11 @@ void AWidget::calcWater(int npage, int density) {
     int *newptr;
     int *oldptr;
     if(npage == 0) {
-        newptr = &heightField1.front();
-        oldptr = &heightField2.front();
+        newptr = &bitfield1.front();
+        oldptr = &bitfield2.front();
     } else {
-        newptr = &heightField2.front();
-        oldptr = &heightField1.front();
+        newptr = &bitfield2.front();
+        oldptr = &bitfield1.front();
     }
 
     for (int y = (h-1)*w; count < y; count += 2) {
@@ -307,10 +451,10 @@ void AWidget::addBlob(int x, int y, int radius, int height) {
     int *newptr;
 //    int *oldptr;
     if (page == 0) {
-        newptr = &heightField1.front();
+        newptr = &bitfield1.front();
 //        oldptr = &heightField2.front();
     } else {
-        newptr = &heightField2.front();
+        newptr = &bitfield2.front();
 //        oldptr = &heightField1.front();
     }
 
@@ -344,7 +488,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
     int lIndex;
     int lBreak = w * h;
 
-    int *ptr = &heightField1.front();
+    int *ptr = &bitfield1.front();
 
     for (int y = (h-1)*w; offset < y; offset += 2) {
         for (int x = offset+w-2; offset < x; ++offset) {
@@ -370,6 +514,7 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
         }
     }
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // T

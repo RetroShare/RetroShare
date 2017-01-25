@@ -58,7 +58,7 @@ signals:
     void si_levelChanged(QString);
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
+    //void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QMouseEvent *event);
 private:
     void switchPages();
@@ -66,6 +66,7 @@ private:
     void installTWidget();
     void updateTitle();
 
+    AWidget*     aWidget;
     TBoard*     tWidget;
 };
 
@@ -77,14 +78,18 @@ class AWidget : public QWidget {
 public:
     AWidget();
 
+    void switchState() ;
+
 protected:
     void timerEvent(QTimerEvent* e);
     void paintEvent(QPaintEvent* e);
-    void mouseMoveEvent(QMouseEvent* e);
+    //void mouseMoveEvent(QMouseEvent* e);
     void resizeEvent(QResizeEvent *);
-  
+	//void keyPressEvent(QKeyEvent *e);
+
 private:
 	void initImages();
+	void computeNextState();
     void calcWater(int npage, int density);
 
     void addBlob(int x, int y, int radius, int height);
@@ -96,15 +101,21 @@ private:
             qBound(0, qGreen(color) - shift,255),
             qBound(0, qBlue(color) - shift, 255));
     }
+	void initGoL();
+	void drawBitField();
 
     int			    page;
     int			    density;
-    QVector<int>    heightField1;
-    QVector<int>    heightField2;
+    std::vector<int>    bitfield1;
+    std::vector<int>    bitfield2;
     QImage          image1;
     QImage          image2;
 
     bool			mImagesReady ;
+    int				mState;
+    int 			mTimerId;
+    int 			mStep;
+    int 			mMaxStep;
 };
 
 //////////////////////////////////////////////////////////////////////////
