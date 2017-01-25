@@ -164,7 +164,7 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
 
 void QuickStartWizard::on_pushButtonConnectionExit_clicked()
 {
-        on_pushButtonConnectionNext_clicked();
+        //on_pushButtonConnectionNext_clicked();
         close();
 }
 
@@ -442,6 +442,8 @@ void QuickStartWizard::loadNetwork()
             ui.netModeComboBox->hide();
             ui.discoveryLabel->hide();
             ui.discoveryComboBox->hide();
+            ui.netModeComboBox->insertItem(3,"Hidden Node");
+            netIndex = 3;
             break;
 		default:
 		case RS_NETMODE_UPNP:
@@ -514,6 +516,9 @@ void QuickStartWizard::saveChanges()
         std::cerr << "ui.netModeComboBox->currentIndex()" << ui.netModeComboBox->currentIndex() << std::endl;
         switch(netIndex)
 	{
+		case 3:
+			netMode = RS_NETMODE_HIDDEN;
+			break;
 		case 2:
 			netMode = RS_NETMODE_EXT;
 			break;
