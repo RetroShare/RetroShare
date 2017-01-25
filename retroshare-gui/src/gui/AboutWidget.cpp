@@ -68,7 +68,7 @@ void AboutWidget::installAWidget() {
     AWidget* aWidget = new AWidget();
     QVBoxLayout* l = (QVBoxLayout*)frame->layout();
     l->insertWidget(0, aWidget);
-//    l->setStretchFactor(aWidget, 100);
+    l->setStretchFactor(aWidget, 100);
 }
 
 void AboutWidget::installTWidget() {
@@ -151,7 +151,8 @@ void AboutWidget::keyPressEvent(QKeyEvent *e) {
     QWidget::keyPressEvent(e);
 }
 
-void AboutWidget::mousePressEvent(QMouseEvent *e) {
+void AboutWidget::mousePressEvent(QMouseEvent *e)
+{
     QPoint globalPos = mapToGlobal(e->pos());
     QPoint framePos = frame->mapFromGlobal(globalPos);
     if (frame->contentsRect().contains(framePos)) {
@@ -166,37 +167,65 @@ void AboutWidget::on_help_button_clicked()
     helpdlg.exec();
 }
 
-AWidget::AWidget() {
-    setMouseTracking(true);
+void AWidget::resizeEvent(QResizeEvent *e)
+{
+    mImagesReady = false ;
+}
 
-    QImage image(":/images/logo/logo_info.png");
-    QPainter p(&image);
+void AWidget::initImages()
+{
+    if(width() == 0) return ;
+    if(height() == 0) return ;
+
+    image1 = QImage(width(),height(),QImage::Format_ARGB32);
+    image1.fill(palette().color(QPalette::Background));
+
+    std::cerr << "width=" << width() << ", height=" << height() << std::endl;
+
+    //QImage image(":/images/logo/logo_info.png");
+    QPixmap image(":/images/logo/logo_splash.png");
+    QPainter p(&image1);
     p.setPen(Qt::black);
     QFont font = p.font();
     font.setBold(true);
     font.setPointSizeF(font.pointSizeF() + 2);
     p.setFont(font);
 
+    //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
+
     /* Draw RetroShare version */
-    p.drawText(QRect(10, 10, width()-10, 60), QString("%1 : \n%2").arg(tr("RetroShare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("RetroShare version"), Rshare::retroshareVersion(true)));
 
     /* Draw Qt's version number */
-    p.drawText(QRect(10, 50, width()-10, 60), QString("Qt %1 : \n%2").arg(tr("version"), QT_VERSION_STR));
+    p.drawText(QPointF(10, 90), QString("Qt %1 : %2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
 
-    image1 = image2 = image;
-    setFixedSize(image1.size());
+//    setFixedSize(image1.size());
+
+    image2 = image1 ;
 
     int w = image1.width();
     int h = image1.height();
+
+    heightField1.clear();
+    heightField2.clear();
+
     heightField1.resize(w*h);
     heightField2.resize(w*h);
 
-    density = 5;
-    page = 0;
+    mImagesReady = true ;
+    update() ;
+}
 
-    startTimer(15);
+AWidget::AWidget() {
+//    setMouseTracking(true);
+
+	density = 5;
+    page = 0;
+    mImagesReady = false ;
+
+//    startTimer(15);
 }
 
 
@@ -218,11 +247,15 @@ void AWidget::timerEvent(QTimerEvent* e) {
 }
 
 
-void AWidget::paintEvent(QPaintEvent* e) {
+void AWidget::paintEvent(QPaintEvent* e)
+{
     QWidget::paintEvent(e);
     
+    if(!mImagesReady)
+        initImages();
+
     QPainter p(this);
-    p.drawImage(0, 0, image2);
+    p.drawImage(0, 0, image1);
 }
 
 void AWidget::mouseMoveEvent(QMouseEvent* e) {

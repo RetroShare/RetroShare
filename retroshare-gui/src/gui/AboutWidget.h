@@ -26,6 +26,7 @@
 #include "ui_AboutWidget.h"
 
 #include <QBasicTimer>
+#include <QResizeEvent>
 #include <QPointer>
 
 #include <QDialog>
@@ -80,8 +81,10 @@ protected:
     void timerEvent(QTimerEvent* e);
     void paintEvent(QPaintEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
+    void resizeEvent(QResizeEvent *);
   
 private:
+	void initImages();
     void calcWater(int npage, int density);
 
     void addBlob(int x, int y, int radius, int height);
@@ -100,6 +103,8 @@ private:
     QVector<int>    heightField2;
     QImage          image1;
     QImage          image2;
+
+    bool			mImagesReady ;
 };
 
 //////////////////////////////////////////////////////////////////////////
