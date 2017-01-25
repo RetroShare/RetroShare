@@ -45,8 +45,6 @@ public:
   virtual QString pageName() const { return tr("General") ; }
   virtual QString helpText() const { return ""; }
 
-  public slots:
-	  void runStartWizard() ;
 private:
   /** Qt Designer generated object */
   Ui::GeneralPage ui;

@@ -7,13 +7,69 @@
     <x>0</x>
     <y>0</y>
     <width>886</width>
-    <height>584</height>
+    <height>685</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="4" column="1">
+    <widget class="QFrame" name="addFrame">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <property name="margin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QFrame" name="addframe">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>You get certificate from your friend?</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="addButton">
+        <property name="text">
+         <string>Add friends certificate</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/png/invite.png</normaloff>:/icons/png/invite.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0" colspan="4">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
@@ -126,24 +182,6 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="1">
-    <widget class="QFrame" name="addFrame">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="1" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="font">
@@ -161,51 +199,15 @@ private and secure decentralized commmunication platform.
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QFrame" name="addframe">
-     <property name="styleSheet">
-      <string notr="true"/>
+   <item row="5" column="1">
+    <widget class="QPushButton" name="runStartWizard_PB">
+     <property name="text">
+      <string>Launch startup wizard</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string>You get certificate from your friend?</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="addButton">
-        <property name="text">
-         <string>Add friends certificate</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/png/invite.png</normaloff>:/icons/png/invite.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="icon">
+      <iconset resource="images.qrc">
+       <normaloff>:/images/tools_wizard.png</normaloff>:/images/tools_wizard.png</iconset>
+     </property>
     </widget>
    </item>
   </layout>

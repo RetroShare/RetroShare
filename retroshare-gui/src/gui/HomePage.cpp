@@ -25,6 +25,7 @@
 #include "gui/notifyqt.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/connect/ConnectFriendWizard.h"
+#include <gui/QuickStartWizard.h>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
@@ -66,7 +67,8 @@ HomePage::HomePage(QWidget *parent) :
     menu->addAction(SendAction);
 
     ui->shareButton->setMenu(menu);
-
+	
+	connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 }
 
 HomePage::~HomePage()
@@ -145,4 +147,9 @@ void HomePage::addFriend()
 
     connwiz.setStartId(ConnectFriendWizard::Page_Text);
     connwiz.exec ();
+}
+
+void HomePage::runStartWizard()
+{
+    QuickStartWizard(this).exec();
 }

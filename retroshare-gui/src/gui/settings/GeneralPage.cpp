@@ -29,7 +29,6 @@
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>
 #include "rsharesettings.h"
-#include <gui/QuickStartWizard.h>
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
@@ -39,7 +38,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     ui.setupUi(this);
 
     /* Connect signals */
-    connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 
     /* Hide platform specific features */
 #ifdef Q_OS_WIN
@@ -87,10 +85,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 /** Destructor */
 GeneralPage::~GeneralPage()
 {
-}
-void GeneralPage::runStartWizard()
-{
-    QuickStartWizard(this).exec();
 }
 
 /** Saves the changes on this page */
