@@ -624,7 +624,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
-            gui/settings/settings.ui \
+            gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/DirectoriesPage.ui \
             gui/settings/ServerPage.ui \

@@ -52,15 +52,15 @@
 
 #include "rsettingswin.h"
 
-RSettingsWin *RSettingsWin::_instance = NULL;
-int RSettingsWin::lastPage = 0;
+//RSettingsWin *RSettingsWin::_instance = NULL;
+int SettingsPage::lastPage = 0;
 
-RSettingsWin::RSettingsWin(QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
+SettingsPage::SettingsPage(QWidget *parent)
+    : MainPage(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
-    setModal(false);
+//    setModal(false);
 
     /* Initialize help browser */
     mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
@@ -74,31 +74,32 @@ RSettingsWin::RSettingsWin(QWidget *parent)
     }
 
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+//    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
+//    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 
-RSettingsWin::~RSettingsWin()
+SettingsPage::~SettingsPage()
 {
     /* Save window position */
     Settings->setValueToGroup("SettingDialog", "Geometry", saveGeometry());
     lastPage = ui.stackedWidget->currentIndex ();
-    _instance = NULL;
+    //_instance = NULL;
 }
 
-void RSettingsWin::dialogFinished(int result)
-{
-	if (result == Rejected) {
-		/* reaload style sheet */
-		Rshare::loadStyleSheet(::Settings->getSheetName());
-	}
-}
+//void RSettingsPage::dialogFinished(int result)
+//{
+//	if (result == Rejected) {
+//		/* reaload style sheet */
+//		Rshare::loadStyleSheet(::Settings->getSheetName());
+//	}
+//}
 
-/*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /* = LastPage*/)
+/*static*/ void SettingsPage::showYourself(QWidget *parent, PageType page /* = LastPage*/)
 {
+#ifdef TODO
     if(_instance == NULL) {
-        _instance = new RSettingsWin(parent);
+        _instance = new RSettingsPage(parent);
     }
 
     if (page != LastPage) {
@@ -112,17 +113,21 @@ void RSettingsWin::dialogFinished(int result)
 
     _instance->show();
     _instance->activateWindow();
+#else
+    std::cerr << "(EE) unimplemented call to RSettingsPage::showYourself" << std::endl;
+#endif
 }
 
-/*static*/ void RSettingsWin::postModDirectories(bool update_local)
+/*static*/ void SettingsPage::postModDirectories(bool update_local)
 {
-    if (_instance == NULL || _instance->isHidden() || _instance->ui.stackedWidget == NULL) {
+    //if (_instance == NULL || _instance->isHidden() || _instance->ui.stackedWidget == NULL) {
+    if (ui.stackedWidget == NULL) {
        return;
     }
 
     if (update_local) {
-        if (_instance->ui.stackedWidget->currentIndex() == Directories) {
-            ConfigPage *Page = dynamic_cast<ConfigPage *> (_instance->ui.stackedWidget->currentWidget());
+        if (ui.stackedWidget->currentIndex() == Directories) {
+            ConfigPage *Page = dynamic_cast<ConfigPage *> (ui.stackedWidget->currentWidget());
             if (Page) {
                 Page->load();
             }
@@ -131,7 +136,7 @@ void RSettingsWin::dialogFinished(int result)
 }
 
 void
-RSettingsWin::initStackedWidget()
+SettingsPage::initStackedWidget()
 {
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
@@ -175,7 +180,7 @@ RSettingsWin::initStackedWidget()
     setNewPage(General);
 }
 
-void RSettingsWin::addPage(ConfigPage *page)
+void SettingsPage::addPage(ConfigPage *page)
 {
 	ui.stackedWidget->addWidget(page) ;
 
@@ -184,7 +189,7 @@ void RSettingsWin::addPage(ConfigPage *page)
 }
 
 void
-RSettingsWin::setNewPage(int page)
+SettingsPage::setNewPage(int page)
 {
 	ConfigPage *pagew = dynamic_cast<ConfigPage*>(ui.stackedWidget->widget(page)) ;
 
@@ -192,7 +197,7 @@ RSettingsWin::setNewPage(int page)
 
 	if(pagew == NULL)
 	{
-		std::cerr << "Error in RSettingsWin::setNewPage(): widget is not a ConfigPage!" << std::endl;
+		std::cerr << "Error in RSettingsPage::setNewPage(): widget is not a ConfigPage!" << std::endl;
 		mHelpBrowser->clear();
 		return ;
 	}
@@ -207,7 +212,7 @@ RSettingsWin::setNewPage(int page)
 
 /** Saves changes made to settings. */
 void
-RSettingsWin::saveChanges()
+SettingsPage::saveChanges()
 {
 	QString errmsg;
 

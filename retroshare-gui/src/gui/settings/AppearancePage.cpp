@@ -49,23 +49,22 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	MainWindow *pMainWindow = MainWindow::getInstance();
 	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
 
-	connect(ui.grpStatus,                 SIGNAL(toggled(bool)), pMainWindow->statusBar(), SLOT(setVisible(bool)));
-	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
-	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), pMainWindow, SLOT(toggleStatusToolTip(bool)));
-	connect(ui.checkBoxShowStatusStatus,  SIGNAL(toggled(bool)), pMainWindow->statusComboBoxInstance(), SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowPeerStatus,    SIGNAL(toggled(bool)), pMainWindow->peerstatusInstance(),     SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowNATStatus,     SIGNAL(toggled(bool)), pMainWindow->natstatusInstance(),      SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowDHTStatus,     SIGNAL(toggled(bool)), pMainWindow->dhtstatusInstance(),      SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowHashingStatus, SIGNAL(toggled(bool)), pMainWindow->hashingstatusInstance(),  SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowDiscStatus,    SIGNAL(toggled(bool)), pMainWindow->discstatusInstance(),     SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowRateStatus,    SIGNAL(toggled(bool)), pMainWindow->ratesstatusInstance(),    SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowOpModeStatus,  SIGNAL(toggled(bool)), pMainWindow->opModeStatusInstance(),   SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowSoundStatus,   SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(),    SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setVisible(bool)));
-	connect(ui.checkBoxShowSystrayOnStatus, SIGNAL(toggled(bool)), pMainWindow->sysTrayStatusInstance(), SLOT(setVisible(bool)));
+	connect(ui.grpStatus,                     SIGNAL(toggled(bool)), this /* pMainWindow->statusBar(),				*/, SLOT(switch_status_grpStatus(bool)));
+	connect(ui.checkBoxStatusCompactMode,     SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_compactMode(bool)));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)), this /* pMainWindow, 							*/, SLOT(switch_status_showToolTip(bool)));
+	connect(ui.checkBoxShowStatusStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->statusComboBoxInstance(), */, SLOT(switch_status_ShowStatus(bool)));
+	connect(ui.checkBoxShowPeerStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->peerstatusInstance(),     */, SLOT(switch_status_ShowStatus(bool)));
+	connect(ui.checkBoxShowNATStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->natstatusInstance(),      */, SLOT(switch_status_ShowPeer(bool)));
+	connect(ui.checkBoxShowDHTStatus,         SIGNAL(toggled(bool)), this /* pMainWindow->dhtstatusInstance(),      */, SLOT(switch_status_ShowDHT(bool)));
+	connect(ui.checkBoxShowHashingStatus,     SIGNAL(toggled(bool)), this /* pMainWindow->hashingstatusInstance(),  */, SLOT(switch_status_ShowHashing(bool)));
+	connect(ui.checkBoxShowDiscStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->discstatusInstance(),     */, SLOT(switch_status_ShowDisc(bool)));
+	connect(ui.checkBoxShowRateStatus,        SIGNAL(toggled(bool)), this /* pMainWindow->ratesstatusInstance(),    */, SLOT(switch_status_ShowRate(bool)));
+	connect(ui.checkBoxShowOpModeStatus,      SIGNAL(toggled(bool)), this /* pMainWindow->opModeStatusInstance(),   */, SLOT(switch_status_ShowOpMode(bool)));
+	connect(ui.checkBoxShowSoundStatus,       SIGNAL(toggled(bool)), this /* pMainWindow->soundStatusInstance(),    */, SLOT(switch_status_ShowSound(bool)));
+	connect(ui.checkBoxShowToasterDisable,    SIGNAL(toggled(bool)), this /* pMainWindow->toasterDisableInstance(), */, SLOT(switch_status_ShowToaster(bool)));
+	connect(ui.checkBoxShowSystrayOnStatus,   SIGNAL(toggled(bool)), this /* pMainWindow->sysTrayStatusInstance(),  */, SLOT(switch_status_ShowSystray(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -84,6 +83,30 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
+}
+
+void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,b) ; }
+void AppearancePage::switch_status_compactMode(bool b)      { switch_status(MainWindow::StatusCompactMode,b) ; }
+void AppearancePage::switch_status_showToolTip(bool b)      { switch_status(MainWindow::StatusShowToolTip,b) ; }
+void AppearancePage::switch_status_ShowStatus(bool b)       { switch_status(MainWindow::StatusShowStatus ,b) ; }
+void AppearancePage::switch_status_ShowPeer(bool b)         { switch_status(MainWindow::StatusShowPeer   ,b) ; }
+void AppearancePage::switch_status_ShowDHT(bool b)          { switch_status(MainWindow::StatusShowDHT    ,b) ; }
+void AppearancePage::switch_status_ShowHashing(bool b)      { switch_status(MainWindow::StatusShowHashing,b) ; }
+void AppearancePage::switch_status_ShowDisc(bool b)         { switch_status(MainWindow::StatusShowDisc   ,b) ; }
+void AppearancePage::switch_status_ShowRate(bool b)         { switch_status(MainWindow::StatusShowRate   ,b) ; }
+void AppearancePage::switch_status_ShowOpMode(bool b)       { switch_status(MainWindow::StatusShowOpMode ,b) ; }
+void AppearancePage::switch_status_ShowSound(bool b)        { switch_status(MainWindow::StatusShowSound  ,b) ; }
+void AppearancePage::switch_status_ShowToaster(bool b)      { switch_status(MainWindow::StatusShowToaster,b) ; }
+void AppearancePage::switch_status_ShowSystray(bool b)      { switch_status(MainWindow::StatusShowSystray,b) ; }
+
+void AppearancePage::switch_status(MainWindow::StatusElement s,bool b)
+{
+	MainWindow *pMainWindow = MainWindow::getInstance();
+
+    if(!pMainWindow)
+        return ;
+
+    pMainWindow->switchVisibilityStatus(s,b) ;
 }
 
 /** Saves the changes on this page */
