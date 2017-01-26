@@ -114,7 +114,7 @@ private:
     bool			mImagesReady ;
     int				mState;
     int 			mTimerId;
-    int 			mStep;
+    float			mStep;
     int 			mMaxStep;
 };
 

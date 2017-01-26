@@ -186,7 +186,7 @@ void AWidget::switchState()
 
 		if(mState == 1)
 		{
-            mStep = 1 ;
+            mStep = 1.0f ;
 			initGoL();
 			drawBitField();
 
@@ -237,7 +237,6 @@ void AWidget::initImages()
     image2 = image1 ;
     mImagesReady = true ;
 
-    initGoL();
     drawBitField();
 
     update() ;
@@ -258,7 +257,7 @@ void AWidget::initGoL()
 
     for(int i=0;i<bw;++i)
         for(int j=0;j<bh;++j)
-            if((image1.pixel((i+0.5)*s,(j+0.5)*s) & 0xff) < 20)
+            if((image1.pixel((i+0.0)*s,(j+0.0)*s) & 0xff) < 0x80)
                 bitfield1[i+bw*j] = 1 ;
 }
 
@@ -290,7 +289,10 @@ void AWidget::drawBitField()
 	for(int i=0;i<bw;++i)
 		for(int j=0;j<bh;++j)
 			if(bitfield1[i+bw*j] == 1)
-                p.fillRect(QRect(i*s+1,j*s+1,s-2,s-2),QBrush(QColor(50,50,50)));
+                if(mStep >= mMaxStep)
+					p.fillRect(QRect(i*s+1,j*s+1,s-2,s-2),QBrush(QColor(50,50,50)));
+				else
+					p.fillRect(QRect(i*s,j*s,s,s),QBrush(QColor(50,50,50)));
 
     p.end();
 }
@@ -301,7 +303,7 @@ AWidget::AWidget() {
 	density = 5;
     page = 0;
     mMaxStep = QFontMetricsF(font()).width(' ') ;
-    mStep = 1 ;
+    mStep = 1.0f ;
     mState = 0 ;
     mImagesReady = false ;
 
@@ -353,7 +355,7 @@ void AWidget::timerEvent(QTimerEvent* e)
     else
     {
         initGoL();
-        mStep++ ;
+        mStep+=0.2f ;
     }
 
     drawBitField();
@@ -381,12 +383,13 @@ void AWidget::paintEvent(QPaintEvent* e)
 {
 	QWidget::paintEvent(e);
 
+		if(!mImagesReady) initImages();
+
 	switch(mState)
 	{
 	default:
 	case 0:
 	{
-		if(!mImagesReady) initImages();
 		QPainter p(this);
 		p.drawImage(0, 0, image1);
 	}
