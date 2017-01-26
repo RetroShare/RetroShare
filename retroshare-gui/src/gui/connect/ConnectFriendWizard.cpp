@@ -999,13 +999,14 @@ void ConnectFriendWizard::friendCertChanged()
 void ConnectFriendWizard::cleanFriendCert()
 {
 	bool certValid = false;
-	QString errorMsg;
+	QString errorMsg ;
 	std::string cert = ui->friendCertEdit->toPlainText().toUtf8().constData();
 
 	if (cert.empty()) {
 		ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
 		ui->friendCertCleanLabel->setToolTip("");
 		ui->friendCertCleanLabel->setStyleSheet("");
+		errorMsg = tr("");
 
 	} else {
 		std::string cleanCert;
@@ -1021,23 +1022,27 @@ void ConnectFriendWizard::cleanFriendCert()
 				ui->friendCertCleanLabel->setStyleSheet("");
 				connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 			}
+			errorMsg = tr("Certificate appears to be valid");
+			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/accepted16.png"));
 		} else {
 			if (error_code > 0) {
 				switch (error_code) {
-				case RS_PEER_CERT_CLEANING_CODE_NO_BEGIN_TAG:
-					errorMsg = tr("No or misspelled BEGIN tag found") ;
-					break ;
-				case RS_PEER_CERT_CLEANING_CODE_NO_END_TAG:
-					errorMsg = tr("No or misspelled END tag found") ;
-					break ;
-				case RS_PEER_CERT_CLEANING_CODE_NO_CHECKSUM:
-					errorMsg = tr("No checksum found (the last 5 chars should be separated by a '=' char), or no newline after tag line (e.g. line beginning with Version:)") ;
-					break ;
+				case CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR            :
+				case CERTIFICATE_PARSING_ERROR_WRONG_VERSION             :
+				case CERTIFICATE_PARSING_ERROR_SIZE_ERROR                :
+				case CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID       :
+				case CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP       :
+				case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP          :
+				case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION  :
+				case CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG      :
+				case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          :
+
 				default:
-					errorMsg = tr("Fake certificate: take any real certificate, and replace some of the letters randomly") ;
+					errorMsg = tr("Not a valid Retroshare certificate!") ;
 					ui->friendCertCleanLabel->setStyleSheet("QLabel#friendCertCleanLabel {border: 2px solid red; border-radius: 6px;}");
 				}
 			}
+			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/delete.png"));
 		}
 	}
 

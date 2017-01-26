@@ -1214,7 +1214,7 @@ bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCer
 {
 	RsCertificate::Format format ;
 
-	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code) ;
+	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
 }
 
 bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)

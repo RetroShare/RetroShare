@@ -54,7 +54,8 @@ private slots:
 	void saveCert();
   void addFriend();
 	void runStartWizard() ;
-	
+	void recommendFriends();
+
 private:
 	Ui::HomePage *ui;
 	
