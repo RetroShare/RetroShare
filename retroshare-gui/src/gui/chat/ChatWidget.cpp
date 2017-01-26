@@ -1006,10 +1006,10 @@ void ChatWidget::pasteText(const QString& S)
 	setColorAndFont(false);
 }
 
-void ChatWidget::pasteCreateMsgLink()
-{
-	RSettingsWin::showYourself(this, RSettingsWin::Chat);
-}
+//void ChatWidget::pasteCreateMsgLink()
+//{
+//	RSettingsWin::showYourself(this, RSettingsWin::Chat);
+//}
 
 void ChatWidget::contextMenuTextBrowser(QPoint point)
 {

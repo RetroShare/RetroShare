@@ -1396,5 +1396,5 @@ void NewsFeed::sendNewsFeedChanged()
 
 void NewsFeed::feedoptions()
 {
-	RSettingsWin::showYourself(this, RSettingsWin::Notify);
+	SettingsPage::showYourself(this, SettingsPage::Notify);
 }

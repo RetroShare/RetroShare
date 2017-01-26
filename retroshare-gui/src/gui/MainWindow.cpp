@@ -425,6 +425,7 @@ void MainWindow::initStackedPage()
       addPage(getStartedPage = new GetStartedDialog(ui->stackPages), grp, NULL);
   }
 #endif
+  addPage(settingsDialog = new SettingsPage(ui->stackPages),grp,&notify);
 
   /* Create the toolbar */
   ui->toolBarPage->addActions(grp->actions());
@@ -441,10 +442,11 @@ void MainWindow::initStackedPage()
   // I remove add a friend because it's in HOME ghibli
   //addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
   //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
-  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
+  //addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
 
   // Removed About because it's now in options.
   //addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
+
   addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
 
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
@@ -768,11 +770,7 @@ void MainWindow::updateFriends()
 
 void MainWindow::postModDirectories(bool update_local)
 {
-    RSettingsWin::postModDirectories(update_local);
-
-    // Why would we need that?? The effect is to reset the flags while we're changing them, so it's really not
-    // a good idea.
-    //ShareManager::postModDirectories(update_local);
+    //RSettingsPage::postModDirectories(update_local);
 
     QCoreApplication::flush();
 }
@@ -901,6 +899,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
 			 _instance->transfersDialog->activatePage(TransfersDialog::LocalSharedFilesTab) ;
 			 break;
+		 case Options:
+			 _instance->ui->stackPages->setCurrentPage( _instance->settingsDialog );
+			 break;
 		 case Messages:
 			 _instance->ui->stackPages->setCurrentPage( _instance->messagesDialog );
 			 break;
@@ -939,6 +940,9 @@ void SetForegroundWindowInternal(HWND hWnd)
 //   }
    if (page == _instance->friendsDialog) {
        return Friends;
+   }
+   if (page == _instance->settingsDialog) {
+       return Options;
    }
    if (page == _instance->chatLobbyDialog) {
        return ChatLobby;
@@ -991,6 +995,8 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->idDialog;
 		case ChatLobby:
 			return _instance->chatLobbyDialog;
+		case Options:
+			return _instance->settingsDialog;
 		case Transfers:
 			return _instance->transfersDialog;
 		case SharedDirectories:
@@ -1054,7 +1060,7 @@ MainWindow::showMess()
 /** Shows Options */
 void MainWindow::showSettings()
 {
-    RSettingsWin::showYourself(this);
+    showWindow(MainWindow::Options);
 }
 
 /** Shows Messenger window */
@@ -1482,6 +1488,29 @@ void MainWindow::processLastArgs()
 		/* Now use files from the command line, because no RetroShare was running */
 		openRsCollection(Rshare::files()->takeFirst());
 	}
+}
+
+void MainWindow::switchVisibilityStatus(StatusElement e,bool b)
+{
+    switch(e)
+    {
+        case 	StatusGrpStatus   : getInstance()->statusBar()               ->setVisible(b); break ;
+        case 	StatusCompactMode : getInstance()->setCompactStatusMode(b) ; break ;
+        case 	StatusShowToolTip : getInstance()->toggleStatusToolTip(b) ; break ;
+        case 	StatusShowStatus  : getInstance()->peerstatusInstance()      ->setVisible(b); break ;
+        case 	StatusShowPeer    : getInstance()->natstatusInstance()       ->setVisible(b); break ;
+        case 	StatusShowDHT     : getInstance()->dhtstatusInstance()       ->setVisible(b); break ;
+        case 	StatusShowHashing : getInstance()->hashingstatusInstance()   ->setVisible(b); break ;
+        case 	StatusShowDisc    : getInstance()->discstatusInstance()      ->setVisible(b); break ;
+        case 	StatusShowRate    : getInstance()->ratesstatusInstance()     ->setVisible(b); break ;
+        case 	StatusShowOpMode  : getInstance()->opModeStatusInstance()    ->setVisible(b); break ;
+        case 	StatusShowSound   : getInstance()->soundStatusInstance()     ->setVisible(b); break ;
+        case 	StatusShowToaster : getInstance()->toasterDisableInstance()  ->setVisible(b); break ;
+        case 	StatusShowSystray : getInstance()->sysTrayStatusInstance()   ->setVisible(b); break ;
+
+    default:
+        std::cerr << "(EE) Unknown object to change visibility of: " << (int)e << std::endl;
+    }
 }
 
 //void MainWindow::servicePermission()
