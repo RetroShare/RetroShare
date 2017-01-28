@@ -210,13 +210,6 @@ PluginsPage::~PluginsPage()
 {
 }
 
-/** Saves the changes on this page */
-bool PluginsPage::save(QString &/*errmsg*/)
-{
-	// nothing to save for now.
-    return true;
-}
-
 /** Loads the settings for this page */
 void PluginsPage::load()
 {

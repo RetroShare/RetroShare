@@ -141,7 +141,7 @@ SettingsPage::initStackedWidget()
     ui.stackedWidget->setCurrentIndex(-1);
     ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
 
-    addPage(new GeneralPage(0));
+    addPage(new GeneralPage());
     addPage(new ServerPage());
     addPage(new TransferPage());
     addPage(new RelayPage() );
@@ -211,39 +211,11 @@ SettingsPage::setNewPage(int page)
 }
 
 /** Saves changes made to settings. */
-void
-SettingsPage::saveChanges()
+void SettingsPage::notifySettingsChanged()
 {
-	QString errmsg;
-
-	/* Call each config page's save() method to save its data */
-	int i, count = ui.stackedWidget->count();
-	for (i = 0; i < count; i++)
-	{
-		ConfigPage *page = dynamic_cast<ConfigPage *>(ui.stackedWidget->widget(i));
-		if (page && page->wasLoaded()) {
-			if (!page->save(errmsg))
-			{
-				/* Display the offending page */
-				ui.stackedWidget->setCurrentWidget(page);
-
-				/* Show the user what went wrong */
-				QMessageBox::warning(this,
-				tr("Error Saving Configuration on page")+" "+QString::number(i), errmsg,
-				QMessageBox::Ok, QMessageBox::NoButton);
-
-				/* Don't process the rest of the pages */
-				return;
-			}
-		}
-	}
-
 	/* call to RsIface save function.... */
 	//rsicontrol -> ConfigSave();
 
-	if (NotifyQt::getInstance()) {
+	if (NotifyQt::getInstance())
 		NotifyQt::getInstance()->notifySettingsChanged();
-	}
-
-    close();
 }

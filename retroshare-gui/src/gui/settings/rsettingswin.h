@@ -58,8 +58,10 @@ public slots:
 	void setNewPage(int page);
 
 private slots:
-	/** Called when user clicks "Save Settings" */
-	void saveChanges();
+	void notifySettingsChanged();
+
+	// Called when user clicks "Save Settings"
+	//void saveChanges();
 	//void dialogFinished(int result);
 
 private:
@@ -67,7 +69,6 @@ private:
 
 private:
 	FloatingHelpBrowser *mHelpBrowser;
-	//static RSettingsWin *_instance;
 	static int lastPage;
 
 	/* UI - from Designer */

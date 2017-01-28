@@ -38,8 +38,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    /* Connect signals */
-    connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 
     /* Hide platform specific features */
 #ifdef Q_OS_WIN
@@ -82,6 +80,10 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 	ui.autoLogin->setEnabled(false);
 	ui.autoLogin->setToolTip(tr("Your RetroShare build has auto-login disabled."));
 #endif // RS_AUTOLOGIN
+
+    /* Connect signals */
+    connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
+    connect(ui.checkAdvanced,SIGNAL(toggled(bool)), this,SLOT(updateAdvancedMode())) ;
 }
 
 /** Destructor */
@@ -93,48 +95,48 @@ void GeneralPage::runStartWizard()
     QuickStartWizard(this).exec();
 }
 
-/** Saves the changes on this page */
-bool GeneralPage::save(QString &/*errmsg*/)
+void GeneralPage::updateAdvancedMode()
+{
+	if (ui.checkAdvanced->isChecked())
+	{
+		std::string opt("YES");
+		rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
+	}
+	else
+	{
+		std::string opt("NO");
+		rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
+	}
+}
+
+void GeneralPage::updateUseLocalServer()   { Settings->setUseLocalServer(ui.useLocalServer->isChecked()); }
+void GeneralPage::updateMaxTimeBeforeIdle(){ Settings->setMaxTimeBeforeIdle(ui.idleSpinBox->value()); }
+void GeneralPage::updateStartMinimized()   { Settings->setStartMinimized(ui.checkStartMinimized->isChecked()); }
+void GeneralPage::updateDoQuit()           { Settings->setValue("doQuit", ui.checkQuit->isChecked()); }
+void GeneralPage::updateCloseToTray()      { Settings->setCloseToTray(ui.checkCloseToTray->isChecked()); }
+void GeneralPage::updateAutoLogin()        { RsInit::setAutoLogin(ui.autoLogin->isChecked());}
+void GeneralPage::updateRunRSOnBoot()
 {
 #ifdef Q_OS_WIN
 #ifndef QT_DEBUG
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
 #endif
 #endif
+}
 
-  Settings->setStartMinimized(ui.checkStartMinimized->isChecked());
-
-  if (ui.checkAdvanced->isChecked())
-  {
-    std::string opt("YES");
-    rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
-  }
-  else
-  {
-    std::string opt("NO");
-    rsConfig->setConfigurationOption(RS_CONFIG_ADVANCED, opt);
-  }
-
-  Settings->setValue("doQuit", ui.checkQuit->isChecked());
-  Settings->setCloseToTray(ui.checkCloseToTray->isChecked());
-  RsInit::setAutoLogin(ui.autoLogin->isChecked());
-
-  if (ui.registerRetroShareProtocol->isChecked() != Settings->getRetroShareProtocol()) {
-    QString error ="";
-    if (Settings->setRetroShareProtocol(ui.registerRetroShareProtocol->isChecked(), error) == false) {
-        if (ui.registerRetroShareProtocol->isChecked()) {
-            QMessageBox::critical(this, tr("Error"), tr("Could not add retroshare:// as protocol.").append("\n").append(error));
-        } else {
-            QMessageBox::critical(this, tr("Error"), tr("Could not remove retroshare:// protocol.").append("\n").append(error));
-        }
-    }
-  }
-
-  Settings->setUseLocalServer(ui.useLocalServer->isChecked());
-
-  Settings->setMaxTimeBeforeIdle(ui.idleSpinBox->value());
-
-  return true;
+void GeneralPage::updateRegisterRSProtocol()
+{
+	if (ui.registerRetroShareProtocol->isChecked() != Settings->getRetroShareProtocol())
+    {
+		QString error ="";
+		if (Settings->setRetroShareProtocol(ui.registerRetroShareProtocol->isChecked(), error) == false) {
+			if (ui.registerRetroShareProtocol->isChecked()) {
+				QMessageBox::critical(this, tr("Error"), tr("Could not add retroshare:// as protocol.").append("\n").append(error));
+			} else {
+				QMessageBox::critical(this, tr("Error"), tr("Could not remove retroshare:// protocol.").append("\n").append(error));
+			}
+		}
+	}
 }
 
 /** Loads the settings for this page */

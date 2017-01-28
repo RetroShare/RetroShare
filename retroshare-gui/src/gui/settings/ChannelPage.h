@@ -33,14 +33,15 @@ public:
 	ChannelPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 	~ChannelPage();
 
-	/** Saves the changes on this page */
-	virtual bool save(QString &errmsg);
 	/** Loads the settings for this page */
 	virtual void load();
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/channels.svg") ; }
 	virtual QString pageName() const { return tr("Channels") ; }
 	virtual QString helpText() const { return ""; }
+
+protected slots:
+	void updateLoadThread() ;
 
 private:
 	Ui::ChannelPage ui;

@@ -28,28 +28,37 @@
 
 class GeneralPage : public ConfigPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  GeneralPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
-    /** Default Destructor */
-  ~GeneralPage();
+	/** Default Constructor */
+	GeneralPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	/** Default Destructor */
+	~GeneralPage();
 
-  /** Saves the changes on this page */
-  virtual bool save(QString &errmsg);
-  /** Loads the settings for this page */
-  virtual void load();
+	/** Saves the changes on this page */
+	/** Loads the settings for this page */
+	virtual void load();
 
-  virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/general.svg") ; }
-  virtual QString pageName() const { return tr("General") ; }
-  virtual QString helpText() const { return ""; }
+	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/general.svg") ; }
+	virtual QString pageName() const { return tr("General") ; }
+	virtual QString helpText() const { return ""; }
 
-  public slots:
-	  void runStartWizard() ;
+public slots:
+	void runStartWizard() ;
+	void updateAdvancedMode();
+	void updateUseLocalServer()   ;
+	void updateMaxTimeBeforeIdle();
+	void updateStartMinimized()   ;
+	void updateDoQuit()           ;
+	void updateCloseToTray()      ;
+	void updateAutoLogin()        ;
+	void updateRunRSOnBoot()      ;
+	void updateRegisterRSProtocol();
+
 private:
-  /** Qt Designer generated object */
-  Ui::GeneralPage ui;
+	/** Qt Designer generated object */
+	Ui::GeneralPage ui;
 };
 
 #endif
