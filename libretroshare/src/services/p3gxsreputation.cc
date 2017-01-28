@@ -451,24 +451,25 @@ void p3GxsReputation::cleanup()
                 ++it ;
     }
 
-    // update opinions based on flags and contact information
+    // Update opinions based on flags and contact information.
+	// Note: the call to rsIdentity->isARegularContact() is done off-mutex, in order to avoid a cross-deadlock, as
+	// normally, p3GxsReputation gets called by p3dentity and not te reverse. That explains the weird implementation
+	// of these two loops.
 	{
-        std::list<RsGxsId> should_set_to_positive ;
+        std::list<RsGxsId> should_set_to_positive_candidates ;
 
+        if(mAutoSetPositiveOptionToContacts)
 		{
 			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 			for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();++it)
-			{
-				bool is_a_contact = rsIdentity->isARegularContact(it->first) ;
-
-				if(mAutoSetPositiveOptionToContacts && is_a_contact && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-					should_set_to_positive.push_back(it->first) ;
-			}
+				if(it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+					should_set_to_positive_candidates.push_back(it->first) ;
 		}
 
-		for(std::list<RsGxsId>::const_iterator it(should_set_to_positive.begin());it!=should_set_to_positive.end();++it)
-			setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
+		for(std::list<RsGxsId>::const_iterator it(should_set_to_positive_candidates.begin());it!=should_set_to_positive_candidates.end();++it)
+			if(rsIdentity->isARegularContact(*it))
+			        setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
 	}
 }
 
