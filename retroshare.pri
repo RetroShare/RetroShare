@@ -134,6 +134,22 @@ macx {
 	INC_DIR += "/opt/local/include"
 	LIB_DIR += "/usr/local/lib"
 	LIB_DIR += "/opt/local/lib"
+	INC_DIR += /usr/local/Cellar/openssl/1.0.2k/include
+	LIB_DIR += /usr/local/Cellar/openssl/1.0.2k/lib
+	INC_DIR += /usr/local/Cellar/sqlcipher/3.4.0/include
+	LIB_DIR += /usr/local/Cellar/sqlcipher/3.4.0/lib
+	INC_DIR += /usr/local/Cellar/miniupnpc/2.0/include
+	LIB_DIR += /usr/local/Cellar/miniupnpc/2.0/lib
+	INC_DIR += /usr/local/Cellar/libmicrohttpd/0.9.52/include
+	LIB_DIR += /usr/local/Cellar/libmicrohttpd/0.9.52/lib
+	INC_DIR += /usr/local/Cellar/speex/1.2.0/include
+	LIB_DIR += /usr/local/Cellar/speex/1.2.0/lib
+	INC_DIR += /usr/local/Cellar/speexdsp/1.2rc3/include
+	LIB_DIR += /usr/local/Cellar/speexdsp/1.2rc3/lib
+	INC_DIR += /usr/local/Cellar/opencv/2.4.13.2/include
+	LIB_DIR += /usr/local/Cellar/opencv/2.4.13.2/lib
+	INC_DIR += /usr/local/Cellar/libxml2/2.9.4_2/include
+	LIB_DIR += /usr/local/Cellar/libxml2/2.9.4_2/lib
 	!QMAKE_MACOSX_DEPLOYMENT_TARGET {
 		message(***retroshare.pri: No Target. Set it to MacOS 10.11 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.11

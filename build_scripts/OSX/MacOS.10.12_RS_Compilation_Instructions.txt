@@ -1,0 +1,43 @@
+These instructions assume that you already have a development environment setup 
+on macOS 10.12 with command line compilation tools, git and brew installed.
+
+- get RS sources from github repository
+    git clone https://github.com/RetroShare/RetroShare.git
+- install Qt5.7 using the provided installer from https://www.qt.io/qt5-7/
+- install with brew RS dependences
+    brew install sqlcipher
+    brew install miniupnpc
+    brew install libmicrohttpd
+    brew install speex
+    brew install speexdsp
+    brew install homebrew/science/opencv
+    brew install libxml2
+You can list with 'brew ls <package name>' the installed files locations
+- modify macx section of retroshare.pri file in order to specify the include and
+library paths for the above installed dependences, e.g.
+    INC_DIR += /usr/local/Cellar/openssl/1.0.2k/include
+	LIB_DIR += /usr/local/Cellar/openssl/1.0.2k/lib
+	INC_DIR += /usr/local/Cellar/sqlcipher/3.4.0/include
+	LIB_DIR += /usr/local/Cellar/sqlcipher/3.4.0/lib
+	INC_DIR += /usr/local/Cellar/miniupnpc/2.0/include
+	LIB_DIR += /usr/local/Cellar/miniupnpc/2.0/lib
+	INC_DIR += /usr/local/Cellar/libmicrohttpd/0.9.52/include
+	LIB_DIR += /usr/local/Cellar/libmicrohttpd/0.9.52/lib
+	INC_DIR += /usr/local/Cellar/speex/1.2.0/include
+	LIB_DIR += /usr/local/Cellar/speex/1.2.0/lib
+	INC_DIR += /usr/local/Cellar/speexdsp/1.2rc3/include
+	LIB_DIR += /usr/local/Cellar/speexdsp/1.2rc3/lib
+	INC_DIR += /usr/local/Cellar/opencv/2.4.13.2/include
+	LIB_DIR += /usr/local/Cellar/opencv/2.4.13.2/lib
+	INC_DIR += /usr/local/Cellar/libxml2/2.9.4_2/include
+	LIB_DIR += /usr/local/Cellar/libxml2/2.9.4_2/lib
+- generate the Makefiles with qmake (assuming that
+you are already in the sources root folder)
+	~/Qt/5.7/clang_64/bin/qmake
+- compile RS with
+	make
+- at the end of the compilation process, you can start RS GUI with
+	open retroshare-gui/src/RetroShare06.app
+- in order to generate RS installer use
+	~/Qt/5.7/clang_64/bin/macdeployqt retroshare-gui/src/RetroShare06.app -dmg
+The installer can be found in 'retroshare-gui/src/RetroShare06.dmg'.
