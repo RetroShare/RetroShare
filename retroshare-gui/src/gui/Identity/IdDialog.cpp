@@ -230,6 +230,8 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->mainSplitter->setStretchFactor(0, 0);
 	ui->mainSplitter->setStretchFactor(1, 1);
 	
+	ui->inviteFrame->hide();
+	
   /*remove
 	QList<int> sizes;
 	sizes << width() << 500; // Qt calculates the right sizes
@@ -2458,28 +2460,13 @@ void IdDialog::sendInvite()
 	{
 		return;
 	}
-    /* create a message */
-    MessageComposer *composer = MessageComposer::newMsg();
 
-    composer->setTitleText(tr("You have a friend invite"));
+    RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
     
-    RsPeerId ownId = rsPeers->getOwnId();
-    RetroShareLink link;
-    link.createCertificate(ownId);
+    MessageComposer::sendInvite(id);
     
-    std::string keyId = item->text(RSID_COL_KEYID).toStdString();
-    
-    QString sMsgText = inviteMessage();
-    sMsgText += "<br><br>";
-    sMsgText += tr("Respond now:") + "<br>";
-    sMsgText += link.toHtml() + "<br>";
-    sMsgText += "<br>";
-    sMsgText += tr("Thanks, <br>") + QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str());
-    composer->setMsgText(sMsgText);
-    composer->addRecipient(MessageComposer::TO,  RsGxsId(keyId));
-
-    composer->show();
-
+    ui->inviteFrame->show();
+    ui->inviteButton->setEnabled(false);
 }
 
 void IdDialog::negativePerson()
@@ -2557,3 +2544,7 @@ QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 	requestIdList();
 }
 
+void IdDialog::on_closeInfoFrameButton_clicked()
+{
+	ui->inviteFrame->setVisible(false);
+}
