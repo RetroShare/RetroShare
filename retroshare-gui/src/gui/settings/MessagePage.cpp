@@ -51,8 +51,12 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     
     connect(ui.comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(distantMsgsComboBoxChanged(int)));
 
+	connect(ui.setMsgToReadOnActivate,SIGNAL(toggled(bool)),          this,SLOT(updateMsgToReadOnActivate()));
+	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
+	connect(ui.openComboBox,          SIGNAL(currentItemChanged(int)),this,SLOT(updateMsgOpen()            ));
+	connect(ui.comboBox,              SIGNAL(currebtItemChanged(int)),this,SLOT(updateDistantMsgs()        ));
 
-	 //ui.encryptedMsgs_CB->setEnabled(false) ;
+	connect(ui.comboBox,              SIGNAL(currebtItemChanged(int)),this,SLOT(updateMsgTags()        ));
 }
 
 MessagePage::~MessagePage()
@@ -79,17 +83,13 @@ void MessagePage::distantMsgsComboBoxChanged(int i)
 
 }
 
-/** Saves the changes on this page */
-bool
-MessagePage::save(QString &/*errmsg*/)
-{
-    Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
-    Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
-    Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
-    
-    // state of distant Message combobox
-    Settings->setValue("DistantMessages", ui.comboBox->currentIndex());
+void MessagePage::updateMsgToReadOnActivate() { Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked()); }
+void MessagePage::updateLoadEmbededImages()   { Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked()); }
+void MessagePage::updateMsgOpen()             { Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());}
+void MessagePage::updateDistantMsgs()         { Settings->setValue("DistantMessages", ui.comboBox->currentIndex()); }
 
+void MessagePage::updateMsgTags()
+{
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
     for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); ++Tag) {
         // check for changed tags
@@ -107,8 +107,6 @@ MessagePage::save(QString &/*errmsg*/)
             }
         }
     }
-
-    return true;
 }
 
 /** Loads the settings for this page */
@@ -166,6 +164,8 @@ void MessagePage::addTag()
             m_changedTagIds.push_back(TagDlg.m_nId);
         }
     }
+
+    updateMsgTags();
 }
 
 void MessagePage::editTag()
@@ -196,6 +196,7 @@ void MessagePage::editTag()
             }
         }
     }
+    updateMsgTags();
 }
 
 void MessagePage::deleteTag()
@@ -228,6 +229,7 @@ void MessagePage::deleteTag()
     if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), nId) == m_changedTagIds.end()) {
         m_changedTagIds.push_back(nId);
     }
+    updateMsgTags();
 }
 
 void MessagePage::defaultTag()
@@ -244,6 +246,7 @@ void MessagePage::defaultTag()
         }
     }
 
+    updateMsgTags();
     fillTags();
 }
 

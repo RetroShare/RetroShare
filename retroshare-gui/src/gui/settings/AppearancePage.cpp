@@ -83,44 +83,53 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	foreach (QString name, styleSheets.keys()) {
 		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
+
+	connect(ui.cmboTollButtonsSize,           SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboToolButtonSize() ));
+	connect(ui.cmboListItemSize,              SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboListItemSize()   ));
+	connect(ui.cmboTollButtonsStyle,          SIGNAL(currentItemChanged(int)), this, SLOT(updateCmboToolButtonStyle()));
+	connect(ui.cmboLanguage,                  SIGNAL(currentItemChanged(int)), this, SLOT(updateLanguageCode()       ));
+	connect(ui.cmboStyle,                     SIGNAL(currentItemChanged(int)), this, SLOT(updateInterfaceStyle()     ));
+	connect(ui.cmboStyleSheet,                SIGNAL(currentItemChanged(int)), this, SLOT(updateSheetName()          ));
+	connect(ui.rbtPageOnToolBar,              SIGNAL(toggled(bool)),           this, SLOT(updateRbtPageOnToolBar() ));
+	connect(ui.rbtActionOnToolBar,            SIGNAL(toggled(bool)),           this, SLOT(updateActionButtonLoc()  ));
+	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)),           this, SLOT(updateStatusToolTip()    ));
 }
 
-void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,b) ; }
-void AppearancePage::switch_status_compactMode(bool b)      { switch_status(MainWindow::StatusCompactMode,b) ; }
-void AppearancePage::switch_status_showToolTip(bool b)      { switch_status(MainWindow::StatusShowToolTip,b) ; }
-void AppearancePage::switch_status_ShowStatus(bool b)       { switch_status(MainWindow::StatusShowStatus ,b) ; }
-void AppearancePage::switch_status_ShowPeer(bool b)         { switch_status(MainWindow::StatusShowPeer   ,b) ; }
-void AppearancePage::switch_status_ShowDHT(bool b)          { switch_status(MainWindow::StatusShowDHT    ,b) ; }
-void AppearancePage::switch_status_ShowHashing(bool b)      { switch_status(MainWindow::StatusShowHashing,b) ; }
-void AppearancePage::switch_status_ShowDisc(bool b)         { switch_status(MainWindow::StatusShowDisc   ,b) ; }
-void AppearancePage::switch_status_ShowRate(bool b)         { switch_status(MainWindow::StatusShowRate   ,b) ; }
-void AppearancePage::switch_status_ShowOpMode(bool b)       { switch_status(MainWindow::StatusShowOpMode ,b) ; }
-void AppearancePage::switch_status_ShowSound(bool b)        { switch_status(MainWindow::StatusShowSound  ,b) ; }
-void AppearancePage::switch_status_ShowToaster(bool b)      { switch_status(MainWindow::StatusShowToaster,b) ; }
-void AppearancePage::switch_status_ShowSystray(bool b)      { switch_status(MainWindow::StatusShowSystray,b) ; }
+void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,"ShowStatusBar",         b) ; }
+void AppearancePage::switch_status_compactMode(bool b)      { switch_status(MainWindow::StatusCompactMode,"CompactMode",           b) ; }
+void AppearancePage::switch_status_showToolTip(bool b)      { switch_status(MainWindow::StatusShowToolTip,"DisableSysTrayToolTip", b) ; }
+void AppearancePage::switch_status_ShowStatus(bool b)       { switch_status(MainWindow::StatusShowStatus ,"ShowStatus",            b) ; }
+void AppearancePage::switch_status_ShowPeer(bool b)         { switch_status(MainWindow::StatusShowPeer   ,"ShowPeer",              b) ; }
+void AppearancePage::switch_status_ShowDHT(bool b)          { switch_status(MainWindow::StatusShowDHT    ,"ShowDHT",               b) ; }
+void AppearancePage::switch_status_ShowHashing(bool b)      { switch_status(MainWindow::StatusShowHashing,"ShowHashing",           b) ; }
+void AppearancePage::switch_status_ShowDisc(bool b)         { switch_status(MainWindow::StatusShowDisc   ,"ShowDisc",              b) ; }
+void AppearancePage::switch_status_ShowRate(bool b)         { switch_status(MainWindow::StatusShowRate   ,"ShowRate",              b) ; }
+void AppearancePage::switch_status_ShowOpMode(bool b)       { switch_status(MainWindow::StatusShowOpMode ,"ShowOpMode",            b) ; }
+void AppearancePage::switch_status_ShowSound(bool b)        { switch_status(MainWindow::StatusShowSound  ,"ShowSound",             b) ; }
+void AppearancePage::switch_status_ShowToaster(bool b)      { switch_status(MainWindow::StatusShowToaster,"ShowToaster",           b) ; }
+void AppearancePage::switch_status_ShowSystray(bool b)      { switch_status(MainWindow::StatusShowSystray,"ShowSysTrayOnStatusBar",b) ; }
 
-void AppearancePage::switch_status(MainWindow::StatusElement s,bool b)
+void AppearancePage::switch_status(MainWindow::StatusElement s,const QString& key, bool b)
 {
 	MainWindow *pMainWindow = MainWindow::getInstance();
 
     if(!pMainWindow)
         return ;
 
+	Settings->setValueToGroup("StatusBar", key, QVariant(b));
+
     pMainWindow->switchVisibilityStatus(s,b) ;
 }
 
-/** Saves the changes on this page */
-bool AppearancePage::save(QString &errmsg)
+void AppearancePage::updateLanguageCode()     { Settings->setLanguageCode(LanguageSupport::languageCode(ui.cmboLanguage->currentText())); }
+void AppearancePage::updateInterfaceStyle()   { Settings->setInterfaceStyle(ui.cmboStyle->currentText()); }
+void AppearancePage::updateSheetName()        { Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString()); }
+void AppearancePage::updateRbtPageOnToolBar() { Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());}
+void AppearancePage::updateActionButtonLoc()  {	Settings->setActionButtonLoc(ui.rbtActionOnToolBar->isChecked()); }
+void AppearancePage::updateStatusToolTip()    { MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked()); }
+
+void AppearancePage::updateCmboToolButtonStyle()
 {
-	Q_UNUSED(errmsg);
-
-	QString languageCode = LanguageSupport::languageCode(ui.cmboLanguage->currentText());
-
-	Settings->setLanguageCode(languageCode);
-	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
-	Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString());
-	Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());
-	Settings->setActionButtonLoc(ui.rbtActionOnToolBar->isChecked());
 	switch (ui.cmboTollButtonsStyle->currentIndex())
 	{
 		case 0:
@@ -136,6 +145,10 @@ bool AppearancePage::save(QString &errmsg)
 		default:
 			Settings->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	}
+}
+
+void AppearancePage::updateCmboToolButtonSize()
+{
 	switch (ui.cmboTollButtonsSize->currentIndex())
 	{
 		case 0:
@@ -157,6 +170,9 @@ bool AppearancePage::save(QString &errmsg)
         case 5:
             Settings->setToolButtonSize(128);
     }
+}
+void AppearancePage::updateCmboListItemSize()
+{
 	switch (ui.cmboListItemSize->currentIndex())
 	{
 		case 0:
@@ -178,28 +194,9 @@ bool AppearancePage::save(QString &errmsg)
         case 5:
             Settings->setListItemIconSize(128);
     }
-
-	/* Set to new style */
-	Rshare::setStyle(ui.cmboStyle->currentText());
-
-	Settings->setValueToGroup("StatusBar", "ShowStatusBar", QVariant(ui.grpStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
-	Settings->setValueToGroup("StatusBar", "DisableSysTrayToolTip", QVariant(ui.checkBoxDisableSysTrayToolTip->isChecked()));
-	MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked());
-	Settings->setValueToGroup("StatusBar", "ShowStatus", QVariant(ui.checkBoxShowStatusStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowPeer", QVariant(ui.checkBoxShowPeerStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowNAT", QVariant(ui.checkBoxShowNATStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowDHT", QVariant(ui.checkBoxShowDHTStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowHashing", QVariant(ui.checkBoxShowHashingStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowDisc", QVariant(ui.checkBoxShowDiscStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowRate", QVariant(ui.checkBoxShowRateStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowOpMode", QVariant(ui.checkBoxShowOpModeStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowSound", QVariant(ui.checkBoxShowSoundStatus->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowToaster", QVariant(ui.checkBoxShowToasterDisable->isChecked()));
-	Settings->setValueToGroup("StatusBar", "ShowSysTrayOnStatusBar", QVariant(ui.checkBoxShowSystrayOnStatus->isChecked()));
-
-	return true;
 }
+
+void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText()); }
 
 /** Loads the settings for this page */
 void AppearancePage::load()

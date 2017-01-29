@@ -31,8 +31,6 @@ public:
     NetworkPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     ~NetworkPage() {}
 
-    /** Saves the changes on this page */
-    virtual bool save(QString &errmsg);
     /** Loads the settings for this page */
     virtual void load();
 

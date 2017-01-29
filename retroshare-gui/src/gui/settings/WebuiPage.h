@@ -20,8 +20,6 @@ public:
     /** Default Destructor */
   ~WebuiPage();
 
-  /** Saves the changes on this page */
-  virtual bool save(QString &errmsg);
   /** Loads the settings for this page */
   virtual void load();
 

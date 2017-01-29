@@ -58,11 +58,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
-  connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
-  connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
-  connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
-
   manager = NULL ;
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
@@ -107,11 +102,32 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.hiddenpage_incoming->setVisible(false);
 
+	connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
+	connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
+	connect( ui.cleanKnownIPs_PB, SIGNAL( clicked( ) ), this, SLOT( clearKnownAddressList() ) );
+	connect( ui.testIncoming_PB, SIGNAL( clicked( ) ), this, SLOT( updateInProxyIndicator() ) );
+    connect( ui.showDiscStatusBar,SIGNAL(toggled(bool)),this,SLOT(updateShowDiscStatusBar())) ;
+
 #ifdef SERVER_DEBUG
 	std::cerr << "ServerPage::ServerPage() called";
 	std::cerr << std::endl;
 #endif
+
+	connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
+	connect(ui.discComboBox,   SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
+	connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.dynDNS,         SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+
+	connect(ui.hiddenpage_proxyAddress_tor, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.hiddenpage_proxyPort_tor,    SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.hiddenpage_proxyAddress_i2p, SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+	connect(ui.hiddenpage_proxyPort_i2p,    SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
+
+	connect(ui.totalDownloadRate,SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
+	connect(ui.totalUploadRate,  SIGNAL(valueChanged(int)),this,SLOT(saveRates()));
 }
+
 void ServerPage::checkIpRange(const QString& ipstr)
 {
     QColor color;
@@ -183,22 +199,7 @@ void ServerPage::toggleTunnelConnection(bool b)
         //rsPeers->allowTunnelConnection(b) ;
 }
 
-/** Saves the changes on this page */
-bool
-ServerPage::save(QString &/*errmsg*/)
-{
-    Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked());
-
-/* save the server address */
-/* save local address */
-/* save the url for DNS access */
-
-/* restart server */
-
-/* save all? */
-   saveAddresses();
- return true;
-}
+void ServerPage::updateShowDiscStatusBar() { Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked()); }
 
 /** Loads the settings for this page */
 void ServerPage::load()
@@ -815,7 +816,6 @@ void ServerPage::saveAddresses()
 	}
 
 	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
-	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
 	// HANDLE PROXY SERVER.
 	std::string orig_proxyaddr, new_proxyaddr;
@@ -846,6 +846,10 @@ void ServerPage::saveAddresses()
 	load();
 }
 
+void ServerPage::saveRates()
+{
+	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+}
 
 /***********************************************************************************/
 /***********************************************************************************/
