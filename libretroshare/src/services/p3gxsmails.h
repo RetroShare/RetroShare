@@ -24,21 +24,81 @@
 #include "serialiser/rsgxsmailitems.h" // For RS_SERVICE_TYPE_GXS_MAIL
 #include "services/p3idservice.h" // For p3IdService
 
+struct p3GxsMails;
 
-class p3GxsMails : public RsGenExchange, public GxsTokenQueue
+struct GxsMailsClient
 {
-public:
+	/// Subservices identifiers (like port for TCP)
+	enum GxsMailSubServices { MSG_SERVICE };
+
+	/**
+	 * This is usually used to save a pointer to the p3GxsMails service (e.g. by
+	 * coping it in a member variable), so as to be able to send mails, and to
+	 * register as a mail receiver via
+	 * p3GxsMails::registerGxsMailsClient(GxsMailSubServices, GxsMailsClient)
+	 */
+	//virtual void connectToGxsMails(p3GxsMails *pt) = 0 ;
+
+	/**
+	 * This will be called by p3GxsMails to dispatch mails to the subservice
+	 * @param destinationId
+	 * @param signingKey
+	 * @param data
+	 * @param dataSize
+	 * @return true if dispatching goes fine, false otherwise
+	 */
+	virtual bool receiveGxsMail( const RsGxsId& destinationId,
+	                             const RsGxsId& signingKey,
+	                             uint8_t* data, uint32_t dataSize ) = 0;
+};
+
+struct p3GxsMails : RsGenExchange, GxsTokenQueue
+{
 	p3GxsMails( RsGeneralDataService* gds, RsNetworkExchangeService* nes,
-	            p3IdService *identities ) :
+	            p3IdService& identities ) :
 	    RsGenExchange( gds, nes, new RsGxsMailSerializer(),
-	                   RS_SERVICE_TYPE_GXS_MAIL, identities,
+	                   RS_SERVICE_TYPE_GXS_MAIL, &identities,
 	                   AuthenPolicy(),
 	                   RS_GXS_DEFAULT_MSG_STORE_PERIOD ), // TODO: Discuss with Cyril about this
-	    GxsTokenQueue(this) {}
+	    GxsTokenQueue(this), idService(identities) {}
 
-	/// Public interface
-	bool sendEmail( const RsGxsId& own_gxsid, const RsGxsId& recipient,
-	                const std::string& body );
+	/**
+	 * Send an email to recipient, in the process author of the email is
+	 * disclosed to the network (because the sent GXS item is signed), while
+	 * recipient is not @see RsGxsMailBaseItem::recipientsHint for details on
+	 * recipient protection.
+	 * This method is part of the public interface of this service.
+	 * @return true if the mail will be sent, false if not
+	 */
+	bool sendMail( GxsMailsClient::GxsMailSubServices service,
+	               const RsGxsId& own_gxsid, const RsGxsId& recipient,
+	               const uint8_t* data, uint32_t size,
+	               RsGxsMailBaseItem::EncryptionMode cm = RsGxsMailBaseItem::RSA
+	        );
+
+	/**
+	 * Send an email to recipients, in the process author of the email is
+	 * disclosed to the network (because the sent GXS item is signed), while
+	 * recipients are not @see RsGxsMailBaseItem::recipientsHint for details on
+	 * recipient protection.
+	 * This method is part of the public interface of this service.
+	 * @return true if the mail will be sent, false if not
+	 */
+	bool sendMail( GxsMailsClient::GxsMailSubServices service,
+	               const RsGxsId& own_gxsid,
+	               const std::vector<const RsGxsId*>& recipients,
+	               const uint8_t* data, uint32_t size,
+	               RsGxsMailBaseItem::EncryptionMode cm = RsGxsMailBaseItem::RSA
+	        );
+
+	/**
+	 * Register a client service to p3GxsMails to receive mails via
+	 * GxsMailsClient::receiveGxsMail(...) callback
+	 * This is NOT thread safe!
+	 */
+	void registerGxsMailsClient( GxsMailsClient::GxsMailSubServices serviceType,
+	                             GxsMailsClient* service )
+	{ servClients[serviceType] = service; }
 
 	/**
 	 * @see GxsTokenQueue::handleResponse(uint32_t token, uint32_t req_type)
@@ -59,17 +119,26 @@ protected:
 	void notifyChanges(std::vector<RsGxsNotify *> &changes);
 
 private:
+	/// Time interval of inactivity before a distribution group is unsubscribed
+	const static int32_t UNUSED_GROUP_UNSUBSCRIBE_INTERVAL = 0x76A700; // 3 months approx
 
 	/// @brief AuthenPolicy check nothing ATM TODO talk with Cyril how this should be
 	static uint32_t AuthenPolicy() { return 0; }
 
 	/// Types to mark GXS queries and answhers
-	enum GxsReqResTypes { GROUPS_LIST, GROUP_CREATE };
+	enum GxsReqResTypes { GROUPS_LIST, GROUP_CREATE, MAILS_UPDATE };
 
+	/// Store the id of the preferred GXS group to send emails
 	RsGxsGroupId preferredGroupId;
 
+	/// Used for items {de,en}cryption
+	p3IdService& idService;
+
+	/// Stores pointers to client services to notify them about new mails
+	std::map<GxsMailsClient::GxsMailSubServices, GxsMailsClient*> servClients;
+
 	/// Request groups list to GXS backend. Async method.
-	bool requestGroupsList();
+	bool requestGroupsData(const std::list<RsGxsGroupId>* groupIds = NULL);
 
 	/**
 	 * Check if current preferredGroupId is the best against potentialGrId, if
@@ -84,21 +153,16 @@ private:
 		//std::cout << "supersedePreferredGroup(const RsGxsGroupId& potentialGrId) " << preferredGroupId << " <? " << potentialGrId << std::endl;
 		if(preferredGroupId < potentialGrId)
 		{
+			std::cerr << "supersedePreferredGroup(...) " << potentialGrId
+			          << " supersed " << preferredGroupId << std::endl;
 			preferredGroupId = potentialGrId;
 			return true;
 		}
 		return false;
 	}
+
+	/// @return true if has passed more then interval seconds time since timeStamp
+	bool static inline olderThen(time_t timeStamp, int32_t interval)
+	{ return (timeStamp + interval) < time(NULL); }
 };
 
-/*
-19:27:29 G10h4ck: About the scalability stuff i have thinked we can implement TTL mechanism like IP does
-19:27:48 G10h4ck: better HTL Hop To Live
-19:28:09 G10h4ck: one send an email with an associated HTL for example 2
-19:28:32 G10h4ck: when a node receive that it decrement the HTL and store and forward it
-19:29:03 G10h4ck: if a received mail has an HTL greater then the last we received we store that one
-19:29:18 G10h4ck: this way we can control how much the mail should spread in the net
-19:29:47 G10h4ck: HTL should be upper limited to a maximum
-19:30:03 G10h4ck: so an abuser cant spread mails with 10000000 as HTL
-19:30:30 G10h4ck: if a mail is received witha suspicios HTL it may be dropped or the HTL reduced to MAX_HTL
- */

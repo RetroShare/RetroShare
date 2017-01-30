@@ -17,29 +17,136 @@
  */
 
 #include "p3gxsmails.h"
+#include "util/stacktrace.h"
 
 
-bool p3GxsMails::sendEmail(const RsGxsId& own_gxsid, const RsGxsId& recipient, const std::string& body)
+bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
+                           const RsGxsId& own_gxsid, const RsGxsId& recipient,
+                           const uint8_t* data, uint32_t size,
+                           RsGxsMailBaseItem::EncryptionMode cm)
+{
+	std::vector<const RsGxsId*> recipients;
+	recipients.push_back(&recipient);
+	return sendMail(service, own_gxsid, recipients, data, size, cm);
+}
+
+bool p3GxsMails::sendMail( GxsMailsClient::GxsMailSubServices service,
+                           const RsGxsId& own_gxsid,
+                           const std::vector<const RsGxsId*>& recipients,
+                           const uint8_t* data, uint32_t size,
+                           RsGxsMailBaseItem::EncryptionMode cm )
 {
 	std::cout << "p3GxsMails::sendEmail(...)" << std::endl;
 
 	if(preferredGroupId.isNull())
 	{
-		requestGroupsList();
+		requestGroupsData();
+		std::cerr << "p3GxsMails::sendEmail(...) preferredGroupId.isNull()!"
+		          << std::endl;
 		return false;
 	}
 
-	RsGxsMailItem* m = new RsGxsMailItem;
-	m->meta.mAuthorId = own_gxsid;
-	m->meta.mGroupId = preferredGroupId;
-	m->recipients.ids.insert(recipient);
-	m->body = body;
+	if(!idService.isOwnId(own_gxsid))
+	{
+		std::cerr << "p3GxsMails::sendEmail(...) isOwnId(own_gxsid) false!"
+		          << std::endl;
+		return false;
+	}
+
+	std::set<RsGxsId> rcps;
+	typedef std::vector<const RsGxsId*>::const_iterator itT;
+	for(itT it = recipients.begin(); it != recipients.end(); it++)
+	{
+		const RsGxsId* gId = *it;
+
+		if(!gId || gId->isNull())
+		{
+			std::cerr << "p3GxsMails::sendEmail(...) got invalid recipient"
+			          << std::endl;
+			print_stacktrace();
+			return false;
+		}
+
+		rcps.insert(*gId);
+	}
+	if(rcps.empty())
+	{
+		std::cerr << "p3GxsMails::sendEmail(...) got no recipients"
+		          << std::endl;
+		print_stacktrace();
+		return false;
+	}
+
+	RsGxsMailItem* item = new RsGxsMailItem();
+
+	// Public metadata
+	item->meta.mAuthorId = own_gxsid;
+	item->meta.mGroupId = preferredGroupId;
+
+	typedef std::set<RsGxsId>::const_iterator siT;
+	for(siT it = rcps.begin(); it != rcps.end(); ++it)
+			item->saltRecipientHint(*it);
+
+	// If there is jut one recipient salt with a random id to avoid leaking it
+	if(rcps.size() == 1) item->saltRecipientHint(RsGxsId::random());
+
+
+	/* At this point we do a lot of memory copying, it doesn't look pretty but
+	 * ATM haven't thinked of an elegant way to have the GxsMailSubServices
+	 * travelling encrypted withuot copying memory around or responsabilize the
+	 * client service to embed it in data array that is awful */
+
+	uint16_t serv = static_cast<uint16_t>(service);
+	uint32_t clearTextPldSize = size+2;
+	item->payload.resize(clearTextPldSize);
+	uint32_t _discard = 0;
+	setRawUInt16(&item->payload[0], clearTextPldSize, &_discard, serv);
+	memcpy(&item->payload[2], data, size);
+
+	switch (cm)
+	{
+	case RsGxsMailBaseItem::CLEAR_TEXT:
+	{
+		std::cerr << "p3GxsMails::sendMail(...) you are sending a mail without"
+		          << " encryption, everyone can read it!" << std::endl;
+		print_stacktrace();
+		break;
+	}
+	case RsGxsMailBaseItem::RSA:
+	{
+		uint8_t* encryptedData = NULL;
+		uint32_t encryptedSize = 0;
+		uint32_t encryptError = 0;
+		if( idService.encryptData( &item->payload[0], clearTextPldSize,
+		                           encryptedData, encryptedSize,
+		                           rcps, true, encryptError ) )
+		{
+			item->payload.resize(encryptedSize);
+			memcpy(&item->payload[0], encryptedData, encryptedSize);
+			free(encryptedData);
+			break;
+		}
+		else
+		{
+			std::cerr << "p3GxsMails::sendMail(...) RSA encryption failed! "
+			          << "error_status: " << encryptError << std::endl;
+			print_stacktrace();
+			return false;
+		}
+	}
+	case RsGxsMailBaseItem::UNDEFINED_ENCRYPTION:
+	default:
+		std::cerr << "p3GxsMails::sendMail(...) attempt to send mail with wrong"
+		          << " EncryptionMode " << cm << " dropping mail!" << std::endl;
+		print_stacktrace();
+		return false;
+	}
 
 	uint32_t token;
-	publishMsg(token, m);
-
+	publishMsg(token, item);
 	return true;
 }
+
 
 void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 {
@@ -54,21 +161,37 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 		for( std::vector<RsGxsGrpItem *>::iterator it = groups.begin();
 		     it != groups.end(); ++it )
 		{
-			RsGxsGrpItem* grp = *it;
-			if(!IS_GROUP_SUBSCRIBED(grp->meta.mSubscribeFlags))
-			{
-				std::cout << "p3GxsMails::handleResponse(...) subscribing to group: " << grp->meta.mGroupId << std::endl;
-				uint32_t token;
-				subscribeToGroup(token, grp->meta.mGroupId, true);
-			}
+			/* For each group check if it is better candidate then
+			 * preferredGroupId, if it is supplant it and subscribe if it is not
+			 * subscribed yet.
+			 * Otherwise if it has recent messages subscribe.
+			 * If the group was already subscribed has no recent messages
+			 * unsubscribe.
+			 */
 
-			supersedePreferredGroup(grp->meta.mGroupId);
+			const RsGroupMetaData& meta = (*it)->meta;
+			bool subscribed = IS_GROUP_SUBSCRIBED(meta.mSubscribeFlags);
+			bool old = olderThen( meta.mLastPost,
+			                      UNUSED_GROUP_UNSUBSCRIBE_INTERVAL );
+			bool supersede = supersedePreferredGroup(meta.mGroupId);
+			uint32_t token;
+
+			if( !subscribed && ( !old || supersede ))
+				subscribeToGroup(token, meta.mGroupId, true);
+			else if( subscribed && old )
+				subscribeToGroup(token, meta.mGroupId, false);
 		}
 
 		if(preferredGroupId.isNull())
 		{
-			std::cout << "p3GxsMails::handleResponse(...) preferredGroupId.isNull()" << std::endl;
-			// TODO: Should check if we have friends before of doing this?
+			/* This is true only at first run when we haven't received mail
+			 * distribuition groups from friends
+			 * TODO: We should check if we have some connected firend too, to
+			 * avoid to create yet another never used mail distribution group.
+			 */
+
+			std::cerr << "p3GxsMails::handleResponse(...) preferredGroupId.isNu"
+			          << "ll() let's create a new group." << std::endl;
 			uint32_t token;
 			publishGroup(token, new RsGxsMailGroupItem());
 			queueRequest(token, GROUP_CREATE);
@@ -78,45 +201,86 @@ void p3GxsMails::handleResponse(uint32_t token, uint32_t req_type)
 	}
 	case GROUP_CREATE:
 	{
-		std::cout << "p3GxsMails::handleResponse(...) GROUP_CREATE" << std::endl;
+		std::cerr << "p3GxsMails::handleResponse(...) GROUP_CREATE" << std::endl;
 		RsGxsGroupId grpId;
 		acknowledgeTokenGrp(token, grpId);
 		supersedePreferredGroup(grpId);
 		break;
 	}
+	case MAILS_UPDATE:
+	{
+		std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE" << std::endl;
+		typedef std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> > GxsMsgDataMap;
+		GxsMsgDataMap gpMsgMap;
+		getMsgData(token, gpMsgMap);
+		for ( GxsMsgDataMap::iterator gIt = gpMsgMap.begin();
+		      gIt != gpMsgMap.end(); ++gIt )
+		{
+			typedef std::vector<RsGxsMsgItem*> vT;
+			vT& mv(gIt->second);
+			for( vT::const_iterator mIt = mv.begin(); mIt != mv.end(); ++mIt )
+			{
+				RsGxsMsgItem* it = *mIt;
+				std::cout << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
+				          << (uint32_t)it->PacketSubType() << std::endl;
+				switch(it->PacketSubType())
+				{
+				case GXS_MAIL_SUBTYPE_MAIL:
+				{
+					RsGxsMailItem* msg = dynamic_cast<RsGxsMailItem*>(it);
+					if(msg)
+					{
+						std::cout << "p3GxsMails::handleResponse(...) "
+						          << "GXS_MAIL_SUBTYPE_MAIL got recipientsHint: "
+						          << msg->recipientsHint << " cryptoType: "
+						          << (uint32_t)msg->cryptoType
+						          <<  " payload size: " << msg->payload.size()
+						           << std::endl;
+					}
+					break;
+				}
+				default:
+					std::cerr << "p3GxsMails::handleResponse(...) MAILS_UPDATE "
+					          << "Unknown mail subtype : "
+					          << it->PacketSubType() << std::endl;
+					break;
+				}
+			}
+		}
+	}
 	default:
-		std::cout << "p3GxsMails::handleResponse(...) Unknown req_type: " << req_type << std::endl;
+		std::cerr << "p3GxsMails::handleResponse(...) Unknown req_type: "
+		         << req_type << std::endl;
 		break;
 	}
-/*
-	GxsMsgDataMap msgItems;
-	if(!RsGenExchange::getMsgData(token, msgItems))
-	{
-		std::cerr << "p3GxsMails::handleResponse(...) Cannot get msg data. "
-				  << "Something's weird." << std::endl;
-	}
-*/
 }
 
 void p3GxsMails::service_tick()
 {
 	static int tc = 0;
 	++tc;
-	if((tc % 100) == 0)
-	{
-//		std::cout << "p3GxsMails::service_tick() " << tc << " "
-//		          << preferredGroupId << std::endl;
-		requestGroupsList();
-	}
 
-#if 0
+	if(((tc % 1000) == 0) || (tc == 50)) requestGroupsData();
+
 	if(tc == 500)
 	{
-		RsGxsId own_gxsid("d0df7474bdde0464679e6ef787890287");
-		RsGxsId recipient("d060bea09dfa14883b5e6e517eb580cd");
-		sendEmail(own_gxsid, recipient, "Ciao!");
+		RsGxsId gxsidA("d0df7474bdde0464679e6ef787890287");
+		RsGxsId gxsidB("d060bea09dfa14883b5e6e517eb580cd");
+		if(idService.isOwnId(gxsidA))
+		{
+			std::string ciao("CiAone!");
+			sendMail( GxsMailsClient::MSG_SERVICE, gxsidA, gxsidB,
+			          reinterpret_cast<const uint8_t*>(ciao.data()),
+			          ciao.size());
+		}
+		else if(idService.isOwnId(gxsidB))
+		{
+			std::string ciao("CiBone!");
+			sendMail( GxsMailsClient::MSG_SERVICE, gxsidB, gxsidA,
+			          reinterpret_cast<const uint8_t*>(ciao.data()),
+			          ciao.size());
+		}
 	}
-#endif
 
 	GxsTokenQueue::checkRequests();
 }
@@ -138,20 +302,19 @@ void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
 
 		if (grpChange)
 		{
-			typedef std::list<RsGxsGroupId>::const_iterator itT;
-			for( itT it = grpChange->mGrpIdList.begin();
-			     it != grpChange->mGrpIdList.end(); ++it )
-			{
-				const RsGxsGroupId& grpId = *it;
-				std::cout << "p3GxsMails::notifyChanges(...) got group "
-				          << grpId << std::endl;
-				supersedePreferredGroup(grpId);
-			}
+			std::cout << "p3GxsMails::notifyChanges(...) grpChange" << std::endl;
+			requestGroupsData(&(grpChange->mGrpIdList));
 		}
 		else if(msgChange)
 		{
-			typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mT;
-			for( mT::const_iterator it = msgChange->msgChangeMap.begin();
+			std::cout << "p3GxsMails::notifyChanges(...) msgChange" << std::endl;
+			uint32_t token;
+			RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+			getTokenService()->requestMsgInfo( token, 0xcaca,
+			                                   opts, msgChange->msgChangeMap );
+			GxsTokenQueue::queueRequest(token, MAILS_UPDATE);
+
+			for( GxsMsgReq::const_iterator it = msgChange->msgChangeMap.begin();
 			     it != msgChange->msgChangeMap.end(); ++it )
 			{
 				const RsGxsGroupId& grpId = it->first;
@@ -161,20 +324,22 @@ void p3GxsMails::notifyChanges(std::vector<RsGxsNotify*>& changes)
 				{
 					const RsGxsMessageId& msgId = *vit;
 					std::cout << "p3GxsMails::notifyChanges(...) got "
-					          << "new message " << msgId << " in group "
-					          << grpId << std::endl;
+					          << "notification for message " << msgId
+					          << " in group " << grpId << std::endl;
 				}
 			}
 		}
 	}
 }
 
-bool p3GxsMails::requestGroupsList()
+bool p3GxsMails::requestGroupsData(const std::list<RsGxsGroupId>* groupIds)
 {
-	//	std::cout << "p3GxsMails::requestGroupsList() GXS_REQUEST_TYPE_GROUP_META" << std::endl;
+	//	std::cout << "p3GxsMails::requestGroupsList()" << std::endl;
 	uint32_t token;
 	RsTokReqOptions opts; opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	RsGenExchange::getTokenService()->requestGroupInfo(token, 0xcaca, opts);
+	if(!groupIds) getTokenService()->requestGroupInfo(token, 0xcaca, opts);
+	else getTokenService()->requestGroupInfo(token, 0xcaca, opts, *groupIds);
 	GxsTokenQueue::queueRequest(token, GROUPS_LIST);
 	return true;
 }
+

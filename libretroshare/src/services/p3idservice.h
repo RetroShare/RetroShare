@@ -287,11 +287,37 @@ public:
 
 	virtual bool isOwnId(const RsGxsId& key_id) ;
 
-	virtual bool signData(const uint8_t *data,uint32_t data_size,const RsGxsId& signer_id,RsTlvKeySignature& signature,uint32_t& signing_error) ;
-	virtual bool validateData(const uint8_t *data, uint32_t data_size, const RsTlvKeySignature& signature, bool force_load, const RsIdentityUsage &info, uint32_t& signing_error) ;
+	virtual bool signData( const uint8_t* data,
+	                       uint32_t data_size,
+	                       const RsGxsId& signer_id,
+	                       RsTlvKeySignature& signature,
+	                       uint32_t& signing_error);
 
-	virtual bool encryptData(const uint8_t *decrypted_data,uint32_t decrypted_data_size,uint8_t *& encrypted_data,uint32_t& encrypted_data_size,const RsGxsId& encryption_key_id,bool force_load,uint32_t& encryption_error) ;
-	virtual bool decryptData(const uint8_t *encrypted_data,uint32_t encrypted_data_size,uint8_t *& decrypted_data,uint32_t& decrypted_data_size,const RsGxsId& encryption_key_id,uint32_t& encryption_error) ;
+	virtual bool validateData( const uint8_t *data, uint32_t data_size,
+	                           const RsTlvKeySignature& signature,
+	                           bool force_load, const RsIdentityUsage &info,
+	                           uint32_t& signing_error );
+
+	virtual bool encryptData( const uint8_t* decrypted_data,
+	                          uint32_t decrypted_data_size,
+	                          uint8_t*& encrypted_data,
+	                          uint32_t& encrypted_data_size,
+	                          const RsGxsId& encryption_key_id,
+	                          bool force_load, uint32_t& encryption_error);
+
+	bool encryptData( const uint8_t* decrypted_data,
+	                  uint32_t decrypted_data_size,
+	                  uint8_t*& encrypted_data,
+	                  uint32_t& encrypted_data_size,
+	                  const std::set<RsGxsId>& encrypt_ids,
+	                  bool force_load, uint32_t& error_status );
+
+	virtual bool decryptData( const uint8_t* encrypted_data,
+	                          uint32_t encrypted_data_size,
+	                          uint8_t*& decrypted_data,
+	                          uint32_t& decrypted_data_size,
+	                          const RsGxsId& encryption_key_id,
+	                          uint32_t& encryption_error );
 
 	virtual bool haveKey(const RsGxsId &id);
 	virtual bool havePrivateKey(const RsGxsId &id);
@@ -299,7 +325,9 @@ public:
 	virtual bool getKey(const RsGxsId &id, RsTlvPublicRSAKey &key);
 	virtual bool getPrivateKey(const RsGxsId &id, RsTlvPrivateRSAKey &key);
 
-    virtual bool requestKey(const RsGxsId &id, const std::list<RsPeerId> &peers, const RsIdentityUsage &use_info);
+	virtual bool requestKey( const RsGxsId &id,
+	                         const std::list<RsPeerId> &peers,
+	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
 

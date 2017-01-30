@@ -1332,7 +1332,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 	return ok;
 }
 
-bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
+bool RsGenExchange::getMsgData(uint32_t token, GxsMsgDataMap &msgItems)
 {
 	RS_STACK_MUTEX(mGenMtx) ;
 	NxsMsgDataResult msgResult;
@@ -1382,7 +1382,8 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 	return ok;
 }
 
-bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)
+bool RsGenExchange::getMsgRelatedData( uint32_t token,
+                                       GxsMsgRelatedDataMap &msgItems )
 {
 	RS_STACK_MUTEX(mGenMtx) ;
     NxsMsgRelatedDataResult msgResult;

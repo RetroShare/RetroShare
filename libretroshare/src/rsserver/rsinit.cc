@@ -1491,7 +1491,7 @@ int RsServer::StartupRetroShare()
 	RsGeneralDataService* gxsmail_ds = new RsDataService(
 	            currGxsDir + "/", "gxsmails_db", RS_SERVICE_TYPE_GXS_MAIL,
 	            NULL, rsInitConfig->gxs_passwd );
-	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, mGxsIdService);
+	p3GxsMails* mGxsMails = new p3GxsMails(gxsmail_ds, NULL, *mGxsIdService);
 	RsGxsNetService* gxsmails_ns = new RsGxsNetService(
 	            RS_SERVICE_TYPE_GXS_MAIL, gxsmail_ds, nxsMgr, mGxsMails,
 	            mGxsMails->getServiceInfo(), mReputations, mGxsCircles,

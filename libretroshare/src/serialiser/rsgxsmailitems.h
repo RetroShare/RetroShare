@@ -24,28 +24,36 @@
 #include "serialiser/rstlvidset.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxscircles.h" // For: GXS_CIRCLE_TYPE_PUBLIC
+#include "services/p3idservice.h"
 
-
-enum GxsMailSubtypes
+/// Values must fit into uint8_t
+enum GxsMailItemsSubtypes
 {
-	GXS_MAIL_SUBTYPE_MAIL = 1,
-	GXS_MAIL_SUBTYPE_ACK,
-	GXS_MAIL_SUBTYPE_GROUP
+	GXS_MAIL_SUBTYPE_MAIL    = 1,
+	GXS_MAIL_SUBTYPE_ACK     = 2,
+	GXS_MAIL_SUBTYPE_GROUP   = 3
 };
 
 struct RsGxsMailBaseItem : RsGxsMsgItem
 {
-	RsGxsMailBaseItem(GxsMailSubtypes subtype) :
-	    RsGxsMsgItem(RS_SERVICE_TYPE_GXS_MAIL, (uint8_t)subtype), flags(0) {}
+	RsGxsMailBaseItem(GxsMailItemsSubtypes subtype) :
+	    RsGxsMsgItem( RS_SERVICE_TYPE_GXS_MAIL,
+	                  static_cast<uint8_t>(subtype) ) {}
 
-	enum RsGxsMailFlags { READ = 0x1 };
-	uint8_t flags;
+	/// Values must fit into uint8_t
+	enum EncryptionMode
+	{
+		CLEAR_TEXT                = 1,
+		RSA                       = 2,
+		UNDEFINED_ENCRYPTION      = 250
+	};
+	EncryptionMode cryptoType;
 
 	/**
-	 * @brief recipient_hint used instead of plain recipient id, so sender can
+	 * @brief recipientsHint used instead of plain recipient id, so sender can
 	 *  decide the equilibrium between exposing the recipient and the cost of
 	 *  completely anonymize it. So a bunch of luky non recipient can conclude
-	 *  rapidly that they are not recipiend without trying to decrypt the
+	 *  rapidly that they are not the recipient without trying to decrypt the
 	 *  message.
 	 *
 	 * To be able to decide how much metadata we disclose sending a message we
@@ -54,10 +62,10 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	 * obscure like 0xFF...FF so potentially everyone could be the recipient, or
 	 * may expose the complete recipient id or be a middle ground.
 	 * To calculate arbitrary precise hint one do a bitwise OR of the recipients
-	 * keys and an arbytrary salting mask, the more recipients has the mail and
-	 * the more 1 bits has the mask the less accurate is the hint.
+	 * keys and an arbitrary salt, the more recipients has the mail and the more
+	 * 1 bits has the salt the less accurate is the hint.
 	 * This way the sender is able to adjust the metadata privacy needed for the
-	 * message, in the more private case (recipient_hint == 0xFF...FF) no one
+	 * message, in the more private case (recipientsHint == 0xFFF...FFF) no one
 	 * has a clue about who is the actual recipient, while this imply the cost
 	 * that every potencial recipient has to try to decrypt it to know if it is
 	 * for herself. This way a bunch of non recipients can rapidly discover that
@@ -76,42 +84,75 @@ struct RsGxsMailBaseItem : RsGxsMsgItem
 	 * mail is directed to the actual recipient as the "apparently"
 	 * corresponding hint may be fruit of a "luky" salting of another id.
 	 */
-	uint32_t recipient_hint;
+	RsGxsId recipientsHint;
+
+	void inline saltRecipientHint(const RsGxsId& salt)
+	{ saltRecipientHint(recipientsHint, salt); }
+
+	void static inline saltRecipientHint(RsGxsId& hint, const RsGxsId& salt)
+	{ hint = hint | salt; }
 
 	/**
-	 * @brief maybe_recipient given an id and an hint check if they match
-	 * @see recipient_hint
+	 * @brief maybeRecipient given an id and an hint check if they match
+	 * @see recipientHint
 	 * @note this is not the final implementation as id and hint are not 32bit
 	 *   integers it is just to not forget how to verify the hint/id matching
 	 *   fastly with boolean ops
 	 * @return true if the id may be recipient of the hint, false otherwise
 	 */
-	static bool maybe_recipient(uint32_t id, uint32_t hint)
-	{ return (~id|hint) == 0xFFFFFFFF; }
+	bool static inline maybeRecipient(const RsGxsId& hint, const RsGxsId& id)
+	{ return (~id|hint) == allRecipientsHint; }
+
+	const static RsGxsId allRecipientsHint;
+
+	void inline clear()
+	{
+		cryptoType = UNDEFINED_ENCRYPTION;
+		recipientsHint.clear();
+		meta = RsMsgMetaData();
+	}
+
+	static uint32_t inline size()
+	{
+		return  8 + // Header
+		        1 + // cryptoType
+		        RsGxsId::serial_size(); // recipientsHint
+	}
+	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const;
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset);
+	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/);
 };
 
 struct RsGxsMailItem : RsGxsMailBaseItem
 {
-	RsGxsMailItem() : RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_MAIL) {}
+	RsGxsMailItem(GxsMailItemsSubtypes subtype) :
+	    RsGxsMailBaseItem(subtype) {}
+	RsGxsMailItem() :
+	    RsGxsMailBaseItem(GXS_MAIL_SUBTYPE_MAIL) {}
 
-	RsTlvGxsIdSet recipients;
+	/** This should travel encrypted, unless EncryptionMode::CLEAR_TEXT
+	 * is specified */
+	std::vector<uint8_t> payload;
 
-	/**
-	 * @brief body of the email
-	 * Should we ue MIME for compatibility with fido RS-email gateway?
-	 * https://github.com/zeroreserve/fido
-	 * https://github.com/RetroShare/fido
-	 * https://en.wikipedia.org/wiki/MIME
-	 */
-	std::string body;
-
-	void clear()
+	uint32_t size() const { return RsGxsMailBaseItem::size() + payload.size(); }
+	bool serialize(uint8_t* data, uint32_t size, uint32_t& offset) const
 	{
-		recipients.TlvClear();
-		body.clear();
+		return size < MAX_SIZE
+		        && RsGxsMailBaseItem::serialize(data, size, offset)
+		        && memcpy(data+offset, &payload[0], payload.size());
 	}
-	std::ostream &print(std::ostream &out, uint16_t indent = 0)
-	{ return recipients.print(out, indent) << body; }
+	bool deserialize(const uint8_t* data, uint32_t& size, uint32_t& offset)
+	{
+		uint32_t bsz = RsGxsMailBaseItem::size();
+		uint32_t psz = size - bsz;
+		return size < MAX_SIZE && size >= bsz
+		        && RsGxsMailBaseItem::deserialize(data, size, offset)
+		        && (payload.resize(psz), memcpy(&payload[0], data+offset, psz));
+	}
+	void clear() { RsGxsMailBaseItem::clear(); payload.clear(); }
+
+	/// Maximum mail size in bytes 10 MiB is more than anything sane can need
+	const static uint32_t MAX_SIZE = 10*8*1024*1024;
 };
 
 struct RsGxsMailAckItem : RsGxsMailBaseItem
@@ -147,19 +188,13 @@ struct RsGxsMailSerializer : RsSerialType
 
 	uint32_t size(RsItem* item)
 	{
-		uint32_t s = 8; // Header
-
+		uint32_t sz = 0;
 		switch(item->PacketSubType())
 		{
 		case GXS_MAIL_SUBTYPE_MAIL:
 		{
 			RsGxsMailItem* i = dynamic_cast<RsGxsMailItem*>(item);
-			if(i)
-			{
-				s += 4; // RsGxsMailBaseItem::recipient_hint
-				s += i->recipients.TlvSize();
-				s += getRawStringSize(i->body);
-			}
+			if(i) sz = i->size();
 			break;
 		}
 		case GXS_MAIL_SUBTYPE_ACK:
@@ -167,74 +202,36 @@ struct RsGxsMailSerializer : RsSerialType
 			RsGxsMailAckItem* i = dynamic_cast<RsGxsMailAckItem*>(item);
 			if(i)
 			{
-				s += 4; // RsGxsMailBaseItem::recipient_hint
-				s += 1; // RsGxsMailAckItem::read
-				s += i->recipient.serial_size();
+				sz = 8; // Header
+				sz += 4; // RsGxsMailBaseItem::recipient_hint
+				sz += 1; // RsGxsMailAckItem::read
+				sz += i->recipient.serial_size();
 			}
 			break;
 		}
-		case GXS_MAIL_SUBTYPE_GROUP: break;
-		default: return 0;
+		case GXS_MAIL_SUBTYPE_GROUP: sz = 8; break;
+		default: break;
 		}
 
-		return s;
+		return sz;
 	}
 
-	bool serialise(RsItem* item, void* data, uint32_t* size)
-	{
-		uint32_t tlvsize = RsGxsMailSerializer::size(item);
-		uint32_t offset = 0;
-
-		if(*size < tlvsize) return false;
-
-		*size = tlvsize;
-
-		bool ok = true;
-		ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-		/* skip the header */
-		offset += 8;
-
-		switch(item->PacketSubType())
-		{
-		case GXS_MAIL_SUBTYPE_MAIL:
-		{
-			RsGxsMailItem* i = dynamic_cast<RsGxsMailItem*>(item);
-			if(i)
-			{
-				ok &= i->recipients.SetTlv(data, tlvsize, &offset);
-				ok &= setRawString(data, tlvsize, &offset, i->body);
-			}
-			break;
-		}
-		case GXS_MAIL_SUBTYPE_ACK:
-		{
-			RsGxsMailAckItem* i = dynamic_cast<RsGxsMailAckItem*>(item);
-			if(i)
-			{
-				ok &= i->recipient.serialise(data, tlvsize, offset);
-				ok &= setRawUInt8(data, tlvsize, &offset, i->flags);
-			}
-			break;
-		}
-		case GXS_MAIL_SUBTYPE_GROUP: break;
-		default: ok = false; break;
-		}
-
-		return ok;
-	}
+	bool serialise(RsItem* item, void* data, uint32_t* size);
 
 	RsItem* deserialise(void* data, uint32_t* size)
 	{
 		uint32_t rstype = getRsItemId(data);
 		uint32_t rssize = getRsItemSize(data);
-		uint32_t offset = 8;
+		uint8_t pktv = getRsItemVersion(rstype);
+		uint16_t srvc = getRsItemService(rstype);
 
-
-		if ( (RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		     (RS_SERVICE_TYPE_GXS_MAIL != getRsItemService(rstype)) ||
+		if ( (RS_PKT_VERSION_SERVICE != pktv) || // 0x02
+		     (RS_SERVICE_TYPE_GXS_MAIL != srvc) || // 0x0230 = 560
 		     (*size < rssize) )
+		{
+			print_stacktrace();
 			return NULL;
+		}
 
 		*size = rssize;
 		bool ok = true;
@@ -245,15 +242,16 @@ struct RsGxsMailSerializer : RsSerialType
 		case GXS_MAIL_SUBTYPE_MAIL:
 		{
 			RsGxsMailItem* i = new RsGxsMailItem();
-			ok &= i->recipients.GetTlv(data, *size, &offset);
-			ok &= getRawString(data, *size, &offset, i->body);
+			uint32_t offset = 0;
+			const uint8_t* dataPtr = reinterpret_cast<uint8_t*>(data);
+			ok = ok && i->deserialize(dataPtr, *size, offset);
 			ret = i;
 			break;
 		}
 		case GXS_MAIL_SUBTYPE_ACK:
 		{
 			RsGxsMailAckItem* i = new RsGxsMailAckItem();
-			ok &= getRawUInt8(data, *size, &offset, &i->flags);
+			uint32_t offset = 0;
 			ok &= i->recipient.deserialise(data, *size, offset);
 			ret = i;
 			break;

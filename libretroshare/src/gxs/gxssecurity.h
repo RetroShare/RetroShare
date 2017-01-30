@@ -35,9 +35,10 @@
 
 
 /*!
- * This contains functionality for performing security
- * operations needed to validate data received in RsGenExchange
+ * This contains functionality for performing basic security operations needed
+ * in RsGenExchange operations.
  * Also has routine for creating security objects around msgs and groups
+ * TODO: Those functions doesn't do param checking!
  */
 class GxsSecurity 
 {
