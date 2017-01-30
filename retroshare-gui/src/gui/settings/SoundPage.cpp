@@ -46,6 +46,7 @@ SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.defaultButton, SIGNAL(clicked()), this, SLOT(defaultButtonClicked()));
 	connect(ui.browseButton, SIGNAL(clicked()), this, SLOT(browseButtonClicked()));
 	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(playButtonClicked()));
+	connect(ui.eventTreeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(updateSounds()));
 
 	ui.eventTreeWidget->setColumnCount(COLUMN_COUNT);
 
@@ -100,7 +101,7 @@ QTreeWidgetItem *SoundPage::addItem(QTreeWidgetItem *groupItem, const QString &n
 }
 
 /** Saves the changes on this page */
-bool SoundPage::save(QString &/*errmsg*/)
+void SoundPage::updateSounds()
 {
 	QTreeWidgetItemIterator itemIterator(ui.eventTreeWidget);
 	QTreeWidgetItem *item = NULL;
@@ -113,8 +114,6 @@ bool SoundPage::save(QString &/*errmsg*/)
 			SoundManager::setEventFilename(event, item->text(COLUMN_FILENAME));
 		}
 	}
-
-	return true;
 }
 
 /** Loads the settings for this page */

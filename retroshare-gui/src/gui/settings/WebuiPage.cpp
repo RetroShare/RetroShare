@@ -33,7 +33,7 @@ WebuiPage::~WebuiPage()
 
 }
 
-bool WebuiPage::save(QString &errmsg)
+bool WebuiPage::updateParams(QString &errmsg)
 {
     std::cerr << "WebuiPage::save()" << std::endl;
     bool ok = true;
@@ -153,7 +153,7 @@ void WebuiPage::onEnableCBClicked(bool checked)
 void WebuiPage::onApplyClicked()
 {
     QString errmsg;
-    bool ok = save(errmsg);
+    bool ok = updateParams(errmsg);
     if(!ok)
     {
         QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");

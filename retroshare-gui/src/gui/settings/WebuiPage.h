@@ -45,6 +45,8 @@ private:
   /** Qt Designer generated object */
   Ui::WebuiPage ui;
 
+  bool updateParams(QString &errmsg);
+
   static resource_api::ApiServer* apiServer;
   static resource_api::ApiServerMHD* apiServerMHD;
  #ifdef LIBRESAPI_LOCAL_SERVER

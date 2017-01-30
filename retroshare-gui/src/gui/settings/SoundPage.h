@@ -50,6 +50,7 @@ private slots:
 	void defaultButtonClicked();
 	void browseButtonClicked();
 	void playButtonClicked();
+	void updateSounds();
 
 private:
 	QTreeWidgetItem *addGroup(const QString &name);

@@ -56,6 +56,17 @@ class ChatPage : public ConfigPage
  
     void distantChatComboBoxChanged(int);
   
+    void updateFontsAndEmotes();
+    void updateChatParams();
+    void updateChatSearchParams();
+    void updateDefaultLobbyIdentity() ;
+    void updateHistoryParams();
+    void updatePublicStyle() ;
+    void updatePrivateStyle() ;
+    void updateHistoryStyle() ;
+    void updateHistoryStorage();
+    void updateChatFlags();
+    void updateChatLobbyFlags();
 
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
