@@ -53,10 +53,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.setMsgToReadOnActivate,SIGNAL(toggled(bool)),          this,SLOT(updateMsgToReadOnActivate()));
 	connect(ui.loadEmbeddedImages,    SIGNAL(toggled(bool)),          this,SLOT(updateLoadEmbededImages()  ));
-	connect(ui.openComboBox,          SIGNAL(currentItemChanged(int)),this,SLOT(updateMsgOpen()            ));
-	connect(ui.comboBox,              SIGNAL(currebtItemChanged(int)),this,SLOT(updateDistantMsgs()        ));
-
-	connect(ui.comboBox,              SIGNAL(currebtItemChanged(int)),this,SLOT(updateMsgTags()        ));
+	connect(ui.openComboBox,          SIGNAL(currentIndexChanged(int)),this,SLOT(updateMsgOpen()            ));
 }
 
 MessagePage::~MessagePage()

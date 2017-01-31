@@ -31,6 +31,7 @@
 #include "AppearancePage.h"
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
+#include "gui/notifyqt.h"
 #include "gui/statusbar/peerstatus.h"
 #include "gui/statusbar/natstatus.h"
 #include "gui/statusbar/dhtstatus.h"
@@ -90,9 +91,10 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.cmboLanguage,                  SIGNAL(currentIndexChanged(int)), this, SLOT(updateLanguageCode()       ));
 	connect(ui.cmboStyle,                     SIGNAL(currentIndexChanged(int)), this, SLOT(updateInterfaceStyle()     ));
 	connect(ui.cmboStyleSheet,                SIGNAL(currentIndexChanged(int)), this, SLOT(updateSheetName()          ));
-	connect(ui.rbtPageOnToolBar,              SIGNAL(toggled(bool)),           this, SLOT(updateRbtPageOnToolBar() ));
-	connect(ui.rbtActionOnToolBar,            SIGNAL(toggled(bool)),           this, SLOT(updateActionButtonLoc()  ));
 	connect(ui.checkBoxDisableSysTrayToolTip, SIGNAL(toggled(bool)),           this, SLOT(updateStatusToolTip()    ));
+
+	connect(ui.mainPageButtonType_CB,  SIGNAL(currentIndexChanged(int)),           this, SLOT(updateRbtPageOnToolBar()    ));
+	connect(ui.menuItemsButtonType_CB, SIGNAL(currentIndexChanged(int)),           this, SLOT(updateActionButtonLoc()    ));
 }
 
 void AppearancePage::switch_status_grpStatus(bool b)        { switch_status(MainWindow::StatusGrpStatus  ,"ShowStatusBar",         b) ; }
@@ -128,8 +130,16 @@ void AppearancePage::updateInterfaceStyle()
     Settings->setInterfaceStyle(ui.cmboStyle->currentText());
 }
 void AppearancePage::updateSheetName()        { Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString()); }
-void AppearancePage::updateRbtPageOnToolBar() { Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());}
-void AppearancePage::updateActionButtonLoc()  {	Settings->setActionButtonLoc(ui.rbtActionOnToolBar->isChecked()); }
+void AppearancePage::updateRbtPageOnToolBar()
+{
+    Settings->setPageButtonLoc(!ui.mainPageButtonType_CB->currentIndex());
+    NotifyQt::getInstance()->notifySettingsChanged();
+}
+void AppearancePage::updateActionButtonLoc()
+{
+    Settings->setActionButtonLoc(!ui.menuItemsButtonType_CB->currentIndex());
+    NotifyQt::getInstance()->notifySettingsChanged();
+}
 void AppearancePage::updateStatusToolTip()    { MainWindow::getInstance()->toggleStatusToolTip(ui.checkBoxDisableSysTrayToolTip->isChecked()); }
 
 void AppearancePage::updateCmboToolButtonStyle()
@@ -149,6 +159,7 @@ void AppearancePage::updateCmboToolButtonStyle()
 		default:
 			Settings->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 	}
+    NotifyQt::getInstance()->notifySettingsChanged();
 }
 
 void AppearancePage::updateCmboToolButtonSize()
@@ -174,6 +185,7 @@ void AppearancePage::updateCmboToolButtonSize()
         case 5:
             Settings->setToolButtonSize(128);
     }
+    NotifyQt::getInstance()->notifySettingsChanged();
 }
 void AppearancePage::updateCmboListItemSize()
 {
@@ -198,6 +210,7 @@ void AppearancePage::updateCmboListItemSize()
         case 5:
             Settings->setListItemIconSize(128);
     }
+    NotifyQt::getInstance()->notifySettingsChanged();
 }
 
 void AppearancePage::updateStyle() { Rshare::setStyle(ui.cmboStyle->currentText()); }
@@ -218,10 +231,9 @@ void AppearancePage::load()
 	}
 	ui.cmboStyleSheet->setCurrentIndex(index);
 
-	ui.rbtPageOnToolBar->setChecked(Settings->getPageButtonLoc());
-	ui.rbtPageOnListItem->setChecked(!Settings->getPageButtonLoc());
-	ui.rbtActionOnToolBar->setChecked(Settings->getActionButtonLoc());
-	ui.rbtActionOnListItem->setChecked(!Settings->getActionButtonLoc());
+	ui.mainPageButtonType_CB->setCurrentIndex(!Settings->getPageButtonLoc());
+	ui.menuItemsButtonType_CB->setCurrentIndex(!Settings->getActionButtonLoc());
+
 	switch (Settings->getToolButtonStyle())
 	{
 		case Qt::ToolButtonIconOnly:

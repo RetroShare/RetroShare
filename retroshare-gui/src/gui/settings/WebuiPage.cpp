@@ -148,6 +148,9 @@ void WebuiPage::onEnableCBClicked(bool checked)
         ui.params_GB->setEnabled(false);
         ui.applyStartBrowser_PB->setEnabled(false);
     }
+
+    QString S;
+    updateParams(S);
 }
 
 void WebuiPage::onApplyClicked()
